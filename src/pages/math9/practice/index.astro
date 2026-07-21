@@ -9,6 +9,9 @@ const base = import.meta.env.BASE_URL;
     <p class="text-xs font-bold uppercase tracking-widest text-math9-600 mb-2">Math 9</p>
     <h1 class="text-3xl font-bold text-slate-900 mb-2">Prereq Practice</h1>
     <p class="text-slate-500">Pick the topic you're about to start. We'll quiz you on the skills you need to be ready.</p>
+    <div class="mt-3 flex items-center gap-2">
+      <button id="visual-toggle" class="text-xs font-medium px-3 py-1 rounded-full border transition-colors"></button>
+    </div>
   </div>
 
   <!-- ── STATE 1: Topic Grid ── -->
@@ -96,12 +99,14 @@ const base = import.meta.env.BASE_URL;
     #print-problems {
       columns: 2;
       column-gap: 2rem;
-      height: calc(100vh - 8rem);
     }
     .print-problem {
-      height: calc((100vh - 8rem) / 5);
-      margin-bottom: 0;
+      min-height: calc((100vh - 8rem) / 5);
+      margin-bottom: 0.75rem;
       padding-bottom: 0.25rem;
+    }
+    .print-problem svg {
+      max-height: 120px;
     }
   }
 </style>
@@ -122,6 +127,114 @@ function fmtSign(n) { return n < 0 ? `(${n})` : `${n}`; }
 function fmtTerm(coeff, first) {
   if (first) return `${coeff}`;
   return coeff >= 0 ? `+ ${coeff}` : `− ${Math.abs(coeff)}`;
+}
+
+// ─── VISUAL MODE ───
+const VISUAL_KEY = 'math9-practice-visual';
+let visualMode = localStorage.getItem(VISUAL_KEY) !== 'off';
+
+// ─── SVG HELPERS (CPA visual representations) ───
+const SVG_COLORS = { x2pos:'#6366f1', x2neg:'#ef4444', xpos:'#818cf8', xneg:'#f87171', upos:'#a5b4fc', uneg:'#fca5a5', grid:'#e2e8f0', accent:'#4f46e5', light:'#eef2ff', text:'#1e293b', muted:'#64748b' };
+
+function svgAlgebraTiles(terms) {
+  const tileSize = 24;
+  const gap = 4;
+  const groupGap = 16;
+  let x = 10;
+  const tiles = [];
+  let maxH = 0;
+
+  terms.forEach(t => {
+    const count = Math.abs(t.count);
+    if (count === 0) return;
+    const isNeg = t.count < 0;
+    let w, h, color, label;
+    if (t.type === 'x2') { w = tileSize * 2; h = tileSize * 2; color = isNeg ? SVG_COLORS.x2neg : SVG_COLORS.x2pos; label = 'x²'; }
+    else if (t.type === 'x') { w = tileSize * 2; h = tileSize; color = isNeg ? SVG_COLORS.xneg : SVG_COLORS.xpos; label = 'x'; }
+    else { w = tileSize; h = tileSize; color = isNeg ? SVG_COLORS.uneg : SVG_COLORS.upos; label = '1'; }
+
+    for (let i = 0; i < count; i++) {
+      tiles.push({ x, y: 10, w, h, color, label, neg: isNeg });
+      x += w + gap;
+    }
+    x += groupGap;
+    if (h > maxH) maxH = h;
+  });
+
+  const totalW = x + 6;
+  const totalH = maxH + 36;
+  let svg = tiles.map(r =>
+    `<rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="4" fill="${r.color}" opacity="0.85"/>` +
+    `<text x="${r.x + r.w/2}" y="${r.y + r.h/2 + 5}" text-anchor="middle" font-size="12" fill="white" font-weight="bold" font-family="system-ui">${r.neg ? '−' : ''}${r.label}</text>`
+  ).join('');
+
+  const legend = `<text x="10" y="${totalH - 2}" font-size="10" fill="${SVG_COLORS.muted}" font-family="system-ui">■ x²   ▬ x   ▪ 1   (red = negative)</text>`;
+
+  return `<svg viewBox="0 0 ${totalW} ${totalH + 4}" width="100%" style="max-width:${Math.min(totalW, 600)}px;margin:0.75rem 0;" role="img" aria-label="Algebra tile representation"><style>svg text{user-select:none;}</style>${svg}${legend}</svg>`;
+}
+
+function svgBalanceBeam(leftLabel, rightLabel) {
+  const w = 340, h = 100;
+  const beam = `<line x1="40" y1="50" x2="300" y2="50" stroke="${SVG_COLORS.grid}" stroke-width="3"/>`;
+  const fulcrum = `<polygon points="170,50 155,85 185,85" fill="${SVG_COLORS.accent}" opacity="0.3"/>`;
+  const leftPan = `<rect x="50" y="28" width="100" height="36" rx="8" fill="${SVG_COLORS.light}" stroke="${SVG_COLORS.accent}" stroke-width="1.5"/>` +
+    `<text x="100" y="52" text-anchor="middle" font-size="13" font-weight="bold" fill="${SVG_COLORS.accent}" font-family="system-ui">${leftLabel}</text>`;
+  const rightPan = `<rect x="190" y="28" width="100" height="36" rx="8" fill="${SVG_COLORS.light}" stroke="${SVG_COLORS.accent}" stroke-width="1.5"/>` +
+    `<text x="240" y="52" text-anchor="middle" font-size="13" font-weight="bold" fill="${SVG_COLORS.accent}" font-family="system-ui">${rightLabel}</text>`;
+  const eq = `<text x="170" y="46" text-anchor="middle" font-size="16" font-weight="bold" fill="${SVG_COLORS.text}" font-family="system-ui">=</text>`;
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" style="max-width:${w}px;margin:0.5rem 0;" role="img" aria-label="Balance beam: ${leftLabel} = ${rightLabel}"><style>svg text{user-select:none;}</style>${beam}${fulcrum}${leftPan}${rightPan}${eq}</svg>`;
+}
+
+function svgNumberLine(min, max, highlights, labels) {
+  const pad = 30, w = 400, h = 60;
+  const range = max - min;
+  const toX = v => pad + ((v - min) / range) * (w - 2*pad);
+
+  let svg = `<line x1="${pad}" y1="30" x2="${w-pad}" y2="30" stroke="${SVG_COLORS.grid}" stroke-width="2" marker-end="url(#arrowhead)"/>`;
+  svg += `<defs><marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="${SVG_COLORS.grid}"/></marker></defs>`;
+
+  for (let v = min; v <= max; v++) {
+    const x = toX(v);
+    const isMajor = v % 5 === 0 || v === min || v === max;
+    svg += `<line x1="${x}" y1="${isMajor ? 24 : 27}" x2="${x}" y2="${isMajor ? 36 : 33}" stroke="${SVG_COLORS.muted}" stroke-width="${isMajor ? 1.5 : 0.75}"/>`;
+    if (isMajor) svg += `<text x="${x}" y="48" text-anchor="middle" font-size="9" fill="${SVG_COLORS.muted}" font-family="system-ui">${v}</text>`;
+  }
+
+  if (highlights) highlights.forEach((v, i) => {
+    const x = toX(v);
+    const color = i === 0 ? SVG_COLORS.accent : '#059669';
+    svg += `<circle cx="${x}" cy="30" r="5" fill="${color}"/>`;
+    if (labels && labels[i]) svg += `<text x="${x}" y="16" text-anchor="middle" font-size="9" font-weight="bold" fill="${color}" font-family="system-ui">${labels[i]}</text>`;
+  });
+
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" style="max-width:${w}px;margin:0.5rem 0;" role="img" aria-label="Number line from ${min} to ${max}"><style>svg text{user-select:none;}</style>${svg}</svg>`;
+}
+
+function svgCoordinateGrid(points, xRange, yRange) {
+  const pad = 30, size = 280;
+  const w = size + 2*pad, h = size + 2*pad;
+  const toX = v => pad + ((v - xRange[0]) / (xRange[1] - xRange[0])) * size;
+  const toY = v => pad + ((yRange[1] - v) / (yRange[1] - yRange[0])) * size;
+
+  let svg = '';
+  for (let x = xRange[0]; x <= xRange[1]; x++) {
+    const px = toX(x);
+    svg += `<line x1="${px}" y1="${pad}" x2="${px}" y2="${pad+size}" stroke="${x===0?SVG_COLORS.text:SVG_COLORS.grid}" stroke-width="${x===0?1.5:0.5}"/>`;
+    if (x % 2 === 0) svg += `<text x="${px}" y="${pad+size+14}" text-anchor="middle" font-size="8" fill="${SVG_COLORS.muted}" font-family="system-ui">${x}</text>`;
+  }
+  for (let y = yRange[0]; y <= yRange[1]; y++) {
+    const py = toY(y);
+    svg += `<line x1="${pad}" y1="${py}" x2="${pad+size}" y2="${py}" stroke="${y===0?SVG_COLORS.text:SVG_COLORS.grid}" stroke-width="${y===0?1.5:0.5}"/>`;
+    if (y % 2 === 0) svg += `<text x="${pad-8}" y="${py+3}" text-anchor="end" font-size="8" fill="${SVG_COLORS.muted}" font-family="system-ui">${y}</text>`;
+  }
+
+  if (points) points.forEach(p => {
+    const px = toX(p.x), py = toY(p.y);
+    svg += `<circle cx="${px}" cy="${py}" r="5" fill="${p.color || SVG_COLORS.accent}"/>`;
+    if (p.label) svg += `<text x="${px+8}" y="${py-6}" font-size="9" font-weight="bold" fill="${p.color || SVG_COLORS.accent}" font-family="system-ui">${p.label}</text>`;
+  });
+
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" style="max-width:${w}px;margin:0.5rem 0;" role="img" aria-label="Coordinate grid"><style>svg text{user-select:none;}</style>${svg}</svg>`;
 }
 
 // ─── GENERATORS: 1. Rational Numbers ───
@@ -177,7 +290,12 @@ function genDecFracPercent() {
 function genOrderIntegers() {
   const nums = Array.from({length: 5}, () => randInt(-20, 20));
   const sorted = [...nums].sort((a,b) => a - b);
-  return { question: `Order from least to greatest: ${nums.join(', ')}`, answer: sorted.join(', '),
+  let visual = '';
+  if (visualMode) {
+    const lo = Math.min(...nums) - 2, hi = Math.max(...nums) + 2;
+    visual = '<br>' + svgNumberLine(lo, hi, nums, nums.map(n => ''+n));
+  }
+  return { question: `Order from least to greatest: ${nums.join(', ')}${visual}`, answer: sorted.join(', '),
     solution: `Place on a number line:\nFarthest left (most negative) → farthest right (most positive)\n${sorted.join(', ')}`,
     hint: `Negative numbers go left on the number line. More negative = smaller.`,
     accept: i => { const got = i.split(/[,\s]+/).map(Number).filter(x=>!isNaN(x)); return JSON.stringify(got)===JSON.stringify(sorted); }};
@@ -430,10 +548,14 @@ function genAddPolySimple() {
   const a1 = randInt(-8,8), a2 = randInt(-8,8), b1 = randInt(-8,8), b2 = randInt(-8,8);
   if (a1===0 && b1===0) return genAddPolySimple();
   const rA = a1+a2, rB = b1+b2;
-  const p1 = `${a1===0?'':(a1===1?'':a1===-1?'−':a1)+'x'}${b1>=0?(a1===0?b1:' + '+b1):' − '+Math.abs(b1)}`;
-  const p2 = `${a2===0?'':(a2===1?'':a2===-1?'−':a2)+'x'}${b2>=0?(a2===0?b2:' + '+b2):' − '+Math.abs(b2)}`;
-  const ans = `${rA===0?'':(rA===1?'':rA===-1?'−':rA)+'x'}${rB>=0?(rA===0?rB:' + '+rB):' − '+Math.abs(rB)}`;
-  return { question: `Add: (${a1}x + ${b1}) + (${a2}x + ${b2})`, answer: `${rA}x + ${rB}`,
+  let visual = '';
+  if (visualMode) {
+    visual = '<br>' + svgAlgebraTiles([
+      { type:'x', count: a1 }, { type:'1', count: b1 },
+      { type:'x', count: a2 }, { type:'1', count: b2 },
+    ]);
+  }
+  return { question: `Add: (${a1}x + ${b1}) + (${a2}x + ${b2})${visual}`, answer: `${rA}x + ${rB}`,
     solution: `(${a1}x + ${b1}) + (${a2}x + ${b2})\nCombine like terms:\nx terms: ${a1}x + ${a2}x = ${rA}x\nConstants: ${b1} + ${b2} = ${rB}\n= ${rA}x + ${rB}`,
     hint: 'Combine the x terms together and the constant terms together.',
     accept: i => { const c=i.replace(/\s/g,'').toLowerCase(); return c===`${rA}x+${rB}`||c===`${rA}x${rB>=0?'+':''}${rB}`; }};
@@ -441,7 +563,10 @@ function genAddPolySimple() {
 function genMultiStepEq() {
   const x = randInt(-8, 8);
   const a = randInt(2, 6), b = randInt(-10, 10), c = a * x + b;
-  return { question: `Solve: ${a}x + ${b >= 0 ? b : `(${b})`} = ${c}`, answer: `${x}`,
+  const leftStr = `${a}x ${b >= 0 ? '+ '+b : '− '+Math.abs(b)}`;
+  let visual = '';
+  if (visualMode) visual = '<br>' + svgBalanceBeam(leftStr, ''+c);
+  return { question: `Solve: ${a}x + ${b >= 0 ? b : `(${b})`} = ${c}${visual}`, answer: `${x}`,
     solution: `${a}x + ${b} = ${c}\n${a}x = ${c} − ${b}\n${a}x = ${c - b}\nx = ${c - b} ÷ ${a}\nx = ${x}`,
     hint: `First subtract ${b} from both sides, then divide by ${a}.`,
     accept: i => parseInt(i) === x };
@@ -564,7 +689,11 @@ function genNegBasePower() {
 // ─── GENERATORS: 4. Linear Relations ───
 function genPlotPoint() {
   const x = randInt(-8, 8), y = randInt(-8, 8);
-  return { question: `Where would you plot the point (${x}, ${y})? State the quadrant (I, II, III, IV) or axis.`,
+  let visual = '';
+  if (visualMode) {
+    visual = '<br>' + svgCoordinateGrid([{x, y, label: `(${x}, ${y})`}], [-10, 10], [-10, 10]);
+  }
+  return { question: `Where would you plot the point (${x}, ${y})? State the quadrant (I, II, III, IV) or axis.${visual}`,
     answer: x===0||y===0 ? 'on an axis' : (x>0&&y>0?'I':x<0&&y>0?'II':x<0&&y<0?'III':'IV'),
     solution: `(${x}, ${y})\nx = ${x} → move ${x>0?'right':'left'} ${Math.abs(x)}\ny = ${y} → move ${y>0?'up':'down'} ${Math.abs(y)}\n${x===0||y===0?'The point is on an axis.':'Quadrant '+(x>0&&y>0?'I':x<0&&y>0?'II':x<0&&y<0?'III':'IV')}`,
     hint: `x tells you left/right, y tells you up/down. Quadrant I is top-right, going counter-clockwise.`,
@@ -633,11 +762,12 @@ function genInverseOp() {
 function genOneStepEq() {
   const x = randInt(-12, 12);
   const mode = randInt(0, 3);
-  if (mode === 0) { const b = randInt(1,15); return { question: `Solve: x + ${b} = ${x+b}`, answer:`${x}`, solution:`x + ${b} = ${x+b}\nx = ${x+b} − ${b}\nx = ${x}`, hint:`Subtract ${b} from both sides.`, accept:i=>parseInt(i)===x }; }
-  if (mode === 1) { const b = randInt(1,15); return { question: `Solve: x − ${b} = ${x-b}`, answer:`${x}`, solution:`x − ${b} = ${x-b}\nx = ${x-b} + ${b}\nx = ${x}`, hint:`Add ${b} to both sides.`, accept:i=>parseInt(i)===x }; }
-  if (mode === 2) { const a = randInt(2,9); return { question: `Solve: ${a}x = ${a*x}`, answer:`${x}`, solution:`${a}x = ${a*x}\nx = ${a*x} ÷ ${a}\nx = ${x}`, hint:`Divide both sides by ${a}.`, accept:i=>parseInt(i)===x }; }
+  const beam = (l, r) => visualMode ? '<br>' + svgBalanceBeam(l, r) : '';
+  if (mode === 0) { const b = randInt(1,15); return { question: `Solve: x + ${b} = ${x+b}${beam('x + '+b, ''+(x+b))}`, answer:`${x}`, solution:`x + ${b} = ${x+b}\nx = ${x+b} − ${b}\nx = ${x}`, hint:`Subtract ${b} from both sides.`, accept:i=>parseInt(i)===x }; }
+  if (mode === 1) { const b = randInt(1,15); return { question: `Solve: x − ${b} = ${x-b}${beam('x − '+b, ''+(x-b))}`, answer:`${x}`, solution:`x − ${b} = ${x-b}\nx = ${x-b} + ${b}\nx = ${x}`, hint:`Add ${b} to both sides.`, accept:i=>parseInt(i)===x }; }
+  if (mode === 2) { const a = randInt(2,9); return { question: `Solve: ${a}x = ${a*x}${beam(a+'x', ''+(a*x))}`, answer:`${x}`, solution:`${a}x = ${a*x}\nx = ${a*x} ÷ ${a}\nx = ${x}`, hint:`Divide both sides by ${a}.`, accept:i=>parseInt(i)===x }; }
   const a = randInt(2,7); if(x===0) return genOneStepEq(); const prod = a*x;
-  return { question: `Solve: x/${a} = ${x}`, answer:`${a*x}`, solution:`x/${a} = ${x}\nx = ${x} × ${a}\nx = ${a*x}`, hint:`Multiply both sides by ${a}.`, accept:i=>parseInt(i)===a*x };
+  return { question: `Solve: x/${a} = ${x}${beam('x/'+a, ''+x)}`, answer:`${a*x}`, solution:`x/${a} = ${x}\nx = ${x} × ${a}\nx = ${a*x}`, hint:`Multiply both sides by ${a}.`, accept:i=>parseInt(i)===a*x };
 }
 function genEvalExpression() {
   const a = randInt(2, 8), b = randInt(-10, 10), x = randInt(-5, 5);
@@ -669,7 +799,21 @@ function genAddSubNeg() {
 function genDistributive() {
   const a = randInt(2, 7), b = randInt(1, 9), c = randInt(1, 9);
   const res = a * b + a * c;
-  return { question: `Use the distributive property: ${a}(${b} + ${c}) = ?`, answer: `${res}`,
+  let visual = '';
+  if (visualMode) {
+    const w = 240, h = 100;
+    const bW = 100, cW = 80, aH = 60;
+    visual = '<br>' + `<svg viewBox="0 0 ${w} ${h}" width="100%" style="max-width:${w}px;margin:0.5rem 0;" role="img" aria-label="Area model for ${a}(${b} + ${c})"><style>svg text{user-select:none;}</style>` +
+      `<rect x="30" y="20" width="${bW}" height="${aH}" rx="4" fill="${SVG_COLORS.xpos}" opacity="0.7"/>` +
+      `<text x="${30+bW/2}" y="${20+aH/2+5}" text-anchor="middle" font-size="13" font-weight="bold" fill="white" font-family="system-ui">${a}×${b}=${a*b}</text>` +
+      `<rect x="${30+bW+4}" y="20" width="${cW}" height="${aH}" rx="4" fill="${SVG_COLORS.upos}" opacity="0.8"/>` +
+      `<text x="${30+bW+4+cW/2}" y="${20+aH/2+5}" text-anchor="middle" font-size="13" font-weight="bold" fill="${SVG_COLORS.accent}" font-family="system-ui">${a}×${c}=${a*c}</text>` +
+      `<text x="15" y="${20+aH/2+5}" text-anchor="middle" font-size="12" font-weight="bold" fill="${SVG_COLORS.text}" font-family="system-ui">${a}</text>` +
+      `<text x="${30+bW/2}" y="14" text-anchor="middle" font-size="12" font-weight="bold" fill="${SVG_COLORS.text}" font-family="system-ui">${b}</text>` +
+      `<text x="${30+bW+4+cW/2}" y="14" text-anchor="middle" font-size="12" font-weight="bold" fill="${SVG_COLORS.text}" font-family="system-ui">${c}</text>` +
+      `</svg>`;
+  }
+  return { question: `Use the distributive property: ${a}(${b} + ${c}) = ?${visual}`, answer: `${res}`,
     solution: `${a}(${b} + ${c})\n= ${a} × ${b} + ${a} × ${c}\n= ${a*b} + ${a*c}\n= ${res}`,
     hint: `Multiply ${a} by each number inside the brackets.`,
     accept: i => parseInt(i) === res };
@@ -1349,6 +1493,24 @@ hintToggle.addEventListener('click', () => {
   hintBox.classList.toggle('hidden');
   hintToggle.textContent = showing ? 'Show hint' : 'Hide hint';
 });
+
+// ─── VISUAL TOGGLE ───
+const visualToggle = document.getElementById('visual-toggle');
+function updateVisualToggle() {
+  if (visualMode) {
+    visualToggle.textContent = 'Visual Mode: ON';
+    visualToggle.className = 'text-xs font-medium px-3 py-1 rounded-full border transition-colors bg-math9-100 text-math9-700 border-math9-300';
+  } else {
+    visualToggle.textContent = 'Visual Mode: OFF';
+    visualToggle.className = 'text-xs font-medium px-3 py-1 rounded-full border transition-colors bg-slate-100 text-slate-500 border-slate-200';
+  }
+}
+visualToggle.addEventListener('click', () => {
+  visualMode = !visualMode;
+  localStorage.setItem(VISUAL_KEY, visualMode ? 'on' : 'off');
+  updateVisualToggle();
+});
+updateVisualToggle();
 
 // ─── INIT ───
 renderGrid();

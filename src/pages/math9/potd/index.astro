@@ -1,0 +1,452 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout course="math9" title="Problem of the Day — Math 9">
+
+  <div class="mb-8">
+    <p class="text-xs font-bold uppercase tracking-widest text-math9-600 mb-2">Math 9</p>
+    <h1 class="text-3xl font-bold text-slate-900 mb-2">Problem of the Day</h1>
+    <p class="text-slate-500">A daily problem to spark curiosity and discussion before the lesson begins.</p>
+  </div>
+
+  <!-- Date navigation -->
+  <div class="flex items-center justify-between mb-6 max-w-xl mx-auto">
+    <button id="prev-day" class="text-sm text-slate-400 hover:text-slate-700 transition-colors px-3 py-1.5 rounded-lg hover:bg-slate-100">&larr; Yesterday</button>
+    <button id="date-label" class="text-sm font-semibold text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-colors" title="Click to return to today"></button>
+    <button id="next-day" class="text-sm text-slate-400 hover:text-slate-700 transition-colors px-3 py-1.5 rounded-lg hover:bg-slate-100">Tomorrow &rarr;</button>
+  </div>
+
+  <!-- Problem display -->
+  <div id="problem-card" class="max-w-xl mx-auto">
+    <div class="bg-white rounded-xl border border-slate-200 p-8 mb-4">
+      <div class="flex items-center gap-2 mb-4">
+        <span id="category-tag" class="text-xs font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-math9-100 text-math9-700"></span>
+      </div>
+      <div id="problem-text" class="text-lg font-medium text-slate-800 leading-relaxed mb-6"></div>
+      <div id="problem-visual" class="mb-6"></div>
+
+      <!-- Think time -->
+      <div id="think-timer" class="hidden text-center mb-4">
+        <div class="inline-flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full px-4 py-2">
+          <span class="text-sm text-slate-500">Think time:</span>
+          <span id="timer-display" class="text-lg font-bold text-math9-600 tabular-nums">60</span>
+          <span class="text-sm text-slate-500">s</span>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="flex flex-wrap gap-2">
+        <button id="timer-btn" class="text-sm bg-slate-100 text-slate-600 font-semibold px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors">Start Timer (60s)</button>
+        <button id="reveal-btn" class="text-sm bg-math9-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-math9-700 transition-colors">Reveal Solution</button>
+      </div>
+    </div>
+
+    <!-- Solution (hidden until revealed) -->
+    <div id="solution-panel" style="display:none;" class="bg-emerald-50 rounded-xl border border-emerald-200 p-6 mb-4">
+      <p class="text-xs font-bold uppercase tracking-widest text-emerald-700 mb-2">Solution</p>
+      <div id="solution-answer" class="text-lg font-bold text-emerald-800 mb-3"></div>
+      <pre id="solution-work" class="text-sm leading-relaxed whitespace-pre-wrap font-sans text-emerald-900"></pre>
+    </div>
+
+    <!-- Discussion prompts (hidden until revealed) -->
+    <div id="discussion-panel" style="display:none;" class="bg-math9-50 rounded-xl border border-math9-200 p-6 mb-4">
+      <p class="text-xs font-bold uppercase tracking-widest text-math9-700 mb-3">Discussion Prompts</p>
+      <ul id="discussion-list" class="space-y-2 text-sm text-slate-700 list-disc list-inside"></ul>
+    </div>
+  </div>
+
+</BaseLayout>
+
+<script define:vars={{ base }}>
+// ─── SEEDED PRNG (mulberry32) ───
+function mulberry32(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function dateToSeed(date) {
+  const y = date.getFullYear();
+  const m = date.getMonth();
+  const d = date.getDate();
+  return y * 10000 + m * 100 + d;
+}
+
+let rng;
+function sRand() { return rng(); }
+function sRandInt(a, b) { return Math.floor(sRand() * (b - a + 1)) + a; }
+function sShuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = sRandInt(0, i);
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function sPick(arr) { return arr[sRandInt(0, arr.length - 1)]; }
+
+// ─── PROBLEM GENERATORS ───
+
+function genTargetBuilding() {
+  const ops = ['+', '−', '×'];
+  for (let attempt = 0; attempt < 50; attempt++) {
+    const digits = [];
+    for (let i = 0; i < 4; i++) digits.push(sRandInt(1, 9));
+    const perm = sShuffle(digits);
+    const op = sPick(ops);
+    let result;
+    if (op === '+') result = (perm[0] * 10 + perm[1]) + (perm[2] * 10 + perm[3]);
+    else if (op === '−') {
+      const a = Math.max(perm[0] * 10 + perm[1], perm[2] * 10 + perm[3]);
+      const b = Math.min(perm[0] * 10 + perm[1], perm[2] * 10 + perm[3]);
+      result = a - b;
+      if (result <= 0) continue;
+    }
+    else result = perm[0] * perm[1] + perm[2] + perm[3];
+
+    const sorted = [...digits].sort((a, b) => a - b);
+    return {
+      category: 'Target Building',
+      question: `Use the digits <strong>${sorted.join(', ')}</strong> exactly once each.<br>Arrange them to make a true equation using ${op === '×' ? 'multiplication and addition' : op === '+' ? 'addition' : 'subtraction'}.<br><br><em>How many different solutions can you find?</em>`,
+      answer: `One solution: ${op === '−' ? `${Math.max(perm[0]*10+perm[1], perm[2]*10+perm[3])} − ${Math.min(perm[0]*10+perm[1], perm[2]*10+perm[3])} = ${result}` : op === '+' ? `${perm[0]*10+perm[1]} + ${perm[2]*10+perm[3]} = ${result}` : `${perm[0]} × ${perm[1]} + ${perm[2]} + ${perm[3]}`}`,
+      solution: `Try different arrangements of the digits.\nThink about place value — which digit goes in the tens place?`,
+      discussion: [
+        'What strategy did you use to find your solution?',
+        'Is there more than one valid arrangement? How do you know you found them all?',
+        'How does place value affect the result?',
+      ],
+    };
+  }
+  return genMakeItEqual();
+}
+
+function genMakeItEqual() {
+  const target = sRandInt(10, 50);
+  const nums = [];
+  for (let i = 0; i < 5; i++) nums.push(sRandInt(1, 15));
+  return {
+    category: 'Expresso Challenge',
+    question: `<strong>Target: ${target}</strong><br><br>Using some or all of the numbers <strong>${nums.join(', ')}</strong> and any operations (+, −, ×, ÷), build an expression that equals the target.<br><br><em>Can you find more than one way?</em>`,
+    answer: `Answers will vary — target is ${target}`,
+    solution: `Start with the largest numbers and work toward the target.\nTry multiplication first to get close, then adjust with + or −.`,
+    discussion: [
+      'Which operations did you try first? Why?',
+      'Did anyone find a solution using all five numbers?',
+      'What if the target was negative — would your strategy change?',
+    ],
+  };
+}
+
+function genVisualPattern() {
+  const base = sRandInt(1, 4);
+  const diff = sRandInt(2, 5);
+  const terms = [base, base + diff, base + 2 * diff, base + 3 * diff];
+  const cellSize = 18;
+  const gap = 4;
+  const groupGap = 30;
+
+  let svg = '';
+  let totalWidth = 0;
+  terms.forEach((count, groupIdx) => {
+    const cols = Math.ceil(Math.sqrt(count));
+    const rows = Math.ceil(count / cols);
+    const groupX = totalWidth;
+    for (let i = 0; i < count; i++) {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const x = groupX + col * (cellSize + gap);
+      const y = row * (cellSize + gap);
+      svg += `<rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" rx="3" fill="#6366f1" opacity="0.8"/>`;
+    }
+    const labelX = groupX + (cols * (cellSize + gap) - gap) / 2;
+    const labelY = rows * (cellSize + gap) + 14;
+    svg += `<text x="${labelX}" y="${labelY}" text-anchor="middle" font-size="12" fill="#64748b" font-family="system-ui">Figure ${groupIdx + 1}</text>`;
+    totalWidth = groupX + cols * (cellSize + gap) + groupGap;
+  });
+
+  const maxRows = Math.ceil(terms[3] / Math.ceil(Math.sqrt(terms[3])));
+  const height = maxRows * (cellSize + gap) + 24;
+
+  const term10 = base + 9 * diff;
+  const term100 = base + 99 * diff;
+
+  return {
+    category: 'Pattern Extension',
+    question: `How many squares are in each figure? Find the pattern, then predict:<br><br>`,
+    visual: `<svg viewBox="0 0 ${totalWidth} ${height}" width="100%" style="max-width:${totalWidth}px" role="img" aria-label="Four groups of squares showing a growing pattern: ${terms.join(', ')}"><style>svg text{user-select:none;}</style>${svg}</svg>`,
+    answer: `Pattern: start at ${base}, add ${diff} each time\nFigure 10 = ${term10}\nFigure 100 = ${term100}`,
+    solution: `The pattern grows by ${diff} each figure.\nFigure n = ${base} + ${diff}(n − 1) = ${diff}n + ${base - diff}\nFigure 10 = ${diff}(10) + ${base - diff} = ${term10}\nFigure 100 = ${diff}(100) + ${base - diff} = ${term100}`,
+    discussion: [
+      `How did you figure out how many squares to add each time?`,
+      `Could you write a formula for Figure n?`,
+      `What would Figure 0 look like? Does that make sense?`,
+    ],
+    questionSuffix: `<strong>a)</strong> How many squares are in Figure 5?<br><strong>b)</strong> How many squares are in Figure 10?<br><strong>c)</strong> How many squares are in Figure 100?<br><strong>d)</strong> Write a rule for Figure <em>n</em>.`,
+  };
+}
+
+function genEstimationDots() {
+  const rows = sRandInt(3, 6);
+  const cols = sRandInt(4, 8);
+  const total = rows * cols;
+  const removed = sRandInt(2, Math.floor(total * 0.25));
+  const actual = total - removed;
+
+  const cellSize = 20;
+  const gap = 8;
+  const removeSet = new Set();
+  let tempRng = 0;
+  while (removeSet.size < removed) {
+    removeSet.add(sRandInt(0, total - 1));
+  }
+
+  let svg = '';
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const idx = r * cols + c;
+      if (removeSet.has(idx)) continue;
+      const cx = c * (cellSize + gap) + cellSize / 2 + 10;
+      const cy = r * (cellSize + gap) + cellSize / 2 + 10;
+      svg += `<circle cx="${cx}" cy="${cy}" r="${cellSize/2}" fill="#6366f1" opacity="0.75"/>`;
+    }
+  }
+
+  const width = cols * (cellSize + gap) + 10;
+  const height = rows * (cellSize + gap) + 10;
+
+  return {
+    category: 'Visual Estimation',
+    question: `<strong>Don't count one by one!</strong><br>Estimate how many dots you see. Then explain your strategy.`,
+    visual: `<svg viewBox="0 0 ${width} ${height}" width="100%" style="max-width:${width}px" role="img" aria-label="A scattered arrangement of approximately ${actual} dots">${svg}</svg>`,
+    answer: `There are exactly ${actual} dots.`,
+    solution: `One strategy: see ${rows} rows of roughly ${cols} dots = ${rows} × ${cols} = ${total}.\nThen subtract the ${removed} gap${removed !== 1 ? 's' : ''} = ${actual}.`,
+    discussion: [
+      'What grouping strategy did you use? (rows, columns, clusters?)',
+      'How close was your estimate? What made it hard?',
+      'Why is estimating a useful skill in mathematics?',
+    ],
+  };
+}
+
+function genKakoomaGrid() {
+  const size = 3;
+  let numbers = null;
+
+  for (let restart = 0; restart < 30 && !numbers; restart++) {
+    const a = sRandInt(2, 12);
+    const b = sRandInt(2, 12);
+    const sum = a + b;
+    const attempt = [a, b, sum];
+    let tries = 0;
+    while (attempt.length < size * size && tries < 200) {
+      tries++;
+      const n = sRandInt(2, 30);
+      let conflict = false;
+      for (let i = 0; i < attempt.length; i++) {
+        for (let j = i + 1; j < attempt.length; j++) {
+          if (attempt[i] + attempt[j] === n && n !== sum) conflict = true;
+          if (attempt[i] + n === attempt[j] || n + attempt[j] === attempt[i]) conflict = true;
+        }
+      }
+      if (!conflict && !attempt.includes(n)) attempt.push(n);
+    }
+    if (attempt.length === size * size) numbers = attempt;
+  }
+
+  if (!numbers) return genMissingOperation();
+
+  const [a, b, sum] = numbers;
+  const grid = sShuffle(numbers);
+  const cellSize = 60;
+  const gap = 4;
+  let svg = '';
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      const x = c * (cellSize + gap);
+      const y = r * (cellSize + gap);
+      svg += `<rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>`;
+      svg += `<text x="${x + cellSize/2}" y="${y + cellSize/2 + 7}" text-anchor="middle" font-size="22" font-weight="bold" fill="#1e293b" font-family="system-ui">${grid[r * size + c]}</text>`;
+    }
+  }
+  const w = size * (cellSize + gap);
+  const h = w;
+
+  return {
+    category: 'Kakooma',
+    question: `Find the number in the grid that is the <strong>sum of two other numbers</strong> in the grid.`,
+    visual: `<svg viewBox="0 0 ${w} ${h}" width="100%" style="max-width:${w}px" role="img" aria-label="3 by 3 grid of numbers: ${grid.join(', ')}"><style>svg text{user-select:none;}</style>${svg}</svg>`,
+    answer: `${sum} (because ${a} + ${b} = ${sum})`,
+    solution: `Check each number: is it the sum of two others in the grid?\n${a} + ${b} = ${sum} ✓`,
+    discussion: [
+      'What strategy did you use — trial and error, or something more systematic?',
+      'Could there be more than one answer? How would you check?',
+      'What if we changed the rule to "product of two others" — would that be harder?',
+    ],
+  };
+}
+
+function genFermiEstimation() {
+  const scenarios = [
+    { q: 'How many textbooks are in our school right now?', hints: 'Think: how many classrooms? How many books per class?', approach: 'Classrooms × books per class. ~30 classrooms × ~30 books = ~900 textbooks.' },
+    { q: 'How many hours have you spent in math class in your entire life?', hints: 'Think: how many years of school? How many math classes per week?', approach: '~10 years × ~35 weeks × ~4 hours/week = ~1,400 hours.' },
+    { q: 'How many words are on one page of a typical textbook?', hints: 'Think: how many lines? How many words per line?', approach: '~35 lines × ~10 words/line = ~350 words per page.' },
+    { q: 'If you stacked all the desks in our school on top of each other, how tall would the stack be?', hints: 'Think: how many classrooms? How many desks? How tall is one desk?', approach: '~30 classrooms × ~30 desks = 900 desks × ~0.75m = ~675 metres.' },
+    { q: 'How many pizzas does our school cafeteria sell in a year?', hints: 'Think: how many pizza days? How many slices per student?', approach: 'Maybe 1 pizza day/week × ~35 weeks. If 200 students buy 2 slices = 400 slices = ~50 pizzas/week × 35 = ~1,750 pizzas.' },
+    { q: 'How many steps do you take walking to all your classes in one day?', hints: 'Think: how many class changes? How far is each walk?', approach: '~6 class changes × ~200 steps each = ~1,200 steps between classes.' },
+    { q: 'How many litres of water does our school use in one day?', hints: 'Think: drinking fountains, bathrooms, kitchen, cleaning.', approach: '~500 people × ~5 litres/person (drinking, washing) + kitchen + cleaning = ~3,000–5,000 litres.' },
+    { q: 'If you lined up all the pencils used by students in our school in one year, how long would the line be?', hints: 'Think: how many students? How many pencils per student per year?', approach: '~500 students × ~10 pencils × 19cm = ~950 metres, almost 1 km.' },
+  ];
+  const s = sPick(scenarios);
+  return {
+    category: 'Fermi Estimation',
+    question: `<strong>${s.q}</strong><br><br><em>${s.hints}</em><br><br>Make a reasonable estimate and explain your reasoning.`,
+    answer: s.approach,
+    solution: s.approach,
+    discussion: [
+      'What assumptions did you make? Were they reasonable?',
+      'How could you check if your estimate is in the right ballpark?',
+      'Whose estimate was most different from yours? Why might their reasoning be just as valid?',
+    ],
+  };
+}
+
+function genMissingOperation() {
+  const a = sRandInt(2, 9);
+  const b = sRandInt(2, 9);
+  const c = sRandInt(2, 9);
+  const target = a * b + c;
+  return {
+    category: 'Number Puzzle',
+    question: `Place +, −, ×, or ÷ between the numbers to make the equation true:<br><br><strong style="font-size:1.5rem;">${a} __ ${b} __ ${c} = ${target}</strong><br><br><em>Remember: order of operations matters!</em>`,
+    answer: `${a} × ${b} + ${c} = ${target}`,
+    solution: `${a} × ${b} + ${c}\n= ${a*b} + ${c}\n= ${target}\nMultiplication before addition (BEDMAS).`,
+    discussion: [
+      'Did order of operations change which solution works?',
+      'Could you find a different target using the same numbers but different operations?',
+      'What if brackets were allowed?',
+    ],
+  };
+}
+
+// ─── ALL GENERATORS ───
+const GENERATORS = [
+  genTargetBuilding,
+  genMakeItEqual,
+  genVisualPattern,
+  genEstimationDots,
+  genKakoomaGrid,
+  genFermiEstimation,
+  genMissingOperation,
+];
+
+// ─── APP STATE ───
+let currentDate = new Date();
+let timerInterval = null;
+
+// ─── DOM REFS ───
+const dateLabel = document.getElementById('date-label');
+const prevBtn = document.getElementById('prev-day');
+const nextBtn = document.getElementById('next-day');
+const categoryTag = document.getElementById('category-tag');
+const problemText = document.getElementById('problem-text');
+const problemVisual = document.getElementById('problem-visual');
+const timerBtn = document.getElementById('timer-btn');
+const thinkTimer = document.getElementById('think-timer');
+const timerDisplay = document.getElementById('timer-display');
+const revealBtn = document.getElementById('reveal-btn');
+const solutionPanel = document.getElementById('solution-panel');
+const solutionAnswer = document.getElementById('solution-answer');
+const solutionWork = document.getElementById('solution-work');
+const discussionPanel = document.getElementById('discussion-panel');
+const discussionList = document.getElementById('discussion-list');
+
+// ─── RENDER PROBLEM ───
+function renderDay(date) {
+  currentDate = new Date(date);
+  rng = mulberry32(dateToSeed(currentDate));
+
+  const genIndex = sRandInt(0, GENERATORS.length - 1);
+  const problem = GENERATORS[genIndex]();
+
+  const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  dateLabel.textContent = currentDate.toLocaleDateString('en-CA', opts);
+
+  categoryTag.textContent = problem.category;
+  let qHTML = problem.question;
+  if (problem.questionSuffix) qHTML += problem.questionSuffix;
+  problemText.innerHTML = qHTML;
+  problemVisual.innerHTML = problem.visual || '';
+
+  solutionAnswer.textContent = problem.answer;
+  solutionWork.textContent = problem.solution;
+  discussionList.innerHTML = problem.discussion.map(d => `<li>${d}</li>`).join('');
+
+  solutionPanel.style.display = 'none';
+  discussionPanel.style.display = 'none';
+  thinkTimer.classList.add('hidden');
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  timerBtn.textContent = 'Start Timer (60s)';
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const viewing = new Date(currentDate);
+  viewing.setHours(0,0,0,0);
+  nextBtn.classList.toggle('invisible', viewing >= today);
+}
+
+// ─── TIMER ───
+function startTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  let seconds = 60;
+  thinkTimer.classList.remove('hidden');
+  timerDisplay.textContent = seconds;
+  timerBtn.textContent = 'Reset Timer';
+  timerInterval = setInterval(() => {
+    seconds--;
+    timerDisplay.textContent = seconds;
+    if (seconds <= 0) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerDisplay.textContent = '0';
+      timerBtn.textContent = 'Start Timer (60s)';
+    }
+  }, 1000);
+}
+
+// ─── EVENT LISTENERS ───
+prevBtn.addEventListener('click', () => {
+  const d = new Date(currentDate);
+  d.setDate(d.getDate() - 1);
+  renderDay(d);
+});
+
+nextBtn.addEventListener('click', () => {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const viewing = new Date(currentDate);
+  viewing.setHours(0,0,0,0);
+  if (viewing < today) {
+    const d = new Date(currentDate);
+    d.setDate(d.getDate() + 1);
+    renderDay(d);
+  }
+});
+
+dateLabel.addEventListener('click', () => renderDay(new Date()));
+
+timerBtn.addEventListener('click', startTimer);
+
+revealBtn.addEventListener('click', () => {
+  solutionPanel.style.display = 'block';
+  discussionPanel.style.display = 'block';
+  solutionPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+// ─── INIT ───
+renderDay(new Date());
+</script>
