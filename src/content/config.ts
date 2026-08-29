@@ -27,6 +27,27 @@ const science7Units = defineCollection({
   }),
 });
 
+const math9Units = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    guidingQuestion: z.string(),
+    learningOutcome: z.string(),
+    order: z.number(),
+  }),
+});
+
+const social9Units = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    organizingIdea: z.string(),
+    guidingQuestion: z.string(),
+    learningOutcome: z.string(),
+    order: z.number(),
+  }),
+});
+
 const lessons = defineCollection({
   type: 'content',
   schema: z.object({
@@ -70,6 +91,8 @@ const materials = defineCollection({
 export const collections = {
   units,
   'science7-units': science7Units,
+  'math9-units': math9Units,
+  'social9-units': social9Units,
   lessons,
   'teacher-units': teacherUnits,
   'teacher-lessons': teacherLessons,

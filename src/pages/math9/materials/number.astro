@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
 const base = import.meta.env.BASE_URL;
 const b = base;
 
@@ -19,6 +20,13 @@ const topics: { label: string; slug: string; noteSlug: string; wsSlug: string; e
   { label: 'Square Roots',        slug: 'square-roots',      noteSlug: 'math9-square-roots-notes-v1',        wsSlug: 'math9-square-roots',     exitSlug: 'math9-square-roots-exits-v1' },
   { label: 'Powers & Exponents',  slug: 'powers-exponents',  noteSlug: 'math9-powers-notes-v1',              wsSlug: 'math9-powers',           exitSlug: 'math9-powers-exits-v1' },
 ];
+
+const topicUnits = await Promise.all(
+  topics.map(async t => {
+    const entry = await getEntry('math9-units', t.slug);
+    return entry ? { ...await entry.render(), data: entry.data } : null;
+  })
+);
 ---
 
 <BaseLayout course="math9" title="Number — Math 9 Materials">
@@ -68,10 +76,24 @@ const topics: { label: string; slug: string; noteSlug: string; wsSlug: string; e
   </section>
 
   <!-- Per-topic sections -->
-  {topics.map(t => (
+  {topics.map((t, i) => {
+    const unit = topicUnits[i];
+    const TopicContent = unit?.Content;
+    return (
     <section class="mb-12">
-      <h2 class={`text-sm font-bold ${text} mb-4 pb-2 border-b border-slate-100`}>{t.label}</h2>
-
+      <h2 class={`text-sm font-bold ${text} mb-2 pb-2 border-b border-slate-100`}>{t.label}</h2>
+      {unit && TopicContent && (
+        <div class="mb-5">
+          <p class="text-slate-500 italic text-sm mb-3">{unit.data.guidingQuestion}</p>
+          <div class="bg-white rounded-xl border border-slate-200 p-3 mb-3">
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Learning Outcome</p>
+            <p class="text-slate-700 text-sm">{unit.data.learningOutcome}</p>
+          </div>
+          <div class="prose prose-slate prose-sm max-w-none">
+            <TopicContent />
+          </div>
+        </div>
+      )}
       <div class="space-y-2 mb-3">
         <!-- Notes -->
         <div class={`bg-white rounded-xl border border-slate-200 border-l-4 ${border} px-5 py-4 flex items-center justify-between gap-4`}>
@@ -138,6 +160,7 @@ const topics: { label: string; slug: string; noteSlug: string; wsSlug: string; e
         </div>
       </details>
     </section>
-  ))}
+    );
+  })}
 
 </BaseLayout>

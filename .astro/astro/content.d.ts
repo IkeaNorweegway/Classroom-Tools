@@ -168,6 +168,85 @@ declare module 'astro:content' {
   data: InferEntrySchema<"materials">;
   render(): Render[".md"];
 }>;
+"math9-units": {
+"circle-geometry.md": {
+	id: "circle-geometry.md";
+  slug: "circle-geometry";
+  body: string;
+  collection: "math9-units";
+  data: InferEntrySchema<"math9-units">
+} & { render(): Render[".md"] };
+"linear-equations.md": {
+	id: "linear-equations.md";
+  slug: "linear-equations";
+  body: string;
+  collection: "math9-units";
+  data: InferEntrySchema<"math9-units">
+} & { render(): Render[".md"] };
+"linear-relations.md": {
+	id: "linear-relations.md";
+  slug: "linear-relations";
+  body: string;
+  collection: "math9-units";
+  data: InferEntrySchema<"math9-units">
+} & { render(): Render[".md"] };
+"measurement.md": {
+	id: "measurement.md";
+  slug: "measurement";
+  body: string;
+  collection: "math9-units";
+  data: InferEntrySchema<"math9-units">
+} & { render(): Render[".md"] };
+"polynomials.md": {
+	id: "polynomials.md";
+  slug: "polynomials";
+  body: string;
+  collection: "math9-units";
+  data: InferEntrySchema<"math9-units">
+} & { render(): Render[".md"] };
+"powers-exponents.md": {
+	id: "powers-exponents.md";
+  slug: "powers-exponents";
+  body: string;
+  collection: "math9-units";
+  data: InferEntrySchema<"math9-units">
+} & { render(): Render[".md"] };
+"probability.md": {
+	id: "probability.md";
+  slug: "probability";
+  body: string;
+  collection: "math9-units";
+  data: InferEntrySchema<"math9-units">
+} & { render(): Render[".md"] };
+"rational-numbers.md": {
+	id: "rational-numbers.md";
+  slug: "rational-numbers";
+  body: string;
+  collection: "math9-units";
+  data: InferEntrySchema<"math9-units">
+} & { render(): Render[".md"] };
+"similarity.md": {
+	id: "similarity.md";
+  slug: "similarity";
+  body: string;
+  collection: "math9-units";
+  data: InferEntrySchema<"math9-units">
+} & { render(): Render[".md"] };
+"square-roots.md": {
+	id: "square-roots.md";
+  slug: "square-roots";
+  body: string;
+  collection: "math9-units";
+  data: InferEntrySchema<"math9-units">
+} & { render(): Render[".md"] };
+"statistics.md": {
+	id: "statistics.md";
+  slug: "statistics";
+  body: string;
+  collection: "math9-units";
+  data: InferEntrySchema<"math9-units">
+} & { render(): Render[".md"] };
+};
 "science7-units": {
 "heat-temperature.md": {
 	id: "heat-temperature.md";
@@ -203,6 +282,57 @@ declare module 'astro:content' {
   body: string;
   collection: "science7-units";
   data: InferEntrySchema<"science7-units">
+} & { render(): Render[".md"] };
+};
+"social9-units": {
+"canada-in-wwii.md": {
+	id: "canada-in-wwii.md";
+  slug: "canada-in-wwii";
+  body: string;
+  collection: "social9-units";
+  data: InferEntrySchema<"social9-units">
+} & { render(): Render[".md"] };
+"evolving-citizenship.md": {
+	id: "evolving-citizenship.md";
+  slug: "evolving-citizenship";
+  body: string;
+  collection: "social9-units";
+  data: InferEntrySchema<"social9-units">
+} & { render(): Render[".md"] };
+"independence-democratic-rights.md": {
+	id: "independence-democratic-rights.md";
+  slug: "independence-democratic-rights";
+  body: string;
+  collection: "social9-units";
+  data: InferEntrySchema<"social9-units">
+} & { render(): Render[".md"] };
+"modern-economy.md": {
+	id: "modern-economy.md";
+  slug: "modern-economy";
+  body: string;
+  collection: "social9-units";
+  data: InferEntrySchema<"social9-units">
+} & { render(): Render[".md"] };
+"postwar-canada.md": {
+	id: "postwar-canada.md";
+  slug: "postwar-canada";
+  body: string;
+  collection: "social9-units";
+  data: InferEntrySchema<"social9-units">
+} & { render(): Render[".md"] };
+"system-of-government.md": {
+	id: "system-of-government.md";
+  slug: "system-of-government";
+  body: string;
+  collection: "social9-units";
+  data: InferEntrySchema<"social9-units">
+} & { render(): Render[".md"] };
+"urbanization-industry.md": {
+	id: "urbanization-industry.md";
+  slug: "urbanization-industry";
+  body: string;
+  collection: "social9-units";
+  data: InferEntrySchema<"social9-units">
 } & { render(): Render[".md"] };
 };
 "teacher-lessons": {
