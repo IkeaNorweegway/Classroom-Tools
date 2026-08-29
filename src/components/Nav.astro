@@ -1,6 +1,6 @@
 ---
 interface Props {
-  course?: 'science' | 'math9' | 'science7';
+  course?: 'science' | 'math9' | 'science7' | 'social9';
   teacherMode?: boolean;
 }
 const { course, teacherMode = false } = Astro.props;
@@ -34,6 +34,16 @@ const science7Units = [
   { slug: 'structures-forces',       label: 'Structures' },
   { slug: 'planet-earth',            label: 'Planet Earth' },
   { slug: 'practice',                label: 'Practice', href: `${base}science7/practice` },
+];
+
+const social9Units = [
+  { slug: 'urbanization-industry',            label: 'Urbanization' },
+  { slug: 'independence-democratic-rights',   label: 'Independence' },
+  { slug: 'canada-in-wwii',                   label: 'WWII' },
+  { slug: 'postwar-canada',                   label: 'Post-War' },
+  { slug: 'modern-economy',                   label: 'Economy' },
+  { slug: 'system-of-government',             label: 'Government' },
+  { slug: 'evolving-citizenship',             label: 'Citizenship' },
 ];
 
 const navBg   = teacherMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200';
@@ -88,13 +98,24 @@ const hoverBase = teacherMode ? 'hover:bg-slate-700 hover:text-white' : 'hover:b
         >
           Gr. 7 Science
         </a>
+        <a
+          href={`${base}social9`}
+          class={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors
+            ${course === 'social9'
+              ? 'text-white'
+              : `${textBase} ${hoverBase}`
+            }`}
+          style={course === 'social9' ? 'background-color: #b91c1c;' : ''}
+        >
+          Social 9
+        </a>
       </div>
 
       <!-- Right: Teacher toggle -->
       <a
         href={teacherMode
-          ? (course === 'math9' ? `${base}math9` : course === 'science7' ? `${base}science7` : `${base}materials`)
-          : (course === 'math9' ? `${base}math9/teacher` : course === 'science7' ? `${base}science7/teacher` : `${base}teacher`)}
+          ? (course === 'math9' ? `${base}math9` : course === 'science7' ? `${base}science7` : course === 'social9' ? `${base}social9` : `${base}materials`)
+          : (course === 'math9' ? `${base}math9/teacher` : course === 'science7' ? `${base}science7/teacher` : course === 'social9' ? `${base}social9/teacher` : `${base}teacher`)}
         class={`text-xs px-3 py-1.5 rounded-md font-medium border transition-colors
           ${teacherMode
             ? 'border-teacher-500 text-teacher-400 hover:bg-teacher-700 hover:text-white'
@@ -193,6 +214,35 @@ const hoverBase = teacherMode ? 'hover:bg-slate-700 hover:text-white' : 'hover:b
               : 'text-slate-600 hover:bg-slate-100'
             }`}
           style={currentPath.endsWith('/science7') || currentPath.endsWith('/science7/') ? 'background-color: #059669;' : ''}
+        >
+          All Units
+        </a>
+      </div>
+    )}
+
+    {course === 'social9' && (
+      <div class="flex gap-1 pb-2 overflow-x-auto">
+        {social9Units.map(u => (
+          <a
+            href={`${base}social9/materials/${u.slug}`}
+            class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
+              ${currentPath.includes(u.slug)
+                ? 'text-white'
+                : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            style={currentPath.includes(u.slug) ? 'background-color: #b91c1c;' : ''}
+          >
+            {u.label}
+          </a>
+        ))}
+        <a
+          href={`${base}social9`}
+          class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
+            ${currentPath.endsWith('/social9') || currentPath.endsWith('/social9/')
+              ? 'text-white'
+              : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          style={currentPath.endsWith('/social9') || currentPath.endsWith('/social9/') ? 'background-color: #b91c1c;' : ''}
         >
           All Units
         </a>

@@ -1,0 +1,104 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
+
+const units = [
+  {
+    slug: 'urbanization-industry',
+    label: 'Urbanization and the Growth of Industry',
+    description: 'Push and pull factors, postwar immigration, the growth of Alberta industry, and the environmental cost of urban growth.',
+    organizingIdea: 'Time and Place',
+    color: '#b45309', colorDark: '#92400e', colorLight: '#fef3c7',
+  },
+  {
+    slug: 'independence-democratic-rights',
+    label: "Canada's Independence and Democratic Rights",
+    description: 'The Balfour Declaration, the Statute of Westminster, and the Persons Case.',
+    organizingIdea: 'Time and Place',
+    color: '#4338ca', colorDark: '#3730a3', colorLight: '#e0e7ff',
+  },
+  {
+    slug: 'canada-in-wwii',
+    label: 'Canada in the Second World War',
+    description: "Canada's independent declaration of war, key battles, and the contributions of Chinese Canadians and Cree code talkers.",
+    organizingIdea: 'Time and Place',
+    color: '#b91c1c', colorDark: '#991b1b', colorLight: '#fee2e2',
+  },
+  {
+    slug: 'postwar-canada',
+    label: 'Post-War Canada: Change, Cooperation, and Conflict',
+    description: 'The welfare state, peacekeeping, multiculturalism, residential schools, Western alienation, and the Charter of Rights and Freedoms.',
+    organizingIdea: 'Time and Place',
+    color: '#0f766e', colorDark: '#115e59', colorLight: '#ccfbf1',
+  },
+  {
+    slug: 'modern-economy',
+    label: 'Building a Modern Economy',
+    description: 'The Great Depression, government response, postwar industrial growth, and trade with the United States.',
+    organizingIdea: 'Systems',
+    color: '#15803d', colorDark: '#166534', colorLight: '#dcfce7',
+  },
+  {
+    slug: 'system-of-government',
+    label: "Canada's System of Government",
+    description: 'Responsible government, how laws are made, federalism and natural resources, and the judiciary.',
+    organizingIdea: 'Systems',
+    color: '#1d4ed8', colorDark: '#1e40af', colorLight: '#dbeafe',
+  },
+  {
+    slug: 'evolving-citizenship',
+    label: 'Evolving Citizenship and Rights',
+    description: 'Canadian citizenship categories, the legislative path to the Charter, and the balance of rights and responsibilities.',
+    organizingIdea: 'Citizenship',
+    color: '#be185d', colorDark: '#9d174d', colorLight: '#fce7f3',
+  },
+];
+---
+
+<BaseLayout course="social9" title="Social Studies 9">
+
+  <div class="mb-10">
+    <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color: #b91c1c;">Alberta Draft Curriculum · 2026</p>
+    <h1 class="text-4xl font-bold text-slate-900 mb-3">Social Studies 9</h1>
+    <p class="text-slate-500 text-lg max-w-xl">
+      Seven units across Time and Place, Systems, and Citizenship. Notes, workbooks, and answer keys.
+    </p>
+  </div>
+
+  <!-- Quick stats -->
+  <div class="grid grid-cols-3 gap-3 mb-10">
+    {[
+      { n: '7', label: 'Units' },
+      { n: '3', label: 'Organizing Ideas' },
+      { n: '35', label: 'Materials' },
+    ].map(s => (
+      <div class="bg-white rounded-xl border border-slate-200 p-4 text-center">
+        <p class="text-2xl font-bold" style="color: #991b1b;">{s.n}</p>
+        <p class="text-xs text-slate-400 mt-1 uppercase tracking-wide">{s.label}</p>
+      </div>
+    ))}
+  </div>
+
+  <!-- Unit cards -->
+  <div class="space-y-3">
+    {units.map(u => (
+      <a
+        href={`${base}social9/materials/${u.slug}`}
+        class="group block bg-white rounded-xl border border-slate-200 border-l-4 p-5 transition-colors hover:opacity-90"
+        style={`border-left-color: ${u.color};`}
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0">
+            <p class="text-xs font-bold uppercase tracking-widest mb-1" style={`color: ${u.colorDark};`}>{u.organizingIdea}</p>
+            <p class="font-semibold text-slate-900 mb-1">{u.label}</p>
+            <p class="text-sm text-slate-500 leading-relaxed">{u.description}</p>
+          </div>
+          <span class="flex-shrink-0 text-sm font-semibold group-hover:underline whitespace-nowrap" style={`color: ${u.colorDark};`}>
+            View →
+          </span>
+        </div>
+      </a>
+    ))}
+  </div>
+
+</BaseLayout>
