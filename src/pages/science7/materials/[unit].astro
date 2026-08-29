@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
 const base = import.meta.env.BASE_URL;
 
 export function getStaticPaths() {
@@ -206,6 +207,9 @@ const units: Record<string, UnitData> = {
 
 const data = units[unit];
 const borderStyle = `border-left-color: ${data.color};`;
+
+const unitEntry = await getEntry('science7-units', unit!);
+const { Content } = unitEntry ? await unitEntry.render() : { Content: null };
 ---
 
 <BaseLayout title={`${data.label} — Materials`} course="science7">
@@ -216,11 +220,33 @@ const borderStyle = `border-left-color: ${data.color};`;
   </a>
 
   <!-- Header -->
-  <div class="mb-10">
-    <p class="text-xs font-bold uppercase tracking-widest mb-2" style={`color: ${data.colorDark};`}>Grade 7 Science</p>
+  <div class="mb-8">
+    <div class="flex items-center gap-2 mb-1">
+      <p class="text-xs font-bold uppercase tracking-widest" style={`color: ${data.colorDark};`}>Grade 7 Science</p>
+      {unitEntry && (
+        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+          Tier {unitEntry.data.tier} · {unitEntry.data.weeks} weeks
+        </span>
+      )}
+    </div>
     <h1 class="text-4xl font-bold text-slate-900 mb-3">{data.label}</h1>
-    <p class="text-slate-500 text-lg max-w-xl">{data.tagline}</p>
+    <p class="text-slate-500 text-lg max-w-xl italic">{unitEntry ? unitEntry.data.guidingQuestion : data.tagline}</p>
   </div>
+
+  {unitEntry && (
+    <>
+      <!-- Learning outcome -->
+      <div class="bg-white rounded-xl border border-slate-200 p-4 mb-6">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Learning Outcome</p>
+        <p class="text-slate-700">{unitEntry.data.learningOutcome}</p>
+      </div>
+
+      <!-- Unit description -->
+      <div class="prose prose-slate max-w-none mb-10">
+        <Content />
+      </div>
+    </>
+  )}
 
   <!-- Material sections -->
   {data.sections.map(section => (

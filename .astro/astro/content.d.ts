@@ -168,6 +168,43 @@ declare module 'astro:content' {
   data: InferEntrySchema<"materials">;
   render(): Render[".md"];
 }>;
+"science7-units": {
+"heat-temperature.md": {
+	id: "heat-temperature.md";
+  slug: "heat-temperature";
+  body: string;
+  collection: "science7-units";
+  data: InferEntrySchema<"science7-units">
+} & { render(): Render[".md"] };
+"interactions-ecosystems.md": {
+	id: "interactions-ecosystems.md";
+  slug: "interactions-ecosystems";
+  body: string;
+  collection: "science7-units";
+  data: InferEntrySchema<"science7-units">
+} & { render(): Render[".md"] };
+"planet-earth.md": {
+	id: "planet-earth.md";
+  slug: "planet-earth";
+  body: string;
+  collection: "science7-units";
+  data: InferEntrySchema<"science7-units">
+} & { render(): Render[".md"] };
+"plants-food-fibre.md": {
+	id: "plants-food-fibre.md";
+  slug: "plants-food-fibre";
+  body: string;
+  collection: "science7-units";
+  data: InferEntrySchema<"science7-units">
+} & { render(): Render[".md"] };
+"structures-forces.md": {
+	id: "structures-forces.md";
+  slug: "structures-forces";
+  body: string;
+  collection: "science7-units";
+  data: InferEntrySchema<"science7-units">
+} & { render(): Render[".md"] };
+};
 "teacher-lessons": {
 "matter-01.md": {
 	id: "matter-01.md";
