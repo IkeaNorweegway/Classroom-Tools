@@ -15,43 +15,45 @@ const { title, tier, weeks, guidingQuestion, learningOutcome, slug, teacherMode 
 
 const base = import.meta.env.BASE_URL;
 
+const viewHref = (unit: string, filename: string) => `${base}materials/view/${unit}/${filename}`;
+
 const unitWorkbooks: Record<string, string> = {
-  'matter': `${base}materials/sci6-matter-workbook-v1.html`,
-  'forces': `${base}materials/sci6-forces-workbook-v1.html`,
-  'living-systems': `${base}materials/sci6-living-systems-workbook-gr6-v1.html`,
-  'climate': `${base}materials/sci6-climate-workbook-v1.html`,
-  'energy-resources': `${base}materials/sci6-energy-resources-workbook-v1.html`,
-  'space': `${base}materials/sci6-space-workbook-v1.html`,
+  'matter': 'sci6-matter-workbook-v1',
+  'forces': 'sci6-forces-workbook-v1',
+  'living-systems': 'sci6-living-systems-workbook-gr6-v1',
+  'climate': 'sci6-climate-workbook-v1',
+  'energy-resources': 'sci6-energy-resources-workbook-v1',
+  'space': 'sci6-space-workbook-v1',
 };
 
 const unitNotes: Record<string, string> = {
-  'matter': `${base}materials/sci6-matter-notes-v1.html`,
-  'living-systems': `${base}materials/sci6-living-systems-notes-gr6-v1.html`,
-  'forces': `${base}materials/sci6-forces-notes-v1.html`,
-  'climate': `${base}materials/sci6-climate-notes-v1.html`,
-  'energy-resources': `${base}materials/sci6-energy-resources-notes-v1.html`,
-  'space': `${base}materials/sci6-space-notes-v1.html`,
+  'matter': 'sci6-matter-notes-v1',
+  'living-systems': 'sci6-living-systems-notes-gr6-v1',
+  'forces': 'sci6-forces-notes-v1',
+  'climate': 'sci6-climate-notes-v1',
+  'energy-resources': 'sci6-energy-resources-notes-v1',
+  'space': 'sci6-space-notes-v1',
 };
 
 const unitNotesEF: Record<string, string> = {
-  'matter': `${base}materials/sci6-matter-notes-ef-v1.html`,
-  'living-systems': `${base}materials/sci6-living-systems-notes-ef-gr6-v1.html`,
-  'forces': `${base}materials/sci6-forces-notes-ef-v1.html`,
-  'climate': `${base}materials/sci6-climate-notes-ef-v1.html`,
-  'energy-resources': `${base}materials/sci6-energy-resources-notes-ef-v1.html`,
-  'space': `${base}materials/sci6-space-notes-ef-v1.html`,
+  'matter': 'sci6-matter-notes-ef-v1',
+  'living-systems': 'sci6-living-systems-notes-ef-gr6-v1',
+  'forces': 'sci6-forces-notes-ef-v1',
+  'climate': 'sci6-climate-notes-ef-v1',
+  'energy-resources': 'sci6-energy-resources-notes-ef-v1',
+  'space': 'sci6-space-notes-ef-v1',
 };
 
 const unitMaterialLinks = [
-  ...(unitNotes[slug]   ? [{ label: 'Guided Notes',       href: unitNotes[slug],   icon: '📋' }] : []),
-  ...(unitNotesEF[slug] ? [{ label: 'Notes — Easy Read',  href: unitNotesEF[slug], icon: '📄' }] : []),
-  ...(unitWorkbooks[slug] ? [{ label: 'Workbook',         href: unitWorkbooks[slug], icon: '📓' }] : []),
+  ...(unitNotes[slug]   ? [{ label: 'Guided Notes',       href: viewHref(slug, unitNotes[slug]),   icon: '📋' }] : []),
+  ...(unitNotesEF[slug] ? [{ label: 'Notes — Easy Read',  href: viewHref(slug, unitNotesEF[slug]), icon: '📄' }] : []),
+  ...(unitWorkbooks[slug] ? [{ label: 'Workbook',         href: viewHref(slug, unitWorkbooks[slug]), icon: '📓' }] : []),
 ];
 
 const yearMaterialLinks = [
-  { label: 'Year Notes',            href: `${base}materials/sci6-year-notes-v1.html`,              icon: '📋' },
-  { label: 'Year Notes — Easy Read',href: `${base}materials/sci6-year-notes-ef-v1.html`,           icon: '📄' },
-  { label: 'Year Review Workbook',  href: `${base}materials/sci6-year-review-workbook-gr6-v1.html`, icon: '📓' },
+  { label: 'Year Notes',            href: viewHref('year-review', 'sci6-year-notes-v1'),              icon: '📋' },
+  { label: 'Year Notes — Easy Read',href: viewHref('year-review', 'sci6-year-notes-ef-v1'),           icon: '📄' },
+  { label: 'Year Review Workbook',  href: viewHref('year-review', 'sci6-year-review-workbook-gr6-v1'), icon: '📓' },
 ];
 
 const unitColors: Record<string, { accent: string; dot: string }> = {
