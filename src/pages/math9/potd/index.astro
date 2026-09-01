@@ -113,7 +113,7 @@ function genTargetBuilding() {
     return {
       category: 'Target Building',
       question: `Use the digits <strong>${sorted.join(', ')}</strong> exactly once each.<br>Arrange them to make a true equation using ${op === '×' ? 'multiplication and addition' : op === '+' ? 'addition' : 'subtraction'}.<br><br><em>How many different solutions can you find?</em>`,
-      answer: `One solution: ${op === '−' ? `${Math.max(perm[0]*10+perm[1], perm[2]*10+perm[3])} − ${Math.min(perm[0]*10+perm[1], perm[2]*10+perm[3])} = ${result}` : op === '+' ? `${perm[0]*10+perm[1]} + ${perm[2]*10+perm[3]} = ${result}` : `${perm[0]} × ${perm[1]} + ${perm[2]} + ${perm[3]}`}`,
+      answer: `One solution: ${op === '−' ? `${Math.max(perm[0]*10+perm[1], perm[2]*10+perm[3])} − ${Math.min(perm[0]*10+perm[1], perm[2]*10+perm[3])} = ${result}` : op === '+' ? `${perm[0]*10+perm[1]} + ${perm[2]*10+perm[3]} = ${result}` : `${perm[0]} × ${perm[1]} + ${perm[2]} + ${perm[3]} = ${result}`}`,
       solution: `Try different arrangements of the digits.\nThink about place value — which digit goes in the tens place?`,
       discussion: [
         'What strategy did you use to find your solution?',
@@ -172,6 +172,7 @@ function genVisualPattern() {
   const maxRows = Math.ceil(terms[3] / Math.ceil(Math.sqrt(terms[3])));
   const height = maxRows * (cellSize + gap) + 24;
 
+  const term5 = base + 4 * diff;
   const term10 = base + 9 * diff;
   const term100 = base + 99 * diff;
 
@@ -179,8 +180,8 @@ function genVisualPattern() {
     category: 'Pattern Extension',
     question: `How many squares are in each figure? Find the pattern, then predict:<br><br>`,
     visual: `<svg viewBox="0 0 ${totalWidth} ${height}" width="100%" style="max-width:${totalWidth}px" role="img" aria-label="Four groups of squares showing a growing pattern: ${terms.join(', ')}"><style>svg text{user-select:none;}</style>${svg}</svg>`,
-    answer: `Pattern: start at ${base}, add ${diff} each time\nFigure 10 = ${term10}\nFigure 100 = ${term100}`,
-    solution: `The pattern grows by ${diff} each figure.\nFigure n = ${base} + ${diff}(n − 1) = ${diff}n + ${base - diff}\nFigure 10 = ${diff}(10) + ${base - diff} = ${term10}\nFigure 100 = ${diff}(100) + ${base - diff} = ${term100}`,
+    answer: `Pattern: start at ${base}, add ${diff} each time\nFigure 5 = ${term5}\nFigure 10 = ${term10}\nFigure 100 = ${term100}`,
+    solution: `The pattern grows by ${diff} each figure.\nFigure n = ${base} + ${diff}(n − 1) = ${diff}n + ${base - diff}\nFigure 5 = ${diff}(5) + ${base - diff} = ${term5}\nFigure 10 = ${diff}(10) + ${base - diff} = ${term10}\nFigure 100 = ${diff}(100) + ${base - diff} = ${term100}`,
     discussion: [
       `How did you figure out how many squares to add each time?`,
       `Could you write a formula for Figure n?`,
@@ -239,7 +240,8 @@ function genKakoomaGrid() {
 
   for (let restart = 0; restart < 30 && !numbers; restart++) {
     const a = sRandInt(2, 12);
-    const b = sRandInt(2, 12);
+    let b = sRandInt(2, 12);
+    while (b === a) b = sRandInt(2, 12);
     const sum = a + b;
     const attempt = [a, b, sum];
     let tries = 0;
