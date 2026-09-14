@@ -74,12 +74,23 @@
   .synthesis-item { margin-bottom: 20px; }
   .synthesis-item strong { display: block; color: var(--accent); font-size: 10.5pt; margin-bottom: 6px; }
 
+  .signoff { border: 2px solid #d97706; background: #fffbeb; border-radius: 8px; padding: 12px 16px; margin: 16px 0; }
+  .signoff .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #b45309; margin-bottom: 6px; }
+
+  .example-block { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; margin: 14px 0; }
+  .example-block .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #475569; margin-bottom: 6px; }
+  .example-block pre { font-family: 'Consolas', 'Courier New', monospace; font-size: 9.5pt; white-space: pre-wrap; word-wrap: break-word; background: #fff; border-radius: 4px; padding: 8px 10px; margin-top: 4px; border: 1px solid #e2e8f0; }
+
+  .example-note { font-size: 9.5pt; font-style: italic; color: #64748b; margin-bottom: 6px; }
+  tr.example-row td { background: #fefce8 !important; }
+  tr.example-row td:first-child { font-weight: 700; color: #a16207; }
+
   @media print {
     body { padding: 18px 22px 32px; font-size: 10.5pt; }
     .section-break { margin: 18px 0; }
     h2 { margin: 20px 0 8px; }
     .section { break-before: page; }
-    .question, .retrieval, .misconception, .connection, .newword, .self-check, .worked-example, .learning-target, .name-row, table, figure { break-inside: avoid; }
+    .question, .retrieval, .misconception, .connection, .newword, .self-check, .worked-example, .learning-target, .name-row, table, figure, .signoff, .example-block { break-inside: avoid; }
     h2, h3, h4 { break-after: avoid; }
     p { orphans: 3; widows: 3; }
   }
@@ -142,6 +153,14 @@
 
 <p>What <em>is</em> new is the <span class="b b-md">&nbsp;</span> API: a specific set of objects and methods for talking to physical hardware — a motor object you tell to spin, a sensor object you read a value from, a servo object you tell to move to a position.</p>
 
+<div class="example-block">
+  <div class="label">Example</div>
+  <pre>// Same loop syntax as Unit 1 — new hardware API call inside it:
+for (int i = 0; i &lt; 4; i++) {
+    leftMotor.setPower(0.5);   // NEW: a hardware object method, not board logic
+}</pre>
+</div>
+
 <div class="misconception">
   <div class="label">MISCONCEPTION</div>
   <p>"Competition-grade robotics hardware must need a completely different language, or completely different logic, than what I already know."</p>
@@ -168,6 +187,12 @@
 
 <p>If Blockly-for-Java is used first, treat it the same way you'd treat training wheels: it's showing you the <em>shape</em> of the new hardware API (what objects and methods exist) so you can recognize them faster once you move to typed Java — it isn't asking you to think about logic differently than you did in Unit 1.</p>
 
+<div class="example-block">
+  <div class="label">Example</div>
+  <pre>DcMotor leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
+leftMotor.setPower(0.75);</pre>
+</div>
+
 <div class="retrieval">
   <div class="retrieval-header">Check Yourself — no peeking</div>
   <ol>
@@ -183,6 +208,16 @@
 <p class="learning-target">I can: use at least one sensor to create a conditional behavior on REV hardware.</p>
 
 <p>A <strong>servo object</strong> moves to a specific position when told to — useful for something like an arm or a claw. A <strong>sensor object</strong> reports a value back into your program, exactly like the conditionals you already understand from Unit 1 (and from Dash, back in Grade 5): the sensor doesn't decide anything, it just reports a number, and a conditional you write decides what the robot does with that number.</p>
+
+<div class="example-block">
+  <div class="label">Example</div>
+  <pre>if (distanceSensor.getDistance(DistanceUnit.CM) &lt; 10) {
+    leftMotor.setPower(0);
+    rightMotor.setPower(0);
+} else {
+    leftMotor.setPower(0.5);
+}</pre>
+</div>
 
 <div class="connection">
   <div class="label">Connection</div>

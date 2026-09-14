@@ -74,12 +74,23 @@
   .synthesis-item { margin-bottom: 20px; }
   .synthesis-item strong { display: block; color: var(--accent); font-size: 10.5pt; margin-bottom: 6px; }
 
+  .signoff { border: 2px solid #d97706; background: #fffbeb; border-radius: 8px; padding: 12px 16px; margin: 16px 0; }
+  .signoff .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #b45309; margin-bottom: 6px; }
+
+  .example-block { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; margin: 14px 0; }
+  .example-block .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #475569; margin-bottom: 6px; }
+  .example-block pre { font-family: 'Consolas', 'Courier New', monospace; font-size: 9.5pt; white-space: pre-wrap; word-wrap: break-word; background: #fff; border-radius: 4px; padding: 8px 10px; margin-top: 4px; border: 1px solid #e2e8f0; }
+
+  .example-note { font-size: 9.5pt; font-style: italic; color: #64748b; margin-bottom: 6px; }
+  tr.example-row td { background: #fefce8 !important; }
+  tr.example-row td:first-child { font-weight: 700; color: #a16207; }
+
   @media print {
     body { padding: 18px 22px 32px; font-size: 10.5pt; }
     .section-break { margin: 18px 0; }
     h2 { margin: 20px 0 8px; }
     .section { break-before: page; }
-    .question, .retrieval, .misconception, .connection, .newword, .self-check, .worked-example, .learning-target, .name-row, table, figure { break-inside: avoid; }
+    .question, .retrieval, .misconception, .connection, .newword, .self-check, .worked-example, .learning-target, .name-row, table, figure, .signoff, .example-block { break-inside: avoid; }
     h2, h3, h4 { break-after: avoid; }
     p { orphans: 3; widows: 3; }
   }
@@ -159,6 +170,14 @@
 
 <p>The logic itself isn't new. A <strong>variable</strong> still stores a value that can change — and in Python you don't have to declare what type of value it will hold before you use it. A <strong>loop</strong> (<code>for</code> or <code>while</code>) still repeats instructions instead of writing them out over and over. A <strong>conditional</strong> (<code>if</code> / <code>elif</code> / <code>else</code>) still branches — "if this is true, do this; otherwise, do that." What's different from a block language is just the notation: you type the keyword, end the line with a colon <code>:</code>, and indent the lines that belong inside.</p>
 
+<div class="example-block">
+  <div class="label">Example</div>
+  <pre>moves_left = 9
+for row in range(3):
+    if board[row][0] == board[row][1] == board[row][2]:
+        print("Row", row, "is a win!")</pre>
+</div>
+
 <div class="retrieval">
   <div class="retrieval-header">Check Yourself — no peeking</div>
   <ol>
@@ -174,6 +193,12 @@
 <p class="learning-target">I can: explain what a function is and why breaking a program into functions is useful.</p>
 
 <p>A <strong>function</strong> (defined with <code>def</code>) is a named, reusable block of code that does one job — the same idea as a custom block you may have built before, now written as text. Instead of writing the same win-check logic three times in your game, you write it once as a function and <em>call</em> it whenever you need it. This also makes a program easier to read and to debug: if something's wrong with how a win is detected, you know exactly which function to look inside.</p>
+
+<div class="example-block">
+  <div class="label">Example</div>
+  <pre>def check_win(board, player):
+    return board[0][0] == player and board[0][1] == player and board[0][2] == player</pre>
+</div>
 
 <div class="connection">
   <div class="label">Connection</div>
@@ -203,6 +228,13 @@
   <li>A <strong>runtime error</strong> (Python calls these <strong>exceptions</strong>) happens <em>while the program is running</em> — it starts fine, then crashes partway through (for example, trying to access an item in a list that doesn't exist).</li>
   <li>A <strong>logic error</strong> is the sneakiest: the program runs from start to finish without crashing — but it gives the <strong>wrong answer</strong>. A Tic-Tac-Toe that never detects a real win, or a Minesweeper that reveals the wrong tiles, is a logic error in action.</li>
 </ul>
+
+<div class="example-block">
+  <div class="label">Example</div>
+  <pre># Runs with no crash — but the logic is wrong:
+if board[0] == board[1]:
+    print("Player wins!")   # forgot to also check board[2]!</pre>
+</div>
 
 <div class="misconception">
   <div class="label">MISCONCEPTION</div>

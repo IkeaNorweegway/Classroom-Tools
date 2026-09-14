@@ -74,12 +74,23 @@
   .synthesis-item { margin-bottom: 20px; }
   .synthesis-item strong { display: block; color: var(--accent); font-size: 10.5pt; margin-bottom: 6px; }
 
+  .signoff { border: 2px solid #d97706; background: #fffbeb; border-radius: 8px; padding: 12px 16px; margin: 16px 0; }
+  .signoff .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #b45309; margin-bottom: 6px; }
+
+  .example-block { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; margin: 14px 0; }
+  .example-block .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #475569; margin-bottom: 6px; }
+  .example-block pre { font-family: 'Consolas', 'Courier New', monospace; font-size: 9.5pt; white-space: pre-wrap; word-wrap: break-word; background: #fff; border-radius: 4px; padding: 8px 10px; margin-top: 4px; border: 1px solid #e2e8f0; }
+
+  .example-note { font-size: 9.5pt; font-style: italic; color: #64748b; margin-bottom: 6px; }
+  tr.example-row td { background: #fefce8 !important; }
+  tr.example-row td:first-child { font-weight: 700; color: #a16207; }
+
   @media print {
     body { padding: 18px 22px 32px; font-size: 10.5pt; }
     .section-break { margin: 18px 0; }
     h2 { margin: 20px 0 8px; }
     .section { break-before: page; }
-    .question, .retrieval, .misconception, .connection, .newword, .self-check, .worked-example, .learning-target, .name-row, table, figure { break-inside: avoid; }
+    .question, .retrieval, .misconception, .connection, .newword, .self-check, .worked-example, .learning-target, .name-row, table, figure, .signoff, .example-block { break-inside: avoid; }
     h2, h3, h4 { break-after: avoid; }
     p { orphans: 3; widows: 3; }
   }
@@ -146,6 +157,16 @@
 
 <p>This is the same idea you've used before with variables tracking state (Grade 7), but now the variable is being updated <em>continuously</em>, forever, unless something else interrupts it — a more systems-like use of a variable than tracking a single score or a single choice.</p>
 
+<div class="example-block">
+  <div class="label">Example</div>
+  <pre>when green flag clicked
+set [gravity] to -2
+forever
+    change y by (gravity)
+    if &lt;touching [ground]?&gt; then
+        set [gravity] to 0</pre>
+</div>
+
 <div class="retrieval">
   <div class="retrieval-header">Check Yourself — no peeking</div>
   <ol>
@@ -162,6 +183,14 @@
 <p class="learning-target">I can: implement and debug a collision check between two sprites so it works consistently, not just sometimes.</p>
 
 <div class="newword"><div class="label">📌 New Word: collision detection</div><p>Checking whether two sprites are touching, and responding when they are — landing on a platform, hitting an obstacle, collecting an item. A collision check that only works <em>most</em> of the time (a jump that sometimes doesn't register) is a bug to fix, not a quirk to accept — inconsistent collision handling is exactly the kind of thing a real playtester will find immediately.</p></div>
+
+<div class="example-block">
+  <div class="label">Example</div>
+  <pre>forever
+    if &lt;touching [spike]?&gt; then
+        change [lives] by -1
+        go to x: (start x) y: (start y)</pre>
+</div>
 
 <div class="retrieval">
   <div class="retrieval-header">Check Yourself — no peeking</div>
@@ -181,6 +210,15 @@
 <div class="newword"><div class="label">📌 New Word: game state</div><p>Everything the program is keeping track of behind the scenes right now — score, lives, whether the player has won or lost.</p></div>
 
 <div class="newword"><div class="label">📌 New Word: win condition / lose condition</div><p>Specific, checkable rules ("score reaches 10" or "lives reach 0") — not a vague sense that the game is "over." Every platform game in this unit needs both, defined clearly enough that the program itself can detect them.</p></div>
+
+<div class="example-block">
+  <div class="label">Example</div>
+  <pre>forever
+    if &lt;score = 10&gt; then
+        broadcast [you win]
+    if &lt;lives = 0&gt; then
+        broadcast [game over]</pre>
+</div>
 
 <div class="retrieval">
   <div class="retrieval-header">Check Yourself — no peeking</div>
