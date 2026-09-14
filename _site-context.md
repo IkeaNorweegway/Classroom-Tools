@@ -24,6 +24,9 @@ Two courses are live. All other materials (PhysEd, eSports) are in the workspace
 |---|---|---|---|---|
 | Grade 6 Science | `/materials/` | `science-*` | `#0891b2` (cyan) | Partially built |
 | Math 9 | `/math9/` | `math9-*` | `#4f46e5` (indigo) | Partially built |
+| Grade 7 Science | `/science7/` | inline hex | `#059669` (emerald) | Live |
+| Social Studies 9 | `/social9/` | inline hex | `#b91c1c` (red) | Live |
+| STEAM (Gr. 5–9) | `/steam/` | inline hex | `#7c3aed` (violet) | Live |
 
 **Adding a course:** Add a row here, add a Tailwind colour token in `tailwind.config.mjs`, add a course card to the home page, add the course slug to the top nav.
 

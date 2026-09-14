@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
+
+const grades = [
+  {
+    slug: 'grade-5',
+    label: 'Grade 5',
+    description: 'Dash robots, a marble-run coaster, a water filter, and a Scratch story capstone. Sequence, loop, conditional, energy, and design-cycle basics.',
+    units: 4, color: '#7c3aed', colorDark: '#6d28d9', colorLight: '#ede9fe',
+  },
+  {
+    slug: 'grade-6',
+    label: 'Grade 6',
+    description: 'littleBits circuits, 3D-printed bag tags, bridges, and a glider capstone. Circuits, CAD, triangulation, and the four forces of flight.',
+    units: 4, color: '#7c3aed', colorDark: '#6d28d9', colorLight: '#ede9fe',
+  },
+  {
+    slug: 'grade-7',
+    label: 'Grade 7',
+    description: 'Spike Prime robotics, a micro:bit thermodynamics box, a branching Scratch adventure, and a CO2 dragster capstone.',
+    units: 4, color: '#7c3aed', colorDark: '#6d28d9', colorLight: '#ede9fe',
+  },
+  {
+    slug: 'grade-8',
+    label: 'Grade 8',
+    description: 'A class-wide Rube Goldberg chain, a Scratch platform game, mechanical advantage with a soldered motor circuit, and a Spike Prime maze capstone.',
+    units: 4, color: '#7c3aed', colorDark: '#6d28d9', colorLight: '#ede9fe',
+  },
+  {
+    slug: 'grade-9',
+    label: 'Grade 9',
+    description: 'Java or Python foundations, REV Robotics, electrified miniature scenes, and a trebuchet capstone.',
+    units: 4, color: '#7c3aed', colorDark: '#6d28d9', colorLight: '#ede9fe',
+  },
+];
+---
+
+<BaseLayout course="steam" title="STEAM">
+
+  <div class="mb-10">
+    <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color: #6d28d9;">STEAM · Grades 5–9</p>
+    <h1 class="text-4xl font-bold text-slate-900 mb-3">STEAM</h1>
+    <p class="text-slate-500 text-lg max-w-xl">
+      Pick a grade. Each unit has a Notes booklet and a Design Journal — planning, sketching, testing, and reflection, all in one place.
+    </p>
+  </div>
+
+  <!-- Quick stats -->
+  <div class="grid grid-cols-3 gap-3 mb-10">
+    {[
+      { n: '5', label: 'Grades' },
+      { n: '22', label: 'Projects' },
+      { n: '44', label: 'Materials' },
+    ].map(s => (
+      <div class="bg-white rounded-xl border border-slate-200 p-4 text-center">
+        <p class="text-2xl font-bold" style="color: #6d28d9;">{s.n}</p>
+        <p class="text-xs text-slate-400 mt-1 uppercase tracking-wide">{s.label}</p>
+      </div>
+    ))}
+  </div>
+
+  <!-- Grade cards -->
+  <div class="space-y-3">
+    {grades.map(g => (
+      <a
+        href={`${base}steam/materials/${g.slug}`}
+        class="group block bg-white rounded-xl border border-slate-200 border-l-4 p-5 transition-colors hover:opacity-90"
+        style={`border-left-color: ${g.color};`}
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0">
+            <p class="text-xs font-bold uppercase tracking-widest mb-1" style={`color: ${g.colorDark};`}>{g.units} Units</p>
+            <p class="font-semibold text-slate-900 mb-1">{g.label}</p>
+            <p class="text-sm text-slate-500 leading-relaxed">{g.description}</p>
+          </div>
+          <span class="flex-shrink-0 text-sm font-semibold group-hover:underline whitespace-nowrap" style={`color: ${g.colorDark};`}>
+            View →
+          </span>
+        </div>
+      </a>
+    ))}
+  </div>
+
+</BaseLayout>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REV Robotics (Intro) — Notes | STEAM Grade 9</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 11pt;
+    line-height: 1.55;
+    color: #1e293b;
+    background: #fff;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 28px 32px 48px;
+  }
+  :root {
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --accent-mid: #3b82f6;
+  }
+  h1 { font-size: 22pt; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+  h2 { font-size: 14pt; font-weight: 700; color: var(--accent); margin: 28px 0 10px; border-bottom: 2px solid var(--accent-light); padding-bottom: 4px; }
+  h3 { font-size: 11pt; font-weight: 700; color: #334155; margin: 18px 0 6px; text-transform: uppercase; letter-spacing: .04em; }
+  p { margin-bottom: 8px; }
+  ul, ol { margin: 6px 0 10px 20px; }
+  li { margin-bottom: 4px; }
+  strong { font-weight: 700; }
+  em { font-style: italic; color: #475569; }
+
+  .b { display: inline-block; border-bottom: 1.5px solid #334155; vertical-align: bottom; }
+  .b-sm { width: 60px; } .b-md { width: 110px; } .b-lg { width: 170px; } .b-xl { width: 240px; }
+
+  .al { display: block; border-bottom: 1px solid #94a3b8; height: 1.8rem; margin: 6px 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10.5pt; }
+  th { background: var(--accent-light); color: var(--accent); font-weight: 700; text-align: left; padding: 7px 10px; border: 1px solid var(--accent-light); }
+  td { padding: 8px 10px; border: 1px solid #e2e8f0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+
+  .misconception { border-left: 4px solid #dc2626; background: #fef2f2; padding: 10px 14px; margin: 14px 0; border-radius: 0 6px 6px 0; }
+  .misconception .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #dc2626; margin-bottom: 4px; }
+
+  .connection { border-left: 4px solid #f97316; background: #fff7ed; padding: 10px 14px; margin: 14px 0; border-radius: 0 6px 6px 0; }
+  .connection .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #ea580c; margin-bottom: 4px; }
+
+  .newword { border-left: 4px solid #059669; background: #ecfdf5; padding: 10px 14px; margin: 14px 0; border-radius: 0 6px 6px 0; }
+  .newword .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #059669; margin-bottom: 4px; }
+
+  .howto-box { background: var(--accent-light); border-radius: 8px; padding: 10px 16px; margin: 0 0 20px; font-size: 10pt; font-style: italic; color: #475569; }
+
+  .retrieval { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin: 18px 0; }
+  .retrieval-header { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #1d4ed8; margin-bottom: 10px; }
+  .retrieval ol { margin-left: 18px; }
+  .retrieval li { margin-bottom: 14px; }
+
+  .learning-target { font-size: 10pt; font-style: italic; color: #475569; margin-bottom: 12px; padding: 6px 12px; border-left: 3px solid var(--accent-mid); background: var(--accent-light); }
+
+  .section-break { border: none; border-top: 2px dashed #e2e8f0; margin: 28px 0; }
+
+  .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 24px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
+  .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent-mid); margin-bottom: 4px; }
+
+  .name-row { display: flex; gap: 24px; margin: 16px 0 24px; font-size: 10.5pt; }
+  .name-row span { color: #64748b; }
+  .name-row .b { flex: 1; }
+
+  .pre-knowledge { border: 1px solid var(--accent-light); border-radius: 8px; padding: 16px 20px; margin: 16px 0 24px; background: var(--accent-light); }
+  .pre-knowledge .pk-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--accent); margin-bottom: 8px; }
+
+  .synthesis { margin: 24px 0; }
+  .synthesis-item { margin-bottom: 20px; }
+  .synthesis-item strong { display: block; color: var(--accent); font-size: 10.5pt; margin-bottom: 6px; }
+
+  @media print {
+    body { padding: 18px 22px 32px; font-size: 10.5pt; }
+    .section-break { margin: 18px 0; }
+    h2 { margin: 20px 0 8px; }
+    .section { break-before: page; }
+    .question, .retrieval, .misconception, .connection, .newword, .self-check, .worked-example, .learning-target, .name-row, table, figure { break-inside: avoid; }
+    h2, h3, h4 { break-after: avoid; }
+    p { orphans: 3; widows: 3; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-strip">
+  <div class="course-label">STEAM · Grade 9 · Unit 2</div>
+  <h1>REV Robotics (Intro) — Notes</h1>
+</div>
+
+<div class="name-row">
+  <span>Name:</span><span class="b b-xl">&nbsp;</span>
+  <span>Date:</span><span class="b b-lg">&nbsp;</span>
+</div>
+
+<!-- Teacher note: this file assumes Java was chosen for Unit 1 (the "same language" framing throughout). If Python was chosen for Unit 1 instead, use `steam9-rev-notes-python-path-v1.md` in this same folder — it treats the Java syntax as genuinely new and includes a Python-to-Java translation guide. -->
+
+<div class="section">
+<div class="pre-knowledge">
+  <div class="pk-label">Before We Start</div>
+  <p><em>No notes, no right or wrong answers. Write your honest first thoughts.</em></p>
+  <p style="margin-top:8px;">REV DUO is real competition-grade robotics hardware — the same kind used in actual FTC competitions. Do you think working with hardware like this means learning a whole new programming language? Write what you think. We'll come back to this.</p>
+  <div class="al"></div>
+  <div class="al"></div>
+  <p style="margin-top:10px;">What do you already know how to do in Java from Unit 1 that you think might carry over here?</p>
+  <div class="al"></div>
+  <!-- Teacher note: Do NOT correct at this stage. Students return to this page at the Unit Synthesis. -->
+</div>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Vocabulary</h2>
+<table>
+  <thead><tr><th>Term</th><th>Definition in your own words</th><th>One example</th></tr></thead>
+  <tbody>
+    <tr><td>FTC SDK</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Hardware map</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Motor object</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Servo object</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Sensor object</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Control Hub</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Driver Hub</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Blockly-for-Java</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+  </tbody>
+</table>
+<p style="font-size:10pt; color:#64748b; font-style:italic;">Fill this in as each word comes up — not all at once before we start.</p>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Concept 1: Same Language, New Hardware</h2>
+<p class="learning-target">I can: explain what's actually new about this unit and what's carrying over unchanged from Unit 1.</p>
+
+<p>REV DUO is genuine competition-grade FTC hardware — a Control Hub and Driver Hub, real motors and motor controllers, real servos. That can make it <em>feel</em> like a completely new subject. It isn't. You program REV DUO through the <strong>FTC SDK</strong>, in the exact same language you already used in Unit 1: <span class="b b-md">&nbsp;</span>. The computational thinking underneath — sequence, loop, conditional — hasn't changed either.</p>
+
+<p>What <em>is</em> new is the <span class="b b-md">&nbsp;</span> API: a specific set of objects and methods for talking to physical hardware — a motor object you tell to spin, a sensor object you read a value from, a servo object you tell to move to a position.</p>
+
+<div class="misconception">
+  <div class="label">MISCONCEPTION</div>
+  <p>"Competition-grade robotics hardware must need a completely different language, or completely different logic, than what I already know."</p>
+  <p style="margin-top:8px;"><strong>Why this fails:</strong> the language is unchanged — it's still Java — and the CT logic (sequence, loop, conditional) hasn't changed either. What changed is the vocabulary of objects available to call into: a hardware map, a motor object, a servo object, a sensor object. Assuming everything is new means re-learning things you've already mastered instead of noticing what's genuinely different.</p>
+  <p style="margin-top:8px;"><strong>Correct understanding:</strong> This unit is Unit 1's Java applied to a new hardware API, not a fresh start. If you can write a loop and a conditional, you can write one that controls a REV motor — you just need to learn what the motor object is called and what methods it has.</p>
+</div>
+
+<div class="retrieval">
+  <div class="retrieval-header">Check Yourself — no peeking</div>
+  <ol>
+    <li>What stays exactly the same between Unit 1 and this unit?<div class="al"></div></li>
+    <li>What's actually new in this unit?<div class="al"></div></li>
+  </ol>
+</div>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Concept 2: The Hardware Map and Motor Objects</h2>
+<p class="learning-target">I can: explain what a hardware map is and how a motor object is used to move a robot.</p>
+
+<p>Before your program can control anything, it needs a <strong>hardware map</strong> — a list that connects the names you use in code (like <code>leftMotor</code>) to the physical ports the hardware is actually plugged into on the Control Hub. Once a motor is mapped, you control it through a <strong>motor object</strong> — calling methods on it (like setting its power or direction) instead of writing raw electrical instructions yourself.</p>
+
+<p>If Blockly-for-Java is used first, treat it the same way you'd treat training wheels: it's showing you the <em>shape</em> of the new hardware API (what objects and methods exist) so you can recognize them faster once you move to typed Java — it isn't asking you to think about logic differently than you did in Unit 1.</p>
+
+<div class="retrieval">
+  <div class="retrieval-header">Check Yourself — no peeking</div>
+  <ol>
+    <li>What job does the hardware map do?<div class="al"></div></li>
+  </ol>
+</div>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Concept 3: Servos and Sensors — Conditional Behavior on Real Hardware</h2>
+<p class="learning-target">I can: use at least one sensor to create a conditional behavior on REV hardware.</p>
+
+<p>A <strong>servo object</strong> moves to a specific position when told to — useful for something like an arm or a claw. A <strong>sensor object</strong> reports a value back into your program, exactly like the conditionals you already understand from Unit 1 (and from Dash, back in Grade 5): the sensor doesn't decide anything, it just reports a number, and a conditional you write decides what the robot does with that number.</p>
+
+<div class="connection">
+  <div class="label">Connection</div>
+  <p>In Unit 1, you wrote a conditional using data your program already had (like a game board's state). Here, the "data" comes from a real sensor reading the physical world instead. What do you think has to be true about how you write the conditional to account for a sensor reading being slightly noisy or imprecise, compared to a game board value that's always exact?</p>
+  <div class="al"></div>
+</div>
+
+<div class="retrieval">
+  <div class="retrieval-header">Check Yourself — no peeking</div>
+  <ol>
+    <li>What's the difference between a servo object and a sensor object?<div class="al"></div></li>
+    <li>Describe one conditional robot behavior you could build using a sensor on REV hardware.<div class="al"></div></li>
+  </ol>
+</div>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Unit Synthesis</h2>
+<p style="font-size:10pt; color:#64748b; font-style:italic; margin-bottom:14px;">Complete from memory — notes closed.</p>
+
+<p>In one or two sentences each:</p>
+
+<div class="synthesis">
+  <div class="synthesis-item"><strong>What's the same as Unit 1:</strong><div class="al"></div></div>
+  <div class="synthesis-item"><strong>What's new in this unit (the hardware API):</strong><div class="al"></div></div>
+  <div class="synthesis-item"><strong>Hardware map and motor objects:</strong><div class="al"></div></div>
+  <div class="synthesis-item"><strong>Sensors and conditional robot behavior:</strong><div class="al"></div></div>
+</div>
+
+<p>Now open "Before We Start" and read what you wrote about whether competition-grade hardware needs a whole new language.</p>
+<p>Was your first idea right? What would you tell your past self?</p>
+<div class="al"></div>
+<div class="al"></div>
+</div>
+
+</body>
+</html>

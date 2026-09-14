@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spike Prime: Foundations &amp; Computational Thinking — Notes | STEAM Grade 7</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 11pt;
+    line-height: 1.55;
+    color: #1e293b;
+    background: #fff;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 28px 32px 48px;
+  }
+  :root {
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --accent-mid: #3b82f6;
+  }
+  h1 { font-size: 22pt; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+  h2 { font-size: 14pt; font-weight: 700; color: var(--accent); margin: 28px 0 10px; border-bottom: 2px solid var(--accent-light); padding-bottom: 4px; }
+  h3 { font-size: 11pt; font-weight: 700; color: #334155; margin: 18px 0 6px; text-transform: uppercase; letter-spacing: .04em; }
+  p { margin-bottom: 8px; }
+  ul, ol { margin: 6px 0 10px 20px; }
+  li { margin-bottom: 4px; }
+  strong { font-weight: 700; }
+  em { font-style: italic; color: #475569; }
+
+  .b { display: inline-block; border-bottom: 1.5px solid #334155; vertical-align: bottom; }
+  .b-sm { width: 60px; } .b-md { width: 110px; } .b-lg { width: 170px; } .b-xl { width: 240px; }
+
+  .al { display: block; border-bottom: 1px solid #94a3b8; height: 1.8rem; margin: 6px 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10.5pt; }
+  th { background: var(--accent-light); color: var(--accent); font-weight: 700; text-align: left; padding: 7px 10px; border: 1px solid var(--accent-light); }
+  td { padding: 8px 10px; border: 1px solid #e2e8f0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+
+  .misconception { border-left: 4px solid #dc2626; background: #fef2f2; padding: 10px 14px; margin: 14px 0; border-radius: 0 6px 6px 0; }
+  .misconception .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #dc2626; margin-bottom: 4px; }
+
+  .connection { border-left: 4px solid #f97316; background: #fff7ed; padding: 10px 14px; margin: 14px 0; border-radius: 0 6px 6px 0; }
+  .connection .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #ea580c; margin-bottom: 4px; }
+
+  .newword { border-left: 4px solid #059669; background: #ecfdf5; padding: 10px 14px; margin: 14px 0; border-radius: 0 6px 6px 0; }
+  .newword .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #059669; margin-bottom: 4px; }
+
+  .howto-box { background: var(--accent-light); border-radius: 8px; padding: 10px 16px; margin: 0 0 20px; font-size: 10pt; font-style: italic; color: #475569; }
+
+  .retrieval { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin: 18px 0; }
+  .retrieval-header { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #1d4ed8; margin-bottom: 10px; }
+  .retrieval ol { margin-left: 18px; }
+  .retrieval li { margin-bottom: 14px; }
+
+  .learning-target { font-size: 10pt; font-style: italic; color: #475569; margin-bottom: 12px; padding: 6px 12px; border-left: 3px solid var(--accent-mid); background: var(--accent-light); }
+
+  .section-break { border: none; border-top: 2px dashed #e2e8f0; margin: 28px 0; }
+
+  .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 24px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
+  .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent-mid); margin-bottom: 4px; }
+
+  .name-row { display: flex; gap: 24px; margin: 16px 0 24px; font-size: 10.5pt; }
+  .name-row span { color: #64748b; }
+  .name-row .b { flex: 1; }
+
+  .pre-knowledge { border: 1px solid var(--accent-light); border-radius: 8px; padding: 16px 20px; margin: 16px 0 24px; background: var(--accent-light); }
+  .pre-knowledge .pk-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--accent); margin-bottom: 8px; }
+
+  .synthesis { margin: 24px 0; }
+  .synthesis-item { margin-bottom: 20px; }
+  .synthesis-item strong { display: block; color: var(--accent); font-size: 10.5pt; margin-bottom: 6px; }
+
+  @media print {
+    body { padding: 18px 22px 32px; font-size: 10.5pt; }
+    .section-break { margin: 18px 0; }
+    h2 { margin: 20px 0 8px; }
+    .section { break-before: page; }
+    .question, .retrieval, .misconception, .connection, .newword, .self-check, .worked-example, .learning-target, .name-row, table, figure { break-inside: avoid; }
+    h2, h3, h4 { break-after: avoid; }
+    p { orphans: 3; widows: 3; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-strip">
+  <div class="course-label">STEAM · Grade 7 · Unit 1</div>
+  <h1>Spike Prime: Foundations &amp; Computational Thinking — Notes</h1>
+</div>
+
+<div class="name-row">
+  <span>Name:</span><span class="b b-xl">&nbsp;</span>
+  <span>Date:</span><span class="b b-lg">&nbsp;</span>
+</div>
+
+<div class="howto-box"><strong>How to use this page:</strong> Read each concept, then answer the Check Yourself questions without looking back. New vocabulary appears in 📌 boxes the first time it's used.</div>
+
+<div class="section">
+<div class="pre-knowledge">
+  <div class="pk-label">Before We Start</div>
+  <p><em>No notes, no right or wrong answers. Write your honest first thoughts.</em></p>
+  <p style="margin-top:8px;">It's been a whole year since you programmed a robot (Grade 6 was littleBits, 3D printing, bridges, and gliders — no robot). Do you think you're starting from scratch with coding, or do you already know more than you think? Write what you think — we'll come back to this.</p>
+  <div class="al"></div>
+  <div class="al"></div>
+  <p style="margin-top:10px;">What's one thing you remember about sequence, loop, conditional, or variable from littleBits, Scratch, or Dash — from any grade, any tool?</p>
+  <div class="al"></div>
+  <!-- Teacher note: Do NOT correct at this stage. Students return to this page at the Unit Synthesis. -->
+</div>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Vocabulary</h2>
+<table>
+  <thead><tr><th>Term</th><th>Definition in your own words</th><th>One example</th></tr></thead>
+  <tbody>
+    <tr><td>Sequence</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Loop</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Conditional</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Variable</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Transfer</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Word Blocks</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Debug</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+  </tbody>
+</table>
+<p style="font-size:10pt; color:#64748b; font-style:italic;">Fill this in as each word comes up — not all at once before we start.</p>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Concept 1: Same Ideas, New Tool</h2>
+<p class="learning-target">I can: name a CT concept I already know, and recognize it again inside Spike Prime's Word Blocks.</p>
+
+<p>You already know <strong>sequence</strong>, <strong>loop</strong>, and <strong>conditional</strong> — you used them in littleBits circuits, in Scratch, maybe in Dash back in Grade 5. This unit doesn't teach those ideas for the first time. It teaches you to recognize the <em>same idea</em> wearing a <em>different costume</em>.</p>
+
+<p>Spike Prime's loop block is the same concept as littleBits' pulse bit and Scratch's repeat block — same idea, new tool. When you build a program in <strong>Word Blocks</strong>, don't ask "what is this new thing?" Ask "have I done this exact kind of thinking before, just somewhere else?"</p>
+
+<div class="newword"><div class="label">📌 New Word: transfer</div><p>Carrying an idea you learned in one tool into a completely different tool. It's a stronger kind of learning than just repeating the same thing in the same tool, because it proves you understood the <em>idea</em>, not just the button.</p></div>
+
+<div class="retrieval">
+  <div class="retrieval-header">Check Yourself — no peeking</div>
+  <ol>
+    <li>Name one CT concept you're bringing into this unit from a non-robot tool, and name that tool.<div class="al"></div></li>
+    <li>What does "transfer" mean, and why is it a stronger kind of learning than repeating something in the same tool?<div class="al"></div></li>
+  </ol>
+</div>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Concept 2: Sequence &amp; Loop in Spike Prime</h2>
+<p class="learning-target">I can: build a sequenced program for my driving base, then rebuild a repeating part of it as a loop.</p>
+
+<p>A <strong>sequence</strong> is instructions carried out in order, one after another — Spike Prime does exactly what the blocks say, nothing more, nothing skipped. If part of your program repeats (drive forward, turn, drive forward, turn), a <strong>loop</strong> lets you say "do this <span class="b b-sm">&nbsp;</span> times" instead of stacking the same blocks over and over.</p>
+
+<div class="misconception">
+  <div class="label">Common Misconception</div>
+  <p>"I'm basically starting over — I don't really know robots yet."</p>
+  <p style="margin-top:8px;"><strong>Why this fails:</strong> You're not starting over on the <em>thinking</em>. Sequence, loop, and conditional are concepts, not robot-specific skills — you already used every one of them in a non-robot tool. What's actually new here is the <em>modality</em>: applying ideas you already know to a build-and-code platform for the first time in a year. That's a real gap (the build side), but it isn't the same as not knowing the concepts.</p>
+  <p style="margin-top:8px;"><strong>What's actually true:</strong> Say it out loud each time it comes up: "this is the same idea as <span class="b b-md">&nbsp;</span>, just in a new tool." The robot is new. The thinking underneath it is not.</p>
+</div>
+
+<div class="retrieval">
+  <div class="retrieval-header">Check Yourself — no peeking</div>
+  <ol>
+    <li>What's the difference between a sequence and a loop, in your own words?<div class="al"></div></li>
+    <li>Why is it inaccurate to say you're "starting over" this unit, even though you haven't touched a robot in a year?<div class="al"></div></li>
+  </ol>
+</div>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Concept 3: Conditionals — Responding to a Sensor</h2>
+<p class="learning-target">I can: explain what a conditional does with a sensor reading, and use one to make my robot respond to its environment.</p>
+
+<p>A <strong>conditional</strong> tells Spike Prime: "if <span class="b b-md">&nbsp;</span> is true, then do <span class="b b-md">&nbsp;</span> — otherwise, do something else." The robot isn't deciding anything on its own — a sensor (color or distance) reports a number, and a conditional block a person wrote decides what the robot does with that number.</p>
+
+<p>This is the same relationship you saw with Dash's distance sensor in Grade 5, or a littleBits sensor bit triggering an actuator in Grade 6 — sensor reports, conditional decides, robot acts. Unit 2 this year goes much deeper into sensors with micro:bit; this is your first taste on Spike Prime.</p>
+
+<div class="retrieval">
+  <div class="retrieval-header">Check Yourself — no peeking</div>
+  <ol>
+    <li>In your own words, what job does the sensor do, and what job does the conditional do? Why are they two separate jobs?<div class="al"></div></li>
+    <li>If your robot's conditional isn't working the way you expect, is the sensor more likely broken, or is the conditional more likely written wrong? How would you check?<div class="al"></div></li>
+  </ol>
+</div>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Concept 4: Variables — Controlling and Predicting Behavior</h2>
+<p class="learning-target">I can: use a variable to control speed or distance, and predict what will happen before I test it.</p>
+
+<p>A <strong>variable</strong> is a labeled value your program can store and reuse — instead of typing "speed: 30" into five different blocks, you set a variable called <code>speed</code> once, and every block that uses it follows along. Change the variable, and every block using it changes too.</p>
+
+<p><strong>Predict, then test:</strong> Before you change your robot's speed variable, write down what you predict will happen to how it drives.</p>
+<div class="al"></div>
+<p>What actually happened?</p>
+<div class="al"></div>
+
+<div class="retrieval">
+  <div class="retrieval-header">Check Yourself — no peeking</div>
+  <ol>
+    <li>Why is using a variable better than typing the same number into several separate blocks?<div class="al"></div></li>
+    <li>Name one robot behavior (besides speed) that a variable could control.<div class="al"></div></li>
+  </ol>
+</div>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Unit Synthesis</h2>
+<p style="font-size:10pt; color:#64748b; font-style:italic; margin-bottom:14px;">Complete from memory — notes closed.</p>
+
+<div class="synthesis">
+  <div class="synthesis-item"><strong>Transfer (why this isn't "starting over"):</strong><div class="al"></div></div>
+  <div class="synthesis-item"><strong>Sequence and loop in Spike Prime:</strong><div class="al"></div></div>
+  <div class="synthesis-item"><strong>Conditional and sensor:</strong><div class="al"></div></div>
+  <div class="synthesis-item"><strong>Variable:</strong><div class="al"></div></div>
+</div>
+
+<p>Now open "Before We Start" and read what you wrote about whether you're starting from scratch.</p>
+<p>Was your first idea right? What would you tell your past self?</p>
+<div class="al"></div>
+<div class="al"></div>
+</div>
+
+</body>
+</html>

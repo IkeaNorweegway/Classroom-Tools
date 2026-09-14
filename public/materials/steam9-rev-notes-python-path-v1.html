@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REV Robotics (Intro) — Notes — Python-Path Version | STEAM Grade 9</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 11pt;
+    line-height: 1.55;
+    color: #1e293b;
+    background: #fff;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 28px 32px 48px;
+  }
+  :root {
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --accent-mid: #3b82f6;
+  }
+  h1 { font-size: 22pt; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+  h2 { font-size: 14pt; font-weight: 700; color: var(--accent); margin: 28px 0 10px; border-bottom: 2px solid var(--accent-light); padding-bottom: 4px; }
+  h3 { font-size: 11pt; font-weight: 700; color: #334155; margin: 18px 0 6px; text-transform: uppercase; letter-spacing: .04em; }
+  p { margin-bottom: 8px; }
+  ul, ol { margin: 6px 0 10px 20px; }
+  li { margin-bottom: 4px; }
+  strong { font-weight: 700; }
+  em { font-style: italic; color: #475569; }
+
+  .b { display: inline-block; border-bottom: 1.5px solid #334155; vertical-align: bottom; }
+  .b-sm { width: 60px; } .b-md { width: 110px; } .b-lg { width: 170px; } .b-xl { width: 240px; }
+
+  .al { display: block; border-bottom: 1px solid #94a3b8; height: 1.8rem; margin: 6px 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10.5pt; }
+  th { background: var(--accent-light); color: var(--accent); font-weight: 700; text-align: left; padding: 7px 10px; border: 1px solid var(--accent-light); }
+  td { padding: 8px 10px; border: 1px solid #e2e8f0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+
+  .misconception { border-left: 4px solid #dc2626; background: #fef2f2; padding: 10px 14px; margin: 14px 0; border-radius: 0 6px 6px 0; }
+  .misconception .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #dc2626; margin-bottom: 4px; }
+
+  .connection { border-left: 4px solid #f97316; background: #fff7ed; padding: 10px 14px; margin: 14px 0; border-radius: 0 6px 6px 0; }
+  .connection .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #ea580c; margin-bottom: 4px; }
+
+  .newword { border-left: 4px solid #059669; background: #ecfdf5; padding: 10px 14px; margin: 14px 0; border-radius: 0 6px 6px 0; }
+  .newword .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #059669; margin-bottom: 4px; }
+
+  .howto-box { background: var(--accent-light); border-radius: 8px; padding: 10px 16px; margin: 0 0 20px; font-size: 10pt; font-style: italic; color: #475569; }
+
+  .retrieval { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin: 18px 0; }
+  .retrieval-header { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #1d4ed8; margin-bottom: 10px; }
+  .retrieval ol { margin-left: 18px; }
+  .retrieval li { margin-bottom: 14px; }
+
+  .learning-target { font-size: 10pt; font-style: italic; color: #475569; margin-bottom: 12px; padding: 6px 12px; border-left: 3px solid var(--accent-mid); background: var(--accent-light); }
+
+  .section-break { border: none; border-top: 2px dashed #e2e8f0; margin: 28px 0; }
+
+  .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 24px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
+  .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent-mid); margin-bottom: 4px; }
+
+  .name-row { display: flex; gap: 24px; margin: 16px 0 24px; font-size: 10.5pt; }
+  .name-row span { color: #64748b; }
+  .name-row .b { flex: 1; }
+
+  .pre-knowledge { border: 1px solid var(--accent-light); border-radius: 8px; padding: 16px 20px; margin: 16px 0 24px; background: var(--accent-light); }
+  .pre-knowledge .pk-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--accent); margin-bottom: 8px; }
+
+  .synthesis { margin: 24px 0; }
+  .synthesis-item { margin-bottom: 20px; }
+  .synthesis-item strong { display: block; color: var(--accent); font-size: 10.5pt; margin-bottom: 6px; }
+
+  @media print {
+    body { padding: 18px 22px 32px; font-size: 10.5pt; }
+    .section-break { margin: 18px 0; }
+    h2 { margin: 20px 0 8px; }
+    .section { break-before: page; }
+    .question, .retrieval, .misconception, .connection, .newword, .self-check, .worked-example, .learning-target, .name-row, table, figure { break-inside: avoid; }
+    h2, h3, h4 { break-after: avoid; }
+    p { orphans: 3; widows: 3; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-strip">
+  <div class="course-label">STEAM · Grade 9 · Unit 2</div>
+  <h1>REV Robotics (Intro) — Notes — Python-Path Version</h1>
+</div>
+
+<div class="name-row">
+  <span>Name:</span><span class="b b-xl">&nbsp;</span>
+  <span>Date:</span><span class="b b-lg">&nbsp;</span>
+</div>
+
+<!-- Teacher note: use THIS version if Python was chosen for Unit 1 instead of Java. Unlike the default version of this unit, this one treats the Java syntax as genuinely new — Unit 1's Python doesn't carry over word-for-word, only the underlying logic does. If Java was chosen for Unit 1, use `steam9-rev-notes-v1.md` instead, not this file. -->
+
+<div class="section">
+<div class="pre-knowledge">
+  <div class="pk-label">Before We Start</div>
+  <p><em>No notes, no right or wrong answers. Write your honest first thoughts.</em></p>
+  <p style="margin-top:8px;">REV DUO is real competition-grade robotics hardware — the same kind used in actual FTC competitions — and it's programmed in Java, a different language from the Python you used in Unit 1. Do you think that means starting over from scratch, or does some of what you learned in Unit 1 still count? Write what you think. We'll come back to this.</p>
+  <div class="al"></div>
+  <div class="al"></div>
+  <p style="margin-top:10px;">What do you already know how to do from Unit 1 (in Python) that you think might still be useful here, even in a different language?</p>
+  <div class="al"></div>
+  <!-- Teacher note: Do NOT correct at this stage. Students return to this page at the Unit Synthesis. -->
+</div>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Vocabulary</h2>
+<table>
+  <thead><tr><th>Term</th><th>Definition in your own words</th><th>One example</th></tr></thead>
+  <tbody>
+    <tr><td>FTC SDK</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Hardware map</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Motor object</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Servo object</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Sensor object</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Control Hub</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Driver Hub</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Blockly-for-Java</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+    <tr><td>Syntax (vs. logic)</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
+  </tbody>
+</table>
+<p style="font-size:10pt; color:#64748b; font-style:italic;">Fill this in as each word comes up — not all at once before we start.</p>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Concept 1: What Changes, What Doesn't</h2>
+<p class="learning-target">I can: explain exactly what carries over from Unit 1's Python and what genuinely doesn't.</p>
+
+<p>REV DUO is programmed through the <strong>FTC SDK</strong>, in <strong>Java</strong> — a different language from the Python you used in Unit 1. That's a real change, not a small one, and this unit doesn't pretend otherwise. But it isn't a fresh start either. Two different things are true at once:</p>
+
+<ul>
+  <li>The <strong>computational thinking underneath</strong> — sequence, loop, conditional, variable, function — is <span class="b b-md">&nbsp;</span> (the same / different) as what you already know. A loop is still a loop. A conditional is still "if this is true, do this."</li>
+  <li>The <strong>syntax</strong> — how you write a loop, a conditional, a function — is <span class="b b-md">&nbsp;</span> (the same / different), because Java has its own rules (type declarations, semicolons, curly braces, and a class/main-method structure every program needs).</li>
+</ul>
+
+<div class="misconception">
+  <div class="label">MISCONCEPTION</div>
+  <p>"This is a different language, so everything I learned in Unit 1 is useless here — I'm basically starting over."</p>
+  <p style="margin-top:8px;"><strong>Why this fails:</strong> the <em>logic</em> you built in Unit 1 — knowing what a loop is for, when to use a conditional, how to break a program into reusable pieces — is exactly the thinking you need here too. What you actually have to relearn is much narrower than "everything": it's the notation, plus a new set of hardware-specific objects (motors, sensors, servos) to call into.</p>
+  <p style="margin-top:8px;"><strong>Correct understanding:</strong> Treat this unit as a <em>translation</em> exercise, not a <em>relearning</em> exercise. If you already know what you want a program to do (because you reasoned it out in Python-shaped thinking), the job here is finding the Java way to say it — not figuring out the idea from zero.</p>
+</div>
+
+<div class="retrieval">
+  <div class="retrieval-header">Check Yourself — no peeking</div>
+  <ol>
+    <li>What stays the same between Unit 1 and this unit, even though the language changed?<div class="al"></div></li>
+    <li>What's genuinely new here (there's more than one thing)?<div class="al"></div></li>
+  </ol>
+</div>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Concept 2: A Quick Python-to-Java Translation Guide</h2>
+<p class="learning-target">I can: rewrite a simple piece of Python logic in Java syntax.</p>
+
+<p>Here's the same four ideas, side by side, so you can see the logic hasn't moved even though the notation has:</p>
+
+<table>
+  <thead><tr><th>Idea</th><th>In Python (Unit 1)</th><th>In Java (this unit)</th></tr></thead>
+  <tbody>
+    <tr><td>A variable</td><td><code>lives = 3</code></td><td><code>int lives = 3;</code></td></tr>
+    <tr><td>A conditional</td><td><code>if lives &lt;= 0:</code> (then indent)</td><td><code>if (lives &lt;= 0) {</code> (then a closing <code>}</code>)</td></tr>
+    <tr><td>A loop</td><td><code>for i in range(5):</code> (then indent)</td><td><code>for (int i = 0; i &lt; 5; i++) {</code> (then a closing <code>}</code>)</td></tr>
+    <tr><td>A function/method</td><td><code>def checkWin():</code> (then indent)</td><td><code>void checkWin() {</code> (then a closing <code>}</code>)</td></tr>
+  </tbody>
+</table>
+
+<p>Notice what's different: Java wants you to declare a variable's <strong>type</strong> (<code>int</code>, meaning a whole number), end statements with a <strong>semicolon</strong>, and mark a block of code with <strong>curly braces <code>{ }</code></strong> instead of indentation alone. Python never made you do any of that.</p>
+
+<div class="retrieval">
+  <div class="retrieval-header">Check Yourself — no peeking</div>
+  <ol>
+    <li>Pick one row from the table above. In your own words, what's the same about the idea, and what's different about how you write it?<div class="al"></div></li>
+  </ol>
+</div>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Concept 3: The Hardware Map and Motor Objects</h2>
+<p class="learning-target">I can: explain what a hardware map is and how a motor object is used to move a robot.</p>
+
+<p>Before your program can control anything, it needs a <strong>hardware map</strong> — a list that connects the names you use in code (like <code>leftMotor</code>) to the physical ports the hardware is actually plugged into on the Control Hub. Once a motor is mapped, you control it through a <strong>motor object</strong> — calling methods on it (like setting its power or direction) instead of writing raw electrical instructions yourself. This is new <em>hardware</em> vocabulary, on top of the new <em>language</em> syntax from Concept 2 — two separate things to learn, not one.</p>
+
+<p>If Blockly-for-Java is used first, it can help separate these two challenges: it lets you see the shape of the new hardware API (what objects and methods exist) without also having to type correct Java syntax at the same time. Use it as a stepping stone, not a permanent home.</p>
+
+<div class="retrieval">
+  <div class="retrieval-header">Check Yourself — no peeking</div>
+  <ol>
+    <li>What job does the hardware map do?<div class="al"></div></li>
+    <li>Name the two different things you're learning in this unit (hint: one is about a language, one is about hardware).<div class="al"></div></li>
+  </ol>
+</div>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Concept 4: Servos and Sensors — Conditional Behavior on Real Hardware</h2>
+<p class="learning-target">I can: use at least one sensor to create a conditional behavior on REV hardware, written in Java.</p>
+
+<p>A <strong>servo object</strong> moves to a specific position when told to — useful for something like an arm or a claw. A <strong>sensor object</strong> reports a value back into your program, exactly like the conditionals you already understand from Unit 1 (and from Dash, back in Grade 5): the sensor doesn't decide anything, it just reports a number, and a conditional you write decides what the robot does with that number. The <em>idea</em> is identical to a Python conditional checking a game variable — only the syntax you write it in has changed.</p>
+
+<div class="connection">
+  <div class="label">Connection</div>
+  <p>In Unit 1, you wrote a conditional using data your program already had (like a game board's state), in Python. Here, the "data" comes from a real sensor reading the physical world, and you write the check in Java. What do you think has to be true about how you write the conditional to account for a sensor reading being slightly noisy or imprecise, compared to a game board value that's always exact?</p>
+  <div class="al"></div>
+</div>
+
+<div class="retrieval">
+  <div class="retrieval-header">Check Yourself — no peeking</div>
+  <ol>
+    <li>What's the difference between a servo object and a sensor object?<div class="al"></div></li>
+    <li>Describe one conditional robot behavior you could build using a sensor on REV hardware, and say which part of writing it would rely on Unit 1 thinking versus this unit's new Java syntax.<div class="al"></div></li>
+  </ol>
+</div>
+</div>
+
+<hr class="section-break">
+
+<div class="section">
+<h2>Unit Synthesis</h2>
+<p style="font-size:10pt; color:#64748b; font-style:italic; margin-bottom:14px;">Complete from memory — notes closed.</p>
+
+<p>In one or two sentences each:</p>
+
+<div class="synthesis">
+  <div class="synthesis-item"><strong>What's the same as Unit 1 (the logic):</strong><div class="al"></div></div>
+  <div class="synthesis-item"><strong>What's new (the Java syntax):</strong><div class="al"></div></div>
+  <div class="synthesis-item"><strong>What's new (the hardware API):</strong><div class="al"></div></div>
+  <div class="synthesis-item"><strong>Sensors and conditional robot behavior:</strong><div class="al"></div></div>
+</div>
+
+<p>Now open "Before We Start" and read what you wrote about whether a different language means starting over.</p>
+<p>Was your first idea right? What would you tell your past self?</p>
+<div class="al"></div>
+<div class="al"></div>
+</div>
+
+</body>
+</html>

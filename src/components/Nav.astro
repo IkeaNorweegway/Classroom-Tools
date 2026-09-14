@@ -1,6 +1,6 @@
 ---
 interface Props {
-  course?: 'science' | 'math9' | 'science7' | 'social9';
+  course?: 'science' | 'math9' | 'science7' | 'social9' | 'steam';
   teacherMode?: boolean;
 }
 const { course, teacherMode = false } = Astro.props;
@@ -44,6 +44,14 @@ const social9Units = [
   { slug: 'modern-economy',                   label: 'Economy' },
   { slug: 'system-of-government',             label: 'Government' },
   { slug: 'evolving-citizenship',             label: 'Citizenship' },
+];
+
+const steamGrades = [
+  { slug: 'grade-5', label: 'Gr. 5' },
+  { slug: 'grade-6', label: 'Gr. 6' },
+  { slug: 'grade-7', label: 'Gr. 7' },
+  { slug: 'grade-8', label: 'Gr. 8' },
+  { slug: 'grade-9', label: 'Gr. 9' },
 ];
 
 const navBg   = teacherMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200';
@@ -109,13 +117,24 @@ const hoverBase = teacherMode ? 'hover:bg-slate-700 hover:text-white' : 'hover:b
         >
           Social 9
         </a>
+        <a
+          href={`${base}steam`}
+          class={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors
+            ${course === 'steam'
+              ? 'text-white'
+              : `${textBase} ${hoverBase}`
+            }`}
+          style={course === 'steam' ? 'background-color: #6d28d9;' : ''}
+        >
+          STEAM
+        </a>
       </div>
 
       <!-- Right: Teacher toggle -->
       <a
         href={teacherMode
-          ? (course === 'math9' ? `${base}math9` : course === 'science7' ? `${base}science7` : course === 'social9' ? `${base}social9` : `${base}materials`)
-          : (course === 'math9' ? `${base}math9/teacher` : course === 'science7' ? `${base}science7/teacher` : course === 'social9' ? `${base}social9/teacher` : `${base}teacher`)}
+          ? (course === 'math9' ? `${base}math9` : course === 'science7' ? `${base}science7` : course === 'social9' ? `${base}social9` : course === 'steam' ? `${base}steam` : `${base}materials`)
+          : (course === 'math9' ? `${base}math9/teacher` : course === 'science7' ? `${base}science7/teacher` : course === 'social9' ? `${base}social9/teacher` : course === 'steam' ? `${base}steam` : `${base}teacher`)}
         class={`text-xs px-3 py-1.5 rounded-md font-medium border transition-colors
           ${teacherMode
             ? 'border-teacher-500 text-teacher-400 hover:bg-teacher-700 hover:text-white'
@@ -245,6 +264,35 @@ const hoverBase = teacherMode ? 'hover:bg-slate-700 hover:text-white' : 'hover:b
           style={currentPath.endsWith('/social9') || currentPath.endsWith('/social9/') ? 'background-color: #b91c1c;' : ''}
         >
           All Units
+        </a>
+      </div>
+    )}
+
+    {course === 'steam' && (
+      <div class="flex gap-1 pb-2 overflow-x-auto">
+        {steamGrades.map(g => (
+          <a
+            href={`${base}steam/materials/${g.slug}`}
+            class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
+              ${currentPath.includes(g.slug)
+                ? 'text-white'
+                : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            style={currentPath.includes(g.slug) ? 'background-color: #6d28d9;' : ''}
+          >
+            {g.label}
+          </a>
+        ))}
+        <a
+          href={`${base}steam`}
+          class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
+            ${currentPath.endsWith('/steam') || currentPath.endsWith('/steam/')
+              ? 'text-white'
+              : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          style={currentPath.endsWith('/steam') || currentPath.endsWith('/steam/') ? 'background-color: #6d28d9;' : ''}
+        >
+          All Grades
         </a>
       </div>
     )}
