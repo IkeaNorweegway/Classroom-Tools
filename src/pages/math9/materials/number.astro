@@ -119,6 +119,16 @@ const topicUnits = await Promise.all(
           </div>
           <a href={viewHref(`worksheets/number/${t.slug}/${t.wsSlug}-worksheet-core-v1`)} class="flex-shrink-0 text-sm font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-400 px-4 py-1.5 rounded-lg transition-colors">Open</a>
         </div>
+        <!-- Extra practice worksheet -->
+        {t.slug === 'rational-numbers' && (
+        <div class={`bg-white rounded-xl border border-slate-200 border-l-4 ${border} px-5 py-4 flex items-center justify-between gap-4`}>
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-medium text-slate-800">Extra Practice</span>
+            <span class="text-xs bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded-full">★</span>
+          </div>
+          <a href={viewHref(`worksheets/number/${t.slug}/${t.wsSlug}-worksheet-extra-v1`)} class="flex-shrink-0 text-sm font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-400 px-4 py-1.5 rounded-lg transition-colors">Open</a>
+        </div>
+        )}
         <!-- Challenge worksheet -->
         <div class={`bg-white rounded-xl border border-slate-200 border-l-4 ${border} px-5 py-4 flex items-center justify-between gap-4`}>
           <div class="flex items-center gap-2">
@@ -147,6 +157,7 @@ const topicUnits = await Promise.all(
           {[
             { label: 'Notes Answer Key', path: `notes/${t.slug}/${t.noteSlug.replace('-notes-v1', '-notes-answers-v1')}` },
             { label: 'Core Worksheet Answer Key', path: `worksheets/number/${t.slug}/${t.wsSlug}-worksheet-core-answers-v1` },
+            ...(t.slug === 'rational-numbers' ? [{ label: 'Extra Practice Answer Key', path: `worksheets/number/${t.slug}/${t.wsSlug}-worksheet-extra-answers-v1` }] : []),
             { label: 'Challenge Answer Key', path: `worksheets/number/${t.slug}/${t.wsSlug}-worksheet-challenge-answers-v1` },
           ].map(ak => (
             <div class="bg-slate-50 rounded-xl border border-slate-200 px-5 py-4 flex items-center justify-between gap-4">
