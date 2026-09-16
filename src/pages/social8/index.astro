@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
+
+const units = [
+  {
+    slug: 'ideologies',
+    label: 'Foundations and Influences of Ideologies',
+    description: 'Individualism vs. collectivism, the political spectrum, the four major ideologies, and totalitarian government.',
+    organizingIdea: 'Time and Place',
+    color: '#92400e', colorDark: '#78350f', colorLight: '#fef3c7',
+  },
+  {
+    slug: 'economic-systems',
+    label: 'Economic Systems',
+    description: 'Traditional, command, market, and mixed economies, how economies are measured, and government surplus, deficit, and debt.',
+    organizingIdea: 'Systems',
+    color: '#1d4ed8', colorDark: '#1e40af', colorLight: '#dbeafe',
+  },
+  {
+    slug: 'political-systems',
+    label: 'Political Systems',
+    description: "Types of political systems, Canada's parliamentary democracy vs. the American presidential system, and political parties.",
+    organizingIdea: 'Systems',
+    color: '#4338ca', colorDark: '#3730a3', colorLight: '#e0e7ff',
+  },
+  {
+    slug: 'civic-engagement',
+    label: 'Civic Engagement',
+    description: 'Voting, volunteering, advocacy, and how global issues connect to daily life in Canada.',
+    organizingIdea: 'Citizenship',
+    color: '#0f766e', colorDark: '#115e59', colorLight: '#ccfbf1',
+  },
+];
+---
+
+<BaseLayout course="social8" title="Social Studies 8">
+
+  <div class="mb-10">
+    <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color: #4338ca;">Alberta Draft Curriculum · 2026</p>
+    <h1 class="text-4xl font-bold text-slate-900 mb-3">Social Studies 8</h1>
+    <p class="text-slate-500 text-lg max-w-xl">
+      Four units across Time and Place, Systems, and Citizenship. Notes, workbooks, and answer keys.
+    </p>
+  </div>
+
+  <!-- Quick stats -->
+  <div class="grid grid-cols-3 gap-3 mb-10">
+    {[
+      { n: '4', label: 'Units' },
+      { n: '3', label: 'Organizing Ideas' },
+      { n: '20', label: 'Materials' },
+    ].map(s => (
+      <div class="bg-white rounded-xl border border-slate-200 p-4 text-center">
+        <p class="text-2xl font-bold" style="color: #3730a3;">{s.n}</p>
+        <p class="text-xs text-slate-400 mt-1 uppercase tracking-wide">{s.label}</p>
+      </div>
+    ))}
+  </div>
+
+  <!-- Unit cards -->
+  <div class="space-y-3">
+    {units.map(u => (
+      <a
+        href={`${base}social8/materials/${u.slug}`}
+        class="group block bg-white rounded-xl border border-slate-200 border-l-4 p-5 transition-colors hover:opacity-90"
+        style={`border-left-color: ${u.color};`}
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0">
+            <p class="text-xs font-bold uppercase tracking-widest mb-1" style={`color: ${u.colorDark};`}>{u.organizingIdea}</p>
+            <p class="font-semibold text-slate-900 mb-1">{u.label}</p>
+            <p class="text-sm text-slate-500 leading-relaxed">{u.description}</p>
+          </div>
+          <span class="flex-shrink-0 text-sm font-semibold group-hover:underline whitespace-nowrap" style={`color: ${u.colorDark};`}>
+            View →
+          </span>
+        </div>
+      </a>
+    ))}
+  </div>
+
+</BaseLayout>

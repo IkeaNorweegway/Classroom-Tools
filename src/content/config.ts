@@ -48,6 +48,17 @@ const social9Units = defineCollection({
   }),
 });
 
+const social8Units = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    organizingIdea: z.string(),
+    guidingQuestion: z.string(),
+    learningOutcome: z.string(),
+    order: z.number(),
+  }),
+});
+
 const lessons = defineCollection({
   type: 'content',
   schema: z.object({
@@ -93,6 +104,7 @@ export const collections = {
   'science7-units': science7Units,
   'math9-units': math9Units,
   'social9-units': social9Units,
+  'social8-units': social8Units,
   lessons,
   'teacher-units': teacherUnits,
   'teacher-lessons': teacherLessons,

@@ -1,0 +1,174 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+const base = import.meta.env.BASE_URL;
+
+export function getStaticPaths() {
+  return [
+    { params: { unit: 'ideologies' } },
+    { params: { unit: 'economic-systems' } },
+    { params: { unit: 'political-systems' } },
+    { params: { unit: 'civic-engagement' } },
+  ];
+}
+
+const { unit } = Astro.params;
+
+type MaterialFile = { label: string; badge?: string; badgeStyle?: string; doc: string };
+type Section = { heading: string; items: MaterialFile[] };
+
+interface UnitData {
+  label: string;
+  tagline: string;
+  color: string;
+  colorDark: string;
+  colorLight: string;
+  sections: Section[];
+  answerKeys: MaterialFile[];
+}
+
+const units: Record<string, UnitData> = {
+  'ideologies': {
+    label: 'Foundations and Influences of Ideologies',
+    tagline: 'Individualism vs. collectivism, the political spectrum, the four major ideologies, and totalitarian government.',
+    color: '#92400e', colorDark: '#78350f', colorLight: '#fef3c7',
+    sections: [
+      { heading: 'Notes', items: [{ label: 'Guided Notes', doc: 'soc8-ideologies-notes-v1' }] },
+      { heading: 'Practice Workbook', items: [{ label: 'Workbook', doc: 'soc8-ideologies-workbook-v1' }] },
+    ],
+    answerKeys: [
+      { label: 'Notes Answer Key', doc: 'soc8-ideologies-notes-answers-v1' },
+      { label: 'Workbook Answer Key', doc: 'soc8-ideologies-workbook-answers-v1' },
+    ],
+  },
+  'economic-systems': {
+    label: 'Economic Systems',
+    tagline: 'Traditional, command, market, and mixed economies, how economies are measured, and government surplus, deficit, and debt.',
+    color: '#1d4ed8', colorDark: '#1e40af', colorLight: '#dbeafe',
+    sections: [
+      { heading: 'Notes', items: [{ label: 'Guided Notes', doc: 'soc8-economic-systems-notes-v1' }] },
+      { heading: 'Practice Workbook', items: [{ label: 'Workbook', doc: 'soc8-economic-systems-workbook-v1' }] },
+    ],
+    answerKeys: [
+      { label: 'Notes Answer Key', doc: 'soc8-economic-systems-notes-answers-v1' },
+      { label: 'Workbook Answer Key', doc: 'soc8-economic-systems-workbook-answers-v1' },
+    ],
+  },
+  'political-systems': {
+    label: 'Political Systems',
+    tagline: "Types of political systems, Canada's parliamentary democracy vs. the American presidential system, and political parties.",
+    color: '#4338ca', colorDark: '#3730a3', colorLight: '#e0e7ff',
+    sections: [
+      { heading: 'Notes', items: [{ label: 'Guided Notes', doc: 'soc8-political-systems-notes-v1' }] },
+      { heading: 'Practice Workbook', items: [{ label: 'Workbook', doc: 'soc8-political-systems-workbook-v1' }] },
+    ],
+    answerKeys: [
+      { label: 'Notes Answer Key', doc: 'soc8-political-systems-notes-answers-v1' },
+      { label: 'Workbook Answer Key', doc: 'soc8-political-systems-workbook-answers-v1' },
+    ],
+  },
+  'civic-engagement': {
+    label: 'Civic Engagement',
+    tagline: 'Voting, volunteering, advocacy, and how global issues connect to daily life in Canada.',
+    color: '#0f766e', colorDark: '#115e59', colorLight: '#ccfbf1',
+    sections: [
+      { heading: 'Notes', items: [{ label: 'Guided Notes', doc: 'soc8-civic-engagement-notes-v1' }] },
+      { heading: 'Practice Workbook', items: [{ label: 'Workbook', doc: 'soc8-civic-engagement-workbook-v1' }] },
+    ],
+    answerKeys: [
+      { label: 'Notes Answer Key', doc: 'soc8-civic-engagement-notes-answers-v1' },
+      { label: 'Workbook Answer Key', doc: 'soc8-civic-engagement-workbook-answers-v1' },
+    ],
+  },
+};
+
+const data = units[unit];
+const borderStyle = `border-left-color: ${data.color};`;
+
+const unitEntry = await getEntry('social8-units', unit!);
+const { Content } = unitEntry ? await unitEntry.render() : { Content: null };
+---
+
+<BaseLayout title={`${data.label} — Materials`} course="social8">
+
+  <!-- Back link -->
+  <a href={`${base}social8`} class="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-slate-600 mb-8 transition-colors">
+    ← Social Studies 8
+  </a>
+
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center gap-2 mb-1">
+      <p class="text-xs font-bold uppercase tracking-widest" style={`color: ${data.colorDark};`}>
+        Social Studies 8{unitEntry ? ` · ${unitEntry.data.organizingIdea}` : ''}
+      </p>
+    </div>
+    <h1 class="text-4xl font-bold text-slate-900 mb-3">{data.label}</h1>
+    <p class="text-slate-500 text-lg max-w-xl italic">{unitEntry ? unitEntry.data.guidingQuestion : data.tagline}</p>
+  </div>
+
+  {unitEntry && (
+    <>
+      <!-- Learning outcome -->
+      <div class="bg-white rounded-xl border border-slate-200 p-4 mb-6">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Learning Outcome</p>
+        <p class="text-slate-700">{unitEntry.data.learningOutcome}</p>
+      </div>
+
+      <!-- Unit description -->
+      <div class="prose prose-slate max-w-none mb-10">
+        <Content />
+      </div>
+    </>
+  )}
+
+  <!-- Material sections -->
+  {data.sections.map(section => (
+    <section class="mb-10">
+      <h2 class="text-xs font-bold uppercase tracking-widest mb-3" style={`color: ${data.colorDark};`}>{section.heading}</h2>
+      <div class="space-y-2">
+        {section.items.map(item => (
+          <div class="bg-white rounded-xl border border-slate-200 border-l-4 px-5 py-4 flex items-center justify-between gap-4" style={borderStyle}>
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="text-sm font-medium text-slate-800">{item.label}</span>
+              {item.badge && (
+                <span class={`text-xs font-semibold px-2 py-0.5 rounded-full ${item.badgeStyle}`}>{item.badge}</span>
+              )}
+            </div>
+            <a
+              href={`${base}social8/view/${unit}/${item.doc}`}
+              class="flex-shrink-0 text-sm font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-400 px-4 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+            >
+              Open
+            </a>
+          </div>
+        ))}
+      </div>
+    </section>
+  ))}
+
+  <!-- Answer keys — hidden by default -->
+  <details class="group mt-2">
+    <summary class="cursor-pointer list-none flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors select-none mb-3">
+      <span class="inline-block transition-transform group-open:rotate-90">▶</span>
+      Show answer keys
+    </summary>
+    <div class="space-y-2 mt-1">
+      {data.answerKeys.map(item => (
+        <div class="bg-slate-50 rounded-xl border border-slate-200 px-5 py-4 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="text-sm font-medium text-slate-600">{item.label}</span>
+            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600 tracking-wide">Answer Key</span>
+          </div>
+          <a
+            href={`${base}social8/view/${unit}/${item.doc}`}
+            class="flex-shrink-0 text-sm font-semibold text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-400 px-4 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+          >
+            Open
+          </a>
+        </div>
+      ))}
+    </div>
+  </details>
+
+</BaseLayout>

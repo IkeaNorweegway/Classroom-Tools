@@ -1,6 +1,6 @@
 ---
 interface Props {
-  course?: 'science' | 'math9' | 'science7' | 'social9' | 'steam';
+  course?: 'science' | 'math9' | 'science7' | 'social9' | 'social8' | 'steam';
   teacherMode?: boolean;
 }
 const { course, teacherMode = false } = Astro.props;
@@ -44,6 +44,13 @@ const social9Units = [
   { slug: 'modern-economy',                   label: 'Economy' },
   { slug: 'system-of-government',             label: 'Government' },
   { slug: 'evolving-citizenship',             label: 'Citizenship' },
+];
+
+const social8Units = [
+  { slug: 'ideologies',        label: 'Ideologies' },
+  { slug: 'economic-systems',  label: 'Economy' },
+  { slug: 'political-systems', label: 'Politics' },
+  { slug: 'civic-engagement',  label: 'Citizenship' },
 ];
 
 const steamGrades = [
@@ -118,6 +125,17 @@ const hoverBase = teacherMode ? 'hover:bg-slate-700 hover:text-white' : 'hover:b
           Social 9
         </a>
         <a
+          href={`${base}social8`}
+          class={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors
+            ${course === 'social8'
+              ? 'text-white'
+              : `${textBase} ${hoverBase}`
+            }`}
+          style={course === 'social8' ? 'background-color: #4338ca;' : ''}
+        >
+          Social 8
+        </a>
+        <a
           href={`${base}steam`}
           class={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors
             ${course === 'steam'
@@ -133,8 +151,8 @@ const hoverBase = teacherMode ? 'hover:bg-slate-700 hover:text-white' : 'hover:b
       <!-- Right: Teacher toggle -->
       <a
         href={teacherMode
-          ? (course === 'math9' ? `${base}math9` : course === 'science7' ? `${base}science7` : course === 'social9' ? `${base}social9` : course === 'steam' ? `${base}steam` : `${base}materials`)
-          : (course === 'math9' ? `${base}math9/teacher` : course === 'science7' ? `${base}science7/teacher` : course === 'social9' ? `${base}social9/teacher` : course === 'steam' ? `${base}steam` : `${base}teacher`)}
+          ? (course === 'math9' ? `${base}math9` : course === 'science7' ? `${base}science7` : course === 'social9' ? `${base}social9` : course === 'social8' ? `${base}social8` : course === 'steam' ? `${base}steam` : `${base}materials`)
+          : (course === 'math9' ? `${base}math9/teacher` : course === 'science7' ? `${base}science7/teacher` : course === 'social9' ? `${base}social9/teacher` : course === 'social8' ? `${base}social8/teacher` : course === 'steam' ? `${base}steam` : `${base}teacher`)}
         class={`text-xs px-3 py-1.5 rounded-md font-medium border transition-colors
           ${teacherMode
             ? 'border-teacher-500 text-teacher-400 hover:bg-teacher-700 hover:text-white'
@@ -262,6 +280,35 @@ const hoverBase = teacherMode ? 'hover:bg-slate-700 hover:text-white' : 'hover:b
               : 'text-slate-600 hover:bg-slate-100'
             }`}
           style={currentPath.endsWith('/social9') || currentPath.endsWith('/social9/') ? 'background-color: #b91c1c;' : ''}
+        >
+          All Units
+        </a>
+      </div>
+    )}
+
+    {course === 'social8' && (
+      <div class="flex gap-1 pb-2 overflow-x-auto">
+        {social8Units.map(u => (
+          <a
+            href={`${base}social8/materials/${u.slug}`}
+            class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
+              ${currentPath.includes(u.slug)
+                ? 'text-white'
+                : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            style={currentPath.includes(u.slug) ? 'background-color: #4338ca;' : ''}
+          >
+            {u.label}
+          </a>
+        ))}
+        <a
+          href={`${base}social8`}
+          class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
+            ${currentPath.endsWith('/social8') || currentPath.endsWith('/social8/')
+              ? 'text-white'
+              : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          style={currentPath.endsWith('/social8') || currentPath.endsWith('/social8/') ? 'background-color: #4338ca;' : ''}
         >
           All Units
         </a>
