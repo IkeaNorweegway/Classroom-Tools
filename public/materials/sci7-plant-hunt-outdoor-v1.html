@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plant Hunt — Outdoor Activity | Grade 7 Science</title>
+<style>
+/* ─────────────────────────────────────────
+   PLANT HUNT — OUTDOOR SKETCH ACTIVITY
+   Grade 7 Science | Plants for Food and Fibre
+   LO 7-2-02 (root/shoot systems, vascular tissue) · LO 7-2-03 (photosynthesis)
+   Students find a tree, a bush, and a grass; sketch each; label the systems;
+   mark where photosynthesis happens and what goes in / comes out.
+   Built on: public/materials/sci7-*-organizer-ipp-v1.html (visual system)
+             notes-packages/_svg-classes.md (dg-* system)
+   ───────────────────────────────────────── */
+
+:root {
+  --accent: #15803d;
+  --accent-light: #f0fdf4;
+  --accent-mid: #22c55e;
+  --dg-stroke:    #334155;
+  --dg-fill:      #f8fafc;
+  --dg-accent:    var(--accent);
+  --dg-secondary: #64748b;
+  --dg-muted:     #94a3b8;
+  --dg-sw:        1.5px;
+  --dg-sw-bold:   2.5px;
+  --dg-sw-thin:   1.0px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f8fafc;
+  color: #1e293b;
+  line-height: 1.6;
+}
+
+.page {
+  max-width: 8.5in; margin: 24px auto; background: #fff;
+  padding: 0.45in 0.5in; box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+}
+
+.er-header { border-bottom: 4px solid var(--accent); padding-bottom: 12px; margin-bottom: 16px; }
+.er-header .unit-label {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 4px;
+}
+.er-header h1 { font-size: 1.55rem; font-weight: 800; color: #0f172a; line-height: 1.2; margin-bottom: 8px; }
+.student-line { font-size: 0.9rem; color: #64748b; }
+.uline {
+  display: inline-block; width: 190px; border-bottom: 1.5px solid #94a3b8; vertical-align: bottom; margin-left: 6px;
+}
+
+.i-can {
+  background: var(--accent-light); border-left: 4px solid var(--accent);
+  padding: 10px 14px; font-weight: 700; color: #14532d; margin-bottom: 16px; border-radius: 0 6px 6px 0;
+}
+
+.h2 { font-size: 1.08rem; font-weight: 800; color: #0f172a; margin: 18px 0 8px; }
+.h2 .step {
+  display: inline-block; background: var(--accent); color: #fff; border-radius: 999px;
+  font-size: 0.75rem; padding: 1px 9px; margin-right: 6px; vertical-align: 2px;
+}
+
+/* Field rules */
+.field-rules {
+  border: 1.5px dashed var(--dg-muted); border-radius: 8px; padding: 10px 14px 10px 14px;
+  font-size: 0.9rem; color: #334155;
+}
+.field-rules ul { margin-left: 1.2rem; }
+.field-rules li { margin: 2px 0; }
+.field-rules strong { color: #0f172a; }
+
+/* Photosynthesis note */
+.note {
+  background: #fefce8; border-left: 4px solid #ca8a04; border-radius: 0 6px 6px 0;
+  padding: 10px 14px; font-size: 0.95rem; line-height: 1.65;
+}
+.note .callout-h { color: #a16207; }
+
+.diagram-frame { border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 8px; background: #fff; margin-top: 10px; }
+.diagram-frame svg { display: block; width: 100%; height: auto; }
+
+.equation {
+  text-align: center; font-weight: 700; font-size: 0.98rem; color: #0f172a;
+  margin-top: 8px; padding: 8px; background: #f1f5f9; border-radius: 6px;
+}
+.equation .arrow { color: #64748b; padding: 0 6px; }
+
+/* SVG classes */
+svg .dg-line        { stroke: var(--dg-stroke);    fill: none; stroke-width: var(--dg-sw); }
+svg .dg-dashed      { stroke: #92702f; fill: none; stroke-width: 2px; stroke-dasharray: 5 4; stroke-linecap: round; }
+svg .dg-label       { font: 600 13px/1.3 'Segoe UI', Arial, sans-serif; fill: var(--dg-stroke); }
+svg .dg-label-lg    { font: 700 15px/1.3 'Segoe UI', Arial, sans-serif; fill: #0f172a; }
+svg .dg-label-sm    { font: 12px/1.3 'Segoe UI', Arial, sans-serif; fill: var(--dg-secondary); }
+svg .dg-label-accent{ font: 700 13px/1.3 'Segoe UI', Arial, sans-serif; fill: var(--accent); letter-spacing: 0.06em; }
+svg .soil           { fill: #f3ead8; stroke: none; }
+svg .leaf-fill      { fill: #86efac; stroke: #15803d; stroke-width: 1.5px; }
+svg .leaf-big       { fill: #dcfce7; stroke: #15803d; stroke-width: 2.5px; }
+svg .vein           { stroke: #15803d; fill: none; stroke-width: 1.2px; }
+svg .chloro         { fill: #22c55e; stroke: #15803d; stroke-width: 1px; }
+svg .sun            { fill: #facc15; stroke: #ca8a04; stroke-width: 1.5px; }
+svg .ray            { stroke: #ca8a04; stroke-width: 2px; stroke-linecap: round; }
+svg .drop           { fill: #bae6fd; stroke: #0284c7; stroke-width: 1.8px; }
+svg .cloud          { fill: #e2e8f0; stroke: #64748b; stroke-width: 1.5px; }
+svg .sugar          { fill: #fde68a; stroke: #b45309; stroke-width: 1.8px; }
+svg .bubble         { fill: #fff; stroke: #0ea5e9; stroke-width: 1.8px; }
+svg .in-arrow       { stroke: #0284c7; stroke-width: 2.5px; fill: none; }
+svg .out-arrow      { stroke: #b45309; stroke-width: 2.5px; fill: none; }
+svg .light-arrow    { stroke: #ca8a04; stroke-width: 2px; fill: none; stroke-dasharray: 6 4; }
+svg .gas-arrow      { stroke: #64748b; stroke-width: 2px; fill: none; }
+svg .water-arrow    { stroke: #0284c7; stroke-width: 2.5px; fill: none; }
+svg .stalk          { stroke: #16a34a; stroke-width: 3px; fill: none; stroke-linecap: round; }
+svg .flower         { fill: #fde047; stroke: #ca8a04; stroke-width: 1.5px; }
+svg .t-blue  { font: 600 12px/1.3 'Segoe UI', Arial, sans-serif; fill: #0284c7; }
+svg .t-gold  { font: 600 12px/1.3 'Segoe UI', Arial, sans-serif; fill: #a16207; }
+svg .t-grey  { font: 600 12px/1.3 'Segoe UI', Arial, sans-serif; fill: #475569; }
+
+/* Word bank */
+.word-bank {
+  background: #f1f5f9; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px 12px;
+}
+.word-bank .label {
+  display: block; font-weight: 700; color: #334155; margin-bottom: 6px;
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.wb-items { display: flex; flex-wrap: wrap; gap: 6px 8px; }
+.wb-item {
+  display: inline-block; background: #fff; border: 1.5px solid #94a3b8; border-radius: 8px;
+  padding: 3px 10px; font-size: 0.88rem; font-weight: 600; color: #1e293b; line-height: 1.35;
+}
+.wb-item.sys { border-color: var(--accent); color: #14532d; background: var(--accent-light); }
+.wb-item small { font-weight: 400; color: #64748b; }
+
+/* Model + checklist */
+.model-row { display: flex; gap: 16px; align-items: flex-start; margin-top: 10px; }
+.model-row .diagram-frame { flex: 0 0 56%; margin-top: 0; }
+.checklist { flex: 1; font-size: 0.9rem; }
+.checklist ol { margin-left: 1.3rem; }
+.checklist li { margin-bottom: 7px; }
+.checklist li strong { color: #0f172a; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.82rem; color: #334155; margin-top: 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend svg { width: 22px; height: 14px; flex: none; }
+
+/* Plant pages */
+.plant-head {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--accent); color: #fff; border-radius: 8px; padding: 6px 14px; margin-bottom: 10px;
+}
+.plant-head svg { width: 38px; height: 38px; flex: none; }
+.plant-head h2 { font-size: 1.25rem; font-weight: 800; line-height: 1.2; }
+.plant-head .sub { font-size: 0.82rem; opacity: 0.9; }
+
+.info-row { display: flex; gap: 20px; font-size: 0.9rem; color: #334155; margin-bottom: 8px; }
+.info-row > div { flex: 1; display: flex; align-items: baseline; gap: 6px; }
+.info-row .bl { flex: 1; border-bottom: 1.5px solid #94a3b8; min-height: 1.1rem; }
+
+.ticks { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.82rem; color: #334155; margin-bottom: 8px; }
+.ticks span::before {
+  content: ""; display: inline-block; width: 11px; height: 11px; border: 1.5px solid #475569;
+  border-radius: 2px; margin-right: 5px; vertical-align: -1px;
+}
+
+.draw-box {
+  position: relative; height: 5.1in; border: 2px solid #334155; border-radius: 8px;
+  background: #fff; margin-bottom: 10px; overflow: hidden;
+}
+.draw-box .ground {
+  position: absolute; left: 0; right: 0; top: 64%; border-top: 2px dashed #b8a27a;
+}
+.draw-box .below {
+  position: absolute; left: 0; right: 0; top: 64%; bottom: 0; background: #faf6ee;
+}
+.draw-box .tag {
+  position: absolute; left: 10px; font-size: 0.72rem; font-weight: 600; color: #94a3b8;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.draw-box .tag.up { top: calc(64% - 22px); }
+.draw-box .tag.down { top: calc(64% + 6px); color: #a8906a; }
+
+.q { font-size: 0.92rem; margin-top: 10px; }
+.q .qn { font-weight: 800; color: var(--accent); margin-right: 4px; }
+.lines { margin-top: 4px; }
+.lines div { border-bottom: 1.5px solid #cbd5e1; height: 1.75rem; }
+
+/* Compare page */
+.compare { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 6px; }
+.compare th, .compare td { border: 1.5px solid #cbd5e1; padding: 8px 10px; text-align: left; vertical-align: top; }
+.compare th { background: #f1f5f9; font-weight: 700; font-size: 0.85rem; }
+.compare td { height: 1.05in; }
+.compare td:first-child { font-weight: 700; width: 14%; background: var(--accent-light); color: #14532d; }
+
+.er-watchout {
+  background: #fff7ed; border-left: 4px solid #f97316; border-radius: 0 6px 6px 0;
+  padding: 10px 14px; font-size: 0.92rem; margin-top: 16px;
+}
+.callout-h { font-weight: 700; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+.er-watchout .callout-h { color: #c2410c; }
+
+.reflect-line { margin-top: 16px; padding-top: 12px; border-top: 1.5px solid #e2e8f0; font-size: 0.92rem; display: flex; gap: 8px; }
+.reflect-line .bl { flex: 1; border-bottom: 1.5px solid #94a3b8; }
+
+.keep-together { break-inside: avoid; page-break-inside: avoid; }
+
+@media (max-width: 700px) {
+  .page { padding: 20px 16px; margin: 0; }
+  .model-row, .info-row { flex-direction: column; }
+  .model-row .diagram-frame { flex: none; width: 100%; }
+  .draw-box { height: 420px; }
+}
+
+@page { size: letter; margin: 0.4in; }
+@media print {
+  body { background: #fff; }
+  .page { margin: 0; padding: 0; max-width: none; box-shadow: none; break-after: page; page-break-after: always; }
+  .page:last-child { break-after: auto; page-break-after: auto; }
+  .diagram-frame, .word-bank, .model-row, .draw-box, .compare, .q, .field-rules, .note { break-inside: avoid; page-break-inside: avoid; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<!-- Shared symbols: the "photosynthesis mark" students copy onto their sketches -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="psun" viewBox="-12 -12 24 24">
+      <g class="ray" style="stroke:#ca8a04;stroke-width:2;stroke-linecap:round">
+        <line x1="0" y1="-11" x2="0" y2="-7"/><line x1="0" y1="7" x2="0" y2="11"/>
+        <line x1="-11" y1="0" x2="-7" y2="0"/><line x1="7" y1="0" x2="11" y2="0"/>
+        <line x1="-7.8" y1="-7.8" x2="-5" y2="-5"/><line x1="5" y1="5" x2="7.8" y2="7.8"/>
+        <line x1="-7.8" y1="7.8" x2="-5" y2="5"/><line x1="5" y1="-5" x2="7.8" y2="-7.8"/>
+      </g>
+      <circle r="5" style="fill:#facc15;stroke:#ca8a04;stroke-width:1.5"/>
+    </symbol>
+    <marker id="ah-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#0284c7"/></marker>
+    <marker id="ah-brown" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#b45309"/></marker>
+    <marker id="ah-gold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#ca8a04"/></marker>
+    <marker id="ah-grey" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#64748b"/></marker>
+  </defs>
+</svg>
+
+<!-- ═══════════════ PAGE 1 — BRIEFING ═══════════════ -->
+<section class="page">
+  <div class="er-header">
+    <div class="unit-label">Grade 7 Science · Plants for Food and Fibre · Outdoor Activity</div>
+    <h1>Plant Hunt: Three Plants, Two Systems, One Food Factory</h1>
+    <div class="student-line">Name:<span class="uline"></span> &nbsp; Date:<span class="uline" style="width:110px;"></span></div>
+  </div>
+
+  <div class="i-can">I can find the root system and shoot system of three different plants, and show where and how photosynthesis happens in each one.</div>
+
+  <div class="field-rules">
+    <strong>Your mission:</strong> find and sketch <strong>1 tree</strong>, <strong>1 bush</strong> (shrub), and <strong>1 patch of grass</strong>.
+    <ul>
+      <li>Stay inside the boundary your teacher sets.</li>
+      <li><strong>Look, don't pick.</strong> Don't pull up, break, or eat any plant. If you're not sure a plant is safe to touch, don't touch it.</li>
+      <li>Roots are underground, so <strong>don't dig</strong>. Draw the roots you <em>predict</em> are there using <strong>dashed lines</strong>.</li>
+      <li>Bring a clipboard and a pencil. A green pencil crayon helps with the photosynthesis step.</li>
+    </ul>
+  </div>
+
+  <h2 class="h2"><span class="step">Read</span>Photosynthesis in a Nutshell</h2>
+  <div class="note">
+    <strong>Photosynthesis</strong> is how a plant makes its own food. In the <strong>green parts</strong> of a plant (mostly the leaves), tiny <strong>chloroplasts</strong> use green <strong>chlorophyll</strong> to capture <strong>light energy</strong>. The plant uses that energy to turn <strong>water</strong> (pulled up from the roots through the xylem) and <strong>carbon dioxide</strong> (taken in from the air) into <strong>glucose</strong>, a sugar that feeds the whole plant. <strong>Oxygen</strong> is released into the air as a by-product.
+  </div>
+
+  <div class="diagram-frame keep-together">
+    <svg viewBox="0 0 760 270" role="img" aria-label="Icon flowchart of photosynthesis. Three inputs on the left, light energy from the sun, water from the roots through the xylem, and carbon dioxide from the air, point into a green leaf labelled chloroplasts. Two outputs on the right leave the leaf: glucose sugar, which travels through the phloem as food, and oxygen, released into the air.">
+      <!-- INPUTS -->
+      <text x="20" y="18" class="dg-label-sm" style="font-weight:700;letter-spacing:0.08em">WHAT GOES IN</text>
+
+      <!-- sun -->
+      <g transform="translate(48,58)">
+        <g class="ray">
+          <line x1="0" y1="-26" x2="0" y2="-19"/><line x1="0" y1="19" x2="0" y2="26"/>
+          <line x1="-26" y1="0" x2="-19" y2="0"/><line x1="19" y1="0" x2="26" y2="0"/>
+          <line x1="-18" y1="-18" x2="-13" y2="-13"/><line x1="13" y1="13" x2="18" y2="18"/>
+          <line x1="-18" y1="18" x2="-13" y2="13"/><line x1="13" y1="-13" x2="18" y2="-18"/>
+        </g>
+        <circle r="14" class="sun"/>
+      </g>
+      <text x="84" y="54" class="dg-label-lg">Light energy</text>
+      <text x="84" y="72" class="dg-label-sm">from the sun</text>
+
+      <!-- water drop -->
+      <path d="M48,116 C48,116 33,136 33,146 A15,15 0 0 0 63,146 C63,136 48,116 48,116 Z" class="drop"/>
+      <text x="84" y="138" class="dg-label-lg">Water</text>
+      <text x="84" y="156" class="dg-label-sm">roots → up the xylem</text>
+
+      <!-- CO2 cloud -->
+      <g transform="translate(48,222)">
+        <path d="M-24,8 A10,10 0 0 1 -18,-8 A12,12 0 0 1 2,-14 A11,11 0 0 1 20,-6 A9,9 0 0 1 24,8 Z" class="cloud"/>
+        <text x="0" y="5" text-anchor="middle" style="font:700 11px 'Segoe UI',Arial,sans-serif;fill:#334155">CO₂</text>
+      </g>
+      <text x="84" y="220" class="dg-label-lg">Carbon dioxide</text>
+      <text x="84" y="238" class="dg-label-sm">from the air, into the leaf</text>
+
+      <!-- input arrows -->
+      <path d="M218,62 C250,62 272,95 296,118" class="in-arrow" marker-end="url(#ah-blue)"/>
+      <path d="M218,145 L294,145" class="in-arrow" marker-end="url(#ah-blue)"/>
+      <path d="M232,226 C258,226 274,195 296,172" class="in-arrow" marker-end="url(#ah-blue)"/>
+
+      <!-- LEAF (the factory) -->
+      <text x="390" y="52" text-anchor="middle" class="dg-label-accent">PHOTOSYNTHESIS</text>
+      <text x="390" y="68" text-anchor="middle" class="dg-label-sm">happens in the leaf</text>
+      <path d="M302,145 C335,82 440,78 478,145 C440,208 335,208 302,145 Z" class="leaf-big"/>
+      <path d="M302,145 L478,145" class="vein"/>
+      <path d="M350,145 L372,118 M400,145 L422,118 M350,145 L372,172 M400,145 L422,172" class="vein"/>
+      <ellipse cx="344" cy="126" rx="8" ry="5" class="chloro"/>
+      <ellipse cx="438" cy="128" rx="8" ry="5" class="chloro"/>
+      <ellipse cx="366" cy="166" rx="8" ry="5" class="chloro"/>
+      <ellipse cx="420" cy="165" rx="8" ry="5" class="chloro"/>
+      <text x="390" y="226" text-anchor="middle" class="dg-label">green dots = chloroplasts</text>
+      <text x="390" y="243" text-anchor="middle" class="dg-label-sm">(chlorophyll captures the light)</text>
+
+      <!-- output arrows -->
+      <path d="M476,124 C500,100 516,80 540,76" class="out-arrow" marker-end="url(#ah-brown)"/>
+      <path d="M476,166 C500,190 516,208 540,212" class="out-arrow" marker-end="url(#ah-brown)"/>
+
+      <!-- OUTPUTS -->
+      <text x="560" y="18" class="dg-label-sm" style="font-weight:700;letter-spacing:0.08em">WHAT COMES OUT</text>
+      <!-- glucose: sugar ring -->
+      <polygon points="572,62 586,54 600,62 600,78 586,86 572,78" class="sugar"/>
+      <text x="586" y="74" text-anchor="middle" style="font:700 8px 'Segoe UI',Arial,sans-serif;fill:#92400e">sugar</text>
+      <text x="612" y="68" class="dg-label-lg">Glucose</text>
+      <text x="612" y="86" class="dg-label-sm">food, sent round</text>
+      <text x="612" y="101" class="dg-label-sm">the plant by phloem</text>
+
+      <!-- oxygen bubbles -->
+      <circle cx="584" cy="212" r="15" class="bubble"/>
+      <text x="584" y="217" text-anchor="middle" style="font:700 11px 'Segoe UI',Arial,sans-serif;fill:#0369a1">O₂</text>
+      <circle cx="600" cy="190" r="5" class="bubble"/>
+      <circle cx="570" cy="192" r="3.5" class="bubble"/>
+      <text x="612" y="210" class="dg-label-lg">Oxygen</text>
+      <text x="612" y="228" class="dg-label-sm">released into the air</text>
+    </svg>
+  </div>
+  <div class="equation">light energy + water + carbon dioxide <span class="arrow">→</span> glucose + oxygen</div>
+</section>
+
+<!-- ═══════════════ PAGE 2 — HOW TO SKETCH (MODEL) ═══════════════ -->
+<section class="page">
+  <h2 class="h2" style="margin-top:0"><span class="step">Model</span>What Every Sketch Needs to Show</h2>
+  <p style="font-size:0.92rem;margin-bottom:8px">This map shows the parts and labels every plant sketch needs. Your drawings will look like the real plant. They don't need to be art. They need to be <strong>clear and labelled</strong>.</p>
+
+  <div class="word-bank keep-together">
+    <span class="label">Word bank: plant systems and parts</span>
+    <div class="wb-items">
+      <span class="wb-item sys">root system</span>
+      <span class="wb-item sys">shoot system</span>
+      <span class="wb-item">roots</span>
+      <span class="wb-item">stem <small>(a tree's stem = trunk)</small></span>
+      <span class="wb-item">branches</span>
+      <span class="wb-item">leaves <small>(needles and grass blades are leaves)</small></span>
+      <span class="wb-item">flower</span>
+      <span class="wb-item">seeds / fruit / cones</span>
+      <span class="wb-item">xylem <small>(water up)</small></span>
+      <span class="wb-item">phloem <small>(food around)</small></span>
+    </div>
+  </div>
+
+  <div class="model-row">
+    <div class="diagram-frame">
+      <svg viewBox="0 0 520 350" role="img" aria-label="Plant map built from icon cards. Above the ground line, the shoot system: a flower card, a green leaves card with a sun mark showing photosynthesis, and a stem card. Below the ground line, the root system: a dashed roots card, marked as predicted. Arrows show light going into the leaves, carbon dioxide going in, oxygen coming out, and water moving up from the roots.">
+        <!-- ground -->
+        <rect x="20" y="262" width="400" height="80" style="fill:#f3ead8"/>
+        <line x1="20" y1="262" x2="420" y2="262" style="stroke:#b8a27a;stroke-width:2.5"/>
+        <text x="26" y="282" style="font:13px 'Segoe UI',Arial,sans-serif;fill:#8a7550">ground line</text>
+
+        <!-- connectors -->
+        <path d="M225,74 L225,104 M225,154 L225,184 M225,234 L225,282" style="stroke:#16a34a;stroke-width:3"/>
+
+        <!-- flower card -->
+        <rect x="150" y="24" width="150" height="50" rx="10" style="fill:#fff;stroke:#cbd5e1;stroke-width:2"/>
+        <circle cx="178" cy="49" r="13" style="fill:#fde047;stroke:#ca8a04;stroke-width:1.5"/>
+        <circle cx="178" cy="49" r="5" style="fill:#facc15;stroke:#ca8a04"/>
+        <text x="202" y="55" style="font:700 16px 'Segoe UI',Arial,sans-serif;fill:#0f172a">flower</text>
+
+        <!-- leaves card (shaded green = photosynthesis) -->
+        <rect x="150" y="104" width="150" height="50" rx="10" style="fill:#bbf7d0;stroke:#15803d;stroke-width:2.5"/>
+        <path d="M164,136 C170,120 186,116 194,120 C190,134 176,140 164,136 Z" style="fill:#4ade80;stroke:#15803d;stroke-width:1.5"/>
+        <path d="M164,136 L186,124" style="stroke:#15803d;stroke-width:1.2"/>
+        <text x="202" y="135" style="font:700 16px 'Segoe UI',Arial,sans-serif;fill:#14532d">leaves</text>
+        <use href="#psun" x="284" y="88" width="30" height="30"/>
+
+        <!-- stem card -->
+        <rect x="150" y="184" width="150" height="50" rx="10" style="fill:#fff;stroke:#cbd5e1;stroke-width:2"/>
+        <rect x="172" y="194" width="10" height="30" rx="2" style="fill:#c99a52;stroke:#92702f;stroke-width:1.5"/>
+        <text x="202" y="215" style="font:700 16px 'Segoe UI',Arial,sans-serif;fill:#0f172a">stem</text>
+
+        <!-- roots card (dashed = predicted) -->
+        <rect x="150" y="282" width="150" height="50" rx="10" style="fill:#fff;stroke:#92702f;stroke-width:2;stroke-dasharray:6 4"/>
+        <path d="M177,290 L177,324 M177,300 L166,312 M177,300 L188,312 M177,312 L169,324 M177,312 L185,324" style="stroke:#92702f;stroke-width:2;fill:none;stroke-dasharray:4 3;stroke-linecap:round"/>
+        <text x="202" y="304" style="font:700 16px 'Segoe UI',Arial,sans-serif;fill:#0f172a">roots</text>
+        <text x="202" y="322" style="font:13px 'Segoe UI',Arial,sans-serif;fill:#64748b">(predicted)</text>
+
+        <!-- light in -->
+        <g transform="translate(58,50)" style="stroke:#ca8a04;stroke-width:2.5;stroke-linecap:round">
+          <line x1="0" y1="-22" x2="0" y2="-16"/><line x1="0" y1="16" x2="0" y2="22"/>
+          <line x1="-22" y1="0" x2="-16" y2="0"/><line x1="16" y1="0" x2="22" y2="0"/>
+          <line x1="-15" y1="-15" x2="-11" y2="-11"/><line x1="11" y1="11" x2="15" y2="15"/>
+          <line x1="-15" y1="15" x2="-11" y2="11"/><line x1="11" y1="-11" x2="15" y2="-15"/>
+          <circle r="11" style="fill:#facc15;stroke-width:1.5"/>
+        </g>
+        <path d="M80,64 L144,110" style="stroke:#ca8a04;stroke-width:2.5;fill:none;stroke-dasharray:6 4" marker-end="url(#ah-gold)"/>
+        <text x="34" y="100" style="font:700 14px 'Segoe UI',Arial,sans-serif;fill:#a16207">light in</text>
+
+        <!-- water up -->
+        <path d="M128,318 L128,146" style="stroke:#0284c7;stroke-width:3;fill:none" marker-end="url(#ah-blue)"/>
+        <text x="40" y="206" style="font:700 14px 'Segoe UI',Arial,sans-serif;fill:#0284c7">water up</text>
+        <text x="48" y="224" style="font:13px 'Segoe UI',Arial,sans-serif;fill:#0284c7">(xylem)</text>
+
+        <!-- gases -->
+        <path d="M362,104 L308,120" style="stroke:#64748b;stroke-width:2.5;fill:none" marker-end="url(#ah-grey)"/>
+        <text x="366" y="108" style="font:700 14px 'Segoe UI',Arial,sans-serif;fill:#475569">CO₂ in</text>
+        <path d="M304,142 L358,156" style="stroke:#64748b;stroke-width:2.5;fill:none" marker-end="url(#ah-grey)"/>
+        <text x="366" y="162" style="font:700 14px 'Segoe UI',Arial,sans-serif;fill:#475569">O₂ out</text>
+
+        <!-- system brackets -->
+        <path d="M432,24 L442,24 L442,256 L432,256" style="stroke:#15803d;stroke-width:2.5;fill:none"/>
+        <text x="450" y="134" style="font:700 15px 'Segoe UI',Arial,sans-serif;fill:#15803d">shoot</text>
+        <text x="450" y="152" style="font:700 15px 'Segoe UI',Arial,sans-serif;fill:#15803d">system</text>
+        <path d="M432,268 L442,268 L442,338 L432,338" style="stroke:#92702f;stroke-width:2.5;fill:none"/>
+        <text x="450" y="300" style="font:700 15px 'Segoe UI',Arial,sans-serif;fill:#92702f">root</text>
+        <text x="450" y="318" style="font:700 15px 'Segoe UI',Arial,sans-serif;fill:#92702f">system</text>
+      </svg>
+    </div>
+
+    <div class="checklist">
+      <strong style="display:block;margin-bottom:6px;color:#0f172a">Every sketch needs:</strong>
+      <ol>
+        <li>A <strong>ground line</strong>. It's already printed in each drawing box.</li>
+        <li>The <strong>shoot system</strong> above the ground, drawn from what you see.</li>
+        <li>The <strong>root system</strong> below the ground, drawn as a <strong>dashed prediction</strong>.</li>
+        <li>A bracket and label for <strong>both systems</strong>.</li>
+        <li>At least <strong>4 parts</strong> labelled from the word bank.</li>
+        <li><strong>Shade green</strong> every part that does photosynthesis and add the sun mark
+          <svg width="18" height="18" style="vertical-align:-4px" aria-hidden="true"><use href="#psun" width="18" height="18"/></svg>.</li>
+        <li>Photosynthesis <strong>arrows</strong>: light in, CO₂ in, O₂ out, and water up from the roots.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="legend" aria-label="Arrow key">
+    <span><svg viewBox="0 0 22 14"><line x1="1" y1="7" x2="20" y2="7" style="stroke:#ca8a04;stroke-width:2;stroke-dasharray:4 3"/></svg>light</span>
+    <span><svg viewBox="0 0 22 14"><line x1="1" y1="7" x2="20" y2="7" style="stroke:#64748b;stroke-width:2"/></svg>gases (CO₂ in, O₂ out)</span>
+    <span><svg viewBox="0 0 22 14"><line x1="1" y1="7" x2="20" y2="7" style="stroke:#0284c7;stroke-width:2.5"/></svg>water</span>
+    <span><svg viewBox="0 0 22 14"><line x1="1" y1="7" x2="20" y2="7" style="stroke:#92702f;stroke-width:2;stroke-dasharray:4 3"/></svg>predicted roots</span>
+    <span><svg viewBox="-12 -12 24 24" style="width:16px;height:16px"><use href="#psun" x="-12" y="-12" width="24" height="24"/></svg>photosynthesis happens here</span>
+  </div>
+  <p style="font-size:0.85rem;color:#64748b;margin-top:8px">No coloured pencils? Use a plain pencil and write "light", "CO₂", "O₂", and "water" on your arrows.</p>
+
+  <h2 class="h2" style="margin-top:22px"><span class="step">Predict</span>Before You Go Outside</h2>
+  <div class="q" style="margin-top:0">Which of your three plants (tree, bush, or grass) do you predict has the <strong>biggest root system</strong> compared with the size of its shoot system? Explain what a root system does that makes you think so.
+    <div class="lines"><div></div><div></div><div></div></div></div>
+  <div class="reflect-line" style="border-top:none;margin-top:10px;padding-top:0">After the hunt: was your prediction right? <span class="bl"></span></div>
+</section>
+
+<!-- ═══════════════ PAGE 3 — TREE ═══════════════ -->
+<section class="page">
+  <div class="plant-head">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="17" y="22" width="6" height="15" rx="1" fill="#fff"/><circle cx="20" cy="15" r="12" fill="#fff" opacity="0.85"/></svg>
+    <div><h2>Plant 1 · A Tree</h2><div class="sub">Draw the whole tree small enough to fit, with its top near the top of the box.</div></div>
+  </div>
+  <div class="info-row">
+    <div>Kind of tree (if you know):<span class="bl"></span></div>
+    <div>Where I found it:<span class="bl"></span></div>
+  </div>
+  <div class="ticks"><span>ground line</span><span>shoot system</span><span>root system (dashed)</span><span>both systems bracketed</span><span>4+ parts labelled</span><span>green + sun mark</span><span>photosynthesis arrows</span></div>
+  <div class="draw-box"><div class="below"></div><div class="ground"></div><span class="tag up">above ground: what you see</span><span class="tag down">below ground: what you predict</span></div>
+  <div class="word-bank">
+    <div class="wb-items">
+      <span class="wb-item sys">root system</span><span class="wb-item sys">shoot system</span><span class="wb-item">roots</span><span class="wb-item">stem (trunk)</span><span class="wb-item">branches</span><span class="wb-item">leaves / needles</span><span class="wb-item">seeds / fruit / cones</span><span class="wb-item">xylem</span><span class="wb-item">phloem</span>
+    </div>
+  </div>
+  <div class="q"><span class="qn">1.</span>A tree's trunk is its stem. Look closely at the bark. Does the trunk do much photosynthesis? Explain what you <em>saw</em> that helped you decide.
+    <div class="lines"><div></div><div></div></div></div>
+  <div class="q"><span class="qn">2.</span>This tree's leaves might be 10 m or more above its roots. Explain how water gets from the roots up to the leaves, and why the leaves need it.
+    <div class="lines"><div></div><div></div></div></div>
+</section>
+
+<!-- ═══════════════ PAGE 4 — BUSH ═══════════════ -->
+<section class="page">
+  <div class="plant-head">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20,36 L20,24 M20,28 L13,20 M20,28 L27,20" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/><ellipse cx="20" cy="17" rx="16" ry="11" fill="#fff" opacity="0.85"/></svg>
+    <div><h2>Plant 2 · A Bush (Shrub)</h2><div class="sub">Look low, near the ground, at where the stems begin.</div></div>
+  </div>
+  <div class="info-row">
+    <div>Kind of bush (if you know):<span class="bl"></span></div>
+    <div>Where I found it:<span class="bl"></span></div>
+  </div>
+  <div class="ticks"><span>ground line</span><span>shoot system</span><span>root system (dashed)</span><span>both systems bracketed</span><span>4+ parts labelled</span><span>green + sun mark</span><span>photosynthesis arrows</span></div>
+  <div class="draw-box"><div class="below"></div><div class="ground"></div><span class="tag up">above ground: what you see</span><span class="tag down">below ground: what you predict</span></div>
+  <div class="word-bank">
+    <div class="wb-items">
+      <span class="wb-item sys">root system</span><span class="wb-item sys">shoot system</span><span class="wb-item">roots</span><span class="wb-item">stems</span><span class="wb-item">branches</span><span class="wb-item">leaves</span><span class="wb-item">flower</span><span class="wb-item">seeds / fruit / berries</span><span class="wb-item">xylem</span><span class="wb-item">phloem</span>
+    </div>
+  </div>
+  <div class="q"><span class="qn">1.</span>How are this bush's stems different from the tree's trunk? Name one way they are the <em>same</em> in the job they do.
+    <div class="lines"><div></div><div></div></div></div>
+  <div class="q"><span class="qn">2.</span>Find the side or part of the bush that gets the most sunlight. Are there more leaves there, or fewer? Use what photosynthesis needs to explain why.
+    <div class="lines"><div></div><div></div></div></div>
+</section>
+
+<!-- ═══════════════ PAGE 5 — GRASS ═══════════════ -->
+<section class="page">
+  <div class="plant-head">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8,36 C9,26 7,18 4,10 M15,36 C15,24 16,14 14,4 M22,36 C22,26 24,16 28,8 M30,36 C30,28 32,22 36,16" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+    <div><h2>Plant 3 · Grass</h2><div class="sub">Zoom in: draw 2 or 3 grass plants <strong>large</strong>, not the whole lawn.</div></div>
+  </div>
+  <div class="info-row">
+    <div>Kind of grass (if you know):<span class="bl"></span></div>
+    <div>Where I found it:<span class="bl"></span></div>
+  </div>
+  <div class="ticks"><span>ground line</span><span>shoot system</span><span>root system (dashed)</span><span>both systems bracketed</span><span>4+ parts labelled</span><span>green + sun mark</span><span>photosynthesis arrows</span></div>
+  <div class="draw-box"><div class="below"></div><div class="ground"></div><span class="tag up">above ground: what you see</span><span class="tag down">below ground: what you predict</span></div>
+  <div class="word-bank">
+    <div class="wb-items">
+      <span class="wb-item sys">root system</span><span class="wb-item sys">shoot system</span><span class="wb-item">roots</span><span class="wb-item">stem</span><span class="wb-item">leaves (blades)</span><span class="wb-item">seed head</span><span class="wb-item">xylem</span><span class="wb-item">phloem</span>
+    </div>
+  </div>
+  <div class="q"><span class="qn">1.</span>Grass has no trunk and no branches. Which part of the grass does the photosynthesis? How could you tell by looking?
+    <div class="lines"><div></div><div></div></div></div>
+  <div class="q"><span class="qn">2.</span>A lawnmower cuts off the top half of every grass blade. Predict what happens to how much glucose the grass can make right after mowing. Explain using the flowchart.
+    <div class="lines"><div></div><div></div></div></div>
+</section>
+
+<!-- ═══════════════ PAGE 6 — BACK INSIDE ═══════════════ -->
+<section class="page">
+  <h2 class="h2" style="margin-top:0"><span class="step">Back inside</span>Compare Your Three Plants</h2>
+  <p style="font-size:0.92rem">Use your sketches to fill in the table.</p>
+  <table class="compare">
+    <thead><tr><th></th><th>What its stem looks like</th><th>Where photosynthesis happens</th><th>The root system I predicted (deep? wide? a mat?)</th></tr></thead>
+    <tbody>
+      <tr><td>Tree</td><td></td><td></td><td></td></tr>
+      <tr><td>Bush</td><td></td><td></td><td></td></tr>
+      <tr><td>Grass</td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <div class="q" style="margin-top:16px"><span class="qn">3.</span>All three plants look very different. What is the <strong>same</strong> about where and how they make their food? Use at least two words from the flowchart.
+    <div class="lines"><div></div><div></div><div></div></div></div>
+
+  <div class="er-watchout keep-together">
+    <div class="callout-h">⚠️ Think it through</div>
+    A big tree can weigh more than a car. A classmate says: <em>"The tree got all that mass by taking food out of the soil."</em>
+  </div>
+  <div class="q"><span class="qn">4.</span>Do you agree or disagree? Use the photosynthesis flowchart to explain where a tree's food (glucose) really comes from, and what the soil <em>does</em> give it.
+    <div class="lines"><div></div><div></div><div></div><div></div></div></div>
+
+  <div class="reflect-line">One part of photosynthesis or plant systems I'm still not sure about:<span class="bl"></span></div>
+</section>
+
+</body>
+</html>
