@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lily Lab (Accessible) | Grade 7 Science</title>
+<style>
+/* ─────────────────────────────────────────
+   LILY LAB — DISSECT, PRESS, AND MOUNT (IPP / ACCESSIBLE)
+   Grade 7 Science | Plants for Food and Fibre
+   LO 7-2-04 (flower parts and their jobs in making seeds)
+   Adapted from: public/materials/sci7-lily-dissection-lab-v1.html
+   Built on: notes-packages/easy-read-context.md (EF spec)
+   Adaptations: EF sentences (5–12 words), adult read-aloud note, 70/30 support
+   strip, 4-part picture word bank (sepal, petal, stamen, pistil), 3-step
+   pull / lay / count routine, count boxes, draw-a-line matching, circle-it
+   answers (say / point / circle / write all accepted), self-rating.
+   Drops: anther/filament/stigma/style/ovary sub-parts, tepal term, ovule count,
+   archival-chemistry question. Keeps: the pollinator misconception (circle-it).
+   ───────────────────────────────────────── */
+
+:root {
+  --accent: #15803d;
+  --accent-light: #f0fdf4;
+  --petal: #fbcfe8;
+  --petal-stroke: #be185d;
+  --dg-muted: #94a3b8;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16.5px; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: #1e293b; line-height: 1.9; }
+
+.page { max-width: 8.5in; margin: 24px auto; background: #fff; padding: 0.45in 0.5in; box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08); }
+
+.er-header { border-bottom: 4px solid var(--accent); padding-bottom: 12px; margin-bottom: 18px; }
+.er-header .unit-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.er-header h1 { font-size: 1.6rem; font-weight: 800; color: #0f172a; line-height: 1.25; margin-bottom: 8px; }
+.student-line { font-size: 0.9rem; color: #64748b; }
+.uline { display: inline-block; width: 190px; border-bottom: 1.5px solid #94a3b8; vertical-align: bottom; margin-left: 6px; }
+
+.helper-note { background: #f8fafc; border: 1.5px dashed var(--dg-muted); border-radius: 8px; padding: 10px 16px; font-size: 0.88rem; color: #475569; margin-bottom: 18px; line-height: 1.6; }
+.helper-note strong { color: #0f172a; }
+
+.i-can { background: var(--accent-light); border-left: 4px solid var(--accent); padding: 10px 16px; font-weight: 700; color: #14532d; margin-bottom: 18px; border-radius: 0 6px 6px 0; }
+
+.er-h2 { font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 1.4rem 0 0.6rem; }
+.er-h2:first-child { margin-top: 0; }
+.er-h2 .step { display: inline-block; background: var(--accent); color: #fff; border-radius: 999px; font-size: 0.78rem; padding: 0 10px; margin-right: 8px; vertical-align: 2px; }
+.er-main p { max-width: 58ch; margin-bottom: 0.8rem; }
+
+.er-columns { display: flex; gap: 26px; align-items: flex-start; }
+.er-main  { flex: 0 0 68%; min-width: 0; }
+.er-aside { flex: 0 0 29%; min-width: 0; }
+
+.er-vocab, .er-watchout, .er-check, .er-remember { border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; font-size: 0.9rem; line-height: 1.6; }
+.er-vocab    { background: #eff6ff; border-left: 4px solid #3b82f6; }
+.er-watchout { background: #fff7ed; border-left: 4px solid #f97316; }
+.er-check    { background: #faf5ff; border-left: 4px solid #a855f7; }
+.er-remember { background: #f0fdf4; border-left: 4px solid #22c55e; }
+.callout-h { font-weight: 700; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+.er-vocab .callout-h    { color: #1d4ed8; }
+.er-watchout .callout-h { color: #c2410c; }
+.er-check .callout-h    { color: #7e22ce; }
+.er-remember .callout-h { color: #15803d; }
+
+.rules { list-style: none; }
+.rules li { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font-size: 1rem; }
+.rules .ic { flex: none; width: 38px; height: 38px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+
+.diagram-frame { border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 8px; background: #fff; }
+.diagram-frame svg { display: block; width: 100%; height: auto; }
+svg .lbl    { font: 800 17px 'Segoe UI', Arial, sans-serif; fill: #0f172a; }
+svg .lbl-sm { font: 14px 'Segoe UI', Arial, sans-serif; fill: #475569; }
+svg .lead   { stroke: #475569; stroke-width: 1.5px; fill: none; }
+svg .tepal  { fill: var(--petal); stroke: var(--petal-stroke); stroke-width: 2.5px; }
+svg .tepal-back { fill: #fdf2f8; stroke: #f472b6; stroke-width: 1.5px; }
+svg .filament { stroke: #65a30d; stroke-width: 3px; fill: none; stroke-linecap: round; }
+svg .anther { fill: #ea580c; stroke: #9a3412; stroke-width: 1.2px; }
+svg .style  { stroke: #65a30d; stroke-width: 5px; fill: none; stroke-linecap: round; }
+svg .stigma { fill: #bef264; stroke: #4d7c0f; stroke-width: 1.5px; }
+svg .ovary  { fill: #86efac; stroke: #15803d; stroke-width: 2px; }
+svg .stem   { stroke: #16a34a; stroke-width: 7px; fill: none; stroke-linecap: round; }
+
+/* Word bank with pictures */
+.word-bank { background: #f1f5f9; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; }
+.word-bank .label { display: block; font-weight: 700; color: #334155; margin-bottom: 4px; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.wb-items { display: flex; flex-wrap: wrap; gap: 8px 10px; }
+.wb-item { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 2px solid #94a3b8; border-radius: 8px; padding: 3px 12px; font-size: 1rem; font-weight: 700; color: #1e293b; line-height: 1.4; }
+.wb-item svg { width: 24px; height: 24px; flex: none; }
+
+/* Three steps */
+.steps { display: flex; gap: 10px; margin-bottom: 12px; }
+.steps > div { flex: 1; border: 2px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; font-size: 0.95rem; line-height: 1.4; display: flex; align-items: center; gap: 8px; }
+.steps .num { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+
+/* Sorting mat with count boxes */
+.mat { display: flex; gap: 10px; }
+.mat > div { flex: 1; border: 2px dashed #94a3b8; border-radius: 10px; padding: 8px 6px; text-align: center; background: #fafafa; }
+.mat .name { font-weight: 800; font-size: 1.05rem; color: #0f172a; }
+.mat svg { width: 100%; height: 130px; display: block; margin: 4px 0; }
+.mat .count { font-size: 0.95rem; font-weight: 600; }
+.mat .count span { display: inline-block; width: 38px; height: 34px; border: 2px solid #334155; border-radius: 6px; vertical-align: middle; margin-left: 6px; background: #fff; }
+
+/* Circle-it */
+.circle-q { margin-top: 12px; font-size: 1rem; font-weight: 600; }
+.circle-q .hint { font-weight: 400; font-size: 0.85rem; color: #64748b; }
+.options { display: flex; gap: 14px; margin-top: 6px; flex-wrap: wrap; }
+.options span { border: 2px solid #475569; border-radius: 999px; padding: 2px 20px; font-weight: 700; font-size: 1.02rem; }
+.say-line { display: flex; gap: 8px; margin-top: 10px; font-size: 0.95rem; }
+.say-line .bl { flex: 1; border-bottom: 1.5px solid #94a3b8; }
+
+/* Picture steps (press) */
+.pic-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pic-steps > div { border: 2px solid #cbd5e1; border-radius: 10px; padding: 8px 10px; display: flex; gap: 10px; align-items: center; font-size: 0.95rem; line-height: 1.45; }
+.pic-steps svg { width: 90px; height: 64px; flex: none; }
+.pic-steps .num { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+
+/* Match */
+.match { display: flex; justify-content: space-between; margin-top: 8px; }
+.match .col { display: flex; flex-direction: column; gap: 14px; }
+.match .item { display: flex; align-items: center; gap: 10px; border: 2px solid #cbd5e1; border-radius: 8px; padding: 4px 12px; font-weight: 700; font-size: 1rem; min-width: 2.2in; }
+.match .item svg { width: 26px; height: 26px; flex: none; }
+.match .dot { width: 12px; height: 12px; border-radius: 50%; background: #334155; flex: none; }
+.match .right .item { justify-content: flex-start; }
+
+/* Label card */
+.label-card { border: 2.5px solid #334155; border-radius: 6px; padding: 8px 14px; font-size: 1rem; }
+.label-card div { display: flex; gap: 8px; margin: 6px 0; }
+.label-card .bl { flex: 1; border-bottom: 1.5px solid #94a3b8; }
+
+.rate { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.95rem; }
+.rate td, .rate th { border: 1.5px solid #e2e8f0; padding: 6px 10px; }
+.rate th { font-size: 0.85rem; background: #f8fafc; text-align: center; }
+.rate td.c { text-align: center; width: 13%; }
+.rate td.c::before { content: ""; display: inline-block; width: 18px; height: 18px; border: 2px solid #475569; border-radius: 3px; vertical-align: -3px; }
+
+.keep-together { break-inside: avoid; page-break-inside: avoid; }
+
+@media (max-width: 700px) {
+  .page { padding: 20px 16px; margin: 0; }
+  .er-columns, .steps, .mat, .match { flex-direction: column; }
+  .pic-steps { grid-template-columns: 1fr; }
+  .er-main, .er-aside { flex: none; width: 100%; }
+}
+
+@page { size: letter; margin: 0.4in; }
+@media print {
+  body { background: #fff; }
+  .page { margin: 0; padding: 0; max-width: none; box-shadow: none; break-after: page; page-break-after: always; }
+  .page:last-child { break-after: auto; page-break-after: auto; }
+  .diagram-frame, .word-bank, .mat, .pic-steps, .rate, .circle-q, .er-columns, .match, .label-card { break-inside: avoid; page-break-inside: avoid; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<!-- Shared picture icons -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-sepal" viewBox="0 0 24 24"><path d="M12,23 C7,17 7,7 12,1 C17,7 17,17 12,23 Z" fill="#fbcfe8" stroke="#be185d" stroke-width="1.5"/></symbol>
+    <symbol id="i-petal" viewBox="0 0 24 24"><path d="M12,23 C4,17 4,7 12,1 C20,7 20,17 12,23 Z" fill="#fbcfe8" stroke="#be185d" stroke-width="1.5"/></symbol>
+    <symbol id="i-stamen" viewBox="0 0 24 24"><path d="M12,23 L12,6" stroke="#65a30d" stroke-width="2"/><ellipse cx="12" cy="5" rx="7" ry="3.2" fill="#ea580c" stroke="#9a3412" stroke-width="1"/></symbol>
+    <symbol id="i-pistil" viewBox="0 0 24 24"><path d="M12,16 L12,5" stroke="#65a30d" stroke-width="2.5"/><ellipse cx="12" cy="18" rx="4" ry="5" fill="#86efac" stroke="#15803d" stroke-width="1.2"/><circle cx="9.5" cy="4" r="2.6" fill="#bef264" stroke="#4d7c0f"/><circle cx="14.5" cy="4" r="2.6" fill="#bef264" stroke="#4d7c0f"/><circle cx="12" cy="1.8" r="2.4" fill="#bef264" stroke="#4d7c0f"/></symbol>
+  </defs>
+</svg>
+
+<!-- ═══════════════ PAGE 1 — YOUR JOB ═══════════════ -->
+<section class="page">
+  <div class="er-header">
+    <div class="unit-label">Grade 7 Science · Plants for Food and Fibre · Lab</div>
+    <h1>Lily Lab: Take a Flower Apart</h1>
+    <div class="student-line">Name:<span class="uline"></span> &nbsp; Date:<span class="uline" style="width:110px;"></span></div>
+  </div>
+
+  <div class="helper-note">
+    <strong>To the adult helping:</strong> Read every part of this page aloud with the student, including the word banks. The student can say an answer, point to it, circle it, or write it. Any of these is fine. The student works with a group but fills in this sheet.
+  </div>
+
+  <div class="i-can">I can find the parts of a flower. I can say what each part does.</div>
+
+  <div class="er-columns">
+    <div class="er-main">
+      <h2 class="er-h2"><span class="step">Your job</span>Take a lily apart</h2>
+      <p>Your group gets one lily flower. You will take it apart, one part at a time. You will count the parts. Then you will press the parts flat to keep.</p>
+
+      <h2 class="er-h2"><span class="step">Rules</span>Lab rules</h2>
+      <ul class="rules">
+        <li><span class="ic">🟠</span>Orange pollen stains. Do not rub it.</li>
+        <li><span class="ic">🚫</span>Do not eat any part of the lily.</li>
+        <li><span class="ic">🐈</span>Lilies make cats sick. Keep lilies away from cats.</li>
+        <li><span class="ic">✂️</span>Only your teacher uses the sharp knife.</li>
+        <li><span class="ic">🧼</span>Wash your hands at the end.</li>
+      </ul>
+    </div>
+    <div class="er-aside">
+      <div class="er-vocab"><div class="callout-h">🔑 Word to know</div><strong>Dissect</strong>: to take something apart carefully to look inside.</div>
+      <div class="er-vocab"><div class="callout-h">🔑 Word to know</div><strong>Pollen</strong>: yellow or orange dust. It helps make seeds.</div>
+    </div>
+  </div>
+
+  <div class="circle-q keep-together">Guess: a lily has bright colours. Who are the colours for? <span class="hint">(circle one)</span>
+    <div class="options"><span>people</span><span>bees and butterflies</span><span>the sun</span></div>
+  </div>
+</section>
+
+<!-- ═══════════════ PAGE 2 — THE PARTS ═══════════════ -->
+<section class="page">
+  <div class="er-columns">
+    <div class="er-main">
+      <h2 class="er-h2"><span class="step">Look</span>The 4 parts of a lily</h2>
+      <p>A lily has 4 kinds of parts. Each part has a job. The job is to help make seeds.</p>
+    </div>
+    <div class="er-aside">
+      <div class="er-remember"><div class="callout-h">💡 Remember</div>Flowers make seeds. Seeds grow new plants.</div>
+    </div>
+  </div>
+
+  <div class="word-bank keep-together" style="margin-bottom:10px">
+    <span class="label">Word bank</span>
+    <div class="wb-items">
+      <span class="wb-item"><svg aria-hidden="true"><use href="#i-sepal"/></svg>sepal</span>
+      <span class="wb-item"><svg aria-hidden="true"><use href="#i-petal"/></svg>petal</span>
+      <span class="wb-item"><svg aria-hidden="true"><use href="#i-stamen"/></svg>stamen</span>
+      <span class="wb-item"><svg aria-hidden="true"><use href="#i-pistil"/></svg>pistil</span>
+    </div>
+  </div>
+
+  <div class="er-columns">
+    <div class="er-main">
+      <div class="diagram-frame keep-together">
+        <svg viewBox="0 0 560 360" role="img" aria-label="Side view of a lily with four labels. A sepal flares to the left. A petal flares to the right. Stamens with orange tips stand around the centre. The pistil stands in the middle.">
+          <path d="M280,358 L280,306" class="stem"/>
+          <path d="M280,300 C296,240 300,170 284,96 C270,170 262,240 280,300 Z" class="tepal-back"/>
+          <path d="M276,300 C240,245 160,175 64,150 C104,200 196,275 272,304 Z" class="tepal"/>
+          <path d="M284,300 C320,245 400,175 496,150 C456,200 364,275 288,304 Z" class="tepal"/>
+          <path d="M280,246 L280,112" class="style"/>
+          <ellipse cx="280" cy="274" rx="12" ry="28" class="ovary"/>
+          <circle cx="273" cy="108" r="7" class="stigma"/><circle cx="287" cy="108" r="7" class="stigma"/><circle cx="280" cy="100" r="7" class="stigma"/>
+          <path d="M277,298 C262,240 222,190 206,152" class="filament"/>
+          <path d="M279,298 C272,240 248,172 240,130" class="filament"/>
+          <path d="M283,298 C288,240 312,172 320,130" class="filament"/>
+          <path d="M285,298 C298,240 338,190 354,152" class="filament"/>
+          <ellipse cx="206" cy="148" rx="13" ry="5.5" class="anther" transform="rotate(-25 206 148)"/>
+          <ellipse cx="240" cy="126" rx="13" ry="5.5" class="anther" transform="rotate(-10 240 126)"/>
+          <ellipse cx="320" cy="126" rx="13" ry="5.5" class="anther" transform="rotate(10 320 126)"/>
+          <ellipse cx="354" cy="148" rx="13" ry="5.5" class="anther" transform="rotate(25 354 148)"/>
+          <text x="40" y="262" class="lbl">sepal</text>
+          <text x="40" y="280" class="lbl-sm">outside ring</text>
+          <path d="M86,250 L136,206" class="lead"/>
+          <text x="440" y="250" class="lbl">petal</text>
+          <text x="440" y="268" class="lbl-sm">inside ring</text>
+          <path d="M452,236 L428,204" class="lead"/>
+          <text x="150" y="100" class="lbl" text-anchor="end">stamen</text>
+          <path d="M154,98 L196,138" class="lead"/>
+          <text x="380" y="70" class="lbl">pistil</text>
+          <path d="M376,72 L284,160" class="lead"/>
+        </svg>
+      </div>
+    </div>
+    <div class="er-aside">
+      <div class="er-vocab"><div class="callout-h">🔑 Stamen</div>Makes <strong>pollen</strong>. It has an orange tip.</div>
+      <div class="er-vocab"><div class="callout-h">🔑 Pistil</div>Makes <strong>seeds</strong>. It stands in the middle.</div>
+      <div class="er-watchout"><div class="callout-h">⚠️ Watch out</div>On a lily, sepals look like petals. Sepals are the outside ring.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PAGE 3 — TAKE IT APART ═══════════════ -->
+<section class="page">
+  <h2 class="er-h2"><span class="step">Do</span>Take the lily apart</h2>
+  <p style="margin-bottom:10px">Start on the outside. Work in to the middle. Do the 3 steps for each part.</p>
+
+  <div class="steps">
+    <div><span class="num">1</span>Pull the part off gently.</div>
+    <div><span class="num">2</span>Lay it in its box below.</div>
+    <div><span class="num">3</span>Count them. Write the number.</div>
+  </div>
+
+  <div class="mat keep-together">
+    <div>
+      <div class="name">sepals</div>
+      <svg viewBox="0 0 100 130" aria-hidden="true"><path d="M26,126 C18,90 18,40 26,8 C34,40 34,90 26,126 Z" fill="#fbcfe8" stroke="#be185d" stroke-width="2"/><path d="M50,126 C42,90 42,40 50,8 C58,40 58,90 50,126 Z" fill="#fbcfe8" stroke="#be185d" stroke-width="2"/><path d="M74,126 C66,90 66,40 74,8 C82,40 82,90 74,126 Z" fill="#fbcfe8" stroke="#be185d" stroke-width="2"/></svg>
+      <div class="count">How many?<span></span></div>
+    </div>
+    <div>
+      <div class="name">petals</div>
+      <svg viewBox="0 0 100 130" aria-hidden="true"><path d="M22,126 C10,90 10,40 22,8 C34,40 34,90 22,126 Z" fill="#fbcfe8" stroke="#be185d" stroke-width="2"/><path d="M50,126 C38,90 38,40 50,8 C62,40 62,90 50,126 Z" fill="#fbcfe8" stroke="#be185d" stroke-width="2"/><path d="M78,126 C66,90 66,40 78,8 C90,40 90,90 78,126 Z" fill="#fbcfe8" stroke="#be185d" stroke-width="2"/></svg>
+      <div class="count">How many?<span></span></div>
+    </div>
+    <div>
+      <div class="name">stamens</div>
+      <svg viewBox="0 0 100 130" aria-hidden="true"><g stroke="#65a30d" stroke-width="2.5"><path d="M14,126 L14,18 M28,126 L28,18 M42,126 L42,18 M56,126 L56,18 M70,126 L70,18 M84,126 L84,18"/></g><g fill="#ea580c" stroke="#9a3412"><ellipse cx="14" cy="14" rx="6" ry="3.5"/><ellipse cx="28" cy="14" rx="6" ry="3.5"/><ellipse cx="42" cy="14" rx="6" ry="3.5"/><ellipse cx="56" cy="14" rx="6" ry="3.5"/><ellipse cx="70" cy="14" rx="6" ry="3.5"/><ellipse cx="84" cy="14" rx="6" ry="3.5"/></g></svg>
+      <div class="count">How many?<span></span></div>
+    </div>
+    <div>
+      <div class="name">pistil</div>
+      <svg viewBox="0 0 100 130" aria-hidden="true"><path d="M50,100 L50,18" stroke="#65a30d" stroke-width="4"/><ellipse cx="50" cy="108" rx="9" ry="18" fill="#86efac" stroke="#15803d" stroke-width="2"/><circle cx="45" cy="15" r="5" fill="#bef264" stroke="#4d7c0f"/><circle cx="55" cy="15" r="5" fill="#bef264" stroke="#4d7c0f"/><circle cx="50" cy="8" r="5" fill="#bef264" stroke="#4d7c0f"/></svg>
+      <div class="count">How many?<span></span></div>
+    </div>
+  </div>
+
+  <div class="er-columns" style="margin-top:14px">
+    <div class="er-main">
+      <div class="circle-q keep-together">Which part has the orange pollen? <span class="hint">(circle one)</span>
+        <div class="options"><span>sepal</span><span>stamen</span><span>petal</span></div>
+      </div>
+      <div class="circle-q keep-together">Touch the top of the pistil gently. How does it feel? <span class="hint">(circle one)</span>
+        <div class="options"><span>sticky</span><span>dry</span><span>hard</span></div>
+      </div>
+      <div class="say-line">Why is that a good way to feel? <span class="bl"></span></div>
+    </div>
+    <div class="er-aside">
+      <div class="er-remember"><div class="callout-h">💡 Remember</div>The sticky top of the pistil catches pollen.</div>
+      <div class="er-check"><div class="callout-h">✅ Check yourself</div>Point to the part that makes seeds.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PAGE 4 — PRESS ═══════════════ -->
+<section class="page">
+  <div class="er-columns">
+    <div class="er-main">
+      <h2 class="er-h2"><span class="step">Press</span>Press the parts flat</h2>
+      <p>Pressing dries the parts flat. Then they last a long time. We use special paper called archival paper.</p>
+    </div>
+    <div class="er-aside">
+      <div class="er-vocab"><div class="callout-h">🔑 Word to know</div><strong>Archival paper</strong>: paper that stays white for many years.</div>
+    </div>
+  </div>
+
+  <div class="pic-steps keep-together">
+    <div><span class="num">1</span>
+      <svg viewBox="0 0 90 64" aria-hidden="true"><rect x="4" y="40" width="82" height="8" fill="#fffbeb" stroke="#ca8a04" stroke-width="1.5"/><rect x="4" y="50" width="82" height="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/></svg>
+      Lay down the special paper.</div>
+    <div><span class="num">2</span>
+      <svg viewBox="0 0 90 64" aria-hidden="true"><rect x="4" y="44" width="82" height="8" fill="#fffbeb" stroke="#ca8a04" stroke-width="1.5"/><path d="M10,36 C18,28 34,28 42,34 C34,40 18,40 10,36 Z" fill="#fbcfe8" stroke="#be185d" stroke-width="1.5"/><path d="M52,36 L76,36" stroke="#65a30d" stroke-width="2.5"/><ellipse cx="79" cy="36" rx="5" ry="2.8" fill="#ea580c"/></svg>
+      Put the parts on it. Parts do not touch.</div>
+    <div><span class="num">3</span>
+      <svg viewBox="0 0 90 64" aria-hidden="true"><rect x="4" y="26" width="82" height="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/><rect x="4" y="36" width="82" height="8" fill="#fffbeb" stroke="#ca8a04" stroke-width="1.5"/><path d="M14,44 L14,46 M30,44 L30,46" stroke="#be185d"/><rect x="4" y="46" width="82" height="8" fill="#fffbeb" stroke="#ca8a04" stroke-width="1.5"/></svg>
+      Cover with more paper.</div>
+    <div><span class="num">4</span>
+      <svg viewBox="0 0 90 64" aria-hidden="true"><rect x="8" y="4" width="74" height="16" rx="2" fill="#64748b" stroke="#334155"/><rect x="12" y="22" width="68" height="16" rx="2" fill="#94a3b8" stroke="#334155"/><rect x="4" y="42" width="82" height="10" fill="#fffbeb" stroke="#ca8a04" stroke-width="1.5"/></svg>
+      Put heavy books on top. Wait 2 weeks.</div>
+  </div>
+
+  <div class="er-columns" style="margin-top:16px">
+    <div class="er-main">
+      <div class="circle-q keep-together">Why do we press the flower parts? <span class="hint">(circle one)</span>
+        <div class="options"><span>to dry them flat</span><span>to make them grow</span><span>to make pollen</span></div>
+      </div>
+      <div class="circle-q keep-together">Which part will be hardest to press flat? <span class="hint">(circle one)</span>
+        <div class="options"><span>thin petal</span><span>thick pistil</span></div>
+      </div>
+      <div class="say-line">Why? <span class="bl"></span></div>
+    </div>
+    <div class="er-aside">
+      <div class="er-remember"><div class="callout-h">💡 Remember</div>Wet parts can go mouldy. Change the grey paper on Day 2 and Day 4.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PAGE 5 — MOUNT + THINK ═══════════════ -->
+<section class="page">
+  <h2 class="er-h2"><span class="step">Label</span>Make your label</h2>
+  <p style="margin-bottom:8px">Glue your dry parts on the special card. Write a label in pencil.</p>
+  <div class="label-card keep-together">
+    <div>Flower: <strong>Lily</strong></div>
+    <div>My name:<span class="bl"></span></div>
+    <div>Date:<span class="bl"></span></div>
+    <div>Parts on my card:<span class="bl"></span></div>
+  </div>
+
+  <h2 class="er-h2"><span class="step">Match</span>Draw a line from each part to its job</h2>
+  <div class="match keep-together">
+    <div class="col left">
+      <div class="item"><svg aria-hidden="true"><use href="#i-sepal"/></svg>sepal<span style="flex:1"></span><span class="dot"></span></div>
+      <div class="item"><svg aria-hidden="true"><use href="#i-petal"/></svg>petal<span style="flex:1"></span><span class="dot"></span></div>
+      <div class="item"><svg aria-hidden="true"><use href="#i-stamen"/></svg>stamen<span style="flex:1"></span><span class="dot"></span></div>
+      <div class="item"><svg aria-hidden="true"><use href="#i-pistil"/></svg>pistil<span style="flex:1"></span><span class="dot"></span></div>
+    </div>
+    <div class="col right">
+      <div class="item"><span class="dot"></span>makes pollen</div>
+      <div class="item"><span class="dot"></span>makes seeds</div>
+      <div class="item"><span class="dot"></span>covers the bud</div>
+      <div class="item"><span class="dot"></span>calls bees and butterflies</div>
+    </div>
+  </div>
+
+  <div class="er-columns" style="margin-top:14px">
+    <div class="er-main">
+      <div class="circle-q keep-together">Look at your guess on page 1. Who are lily colours for? <span class="hint">(circle one)</span>
+        <div class="options"><span>people</span><span>bees and butterflies</span><span>the sun</span></div>
+      </div>
+      <div class="say-line">How do you know? <span class="bl"></span></div>
+    </div>
+    <div class="er-aside">
+      <div class="er-watchout"><div class="callout-h">⚠️ Watch out</div>Many people think flowers are pretty for us. Colours call bees and butterflies to carry pollen.</div>
+    </div>
+  </div>
+
+  <h2 class="er-h2"><span class="step">Me</span>How did I do?</h2>
+  <table class="rate keep-together">
+    <thead><tr><th style="text-align:left">I can…</th><th>Yes</th><th>A little</th><th>Not yet</th></tr></thead>
+    <tbody>
+      <tr><td>find the 4 parts of a lily</td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+      <tr><td>say which part makes pollen</td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+      <tr><td>say which part makes seeds</td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+    </tbody>
+  </table>
+</section>
+
+</body>
+</html>
