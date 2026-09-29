@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math 9 — Probability</title>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent: #1d4ed8;
+  --accent-light: #eff6ff;
+  --accent-border: #bfdbfe;
+  --show-bg: #eff6ff;
+  --show-border: #3b82f6;
+  --say-bg: #ffffff;
+  --cue-bg: #f0fdf4;
+  --cue-border: #22c55e;
+  --flag-mc-bg: #fef2f2;
+  --flag-mc-border: #ef4444;
+  --flag-mc-label: #dc2626;
+  --flag-pace-bg: #fffbeb;
+  --flag-pace-border: #f59e0b;
+  --flag-pace-label: #d97706;
+  --flag-ab-bg: #f0fdf4;
+  --flag-ab-border: #22c55e;
+  --flag-ab-label: #15803d;
+  --flag-cs-bg: #fdf4ff;
+  --flag-cs-border: #a855f7;
+  --flag-cs-label: #7e22ce;
+  --text: #1a1a2e;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+}
+
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+
+/* ── Typography ── */
+h1 {
+  font-size: 1.6rem;
+  color: var(--accent);
+  margin-bottom: 2px;
+  font-family: system-ui, sans-serif;
+}
+h2 {
+  font-size: 1rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 700;
+  background: var(--accent);
+  color: white;
+  padding: 7px 14px;
+  margin: 36px -4px 18px;
+  letter-spacing: 0.01em;
+}
+h3 {
+  font-size: 0.95rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent-border);
+  padding-bottom: 4px;
+  margin: 28px 0 12px;
+}
+h4 {
+  font-size: 0.9rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  color: #374151;
+  margin: 20px 0 8px;
+}
+p { margin-bottom: 10px; }
+ul, ol { margin: 6px 0 10px 24px; }
+li { margin-bottom: 3px; }
+em { font-style: italic; }
+strong { font-weight: 700; }
+hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* ── Beat titles ── */
+p.beat-title {
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #334155;
+  padding: 7px 14px;
+  margin: 20px 0 0;
+  border-left: 4px solid #94a3b8;
+  border-radius: 3px 3px 0 0;
+}
+
+/* ── SHOW / SAY / CUE labels ── */
+.show-label { color: var(--accent); font-family: system-ui, sans-serif; }
+.say-label  { color: #374151;       font-family: system-ui, sans-serif; }
+.cue-label  { color: #15803d;       font-family: system-ui, sans-serif; }
+
+/* ── Flag callouts ── */
+.flag {
+  margin: 14px 0;
+  padding: 10px 14px;
+  border-radius: 0 4px 4px 0;
+  font-family: system-ui, sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.flag-label {
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 4px;
+}
+.flag p { margin-bottom: 6px; font-family: system-ui, sans-serif; }
+.flag p:last-child { margin-bottom: 0; }
+.flag ul { margin-top: 4px; }
+
+.flag-misconception { background: var(--flag-mc-bg);   border-left: 5px solid var(--flag-mc-border); }
+.flag-misconception .flag-label { color: var(--flag-mc-label); }
+
+.flag-pacing       { background: var(--flag-pace-bg);  border-left: 5px solid var(--flag-pace-border); }
+.flag-pacing .flag-label { color: var(--flag-pace-label); }
+
+.flag-alberta-context,
+.flag-alberta,
+.flag-context      { background: var(--flag-ab-bg);   border-left: 5px solid var(--flag-ab-border); }
+.flag-alberta-context .flag-label,
+.flag-alberta .flag-label,
+.flag-context .flag-label { color: var(--flag-ab-label); }
+
+.flag-cs-connection,
+.flag-connection   { background: var(--flag-cs-bg);   border-left: 5px solid var(--flag-cs-border); }
+.flag-cs-connection .flag-label,
+.flag-connection .flag-label { color: var(--flag-cs-label); }
+
+/* ── Retrieval guide box ── */
+.retrieval-guide {
+  background: var(--accent-light);
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 16px 0;
+}
+.retrieval-guide h3 { margin-top: 0; color: var(--accent); border-color: var(--accent-border); }
+.retrieval-guide ol { margin-left: 20px; }
+.retrieval-guide li { margin-bottom: 6px; font-family: system-ui, sans-serif; font-size: 0.9rem; }
+
+/* ── Tables ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 0.88rem;
+  font-family: system-ui, sans-serif;
+}
+th {
+  background: var(--accent);
+  color: white;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 600;
+}
+td {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tr:nth-child(even) td { background: #f8fafc; }
+
+/* ── Answer key ── */
+.answer-key h3 { color: #374151; border-color: #d1d5db; }
+
+/* ── Subtitle / subheading below h1 ── */
+.subtitle {
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ── Print ── */
+@media print {
+  body { max-width: none; padding: 10px; font-size: 11.5px; }
+  h2 { break-before: page; margin-left: 0; margin-right: 0; }
+  h2:first-of-type { break-before: auto; }
+  .flag, .retrieval-guide, table { break-inside: avoid; }
+  h3, h4, p.beat-title { break-after: avoid; }
+  p { orphans: 3; widows: 3; }
+}
+</style>
+</head>
+<body>
+<h1 id="math-9-probability">Math 9 — Probability</h1>
+<h2 id="teacher-notes-package">Teacher Notes Package</h2>
+<p><em>Teaching reference — not a script</em></p>
+<hr />
+<h2 id="how-to-use-this-document">How to use this document</h2>
+<p>Each teaching beat has three parts:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Label</th>
+<th>What it contains</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SHOW</strong></td>
+<td>What is visible to students — draw on the board or project. One
+thing per beat.</td>
+</tr>
+<tr>
+<td><strong>SAY</strong></td>
+<td>Key phrases and questions. Not sentences to read — prompts for
+fluent delivery. Answers to blanks shown in
+<strong>[brackets]</strong>.</td>
+</tr>
+<tr>
+<td><strong>CUE</strong></td>
+<td>The exact signal for students to write. Four types: ★ Write / ✎ Draw
+/ ⊡ Think / ↩︎ Check</td>
+</tr>
+</tbody>
+</table>
+<p>Flags appear in callout blocks: &gt; <strong>FLAG —
+Misconception:</strong> Red alert. Students will get this wrong without
+a direct address. &gt; <strong>FLAG — Pacing:</strong> Warning for where
+lessons tend to lose momentum. &gt; <strong>FLAG — Alberta
+Context:</strong> Grounded real-world application — worth the 30 seconds
+it takes.</p>
+<p><strong>The screen and the voice carry different things.</strong>
+What is SHOW stays visual — formulas, diagrams, key terms. What is SAY
+carries the reasoning. Never put your SAY on the screen.</p>
+<hr />
+<h2 id="unit-at-a-glance">Unit at a Glance</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Lesson</th>
+<th>Content</th>
+<th>Student notes pages</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pre-knowledge check + Section 1: Probability Fundamentals</td>
+<td>Pre-K check + S1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Section 2: Sample Spaces and Tree Diagrams</td>
+<td>S2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Section 3: Independent Events</td>
+<td>S3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Section 4: Dependent Events</td>
+<td>S4</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Unit Synthesis + Pre-Knowledge revisit</td>
+<td>Synthesis page</td>
+</tr>
+<tr>
+<td>6+</td>
+<td>Practice, workbook, assessments</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><em>Retrieval warm-ups begin Lesson 2. Each warm-up pulls from the
+previous lesson + something from 2 lessons prior.</em></p>
+<hr />
+<h2 id="materials-per-lesson">Materials per lesson</h2>
+<ul>
+<li>Student notes packages (printed, one per student)</li>
+<li>Whiteboard + markers (two colours if available — one for
+theoretical, one for experimental)</li>
+<li><strong>Lesson 1:</strong> One coin per pair (experimental
+probability demonstration); one six-sided die per group</li>
+<li><strong>Lesson 2:</strong> Two dice per group (sample space table
+activity)</li>
+<li><strong>Lesson 3:</strong> One coin per student (Gambler’s Fallacy
+demonstration — they flip it themselves); bag with 8 coloured cubes (5
+one colour, 3 another)</li>
+<li><strong>Lesson 4:</strong> Bag with 5 red and 3 blue counters or
+cubes (without replacement demonstration); standard deck of playing
+cards (or printed substitute)</li>
+</ul>
+<hr />
+<h2 id="pre-knowledge-check">Pre-Knowledge Check</h2>
+<p><em>~10 minutes — before any instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Opening</strong> <strong class="show-label">SHOW:</strong> Board:
+<em>“Write exactly what you think right now — no correction, no
+marks.”</em> (Nothing else on the board.) <strong class="say-label">SAY:</strong> -
+“Before we start anything, I need to know what’s already in your head.”
+- “This is not graded. I am not going to correct your answers today.” -
+“Write honestly. You will come back to this page at the end of the unit
+and see how your thinking changed.” - “Three questions. Five minutes.
+Go.” <strong class="cue-label">CUE:</strong> ★ Write: “Open your notes. Pre-Knowledge
+Check. You have 5 minutes — answer all three questions honestly.”</p>
+<div class="flag flag-pacing"><span class="flag-label">FLAG — Pacing</span>Do not comment on student responses
+or hint at answers. Circulate only. You are looking for: (a) students
+who already know the 50/50 coin-flip answer, (b) students who write
+“heads is more likely because you’ve been getting tails” — these are
+your Gambler’s Fallacy cases, and they are your most important teaching
+targets for the whole unit. Note them mentally. Do not correct in the
+moment.</div>
+<div class="flag flag-alberta-context"><span class="flag-label">FLAG — Alberta Context</span>Question 1 (coin flip
+sequence) directly targets the Gambler’s Fallacy. Question 3 (card kept
+after drawing) directly targets dependent events. All three questions
+are diagnostic — use them to calibrate lesson pacing.</div>
+<hr />
+<h2 id="section-1-probability-fundamentals">Section 1 — Probability
+Fundamentals</h2>
+<p><em>Learning target: I can calculate theoretical and experimental
+probability, distinguish between them, and use correct probability
+notation.</em> <em>Timing: ~30 minutes direct instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: The seven vocabulary terms in a column — Outcome / Sample space /
+Event / Theoretical probability / Experimental probability /
+Complementary events / Favourable outcomes <strong class="say-label">SAY:</strong> -
+“Seven terms in your vocabulary table.” - “Don’t fill them in yet. We
+build them as we go.” - “By the end of the section, you’ll have your own
+definition and example — not the textbook definition.”
+<strong class="cue-label">CUE:</strong> ⊡ Think: “Scan the seven terms. Which one do you
+think you already know? Hold it.”</p>
+<hr />
+<p><strong>Beat 2 — What probability measures</strong>
+<strong class="show-label">SHOW:</strong> Board: Draw a horizontal line. Label the left end
+<strong>0 (impossible)</strong>, the right end <strong>1
+(certain)</strong>, and the midpoint <strong>0.5 (equally likely either
+way)</strong>. <strong class="say-label">SAY:</strong> - “Probability measures how likely
+an event is.” - “Always between 0 and 1 — inclusive. Never less than 0.
+Never more than 1.” - “A probability of 0 means it cannot happen. A
+probability of 1 means it must happen.” - “0.5 sits exactly in the
+middle — equally likely to happen or not happen.” - “A coin flip,
+assuming fair — P(heads) = 0.5. Right in the middle.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Probability is always between
+<strong>[0]</strong> and <strong>[1]</strong> (inclusive). 0 =
+<strong>[impossible]</strong>. 1 = <strong>[certain]</strong>. 0.5 =
+<strong>[equally likely either way]</strong>.”</p>
+<hr />
+<p><strong>Beat 3 — Theoretical probability formula</strong>
+<strong class="show-label">SHOW:</strong> Board: Write clearly: <em>P(event) = number of
+favourable outcomes / total number of possible outcomes</em></p>
+<p><em>(Assumes all outcomes are equally likely)</em>
+<strong class="say-label">SAY:</strong> - “Theoretical probability — you calculate it from
+the structure of the situation.” - “Count the favourable outcomes —
+outcomes where the event occurs.” - “Divide by the total number of
+possible outcomes in the sample space.” - “Critical condition: all
+outcomes must be equally likely for this formula to apply.” - “Fair die
+— yes. Weighted die — no.” <strong class="cue-label">CUE:</strong> ★ Write: “P(event) =
+number of <strong>[favourable]</strong> outcomes / total number of
+<strong>[possible]</strong> outcomes”</p>
+<hr />
+<p><strong>Beat 4 — Worked example: rolling a die</strong>
+<strong class="show-label">SHOW:</strong> Board: Write: <em>Sample space for a 6-sided die:
+{1, 2, 3, 4, 5, 6}. Size = 6.</em></p>
+<p>Then work through each probability as you say it: - P(rolling a 4) =
+1/6 - P(rolling an even number) = 3/6 (favourables: 2, 4, 6) - P(rolling
+a 7) = 0/6 = 0 - P(rolling less than 7) = 6/6 = 1 <strong class="say-label">SAY:</strong>
+- “Sample space — the set of all possible outcomes. Six-sided die: six
+outcomes.” - “P(rolling a 4) — one outcome is a 4, six total. 1/6.” -
+“P(even number) — which ones are even? 2, 4, 6. Three favourables. 3/6.”
+- “P(rolling a 7) — can you roll a 7 on a 6-sided die? No. Zero
+favourables. P = 0.” - “P(less than 7) — all six outcomes qualify. 6/6 =
+1. Certain.” <strong class="cue-label">CUE:</strong> ★ Write: “Sample space size =
+<strong>[6]</strong>. P(4) = <strong>[1]</strong>/<strong>[6]</strong>.
+P(even) = <strong>[3]</strong>/<strong>[6]</strong> (favourables:
+<strong>[2]</strong>, <strong>[4]</strong>, <strong>[6]</strong>). P(7)
+= <strong>[0]</strong>/<strong>[6]</strong> = <strong>[0]</strong>.
+P(&lt;7) = <strong>[6]</strong>/<strong>[6]</strong> =
+<strong>[1]</strong>.”</p>
+<hr />
+<p><strong>Beat 5 — Self-explanation prompt (Beat 4)</strong>
+<strong class="say-label">SAY:</strong> “Before moving on — explain Step 3 in your own
+words: why does P(rolling a 7) equal zero and not 1/7?”
+<strong class="cue-label">CUE:</strong> ★ Write: “Explain: P(rolling a 7) = 0 because
+___”</p>
+<p><em>Allow 45–60 seconds. Good responses: “7 isn’t in the sample
+space” or “there are no favourable outcomes.” Incomplete: “it’s
+impossible.” Redirect: “Why is it impossible? Ground it in the sample
+space.”</em></p>
+<hr />
+<p><strong>Beat 6 — Experimental probability</strong>
+<strong class="show-label">SHOW:</strong> Board: Write: <em>P(event) experimental = number
+of times event occurred / total number of trials</em>
+<strong class="say-label">SAY:</strong> - “Experimental probability — you observe it from
+actual trials.” - “Not calculated from structure — measured from what
+actually happened.” - “Count how many times your event occurred. Divide
+by total trials.” - “It changes every time you run the experiment.”
+<strong class="cue-label">CUE:</strong> ★ Write: “P(event) experimental = number of times
+event <strong>[occurred]</strong> / total number of
+<strong>[trials]</strong>”</p>
+<hr />
+<p><strong>Beat 7 — Worked example: spinner</strong>
+<strong class="show-label">SHOW:</strong> Board: Write: <em>Spinner spun 40 times: red 14,
+blue 16, green 10.</em></p>
+<p>Then work through: - P(red) experimental = 14/40 = 7/20 - P(blue)
+experimental = 16/40 = 2/5 <strong class="say-label">SAY:</strong> - “Spinner spun 40
+times. Results: red 14, blue 16, green 10.” - “Experimental P(red): 14
+times out of 40 trials. 14/40. Simplify: 7/20.” - “Experimental P(blue):
+16/40 = 2/5.” - “Now — if the spinner has three equal sections, what
+should theoretical P(red) be? 1/3, roughly 0.333.” - “14/40 = 0.35. Is
+that the same as 1/3? Close — but not exact.” - “That difference is
+normal. Short-run experiments don’t match theory perfectly.”
+<strong class="cue-label">CUE:</strong> ★ Write: “P(red) experimental =
+<strong>[14]</strong>/<strong>[40]</strong> = <strong>[0.35]</strong>.
+P(blue) experimental = <strong>[16]</strong>/<strong>[40]</strong> =
+<strong>[0.4]</strong>.”</p>
+<hr />
+<p><strong>Beat 8 — Self-explanation prompt (Beat 7)</strong>
+<strong class="say-label">SAY:</strong> “Before moving on — explain why the experimental
+probability of red (0.35) differs from the theoretical (0.333). What
+does that difference actually mean?” <strong class="cue-label">CUE:</strong> ★ Write: “The
+difference exists because ___”</p>
+<p><em>Allow 60 seconds. Target answer: experimental results vary from
+trial to trial; theory predicts the long-run average, not any single
+experiment. This is the critical bridge to the upcoming
+misconception.</em></p>
+<hr />
+<p class="beat-title"><strong>Beat 9 — The theoretical vs. experimental gap</strong></p>
+<blockquote>
+<p><strong>FLAG — Misconception: “Theoretical probability tells you what
+WILL happen.”</strong> Address this directly before moving on. Do not
+let it slide.</p>
+</blockquote>
+<p><strong class="show-label">SHOW:</strong> Board: Two columns — <em>Theoretical: what
+SHOULD happen (long run)</em> | <em>Experimental: what DID happen (this
+time)</em> <strong class="say-label">SAY:</strong> - “Here’s the single most important
+distinction in this section.” - “Theoretical probability tells you what
+should happen over many, many trials in the long run.” - “It does NOT
+tell you what will happen in the next 10 flips, or the next 40 spins.” -
+“Run an experiment — you might get results that look very different from
+theory. That is not a mistake. That is how probability works.” - “Over
+hundreds of trials, experimental probability gets closer to theoretical.
+Not guaranteed for 40 spins.” - “If you flip a coin 10 times and get 7
+heads — the coin is not broken. Probability just doesn’t guarantee
+short-run results.” <strong class="cue-label">CUE:</strong> ★ Write: “Theoretical
+probability tells you what <strong>[should]</strong> happen in the long
+run. Short-run results <strong>[will vary]</strong> from the theoretical
+value.”</p>
+<div class="flag flag-alberta-context"><span class="flag-label">FLAG — Alberta Context</span>Weather forecasting in
+Calgary. “Environment Canada says P(rain) = 0.35 tomorrow. Does that
+mean it will rain 35% of the day? No — it means if you take 100 days
+with similar conditions, rain occurs on about 35 of them. The forecast
+is a theoretical probability. Tomorrow’s weather is a single trial.”</div>
+<hr />
+<p><strong>Beat 10 — Complementary events</strong>
+<strong class="show-label">SHOW:</strong> Board: Write: <em>P(not A) = 1 − P(A)</em>. Draw:
+a full rectangle representing all outcomes. Shade one region and label
+it “A”. Label the rest “not A”. <strong class="say-label">SAY:</strong> - “Complementary
+events — A and ‘not A’ cover everything. Together they equal 1.” - “If A
+has probability 0.35, then not-A must have probability 0.65.” - “They
+can’t overlap. They must add to 1. Always.” - “P(rain) = 0.35 → P(no
+rain) = 0.65.” <strong class="cue-label">CUE:</strong> ★ Write: “P(not A) = <strong>[1 −
+P(A)]</strong>. P(rain) = 0.35 → P(no rain) = <strong>[0.65]</strong>.
+P(rolling a 3 or less) = 3/6 → P(rolling 4 or higher) =
+<strong>[1/2]</strong>.”</p>
+<hr />
+<p><strong>Beat 11 — Expressing probability: three forms</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>3/8 = 0.375 = 37.5%</em>. Quick
+conversion table: - 1/4 → 0.25 → 25% - 0.6 → 3/5 → 60% - 75% → 3/4 →
+0.75 - 5/8 → 0.625 → 62.5% <strong class="say-label">SAY:</strong> - “Probability can be
+written as a fraction, decimal, or percent. All three mean the same
+thing.” - “Your notes have a practice table — do it now. Convert each
+one.” - “Fraction to decimal: divide top by bottom. Decimal to percent:
+multiply by 100.” <strong class="cue-label">CUE:</strong> ★ Write: “Complete the
+conversion table in your notes. Fraction: 3/8 → Decimal:
+<strong>[0.375]</strong> → Percent: <strong>[37.5]</strong>%.”</p>
+<p><em>Allow 2–3 minutes for the practice table. Answers: 1/4 = 0.25 =
+25%; 0.6 = 3/5 = 60%; 75% = 3/4 = 0.75; 5/8 = 0.625 = 62.5%.</em></p>
+<hr />
+<p><strong>Beat 12 — Vocabulary table fill-in</strong>
+<strong class="show-label">SHOW:</strong> Board: The seven terms still visible. Nothing
+else. <strong class="say-label">SAY:</strong> - “Now go back to your vocabulary table.” -
+“Fill in each definition in your own words — what you would say to a
+Grade 6 student.” - “Your own example — something you thought of, not
+one from the notes.” <strong class="cue-label">CUE:</strong> ★ Write: “Complete your vocab
+table — own words, own examples.”</p>
+<p><em>Allow 3–5 minutes. Circulate. Common issues: “theoretical
+probability” defined as “what you calculate” without mentioning equally
+likely outcomes — redirect; “experimental probability” defined as “doing
+the experiment” without the trial-count structure — redirect.</em></p>
+<hr />
+<h3 id="section-1-retrieval-check-facilitation">Section 1 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Everything closed. Five questions — write answers from memory.
+You have 4 minutes.” <strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed.
+Retrieval check begins now.”</p>
+<p><strong>After students finish:</strong> <strong class="say-label">SAY:</strong> “Open
+your notes. Find each answer. Fix anything that was wrong or incomplete
+— different colour if you have one.” <strong class="cue-label">CUE:</strong> ★ Write:
+“Open your notes. Check and correct now.”</p>
+<p><strong>Answer guide:</strong> 1. P(blue) = 5/10 = 1/2. P(not blue) =
+1 − 1/2 = 1/2. <em>(Total = 3 + 5 + 2 = 10. Five blue marbles.)</em> 2.
+Experimental P(heads) = 23/50 = 0.46. Not exactly 0.5, because
+experimental results vary from theoretical in the short run — 50 flips
+is not enough to guarantee the theoretical value. 3. P(not A) = 1 − 0.7
+= 0.3. 4. Theoretical probability is calculated from the structure of
+the situation (equally likely outcomes). Experimental probability is
+measured from actual trials. They differ in the short run; experimental
+approaches theoretical over many trials. 5. <em>(Stretch)</em> The
+student is wrong. Independent events have no memory — each roll of the
+die is a separate event. Rolling a 6 four times does not change the
+probability on the fifth roll. P(6) is always 1/6. This is the Gambler’s
+Fallacy. <em>(If students get this right, affirm it — they are ahead of
+the misconception. If wrong, hold for Section 3 where it gets full
+treatment.)</em></p>
+<hr />
+<h2 id="section-2-sample-spaces-and-tree-diagrams">Section 2 — Sample
+Spaces and Tree Diagrams</h2>
+<p><em>Learning target: I can list all outcomes of a two-event
+probability experiment using a tree diagram or table, and calculate
+probabilities from the sample space.</em> <em>Timing: ~30 minutes direct
+instruction</em></p>
+<p><em>Bring to class: two dice per group.</em></p>
+<hr />
+<p><strong>Beat 1 — Why listing matters</strong> <strong class="show-label">SHOW:</strong>
+Board: <em>“You can only calculate probability accurately if you know
+ALL the outcomes.”</em> <strong class="say-label">SAY:</strong> - “Compound events — two
+or more things happening.” - “Flip a coin AND roll a die. How many total
+outcomes?” - Pause. Get estimates. Don’t confirm yet. - “To find
+probability, you need the complete sample space. Skip an outcome — your
+probability is wrong.” - “Three methods for listing: tree diagram,
+table, organized list.” <strong class="cue-label">CUE:</strong> ★ Write: “A compound event
+involves <strong>[two or more]</strong> separate probability events.
+Listing the <strong>[sample space]</strong> is the foundation.”</p>
+<hr />
+<p><strong>Beat 2 — Tree diagram: coin and spinner</strong>
+<strong class="show-label">SHOW:</strong> Board: Draw the tree diagram live — root node,
+two branches (H, T), then three branches from each (R, G, B). Label each
+branch with its probability. List all six outcomes with probabilities at
+the right.</p>
+<p><em>(Structure: Start → H(1/2) → R(1/3) → (H,R) 1/6 / G(1/3) → (H,G)
+1/6 / B(1/3) → (H,B) 1/6; Start → T(1/2) → same three branches)</em>
+<strong class="say-label">SAY:</strong> - “Tree diagram: flip a coin, then spin a
+3-section spinner (R, G, B).” - “First branch: coin. Two outcomes — H or
+T. Each has probability 1/2.” - “Second branch: for each coin outcome,
+the spinner branches three ways — R, G, B. Each 1/3.” - “End of each
+path = one complete outcome. How many paths? Count the tips.” - “Six
+outcomes: (H,R), (H,G), (H,B), (T,R), (T,G), (T,B).” - “Probability of
+each path: multiply along the branches. (1/2) × (1/3) = 1/6 for each.” -
+“Total probability of all six outcomes: 6 × 1/6 = 1. Correct — must sum
+to 1.” <strong class="cue-label">CUE:</strong> ✎ Draw: “Your notes already have this tree
+diagram. Complete the blanks: Total outcomes = <strong>[2]</strong> ×
+<strong>[3]</strong> = <strong>[6]</strong>. P(H and G) =
+<strong>[1]</strong>/<strong>[6]</strong>. P(T and not R) =
+<strong>[2]</strong>/<strong>[6]</strong>.”</p>
+<div class="flag flag-pacing"><span class="flag-label">FLAG — Pacing</span>Students often want to count the
+branches rather than multiply. This is fine for now — make sure they see
+that both give the same answer. The multiplication shortcut (Fundamental
+Counting Principle) is the main payoff. Don’t move on until the tree
+structure is clear.</div>
+<hr />
+<p><strong>Beat 3 — Fundamental Counting Principle</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>Fundamental Counting Principle: if
+Event A has m outcomes and Event B has n outcomes, total outcomes = m ×
+n</em></p>
+<p>Examples: - Coin (2) × Spinner (3) = 6 - Soup (4) × Sandwich (3) ×
+Dessert (2) = 24 <strong class="say-label">SAY:</strong> - “Fundamental Counting
+Principle: multiply the number of outcomes at each step.” - “Two events:
+multiply. Three events: multiply all three. The rule extends.” -
+“Restaurant: 4 soups, 3 sandwiches, 2 desserts. How many different
+3-course meals?” - Pause 3 seconds. - “4 × 3 × 2 = 24. Don’t list them —
+multiply.” <strong class="cue-label">CUE:</strong> ★ Write: “FCP: m × n total outcomes.
+Restaurant: <strong>[4]</strong> × <strong>[3]</strong> ×
+<strong>[2]</strong> = <strong>[24]</strong> meals.”</p>
+<hr />
+<p><strong>Beat 4 — Self-explanation prompt (Beat 2–3)</strong>
+<strong class="say-label">SAY:</strong> “Before moving on — explain in your own words: why
+does each path in the tree diagram have a probability of 1/6? What
+calculation produced that number and why?” <strong class="cue-label">CUE:</strong> ★
+Write: “Each path has probability 1/6 because ___”</p>
+<p><em>Allow 60 seconds. Target: (1/2) × (1/3) = 1/6 — multiply the
+branch probabilities. Students who write “because there are 6 paths” are
+describing the result, not the reasoning. Redirect: “What were the
+probabilities on each branch, and what did you do with them?”</em></p>
+<hr />
+<p><strong>Beat 5 — Table method: two dice</strong>
+<strong class="show-label">SHOW:</strong> Board: Draw the 7×7 table with Die 1 as rows
+(1–6) and Die 2 as columns (1–6). Fill in the first row and first
+column. Leave the interior blank. <strong class="say-label">SAY:</strong> - “Second
+method: table or grid. Especially useful when two events have the same
+type of outcome.” - “Roll two dice. Die 1 labels the rows. Die 2 labels
+the columns.” - “Each cell is one outcome: (Die 1 result, Die 2
+result).” - “Total outcomes: 6 × 6 = 36. The table confirms it.” - “Now
+— from the table — find P(sum = 7). Which cells give a sum of 7?” -
+“(1,6), (2,5), (3,4), (4,3), (5,2), (6,1) — six cells.” - “P(sum = 7) =
+6/36 = 1/6.” <strong class="cue-label">CUE:</strong> ★ Write: “Total outcomes =
+<strong>[36]</strong>. P(sum = 7) =
+<strong>[6]</strong>/<strong>[36]</strong>. P(both same) =
+<strong>[6]</strong>/<strong>[36]</strong>. P(Die 1 &gt; Die 2) =
+<strong>[15]</strong>/<strong>[36]</strong>.”</p>
+<p><em>P(both same): (1,1), (2,2), (3,3), (4,4), (5,5), (6,6) = 6
+outcomes.</em> <em>P(Die 1 &gt; Die 2): 15 outcomes (students can count
+from the table — the diagonal and below-diagonal cells).</em></p>
+<hr />
+<p><strong>Beat 6 — Organized list: two coins</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>Toss two coins: {HH, HT, TH, TT}</em>
+P(exactly one head) = 2/4 = 1/2 Note: HT and TH are different outcomes.
+<strong class="say-label">SAY:</strong> - “Organized list — useful when the sample space
+is small.” - “Two coins: four outcomes. HH, HT, TH, TT.” - “Important:
+HT and TH are different. The first coin and second coin are separate —
+order matters.” - “P(exactly one head): HT and TH qualify. 2 out of 4. P
+= 1/2.” <strong class="cue-label">CUE:</strong> ★ Write: “Two coins: {HH, HT, TH, TT}.
+P(exactly one head) = <strong>[2]</strong>/<strong>[4]</strong>. Note:
+HT ≠ TH — order <strong>[matters]</strong>.”</p>
+<hr />
+<p><strong>Beat 7 — When to use each method</strong>
+<strong class="show-label">SHOW:</strong> Board: | Method | Best when | |—|—| | Tree
+diagram | Sequence of events, seeing each branch | | Table/grid | Two
+events with clear categories | | Organized list | Small sample space,
+quick listing | <strong class="say-label">SAY:</strong> - “All three methods get to the
+same answer. Choose the one that makes the problem clearest.” - “Lots of
+steps with branching choices: tree diagram.” - “Two events that each
+produce a range of values (like dice): table.” - “Small, manageable
+list: write them out.” <strong class="cue-label">CUE:</strong> ★ Write: “Complete the
+‘when to use’ table in your notes.”</p>
+<hr />
+<h3 id="section-2-retrieval-check-facilitation">Section 2 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Five questions — from memory. You have 5 minutes.”
+<strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed. Retrieval check begins
+now.”</p>
+<p><strong>After students finish:</strong> <strong class="cue-label">CUE:</strong> ★
+Write: “Open notes. Check and correct — different colour.”</p>
+<p><strong>Answer guide:</strong> 1. Total outcomes: 4 × 6 = 24. Tree
+diagram (partial): from root, two branches for A and B, each branching
+to 6 die faces. <em>(Accept any correct partial tree with accurate
+labelling for A and B branches.)</em> 2. P(sum ≥ 10): outcomes are
+(4,6), (5,5), (5,6), (6,4), (6,5), (6,6) = 6 outcomes. P = 6/36 = 1/6.
+3. FCP: 10 × 10 × 10 = 1000 possible codes. 4. Two coins: {HH, HT, TH,
+TT}. P(at least one tail): outcomes are HT, TH, TT = 3 outcomes. P =
+3/4. 5. <em>(Stretch)</em> Two dice, 36 total outcomes. Primes: 2, 3, 5,
+7, 11. Sum=2: (1,1)=1; Sum=3: (1,2),(2,1)=2; Sum=5:
+(1,4),(2,3),(3,2),(4,1)=4; Sum=7: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1)=6;
+Sum=11: (5,6),(6,5)=2. Total = 1+2+4+6+2 = 15. P(sum is prime) = 15/36 =
+5/12.</p>
+<hr />
+<h2 id="section-3-independent-events">Section 3 — Independent
+Events</h2>
+<p><em>Learning target: I can identify independent events, calculate the
+probability of both occurring using the multiplication rule, and explain
+why independence matters.</em> <em>Timing: ~30 minutes direct
+instruction</em></p>
+<p><em>Bring to class: one coin per student; bag with 5 red and 3 blue
+cubes.</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Three vocabulary terms — Independent events / Multiplication rule
+(independent) / P(A and B) <strong class="say-label">SAY:</strong> - “Three terms. Don’t
+fill them in yet.” - “By the end of this section, you’ll know what makes
+two events independent, and how to calculate probability when they are.”
+<strong class="cue-label">CUE:</strong> ⊡ Think: “What does ‘independent’ mean in everyday
+English? Hold that.”</p>
+<hr />
+<p><strong>Beat 2 — Defining independence</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>Two events are independent if the
+outcome of one does NOT affect the probability of the other.</em>
+<strong class="say-label">SAY:</strong> - “Independent: knowing what happened in event A
+gives you no useful information about event B.” - “Flip a coin. Did the
+flip change the die you’re about to roll? No.” - “The coin has no way to
+communicate with the die. They’re independent.” - “What makes events NOT
+independent? We’ll cover that in Section 4. For now: focus on when they
+are.” <strong class="cue-label">CUE:</strong> ★ Write: “Two events are independent if the
+outcome of one does NOT affect the <strong>[probability]</strong> of the
+other.”</p>
+<hr />
+<p><strong>Beat 3 — Multiplication rule</strong> <strong class="show-label">SHOW:</strong>
+Board: <em>P(A and B) = P(A) × P(B)</em> [for independent events]
+<strong class="say-label">SAY:</strong> - “When two events are independent, you multiply
+their probabilities.” - “P(Heads and rolling a 3) = P(H) × P(3) = (1/2)
+× (1/6) = 1/12.” - “Verify it with the sample space: 12 total outcomes,
+exactly 1 is (H,3). P = 1/12. Same answer.” - “Multiplication works
+because independence means the probabilities don’t influence each
+other.” <strong class="cue-label">CUE:</strong> ★ Write: “P(A and B) = <strong>[P(A) ×
+P(B)]</strong>. P(H and 3) = (1/2) × (1/6) = <strong>[1/12]</strong>.
+Verified from sample space: <strong>[1]</strong>/<strong>[12]</strong>.
+Same? <strong>[Yes]</strong>.”</p>
+<hr />
+<p><strong>Beat 4 — Worked example: with replacement</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>Bag: 5 red, 3 blue (8 total). Draw,
+record colour, PUT BACK, draw again.</em> - P(red, draw 1) = 5/8 -
+P(red, draw 2) = 5/8 ← same, marble was replaced - P(red and red) =
+(5/8) × (5/8) = 25/64 <strong class="say-label">SAY:</strong> - “Key word: PUT IT BACK.
+That’s what makes these independent.” - “After the first draw, the bag
+is identical to before — 8 marbles, 5 red.” - “The marble has been
+replaced. The second draw doesn’t know what the first draw was.” -
+“P(red, draw 2) is still 5/8. Multiply: 25/64.” <strong class="cue-label">CUE:</strong> ★
+Write: “P(red, draw 2) = <strong>[5/8]</strong> ← same, because the
+marble was <strong>[replaced]</strong>. P(red and red) =
+<strong>[25/64]</strong>.”</p>
+<hr />
+<p><strong>Beat 5 — Self-explanation prompt (Beat 4)</strong>
+<strong class="say-label">SAY:</strong> “Before moving on — explain in your own words: why
+is the probability on the second draw the same as the first? What
+specific condition makes this true?” <strong class="cue-label">CUE:</strong> ★ Write: “The
+second draw probability is the same because ___”</p>
+<p><em>Target: “the marble was replaced, so the bag is the same as it
+was before.” Students who write “because they’re independent” are
+circular — they haven’t explained what creates the independence.
+Redirect: “What physical thing was done between the draws that kept them
+independent?”</em></p>
+<hr />
+<p class="beat-title"><strong>Beat 6 — The Gambler’s Fallacy — dedicated beat</strong></p>
+<blockquote>
+<p><strong>FLAG — Misconception: The Gambler’s Fallacy. This is the
+single most important misconception in the entire unit. It needs its own
+beat, a concrete example, and time. Do not rush this.</strong></p>
+</blockquote>
+<p><strong class="show-label">SHOW:</strong> Board: Write: <em>H H H H H — what is P(heads
+on flip 6)?</em> Leave the answer blank. Wait. <strong class="say-label">SAY:</strong> -
+“You flip a coin. Heads. Heads again. Heads again. Four times. Five
+times. All heads.” - “Pause. What is the probability of heads on the
+next flip?” - Wait for responses. Most will say less than 1/2, or “tails
+is due.” - “Let me ask this differently: does the coin know it’s been
+landing on heads?” - Pause 3 seconds. - “No. The coin has no memory. It
+has no mechanism to track what it has done before.” - “Each flip is
+completely independent. P(heads on flip 6) = 1/2. Always.” - “The
+Gambler’s Fallacy: believing that past independent outcomes make a
+future outcome more or less likely.” - “The word ‘fallacy’ means it is a
+mistake in reasoning — it feels true but it is wrong.”
+<strong class="show-label">SHOW:</strong> Board (beneath the coin sequence): <em>P(heads |
+previous 5 were heads) = 1/2</em> <strong class="say-label">SAY:</strong> - “That vertical
+bar means ‘given.’ Given that the last five were heads — it’s still
+1/2.” - “What IS true: over thousands of flips, heads and tails will
+appear roughly equally often.” - “But that happens through future flips
+balancing out, not through the coin paying a debt.” - “The coin owes you
+nothing.” <strong class="cue-label">CUE:</strong> ★ Write: “Gambler’s Fallacy: believing
+past <strong>[independent]</strong> outcomes make a future outcome more
+or less likely. Wrong, because independent events have <strong>[no
+memory]</strong>. P(heads on flip 6 | 5 heads in a row) =
+<strong>[1/2]</strong>.”</p>
+<div class="flag flag-alberta-context"><span class="flag-label">FLAG — Alberta Context</span>Hockey draft lottery. “The
+Edmonton Oilers got the first pick three times in four years. Does that
+mean they’re ‘due’ for a low pick? Or does it mean a high pick is less
+likely for them now? Neither — if each lottery draw is independent,
+previous results have no bearing on future ones. The lottery balls don’t
+know what happened last year.” <em>(Note: the lottery odds change based
+on standings, which can lead to a productive extension conversation —
+but the core independence principle still holds within a given year’s
+draw.)</em></div>
+<div class="flag flag-pacing"><span class="flag-label">FLAG — Pacing</span>Give 2 extra minutes here. Ask
+students to flip their own coin 10 times and record the sequence. Then
+ask: “Did any sequence feel like it was ‘due’ for a change?” The
+physical act of flipping reinforces that each flip is a fresh start.</div>
+<hr />
+<p><strong>Beat 7 — Identifying independence: key question</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>“Does knowing the outcome of Event A
+change what’s likely for Event B?”</em> Then complete the identification
+table: | Situation | Independent or Dependent? | |—|—| | Two separate
+coin flips | Independent | | Draw a card, keep it, draw again |
+Dependent | | Draw a card, replace it, draw again | Independent | | Two
+students selected without replacement | Dependent | | Rolling two dice |
+Independent | <strong class="say-label">SAY:</strong> - “The test: does the outcome of
+Event A give you any new information about Event B?” - “Card kept: yes —
+one card is gone, so the second draw is from a different pool.” - “Card
+replaced: no — the deck is restored. Same probabilities.” - “Without
+replacement: always dependent. With replacement: always independent.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Complete the identification table in
+your notes.”</p>
+<hr />
+<h3 id="section-3-retrieval-check-facilitation">Section 3 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Five questions. You have 5 minutes.” <strong class="cue-label">CUE:</strong> ↩︎
+Check: “Notes closed. Retrieval check begins now.”</p>
+<p><strong>After students finish:</strong> <strong class="cue-label">CUE:</strong> ★
+Write: “Open notes. Check and correct — different colour.”</p>
+<p><strong>Answer guide:</strong> 1. Yes — independent. Rolling a die
+and spinning a spinner: neither outcome affects the other. There is no
+mechanism for the die to influence the spinner. 2. P(A and B) = 0.4 ×
+0.3 = 0.12. 3. P(green) = 4/10. Draw with replacement: P(green, draw 2)
+= 4/10. P(green and green) = (4/10) × (4/10) = 16/100 = 4/25. 4.
+Gambler’s Fallacy: the mistaken belief that past results in an
+independent probability situation influence future outcomes. Real-life
+example: “Slot machine hasn’t paid out in a while, so it must be about
+to” or “roulette wheel has hit red five times — black must be coming.”
+<em>(Accept any genuine independent probability situation.)</em> 5.
+<em>(Stretch)</em> P(all three) = (1/3) × (1/3) × (1/3) = 1/27. P(at
+least one does NOT occur) = 1 − P(all three occur) = 1 − 1/27 =
+26/27.</p>
+<hr />
+<h2 id="section-4-dependent-events">Section 4 — Dependent Events</h2>
+<p><em>Learning target: I can identify dependent events, calculate P(A
+then B) using the conditional multiplication rule, and explain how the
+sample space changes after the first event.</em> <em>Timing: ~35 minutes
+direct instruction</em></p>
+<p><em>Bring to class: bag with 5 red and 3 blue cubes; playing cards
+(or printed substitute).</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Four vocabulary terms — Dependent events / Conditional
+probability / Without replacement / P(B | A) <strong class="say-label">SAY:</strong> -
+“Four terms. Don’t fill them in yet.” - “Section 3 was about events that
+don’t affect each other. Section 4 is about what happens when they do.”
+<strong class="cue-label">CUE:</strong> ⊡ Think: “Think of one situation where the first
+event would change what’s possible in the second. Hold it.”</p>
+<hr />
+<p><strong>Beat 2 — Defining dependent events</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>Two events are dependent if the
+outcome of the first changes the probability of the second.</em></p>
+<p><em>Most common cause: items selected without replacement.</em>
+<strong class="say-label">SAY:</strong> - “Dependent: the first event has consequences for
+the second.” - “The most common reason: you take something out and don’t
+put it back.” - “52 cards, draw one and keep it. The deck now has 51
+cards. The sample space is smaller.” - “Whatever you drew is gone. If
+you drew an ace, there are now only 3 aces left.” - “The first event
+permanently changed the pool. That’s dependence.” <strong class="cue-label">CUE:</strong>
+★ Write: “Two events are dependent if the first event CHANGES the
+probability of the second. Most common cause: items selected
+<strong>[without replacement]</strong> — the sample space
+<strong>[shrinks]</strong>.”</p>
+<hr />
+<p><strong>Beat 3 — Conditional multiplication rule</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>P(A then B) = P(A) × P(B | A)</em></p>
+<p>P(B | A) = “probability of B given that A already happened”
+<strong class="say-label">SAY:</strong> - “New notation: P(B | A) — probability of B given
+A.” - “Given A already happened — what are the probabilities now, with A
+removed from the pool?” - “You multiply, but the second fraction uses
+the updated sample space.” - “The first event didn’t just produce an
+outcome — it changed the conditions for the second event.”
+<strong class="cue-label">CUE:</strong> ★ Write: “P(A then B) = <strong>[P(A) × P(B |
+A)]</strong>. The second probability uses the <strong>[updated]</strong>
+sample space.”</p>
+<hr />
+<p><strong>Beat 4 — Worked example: cards</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>Standard deck: 52 cards, 4 aces. Draw
+one, keep it. Then draw another.</em></p>
+<p>Work through: - P(Ace, draw 1) = 4/52 = 1/13 - After removing one
+ace: 3 aces remain, 51 cards remain - P(Ace, draw 2 | Ace on draw 1) =
+3/51 - P(both aces) = (4/52) × (3/51) = 12/2652 ≈ 0.0045
+<strong class="say-label">SAY:</strong> - “P(Ace, draw 1) = 4/52.” - “An ace was drawn and
+kept. How many aces now? 3. How many total cards? 51.” - “P(Ace, draw 2
+| Ace drawn first) = 3/51. The sample space changed.” - “Multiply:
+(4/52) × (3/51) = 12/2652. Small probability — makes sense.”
+<strong class="cue-label">CUE:</strong> ★ Write: “After removing one ace:
+<strong>[3]</strong> aces remain, <strong>[51]</strong> cards remain.
+P(Ace, draw 2 | Ace, draw 1) = <strong>[3]</strong>/51. P(both aces) =
+<strong>[12]</strong>/<strong>[2652]</strong> ≈
+<strong>[0.0045]</strong>.”</p>
+<hr />
+<p><strong>Beat 5 — Self-explanation prompt (Beat 4)</strong>
+<strong class="say-label">SAY:</strong> “Before moving on — explain in your own words why
+the second probability is 3/51 instead of 4/52. What changed and why?”
+<strong class="cue-label">CUE:</strong> ★ Write: “The second probability is 3/51 because
+___”</p>
+<p><em>Target: one ace was drawn and kept, so one ace is gone and the
+total pool is now 51 cards. Students who write “because it’s dependent”
+are describing the category, not the mechanism. Redirect: “What
+physically happened between draw 1 and draw 2 that changed the
+numbers?”</em></p>
+<hr />
+<p><strong>Beat 6 — Worked example: marbles</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>Bag: 5 red, 3 blue (8 total). Draw two
+without replacement. P(red first, blue second).</em></p>
+<p>Work through: - P(red first) = 5/8 - After removing one red: 4 red
+remain, 3 blue remain, 7 total - P(blue second | red first) = 3/7 -
+P(red then blue) = (5/8) × (3/7) = 15/56 ≈ 0.268 <strong class="say-label">SAY:</strong> -
+“Draw red first: 5/8.” - “Red drawn, not replaced. Now: 4 red, 3 blue, 7
+total.” - “P(blue second | red was first) = 3/7. Three blue marbles,
+seven remaining.” - “Multiply: (5/8) × (3/7) = 15/56.”
+<strong class="cue-label">CUE:</strong> ★ Write: “After removing one red:
+<strong>[4]</strong> red remain, <strong>[3]</strong> blue remain,
+<strong>[7]</strong> total remain. P(blue | red first) =
+3/<strong>[7]</strong>. P(red then blue) =
+<strong>[15]</strong>/<strong>[56]</strong> ≈
+<strong>[0.268]</strong>.”</p>
+<hr />
+<p><strong>Beat 7 — Comparing with vs. without replacement</strong>
+<strong class="show-label">SHOW:</strong> Board: Same bag (5 red, 3 blue): | Scenario |
+P(red first) | P(blue second) | P(red then blue) | |—|—|—|—| | WITH
+replacement | 5/8 | 3/8 | (5/8)(3/8) = 15/64 | | WITHOUT replacement |
+5/8 | 3/7 | (5/8)(3/7) = 15/56 | <strong class="say-label">SAY:</strong> - “Same bag. Same
+sequence. Different answers.” - “With replacement: P(red then blue) =
+15/64 ≈ 0.234.” - “Without replacement: P(red then blue) = 15/56 ≈
+0.268.” - “Without replacement is slightly higher — because removing a
+red makes blue relatively more likely.” - “The difference exists because
+without replacement changes the sample space.” <strong class="cue-label">CUE:</strong> ★
+Write: “The probabilities are different because without replacement
+changes the <strong>[sample space / denominator]</strong>.”</p>
+<hr />
+<p class="beat-title"><strong>Beat 8 — Misconception: small changes don’t
+matter</strong></p>
+<blockquote>
+<p><strong>FLAG — Misconception: “Removing one item from a large group
+doesn’t really change the probability.”</strong> This feels intuitively
+reasonable for large groups. Address directly.</p>
+</blockquote>
+<p><strong class="show-label">SHOW:</strong> Board: Two comparisons: - Small group (8
+marbles): P(red) before = 5/8 = 0.625. After removing one red: P(red) =
+4/7 = 0.571. Difference = 0.054. Significant? <strong>Yes.</strong> -
+Large group (1000 marbles, 625 red): P(red) before = 625/1000 = 0.625.
+After removing one red: P(red) = 624/999 ≈ 0.624. Difference ≈ 0.001.
+Significant? <strong>Barely.</strong> <strong class="say-label">SAY:</strong> - “Here’s
+the catch: the misconception is partially right and partially wrong.” -
+“For a very large population — 1000 items, 10 000 items — removing one
+barely changes the probability. Statisticians sometimes treat this as
+approximately independent.” - “But for the problems we work with — 8
+marbles, 52 cards, 30 students in a class — the change matters. You must
+account for it.” - “Rule of thumb: if the sample is a significant
+fraction of the population, use the dependent events rule.”
+<strong class="cue-label">CUE:</strong> ★ Write: “For small populations (cards, marbles,
+students): removing one item <strong>[does change]</strong> the
+probability. Difference before: <strong>[5/8 = 0.625]</strong>, after:
+<strong>[4/7 ≈ 0.571]</strong>. Meaningful? <strong>[Yes]</strong>.”</p>
+<hr />
+<p><strong>Beat 9 — Three-draw sequence</strong> <strong class="show-label">SHOW:</strong>
+Board: <em>Bag: 4 red, 6 blue (10 total). Draw three without
+replacement. P(red, red, blue).</em></p>
+<p>Work through step by step: - P(R₁) = 4/10 - After draw 1: 3 red, 6
+blue, 9 total → P(R₂ | R₁) = 3/9 - After draw 2: 2 red, 6 blue, 8 total
+→ P(B₃ | R₁R₂) = 6/8 - P(R, R, B) = (4/10) × (3/9) × (6/8) = 72/720 =
+1/10 <strong class="say-label">SAY:</strong> - “Three events, dependent all the way
+through.” - “Each draw, update your count — red remaining, blue
+remaining, total remaining.” - “Multiply all three probabilities.” -
+“Work systematically: state what’s in the bag before each draw.”
+<strong class="cue-label">CUE:</strong> ★ Write: “After draw 1: <strong>[3]</strong> red,
+<strong>[6]</strong> blue, <strong>[9]</strong> total. P(R₂|R₁) =
+<strong>[3]</strong>/9. After draw 2: <strong>[2]</strong> red,
+<strong>[6]</strong> blue, <strong>[8]</strong> total. P(B₃|R₁R₂) =
+<strong>[6]</strong>/8. P(R,R,B) =
+<strong>[72]</strong>/<strong>[720]</strong> =
+<strong>[1/10]</strong>.”</p>
+<hr />
+<p><strong>Beat 10 — Self-explanation prompt (Beat 9)</strong>
+<strong class="say-label">SAY:</strong> “Before moving on — explain what you did at Step
+2: why did the numbers in the bag change the way they did, and why did
+you multiply rather than add?” <strong class="cue-label">CUE:</strong> ★ Write: “At Step
+2, the bag changed because <strong><em>. I multiplied because
+</em></strong>.”</p>
+<p><em>Target for “bag changed”: one red was drawn and not replaced — so
+red count decreased by 1, total decreased by 1, blue count unchanged.
+Target for “multiplied”: each event is one step in a sequence — the
+multiplication rule for dependent events chains them together.</em></p>
+<hr />
+<p class="beat-title"><strong>Beat 11 — Alberta context: card games</strong></p>
+<div class="flag flag-alberta-context"><span class="flag-label">FLAG — Alberta Context</span>Card games at a Métis
+community gathering. “In many card games played at community gatherings
+— including traditional and contemporary Métis card games — players need
+to track what cards have already been played to judge what’s likely to
+come next. When a card is played and removed from the deck, it changes
+the probabilities for every future draw. This is dependent event
+reasoning in action.”</div>
+<p><strong class="say-label">SAY:</strong> - “This isn’t just a textbook problem. Any
+situation where you track what’s been used — cards, lottery numbers,
+names drawn from a hat — uses dependent event logic.” - “The principle:
+once something is removed from the pool without being returned, the
+probabilities shift.” <strong class="cue-label">CUE:</strong> ⊡ Think: “Name one real
+situation — inside or outside of school — where you would need to track
+what’s already been removed to calculate probability correctly.”</p>
+<hr />
+<h3 id="section-4-retrieval-check-facilitation">Section 4 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Five questions. You have 5 minutes.” <strong class="cue-label">CUE:</strong> ↩︎
+Check: “Notes closed. Retrieval check begins now.”</p>
+<p><strong>After students finish:</strong> <strong class="cue-label">CUE:</strong> ★
+Write: “Open notes. Check and correct — different colour.”</p>
+<p><strong>Answer guide:</strong> 1. P(first is a girl) = 12/20. After
+removing one girl: 11 girls remain, 19 total. P(second is a girl | first
+was a girl) = 11/19. P(both girls) = (12/20) × (11/19) = 132/380 = 33/95
+≈ 0.347. 2. P(red first) = 6/10. After removing one red: 5 red, 4 green,
+9 total. P(green second | red first) = 4/9. P(red then green) = (6/10) ×
+(4/9) = 24/90 = 4/15 ≈ 0.267. 3. “Without replacement” means the first
+item drawn is removed from the pool permanently. The second draw is now
+from a smaller pool with a different composition, so its probabilities
+are different from the first. The two events are linked — they’re
+dependent. 4. <em>(This question refers to a card scenario students
+specify — accept any valid comparison that correctly applies both rules
+with the numbers they chose. Key: with replacement uses the same
+fractions both times; without replacement uses updated
+denominators.)</em> 5. <em>(Stretch)</em> Bag: 3 yellow, 4 blue, 5 green
+(12 total). P(yellow) = 3/12. After: 2 yellow, 4 blue, 5 green, 11
+total. P(blue | yellow) = 4/11. After: 2 yellow, 3 blue, 5 green, 10
+total. P(green | yellow, blue) = 5/10. P(yellow, blue, green) = (3/12) ×
+(4/11) × (5/10) = 60/1320 = 1/22 ≈ 0.045.</p>
+<hr />
+<h2 id="unit-synthesis">Unit Synthesis</h2>
+<p><em>~20 minutes — notes closed, then return to pre-knowledge
+check</em></p>
+<hr />
+<p><strong>Beat 1 — Setup</strong> <strong class="show-label">SHOW:</strong> Board: Four
+section headers in a column — leave a blank line beside each. 1.
+Probability Fundamentals 2. Sample Spaces and Tree Diagrams 3.
+Independent Events 4. Dependent Events <strong class="say-label">SAY:</strong> - “Notes
+closed. Everything closed.” - “Four sections. I want one sentence from
+each — the single most important idea — from memory.” - “Not a test.
+This is you finding out what actually stuck.” <strong class="cue-label">CUE:</strong> ↩︎
+Check: “Notes closed. Four sections. One sentence each. Go.”</p>
+<p><em>Allow 5–7 minutes. Circulate. Watch for: students who can state
+the multiplication rules but cannot explain why they differ; students
+who confuse theoretical and experimental; students whose Section 3
+sentence doesn’t mention independence or memory. These are your
+consolidation targets.</em></p>
+<hr />
+<p><strong>Beat 2 — Part B: Practice from memory</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>Bag: 4 red, 3 blue, 2 green (9
+total).</em> (a) P(not red)? (b) Two draws WITH replacement — P(red then
+blue)? (c) Two draws WITHOUT replacement — P(red then blue)? (d) Are
+draws in (b) independent or dependent? In (c)? <strong class="say-label">SAY:</strong> -
+“Work through all four parts. Show every step.” - “If you need to draw
+the multiplication tree, draw it.” - “Notes closed — this is memory
+retrieval.” <strong class="cue-label">CUE:</strong> ↩︎ Check: “Work through Parts a–d. Show
+all working.”</p>
+<p><em>Answers: (a) P(not red) = 1 − 4/9 = 5/9. (b) WITH replacement:
+P(red) = 4/9; P(blue) = 3/9 = 1/3; P(red then blue) = (4/9)(3/9) = 12/81
+= 4/27. (c) WITHOUT: P(red) = 4/9; after red removed: 3 blue, 8 total;
+P(blue | red) = 3/8; P(red then blue) = (4/9)(3/8) = 12/72 = 1/6. (d)
+(b) independent — marble replaced; (c) dependent — marble not
+replaced.</em></p>
+<hr />
+<p><strong>Beat 3 — Return to the Pre-Knowledge Check</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>“Turn to page 1. Read what you wrote
+before the unit. Do not change it.”</em> <strong class="say-label">SAY:</strong> - “Read
+your pre-knowledge answers from day one.” - “Don’t erase anything. Don’t
+change anything.” - “Three questions at the bottom of the synthesis
+page: What did you get right? What were you wrong about? What surprised
+you?” - “Write in your own words.” <strong class="cue-label">CUE:</strong> ★ Write:
+“Answer the three end-of-unit questions using your own words.”</p>
+<p><em>Allow 4–5 minutes. This is the most important metacognitive
+moment in the unit. Students seeing their own pre-instruction words —
+especially on the coin-flip Gambler’s Fallacy question — is more
+powerful than any correction you can deliver verbally. Let it
+sit.</em></p>
+<div class="flag flag-pacing"><span class="flag-label">FLAG — Pacing</span>Do not read student pre-knowledge
+checks aloud. Do not comment on individual answers. The value is in each
+student confronting their own prior thinking privately. If you see a
+student who wrote “heads is due” on day one and now understands why
+that’s wrong, that’s the learning. Let them have that moment without
+making it public.</div>
+<hr />
+<p><strong>Beat 4 — Self-assessment</strong> <strong class="show-label">SHOW:</strong>
+Board: <em>“Synthesis Part C — self-assessment.”</em>
+<strong class="say-label">SAY:</strong> - “Last step: three questions from your
+pre-knowledge check.” - “For each one: what IS the right answer? Were
+you right? What changed in your thinking?” - “Write one question you
+still have about probability. If you have none, you’re not looking hard
+enough.” <strong class="cue-label">CUE:</strong> ★ Write: “Complete Part C — answer all
+three questions and write one question you still have.”</p>
+<hr />
+<h2 id="blank-answer-key">Blank Answer Key</h2>
+<p>Quick reference — all fill-in blank answers, in section order.</p>
+<h3 id="section-1">Section 1</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Probability is always between ___ and ___</td>
+<td>0 / 1</td>
+</tr>
+<tr>
+<td>0 = ___</td>
+<td>impossible</td>
+</tr>
+<tr>
+<td>1 = ___</td>
+<td>certain</td>
+</tr>
+<tr>
+<td>0.5 = ___</td>
+<td>equally likely either way</td>
+</tr>
+<tr>
+<td>P(event) = number of ___ outcomes / total ___ outcomes</td>
+<td>favourable / possible</td>
+</tr>
+<tr>
+<td>Sample space size (6-sided die) = ___</td>
+<td>6</td>
+</tr>
+<tr>
+<td>P(4) = <strong><em>/</em></strong></td>
+<td>1/6</td>
+</tr>
+<tr>
+<td>P(even) = <strong><em>/</em></strong> (favourables: <strong><em>,
+</em></strong>, ___)</td>
+<td>3/6 (2, 4, 6)</td>
+</tr>
+<tr>
+<td>P(7) = <strong><em>/</em></strong> = ___</td>
+<td>0/6 = 0</td>
+</tr>
+<tr>
+<td>P(&lt;7) = <strong><em>/</em></strong> = ___</td>
+<td>6/6 = 1</td>
+</tr>
+<tr>
+<td>P(red) experimental = <strong><em>/</em></strong> = ___</td>
+<td>14/40 = 0.35</td>
+</tr>
+<tr>
+<td>P(blue) experimental = <strong><em>/</em></strong> = ___</td>
+<td>16/40 = 0.4</td>
+</tr>
+<tr>
+<td>Theoretical tells you what ___ happen (long run)</td>
+<td>should</td>
+</tr>
+<tr>
+<td>Short-run results will ___ from theoretical</td>
+<td>vary</td>
+</tr>
+<tr>
+<td>P(not A) = ___</td>
+<td>1 − P(A)</td>
+</tr>
+<tr>
+<td>P(no rain) = ___</td>
+<td>0.65</td>
+</tr>
+<tr>
+<td>P(rolling 4 or higher) = ___</td>
+<td>1/2</td>
+</tr>
+<tr>
+<td>Fraction 3/8 → Decimal ___ → Percent ___%</td>
+<td>0.375 / 37.5</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-2">Section 2</h3>
+<table>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A compound event involves ___ separate events</td>
+<td>two or more</td>
+</tr>
+<tr>
+<td>Listing the ___ is the foundation</td>
+<td>sample space</td>
+</tr>
+<tr>
+<td>Total outcomes = ___ × ___ = ___ (coin + spinner)</td>
+<td>2 × 3 = 6</td>
+</tr>
+<tr>
+<td>P(H and G) = <strong><em>/</em></strong></td>
+<td>1/6</td>
+</tr>
+<tr>
+<td>P(T and not R) = <strong><em>/</em></strong></td>
+<td>2/6</td>
+</tr>
+<tr>
+<td>FCP: m × n. Restaurant: ___ × ___ × ___ = ___</td>
+<td>4 × 3 × 2 = 24</td>
+</tr>
+<tr>
+<td>Each path probability = 1/6 because (1/2) × ___ = ___</td>
+<td>(1/3) = 1/6</td>
+</tr>
+<tr>
+<td>Two dice total outcomes = ___</td>
+<td>36</td>
+</tr>
+<tr>
+<td>P(sum = 7) = <strong><em>/</em></strong></td>
+<td>6/36</td>
+</tr>
+<tr>
+<td>P(both same) = <strong><em>/</em></strong></td>
+<td>6/36</td>
+</tr>
+<tr>
+<td>P(Die 1 &gt; Die 2) = <strong><em>/</em></strong></td>
+<td>15/36</td>
+</tr>
+<tr>
+<td>Two coins: P(exactly one head) = <strong><em>/</em></strong></td>
+<td>2/4</td>
+</tr>
+<tr>
+<td>HT ≠ TH — order ___</td>
+<td>matters</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-3">Section 3</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Two events independent if outcome of one does NOT affect the ___ of
+the other</td>
+<td>probability</td>
+</tr>
+<tr>
+<td>P(A and B) = ___</td>
+<td>P(A) × P(B)</td>
+</tr>
+<tr>
+<td>P(H and 3) = ___</td>
+<td>1/12</td>
+</tr>
+<tr>
+<td>Verified from sample space: <strong><em>/</em></strong>. Same?
+___</td>
+<td>1/12. Yes</td>
+</tr>
+<tr>
+<td>P(red, draw 2) = ___ ← same, because marble was ___</td>
+<td>5/8 / replaced</td>
+</tr>
+<tr>
+<td>P(red and red) = ___</td>
+<td>25/64</td>
+</tr>
+<tr>
+<td>Gambler’s Fallacy: believing past ___ outcomes affect future
+ones</td>
+<td>independent</td>
+</tr>
+<tr>
+<td>Independent events have ___</td>
+<td>no memory</td>
+</tr>
+<tr>
+<td>P(heads on flip 6</td>
+<td>5 heads in a row) = ___</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-4">Section 4</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Events dependent if first changes the ___ of the second</td>
+<td>probability</td>
+</tr>
+<tr>
+<td>Most common cause: selected ___ — sample space ___</td>
+<td>without replacement / shrinks</td>
+</tr>
+<tr>
+<td>P(A then B) = ___</td>
+<td>P(A) × P(B</td>
+</tr>
+<tr>
+<td>Second probability uses the ___ sample space</td>
+<td>updated</td>
+</tr>
+<tr>
+<td>After removing one ace: ___ aces remain, ___ cards remain</td>
+<td>3 / 51</td>
+</tr>
+<tr>
+<td>P(Ace, draw 2</td>
+<td>Ace, draw 1) = ___/51</td>
+</tr>
+<tr>
+<td>P(both aces) = <strong><em>/</em></strong> ≈ ___</td>
+<td>12/2652 ≈ 0.0045</td>
+</tr>
+<tr>
+<td>After removing one red (5 red, 3 blue, 8 total): ___ red, ___ blue,
+___ total</td>
+<td>4 / 3 / 7</td>
+</tr>
+<tr>
+<td>P(blue</td>
+<td>red first) = 3/___</td>
+</tr>
+<tr>
+<td>P(red then blue) = <strong><em>/</em></strong> ≈ ___</td>
+<td>15/56 ≈ 0.268</td>
+</tr>
+<tr>
+<td>Without replacement changes the ___</td>
+<td>sample space / denominator</td>
+</tr>
+<tr>
+<td>For small populations: removing one ___ change probability</td>
+<td>does</td>
+</tr>
+<tr>
+<td>After draw 1 (4 red, 6 blue): ___ red, ___ blue, ___ total</td>
+<td>3 / 6 / 9</td>
+</tr>
+<tr>
+<td>P(R₂</td>
+<td>R₁) = ___/9</td>
+</tr>
+<tr>
+<td>After draw 2: ___ red, ___ blue, ___ total</td>
+<td>2 / 6 / 8</td>
+</tr>
+<tr>
+<td>P(B₃</td>
+<td>R₁R₂) = ___/8</td>
+</tr>
+<tr>
+<td>P(R,R,B) = <strong><em>/</em></strong> = ___</td>
+<td>72/720 = 1/10</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-flags-summary">Key Flags Summary</h2>
+<p><em>Quick reference for lesson planning — every misconception that
+needs direct address.</em></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Section</th>
+<th>Misconception</th>
+<th>Where it appears</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>“Theoretical probability tells you what WILL happen”</td>
+<td>Beat 9 — dedicated beat with weather forecasting context</td>
+</tr>
+<tr>
+<td>S1</td>
+<td>Students confuse theoretical (calculated) and experimental
+(observed)</td>
+<td>Beat 7–8 — spinner example + self-explanation prompt</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>Gambler’s Fallacy: “heads is due after 5 tails”</td>
+<td>Beat 6 — dedicated beat; coin flip demonstration</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>“Independent” means the events are rare or unusual</td>
+<td>Beat 2 — clarify: independence is about probability influence, not
+frequency</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>“Removing one item from a large group doesn’t change
+probability”</td>
+<td>Beat 8 — addressed with numerical comparison, small vs. large
+group</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>Students use the original denominator for both draws</td>
+<td>Beat 4–5 — self-explanation prompt forces articulation of the
+mechanism</td>
+</tr>
+<tr>
+<td>All</td>
+<td>Theoretical probability equals what you’ll get on the next
+trial</td>
+<td>S1 Beat 9, S3 Beat 6 retrieval Q5 — independent events have no
+memory</td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>

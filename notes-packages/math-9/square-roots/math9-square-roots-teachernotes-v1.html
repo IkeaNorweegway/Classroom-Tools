@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math 9 — Square
+Roots and the Pythagorean Theorem</title>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent: #1d4ed8;
+  --accent-light: #eff6ff;
+  --accent-border: #bfdbfe;
+  --show-bg: #eff6ff;
+  --show-border: #3b82f6;
+  --say-bg: #ffffff;
+  --cue-bg: #f0fdf4;
+  --cue-border: #22c55e;
+  --flag-mc-bg: #fef2f2;
+  --flag-mc-border: #ef4444;
+  --flag-mc-label: #dc2626;
+  --flag-pace-bg: #fffbeb;
+  --flag-pace-border: #f59e0b;
+  --flag-pace-label: #d97706;
+  --flag-ab-bg: #f0fdf4;
+  --flag-ab-border: #22c55e;
+  --flag-ab-label: #15803d;
+  --flag-cs-bg: #fdf4ff;
+  --flag-cs-border: #a855f7;
+  --flag-cs-label: #7e22ce;
+  --text: #1a1a2e;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+}
+
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+
+/* ── Typography ── */
+h1 {
+  font-size: 1.6rem;
+  color: var(--accent);
+  margin-bottom: 2px;
+  font-family: system-ui, sans-serif;
+}
+h2 {
+  font-size: 1rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 700;
+  background: var(--accent);
+  color: white;
+  padding: 7px 14px;
+  margin: 36px -4px 18px;
+  letter-spacing: 0.01em;
+}
+h3 {
+  font-size: 0.95rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent-border);
+  padding-bottom: 4px;
+  margin: 28px 0 12px;
+}
+h4 {
+  font-size: 0.9rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  color: #374151;
+  margin: 20px 0 8px;
+}
+p { margin-bottom: 10px; }
+ul, ol { margin: 6px 0 10px 24px; }
+li { margin-bottom: 3px; }
+em { font-style: italic; }
+strong { font-weight: 700; }
+hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* ── Beat titles ── */
+p.beat-title {
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #334155;
+  padding: 7px 14px;
+  margin: 20px 0 0;
+  border-left: 4px solid #94a3b8;
+  border-radius: 3px 3px 0 0;
+}
+
+/* ── SHOW / SAY / CUE labels ── */
+.show-label { color: var(--accent); font-family: system-ui, sans-serif; }
+.say-label  { color: #374151;       font-family: system-ui, sans-serif; }
+.cue-label  { color: #15803d;       font-family: system-ui, sans-serif; }
+
+/* ── Flag callouts ── */
+.flag {
+  margin: 14px 0;
+  padding: 10px 14px;
+  border-radius: 0 4px 4px 0;
+  font-family: system-ui, sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.flag-label {
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 4px;
+}
+.flag p { margin-bottom: 6px; font-family: system-ui, sans-serif; }
+.flag p:last-child { margin-bottom: 0; }
+.flag ul { margin-top: 4px; }
+
+.flag-misconception { background: var(--flag-mc-bg);   border-left: 5px solid var(--flag-mc-border); }
+.flag-misconception .flag-label { color: var(--flag-mc-label); }
+
+.flag-pacing       { background: var(--flag-pace-bg);  border-left: 5px solid var(--flag-pace-border); }
+.flag-pacing .flag-label { color: var(--flag-pace-label); }
+
+.flag-alberta-context,
+.flag-alberta,
+.flag-context      { background: var(--flag-ab-bg);   border-left: 5px solid var(--flag-ab-border); }
+.flag-alberta-context .flag-label,
+.flag-alberta .flag-label,
+.flag-context .flag-label { color: var(--flag-ab-label); }
+
+.flag-cs-connection,
+.flag-connection   { background: var(--flag-cs-bg);   border-left: 5px solid var(--flag-cs-border); }
+.flag-cs-connection .flag-label,
+.flag-connection .flag-label { color: var(--flag-cs-label); }
+
+/* ── Retrieval guide box ── */
+.retrieval-guide {
+  background: var(--accent-light);
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 16px 0;
+}
+.retrieval-guide h3 { margin-top: 0; color: var(--accent); border-color: var(--accent-border); }
+.retrieval-guide ol { margin-left: 20px; }
+.retrieval-guide li { margin-bottom: 6px; font-family: system-ui, sans-serif; font-size: 0.9rem; }
+
+/* ── Tables ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 0.88rem;
+  font-family: system-ui, sans-serif;
+}
+th {
+  background: var(--accent);
+  color: white;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 600;
+}
+td {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tr:nth-child(even) td { background: #f8fafc; }
+
+/* ── Answer key ── */
+.answer-key h3 { color: #374151; border-color: #d1d5db; }
+
+/* ── Subtitle / subheading below h1 ── */
+.subtitle {
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ── Print ── */
+@media print {
+  body { max-width: none; padding: 10px; font-size: 11.5px; }
+  h2 { break-before: page; margin-left: 0; margin-right: 0; }
+  h2:first-of-type { break-before: auto; }
+  .flag, .retrieval-guide, table { break-inside: avoid; }
+  h3, h4, p.beat-title { break-after: avoid; }
+  p { orphans: 3; widows: 3; }
+}
+</style>
+</head>
+<body>
+<h1 id="math-9-square-roots-and-the-pythagorean-theorem">Math 9 — Square
+Roots and the Pythagorean Theorem</h1>
+<h2 id="teacher-notes-package">Teacher Notes Package</h2>
+<p><em>Teaching reference — not a script</em></p>
+<hr />
+<h2 id="how-to-use-this-document">How to use this document</h2>
+<p>Each teaching beat has three parts:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Label</th>
+<th>What it contains</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SHOW</strong></td>
+<td>What is visible to students — draw on the board or project. One
+thing per beat.</td>
+</tr>
+<tr>
+<td><strong>SAY</strong></td>
+<td>Key phrases and questions. Not sentences to read — prompts for
+fluent delivery. Answers to blanks shown in
+<strong>[brackets]</strong>.</td>
+</tr>
+<tr>
+<td><strong>CUE</strong></td>
+<td>The exact signal for students to write. Four types: ★ Write / ✎ Draw
+/ ⊡ Think / ↩︎ Check</td>
+</tr>
+</tbody>
+</table>
+<p>Flags appear in callout blocks: &gt; <strong>FLAG —
+Misconception:</strong> Red alert. Students will get this wrong without
+a direct address. &gt; <strong>FLAG — Pacing:</strong> Warning for where
+lessons tend to lose momentum. &gt; <strong>FLAG — Alberta
+Context:</strong> Genuine-context problem — the setting matters, not
+decoration.</p>
+<p><strong>The screen and the voice carry different things.</strong>
+What is SHOW stays visual — diagrams, expressions, key terms. What is
+SAY carries the reasoning. Never put your SAY on the screen.</p>
+<hr />
+<h2 id="unit-at-a-glance">Unit at a Glance</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Lesson</th>
+<th>Content</th>
+<th>Student notes pages</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pre-knowledge check + Section 1: Perfect Squares and Principal
+Square Roots</td>
+<td>Pre-K check + S1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Section 2: Non-Perfect Squares and Irrational Numbers</td>
+<td>S2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Section 3: The Pythagorean Theorem</td>
+<td>S3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Section 4: Square Roots of Rational Numbers</td>
+<td>S4</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Unit Synthesis + Return to Pre-Knowledge Check</td>
+<td>Synthesis page</td>
+</tr>
+<tr>
+<td>6+</td>
+<td>Practice, workbook, problem sets</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><em>Retrieval warm-ups begin Lesson 2. Each warm-up pulls one item
+from the previous lesson and one item from earlier in the Number strand
+(rational numbers, powers).</em></p>
+<hr />
+<h2 id="materials-per-lesson">Materials per lesson</h2>
+<ul>
+<li>Student notes packages (printed, one per student)</li>
+<li>Whiteboard + markers</li>
+<li>Square tiles or grid paper cut into squares (Lesson 1 — for showing
+that perfect squares are literal squares with equal side lengths)</li>
+<li>Calculator (Lesson 2 onwards — for checking irrational
+approximations only; estimation beats happen without it)</li>
+<li>Ruler (Lesson 3 — optional, for confirming Pythagorean triple
+triangles are right triangles)</li>
+</ul>
+<hr />
+<h2 id="pre-knowledge-check">Pre-Knowledge Check</h2>
+<p><em>~10 minutes — before any instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Opening</strong> <strong class="show-label">SHOW:</strong> Board:
+<em>“What does it mean to find the square root of a number? Write
+everything you think you know.”</em> (That’s it — nothing else on the
+board.) <strong class="say-label">SAY:</strong> - “Before we start this unit, I want to
+know what’s already in your head.” - “No marks. No correction. I’m not
+going to react to what you write today.” - “Three questions — be honest
+about what you actually think right now.” - “You will come back to this
+page at the end of the unit. Do not erase.” <strong class="cue-label">CUE:</strong> ★
+Write: “Open your notes to the Pre-Knowledge Check. You have 5 minutes —
+write honestly. Go.”</p>
+<div class="flag flag-pacing"><span class="flag-label">FLAG — Pacing</span>Do not read responses aloud or
+comment on them. The pre-knowledge check loses its diagnostic value if
+students calibrate to what you reward. Circulate silently. You are
+looking for two things: (a) students who already know the
+principal/positive root distinction, (b) students who believe every
+number has a clean square root. These are the two knowledge states that
+predict how much time Section 1 and 2 will need.</div>
+<h2 id="section-1-perfect-squares-and-principal-square-roots">Section 1
+— Perfect Squares and Principal Square Roots</h2>
+<p><em>Learning target: I can identify perfect squares, evaluate
+principal square roots, and explain what the principal square root
+means.</em> <em>Timing: ~25 minutes direct instruction</em></p>
+<p><em>Bring to class: square tiles or grid paper squares (4–5 different
+sizes: 1×1, 2×2, 3×3, 4×4, 5×5).</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: The six vocabulary terms in a column — Square / Perfect square /
+Square root / Principal square root / Radical symbol (√) / Radicand
+<strong class="say-label">SAY:</strong> - “Six terms. Don’t fill them in yet.” - “We’ll
+build the meaning of each one as we go through the section.” - “By the
+end you’ll write your own definition and example — not mine, yours.”
+<strong class="cue-label">CUE:</strong> ⊡ Think: “Read the six terms. Which one do you
+think you already know? Keep it in your head.”</p>
+<hr />
+<p><strong>Beat 2 — Squaring as area (with tiles)</strong>
+<strong class="show-label">SHOW:</strong> Board: Draw a 3×3 grid of squares. Label the
+sides “3” and “3”. Label the area “9 square units.” Beside it write:
+<em>3² = 9</em>. <strong class="say-label">SAY:</strong> - “Squaring a number means
+multiplying it by itself.” - Hold up (or draw) the 3×3 tile arrangement.
+- “Three by three. Nine squares. This is where the word comes from — a
+perfect square is literally a square shape.” - “If you can arrange that
+many tiles into a perfect square, the number is a perfect square.” - “5
+squared: 5 × 5 = 25. 25 tiles can form a 5×5 square.”
+<strong class="cue-label">CUE:</strong> ★ Write: “If 5² = 25, then √25 =
+<strong>[5]</strong>. If 9² = 81, then √81 = <strong>[9]</strong>.”</p>
+<hr />
+<p><strong>Beat 3 — Perfect square table</strong> <strong class="show-label">SHOW:</strong>
+Board: The partially complete table — integers 1–12. Show the first two
+rows filled (1, 4). Leave the rest blank. Fill them in live as students
+call them out. <strong class="say-label">SAY:</strong> - “Let’s build the table together —
+call them out.” - Go through 3 to 12. Write each: integer → squared →
+perfect square. - When done: “These twelve — know them cold. They are
+your tools for every estimation problem in this unit.” - “Right now,
+close your notes and say the squares from 1 to 12 in your head. If you
+get stuck, that’s where you need work.” <strong class="cue-label">CUE:</strong> ★ Write:
+“Complete your perfect square table — integers 1 to 12.”</p>
+<div class="flag flag-pacing"><span class="flag-label">FLAG — Pacing</span>Some students will not know their
+times tables reliably. The table itself is the remedy — they build it
+now and use it for reference. Do not pause here to remediate
+multiplication. Flag those students for extra practice outside class.
+Keep the pace.</div>
+<hr />
+<p><strong>Beat 4 — Principal square root: the positive root
+only</strong> <strong class="show-label">SHOW:</strong> Board: Write <em>3² = 9</em> and
+<em>(−3)² = 9</em>. Draw a box around the second one. Then write: <em>√9
+= ?</em> Below that: <em>√9 = 3 (principal — positive only)</em>. Then:
+<em>±√9 = ±3 (both roots)</em>. <strong class="say-label">SAY:</strong> - “Here’s the most
+important rule in this section.” - “Both 3 and −3 square to 9. True.” -
+“So there are two square roots of 9: 3 and −3.” - “But the symbol √ —
+the radical symbol — gives exactly ONE answer: the positive one.” - “The
+principal square root is defined as the non-negative root. Always.” -
+Pause 3 seconds. - “If a problem wants both roots, it writes ±√9. That
+plus-minus symbol is doing extra work.” - “√9 alone, with no ± in front:
+the answer is 3. Just 3.” <strong class="cue-label">CUE:</strong> ★ Write: “√25 =
+<strong>[5]</strong> only, because the radical symbol √ means the
+<strong>[principal / positive]</strong> root.”</p>
+<blockquote>
+<p><strong>FLAG — Misconception: “√9 = ±3”</strong> This is the single
+most persistent error in this section. Students are not wrong that 3 and
+−3 are both square roots of 9 — that is mathematically true. The error
+is in the notation: the symbol √ is defined to give the non-negative
+root only. Address it head-on before the retrieval check.</p>
+<p>SAY: “Some of you — and honestly most adults — will want to say √9 =
+±3. Here’s why that’s wrong: it’s not about the math, it’s about what
+the symbol means. The radical symbol √ has a definition: non-negative
+output. If the answer were ±3, you’d need to write ±√9.”</p>
+<p>Have students complete the blank in the misconception box: <em>“Which
+expression gives −3? Write it:”</em> Answer: <strong>−√9</strong></p>
+</blockquote>
+<hr />
+<p><strong>Beat 5 — Radical structure diagram</strong>
+<strong class="show-label">SHOW:</strong> Board: Draw the √36 diagram — the radical symbol
+with the vinculum over 36. Draw pointer lines to (a) the radical symbol
+and (b) the radicand. Label each. <strong class="say-label">SAY:</strong> - “Two parts:
+the radical symbol — the checkmark with the bar — and the radicand,
+which is the number under the bar.” - “The radicand of √36 is 36. The
+principal square root of 36 is 6.” <strong class="cue-label">CUE:</strong> ★ Write: “The
+radicand of √36 is <strong>[36]</strong>. The principal square root of
+36 is <strong>[6]</strong>.”</p>
+<hr />
+<p><strong>Beat 6 — Negative radicands and the evaluation table</strong>
+<strong class="show-label">SHOW:</strong> Board: Write the four expressions in a column —
+√144 / −√25 / √(−16) / √(49/64). Leave the value column blank.
+<strong class="say-label">SAY:</strong> - “Let’s evaluate four expressions. They look
+similar — they’re not.” - “√144: radicand is 144. What integer squared
+gives 144? <strong>[12]</strong>.” - “−√25: the negative is in FRONT of
+the radical, not inside it. We take √25 = 5, then apply the negative.
+Answer: <strong>[−5]</strong>.” - “√(−16): the negative is INSIDE. We
+need a real number that squares to −16. Is there one?” Pause. “No. A
+negative times a negative is positive. A positive times a positive is
+positive. Nothing real squares to a negative. Answer: <strong>[no real
+answer / undefined in real numbers]</strong>.” - “√(49/64): we can split
+the root — √49/√64 = <strong>[7/8]</strong>.” <strong class="cue-label">CUE:</strong> ★
+Write: “Complete the evaluation table — all four expressions with
+correct values.”</p>
+<blockquote>
+<p><strong>FLAG — Misconception: “√(−16) = −4”</strong> Students
+frequently write −4 because they “remove the negative and take the root,
+then put it back.” Pre-empt: “Can you check by squaring? If √(−16) = −4,
+then (−4)² should equal −16. Does it?” Pause. (−4)² = +16. The check
+fails. There is no real square root of a negative number.</p>
+</blockquote>
+<hr />
+<p><strong>Beat 7 — Square roots of fractions</strong>
+<strong class="show-label">SHOW:</strong> Board: Write √(a/b) = √a / √b. Below it: the
+worked example √(9/25) = √9/√25 = 3/5. <strong class="say-label">SAY:</strong> - “Roots
+distribute over division — they split across the fraction bar.” - “Take
+the root of the numerator and the root of the denominator separately.” -
+“Works only when numerator ≥ 0 and denominator &gt; 0.”
+<strong class="cue-label">CUE:</strong> ★ Write: “√(9/25) = √9/√25 =
+<strong>[3]</strong>/<strong>[5]</strong> = <strong>[3/5]</strong>”</p>
+<p>Then immediately: <strong class="say-label">SAY:</strong> “Your turn — two practice
+problems: √(4/49) and √(16/81). Work them using the same method.”
+<strong class="cue-label">CUE:</strong> ★ Write: “√(4/49) = <strong>[2/7]</strong>.
+√(16/81) = <strong>[4/9]</strong>.”</p>
+<hr />
+<p><strong>Beat 8 — Self-explanation</strong> <strong class="say-label">SAY:</strong>
+“Before moving on — explain Step 1 of the fraction root in your own
+words: what did we do and why does splitting the fraction bar work?”
+<strong class="cue-label">CUE:</strong> ★ Write: “Write your explanation in the margin or
+below your worked example. One sentence minimum.”</p>
+<p><em>Allow 60–90 seconds. Good responses name that (√a/√b)² = a/b, so
+the split is justified. Minimum acceptable: “we can take the root of top
+and bottom separately.” Redirect vague responses: “Why does it work —
+not just that it does?”</em></p>
+<hr />
+<h3 id="section-1-retrieval-check-facilitation">Section 1 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Everything closed. Five questions — write answers from memory.”
+<strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed. Retrieval check begins
+now.”</p>
+<p><strong>After students finish (4–5 min):</strong>
+<strong class="say-label">SAY:</strong> “Open your notes. Find the answer. Fix anything
+wrong or incomplete — different colour if you have one.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Open your notes. Check and correct
+now.”</p>
+<p><strong>Answer guide:</strong> 1. √64 = <strong>8</strong> 2. −√36 =
+<strong>−6</strong> (negative in front, root is 6, apply negative).
+√(−36) = <strong>no real answer</strong> (negative radicand has no real
+square root). These are NOT the same — the negative in −√36 is outside
+the radical; in √(−36) it is inside the radical. Completely different
+expressions. 3. √(25/144) = √25/√144 = <strong>5/12</strong> 4.
+Incorrect. √100 = <strong>10</strong> only. The radical symbol gives the
+principal (positive) root. If both roots were intended, the expression
+would be written ±√100 = ±10. √100 by itself always means positive 10.
+5. (Stretch) √49 = 7 and √64 = 8. Since 49 &lt; 50 &lt; 64, we get 7
+&lt; √50 &lt; 8. Since 50 is much closer to 49 than to 64, √50 is closer
+to 7 — approximately <strong>7.1</strong>.</p>
+<p><em>Q2 is the high-stakes one. Students who write “no, same thing”
+have the √(−16) misconception still active. Return to Beat 6 for that
+student.</em></p>
+<h2 id="section-2-non-perfect-squares-and-irrational-numbers">Section 2
+— Non-Perfect Squares and Irrational Numbers</h2>
+<p><em>Learning target: I can estimate the square root of a non-perfect
+square, locate it on a number line, and explain why it is
+irrational.</em> <em>Timing: ~25 minutes direct instruction</em></p>
+<p><em>No special materials needed. Students should have their perfect
+square table from Section 1 visible.</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Four terms — Irrational number / Non-perfect square / Estimate /
+Real number <strong class="say-label">SAY:</strong> - “Same as before — don’t fill these
+in yet. We’ll build them.” - “The big idea in this section: most numbers
+are not perfect squares. And the roots of non-perfect squares behave
+differently.” <strong class="cue-label">CUE:</strong> ⊡ Think: “Which of these four terms
+do you think you already know? Which is completely new? Keep it in your
+head.”</p>
+<hr />
+<p><strong>Beat 2 — Most numbers are not perfect squares</strong>
+<strong class="show-label">SHOW:</strong> Board: Write √3, √7, √10. Below each: <em>not an
+integer</em>. Below that: <em>not a fraction either</em>.
+<strong class="say-label">SAY:</strong> - “√3 — what integer squared gives 3? There isn’t
+one. 1² = 1, 2² = 4. Nothing gives exactly 3.” - “So √3 is not an
+integer. Could it be a fraction — like 173/100 or something?” - Pause 3
+seconds. - “No. And this was proven in ancient Greece. Not guessed —
+proven. It cannot be written as any fraction a/b no matter how large a
+and b are.” - “√3 is irrational — it cannot be expressed as a ratio of
+integers.” <strong class="cue-label">CUE:</strong> ★ Write: “√3, √7, √10 are
+<strong>[irrational]</strong> numbers — they cannot be written as a/b
+where a and b are integers.”</p>
+<hr />
+<p><strong>Beat 3 — What irrational means (and the exact value
+distinction)</strong> <strong class="show-label">SHOW:</strong> Board: Write <em>√2 =
+1.41421356…</em> and below it: <em>√2 ≈ 1.414</em>. Draw a box around
+the first one. Label: <em>exact value</em>. Draw a box around the
+second. Label: <em>approximation</em>. <strong class="say-label">SAY:</strong> - “Two
+things on the board — they look similar. They are not the same.” - “√2 =
+1.41421356… — this goes on forever with no repeating block. That decimal
+IS √2. The exact value.” - “√2 ≈ 1.414 — this is an approximation. A
+useful number. But it’s not exactly √2.” - “When a problem asks for the
+exact value, you write √2. When it asks to approximate, you write the
+decimal.” - “Confusing these two is a common error. I’ll flag it every
+time I see it.” <strong class="cue-label">CUE:</strong> ★ Write: “√2 ≈ 1.414 is an
+<strong>[approximation]</strong>. The only exact form is
+<strong>[√2]</strong>.”</p>
+<blockquote>
+<p><strong>FLAG — Misconception: Confusing approximation with exact
+value</strong> Students regularly write √2 = 1.414 (with an equals sign)
+in their working. Correct the notation each time you see it. The = sign
+claims equality — 1.414 is not equal to √2, it is approximately equal.
+This habit matters when answers require exact form (e.g., “leave your
+answer as a simplified radical”).</p>
+<p>SAY: “Every time you write √2 = 1.414, you are claiming these are
+exactly the same. Are they? Square 1.414: 1.414² = 1.999396. Not 2. So
+1.414 is not the square root of 2 — it’s close, but not exact. The exact
+value is √2.”</p>
+</blockquote>
+<hr />
+<p><strong>Beat 4 — The squeeze technique</strong>
+<strong class="show-label">SHOW:</strong> Board: Write the worked example — finding √47.
+Leave blanks where the student notes have blanks. Fill in live as you
+walk through.</p>
+<pre><code>Step 1: Perfect squares on either side.
+  36 &lt; 47 &lt; 49  →  √36 &lt; √47 &lt; √49  →  6 &lt; √47 &lt; 7
+
+Step 2: Is 47 closer to 36 or 49?
+  47 − 36 = 11.  49 − 47 = 2.  Closer to 49.
+
+Step 3: Better estimate: √47 ≈ 6.9</code></pre>
+<p><strong class="say-label">SAY:</strong> - “Step 1: look at your perfect square table.
+What perfect squares sit on either side of 47?” - Pause. “36 and 49. So
+√47 is between √36 and √49 — between 6 and 7.” - “Step 2: how far is 47
+from each? 47 − 36 = 11. 49 − 47 = 2. Much closer to 49.” - “So √47 is
+much closer to 7 than to 6. Good estimate: 6.9.” - “This technique is
+the squeeze — you trap the number between two perfect squares you
+already know.” <strong class="cue-label">CUE:</strong> ★ Write: “Step 1:
+<strong>[36]</strong> &lt; 47 &lt; <strong>[49]</strong> so
+<strong>[6]</strong> &lt; √47 &lt; <strong>[7]</strong>. Step 2: closer
+to <strong>[49]</strong>. Step 3: √47 ≈ <strong>[6.9]</strong>”</p>
+<hr />
+<p><strong>Beat 5 — Estimation practice table</strong>
+<strong class="show-label">SHOW:</strong> Board: The four expressions — √20, √55, √80,
+√120. Fill in the “between” columns live as students call them out.
+Leave the estimate column for students to complete.
+<strong class="say-label">SAY:</strong> - “Call out the surrounding integers for each
+one.” - √20: “16 and 25 — so 4 and 5.” Closer to 16? (20 − 16 = 4, 25 −
+20 = 5). Closer to 16. “So about 4.4 or 4.5.” - √55: “49 and 64 — so 7
+and 8.” (55 − 49 = 6, 64 − 55 = 9). Closer to 49. “About 7.4.” - √80:
+“64 and 81 — so 8 and 9.” (80 − 64 = 16, 81 − 80 = 1). Very close to 81.
+“About 8.9.” - √120: “121 is 11², but 121 &gt; 120. 100 is 10². So
+between 10 and 11.” (120 − 100 = 20, 121 − 120 = 1). Very close to 121.
+“About 10.95.” <strong class="cue-label">CUE:</strong> ★ Write: “Complete the estimation
+table — surrounding integers and your estimate for each.”</p>
+<hr />
+<p><strong>Beat 6 — Number line placement</strong>
+<strong class="show-label">SHOW:</strong> Board: Draw the number line (range 2–5). Mark
+integers 2, 3, 4, 5. Then, using the estimates students just calculated,
+mark √5 ≈ 2.2, √10 ≈ 3.2, √15 ≈ 3.9, √20 ≈ 4.5 with small vertical ticks
+and labels. <strong class="say-label">SAY:</strong> - “Using the squeeze technique, place
+each root on the line.” - “Don’t use a calculator. Estimate the position
+from your knowledge of the surrounding perfect squares.” - “√5: between
+4 and 9, so between 2 and 3. Closer to 4, so closer to 2. About 2.2.” -
+Walk through all four — show them landing between the integers, closer
+to one or the other. <strong class="cue-label">CUE:</strong> ✎ Draw: “Place √5, √10, √15,
+and √20 on your number line. Show each with a labelled tick mark.”</p>
+<hr />
+<p><strong>Beat 7 — Real Number System tree: build it together</strong>
+<strong class="show-label">SHOW:</strong> Board: Draw the tree from scratch with student
+input. Start at the top: write <em>REAL NUMBERS</em>. Draw a vertical
+line down. Branch left and right. Ask students where to branch before
+writing.</p>
+<p>Build it in this order: 1. Write REAL NUMBERS at the top. 2. “Real
+numbers split into two groups — what are they?” → RATIONAL and
+IRRATIONAL (right branch). 3. “Rational numbers can be split further —
+what’s inside rational numbers?” → INTEGERS and NON-INTEGER RATIONALS.
+4. “Integers — any subsets?” → WHOLE NUMBERS inside integers, NATURAL
+NUMBERS inside whole numbers. 5. For each level, ask: “Give me an
+example that belongs here and ONLY here.” Fill in the examples from the
+diagram.</p>
+<p><strong class="say-label">SAY:</strong> - “This is the map of every number you’ve ever
+worked with.” - “Natural numbers are nested inside whole numbers, which
+are nested inside integers, which are nested inside rational numbers.” -
+“Irrational numbers sit beside rational numbers — they are both real,
+but they don’t overlap.” - “No number can be both rational and
+irrational.” - “Now: where does √9 go?” Pause. “√9 = 3. An integer.
+Natural number, whole number, integer, rational — all of those. But
+specifically in natural numbers.” - “Where does √10 go?” Pause. “√10 is
+irrational. It goes in the irrational branch.” <strong class="cue-label">CUE:</strong> ✎
+Draw: “Copy the Real Number System tree into your notes. Label every
+level and include one example per level.”</p>
+<div class="flag flag-pacing"><span class="flag-label">FLAG — Pacing</span>This beat earns extra time. Do not
+rush the tree. It is the central visual of the unit and of the entire
+Number strand. Students who understand the tree can classify any number
+you give them. Students who don’t will confuse rational and irrational
+throughout the rest of the course. Invest 5–7 minutes here.</div>
+<p>After drawing: <strong class="say-label">SAY:</strong> “Tell me where √9 and √10
+belong. Write your answers on the blank lines in your notes.”
+<strong class="cue-label">CUE:</strong> ★ Write: “√9 belongs: <strong>[integers / rational
+numbers — specifically, √9 = 3, a natural number]</strong>. √10 belongs:
+<strong>[irrational numbers]</strong>.”</p>
+<hr />
+<p><strong>Beat 8 — Self-explanation</strong> <strong class="say-label">SAY:</strong>
+“Before moving on — explain in your own words why √10 is irrational.
+Don’t say ‘the decimal doesn’t repeat’ — explain what irrational means.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Write your explanation in the margin.
+Minimum: two sentences.”</p>
+<p><em>Allow 60–90 seconds. A strong response will include: (a) cannot
+be written as a fraction a/b, (b) the decimal expansion neither
+terminates nor repeats, (c) √10 is between 3 and 4 but not an integer.
+Acceptable minimum: “It cannot be written as a fraction no matter
+what.”</em></p>
+<hr />
+<p><strong>Beat 9 — Connection prompt: fractional exponents</strong>
+<strong class="show-label">SHOW:</strong> Board: Write the power law pattern — x^(1/2) ×
+x^(1/2) = x^(1/2 + 1/2) = x¹ = x. Below: √x × √x = x. Circle both.
+Write: <em>x^(1/2) = √x</em>. <strong class="say-label">SAY:</strong> - “From powers —
+adding exponents when multiplying same base.” - “x^(1/2) times x^(1/2) =
+x^1 = x. And √x times √x = x. Same behaviour.” - “So x^(1/2) IS the
+square root. The connection prompt in your notes asks you to figure out
+the exponent.” - “The answer is one half.” <strong class="cue-label">CUE:</strong> ★
+Write: “If squaring = power of 2, then square rooting = power of
+<strong>[1/2]</strong>. √x = x^(1/2).”</p>
+<hr />
+<h3 id="section-2-retrieval-check-facilitation">Section 2 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Five questions — write answers from memory.”
+<strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed. Retrieval check begins
+now.”</p>
+<p><strong>After students finish (4–5 min):</strong>
+<strong class="say-label">SAY:</strong> “Open your notes. Find the answer. Fix anything
+wrong — different colour if you have one.”</p>
+<p><strong>Answer guide:</strong> 1. √49 = 7. <strong>Rational</strong>
+— it is an integer. √50: not a perfect square, √50 is between 7 and 8,
+decimal never terminates or repeats. <strong>Irrational.</strong> 2. 25
+&lt; 30 &lt; 36, so 5 &lt; √30 &lt; 6. 30 − 25 = 5, 36 − 30 = 6.
+Approximately equally between, slightly closer to 25. √30 ≈
+<strong>5.5</strong>. 3. √7: 4 &lt; 7 &lt; 9, so 2 &lt; √7 &lt; 3. 7 − 4
+= 3, 9 − 7 = 2. Closer to 9. √7 ≈ 2.6. Tick should be placed between 2
+and 3, closer to 3. 4. No. A number is either rational (can be expressed
+as a/b, integer over integer) or it cannot be. There is no number that
+satisfies both conditions simultaneously. Rational and irrational are
+mutually exclusive categories. 5. (Stretch) Side length = √50 cm
+(exact). √50 ≈ 7.1 cm (approximate). <strong>Irrational</strong> — 50 is
+not a perfect square.</p>
+<h2 id="section-3-the-pythagorean-theorem">Section 3 — The Pythagorean
+Theorem</h2>
+<p><em>Learning target: I can apply the Pythagorean theorem to find
+unknown side lengths of right triangles, including cases where the
+answer is irrational.</em> <em>Timing: ~30 minutes direct
+instruction</em></p>
+<p><em>No special materials needed beyond notes and whiteboard.</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Five terms — Right triangle / Hypotenuse / Leg / Pythagorean
+theorem / Pythagorean triple <strong class="say-label">SAY:</strong> - “Five terms. Hold
+on filling them in.” - “We’ll build them as we work through the
+section.” <strong class="cue-label">CUE:</strong> ⊡ Think: “Which of these five have you
+heard before? Which is new? Keep it in your head.”</p>
+<hr />
+<p><strong>Beat 2 — Labelling the right triangle</strong>
+<strong class="show-label">SHOW:</strong> Board: Draw a right triangle. Mark the
+right-angle square in the corner. Label one leg <em>a</em>, the other
+leg <em>b</em>, and the longest side (opposite the right angle)
+<em>c</em>. <strong class="say-label">SAY:</strong> - “A right triangle has exactly one
+90° angle — we mark it with a small square.” - “The two shorter sides
+are called legs. They form the right angle.” - “The side across from —
+opposite — the right angle is the hypotenuse.” - “Two properties of the
+hypotenuse: it is always opposite the right angle, and it is always the
+longest side.” <strong class="cue-label">CUE:</strong> ★ Write: “The hypotenuse is always
+the side <strong>[opposite]</strong> the right angle and is always the
+<strong>[longest]</strong> side.”</p>
+<p><strong>Then:</strong> <strong class="cue-label">CUE:</strong> ✎ Draw: “Label your
+triangle diagram — mark the right angle, both legs (a and b), and the
+hypotenuse (c).”</p>
+<hr />
+<p><strong>Beat 3 — The theorem</strong> <strong class="show-label">SHOW:</strong> Board:
+Write large in the centre — <em>a² + b² = c²</em>. Below it: “In any
+right triangle.” <strong class="say-label">SAY:</strong> - “The Pythagorean theorem: a
+squared plus b squared equals c squared.” - “In any right triangle —
+always. This is not an approximation.” - “a and b are the legs. c is the
+hypotenuse.” - “The square of the hypotenuse equals the sum of the
+squares of the legs.” <strong class="cue-label">CUE:</strong> ★ Write: “In any right
+triangle, the square of the <strong>[hypotenuse]</strong> (c) equals the
+sum of the squares of the two <strong>[legs]</strong> (a and b).”</p>
+<hr />
+<p><strong>Beat 4 — Worked Example 1: find the hypotenuse (Pythagorean
+triple)</strong> <strong class="show-label">SHOW:</strong> Board: Write the problem. Work
+through all steps live:</p>
+<pre><code>Legs: a = 6 cm, b = 8 cm. Find hypotenuse c.
+
+a² + b² = c²
+6² + 8² = c²
+36 + 64 = c²
+c² = 100
+c = √100 = 10 cm</code></pre>
+<p><strong class="say-label">SAY:</strong> - “We know both legs, we want the hypotenuse.”
+- “Substitute: 6² is 36, 8² is 64.” - “36 + 64 = 100. So c² = 100.” -
+“Take the square root of both sides. c = √100 = 10.” - “Why do we use
+the principal (positive) square root? Because a side length must be
+positive. Distance is always positive.” <strong class="cue-label">CUE:</strong> ★ Write:
+“6² + 8² = c² → <strong>[36]</strong> + <strong>[64]</strong> = c² → c²
+= <strong>[100]</strong> → c = √<strong>[100]</strong> =
+<strong>[10]</strong>”</p>
+<p><strong>Self-explanation beat:</strong> <strong class="say-label">SAY:</strong> “Before
+moving on — explain the final step in your own words: what did we do and
+why do we use the positive root only?” <strong class="cue-label">CUE:</strong> ★ Write:
+“Write your explanation on the lines below Worked Example 1 in your
+notes.”</p>
+<p><em>Allow 60–90 seconds. Expected: “We took the square root of both
+sides to isolate c. We used the principal root because side length is a
+positive distance.”</em></p>
+<hr />
+<p><strong>Beat 5 — Worked Example 2: find a leg (irrational
+answer)</strong> <strong class="show-label">SHOW:</strong> Board: Write the problem and
+work all steps:</p>
+<pre><code>Hypotenuse: c = 10 m, one leg: a = 4 m. Find leg b.
+
+a² + b² = c²
+4² + b² = 10²
+16 + b² = 100
+b² = 100 − 16
+b² = 84
+b = √84 ≈ 9.2 m (to one decimal)</code></pre>
+<p><strong class="say-label">SAY:</strong> - “This time we know the hypotenuse and one leg
+— we want the other leg.” - “Substitute what we know.” - “16 + b² = 100.
+We need b by itself. Subtract 16 from both sides.” - “b² = 84. Take the
+square root.” - “Is 84 a perfect square? No. So we get an irrational
+answer.” - “Exact: b = √84. Approximate: b ≈ 9.2 m.”
+<strong class="cue-label">CUE:</strong> ★ Write: “<strong>[16]</strong> + b² =
+<strong>[100]</strong> → b² = <strong>[84]</strong> → b =
+√<strong>[84]</strong> ≈ <strong>[9.2]</strong> m”</p>
+<p><strong>Self-explanation beat:</strong> <strong class="say-label">SAY:</strong> “Before
+moving on — explain Step 4 in your own words: why did we subtract 16
+from both sides instead of taking the square root right away?”
+<strong class="cue-label">CUE:</strong> ★ Write: “Write your explanation on the lines
+below Worked Example 2.”</p>
+<p><em>Expected: “We can’t take the square root of 16 + b² as a sum — we
+need b² alone before we can root it.”</em></p>
+<blockquote>
+<p><strong>FLAG — Misconception: “√(a² + b²) = a + b”</strong> Some
+students will try to take the root of each term separately: √(16 + b²) =
+4 + b. This is the same error as √(a + b) = √a + √b, which appears
+directly in Section 4. Pre-empt it here.</p>
+<p>SAY: “I will see some of you write √(16 + b²) = 4 + b. Let me show
+you why that fails.”</p>
+<p>Write on board: Does √(16 + 9) = √16 + √9? → √25 = 5, but 4 + 3 = 7.
+Not equal.</p>
+<p>“You cannot distribute a square root over addition. This is not
+optional — it is never correct. You must isolate the squared term first,
+then root.”</p>
+</blockquote>
+<hr />
+<p><strong>Beat 6 — Misconception: Pythagorean theorem on all
+triangles</strong> <strong class="show-label">SHOW:</strong> Board: Draw two triangles side
+by side. Left one: right angle marked, labeled “RIGHT triangle — a² + b²
+= c² works.” Right one: no right angle, labeled “NOT a right triangle —
+a² + b² = c² does NOT work.” <strong class="say-label">SAY:</strong> - “The theorem only
+works for right triangles. Only.” - “If a triangle has no right angle,
+a² + b² = c² does not hold in general.” - “Before using the theorem, you
+must confirm the triangle has a 90° angle.” - “Check: does the triangle
+with sides 3, 4, 6 satisfy the theorem?” - Write on board: 3² + 4² = 9 +
+16 = 25. But 6² = 36. 25 ≠ 36. - “No. So that triangle is NOT a right
+triangle.” <strong class="cue-label">CUE:</strong> ★ Write: “3² + 4² =
+<strong>[25]</strong> and 6² = <strong>[36]</strong>. Equal?
+<strong>[No]</strong> Is this a right triangle?
+<strong>[No]</strong>”</p>
+<hr />
+<p><strong>Beat 7 — Pythagorean triples</strong> <strong class="show-label">SHOW:</strong>
+Board: Table of three triples — 3, 4, 5 / 5, 12, 13 / 8, 15, 17.
+<strong class="say-label">SAY:</strong> - “Pythagorean triples — three whole-number side
+lengths that satisfy the theorem exactly.” - “3-4-5 is the most common.
+Check: 9 + 16 = 25. Yes.” - “Multiples of a triple also work. 6-8-10 is
+2 × (3-4-5). Check: 36 + 64 = 100. Yes.” - “Why memorize these? They
+appear constantly in applied problems. If you recognize a 5-12-13
+triangle, you don’t have to solve anything.” <strong class="cue-label">CUE:</strong> ★
+Write: “6, 8, 10 is a <strong>[2]</strong> × (3, 4, 5) triple.”</p>
+<hr />
+<p><strong>Beat 8 — Alberta context problem</strong>
+<strong class="show-label">SHOW:</strong> Board: Draw a rectangle. Label the sides 9 km and
+40 km. Draw the diagonal. Ask: how long is the diagonal?
+<strong class="say-label">SAY:</strong> - “A rectangular section of land near Leduc: 9 km
+by 40 km. A pipeline is built across the diagonal.” - “The diagonal is
+the hypotenuse. The two sides of the rectangle are the legs.” - “c =
+√(9² + 40²) = √(81 + 1600) = √1681. Is 1681 a perfect square?” Pause.
+“41² = 1681. Yes.” - “The pipeline is exactly 41 km. This is a 9-40-41
+Pythagorean triple.” <strong class="cue-label">CUE:</strong> ★ Write: “c = √(9² + 40²) =
+√(<strong>[81]</strong> + <strong>[1600]</strong>) =
+√<strong>[1681]</strong> = <strong>[41]</strong> km”</p>
+<hr />
+<p><strong>Beat 9 — Second Alberta context (Banff lake)</strong>
+<strong class="show-label">SHOW:</strong> Board: Draw a right triangle. Label the legs 3.2
+km and 2.4 km. Ask: how long is the diagonal path across the lake?
+<strong class="say-label">SAY:</strong> - “A hiker wants to walk the shortest path across
+a frozen lake near Banff — straight across the diagonal.” - “The lake is
+roughly rectangular: 3.2 km wide, 2.4 km long.” - “a = 2.4, b = 3.2, c =
+?” - “c² = 2.4² + 3.2² = 5.76 + 10.24 = 16. c = √16 = 4 km.” - “Exact
+answer — a rational number. This works out cleanly because 2.4-3.2-4 is
+a scaled 3-4-5 triple (×0.8).” <strong class="say-label">SAY:</strong> “Before the
+retrieval check — explain this problem: explain step 2 in your own
+words. What did we do to get 16, and why?” <strong class="cue-label">CUE:</strong> ★
+Write: “Write your explanation below the problem. One sentence
+minimum.”</p>
+<hr />
+<h3 id="section-3-retrieval-check-facilitation">Section 3 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Five questions — answers from memory.” <strong class="cue-label">CUE:</strong> ↩︎
+Check: “Notes closed. Retrieval check begins now.”</p>
+<p><strong>After students finish:</strong> <strong class="say-label">SAY:</strong> “Open
+your notes. Check and correct.”</p>
+<p><strong>Answer guide:</strong> 1. Legs 5 and 12: c² = 5² + 12² = 25 +
+144 = 169. c = √169 = <strong>13</strong>. This is a Pythagorean triple
+(5-12-13). 2. Hypotenuse 15, one leg 9: 9² + b² = 15² → 81 + b² = 225 →
+b² = 144 → b = √144 = <strong>12</strong>. This is a 9-12-15 triple
+(3-4-5 × 3). 3. Check: 7² + 24² = 49 + 576 = 625. 25² = 625. Equal.
+<strong>Yes, this is a right triangle</strong> (7-24-25 Pythagorean
+triple). 4. The student assumed the triangle has a right angle. The
+Pythagorean theorem only holds for right triangles. Without a 90° angle,
+there is no guarantee that a² + b² = c². 5. (Stretch) Let the side
+length = s. The diagonal is the hypotenuse of a right triangle with both
+legs equal to s. So s² + s² = 10² → 2s² = 100 → s² = 50 → s = √50 =
+<strong>5√2 cm</strong> (exact). Approximately 7.1 cm.</p>
+<h2 id="section-4-square-roots-of-rational-numbers">Section 4 — Square
+Roots of Rational Numbers</h2>
+<p><em>Learning target: I can find the square root of a positive
+rational number, and connect square roots to fractional exponents.</em>
+<em>Timing: ~20 minutes direct instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Two terms — Square root of a fraction / Square root of a decimal
+<strong class="say-label">SAY:</strong> - “Short vocabulary section. Two terms. We’ll
+define them through examples.” <strong class="cue-label">CUE:</strong> ⊡ Think: “These
+sound familiar. What do you think you already know about each one?”</p>
+<hr />
+<p><strong>Beat 2 — Square roots of fractions (review and
+extend)</strong> <strong class="show-label">SHOW:</strong> Board: Write the rule and the
+worked example:</p>
+<pre><code>√(a/b) = √a / √b
+
+√(9/16) = √9 / √16 = 3/4</code></pre>
+<p><strong class="say-label">SAY:</strong> - “We introduced this in Section 1. Now we make
+it explicit.” - “Why does it work? Because (3/4)² = 9/16. Check by
+squaring — the definition of a square root.” - “Numerator and
+denominator each get their own root. Take both.” <strong class="cue-label">CUE:</strong> ★
+Write: “√(9/16) = √9/√16 =
+<strong>[3]</strong>/<strong>[4]</strong>”</p>
+<hr />
+<p><strong>Beat 3 — Square roots of decimals: two methods</strong>
+<strong class="show-label">SHOW:</strong> Board: Write the two methods side by side.</p>
+<p>Method 1 (convert to fraction):</p>
+<pre><code>√0.49 = √(49/100) = √49/√100 = 7/10 = 0.7</code></pre>
+<p>Method 2 (think about squaring):</p>
+<pre><code>0.7 × 0.7 = 0.49 → √0.49 = 0.7</code></pre>
+<p><strong class="say-label">SAY:</strong> - “Two ways to handle decimals under a
+radical.” - “Method 1: convert to a fraction. If the decimal terminates,
+it becomes a fraction. Then split the root.” - “Method 2: ask yourself —
+what decimal, squared, gives me this number?” - “Both methods give the
+same answer. Use whichever is faster for you.” <strong class="cue-label">CUE:</strong> ★
+Write: “Method 1: √0.49 = √(49/100) =
+<strong>[7]</strong>/<strong>[10]</strong> = <strong>[0.7]</strong>.
+Method 2: <strong>[0.7]</strong> × <strong>[0.7]</strong> = 0.49, so
+√0.49 = <strong>[0.7]</strong>.”</p>
+<hr />
+<p><strong>Beat 4 — Practice table</strong> <strong class="show-label">SHOW:</strong>
+Board: Four expressions — √0.25 / √(4/9) / √1.44 / √(0.01). Leave method
+and answer columns blank. <strong class="say-label">SAY:</strong> - “Four expressions.
+Work each one using whichever method you prefer. Show your method.” -
+Walk through after students attempt: √0.25 = <strong>0.5</strong> /
+√(4/9) = <strong>2/3</strong> / √1.44 = √(144/100) = 12/10 =
+<strong>1.2</strong> / √(0.01) = √(1/100) = <strong>1/10 = 0.1</strong>
+<strong class="cue-label">CUE:</strong> ★ Write: “Complete the practice table — all four
+expressions.”</p>
+<hr />
+<p><strong>Beat 5 — The big misconception: √(a + b) ≠ √a + √b</strong>
+<strong class="show-label">SHOW:</strong> Board: Write the wrong claim large: <em>√(9 + 16)
+= √9 + √16 = 3 + 4 = 7</em>. Draw a large X through it. Below: <em>√(9 +
+16) = √25 = 5</em>. <strong class="say-label">SAY:</strong> - “This is the most common
+algebraic error in the unit.” - “A student adds the roots separately.
+Gets 7. The actual answer is 5.” - “Square roots do NOT distribute over
+addition.” - “Why? Because √ applies to the entire expression under the
+bar — the whole radicand. The bar is the grouping symbol.” - “Think of
+it like multiplication and addition: you cannot distribute
+multiplication over addition inside a root either.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Verify: let a = 16, b = 9. Left side:
+√(16 + 9) = √25 = <strong>[5]</strong>. Right side: √16 + √9 = 4 + 3 =
+<strong>[7]</strong>. Equal? <strong>[No]</strong>.”</p>
+<blockquote>
+<p><strong>FLAG — Misconception: “√(a + b) = √a + √b”</strong> This is a
+Tier 1 misconception listed in the course context. It appears here in
+the student notes misconception box and will resurface in every future
+unit where students simplify radical expressions (including Grade 10
+Foundations). Address it directly and completely.</p>
+<p>After the CUE, return to Section 3 briefly: “This is also why you
+cannot root each term in a² + b² when solving the Pythagorean theorem.
+You must find c² first, then root the whole thing.”</p>
+<p>Numerical disproof is the only reliable correction tool here. Have
+students substitute any two numbers and check. The habit of checking by
+substitution is the long-term remedy.</p>
+</blockquote>
+<hr />
+<p><strong>Beat 6 — What does distribute under a radical?</strong>
+<strong class="show-label">SHOW:</strong> Board: The distribution table — all four rows.
+Fill in the examples live.</p>
+<table>
+<thead>
+<tr>
+<th>Expression</th>
+<th>Distributes?</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>√(a × b)</td>
+<td>Yes</td>
+<td>√(4 × 9) = √4 × √9 = 2 × 3 = 6</td>
+</tr>
+<tr>
+<td>√(a ÷ b)</td>
+<td>Yes</td>
+<td>√(36/4) = √36/√4 = 6/2 = 3</td>
+</tr>
+<tr>
+<td>√(a + b)</td>
+<td>No</td>
+<td>√(9 + 16) ≠ 3 + 4</td>
+</tr>
+<tr>
+<td>√(a − b)</td>
+<td>No</td>
+<td>√(25 − 9) ≠ 5 − 3</td>
+</tr>
+</tbody>
+</table>
+<p><strong class="say-label">SAY:</strong> - “Roots distribute over multiplication and
+division — that’s the rule from fractions.” - “Roots do not distribute
+over addition or subtraction — ever.” - “Notice the pattern: the two
+operations that work are the ones that are ‘compatible’ with exponents.
+The two that don’t are the ones that create the classic student error.”
+<strong class="cue-label">CUE:</strong> ★ Write: “√(4 × 9) = √4 × √9 =
+<strong>[6]</strong>. √(36/4) = √36/√4 = <strong>[3]</strong>.”</p>
+<hr />
+<p><strong>Beat 7 — Connecting square roots to exponents</strong>
+<strong class="show-label">SHOW:</strong> Board: Write the pattern:</p>
+<pre><code>x^(1/2) × x^(1/2) = x^(1/2 + 1/2) = x^1 = x
+
+But also: √x × √x = x
+
+Therefore: x^(1/2) = √x</code></pre>
+<p><strong class="say-label">SAY:</strong> - “From the Powers unit — exponent law: when
+you multiply, you add the exponents.” - “x to the 1/2 times x to the 1/2
+equals x to the 1. Which is just x.” - “√x times √x also gives x. They
+behave identically.” - “So x^(1/2) is the square root. The connection
+prompt in Section 2 asked you to predict this. Here it is confirmed.” -
+“Check: 9^(1/2) = 3. √9 = 3. They match.” <strong class="cue-label">CUE:</strong> ★ Write:
+“x^(1/2) = <strong>[√x]</strong> (the square root of x). Verify: 9^(1/2)
+= <strong>[3]</strong> and √9 = <strong>[3]</strong>. They match.”</p>
+<hr />
+<p><strong>Beat 8 — Self-explanation</strong> <strong class="say-label">SAY:</strong>
+“Before moving on — explain in your own words why √(9 + 16) ≠ √9 + √16.
+Don’t just say it doesn’t work — explain what the radical bar is doing.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Write your explanation below the
+distribution table. Two sentences minimum.”</p>
+<p><em>Expected: “The radical bar acts as a grouping symbol — it says
+‘evaluate everything inside first, then take the root.’ When you split
+it over addition, you’re changing what the grouping says, which gives a
+different answer.”</em></p>
+<hr />
+<h3 id="section-4-retrieval-check-facilitation">Section 4 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Five questions — answers from memory.” <strong class="cue-label">CUE:</strong> ↩︎
+Check: “Notes closed. Retrieval check begins now.”</p>
+<p><strong>After students finish:</strong> <strong class="say-label">SAY:</strong> “Open
+your notes. Check and correct.”</p>
+<p><strong>Answer guide:</strong> 1. √(64/25) = √64/√25 =
+<strong>8/5</strong> (or 1.6). 2. √1.21 = √(121/100) = √121/√100 = 11/10
+= <strong>1.1</strong>. 3. √(16 + 9) = √25 = <strong>5</strong>, not 7.
+The error: the student distributed the root over addition, which is not
+a valid operation. The radical applies to the entire radicand (16 + 9 =
+25), not to each term separately. 4. 16^(1/2) = <strong>4</strong>.
+Because x^(1/2) = √x, and √16 = 4. 5. (Stretch) √0.25 = 0.5. Then (0.5)³
+= 0.125. <strong>Rational</strong> — 0.125 = 1/8.</p>
+<h2 id="unit-synthesis">Unit Synthesis</h2>
+<p><em>~15 minutes — notes closed throughout, then return to
+pre-knowledge check</em></p>
+<hr />
+<p><strong>Beat 1 — Set up (notes closed)</strong>
+<strong class="show-label">SHOW:</strong> Board: Four section headers: - Section 1 —
+Perfect Squares and Principal Square Roots - Section 2 — Non-Perfect
+Squares and Irrational Numbers - Section 3 — The Pythagorean Theorem -
+Section 4 — Square Roots of Rational Numbers <strong class="say-label">SAY:</strong> -
+“Notes closed. Everything closed.” - “Unit Synthesis — four parts. I
+want one key idea from each section, from memory.” - “This is not a
+test. This is you finding out what stuck.” <strong class="cue-label">CUE:</strong> ↩︎
+Check: “Notes closed. Fill in Part A — four key ideas — from memory.
+Go.”</p>
+<p><em>Allow 5–7 minutes. Circulate. Watch for: students who write vague
+content (“something about square roots”) rather than specific ideas.
+Prompt: “Give me the rule, not the topic.” Sections 2 and 4 are most
+commonly underdeveloped — irrational numbers and the distribution
+rules.</em></p>
+<hr />
+<p><strong>Beat 2 — Part B: practice problem from memory</strong>
+<strong class="show-label">SHOW:</strong> Board: Write the ladder problem from the
+synthesis page:</p>
+<pre><code>A 13 m ladder leans against a wall.
+The base is 5 m from the wall.
+How high up the wall does it reach?</code></pre>
+<p><strong class="say-label">SAY:</strong> - “Work this one entirely from memory. Set up
+the equation. Solve. State the answer with units.” - “If you recognize 5
+and 13 — that’s a shortcut.” <strong class="cue-label">CUE:</strong> ↩︎ Check: “Work Part B
+entirely from memory. Show your steps.”</p>
+<p><em>Expected solution: 5² + h² = 13². 25 + h² = 169. h² = 144. h = 12
+m. Rational — 144 is a perfect square. This is a 5-12-13 Pythagorean
+triple. Students who recognise the triple can skip directly to h = 12,
+but should note why.</em></p>
+<hr />
+<p><strong>Beat 3 — Return to Pre-Knowledge Check</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>“Turn to page 1. Read what you wrote
+before this unit started.”</em> <strong class="say-label">SAY:</strong> - “Read it
+quietly. Don’t change it. Don’t erase anything.” - “Three questions at
+the bottom of the synthesis page: what did you get right, what were you
+wrong about, what surprised you.” - “Write your answers now.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Answer Part C — right / wrong /
+surprised. Your own words.”</p>
+<p><em>Allow 3–5 minutes. This is the most important metacognitive
+moment in the unit. Let it land quietly. Students seeing their own
+pre-instruction writing is more powerful than any correction from you.
+Do not comment on individual pre-knowledge check responses.</em></p>
+<h2 id="blank-answer-key">Blank Answer Key</h2>
+<p>Quick reference — all fill-in blank answers in section order.</p>
+<h3 id="section-1">Section 1</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>If 5² = 25, then √25 = ___</td>
+<td>5</td>
+</tr>
+<tr>
+<td>If 9² = 81, then √81 = ___</td>
+<td>9</td>
+</tr>
+<tr>
+<td>A perfect square is any number that is the square of a ___
+integer</td>
+<td>whole</td>
+</tr>
+<tr>
+<td>√25 = ___ only, because the radical symbol means the ___ root</td>
+<td>5 / principal (positive)</td>
+</tr>
+<tr>
+<td>Which expression gives −3?</td>
+<td>−√9</td>
+</tr>
+<tr>
+<td>The radicand of √36 is ___</td>
+<td>36</td>
+</tr>
+<tr>
+<td>The principal square root of 36 is ___</td>
+<td>6</td>
+</tr>
+<tr>
+<td>√144 = ___</td>
+<td>12</td>
+</tr>
+<tr>
+<td>−√25 = ___</td>
+<td>−5</td>
+</tr>
+<tr>
+<td>√(−16) = ___</td>
+<td>no real answer</td>
+</tr>
+<tr>
+<td>√(49/64) = ___</td>
+<td>7/8</td>
+</tr>
+<tr>
+<td>Can you take the square root of a negative number? ___</td>
+<td>No (no real answer)</td>
+</tr>
+<tr>
+<td>No real number squared gives a ___ result</td>
+<td>negative</td>
+</tr>
+<tr>
+<td>√(9/25) = √9/√25 = <strong><em>/</em></strong> = ___</td>
+<td>3 / 5 / 3/5</td>
+</tr>
+<tr>
+<td>√(4/49) = <strong><em>/</em></strong> = ___</td>
+<td>2 / 7 / 2/7</td>
+</tr>
+<tr>
+<td>√(16/81) = ___</td>
+<td>4/9</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-2">Section 2</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>√3, √7, √10 are ___ numbers</td>
+<td>irrational</td>
+</tr>
+<tr>
+<td>√2 ≈ 1.414 is an ___</td>
+<td>approximation</td>
+</tr>
+<tr>
+<td>The only exact form of √2 is ___</td>
+<td>√2</td>
+</tr>
+<tr>
+<td>Step 1: ___ &lt; 47 &lt; ___ so ___ &lt; √47 &lt; ___</td>
+<td>36 / 49 / 6 / 7</td>
+</tr>
+<tr>
+<td>Step 2: closer to ___</td>
+<td>49</td>
+</tr>
+<tr>
+<td>Step 3: √47 ≈ ___</td>
+<td>6.9</td>
+</tr>
+<tr>
+<td>√9 belongs in ___</td>
+<td>integers / rational numbers (= 3, a natural number)</td>
+</tr>
+<tr>
+<td>√10 belongs in ___</td>
+<td>irrational numbers</td>
+</tr>
+<tr>
+<td>If squaring = power of 2, then square rooting = power of ___</td>
+<td>1/2</td>
+</tr>
+<tr>
+<td>√x = x^(_)</td>
+<td>1/2</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-3">Section 3</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The hypotenuse is always the side ___ the right angle</td>
+<td>opposite</td>
+</tr>
+<tr>
+<td>The hypotenuse is always the ___ side</td>
+<td>longest</td>
+</tr>
+<tr>
+<td>The square of the ___ (c) equals the sum of the squares of the two
+___</td>
+<td>hypotenuse / legs</td>
+</tr>
+<tr>
+<td>6² + 8² = c² → ___ + ___ = c²</td>
+<td>36 / 64</td>
+</tr>
+<tr>
+<td>c² = ___</td>
+<td>100</td>
+</tr>
+<tr>
+<td>c = √___ = ___</td>
+<td>100 / 10</td>
+</tr>
+<tr>
+<td>4² + b² = 10² → ___ + b² = ___</td>
+<td>16 / 100</td>
+</tr>
+<tr>
+<td>b² = ___</td>
+<td>84</td>
+</tr>
+<tr>
+<td>b = √___ ≈ ___ m</td>
+<td>84 / 9.2</td>
+</tr>
+<tr>
+<td>3² + 4² = ___ and 6² = ___</td>
+<td>25 / 36</td>
+</tr>
+<tr>
+<td>Equal? ___ Is this a right triangle? ___</td>
+<td>No / No</td>
+</tr>
+<tr>
+<td>6, 8, 10 is a ___ × (3, 4, 5) triple</td>
+<td>2</td>
+</tr>
+<tr>
+<td>c = √(9² + 40²) = √(___ + <strong><em>) = √</em></strong> = ___
+km</td>
+<td>81 / 1600 / 1681 / 41</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-4">Section 4</h3>
+<table>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>√(9/16) = √9/√16 = <strong><em>/</em></strong></td>
+<td>3/4</td>
+</tr>
+<tr>
+<td>√0.49 = √(49/100) = <strong><em>/</em></strong> = ___</td>
+<td>7/10 / 0.7</td>
+</tr>
+<tr>
+<td>___ × ___ = 0.49, so √0.49 = ___</td>
+<td>0.7 / 0.7 / 0.7</td>
+</tr>
+<tr>
+<td>√0.25 answer</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>√(4/9) answer</td>
+<td>2/3</td>
+</tr>
+<tr>
+<td>√1.44 answer</td>
+<td>1.2</td>
+</tr>
+<tr>
+<td>√(0.01) answer</td>
+<td>0.1</td>
+</tr>
+<tr>
+<td>Left side: √(16 + 9) = ___</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Right side: √16 + √9 = ___</td>
+<td>7</td>
+</tr>
+<tr>
+<td>Equal? ___</td>
+<td>No</td>
+</tr>
+<tr>
+<td>√(4 × 9) = √4 × √9 = ___</td>
+<td>6</td>
+</tr>
+<tr>
+<td>√(36/4) = √36/√4 = ___</td>
+<td>3</td>
+</tr>
+<tr>
+<td>x^(1/2) = ___</td>
+<td>√x</td>
+</tr>
+<tr>
+<td>9^(1/2) = ___ and √9 = ___</td>
+<td>3 / 3</td>
+</tr>
+</tbody>
+</table>
+<h2 id="key-flags-summary">Key Flags Summary</h2>
+<p><em>Quick reference for lesson planning — every misconception that
+needs direct address.</em></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Section</th>
+<th>Misconception</th>
+<th>Where it appears</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>“√9 = ±3” — the principal square root is positive only; √9 = 3; ±√9
+= ±3 is a different expression</td>
+<td>Beat 4; Section 1 Retrieval Q4</td>
+</tr>
+<tr>
+<td>S1</td>
+<td>“√(−16) = −4” — students remove the negative, root, and replace it;
+check by squaring disproves it</td>
+<td>Beat 6</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>Confusing approximation with exact value: writing √2 = 1.414 with an
+equals sign</td>
+<td>Beat 3; flag any time it appears in student work</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>“√x² = x for all x” — should be √x² =</td>
+<td>x</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>Distributing root over addition inside the Pythagorean theorem: √(a²
++ b²) = a + b</td>
+<td>Beat 5 — address before releasing students to practice</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>Applying the theorem to non-right triangles</td>
+<td>Beat 6; Section 3 Retrieval Q4</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>“√(a + b) = √a + √b” — demonstrate numerically: √(9+16) = 5, not
+7</td>
+<td>Beat 5; the primary misconception beat of this section</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>Distributing root over subtraction: √(a − b) = √a − √b</td>
+<td>Distribution table Beat 6</td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>

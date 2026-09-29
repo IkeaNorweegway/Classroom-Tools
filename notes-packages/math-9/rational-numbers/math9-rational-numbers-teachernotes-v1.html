@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math 9 — Rational Numbers</title>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent: #1d4ed8;
+  --accent-light: #eff6ff;
+  --accent-border: #bfdbfe;
+  --show-bg: #eff6ff;
+  --show-border: #3b82f6;
+  --say-bg: #ffffff;
+  --cue-bg: #f0fdf4;
+  --cue-border: #22c55e;
+  --flag-mc-bg: #fef2f2;
+  --flag-mc-border: #ef4444;
+  --flag-mc-label: #dc2626;
+  --flag-pace-bg: #fffbeb;
+  --flag-pace-border: #f59e0b;
+  --flag-pace-label: #d97706;
+  --flag-ab-bg: #f0fdf4;
+  --flag-ab-border: #22c55e;
+  --flag-ab-label: #15803d;
+  --flag-cs-bg: #fdf4ff;
+  --flag-cs-border: #a855f7;
+  --flag-cs-label: #7e22ce;
+  --text: #1a1a2e;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+}
+
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+
+/* ── Typography ── */
+h1 {
+  font-size: 1.6rem;
+  color: var(--accent);
+  margin-bottom: 2px;
+  font-family: system-ui, sans-serif;
+}
+h2 {
+  font-size: 1rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 700;
+  background: var(--accent);
+  color: white;
+  padding: 7px 14px;
+  margin: 36px -4px 18px;
+  letter-spacing: 0.01em;
+}
+h3 {
+  font-size: 0.95rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent-border);
+  padding-bottom: 4px;
+  margin: 28px 0 12px;
+}
+h4 {
+  font-size: 0.9rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  color: #374151;
+  margin: 20px 0 8px;
+}
+p { margin-bottom: 10px; }
+ul, ol { margin: 6px 0 10px 24px; }
+li { margin-bottom: 3px; }
+em { font-style: italic; }
+strong { font-weight: 700; }
+hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* ── Beat titles ── */
+p.beat-title {
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #334155;
+  padding: 7px 14px;
+  margin: 20px 0 0;
+  border-left: 4px solid #94a3b8;
+  border-radius: 3px 3px 0 0;
+}
+
+/* ── SHOW / SAY / CUE labels ── */
+.show-label { color: var(--accent); font-family: system-ui, sans-serif; }
+.say-label  { color: #374151;       font-family: system-ui, sans-serif; }
+.cue-label  { color: #15803d;       font-family: system-ui, sans-serif; }
+
+/* ── Flag callouts ── */
+.flag {
+  margin: 14px 0;
+  padding: 10px 14px;
+  border-radius: 0 4px 4px 0;
+  font-family: system-ui, sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.flag-label {
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 4px;
+}
+.flag p { margin-bottom: 6px; font-family: system-ui, sans-serif; }
+.flag p:last-child { margin-bottom: 0; }
+.flag ul { margin-top: 4px; }
+
+.flag-misconception { background: var(--flag-mc-bg);   border-left: 5px solid var(--flag-mc-border); }
+.flag-misconception .flag-label { color: var(--flag-mc-label); }
+
+.flag-pacing       { background: var(--flag-pace-bg);  border-left: 5px solid var(--flag-pace-border); }
+.flag-pacing .flag-label { color: var(--flag-pace-label); }
+
+.flag-alberta-context,
+.flag-alberta,
+.flag-context      { background: var(--flag-ab-bg);   border-left: 5px solid var(--flag-ab-border); }
+.flag-alberta-context .flag-label,
+.flag-alberta .flag-label,
+.flag-context .flag-label { color: var(--flag-ab-label); }
+
+.flag-cs-connection,
+.flag-connection   { background: var(--flag-cs-bg);   border-left: 5px solid var(--flag-cs-border); }
+.flag-cs-connection .flag-label,
+.flag-connection .flag-label { color: var(--flag-cs-label); }
+
+/* ── Retrieval guide box ── */
+.retrieval-guide {
+  background: var(--accent-light);
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 16px 0;
+}
+.retrieval-guide h3 { margin-top: 0; color: var(--accent); border-color: var(--accent-border); }
+.retrieval-guide ol { margin-left: 20px; }
+.retrieval-guide li { margin-bottom: 6px; font-family: system-ui, sans-serif; font-size: 0.9rem; }
+
+/* ── Tables ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 0.88rem;
+  font-family: system-ui, sans-serif;
+}
+th {
+  background: var(--accent);
+  color: white;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 600;
+}
+td {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tr:nth-child(even) td { background: #f8fafc; }
+
+/* ── Answer key ── */
+.answer-key h3 { color: #374151; border-color: #d1d5db; }
+
+/* ── Subtitle / subheading below h1 ── */
+.subtitle {
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ── Print ── */
+@media print {
+  body { max-width: none; padding: 10px; font-size: 11.5px; }
+  h2 { break-before: page; margin-left: 0; margin-right: 0; }
+  h2:first-of-type { break-before: auto; }
+  .flag, .retrieval-guide, table { break-inside: avoid; }
+  h3, h4, p.beat-title { break-after: avoid; }
+  p { orphans: 3; widows: 3; }
+}
+</style>
+</head>
+<body>
+<h1 id="math-9-rational-numbers">Math 9 — Rational Numbers</h1>
+<h2 id="teacher-notes-package">Teacher Notes Package</h2>
+<p><em>Teaching reference — not a script</em></p>
+<hr />
+<h2 id="how-to-use-this-document">How to use this document</h2>
+<p>Each teaching beat has three parts:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Label</th>
+<th>What it contains</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SHOW</strong></td>
+<td>What is visible to students — draw on the board or project. One
+thing per beat.</td>
+</tr>
+<tr>
+<td><strong>SAY</strong></td>
+<td>Key phrases and questions. Not sentences to read — prompts for
+fluent delivery. Answers to blanks shown in
+<strong>[brackets]</strong>.</td>
+</tr>
+<tr>
+<td><strong>CUE</strong></td>
+<td>The exact signal for students to write. Four types: ★ Write / ✎ Draw
+/ ⊡ Think / ↩︎ Check</td>
+</tr>
+</tbody>
+</table>
+<p>Flags appear in callout blocks: &gt; <strong>FLAG —
+Misconception:</strong> Red alert. Students will get this wrong without
+a direct address. &gt; <strong>FLAG — Pacing:</strong> Warning for where
+lessons tend to lose momentum. &gt; <strong>FLAG — Alberta
+Context:</strong> Local anchor — use to make abstract problems concrete
+and meaningful.</p>
+<p><strong>The screen and the voice carry different things.</strong>
+What is SHOW stays visual — number lines, worked examples, key terms.
+What is SAY carries the reasoning. Never put your SAY on the screen.</p>
+<p><strong>Self-explanation rule:</strong> After every worked example in
+this unit, hold a self-explanation beat before moving on. The prompt is
+always: “Before we move on — explain Step [X] in your own words: what
+did we do and why?” Students write the answer (★ Write). Do not skip
+these. Self-explanation is the highest-yield move in the math notes
+literature (g ≈ 0.55 for transfer).</p>
+<hr />
+<h2 id="unit-at-a-glance">Unit at a Glance</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Lesson</th>
+<th>Content</th>
+<th>Student notes pages</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pre-knowledge check + Section 1: What Is a Rational Number?</td>
+<td>Pre-K check + S1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Section 2: Adding and Subtracting Rational Numbers</td>
+<td>S2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Section 3: Multiplying Rational Numbers</td>
+<td>S3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Section 4: Dividing Rational Numbers</td>
+<td>S4</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Section 5: Order of Operations with Rational Numbers</td>
+<td>S5</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Unit Synthesis + Return to Pre-Knowledge Check</td>
+<td>Synthesis page</td>
+</tr>
+<tr>
+<td>7+</td>
+<td>Practice, workbook problems, quiz</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><em>Retrieval warm-ups begin Lesson 2. Each warm-up pulls from the
+previous lesson plus one item from two weeks prior.</em></p>
+<hr />
+<h2 id="materials-per-lesson">Materials per lesson</h2>
+<ul>
+<li>Student notes packages (printed, one per student)</li>
+<li>Whiteboard + markers (two colours if available — one for positive
+values, one for negative)</li>
+<li>Printed or hand-drawn number lines (large format — at minimum 1 per
+board section; ideally a poster-size number line visible throughout the
+unit)</li>
+<li>Fraction strips (if available) — useful for Section 2
+addition/subtraction</li>
+<li>Calculator — available for checking answers only, not for primary
+computation</li>
+<li>Mini whiteboards or scrap paper for partner estimation checks</li>
+</ul>
+<p><em>Note on number lines: this is the most important physical tool in
+the unit. Every addition and subtraction concept in Section 2 should be
+demonstrated on a number line alongside the symbolic work. Pre-draw a
+large number line from −3 to 3 on the board before Lesson 2 and leave it
+up for Lessons 2–4.</em></p>
+<hr />
+<h2 id="pre-knowledge-check">Pre-Knowledge Check</h2>
+<p><em>~10 minutes — before any instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Opening</strong> <strong class="show-label">SHOW:</strong> Board:
+<em>“Write everything you think you know about rational numbers and
+fractions.”</em> (That is it — no further prompts on board.)
+<strong class="say-label">SAY:</strong> - “Before we start the unit — I want to know what
+is already in your head.” - “This is not a test. No marks. I am not
+going to correct it today.” - “Write honestly. You will come back to
+this page at the end of the unit — do not erase your answers.” - “Three
+questions on the page: What is a rational number? Give an example of
+adding two fractions. What happens when you divide by a fraction?”
+<strong class="cue-label">CUE:</strong> ★ Write: “Open to the Pre-Knowledge Check. You
+have 5 minutes. Answer honestly. Go.”</p>
+<div class="flag flag-pacing"><span class="flag-label">FLAG — Pacing</span>Do not read student responses aloud
+or comment on them during the check. The value is in the honest
+baseline. Circulate and watch for: (a) students who already have the
+correct fraction-addition procedure, (b) students who say “dividing by a
+fraction makes it smaller” — these students are your primary target for
+the Section 4 misconception beat. Keep a mental note.</div>
+<hr />
+<h2 id="section-1-what-is-a-rational-number">Section 1 — What Is a
+Rational Number?</h2>
+<p><em>Learning target: I can identify rational numbers, represent them
+in multiple forms, and compare and order them on a number line.</em>
+<em>Timing: ~25 minutes direct instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Six vocabulary terms in a column — Rational number / Numerator /
+Denominator / Equivalent fractions / Opposite / Absolute value
+<strong class="say-label">SAY:</strong> - “Six terms on your vocab table — before we go
+into the notes.” - “Don’t fill them in yet. We’ll build them as we go
+through the section.” - “By the end you’ll have your own definition and
+example for each one.” <strong class="cue-label">CUE:</strong> ⊡ Think: “Read the six
+terms. Which one do you think you already know best? Keep it in your
+head.”</p>
+<hr />
+<p><strong>Beat 2 — Defining rational numbers</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>RATIONAL NUMBER = any number that can
+be written as a/b, where a and b are integers and b ≠ 0.</em>
+<strong class="say-label">SAY:</strong> - “A rational number is any number that can be
+written as a fraction — numerator over denominator — where both are
+integers and the denominator is not zero.” - “The key word is CAN. It
+does not have to look like a fraction.” - “The integer 5 qualifies —
+write it as 5/1. The decimal 0.75 qualifies — write it as 75/100 or
+3/4.” - “What does NOT qualify? A decimal that goes on forever without
+repeating — like pi. Pi cannot be written as a fraction. It is not
+rational.” - Pause 3 seconds. <strong class="cue-label">CUE:</strong> ★ Write: “A rational
+number can be written as <strong>[a/b]</strong>, where a and b are
+integers and b <strong>[≠ 0]</strong>.”</p>
+<hr />
+<p><strong>Beat 3 — What counts as rational</strong>
+<strong class="show-label">SHOW:</strong> Board: Four bullet points — All integers: 5 = 5/1
+/ All fractions: 3/4 / All terminating decimals: 0.75 = 75/100 / All
+repeating decimals: 0.333… = 1/3 <strong class="say-label">SAY:</strong> - “Four families
+of rational numbers. Let’s go through each.” - “Integers first: 5 equals
+5/1. Negative three equals −3/1. Every integer qualifies.” - “Fractions
+— that one is obvious.” - “Terminating decimals: 0.75 ends. It equals 75
+over 100 — that is a ratio of two integers. Rational.” - “Repeating
+decimals: 0.333… equals 1/3. The repeating decimal can always be
+converted to a fraction.” - “The denominator blank for 0.75: write 100.
+The blank for 0.333…: write 3.” <strong class="cue-label">CUE:</strong> ★ Write: “Fill in
+the four blanks — integers as fractions, terminating decimal as a
+fraction over <strong>[100]</strong>, repeating decimal as
+<strong>[1/3]</strong>.”</p>
+<hr />
+<p><strong>Beat 4 — Three equivalent sign forms</strong>
+<strong class="show-label">SHOW:</strong> Board: −3/4 = 3/(−4) = −(3/4). Draw all three on
+the number line at the same point. <strong class="say-label">SAY:</strong> - “Every
+negative rational number has three equivalent forms.” - “Negative 3/4.
+Three over negative 4. Negative of the fraction 3/4.” - “All three land
+on the same point — 3/4 of the way between 0 and −1.” - “Why does this
+matter? Because students often see one form on a test and not recognize
+it as the same number as another form. They are the same.” - Pause 3
+seconds. <strong class="cue-label">CUE:</strong> ★ Write: “Three equivalent sign forms —
+all represent the same point on the number line.”</p>
+<hr />
+<p><strong>Beat 5 — Comparing rational numbers with a number
+line</strong> <strong class="show-label">SHOW:</strong> Board: A number line from −2 to 2,
+drawn large. Mark and label −3/4 and −1/4 with dots.
+<strong class="say-label">SAY:</strong> - “Comparing negative fractions — this is where
+the first big error happens.” - “Look at the number line. Is −1/4 to the
+left or the right of −3/4?” - Pause 3 seconds. - “Right. −1/4 is to the
+right. And on a number line, right means greater.” - “So −1/4 is greater
+than −3/4. Even though 1/4 is less than 3/4 when you ignore the
+negatives.” - “The negative flips the order.” - “Think: debt. Owing 25
+cents is better — closer to zero — than owing 75 cents.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>“−3/4 is bigger than −1/4
+because 3/4 is bigger than 1/4.” This is the most common error in
+Section 1. Students apply the positive-number comparison rule without
+adjusting for the negative sign. The number line is your best tool here
+— show the positions, then ask which is further right. The debt context
+makes it intuitive. Do not skip the number line SHOW beat. Students who
+only see the symbolic comparison will revert to the wrong rule on a
+test.</div>
+<p><strong class="cue-label">CUE:</strong> ★ Write: “For negative fractions, the fraction
+<strong>[larger / farther from zero]</strong> in absolute value is
+actually <strong>[smaller / lesser]</strong> in value. −1/4
+<strong>[&gt;]</strong> −3/4.”</p>
+<hr />
+<p><strong>Beat 6 — Comparing method: common denominator</strong>
+<strong class="show-label">SHOW:</strong> Board: Compare −5/6 and −7/8. Step 1: LCD. Step
+2: Convert. Step 3: Compare. <strong class="say-label">SAY:</strong> - “Worked example —
+comparing −5/6 and −7/8.” - “Step 1: What is the LCD of 6 and 8? Think —
+6 times 8 is 48, but can we do better? Multiples of 8: 8, 16, 24.
+Multiples of 6: 6, 12, 18, 24. LCD is 24.” - “Step 2: Convert. −5/6 —
+multiply top and bottom by 4: −20/24. −7/8 — multiply top and bottom by
+3: −21/24.” - “Step 3: Compare −20/24 and −21/24. −21 is further from
+zero, so −21/24 is smaller.” - “So −5/6 is greater than −7/8.” - Blanks:
+LCD = <strong>[24]</strong> / −5/6 = −<strong>[20]</strong>/24 / −7/8 =
+−<strong>[21]</strong>/24 / −<strong>[20]</strong>/24
+<strong>[&gt;]</strong> −<strong>[21]</strong>/24 / so −5/6
+<strong>[&gt;]</strong> −7/8. <strong class="cue-label">CUE:</strong> ★ Write: “Work
+through the comparison — fill in LCD <strong>[24]</strong>, converted
+fractions <strong>[−20/24]</strong> and <strong>[−21/24]</strong>, and
+the result <strong>[&gt;]</strong>.”</p>
+<hr />
+<p><strong>Beat 7 — Key insight note and number line plotting</strong>
+<strong class="show-label">SHOW:</strong> Board: Number line with −1, −3/4, −1/3, 0, 1/2,
+5/6 plotted and labeled. <strong class="say-label">SAY:</strong> - “Key insight: for
+negative fractions, larger absolute value means smaller value. Smaller
+absolute value means larger value. That is the rule — write it.” - “Now:
+order from least to greatest — 1/2, −3/4, −1/3, 0, 5/6, −1.” - “Least
+first. Most negative first. −1, then −3/4, then −1/3, then 0, then 1/2,
+then 5/6.” - “Draw them on the number line in your notes.”
+<strong class="cue-label">CUE:</strong> ✎ Draw: “Plot all six values on your number line.
+Label each one.”</p>
+<p><em>Allow 2 minutes. Circulate. Watch for students placing −1/3 to
+the left of −3/4 — that is the target misconception. Also watch for
+students who correctly order but plot imprecisely: −1/3 should sit
+between −1/2 and 0.</em></p>
+<hr />
+<p><strong>Beat 8 — Vocabulary table fill-in</strong>
+<strong class="show-label">SHOW:</strong> Board: Six terms still visible — nothing else.
+<strong class="say-label">SAY:</strong> - “Go back to your vocab table.” - “Fill in each
+definition in your own words — not the textbook definition.” - “Your
+definition should be something a Grade 7 student could understand.” -
+“Add one example you thought of yourself.” <strong class="cue-label">CUE:</strong> ★
+Write: “Complete your vocab table now — own words, own examples.”</p>
+<p><em>Allow 3–5 minutes. Circulate. Watch for: ‘opposite’ filled in as
+synonym for ‘negative’ (redirect: the opposite of −3/4 is +3/4 — equal
+distance, other side of zero); ‘absolute value’ left blank (prompt: how
+far from zero on the number line?).</em></p>
+<hr />
+<h3 id="section-1-retrieval-check-facilitation">Section 1 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Everything closed. Questions from memory — write what you know.”
+<strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed. Retrieval check begins
+now.”</p>
+<p><strong>After students finish (4–5 min):</strong>
+<strong class="say-label">SAY:</strong> “Open your notes. Find the answer. Correct
+anything wrong or incomplete — use a different colour if you have one.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Open your notes. Check and correct
+now.”</p>
+<p><strong>Answer guide:</strong> 1. Yes — −8 = −8/1, which is a ratio
+of two integers with denominator not equal to zero. Every integer is
+rational. 2. Two equivalent sign forms of −5/3: 5/(−3) and −(5/3). Any
+two of the three forms accepted (−5/3 is the third). 3. −2/3 vs −3/4:
+LCD = 12. −2/3 = −8/12. −3/4 = −9/12. −8/12 &gt; −9/12, so −2/3 &gt;
+−3/4. (On the number line: −2/3 sits to the right of −3/4.) 4. Least to
+greatest: −3/4, −1/2, 1/4, 0.5. (Note: 0.5 = 1/2, so they are equal —
+accept either order for those two.) 5. Stretch — Every integer IS
+rational (write it as n/1). But not every rational number is an integer
+— 1/2 is rational and is not an integer. The set of integers is
+contained inside the set of rational numbers.</p>
+<p><em>Q5 is the stretch. If students finish early, prompt: “Think about
+what set is larger — integers or rationals?” Do not give the answer
+before the retrieval check ends.</em></p>
+<hr />
+<h2 id="section-2-adding-and-subtracting-rational-numbers">Section 2 —
+Adding and Subtracting Rational Numbers</h2>
+<p><em>Learning target: I can add and subtract rational numbers in both
+fraction and decimal form, including negative values.</em> <em>Timing:
+~30 minutes direct instruction</em></p>
+<p><em>Set up: pre-draw a large number line from −3 to 3 on the board.
+Keep it up for the whole lesson. Every example should be shown both
+symbolically and on the number line.</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Four terms — Common denominator / Least common denominator (LCD)
+/ Mixed number / Improper fraction <strong class="say-label">SAY:</strong> - “Four terms —
+before we get into the procedure.” - “Common denominator — you know this
+from earlier grades. What does it mean?” - Wait for responses. - “A
+shared denominator. Both fractions have been rewritten with the same
+bottom number.” - “LCD — least common denominator — the smallest one
+available.” - “Mixed number: a whole number plus a fraction. Improper
+fraction: numerator larger than denominator.” <strong class="cue-label">CUE:</strong> ⊡
+Think: “Which of these four terms feels shakiest? Hold that in
+mind.”</p>
+<hr />
+<p><strong>Beat 2 — The core rule: same denominator required</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>To ADD or SUBTRACT fractions: must
+have the SAME denominator. Step sequence — (1) Find LCD / (2) Rewrite
+each fraction with LCD / (3) Add or subtract NUMERATORS ONLY / (4)
+Simplify.</em> <strong class="say-label">SAY:</strong> - “This is the procedure. Four
+steps. Every time.” - “Why do we need the same denominator? Because
+denominators name the kind of piece. Thirds and fourths are
+different-sized pieces — you cannot add them directly.” - “One third
+plus one fourth. You can’t say two sevenths — that would mean something
+completely different. You need to convert to a common unit first.” -
+“Step 3: add numerators ONLY. The denominator stays. You are not adding
+the types of pieces — you are counting how many you have of the same
+type.” <strong class="cue-label">CUE:</strong> ★ Write: “Rule — to add or subtract
+fractions: need the <strong>[same / common]</strong> denominator. Step
+3: add or subtract the <strong>[numerators]</strong> only.”</p>
+<hr />
+<p><strong>Beat 3 — Worked Example 1: positive fractions + number
+line</strong> <strong class="show-label">SHOW:</strong> Board: 3/4 + 5/6. Solve
+symbolically step by step. Then draw on the number line: start at 3/4,
+jump forward 5/6, land at 19/12 = 1 7/12. <strong class="say-label">SAY:</strong> -
+“Example 1: 3/4 + 5/6.” - “Step 1: LCD of 4 and 6. Multiples of 4: 4, 8,
+12. Multiples of 6: 6, 12. LCD = 12.” - “Step 2: Rewrite. 3/4 — multiply
+top and bottom by 3 — equals 9/12. 5/6 — multiply top and bottom by 2 —
+equals 10/12.” - “Step 3: Add numerators: 9 + 10 = 19. Denominator stays
+12. Answer: 19/12.” - “Step 4: Simplify. 19/12 = 1 and 7/12 as a mixed
+number.” - “On the number line: start at 3/4 — that is between 0 and 1,
+closer to 1. Jump forward 5/6. Land just past 1 at 1 7/12.” - Blanks:
+LCD = <strong>[12]</strong> / 3/4 = <strong>[9]</strong>/12 / 5/6 =
+<strong>[10]</strong>/12 / 9/12 + 10/12 = <strong>[19]</strong>/12 /
+simplified: <strong>[1 7/12]</strong>. <strong class="cue-label">CUE:</strong> ★ Write:
+“Work through Example 1 — fill in all blanks including the simplified
+form <strong>[1 7/12]</strong>.”</p>
+<p><strong>Self-explanation beat:</strong> <strong class="say-label">SAY:</strong> “Before
+moving on — explain Step 2 in your own words: what did we do and why?
+Specifically — why do we multiply both the numerator and the denominator
+by the same number when rewriting the fraction?” <strong class="cue-label">CUE:</strong> ★
+Write: “Answer the Step 2 explanation question now.”</p>
+<p><em>Circulate while students write. Target answer: multiplying top
+and bottom by the same number is the same as multiplying by 1 — the
+value of the fraction does not change. We are finding an equivalent
+fraction, not changing the amount.</em></p>
+<hr />
+<p><strong>Beat 4 — Number line demonstration: the additive
+model</strong> <strong class="show-label">SHOW:</strong> Board: Number line from −3 to 3.
+Mark 0. Mark and label each step in Example 1: start at 3/4, hop +5/6,
+land at 1 7/12. Use arrows to show the hops. <strong class="say-label">SAY:</strong> -
+“Every addition problem is a hop on the number line.” - “Positive addend
+— hop right. Negative addend — hop left.” - “This visual is critical for
+the mixed-sign examples coming up. Understand the hop model now.” - “3/4
+is between 0 and 1 — right of centre. We hop 5/6 to the right — about
+6/7 of a unit. We land past 1.” <strong class="cue-label">CUE:</strong> ✎ Draw: “Mark the
+hop for 3/4 + 5/6 on the number line in your notes.”</p>
+<hr />
+<p><strong>Beat 5 — Worked Example 2: negative fractions + number
+line</strong> <strong class="show-label">SHOW:</strong> Board: −1/3 + (−3/4). Symbolic
+steps. Then on number line: start at −1/3, hop left 3/4, land at −13/12.
+<strong class="say-label">SAY:</strong> - “Example 2: both fractions negative.” - “LCD of
+3 and 4 = 12.” - “−1/3 = −4/12. −3/4 = −9/12.” - “Add: −4/12 + (−9/12) =
+−13/12.” - “Simplified: −1 1/12.” - “On the number line: start at −1/3 —
+slightly left of 0. Hop left 3/4 — a bigger hop. Land at −13/12, which
+is just past −1.” - “Pattern: two negatives added always gives a
+negative result. You move further left.” - Blanks: LCD =
+<strong>[12]</strong> / −1/3 = −<strong>[4]</strong>/12 / −3/4 =
+−<strong>[9]</strong>/12 / result = −<strong>[13]</strong>/12 /
+simplified: <strong>[−1 1/12]</strong> / pattern: always
+<strong>[negative]</strong>. <strong class="cue-label">CUE:</strong> ★ Write: “Fill in
+Example 2 blanks. Pattern: adding two negative rationals always gives a
+<strong>[negative]</strong> result.”</p>
+<hr />
+<p><strong>Beat 6 — Worked Example 3: mixed signs + number line
+(critical)</strong> <strong class="show-label">SHOW:</strong> Board: −5/6 + 1/2. Symbolic
+steps. Then on number line: start at −5/6, hop right 1/2, land at −1/3.
+<strong class="say-label">SAY:</strong> - “Example 3 — the harder case. One negative, one
+positive.” - “LCD of 6 and 2 = 6. −5/6 stays as −5/6. 1/2 = 3/6.” -
+“−5/6 + 3/6 = −2/6 = −1/3.” - “On the number line: start at −5/6 —
+nearly −1. Hop right 1/2. We do not make it to 0. We land at −1/3.” -
+“Key question: when signs differ, how do you find the sign of the
+answer? Look at which number is larger in absolute value. −5/6 has
+absolute value 5/6. 1/2 = 3/6. 5/6 is larger. So the answer takes the
+sign of −5/6 — it is negative.” - Blanks: LCD = <strong>[6]</strong> /
+1/2 = <strong>[3]</strong>/6 / −5/6 + <strong>[3]</strong>/6 =
+−<strong>[2]</strong>/6 = <strong>[−1/3]</strong>. <strong class="cue-label">CUE:</strong>
+★ Write: “Fill in Example 3. When signs differ — subtract numerators,
+take the sign of the <strong>[larger absolute value]</strong>.”</p>
+<p><strong>Self-explanation beat:</strong> <strong class="say-label">SAY:</strong> “Before
+we move on — explain the mixed-sign case in your own words: when the
+signs differ, how do you determine the sign of the answer? Write a rule
+in your own words.” <strong class="cue-label">CUE:</strong> ★ Write: “Write your own rule
+for the mixed-sign case — what did we do and why?”</p>
+<hr />
+<p><strong>Beat 7 — The critical misconception: adding numerators AND
+denominators</strong> <strong class="show-label">SHOW:</strong> Board: 1/2 + 1/3. Student
+error: 2/5. Correct: 5/6. Show both on number line — mark 2/5 and 5/6
+and show they are different points. <strong class="say-label">SAY:</strong> - “This is the
+most common fraction error — and it is very tempting.” - “A student sees
+1/2 + 1/3 and thinks: add the tops, add the bottoms. Gets 2/5.” - “Is
+that right? Check with decimals. 1/2 = 0.5. 1/3 = 0.333. Their sum =
+0.833.” - “Is 2/5 equal to 0.833? No — 2/5 = 0.4. These are very
+different numbers.” - “On the number line: 2/5 is less than half. 5/6 is
+close to 1. The error gives an answer that is smaller than either addend
+— that alone should trigger alarm.” - “The denominator is not a count —
+it names the type of piece. You cannot add pieces of different sizes by
+just counting them. Convert first.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>“1/2 + 1/3 = 2/5 — add
+numerators and add denominators.” This misconception must be directly
+addressed here. Do not simply state the correct procedure — show why the
+shortcut is wrong using the decimal check and the number line. Students
+who have the rule but not the understanding will revert to 2/5 under
+time pressure on a test. The decimal check is the fastest correction: if
+2/5 = 0.4 and the sum should be 0.833, something went badly wrong.</div>
+<p><strong class="cue-label">CUE:</strong> ★ Write: “Misconception — 1/2 + 1/3 ≠ 2/5.
+Decimal check: 0.5 + 0.333 = 0.833 but 2/5 = <strong>[0.4]</strong>.
+Correct answer: <strong>[5/6]</strong>.”</p>
+<hr />
+<p><strong>Beat 8 — Subtracting: adding the opposite</strong>
+<strong class="show-label">SHOW:</strong> Board: 5/8 − (−3/8). Rewrite as 5/8 + 3/8.
+Answer: 8/8 = 1. <strong class="say-label">SAY:</strong> - “Subtraction — the key move is
+rewriting it as adding the opposite.” - “5/8 minus negative 3/8.
+Subtracting a negative is the same as adding a positive.” - “The two
+negatives resolve: −(−3/8) = +3/8.” - “5/8 + 3/8 = 8/8 = 1.” - “On the
+number line: start at 5/8. Subtracting a negative means hopping right —
+same direction as addition. We hop 3/8 to the right and land at 1.” -
+Blanks: = 5/8 + <strong>[3/8]</strong> = <strong>[1]</strong>.
+<strong class="cue-label">CUE:</strong> ★ Write: “Subtracting negative: 5/8 − (−3/8) = 5/8
++ <strong>[3/8]</strong> = <strong>[1]</strong>.”</p>
+<hr />
+<p><strong>Beat 9 — Alberta context: Fort McMurray temperature</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>Fort McMurray — Monday: −7.5°C. Rise
+of 11.25°C by Wednesday. What is Wednesday’s temperature?</em>
+<strong class="say-label">SAY:</strong> - “Real Alberta context. Fort McMurray winters are
+serious — it gets to −40°C.” - “Monday is −7.5. Temperature rises by
+11.25. This is addition: −7.5 + 11.25.” - “Convert to a common form:
+−7.5 = −7.50. Add: −7.50 + 11.25 = 3.75.” - “Wednesday: 3.75°C.” -
+“Number line check: start at −7.5, hop right 11.25. We cross 0 and land
+at +3.75.” - Blanks: −7.5 + <strong>[11.25]</strong> =
+<strong>[3.75]</strong>°C.</p>
+<div class="flag flag-alberta-context"><span class="flag-label">FLAG — Alberta Context</span>Temperature problems are not
+pseudo-context here — the numbers and direction of change (negative
+start, positive rise) give this problem meaning. If you remove the
+context, the operation is ambiguous. Emphasize this: the negative
+temperature is the starting point; the rise is the addend; the context
+tells you to add, not subtract.</div>
+<p><strong class="cue-label">CUE:</strong> ★ Write: “Temperature = −7.5 +
+<strong>[11.25]</strong> = <strong>[3.75]</strong>°C.”</p>
+<hr />
+<h3 id="section-2-retrieval-check-facilitation">Section 2 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Notes and number line covered.” <strong class="cue-label">CUE:</strong> ↩︎ Check:
+“Notes closed. Five questions — fractions, signed arithmetic, and the
+common error. Go.”</p>
+<p><strong>After students finish (4–5 min):</strong>
+<strong class="cue-label">CUE:</strong> ★ Write: “Open and correct — use a different
+colour.”</p>
+<p><strong>Answer guide:</strong> 1. 2/3 + (−5/6): LCD = 6. 4/6 + (−5/6)
+= −1/6. 2. −3/4 − (−1/2): rewrite as −3/4 + 1/2. LCD = 4. −3/4 + 2/4 =
+−1/4. 3. −1/2 + (−2/3) + 1/4: LCD = 12. −6/12 + (−8/12) + 3/12 = −11/12.
+4. The student added numerators AND denominators: 1+2=3, 4+3=7, giving
+3/7. Error: denominators name the type of piece — they cannot be added
+directly. Must convert to LCD first. LCD of 4 and 3 = 12. 3/12 + 8/12 =
+11/12. 5. Stretch: −2⅓ + 1¾. Convert: −2⅓ = −7/3. 1¾ = 7/4. LCD = 12.
+−28/12 + 21/12 = −7/12.</p>
+<p><em>Q4 targets the core misconception directly. If many students
+simply wrote “3/7 is wrong” without showing the correct method — use
+this as a whole-class retrieval moment. Ask: “How do we know it is
+wrong? What is the correct approach?”</em></p>
+<hr />
+<h2 id="section-3-multiplying-rational-numbers">Section 3 — Multiplying
+Rational Numbers</h2>
+<p><em>Learning target: I can multiply rational numbers in fraction
+form, determine the correct sign, and simplify the result.</em>
+<em>Timing: ~25 minutes direct instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Three terms — Product / Simplify before multiplying
+(cross-cancel) / Reciprocal <strong class="say-label">SAY:</strong> - “Three terms today.
+Product and reciprocal are likely familiar.” - “Cross-cancellation is
+the new technique — and it is worth learning because it keeps numbers
+small.” - “We will build the reciprocal definition properly here because
+it is the foundation of Section 4.” <strong class="cue-label">CUE:</strong> ⊡ Think:
+“Which of these three is least familiar? Hold that.”</p>
+<hr />
+<p><strong>Beat 2 — The multiplication rule: no common denominator
+needed</strong> <strong class="show-label">SHOW:</strong> Board: (a/b) × (c/d) = ac/bd.
+Large and clear. Emphasize: multiply numerators, multiply denominators.
+<strong class="say-label">SAY:</strong> - “This is the good news about multiplication: you
+do NOT need a common denominator.” - “Multiply the numerators. Multiply
+the denominators. That is it.” - “Why no common denominator? Because
+multiplication is fundamentally different from addition. Adding
+fractions means counting like pieces — you need the pieces to be the
+same size. Multiplying a fraction by a fraction means taking a fraction
+of a fraction — the denominators multiply naturally.” - “Example: 1/2 ×
+1/3 means ‘half of one-third.’ That is one-sixth. And 2 × 3 = 6 — it
+works.” <strong class="cue-label">CUE:</strong> ★ Write: “(a/b) × (c/d) =
+<strong>[ac/bd]</strong> — multiply numerators × multiply
+denominators.”</p>
+<hr />
+<p><strong>Beat 3 — Sign rules for multiplication</strong>
+<strong class="show-label">SHOW:</strong> Board: Table with four rows — Positive × Positive
+/ Negative × Negative / Positive × Negative / Negative × Positive. Leave
+the sign-of-product column blank. <strong class="say-label">SAY:</strong> - “Sign rules —
+these apply to all rational number multiplication.” - “Positive times
+positive: both factors are positive, product is positive. Easy.” -
+“Negative times negative: this one surprises students. Two negatives
+give a positive. We will derive why in a moment.” - “Positive times
+negative: negative.” - “Negative times positive: negative.” - “Quick
+rule: count the negative signs. Odd number of negatives — product is
+negative. Even number — product is positive.” <strong class="cue-label">CUE:</strong> ★
+Write: “Negative × Negative = <strong>[positive]</strong>. Positive ×
+Negative = <strong>[negative]</strong>. Quick rule:
+<strong>[odd]</strong> number of negatives → negative product.”</p>
+<hr />
+<p><strong>Beat 4 — Deriving negative × negative using a pattern
+table</strong> <strong class="show-label">SHOW:</strong> Board: Pattern table:</p>
+<pre><code>3 × (−2) = −6
+2 × (−2) = −4
+1 × (−2) = −2
+0 × (−2) =  0
+(−1) × (−2) = ?
+(−2) × (−2) = ?</code></pre>
+<p><strong class="say-label">SAY:</strong> - “Here is where negative × negative comes
+from. Do not just accept the rule — see where it comes from.” - “The
+pattern: as the first factor decreases by 1, the product increases by
+2.” - “3 × (−2) = −6. 2 × (−2) = −4. 1 × (−2) = −2. 0 × (−2) = 0.” -
+“Pattern continues: (−1) × (−2) = +2. (−2) × (−2) = +4.” - “The pattern
+demands a positive result. The rule is not arbitrary — it comes from
+extending the number pattern.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>Negative × negative =
+positive: students accept the rule but cannot explain why. This matters
+for two reasons: (1) they apply it incorrectly under pressure, (2) they
+will need this reasoning for exponent work later in the course. Spend 2
+minutes on the pattern table. Ask students to fill in the last two rows
+before revealing the answers. The pattern makes the result feel
+inevitable rather than arbitrary.</div>
+<p><strong class="cue-label">CUE:</strong> ★ Write: “Pattern table — (−1) × (−2) =
+<strong>[+2]</strong> and (−2) × (−2) = <strong>[+4]</strong>. Pattern:
+each step increases by <strong>[2]</strong>.”</p>
+<hr />
+<p><strong>Beat 5 — Worked Example 1: two fractions with signs</strong>
+<strong class="show-label">SHOW:</strong> Board: (−3/5) × (2/7). Step through — numerators,
+denominators, sign separately. <strong class="say-label">SAY:</strong> - “Example 1:
+(−3/5) × (2/7).” - “Numerators: −3 × 2 = −6. Denominators: 5 × 7 = 35.”
+- “Sign separately: one negative factor, one positive factor — odd
+number of negatives — product is negative.” - “Result: −6/35.” - “Does
+this simplify? Check: GCF of 6 and 35. 6 = 2 × 3. 35 = 5 × 7. No common
+factors. Already simplified.” - Blanks: numerators <strong>[−3] × [2] =
+[−6]</strong> / denominators <strong>[5] × [7] = [35]</strong> / sign
+<strong>[negative]</strong> / result <strong>[−6/35]</strong>.
+<strong class="cue-label">CUE:</strong> ★ Write: “Fill in all blanks for Example 1.
+Result: <strong>[−6/35]</strong>.”</p>
+<p><strong>Self-explanation beat:</strong> <strong class="say-label">SAY:</strong> “Before
+we move on — explain Step 3, the sign step, in your own words: you have
+one negative factor and one positive factor. What does the sign rule
+tell you?” <strong class="cue-label">CUE:</strong> ★ Write: “Write your sign-rule
+explanation now.”</p>
+<hr />
+<p><strong>Beat 6 — Cross-cancellation</strong> <strong class="show-label">SHOW:</strong>
+Board: (8/15) × (5/4). Show the cross-cancel before multiplying. Circle
+8 and 4 (share factor 4). Circle 5 and 15 (share factor 5). Reduce, then
+multiply. <strong class="say-label">SAY:</strong> - “Cross-cancellation is simplifying
+before you multiply — instead of after.” - “8/15 × 5/4. Before
+multiplying: can any numerator share a factor with any denominator?” -
+“8 and 4 share factor 4: 8÷4=2, 4÷4=1.” - “5 and 15 share factor 5:
+5÷5=1, 15÷5=3.” - “Now multiply the reduced fractions: (2/3) × (1/1) =
+2/3.” - “Compare: if we multiplied first — 40/60 — then we would have to
+simplify by dividing by 20. Same answer, much messier.” - Blanks: 8 and
+4 share factor <strong>[4]</strong> / 5 and 15 share factor
+<strong>[5]</strong> / 8÷4 = <strong>[2]</strong> / 5÷15 =
+<strong>[1/3]</strong> / multiply: <strong>[(2/3) × (1/1) =
+2/3]</strong>. <strong class="cue-label">CUE:</strong> ★ Write: “Cross-cancel example —
+factors <strong>[4]</strong> and <strong>[5]</strong>. Result:
+<strong>[2/3]</strong>.”</p>
+<p><strong>Self-explanation beat:</strong> <strong class="say-label">SAY:</strong>
+“Explain why cross-cancelling before multiplying gives the same answer
+as multiplying then reducing. Which method is easier and why?”
+<strong class="cue-label">CUE:</strong> ★ Write: “Write your explanation. Which method do
+you prefer and why?”</p>
+<hr />
+<p><strong>Beat 7 — Worked Example 2: fraction × integer</strong>
+<strong class="show-label">SHOW:</strong> Board: (−3/4) × 8. Rewrite 8 as 8/1. Then
+multiply. <strong class="say-label">SAY:</strong> - “Multiplying a fraction by an integer:
+rewrite the integer as a fraction over 1.” - “−3/4 × 8 = −3/4 × 8/1.” -
+“Numerators: −3 × 8 = −24. Denominators: 4 × 1 = 4.” - “Simplify: −24/4
+= −6.” - Blanks: 8 = <strong>[8/1]</strong> / (−3/4) × (8/1) =
+−<strong>[24]</strong>/4 = <strong>[−6]</strong>. <strong class="cue-label">CUE:</strong>
+★ Write: “Fill in Example 2. Rewrite 8 as <strong>[8/1]</strong>.
+Result: <strong>[−6]</strong>.”</p>
+<hr />
+<p><strong>Beat 8 — The cross-cancel misconception</strong>
+<strong class="show-label">SHOW:</strong> Board: (3/8) × (4/9). Show valid cross-cancel: 3
+and 9 (diagonal — valid, one is a numerator, one a denominator from the
+other fraction). Show invalid: 8 and 4 — are they valid? Yes (8 is
+denominator, 4 is numerator). Add a fake example: show trying to cancel
+two numerators — invalid. <strong class="say-label">SAY:</strong> - “Cross-cancellation
+works between a numerator and a denominator. That is the only rule.” -
+“3/8 × 4/9: can we cancel? 3 (numerator, first fraction) and 9
+(denominator, second fraction) share factor 3. Valid — cancel.” - “8
+(denominator, first) and 4 (numerator, second) share factor 4. Valid —
+cancel.” - “What you cannot do: cancel two numerators with each other,
+or two denominators with each other.” - “In the student notes: can you
+cancel the 8 and the 4? Yes — 8 is a denominator, 4 is a numerator. Why?
+They share factor 4, and they are on opposite roles in the
+multiplication.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>Cross-cancellation rule:
+students sometimes try to cancel any two numbers that share a common
+factor, regardless of whether one is a numerator and the other is a
+denominator. The rule is strictly cross: numerator of one fraction with
+denominator of the other. A clear board diagram with circles and
+diagonal lines helps. If a student says “I can cancel the 3 and the 4 —
+they’re both small” — that is the error. 3 is numerator, 4 is numerator
+— same side of the fraction bar. Cannot cancel.</div>
+<p><strong class="cue-label">CUE:</strong> ★ Write: “Cross-cancel rule: numerator of one
+fraction with <strong>[denominator]</strong> of the other — opposite
+roles only.”</p>
+<hr />
+<p><strong>Beat 9 — Alberta context: pipeline flow rate</strong>
+<strong class="show-label">SHOW:</strong> Board: Pipeline carries −5/6 of capacity per
+hour. Over 3/4 of a day. Total? (−5/6) × (3/4). <strong class="say-label">SAY:</strong> -
+“Alberta context — pipeline flow.” - “(−5/6) × (3/4). Cross-cancel: 3
+and 6 share factor 3. 3÷3=1, 6÷3=2.” - “(−5/2) × (1/4) = −5/8.” - “The
+pipeline delivers −5/8 of designed capacity over the period. The
+negative indicates below-target delivery.”</p>
+<div class="flag flag-alberta-context"><span class="flag-label">FLAG — Alberta Context</span>The pipeline context is
+genuine — the negative sign represents below-target flow, not literal
+negative flow. Spend 30 seconds connecting the sign to the real
+situation: in Alberta, pipeline capacity metrics are reported as
+deviation from designed flow. A negative means the pipeline is
+underperforming. This is not decorative — it is why the answer is
+negative.</div>
+<p><strong class="cue-label">CUE:</strong> ★ Write: “(−5/6) × (3/4) =
+<strong>[−5/8]</strong> — cross-cancel using factor
+<strong>[3]</strong>.”</p>
+<hr />
+<h3 id="section-3-retrieval-check-facilitation">Section 3 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="cue-label">CUE:</strong> ↩︎ Check:
+“Notes closed. Multiplication, sign rules, cross-cancellation. Go.”</p>
+<p><strong>Answer guide:</strong> 1. (−2/3) × (−3/4): two negatives —
+product positive. 2×3=6, 3×4=12. 6/12 = 1/2. 2. (5/6) × (−9/10) with
+cross-cancellation: 5 and 10 share factor 5 (5÷5=1, 10÷5=2). 9 and 6
+share factor 3 (9÷3=3, 6÷3=2). Result: (1/2) × (−3/2) = −3/4. One
+negative factor — negative product. 3. (−3) × (−2/5): rewrite −3 as
+−3/1. Two negatives — positive. 3×2=6, 1×5=5. Result: 6/5 = 1 1/5. 4.
+The error: (−2/3) × (−4/5). Two negative factors — should give a
+positive result. The student got −8/15 (negative) — they applied the
+wrong sign rule, treating negative × negative as negative. Correct
+answer: +8/15. 5. Stretch: (−3/4)³ = (−3/4) × (−3/4) × (−3/4). First
+two: (−3/4) × (−3/4) = +9/16. Then (+9/16) × (−3/4) = −27/64. Three
+negative factors = odd = negative. Result: −27/64.</p>
+<hr />
+<h2 id="section-4-dividing-rational-numbers">Section 4 — Dividing
+Rational Numbers</h2>
+<p><em>Learning target: I can divide rational numbers by multiplying by
+the reciprocal and explain why this method works.</em> <em>Timing: ~25
+minutes direct instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Three terms — Reciprocal / Quotient / Divisor
+<strong class="say-label">SAY:</strong> - “Three terms. Reciprocal is the new one.” - “A
+reciprocal is the flip of a fraction — numerator and denominator swap.”
+- “The reciprocal of 3/4 is 4/3. The reciprocal of 5 is 1/5.” - “One
+important fact: a number times its reciprocal always equals 1. 3/4 × 4/3
+= 12/12 = 1.” <strong class="cue-label">CUE:</strong> ★ Write: “Reciprocal of a/b =
+<strong>[b/a]</strong>. A number times its reciprocal =
+<strong>[1]</strong>.”</p>
+<hr />
+<p><strong>Beat 2 — Reciprocal table</strong> <strong class="show-label">SHOW:</strong>
+Board: Table — 3/4 → ? / −5/2 → ? / 7 → ? / −1/3 → ?
+<strong class="say-label">SAY:</strong> - “Fill these in before I write them. Flip the
+fraction.” - “3/4 → 4/3. −5/2 → −2/5. 7 = 7/1 → 1/7. −1/3 → −3/1 = −3.”
+- “Notice: the sign does not change when you take a reciprocal. −5/2 and
+−2/5 are both negative.” <strong class="cue-label">CUE:</strong> ★ Write: “Fill in the
+reciprocal table: 3/4 → <strong>[4/3]</strong> / −5/2 →
+<strong>[−2/5]</strong> / 7 → <strong>[1/7]</strong> / −1/3 →
+<strong>[−3]</strong>.”</p>
+<hr />
+<p><strong>Beat 3 — The big idea: dividing = multiplying by
+reciprocal</strong> <strong class="show-label">SHOW:</strong> Board: a ÷ (b/c) = a × (c/b).
+Large, centred. <strong class="say-label">SAY:</strong> - “The key move: dividing by a
+fraction is the same as multiplying by its reciprocal.” - “This is not a
+trick. It comes from the definition of division.” - “Division asks: how
+many of this go into that? Dividing by 1/2 asks: how many halves fit
+into this number? More than 1 whole fits — the answer grows.” - “We will
+see the proof in a moment. First — the procedure: keep the first
+fraction, change division to multiplication, flip the second fraction.”
+- “Keep. Change. Flip.” <strong class="cue-label">CUE:</strong> ★ Write: “Dividing by a
+fraction = multiplying by its <strong>[reciprocal]</strong>. Keep.
+Change. Flip.”</p>
+<hr />
+<p><strong>Beat 4 — Why dividing by a fraction less than 1 gives a
+larger result</strong> <strong class="show-label">SHOW:</strong> Board: Number line from 0
+to 8. Mark 6. Show 6 ÷ 2 = 3 (three groups of 2 in 6). Then show 6 ÷
+(1/2) = 12 (twelve halves in 6). Mark 12 on the line.
+<strong class="say-label">SAY:</strong> - “Here is the misconception to destroy before we
+go further.” - “Most students believe: dividing always makes things
+smaller. That is only true when you divide by a number greater than 1.”
+- “6 ÷ 2 = 3. Yes — smaller. Divided by 2, got less.” - “6 ÷ (1/2) = 12.
+Bigger. Why? How many halves fit in 6? Twelve halves.” - “Think of it
+as: 6 ÷ (1/2) = 6 × 2 = 12. Dividing by a half doubles it.” - “6 ÷
+(1/3): even bigger — 18. Three thirds in every whole, six wholes, 18
+thirds.” - “On the number line: the result lands further from zero, not
+closer.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>“Dividing by a fraction makes
+the answer smaller.” This misconception is deeply held — it comes from
+years of integer division where dividing always meant getting less. The
+number line is essential here: show that the quotient lands further
+right than the dividend. The “how many fit in” framing is the most
+intuitive correction. Have students fill in the test-it blank: 6 ÷ (1/3)
+= <strong>[18]</strong> — bigger than 6. Let the number speak.</div>
+<p><strong class="cue-label">CUE:</strong> ★ Write: “6 ÷ (1/2) = <strong>[12]</strong> —
+bigger. Dividing by a fraction <strong>[less than 1]</strong> gives a
+<strong>[larger]</strong> result.”</p>
+<hr />
+<p><strong>Beat 5 — Worked Example 1: fraction ÷ fraction</strong>
+<strong class="show-label">SHOW:</strong> Board: (−3/4) ÷ (2/5). Rewrite with reciprocal.
+Multiply. Apply sign. <strong class="say-label">SAY:</strong> - “Example 1: (−3/4) ÷
+(2/5).” - “Reciprocal of 2/5: 5/2.” - “Rewrite: (−3/4) × (5/2).” -
+“Multiply numerators: −3 × 5 = −15. Denominators: 4 × 2 = 8.” - “Sign:
+one negative factor — negative product.” - “Result: −15/8 = −1 7/8.” -
+Blanks: reciprocal = <strong>[5/2]</strong> / (−3/4) ×
+<strong>[(5/2)]</strong> = <strong>[−15/8]</strong>.
+<strong class="cue-label">CUE:</strong> ★ Write: “Fill in Example 1. Reciprocal of 2/5 =
+<strong>[5/2]</strong>. Result: <strong>[−15/8]</strong>.”</p>
+<p><strong>Self-explanation beat:</strong> <strong class="say-label">SAY:</strong> “Before
+we move on — explain Step 1 in your own words: how do you find the
+reciprocal of 2/5, and why does multiplying by the reciprocal give the
+same result as dividing?” <strong class="cue-label">CUE:</strong> ★ Write: “Write your
+explanation of the reciprocal move — what did we do and why?”</p>
+<hr />
+<p><strong>Beat 6 — Worked Example 2: dividing mixed numbers</strong>
+<strong class="show-label">SHOW:</strong> Board: 2½ ÷ (−3/4). Step 1: convert 2½ to
+improper fraction. Step 2: multiply by reciprocal. Apply sign.
+<strong class="say-label">SAY:</strong> - “Example 2 — mixed number involved.” - “First
+step: convert 2½ to an improper fraction. 2 × 2 + 1 = 5. So 2½ = 5/2.” -
+“Rewrite: (5/2) ÷ (−3/4) = (5/2) × (−4/3).” - “Multiply: 5 × (−4) = −20.
+2 × 3 = 6. Result: −20/6 = −10/3 = −3⅓.” - “Sign: one negative —
+negative product.” - Blanks: 2½ = <strong>[5/2]</strong> / (5/2) ×
+<strong>[(−4/3)]</strong> = <strong>[−20/6]</strong> =
+<strong>[−10/3]</strong> / sign <strong>[negative]</strong> / result
+<strong>[−3⅓]</strong>. <strong class="cue-label">CUE:</strong> ★ Write: “Fill in Example
+2. 2½ = <strong>[5/2]</strong>. Reciprocal of −3/4 =
+<strong>[−4/3]</strong>. Result: <strong>[−3⅓]</strong>.”</p>
+<hr />
+<p><strong>Beat 7 — Why the rule works (algebraic derivation)</strong>
+<strong class="show-label">SHOW:</strong> Board: (2/3) ÷ (4/5) = n. So n × (4/5) = 2/3.
+Solve: n = (2/3) × (5/4) = 10/12 = 5/6. Check: (5/6) × (4/5) = 20/30 =
+2/3. ✓ <strong class="say-label">SAY:</strong> - “Why does Keep-Change-Flip work? Here is
+the proof — follow along.” - “Division asks: what number times 4/5
+equals 2/3?” - “Let that number be n. Then n × (4/5) = 2/3.” - “Multiply
+both sides by 5/4 — the reciprocal of 4/5. On the left: n × (4/5) ×
+(5/4) = n × 1 = n. On the right: (2/3) × (5/4) = 10/12 = 5/6.” - “So n =
+5/6. And we can check: (5/6) × (4/5) = 20/30 = 2/3. ✓” - “The rule comes
+directly from the definition of division. It is not a shortcut — it is
+the definition.” <strong class="cue-label">CUE:</strong> ★ Write: “Proof — n = (2/3) ×
+(5/4) = <strong>[5/6]</strong>. Check: <strong>[(5/6) × (4/5) =
+2/3]</strong> ✓.”</p>
+<hr />
+<p><strong>Beat 8 — Alberta context: Edmonton firewood</strong>
+<strong class="show-label">SHOW:</strong> Board: Edmonton — three families splitting 2/3 of
+shared firewood equally. (2/3) ÷ 3. <strong class="say-label">SAY:</strong> - “Real
+context — Edmonton. Three families, 2/3 of a supply to share equally.” -
+“(2/3) ÷ 3 = (2/3) × (1/3) = 2/9.” - “Each family receives 2/9 of the
+total firewood.” - “Notice: dividing by 3 (a number greater than 1) —
+the result gets smaller. That is the familiar case.” - Blanks: (2/3) ×
+<strong>[1/3]</strong> = <strong>[2/9]</strong>.</p>
+<div class="flag flag-alberta-context"><span class="flag-label">FLAG — Alberta Context</span>Edmonton and Fort McMurray
+winter fuel sharing is a genuine context. The problem is incoherent
+without the context — “2/3 divided by 3” only makes sense if you know
+what the 2/3 represents and what “divided equally among 3” means. Use
+this to contrast with the Section 4 misconception: dividing by a whole
+number (&gt; 1) does give a smaller result. Dividing by a fraction (&lt;
+1) does not.</div>
+<p><strong class="cue-label">CUE:</strong> ★ Write: “(2/3) ÷ 3 = <strong>[2/9]</strong>.
+Each family receives <strong>[2/9]</strong> of the total.”</p>
+<hr />
+<h3 id="section-4-retrieval-check-facilitation">Section 4 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="cue-label">CUE:</strong> ↩︎ Check:
+“Notes closed. Reciprocals, dividing by fractions, mixed numbers, the
+proof of why Keep-Change-Flip works. Go.”</p>
+<p><strong>Answer guide:</strong> 1. Reciprocal of −4/7: −7/4. (Sign
+stays; numerator and denominator swap.) 2. (3/4) ÷ (−9/8): reciprocal of
+−9/8 = −8/9. (3/4) × (−8/9). Cross-cancel: 3 and 9 share factor 3 → 1
+and 3. 4 and 8 share factor 4 → 1 and 2. (1/1) × (−2/3) = −2/3. One
+negative — negative result: −2/3. 3. (−5/6) ÷ (−5/3): reciprocal of −5/3
+= −3/5. (−5/6) × (−3/5). Two negatives — positive. Cross-cancel: 5 and 5
+share factor 5. 3 and 6 share factor 3. (1/2) × (1/1) = 1/2. 4. Dividing
+by 1/3 means multiplying by 3/1 = 3. One-third fits into a whole 3
+times, so any number has three times as many thirds as it has ones. The
+reciprocal of 1/3 is 3, so multiplying by the reciprocal is equivalent.
+5. Stretch: 5¼ ÷ ¾. Convert: 5¼ = 21/4. (21/4) ÷ (3/4) = (21/4) × (4/3).
+Cross-cancel: 4 and 4 cancel (both = 4). (21/1) × (1/3) = 21/3 = 7.
+Seven complete batches. No remainder — 7 × ¾ = 21/4 = 5¼ exactly.</p>
+<hr />
+<h2 id="section-5-order-of-operations-with-rational-numbers">Section 5 —
+Order of Operations with Rational Numbers</h2>
+<p><em>Learning target: I can evaluate multi-step expressions with
+rational numbers using the correct order of operations.</em> <em>Timing:
+~25 minutes direct instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Three terms — BEDMAS / Evaluate / Nested brackets
+<strong class="say-label">SAY:</strong> - “BEDMAS — you know this from earlier grades.
+Brackets, Exponents, Division/Multiplication left to right,
+Addition/Subtraction left to right.” - “New extension: rational numbers
+create new traps inside each step.” - “Evaluate means find the numerical
+value of the expression.” - “Nested brackets: brackets inside brackets.
+Work from inside out.” <strong class="cue-label">CUE:</strong> ★ Write: “BEDMAS — steps in
+order: <strong>[Brackets / Exponents / Division &amp; Multiplication (L
+to R) / Addition &amp; Subtraction (L to R)]</strong>.”</p>
+<hr />
+<p><strong>Beat 2 — BEDMAS with rational numbers: the special
+cases</strong> <strong class="show-label">SHOW:</strong> Board: BEDMAS table with the
+rational-number notes column filled in: - B: Convert mixed numbers
+before starting. - E: Apply sign rules — (−2/3)² = 4/9, not −4/9. - D/M:
+Division = multiply by reciprocal; left to right. - A/S: Need LCD for
+fractions; left to right. <strong class="say-label">SAY:</strong> - “Every step in BEDMAS
+has a rational-number extension. Let me go through each.” - “Brackets
+first — but also: convert any mixed numbers to improper fractions before
+you start. Mixed numbers inside expressions cause errors.” - “Exponents:
+apply sign rules. Negative base inside brackets — result is positive for
+even exponent. We will work this through explicitly.” - “Division and
+Multiplication: convert division to multiplication by reciprocal, then
+proceed left to right.” - “Addition and Subtraction: need LCD. Left to
+right.” - “Blank for E step: (−2/3)² = <strong>[4/9]</strong> — two
+negatives multiply to positive.” <strong class="cue-label">CUE:</strong> ★ Write: “Fill in
+the BEDMAS table — especially E step: (−2/3)² =
+<strong>[4/9]</strong>.”</p>
+<hr />
+<p><strong>Beat 3 — Sign trap with exponents: critical
+distinction</strong> <strong class="show-label">SHOW:</strong> Board: Two expressions side
+by side — −(3/4)² and (−3/4)². Work both out. Show different answers.
+<strong class="say-label">SAY:</strong> - “This is the trap that catches students most
+often in BEDMAS.” - “−(3/4)²: the negative sign is OUTSIDE the brackets.
+Apply the exponent first: (3/4)² = 9/16. Then apply the negative:
+−9/16.” - “(−3/4)²: the negative sign is INSIDE the brackets. The base
+is −3/4. Apply the exponent: (−3/4) × (−3/4) = +9/16. Positive.” - “Same
+fraction, same exponent — different answers because of where the
+negative sign is.” - “Ask yourself: is the negative sign part of the
+base? If it is inside the brackets — yes. If it is outside — no.” -
+“Which answer is negative? The first: −(3/4)² = −9/16. The second:
+(−3/4)² = +9/16.” - Blanks: −(3/4)² = −(<strong>[9/16]</strong>) =
+<strong>[−9/16]</strong> / (−3/4)² = <strong>[9/16]</strong>
+(positive).</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>−(−3) = −3. A related error:
+students forget that negating a negative gives positive. When a negative
+sign sits outside brackets containing a negative base, they sometimes
+carry two negatives through without resolving them. Reinforce: −(−3/4)²
+means the exponent applies to the negative base (−3/4)², which gives
++9/16, and then the outside negative gives −9/16. Three signs to track.
+Slow down on this beat.</div>
+<p><strong class="cue-label">CUE:</strong> ★ Write: “Sign trap — −(3/4)² =
+<strong>[−9/16]</strong> but (−3/4)² = <strong>[+9/16]</strong>. The
+negative inside the bracket IS part of the base.”</p>
+<hr />
+<p><strong>Beat 4 — Worked Example: full BEDMAS</strong>
+<strong class="show-label">SHOW:</strong> Board: (−1/2 + 3/4)² ÷ (−1/4). Solve step by
+step, labeling each letter of BEDMAS. <strong class="say-label">SAY:</strong> - “Full
+example. Three steps — B, E, D.” - “B: bracket first. −1/2 + 3/4. LCD =
+4. −2/4 + 3/4 = 1/4.” - “E: exponent. (1/4)² = 1/16.” - “D: division.
+(1/16) ÷ (−1/4) = (1/16) × (−4) = −4/16 = −1/4.” - “Sign: one negative
+factor in the final step — negative result.” - Blanks: B:
+<strong>[1/4]</strong> / E: <strong>[1/16]</strong> / D: <strong>[(1/16)
+× (−4) = −1/4]</strong>. <strong class="cue-label">CUE:</strong> ★ Write: “Fill in each
+step: B = <strong>[1/4]</strong>, E = <strong>[1/16]</strong>, D =
+<strong>[−1/4]</strong>.”</p>
+<p><strong>Self-explanation beat:</strong> <strong class="say-label">SAY:</strong> “Before
+we move on — explain the B step: why do we handle the bracket before
+squaring? What would go wrong if you applied the exponent first?”
+<strong class="cue-label">CUE:</strong> ★ Write: “Write your B-step explanation — what
+would go wrong if you squared first?”</p>
+<p><em>Target answer: squaring first would apply the exponent to only
+one of the fractions (−1/2 or 3/4), not to their sum. Squaring
+distributes over multiplication, not over addition. (a + b)² ≠ a² +
+b².</em></p>
+<hr />
+<p><strong>Beat 5 — Common sequence error: adding before
+multiplying</strong> <strong class="show-label">SHOW:</strong> Board: 1/2 + 3/4 × (−2/3).
+Show wrong order (add first). Show correct order (multiply first).
+Compare answers. <strong class="say-label">SAY:</strong> - “Common sequence error: student
+adds 1/2 and 3/4 first.” - “Wrong: (1/2 + 3/4) × (−2/3) = (5/4) × (−2/3)
+= −10/12 = −5/6.” - “Correct: multiplication before addition. 3/4 ×
+(−2/3) first. Cross-cancel: 3 and 3, 2 and 4. (1/4) × (−1/1) = −1/4.
+Wait — let me redo this. 3/4 × (−2/3): numerators 3×(−2)=−6,
+denominators 4×3=12, result −6/12 = −1/2. Then: 1/2 + (−1/2) = 0.” -
+“Wrong answer: −5/6. Correct answer: 0. That is a significant
+difference.” - “No brackets around the addition — multiplication comes
+first. That is BEDMAS.” - Blanks for interleaved table: correct
+approach: multiply first → 3/4 × (−2/3) = <strong>[−1/2]</strong> / then
+1/2 + <strong>[−1/2]</strong> = <strong>[0]</strong>.
+<strong class="cue-label">CUE:</strong> ★ Write: “Sequence error — correct approach:
+multiply first. 3/4 × (−2/3) = <strong>[−1/2]</strong>. Then 1/2 +
+<strong>[−1/2]</strong> = <strong>[0]</strong>.”</p>
+<hr />
+<p><strong>Beat 6 — Interleaved practice: name the first step</strong>
+<strong class="show-label">SHOW:</strong> Board: Four-row table (fill columns 2 and 3 live
+or leave as student work):</p>
+<pre><code>3/4 × (−2/3) + 1/2        | First step: Multiplication (D/M)  | Answer: 0
+(1/3 + 1/6) ÷ (−1/2)      | First step: Brackets (B)          | Answer: −1
+−(−2/3)²                  | First step: Exponent (E)          | Answer: −4/9
+1/2 ÷ 1/4 − 3/2           | First step: Division (D/M)        | Answer: 1/2</code></pre>
+<p><strong class="say-label">SAY:</strong> - “Interleaved practice — four expressions. For
+each one: name the first BEDMAS step before calculating.” - “Do not
+start calculating. Name the step first. That decision is the skill being
+tested.” - “We will go through these together after you have tried all
+four.” - “Column 2: first step only. Column 3: final answer.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Name the first step for each expression
+— then calculate the answer.”</p>
+<p><em>Allow 4–5 minutes. Circulate. Watch for: students who write
+‘Multiplication’ for expression 4 but forget to do division first (D/M
+left to right — 1/2 ÷ 1/4 comes before the −3/2). Expression 3 is the
+sign-trap — (−2/3)² first, then apply the outside negative.</em></p>
+<p><em>Answer key for the table: Row 1: first step D/M, answer 0. Row 2:
+first step B, answer (1/6 ÷ (−1/2) — wait, bracket gives 1/3 + 1/6 =
+1/2, then 1/2 ÷ (−1/2) = −1. Row 3: first step E, (−2/3)² = 4/9, then
+−(4/9) = −4/9. Row 4: first step D/M, 1/2 ÷ 1/4 = 2, then 2 − 3/2 =
+1/2.</em></p>
+<hr />
+<h3 id="section-5-retrieval-check-facilitation">Section 5 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="cue-label">CUE:</strong> ↩︎ Check:
+“Notes closed. Five multi-step expressions. Name the first step before
+calculating each one.”</p>
+<p><strong>Answer guide:</strong> 1. (−3/4 + 1/2) × (−8/3): B first.
+−3/4 + 1/2 = −3/4 + 2/4 = −1/4. Then (−1/4) × (−8/3) = +8/12 = 2/3. 2.
+2/3 ÷ (1/3)²: E first. (1/3)² = 1/9. Then 2/3 ÷ 1/9 = 2/3 × 9 = 18/3 =
+6. 3. (−1/2)³ + 3/4 × (−2/3): two operations after the exponent — do the
+exponent first, then multiplication, then addition. E: (−1/2)³ = −1/8.
+Then D/M: 3/4 × (−2/3) = −6/12 = −1/2. Then A/S: −1/8 + (−1/2) = −1/8 +
+(−4/8) = −5/8. 4. Student evaluates 1/2 + 3/4 × (−2) as −5/4. Error:
+they added 1/2 + 3/4 first, getting 5/4, then multiplied (5/4) × (−2) =
+−10/4 = −5/2. The correct BEDMAS approach: multiply first. 3/4 × (−2) =
+−6/4 = −3/2. Then 1/2 + (−3/2) = 1/2 − 3/2 = −2/2 = −1. 5. Stretch: (1/3
+− 2/3)² ÷ (−1/9) + (−1/2)². B: 1/3 − 2/3 = −1/3. E: (−1/3)² = 1/9 and
+(−1/2)² = 1/4. D: (1/9) ÷ (−1/9) = −1. A: −1 + 1/4 = −3/4.</p>
+<hr />
+<h2 id="unit-synthesis">Unit Synthesis</h2>
+<p><em>~15 minutes — notes closed, then return to Pre-Knowledge
+Check</em></p>
+<hr />
+<p><strong>Beat 1 — Set up</strong> <strong class="show-label">SHOW:</strong> Board: Four
+section headers — Section 1: Rational Numbers / Section 2: Adding &amp;
+Subtracting / Section 3: Multiplying / Section 4: Dividing / Section 5:
+Order of Operations. Blank lines beside each. <strong class="say-label">SAY:</strong> -
+“Notes closed. Everything closed.” - “Five sections. From memory — one
+sentence each: the single most important idea.” - “This is not a test.
+This is you finding out what stuck.” - “Part A and Part B are in your
+notes. Part A first.” <strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed. Five
+sections. One sentence each. Go.”</p>
+<p><em>Allow 5–7 minutes. Circulate. Watch for: students who can do
+Sections 2 and 3 but lose Section 1 precision (rational numbers have a
+definition — numbers writable as a/b — students often write vague
+answers like “fractions and decimals”); students who get the sign rules
+for multiplication but forget the “odd/even count of negatives” rule
+under time pressure.</em></p>
+<hr />
+<p><strong>Beat 2 — Part B: synthesis problem from memory</strong>
+<strong class="show-label">SHOW:</strong> Board: Evaluate: (−3/4 + 1/2) ÷ (−5/6) × (−2/5).
+Label each step as you show it. <strong class="say-label">SAY:</strong> - “Part B — work
+through this problem step by step. Show each operation and name it.” -
+“First step: BEDMAS — what comes first?” - Pause for student responses:
+“Brackets — there are no explicit brackets here, but the conventional
+reading is that addition has lower priority. Actually: no brackets, no
+exponents, so D/M left to right? Wait — is there a bracket around −3/4 +
+1/2? If not, apply BEDMAS order: division/multiplication before
+addition.” - “Actually looking at the expression: (−3/4 + 1/2) IS in
+brackets. So bracket first.” - “B: −3/4 + 1/2 = −3/4 + 2/4 = −1/4.” -
+“Then left to right D/M: (−1/4) ÷ (−5/6) = (−1/4) × (−6/5) = +6/20 =
++3/10.” - “Then: (3/10) × (−2/5) = −6/50 = −3/25.” - “Two negatives in
+the division cancel to positive. Then one negative in the final
+multiplication — negative result.” <strong class="cue-label">CUE:</strong> ★ Write: “Work
+through the synthesis problem. Name each step. Answer:
+<strong>[−3/25]</strong>.”</p>
+<hr />
+<p><strong>Beat 3 — Return to Pre-Knowledge Check</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>“Turn to page 1. Read what you wrote
+before the unit started.”</em> <strong class="say-label">SAY:</strong> - “Read it. Do not
+change it. Do not erase anything.” - “Part C in your notes: What did you
+get right? What did you get wrong? Was your guess about dividing by a
+fraction correct?” - “Write your answers now.” <strong class="cue-label">CUE:</strong> ★
+Write: “Answer Part C — right / wrong / what you now know about dividing
+by a fraction.”</p>
+<p><em>Allow 3–5 minutes. This is the most important metacognitive
+moment in the unit. Students reading their own pre-instruction writing —
+especially the dividing-by-a-fraction response — and seeing how it
+compared to what they now know. Let it land quietly. Do not comment on
+individual pre-knowledge checks. The value is in the private
+comparison.</em></p>
+<hr />
+<h2 id="blank-answer-key">Blank Answer Key</h2>
+<p>Quick reference — all fill-in blank answers in section order.</p>
+<h3 id="section-1">Section 1</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rational number: any number writable as <em>/</em> where b ___
+0</td>
+<td>a/b; ≠</td>
+</tr>
+<tr>
+<td>Integers: 5 = <strong><em>/1, −3 = </em></strong>/1</td>
+<td>5; −3</td>
+</tr>
+<tr>
+<td>Terminating decimal: 0.75 = ___/100</td>
+<td>75</td>
+</tr>
+<tr>
+<td>Repeating decimal: 0.333… = ___/3</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Three sign forms — all represent the same ___</td>
+<td>point on the number line</td>
+</tr>
+<tr>
+<td>Key insight: negative fraction larger in absolute value is actually
+___ in value</td>
+<td>smaller / lesser</td>
+</tr>
+<tr>
+<td>−1/4 ___ −3/4</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>Compare −5/6 and −7/8: LCD = ___</td>
+<td>24</td>
+</tr>
+<tr>
+<td>−5/6 = −___/24</td>
+<td>20</td>
+</tr>
+<tr>
+<td>−7/8 = −___/24</td>
+<td>21</td>
+</tr>
+<tr>
+<td>−<strong><em>/24 </em></strong> −<strong><em>/24 so −5/6
+</em></strong> −7/8</td>
+<td>20 &gt; 21; &gt;</td>
+</tr>
+<tr>
+<td>Order: −1, <strong><em>, </em></strong>, 0, <strong><em>,
+</em></strong></td>
+<td>−3/4; −1/3; 1/2; 5/6</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-2">Section 2</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>To add or subtract: need ___ denominator</td>
+<td>same / common</td>
+</tr>
+<tr>
+<td>Step 3: add or subtract ___ only</td>
+<td>numerators</td>
+</tr>
+<tr>
+<td>Example 1: LCD of 4 and 6 = ___</td>
+<td>12</td>
+</tr>
+<tr>
+<td>3/4 = ___/12</td>
+<td>9</td>
+</tr>
+<tr>
+<td>5/6 = ___/12</td>
+<td>10</td>
+</tr>
+<tr>
+<td>9/12 + 10/12 = ___/12</td>
+<td>19</td>
+</tr>
+<tr>
+<td>Simplified: ___</td>
+<td>1 7/12</td>
+</tr>
+<tr>
+<td>Example 2: LCD = ___</td>
+<td>12</td>
+</tr>
+<tr>
+<td>−1/3 = −___/12</td>
+<td>4</td>
+</tr>
+<tr>
+<td>−3/4 = −___/12</td>
+<td>9</td>
+</tr>
+<tr>
+<td>Result = −___/12</td>
+<td>13</td>
+</tr>
+<tr>
+<td>Simplified: ___</td>
+<td>−1 1/12</td>
+</tr>
+<tr>
+<td>Pattern: two negatives added → always ___ result</td>
+<td>negative</td>
+</tr>
+<tr>
+<td>Example 3: LCD = ___</td>
+<td>6</td>
+</tr>
+<tr>
+<td>1/2 = ___/6</td>
+<td>3</td>
+</tr>
+<tr>
+<td>−5/6 + 3/6 = −___/6</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Simplified: ___</td>
+<td>−1/3</td>
+</tr>
+<tr>
+<td>Mixed-sign rule: subtract numerators, take sign of ___</td>
+<td>larger absolute value</td>
+</tr>
+<tr>
+<td>Misconception check: 2/5 = ___ (decimal)</td>
+<td>0.4</td>
+</tr>
+<tr>
+<td>Correct answer for 1/2 + 1/3: ___</td>
+<td>5/6</td>
+</tr>
+<tr>
+<td>5/8 − (−3/8) = 5/8 + ___ = ___</td>
+<td>3/8; 1</td>
+</tr>
+<tr>
+<td>Fort McMurray temperature: −7.5 + ___ = ___°C</td>
+<td>11.25; 3.75</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-3">Section 3</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(a/b) × (c/d) = ___</td>
+<td>ac/bd</td>
+</tr>
+<tr>
+<td>Negative × Negative = ___</td>
+<td>positive</td>
+</tr>
+<tr>
+<td>Positive × Negative = ___</td>
+<td>negative</td>
+</tr>
+<tr>
+<td>Quick rule: ___ number of negatives → negative product</td>
+<td>odd</td>
+</tr>
+<tr>
+<td>Pattern table: (−1) × (−2) = ___</td>
+<td>+2</td>
+</tr>
+<tr>
+<td>Pattern table: (−2) × (−2) = ___</td>
+<td>+4</td>
+</tr>
+<tr>
+<td>Example 1: numerators −3 × 2 = ___</td>
+<td>−6</td>
+</tr>
+<tr>
+<td>Denominators 5 × 7 = ___</td>
+<td>35</td>
+</tr>
+<tr>
+<td>Sign: ___</td>
+<td>negative</td>
+</tr>
+<tr>
+<td>Result: ___</td>
+<td>−6/35</td>
+</tr>
+<tr>
+<td>Cross-cancel: 8 and 4 share factor ___</td>
+<td>4</td>
+</tr>
+<tr>
+<td>5 and 15 share factor ___</td>
+<td>5</td>
+</tr>
+<tr>
+<td>8÷4 = ___</td>
+<td>2</td>
+</tr>
+<tr>
+<td>5÷15 = ___</td>
+<td>1/3</td>
+</tr>
+<tr>
+<td>Cross-cancel result: ___</td>
+<td>2/3</td>
+</tr>
+<tr>
+<td>Example 2: 8 = ___/1</td>
+<td>8</td>
+</tr>
+<tr>
+<td>(−3/4) × (8/1) = −<strong><em>/4 = </em></strong></td>
+<td>24; −6</td>
+</tr>
+<tr>
+<td>Cross-cancel rule: numerator of one fraction with ___ of the
+other</td>
+<td>denominator</td>
+</tr>
+<tr>
+<td>Pipeline context: (−5/6) × (3/4) = ___</td>
+<td>−5/8</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-4">Section 4</h3>
+<table>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reciprocal of a/b = ___</td>
+<td>b/a</td>
+</tr>
+<tr>
+<td>A number × its reciprocal = ___</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Reciprocal of 3/4 = ___</td>
+<td>4/3</td>
+</tr>
+<tr>
+<td>Reciprocal of −5/2 = ___</td>
+<td>−2/5</td>
+</tr>
+<tr>
+<td>Reciprocal of 7 = ___</td>
+<td>1/7</td>
+</tr>
+<tr>
+<td>Reciprocal of −1/3 = ___</td>
+<td>−3</td>
+</tr>
+<tr>
+<td>Dividing by a fraction = multiplying by its ___</td>
+<td>reciprocal</td>
+</tr>
+<tr>
+<td>6 ÷ (1/2) = ___</td>
+<td>12</td>
+</tr>
+<tr>
+<td>Dividing by a fraction less than 1 gives a ___ result</td>
+<td>larger</td>
+</tr>
+<tr>
+<td>Example 1: reciprocal of 2/5 = ___</td>
+<td>5/2</td>
+</tr>
+<tr>
+<td>(−3/4) × (5/2) = ___</td>
+<td>−15/8</td>
+</tr>
+<tr>
+<td>Example 2: 2½ = ___/2</td>
+<td>5</td>
+</tr>
+<tr>
+<td>(5/2) × (−4/3) = <strong><em>/6 = </em></strong></td>
+<td>−20; −10/3</td>
+</tr>
+<tr>
+<td>Result in mixed number: ___</td>
+<td>−3⅓</td>
+</tr>
+<tr>
+<td>Proof: n = (2/3) × (5/4) = ___</td>
+<td>5/6</td>
+</tr>
+<tr>
+<td>Firewood: (2/3) × 1/___ = 2/___</td>
+<td>3; 9</td>
+</tr>
+<tr>
+<td>Each family: ___</td>
+<td>2/9</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-5">Section 5</h3>
+<table>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BEDMAS E step: (−2/3)² = ___</td>
+<td>4/9</td>
+</tr>
+<tr>
+<td>Sign trap: −(3/4)² = ___</td>
+<td>−9/16</td>
+</tr>
+<tr>
+<td>Sign trap: (−3/4)² = ___</td>
+<td>+9/16</td>
+</tr>
+<tr>
+<td>Full example B step: −1/2 + 3/4 = ___</td>
+<td>1/4</td>
+</tr>
+<tr>
+<td>Full example E step: (1/4)² = ___</td>
+<td>1/16</td>
+</tr>
+<tr>
+<td>Full example D step: (1/16) × (−4) = ___</td>
+<td>−1/4</td>
+</tr>
+<tr>
+<td>Sequence error correction: 3/4 × (−2/3) = ___</td>
+<td>−1/2</td>
+</tr>
+<tr>
+<td>Then: 1/2 + (−1/2) = ___</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Table row 1 first step: ___ / answer: ___</td>
+<td>D/M; 0</td>
+</tr>
+<tr>
+<td>Table row 2 first step: ___ / answer: ___</td>
+<td>B; −1</td>
+</tr>
+<tr>
+<td>Table row 3 first step: ___ / answer: ___</td>
+<td>E; −4/9</td>
+</tr>
+<tr>
+<td>Table row 4 first step: ___ / answer: ___</td>
+<td>D/M; 1/2</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-flags-summary">Key Flags Summary</h2>
+<p><em>Quick reference for lesson planning — every misconception
+requiring direct address.</em></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Section</th>
+<th>Misconception</th>
+<th>Where it appears</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>“−3/4 &gt; −1/4 because 3/4 &gt; 1/4” — applying positive comparison
+to negative fractions</td>
+<td>Beat 5 — number line and debt context are the fix</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>“1/2 + 1/3 = 2/5” — add numerators AND denominators</td>
+<td>Beat 7 — decimal check and number line required; this is the
+highest-priority flag in the unit</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>“Subtracting and adding are different procedures” — students forget
+to rewrite a − b as a + (−b)</td>
+<td>Beat 8 — reinforce: subtraction is adding the opposite</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>“Negative × negative = negative” — accepting the rule without
+understanding</td>
+<td>Beat 4 — pattern table derives the rule; students fill in the table
+before the answer is revealed</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>Cross-cancellation across wrong pairs (numerator × numerator)</td>
+<td>Beat 8 — diagram showing valid and invalid cancel pairs</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>“Dividing always makes things smaller”</td>
+<td>Beat 4 — number line and “how many halves fit in 6?” framing; this
+is the second-highest-priority flag</td>
+</tr>
+<tr>
+<td>S5</td>
+<td>−(−3) = −3 — forgetting that negating a negative gives positive</td>
+<td>Beat 3 — sign trap with exponents; slow down here</td>
+</tr>
+<tr>
+<td>S5</td>
+<td>Adding before multiplying (no brackets present)</td>
+<td>Beat 5 — sequence error; have students name the first step before
+calculating</td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>

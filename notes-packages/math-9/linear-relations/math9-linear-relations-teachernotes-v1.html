@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math 9 — Linear Relations</title>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent: #1d4ed8;
+  --accent-light: #eff6ff;
+  --accent-border: #bfdbfe;
+  --show-bg: #eff6ff;
+  --show-border: #3b82f6;
+  --say-bg: #ffffff;
+  --cue-bg: #f0fdf4;
+  --cue-border: #22c55e;
+  --flag-mc-bg: #fef2f2;
+  --flag-mc-border: #ef4444;
+  --flag-mc-label: #dc2626;
+  --flag-pace-bg: #fffbeb;
+  --flag-pace-border: #f59e0b;
+  --flag-pace-label: #d97706;
+  --flag-ab-bg: #f0fdf4;
+  --flag-ab-border: #22c55e;
+  --flag-ab-label: #15803d;
+  --flag-cs-bg: #fdf4ff;
+  --flag-cs-border: #a855f7;
+  --flag-cs-label: #7e22ce;
+  --text: #1a1a2e;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+}
+
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+
+/* ── Typography ── */
+h1 {
+  font-size: 1.6rem;
+  color: var(--accent);
+  margin-bottom: 2px;
+  font-family: system-ui, sans-serif;
+}
+h2 {
+  font-size: 1rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 700;
+  background: var(--accent);
+  color: white;
+  padding: 7px 14px;
+  margin: 36px -4px 18px;
+  letter-spacing: 0.01em;
+}
+h3 {
+  font-size: 0.95rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent-border);
+  padding-bottom: 4px;
+  margin: 28px 0 12px;
+}
+h4 {
+  font-size: 0.9rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  color: #374151;
+  margin: 20px 0 8px;
+}
+p { margin-bottom: 10px; }
+ul, ol { margin: 6px 0 10px 24px; }
+li { margin-bottom: 3px; }
+em { font-style: italic; }
+strong { font-weight: 700; }
+hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* ── Beat titles ── */
+p.beat-title {
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #334155;
+  padding: 7px 14px;
+  margin: 20px 0 0;
+  border-left: 4px solid #94a3b8;
+  border-radius: 3px 3px 0 0;
+}
+
+/* ── SHOW / SAY / CUE labels ── */
+.show-label { color: var(--accent); font-family: system-ui, sans-serif; }
+.say-label  { color: #374151;       font-family: system-ui, sans-serif; }
+.cue-label  { color: #15803d;       font-family: system-ui, sans-serif; }
+
+/* ── Flag callouts ── */
+.flag {
+  margin: 14px 0;
+  padding: 10px 14px;
+  border-radius: 0 4px 4px 0;
+  font-family: system-ui, sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.flag-label {
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 4px;
+}
+.flag p { margin-bottom: 6px; font-family: system-ui, sans-serif; }
+.flag p:last-child { margin-bottom: 0; }
+.flag ul { margin-top: 4px; }
+
+.flag-misconception { background: var(--flag-mc-bg);   border-left: 5px solid var(--flag-mc-border); }
+.flag-misconception .flag-label { color: var(--flag-mc-label); }
+
+.flag-pacing       { background: var(--flag-pace-bg);  border-left: 5px solid var(--flag-pace-border); }
+.flag-pacing .flag-label { color: var(--flag-pace-label); }
+
+.flag-alberta-context,
+.flag-alberta,
+.flag-context      { background: var(--flag-ab-bg);   border-left: 5px solid var(--flag-ab-border); }
+.flag-alberta-context .flag-label,
+.flag-alberta .flag-label,
+.flag-context .flag-label { color: var(--flag-ab-label); }
+
+.flag-cs-connection,
+.flag-connection   { background: var(--flag-cs-bg);   border-left: 5px solid var(--flag-cs-border); }
+.flag-cs-connection .flag-label,
+.flag-connection .flag-label { color: var(--flag-cs-label); }
+
+/* ── Retrieval guide box ── */
+.retrieval-guide {
+  background: var(--accent-light);
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 16px 0;
+}
+.retrieval-guide h3 { margin-top: 0; color: var(--accent); border-color: var(--accent-border); }
+.retrieval-guide ol { margin-left: 20px; }
+.retrieval-guide li { margin-bottom: 6px; font-family: system-ui, sans-serif; font-size: 0.9rem; }
+
+/* ── Tables ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 0.88rem;
+  font-family: system-ui, sans-serif;
+}
+th {
+  background: var(--accent);
+  color: white;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 600;
+}
+td {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tr:nth-child(even) td { background: #f8fafc; }
+
+/* ── Answer key ── */
+.answer-key h3 { color: #374151; border-color: #d1d5db; }
+
+/* ── Subtitle / subheading below h1 ── */
+.subtitle {
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ── Print ── */
+@media print {
+  body { max-width: none; padding: 10px; font-size: 11.5px; }
+  h2 { break-before: page; margin-left: 0; margin-right: 0; }
+  h2:first-of-type { break-before: auto; }
+  .flag, .retrieval-guide, table { break-inside: avoid; }
+  h3, h4, p.beat-title { break-after: avoid; }
+  p { orphans: 3; widows: 3; }
+}
+</style>
+</head>
+<body>
+<h1 id="math-9-linear-relations">Math 9 — Linear Relations</h1>
+<h2 id="teacher-notes-package">Teacher Notes Package</h2>
+<p><em>Teaching reference — not a script</em></p>
+<hr />
+<h2 id="how-to-use-this-document">How to use this document</h2>
+<p>Each teaching beat has three parts:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Label</th>
+<th>What it contains</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SHOW</strong></td>
+<td>What is visible to students — write on the board or project. One
+thing per beat.</td>
+</tr>
+<tr>
+<td><strong>SAY</strong></td>
+<td>Key phrases and questions. Not sentences to read — prompts for
+fluent delivery. Answers to blanks shown in
+<strong>[brackets]</strong>.</td>
+</tr>
+<tr>
+<td><strong>CUE</strong></td>
+<td>The exact signal for students to write. Four types: ★ Write / ✎ Draw
+/ ⊡ Think / ↩︎ Check</td>
+</tr>
+</tbody>
+</table>
+<p>Flags appear in callout blocks: &gt; <strong>FLAG —
+Misconception:</strong> Red alert. Students will get this wrong without
+a direct address. &gt; <strong>FLAG — Pacing:</strong> Warning for where
+lessons tend to lose momentum. &gt; <strong>FLAG — Rule of
+Four:</strong> Reminder to name which representation you are currently
+working in.</p>
+<p><strong>The screen and the voice carry different things.</strong>
+What is SHOW stays visual — labels, equations, graphs, key terms. What
+is SAY carries the reasoning. Never put your SAY on the screen.</p>
+<hr />
+<h2 id="unit-at-a-glance">Unit at a Glance</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Lesson</th>
+<th>Content</th>
+<th>Student notes pages</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pre-knowledge check + Section 1: Patterns and the Four
+Representations</td>
+<td>Pre-K check + S1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Section 2: Slope as Rate of Change</td>
+<td>S2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Section 3: The Equation y = mx + b</td>
+<td>S3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Section 4: Direct and Partial Variation</td>
+<td>S4</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Unit Synthesis + Return to Pre-Knowledge Check</td>
+<td>Synthesis page</td>
+</tr>
+<tr>
+<td>6+</td>
+<td>Practice, workbook, assessment</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><em>Retrieval warm-ups begin Lesson 2. Each warm-up pulls one
+question from the previous lesson and one from a prior topic (e.g.,
+substituting values from Rational Numbers, or exponent patterns from
+Powers).</em></p>
+<hr />
+<h2 id="materials-per-lesson">Materials per lesson</h2>
+<ul>
+<li>Student notes packages (printed, one per student)</li>
+<li>Graph paper (at least one sheet per student — for Section 1 and
+Section 3 graphing)</li>
+<li>Rulers (one per student — straight lines only, no curves)</li>
+<li>Coloured pens or pencils (optional but useful — one colour per
+representation in Rule of Four work)</li>
+<li>Whiteboard + markers</li>
+</ul>
+<hr />
+<h2 id="pre-knowledge-check">Pre-Knowledge Check</h2>
+<p><em>~10 minutes — before any instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Opening</strong> <strong class="show-label">SHOW:</strong> Board:
+<em>“Write everything you think you know about linear relations and
+graphs.”</em> (That’s it — no further prompts on the board.)
+<strong class="say-label">SAY:</strong> - “Before we start the unit, I want to know what’s
+already in your head.” - “This is not a test. There are no marks. I am
+not going to correct it today.” - “Write honestly. You will come back to
+this page at the end of the unit.” - “Questions to think about: what is
+a linear relation? What makes something linear? What does a linear graph
+look like?” <strong class="cue-label">CUE:</strong> ★ Write: “Open your notes to page 1.
+You have 5 minutes — write everything you know. Go.”</p>
+<div class="flag flag-pacing"><span class="flag-label">FLAG — Pacing</span>Do not comment on student responses
+or read them aloud. The pre-knowledge check loses its value if students
+calibrate to what you reward. Circulate and look for: (a) students who
+already know y = mx + b, (b) students who think ‘linear’ just means
+‘line’ without understanding constant rate of change, (c) students who
+have confused slope with y-intercept already. These patterns tell you
+where to spend time in Sections 2 and 3.</div>
+<hr />
+<p><strong>Beat 2 — Phone plan prompt</strong> <strong class="show-label">SHOW:</strong>
+Board: <em>“A phone plan costs $15/month plus $0.10 per text. How would
+you write a rule for the total cost?”</em> <strong class="say-label">SAY:</strong> - “Try
+to write this as an equation — or describe the pattern.” - “No correct
+answer required. I want to see what your instinct is.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Write your rule for the phone plan. Try
+to use symbols if you can.”</p>
+<p><em>Allow 3 minutes. Do not give any hints. The purpose is to surface
+pre-existing algebraic language — you will return to this exact context
+in Section 4.</em></p>
+<hr />
+<h2 id="section-1-patterns-and-the-four-representations">Section 1 —
+Patterns and the Four Representations</h2>
+<p><em>Learning target: I can represent a linear pattern using a table
+of values, an equation, a graph, and a verbal description, and translate
+between all four forms.</em> <em>Timing: ~25 minutes direct
+instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: The six vocabulary terms in a column — Linear relation / Table of
+values / Independent variable / Dependent variable / Equation (of a
+relation) / Rule of Four <strong class="say-label">SAY:</strong> - “Before we go into the
+notes — these six terms are on your vocab table.” - “Don’t fill them in
+yet. We’ll build them as we go through the section.” - “By the end you
+will have your own definition and an example you thought of yourself.”
+<strong class="cue-label">CUE:</strong> ⊡ Think: “Read the six terms. Which one do you
+think you already know? Keep it in your head.”</p>
+<hr />
+<p><strong>Beat 2 — What is a linear relation?</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>LINEAR RELATION: equal changes in x
+produce equal changes in y</em>. Draw a simple two-column table: x = 0,
+1, 2, 3 and y = 2, 5, 8, 11. <strong class="say-label">SAY:</strong> - “A linear relation
+is a relationship between two variables.” - “What’s the pattern here?
+What happens to y each time x goes up by 1?” - Pause 4–5 seconds. Get
+responses. - “Right — y goes up by 3 every time. Same change. Always.
+That’s what linear means.” - “Equal changes in x produce
+<strong>[equal]</strong> changes in y.” - “Not sometimes equal. Not
+approximately equal. Exactly equal, every time.” <strong class="cue-label">CUE:</strong> ★
+Write: “A linear relation is a relationship between two variables where
+equal changes in one variable produce <strong>[equal]</strong> changes
+in the other.”</p>
+<div class="flag flag-rule-of-four"><span class="flag-label">FLAG — Rule of Four</span>You are introducing the tabular
+representation here. Say explicitly: “We’re starting with the table —
+one of the four ways to show this relationship. The table shows us
+specific values and the pattern in the numbers.”</div>
+<hr />
+<p><strong>Beat 3 — The Rule of Four</strong> <strong class="show-label">SHOW:</strong>
+Board: The four-row table — Verbal / Table / Equation / Graph. Leave the
+‘What it shows’ column visible. <strong class="say-label">SAY:</strong> - “There are four
+ways to represent the same relationship. We call this the Rule of Four.”
+- “Verbal — a sentence. Table — pairs of x and y values. Equation — an
+algebraic rule. Graph — a visual picture.” - “They all describe the SAME
+relationship. One is not better than another.” - “Your job in this unit
+is to be able to move between all four — fluently.” - “When you see a
+table, you should be able to sketch the graph. When you see an equation,
+you should be able to write the verbal description.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Complete your Rule of Four table — read
+each row while I point to it.”</p>
+<hr />
+<p><strong>Beat 4 — Worked example: build all four
+representations</strong> <strong class="show-label">SHOW:</strong> Board: <em>Verbal: “A
+tree grows 4 cm per year. It was 10 cm tall when planted.”</em>
+<strong class="say-label">SAY:</strong> - “Let’s build all four representations from this
+single verbal description.” - “We already have the verbal. That’s
+representation one.”</p>
+<p><strong>Table:</strong> <strong class="show-label">SHOW:</strong> Board: Draw the table
+— x (Year), y (Height in cm). Fill in x = 0 through 4. Leave y column
+blank. <strong class="say-label">SAY:</strong> - “Year 0 — just planted. Height is 10 cm.”
+- “Year 1 — grows 4 cm. What’s the height?” - Pause. Students call out
+or write. “14. Year 2?” - “18. Year 3?” — “22. Year 4?” — “26.” - Fill
+in as you go: <strong>[14, 18, 22, 26]</strong>. <strong class="cue-label">CUE:</strong> ★
+Write: “Fill in the height column: 10, <strong>[14]</strong>,
+<strong>[18]</strong>, <strong>[22]</strong>,
+<strong>[26]</strong>.”</p>
+<div class="flag flag-rule-of-four"><span class="flag-label">FLAG — Rule of Four</span>Announce: “That’s
+representation two — the table. Watch for the constant difference: plus
+4 every time. That constant difference is what we will call the slope in
+Section 2.”</div>
+<p><strong>Equation:</strong> <strong class="show-label">SHOW:</strong> Board: <em>y =
+<strong>x + </strong></em>. Point to the blanks. <strong class="say-label">SAY:</strong> -
+“Each year adds 4 cm — that goes in front of x.” - “We started at 10 —
+that’s the value when x is zero.” - “So the equation is y = 4x + 10.” -
+Write: <strong>y = 4x + 10</strong>. <strong class="cue-label">CUE:</strong> ★ Write: “y =
+<strong>[4]</strong> x + <strong>[10]</strong>”</p>
+<div class="flag flag-rule-of-four"><span class="flag-label">FLAG — Rule of Four</span>Announce: “Representation three
+— the equation. Two things to name: the 4 is the rate of change; the 10
+is the starting value. We will spend all of Section 3 on what these mean
+in y = mx + b.”</div>
+<p><strong>Graph:</strong> <strong class="show-label">SHOW:</strong> Board: Point to the
+coordinate grid on the student page. <strong class="say-label">SAY:</strong> - “Plot the
+five points from your table. Then draw the line through them.” -
+“Notice: this is the same page as your table. The graph is showing the
+same information — just visually.” - “What shape does the graph make? A
+straight line. That’s the visual signature of a linear relation.”
+<strong class="cue-label">CUE:</strong> ✎ Draw: “Plot your five points and draw the line.
+Label the axes: x = Year, y = Height (cm).”</p>
+<div class="flag flag-rule-of-four"><span class="flag-label">FLAG — Rule of Four</span>All four representations are
+now complete. SAY: “We started with a sentence and ended with a graph —
+same relationship, four different forms. Before we move on: what stays
+the same across all four? <strong>[The rate of change — +4 per step —
+appears in every form.]</strong>”</div>
+<p><strong>Self-explanation beat:</strong> <strong class="say-label">SAY:</strong> “Before
+moving on — look at how we wrote the equation. In your own words: what
+did the starting value 10 do in the equation, and why did we put it
+there?” <strong class="cue-label">CUE:</strong> ★ Write: “Answer the ‘Explain’ prompt in
+your notes before looking ahead.”</p>
+<p><em>Allow 60–90 seconds. You want: the starting value (10) becomes
+the constant added to the rate — it tells us where the relationship
+begins. Students who write “because that’s the answer” need a redirect:
+“Tell me what problem that number solves.”</em></p>
+<hr />
+<p><strong>Beat 5 — Independent and dependent variables</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>Independent variable = what you
+CONTROL (input, x). Dependent variable = what DEPENDS on it (output,
+y).</em> <strong class="say-label">SAY:</strong> - “Two terms you’ll use for every
+relation.” - “Independent: what you choose or control. In the tree
+problem — you pick the year.” - “Dependent: what results from your
+choice. The height depends on the year.” - “Not hard to remember:
+‘depend’ — the dependent variable depends.” <strong class="cue-label">CUE:</strong> ★
+Write: “Independent variable: what you <strong>[control]</strong>
+(input, often x). Dependent variable: <strong>[depends]</strong> on it
+(output, often y).”</p>
+<p><strong class="show-label">SHOW:</strong> Board: The three-row situations table —
+Cost/items, Distance/time, Temperature/time of day.
+<strong class="say-label">SAY:</strong> - “In the cost situation — what do you control?
+The number of items. That’s independent.” - “What depends on it? The
+cost. Cost depends on how many items you buy.” - Work through all three
+rows together. <strong class="cue-label">CUE:</strong> ★ Write: “Complete the
+independent/dependent table — three situations.”</p>
+<p><em>Answers: (1) independent = number of items, dependent = cost; (2)
+independent = travel time, dependent = distance; (3) independent = time
+of day, dependent = temperature.</em></p>
+<hr />
+<p><strong>Beat 6 — Translation task: equation to table</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>y = −2x + 5</em>. Draw the blank table
+beside it. <strong class="say-label">SAY:</strong> - “Now we go the other direction — from
+equation to table.” - “Substitute x = 0 into the equation. What is y?” -
+Pause. <strong>[y = 5]</strong>. - “x = 1?” <strong>[y = 3]</strong>. “x
+= 2?” <strong>[y = 1]</strong>. “x = 3?” <strong>[y = −1]</strong>.” -
+“What pattern do you see in the y-values?” - Pause 4–5 seconds. Get
+responses. - “They decrease by 2 each time. The negative in front of x
+tells us the y-values go down as x goes up.” <strong class="cue-label">CUE:</strong> ★
+Write: “Complete the y = −2x + 5 table. Write the pattern you notice:
+<strong>[y decreases by 2 each time x increases by 1]</strong>.”</p>
+<div class="flag flag-rule-of-four"><span class="flag-label">FLAG — Rule of Four</span>Label this explicitly:
+“Equation → Table. We moved between two representations. The pattern in
+the table (−2 each step) matches the coefficient −2 in the equation.
+These are not separate facts — they’re the same thing.”</div>
+<hr />
+<h3 id="section-1-retrieval-check-facilitation">Section 1 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Everything closed. Retrieval check — write answers from memory.”
+<strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed. Retrieval check begins
+now.”</p>
+<p><strong>After students finish (4–5 min):</strong>
+<strong class="say-label">SAY:</strong> “Open your notes. Find the answers. Fix anything
+wrong or incomplete — use a different colour if you have one.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Open your notes. Check and correct
+now.”</p>
+<p><strong>Answer guide:</strong> 1. Equation: C = 3.50h (where h =
+hours). Table: (0, 0), (1, 3.50), (2, 7.00), (3, 10.50), (4, 14.00).
+Graph: straight line starting at origin, rising to the right. 2. The
+equation is y = 3x + 5. (Slope: +3 each step. Starting value at x=0:
+y=5.) 3. The independent variable is the amount of fuel used. (Fuel is
+what you control — kilometres driven depends on how much fuel is
+consumed.) 4. In a linear relation, the y-values change by the same
+amount (constant difference) every time x increases by 1. 5. Stretch —
+Not linear. Differences: 5−3=2, 9−5=4, 15−9=6. The differences are not
+constant (they increase), so the table is NOT linear.</p>
+<p><em>Q5 is the stretch — if students finish early, prompt: “Don’t
+check whether y changes — check whether y changes by the SAME amount
+each time.” The key insight is that constant first differences = linear;
+changing first differences = not linear.</em></p>
+<hr />
+<h2 id="section-2-slope-as-rate-of-change">Section 2 — Slope as Rate of
+Change</h2>
+<p><em>Learning target: I can calculate slope using the rise/run
+formula, interpret slope as a rate of change, and distinguish between
+positive, negative, zero, and undefined slopes.</em> <em>Timing: ~25
+minutes direct instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: The eight vocabulary terms — Slope / Rise / Run / Rate of change
+/ Positive slope / Negative slope / Zero slope / Undefined slope.
+<strong class="say-label">SAY:</strong> - “Eight terms today. All connected to one central
+idea.” - “Don’t fill them in yet. We build them as we go.”
+<strong class="cue-label">CUE:</strong> ⊡ Think: “Read the list. Which one of these do you
+already know something about? Keep it in your head.”</p>
+<hr />
+<p><strong>Beat 2 — What slope measures</strong> <strong class="show-label">SHOW:</strong>
+Board: <em>SLOPE = how STEEP a line is AND which DIRECTION it goes</em>.
+Draw two lines on the board — one steep, one shallow.
+<strong class="say-label">SAY:</strong> - “Slope is a number that tells us two things
+about a line: how steep it is, and whether it goes up or down.” - “The
+steeper the line, the larger the absolute value of the slope.” - “The
+direction tells us whether it rises (positive) or falls (negative) as we
+move right.” <strong class="cue-label">CUE:</strong> ★ Write: “Slope measures how
+<strong>[steep]</strong> a line is and in what
+<strong>[direction]</strong>.”</p>
+<hr />
+<p><strong>Beat 3 — Rise over run formula</strong>
+<strong class="show-label">SHOW:</strong> Board: Draw a line segment with a clear staircase
+shape. Label the vertical leg: <em>rise (change in y)</em>. Label the
+horizontal leg: <em>run (change in x)</em>. Write: <em>m = rise / run =
+(y₂ − y₁) / (x₂ − x₁)</em>. <strong class="say-label">SAY:</strong> - “Rise: how far you
+go up or down. Measured on the y-axis.” - “Run: how far you go across.
+Measured on the x-axis.” - “Slope = rise divided by run. That’s the
+formula.” - “The formal version using coordinates: m equals y₂ minus y₁,
+divided by x₂ minus x₁.” - “It doesn’t matter which point is point 1 and
+which is point 2 — as long as you are consistent.” <strong class="cue-label">CUE:</strong>
+★ Write: “slope = rise/run = change in y / change in x = (y₂ − y₁) / (x₂
+− x₁)”</p>
+<hr />
+<p><strong>Beat 4 — Worked Example 1: from a graph (positive
+slope)</strong> <strong class="show-label">SHOW:</strong> Board: Plot (1, 2) and (4, 8).
+Draw the line. Draw the staircase — label rise and run visually.
+<strong class="say-label">SAY:</strong> - “Two points: (1, 2) and (4, 8). Let me label
+them: point 1 is (1, 2), point 2 is (4, 8).” - “Rise: y₂ minus y₁.
+That’s 8 minus 2. What is that?” - Pause. <strong>[6]</strong>. - “Run:
+x₂ minus x₁. That’s 4 minus 1. What is that?” - Pause.
+<strong>[3]</strong>. - “Slope = 6 divided by 3 = 2.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Rise = <strong>[6]</strong> / Run =
+<strong>[3]</strong> / Slope = <strong>[6]</strong> /
+<strong>[3]</strong> = <strong>[2]</strong>”</p>
+<p><strong class="say-label">SAY:</strong> “The slope of 2 means: for every 1 unit you
+move right, the line goes <strong>[2]</strong> units up. Can you see
+that staircase on the graph?” <strong class="cue-label">CUE:</strong> ★ Write: “The slope
+of 2 means: for every 1 unit right, the line goes <strong>[2]</strong>
+units up.”</p>
+<p><strong>Self-explanation beat:</strong> <strong class="say-label">SAY:</strong> “Before
+moving on — look at Step 2, where we calculated the run. In your own
+words: what did we do there and why did we subtract instead of add?”
+<strong class="cue-label">CUE:</strong> ★ Write: “Answer the explain prompt now — what did
+Step 2 do and why.”</p>
+<p><em>Allow 60–90 seconds. You want: run = change in x = how far apart
+the two x-coordinates are. We subtract to find the difference between
+them. Adding would give the sum, not the distance between them.</em></p>
+<hr />
+<p><strong>Beat 5 — Worked Example 2: negative slope</strong>
+<strong class="show-label">SHOW:</strong> Board: Plot (0, 6) and (3, 0). Draw the line — it
+falls to the right. <strong class="say-label">SAY:</strong> - “Two points: (0, 6) and (3,
+0).” - “Slope = (y₂ − y₁) / (x₂ − x₁) = (0 − 6) / (3 − 0).” -
+“Numerator: 0 minus 6 = what?” - Pause. <strong>[−6]</strong>. -
+“Denominator: 3 minus 0 = 3.” - “Slope = <strong>[−6]</strong> /
+<strong>[3]</strong> = <strong>[−2]</strong>.” <strong class="cue-label">CUE:</strong> ★
+Write: “m = <strong>[−6]</strong> / <strong>[3]</strong> =
+<strong>[−2]</strong>”</p>
+<p><strong class="say-label">SAY:</strong> “A negative slope means the line is going
+<strong>[down to the right]</strong> — it falls as you move left to
+right. What does −2 mean in the temperature context? For each hour that
+passes, temperature drops <strong>[2]</strong> degrees.”
+<strong class="cue-label">CUE:</strong> ★ Write: “A negative slope means the line is going
+<strong>[down to the right]</strong>. In context: a change of −2 per
+unit.”</p>
+<p><strong>Self-explanation beat:</strong> <strong class="say-label">SAY:</strong> “Before
+moving on — look at the point (0, 6). In your own words: what is special
+about a point where x equals zero, and what will that tell us in Section
+3?” <strong class="cue-label">CUE:</strong> ★ Write: “Answer the explain prompt — what is
+special about x = 0?”</p>
+<p><em>You want: when x = 0, the point sits on the y-axis. This is the
+y-intercept — the starting value. Planting the seed for Section
+3.</em></p>
+<hr />
+<p><strong>Beat 6 — Misconception: different points give different
+slopes</strong> <strong class="show-label">SHOW:</strong> Board: Write three collinear
+points: (0, 1), (2, 5), (4, 9). Leave space for two slope calculations
+side by side. <strong class="say-label">SAY:</strong> - “Here’s a misconception I want to
+address directly.” - “‘If I use different points on the line, will I get
+a different slope?’ Let’s check.” - “Using (0,1) and (2,5): rise = 5−1 =
+4, run = 2−0 = 2, slope = 2.” - “Using (2,5) and (4,9): rise = 9−5 = 4,
+run = 4−2 = 2, slope = 2.” - “Same slope. For a straight line, slope is
+CONSTANT — every pair of points gives the same ratio.” - “In fact, this
+is what makes it a LINE. If the slope changed depending on which points
+you picked, the relationship would NOT be linear.” <strong class="cue-label">CUE:</strong>
+★ Write: “Using (0,1)+(2,5): slope = <strong>[2]</strong>. Using
+(2,5)+(4,9): slope = <strong>[2]</strong>. Same?
+<strong>[Yes]</strong>.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>“If I use different points, I
+get a different slope.” Address directly with the worked example above.
+The key conceptual link: constant slope is the defining property of
+linearity. Students who pick non-collinear points from a table (or
+misread a graph) and get different slopes are diagnosing that the
+relation is NOT linear — that’s a useful error, not a mistake.</div>
+<hr />
+<p><strong>Beat 7 — The four slope types</strong> <strong class="show-label">SHOW:</strong>
+Board: The four-column table — Positive / Negative / Zero / Undefined.
+Draw a sketch of each line type beside the label. <strong class="say-label">SAY:</strong>
+- “Positive slope: line goes up as you move right. m &gt; 0.” -
+“Negative slope: line goes down as you move right. m &lt; 0.” - “Zero
+slope: line is perfectly horizontal — no rise. m = 0.” - “Undefined
+slope: line is perfectly vertical — no run. You’d divide by zero. m =
+undefined.” - Work through the context matching together: temperature
+flat all day → zero; a wall → undefined; ski hill dropping → negative.
+<strong class="cue-label">CUE:</strong> ★ Write: “Complete the four slope types table.
+Match: temperature = <strong>[zero]</strong> / wall =
+<strong>[undefined]</strong> / ski hill = <strong>[−3/10 or
+negative]</strong>.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>“A steeper line always has a
+larger slope value.” This is only true when both slopes are positive.
+Draw two lines on the board — one with slope +1 (gentle rise) and one
+with slope −10 (very steep fall). Ask: “Which is steeper? Which has the
+larger slope VALUE?” The answer: the second line is steeper, but its
+slope value (−10) is less than the first (1) because it is negative.
+Slope value and steepness are not the same thing when signs differ.</div>
+<hr />
+<p><strong>Beat 8 — Slope as rate of change</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>300 km in 3 hours</em>. Write the
+slope calculation beside it. <strong class="say-label">SAY:</strong> - “Slope is a ratio
+of two quantities — rise divided by run.” - “In a real-world context,
+slope becomes a RATE OF CHANGE. The units matter.” - “300 km in 3 hours:
+slope = 300 km / 3 h = 100 km/h.” - “The units of slope are: units of y
+per unit of x. Kilometres per hour.” <strong class="cue-label">CUE:</strong> ★ Write: “m =
+300 km / 3 h = <strong>[100]</strong> km/h. The slope tells you: for
+each hour, you travel <strong>[100]</strong> km.”</p>
+<p><strong class="show-label">SHOW:</strong> Board: <em>Alberta context — Rocky Mountain
+highway descends 120 m over 800 m horizontal.</em> <strong class="say-label">SAY:</strong>
+- “Let’s use a real Alberta context. A highway in the Rockies.” - “Rise
+= −120 m (it goes DOWN, so negative). Run = 800 m.” - “Slope = −120 /
+800 = −0.15.” - “The negative sign means: the highway is descending —
+for each metre you travel horizontally, you drop 0.15 m in elevation.”
+<strong class="cue-label">CUE:</strong> ★ Write: “m = <strong>[−120]</strong> /
+<strong>[800]</strong> = <strong>[−0.15]</strong>. The slope means
+<strong>[the road descends 0.15 m for every 1 m of horizontal
+distance]</strong>.”</p>
+<hr />
+<h3 id="section-2-retrieval-check-facilitation">Section 2 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Everything closed.” <strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed.
+Retrieval check begins now.”</p>
+<p><strong>After students finish (4–5 min):</strong>
+<strong class="say-label">SAY:</strong> “Open your notes. Check and correct.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Open your notes. Check and correct
+now.”</p>
+<p><strong>Answer guide:</strong> 1. m = (−9 − 3) / (4 − (−2)) = −12 / 6
+= −2. 2. Slope = 3. (From the table: y increases by 3 for each increase
+of 1 in x. Pick any two points: e.g., (0,4) and (1,7) → m = 3/1 = 3.) 3.
+A horizontal line — completely flat. Context: any quantity that doesn’t
+change over time: a person sitting still (distance = 0), a room held at
+a constant temperature, a fixed-rate fee that doesn’t vary. 4. Both are
+right. 3/−2 = −3/2 = −1.5. The sign and value are identical — just
+written differently. What matters is that the negative sign is carried
+through: slope is −1.5. 5. Stretch: slope = (b − 0) / (0 − a) = −b/a.
+(The line passes through (a, 0) and (0, b). Rise = b − 0 = b, run = 0 −
+a = −a, so m = b / (−a) = −b/a.)</p>
+<hr />
+<h2 id="section-3-the-equation-y-mx-b">Section 3 — The Equation y = mx +
+b</h2>
+<p><em>Learning target: I can identify the slope and y-intercept from an
+equation in slope-intercept form, write an equation given the slope and
+y-intercept, and interpret both values in context.</em> <em>Timing: ~25
+minutes direct instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: The four vocabulary terms — Slope-intercept form / y-intercept /
+x-intercept / Initial value. <strong class="say-label">SAY:</strong> - “Four terms today.
+We already know ‘slope.’ These build on that.” - “Don’t fill them in
+yet.” <strong class="cue-label">CUE:</strong> ⊡ Think: “Which of these four terms sounds
+most familiar? Keep it in your head.”</p>
+<hr />
+<p><strong>Beat 2 — Anatomy of y = mx + b</strong>
+<strong class="show-label">SHOW:</strong> Board: Write <em>y = mx + b</em> large. Draw
+arrows pointing to m and b. Label: <em>m = slope (rate of change)</em>
+and <em>b = y-intercept (starting value)</em>. <strong class="say-label">SAY:</strong> -
+“y = mx + b. This is called slope-intercept form.” - “m is the slope —
+the rate of change, the steepness, the rise over run. Everything we just
+learned.” - “b is the y-intercept — the value of y when x equals zero.
+The starting point.” - “On the graph: b is where the line CROSSES the
+y-axis.” - “Once you can read m and b out of an equation, you can draw
+the line immediately.” <strong class="cue-label">CUE:</strong> ★ Write: “Complete the y =
+mx + b breakdown table — m = rate of change, b = starting value / where
+line crosses y-axis.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>“The y-intercept is where the
+line crosses the x-axis.” This is one of the most persistent errors in
+linear relations. Address it directly now and again when you reach the
+misconception block in the student notes. The y-intercept is on the
+Y-axis — where x = 0. The x-intercept is on the X-axis — where y = 0.
+Two different axes. Two different intercepts.</div>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>“Slope is the y-intercept.” In
+y = mx + b, students often mix up which letter is which. Establish the
+convention clearly: m is the multiplier (it multiplies x), b is the
+bonus (added on). These are memory tricks — the real understanding is
+what each parameter does on the graph.</div>
+<hr />
+<p><strong>Beat 3 — Reading the equation directly</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>y = 3x − 4</em>. Draw the worked
+example box. <strong class="say-label">SAY:</strong> - “Read this equation. What is the
+slope?” - Pause 3 seconds. <strong>[m = 3]</strong>. - “What is the
+y-intercept?” - Pause. <strong>[b = −4]</strong>. - “The starting point
+is (0, <strong>[−4]</strong>). For each x that increases by 1, y changes
+by <strong>[3]</strong>.” - “Notice: the equation tells us everything we
+need to draw the graph. Start at (0, −4). Move up 3, right 1. Up 3,
+right 1. Connect the dots.” <strong class="cue-label">CUE:</strong> ★ Write: “Slope m =
+<strong>[3]</strong>, y-intercept b = <strong>[−4]</strong>, starting
+point (0, <strong>[−4]</strong>), y changes by <strong>[3]</strong> per
+unit of x.”</p>
+<p><strong>Self-explanation beat:</strong> <strong class="say-label">SAY:</strong> “Before
+moving on — in your own words: why is b called the y-intercept and not
+just ‘the constant’? What does it show on the graph?”
+<strong class="cue-label">CUE:</strong> ★ Write: “Answer the explain prompt — why is b
+called the y-intercept?”</p>
+<p><em>You want: b is the value of y when x = 0. That point (0, b) is
+exactly where the line crosses the y-axis — the vertical axis.
+‘Intercept’ means ‘crosses.’</em></p>
+<hr />
+<p><strong>Beat 4 — Write the equation from context (Alberta
+setting)</strong> <strong class="show-label">SHOW:</strong> Board: <em>Banff hotel:
+$90/night + $25 one-time parking fee.</em> <strong class="say-label">SAY:</strong> -
+“Let’s write the equation. What is the starting value — the cost when
+nights = 0?” - Pause. <strong>[$25]</strong>. - “What is the rate of
+change — cost per night?” - Pause. <strong>[$90]</strong>. - “Equation:
+C = 90n + 25. What does the 90 represent? What does the 25 represent?” -
+“90 is the slope — the rate of change — how much cost increases per
+night.” - “25 is the y-intercept — the fixed parking fee that exists
+before any nights are counted.” <strong class="cue-label">CUE:</strong> ★ Write: “Starting
+value = <strong>[$25]</strong>, rate of change = <strong>[$90]</strong>,
+Equation: C = <strong>[90]</strong> n + <strong>[25]</strong>.”</p>
+<p><strong class="show-label">SHOW:</strong> Board: *Second point: (1, ___)*. Graph axes
+already on student page. <strong class="say-label">SAY:</strong> - “Plot the y-intercept:
+(0, 25). That’s our starting point.” - “Use the slope: go up 90, right
+1. Second point is (1, <strong>[115]</strong>). Draw the line.”
+<strong class="cue-label">CUE:</strong> ✎ Draw: “Plot (0, 25) and (1, 115). Draw the line
+through both points.”</p>
+<div class="flag flag-rule-of-four"><span class="flag-label">FLAG — Rule of Four</span>This worked example hits all
+four representations. Verbal (the hotel problem), equation (C = 90n +
+25), table (students can build it from the graph), graph (just drawn).
+SAY: “What representation are we in right now? The graph. What’s the
+verbal? Hotel cost. What’s the equation? C = 90n + 25. Same relationship
+— four forms.”</div>
+<hr />
+<p><strong>Beat 5 — Misconception: intercepts</strong>
+<strong class="show-label">SHOW:</strong> Board: Write the misconception boxed in red:
+<em>“The intercept is where the line hits zero — that’s the
+x-axis.”</em> <strong class="say-label">SAY:</strong> - “I want to address this directly —
+it’s a very common error.” - “‘Intercept’ means ‘crosses.’ The
+y-intercept is where the line CROSSES the Y-AXIS.” - “The y-axis is the
+vertical axis — where x = 0.” - “The x-intercept is where the line
+crosses the X-AXIS — where y = 0.” - “In y = 3x − 4: y-intercept is −4
+(at the point (0, −4)). Find the x-intercept by setting y = 0: 0 = 3x −
+4, so x = 4/3.” - “They are at completely different places on the
+graph.” <strong class="show-label">SHOW:</strong> Board: Work through y = 2x − 6. Find both
+intercepts side by side. <strong class="say-label">SAY:</strong> - “y-intercept: set x =
+0. y = 2(0) − 6 = <strong>[−6]</strong>. Point: (0,
+<strong>[−6]</strong>).” - “x-intercept: set y = 0. 0 = 2x − 6, so 2x =
+6, x = <strong>[3]</strong>. Point: (<strong>[3]</strong>, 0).”
+<strong class="cue-label">CUE:</strong> ★ Write: “y-intercept (x=0): y =
+<strong>[−6]</strong> → point (<strong>[0]</strong>,
+<strong>[−6]</strong>). x-intercept (y=0): x = <strong>[3]</strong> →
+point (<strong>[3]</strong>, <strong>[0]</strong>).”</p>
+<hr />
+<p><strong>Beat 6 — Finding b from slope and a point</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>m = 2, passes through (3, 7). Find
+b.</em> <strong class="say-label">SAY:</strong> - “We know the slope. We know one point.
+We need to find b.” - “Strategy: the point is ON the line, so its
+coordinates satisfy the equation.” - “Substitute: y = mx + b → 7 = 2(3)
++ b.” - “7 = 6 + b.” - “b = <strong>[1]</strong>.” - “Equation: y =
+<strong>[2x + 1]</strong>.” <strong class="cue-label">CUE:</strong> ★ Write: “b =
+<strong>[1]</strong>, Equation: y = <strong>[2x + 1]</strong>.”</p>
+<p><strong class="say-label">SAY:</strong> “Before moving on — look at where we
+substituted (3, 7) for (x, y). In your own words: why are we allowed to
+do that? What does it mean for a point to be ON the line?”
+<strong class="cue-label">CUE:</strong> ★ Write: “Answer the explain prompt — why can we
+substitute the point’s coordinates?”</p>
+<p><em>You want: if the point (3, 7) is on the line, then it satisfies
+the equation — plugging in x = 3 must give y = 7. That’s what ‘being on
+the line’ means algebraically.</em></p>
+<hr />
+<p><strong>Beat 7 — Rule of Four in action: y = −2x + 6</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>y = −2x + 6</em>. Leave space for all
+four representations. <strong class="say-label">SAY:</strong> - “Complete the Rule of Four
+for this equation.” - “Verbal first: starting at <strong>[6]</strong>,
+the value decreases by <strong>[2]</strong> for each unit increase in
+x.” - “Table: substitute x = 0, 1, 2, 3. y-values are <strong>[6, 4, 2,
+0]</strong>.” - “Graph: plot and connect. Does it rise or fall?
+<strong>[Falls — negative slope.]</strong>” <strong class="cue-label">CUE:</strong> ★
+Write: “Verbal: starting at <strong>[6]</strong>, decreases by
+<strong>[2]</strong> per unit. Table: y = <strong>[6, 4, 2,
+0]</strong>.” <strong class="cue-label">CUE:</strong> ✎ Draw: “Plot and draw the line for
+y = −2x + 6 on your graph.”</p>
+<div class="flag flag-rule-of-four"><span class="flag-label">FLAG — Rule of Four</span>Announce each representation as
+you build it. Make the explicit connection: “The −2 in the equation
+matches the ‘−2 per unit’ in the verbal and the constant difference of
+−2 in the table and the downward slope on the graph. One relationship,
+four views.”</div>
+<hr />
+<h3 id="section-3-retrieval-check-facilitation">Section 3 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Everything closed.” <strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed.
+Retrieval check begins now.”</p>
+<p><strong>After students finish (4–5 min):</strong>
+<strong class="cue-label">CUE:</strong> ★ Write: “Open your notes. Check and correct
+now.”</p>
+<p><strong>Answer guide:</strong> 1. Slope m = −3, y-intercept b = 7. 2.
+y = 4x − 2. 3. The line passes through (0, 5), so b = 5. Find slope
+using (0,5) and (2,11): m = (11−5)/(2−0) = 6/2 = 3. Equation: y = 3x +
+5. 4. The y-intercept (25) represents the one-time parking fee — the
+fixed cost that exists even before any nights are booked. It is the
+initial value when n = 0. 5. Stretch: Both lines have slope 3 — they are
+parallel (same steepness, same direction). They are different because
+they have different y-intercepts (+2 vs. −5), so they cross the y-axis
+at different points and never intersect. Parallel lines have equal
+slopes.</p>
+<hr />
+<h2 id="section-4-direct-and-partial-variation">Section 4 — Direct and
+Partial Variation</h2>
+<p><em>Learning target: I can distinguish between direct and partial
+variation, recognize each from a table, graph, or equation, and connect
+them to real-world contexts.</em> <em>Timing: ~25 minutes direct
+instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: The four terms — Direct variation / Partial variation / Constant
+of variation / Initial value. <strong class="say-label">SAY:</strong> - “Two types of
+linear relations today. They look similar but behave differently.” -
+“We’ve already seen examples of both — you might not have noticed which
+type they were.” <strong class="cue-label">CUE:</strong> ⊡ Think: “Read the four terms.
+What do you think ‘direct variation’ means? Keep your guess in your
+head.”</p>
+<hr />
+<p><strong>Beat 2 — Direct variation</strong> <strong class="show-label">SHOW:</strong>
+Board: <em>DIRECT VARIATION: y = kx (no constant added). Graph passes
+through the origin (0, 0).</em> <strong class="say-label">SAY:</strong> - “Direct
+variation: y varies directly with x.” - “The equation has the form y =
+kx — notice NO b term. No constant added.” - “What happens when x = 0? y
+= k(0) = 0. Always zero.” - “The graph MUST pass through the origin —
+the point (0, 0).” - “The ratio y/x is constant for all values — that’s
+the definition of ‘direct.’” - “Example: gas cost = price per litre ×
+litres. When litres = 0, cost = 0. Direct variation.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Direct variation equation: y =
+<strong>[kx]</strong> (no constant). Graph passes through <strong>[the
+origin]</strong>. Ratio y/x is <strong>[constant]</strong>.”</p>
+<div class="flag flag-rule-of-four"><span class="flag-label">FLAG — Rule of Four</span>SAY: “We’re introducing both
+forms today. In the equation: look for whether b exists and is non-zero.
+In the table: look at the y-value when x = 0. In the graph: look for
+whether the line passes through the origin or the y-axis at some other
+point.”</div>
+<hr />
+<p><strong>Beat 3 — Partial variation</strong> <strong class="show-label">SHOW:</strong>
+Board: <em>PARTIAL VARIATION: y = mx + b where b ≠ 0. Graph crosses the
+y-axis at b, NOT the origin.</em> <strong class="say-label">SAY:</strong> - “Partial
+variation: y varies partially with x.” - “The equation has a constant b
+— and b is NOT zero.” - “When x = 0, y = b. The starting value is not
+zero.” - “The graph crosses the y-axis at b — NOT the origin.” -
+“Example: phone plan with a monthly fee. When texts = 0, you still pay
+the fee. That fee is b.” - “The DIFFERENCES in y are still constant —
+it’s still linear. But the y-axis crossing is not at zero.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Partial variation equation: y = mx + b
+where b ≠ <strong>[0]</strong>. Graph crosses y-axis at <strong>[b, not
+the origin]</strong>.”</p>
+<hr />
+<p><strong>Beat 4 — Side-by-side comparison</strong>
+<strong class="show-label">SHOW:</strong> Board: The comparison table — Feature / Direct
+variation / Partial variation. Fill in live. <strong class="say-label">SAY:</strong> -
+“Let’s put them side by side. Equation: direct = y = kx, partial = y =
+kx + b where b ≠ 0.” - “Graph passes through: direct =
+<strong>[origin]</strong>, partial = <strong>[y-axis at b]</strong>.” -
+“Example: cost = price × quantity (direct) vs. cost = monthly fee +
+price × quantity (partial).” <strong class="cue-label">CUE:</strong> ★ Write: “Complete
+the comparison table — graph passes through: <strong>[origin]</strong> /
+<strong>[(0, b)]</strong>.”</p>
+<hr />
+<p><strong>Beat 5 — Identify from a table</strong>
+<strong class="show-label">SHOW:</strong> Board: Table A (y-values: 0, 5, 10, 15 for x = 0,
+1, 2, 3). <strong class="say-label">SAY:</strong> - “Look at Table A. What is y when x =
+0?” - Pause. <strong>[0]</strong>. - “When x is zero and y is zero — the
+relationship starts at the origin.” - “This is direct variation.
+Equation: y = <strong>[5x]</strong>.” <strong class="show-label">SHOW:</strong> Board:
+Table B (y-values: 8, 12, 16, 20 for x = 0, 1, 2, 3).
+<strong class="say-label">SAY:</strong> - “Table B. What is y when x = 0?” - Pause.
+<strong>[8]</strong>. - “y = 8 when x = 0. Not zero. The line does not
+pass through the origin.” - “This is partial variation. Equation: y =
+<strong>[4x + 8]</strong>.” - “How to tell — always look at what happens
+when x = 0: y = 0 means direct; y ≠ 0 means partial.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Table A: <strong>[direct]</strong>,
+equation <strong>[y = 5x]</strong>. Table B: <strong>[partial]</strong>,
+equation <strong>[y = 4x + 8]</strong>. Rule: look at y when x = 0 — if
+<strong>[y = 0]</strong> it’s direct; if <strong>[y ≠ 0]</strong> it’s
+partial.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>“If both x and y increase, the
+relation is direct variation.” This is wrong. Partial variation also has
+both variables increasing. Direct variation specifically requires the
+graph to pass through the origin — when x = 0, y must also equal 0. The
+phone plan with a monthly fee sees costs rising with usage, but it is
+NOT direct variation because there is a cost even at zero usage.
+Demonstrate with Table B: x increases, y increases, but it is partial
+variation.</div>
+<hr />
+<p><strong>Beat 6 — Alberta context: two phone plans</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>Plan A: $0.15 per text, no monthly
+fee. Plan B: $10/month + $0.05 per text.</em> <strong class="say-label">SAY:</strong> -
+“Plan A: no monthly fee. When texts = 0, cost = 0. What type of
+variation?” - Pause. <strong>[Direct.]</strong> - “Equation: C =
+<strong>[0.15t]</strong>.” - “Plan B: $10 fee exists even before one
+text. When texts = 0, cost = $10. What type?” - Pause.
+<strong>[Partial.]</strong> - “Equation: C = <strong>[0.05t +
+10]</strong>.” <strong class="show-label">SHOW:</strong> Board: Calculate the cost for 50
+texts and 200 texts for both plans. <strong class="say-label">SAY:</strong> - “50 texts:
+Plan A = 0.15(50) = <strong>[$7.50]</strong>. Plan B = 0.05(50) + 10 =
+<strong>[$12.50]</strong>.” - “200 texts: Plan A = 0.15(200) =
+<strong>[$30]</strong>. Plan B = 0.05(200) + 10 =
+<strong>[$20]</strong>.” - “At 50 texts — Plan A is cheaper. At 200
+texts — Plan B is cheaper.” - “When do they cost the same? Set them
+equal and solve.” <strong class="show-label">SHOW:</strong> Board: 0.15t = 0.05t + 10 →
+solve step by step. <strong class="say-label">SAY:</strong> - “0.15t = 0.05t + 10.
+Subtract 0.05t: 0.10t = 10. Divide: t = 100 texts.” - “At exactly 100
+texts, the plans cost the same.” <strong class="cue-label">CUE:</strong> ★ Write: “Plan A:
+C = <strong>[0.15t]</strong> (direct). Plan B: C = <strong>[0.05t +
+10]</strong> (partial). Equal at <strong>[100]</strong> texts.”</p>
+<p><strong>Self-explanation beat:</strong> <strong class="say-label">SAY:</strong> “Before
+moving on — look at how we set the two equations equal. In your own
+words: what did we do there and why does that strategy work?”
+<strong class="cue-label">CUE:</strong> ★ Write: “Answer the explain prompt — what did we
+do when we set the equations equal and why?”</p>
+<p><em>You want: setting the two cost equations equal to find where they
+are the same — the x-value (number of texts) where both plans give the
+same output. If two expressions are equal, they represent the same
+value. Solving for t finds the input that makes that true.</em></p>
+<hr />
+<h3 id="section-4-retrieval-check-facilitation">Section 4 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Everything closed.” <strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed.
+Retrieval check begins now.”</p>
+<p><strong>After students finish (4–5 min):</strong>
+<strong class="cue-label">CUE:</strong> ★ Write: “Open your notes. Check and correct
+now.”</p>
+<p><strong>Answer guide:</strong> 1. y = 4x is direct variation (no
+constant term; passes through origin). y = 4x + 3 is partial variation
+(b = 3 ≠ 0; crosses y-axis at 3). 2. Equation: C = 1.80d + 2.50. This is
+partial variation — there is a fixed base fare of $2.50 regardless of
+distance. When d = 0, C = 2.50 (not zero). 3. x=0 gives y=6, so the
+starting value is 6 (not zero) → partial variation. Rate of change: +4
+each two units of x → slope = 2. Equation: y = 2x + 6. 4. Direct
+variation means y = kx. When x = 0, y = k(0) = 0. The output is always
+zero at zero input — no fixed starting value exists. This means the
+relationship begins at the origin by definition. 5. Stretch: both graphs
+are straight lines with the same slope (same steepness, same direction —
+parallel lines). The direct variation passes through the origin (0,0).
+The partial variation crosses the y-axis at some point (0, b) where b ≠
+0. They never intersect (parallel). The lines look identical in slope,
+but one is shifted up or down from the other by b units.</p>
+<hr />
+<h2 id="unit-synthesis">Unit Synthesis</h2>
+<p><em>~15 minutes — notes closed, then compare to pre-knowledge
+check</em></p>
+<hr />
+<p><strong>Beat 1 — Set up</strong> <strong class="show-label">SHOW:</strong> Board: The
+four section headers — blank lines beside each. <strong class="say-label">SAY:</strong> -
+“Notes closed. Everything closed.” - “We’ve been through four sections.
+I want one sentence from each — the single most important idea — from
+memory.” - “This is not a test. This is you finding out what stuck.”
+<strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed. Four sections. One
+sentence each. Go.”</p>
+<p><em>Allow 5–7 minutes. Circulate. Watch for: students who can do
+Section 1 (four representations) and Section 3 (y = mx + b) but struggle
+with Section 2 (slope calculation) or Section 4 (direct vs. partial).
+Students writing vague sentences (“slope is important”) rather than
+content sentences (“slope = rise/run, the rate of change”) need a
+prompt: “Give me the actual formula or definition.”</em></p>
+<hr />
+<p><strong>Beat 2 — Unit Synthesis questions</strong>
+<strong class="show-label">SHOW:</strong> Board: Part A questions from the synthesis page.
+<strong class="say-label">SAY:</strong> - “Now answer the Part A questions from memory.” -
+“Name the four representations. Write the slope formula. What does m
+represent on the graph? What does b represent? What is the difference
+between direct and partial variation?” <strong class="cue-label">CUE:</strong> ↩︎ Check:
+“Answer Part A now — notes still closed.”</p>
+<p><em>Expected answers: (1) verbal, table, equation, graph — each shows
+a different dimension of the same relationship; (2) m = (y₂−y₁)/(x₂−x₁);
+(3) m = steepness and direction of the line; (4) b = where line crosses
+the y-axis (starting value); (5) direct = y = kx, passes through origin;
+partial = y = mx+b where b≠0, crosses y-axis at b.</em></p>
+<hr />
+<p><strong>Beat 3 — Car rental: Rule of Four</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>Car rental: $50/day + $0.20/km
+driven.</em> <strong class="say-label">SAY:</strong> - “Part B. Work through the Rule of
+Four for this context.” - “Write the equation first.” - “Then build the
+table for 0, 100, 200, 300 km.” - “Then read off the slope and
+y-intercept and interpret both.” - “Then decide: direct or partial
+variation? Explain why.” <strong class="cue-label">CUE:</strong> ★ Write: “Complete Part B
+— all four representations for the car rental context.”</p>
+<p><em>Equation: C = 0.20d + 50. Table: (0,50), (100,70), (200,90),
+(300,110). Slope = 0.20 (meaning each km driven adds $0.20 to the cost).
+y-intercept = 50 (the $50 daily fee exists before any km are driven).
+Partial variation — there is a fixed starting cost of $50.</em></p>
+<hr />
+<p><strong>Beat 4 — Return to Pre-Knowledge Check</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>“Turn to page 1. Read what you wrote
+before the unit started.”</em> <strong class="say-label">SAY:</strong> - “Read it. Don’t
+change it. Don’t erase anything.” - “What did you get right? What were
+you wrong about? What surprised you?” - “Pay special attention to the
+phone plan question — does your rule match y = mx + b?”
+<strong class="cue-label">CUE:</strong> ★ Write: “Answer the end-of-unit questions in Part
+C: right / wrong / surprised. Use your own words.”</p>
+<p><em>Allow 3–5 minutes. Let it land quietly. The most powerful moment
+is students encountering their own pre-instruction confusion in their
+own handwriting. Do not comment on individual responses. Some students
+will have written intuitive rules that closely match y = mx + b —
+acknowledge that the unit gave them precise language for something they
+already sensed.</em></p>
+<hr />
+<h2 id="blank-answer-key">Blank Answer Key</h2>
+<p>Quick reference — all fill-in blank answers in section order.</p>
+<h3 id="section-1">Section 1</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Equal changes in x produce ___ changes in the other</td>
+<td>equal</td>
+</tr>
+<tr>
+<td>Independent variable: what you ___ (input)</td>
+<td>control / choose</td>
+</tr>
+<tr>
+<td>Dependent variable: ___ on it (output)</td>
+<td>depends</td>
+</tr>
+<tr>
+<td>y = <strong><em>x + </em></strong> (tree example)</td>
+<td>4 / 10</td>
+</tr>
+<tr>
+<td>Table y-values: 10, <strong><em>, </em></strong>, <strong><em>,
+</em></strong></td>
+<td>14, 18, 22, 26</td>
+</tr>
+<tr>
+<td>y = −2x + 5 table: x=0→y=<strong><em>, x=1→y=</em></strong>,
+x=2→y=<strong><em>, x=3→y=</em></strong></td>
+<td>5, 3, 1, −1</td>
+</tr>
+<tr>
+<td>Pattern in y-values of y = −2x + 5</td>
+<td>decreases by 2 each time x increases by 1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-2">Section 2</h3>
+<table>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Slope measures how ___ a line is</td>
+<td>steep</td>
+</tr>
+<tr>
+<td>Slope measures in what ___</td>
+<td>direction</td>
+</tr>
+<tr>
+<td>Rise = y₂ − y₁ = 8 − 2 = ___</td>
+<td>6</td>
+</tr>
+<tr>
+<td>Run = x₂ − x₁ = 4 − 1 = ___</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Slope = ___ / ___ = ___</td>
+<td>6 / 3 / 2</td>
+</tr>
+<tr>
+<td>For every 1 unit right, line goes ___ units up (slope 2)</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Negative slope (0,6)–(3,0): m = ___ / ___ = ___</td>
+<td>−6 / 3 / −2</td>
+</tr>
+<tr>
+<td>A negative slope means line goes ___</td>
+<td>down to the right</td>
+</tr>
+<tr>
+<td>Slope check using (0,1)+(2,5): ___</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Slope check using (2,5)+(4,9): ___</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Same?</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Temperature flat all day → slope = ___</td>
+<td>0 (zero)</td>
+</tr>
+<tr>
+<td>Vertical wall → slope = ___</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>Ski hill −120m over 800m → m = ___</td>
+<td>−0.15</td>
+</tr>
+<tr>
+<td>Car: 300km/3h → m = ___ km/h</td>
+<td>100</td>
+</tr>
+<tr>
+<td>Slope means: for each hour, you travel ___ km</td>
+<td>100</td>
+</tr>
+<tr>
+<td>Rocky Mountain highway slope = ___ / ___ = ___</td>
+<td>−120 / 800 / −0.15</td>
+</tr>
+<tr>
+<td>The slope means ___</td>
+<td>the road descends 0.15 m per 1 m horizontal</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-3">Section 3</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>y = 3x − 4: slope m = ___</td>
+<td>3</td>
+</tr>
+<tr>
+<td>y = 3x − 4: y-intercept b = ___</td>
+<td>−4</td>
+</tr>
+<tr>
+<td>Starting point (0, b) = (0, ___)</td>
+<td>−4</td>
+</tr>
+<tr>
+<td>For each x+1, y changes by ___</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Hotel: starting value (parking fee) = ___</td>
+<td>25</td>
+</tr>
+<tr>
+<td>Hotel: rate of change (per night) = ___</td>
+<td>90</td>
+</tr>
+<tr>
+<td>Equation: C = <strong><em>n + </em></strong></td>
+<td>90 / 25</td>
+</tr>
+<tr>
+<td>Second point on hotel graph: (1, ___)</td>
+<td>115</td>
+</tr>
+<tr>
+<td>y = 2x − 6: y-intercept (x=0): y = ___ → point (<strong><em>,
+</em></strong>)</td>
+<td>−6 / 0 / −6</td>
+</tr>
+<tr>
+<td>y = 2x − 6: x-intercept (y=0): x = ___ → point (<strong><em>,
+</em></strong>)</td>
+<td>3 / 3 / 0</td>
+</tr>
+<tr>
+<td>Slope m = 2, passes through (3,7): b = ___</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Equation: y = ___</td>
+<td>2x + 1</td>
+</tr>
+<tr>
+<td>y = −2x + 6: verbal starting at <strong><em>, decreases by
+</em></strong></td>
+<td>6 / 2</td>
+</tr>
+<tr>
+<td>y = −2x + 6: table y-values for x=0,1,2,3</td>
+<td>6, 4, 2, 0</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-4">Section 4</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Direct variation equation: y = ___</td>
+<td>kx</td>
+</tr>
+<tr>
+<td>Graph passes through ___</td>
+<td>the origin (0,0)</td>
+</tr>
+<tr>
+<td>Ratio y/x is ___</td>
+<td>constant</td>
+</tr>
+<tr>
+<td>Partial variation: b ≠ ___</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Graph passes through (direct) / (partial)</td>
+<td>origin / (0, b)</td>
+</tr>
+<tr>
+<td>Table A type: ___ / Equation: ___</td>
+<td>direct / y = 5x</td>
+</tr>
+<tr>
+<td>Table B type: ___ / Equation: ___</td>
+<td>partial / y = 4x + 8</td>
+</tr>
+<tr>
+<td>If y = 0 when x = 0: ___ variation</td>
+<td>direct</td>
+</tr>
+<tr>
+<td>If y ≠ 0 when x = 0: ___ variation</td>
+<td>partial</td>
+</tr>
+<tr>
+<td>Plan A: C = ___</td>
+<td>0.15t</td>
+</tr>
+<tr>
+<td>Plan B: C = ___</td>
+<td>0.05t + 10</td>
+</tr>
+<tr>
+<td>50 texts: Plan A = $___ / Plan B = $___</td>
+<td>7.50 / 12.50</td>
+</tr>
+<tr>
+<td>200 texts: Plan A = $___ / Plan B = $___</td>
+<td>30 / 20</td>
+</tr>
+<tr>
+<td>Plans equal at ___ texts</td>
+<td>100</td>
+</tr>
+<tr>
+<td>Table B (Section 4 misconception check): when x=0, y=___</td>
+<td>0 (Table A) / passes through origin</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-flags-summary">Key Flags Summary</h2>
+<p><em>Quick reference for lesson planning — every misconception that
+needs direct address.</em></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Section</th>
+<th>Misconception</th>
+<th>Where it appears</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>“Linear just means it makes a line” — students don’t connect it to
+constant rate of change</td>
+<td>Beat 2 — establish equal differences in the table first</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>“Different points on the same line give different slopes”</td>
+<td>Beat 6 — worked example with three collinear points</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>“A steeper line always has a larger slope value”</td>
+<td>Beat 7 — true only for positive slopes; steep negative = large
+negative number</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>“The y-intercept is where the line crosses the x-axis”</td>
+<td>Beat 5 — address with two-intercept worked example</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>“Slope is the y-intercept” — m and b confused</td>
+<td>Beat 2 — establish the convention before any calculation</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>“If both x and y increase, it’s direct variation”</td>
+<td>Beat 5 — partial variation also has both increasing; the test is
+whether y = 0 when x = 0</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>“Direct variation and partial variation are the same thing”</td>
+<td>Beats 2–4 — side-by-side comparison table makes the distinction
+visual</td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>

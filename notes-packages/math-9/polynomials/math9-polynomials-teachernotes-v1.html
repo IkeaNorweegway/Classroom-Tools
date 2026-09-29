@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math 9 — Polynomials</title>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent: #1d4ed8;
+  --accent-light: #eff6ff;
+  --accent-border: #bfdbfe;
+  --show-bg: #eff6ff;
+  --show-border: #3b82f6;
+  --say-bg: #ffffff;
+  --cue-bg: #f0fdf4;
+  --cue-border: #22c55e;
+  --flag-mc-bg: #fef2f2;
+  --flag-mc-border: #ef4444;
+  --flag-mc-label: #dc2626;
+  --flag-pace-bg: #fffbeb;
+  --flag-pace-border: #f59e0b;
+  --flag-pace-label: #d97706;
+  --flag-ab-bg: #f0fdf4;
+  --flag-ab-border: #22c55e;
+  --flag-ab-label: #15803d;
+  --flag-cs-bg: #fdf4ff;
+  --flag-cs-border: #a855f7;
+  --flag-cs-label: #7e22ce;
+  --text: #1a1a2e;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+}
+
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+
+/* ── Typography ── */
+h1 {
+  font-size: 1.6rem;
+  color: var(--accent);
+  margin-bottom: 2px;
+  font-family: system-ui, sans-serif;
+}
+h2 {
+  font-size: 1rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 700;
+  background: var(--accent);
+  color: white;
+  padding: 7px 14px;
+  margin: 36px -4px 18px;
+  letter-spacing: 0.01em;
+}
+h3 {
+  font-size: 0.95rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent-border);
+  padding-bottom: 4px;
+  margin: 28px 0 12px;
+}
+h4 {
+  font-size: 0.9rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  color: #374151;
+  margin: 20px 0 8px;
+}
+p { margin-bottom: 10px; }
+ul, ol { margin: 6px 0 10px 24px; }
+li { margin-bottom: 3px; }
+em { font-style: italic; }
+strong { font-weight: 700; }
+hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* ── Beat titles ── */
+p.beat-title {
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #334155;
+  padding: 7px 14px;
+  margin: 20px 0 0;
+  border-left: 4px solid #94a3b8;
+  border-radius: 3px 3px 0 0;
+}
+
+/* ── SHOW / SAY / CUE labels ── */
+.show-label { color: var(--accent); font-family: system-ui, sans-serif; }
+.say-label  { color: #374151;       font-family: system-ui, sans-serif; }
+.cue-label  { color: #15803d;       font-family: system-ui, sans-serif; }
+
+/* ── Flag callouts ── */
+.flag {
+  margin: 14px 0;
+  padding: 10px 14px;
+  border-radius: 0 4px 4px 0;
+  font-family: system-ui, sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.flag-label {
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 4px;
+}
+.flag p { margin-bottom: 6px; font-family: system-ui, sans-serif; }
+.flag p:last-child { margin-bottom: 0; }
+.flag ul { margin-top: 4px; }
+
+.flag-misconception { background: var(--flag-mc-bg);   border-left: 5px solid var(--flag-mc-border); }
+.flag-misconception .flag-label { color: var(--flag-mc-label); }
+
+.flag-pacing       { background: var(--flag-pace-bg);  border-left: 5px solid var(--flag-pace-border); }
+.flag-pacing .flag-label { color: var(--flag-pace-label); }
+
+.flag-alberta-context,
+.flag-alberta,
+.flag-context      { background: var(--flag-ab-bg);   border-left: 5px solid var(--flag-ab-border); }
+.flag-alberta-context .flag-label,
+.flag-alberta .flag-label,
+.flag-context .flag-label { color: var(--flag-ab-label); }
+
+.flag-cs-connection,
+.flag-connection   { background: var(--flag-cs-bg);   border-left: 5px solid var(--flag-cs-border); }
+.flag-cs-connection .flag-label,
+.flag-connection .flag-label { color: var(--flag-cs-label); }
+
+/* ── Retrieval guide box ── */
+.retrieval-guide {
+  background: var(--accent-light);
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 16px 0;
+}
+.retrieval-guide h3 { margin-top: 0; color: var(--accent); border-color: var(--accent-border); }
+.retrieval-guide ol { margin-left: 20px; }
+.retrieval-guide li { margin-bottom: 6px; font-family: system-ui, sans-serif; font-size: 0.9rem; }
+
+/* ── Tables ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 0.88rem;
+  font-family: system-ui, sans-serif;
+}
+th {
+  background: var(--accent);
+  color: white;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 600;
+}
+td {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tr:nth-child(even) td { background: #f8fafc; }
+
+/* ── Answer key ── */
+.answer-key h3 { color: #374151; border-color: #d1d5db; }
+
+/* ── Subtitle / subheading below h1 ── */
+.subtitle {
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ── Print ── */
+@media print {
+  body { max-width: none; padding: 10px; font-size: 11.5px; }
+  h2 { break-before: page; margin-left: 0; margin-right: 0; }
+  h2:first-of-type { break-before: auto; }
+  .flag, .retrieval-guide, table { break-inside: avoid; }
+  h3, h4, p.beat-title { break-after: avoid; }
+  p { orphans: 3; widows: 3; }
+}
+</style>
+</head>
+<body>
+<h1 id="math-9-polynomials">Math 9 — Polynomials</h1>
+<h2 id="teacher-notes-package">Teacher Notes Package</h2>
+<p><em>Teaching reference — not a script</em></p>
+<hr />
+<h2 id="how-to-use-this-document">How to use this document</h2>
+<p>Each teaching beat has three parts:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Label</th>
+<th>What it contains</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SHOW</strong></td>
+<td>What is visible to students — draw on the board or project. One
+thing per beat.</td>
+</tr>
+<tr>
+<td><strong>SAY</strong></td>
+<td>Key phrases and questions. Not sentences to read — prompts for
+fluent delivery. Answers to blanks shown in
+<strong>[brackets]</strong>.</td>
+</tr>
+<tr>
+<td><strong>CUE</strong></td>
+<td>The exact signal for students to write. Four types: ★ Write / ✎ Draw
+/ ⊡ Think / ↩︎ Check</td>
+</tr>
+</tbody>
+</table>
+<p>Flags appear in callout blocks: &gt; <strong>FLAG —
+Misconception:</strong> Red alert. Students will get this wrong without
+a direct address. &gt; <strong>FLAG — Pacing:</strong> Warning for where
+lessons tend to lose momentum. &gt; <strong>FLAG —
+Self-Explanation:</strong> High-yield metacognitive moment — do not
+skip.</p>
+<p><strong>The screen and the voice carry different things.</strong>
+What is SHOW stays visual — labels, diagrams, key terms. What is SAY
+carries the reasoning. Never put your SAY on the screen.</p>
+<hr />
+<h2 id="unit-at-a-glance">Unit at a Glance</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Lesson</th>
+<th>Content</th>
+<th>Student notes pages</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pre-knowledge check + Section 1: What is a Polynomial?</td>
+<td>Pre-K check + S1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Section 2: Like Terms</td>
+<td>S2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Section 3: Adding Polynomials</td>
+<td>S3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Section 4: Subtracting Polynomials</td>
+<td>S4</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Section 5: Multiplying a Monomial by a Polynomial</td>
+<td>S5</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Section 6: Multiplying Two Binomials</td>
+<td>S6</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Unit Synthesis + return to Pre-Knowledge Check</td>
+<td>Synthesis page</td>
+</tr>
+<tr>
+<td>8+</td>
+<td>Practice, workbook, assessment</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><em>Retrieval warm-ups begin Lesson 2. Each warm-up pulls from the
+previous lesson + something from 2 lessons prior.</em></p>
+<hr />
+<h2 id="materials-per-lesson">Materials per lesson</h2>
+<ul>
+<li>Student notes packages (printed, one per student)</li>
+<li>Whiteboard + markers (coloured if available — use one colour per
+polynomial type: monomial, binomial, trinomial)</li>
+<li>Algebra tiles (if available) — strongly recommended for Sections 2,
+5, and 6
+<ul>
+<li>x²-tiles (large squares), x-tiles (long rectangles), unit tiles
+(small squares)</li>
+<li>Negative versions (flip side or different colour)</li>
+<li>Tiles make like-term grouping and distribution concrete and
+visual</li>
+</ul></li>
+<li>Graph paper or area model templates (Section 6 — binomial
+multiplication)</li>
+</ul>
+<h2 id="pre-knowledge-check">Pre-Knowledge Check</h2>
+<p><em>~10 minutes — before any instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Opening</strong> <strong class="show-label">SHOW:</strong> Board:
+<em>“What do you think a polynomial is?”</em> (That’s it — no
+definition, no examples.) <strong class="say-label">SAY:</strong> - “Before we start the
+unit, I want to know what’s already in your head.” - “This is not a
+test. There are no marks. I’m not going to correct it today.” - “Write
+honestly — even if you think you know nothing, write your guess.” - “You
+will come back to this page at the very end of the unit — do not erase
+anything.” - “Three questions on the page. Give each one at least one
+sentence.” <strong class="cue-label">CUE:</strong> ★ Write: “Open your notes to page 1.
+You have 5 minutes — three questions, honest answers. Go.”</p>
+<div class="flag flag-pacing"><span class="flag-label">FLAG — Pacing</span>Do not read student responses aloud
+or comment on them. Circulate silently. You’re looking for: (a) students
+who already know polynomials from a previous class or context, (b)
+students who think the word ‘polynomial’ has something to do with ‘poly’
+as in ‘many’ — this is actually correct and worth surfacing at the end
+of the unit, and (c) students who write “3x + 5” but don’t know what to
+call it. Both (b) and (c) are signs of productive prior knowledge you
+can connect to in Section 1.</div>
+<h2 id="section-1-what-is-a-polynomial">Section 1: What is a
+Polynomial?</h2>
+<p><em>Learning target: I can name a polynomial, identify its degree,
+and identify its coefficients and constant term.</em> <em>Timing: ~25
+minutes direct instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: The ten vocabulary terms in a column — Term / Polynomial /
+Monomial / Binomial / Trinomial / Coefficient / Constant / Degree of a
+term / Degree of a polynomial / Leading coefficient
+<strong class="say-label">SAY:</strong> - “Ten terms today. That’s a lot — they’re all
+connected, so they build quickly.” - “Don’t fill in the table yet. We’ll
+build each definition together as we go.” - “By the end of this section
+you’ll have your own definition and one example for each.”
+<strong class="cue-label">CUE:</strong> ⊡ Think: “Read the ten terms. Which one do you
+think you already know? Keep it in your head.”</p>
+<hr />
+<p><strong>Beat 2 — What is a polynomial?</strong>
+<strong class="show-label">SHOW:</strong> Board: Write: <em>POLYNOMIAL = one or more TERMS
+joined by + or −</em>. Draw two examples side by side: <em>3x + 5</em>
+and <em>x² − 4x + 7</em> <strong class="say-label">SAY:</strong> - “Poly means many.
+Nomial comes from the Latin for name or term.” - “A polynomial is just
+one or more terms joined by addition or subtraction.” - “Each piece
+separated by a + or − is one term.” - “Three things make up a term: the
+coefficient, the variable, and the exponent.” - Point to 3x + 5: “Two
+terms. This is a binomial. We’ll name the types in a moment.”
+<strong class="cue-label">CUE:</strong> ★ Write: “A polynomial is an expression made of
+one or more <strong>[terms]</strong>, joined by addition or subtraction.
+Each term has a <strong>[coefficient]</strong> and a variable raised to
+a whole-number <strong>[exponent]</strong>.”</p>
+<hr />
+<p><strong>Beat 3 — Naming by number of terms</strong>
+<strong class="show-label">SHOW:</strong> Board: Three-column table — draw it live:</p>
+<table>
+<thead>
+<tr>
+<th>Number of terms</th>
+<th>Name</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>monomial</td>
+<td>5x²</td>
+</tr>
+<tr>
+<td>2</td>
+<td>binomial</td>
+<td>3x − 7</td>
+</tr>
+<tr>
+<td>3</td>
+<td>trinomial</td>
+<td>x² + 2x − 4</td>
+</tr>
+</tbody>
+</table>
+<p><strong class="say-label">SAY:</strong> - “Three names. One, two, three terms.” - “Mono
+= one. Bi = two. Tri = three.” - Point to monomial: “One term —
+monomial. Just 5x².” - Point to binomial: “Two terms — binomial. 3x
+minus 7.” - Point to trinomial: “Three terms — trinomial. Three terms,
+three different variables or exponents.” - “Four or more terms? We just
+say ‘polynomial.’ The three names are for the common cases.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Complete the naming table — three names,
+three examples.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>“A polynomial with 3 terms is
+always a trinomial.” Students may believe this without checking whether
+like terms have been collected. Before a polynomial is named, it must be
+in simplified form. A polynomial written as 3x² + x + 2x − 5 has four
+terms as written — but after simplifying to 3x² + 3x − 5, it is a
+trinomial. <strong>Address this here, briefly:</strong> “Before you name
+it, always simplify first. An expression might look like a trinomial but
+simplify to a binomial.” You will revisit this more fully in Section
+2.</div>
+<hr />
+<p><strong>Beat 4 — Degree of a term</strong> <strong class="show-label">SHOW:</strong>
+Board: <em>DEGREE OF A TERM = the exponent on the variable.</em> Write
+three examples vertically: - 5x²: degree = 2 - 3x: degree = 1 (x = x¹) -
+7: degree = 0 (constant — no variable, or x⁰)</p>
+<p><strong class="say-label">SAY:</strong> - “Degree of a term: look at the exponent.” -
+“5x² — the exponent is 2. Degree is 2.” - “3x — the exponent is 1, even
+though we don’t write it. Degree is 1.” - “7 — a constant. No variable.
+Exponent is 0. Degree is 0.” - “The degree tells you the power of the
+variable — nothing else.” <strong class="cue-label">CUE:</strong> ★ Write: “Fill in the
+three degree blanks in your notes: 5x² = degree <strong>[2]</strong>, 3x
+= degree <strong>[1]</strong>, 7 = degree <strong>[0]</strong>.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>“2x³ has degree 2 because the
+coefficient is 2.” This is the highest-frequency error in Section 1. The
+coefficient and the degree are two different things. Say directly: “The
+2 is the coefficient — it tells you how many. The 3 is the degree — it
+tells you the power. They live in different places. Coefficient is in
+front. Degree is the exponent.” Write on board: <em>coefficient: 2 |
+degree: 3</em> with arrows pointing to the respective parts of 2x³. Do
+not move on until students can separate these two quantities.</div>
+<hr />
+<p><strong>Beat 5 — Degree of a polynomial</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>DEGREE OF A POLYNOMIAL = the degree of
+the highest-degree term.</em> Write: 4x³ + 2x² − x + 9. Draw arrows to
+each term with its degree labeled above: 3, 2, 1, 0.
+<strong class="say-label">SAY:</strong> - “A polynomial has multiple terms, each with its
+own degree.” - “The degree of the whole polynomial is the highest degree
+among all its terms.” - “4x³ + 2x² − x + 9 — terms have degrees 3, 2, 1,
+0.” - “Highest is 3. The polynomial has degree 3.” - “Leading
+coefficient: the coefficient of the highest-degree term. Here, that’s
+4.” <strong class="cue-label">CUE:</strong> ★ Write: “Fill in the worked example: degrees
+are <strong>[3, 2, 1, 0]</strong>. Degree of the polynomial =
+<strong>[3]</strong>. Leading coefficient = <strong>[4]</strong>.”</p>
+<div class="flag flag-self-explanation"><span class="flag-label">FLAG — Self-Explanation</span>After filling in the
+example, SAY: “Before moving on — explain Step 2 in your own words: why
+is the degree of the polynomial 3 and not 9 or 4?” <strong class="cue-label">CUE:</strong>
+★ Write: “Write one sentence: the degree is 3 because ___.”</div>
+<hr />
+<p><strong>Beat 6 — Label the parts diagram</strong>
+<strong class="show-label">SHOW:</strong> Board: Write: <em>5x² − 3x + 2</em>. Draw labeled
+arrows pointing to each term: - 5x²: draw lines to “coefficient: 5” and
+“degree: 2” - −3x: draw lines to “coefficient: −3” and “degree: 1” - 2:
+draw line to “this is a constant”</p>
+<p><strong class="say-label">SAY:</strong> - “Let’s label the diagram together.” - “5x²:
+coefficient is 5, degree is 2.” - “−3x: coefficient is −3 — the negative
+sign travels with it. Degree is 1.” - “2: no variable. This is the
+constant term. Degree 0.” - “Leading coefficient: 5. It’s the
+coefficient of the highest-degree term.” <strong class="cue-label">CUE:</strong> ★ Write:
+“Complete the label diagram: coefficient of 5x² = <strong>[5]</strong>,
+degree = <strong>[2]</strong> / coefficient of −3x =
+<strong>[−3]</strong>, degree = <strong>[1]</strong> / 2 is a
+<strong>[constant]</strong>.”</p>
+<hr />
+<p><strong>Beat 7 — Identify practice table</strong>
+<strong class="show-label">SHOW:</strong> Board: The four-row practice table: - 6x − 1 - x²
++ 3x − 5 - −8 - 2x⁴ − x + 7</p>
+<p><strong class="say-label">SAY:</strong> - “Four expressions. Work through the table.
+For each one: type, degree, leading coefficient.” - “Type means
+monomial, binomial, or trinomial.” - “Work quietly first. Then we’ll
+check together.” <strong class="cue-label">CUE:</strong> ★ Write: “Complete the practice
+table now.”</p>
+<p><em>Allow 3 minutes. Then reveal live on board:</em> - 6x − 1:
+binomial, degree 1, leading coefficient 6 - x² + 3x − 5: trinomial,
+degree 2, leading coefficient 1 - −8: monomial, degree 0, leading
+coefficient −8 - 2x⁴ − x + 7: trinomial, degree 4, leading coefficient
+2</p>
+<p><em>Watch for: students calling −8 “degree 8.” Redirect immediately.
+Watch for: students calling the leading coefficient of x² + 3x − 5
+“zero.” The leading coefficient is 1, not zero — when no coefficient is
+written, it is 1.</em></p>
+<hr />
+<h3 id="section-1-retrieval-check-facilitation">Section 1 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Everything closed. Retrieval check — write the answers from
+memory.” <strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed. Retrieval check
+begins now.”</p>
+<p><strong>After students finish (4–5 min):</strong>
+<strong class="say-label">SAY:</strong> “Open your notes. Find the answer. Fix anything
+that was wrong or incomplete — use a different colour if you have one.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Open your notes. Check and correct
+now.”</p>
+<p><strong>Answer guide:</strong> 1. Degree 3 — the highest-degree term
+is 7x³, which has exponent 3. (Watch for “degree 7” — redirect to the
+coefficient vs. degree distinction.) 2. Leading coefficient is −3. The
+highest-degree term is −3x², and its coefficient is −3. (Watch for
+students writing 3 without the negative.) 3. The error: 5x + 3 has
+degree 1, not 5. The degree is the exponent on x (which is 1), not the
+coefficient (which is 5). Correct answer: degree 1, a linear binomial.
+4. Any trinomial with degree 2 — for example: x² + 3x − 1, or 2x² − x +
+5. Both terms must have unlike variable parts; the highest exponent must
+be 2. 5. Stretch — 12 is a polynomial (a monomial of degree 0 — a
+constant). 4/x is NOT a polynomial — the variable is in the denominator,
+which means the exponent on x is −1 (a negative integer), and
+polynomials require whole-number exponents only.</p>
+<p><em>Q5 is the stretch — if students finish early, prompt: “Look at
+the exponent on the variable in each expression. Does a polynomial allow
+negative exponents?”</em></p>
+<h2 id="section-2-like-terms">Section 2: Like Terms</h2>
+<p><em>Learning target: I can identify like terms in a polynomial and
+combine them correctly.</em> <em>Timing: ~20 minutes direct
+instruction</em></p>
+<p><em>Algebra tiles recommended: use x²-tiles, x-tiles, and unit tiles
+to physically group like terms. Tiles are particularly powerful here —
+students can see that you cannot physically combine an x²-tile and an
+x-tile because they are different shapes.</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Three vocab terms — Like terms / Unlike terms / Simplify
+<strong class="say-label">SAY:</strong> - “Three terms today. These carry through every
+remaining section.” - “Don’t fill them in yet — we’ll build them as we
+go.” <strong class="cue-label">CUE:</strong> ⊡ Think: “Read the three terms. Predict a
+definition for ‘like terms’ before we discuss.”</p>
+<hr />
+<p><strong>Beat 2 — What makes terms ‘like’?</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>LIKE TERMS = same variable raised to
+the same exponent.</em> Write two columns side by side:</p>
+<p>Like: | Unlike: 3x² and −7x² | 4x and 4x² 6 and −2 | 5x and 3y</p>
+<p><strong class="say-label">SAY:</strong> - “Like terms share the same variable AND the
+same exponent.” - “3x² and −7x² — both have x². The coefficients are
+different. That’s allowed. They’re like terms.” - “4x and 4x² — both
+have the variable x, but the exponents are different. Not like.” - “5x
+and 3y — different variables entirely. Not like.” - “6 and −2 — both
+constants. No variable. They’re like terms.” - “The coefficient doesn’t
+determine whether terms are ‘like.’ Only the variable part does.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Like terms share the same
+<strong>[variable]</strong> raised to the same
+<strong>[exponent]</strong>. Coefficients can differ.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>“3x + 4x² = 7x² (or 7x³).”
+Students will attempt to combine unlike terms, either because they lose
+track of the exponent or because they see two terms and assume they must
+combine. This error produces either a wrong coefficient or a wrong
+exponent. <strong>Pre-empt explicitly:</strong> “Here’s what I see on
+every test: a student combines 3x + 4x² and writes 7x². Or 7x³. Both are
+wrong. You cannot combine them — they represent different quantities, as
+different as apples and oranges. 3x means ‘three x’s.’ 4x² means ‘four
+x-squares.’ They measure different things.” If algebra tiles are
+available, hold up an x-tile and an x²-tile side by side: “These are
+literally different shapes. You cannot stack them.”</div>
+<hr />
+<p><strong>Beat 3 — How to combine like terms</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>Add or subtract the COEFFICIENTS only.
+The variable part stays unchanged.</em> Write: 3x² + 7x² = (3 + 7)x² =
+10x² <strong class="say-label">SAY:</strong> - “When you combine like terms, the variable
+part — the x² — does not change.” - “You only add the coefficients.” -
+“3x² + 7x² = 10x². Not 10x⁴. Not 10x. The x² stays.” - “Think of it as:
+3 groups of x² plus 7 groups of x² equals 10 groups of x².”
+<strong class="cue-label">CUE:</strong> ★ Write: “To combine like terms: add or subtract
+the <strong>[coefficients]</strong> only. The variable part stays the
+same. 3x² + 7x² = <strong>[10x²]</strong>.”</p>
+<hr />
+<p><strong>Beat 4 — Like terms comparison table</strong>
+<strong class="show-label">SHOW:</strong> Board: The like-terms table:</p>
+<table>
+<thead>
+<tr>
+<th>Pair</th>
+<th>Like terms?</th>
+<th>Why?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3x² and −7x²</td>
+<td>Yes</td>
+<td>Both have x²</td>
+</tr>
+<tr>
+<td>4x and 4x²</td>
+<td>No</td>
+<td>Different exponents</td>
+</tr>
+<tr>
+<td>5x and 3y</td>
+<td>No</td>
+<td>Different variables</td>
+</tr>
+<tr>
+<td>6 and −2</td>
+<td>Yes</td>
+<td>Both constants</td>
+</tr>
+</tbody>
+</table>
+<p><strong class="say-label">SAY:</strong> - “Let’s work through the table together — fill
+in the ‘Why?’ as we go.” - “Row 1: both have x²? Same variable, same
+exponent. Like.” - “Row 2: same variable x, but one has exponent 1 and
+the other has exponent 2. Different exponents. Not like.” - “Row 3: x
+and y are different variables. Not like.” - “Row 4: constants — no
+variable at all, both degree 0. Like.” <strong class="cue-label">CUE:</strong> ★ Write:
+“Fill in the Why? column: row 1 — <strong>[both have x²]</strong> / row
+2 — <strong>[different exponents]</strong> / row 3 — <strong>[different
+variables]</strong> / row 4 — <strong>[both constants]</strong>.”</p>
+<hr />
+<p><strong>Beat 5 — Algebra tile connection</strong>
+<strong class="show-label">SHOW:</strong> Board (or physical tiles if available): Draw or
+display: x²-tile (large square), x-tile (long rectangle), 1-tile (small
+square). Label each shape. <strong class="say-label">SAY:</strong> - “This is why algebra
+tiles work for like terms.” - “Each tile shape represents a different
+kind of term — x², x, or 1.” - “You can only physically combine tiles
+that are the same shape.” - “An x²-tile and an x-tile are different
+shapes. You cannot stack them. They stay separate.” - “This is not a
+rule someone invented arbitrarily — it follows from what the tiles
+physically represent.” <strong class="cue-label">CUE:</strong> ★ Write: “Only tiles of the
+same <strong>[shape]</strong> and <strong>[size]</strong> can be
+combined. An x²-tile and an x-tile are different shapes — they cannot
+stack.”</p>
+<div class="flag flag-self-explanation"><span class="flag-label">FLAG — Self-Explanation</span>SAY: “Before moving on —
+explain Step 3 in your own words: when you simplify 9 − 3x + 2x² − 5 +
+x, what do you look for first, and why?” <strong class="cue-label">CUE:</strong> ★ Write:
+“Write one sentence: I start by looking for ___ because ___.”</div>
+<hr />
+<h3 id="section-2-retrieval-check-facilitation">Section 2 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. I want you to identify like terms and combine them — from
+memory.” <strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed. Retrieval check
+begins now.”</p>
+<p><strong>After students finish:</strong> <strong class="say-label">SAY:</strong> “Open
+your notes. Check and correct.” <strong class="cue-label">CUE:</strong> ★ Write: “Open and
+correct now.”</p>
+<p><strong>Answer guide:</strong> 1. 4x and −4x: yes, like terms — same
+variable x, same exponent 1 (coefficients are 4 and −4; doesn’t matter).
+4x and 4x²: no — same variable but different exponents (1 vs. 2). 2.
+Simplify: 6x² − 2x + 3x² + x − 4 → combine x²-terms: 6x² + 3x² = 9x².
+Combine x-terms: −2x + x = −x. Constant: −4. Answer: <strong>9x² − x −
+4</strong>. 3. The student combined 5x + 3 by adding the coefficient 5
+with the constant 3. These are unlike terms — one has the variable x
+(degree 1), the other is a constant (degree 0). You cannot add them. 4.
+Any valid answer — for example: 3x² + x − x + 3. Or: x² + x² + 2x + 3 −
+2x. Many valid options; the key is that when collected, four terms
+reduce to 2x² + 3. 5. Stretch — 3x and 3y are NOT like terms. Like terms
+require the same variable, not just the same coefficient. The variable
+in 3x is x; in 3y it is y. They represent different unknown quantities
+and cannot be combined.</p>
+<h2 id="section-3-adding-polynomials">Section 3: Adding Polynomials</h2>
+<p><em>Learning target: I can add two or more polynomials by combining
+like terms.</em> <em>Timing: ~20 minutes direct instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Two vocab terms — Sum / Standard form <strong class="say-label">SAY:</strong> -
+“Two new terms today. Standard form comes up in every section from here
+on — learn it now.” <strong class="cue-label">CUE:</strong> ⊡ Think: “Predict: what do you
+think ‘standard form’ means for a polynomial?”</p>
+<hr />
+<p><strong>Beat 2 — Standard form</strong> <strong class="show-label">SHOW:</strong> Board:
+<em>STANDARD FORM = terms written from highest degree to lowest, left to
+right.</em> Write: −x + 4 + 3x² → standard form: 3x² − x + 4
+<strong class="say-label">SAY:</strong> - “Standard form is the agreed-upon way to write a
+polynomial: highest degree first, descending.” - “3x² − x + 4 is in
+standard form. The degrees go: 2, 1, 0.” - “If you write it as −x + 4 +
+3x², that’s the same polynomial, just not in standard form.” - “Always
+re-write in standard form as your final step.” <strong class="cue-label">CUE:</strong> ★
+Write: “Standard form = terms written from <strong>[highest]</strong>
+degree to lowest, left to right.”</p>
+<hr />
+<p><strong>Beat 3 — Steps to add polynomials</strong>
+<strong class="show-label">SHOW:</strong> Board: Three numbered steps: 1. Remove the
+brackets (addition does not change any signs) 2. Identify like terms 3.
+Combine like terms, write in standard form</p>
+<p><strong class="say-label">SAY:</strong> - “Adding polynomials: three steps.” - “Step 1
+— remove brackets. When you add, the bracket comes off cleanly. Nothing
+changes.” - “Step 2 — find your like terms. Colour-code them if it
+helps: circle all x²-terms in one colour, x-terms in another.” - “Step 3
+— combine and write in standard form. Highest degree first.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Three steps: remove
+<strong>[brackets]</strong> / identify <strong>[like terms]</strong> /
+combine and write in <strong>[standard]</strong> form.”</p>
+<hr />
+<p><strong>Beat 4 — Horizontal method worked example</strong>
+<strong class="show-label">SHOW:</strong> Board: Work through this live, step by step:</p>
+<p>(3x² + 2x − 1) + (x² − 5x + 4) = 3x² + 2x − 1 + x² − 5x + 4 ← remove
+brackets = 3x² + x² + 2x − 5x − 1 + 4 ← group like terms = 4x² − 3x + 3
+← simplified</p>
+<p><strong class="say-label">SAY:</strong> - “Horizontal method — everything stays on one
+line.” - “Step 1: the brackets come off. No sign changes — this is
+addition.” - “Step 2: group like terms. I’ll circle x²-terms together,
+x-terms together, constants together.” - “Step 3: 3x² + x² = 4x². 2x −
+5x = −3x. −1 + 4 = 3.” - “Final answer: 4x² − 3x + 3. That’s in standard
+form — degree 2, then 1, then 0.” <strong class="cue-label">CUE:</strong> ★ Write: “Work
+through the horizontal example: remove brackets = <strong>[3x² + 2x − 1
++ x² − 5x + 4]</strong> / group like terms = <strong>[3x² + x² + 2x − 5x
+− 1 + 4]</strong> / simplified = <strong>[4x² − 3x + 3]</strong>.”</p>
+<hr />
+<p><strong>Beat 5 — Vertical method</strong> <strong class="show-label">SHOW:</strong>
+Board: The same example, vertical format:</p>
+<p>3x² + 2x − 1 + x² − 5x + 4 ───────────── 4x² − 3x + 3</p>
+<p><strong class="say-label">SAY:</strong> - “Vertical method: line up like terms in
+columns. One column per variable power.” - “x² column: 3x² + x² = 4x².”
+- “x column: 2x + (−5x) = −3x.” - “Constant column: −1 + 4 = 3.” -
+“Vertical method is useful when you have three or more polynomials to
+add.” <strong class="cue-label">CUE:</strong> ★ Write: “Fill in the vertical example
+answer: <strong>[4x²]</strong>, <strong>[−3x]</strong>,
+<strong>[3]</strong>.”</p>
+<div class="flag flag-self-explanation"><span class="flag-label">FLAG — Self-Explanation</span>SAY: “Before moving on —
+explain Step 2 in your own words: when you removed the brackets and then
+grouped, what exactly were you looking for, and how did you know which
+terms to group together?” <strong class="cue-label">CUE:</strong> ★ Write: “Write one
+sentence: I grouped the terms by ___.”</div>
+<hr />
+<p><strong>Beat 6 — Alberta context</strong> <strong class="show-label">SHOW:</strong>
+Board: “Two field sections in the Lethbridge area have widths (2x + 3) m
+and (x − 1) m. What is the total width?” <strong class="say-label">SAY:</strong> - “This
+is a genuine context — the total width is the sum of both widths.” -
+“Total width = (2x + 3) + (x − 1)” - “Remove brackets: 2x + 3 + x − 1” -
+“Combine like terms: 3x + 2” <strong class="cue-label">CUE:</strong> ★ Write: “Total width
+= <strong>[3x + 2]</strong> m.”</p>
+<hr />
+<h3 id="section-3-retrieval-check-facilitation">Section 3 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Add the polynomials — all steps, from memory.”
+<strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed. Retrieval check begins
+now.”</p>
+<p><strong>After students finish:</strong> <strong class="cue-label">CUE:</strong> ★
+Write: “Open and correct now.”</p>
+<p><strong>Answer guide:</strong> 1. (4x² − x + 2) + (−x² + 3x − 5):
+remove brackets → 4x² − x + 2 − x² + 3x − 5. Combine: <strong>3x² + 2x −
+3</strong>. 2. (x² + 2x) + (3x − 4) + (−x² + 1): remove brackets → x² +
+2x + 3x − 4 − x² + 1. Combine x²: x² − x² = 0. Combine x: 2x + 3x = 5x.
+Constants: −4 + 1 = −3. Answer: <strong>5x − 3</strong>. 3. Two field
+sections with lengths (5x + 2) m and (2x − 3) m. Total: (5x + 2) + (2x −
+3) = 5x + 2 + 2x − 3 = <strong>7x − 1</strong> m. 4. Adding polynomials
+never requires sign changes because the bracket only separates terms —
+it has no multiplying effect on addition. (Subtraction is different;
+this sets up Section 4.) 5. Stretch — (ax² + 3x − 1) + (2x² − bx + 4) =
+5x² + x + 3. Matching x²-terms: a + 2 = 5, so a = 3. Matching x-terms: 3
+− b = 1, so b = 2. Answer: <strong>a = 3, b = 2</strong>.</p>
+<h2 id="section-4-subtracting-polynomials">Section 4: Subtracting
+Polynomials</h2>
+<p><em>Learning target: I can subtract polynomials by distributing the
+negative sign and combining like terms.</em> <em>Timing: ~20 minutes
+direct instruction</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Three vocab terms — Difference / Opposite (of a polynomial) /
+Distribute <strong class="say-label">SAY:</strong> - “Three terms. ‘Distribute’ is the
+most important one in this unit — it will come up again in Sections 5
+and 6.” <strong class="cue-label">CUE:</strong> ⊡ Think: “Where have you seen the word
+‘distribute’ in math before? Keep it in your head.”</p>
+<hr />
+<p><strong>Beat 2 — Opposite of a polynomial</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>OPPOSITE of a polynomial = change the
+sign of EVERY term.</em> Write: Opposite of (2x² − 3x + 1) = −2x² + 3x −
+1 <strong class="say-label">SAY:</strong> - “The opposite of a polynomial means flipping
+every sign.” - “Every single term. Every one.” - “Opposite of (2x² − 3x
++ 1): flip 2x² to −2x², flip −3x to +3x, flip +1 to −1.” - “Result: −2x²
++ 3x − 1.” - “This is the same as multiplying the entire polynomial by
+−1.” <strong class="cue-label">CUE:</strong> ★ Write: “Subtracting a polynomial means
+adding its <strong>[opposite]</strong>. To find the opposite, change the
+sign of <strong>[every term]</strong>. Opposite of (2x² − 3x + 1) =
+<strong>[−2x² + 3x − 1]</strong>.”</p>
+<hr />
+<p><strong>Beat 3 — The sign-distribution error</strong>
+<strong class="show-label">SHOW:</strong> Board: Draw a large box labeled “DANGER ZONE.”
+Inside: −(2x² − x + 6). Below: Wrong: −2x² − x + 6. Below that: Correct:
+−2x² + x − 6. <strong class="say-label">SAY:</strong> - “Here is the most common error in
+this section — and it appears on tests every year.” - “When you
+distribute the negative, it multiplies EVERY term.” - “−(2x² − x + 6):
+distribute to 2x² → −2x². Distribute to −x → +x. Distribute to +6 → −6.”
+- “Wrong version: students flip the first term but forget the others.
+Every sign. Every time.” - “Write the correct version in the
+misconception box in your notes.” <strong class="cue-label">CUE:</strong> ★ Write:
+“Correct: −(2x² − x + 6) = <strong>[−2x² + x − 6]</strong>.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>Students write −(2x² − x + 6)
+= −2x² − x + 6 by distributing the negative to the first term only. The
+middle term’s sign does not change, but it should. This error is nearly
+universal and survives through to Grade 10 if not addressed explicitly.
+Use the language “every term, no exceptions” and have students
+physically circle each term as they flip it.</div>
+<hr />
+<p><strong>Beat 4 — Worked example: distribute the negative
+sign</strong> <strong class="show-label">SHOW:</strong> Board: Work through this live:</p>
+<p>(5x² + 3x − 4) − (2x² − x + 6) = 5x² + 3x − 4 − 2x² + x − 6 ←
+distribute: every sign in (2x² − x + 6) flips = 5x² − 2x² + 3x + x − 4 −
+6 ← group like terms = 3x² + 4x − 10 ← simplified</p>
+<p><strong class="say-label">SAY:</strong> - “Step 1: distribute the negative to every
+term inside the bracket.” - “2x² becomes −2x². −x becomes +x. +6 becomes
+−6.” - “Now it’s an addition problem. The bracket is gone.” - “Step 2:
+group like terms. Combine. Write in standard form.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Fill in the distribute line:
+<strong>[−]</strong> 2x² <strong>[+]</strong> x <strong>[−]</strong> 6 /
+simplified: <strong>[3x² + 4x − 10]</strong>.”</p>
+<hr />
+<p><strong>Beat 5 — Vertical method</strong> <strong class="show-label">SHOW:</strong>
+Board: Vertical layout — flip signs first, then add:</p>
+<p>5x² + 3x − 4 − 2x² − x + 6 ← flip all signs here first → −2x² + x − 6
+───────────────── 3x² + 4x − 10</p>
+<p><strong class="say-label">SAY:</strong> - “Vertical method for subtraction: flip every
+sign in the bottom row first. Then add.” - “Rewrite the bottom row with
+flipped signs. Then it’s just column addition.” - “Same answer: 3x² + 4x
+− 10.” <strong class="cue-label">CUE:</strong> ★ Write: “Fill in the vertical method
+answer: <strong>[3x²]</strong>, <strong>[4x]</strong>,
+<strong>[−10]</strong>.”</p>
+<div class="flag flag-self-explanation"><span class="flag-label">FLAG — Self-Explanation</span>SAY: “Before moving on —
+explain Step 1 in your own words: what did we do with the negative sign,
+and why did every term’s sign change?” <strong class="cue-label">CUE:</strong> ★ Write:
+“Write one sentence: we distributed the negative because ___.”</div>
+<hr />
+<p><strong>Beat 6 — Alberta context</strong> <strong class="show-label">SHOW:</strong>
+Board: “Total floor area of a Fort McMurray building: (6x² + 4x − 2) m².
+A section of (2x² − x + 3) m² is removed. What is the remaining area?”
+<strong class="say-label">SAY:</strong> - “Subtract the removed section from the total.” -
+“(6x² + 4x − 2) − (2x² − x + 3)” - “Distribute: 6x² + 4x − 2 − 2x² + x −
+3” - “Combine: 4x² + 5x − 5” <strong class="cue-label">CUE:</strong> ★ Write: “Remaining
+area = <strong>[4x² + 5x − 5]</strong> m².”</p>
+<hr />
+<h3 id="section-4-retrieval-check-facilitation">Section 4 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Subtract the polynomials — all steps. Pay special attention to
+distributing the negative.” <strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes
+closed. Retrieval check begins now.”</p>
+<p><strong>After students finish:</strong> <strong class="cue-label">CUE:</strong> ★
+Write: “Open and correct now.”</p>
+<p><strong>Answer guide:</strong> 1. Opposite of (−3x² + 2x − 5): flip
+every sign → <strong>3x² − 2x + 5</strong>. 2. (4x² + x − 3) − (x² − 2x
++ 1): distribute → 4x² + x − 3 − x² + 2x − 1. Combine: <strong>3x² + 3x
+− 4</strong>. 3. (2x + 7) − (5x − 3): distribute → 2x + 7 − 5x + 3.
+Combine: <strong>−3x + 10</strong>. 4. If only the first term’s sign is
+flipped: the result will be wrong for every remaining term. For example,
+−(x² − 2x + 1) mistakenly becomes −x² − 2x + 1 instead of −x² + 2x − 1.
+Every subsequent step carries the error. 5. Stretch — What must be
+subtracted from (5x² + 3x − 1) to get (2x² + x + 2)? Set up: (5x² + 3x −
+1) − P = 2x² + x + 2. Solving: P = (5x² + 3x − 1) − (2x² + x + 2) =
+<strong>3x² + 2x − 3</strong>.</p>
+<h2 id="section-5-multiplying-a-monomial-by-a-polynomial">Section 5:
+Multiplying a Monomial by a Polynomial</h2>
+<p><em>Learning target: I can multiply a monomial by a polynomial by
+distributing and applying exponent rules.</em> <em>Timing: ~25 minutes
+direct instruction</em></p>
+<p><em>Algebra tiles useful here: show 3x(2x + 1) as three rows of (2x +
+1) — students can see the physical area being distributed.</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Three vocab terms — Distribute / Expand / Product
+<strong class="say-label">SAY:</strong> - “Three terms. ‘Distribute’ you know from Section
+4. Same idea — broader application.” - “Expand means to apply the
+distributive property and remove the brackets.” <strong class="cue-label">CUE:</strong> ⊡
+Think: “You used the distributive property in Section 4. How was it
+similar to what we’re about to do?”</p>
+<hr />
+<p><strong>Beat 2 — Exponent rule: multiplying powers with the same
+base</strong> <strong class="show-label">SHOW:</strong> Board: Rule box: - x^m × x^n =
+x^(m+n) ← add the exponents - x × x = x² ← not 2x - x² × x³ = x⁵</p>
+<p><strong class="say-label">SAY:</strong> - “Before we can multiply a monomial by a
+polynomial, we need the exponent rule.” - “When multiplying two powers
+with the same base, you ADD the exponents.” - “x times x: x¹ × x¹ = x².
+Not 2x.” - “This is the most important distinction: x + x = 2x, but x ×
+x = x².” - “Addition combines coefficients. Multiplication combines
+exponents.” - “x² × x³: add the exponents. 2 + 3 = 5. Answer: x⁵.”
+<strong class="cue-label">CUE:</strong> ★ Write: “Exponent rule: x^m × x^n =
+x<strong>[m+n]</strong> / x × x = x<strong>[²]</strong> / x² × x³ =
+x<strong>[⁵]</strong>.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>“x × x = 2x.” Students confuse
+addition and multiplication of the same variable. This error makes every
+monomial-by-polynomial problem wrong. Draw side by side on the board:
+<em>x + x = 2x</em> (adding tiles — two x-tiles, two of them) versus
+<em>x × x = x²</em> (x rows of x-tiles, an area). The area model makes
+the distinction visual. If algebra tiles are available, physically show:
+laying two x-tiles end to end (addition = 2x) versus arranging them as
+rows and columns (multiplication = x²).</div>
+<hr />
+<p><strong>Beat 3 — The distributive property</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>a(b + c) = ab + ac</em> — the monomial
+multiplies EVERY term inside. Then write: 3x(2x² − 4x + 1) — with arrows
+showing 3x distributing to each of the three terms.
+<strong class="say-label">SAY:</strong> - “Distributive property: a times (b + c) = a
+times b, plus a times c.” - “The monomial outside must multiply every
+term inside the brackets.” - “Three terms inside: 3x multiplies the
+first, the second, and the third. Every one.” - “Missing even one term
+is the same error as missing a sign in subtraction — every subsequent
+step is wrong.” <strong class="cue-label">CUE:</strong> ★ Write: “Distributive property:
+a(b + c) = <strong>[ab + ac]</strong>. To multiply a monomial by a
+polynomial: multiply the monomial by <strong>[every term]</strong> in
+the brackets.”</p>
+<hr />
+<p><strong>Beat 4 — Worked example</strong> <strong class="show-label">SHOW:</strong>
+Board: Work through step by step:</p>
+<p>3x(2x² − 4x + 1) = 3x × 2x² + 3x × (−4x) + 3x × 1 = 6x³ − 12x² +
+3x</p>
+<p><strong class="say-label">SAY:</strong> - “Three terms in the bracket — three
+products.” - “First term: 3x × 2x². Coefficients: 3 × 2 = 6. Variables:
+x × x² = x³. Answer: 6x³.” - “Second term: 3x × (−4x). Coefficients: 3 ×
+−4 = −12. Variables: x × x = x². Answer: −12x².” - “Third term: 3x × 1.
+Coefficients: 3 × 1 = 3. Variable stays: x. Answer: 3x.” - “Final: 6x³ −
+12x² + 3x. Already in standard form.” <strong class="cue-label">CUE:</strong> ★ Write:
+“Fill in the example: <strong>[6x³]</strong> + <strong>[−12x²]</strong>
++ <strong>[3x]</strong>.”</p>
+<div class="flag flag-self-explanation"><span class="flag-label">FLAG — Self-Explanation</span>SAY: “Before moving on —
+explain Step 2 in your own words: when you multiplied 3x × 2x², why is
+the answer 6x³ and not 6x²?” <strong class="cue-label">CUE:</strong> ★ Write: “Write one
+sentence: the exponent becomes 3 because ___.”</div>
+<hr />
+<p><strong>Beat 5 — Practice: expand step by step</strong>
+<strong class="show-label">SHOW:</strong> Board: 4x(3x² − 2x + 5) <strong class="say-label">SAY:</strong> -
+“Your turn. Fill in the expanded form step by step.” - “First: write out
+the three multiplications.” - “Then: calculate each product.”
+<strong class="cue-label">CUE:</strong> ★ Write: “4x × <strong>[3x²]</strong> + 4x ×
+<strong>[−2x]</strong> + 4x × <strong>[5]</strong> =
+<strong>[12x³]</strong> + <strong>[−8x²]</strong> +
+<strong>[20x]</strong>.”</p>
+<p><em>Walk the room. Common errors: 4x × 3x² = 12x² (forgetting x × x²
+= x³) and 4x × 5 = 20 (dropping the x). Address both when
+reviewing.</em></p>
+<hr />
+<p><strong>Beat 6 — Alberta context</strong> <strong class="show-label">SHOW:</strong>
+Board: “Width: 2x m. Length: (x² + 3x − 1) m. Write a simplified
+expression for the area.” <strong class="say-label">SAY:</strong> - “Area = length ×
+width.” - “2x(x² + 3x − 1)” - “Distribute: 2x × x² = 2x³. 2x × 3x = 6x².
+2x × (−1) = −2x.” - “Area = 2x³ + 6x² − 2x” <strong class="cue-label">CUE:</strong> ★
+Write: “Area = 2x(<strong>[x² + 3x − 1]</strong>) = <strong>[2x³ + 6x² −
+2x]</strong> m².”</p>
+<hr />
+<h3 id="section-5-retrieval-check-facilitation">Section 5 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Exponent rule, distributive property, expand — from memory.”
+<strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed. Retrieval check begins
+now.”</p>
+<p><strong>After students finish:</strong> <strong class="cue-label">CUE:</strong> ★
+Write: “Open and correct now.”</p>
+<p><strong>Answer guide:</strong> 1. x² × x³ = x⁵ (add the exponents: 2
++ 3 = 5). 2. 2x(x + 5) = 2x × x + 2x × 5 = <strong>2x² + 10x</strong>.
+3. −3x(2x² − x + 4): distribute → −3x × 2x² = −6x³. −3x × (−x) = 3x².
+−3x × 4 = −12x. Answer: <strong>−6x³ + 3x² − 12x</strong>. 4. Width x m,
+length (4x − 3) m. Area = x(4x − 3) = <strong>4x² − 3x</strong> m². 5.
+Stretch — 2x(x + 3) + x(x − 1): expand each bracket → 2x² + 6x + x² − x.
+Combine like terms: <strong>3x² + 5x</strong>.</p>
+<h2 id="section-6-multiplying-two-binomials">Section 6: Multiplying Two
+Binomials</h2>
+<p><em>Learning target: I can multiply two binomials using an area model
+and write the simplified product.</em> <em>Timing: ~25 minutes direct
+instruction</em></p>
+<p><em>Algebra tiles are powerful here: use large x²-tiles, x-tiles, and
+unit tiles to build the area model physically. Students arranging (x +
+3)(x + 2) as a rectangle with tiles will see all four partial products
+before computing a single number.</em></p>
+<hr />
+<p><strong>Beat 1 — Vocabulary setup</strong> <strong class="show-label">SHOW:</strong>
+Board: Three vocab terms — Binomial product / Area model / Partial
+product <strong class="say-label">SAY:</strong> - “Three terms. ‘Area model’ is the
+scaffold — once you understand why it works, you won’t need the grid
+every time.” <strong class="cue-label">CUE:</strong> ⊡ Think: “Where have you seen an area
+model before — in any grade?”</p>
+<hr />
+<p><strong>Beat 2 — Four partial products</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>Every term in the first bracket
+multiplies every term in the second bracket. Two binomials always
+produce FOUR partial products.</em> Write: (x + 3)(x + 4) → four arrows:
+x→x, x→4, 3→x, 3→4</p>
+<p><strong class="say-label">SAY:</strong> - “When you multiply two binomials, every term
+in the first bracket must reach every term in the second bracket.” -
+“Two terms times two terms. How many multiplications? Four.” - “We call
+each of those four a partial product.” - “The most common error is to
+multiply only the ‘matching’ terms — x × x and 3 × 4 — and miss the
+middle two.” <strong class="cue-label">CUE:</strong> ★ Write: “Every term in the first
+bracket must multiply every term in the <strong>[second]</strong>
+bracket. Two binomials always produce <strong>[4]</strong> partial
+products.”</p>
+<div class="flag flag-misconception"><span class="flag-label">FLAG — Misconception</span>“(x + 2)(x + 3) = x² + 6 —
+just multiply the numbers.” Students multiply the first terms and the
+last terms, ignoring the cross terms. The area model is specifically
+designed to prevent this. Every cell in the grid is a partial product.
+<strong>Before the area model beat, say directly:</strong> “Some
+students write (x + 2)(x + 3) = x² + 6. They got x by multiplying x × x,
+and 6 by multiplying 2 × 3. They missed two entire products. The middle
+terms — 3x and 2x — disappear entirely. The area model won’t let you do
+this because you can see every cell.”</div>
+<hr />
+<p><strong>Beat 3 — Area model: (x + 3)(x + 4)</strong>
+<strong class="show-label">SHOW:</strong> Board: Draw the grid live — label the top row: ×,
+x, +4. Left column: ×, x, +3. Fill in the four cells:</p>
+<table>
+<thead>
+<tr>
+<th>×</th>
+<th>x</th>
+<th>+4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x</td>
+<td>x²</td>
+<td>4x</td>
+</tr>
+<tr>
+<td>+3</td>
+<td>3x</td>
+<td>12</td>
+</tr>
+</tbody>
+</table>
+<p><strong class="say-label">SAY:</strong> - “Area model: put the first binomial on the
+top, the second on the left.” - “Each cell is a product: row header
+times column header.” - “Top-left: x × x = x².” - “Top-right: x × 4 =
+4x.” - “Bottom-left: 3 × x = 3x.” - “Bottom-right: 3 × 4 = 12.” - “Four
+partial products: x², 4x, 3x, 12.” - “Now collect like terms: 4x + 3x =
+7x.” - “Final answer: x² + 7x + 12.” <strong class="cue-label">CUE:</strong> ★ Write:
+“Fill in the four cells: <strong>[x²]</strong>, <strong>[4x]</strong>,
+<strong>[3x]</strong>, <strong>[12]</strong>. Sum: <strong>[x²]</strong>
++ <strong>[4x]</strong> + <strong>[3x]</strong> + <strong>[12]</strong>.
+Simplified: <strong>[x² + 7x + 12]</strong>.”</p>
+<hr />
+<p><strong>Beat 4 — Second example: (2x + 1)(x + 5)</strong>
+<strong class="show-label">SHOW:</strong> Board: Draw the grid:</p>
+<table>
+<thead>
+<tr>
+<th>×</th>
+<th>x</th>
+<th>+5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2x</td>
+<td>2x²</td>
+<td>10x</td>
+</tr>
+<tr>
+<td>+1</td>
+<td>x</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+<p><strong class="say-label">SAY:</strong> - “Same process. Top: x and +5. Left: 2x and
++1.” - “Top-left: 2x × x = 2x².” - “Top-right: 2x × 5 = 10x.” -
+“Bottom-left: 1 × x = x.” - “Bottom-right: 1 × 5 = 5.” - “Like terms:
+10x + x = 11x.” - “Simplified: 2x² + 11x + 5.” <strong class="cue-label">CUE:</strong> ★
+Write: “Fill in the four cells: <strong>[2x²]</strong>,
+<strong>[10x]</strong>, <strong>[x]</strong>, <strong>[5]</strong>.
+Simplified: <strong>[2x² + 11x + 5]</strong>.”</p>
+<div class="flag flag-self-explanation"><span class="flag-label">FLAG — Self-Explanation</span>SAY: “Before moving on —
+explain Step 3 in your own words: after you found all four partial
+products, which ones did you combine and why could you combine them?”
+<strong class="cue-label">CUE:</strong> ★ Write: “Write one sentence: I combined 10x and x
+because ___.”</div>
+<hr />
+<p><strong>Beat 5 — Alberta context</strong> <strong class="show-label">SHOW:</strong>
+Board: “An Edmonton hockey rink expansion adds a section with length (x
++ 8) m and width (x + 5) m. What is the area?” <strong class="say-label">SAY:</strong> -
+“Area = length × width. Expand (x + 8)(x + 5).” - “Four partial
+products: x², 5x, 8x, 40.” - “Combine like terms: 5x + 8x = 13x.” -
+“Area = x² + 13x + 40 m².” <strong class="cue-label">CUE:</strong> ★ Write: “Area =
+<strong>[x² + 13x + 40]</strong> m².”</p>
+<hr />
+<p><strong>Beat 6 — Thread-back: the distributive property in three
+situations</strong> <strong class="show-label">SHOW:</strong> Board: Three bullet points: -
+Subtracting polynomials: distributing −1 to every term - Monomial ×
+polynomial: distributing the monomial to every term - Binomial ×
+binomial: distributing both terms of the first bracket to both terms of
+the second</p>
+<p><strong class="say-label">SAY:</strong> - “You’ve now used the distributive property
+three different ways.” - “Every single time, the rule is the same: every
+term outside must reach every term inside.” - “In subtraction, the
+‘outside’ is −1. In monomial multiplication, it’s a variable term. In
+binomial multiplication, it’s two terms.” - “One rule. Three
+applications.” <strong class="cue-label">CUE:</strong> ★ Write: “Write your answer to the
+connection prompt: the one rule that applies in all three cases is
+<strong>[the distributive property — every term outside multiplies every
+term inside]</strong>.”</p>
+<hr />
+<h3 id="section-6-retrieval-check-facilitation">Section 6 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> <strong class="say-label">SAY:</strong> “Close your
+notes. Four partial products. Area model. Expand and simplify — from
+memory.” <strong class="cue-label">CUE:</strong> ↩︎ Check: “Notes closed. Retrieval check
+begins now.”</p>
+<p><strong>After students finish:</strong> <strong class="cue-label">CUE:</strong> ★
+Write: “Open and correct now.”</p>
+<p><strong>Answer guide:</strong> 1. Two binomials always produce
+<strong>4</strong> partial products. 2. (x + 2)(x + 7): partial products
+→ x², 7x, 2x, 14. Like terms: 7x + 2x = 9x. Answer: <strong>x² + 9x +
+14</strong>. 3. (2x − 1)(x + 3): partial products → 2x², 6x, −x, −3.
+Like terms: 6x − x = 5x. Answer: <strong>2x² + 5x − 3</strong>. 4.
+Student got x² + 8 from (x + 4)(x + 2) — they multiplied x × x = x² and
+4 × 2 = 8, skipping the two middle products (4x and 2x). Correct:
+partial products are x², 2x, 4x, 8. Like terms: 2x + 4x = 6x. Correct
+answer: <strong>x² + 6x + 8</strong>. 5. Stretch — (x + 3)² = (x + 3)(x
++ 3): partial products → x², 3x, 3x, 9. Like terms: 3x + 3x = 6x.
+Answer: <strong>x² + 6x + 9</strong>.</p>
+<h2 id="unit-synthesis">Unit Synthesis</h2>
+<p><em>~20 minutes — notes closed, then compare to pre-knowledge
+check</em></p>
+<hr />
+<p><strong>Beat 1 — Set up</strong> <strong class="show-label">SHOW:</strong> Board: The
+six section headers listed — blank lines beside each.
+<strong class="say-label">SAY:</strong> - “Notes closed. Everything closed.” - “Six
+sections. I want the single most important idea from each — from
+memory.” - “This is not a test. This is you finding out what stuck and
+what didn’t.” - “Write content sentences — not ‘polynomials are
+important’ but ‘a polynomial is… because…’” <strong class="cue-label">CUE:</strong> ↩︎
+Check: “Notes closed. Six sections. One sentence each. Go.”</p>
+<p><em>Allow 5–7 minutes. Circulate. Watch for: students who can write
+clearly about Sections 1 and 2 but struggle with Sections 5 and 6 —
+distribution fluency is the most commonly unresolved item. Students who
+write vague sentences about “combining terms” without specifying “like
+terms” — prompt: “Can you be more specific?”</em></p>
+<hr />
+<p><strong>Beat 2 — Unit Synthesis Part B — combined problem</strong>
+<strong class="show-label">SHOW:</strong> Board: (3x² + x − 2) − (x² − 4x + 1) + 2x(x + 3)
+<strong class="say-label">SAY:</strong> - “This problem requires three sections in one.” -
+“Subtraction: distribute the negative. Then monomial multiplication.
+Then combine like terms.” - “Work in three columns if it helps — one
+operation at a time.” - Pause. Let students work silently 4–5 minutes. -
+“Let’s go through it step by step on the board.”</p>
+<p><em>Board work:</em> Step 1 — Subtraction: (3x² + x − 2) − (x² − 4x +
+1) = 3x² + x − 2 − x² + 4x − 1 = 2x² + 5x − 3 Step 2 — Expand: 2x(x + 3)
+= 2x² + 6x Step 3 — Combine all: (2x² + 5x − 3) + (2x² + 6x) = 4x² + 11x
+− 3</p>
+<p><strong class="cue-label">CUE:</strong> ★ Write: “Final answer: <strong>[4x² + 11x −
+3]</strong>.”</p>
+<hr />
+<p><strong>Beat 3 — Return to Pre-Knowledge Check</strong>
+<strong class="show-label">SHOW:</strong> Board: <em>“Turn to page 1. Read what you wrote
+before the unit started.”</em> <strong class="say-label">SAY:</strong> - “Read it. Don’t
+change it. Don’t erase anything.” - “What did you get right? What were
+you wrong about? What surprised you?” - “Write your answers at the
+bottom of the synthesis page.” <strong class="cue-label">CUE:</strong> ★ Write: “Answer
+the three end-of-unit synthesis questions: right / surprised / biggest
+misconception — in your own words.”</p>
+<p><em>Allow 3–5 minutes. This is the highest-value metacognitive moment
+in the package. Students reading their pre-instruction words in their
+own handwriting is more powerful than any correction you can deliver.
+Let it land quietly. Many students will have written “3x + 5” in their
+pre-knowledge check — they knew something but couldn’t name it. That
+recognition is meaningful.</em></p>
+<h2 id="blank-answer-key">Blank Answer Key</h2>
+<p>Quick reference — all fill-in blank answers in section order.</p>
+<h3 id="section-1">Section 1</h3>
+<table>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A polynomial is made of one or more ___</td>
+<td>terms</td>
+</tr>
+<tr>
+<td>Each term has a ___ (number in front)</td>
+<td>coefficient</td>
+</tr>
+<tr>
+<td>…and a variable raised to a whole-number ___</td>
+<td>exponent</td>
+</tr>
+<tr>
+<td>1 term = ___</td>
+<td>monomial</td>
+</tr>
+<tr>
+<td>2 terms = ___</td>
+<td>binomial</td>
+</tr>
+<tr>
+<td>3 terms = ___</td>
+<td>trinomial</td>
+</tr>
+<tr>
+<td>Degree of 5x² = ___</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Degree of 3x = ___</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Degree of 7 (constant) = ___</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Degree of a polynomial = degree of the ___ term</td>
+<td>highest (leading)</td>
+</tr>
+<tr>
+<td>4x³ + 2x² − x + 9: degrees are <strong><em>, </em></strong>,
+<strong><em>, </em></strong></td>
+<td>3, 2, 1, 0</td>
+</tr>
+<tr>
+<td>Degree of the polynomial: ___</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Leading coefficient: ___</td>
+<td>4</td>
+</tr>
+<tr>
+<td>5x²: coefficient = <strong><em>, degree = </em></strong></td>
+<td>5, 2</td>
+</tr>
+<tr>
+<td>−3x: coefficient = <strong><em>, degree = </em></strong></td>
+<td>−3, 1</td>
+</tr>
+<tr>
+<td>2 is a ___</td>
+<td>constant</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-2">Section 2</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Like terms share the same ___ raised to the same ___</td>
+<td>variable / exponent</td>
+</tr>
+<tr>
+<td>3x² and −7x²: both have ___</td>
+<td>x²</td>
+</tr>
+<tr>
+<td>4x and 4x²: different ___</td>
+<td>exponents</td>
+</tr>
+<tr>
+<td>5x and 3y: different ___</td>
+<td>variables</td>
+</tr>
+<tr>
+<td>6 and −2: both are ___</td>
+<td>constants</td>
+</tr>
+<tr>
+<td>To combine like terms: add or subtract the ___ only</td>
+<td>coefficients</td>
+</tr>
+<tr>
+<td>3x² + 7x² = ___</td>
+<td>10x²</td>
+</tr>
+<tr>
+<td>Only tiles of the same ___ and ___ can be combined</td>
+<td>shape / size</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-3">Section 3</h3>
+<table>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Steps: remove the ___</td>
+<td>brackets</td>
+</tr>
+<tr>
+<td>Identify ___ terms</td>
+<td>like</td>
+</tr>
+<tr>
+<td>Write in ___ form</td>
+<td>standard</td>
+</tr>
+<tr>
+<td>Standard form: terms from ___ degree to lowest</td>
+<td>highest</td>
+</tr>
+<tr>
+<td>Remove brackets (horizontal): ___</td>
+<td>3x² + 2x − 1 + x² − 5x + 4</td>
+</tr>
+<tr>
+<td>Group like terms: ___</td>
+<td>3x² + x² + 2x − 5x − 1 + 4</td>
+</tr>
+<tr>
+<td>Simplified: ___</td>
+<td>4x² − 3x + 3</td>
+</tr>
+<tr>
+<td>Vertical: row 1 answer, row 2, row 3</td>
+<td>4x², −3x, 3</td>
+</tr>
+<tr>
+<td>Lethbridge context — total width: ___</td>
+<td>3x + 2</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-4">Section 4</h3>
+<table>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Subtracting a polynomial means adding its ___</td>
+<td>opposite</td>
+</tr>
+<tr>
+<td>To find the opposite, change the sign of ___</td>
+<td>every term</td>
+</tr>
+<tr>
+<td>Opposite of (2x² − 3x + 1) = ___</td>
+<td>−2x² + 3x − 1</td>
+</tr>
+<tr>
+<td>Distribute line: −___ 2x² _<strong>x </strong>_6</td>
+<td>−, +, −</td>
+</tr>
+<tr>
+<td>Simplified: ___</td>
+<td>3x² + 4x − 10</td>
+</tr>
+<tr>
+<td>Vertical method answers: <strong><em>, </em></strong>, ___</td>
+<td>3x², 4x, −10</td>
+</tr>
+<tr>
+<td>Fort McMurray context — remaining area: ___</td>
+<td>4x² + 5x − 5</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-5">Section 5</h3>
+<table>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Distributive property: a(b + c) = ___</td>
+<td>ab + ac</td>
+</tr>
+<tr>
+<td>Multiply the monomial by ___ in the brackets</td>
+<td>every term</td>
+</tr>
+<tr>
+<td>x^m × x^n = x^___</td>
+<td>m+n</td>
+</tr>
+<tr>
+<td>x × x = x___</td>
+<td>x²</td>
+</tr>
+<tr>
+<td>x² × x³ = x___</td>
+<td>x⁵</td>
+</tr>
+<tr>
+<td>3x(2x² − 4x + 1) first product: ___</td>
+<td>6x³</td>
+</tr>
+<tr>
+<td>3x(2x² − 4x + 1) second product: ___</td>
+<td>−12x²</td>
+</tr>
+<tr>
+<td>3x(2x² − 4x + 1) third product: ___</td>
+<td>3x</td>
+</tr>
+<tr>
+<td>4x × 3x² = ___</td>
+<td>12x³</td>
+</tr>
+<tr>
+<td>4x × −2x = ___</td>
+<td>−8x²</td>
+</tr>
+<tr>
+<td>4x × 5 = ___</td>
+<td>20x</td>
+</tr>
+<tr>
+<td>Building context: area = ___</td>
+<td>2x³ + 6x² − 2x</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-6">Section 6</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Every term in the first bracket must multiply every term in the
+___</td>
+<td>second bracket</td>
+</tr>
+<tr>
+<td>Two binomials always produce ___ partial products</td>
+<td>4</td>
+</tr>
+<tr>
+<td>(x + 3)(x + 4): cell top-left</td>
+<td>x²</td>
+</tr>
+<tr>
+<td>(x + 3)(x + 4): cell top-right</td>
+<td>4x</td>
+</tr>
+<tr>
+<td>(x + 3)(x + 4): cell bottom-left</td>
+<td>3x</td>
+</tr>
+<tr>
+<td>(x + 3)(x + 4): cell bottom-right</td>
+<td>12</td>
+</tr>
+<tr>
+<td>(x + 3)(x + 4) simplified</td>
+<td>x² + 7x + 12</td>
+</tr>
+<tr>
+<td>(2x + 1)(x + 5): cell top-left</td>
+<td>2x²</td>
+</tr>
+<tr>
+<td>(2x + 1)(x + 5): cell top-right</td>
+<td>10x</td>
+</tr>
+<tr>
+<td>(2x + 1)(x + 5): cell bottom-left</td>
+<td>x</td>
+</tr>
+<tr>
+<td>(2x + 1)(x + 5): cell bottom-right</td>
+<td>5</td>
+</tr>
+<tr>
+<td>(2x + 1)(x + 5) simplified</td>
+<td>2x² + 11x + 5</td>
+</tr>
+<tr>
+<td>Edmonton rink area</td>
+<td>x² + 13x + 40</td>
+</tr>
+<tr>
+<td>Thread-back connection: the one rule</td>
+<td>distributive property — every term outside multiplies every term
+inside</td>
+</tr>
+</tbody>
+</table>
+<h2 id="key-flags-summary">Key Flags Summary</h2>
+<p><em>Quick reference for lesson planning — every misconception that
+needs direct address.</em></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Section</th>
+<th>Misconception</th>
+<th>Where it appears</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>“2x³ has degree 2 because the coefficient is 2” — confusing
+coefficient and degree</td>
+<td>Beat 4 — address before moving on; Retrieval Check Q3</td>
+</tr>
+<tr>
+<td>S1</td>
+<td>“A polynomial with 3 terms is always a trinomial” — naming before
+simplifying</td>
+<td>Beat 3 — address briefly; revisit in Section 2</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>“3x + 4x² = 7x² (or 7x³)” — combining unlike terms</td>
+<td>Beat 2 — FLAG; Retrieval Check Q3; algebraic tile comparison</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>“−(2x² − x + 6) = −2x² − x + 6” — distributing the negative to first
+term only</td>
+<td>Beat 3 — DANGER ZONE board callout; Retrieval Check Q4</td>
+</tr>
+<tr>
+<td>S5</td>
+<td>“x × x = 2x” — confusing multiplication with addition</td>
+<td>Beat 2 — address with side-by-side comparison; area model visualizes
+correctly</td>
+</tr>
+<tr>
+<td>S5</td>
+<td>“3(x + 4) = 3x + 4” — failing to distribute to the second term</td>
+<td>Beat 3 — address directly; practice exercise</td>
+</tr>
+<tr>
+<td>S6</td>
+<td>“(x + 2)(x + 3) = x² + 6” — missing the two middle products</td>
+<td>Beat 2 — FLAG before the area model; area model makes all four cells
+visible</td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>

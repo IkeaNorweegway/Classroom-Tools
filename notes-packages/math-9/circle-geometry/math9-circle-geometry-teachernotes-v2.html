@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Math 9 — Circle Geometry</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 11pt;
+  line-height: 1.55;
+  color: #1e293b;
+  background: #fff;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 28px 32px 56px;
+}
+:root {
+  --accent: #1d4ed8;
+  --accent-light: #eff6ff;
+  --accent-mid: #bfdbfe;
+}
+h1 { font-size: 22pt; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+h2 { font-size: 14pt; font-weight: 700; color: var(--accent); margin: 32px 0 10px; border-bottom: 2px solid var(--accent-light); padding-bottom: 4px; }
+h3 { font-size: 11.5pt; font-weight: 700; color: #334155; margin: 0; text-transform: uppercase; letter-spacing: .04em; padding: 8px 12px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; }
+h4 { font-size: 11pt; font-weight: 700; color: var(--accent); margin: 16px 0 4px; }
+p { margin-bottom: 8px; }
+ul, ol { margin: 6px 0 10px 22px; }
+li { margin-bottom: 4px; }
+strong { font-weight: 700; }
+em { font-style: italic; color: #475569; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10.5pt; }
+th { background: var(--accent-light); color: var(--accent); font-weight: 700; text-align: left; padding: 7px 10px; border: 1px solid var(--accent-light); }
+td { padding: 8px 10px; border: 1px solid #e2e8f0; vertical-align: top; }
+tr:nth-child(even) td { background: #f8fafc; }
+pre, code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; }
+pre { padding: 10px 14px; margin: 8px 0; white-space: pre; overflow-x: auto; }
+code { padding: 1px 5px; }
+hr { border: none; border-top: 2px solid #e2e8f0; margin: 24px 0; }
+.teacher-banner { background: var(--accent); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 9pt; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; display: inline-block; margin-bottom: 10px; }
+.show { border-left: 4px solid #64748b; background: #f8fafc; padding: 10px 14px; margin: 0; }
+.say  { border-left: 4px solid #0284c7; background: #f0f9ff; padding: 10px 14px; margin: 0; border-top: 1px solid #e8f4fb; }
+.cue  { border-left: 4px solid #6366f1; background: #eef2ff; padding: 10px 14px; margin: 0; border-top: 1px solid #e8eeff; }
+.beat-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; }
+.show .beat-label { color: #475569; }
+.say  .beat-label { color: #0284c7; }
+.cue  .beat-label { color: #4f46e5; }
+.beat { border: 1px solid #e2e8f0; border-radius: 8px; margin: 44px 0 0; overflow: hidden; }
+.flag { border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 14px 0; font-size: 10.5pt; }
+.flag .flag-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; display: block; }
+.flag-misconception { border-left: 4px solid #dc2626; background: #fef2f2; }
+.flag-misconception .flag-label { color: #dc2626; }
+.flag-pacing { border-left: 4px solid #d97706; background: #fffbeb; }
+.flag-pacing .flag-label { color: #b45309; }
+.flag-alberta-context, .flag-alberta, .flag-context { border-left: 4px solid #16a34a; background: #f0fdf4; }
+.flag-alberta-context .flag-label, .flag-alberta .flag-label, .flag-context .flag-label { color: #15803d; }
+.flag-cs-connection, .flag-connection { border-left: 4px solid #0284c7; background: #f0f9ff; }
+.flag-cs-connection .flag-label, .flag-connection .flag-label { color: #0284c7; }
+.answer-guide, .retrieval-guide { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px 18px; margin: 14px 0; }
+.answer-guide .ag-label, .retrieval-guide .rg-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #16a34a; margin-bottom: 8px; display: block; }
+.answer-guide ol, .retrieval-guide ol { margin-left: 18px; }
+.answer-guide li, .retrieval-guide li { margin-bottom: 10px; }
+.section-meta { font-size: 9.5pt; color: #64748b; margin: 3px 0 14px; }
+.section-meta span { background: #f1f5f9; border: 1px solid #e2e8f0; padding: 1px 8px; border-radius: 10px; font-weight: 600; margin-right: 5px; white-space: nowrap; }
+@media print { body { padding: 12px 18px; } h2 { page-break-before: always; } .beat { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="teacher-banner">Teacher Copy — Not for Students</div><h1 id="math-9-circle-geometry">Math 9 — Circle Geometry</h1>
+
+<p><em>Teaching reference — not a script</em></p>
+<hr/>
+<h2 id="how-to-use-this-document">How to use this document</h2>
+<p>Each teaching beat has three parts:</p>
+<table>
+<colgroup>
+<col style="width: 50%"/>
+<col style="width: 50%"/>
+</colgroup>
+<thead>
+<tr>
+<th>Label</th>
+<th>What it contains</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SHOW</strong></td>
+<td>What is visible to students — draw on the board or project. One
+thing per beat.</td>
+</tr>
+<tr>
+<td><strong>SAY</strong></td>
+<td>Key phrases and questions. Not sentences to read — prompts for
+fluent delivery. Answers to blanks shown in
+<strong>[brackets]</strong>.</td>
+</tr>
+<tr>
+<td><strong>CUE</strong></td>
+<td>The exact signal for students to write. Four types: ★ Write / ✎ Draw
+/ ⊡ Think / ↩︎ Check</td>
+</tr>
+</tbody>
+</table>
+<p>Flags appear in callout blocks: &gt; <strong>FLAG —
+Misconception:</strong> Red alert. Students will get this wrong without
+a direct address. &gt; <strong>FLAG — Pacing:</strong> Warning for where
+lessons tend to lose momentum. &gt; <strong>FLAG — Alberta
+Context:</strong> Genuine context problem — the setting matters to the
+math.</p>
+<p><strong>The screen and the voice carry different things.</strong>
+What is SHOW stays visual — labels, diagrams, key terms. What is SAY
+carries the reasoning. Never put your SAY on the screen.</p>
+<hr/>
+<h2 id="unit-at-a-glance">Unit at a Glance</h2>
+<table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr>
+<th>Lesson</th>
+<th>Content</th>
+<th>Student notes pages</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pre-knowledge check + Section 1: Circle Vocabulary</td>
+<td>Pre-K check + S1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Section 2: Chord Properties</td>
+<td>S2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Section 3: Central Angle and Inscribed Angle Theorem</td>
+<td>S3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Section 4: Tangent-Radius Property</td>
+<td>S4</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Unit Synthesis + Self-Assessment</td>
+<td>Synthesis page</td>
+</tr>
+<tr>
+<td>6+</td>
+<td>Practice, workbook, review</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><em>Retrieval warm-ups begin Lesson 2. Each warm-up pulls from the
+previous lesson. Section 2 also draws on square roots and the
+Pythagorean theorem — ensure students have those ready.</em></p>
+<hr/>
+<h2 id="materials-per-lesson">Materials per lesson</h2>
+<ul>
+<li>Student notes packages (printed, one per student)</li>
+<li>Whiteboard + markers (coloured if available — use one colour for
+radii, another for chords)</li>
+<li>Compass (Lessons 1–2 — constructing circles and chords)</li>
+<li>Ruler / straightedge (all lessons)</li>
+<li>Protractor (Lesson 3 — measuring inscribed and central angles)</li>
+<li>Calculator (Lessons 2 and 4 — Pythagorean theorem calculations)</li>
+<li>Optional: string or circular lid (Lesson 1 — finding the centre of a
+drawn circle)</li>
+</ul>
+<hr/>
+<h2 id="pre-knowledge-check">Pre-Knowledge Check</h2>
+<p><em>~10 minutes — before any instruction</em></p>
+
+<div class="beat"><h3>Beat 1 — Opening</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board:
+<em>“On the diagram in your notes — label any circle parts you already
+know.”</em> (That’s it — nothing else on the board.)</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Before we start the unit, I want to know what’s
+already in your head.” - “This is not a test. There are no marks. I am
+not going to correct it today.” - “Write honestly — label whatever you
+know, skip what you don’t.” - “There are also two written questions
+below the diagram. Do those as well — make your best guess.” - “You will
+come back to this page at the end of the unit. Do not erase anything.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Open your notes to page 1. You have 5
+minutes — label what you know and answer the two questions. Go.”</p>
+</div>
+</div>
+<div class="flag flag-pacing"><div class="flag-label">FLAG — Pacing</div>Do not read student responses aloud
+or correct them. The pre-knowledge check loses its value if students
+calibrate to what you reward. Circulate and observe. You are looking
+for: (a) students who already know radius, diameter, and chord, (b)
+students who have no idea what an inscribed angle is (most will not —
+this is fine), (c) students who write “90°” for the tangent/radius angle
+question (this is correct — note who wrote it).</div>
+
+<h2 id="section-1-circle-vocabulary">Section 1 — Circle Vocabulary</h2>
+<p><em>Learning target: I can identify and name all major parts of a
+circle and use precise geometric language when describing circle
+relationships.</em> <em>Timing: ~25 minutes direct instruction</em></p>
+
+<div class="beat"><h3>Beat 1 — Vocabulary table setup</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: The ten vocabulary terms in a column —
+Centre / Radius / Diameter / Chord / Arc / Central angle / Inscribed
+angle / Tangent / Point of tangency / Semicircle</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>-
+“Ten terms. That’s the vocabulary for this entire unit.” - “Don’t fill
+them in yet. We’ll build each one as we go.” - “By the end of this
+section you’ll have your own definition and a drawing for each one.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ⊡ Think</div>
+<p>“Scan the ten terms. Which ones do you
+already know something about? Keep it in your head.”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 2 — Centre, radius, diameter</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw a clean circle. Mark the centre O.
+Draw radius OA. Draw diameter QR through O. Label all three.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Centre — the point equidistant from all points
+on the circle. Every point on the circle is the same distance from O.” -
+“Radius — from the centre to any point on the circle. Label it r.” -
+“Diameter — the longest chord. Special because it passes through the
+centre.” - “How does the diameter relate to the radius?” Pause 3
+seconds. “d = 2r. Radius = d divided by 2.” - “Every diameter is a
+chord. Not every chord is a diameter.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Centre is <strong>[equidistant]</strong> from all points on the circle.
+Radius goes from the <strong>[centre]</strong> to any point. Diameter is
+the <strong>[longest]</strong> chord — passes through the
+<strong>[centre]</strong>. d = <strong>[2]</strong> × r and r = d /
+<strong>[2]</strong>.”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 3 — Chord and arc</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board:
+Same circle. Add chord PS (does not pass through O — draw it clearly
+off-centre). Then draw the minor arc between P and S with a curved
+accent line.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Chord — a line segment with both
+endpoints on the circle.” - “PS is a chord. QR is a chord. What makes QR
+special? It passes through the centre.” - “Arc — the curved part of the
+circle between two points. Think: a piece of the circle’s edge.” -
+“Minor arc is the shorter piece. Major arc is the longer piece.” -
+“Semicircle: exactly half the circle — cut by a diameter.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Chord has both endpoints on the
+<strong>[circle]</strong>. Arc is the <strong>[curved part]</strong> of
+the circle between two points. Semicircle is exactly
+<strong>[half]</strong> the circle — cut by a
+<strong>[diameter]</strong>.”</p>
+</div>
+</div>
+<div class="flag flag-misconception"><div class="flag-label">FLAG — Misconception</div>“A chord is the same as a
+diameter.” Address this directly before moving on. SAY: “Here is a
+mistake students make: they say any chord that goes through the circle
+is a diameter. Is that right?” Pause for responses. Then: “No. A
+diameter is a specific chord — one that passes through the centre. QR
+passes through centre O, so QR is a <strong>[diameter]</strong>. A chord
+that does not pass through O — like PS — would be <strong>[shorter
+than]</strong> the diameter. Every diameter is a chord, but not every
+chord is a diameter.” Point to both QR and PS on the board
+simultaneously.</div>
+
+<div class="beat"><h3>Beat 4 — Central angle vs. inscribed angle</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw two circles side by side. In Circle
+A: mark centre O, draw two radii to points A and B on the circle, label
+the angle at O. In Circle B: mark a point C on the circle, draw two
+chords from C to points A and B, label the angle at C.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Central angle — vertex at the centre. Both
+sides are radii.” - “Inscribed angle — vertex on the circle itself. Both
+sides are chords.” - “Same arc AB in both diagrams. The difference is
+where the vertex sits.” - “The arc intercepted by an angle is the arc
+that lies inside the angle.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Central
+angle has vertex at the <strong>[centre]</strong>. Inscribed angle has
+vertex on the <strong>[circle]</strong>, both sides are chords. Arc
+intercepted is <strong>[inside]</strong> the angle.”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 5 — Tangent</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw
+a circle with a horizontal line touching it at exactly one point T. Draw
+the radius OT. Mark the right angle.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Tangent —
+a line that touches the circle at exactly <strong>[one]</strong> point.
+That point is the point of tangency.” - “Is a tangent a chord?” Pause.
+“No. A chord has both endpoints on the circle. The tangent only touches
+at one point — it doesn’t go inside.” - “The tangent is perpendicular to
+the radius at the point of tangency. That right angle marker is always
+there. We’ll prove why in Section 4.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Tangent touches the circle at exactly <strong>[one]</strong> point. At
+the point of tangency, the tangent is <strong>[perpendicular]</strong>
+to the radius. Tangent is NOT a chord — <strong>[No]</strong>.”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 6 — Minor arc, major arc, semicircle</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw a circle with two points marked P and
+Q. Shade the minor arc (the short way around). Arrow pointing to it:
+<em>minor arc</em>. Arrow pointing to the long way around: <em>major
+arc</em>. Separate diagram: diameter drawn, half the circle shaded:
+<em>semicircle</em>.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Minor arc — the shorter
+arc between two points. Less than a semicircle.” - “Major arc — the
+longer arc. More than a semicircle.” - “Semicircle — exactly half.
+Always formed by a diameter.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Minor arc
+= <strong>[shorter]</strong> arc. Major arc = <strong>[longer]</strong>
+arc. Semicircle = <strong>[half]</strong> circle — cut by a
+<strong>[diameter]</strong>.”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 7 — Vocabulary table fill-in</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: The ten terms. Nothing else.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Go back to your vocabulary table at the top of
+Section 1.” - “Fill in each term in your own words — not copied from
+your notes.” - “Add a drawing or example you came up with yourself.” -
+“Your definition should be something you could explain to a Grade 6
+student.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Complete your vocab table now
+— own words, own drawings.”</p>
+</div>
+</div>
+<p><em>Allow 4–5 minutes. Circulate. Watch for: students copying the
+fill-in notes verbatim (redirect — own words); students leaving
+‘inscribed angle’ blank (prompt: “Where is the vertex? On the circle or
+at the centre?”); students confusing tangent and chord (redirect to the
+one-point-versus-two-endpoint distinction).</em></p>
+<hr/>
+<h3 id="section-1-retrieval-check-facilitation">Section 1 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> SAY: “Close your
+notes. Everything closed. I’m going to ask you some questions — you
+write the answers from memory.” CUE: ↩︎ Check: “Notes
+closed. Retrieval check begins now.”</p>
+<p><strong>After students finish (4–5 min):</strong>
+SAY: “Open your notes. Find the answer in your notes.
+Fix anything that was wrong or incomplete — use a different colour if
+you have one.” CUE: ★ Write: “Open your notes. Check
+and correct now.”</p>
+<p><strong>Answer guide:</strong> 1. A chord has both endpoints on the
+circle. A diameter is a special chord — the only chord that passes
+through the centre. Every diameter is a chord; not every chord is a
+diameter. 2. A central angle has its vertex at the centre and its sides
+are radii. An inscribed angle has its vertex on the circle and its sides
+are chords. 3. Radius = 14 ÷ 2 = 7 cm. 4. The tangent is perpendicular
+(90°) to the radius at the point of tangency. 5. <em>(Stretch)</em> Yes
+— two chords can be equal in length. If they are equal in length, they
+are equidistant from the centre. (This previews Section 2’s equal-chords
+property — note students who get this.)</p>
+<hr/>
+<hr/>
+<h2 id="section-2-chord-properties">Section 2 — Chord Properties</h2>
+<p><em>Learning target: I can apply the two chord properties — the
+perpendicular bisector property and the equal chords/equal distance
+property — to solve problems.</em> <em>Timing: ~30 minutes direct
+instruction (includes two worked examples with Pythagorean
+theorem)</em></p>
+<p><em>Have calculators available. Students need square root
+calculations.</em></p>
+
+<div class="beat"><h3>Beat 1 — Property 1 setup</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw a circle with chord AB. From centre O, draw a line segment
+to the midpoint M of AB. Mark the right angle at M.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Property 1. I’m going to tell you what it says,
+and then we’ll look at why it makes sense.” - “If a line from the centre
+of a circle is perpendicular to a chord — 90° — then it bisects that
+chord.” - “Bisects: cuts into two equal halves.” - “AM equals MB. The
+centre ‘sees’ both halves equally because the circle is perfectly
+symmetric.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“If a line from the
+<strong>[centre]</strong> is perpendicular to a chord, then it
+<strong>[bisects]</strong> that chord. AM = <strong>[MB]</strong>.”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 2 — The converse</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board:
+Same diagram. Add label: <em>Converse — works both ways.</em></p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “The converse is also true. If a line from the
+centre bisects a chord — cuts it in half — then it is perpendicular to
+the chord.” - “Both directions. It bisects if and only if it’s
+perpendicular.” - “This is a powerful tool: if you know a line from the
+centre hits the midpoint of a chord, you know you have a right angle.
+That means you can use the Pythagorean theorem.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Converse: if a line from the centre bisects a chord, then it is
+<strong>[perpendicular]</strong> to the chord.”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 3 — Worked Example 1: Bisector + Pythagorean
+theorem</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw the triangle OMA.
+Label OA = 10 (radius), chord AB = 16. Mark right angle at M. Leave OM
+blank.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Worked Example 1. Chord AB is 16 cm.
+Radius is 10 cm. OM perpendicular to AB.” - “Step 1: OM bisects AB. So
+AM = 16 ÷ 2 = 8 cm.” - “Step 2: Right triangle OMA. Which side is the
+hypotenuse?” Pause 3 seconds. “OA — the radius. It is the longest side,
+and it is opposite the right angle at M.” - “Step 3: Pythagorean
+theorem. OA² = OM² + AM².” - “10² = OM² + 8². 100 = OM² + 64. OM² = 36.
+OM = 6 cm.” “Before moving on — look at Step 2, where we
+identified the hypotenuse. In your own words: what did we do there and
+why?”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“AM = <strong>[16]</strong> ÷
+2 = <strong>[8]</strong> cm. OA = <strong>[10]</strong> (radius). AM =
+<strong>[8]</strong>. OM² = <strong>[100]</strong> −
+<strong>[64]</strong> = <strong>[36]</strong>. OM = <strong>[6]</strong>
+cm.” ★ Write: “Explain Step 2 — why is OA the
+hypotenuse and how do we know?”</p>
+</div>
+</div>
+
+<p><em>Allow 60–90 seconds. Good answers identify: OA is opposite the
+right angle at M / OA is the longest side in the triangle / the radius
+connects O to the circle and M is inside the circle so OA must be
+longer. Students who write “it’s just the longest” need a prompt: “Why
+is OA longer than OM and AM?”</em></p>
+
+<div class="beat"><h3>Beat 4 — Property 2: Equal chords, equal distances</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw a circle with two equal-length chords
+AB and CD on opposite sides of the centre. From O, draw perpendiculars
+to each. Label distances d₁ and d₂.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Property 2.
+Still in the same circle.” - “If two chords are equal in length, they
+are equidistant from the centre. Same distance.” - “Converse: if two
+chords are the same distance from the centre, they are equal in length.”
+- “d₁ equals d₂.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Equal chords in the
+same circle → <strong>[equidistant]</strong> from centre. d₁ =
+<strong>[d₂]</strong>.”</p>
+</div>
+</div>
+<div class="flag flag-misconception"><div class="flag-label">FLAG — Misconception</div>“A longer chord is farther
+from the centre.” Students think bigger = farther out. Address this
+directly. SAY: “Here’s an intuition trap. Which chord is farthest from
+the centre — the longest one or the shortest one?” Pause for responses —
+most will say the longest. “It’s the opposite. The longest chord of all
+is the diameter, and it passes through the centre: distance zero. As you
+move a chord farther from the centre, it gets shorter. Think of sliding
+a horizontal chord up toward the top of the circle — it shrinks and
+disappears at the edge. Closer to the middle = longer.”</div>
+
+<div class="beat"><h3>Beat 5 — Worked Example 2: Equal chords</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw the triangle OMP for chord PQ. Label
+OP = 13 (radius), PQ = 24. Mark right angle at M.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Two equal chords PQ and RS, each 24 cm. Radius 13 cm. Find the
+distance from the centre to each chord.” - “Step 1: Equal chords —
+equidistant. So we only need to find the distance for one.” - “Step 2:
+OM bisects PQ. PM = 24 ÷ 2 = 12 cm.” - “Step 3: Right triangle OMP. OP²
+= OM² + PM². 13² = OM² + 12². 169 = OM² + 144. OM² = 25. OM = 5 cm.” -
+“Both chords are 5 cm from the centre.” “Before moving on — look at Step 1 where we used
+equal chords to simplify the problem. In your own words: what did we do
+there and why?”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“PM = <strong>[24]</strong> ÷ 2 = <strong>[12]</strong>. OP = 13. OM² =
+169 − 144. OM = <strong>[5]</strong> cm. Both chords
+<strong>[5]</strong> cm from centre.” ★ Write: “Explain Step 1 — why
+could we just solve for one chord instead of both?”</p>
+</div>
+</div>
+
+<p><em>Allow 60–90 seconds. Students should identify: the equal-chords
+property tells us both distances are the same, so one calculation gives
+both answers.</em></p>
+
+<div class="beat"><h3>Beat 6 — Connection prompt: Finding a centre</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw a circle on the board with no centre
+marked. No labels.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Here’s an application.
+Imagine you have a circle — maybe a circular lid, a manhole cover, a
+coin. You can trace it but you don’t know where the centre is.” - “You
+know that the perpendicular bisector of any chord passes through the
+centre.” - “How would you find the centre using only a ruler and
+compass?” Pause 4–5 seconds. - “Write your steps. Don’t wait — write
+while you think.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Describe the steps to
+find the centre of a circle using two chords and their perpendicular
+bisectors.”</p>
+</div>
+</div>
+<p><em>Allow 90 seconds. Expected answer: draw two chords, construct the
+perpendicular bisector of each, the intersection is the centre. Students
+who get this are ready for the retrieval stretch question.</em></p>
+<hr/>
+<h3 id="section-2-retrieval-check-facilitation">Section 2 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> SAY: “Close your
+notes. Everything closed.” CUE: ↩︎ Check: “Notes closed.
+Two chord properties, and you need to be able to use them with the
+Pythagorean theorem.”</p>
+<p><strong>After students finish (5–6 min):</strong>
+SAY: “Open your notes. Check and correct.”
+CUE: ★ Write: “Open your notes. Check and correct
+now.”</p>
+<p><strong>Answer guide:</strong> 1. If a line from the centre is
+perpendicular to a chord, it bisects the chord (cuts it into two equal
+halves). Converse: if a line from the centre bisects a chord, it is
+perpendicular to it. 2. Half-chord = 18 ÷ 2 = 9 cm. Right triangle: r² =
+9² + 12². r² = 81 + 144 = 225. r = 15 cm. <em>(Students frequently
+subtract instead of adding here — they mix up which side is the
+hypotenuse. The radius is the hypotenuse because it is opposite the
+right angle.)</em> 3. They are equidistant from the centre — the same
+distance from the centre. 4. Half-chord² = r² − d² = 5² − 3² = 25 − 9 =
+16. Half-chord = 4. Full chord = 8 cm. 5. <em>(Stretch)</em> Chord 1:
+half = √(17² − 8²) = √(289 − 64) = √225 = 15 → full = 30 cm. Chord 2:
+half = √(17² − 15²) = √(289 − 225) = √64 = 8 → full = 16 cm. Chord 1 is
+longer by 30 − 16 = 14 cm. <em>(Both calculations require correct
+hypotenuse identification — award partial credit if one is set up
+correctly.)</em></p>
+<hr/>
+<hr/>
+<h2 id="section-3-central-angle-and-inscribed-angle-theorem">Section 3 —
+Central Angle and Inscribed Angle Theorem</h2>
+<p><em>Learning target: I can apply the inscribed angle theorem to find
+unknown angles, and explain why inscribed angles subtending the same arc
+are equal.</em> <em>Timing: ~25 minutes direct instruction</em></p>
+<p><em>Have protractors available for Beat 3 if you want students to
+measure and verify.</em></p>
+
+<div class="beat"><h3>Beat 1 — Vocabulary setup</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Three terms — Inscribed angle theorem / Subtend / Same arc</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Three terms for this section. ‘Subtend’ is the
+key one.” - “When an angle subtends an arc, it means the angle opens up
+to face that arc. The arc is what the angle ‘sees.’” - “We’ll fill in
+these definitions as we build the theorem.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ⊡ Think</div>
+<p>“Look at the diagram of the inscribed angle and central angle in
+your notes. Both angles open toward the same arc. That’s what subtend
+means.”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 2 — The theorem statement</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw the diagram — circle with centre O,
+points A and B on the circle (at the bottom), point P on the circle (at
+the top). Draw inscribed angle APB. Draw central angle AOB. Both open
+toward arc AB at the bottom.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “The inscribed
+angle is half the central angle when both subtend the same arc.” -
+“Inscribed angle = (1/2) × central angle.” - “Or equivalently: central
+angle = 2 × inscribed angle.” - “In this diagram: central angle AOB = 2
+× inscribed angle APB.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Inscribed angle
+= <strong>[(1/2)]</strong> × central angle. Central angle =
+<strong>[2]</strong> × inscribed angle.”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 3 — Worked Example 1: Central → Inscribed</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw the scenario — label central angle
+AOB = 80°. Point P on the circle. Ask: find angle APB.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Worked Example 1. Central angle AOB is 80°.
+Find inscribed angle APB — same arc AB.” - “Apply the theorem: inscribed
+= central ÷ 2.” - “APB = 80° ÷ <strong>[2]</strong> =
+<strong>[40]</strong>°.” “Before moving on — look at the step where we
+divided by 2. In your own words: what did we do there and why? Don’t say
+‘because the theorem says so’ — try to say where the factor of 2 comes
+from.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“APB = 80° ÷
+<strong>[2]</strong> = <strong>[40]</strong>°.” ★ Write: “Explain the divide-by-2 step —
+where does the factor of 2 come from?”</p>
+</div>
+</div>
+
+<p><em>Allow 60–90 seconds. This is a hard self-explanation — students
+do not need a full proof, but a good answer gestures toward: the
+inscribed angle vertex is on the circle (farther from the arc), while
+the central angle vertex is at the centre (closer to the arc), so the
+central angle “opens wider” to see the same arc. Accept any reasoning
+that connects vertex position to angle size.</em></p>
+
+<div class="beat"><h3>Beat 4 — Worked Example 2: Inscribed → Central</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: New diagram. Label inscribed angle APB =
+35°. Ask: find central angle AOB.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Worked
+Example 2. Inscribed angle APB is 35°. Find central angle AOB.” -
+“Reverse the theorem: central = 2 × inscribed.” - “AOB = 2 × 35° =
+<strong>[70]</strong>°.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“AOB = 2 × 35° =
+<strong>[70]</strong>°.”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 5 — Corollary: Same arc, equal inscribed angles</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw a circle with arc AB at the bottom.
+Draw two different inscribed angles from points P and Q on the top arc —
+both opening toward arc AB. Label angles APB and AQB.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Corollary to the theorem. If two inscribed
+angles both subtend the same arc, they are equal.” - “Why? Because both
+equal (1/2) × the same central angle.” - “It doesn’t matter where P and
+Q are on the major arc. The inscribed angle is always the same size.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“APB = AQB = <strong>[(1/2) × central
+angle AOB]</strong>. No matter where P and Q are on the major arc, the
+angle stays the <strong>[same]</strong> size.”</p>
+</div>
+</div>
+<div class="flag flag-misconception"><div class="flag-label">FLAG — Misconception</div>“All inscribed angles in a
+circle equal 90°.” This is the most common error in this section.
+Address it directly now, before students practice. SAY: “Here’s a
+mistake I see on tests: students write that any inscribed angle in a
+circle is 90°. Let’s check that. In the diagram on your notes, the
+central angle AOB = 80°. So the inscribed angle = 40°. Is that 90°?”
+Pause. “No. 90° is a special case — it only happens when the chord AB is
+a diameter. When AB is a diameter, the central angle is 180° (a straight
+line). Inscribed angle = 180° ÷ 2 = <strong>[90]</strong>°. That’s why
+angles in a semicircle are 90°. Not because they’re in a circle —
+because the chord is a diameter.” Write on the board: <em>90° inscribed
+angle → only when AB is a diameter.</em></div>
+
+<div class="beat"><h3>Beat 6 — Angles in a semicircle</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw a circle with diameter AB. Mark point
+P on the circle. Draw inscribed angle APB. Mark 90°.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Special case. If AB is a diameter, central
+angle AOB = 180°. Inscribed angle = 180° ÷ 2 = 90°.” - “This is always
+true. Any point P on the circle will give a 90° angle at P when looking
+across the diameter.” - “Practical test: if you inscribe an angle and it
+comes out 90°, the chord subtending it is a diameter.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“If AB is a diameter: central angle =
+<strong>[180°]</strong>. Inscribed angle APB =
+<strong>[90°]</strong>.”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 7 — Finding unknown angles with major arc</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw a circle with central angle AOB =
+110° on the minor arc side. Mark inscribed angle APB on the minor arc
+side. Then separately label: major arc central angle = 360° − 110° =
+250°. Mark inscribed angle AQB subtending the major arc.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Central angle AOB = 110°. Two questions.” -
+“Part a: inscribed angle APB on the same (minor) arc. APB = 110° ÷ 2 =
+<strong>[55]</strong>°.” - “Part b: inscribed angle AQB subtending the
+major arc. The major arc has central angle = 360° − 110° =
+<strong>[250]</strong>°. So AQB = 250° ÷ 2 = <strong>[125]</strong>°.” -
+“The arc matters. Same circle, different arc, different inscribed
+angle.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“APB = <strong>[110°]</strong> ÷
+2 = <strong>[55]</strong>°. Major arc central angle = 360° − 110° =
+<strong>[250]</strong>°. AQB = <strong>[250°]</strong> ÷ 2 =
+<strong>[125]</strong>°.”</p>
+</div>
+</div>
+
+<h3 id="section-3-retrieval-check-facilitation">Section 3 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> SAY: “Close your
+notes. Everything closed.” CUE: ↩︎ Check: “Notes closed.
+State the theorem, apply it, and explain the special case.”</p>
+<p><strong>After students finish (4–5 min):</strong>
+SAY: “Open your notes. Check and correct.”
+CUE: ★ Write: “Open your notes. Check and correct
+now.”</p>
+<p><strong>Answer guide:</strong> 1. The inscribed angle is half the
+central angle when both subtend the same arc. (Or equivalently: the
+central angle is twice the inscribed angle subtending the same arc.) 2.
+Inscribed angle = 144° ÷ 2 = 72°. 3. Central angle = 2 × 23° = 46°. 4.
+Because all inscribed angles subtending the same arc equal (1/2) × the
+same central angle — so they must all be equal to each other. 5.
+<em>(Stretch)</em> Angle APB = 40° (given, consistent with central angle
+80°). Angle CPD = 130° ÷ 2 = 65°. <em>(Students must apply the theorem
+to the second arc independently. Common error: using 80° again.
+Redirect: “What is the central angle for arc CD?”)</em></p>
+<hr/>
+<hr/>
+<h2 id="section-4-tangent-radius-property">Section 4 — Tangent-Radius
+Property</h2>
+<p><em>Learning target: I can apply the tangent-radius perpendicularity
+property and use it with the Pythagorean theorem to solve problems.</em>
+<em>Timing: ~25 minutes direct instruction</em></p>
+
+<div class="beat"><h3>Beat 1 — Vocabulary setup</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Four terms — Tangent / Point of tangency / Perpendicular /
+Tangent from external point</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “You already know
+tangent from Section 1 — a line touching the circle at exactly one
+point.” - “Section 4 is about the angle relationship at that point of
+tangency, and what it lets us calculate.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ⊡ Think</div>
+<p>“Look at the tangent-radius diagram in your notes. Where is the right
+angle? Why do you think it’s there?”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 2 — The property</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board:
+Draw a circle with centre O. Draw radius OT to the point of tangency T.
+Draw the tangent line through T (horizontal). Mark the 90° angle at T.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “The tangent-radius property: a tangent to a
+circle is perpendicular to the radius at the point of tangency.” -
+“Angle OTP = 90°. Always.” - “This means: every time you see a tangent
+touching a circle, you automatically get a right angle at the point of
+tangency.” - “And a right angle means — what tool can we use?” Pause 3
+seconds. “The Pythagorean theorem.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Tangent is <strong>[perpendicular]</strong> to the radius at the point
+of tangency. Angle OTP = <strong>[90]</strong>°.”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 3 — The right triangle setup</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Same diagram. Add an external point P on
+the tangent line. Draw line segment OP (the hypotenuse). Label: OT = r
+(radius), PT = tangent length (unknown), OP = distance from P to centre.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Add an external point P. Draw the line from P
+to the centre O.” - “Now we have a right triangle: legs are OT and PT,
+hypotenuse is OP.” - “The right angle is at T. So the hypotenuse is OP —
+the side opposite the right angle.” - “This setup is what allows us to
+calculate any one of the three lengths if we know the other two.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Radius and tangent form a
+<strong>[right]</strong> triangle with any line from the external point
+to the centre.”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 4 — Worked Example: Tangent length</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw the triangle OTP. Label OT = 5 cm
+(radius), OP = 13 cm. Mark right angle at T. Leave PT blank.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Worked Example. Circle radius 5 cm. External
+point P is 13 cm from the centre. Find tangent length PT.” - “Right
+angle is at <strong>[T]</strong> — tangent meets radius.” - “Hypotenuse
+is <strong>[OP]</strong> — the longest side, opposite the right angle.”
+- “PT² = OP² − OT².” - “PT² = 13² − 5² = 169 − 25 = 144.” - “PT = 12
+cm.” “Before moving on — look at the step where we
+identified OP as the hypotenuse. In your own words: what did we do there
+and why?”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Right angle at
+<strong>[T]</strong>. Hypotenuse = <strong>[PO = 13]</strong>. PT² =
+<strong>[13²]</strong> − <strong>[5²]</strong> = <strong>[169]</strong>
+− <strong>[25]</strong> = <strong>[144]</strong>. PT =
+<strong>[12]</strong> cm.” ★ Write: “Explain why PO is the
+hypotenuse and not PT or OT.”</p>
+</div>
+</div>
+
+<p><em>Allow 60–90 seconds. Good answers: the right angle is at T, so
+the side opposite T (which is PO) must be the hypotenuse / the
+hypotenuse is always opposite the right angle / OT and PT are the two
+legs meeting at the right angle, so PO must be the hypotenuse.</em></p>
+
+<div class="beat"><h3>Beat 5 — Equal tangents from an external point</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Draw a circle with centre O. Mark external
+point P. Draw two tangent lines from P to the circle — one touching at
+T₁, one touching at T₂. Mark right angles at T₁ and T₂. Show that PT₁ =
+PT₂.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “From any external point, you can draw two
+tangents to a circle.” - “The two tangent segments — from the external
+point to each point of tangency — are equal in length.” - “PT₁ = PT₂.” -
+“Why? Both form right triangles with the same hypotenuse OP and the same
+leg OT = r. So the third side must be equal.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“From external point P: PT₁ = <strong>[PT₂]</strong>.”</p>
+</div>
+</div>
+
+<div class="beat"><h3>Beat 6 — Alberta context problem</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Sketch: a circle labelled “circular
+fountain, r = 3 m.” A point labelled “bench, 5 m from centre.” Two
+straight dashed lines from the bench to the circle.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Alberta context. A circular fountain in a
+Calgary park has radius 3 m. A park bench sits 5 m from the fountain’s
+centre. Two straight paths run from the bench, each touching the
+fountain at exactly one point.” - “Each path is a tangent. The radius to
+the point of tangency is 3 m. The distance from bench to centre is 5 m.”
+- “Sketch the bench as an external point. Draw the radius to the point
+of tangency. Mark the right angle. Then use the Pythagorean theorem.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Path length² = 5² − 3² = 25 − 9 = 16.
+Path length = 4 m.”</p>
+</div>
+</div>
+<div class="flag flag-alberta-context"><div class="flag-label">FLAG — Alberta Context</div>This problem is genuine
+context — the geometry only makes sense because the paths are tangent to
+the fountain’s edge. Removing “circular fountain” breaks the problem. If
+students ask why the path doesn’t just cross the fountain, use it:
+“Could the path cross the fountain? No — we said it touches at exactly
+one point. That’s what tangent means. The path runs alongside the
+fountain edge.”</div>
+
+<h3 id="section-4-retrieval-check-facilitation">Section 4 — Retrieval
+Check Facilitation</h3>
+<p><strong>Before releasing:</strong> SAY: “Close your
+notes. Everything closed.” CUE: ↩︎ Check: “Notes closed.
+State the property, use it with the Pythagorean theorem, and explain the
+equal-tangents result.”</p>
+<p><strong>After students finish (4–5 min):</strong>
+SAY: “Open your notes. Check and correct.”
+CUE: ★ Write: “Open your notes. Check and correct
+now.”</p>
+<p><strong>Answer guide:</strong> 1. A tangent to a circle is
+perpendicular to the radius at the point of tangency. 2. PT² = 10² − 6²
+= 100 − 36 = 64. PT = 8 cm. 3. 8 cm. Equal tangents from an external
+point are equal in length. 4. The tangent-radius perpendicularity
+creates a right angle at the point of tangency. With that right angle,
+the triangle formed by the radius, the tangent, and the line from the
+external point to the centre is a right triangle — so the Pythagorean
+theorem applies. 5. <em>(Stretch)</em> PT² = 25² − 7² = 625 − 49 = 576.
+PT = 24 cm. For angle OPT: tan(OPT) = OT/PT = 7/24, so angle OPT ≈ 16°.
+<em>(Students who know trigonometry: full marks. Students who describe
+needing a trig ratio: partial credit. Students who draw the triangle and
+identify the correct opposite and adjacent sides: partial
+credit.)</em></p>
+<hr/>
+<hr/>
+<h2 id="unit-synthesis">Unit Synthesis</h2>
+<p><em>~15 minutes — notes closed, then compare to pre-knowledge
+check</em></p>
+
+<div class="beat"><h3>Beat 1 — Set up</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Four
+section headers — Section 1: Vocabulary / Section 2: Chord Properties /
+Section 3: Inscribed Angle Theorem / Section 4: Tangent-Radius Property.
+Blank lines beside each.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Notes closed.
+Everything closed.” - “We’ve been through four sections. For each one, I
+want one or two sentences — the single most important idea — from
+memory.” - “This is not a test. This is you finding out what stuck.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ↩︎ Check</div>
+<p>“Notes closed. Four sections. Key ideas
+only. Go.”</p>
+</div>
+</div>
+<p><em>Allow 5–7 minutes. Circulate. Watch for: students who can do
+Section 1 vocabulary but miss the chord properties from Section 2 (the
+two-property structure is commonly conflated); students who write
+“inscribed angle = 90°” — this needs a correction conversation; students
+who write formulas without context (“inscribed = central ÷ 2”) with no
+reference to what arc they’re subtending.</em></p>
+
+<div class="beat"><h3>Beat 2 — Part B: Synthesis problem from memory</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: Circle with centre O, radius 10 cm. Chord
+AB = 16 cm. Inscribed angle APB = 38°. Find: (a) distance from O to
+chord AB; (b) central angle AOB.</p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Part B. Two
+calculations. Notes closed.” - “Part a uses chord properties. Part b
+uses the inscribed angle theorem.” - “Draw a diagram. Label what you
+know. Then work.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ↩︎ Check</div>
+<p>“Notes closed. Work
+through both parts. Show your steps.”</p>
+</div>
+</div>
+<p><em>Expected answers: (a) half-chord = 8, right triangle: OM² = 10² −
+8² = 36, OM = 6 cm. (b) central angle AOB = 2 × 38° = 76°.</em></p>
+<p><em>Allow 5 minutes. If students are stuck: “What do you need to draw
+first?” Don’t give the setup — let them recall that the perpendicular
+from O bisects AB.</em></p>
+
+<div class="beat"><h3>Beat 3 — Return to Pre-Knowledge Check</h3>
+<div class="show"><div class="beat-label">Show</div>
+<p>Board: <em>“Turn to page 1. Read what you wrote
+before the unit started.”</em></p>
+</div>
+<div class="say"><div class="beat-label">Say</div>
+<p>- “Read it. Don’t
+change it. Don’t erase anything.” - “What did you label correctly? What
+did you not know?” - “What did you guess for the inscribed angle
+question? How does your guess compare to what you know now?” - “Write
+your answers at the bottom of the synthesis page.”</p>
+</div>
+<div class="cue"><div class="beat-label">Cue — ★ Write</div>
+<p>“Answer the end-of-unit questions: which parts did you label
+correctly / what surprised you / how did your inscribed angle guess
+compare?”</p>
+</div>
+</div>
+<p><em>Allow 3–5 minutes. This is the most important metacognitive
+moment in the package. Students who wrote “90°” for the inscribed angle
+question in the pre-check are encountering a genuine correction. Let it
+land quietly — do not single anyone out.</em></p>
+<hr/>
+<h2 id="blank-answer-key">Blank Answer Key</h2>
+<p>Quick reference — all fill-in blank answers in section order.</p>
+<h3 id="section-1-circle-vocabulary-1">Section 1 — Circle
+Vocabulary</h3>
+<table>
+<colgroup>
+<col style="width: 50%"/>
+<col style="width: 50%"/>
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Centre is the point ___ from all points on the circle</td>
+<td>equidistant</td>
+</tr>
+<tr>
+<td>Radius goes from the ___ to any point on the circle</td>
+<td>centre</td>
+</tr>
+<tr>
+<td>Diameter is the ___ chord</td>
+<td>longest</td>
+</tr>
+<tr>
+<td>Diameter passes through the ___</td>
+<td>centre</td>
+</tr>
+<tr>
+<td>d = ___ × r</td>
+<td>2</td>
+</tr>
+<tr>
+<td>r = d / ___</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Chord has both endpoints on the ___</td>
+<td>circle</td>
+</tr>
+<tr>
+<td>Arc is the ___ of the circle between two points</td>
+<td>curved part</td>
+</tr>
+<tr>
+<td>The arc intercepted by an angle is the arc ___ the angle</td>
+<td>inside</td>
+</tr>
+<tr>
+<td>Tangent touches the circle at exactly ___ point</td>
+<td>one</td>
+</tr>
+<tr>
+<td>Tangent is ___ to the radius at the point of tangency</td>
+<td>perpendicular</td>
+</tr>
+<tr>
+<td>Is a tangent the same as a chord? ___</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Minor arc is the ___ arc</td>
+<td>shorter</td>
+</tr>
+<tr>
+<td>Major arc is the ___ arc</td>
+<td>longer</td>
+</tr>
+<tr>
+<td>Semicircle is exactly ___ of the circle</td>
+<td>half</td>
+</tr>
+<tr>
+<td>Semicircle is the arc cut by a ___</td>
+<td>diameter</td>
+</tr>
+<tr>
+<td>QR passes through centre O, so QR is a ___</td>
+<td>diameter</td>
+</tr>
+<tr>
+<td>A chord not through O is ___ the diameter</td>
+<td>shorter than</td>
+</tr>
+<tr>
+<td>Central angle has vertex at the ___</td>
+<td>centre</td>
+</tr>
+<tr>
+<td>Inscribed angle has vertex on the ___</td>
+<td>circle</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-2-chord-properties-1">Section 2 — Chord Properties</h3>
+<table>
+<colgroup>
+<col style="width: 50%"/>
+<col style="width: 50%"/>
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>If OM ⊥ AB and passes through the centre, it ___ AB</td>
+<td>bisects</td>
+</tr>
+<tr>
+<td>AM = ___</td>
+<td>MB</td>
+</tr>
+<tr>
+<td>Converse: bisects → ___ to the chord</td>
+<td>perpendicular</td>
+</tr>
+<tr>
+<td>WE1: AM = ___ ÷ 2 = ___ cm</td>
+<td>16 / 8</td>
+</tr>
+<tr>
+<td>OA (radius) = ___</td>
+<td>10</td>
+</tr>
+<tr>
+<td>AM = ___</td>
+<td>8</td>
+</tr>
+<tr>
+<td>OM² = ___ − ___ = ___</td>
+<td>100 − 64 = 36</td>
+</tr>
+<tr>
+<td>OM = ___ cm</td>
+<td>6</td>
+</tr>
+<tr>
+<td>Equal chords → ___ from the centre</td>
+<td>equidistant</td>
+</tr>
+<tr>
+<td>Two chords same distance from centre → they are ___</td>
+<td>equal (in length)</td>
+</tr>
+<tr>
+<td>If AB = CD, then d₁ = ___</td>
+<td>d₂</td>
+</tr>
+<tr>
+<td>WE2: PM = ___ ÷ 2 = ___</td>
+<td>24 / 12</td>
+</tr>
+<tr>
+<td>OM = ___</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Both chords ___ cm from centre</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-3-central-angle-and-inscribed-angle-theorem-1">Section 3
+— Central Angle and Inscribed Angle Theorem</h3>
+<table>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inscribed angle = ___ × central angle</td>
+<td>1/2</td>
+</tr>
+<tr>
+<td>Central angle = ___ × inscribed angle</td>
+<td>2</td>
+</tr>
+<tr>
+<td>WE1: APB = 80° ÷ ___ = ___°</td>
+<td>2 / 40</td>
+</tr>
+<tr>
+<td>WE2: AOB = 2 × 35° = ___°</td>
+<td>70</td>
+</tr>
+<tr>
+<td>Inscribed angles subtending same arc are always the ___ size</td>
+<td>same</td>
+</tr>
+<tr>
+<td>APB = AQB = ___</td>
+<td>(1/2) × central angle AOB</td>
+</tr>
+<tr>
+<td>Special case: when AB is diameter, inscribed angle = ___°</td>
+<td>90</td>
+</tr>
+<tr>
+<td>Central angle for a diameter = ___ (a straight line)</td>
+<td>180°</td>
+</tr>
+<tr>
+<td>Inscribed angle = 180°/2 = ___</td>
+<td>90°</td>
+</tr>
+<tr>
+<td>Test: angle APB (same arc, central 110°) = ___°</td>
+<td>55</td>
+</tr>
+<tr>
+<td>Major arc central angle = 360° − 110° = ___°</td>
+<td>250</td>
+</tr>
+<tr>
+<td>AQB = <strong><em>°/2 = </em></strong>°</td>
+<td>250 / 125</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-4-tangent-radius-property-1">Section 4 — Tangent-Radius
+Property</h3>
+<table>
+<colgroup>
+<col style="width: 50%"/>
+<col style="width: 50%"/>
+</colgroup>
+<thead>
+<tr>
+<th>Blank</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tangent is ___ to the radius at the point of tangency</td>
+<td>perpendicular</td>
+</tr>
+<tr>
+<td>Angle OTP = ___°</td>
+<td>90</td>
+</tr>
+<tr>
+<td>This means the angle at the point of tangency is ___</td>
+<td>90° / a right angle</td>
+</tr>
+<tr>
+<td>Radius and tangent form a ___ triangle</td>
+<td>right</td>
+</tr>
+<tr>
+<td>WE: right angle is at ___</td>
+<td>T</td>
+</tr>
+<tr>
+<td>Hypotenuse = ___</td>
+<td>PO = 13</td>
+</tr>
+<tr>
+<td>PT² = _<strong>² − </strong>_²</td>
+<td>13 / 5</td>
+</tr>
+<tr>
+<td>PT² = ___ − ___ = ___</td>
+<td>169 − 25 = 144</td>
+</tr>
+<tr>
+<td>PT = ___ cm</td>
+<td>12</td>
+</tr>
+<tr>
+<td>From external point P: PT₁ = ___</td>
+<td>PT₂</td>
+</tr>
+<tr>
+<td>Alberta context: path² = 5² − 3² = <strong><em>. Path =
+</em></strong> m</td>
+<td>16 / 4</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2 id="key-flags-summary">Key Flags Summary</h2>
+<p><em>Quick reference for lesson planning — every misconception that
+needs direct address.</em></p>
+<table>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr>
+<th>Section</th>
+<th>Misconception</th>
+<th>Where it appears</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>“A chord is the same as a diameter”</td>
+<td>Beat 3 — address before moving to arc vocabulary</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>“A longer chord is farther from the centre”</td>
+<td>Beat 4 — address before Property 2 practice</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>Mis-identifying the hypotenuse (radius vs. half-chord)</td>
+<td>WE1 Beat 3 — self-explanation check; Retrieval Q2</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>“All inscribed angles in a circle equal 90°”</td>
+<td>Beat 5 — address before any practice; Retrieval Q2</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>Using the wrong arc (minor vs. major) when applying the theorem</td>
+<td>Beat 7 — model major arc calculation explicitly</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>Confusing which side is the hypotenuse in the tangent-radius
+triangle</td>
+<td>Beat 3 + WE4 self-explanation check</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>
