@@ -139,7 +139,12 @@ export async function getStaticPaths() {
     'exits/probability/math9-probability-exits-v1',
   ];
 
-  return [...notes, ...worksheets, ...exits].map(slug => ({ params: { slug } }));
+  const tests = [
+    'tests/rational-numbers/math9-rational-numbers-practice-test-v1',
+    'tests/rational-numbers/math9-rational-numbers-practice-test-answers-v1',
+  ];
+
+  return [...notes, ...worksheets, ...exits, ...tests].map(slug => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;
@@ -162,7 +167,7 @@ function backHref(slug: string): string {
     const strand = slug.split('/')[1];
     return `${base}math9/materials/${strand}`;
   }
-  if (slug.startsWith('exits/')) {
+  if (slug.startsWith('exits/') || slug.startsWith('tests/')) {
     const topic = slug.split('/')[1];
     const strandMap: Record<string, string> = {
       'rational-numbers': 'number', 'square-roots': 'number', 'powers-exponents': 'number',
