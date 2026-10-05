@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plant Lab — Photosynthesis Simulation | Grade 7 Science</title>
+<style>
+/* ─────────────────────────────────────────
+   PLANT LAB — PHOTOSYNTHESIS SIMULATION
+   Grade 7 Science | Plants for Food and Fibre
+   LO 7-2-02 (root/shoot systems, vascular tissue) · LO 7-2-03 (photosynthesis)
+   Students change the environment and the plant's parts, then read how
+   each change affects glucose production and the health of the plant.
+   Visual system: icon cards + arrows (see sci7-plant-hunt-outdoor-v1.html)
+   Model: glucose = scarcest of (light captured, water at leaves, CO2) x leaf share.
+   ───────────────────────────────────────── */
+
+:root {
+  --accent: #15803d;
+  --accent-light: #f0fdf4;
+  --accent-mid: #22c55e;
+  --ink: #0f172a;
+  --body: #1e293b;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --water: #0284c7;
+  --light: #ca8a04;
+  --gas: #64748b;
+  --sugar: #b45309;
+  --oxy: #0ea5e9;
+  --bad: #b91c1c;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f8fafc; color: var(--body); line-height: 1.5;
+}
+button, input { font: inherit; color: inherit; }
+
+.wrap { max-width: 1280px; margin: 0 auto; padding: 14px 16px 28px; }
+
+/* Header */
+.top { border-bottom: 4px solid var(--accent); padding-bottom: 10px; margin-bottom: 12px; }
+.unit-label {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);
+}
+.top h1 { font-size: 1.5rem; font-weight: 800; color: var(--ink); line-height: 1.2; }
+.i-can {
+  background: var(--accent-light); border-left: 4px solid var(--accent); border-radius: 0 6px 6px 0;
+  padding: 7px 12px; font-weight: 700; color: #14532d; font-size: 0.92rem; margin-top: 8px;
+}
+
+/* Time bar */
+.timebar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
+  background: #fff; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 12px; margin-bottom: 12px;
+}
+.day { font-weight: 800; color: var(--ink); font-size: 1.05rem; min-width: 4.6em; }
+.status-pill {
+  font-weight: 800; font-size: 0.85rem; padding: 3px 12px; border-radius: 999px;
+  background: var(--accent-light); color: #14532d; border: 1.5px solid var(--accent);
+}
+.status-pill.warn { background: #fefce8; color: #854d0e; border-color: #ca8a04; }
+.status-pill.bad { background: #fef2f2; color: #991b1b; border-color: var(--bad); }
+.spacer { flex: 1; }
+.btn {
+  border: 1.5px solid #94a3b8; background: #fff; border-radius: 8px; padding: 5px 12px;
+  font-weight: 700; font-size: 0.86rem; cursor: pointer; color: var(--body);
+}
+.btn:hover { border-color: var(--accent); }
+.btn[aria-pressed="true"], .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:focus-visible, input:focus-visible, .part:focus-visible, .tab:focus-visible {
+  outline: 3px solid #0ea5e9; outline-offset: 2px;
+}
+.seg { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+
+/* Layout */
+.grid { display: grid; grid-template-columns: 262px minmax(300px, 1fr) 350px; gap: 12px; align-items: start; }
+.panel { background: #fff; border: 1.5px solid var(--line); border-radius: 10px; padding: 12px; }
+.panel h2 {
+  font-size: 0.74rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
+  margin-bottom: 8px;
+}
+.panel h2 + .hint { margin-top: -4px; }
+.hint { font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; }
+@media (max-width: 1080px) {
+  .grid { grid-template-columns: minmax(280px, 1fr) minmax(300px, 1fr); }
+  .controls { grid-column: 1 / -1; order: 3; }
+  .controls fieldset { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+}
+@media (max-width: 680px) {
+  .grid { grid-template-columns: 1fr; }
+  .controls fieldset { display: block; }
+}
+
+/* Controls */
+fieldset { border: 0; min-width: 0; }
+.ctl { margin-bottom: 11px; }
+.ctl label, .ctl .lab { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 0.88rem; color: var(--ink); }
+.ctl output { font-weight: 600; font-size: 0.8rem; color: var(--muted); }
+.ctl input[type=range] { width: 100%; accent-color: var(--accent); margin-top: 2px; }
+.ctl .seg { margin-top: 4px; }
+.ctl .seg .btn { padding: 3px 9px; font-size: 0.8rem; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+hr.div { border: 0; border-top: 1.5px dashed var(--line); margin: 12px 0; }
+
+/* Diagram */
+.stage svg { display: block; width: 100%; height: auto; max-height: 78vh; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.78rem; font-weight: 600; color: #334155; margin-top: 6px; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; }
+.tap-hint { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+svg text { font-family: 'Segoe UI', Arial, sans-serif; }
+svg .lbl    { font-weight: 700; font-size: 12.5px; fill: #0f172a; }
+svg .lbl-sm { font-weight: 600; font-size: 11.5px; fill: #475569; }
+svg .lbl-sys{ font-weight: 800; font-size: 11px; fill: var(--accent); letter-spacing: 0.12em; }
+svg .sky    { fill: #f0f9ff; }
+svg .soil   { fill: #f3ead8; }
+svg .ground { stroke: #92702f; stroke-width: 2.5; }
+svg .stem   { fill: #dcfce7; stroke: #15803d; stroke-width: 1.5; }
+svg .xylem  { fill: #e0f2fe; stroke: #0284c7; stroke-width: 1.5; }
+svg .phloem { fill: #fef3c7; stroke: #b45309; stroke-width: 1.5; }
+svg .root   { fill: none; stroke: #92400e; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+svg .leaf   { stroke: #15803d; stroke-width: 2; }
+svg .vein   { stroke: #15803d; stroke-width: 1.2; fill: none; opacity: 0.6; }
+svg .sun    { fill: #facc15; stroke: #ca8a04; stroke-width: 1.5; }
+svg .sunray { stroke: #ca8a04; stroke-width: 2.5; stroke-linecap: round; }
+svg .ray    { stroke: #eab308; stroke-width: 2; stroke-dasharray: 6 6; fill: none; animation: dash 1.2s linear infinite; }
+svg .cloud  { fill: #e2e8f0; stroke: #64748b; stroke-width: 1.5; }
+svg .drop   { fill: #bae6fd; stroke: #0284c7; stroke-width: 1.4; }
+svg .min    { fill: #a8a29e; stroke: #57534e; stroke-width: 1; }
+svg .bracket{ fill: none; stroke: var(--accent); stroke-width: 1.5; }
+svg .leader { stroke: #94a3b8; stroke-width: 1; }
+svg .block  { fill: #b91c1c; }
+svg .block-x{ fill: #fff; font-weight: 800; font-size: 10px; }
+svg .p-water{ fill: #38bdf8; stroke: #0369a1; stroke-width: 1; }
+svg .p-co2  { fill: #94a3b8; stroke: #475569; stroke-width: 1; }
+svg .p-sugar{ fill: #fbbf24; stroke: #92400e; stroke-width: 1; }
+svg .p-o2   { fill: #fff; stroke: #0ea5e9; stroke-width: 1.8; }
+svg .part   { cursor: pointer; }
+svg .part:hover .hit, svg .part.sel .hit { stroke: #0ea5e9; stroke-width: 2; stroke-dasharray: 4 3; }
+svg .hit    { fill: transparent; stroke: transparent; }
+@keyframes dash { to { stroke-dashoffset: -24; } }
+@media (prefers-reduced-motion: reduce) { svg .ray { animation: none; } }
+
+/* Tabs */
+.tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+.tab {
+  flex: 1; border: 1.5px solid var(--line); background: #f8fafc; border-radius: 8px; padding: 6px 4px;
+  font-weight: 800; font-size: 0.82rem; cursor: pointer; color: #475569;
+}
+.tab[aria-selected="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+.tabpane[hidden] { display: none; }
+
+/* Report */
+.headline { font-weight: 800; color: var(--ink); font-size: 1rem; }
+.sub { font-size: 0.86rem; color: #334155; margin-bottom: 10px; }
+.group-h { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 10px 0 4px; }
+.meter { display: grid; grid-template-columns: 7.6em 1fr 2.6em; align-items: center; gap: 6px; font-size: 0.82rem; margin: 3px 0; }
+.meter .name { font-weight: 700; color: var(--ink); }
+.meter .track { height: 10px; background: #f1f5f9; border-radius: 999px; overflow: hidden; }
+.meter .fill { height: 100%; border-radius: 999px; width: 0; transition: width 0.25s; }
+.meter .num { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.meter.limit .name::after {
+  content: 'limiting'; margin-left: 5px; font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+  color: #991b1b; background: #fee2e2; border-radius: 4px; padding: 0 4px; vertical-align: 1px;
+}
+.why {
+  background: #fefce8; border-left: 4px solid #ca8a04; border-radius: 0 6px 6px 0;
+  padding: 8px 12px; font-size: 0.88rem; margin-top: 10px;
+}
+.why p + p { margin-top: 5px; }
+.why-h { font-weight: 800; color: #a16207; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.log { list-style: none; max-height: 250px; overflow-y: auto; }
+.log li { border-left: 3px solid var(--line); padding: 4px 0 4px 9px; margin: 6px 0; font-size: 0.84rem; }
+.log li.up { border-color: var(--accent-mid); }
+.log li.down { border-color: #f97316; }
+.log li.event { border-color: var(--bad); }
+.log .chg { font-weight: 700; color: var(--ink); }
+.log .res { font-variant-numeric: tabular-nums; }
+.log .empty { color: var(--muted); border: 0; padding-left: 0; }
+
+/* Missions */
+.mlist { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.mlist .btn { font-size: 0.8rem; padding: 4px 9px; }
+.mcard h3 { font-size: 1rem; font-weight: 800; color: var(--ink); }
+.mcard p { font-size: 0.9rem; margin-top: 6px; }
+.opts { margin-top: 8px; display: grid; gap: 5px; }
+.opt {
+  display: flex; gap: 8px; align-items: flex-start; border: 1.5px solid var(--line); border-radius: 8px;
+  padding: 6px 9px; font-size: 0.88rem; cursor: pointer;
+}
+.opt:has(input:checked) { border-color: var(--accent); background: var(--accent-light); }
+.opt input { margin-top: 4px; accent-color: var(--accent); }
+.mcard .btn.primary { margin-top: 10px; }
+.result { border: 1.5px solid var(--line); border-radius: 8px; padding: 9px 11px; margin-top: 10px; font-size: 0.88rem; }
+.result .data { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.result p { margin-top: 6px; }
+.goal { background: #eff6ff; border-left: 4px solid #2563eb; border-radius: 0 6px 6px 0; padding: 8px 12px; margin-top: 10px; font-size: 0.88rem; }
+.goal.done { background: var(--accent-light); border-color: var(--accent); }
+.goal-h { font-weight: 800; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: #1d4ed8; }
+.goal.done .goal-h { color: var(--accent); }
+.write { border: 1.5px dashed #94a3b8; border-radius: 8px; padding: 8px 11px; margin-top: 10px; font-size: 0.88rem; }
+.write b { color: var(--ink); }
+
+/* Parts */
+.pcard { border: 1.5px solid var(--line); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 8px 11px; margin-bottom: 8px; font-size: 0.86rem; }
+.pcard.sel { background: var(--accent-light); border-color: var(--accent); }
+.pcard h3 { font-size: 0.95rem; font-weight: 800; color: var(--ink); }
+.pcard .sys { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.pcard dl { display: grid; grid-template-columns: 4.6em 1fr; gap: 2px 8px; margin-top: 4px; }
+.pcard dt { font-weight: 700; color: #475569; }
+
+.foot { font-size: 0.76rem; color: var(--muted); margin-top: 12px; }
+
+@media print { .timebar .btn, .tabs { display: none; } body { background: #fff; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="unit-label">Grade 7 Science · Plants for Food and Fibre</div>
+    <h1>Plant Lab: Photosynthesis Simulation</h1>
+    <div class="i-can">I can explain how the root system, the shoot system, and the plant's surroundings work together to make glucose.</div>
+  </header>
+
+  <div class="timebar">
+    <span class="day" id="day">Day 0</span>
+    <span class="status-pill" id="status">Thriving</span>
+    <span class="spacer"></span>
+    <span class="seg" role="group" aria-label="Simulation speed">
+      <button class="btn" id="bPause" aria-pressed="false">Pause</button>
+      <button class="btn" id="bPlay" aria-pressed="true">Play</button>
+      <button class="btn" id="bFast" aria-pressed="false">Fast</button>
+    </span>
+    <button class="btn" id="bNew" title="Start a fresh plant with the same settings">New plant</button>
+    <button class="btn" id="bReset" title="Put every setting back to the start">Reset settings</button>
+  </div>
+
+  <div class="grid">
+
+    <!-- CONTROLS -->
+    <section class="panel controls" aria-label="Controls">
+      <fieldset id="ctl">
+        <div>
+          <h2>Surroundings</h2>
+          <p class="hint">What the plant gets from outside.</p>
+          <div class="ctl">
+            <label for="s-light"><span><i class="dot" style="background:#facc15"></i>Light</span><output id="o-light"></output></label>
+            <input type="range" id="s-light" data-key="light" min="0" max="100" step="5">
+          </div>
+          <div class="ctl">
+            <label for="s-water"><span><i class="dot" style="background:#38bdf8"></i>Soil water</span><output id="o-water"></output></label>
+            <input type="range" id="s-water" data-key="water" min="0" max="100" step="5">
+          </div>
+          <div class="ctl">
+            <label for="s-co2"><span><i class="dot" style="background:#94a3b8"></i>CO₂ in the air</span><output id="o-co2"></output></label>
+            <input type="range" id="s-co2" data-key="co2" min="0" max="100" step="5">
+          </div>
+          <div class="ctl">
+            <label for="s-minerals"><span><i class="dot" style="background:#a8a29e"></i>Soil minerals</span><output id="o-minerals"></output></label>
+            <input type="range" id="s-minerals" data-key="minerals" min="0" max="100" step="5">
+          </div>
+        </div>
+        <div>
+          <hr class="div">
+          <h2>Plant parts</h2>
+          <p class="hint">Damage a part to find out what it does.</p>
+          <div class="ctl">
+            <div class="lab"><span>Roots</span></div>
+            <div class="seg" role="group" aria-label="Roots">
+              <button class="btn" data-part="roots" data-val="100">Whole</button>
+              <button class="btn" data-part="roots" data-val="50">Half</button>
+              <button class="btn" data-part="roots" data-val="10">Almost none</button>
+            </div>
+          </div>
+          <div class="ctl">
+            <div class="lab"><span>Xylem</span></div>
+            <div class="seg" role="group" aria-label="Xylem">
+              <button class="btn" data-part="xylem" data-val="1">Open</button>
+              <button class="btn" data-part="xylem" data-val="0">Blocked</button>
+            </div>
+          </div>
+          <div class="ctl">
+            <div class="lab"><span>Phloem</span></div>
+            <div class="seg" role="group" aria-label="Phloem">
+              <button class="btn" data-part="phloem" data-val="1">Open</button>
+              <button class="btn" data-part="phloem" data-val="0">Blocked</button>
+            </div>
+          </div>
+          <div class="ctl">
+            <label for="s-leaves"><span>Leaves</span><output id="o-leaves"></output></label>
+            <input type="range" id="s-leaves" data-key="leaves" min="0" max="6" step="1">
+          </div>
+          <div class="ctl">
+            <div class="lab"><span>Chlorophyll in the leaves</span></div>
+            <div class="seg" role="group" aria-label="Chlorophyll">
+              <button class="btn" data-part="chl" data-val="1">Dark green</button>
+              <button class="btn" data-part="chl" data-val="0.5">Pale</button>
+              <button class="btn" data-part="chl" data-val="0">None</button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </section>
+
+    <!-- PLANT -->
+    <section class="panel stage" aria-label="Plant diagram">
+      <svg id="svg" viewBox="0 0 480 620" role="img" aria-labelledby="svgTitle svgDesc">
+        <title id="svgTitle">Plant map</title>
+        <desc id="svgDesc">An icon map of a plant. Light, carbon dioxide and water travel to the leaves. Glucose travels down the phloem to the roots. Oxygen leaves the leaves.</desc>
+        <rect class="sky" x="0" y="0" width="480" height="410"/>
+        <rect class="soil" x="0" y="410" width="480" height="210"/>
+        <g id="soilDrops"></g>
+        <g id="soilMins"></g>
+        <line class="ground" x1="0" y1="410" x2="480" y2="410"/>
+
+        <!-- system brackets -->
+        <path class="bracket" d="M26,106 H16 V400 H26"/>
+        <text class="lbl-sys" transform="translate(11,253) rotate(-90)" text-anchor="middle">SHOOT SYSTEM</text>
+        <path class="bracket" d="M26,420 H16 V610 H26"/>
+        <text class="lbl-sys" transform="translate(11,515) rotate(-90)" text-anchor="middle">ROOT SYSTEM</text>
+
+        <g id="rays"></g>
+
+        <!-- sun -->
+        <g class="part" id="pt-light" data-part="light" tabindex="0" role="button" aria-label="Sun: light">
+          <g id="sunG">
+            <g class="sunray">
+              <line x1="70" y1="24" x2="70" y2="34"/><line x1="70" y1="106" x2="70" y2="116"/>
+              <line x1="24" y1="70" x2="34" y2="70"/><line x1="106" y1="70" x2="116" y2="70"/>
+              <line x1="37" y1="37" x2="44" y2="44"/><line x1="96" y1="96" x2="103" y2="103"/>
+              <line x1="37" y1="103" x2="44" y2="96"/><line x1="96" y1="44" x2="103" y2="37"/>
+            </g>
+            <circle class="sun" cx="70" cy="70" r="27"/>
+          </g>
+          <text class="lbl" x="70" y="135" text-anchor="middle">Light</text>
+          <rect class="hit" x="20" y="20" width="100" height="122" rx="8"/>
+        </g>
+
+        <!-- CO2 cloud -->
+        <g class="part" id="pt-co2" data-part="co2" tabindex="0" role="button" aria-label="Carbon dioxide in the air">
+          <g id="cloudG">
+            <path class="cloud" d="M368,84 a16,16 0 0 1 4,-31 a22,22 0 0 1 42,-6 a17,17 0 0 1 22,22 a13,13 0 0 1 -4,25 h-58 a10,10 0 0 1 -6,-10z"/>
+            <text class="lbl" x="402" y="76" text-anchor="middle">CO₂</text>
+          </g>
+          <text class="lbl-sm" x="402" y="112" text-anchor="middle">from the air</text>
+          <rect class="hit" x="346" y="22" width="112" height="98" rx="8"/>
+        </g>
+
+        <!-- roots -->
+        <g class="part" id="pt-roots" data-part="roots" tabindex="0" role="button" aria-label="Roots">
+          <g id="rootsG"></g>
+          <rect class="hit" x="130" y="414" width="226" height="188" rx="8"/>
+        </g>
+        <text class="lbl" x="262" y="432">Roots</text>
+        <text class="lbl-sm" x="301" y="432">take in water + minerals</text>
+
+        <!-- stem -->
+        <rect class="stem" x="222" y="108" width="36" height="302" rx="6"/>
+        <circle cx="240" cy="104" r="9" fill="#86efac" stroke="#15803d" stroke-width="1.5"/>
+        <g class="part" id="pt-xylem" data-part="xylem" tabindex="0" role="button" aria-label="Xylem">
+          <rect class="xylem" x="226" y="114" width="12" height="296" rx="3"/>
+          <rect class="hit" x="224" y="112" width="15" height="300"/>
+        </g>
+        <g class="part" id="pt-phloem" data-part="phloem" tabindex="0" role="button" aria-label="Phloem">
+          <rect class="phloem" x="242" y="114" width="12" height="296" rx="3"/>
+          <rect class="hit" x="241" y="112" width="15" height="300"/>
+        </g>
+        <line class="leader" x1="206" y1="352" x2="226" y2="352"/>
+        <text class="lbl" x="202" y="349" text-anchor="end" fill="#0284c7">Xylem</text>
+        <text class="lbl-sm" x="202" y="363" text-anchor="end">water goes up</text>
+        <line class="leader" x1="254" y1="352" x2="274" y2="352"/>
+        <text class="lbl" x="278" y="349">Phloem</text>
+        <text class="lbl-sm" x="278" y="363">glucose goes down</text>
+
+        <g id="xBlock" style="display:none"><rect class="block" x="223" y="378" width="18" height="13" rx="2"/><text class="block-x" x="232" y="388" text-anchor="middle">✕</text></g>
+        <g id="pBlock" style="display:none"><rect class="block" x="239" y="378" width="18" height="13" rx="2"/><text class="block-x" x="248" y="388" text-anchor="middle">✕</text></g>
+
+        <!-- leaves -->
+        <g class="part" id="pt-leaves" data-part="leaves" tabindex="0" role="button" aria-label="Leaves">
+          <g id="leavesG"></g>
+        </g>
+        <text class="lbl" x="240" y="24" text-anchor="middle">Leaves</text>
+        <text class="lbl-sm" x="240" y="39" text-anchor="middle">glucose is made here</text>
+
+        <g id="particles" aria-hidden="true"></g>
+      </svg>
+      <div class="legend" aria-label="Key">
+        <span><i style="background:#eab308"></i>light</span>
+        <span><i style="background:#38bdf8"></i>water</span>
+        <span><i style="background:#94a3b8"></i>CO₂</span>
+        <span><i style="background:#fbbf24"></i>glucose</span>
+        <span><i style="background:#fff;border:2px solid #0ea5e9"></i>oxygen</span>
+      </div>
+      <p class="tap-hint">Click any part of the plant to find out what it does.</p>
+    </section>
+
+    <!-- REPORT / MISSIONS / PARTS -->
+    <section class="panel" aria-label="Feedback">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" id="tab-report" aria-selected="true" aria-controls="pane-report">Plant report</button>
+        <button class="tab" role="tab" id="tab-missions" aria-selected="false" aria-controls="pane-missions">Missions</button>
+        <button class="tab" role="tab" id="tab-parts" aria-selected="false" aria-controls="pane-parts">Parts</button>
+      </div>
+
+      <div class="tabpane" id="pane-report" role="tabpanel" aria-labelledby="tab-report">
+        <div class="headline" id="headline"></div>
+        <div class="sub" id="sub"></div>
+
+        <div class="group-h">Reaching the leaves</div>
+        <div id="m-in"></div>
+        <div class="group-h">Made by the leaves (per day)</div>
+        <div id="m-out"></div>
+        <div class="group-h">Inside the plant</div>
+        <div id="m-plant"></div>
+
+        <div class="why" aria-live="polite">
+          <div class="why-h">What is holding the plant back?</div>
+          <div id="why"></div>
+        </div>
+
+        <div class="group-h" style="margin-top:14px">What your changes did</div>
+        <ul class="log" id="log" aria-live="polite"></ul>
+      </div>
+
+      <div class="tabpane" id="pane-missions" role="tabpanel" aria-labelledby="tab-missions" hidden>
+        <p class="hint">Predict first. Then test. A wrong prediction is useful evidence.</p>
+        <div class="mlist" id="mlist"></div>
+        <div class="mcard" id="mcard"></div>
+      </div>
+
+      <div class="tabpane" id="pane-parts" role="tabpanel" aria-labelledby="tab-parts" hidden>
+        <div id="pcards"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <p class="foot">This is a model. The numbers are made-up units from 0 to 100, chosen to show how the parts depend on each other. Real plants are more complicated.</p>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+/* ── Model constants ── */
+var NEED = 25;               // glucose a plant uses each day to stay alive
+var DEF_ENV = { light: 70, water: 70, co2: 70, minerals: 70 };
+var DEF_PARTS = { roots: 100, xylem: 1, phloem: 1, leaves: 6, chl: 1 };
+
+var env = copy(DEF_ENV), parts = copy(DEF_PARTS);
+var plant, flags, committed;
+var running = true, speed = 1, ff = null;
+var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function copy(o) { var r = {}; for (var k in o) r[k] = o[k]; return r; }
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+function $(id) { return document.getElementById(id); }
+function R(v) { return Math.round(v); }
+
+function newPlant() {
+  plant = { store: 50, rootEnergy: 100, health: 100, mass: 10, day: 0, dead: false };
+  flags = { rootsStarved: false, storeEmpty: false, wilting: false };
+}
+
+function compute() {
+  var rootFn = parts.roots / 100 * (0.1 + 0.9 * plant.rootEnergy / 100);
+  var waterL = env.water * rootFn * parts.xylem;
+  var lightL = env.light * parts.chl;
+  var co2L = env.co2;
+  var per = Math.min(lightL, waterL, co2L);
+  var glucose = per * parts.leaves / 6;
+  var lim;
+  if (parts.leaves === 0) lim = 'noleaves';
+  else if (Math.max(lightL, waterL, co2L) - per < 1.5) lim = 'balanced';
+  else if (per === lightL) lim = (parts.chl < 1 && env.light > lightL) ? 'chl' : 'light';
+  else if (per === waterL) {
+    if (parts.xylem === 0) lim = 'xylem';
+    else if (plant.rootEnergy < 60) lim = 'rootsStarved';
+    else if (parts.roots < 100 && env.water > waterL + 1) lim = 'roots';
+    else lim = 'water';
+  } else lim = 'co2';
+  var bar = lim === 'light' || lim === 'chl' ? 'light'
+          : lim === 'co2' ? 'co2'
+          : (lim === 'balanced' || lim === 'noleaves') ? '' : 'water';
+  return { rootFn: rootFn, waterL: waterL, lightL: lightL, co2L: co2L, glucose: glucose, lim: lim, bar: bar,
+           uptake: env.water * rootFn };
+}
+
+function step(dt) {
+  var c = compute();
+  var surplus = c.glucose - NEED;
+  plant.store = clamp(plant.store + surplus * dt * 0.4, 0, 100);
+  if (surplus > 0 && plant.health > 30) {
+    plant.mass += surplus * dt * 0.03 * (0.25 + 0.75 * env.minerals / 100);
+  }
+  var fed = parts.phloem === 1 && (plant.store > 0 || surplus >= 0);
+  plant.rootEnergy = clamp(plant.rootEnergy + (fed ? 30 : -18) * dt, 0, 100);
+  var wilting = parts.leaves > 0 && c.waterL < 12;
+  var starving = plant.store <= 0;
+  if (wilting || starving) plant.health -= ((wilting ? 12 : 0) + (starving ? 12 : 0)) * dt;
+  else plant.health += 8 * dt;
+  plant.health = clamp(plant.health, 0, 100);
+  plant.day += dt;
+
+  // delayed effects students should notice
+  var d = 'Day ' + Math.floor(plant.day) + ': ';
+  var rs = plant.rootEnergy < 40;
+  if (rs && !flags.rootsStarved) logEvent(d + 'The roots are running out of sugar. Roots cannot make their own. They are absorbing less water.');
+  if (!rs && flags.rootsStarved && plant.rootEnergy > 70) { logEvent(d + 'Sugar is reaching the roots again. They are recovering.', 'up'); flags.rootsStarved = false; }
+  if (rs) flags.rootsStarved = true;
+  if (starving && !flags.storeEmpty) logEvent(d + 'The stored sugar is gone. The plant has nothing left to live on.');
+  flags.storeEmpty = starving;
+  if (wilting && !flags.wilting) logEvent(d + 'The leaves are wilting. Almost no water is reaching them.');
+  flags.wilting = wilting;
+  if (plant.health <= 0 && !plant.dead) {
+    plant.dead = true;
+    logEvent(d + 'The plant has died. Press “New plant” to try again with these settings.');
+  }
+}
+
+/* ── Labels ── */
+var NAMES = { light: 'Light', water: 'Soil water', co2: 'CO₂', minerals: 'Soil minerals', roots: 'Roots',
+              xylem: 'Xylem', phloem: 'Phloem', leaves: 'Leaves', chl: 'Chlorophyll' };
+function word(key, v) {
+  if (key === 'light') return v === 0 ? 'dark' : v < 35 ? 'shade' : v < 80 ? 'bright' : 'full sun';
+  if (key === 'water') return v < 10 ? 'dry' : v < 40 ? 'damp' : v < 80 ? 'moist' : 'soaked';
+  if (key === 'co2') return v < 5 ? 'none' : v < 40 ? 'low' : v <= 80 ? 'normal air' : 'extra';
+  if (key === 'minerals') return v < 10 ? 'none' : v < 40 ? 'poor' : v < 80 ? 'good' : 'rich';
+  if (key === 'roots') return v === 100 ? 'whole' : v === 50 ? 'half' : 'almost none';
+  if (key === 'xylem' || key === 'phloem') return v ? 'open' : 'blocked';
+  if (key === 'chl') return v === 1 ? 'dark green' : v === 0.5 ? 'pale' : 'none';
+  return '';
+}
+function show(key, v) {
+  if (key === 'leaves') return v + ' of 6';
+  if (key in DEF_ENV) return v + ' (' + word(key, v) + ')';
+  return word(key, v);
+}
+var LIM_NOUN = { light: 'Light', chl: 'Chlorophyll', water: 'Soil water', roots: 'The root system',
+  rootsStarved: 'The starving root system', xylem: 'The blocked xylem', co2: 'CO₂', noleaves: 'Having no leaves',
+  balanced: 'Another ingredient' };
+
+function whyText(c) {
+  var L = R(c.lightL), W = R(c.waterL), C = R(c.co2L), out = [];
+  switch (c.lim) {
+    case 'noleaves': out.push('<b>No leaves.</b> Photosynthesis happens in the green leaves. With no leaves the plant makes no glucose and lives on stored sugar until it runs out.'); break;
+    case 'balanced': out.push('Light, water and CO₂ are reaching the leaves at about the same rate (' + L + ', ' + W + ', ' + C + '). Nothing is being wasted. To make more glucose the plant needs more of <b>all three</b>.'); break;
+    case 'light': out.push('<b>Light is the limiting factor.</b> The leaves capture ' + L + ' light but have ' + W + ' water and ' + C + ' CO₂. The extra water and CO₂ go unused until there is more light.'); break;
+    case 'chl': out.push(parts.chl === 0
+      ? '<b>No chlorophyll.</b> The sun is shining, but nothing in the leaves can capture the light. No captured light means no glucose.'
+      : '<b>Chlorophyll is holding the plant back.</b> Pale leaves capture only half of the light that hits them (' + L + ' of ' + env.light + ').'); break;
+    case 'water': out.push('<b>Water is the limiting factor.</b> Only ' + W + ' water reaches the leaves, compared with ' + L + ' light and ' + C + ' CO₂. Roots can only absorb what is in the soil.'); break;
+    case 'roots': out.push('<b>The root system is holding the plant back.</b> The soil has ' + env.water + ' water, but with so few roots only ' + W + ' gets absorbed and sent up.'); break;
+    case 'rootsStarved': out.push('<b>The roots are starving.</b> Roots have no chloroplasts, so they depend on glucose sent down the phloem. Without it they absorb very little water (' + W + ' reaches the leaves).'); break;
+    case 'xylem': out.push('<b>The xylem is blocked.</b> The roots are absorbing water, but it cannot travel up the stem. The leaves have light and CO₂ but no water to use with them.'); break;
+    case 'co2': out.push('<b>CO₂ is the limiting factor.</b> Only ' + C + ' CO₂ enters through the leaf pores (stomata), compared with ' + L + ' light and ' + W + ' water. The extra light and water go unused.'); break;
+  }
+  if (parts.leaves > 0 && parts.leaves < 6) out.push('With ' + parts.leaves + ' of 6 leaves, the plant has less green surface, so it makes ' + parts.leaves + '/6 of what it could.');
+  if (parts.phloem === 0 && plant.rootEnergy >= 60) out.push('<b>Phloem is blocked.</b> Glucose is still being made, but none is reaching the roots. Watch “Root energy” over the next few days.');
+  if (env.minerals < 30 && c.glucose > NEED) out.push('Minerals are low. The plant has glucose to spare, but it builds new parts slowly without minerals.');
+  return out.map(function (s) { return '<p>' + s + '</p>'; }).join('');
+}
+
+/* ── Change log ── */
+var logItems = [];
+function snapshot() { committed = { env: copy(env), parts: copy(parts), glucose: compute().glucose }; }
+function pushLog(html, cls) {
+  logItems.unshift({ html: html, cls: cls || '' });
+  if (logItems.length > 8) logItems.pop();
+  renderLog();
+}
+function logEvent(text, cls) { pushLog(text, cls || 'event'); }
+function renderLog() {
+  $('log').innerHTML = logItems.length ? logItems.map(function (i) {
+    return '<li class="' + i.cls + '">' + i.html + '</li>';
+  }).join('') : '<li class="empty">Change a slider or damage a part. This list will show what your change did to the plant, and why.</li>';
+}
+
+var REASON = {
+  light: 'Light is the energy for photosynthesis. Chlorophyll in the leaves captures it.',
+  water: 'Water is an ingredient. The roots absorb it and the xylem carries it up to the leaves.',
+  co2: 'CO₂ is an ingredient. It enters the leaves from the air through tiny pores (stomata).',
+  roots: 'Leaves make the glucose, but only roots can bring in the water they need. Fewer roots, less water at the leaves.',
+  xylem: 'Xylem is the only path for water from the roots to the leaves.',
+  leaves: 'Leaves are where photosynthesis happens. More green leaf surface means more glucose.',
+  chl: 'Chlorophyll is the green pigment that captures light. Light that is not captured cannot be used.'
+};
+
+function commitChange(key) {
+  var isEnv = key in DEF_ENV;
+  var from = isEnv ? committed.env[key] : committed.parts[key];
+  var to = isEnv ? env[key] : parts[key];
+  if (from === to) return;
+  var c = compute(), g0 = R(committed.glucose), g1 = R(c.glucose);
+  var head = '<span class="chg">' + NAMES[key] + ': ' + show(key, from) + ' → ' + show(key, to) + '.</span> ';
+  var res, why, cls = '';
+  if (g1 === g0) {
+    res = '<span class="res">Glucose made stayed at ' + g1 + ' a day.</span> ';
+    if (key === 'minerals') why = 'Minerals are not food and not an ingredient of photosynthesis. They change how fast the plant can build new parts, not how much glucose it makes. Watch “Plant mass”.';
+    else if (key === 'phloem') why = to ? 'Glucose can travel down to the roots again. Watch “Root energy”.' : 'The leaves still make glucose, so nothing changes right away. But no sugar is reaching the roots now. Watch “Root energy” over the next few days.';
+    else if (c.lim === 'balanced' || c.lim === 'noleaves' && key !== 'leaves') why = 'The plant still has the same amount of its scarcest ingredient.';
+    else why = LIM_NOUN[c.lim] + ' is still what limits the plant, so this change made no difference.';
+  } else {
+    cls = g1 > g0 ? 'up' : 'down';
+    res = '<span class="res">Glucose made went ' + (g1 > g0 ? 'up' : 'down') + ' from ' + g0 + ' to ' + g1 + ' a day.</span> ';
+    why = REASON[key] || '';
+    if (g1 > g0 && c.lim !== 'balanced' && c.bar && c.bar !== key && !(key === 'chl' && c.bar === 'light')) {
+      why += ' Now ' + LIM_NOUN[c.lim].toLowerCase().replace('co₂', 'CO₂') + ' is the limit.';
+    }
+  }
+  pushLog(head + res + why, cls);
+  snapshot();
+}
+
+/* ── Diagram ── */
+var NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent) {
+  var e = document.createElementNS(NS, tag);
+  for (var k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+var LEAVES = [ { s: -1, y: 300 }, { s: 1, y: 272 }, { s: -1, y: 226 }, { s: 1, y: 198 }, { s: -1, y: 152 }, { s: 1, y: 124 } ];
+LEAVES.forEach(function (l) { l.ax = l.s < 0 ? 222 : 258; l.cx = l.ax + l.s * 46; });
+var ROOTS = {
+  100: [ [[240,410],[240,440],[170,500],[140,560]], [[240,410],[240,440],[310,500],[345,555]],
+         [[240,410],[240,480],[195,540],[180,592]], [[240,410],[240,480],[285,545],[300,594]], [[240,410],[240,578]] ],
+  50:  [ [[240,410],[240,440],[190,483]], [[240,410],[240,440],[290,483]], [[240,410],[240,505]] ],
+  10:  [ [[240,410],[240,448]] ]
+};
+var DROPS = [[60,455],[105,515],[70,585],[150,465],[200,527],[130,600],[215,592],[275,527],[330,470],[385,520],[420,585],[355,600],[430,465],[265,600]];
+var MINS = [[45,500],[92,560],[160,548],[190,468],[258,562],[300,468],[330,537],[372,562],[405,482],[445,540],[55,607],[395,610]];
+
+var leafEls = [], rayEls = [], rootGroups = {}, dropEls = [], minEls = [];
+function buildDiagram() {
+  LEAVES.forEach(function (l) {
+    var g = el('g', {}, $('leavesG'));
+    el('path', { 'class': 'leaf', d: 'M0,0 C-20,-27 -70,-27 -92,0 C-70,27 -20,27 0,0 Z' }, g);
+    el('path', { 'class': 'vein', d: 'M0,0 H-80 M-28,0 l-12,-13 M-28,0 l-12,13 M-54,0 l-11,-11 M-54,0 l-11,11' }, g);
+    leafEls.push(g);
+    rayEls.push(el('line', { 'class': 'ray', x1: 88, y1: 88, x2: l.cx, y2: l.y - 8 }, $('rays')));
+  });
+  [100, 50, 10].forEach(function (k) {
+    var g = el('g', {}, $('rootsG'));
+    ROOTS[k].forEach(function (pts) { el('polyline', { 'class': 'root', points: pts.map(function (p) { return p.join(','); }).join(' ') }, g); });
+    rootGroups[k] = g;
+  });
+  DROPS.forEach(function (p) {
+    dropEls.push(el('path', { 'class': 'drop', d: 'M0,-7 C4,-2 5,1 5,3 A5,5 0 1 1 -5,3 C-5,1 -4,-2 0,-7 Z', transform: 'translate(' + p[0] + ',' + p[1] + ')' }, $('soilDrops')));
+  });
+  MINS.forEach(function (p) {
+    minEls.push(el('rect', { 'class': 'min', x: -3, y: -3, width: 6, height: 6, transform: 'translate(' + p[0] + ',' + p[1] + ') rotate(45)' }, $('soilMins')));
+  });
+}
+function mix(a, b, t) { return [0, 1, 2].map(function (i) { return R(a[i] + (b[i] - a[i]) * t); }); }
+function leafColour() {
+  var base = parts.chl === 1 ? [34, 197, 94] : parts.chl === 0.5 ? [200, 240, 130] : [248, 250, 252];
+  var t = plant.dead ? 0.85 : (1 - plant.health / 100) * 0.75;
+  return 'rgb(' + mix(base, [161, 110, 40], t).join(',') + ')';
+}
+function renderDiagram(c) {
+  var droop = plant.dead ? 48 : clamp((40 - c.waterL) / 40, 0, 1) * 36;
+  var col = leafColour();
+  LEAVES.forEach(function (l, i) {
+    var on = i < parts.leaves;
+    leafEls[i].style.display = on ? '' : 'none';
+    rayEls[i].style.display = on && env.light > 0 ? '' : 'none';
+    rayEls[i].style.opacity = (env.light / 100 * 0.9).toFixed(2);
+    leafEls[i].setAttribute('transform', 'translate(' + l.ax + ',' + l.y + ')' + (l.s > 0 ? ' scale(-1,1)' : '') + ' rotate(' + (-droop).toFixed(1) + ')');
+    leafEls[i].firstChild.style.fill = col;
+  });
+  [100, 50, 10].forEach(function (k) { rootGroups[k].style.display = parts.roots === k ? '' : 'none'; });
+  var rc = 'rgb(' + mix([120, 113, 108], [146, 64, 14], plant.rootEnergy / 100).join(',') + ')';
+  rootGroups[parts.roots].style.stroke = rc;
+  Array.prototype.forEach.call(rootGroups[parts.roots].children, function (p) { p.style.stroke = rc; });
+  $('sunG').style.opacity = (0.2 + 0.8 * env.light / 100).toFixed(2);
+  $('cloudG').style.opacity = (0.2 + 0.8 * env.co2 / 100).toFixed(2);
+  var nd = Math.round(env.water / 100 * DROPS.length), nm = Math.round(env.minerals / 100 * MINS.length);
+  dropEls.forEach(function (e, i) { e.style.display = i < nd ? '' : 'none'; });
+  minEls.forEach(function (e, i) { e.style.display = i < nm ? '' : 'none'; });
+  $('xBlock').style.display = parts.xylem ? 'none' : '';
+  $('pBlock').style.display = parts.phloem ? 'none' : '';
+}
+
+/* ── Particles ── */
+var live = [], pools = { water: [], co2: [], sugar: [], o2: [] }, acc = { water: 0, co2: 0, sugar: 0, o2: 0 };
+function mkParticle(type) {
+  var e = pools[type].pop();
+  if (!e) {
+    e = type === 'sugar'
+      ? el('polygon', { points: '0,-4.6 4,-2.3 4,2.3 0,4.6 -4,2.3 -4,-2.3', 'class': 'p-sugar' })
+      : el('circle', { r: type === 'o2' ? 4 : 3.2, 'class': 'p-' + type });
+  }
+  $('particles').appendChild(e);
+  return e;
+}
+function spawn(type, pts, dur) {
+  var len = [0], total = 0;
+  for (var i = 1; i < pts.length; i++) {
+    total += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+    len.push(total);
+  }
+  live.push({ type: type, e: mkParticle(type), pts: pts, len: len, total: total, t: 0, dur: dur });
+}
+function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+function jit(n) { return (Math.random() - 0.5) * n; }
+function leafPick() { return LEAVES[Math.floor(Math.random() * parts.leaves)]; }
+
+function spawnFlows(dt, c) {
+  var hasLeaf = parts.leaves > 0;
+  var rates = {
+    water: c.uptake / 100 * 6,
+    co2: hasLeaf ? env.co2 / 100 * 5 : 0,
+    sugar: c.glucose / 100 * 6,
+    o2: c.glucose / 100 * 5
+  };
+  for (var type in rates) {
+    acc[type] += rates[type] * dt;
+    while (acc[type] >= 1) {
+      acc[type] -= 1;
+      var l = hasLeaf ? leafPick() : null, root = pick(ROOTS[parts.roots]), pts;
+      if (type === 'water') {
+        pts = root.slice().reverse(); pts.pop();
+        pts[0] = [pts[0][0] + jit(14), pts[0][1] + jit(10)];
+        if (!parts.xylem) pts.push([232, 410], [232, 394]);
+        else if (l) pts.push([232, 410], [232, l.y], [l.cx + jit(24), l.y + jit(10)]);
+        else pts.push([232, 410], [232, 122]);
+        spawn('water', pts, parts.xylem ? 3.4 : 1.6);
+      } else if (type === 'co2') {
+        var from = Math.random() < 0.7 ? [402 + jit(50), 78 + jit(24)] : [l.s < 0 ? 40 : 440, l.y - 40 + jit(40)];
+        spawn('co2', [from, [l.cx + jit(30), l.y + jit(10)]], 2.2);
+      } else if (type === 'sugar') {
+        pts = [[l.cx + jit(24), l.y + jit(8)], [248, l.y]];
+        if (parts.phloem) { pts.push([248, 410]); pts = pts.concat(root.slice(1)); spawn('sugar', pts, 3.6); }
+        else { pts.push([248, Math.max(l.y + 4, 372)]); spawn('sugar', pts, 2); }
+      } else {
+        spawn('o2', [[l.cx + jit(24), l.y + jit(8)], [l.cx + l.s * (105 + jit(30)), l.y - 55 + jit(30)]], 2.4);
+      }
+    }
+  }
+}
+function moveParticles(dt) {
+  for (var i = live.length - 1; i >= 0; i--) {
+    var p = live[i];
+    p.t += dt / p.dur;
+    if (p.t >= 1) {
+      p.e.parentNode.removeChild(p.e); pools[p.type].push(p.e); live.splice(i, 1); continue;
+    }
+    var d = p.t * p.total, j = 1;
+    while (j < p.len.length - 1 && p.len[j] < d) j++;
+    var seg = p.len[j] - p.len[j - 1] || 1, f = (d - p.len[j - 1]) / seg;
+    var x = p.pts[j - 1][0] + (p.pts[j][0] - p.pts[j - 1][0]) * f;
+    var y = p.pts[j - 1][1] + (p.pts[j][1] - p.pts[j - 1][1]) * f;
+    p.e.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ')');
+    p.e.style.opacity = Math.min(1, p.t * 8, (1 - p.t) * 5).toFixed(2);
+  }
+}
+
+/* ── Report ── */
+var METERS = {
+  'm-in': [['lightL', 'Light captured', '#eab308', 'light'], ['waterL', 'Water', '#38bdf8', 'water'], ['co2L', 'CO₂', '#94a3b8', 'co2']],
+  'm-out': [['glucose', 'Glucose', '#f59e0b'], ['oxygen', 'Oxygen', '#0ea5e9']],
+  'm-plant': [['store', 'Stored sugar', '#f59e0b'], ['rootEnergy', 'Root energy', '#92400e'], ['health', 'Health', '#16a34a']]
+};
+var meterEls = {};
+function buildMeters() {
+  for (var box in METERS) {
+    METERS[box].forEach(function (m) {
+      var row = document.createElement('div');
+      row.className = 'meter';
+      row.innerHTML = '<span class="name">' + m[1] + '</span><span class="track"><span class="fill" style="background:' + m[2] + '"></span></span><span class="num">0</span>';
+      $(box).appendChild(row);
+      meterEls[m[0]] = { row: row, fill: row.querySelector('.fill'), num: row.querySelector('.num'), bar: m[3] };
+    });
+  }
+  var mass = document.createElement('div');
+  mass.className = 'meter';
+  mass.innerHTML = '<span class="name">Plant mass</span><span class="num" id="mass" style="grid-column:2 / 4"></span>';
+  $('m-plant').appendChild(mass);
+}
+var cache = {};
+function setHTML(id, html) { if (cache[id] !== html) { cache[id] = html; $(id).innerHTML = html; } }
+function setMeter(key, v, limBar) {
+  var m = meterEls[key], r = R(v);
+  if (m.last !== r) { m.last = r; m.fill.style.width = clamp(r, 0, 100) + '%'; m.num.textContent = r; }
+  if (m.bar) m.row.classList.toggle('limit', m.bar === limBar);
+}
+function statusOf(c) {
+  var s = c.glucose - NEED;
+  if (plant.dead) return ['Dead', 'bad'];
+  if (parts.leaves > 0 && c.waterL < 12) return ['Wilting', 'bad'];
+  if (plant.store <= 0) return ['Starving', 'bad'];
+  if (s < -1) return ['Using up stored sugar', 'warn'];
+  if (s <= 5) return ['Just surviving', 'warn'];
+  if (s < 25) return ['Growing slowly', ''];
+  return ['Thriving', ''];
+}
+function renderReport(c) {
+  var st = statusOf(c), g = R(c.glucose), s = g - NEED;
+  setHTML('day', 'Day ' + Math.floor(plant.day));
+  if (cache.status !== st[0]) { cache.status = st[0]; $('status').textContent = st[0]; $('status').className = 'status-pill ' + st[1]; }
+  setHTML('headline', st[0]);
+  setHTML('sub', plant.dead ? 'Press “New plant” to start again.' :
+    'Makes <b>' + g + '</b> glucose a day. Uses <b>' + NEED + '</b> to stay alive. ' +
+    (s > 0 ? '<b>' + s + '</b> left over to grow.' : s === 0 ? 'Nothing left over to grow.' : 'Short by <b>' + (-s) + '</b>, so it is burning stored sugar.'));
+  setMeter('lightL', c.lightL, c.bar); setMeter('waterL', c.waterL, c.bar); setMeter('co2L', c.co2L, c.bar);
+  setMeter('glucose', c.glucose); setMeter('oxygen', c.glucose);
+  setMeter('store', plant.store); setMeter('rootEnergy', plant.rootEnergy); setMeter('health', plant.health);
+  setHTML('mass', plant.mass.toFixed(1) + ' g');
+  setHTML('why', whyText(c));
+}
+
+/* ── Controls ── */
+function syncControls() {
+  ['light', 'water', 'co2', 'minerals'].forEach(function (k) {
+    $('s-' + k).value = env[k]; $('o-' + k).textContent = show(k, env[k]);
+  });
+  $('s-leaves').value = parts.leaves; $('o-leaves').textContent = show('leaves', parts.leaves);
+  Array.prototype.forEach.call(document.querySelectorAll('[data-part][data-val]'), function (b) {
+    b.setAttribute('aria-pressed', String(parts[b.dataset.part] === Number(b.dataset.val)));
+  });
+  $('bPause').setAttribute('aria-pressed', String(!running));
+  $('bPlay').setAttribute('aria-pressed', String(running && speed === 1));
+  $('bFast').setAttribute('aria-pressed', String(running && speed === 2));
+}
+function bindControls() {
+  Array.prototype.forEach.call(document.querySelectorAll('input[type=range]'), function (inp) {
+    var key = inp.dataset.key;
+    inp.addEventListener('input', function () {
+      if (key in DEF_ENV) env[key] = Number(inp.value); else parts[key] = Number(inp.value);
+      $('o-' + key).textContent = show(key, Number(inp.value));
+    });
+    inp.addEventListener('change', function () { commitChange(key); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('button[data-part][data-val]'), function (b) {
+    b.addEventListener('click', function () {
+      parts[b.dataset.part] = Number(b.dataset.val);
+      syncControls(); commitChange(b.dataset.part);
+    });
+  });
+  $('bPause').addEventListener('click', function () { running = false; syncControls(); });
+  $('bPlay').addEventListener('click', function () { running = true; speed = 1; syncControls(); });
+  $('bFast').addEventListener('click', function () { running = true; speed = 2; syncControls(); });
+  $('bNew').addEventListener('click', function () {
+    newPlant(); running = true; snapshot(); pushLog('A fresh plant, with the same settings.', ''); syncControls();
+  });
+  $('bReset').addEventListener('click', function () {
+    env = copy(DEF_ENV); parts = copy(DEF_PARTS); newPlant(); running = true; logItems = []; renderLog(); snapshot(); syncControls();
+  });
+}
+function lock(on) {
+  $('ctl').disabled = on;
+  ['bPause', 'bPlay', 'bFast', 'bNew', 'bReset'].forEach(function (id) { $(id).disabled = on; });
+}
+
+/* ── Tabs ── */
+var TABS = ['report', 'missions', 'parts'];
+function showTab(name) {
+  TABS.forEach(function (t) {
+    $('tab-' + t).setAttribute('aria-selected', String(t === name));
+    $('pane-' + t).hidden = t !== name;
+  });
+}
+
+/* ── Parts ── */
+var PARTS = [
+  { id: 'leaves', name: 'Leaves', sys: 'Shoot system', job: 'Make glucose by photosynthesis. Chloroplasts in the leaf cells hold chlorophyll, the green pigment that captures light.', needs: 'Light, water (from xylem), CO₂ (through leaf pores called stomata).', gives: 'Glucose for the whole plant. Oxygen is released as a by-product.', tryit: 'Remove leaves one at a time. Then set chlorophyll to “None”.' },
+  { id: 'xylem', name: 'Xylem', sys: 'Vascular tissue · in the stem', job: 'Tubes that carry water and dissolved minerals UP from the roots to the leaves.', needs: 'Water absorbed by the roots.', gives: 'Water to the leaves for photosynthesis.', tryit: 'Block it. Which meter drops first?' },
+  { id: 'phloem', name: 'Phloem', sys: 'Vascular tissue · in the stem', job: 'Tubes that carry glucose from the leaves to the rest of the plant, including DOWN to the roots.', needs: 'Glucose made in the leaves.', gives: 'Food for every part that cannot make its own.', tryit: 'Block it, press Fast, and watch “Root energy” for 10 days.' },
+  { id: 'roots', name: 'Roots', sys: 'Root system', job: 'Absorb water and dissolved minerals from the soil. Anchor the plant. Store food.', needs: 'Glucose sent down the phloem. Roots have no chloroplasts and cannot make their own.', gives: 'Water and minerals to the shoot system.', tryit: 'Cut the roots to “Half”. Can more soil water make up for it?' },
+  { id: 'light', name: 'Light', sys: 'From the surroundings', job: 'The energy source for photosynthesis.', needs: 'Chlorophyll to capture it.', gives: 'The energy that ends up stored in glucose.', tryit: 'Turn light to 0 with rich soil. Does the plant still have food?' },
+  { id: 'co2', name: 'Carbon dioxide (CO₂)', sys: 'From the surroundings', job: 'An ingredient of photosynthesis. A gas in the air.', needs: 'Open leaf pores (stomata) to get in.', gives: 'Together with water, it becomes glucose and oxygen.', tryit: 'Drop CO₂ to 10. Then raise the light. Does more light help?' }
+];
+function buildParts() {
+  $('pcards').innerHTML = '<div class="why" style="margin:0 0 10px"><div class="why-h">The whole process</div><p><b>light + water + carbon dioxide → glucose + oxygen</b></p></div>' +
+    PARTS.map(function (p) {
+      return '<div class="pcard" id="pc-' + p.id + '"><div class="sys">' + p.sys + '</div><h3>' + p.name + '</h3><p>' + p.job + '</p>' +
+        '<dl><dt>Needs</dt><dd>' + p.needs + '</dd><dt>Gives</dt><dd>' + p.gives + '</dd><dt>Try it</dt><dd>' + p.tryit + '</dd></dl></div>';
+    }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('svg .part'), function (g) {
+    function open() {
+      showTab('parts');
+      Array.prototype.forEach.call(document.querySelectorAll('.pcard.sel, svg .part.sel'), function (x) { x.classList.remove('sel'); });
+      g.classList.add('sel');
+      var card = $('pc-' + g.dataset.part);
+      card.classList.add('sel');
+      card.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+    g.addEventListener('click', open);
+    g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+}
+
+/* ── Missions ── */
+var MISSIONS = [
+  { id: 'soil', title: 'Is soil plant food?', days: 8,
+    setup: 'This plant is in the richest soil you can buy, with plenty of water. But it is in a dark closet.',
+    preset: { env: { light: 0, water: 80, minerals: 100 } },
+    q: 'What will happen over the next 8 days?',
+    opts: ['It grows well. Rich soil is full of food.', 'It stays healthy but does not grow.', 'It runs out of sugar and starts to die.'], ans: 2,
+    explain: 'The soil gave the plant water and minerals, but the leaves made <b>zero glucose</b>. Minerals carry no energy, so they are not food. The plant lived on its stored sugar until that ran out. A plant\'s food is the glucose it makes in its own leaves, using light.',
+    goal: 'Do not touch the soil. Get the plant making 60 or more glucose a day.',
+    check: function (c) { return !plant.dead && c.glucose >= 60; },
+    write: 'A classmate says, “Plants eat soil.” Use what you saw to explain why that is wrong.' },
+  { id: 'roots', title: 'A gopher eats the roots', days: 5,
+    setup: 'A gopher chews off almost all the roots. The leaves are untouched and the sun is bright.',
+    preset: { env: { light: 90 }, parts: { roots: 10 } },
+    q: 'What happens to the glucose the leaves make?',
+    opts: ['Nothing changes. Leaves make glucose, not roots.', 'It drops a lot. The leaves run short of water.', 'It goes up. The plant has fewer roots to feed.'], ans: 1,
+    explain: 'Leaves do the making, but water is one of the ingredients and only roots can bring it in. The shoot system cannot do its job without the root system.',
+    goal: 'Set roots to “Half”. Can extra soil water make up for the missing roots? Get glucose to 45 or more.',
+    check: function (c) { return !plant.dead && parts.roots === 50 && c.glucose >= 45; },
+    write: 'Roots do not photosynthesize. Explain why damaging them still lowers the amount of glucose a plant makes.' },
+  { id: 'phloem', title: 'A deer strips the bark', days: 10,
+    setup: 'A deer chews a ring of bark off the stem. That cuts the phloem all the way around. The xylem, deeper inside, still works.',
+    preset: { env: { light: 80, water: 80, co2: 80 }, parts: { phloem: 0 } },
+    q: 'Which part of the plant is in trouble first?',
+    opts: ['The leaves. They cannot get water.', 'The roots. No sugar reaches them.', 'No part. The leaves still make plenty of glucose.'], ans: 1,
+    explain: 'For the first few days the leaves were fine. But roots have no chloroplasts and cannot make their own sugar. With no phloem delivery they starved and stopped absorbing water. Then the leaves ran short too. Each system keeps the other one alive.',
+    goal: 'Open the phloem again. Get root energy back above 80.',
+    check: function () { return !plant.dead && parts.phloem === 1 && plant.rootEnergy >= 80; },
+    write: 'Draw a loop with two arrows between “roots” and “leaves”. Label what each one sends to the other and which tissue carries it.' },
+  { id: 'jar', title: 'Sealed in a jar', days: 4,
+    setup: 'This plant has light and water, but it is sealed in a jar and has used up most of the CO₂.',
+    preset: { env: { light: 60, water: 60, co2: 10 } },
+    q: 'Glucose is low. Which ONE change will raise it?',
+    opts: ['Give it much more light.', 'Give it much more water.', 'Let in more CO₂.'], ans: 2,
+    explain: 'Photosynthesis needs all three ingredients at once. It can only go as fast as the scarcest one, called the <b>limiting factor</b>. Extra light or water just goes unused.',
+    goal: 'Try the two wrong answers first and read what the log says. Then get glucose to 60 or more.',
+    check: function (c) { return !plant.dead && c.glucose >= 60; },
+    write: 'A farmer adds more water to a crop, and nothing improves. Give two possible reasons, using the term “limiting factor”.' },
+  { id: 'white', title: 'The white-leaved plant', days: 6,
+    setup: 'This plant\'s leaves have no chlorophyll at all. It sits in full sun with plenty of water and CO₂.',
+    preset: { env: { light: 100, water: 80, co2: 80 }, parts: { chl: 0 } },
+    q: 'How much glucose will it make?',
+    opts: ['Lots. It has all three ingredients.', 'About half the normal amount.', 'None. Nothing captures the light.'], ans: 2,
+    explain: 'Light only counts if something captures it. Chlorophyll, the green pigment in the chloroplasts, is the plant\'s light catcher. That is why photosynthesis happens in the <b>green</b> parts of a plant.',
+    goal: 'Set chlorophyll to “Pale”. Get a pale plant to make 48 or more glucose a day.',
+    check: function (c) { return !plant.dead && parts.chl === 0.5 && c.glucose >= 48; },
+    write: 'Some houseplants have leaves with white patches. Predict how they grow compared with all-green plants of the same kind, and explain why.' }
+];
+var mState = {}, active = 0;
+try { mState = JSON.parse(localStorage.getItem('plantlab-missions-v1') || '{}') || {}; } catch (e) { mState = {}; }
+function saveM() {
+  var done = {};
+  MISSIONS.forEach(function (m) { if (mState[m.id] && mState[m.id].done) done[m.id] = { done: true }; });
+  try { localStorage.setItem('plantlab-missions-v1', JSON.stringify(done)); } catch (e) {}
+}
+function ms(m) { return mState[m.id] || (mState[m.id] = {}); }
+
+function renderMissions() {
+  $('mlist').innerHTML = MISSIONS.map(function (m, i) {
+    return '<button class="btn" data-m="' + i + '" aria-pressed="' + (i === active) + '">' + (ms(m).done ? '✓ ' : '') + (i + 1) + '</button>';
+  }).join('');
+  var m = MISSIONS[active], s = ms(m), h = '<h3>' + (active + 1) + '. ' + m.title + '</h3><p>' + m.setup + '</p>';
+  if (ff) {
+    h += '<div class="result"><span class="data">Testing… watch the plant and the meters.</span></div>';
+  } else if (!s.tested) {
+    h += '<p><b>Predict:</b> ' + m.q + '</p><div class="opts">' + m.opts.map(function (o, i) {
+      return '<label class="opt"><input type="radio" name="pred" value="' + i + '"' + (s.pred === i ? ' checked' : '') + '><span>' + o + '</span></label>';
+    }).join('') + '</div><button class="btn primary" id="mTest"' + (s.pred == null ? ' disabled' : '') + '>Lock in my prediction and test it</button>';
+  } else {
+    var right = s.pred === m.ans;
+    h += '<div class="result"><div class="data">' + s.data + '</div>' +
+      '<p><b>You predicted:</b> “' + m.opts[s.pred] + '” ' +
+      (right ? 'The evidence supports your prediction.' : 'The evidence does not match. What did you assume that turned out to be wrong?') + '</p>' +
+      '<p><b>What happened:</b> “' + m.opts[m.ans] + '”</p><p>' + m.explain + '</p></div>' +
+      '<div class="goal' + (s.done ? ' done' : '') + '"><div class="goal-h">' + (s.done ? '✓ Done' : 'Now you try') + '</div>' + m.goal +
+      (plant.dead && !s.done ? ' <b>Press “New plant” first.</b>' : '') + '</div>' +
+      '<div class="write"><b>In your notebook:</b> ' + m.write + '</div>' +
+      '<button class="btn" id="mAgain" style="margin-top:10px">Run this mission again</button>';
+  }
+  $('mcard').innerHTML = h;
+}
+function bindMissions() {
+  $('mlist').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-m]');
+    if (!b || ff) return;
+    active = Number(b.dataset.m); renderMissions();
+  });
+  $('mcard').addEventListener('change', function (e) {
+    if (e.target.name === 'pred') { ms(MISSIONS[active]).pred = Number(e.target.value); $('mTest').disabled = false; }
+  });
+  $('mcard').addEventListener('click', function (e) {
+    var m = MISSIONS[active], s = ms(m);
+    if (e.target.id === 'mTest' && s.pred != null) {
+      env = copy(DEF_ENV); parts = copy(DEF_PARTS);
+      for (var k in (m.preset.env || {})) env[k] = m.preset.env[k];
+      for (var j in (m.preset.parts || {})) parts[j] = m.preset.parts[j];
+      newPlant(); logItems = []; pushLog('Mission ' + (active + 1) + ' set up: ' + m.title, '');
+      snapshot(); running = true; ff = { until: m.days }; lock(true); syncControls(); renderMissions();
+    } else if (e.target.id === 'mAgain') {
+      mState[m.id] = { done: s.done }; renderMissions();
+    }
+  });
+}
+function finishFF() {
+  var m = MISSIONS[active], s = ms(m), c = compute();
+  s.tested = true;
+  s.data = 'After ' + m.days + ' days: glucose made ' + R(c.glucose) + ' a day · stored sugar ' + R(plant.store) +
+    ' · root energy ' + R(plant.rootEnergy) + ' · health ' + R(plant.health) + ' · ' + statusOf(c)[0].toLowerCase() + '.';
+  ff = null; running = !plant.dead; speed = 1; lock(false); syncControls(); renderMissions();
+}
+var lastDead = false;
+function checkGoal(c) {
+  var m = MISSIONS[active], s = ms(m);
+  if (!ff && s.tested && !s.done && m.check(c)) { s.done = true; saveM(); renderMissions(); }
+  if (plant.dead !== lastDead) { lastDead = plant.dead; if (!ff) renderMissions(); }
+}
+
+/* ── Main loop ── */
+var last = null;
+function frame(now) {
+  var dt = last == null ? 0 : Math.min(0.1, (now - last) / 1000);
+  last = now;
+  if (running && !plant.dead) {
+    var dayLen = ff ? 0.45 : speed === 2 ? 0.6 : 2.4, dd = dt / dayLen;
+    if (ff && plant.day + dd >= ff.until) { step(Math.max(0, ff.until - plant.day)); finishFF(); }
+    else step(dd);
+  } else if (ff && plant.dead) finishFF();
+  var c = compute();
+  if (running && !plant.dead && !reduceMotion) spawnFlows(dt, c);
+  if (running || live.length) moveParticles(running ? dt : 0);
+  renderDiagram(c); renderReport(c); checkGoal(c);
+  requestAnimationFrame(frame);
+}
+
+/* ── Start ── */
+newPlant(); snapshot();
+buildDiagram(); buildMeters(); buildParts();
+bindControls(); bindMissions();
+TABS.forEach(function (t) { $('tab-' + t).addEventListener('click', function () { showTab(t); }); });
+syncControls(); renderLog(); renderMissions();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

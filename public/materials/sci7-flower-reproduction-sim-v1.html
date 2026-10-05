@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flower Lab — Reproduction Simulation | Grade 7 Science</title>
+<style>
+/* ─────────────────────────────────────────
+   FLOWER LAB — PLANT REPRODUCTION SIMULATION
+   Grade 7 Science | Plants for Food and Fibre
+   LO 7-2-04 (sexual and asexual reproduction; advantages of each)
+   Students change the flower's parts and its surroundings, run a season,
+   and read where the chain from pollen to seed worked or broke.
+   Companion to sci7-photosynthesis-sim-v1.html (same layout and visual system).
+   Model: pollen reaching the ovary = pollen carried x pollen source x stigma x style.
+   ───────────────────────────────────────── */
+
+:root {
+  --accent: #15803d;
+  --accent-light: #f0fdf4;
+  --accent-mid: #22c55e;
+  --ink: #0f172a;
+  --body: #1e293b;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --bad: #b91c1c;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f8fafc; color: var(--body); line-height: 1.5;
+}
+button, input { font: inherit; color: inherit; }
+
+.wrap { max-width: 1280px; margin: 0 auto; padding: 14px 16px 28px; }
+
+/* Header */
+.top { border-bottom: 4px solid var(--accent); padding-bottom: 10px; margin-bottom: 12px; }
+.unit-label {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);
+}
+.top h1 { font-size: 1.5rem; font-weight: 800; color: var(--ink); line-height: 1.2; }
+.i-can {
+  background: var(--accent-light); border-left: 4px solid var(--accent); border-radius: 0 6px 6px 0;
+  padding: 7px 12px; font-weight: 700; color: #14532d; font-size: 0.92rem; margin-top: 8px;
+}
+
+/* Time bar */
+.timebar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
+  background: #fff; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 12px; margin-bottom: 12px;
+}
+.day { font-weight: 800; color: var(--ink); font-size: 1.05rem; min-width: 6.4em; }
+.status-pill {
+  font-weight: 800; font-size: 0.85rem; padding: 3px 12px; border-radius: 999px;
+  background: var(--accent-light); color: #14532d; border: 1.5px solid var(--accent);
+}
+.status-pill.warn { background: #fefce8; color: #854d0e; border-color: #ca8a04; }
+.status-pill.bad { background: #fef2f2; color: #991b1b; border-color: var(--bad); }
+.spacer { flex: 1; }
+.btn {
+  border: 1.5px solid #94a3b8; background: #fff; border-radius: 8px; padding: 5px 12px;
+  font-weight: 700; font-size: 0.86rem; cursor: pointer; color: var(--body);
+}
+.btn:hover { border-color: var(--accent); }
+.btn[aria-pressed="true"], .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:focus-visible, input:focus-visible, .part:focus-visible, .tab:focus-visible {
+  outline: 3px solid #0ea5e9; outline-offset: 2px;
+}
+.seg { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+
+/* Layout */
+.grid { display: grid; grid-template-columns: 268px minmax(300px, 1fr) 350px; gap: 12px; align-items: start; }
+.panel { background: #fff; border: 1.5px solid var(--line); border-radius: 10px; padding: 12px; }
+.panel h2 {
+  font-size: 0.74rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
+  margin-bottom: 8px;
+}
+.panel h2 + .hint { margin-top: -4px; }
+.hint { font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; }
+@media (max-width: 1080px) {
+  .grid { grid-template-columns: minmax(280px, 1fr) minmax(300px, 1fr); }
+  .controls { grid-column: 1 / -1; order: 3; }
+  .controls fieldset { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 20px; }
+  .controls hr.div { display: none; }
+}
+@media (max-width: 680px) {
+  .grid { grid-template-columns: 1fr; }
+  .controls fieldset { display: block; }
+  .controls hr.div { display: block; }
+}
+
+/* Controls */
+fieldset { border: 0; min-width: 0; }
+.ctl { margin-bottom: 10px; }
+.ctl label, .ctl .lab { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 0.88rem; color: var(--ink); }
+.ctl output { font-weight: 600; font-size: 0.8rem; color: var(--muted); }
+.ctl input[type=range] { width: 100%; accent-color: var(--accent); margin-top: 2px; }
+.ctl .seg { margin-top: 4px; }
+.ctl .seg .btn { padding: 3px 9px; font-size: 0.8rem; }
+hr.div { border: 0; border-top: 1.5px dashed var(--line); margin: 12px 0; }
+
+/* Diagram */
+.stage svg { display: block; width: 100%; height: auto; max-height: 78vh; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.78rem; font-weight: 600; color: #334155; margin-top: 6px; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; }
+.tap-hint { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+svg text { font-family: 'Segoe UI', Arial, sans-serif; }
+svg .lbl    { font-weight: 700; font-size: 12.5px; fill: #0f172a; }
+svg .lbl-sm { font-weight: 600; font-size: 11.5px; fill: #475569; }
+svg .lbl-sys{ font-weight: 800; font-size: 10.5px; fill: var(--accent); letter-spacing: 0.1em; }
+svg .sky    { fill: #f0f9ff; }
+svg .soil   { fill: #f3ead8; }
+svg .ground { stroke: #92702f; stroke-width: 2.5; }
+svg .stem   { fill: #86efac; stroke: #15803d; stroke-width: 1.5; }
+svg .petal  { fill: #f9a8d4; stroke: #db2777; stroke-width: 2; }
+svg .petal.dull { fill: #e7e5e4; stroke: #a8a29e; }
+svg .sepal  { fill: #4ade80; stroke: #15803d; stroke-width: 1.5; }
+svg .filament { stroke: #a3a3a3; stroke-width: 3; stroke-linecap: round; }
+svg .anther { fill: #fb923c; stroke: #c2410c; stroke-width: 1.5; }
+svg .style  { fill: #d9f99d; stroke: #4d7c0f; stroke-width: 1.5; }
+svg .ovary  { fill: #ecfccb; stroke: #4d7c0f; stroke-width: 2; }
+svg .stigma { fill: #fde68a; stroke: #ca8a04; stroke-width: 2; }
+svg .stigma.dry { fill: #d6d3d1; stroke: #78716c; }
+svg .ovule  { fill: #fff; stroke: #4d7c0f; stroke-width: 1.5; }
+svg .ovule.fert { fill: #fde047; }
+svg .ovule.ripe { fill: #92400e; stroke: #451a03; }
+svg .leader { stroke: #94a3b8; stroke-width: 1; }
+svg .block  { fill: #b91c1c; }
+svg .block-x{ fill: #fff; font-weight: 800; font-size: 10px; }
+svg .windline { fill: none; stroke: #64748b; stroke-width: 2.5; stroke-linecap: round; }
+svg .nf-petal { fill: #f9a8d4; stroke: #db2777; stroke-width: 1.5; }
+svg .nf-centre { fill: #fb923c; stroke: #c2410c; stroke-width: 1.5; }
+svg .runner { fill: none; stroke: #15803d; stroke-width: 3; stroke-linecap: round; }
+svg .plantlet { fill: #86efac; stroke: #15803d; stroke-width: 1.5; }
+svg .p-pollen { fill: #facc15; stroke: #a16207; stroke-width: 1; }
+svg .p-tube   { fill: #f97316; stroke: #9a3412; stroke-width: 1; }
+svg .p-gust   { stroke: #94a3b8; stroke-width: 2; stroke-linecap: round; }
+svg .bee-body { fill: #facc15; stroke: #1e293b; stroke-width: 1.2; }
+svg .bee-stripe { stroke: #1e293b; stroke-width: 1.6; }
+svg .bee-wing { fill: #fff; stroke: #64748b; stroke-width: 0.8; opacity: 0.9; }
+svg .part   { cursor: pointer; }
+svg .part:hover .hit, svg .part.sel .hit { stroke: #0ea5e9; stroke-width: 2; stroke-dasharray: 4 3; }
+svg .hit    { fill: transparent; stroke: transparent; }
+
+/* Tabs */
+.tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+.tab {
+  flex: 1; border: 1.5px solid var(--line); background: #f8fafc; border-radius: 8px; padding: 6px 4px;
+  font-weight: 800; font-size: 0.82rem; cursor: pointer; color: #475569;
+}
+.tab[aria-selected="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+.tabpane[hidden] { display: none; }
+
+/* Report */
+.headline { font-weight: 800; color: var(--ink); font-size: 1rem; }
+.sub { font-size: 0.86rem; color: #334155; margin-bottom: 10px; }
+.group-h { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 10px 0 4px; }
+.meter { display: grid; grid-template-columns: 9.4em 1fr 2.6em; align-items: center; gap: 6px; font-size: 0.82rem; margin: 3px 0; }
+.meter .name { font-weight: 700; color: var(--ink); }
+.meter .track { height: 10px; background: #f1f5f9; border-radius: 999px; overflow: hidden; }
+.meter .fill { height: 100%; border-radius: 999px; width: 0; transition: width 0.25s; }
+.meter .num { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.meter.limit .name::after {
+  content: 'broken link'; display: inline-block; margin-left: 5px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+  color: #991b1b; background: #fee2e2; border-radius: 4px; padding: 0 4px; vertical-align: 1px;
+}
+.counts { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; font-size: 0.84rem; }
+.counts dt { font-weight: 700; color: var(--ink); }
+.counts dd { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.counts .total { border-top: 1.5px solid var(--line); padding-top: 3px; margin-top: 2px; color: var(--accent); }
+.why {
+  background: #fefce8; border-left: 4px solid #ca8a04; border-radius: 0 6px 6px 0;
+  padding: 8px 12px; font-size: 0.88rem; margin-top: 10px;
+}
+.why p + p { margin-top: 5px; }
+.why-h { font-weight: 800; color: #a16207; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.log { list-style: none; max-height: 250px; overflow-y: auto; }
+.log li { border-left: 3px solid var(--line); padding: 4px 0 4px 9px; margin: 6px 0; font-size: 0.84rem; }
+.log li.up { border-color: var(--accent-mid); }
+.log li.down { border-color: #f97316; }
+.log li.event { border-color: #7c3aed; }
+.log .chg { font-weight: 700; color: var(--ink); }
+.log .res { font-variant-numeric: tabular-nums; }
+.log .empty { color: var(--muted); border: 0; padding-left: 0; }
+
+/* Missions */
+.mlist { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.mlist .btn { font-size: 0.8rem; padding: 4px 9px; }
+.mcard h3 { font-size: 1rem; font-weight: 800; color: var(--ink); }
+.mcard p { font-size: 0.9rem; margin-top: 6px; }
+.opts { margin-top: 8px; display: grid; gap: 5px; }
+.opt {
+  display: flex; gap: 8px; align-items: flex-start; border: 1.5px solid var(--line); border-radius: 8px;
+  padding: 6px 9px; font-size: 0.88rem; cursor: pointer;
+}
+.opt:has(input:checked) { border-color: var(--accent); background: var(--accent-light); }
+.opt input { margin-top: 4px; accent-color: var(--accent); }
+.mcard .btn.primary { margin-top: 10px; }
+.result { border: 1.5px solid var(--line); border-radius: 8px; padding: 9px 11px; margin-top: 10px; font-size: 0.88rem; }
+.result .data { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.result p { margin-top: 6px; }
+.goal { background: #eff6ff; border-left: 4px solid #2563eb; border-radius: 0 6px 6px 0; padding: 8px 12px; margin-top: 10px; font-size: 0.88rem; }
+.goal.done { background: var(--accent-light); border-color: var(--accent); }
+.goal-h { font-weight: 800; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: #1d4ed8; }
+.goal.done .goal-h { color: var(--accent); }
+.write { border: 1.5px dashed #94a3b8; border-radius: 8px; padding: 8px 11px; margin-top: 10px; font-size: 0.88rem; }
+.write b { color: var(--ink); }
+
+/* Parts */
+.pcard { border: 1.5px solid var(--line); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 8px 11px; margin-bottom: 8px; font-size: 0.86rem; }
+.pcard.sel { background: var(--accent-light); border-color: var(--accent); }
+.pcard h3 { font-size: 0.95rem; font-weight: 800; color: var(--ink); }
+.pcard .sys { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.pcard dl { display: grid; grid-template-columns: 4.6em 1fr; gap: 2px 8px; margin-top: 4px; }
+.pcard dt { font-weight: 700; color: #475569; }
+.steps { margin: 4px 0 0 1.2rem; }
+.steps li { margin: 2px 0; }
+
+.foot { font-size: 0.76rem; color: var(--muted); margin-top: 12px; }
+
+@media print { .timebar .btn, .tabs { display: none; } body { background: #fff; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="unit-label">Grade 7 Science · Plants for Food and Fibre</div>
+    <h1>Flower Lab: Reproduction Simulation</h1>
+    <div class="i-can">I can explain what each part of a flower does to turn pollen into seeds, and compare sexual and asexual reproduction.</div>
+  </header>
+
+  <div class="timebar">
+    <span class="day" id="day">Day 0 of 20</span>
+    <span class="status-pill" id="status">Bud</span>
+    <span class="spacer"></span>
+    <span class="seg" role="group" aria-label="Simulation speed">
+      <button class="btn" id="bPause" aria-pressed="false">Pause</button>
+      <button class="btn" id="bPlay" aria-pressed="true">Play</button>
+      <button class="btn" id="bFast" aria-pressed="false">Fast</button>
+    </span>
+    <button class="btn" id="bNew" title="Start a new flower with the same settings">New season</button>
+    <button class="btn" id="bReset" title="Put every setting back to the start">Reset settings</button>
+  </div>
+
+  <div class="grid">
+
+    <!-- CONTROLS -->
+    <section class="panel controls" aria-label="Controls">
+      <fieldset id="ctl">
+        <div>
+          <h2>Surroundings</h2>
+          <p class="hint">What is around the flower.</p>
+          <div class="ctl">
+            <label for="s-bees"><span>Bees</span><output id="o-bees"></output></label>
+            <input type="range" id="s-bees" data-key="bees" min="0" max="100" step="5">
+          </div>
+          <div class="ctl">
+            <label for="s-wind"><span>Wind</span><output id="o-wind"></output></label>
+            <input type="range" id="s-wind" data-key="wind" min="0" max="100" step="5">
+          </div>
+          <div class="ctl">
+            <label for="s-neigh"><span>Other flowers of this kind</span><output id="o-neigh"></output></label>
+            <input type="range" id="s-neigh" data-key="neigh" min="0" max="100" step="5">
+          </div>
+        </div>
+        <div>
+          <hr class="div">
+          <h2>Flower parts</h2>
+          <p class="hint">Damage a part to find out what it does.</p>
+          <div class="ctl">
+            <div class="lab"><span>Petals</span></div>
+            <div class="seg" role="group" aria-label="Petals">
+              <button class="btn" data-part="petals" data-val="1">Bright</button>
+              <button class="btn" data-part="petals" data-val="0.5">Dull</button>
+              <button class="btn" data-part="petals" data-val="0.1">Removed</button>
+            </div>
+          </div>
+          <div class="ctl">
+            <div class="lab"><span>Sepals</span></div>
+            <div class="seg" role="group" aria-label="Sepals">
+              <button class="btn" data-part="sepals" data-val="1">In place</button>
+              <button class="btn" data-part="sepals" data-val="0">Removed</button>
+            </div>
+          </div>
+          <div class="ctl">
+            <div class="lab"><span>Anthers</span></div>
+            <div class="seg" role="group" aria-label="Anthers">
+              <button class="btn" data-part="anthers" data-val="1">Full of pollen</button>
+              <button class="btn" data-part="anthers" data-val="0">Removed</button>
+            </div>
+          </div>
+          <div class="ctl">
+            <div class="lab"><span>Pollen type</span></div>
+            <div class="seg" role="group" aria-label="Pollen type">
+              <button class="btn" data-part="sticky" data-val="1">Sticky</button>
+              <button class="btn" data-part="sticky" data-val="0">Light and dusty</button>
+            </div>
+          </div>
+          <div class="ctl">
+            <div class="lab"><span>Stigma</span></div>
+            <div class="seg" role="group" aria-label="Stigma">
+              <button class="btn" data-part="stigma" data-val="1">Sticky</button>
+              <button class="btn" data-part="stigma" data-val="0.2">Dry</button>
+            </div>
+          </div>
+          <div class="ctl">
+            <div class="lab"><span>Style</span></div>
+            <div class="seg" role="group" aria-label="Style">
+              <button class="btn" data-part="style" data-val="1">Open</button>
+              <button class="btn" data-part="style" data-val="0">Blocked</button>
+            </div>
+          </div>
+          <div class="ctl">
+            <label for="s-ovules"><span>Ovules in the ovary</span><output id="o-ovules"></output></label>
+            <input type="range" id="s-ovules" data-key="ovules" min="0" max="6" step="1">
+          </div>
+        </div>
+        <div>
+          <hr class="div">
+          <h2>The plant's strategy</h2>
+          <p class="hint">Other ways to get offspring into next year.</p>
+          <div class="ctl">
+            <div class="lab"><span>Runners (asexual)</span></div>
+            <div class="seg" role="group" aria-label="Runners">
+              <button class="btn" data-part="runners" data-val="0">Off</button>
+              <button class="btn" data-part="runners" data-val="1">On</button>
+            </div>
+          </div>
+          <div class="ctl">
+            <div class="lab"><span>Seed dispersal</span></div>
+            <div class="seg" role="group" aria-label="Seed dispersal">
+              <button class="btn" data-part="disp" data-val="1">Carried away</button>
+              <button class="btn" data-part="disp" data-val="0">Drops by parent</button>
+            </div>
+          </div>
+          <div class="ctl">
+            <div class="lab"><span>Next year</span></div>
+            <div class="seg" role="group" aria-label="Next year">
+              <button class="btn" data-part="disease" data-val="0">Normal year</button>
+              <button class="btn" data-part="disease" data-val="1">New disease</button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </section>
+
+    <!-- FLOWER -->
+    <section class="panel stage" aria-label="Flower diagram">
+      <svg id="svg" viewBox="0 0 560 620" role="img" aria-labelledby="svgTitle svgDesc">
+        <title id="svgTitle">Flower map</title>
+        <desc id="svgDesc">An icon map of a flower cut in half. Pollen is carried from the anthers or from other flowers to the stigma, grows a tube down the style, and reaches the ovules in the ovary, which become seeds.</desc>
+        <rect class="sky" x="0" y="0" width="560" height="540"/>
+        <rect class="soil" x="0" y="540" width="560" height="80"/>
+        <line class="ground" x1="0" y1="540" x2="560" y2="540"/>
+
+        <!-- wind -->
+        <g class="part" data-part="pollination" tabindex="0" role="button" aria-label="Wind">
+          <g id="windG">
+            <path class="windline" d="M22,52 H78 a10,10 0 1 0 -10,-10"/>
+            <path class="windline" d="M22,70 H98 a10,10 0 1 1 -10,10"/>
+            <path class="windline" d="M22,88 H62"/>
+          </g>
+          <text class="lbl" x="62" y="116" text-anchor="middle">Wind</text>
+          <rect class="hit" x="14" y="24" width="100" height="100" rx="8"/>
+        </g>
+
+        <!-- other flowers -->
+        <g class="part" data-part="pollination" tabindex="0" role="button" aria-label="Other flowers of the same kind">
+          <g id="neighG">
+            <line x1="495" y1="72" x2="495" y2="100" stroke="#15803d" stroke-width="3"/>
+            <circle class="nf-petal" cx="495" cy="50" r="10"/><circle class="nf-petal" cx="514" cy="64" r="10"/>
+            <circle class="nf-petal" cx="507" cy="86" r="10"/><circle class="nf-petal" cx="483" cy="86" r="10"/>
+            <circle class="nf-petal" cx="476" cy="64" r="10"/><circle class="nf-centre" cx="495" cy="70" r="9"/>
+          </g>
+          <text class="lbl" x="495" y="116" text-anchor="middle">Other flowers</text>
+          <rect class="hit" x="445" y="24" width="100" height="100" rx="8"/>
+        </g>
+
+        <!-- runner + plantlets -->
+        <g class="part" data-part="runners" tabindex="0" role="button" aria-label="Runners">
+          <g id="runnerG"></g>
+          <rect class="hit" x="30" y="496" width="238" height="60" rx="8"/>
+        </g>
+
+        <!-- stem -->
+        <rect class="stem" x="274" y="424" width="12" height="118" rx="3"/>
+
+        <!-- petals -->
+        <g class="part" data-part="petals" tabindex="0" role="button" aria-label="Petals">
+          <g id="petalsG">
+            <ellipse class="petal" cx="280" cy="305" rx="36" ry="95" transform="rotate(-55 280 400)"/>
+            <ellipse class="petal" cx="280" cy="305" rx="36" ry="95" transform="rotate(55 280 400)"/>
+            <ellipse class="petal" cx="280" cy="305" rx="36" ry="95" transform="rotate(-24 280 400)"/>
+            <ellipse class="petal" cx="280" cy="305" rx="36" ry="95" transform="rotate(24 280 400)"/>
+          </g>
+        </g>
+
+        <!-- sepals -->
+        <g class="part" data-part="sepals" tabindex="0" role="button" aria-label="Sepals">
+          <g id="sepalsG">
+            <path class="sepal" d="M280,432 C252,446 220,436 206,406 C232,408 262,414 280,432 Z"/>
+            <path class="sepal" d="M280,432 C308,446 340,436 354,406 C328,408 298,414 280,432 Z"/>
+          </g>
+        </g>
+
+        <!-- stamens -->
+        <g class="part" data-part="stamen" tabindex="0" role="button" aria-label="Stamens: anther and filament">
+          <line class="filament" x1="280" y1="398" x2="205" y2="225"/>
+          <line class="filament" x1="280" y1="398" x2="242" y2="195"/>
+          <line class="filament" x1="280" y1="398" x2="318" y2="195"/>
+          <line class="filament" x1="280" y1="398" x2="355" y2="225"/>
+          <g id="anthersG">
+            <ellipse class="anther" cx="205" cy="222" rx="14" ry="8" transform="rotate(-25 205 222)"/>
+            <ellipse class="anther" cx="242" cy="192" rx="14" ry="8" transform="rotate(-10 242 192)"/>
+            <ellipse class="anther" cx="318" cy="192" rx="14" ry="8" transform="rotate(10 318 192)"/>
+            <ellipse class="anther" cx="355" cy="222" rx="14" ry="8" transform="rotate(25 355 222)"/>
+          </g>
+        </g>
+
+        <!-- pistil -->
+        <g class="part" data-part="style" tabindex="0" role="button" aria-label="Style">
+          <rect class="style" x="274" y="176" width="12" height="166" rx="3"/>
+          <rect class="hit" x="271" y="182" width="18" height="150"/>
+        </g>
+        <g class="part" data-part="ovary" tabindex="0" role="button" aria-label="Ovary and ovules">
+          <ellipse class="ovary" id="ovaryE" cx="280" cy="382" rx="38" ry="46"/>
+          <g id="ovulesG"></g>
+        </g>
+        <g class="part" data-part="stigma" tabindex="0" role="button" aria-label="Stigma">
+          <circle class="stigma" id="stigmaE" cx="280" cy="165" r="13"/>
+        </g>
+        <g id="sBlock" style="display:none"><rect class="block" x="271" y="256" width="18" height="13" rx="2"/><text class="block-x" x="280" y="266" text-anchor="middle">✕</text></g>
+
+        <!-- labels: left = stamen side, right = pistil side -->
+        <text class="lbl-sys" x="104" y="188" text-anchor="end">STAMEN · MALE</text>
+        <line class="leader" x1="108" y1="208" x2="192" y2="220"/>
+        <text class="lbl" x="104" y="212" text-anchor="end">Anther</text>
+        <text class="lbl-sm" x="104" y="226" text-anchor="end">makes pollen</text>
+        <line class="leader" x1="108" y1="262" x2="150" y2="290"/>
+        <text class="lbl" x="104" y="266" text-anchor="end">Petal</text>
+        <text class="lbl-sm" x="104" y="280" text-anchor="end">attracts bees</text>
+        <line class="leader" x1="108" y1="322" x2="246" y2="322"/>
+        <text class="lbl" x="104" y="326" text-anchor="end">Filament</text>
+        <text class="lbl-sm" x="104" y="340" text-anchor="end">holds anther up</text>
+        <line class="leader" x1="108" y1="424" x2="214" y2="414"/>
+        <text class="lbl" x="104" y="428" text-anchor="end">Sepal</text>
+        <text class="lbl-sm" x="104" y="442" text-anchor="end">protected the bud</text>
+
+        <text class="lbl-sys" x="458" y="140">PISTIL · FEMALE</text>
+        <line class="leader" x1="454" y1="160" x2="294" y2="165"/>
+        <text class="lbl" x="458" y="164">Stigma</text>
+        <text class="lbl-sm" x="458" y="178">catches pollen</text>
+        <line class="leader" x1="454" y1="246" x2="287" y2="246"/>
+        <text class="lbl" x="458" y="250">Style</text>
+        <text class="lbl-sm" x="458" y="264">pollen tube path</text>
+        <line class="leader" x1="454" y1="346" x2="314" y2="364"/>
+        <text class="lbl" x="458" y="350">Ovary</text>
+        <text class="lbl-sm" x="458" y="364">becomes the fruit</text>
+        <line class="leader" x1="454" y1="400" x2="307" y2="384"/>
+        <text class="lbl" x="458" y="404">Ovule</text>
+        <text class="lbl-sm" x="458" y="418">becomes a seed</text>
+
+        <text class="lbl-sm" id="stageNote" x="280" y="130" text-anchor="middle"></text>
+
+        <g id="particles" aria-hidden="true"></g>
+      </svg>
+      <div class="legend" aria-label="Key">
+        <span><i style="background:#facc15"></i>pollen</span>
+        <span><i style="background:#f97316"></i>pollen tube</span>
+        <span><i style="background:#fff;border:2px solid #4d7c0f"></i>ovule</span>
+        <span><i style="background:#fde047;border:2px solid #4d7c0f"></i>fertilized ovule</span>
+        <span><i style="background:#92400e"></i>ripe seed</span>
+      </div>
+      <p class="tap-hint">Click any part of the flower to find out what it does.</p>
+    </section>
+
+    <!-- REPORT / MISSIONS / PARTS -->
+    <section class="panel" aria-label="Feedback">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" id="tab-report" aria-selected="true" aria-controls="pane-report">Flower report</button>
+        <button class="tab" role="tab" id="tab-missions" aria-selected="false" aria-controls="pane-missions">Missions</button>
+        <button class="tab" role="tab" id="tab-parts" aria-selected="false" aria-controls="pane-parts">Parts</button>
+      </div>
+
+      <div class="tabpane" id="pane-report" role="tabpanel" aria-labelledby="tab-report">
+        <div class="headline" id="headline"></div>
+        <div class="sub" id="sub"></div>
+
+        <div class="group-h">The chain from pollen to ovule (per day)</div>
+        <div id="m-chain"></div>
+
+        <div class="group-h">Offspring so far</div>
+        <dl class="counts" id="counts"></dl>
+
+        <div class="why" aria-live="polite">
+          <div class="why-h">What is happening, and why?</div>
+          <div id="why"></div>
+        </div>
+
+        <div class="group-h" style="margin-top:14px">What your changes did</div>
+        <ul class="log" id="log" aria-live="polite"></ul>
+      </div>
+
+      <div class="tabpane" id="pane-missions" role="tabpanel" aria-labelledby="tab-missions" hidden>
+        <p class="hint">Predict first. Then test. A wrong prediction is useful evidence.</p>
+        <div class="mlist" id="mlist"></div>
+        <div class="mcard" id="mcard"></div>
+      </div>
+
+      <div class="tabpane" id="pane-parts" role="tabpanel" aria-labelledby="tab-parts" hidden>
+        <div id="pcards"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <p class="foot">This is a model. The numbers are made-up units, chosen to show how the parts depend on each other. One season here is 20 days. Real flowers are more complicated, and many kinds cannot pollinate themselves.</p>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+/* ── Model constants ── */
+var SEASON = 20, OPEN_DAY = 2.5, FALL_DAY = 12;
+var DEF = { bees: 70, wind: 20, neigh: 70, petals: 1, sepals: 1, anthers: 1, sticky: 1, stigma: 1, style: 1,
+            ovules: 6, runners: 0, disp: 1, disease: 0 };
+var SLIDERS = ['bees', 'wind', 'neigh', 'ovules'];
+
+var st = copy(DEF);
+var fl, flags, committed;
+var running = true, speed = 1, ff = null;
+var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function copy(o) { var r = {}; for (var k in o) r[k] = o[k]; return r; }
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+function $(id) { return document.getElementById(id); }
+function R(v) { return Math.round(v); }
+function F(v) { return Math.floor(v + 1e-6); }
+
+function newFlower() {
+  fl = { day: 0, fert: 0, cross: 0, ripe: 0, clones: 0, over: false };
+  flags = { first: false, fallen: false };
+}
+function stage() { return fl.over ? 'over' : fl.day < OPEN_DAY ? 'bud' : fl.day < FALL_DAY ? 'open' : 'ripen'; }
+
+function compute() {
+  var bud = st.sepals ? 1 : 0.5;
+  var visits = st.bees * st.petals;
+  var animal = visits * (st.sticky ? 1 : 0.2);
+  var windR = st.wind * (st.sticky ? 0.1 : 0.8);
+  var carry = Math.min(100, animal + windR);
+  var source = st.anthers ? 1 : st.neigh / 100;
+  var arriving = carry * source * bud;
+  var stuck = arriving * st.stigma;
+  var reach = stuck * st.style;
+  var cross = st.neigh === 0 ? 0 : (st.anthers ? st.neigh / 100 : 1);
+  var lim;
+  if (st.ovules === 0) lim = 'ovules';
+  else if (source === 0) lim = 'nopollen';
+  else if (st.style === 0) lim = 'style';
+  else {
+    var fs = [['carry', carry / 100], ['fewneigh', source], ['stigma', st.stigma], ['sepals', bud]], m = fs[0];
+    fs.forEach(function (f) { if (f[1] < m[1]) m = f; });
+    if (m[1] >= 0.6) lim = 'good';
+    else if (m[0] !== 'carry') lim = m[0];
+    else if (!st.sticky) lim = 'nowind';
+    else lim = (st.petals < 1 && st.bees >= 40) ? 'petals' : 'nobees';
+  }
+  var bar = { nobees: 'visits', petals: 'visits', nowind: 'arriving', nopollen: 'arriving', fewneigh: 'arriving',
+              sepals: 'arriving', stigma: 'stuck', style: 'reach' }[lim] || '';
+  return { visits: visits, animal: animal, windR: windR, arriving: arriving, stuck: stuck, reach: reach,
+           cross: cross, source: source, bud: bud, lim: lim, bar: bar };
+}
+
+function offspring() {
+  var seeds = F(fl.ripe), cs = fl.fert > 0 ? R(seeds * fl.cross / fl.fert) : 0, ss = seeds - cs, clones = F(fl.clones);
+  var f = st.disp ? 0.8 : 0.3;
+  var alive = R(cs * f * (st.disease ? 0.6 : 1) + ss * f * (st.disease ? 0.17 : 1)) + (st.disease ? 0 : clones);
+  return { fert: F(fl.fert), seeds: seeds, cross: cs, self: ss, clones: clones, alive: alive };
+}
+
+function step(dt) {
+  if (fl.over) return;
+  var c = compute(), sg = stage();
+  if (sg === 'open') {
+    var add = Math.min(st.ovules - fl.fert, c.reach / 100 * 0.9 * dt);
+    if (add > 0) { fl.fert += add; fl.cross += add * c.cross; }
+  }
+  if (fl.fert > st.ovules) { fl.cross *= st.ovules / fl.fert; fl.fert = st.ovules; }
+  if (fl.day > 5) fl.ripe = Math.min(fl.fert, fl.ripe + 0.6 * dt);
+  fl.ripe = Math.min(fl.ripe, fl.fert);
+  if (st.runners && fl.day > 2) fl.clones = Math.min(3, fl.clones + 0.2 * dt);
+  fl.day += dt;
+
+  var d = 'Day ' + Math.floor(fl.day) + ': ';
+  if (!flags.first && fl.fert >= 1) {
+    flags.first = true;
+    logEvent(d + 'The first ovule is fertilized. A pollen tube grew down the style and reached it. It will now ripen into a seed.');
+  }
+  if (!flags.fallen && fl.day >= FALL_DAY) {
+    flags.fallen = true;
+    var n = F(fl.fert);
+    logEvent(d + 'The petals have fallen. Pollination is over. ' + (n ? n + ' fertilized ovule' + (n > 1 ? 's are' : ' is') + ' ripening and the ovary is becoming a fruit.' : 'No ovules were fertilized, so there will be no seeds.'));
+  }
+  if (fl.day >= SEASON) {
+    fl.day = SEASON; fl.over = true;
+    logEvent('Season over. ' + summary() + ' Press “New season” to run it again.');
+  }
+}
+function summary() {
+  var o = offspring();
+  return 'Seeds: ' + o.seeds + (o.seeds ? ' (' + o.cross + ' from cross-pollination, ' + o.self + ' from self-pollination)' : '') +
+    ' · runner clones: ' + o.clones + ' · alive next year: ' + o.alive + '.';
+}
+
+/* ── Labels ── */
+var NAMES = { bees: 'Bees', wind: 'Wind', neigh: 'Other flowers', petals: 'Petals', sepals: 'Sepals', anthers: 'Anthers',
+  sticky: 'Pollen type', stigma: 'Stigma', style: 'Style', ovules: 'Ovules', runners: 'Runners', disp: 'Seed dispersal', disease: 'Next year' };
+function word(key, v) {
+  switch (key) {
+    case 'bees': return v === 0 ? 'none' : v < 35 ? 'a few' : v < 80 ? 'plenty' : 'lots';
+    case 'wind': return v < 10 ? 'calm' : v < 40 ? 'light breeze' : v < 80 ? 'windy' : 'very windy';
+    case 'neigh': return v === 0 ? 'none' : v < 35 ? 'a few' : v < 80 ? 'some' : 'many';
+    case 'petals': return v === 1 ? 'bright' : v === 0.5 ? 'dull' : 'removed';
+    case 'sepals': return v ? 'in place' : 'removed';
+    case 'anthers': return v ? 'full of pollen' : 'removed';
+    case 'sticky': return v ? 'sticky' : 'light and dusty';
+    case 'stigma': return v === 1 ? 'sticky' : 'dry';
+    case 'style': return v ? 'open' : 'blocked';
+    case 'runners': return v ? 'on' : 'off';
+    case 'disp': return v ? 'carried away' : 'drops by parent';
+    case 'disease': return v ? 'new disease' : 'normal year';
+  }
+  return '';
+}
+function show(key, v) {
+  if (key === 'ovules') return String(v);
+  if (key === 'bees' || key === 'wind' || key === 'neigh') return v + ' (' + word(key, v) + ')';
+  return word(key, v);
+}
+var LIM_NOUN = { ovules: 'having no ovules', nopollen: 'having no pollen source', style: 'the blocked style', stigma: 'the dry stigma',
+  sepals: 'the damage done while it was a bud', fewneigh: 'the shortage of pollen', nowind: 'the lack of wind',
+  petals: 'the missing petal signal', nobees: 'the shortage of pollinators', good: 'something else' };
+
+function whyText(c) {
+  var out = [], sg = stage();
+  if (sg === 'bud') out.push('The flower is still a <b>bud</b>. The sepals wrap around it and protect the parts inside. Nothing can be pollinated yet.');
+  if (sg === 'ripen') out.push('The petals have fallen, so <b>pollination is over</b>. Fertilized ovules are ripening into seeds, and the ovary around them is becoming a fruit.');
+  if (sg === 'over') out.push('<b>The season is over.</b> ' + summary());
+  switch (c.lim) {
+    case 'good': out.push('<b>The chain is working.</b> Pollen is carried to the flower, sticks to the stigma, grows a tube down the style, and reaches the ovules in the ovary. That last step is fertilization.'); break;
+    case 'ovules': out.push('<b>No ovules.</b> Every seed starts as an ovule in the ovary. Pollen can arrive all day, but with nothing to fertilize there will be no seeds.'); break;
+    case 'nopollen': out.push('<b>No pollen anywhere.</b> This flower has no anthers, and there are no other flowers of its kind nearby. Bees and wind have nothing to carry.'); break;
+    case 'fewneigh': out.push('<b>Not much pollen to carry.</b> This flower has no anthers, so all its pollen must come from other flowers, and there are only a few nearby.'); break;
+    case 'nobees': out.push('<b>Few pollinators.</b> Sticky pollen is built to ride on an animal. With ' + word('bees', st.bees) + ' bees, very little pollen gets moved. Wind cannot lift sticky pollen well.'); break;
+    case 'petals': out.push('<b>The bees are not finding the flower.</b> There are bees around, but ' + (st.petals === 0.5 ? 'dull petals are a weak signal' : 'with no petals there is no signal') + '. Petals are an advertisement aimed at pollinators.'); break;
+    case 'nowind': out.push('<b>Light, dusty pollen needs wind.</b> It does not stick to bees well, and there is not enough wind to carry it. Wind-pollinated plants such as grasses do not need petals at all.'); break;
+    case 'stigma': out.push('<b>The stigma is dry.</b> Pollen is arriving, but most of it falls off. A sticky stigma is what catches and holds pollen.'); break;
+    case 'style': out.push('<b>The style is blocked.</b> Pollen is on the stigma, so the flower has been <i>pollinated</i>. But no pollen tube can reach the ovary, so nothing is <i>fertilized</i>. Pollination and fertilization are two different steps.'); break;
+    case 'sepals': out.push('<b>The bud was not protected.</b> Without sepals the flower was damaged before it opened, so every step works at about half strength.'); break;
+  }
+  if (c.arriving > 0) {
+    if (c.cross === 0) out.push('All of this pollen is the flower\'s own. This is <b>self-pollination</b>: the seeds will be very similar to the parent.');
+    else out.push('About ' + R(c.cross * 100) + '% of the pollen comes from other flowers. This is <b>cross-pollination</b>: two parents, so the seeds have more variety.');
+  }
+  if (st.runners) out.push('<b>Runners are on.</b> The plant is growing copies of itself along the ground. This is asexual reproduction: one parent, no pollen, and every clone is identical to the parent.');
+  if (!st.disp) out.push('Seeds are dropping beside the parent. They will compete with it, and each other, for light and water, so fewer survive.');
+  if (st.disease) out.push('<b>A new disease arrives next year.</b> The parent cannot resist it. Clones are identical to the parent, so none survive. Seeds from cross-pollination vary, so some can resist it.');
+  return out.map(function (s) { return '<p>' + s + '</p>'; }).join('');
+}
+
+/* ── Change log ── */
+var logItems = [];
+function snapshot() { committed = { st: copy(st), reach: compute().reach }; }
+function pushLog(html, cls) {
+  logItems.unshift({ html: html, cls: cls || '' });
+  if (logItems.length > 8) logItems.pop();
+  renderLog();
+}
+function logEvent(text, cls) { pushLog(text, cls || 'event'); }
+function renderLog() {
+  $('log').innerHTML = logItems.length ? logItems.map(function (i) {
+    return '<li class="' + i.cls + '">' + i.html + '</li>';
+  }).join('') : '<li class="empty">Change a slider or damage a part. This list will show what your change did to the flower, and why.</li>';
+}
+
+var REASON = {
+  bees: 'Bees carry sticky pollen on their bodies from anther to stigma as they feed.',
+  wind: 'Wind can carry light, dusty pollen. It moves very little sticky pollen.',
+  neigh: 'With no anthers of its own, this flower depends on pollen from other flowers.',
+  petals: 'Petals are a signal to pollinators. The colour is for the bees, not for people.',
+  sepals: 'Sepals wrap the bud and protect the parts inside before the flower opens.',
+  anthers: 'Anthers make the pollen. Pollen carries the male cells.',
+  sticky: 'Sticky pollen rides on animals. Light, dusty pollen rides on wind. The pollen has to match the carrier.',
+  stigma: 'The sticky stigma is the landing pad that catches and holds pollen.',
+  style: 'The pollen tube must grow down the style to reach the ovules. That is the only way in.'
+};
+function commitChange(key) {
+  var from = committed.st[key], to = st[key];
+  if (from === to) return;
+  var c = compute(), r0 = R(committed.reach), r1 = R(c.reach);
+  var head = '<span class="chg">' + NAMES[key] + ': ' + show(key, from) + ' → ' + show(key, to) + '.</span> ';
+  var res = '', why, cls = '';
+  if (key === 'ovules') why = 'Each seed starts as one ovule. This flower can now make at most ' + to + ' seed' + (to === 1 ? '' : 's') + ', however much pollen arrives.';
+  else if (key === 'runners') why = to ? 'The plant now also copies itself with runners. This is asexual reproduction: one parent, no pollen, no flower needed. Watch “Runner clones”.' : 'No more runners. The plant now depends on seeds alone.';
+  else if (key === 'disp') why = to ? 'Seeds are carried away by wind or animals. They land where there is room to grow, so more survive.' : 'Seeds now drop beside the parent. They compete with it for light and water, so fewer survive. Watch “Alive next year”.';
+  else if (key === 'disease') why = to ? 'The parent cannot resist this disease. Identical clones cannot either. Seeds with two parents vary, so some can. Watch “Alive next year”.' : 'With no disease, every offspring that finds room to grow survives, clones included.';
+  else if (key === 'neigh' && st.anthers) {
+    res = '<span class="res">Pollen reaching the ovary stayed at ' + r1 + ' a day.</span> ';
+    why = 'What changed is where the pollen comes from. Now about ' + R(c.cross * 100) + '% is from other flowers (cross-pollination), which gives the seeds more variety.';
+  } else if (r1 === r0) {
+    res = '<span class="res">Pollen reaching the ovary stayed at ' + r1 + ' a day.</span> ';
+    why = c.lim === 'good' ? 'This part of the chain was not the weak link.' : 'The broken link is still ' + LIM_NOUN[c.lim] + ', so this change made no difference.';
+  } else {
+    cls = r1 > r0 ? 'up' : 'down';
+    res = '<span class="res">Pollen reaching the ovary went ' + (r1 > r0 ? 'up' : 'down') + ' from ' + r0 + ' to ' + r1 + ' a day.</span> ';
+    why = REASON[key] || '';
+  }
+  pushLog(head + res + why, cls);
+  snapshot();
+}
+
+/* ── Diagram ── */
+var NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent) {
+  var e = document.createElementNS(NS, tag);
+  for (var k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+var OVULES = [[266, 360], [294, 360], [262, 382], [298, 382], [268, 404], [292, 404]];
+var ANTHERS = [[205, 222], [242, 192], [318, 192], [355, 222]];
+var STIGMA = [280, 163];
+var PLANTLETS = [200, 130, 60];
+var ovuleEls = [], plantletEls = [], petalEls;
+function buildDiagram() {
+  OVULES.forEach(function (p) { ovuleEls.push(el('circle', { 'class': 'ovule', cx: p[0], cy: p[1], r: 8 }, $('ovulesG'))); });
+  PLANTLETS.forEach(function (x) {
+    var g = el('g', {}, $('runnerG'));
+    el('path', { 'class': 'runner', d: 'M274,538 Q' + ((274 + x) / 2) + ',522 ' + x + ',538' }, g);
+    el('line', { x1: x, y1: 538, x2: x, y2: 520, stroke: '#15803d', 'stroke-width': 2.5 }, g);
+    el('path', { 'class': 'plantlet', d: 'M' + x + ',522 c-14,-10 -22,-4 -24,4 c10,4 18,2 24,-4 Z' }, g);
+    el('path', { 'class': 'plantlet', d: 'M' + x + ',522 c14,-10 22,-4 24,4 c-10,4 -18,2 -24,-4 Z' }, g);
+    plantletEls.push(g);
+  });
+  petalEls = $('petalsG').children;
+}
+function renderDiagram(c) {
+  var sg = stage(), i;
+  var bloom = clamp((fl.day - (OPEN_DAY - 1)) / 1, 0, 1), fall = clamp((fl.day - FALL_DAY) / 1.5, 0, 1);
+  var s = 0.35 + 0.65 * bloom;
+  $('petalsG').setAttribute('transform', 'translate(280,' + (400 + fall * 60).toFixed(1) + ') scale(' + s.toFixed(3) + ') translate(-280,-400)');
+  $('petalsG').style.opacity = (1 - fall).toFixed(2);
+  $('petalsG').style.display = st.petals === 0.1 || fall >= 1 ? 'none' : '';
+  for (i = 0; i < petalEls.length; i++) petalEls[i].setAttribute('class', st.petals === 0.5 ? 'petal dull' : 'petal');
+  $('sepalsG').style.display = st.sepals ? '' : 'none';
+  $('anthersG').style.display = st.anthers ? '' : 'none';
+  $('anthersG').style.opacity = sg === 'open' || sg === 'bud' ? 1 : 0.4;
+  $('stigmaE').setAttribute('class', st.stigma === 1 ? 'stigma' : 'stigma dry');
+  $('sBlock').style.display = st.style ? 'none' : '';
+  var swell = 1 + 0.22 * clamp(fl.ripe / 6, 0, 1) * clamp((fl.day - FALL_DAY) / 4, 0, 1);
+  $('ovaryE').setAttribute('rx', (38 * swell).toFixed(1)); $('ovaryE').setAttribute('ry', (46 * swell).toFixed(1));
+  var nf = F(fl.fert), nr = F(fl.ripe);
+  ovuleEls.forEach(function (e, k) {
+    e.style.display = k < st.ovules ? '' : 'none';
+    e.setAttribute('class', k < nr ? 'ovule ripe' : k < nf ? 'ovule fert' : 'ovule');
+  });
+  var nc = F(fl.clones);
+  plantletEls.forEach(function (g, k) { g.style.display = k < nc ? '' : 'none'; });
+  $('windG').style.opacity = (0.15 + 0.85 * st.wind / 100).toFixed(2);
+  $('neighG').style.opacity = st.neigh === 0 ? 0.12 : (0.35 + 0.65 * st.neigh / 100).toFixed(2);
+  var note = sg === 'bud' ? 'Bud: not open yet' : sg === 'open' ? '' : sg === 'ripen' ? 'Petals fallen: seeds ripening' : 'Season over';
+  if ($('stageNote').textContent !== note) $('stageNote').textContent = note;
+}
+
+/* ── Particles ── */
+var live = [], pools = { pollen: [], tube: [], gust: [], bee: [] }, acc = { bee: 0, pa: 0, pw: 0, gust: 0, bounce: 0, tube: 0 };
+function mkParticle(type) {
+  var e = pools[type].pop();
+  if (!e) {
+    if (type === 'bee') {
+      e = el('g', {});
+      el('ellipse', { 'class': 'bee-wing', cx: 0, cy: -5, rx: 4, ry: 3 }, e);
+      el('ellipse', { 'class': 'bee-body', cx: 0, cy: 0, rx: 6.5, ry: 4.2 }, e);
+      el('line', { 'class': 'bee-stripe', x1: -1.5, y1: -3.8, x2: -1.5, y2: 3.8 }, e);
+      el('line', { 'class': 'bee-stripe', x1: 2, y1: -3.4, x2: 2, y2: 3.4 }, e);
+    } else if (type === 'gust') e = el('line', { x1: -9, y1: 0, x2: 9, y2: 0, 'class': 'p-gust' });
+    else e = el('circle', { r: type === 'tube' ? 2.8 : 3.2, 'class': 'p-' + type });
+  }
+  $('particles').appendChild(e);
+  return e;
+}
+function spawn(type, pts, dur) {
+  var len = [0], total = 0;
+  for (var i = 1; i < pts.length; i++) {
+    total += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+    len.push(total);
+  }
+  live.push({ type: type, e: mkParticle(type), pts: pts, len: len, total: total, t: 0, dur: dur });
+}
+function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+function jit(n) { return (Math.random() - 0.5) * n; }
+function tick(key, rate, dt, fn) {
+  acc[key] += rate * dt;
+  while (acc[key] >= 1) { acc[key] -= 1; fn(); }
+}
+function spawnFlows(dt, c) {
+  tick('gust', st.wind / 100 * 3, dt, function () {
+    var y = 40 + Math.random() * 280;
+    spawn('gust', [[-12, y], [572, y + jit(30)]], 2.4);
+  });
+  if (stage() !== 'open') return;
+  var far = [495 + jit(20), 72 + jit(20)];
+  tick('bee', c.visits / 100 * 0.9, dt, function () {
+    var a = pick(ANTHERS), from = st.neigh > 0 ? [495 + jit(20), 72 + jit(20)] : [575, 150 + jit(120)];
+    spawn('bee', [from, [a[0], a[1] - 12], [STIGMA[0] + jit(8), STIGMA[1] - 14], [Math.random() < 0.5 ? -15 : 575, 30 + jit(40)]], 4.6);
+  });
+  tick('pa', c.animal * c.source * c.bud / 100 * 3, dt, function () {
+    var a = pick(ANTHERS), from = Math.random() < c.cross ? far : [a[0] + jit(10), a[1] + jit(6)];
+    spawn('pollen', [from, [STIGMA[0] + jit(14), STIGMA[1] + jit(10)]], 1.8);
+  });
+  tick('pw', c.windR * c.source * c.bud / 100 * 3, dt, function () {
+    spawn('pollen', [[-8, 110 + jit(120)], [STIGMA[0] + jit(14), STIGMA[1] + jit(10)]], 2);
+  });
+  tick('bounce', c.arriving * (1 - st.stigma) / 100 * 3, dt, function () {
+    spawn('pollen', [[STIGMA[0], STIGMA[1]], [STIGMA[0] + jit(140), STIGMA[1] + 70 + jit(30)]], 1.2);
+  });
+  tick('tube', c.stuck / 100 * 3, dt, function () {
+    var pts = [[STIGMA[0], STIGMA[1]], [280, 180]];
+    if (!st.style) pts.push([280, 254]);
+    else { pts.push([280, 340]); if (st.ovules > 0) pts.push(OVULES[Math.floor(Math.random() * st.ovules)]); }
+    spawn('tube', pts, st.style ? 2.6 : 1.4);
+  });
+}
+function moveParticles(dt) {
+  for (var i = live.length - 1; i >= 0; i--) {
+    var p = live[i];
+    p.t += dt / p.dur;
+    if (p.t >= 1) {
+      p.e.parentNode.removeChild(p.e); pools[p.type].push(p.e); live.splice(i, 1); continue;
+    }
+    var d = p.t * p.total, j = 1;
+    while (j < p.len.length - 1 && p.len[j] < d) j++;
+    var seg = p.len[j] - p.len[j - 1] || 1, f = (d - p.len[j - 1]) / seg;
+    var x = p.pts[j - 1][0] + (p.pts[j][0] - p.pts[j - 1][0]) * f;
+    var y = p.pts[j - 1][1] + (p.pts[j][1] - p.pts[j - 1][1]) * f;
+    p.e.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ')');
+    p.e.style.opacity = Math.min(1, p.t * 8, (1 - p.t) * 5).toFixed(2);
+  }
+}
+
+/* ── Report ── */
+var METERS = [['visits', 'Bee visits', '#facc15'], ['arriving', 'Pollen arriving', '#eab308'],
+              ['stuck', 'Stuck to stigma', '#f59e0b'], ['reach', 'Reaching ovary', '#f97316']];
+var meterEls = {};
+function buildMeters() {
+  METERS.forEach(function (m) {
+    var row = document.createElement('div');
+    row.className = 'meter';
+    row.innerHTML = '<span class="name">' + m[1] + '</span><span class="track"><span class="fill" style="background:' + m[2] + '"></span></span><span class="num">0</span>';
+    $('m-chain').appendChild(row);
+    meterEls[m[0]] = { row: row, fill: row.querySelector('.fill'), num: row.querySelector('.num') };
+  });
+}
+var cache = {};
+function setHTML(id, html) { if (cache[id] !== html) { cache[id] = html; $(id).innerHTML = html; } }
+function setMeter(key, v, limBar) {
+  var m = meterEls[key], r = R(v);
+  if (m.last !== r) { m.last = r; m.fill.style.width = clamp(r, 0, 100) + '%'; m.num.textContent = r; }
+  m.row.classList.toggle('limit', key === limBar);
+}
+function statusOf(c) {
+  var sg = stage();
+  if (sg === 'over') return ['Season over', F(fl.ripe) + F(fl.clones) > 0 ? '' : 'bad'];
+  if (sg === 'bud') return ['Bud', ''];
+  if (sg === 'ripen') return F(fl.fert) > 0 ? ['Seeds ripening', ''] : ['No seeds forming', 'bad'];
+  if (c.reach >= 40) return ['Open: being pollinated', ''];
+  if (c.reach > 0) return ['Open: little pollen getting through', 'warn'];
+  return ['Open: no pollen reaching the ovary', 'bad'];
+}
+function renderReport(c) {
+  var s = statusOf(c), o = offspring();
+  setHTML('day', 'Day ' + Math.floor(fl.day) + ' of ' + SEASON);
+  if (cache.status !== s[0] + s[1]) { cache.status = s[0] + s[1]; $('status').textContent = s[0]; $('status').className = 'status-pill ' + s[1]; }
+  setHTML('headline', s[0]);
+  setHTML('sub', '<b>' + o.fert + '</b> of ' + st.ovules + ' ovules fertilized. <b>' + o.seeds + '</b> ripe seed' + (o.seeds === 1 ? '' : 's') + '.');
+  METERS.forEach(function (m) { setMeter(m[0], c[m[0]], c.bar); });
+  setHTML('counts',
+    '<dt>Seeds from cross-pollination</dt><dd>' + o.cross + '</dd>' +
+    '<dt>Seeds from self-pollination</dt><dd>' + o.self + '</dd>' +
+    '<dt>Runner clones</dt><dd>' + o.clones + '</dd>' +
+    '<dt class="total">Alive next year' + (st.disease ? ' (disease)' : '') + '</dt><dd class="total">' + o.alive + '</dd>');
+  setHTML('why', whyText(c));
+}
+
+/* ── Controls ── */
+function syncControls() {
+  SLIDERS.forEach(function (k) { $('s-' + k).value = st[k]; $('o-' + k).textContent = show(k, st[k]); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-part][data-val]'), function (b) {
+    b.setAttribute('aria-pressed', String(st[b.dataset.part] === Number(b.dataset.val)));
+  });
+  $('bPause').setAttribute('aria-pressed', String(!running));
+  $('bPlay').setAttribute('aria-pressed', String(running && speed === 1));
+  $('bFast').setAttribute('aria-pressed', String(running && speed === 2));
+}
+function bindControls() {
+  Array.prototype.forEach.call(document.querySelectorAll('input[type=range]'), function (inp) {
+    var key = inp.dataset.key;
+    inp.addEventListener('input', function () { st[key] = Number(inp.value); $('o-' + key).textContent = show(key, st[key]); });
+    inp.addEventListener('change', function () { commitChange(key); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('button[data-part][data-val]'), function (b) {
+    b.addEventListener('click', function () {
+      st[b.dataset.part] = Number(b.dataset.val);
+      syncControls(); commitChange(b.dataset.part);
+    });
+  });
+  $('bPause').addEventListener('click', function () { running = false; syncControls(); });
+  $('bPlay').addEventListener('click', function () { running = true; speed = 1; syncControls(); });
+  $('bFast').addEventListener('click', function () { running = true; speed = 2; syncControls(); });
+  $('bNew').addEventListener('click', function () {
+    newFlower(); running = true; snapshot(); pushLog('A new season, with the same settings.', ''); syncControls();
+  });
+  $('bReset').addEventListener('click', function () {
+    st = copy(DEF); newFlower(); running = true; logItems = []; renderLog(); snapshot(); syncControls();
+  });
+}
+function lock(on) {
+  $('ctl').disabled = on;
+  ['bPause', 'bPlay', 'bFast', 'bNew', 'bReset'].forEach(function (id) { $(id).disabled = on; });
+}
+
+/* ── Tabs ── */
+var TABS = ['report', 'missions', 'parts'];
+function showTab(name) {
+  TABS.forEach(function (t) {
+    $('tab-' + t).setAttribute('aria-selected', String(t === name));
+    $('pane-' + t).hidden = t !== name;
+  });
+}
+
+/* ── Parts ── */
+var PARTS = [
+  { id: 'petals', name: 'Petals', sys: 'Attract', job: 'Advertise the flower to pollinators with colour, shape and scent. The signal is aimed at bees and other animals, not at people.', gives: 'More visits from pollinators.', tryit: 'Remove the petals with plenty of bees around. Then try it with light, dusty pollen on a windy day.' },
+  { id: 'sepals', name: 'Sepals', sys: 'Protect', job: 'Small green leaf-like parts under the petals. They wrap around the bud and protect it before it opens.', gives: 'An undamaged flower.', tryit: 'Remove the sepals and run a new season.' },
+  { id: 'stamen', name: 'Stamen: anther + filament', sys: 'Male part', job: 'The anther makes pollen, which carries the male cells. The filament is the stalk that holds the anther up where pollinators brush against it.', gives: 'Pollen.', tryit: 'Remove the anthers. Where can pollen come from now?' },
+  { id: 'stigma', name: 'Stigma', sys: 'Female part · top of the pistil', job: 'The sticky tip of the pistil. It catches and holds pollen. Pollen landing here is called pollination.', gives: 'A place for pollen to start growing its tube.', tryit: 'Make the stigma dry and watch what the pollen does.' },
+  { id: 'style', name: 'Style', sys: 'Female part · middle of the pistil', job: 'The stalk joining the stigma to the ovary. Each pollen grain grows a thin tube down through it.', gives: 'The path from stigma to ovary.', tryit: 'Block it. Is the flower still pollinated? Is it fertilized?' },
+  { id: 'ovary', name: 'Ovary and ovules', sys: 'Female part · base of the pistil', job: 'The ovary holds the ovules. When a pollen tube reaches an ovule, the male cell joins the egg cell inside it. That is fertilization.', gives: 'Each fertilized ovule becomes a seed. The ovary becomes the fruit around the seeds.', tryit: 'Set ovules to 2. What is the most seeds this flower can make?' },
+  { id: 'pollination', name: 'Pollination: animals and wind', sys: 'From the surroundings', job: 'Pollen cannot move by itself. Animals carry sticky pollen. Wind carries light, dusty pollen. Pollen from the same flower is self-pollination. Pollen from another flower is cross-pollination.', gives: 'Pollen delivered to the stigma.', tryit: 'Set bees to 0. Find a way to still get seeds.' },
+  { id: 'runners', name: 'Runners', sys: 'Asexual reproduction', job: 'A stem that grows along the ground and roots to form a new plant, as strawberries do. One parent, no pollen, no seeds. Bulbs, tubers and cuttings work in a similar way.', gives: 'Clones that are identical to the parent.', tryit: 'Turn runners on, then choose “New disease”.' }
+];
+function buildParts() {
+  $('pcards').innerHTML = '<div class="why" style="margin:0 0 10px"><div class="why-h">The whole process</div>' +
+    '<ol class="steps"><li><b>Pollination:</b> pollen lands on the stigma.</li><li>A <b>pollen tube</b> grows down the style.</li>' +
+    '<li><b>Fertilization:</b> the tube reaches an ovule in the ovary.</li><li>The ovule becomes a <b>seed</b>. The ovary becomes a <b>fruit</b>.</li>' +
+    '<li><b>Dispersal:</b> seeds are carried away.</li><li><b>Germination:</b> a seed grows into a new plant.</li></ol></div>' +
+    PARTS.map(function (p) {
+      return '<div class="pcard" id="pc-' + p.id + '"><div class="sys">' + p.sys + '</div><h3>' + p.name + '</h3><p>' + p.job + '</p>' +
+        '<dl><dt>Gives</dt><dd>' + p.gives + '</dd><dt>Try it</dt><dd>' + p.tryit + '</dd></dl></div>';
+    }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('svg .part'), function (g) {
+    function open() {
+      showTab('parts');
+      Array.prototype.forEach.call(document.querySelectorAll('.pcard.sel, svg .part.sel'), function (x) { x.classList.remove('sel'); });
+      g.classList.add('sel');
+      var card = $('pc-' + g.dataset.part);
+      card.classList.add('sel');
+      card.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+    g.addEventListener('click', open);
+    g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+}
+
+/* ── Missions ── */
+var MISSIONS = [
+  { id: 'petals', title: 'Are petals just for looks?',
+    setup: 'Someone picks every petal off this flower. The anthers, stigma and ovary are untouched. There are lots of bees and no wind.',
+    preset: { petals: 0.1, bees: 80, wind: 0 },
+    q: 'How many seeds will the flower make this season?',
+    opts: ['About the same. Petals are decoration.', 'Far fewer. The bees will not find it.', 'More. The bees can reach the pollen more easily.'], ans: 1,
+    explain: 'Every reproductive part still worked, but almost no bees came. Petals are an advertisement for pollinators. Their colour and shape are for the bees, not for us.',
+    goal: 'Leave the petals off. Find another way to get 4 or more ripe seeds. Press “New season” after you change the settings.',
+    check: function (o) { return st.petals === 0.1 && o.seeds >= 4; },
+    write: 'Grass flowers have no bright petals. Use what you saw to explain how grasses still make seeds.' },
+  { id: 'anthers', title: 'The flower with no anthers',
+    setup: 'This flower has lost its anthers. It is the only flower of its kind in the field. Bees visit it all day.',
+    preset: { anthers: 0, neigh: 0, bees: 90 },
+    q: 'How many seeds will it make?',
+    opts: ['Plenty. The bees will pollinate it.', 'None. There is no pollen for the bees to carry.', 'About half as many as usual.'], ans: 1,
+    explain: 'Bees only carry pollen. They do not make it. Pollen comes from anthers, either this flower\'s own (self-pollination) or another flower\'s (cross-pollination). Here there was neither.',
+    goal: 'Leave the anthers off. Get 4 or more ripe seeds.',
+    check: function (o) { return st.anthers === 0 && o.seeds >= 4; },
+    write: 'Explain the difference between self-pollination and cross-pollination. Which one did your flower use to make its seeds, and how do you know?' },
+  { id: 'style', title: 'Pollinated, but…',
+    setup: 'The bees have done their job and the stigma is covered in pollen. But the style is blocked.',
+    preset: { style: 0 },
+    q: 'Pollen is on the stigma. Is that enough to make seeds?',
+    opts: ['Yes. Once a flower is pollinated, seeds form.', 'No. The pollen still has to reach the ovules.', 'Some seeds will form, but smaller ones.'], ans: 1,
+    explain: '<b>Pollination</b> is pollen landing on the stigma. <b>Fertilization</b> happens later and lower down, when a pollen tube grows through the style and reaches an ovule in the ovary. Without fertilization there are no seeds.',
+    goal: 'Open the style. Get all 6 ovules fertilized in one season.',
+    check: function (o) { return st.style === 1 && o.fert >= 6; },
+    write: 'Explain the difference between pollination and fertilization. Say where in the flower each one happens.' },
+  { id: 'nobees', title: 'A year with no bees',
+    setup: 'A cold, wet spring. There are no bees at all and almost no wind. This plant can also grow runners.',
+    preset: { bees: 0, wind: 10, runners: 1 },
+    q: 'Can the plant reproduce this year?',
+    opts: ['No. Without pollination there is no reproduction.', 'Yes. Runners make new plants without any pollen.', 'Yes. It will make seeds anyway.'], ans: 1,
+    explain: 'No pollen moved, so no seeds formed. But the runners made new plants anyway. <b>Asexual reproduction</b> needs only one parent and no pollinators. It is natural: strawberries, potatoes and tulips all do it.',
+    goal: 'Bring the bees back. Use seeds and runners together to get 7 or more offspring alive next year.',
+    check: function (o) { return !st.disease && o.alive >= 7; },
+    write: 'Give one advantage of asexual reproduction for a plant. Use evidence from this mission.' },
+  { id: 'disease', title: 'A new disease arrives',
+    setup: 'Next year a new disease will sweep through. The parent plant cannot resist it. This year the plant reproduced only by runners.',
+    preset: { bees: 0, wind: 10, runners: 1, disease: 1 },
+    q: 'Which offspring would have the best chance against the disease?',
+    opts: ['Runner clones. They are strong copies of a healthy parent.', 'Seeds from cross-pollination. Each one is a little different.', 'It makes no difference. They are all the same kind of plant.'], ans: 1,
+    explain: 'Every clone is identical to the parent, so if the parent cannot resist the disease, none of them can. Seeds made by <b>sexual reproduction</b> mix two parents, so the offspring vary. Some of them can resist what the parent could not.',
+    goal: 'Leave the disease on. Get 3 or more offspring alive next year. Hint: where the pollen comes from matters.',
+    check: function (o) { return st.disease === 1 && o.alive >= 3; },
+    write: 'Give one advantage of sexual reproduction and one advantage of asexual reproduction. Support each with evidence from the simulation.' }
+];
+var mState = {}, active = 0;
+try { mState = JSON.parse(localStorage.getItem('flowerlab-missions-v1') || '{}') || {}; } catch (e) { mState = {}; }
+function saveM() {
+  var done = {};
+  MISSIONS.forEach(function (m) { if (mState[m.id] && mState[m.id].done) done[m.id] = { done: true }; });
+  try { localStorage.setItem('flowerlab-missions-v1', JSON.stringify(done)); } catch (e) {}
+}
+function ms(m) { return mState[m.id] || (mState[m.id] = {}); }
+
+function renderMissions() {
+  $('mlist').innerHTML = MISSIONS.map(function (m, i) {
+    return '<button class="btn" data-m="' + i + '" aria-pressed="' + (i === active) + '">' + (ms(m).done ? '✓ ' : '') + (i + 1) + '</button>';
+  }).join('');
+  var m = MISSIONS[active], s = ms(m), h = '<h3>' + (active + 1) + '. ' + m.title + '</h3><p>' + m.setup + '</p>';
+  if (ff) {
+    h += '<div class="result"><span class="data">Testing a full season… watch the flower and the meters.</span></div>';
+  } else if (!s.tested) {
+    h += '<p><b>Predict:</b> ' + m.q + '</p><div class="opts">' + m.opts.map(function (o, i) {
+      return '<label class="opt"><input type="radio" name="pred" value="' + i + '"' + (s.pred === i ? ' checked' : '') + '><span>' + o + '</span></label>';
+    }).join('') + '</div><button class="btn primary" id="mTest"' + (s.pred == null ? ' disabled' : '') + '>Lock in my prediction and test it</button>';
+  } else {
+    var right = s.pred === m.ans;
+    h += '<div class="result"><div class="data">' + s.data + '</div>' +
+      '<p><b>You predicted:</b> “' + m.opts[s.pred] + '” ' +
+      (right ? 'The evidence supports your prediction.' : 'The evidence does not match. What did you assume that turned out to be wrong?') + '</p>' +
+      '<p><b>What happened:</b> “' + m.opts[m.ans] + '”</p><p>' + m.explain + '</p></div>' +
+      '<div class="goal' + (s.done ? ' done' : '') + '"><div class="goal-h">' + (s.done ? '✓ Done' : 'Now you try') + '</div>' + m.goal + '</div>' +
+      '<div class="write"><b>In your notebook:</b> ' + m.write + '</div>' +
+      '<button class="btn" id="mAgain" style="margin-top:10px">Run this mission again</button>';
+  }
+  $('mcard').innerHTML = h;
+}
+function bindMissions() {
+  $('mlist').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-m]');
+    if (!b || ff) return;
+    active = Number(b.dataset.m); renderMissions();
+  });
+  $('mcard').addEventListener('change', function (e) {
+    if (e.target.name === 'pred') { ms(MISSIONS[active]).pred = Number(e.target.value); $('mTest').disabled = false; }
+  });
+  $('mcard').addEventListener('click', function (e) {
+    var m = MISSIONS[active], s = ms(m);
+    if (e.target.id === 'mTest' && s.pred != null) {
+      st = copy(DEF);
+      for (var k in m.preset) st[k] = m.preset[k];
+      newFlower(); logItems = []; pushLog('Mission ' + (active + 1) + ' set up: ' + m.title, '');
+      snapshot(); running = true; ff = true; lock(true); syncControls(); renderMissions();
+    } else if (e.target.id === 'mAgain') {
+      mState[m.id] = { done: s.done }; renderMissions();
+    }
+  });
+}
+function finishFF() {
+  var s = ms(MISSIONS[active]);
+  s.tested = true;
+  s.data = 'After one season: ' + summary();
+  ff = null; speed = 1; lock(false); syncControls(); renderMissions();
+}
+function checkGoal() {
+  var m = MISSIONS[active], s = ms(m);
+  if (!ff && s.tested && !s.done && m.check(offspring())) { s.done = true; saveM(); renderMissions(); }
+}
+
+/* ── Main loop ── */
+var last = null;
+function frame(now) {
+  var dt = last == null ? 0 : Math.min(0.1, (now - last) / 1000);
+  last = now;
+  if (running && !fl.over) step(dt / (ff ? 0.3 : speed === 2 ? 0.4 : 1.5));
+  if (ff && fl.over) finishFF();
+  var c = compute(), go = running && !fl.over;
+  if (go && !reduceMotion) spawnFlows(dt, c);
+  if (go || live.length) moveParticles(running ? dt : 0);
+  renderDiagram(c); renderReport(c); checkGoal();
+  requestAnimationFrame(frame);
+}
+
+/* ── Start ── */
+newFlower(); snapshot();
+buildDiagram(); buildMeters(); buildParts();
+bindControls(); bindMissions();
+TABS.forEach(function (t) { $('tab-' + t).addEventListener('click', function () { showTab(t); }); });
+syncControls(); renderLog(); renderMissions();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
