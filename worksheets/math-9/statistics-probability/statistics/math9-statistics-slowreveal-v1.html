@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slow Reveal Graph — Statistics | Grade 9 Mathematics</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --accent: #0d9488; --accent-light: #f0fdfa; --accent-mid: #14b8a6; --ink: #1e293b; --muted: #64748b; }
+    html, body { height: 100%; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; color: var(--ink); background: #fff; display: flex; flex-direction: column; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 10px 24px; border-bottom: 2px solid var(--accent-light); }
+    header .course-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+    header .counter { font-size: 15px; font-weight: 700; color: var(--muted); }
+    main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; padding: 12px 24px; }
+    .graph { min-height: 0; display: flex; align-items: center; justify-content: center; }
+    .graph svg { width: 100%; height: 100%; max-height: calc(100vh - 130px); }
+    .panel { display: flex; flex-direction: column; justify-content: center; gap: 18px; border-left: 5px solid var(--accent); background: var(--accent-light); border-radius: 0 10px 10px 0; padding: 22px 24px; }
+    .panel .new-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
+    .panel .new { font-size: 19px; font-weight: 700; }
+    .panel .prompt { font-size: 26px; line-height: 1.3; font-weight: 600; }
+    .panel .write { font-size: 17px; line-height: 1.45; color: #334155; background: #fff; border: 1px solid var(--accent-mid); border-radius: 8px; padding: 12px 14px; }
+    .panel .write strong { color: var(--accent); }
+    footer { display: flex; justify-content: space-between; align-items: center; padding: 10px 24px 14px; }
+    footer .hint { font-size: 12px; color: var(--muted); }
+    button { font: inherit; font-size: 15px; font-weight: 700; padding: 8px 20px; border-radius: 8px; border: 2px solid var(--accent); background: #fff; color: var(--accent); cursor: pointer; }
+    button.next { background: var(--accent); color: #fff; }
+    button:disabled { opacity: .35; cursor: default; }
+    button:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+    svg text { font-family: 'Segoe UI', system-ui, sans-serif; fill: var(--ink); }
+    [data-from] { display: none; }
+    @media (max-width: 860px) { main { grid-template-columns: 1fr; } .graph svg { max-height: 55vh; } }
+    @media print { footer, .panel { display: none; } main { grid-template-columns: 1fr; } [data-from] { display: inline !important; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="course-label">Grade 9 Mathematics · Statistics · Slow Reveal Graph</div>
+    <div class="counter" id="counter"></div>
+  </header>
+
+  <main>
+    <div class="graph">
+      <svg id="chart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 540" role="img" aria-label="Scatter plot revealed in stages"></svg>
+    </div>
+    <aside class="panel" aria-live="polite">
+      <div><div class="new-label">What's new</div><div class="new" id="new"></div></div>
+      <div class="prompt" id="prompt"></div>
+      <div class="write" id="write"></div>
+    </aside>
+  </main>
+
+  <footer>
+    <button id="back" type="button">← Back</button>
+    <span class="hint">Arrow keys or space to move · Students write before each reveal</span>
+    <button id="next" class="next" type="button">Reveal →</button>
+  </footer>
+
+  <script>
+    // Census of Population counts, millions (Statistics Canada)
+    const shown = [[1951, 14.0], [1961, 18.2], [1971, 21.6], [1981, 24.3], [1991, 27.3], [2001, 30.0], [2011, 33.5]];
+    const held = [[1996, 28.8], [2021, 37.0]];
+    // least-squares line through the seven shown points
+    const fit = yr => 0.3136 * (yr - 1951) + 14.72;
+
+    const stages = [
+      { isNew: 'Seven dots. Nothing else.',
+        prompt: 'What do you notice? What do you wonder?',
+        write: '<strong>Reveal 1.</strong> Two things you notice, one thing you wonder. Then describe the pattern in math words.' },
+      { isNew: 'The horizontal axis: years.',
+        prompt: 'What could rise this steadily for 60 years?',
+        write: '<strong>Reveal 2.</strong> Label your axis. Write your best guess and one reason for it.' },
+      { isNew: 'The vertical axis: numbers, no units.',
+        prompt: '40 of what? What is the value of the last dot?',
+        write: '<strong>Reveal 3.</strong> Label your axis. Estimate the last dot. Keep your guess or change it, and say why.' },
+      { isNew: 'The units: millions of people.',
+        prompt: 'Now what is this graph about? Give it a title.',
+        write: '<strong>Reveal 4.</strong> Write the title you would give this graph.' },
+      { isNew: 'The title and the source.',
+        prompt: 'How close was your title? Now draw your line and predict.',
+        write: '<strong>Reveal 5, then Part B.</strong> Draw a line of best fit. Predict 1996 and 2021 from your line. Questions 1 to 3.' },
+      { isNew: 'Two census counts that were held back.',
+        prompt: 'How close were your predictions? Which one was interpolation?',
+        write: '<strong>Reveal 6.</strong> Record the actual values beside your predictions. Find the difference.' },
+      { isNew: 'A line of best fit, followed back to 1901.',
+        prompt: 'The same line worked for 2021. What went wrong for 1901?',
+        write: '<strong>Reveal 7.</strong> Questions 4 to 6, then the reflection.' }
+    ];
+
+    const X = yr => 90 + (yr - 1941) * 670 / 90;
+    const Y = v => 470 - v * 10.25;
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.getElementById('chart');
+    function el(name, attrs, from, text) {
+      const n = document.createElementNS(NS, name);
+      for (const k in attrs) n.setAttribute(k, attrs[k]);
+      if (from) n.setAttribute('data-from', from);
+      if (text !== undefined) n.textContent = text;
+      svg.appendChild(n);
+      return n;
+    }
+
+    // grid and axes (always visible)
+    for (let v = 5; v <= 40; v += 5) el('line', { x1: X(1941), x2: X(2031), y1: Y(v), y2: Y(v), stroke: v % 10 ? '#eef2f6' : '#dbe2ea', 'stroke-width': 1 });
+    for (let yr = 1946; yr <= 2031; yr += 5) el('line', { x1: X(yr), x2: X(yr), y1: Y(0), y2: Y(40), stroke: (yr - 1941) % 10 ? '#eef2f6' : '#dbe2ea', 'stroke-width': 1 });
+    el('line', { x1: X(1941), x2: X(2031), y1: Y(0), y2: Y(0), stroke: '#334155', 'stroke-width': 2 });
+    el('line', { x1: X(1941), x2: X(1941), y1: Y(0), y2: Y(40), stroke: '#334155', 'stroke-width': 2 });
+
+    // stage 2: years
+    for (let yr = 1951; yr <= 2021; yr += 10) el('text', { x: X(yr), y: Y(0) + 26, 'text-anchor': 'middle', 'font-size': 18 }, 2, yr);
+    el('text', { x: X(1986), y: Y(0) + 56, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 700 }, 2, 'Year');
+    // stage 3: numbers
+    for (let v = 0; v <= 40; v += 10) el('text', { x: X(1941) - 12, y: Y(v) + 6, 'text-anchor': 'end', 'font-size': 18 }, 3, v);
+    // stage 4: units
+    el('text', { x: 26, y: Y(20), 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 700, transform: `rotate(-90,26,${Y(20)})` }, 4, 'Millions of people');
+    // stage 5: title and source
+    el('text', { x: X(1941), y: 30, 'font-size': 23, 'font-weight': 700 }, 5, 'Population of Canada, census years 1951 to 2011');
+    el('text', { x: X(2031), y: 534, 'text-anchor': 'end', 'font-size': 13, style: 'fill:#64748b' }, 5, 'Source: Statistics Canada, Census of Population');
+
+    // stage 7: line of best fit and the 1901 callout (drawn under the dots)
+    el('line', { x1: X(1941), y1: Y(fit(1941)), x2: X(2031), y2: Y(fit(2031)), stroke: '#334155', 'stroke-width': 2, 'stroke-dasharray': '8 6' }, 7);
+    el('rect', { x: X(1975), y: Y(12.5), width: 372, height: 92, rx: 8, fill: '#fff', stroke: '#334155', 'stroke-width': 1.5 }, 7);
+    el('text', { x: X(1975) + 14, y: Y(12.5) + 28, 'font-size': 17, 'font-weight': 700 }, 7, 'Follow the line back to 1901');
+    el('text', { x: X(1975) + 14, y: Y(12.5) + 54, 'font-size': 17 }, 7, 'The line says: about −1 million people');
+    el('text', { x: X(1975) + 14, y: Y(12.5) + 78, 'font-size': 17 }, 7, '1901 census: 5.4 million people');
+
+    // the data
+    shown.forEach(([yr, v]) => el('circle', { cx: X(yr), cy: Y(v), r: 8, fill: '#0d9488', stroke: '#fff', 'stroke-width': 2 }));
+    // stage 6: held-back counts, hollow markers with direct labels
+    held.forEach(([yr, v]) => {
+      el('circle', { cx: X(yr), cy: Y(v), r: 8, fill: '#fff', stroke: '#1e293b', 'stroke-width': 3 }, 6);
+      el('text', { x: X(yr), y: Y(v) - 16, 'text-anchor': 'middle', 'font-size': 17, 'font-weight': 700 }, 6, `${yr}: ${v.toFixed(1)}`);
+    });
+
+    let stage = Math.min(stages.length, Math.max(1, parseInt(location.hash.slice(1), 10) || 1));
+    const back = document.getElementById('back'), next = document.getElementById('next');
+    function render() {
+      svg.querySelectorAll('[data-from]').forEach(n => { n.style.display = +n.dataset.from <= stage ? 'inline' : 'none'; });
+      const s = stages[stage - 1];
+      document.getElementById('counter').textContent = `Reveal ${stage} of ${stages.length}`;
+      document.getElementById('new').textContent = s.isNew;
+      document.getElementById('prompt').textContent = s.prompt;
+      document.getElementById('write').innerHTML = s.write;
+      back.disabled = stage === 1;
+      next.disabled = stage === stages.length;
+      history.replaceState(null, '', '#' + stage);
+    }
+    function go(d) { stage = Math.min(stages.length, Math.max(1, stage + d)); render(); }
+    back.addEventListener('click', () => go(-1));
+    next.addEventListener('click', () => go(1));
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(1); }
+      if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(-1); }
+    });
+    render();
+  </script>
+</body>
+</html>
