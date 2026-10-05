@@ -1,5 +1,5 @@
 # Classroom Tools Workspace
-*April 2026 | Active project*
+*Active project*
 
 ## Hey — read this first
 
@@ -9,7 +9,9 @@ This is the map for the classroom tools project. Every conversation in this fold
 
 **The project:** Building and refining classroom-ready materials — Workbooks, tests and quizzes, notes packages, and thinking prompts — grounded in evidence on assessment and delivery. Two streams of work: making things, and knowing why they work.
 
-**Also read:** `_meta-context.md` — the evidence base, materials suite, lesson architecture, unit architecture, importance scale, and build protocol that governs everything built in this workspace.
+**Also read:** `_meta-context.md` — the operating principles, binding design rules, materials suite, lesson architecture, unit architecture, and importance scale that govern everything built in this workspace.
+
+**Read on demand:** `_pedagogy-reference.md` — activity menus, scaffolding types, peer structures, feedback design, UDL, and math-specific design. Open it when designing a lesson, a task type, or a scaffold.
 
 ---
 
@@ -54,11 +56,17 @@ When active:
 | `prompts/` | Thinking and writing prompts | Write or refine prompts that get students to articulate their reasoning |
 | `research/` | Evidence on assessment and delivery | Read, summarise, or apply research on what makes assessment and delivery effective |
 | `templates/` | Reusable blank structures | Start any new artifact from the relevant template — structure is pre-built, just fill content |
+| `scripts/` | Render scripts (markdown → HTML, posters) | Re-render a workbook or poster. Read `scripts/_context.md` first |
+| `src/`, `public/` | The Astro site and its published files | Change a page, the nav, or what the site links to. Read `_site-context.md` first |
 
 Each folder has its own `_context.md` — read it before working in that area.
 
 Materials are organized inside type folders by subject and unit:
 `[type]/grade-6-science/[unit]/filename.md`
+
+**Sources vs. renders:** the type folders hold markdown sources. HTML and PDF renders live only in `public/materials/`. Do not keep a second copy of a render beside its source (print-only posters are the exception).
+
+**This repo is public.** Students can read anything committed. `.gitignore` keeps `legislation/`, school admin files, third-party reference PDFs, and unreleased tests out. Before committing a new test or anything with names in it, check it is covered.
 
 **Exception — STEAM (Grades 5–9):** this course is self-contained under `steam/` instead of split across the type folders above. Course context, grade-year plans, notes packages, and design-journal workbooks all live together there (`steam/_context.md`, `steam/grade-5/_context.md` … `steam/grade-9/_context.md`, with each unit's notes + workbook in the matching `steam/grade-[N]/[unit]/` folder). Don't look for STEAM material in `worksheets/`, `notes-packages/`, or `_courses/` — it isn't there.
 
@@ -73,6 +81,11 @@ Materials are organized inside type folders by subject and unit:
 | `_courses/grade-6-science/_context.md` | Full course overview: all units, LOs, CS embedding, SM threading, inquiry options |
 | `_courses/grade-6-science/forces/_context.md` | Forces unit: LOs, knowledge clusters, misconceptions, scope boundary |
 | `_courses/grade-6-science/living-systems/_context.md` | Living Systems unit: LOs, knowledge clusters, scope boundary, misconceptions |
+| `_courses/grade-7-science/_context.md` | Science 7 (Alberta 2007 PoS): 5 units, LOs, misconception inventory, depth ceilings |
+| `_courses/grade-7-science/[unit]/_context.md` | Unit-level contexts: interactions-ecosystems, plants-food-fibre, heat-temperature, structures-forces, planet-earth |
+| `_courses/math-9/_context.md` | Math 9: 11 topics, depth ceilings, misconception inventory, recommended sequence |
+| `_courses/grade-8-social/_context.md` | Social 8 (draft 7–9 curriculum): 4 units, outcomes, misconceptions |
+| `_courses/eSports/_context.md` | eSports club course design: domains, 9-week season, source PDFs |
 | `_courses/phys-ed-56/_context.md` | PEW Grades 5–6: organizing ideas, KUSP framework, activity categories, misconceptions |
 | `_courses/phys-ed-56/[unit]/_context.md` | Unit-level contexts: invasion-games, net-wall, target, striking-fielding, dance, gymnastics, fitness |
 | `_courses/phys-ed-79/_context.md` | PEW Grades 7–9: organizing ideas, KUSP framework, activity categories, misconceptions |
@@ -89,11 +102,13 @@ Materials are organized inside type folders by subject and unit:
 | "Make a worksheet" | `worksheets/_context.md` → unit `_context.md` in `_courses/` | `research/`, `tests-quizzes/` |
 | "Build a workbook" | `worksheets/workbooks-context.md` → unit `_context.md` in `_courses/` → lesson notes | `research/`, `tests-quizzes/` |
 | "Write a quiz / test / exits" | `tests-quizzes/_context.md` → unit `_context.md` in `_courses/` | `research/`, `worksheets/` |
-| "Build a notes package / teacher notes" | `notes-packages/_context.md` → unit `_context.md` in `_courses/` | `research/`, `templates/` |
-| "Build a lesson plan / sub plan" | `lesson-plans/_context.md` → unit `_context.md` in `_courses/` | `research/`, `templates/` |
+| "Build a notes package / teacher notes" | `notes-packages/_context.md` → unit `_context.md` in `_courses/` | `research/`, `tests-quizzes/` |
+| "Build a lesson plan / sub plan" | `lesson-plans/_context.md` → unit `_context.md` in `_courses/` | `research/`, `tests-quizzes/` |
 | "Improve the thinking prompts" | `prompts/_context.md` | everything else |
 | "Research assessment / delivery" | `research/_context.md` | `worksheets/`, `tests-quizzes/` |
 | "Make a template" | `templates/_context.md` | everything else |
+| "Change the site / add it to the site" | `_site-context.md` | type-folder contexts |
+| "Render / re-render" | `scripts/_context.md` | everything else |
 | "Start a [type] build" | Copy relevant template from `templates/` first, then read artifact context | everything else |
 | "Build/revise a STEAM [unit/grade] [notes/design journal/plan]" | `steam/_context.md` → `steam/grade-[N]/_context.md` | `templates/`, `worksheets/`, `notes-packages/`, `_courses/` — STEAM doesn't use the standard templates (see `steam/grade-5/` for the established simplified-notes + design-journal format) |
 
@@ -124,7 +139,7 @@ Example: `notes-packages/grade-6-science/forces/sci6-forces-teachernotes-v1.md`
 - **Audience:** Students and teachers, Alberta curriculum context
 - **Design standard:** Every artifact should be clean enough to print and hand out as-is
 - **Research lens:** Assessment for learning, not just of learning — formative first, summative as confirmation
-- **Evidence standard:** Before finalising any artifact, check it against `templates/evidence-design-principles.md` — every material built here must embed at least one Tier 1 strategy and pass the five-item checklist at the bottom of that file
+- **Evidence standard:** Before finalising any artifact, check it against `templates/evidence-design-principles.md` — every material built here must embed at least one Tier 1 strategy and pass at least 3 of the 5 checklist items at the bottom of that file (all 5 for Tier 1 units)
 - **Two hard rules:**
   1. Every test or quiz item must map to a specific learning outcome
   2. Every thinking prompt must ask students to show reasoning, not just recall a fact

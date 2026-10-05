@@ -10,25 +10,26 @@
 |---|---|
 | **Site name** | Mr. Bremness — Classroom Materials |
 | **Browser tab format** | `[Page name] · Mr. Bremness` |
-| **URL base** | `/science-6/` (GitHub Pages — `astro.config.mjs`) |
+| **URL base** | `/Classroom-Tools/` (GitHub Pages — `astro.config.mjs`) |
 | **Framework** | Astro + Tailwind CSS |
-| **Deployment** | GitHub Pages via `IkeaNorweegway/science-6` |
+| **Deployment** | GitHub Pages via `IkeaNorweegway/Classroom-Tools`, built by `.github/workflows/deploy.yml` on push to `master` |
 
 ---
 
 ## Courses on the Site
 
-Two courses are live. All other materials (PhysEd, eSports) are in the workspace but not yet on the site.
+Six courses are live. PhysEd and eSports are in the workspace but not on the site.
 
 | Course | Slug | Accent token | Accent hex | Status |
 |---|---|---|---|---|
-| Grade 6 Science | `/materials/` | `science-*` | `#0891b2` (cyan) | Partially built |
-| Math 9 | `/math9/` | `math9-*` | `#4f46e5` (indigo) | Partially built |
+| Grade 6 Science | `/materials/` | `science-*` | `#0891b2` (cyan) | Live |
+| Math 9 | `/math9/` | `math9-*` | `#4f46e5` (indigo) | Live |
 | Grade 7 Science | `/science7/` | inline hex | `#059669` (emerald) | Live |
 | Social Studies 9 | `/social9/` | inline hex | `#b91c1c` (red) | Live |
+| Social Studies 8 | `/social8/` | inline hex | `#4338ca` (indigo) | Live |
 | STEAM (Gr. 5–9) | `/steam/` | inline hex | `#7c3aed` (violet) | Live |
 
-**Adding a course:** Add a row here, add a Tailwind colour token in `tailwind.config.mjs`, add a course card to the home page, add the course slug to the top nav.
+**Adding a course:** Add a row here, add the slug to the `course` prop type in `BaseLayout.astro`, add a tab and subnav to `Nav.astro`, and add a course card to the home page. Only Grade 6 Science and Math 9 have Tailwind tokens; the newer courses use an inline hex in `Nav.astro`.
 
 ---
 
@@ -43,10 +44,10 @@ teacher-500  #f59e0b   teacher-600  #d97706   teacher-700  #b45309
 ```
 
 ### How accent colour propagates
-- The `<BaseLayout>` component accepts a `course` prop: `'science' | 'math9'`
-- This prop sets a `data-course` attribute on `<body>`
-- CSS custom property `--accent` is set per course: `.science { --accent: #0891b2 }` etc.
-- Nav active states, headings, and link highlights use the current course accent
+- `<BaseLayout>` accepts a `course` prop: `'science' | 'math9' | 'science7' | 'social9' | 'social8' | 'steam'` and passes it to `Nav.astro`
+- Grade 6 Science and Math 9 use Tailwind tokens (`bg-science-600`, `bg-math9-600`)
+- Science 7, Social 8, Social 9, and STEAM set their accent with an inline `background-color` hex in `Nav.astro` and their pages
+- There is no `data-course` attribute or `--accent` custom property. Moving every course to one mechanism is a target, not current state
 - Site-level pages (home, 404) use slate — no course accent
 
 ### Teacher mode colour
@@ -64,32 +65,27 @@ Every page has two nav levels:
 
 **Level 1 — Site nav (top bar, always visible)**
 - Left: site name → links to home `/`
-- Centre: course tabs — `Gr. 6 Science` | `Math 9` (active tab highlighted with course accent)
-- Right: `Teacher ⇄ Student` toggle
+- Centre: course tabs — `Gr. 6 Science` | `Math 9` | `Gr. 7 Science` | `Social 9` | `Social 8` | `STEAM` (active tab highlighted with course accent)
+- Right: `Teacher` link (reads `← Student view` when in teacher mode)
 
 **Level 2 — Course subnav (below top bar, visible when inside a course)**
 - Grade 6 Science subnav: `Matter | Forces | Living Systems | Climate | Energy | Space | Materials`
-- Math 9 subnav: `Number | Patterns & Relations | Shape & Space | Statistics & Probability | Materials`
+- Math 9 subnav: `Number | Algebra | M&G | Stats & Prob | Practice | PAT Prep | POTD | Materials`
+- Science 7, Social 8, and Social 9 subnavs list their units; the STEAM subnav lists Grades 5–9
 
-### Teacher toggle behaviour
-- Toggle lives in the top-right of the nav bar at all times (both student and teacher views)
-- Toggling switches the site-wide mode — not just the current page
-- Teacher mode: shows answer keys, teacher notes, and the amber "TEACHER VIEW" banner
-- Student mode: hides answer-key files and teacher note links
-- Implementation: URL parameter `?teacher=1` or a client-side cookie — decision TBD
+### Teacher view
+- The `Teacher` link in the top-right goes to the current course's teacher index (`/teacher`, `/math9/teacher`, `/science7/teacher`, `/social8/teacher`, `/social9/teacher`). STEAM has no teacher index.
+- Teacher pages pass `teacherMode` to `BaseLayout`, which adds the amber banner and the dark nav.
+- Teacher mode is a set of separate routes, not a site-wide toggle. Nothing is hidden from students: every answer key in `public/materials/` is reachable by URL.
 
 ### Active states
 - Top nav course tab: `bg-{course}-600 text-white` when on any page under that course
 - Course subnav item: `bg-{course}-600 text-white` when on that unit/strand
 - All other links: `text-slate-600 hover:bg-slate-100`
 
-### Current state vs target
-| Component | Current | Target |
-|---|---|---|
-| `Nav.astro` | Grade 6 Science only | Unified site nav (both courses) |
-| `Math9Nav.astro` | Math 9 standalone nav | Replace with course subnav in unified nav |
-| `BaseLayout.astro` | Gr6 only, `teacherMode` prop | Add `course` prop, unified for both |
-| `Math9Layout.astro` | Separate layout | Merge into `BaseLayout` via `course` prop |
+### Layouts and nav today
+- `Nav.astro` is the single unified nav for all six courses.
+- `BaseLayout.astro` is the single base layout. `UnitLayout.astro` and `LessonLayout.astro` wrap it for the Grade 6 unit and lesson pages.
 
 ---
 
@@ -101,7 +97,7 @@ Every page has two nav levels:
 Props:
   title: string           — page title (goes in <title> and <h1>)
   description?: string    — meta description
-  course?: 'science' | 'math9' | undefined   — drives accent colour and subnav
+  course?: 'science' | 'math9' | 'science7' | 'social9' | 'social8' | 'steam'   — drives accent colour and subnav
   teacherMode?: boolean   — adds amber banner + dark nav
 ```
 
@@ -109,10 +105,9 @@ Structure:
 ```
 <html>
   <head> ... </head>
-  <body data-course={course}>
+  <body>
     [teacher banner if teacherMode]
-    <SiteNav course={course} teacherMode={teacherMode} />
-    [CourseSubnav course={course} if course is set]
+    <Nav course={course} teacherMode={teacherMode} />   (top bar + course subnav)
     <main class="max-w-4xl mx-auto px-4 py-10 sm:px-6">
       <slot />
     </main>
@@ -177,12 +172,11 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 
 | Component | File | Purpose |
 |---|---|---|
-| `SiteNav` | `Nav.astro` (rename target) | Top nav bar — site name, course tabs, teacher toggle |
-| `CourseSubnav` | new | Per-course unit/strand links below the top bar |
+| `Nav` | `Nav.astro` | Top nav bar (site name, course tabs, teacher link) and the per-course subnav |
 | `UnitCard` | `UnitCard.astro` | Card on course index pages |
-| `MaterialList` | new | List of downloadable/viewable materials for a unit |
 | `LessonSection` | `LessonSection.astro` | Section within a lesson page |
-| `BaseLayout` | `BaseLayout.astro` | Single layout wrapping all pages |
+| `BaseLayout` | `BaseLayout.astro` | Base layout wrapping all pages |
+| `UnitLayout`, `LessonLayout` | `layouts/` | Grade 6 unit and lesson pages; both wrap `BaseLayout` |
 
 ---
 
@@ -190,16 +184,26 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 
 ```
 /                               Home — course cards
-/materials/                     Grade 6 Science index
-/materials/[unit]               Unit page (e.g. /materials/forces)
+/materials/                     Grade 6 Science materials index
+/materials/[unit]               Unit materials page
 /materials/view/[unit]/[doc]    Material viewer
 /materials/fr                   Français materials index
+/units/[unit]                   Grade 6 "what you will learn" unit page
+/units/[unit]/[lesson]          Grade 6 lesson page
+/teacher/, /teacher/[unit]      Grade 6 teacher index and unit page
 /math9/                         Math 9 index — strand cards
 /math9/materials/               All Math 9 materials
-/math9/materials/[strand]       Strand page (number, algebra, etc.)
+/math9/materials/[strand]       number, algebra, measurement-geometry, statistics-probability
+/math9/practice/, potd/, pat-prep/   Practice, problem of the day, PAT prep
+/math9/teacher/                 Math 9 teacher index
 /math9/view/[...slug]           Math 9 material viewer
-/teacher/                       Teacher index (Grade 6 Science)
-/teacher/[unit]                 Teacher unit page
+/science7/                      Science 7 index (+ practice/, teacher/)
+/science7/materials/[unit]      Unit materials page
+/science7/view/[unit]/[doc]     Material viewer
+/social8/, /social9/            Same shape as Science 7: index, materials/[unit], teacher/, view/[unit]/[doc]
+/steam/                         STEAM index
+/steam/materials/[grade]        Grade page
+/steam/view/[grade]/[doc]       Material viewer
 ```
 
 ---
@@ -210,11 +214,16 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 
 ```
 public/materials/
-  [unit]/                       Grade 6 Science materials (flat)
+  *.html, *.pdf                 Flat: Grade 6 Science, Science 7, Social 8, Social 9, STEAM
+                                (file prefix sci6-, sci7-, soc8-, soc9-, steam5- to steam9-)
   math-9/
     notes/[unit]/               Notes HTML + teacher notes HTML
     worksheets/[strand]/[topic]/
+    tests/[topic]/
+    practice/
 ```
+
+Renders live only here. The type folders hold the markdown sources.
 
 ### Naming
 - Student notes: `math9-[unit]-notes-v1.html`
@@ -228,8 +237,8 @@ public/materials/
 
 1. **One BaseLayout** — no course gets its own separate layout file. Use the `course` prop.
 2. **No inline styles** — use Tailwind classes or `@apply` in global CSS. Exception: SVG diagram attributes (geometry only).
-3. **Course accent propagates via `data-course`** — never hardcode a course colour in a component; read from the CSS custom property.
-4. **Teacher mode is site-wide** — a page should never show teacher content without the amber banner active.
+3. **One accent per course** — use the hex in the Courses table. New components take the accent from the `course` prop and do not introduce a new colour.
+4. **Teacher content sits behind the teacher routes** — a page should never show teacher content without the amber banner active.
 5. **Every material page has a print button** — materials are designed to be printed; the viewer must expose this.
 6. **Mobile-first nav** — subnav collapses to a horizontal scroll on small screens (already implemented in Nav.astro; carry this pattern forward).
-7. **Footer is consistent** — `[Course] · Alberta Curriculum 2023 · Built for learning` — update "Course" to "Classroom Materials" on site-level pages.
+7. **Footer is consistent** — `[Course] · Alberta Curriculum 2023 · Built for learning`, set by `footerCourse` in `BaseLayout.astro` ("Classroom Materials" on site-level pages).
