@@ -34,6 +34,7 @@ Current state only. Keep this file short: update the tables and the open list, a
 - **Slow reveal trial:** not on the site.
 - **Social 9:** 7 units are published (HTML only) with no course context in `_courses/` and no markdown source.
 - **Social 8 teacher guides:** HTML only, no markdown source.
+- **ASCII-to-SVG conversion** is unfinished: `_ascii-to-svg-status.md` still lists 16 files as pending or in progress.
 - **`steam/_context.md`** cites `research/steam-progression-research.md` and `research/design-thinking-graphic-web-research.md`. Neither file exists.
 - **Grade 6 Science markdown sources** still missing for HTML-only materials: workbook answer keys (5 of 7), all EF notes except the year notes, all EF workbooks and their keys, teacher notes (5 of 6), all FR notes and workbooks.
 - **Grade 6 unit pages** (`src/content/units/*.md`) still read like spec documents. Planned rewrite: opening hook → what students explore → what they will be able to do → one real-world connection.
