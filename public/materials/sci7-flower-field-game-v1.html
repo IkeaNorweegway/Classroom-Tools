@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flower Field — Seed Reproduction Game | Grade 7 Science</title>
+<style>
+/* ─────────────────────────────────────────
+   FLOWER FIELD — SEXUAL REPRODUCTION GAME (cross-pollination only)
+   Grade 7 Science | Plants for Food and Fibre | LO 7-2-04
+   A turn-based field game. Each press of "Grow" runs one season.
+   The season report shows the step where the most offspring were lost.
+   Sister game: sci7-clone-field-game-v1.html (same shell, different reproduction model).
+   ───────────────────────────────────────── */
+
+:root {
+  --accent: #15803d;
+  --accent-light: #f0fdf4;
+  --accent-mid: #22c55e;
+  --ink: #0f172a;
+  --body: #1e293b;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --bad: #b91c1c;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: var(--body); line-height: 1.5; }
+button, input { font: inherit; color: inherit; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 14px 16px 28px; }
+
+.top { border-bottom: 4px solid var(--accent); padding-bottom: 10px; margin-bottom: 12px; }
+.unit-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.top h1 { font-size: 1.5rem; font-weight: 800; color: var(--ink); line-height: 1.2; }
+.i-can {
+  background: var(--accent-light); border-left: 4px solid var(--accent); border-radius: 0 6px 6px 0;
+  padding: 7px 12px; font-weight: 700; color: #14532d; font-size: 0.92rem; margin-top: 8px;
+}
+
+.btn {
+  border: 1.5px solid #94a3b8; background: #fff; border-radius: 8px; padding: 5px 12px;
+  font-weight: 700; font-size: 0.86rem; cursor: pointer; color: var(--body);
+}
+.btn:hover { border-color: var(--accent); }
+.btn[aria-pressed="true"], .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:focus-visible, input:focus-visible, .tab:focus-visible, .info:focus-visible { outline: 3px solid #0ea5e9; outline-offset: 2px; }
+.btn.big { font-size: 1rem; padding: 8px 18px; }
+.seg { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+
+.levels { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.levels .st { color: #ca8a04; letter-spacing: 1px; }
+.levels .btn[aria-pressed="true"] .st { color: #fde68a; }
+
+.grid { display: grid; grid-template-columns: 270px minmax(320px, 1fr) 350px; gap: 12px; align-items: start; }
+.panel { background: #fff; border: 1.5px solid var(--line); border-radius: 10px; padding: 12px; }
+.panel h2 { font-size: 0.74rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 2px; }
+.hint { font-size: 0.8rem; color: var(--muted); }
+@media (max-width: 1100px) {
+  .grid { grid-template-columns: minmax(300px, 1.2fr) minmax(280px, 1fr); }
+  .controls { grid-column: 1 / -1; order: 3; display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+  .controls hr.div { display: none; }
+}
+@media (max-width: 700px) {
+  .grid { grid-template-columns: 1fr; }
+  .controls { display: block; }
+  .controls hr.div { display: block; }
+}
+
+fieldset { border: 0; min-width: 0; }
+fieldset:disabled { opacity: 0.7; }
+.budget { font-size: 0.82rem; color: #334155; margin-bottom: 8px; }
+.budget .locked { font-weight: 700; color: #92400e; background: #fef3c7; border-radius: 4px; padding: 1px 6px; }
+.note { font-size: 0.8rem; font-weight: 700; color: var(--bad); min-height: 1.2em; margin-top: 4px; }
+.ctl { margin-bottom: 9px; }
+.ctl label, .ctl .lab { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 0.88rem; color: var(--ink); }
+.ctl output { font-weight: 600; font-size: 0.8rem; color: var(--muted); }
+.ctl input[type=range] { width: 100%; accent-color: var(--accent); margin-top: 2px; }
+.ctl .seg { margin-top: 3px; }
+.ctl .seg .btn { padding: 3px 9px; font-size: 0.8rem; }
+.info { border: 0; background: none; font-weight: 700; font-size: 0.88rem; color: var(--ink); cursor: pointer; padding: 0; text-decoration: underline dotted #94a3b8; text-underline-offset: 3px; }
+.info:hover { color: var(--accent); }
+.cost { display: inline-block; font-size: 0.68rem; font-weight: 800; background: #fef3c7; color: #92400e; border-radius: 999px; padding: 0 5px; margin-left: 2px; }
+.btn[aria-pressed="true"] .cost { background: #fde68a; }
+hr.div { border: 0; border-top: 1.5px dashed var(--line); margin: 12px 0; }
+
+.statusbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 8px; }
+.season { font-weight: 800; color: var(--ink); font-size: 1.05rem; }
+.spacer { flex: 1; }
+.cov { position: relative; height: 14px; background: #f1f5f9; border-radius: 999px; margin-bottom: 4px; }
+.cov .fill { height: 100%; background: var(--accent-mid); border-radius: 999px; width: 0; transition: width 0.4s; }
+.cov .mark { position: absolute; top: -4px; bottom: -4px; width: 3px; background: var(--ink); border-radius: 2px; }
+.covtext { font-size: 0.86rem; color: #334155; }
+.forecast { font-size: 0.84rem; margin: 6px 0 8px; }
+.chip { display: inline-block; font-size: 0.78rem; font-weight: 700; background: #f1f5f9; border-radius: 999px; padding: 1px 9px; margin: 2px 2px 2px 0; color: #334155; }
+.chip.ev { background: #fee2e2; color: #991b1b; }
+
+.stage svg { display: block; width: 100%; height: auto; border-radius: 6px; }
+svg .cell { fill: #f3ead8; stroke: #e3d5b8; stroke-width: 1; }
+svg .cell.water { fill: #bae6fd; stroke: #7dd3fc; }
+svg .wave { fill: none; stroke: #0284c7; stroke-width: 2; stroke-linecap: round; }
+svg .rock { fill: #a8a29e; stroke: #57534e; stroke-width: 1.5; }
+svg .badge { fill: #fff; stroke: #b91c1c; stroke-width: 1.5; }
+svg .badge-t { font: 800 11px 'Segoe UI', Arial, sans-serif; fill: #b91c1c; }
+svg .resist { fill: none; stroke: #0ea5e9; stroke-width: 2; stroke-dasharray: 4 3; }
+svg .dead { font: 800 22px 'Segoe UI', Arial, sans-serif; fill: #b91c1c; }
+svg .a-pollen { fill: #facc15; stroke: #a16207; stroke-width: 1; }
+svg .a-seed { fill: #92400e; stroke: #451a03; stroke-width: 1; }
+svg .a-seed.fail { fill: #d6d3d1; stroke: #78716c; }
+svg .a-runner { stroke: #15803d; stroke-width: 3; stroke-linecap: round; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.78rem; font-weight: 600; color: #334155; margin-top: 6px; }
+.legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
+
+.tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+.tab { flex: 1; border: 1.5px solid var(--line); background: #f8fafc; border-radius: 8px; padding: 6px 4px; font-weight: 800; font-size: 0.82rem; cursor: pointer; color: #475569; }
+.tab[aria-selected="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+.tabpane[hidden] { display: none; }
+
+.brief h3, .result h3 { font-size: 1rem; font-weight: 800; color: var(--ink); }
+.brief p, .result p { font-size: 0.9rem; margin-top: 6px; }
+.evs { margin: 6px 0 0 1.1rem; font-size: 0.86rem; }
+.result { border: 2px solid var(--accent); background: var(--accent-light); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
+.result.lose { border-color: #f97316; background: #fff7ed; }
+.result .big { font-size: 1.7rem; color: #ca8a04; letter-spacing: 3px; line-height: 1.1; }
+.result .row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.write { border: 1.5px dashed #94a3b8; border-radius: 8px; padding: 8px 11px; margin-top: 10px; font-size: 0.88rem; background: #fff; }
+.group-h { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 10px 0 4px; }
+.funnel { display: grid; grid-template-columns: 1fr 2.4em; gap: 1px 6px; font-size: 0.82rem; margin: 5px 0; }
+.funnel .name { font-weight: 700; color: var(--ink); grid-column: 1 / -1; }
+.funnel .track { height: 10px; background: #f1f5f9; border-radius: 999px; overflow: hidden; align-self: center; }
+.funnel .fill { display: block; height: 100%; background: #f59e0b; border-radius: 999px; }
+.funnel .num { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.funnel.weak .fill { background: var(--bad); }
+.funnel.weak .name::after {
+  content: 'biggest loss'; display: inline-block; margin-left: 6px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+  color: #991b1b; background: #fee2e2; border-radius: 4px; padding: 0 4px; vertical-align: 1px;
+}
+.why { background: #fefce8; border-left: 4px solid #ca8a04; border-radius: 0 6px 6px 0; padding: 8px 12px; font-size: 0.88rem; margin-top: 10px; }
+.why p + p { margin-top: 5px; }
+.why-h { font-weight: 800; color: #a16207; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.pcard { border: 1.5px solid var(--line); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 8px 11px; margin-bottom: 8px; font-size: 0.86rem; }
+.pcard.sel { background: var(--accent-light); border-color: var(--accent); }
+.pcard h3 { font-size: 0.95rem; font-weight: 800; color: var(--ink); }
+.pcard .sys { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.steps { margin-left: 1.2rem; font-size: 0.9rem; }
+.steps li { margin: 5px 0; }
+.foot { font-size: 0.76rem; color: var(--muted); margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="unit-label">Grade 7 Science · Plants for Food and Fibre</div>
+    <h1>Flower Field: Take Over the Meadow with Seeds</h1>
+    <div class="i-can">I can choose the flower parts and surroundings a plant needs to get from pollen to seed to new plant, and explain why each one matters.</div>
+  </header>
+
+  <div class="levels" id="levels" aria-label="Levels"></div>
+
+  <div class="grid">
+
+    <section class="panel controls" aria-label="Controls">
+      <fieldset id="fsParts">
+        <h2>Your flower</h2>
+        <div class="budget" id="budD"></div>
+        <div id="partCtl"></div>
+      </fieldset>
+      <fieldset id="fsConds">
+        <hr class="div">
+        <h2>Surroundings</h2>
+        <div class="budget" id="budC"></div>
+        <div id="condCtl"></div>
+      </fieldset>
+      <div class="note" id="note" aria-live="polite"></div>
+    </section>
+
+    <section class="panel stage" aria-label="The field">
+      <div class="statusbar">
+        <span class="season" id="season"></span>
+        <span class="spacer"></span>
+        <button class="btn" id="bRestart">Restart level</button>
+        <button class="btn primary big" id="bGrow">Grow one season</button>
+      </div>
+      <div class="cov" aria-hidden="true"><div class="fill" id="covFill"></div><div class="mark" id="covMark"></div></div>
+      <div class="covtext" id="covText" aria-live="polite"></div>
+      <div class="forecast" id="forecast"></div>
+      <svg viewBox="0 0 560 360" role="img" aria-label="The field, shown as a grid of squares">
+        <g id="cells"></g>
+        <g id="plants"></g>
+        <g id="overlay" aria-hidden="true"></g>
+      </svg>
+      <div class="legend"><span><i style="background:#facc15"></i>pollen from another plant</span><span><i style="background:#92400e"></i>seed</span><span><i style="background:#d6d3d1"></i>seed that failed</span><span><b style="color:#b91c1c">?</b> no partner in range</span><span><b style="color:#0ea5e9">◌</b> resists the disease</span></div>
+    </section>
+
+    <section class="panel" aria-label="Feedback">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" id="tab-report" aria-selected="true" aria-controls="pane-report">Season report</button>
+        <button class="tab" role="tab" id="tab-parts" aria-selected="false" aria-controls="pane-parts">Parts</button>
+        <button class="tab" role="tab" id="tab-how" aria-selected="false" aria-controls="pane-how">How to play</button>
+      </div>
+      <div class="tabpane" id="pane-report" role="tabpanel" aria-labelledby="tab-report"></div>
+      <div class="tabpane" id="pane-parts" role="tabpanel" aria-labelledby="tab-parts" hidden></div>
+      <div class="tabpane" id="pane-how" role="tabpanel" aria-labelledby="tab-how" hidden></div>
+    </section>
+
+  </div>
+
+  <p class="foot">This is a model. A flower in this game cannot pollinate itself: it needs pollen from another plant within reach of a bee (3 squares) or the wind (6 squares). Real plants are more complicated.</p>
+</div>
+
+<script>
+(function () {
+'use strict';
+/* ── Field model (no DOM in this part) ── */
+var W = 14, H = 9;
+function RNG(seed) {
+  var s = seed % 4294967296 || 1;
+  return function () { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; };
+}
+function inb(x, y) { return x >= 0 && y >= 0 && x < W && y < H; }
+function isPlant(c) { return !!c && c.t === 'plant'; }
+function newPlantCell(r, hue, age, fromSeed) { return { t: 'plant', r: r, hue: hue, age: age, seed: fromSeed ? 1 : 0, tag: '' }; }
+function makeField(level) {
+  var f = [], i, p;
+  for (i = 0; i < W * H; i++) f.push(null);
+  for (i = 0; i < (level.rocks || []).length; i++) { p = level.rocks[i]; f[p[1] * W + p[0]] = { t: 'rock' }; }
+  for (i = 0; i < (level.water || []).length; i++) { p = level.water[i]; f[p[1] * W + p[0]] = { t: 'water' }; }
+  for (i = 0; i < level.start.length; i++) { p = level.start[i]; f[p[1] * W + p[0]] = newPlantCell(0, 0, 1, 0); }
+  return f;
+}
+function copyField(f) {
+  var n = [], i, c;
+  for (i = 0; i < f.length; i++) {
+    c = f[i];
+    n.push(!c ? null : isPlant(c) ? { t: 'plant', r: c.r, hue: c.hue, age: c.age + 1, seed: c.seed, tag: '' } : c);
+  }
+  return n;
+}
+function countPlants(f) { var n = 0, i; for (i = 0; i < f.length; i++) if (isPlant(f[i])) n++; return n; }
+function plantable(f) { var n = 0, i; for (i = 0; i < f.length; i++) if (!f[i] || isPlant(f[i])) n++; return n; }
+function coverage(f) { return countPlants(f) / plantable(f); }
+function plantList(f) { var a = [], i; for (i = 0; i < f.length; i++) if (isPlant(f[i])) a.push(i); return a; }
+/* nearest other plant within a square distance of rad, or -1 */
+function nearestOther(f, i, rad) {
+  var x = i % W, y = Math.floor(i / W), best = -1, bd = 99, dx, dy, d, j;
+  for (dy = -rad; dy <= rad; dy++) for (dx = -rad; dx <= rad; dx++) {
+    if ((dx || dy) && inb(x + dx, y + dy)) {
+      j = (y + dy) * W + x + dx;
+      if (isPlant(f[j])) { d = Math.max(Math.abs(dx), Math.abs(dy)); if (d < bd) { bd = d; best = j; } }
+    }
+  }
+  return best;
+}
+function randInt(rng, a, b) { return a + Math.floor(rng() * (b - a + 1)); }
+/* a random square within rad of i (never i itself); may be off the field */
+function scatter(rng, i, rad) {
+  var x = i % W, y = Math.floor(i / W), dx = 0, dy = 0;
+  while (!dx && !dy) { dx = randInt(rng, -rad, rad); dy = randInt(rng, -rad, rad); }
+  return [x + dx, y + dy];
+}
+function emptyNeighbour(rng, f, i) {
+  var x = i % W, y = Math.floor(i / W), opts = [], dx, dy;
+  for (dy = -1; dy <= 1; dy++) for (dx = -1; dx <= 1; dx++) {
+    if ((dx || dy) && inb(x + dx, y + dy) && !f[(y + dy) * W + x + dx]) opts.push((y + dy) * W + x + dx);
+  }
+  return opts.length ? opts[Math.floor(rng() * opts.length)] : -1;
+}
+function costOf(G, D) {
+  var t = 0, i, j, p;
+  for (i = 0; i < G.parts.length; i++) {
+    p = G.parts[i];
+    if (p.count) t += D[p.key] * p.each;
+    else for (j = 0; j < p.opts.length; j++) if (p.opts[j][0] === D[p.key]) t += p.opts[j][2];
+  }
+  return t;
+}
+function sumOf(G, C) { var t = 0, i; for (i = 0; i < G.conds.length; i++) t += C[G.conds[i].key]; return t; }
+function pct(a, b) { return b ? Math.round(a / b * 100) : 0; }
+function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+
+/* ── Flower game: sexual reproduction, cross-pollination only ── */
+var G = {
+  id: 'flowerfield',
+  plantWord: 'flower',
+  parts: [
+    { key: 'petals', label: 'Petals', part: 'petals', opts: [[0, 'None', 0], [1, 'Dull', 1], [2, 'Bright', 2]] },
+    { key: 'pollen', label: 'Pollen (from the anthers)', part: 'stamen', opts: [[0, 'Sticky', 0], [1, 'Light and dusty', 0]] },
+    { key: 'stigma', label: 'Stigma', part: 'stigma', opts: [[0, 'Sticky knob', 0], [1, 'Feathery', 0]] },
+    { key: 'ovules', label: 'Ovules in the ovary', part: 'ovary', count: 1, min: 1, max: 6, each: 1 },
+    { key: 'sepals', label: 'Sepals', part: 'sepals', opts: [[0, 'Thin', 0], [1, 'Tough', 1]] },
+    { key: 'fruit', label: 'Fruit and seed', part: 'fruit', opts: [[0, 'Seeds just drop', 0], [1, 'Winged seeds', 1], [2, 'Juicy fruit', 2]] }
+  ],
+  conds: [
+    { key: 'bees', label: 'Bees', words: ['none', 'a few', 'plenty', 'lots'] },
+    { key: 'wind', label: 'Wind', words: ['calm', 'light breeze', 'windy', 'very windy'] },
+    { key: 'rain', label: 'Rain', words: ['dry', 'a little', 'steady', 'wet'] },
+    { key: 'animals', label: 'Fruit-eating animals', words: ['none', 'a few', 'plenty', 'lots'] }
+  ],
+  events: {
+    frost: ['Late frost', 'A frost hits while the flowers are still buds. Only tough sepals protect them.'],
+    drought: ['Dry spell', 'Much less rain this season. Fewer seeds will sprout.'],
+    disease: ['New disease', 'A disease the first plants cannot resist. Only plants that are different survive.']
+  }
+};
+
+G.simulate = function (f, D, C, ev, rng) {
+  var nf = copyField(f), i, k, o, idx, pos, t, list, nearA, nearW, carry, mate, rad, kid;
+  var s = { flowers: 0, lonely: 0, ovules: 0, delivered: 0, seeds: 0, landed: 0, sprouted: 0, died: 0,
+            taken: 0, out: 0, rock: 0, carried: 0, plants0: 0, beside: 0 };
+  var anim = { deaths: [], pollen: [], moves: [] };
+  if (ev === 'disease') {
+    for (i = 0; i < nf.length; i++) if (isPlant(nf[i]) && !nf[i].r) { nf[i] = null; s.died++; anim.deaths.push(i); }
+  }
+  list = plantList(nf);
+  s.plants0 = list.length;
+  var bud = (ev === 'frost' && !D.sepals) ? 0.1 : 1;
+  var attract = [0.1, 0.5, 1][D.petals];
+  var aC = C.bees / 100 * attract * (D.pollen === 0 ? 1 : 0.2);
+  var wC = C.wind / 100 * (D.pollen === 1 ? 0.8 : 0.1);
+  var catchF = (D.pollen === D.stigma ? 1 : 0.4) * bud;
+  var germ = 0.15 + 0.85 * (ev === 'drought' ? C.rain * 0.4 : C.rain) / 100;
+  var base = nf.slice(0);
+  for (k = 0; k < list.length; k++) {
+    i = list[k];
+    s.flowers++;
+    nearA = nearestOther(base, i, 3); nearW = nearestOther(base, i, 6);
+    if (nearW < 0) { s.lonely++; nf[i].tag = 'lonely'; }
+    carry = Math.min(1, aC * (nearA >= 0 ? 1 : 0) + wC * (nearW >= 0 ? 1 : 0));
+    mate = nearA >= 0 ? nearA : nearW;
+    for (o = 0; o < D.ovules; o++) {
+      s.ovules++;
+      if (rng() >= carry) continue;
+      s.delivered++;
+      if (anim.pollen.length < 60) anim.pollen.push([mate, i]);
+      if (rng() >= catchF) continue;
+      s.seeds++;
+      rad = 1;
+      if (D.fruit === 1) rad = 1 + Math.round(C.wind / 100 * 5);
+      if (D.fruit === 2 && rng() < C.animals / 100) { rad = 5; s.carried++; }
+      pos = scatter(rng, i, rad);
+      idx = pos[1] * W + pos[0];
+      if (!inb(pos[0], pos[1])) { s.out++; anim.moves.push({ from: i, to: pos, ok: 0 }); continue; }
+      t = nf[idx];
+      if (t && !isPlant(t)) { s.rock++; anim.moves.push({ from: i, to: pos, ok: 0 }); continue; }
+      if (t) { s.taken++; anim.moves.push({ from: i, to: pos, ok: 0 }); continue; }
+      s.landed++;
+      if (rad === 1) s.beside++;
+      if (rng() < germ * (rad === 1 ? 0.45 : 1)) {
+        s.sprouted++;
+        kid = newPlantCell(rng() < (nf[i].r ? 0.6 : 0.25) ? 1 : 0, randInt(rng, 0, 4), 0, 1);
+        nf[idx] = kid;
+        anim.moves.push({ from: i, to: pos, ok: 1 });
+      } else anim.moves.push({ from: i, to: pos, ok: 0 });
+    }
+  }
+  return { field: nf, stats: s, anim: anim };
+};
+
+G.explain = function (s, D, C, ev) {
+  var rows = [['Ovules waiting in the ovaries', s.ovules], ['Reached by pollen from another plant', s.delivered],
+              ['Fertilized, and became seeds', s.seeds], ['Seeds that landed on open soil', s.landed], ['Seeds that sprouted', s.sprouted]];
+  var weak = -1, worst = 0.7, i, r, text = [];
+  for (i = 1; i < rows.length; i++) {
+    if (rows[i - 1][1] > 0) { r = rows[i][1] / rows[i - 1][1]; if (r < worst) { worst = r; weak = i; } }
+  }
+  if (ev === 'disease') {
+    text.push('<b>The disease killed ' + plural(s.died, 'plant', 'plants') + '.</b> ' + (s.plants0
+      ? plural(s.plants0, 'plant', 'plants') + ' survived. Every seed has two parents, so the offspring are all a little different. Some could resist what the first plants could not.'
+      : 'None could resist it. There had not been enough seasons of seeds to build up variety.'));
+  }
+  if (ev === 'frost') text.push(D.sepals ? '<b>Frost:</b> tough sepals wrapped the buds and protected them.' : '<b>Frost damaged the buds.</b> Thin sepals did not protect the parts inside, so most flowers could not be fertilized.');
+  if (ev === 'drought') text.push('<b>Dry spell:</b> much less rain reached the soil this season.');
+  if (!s.flowers) { text.push('There are no plants left to flower.'); return { rows: rows, weak: -1, text: text }; }
+  if (weak === 1) {
+    if (s.lonely) text.push('<b>' + s.lonely + ' of your ' + plural(s.flowers, 'plant', 'plants') + ' had no partner in range.</b> A flower here cannot pollinate itself. It needs pollen from another plant (cross-pollination). Bees carry pollen about 3 squares. Wind carries it about 6.');
+    if (D.pollen === 0) {
+      if (C.bees < 40) text.push('<b>Sticky pollen needs an animal to carry it,</b> and there are ' + (C.bees === 0 ? 'no' : 'very few') + ' bees. Wind cannot lift sticky pollen well.');
+      else if (D.petals < 2) text.push('<b>Bees are around, but few are visiting.</b> ' + (D.petals ? 'Dull petals are a weak signal.' : 'With no petals there is no signal.') + ' Petals are an advertisement aimed at pollinators.');
+      else if (!s.lonely) text.push('Some ovules were missed. More bees would deliver more pollen.');
+    } else {
+      if (C.wind < 40) text.push('<b>Light, dusty pollen rides on wind,</b> and there is not much wind. It does not stick to bees well.');
+      else if (!s.lonely) text.push('Wind scatters pollen in every direction, so some ovules are always missed.');
+    }
+  } else if (weak === 2) {
+    if (ev === 'frost' && !D.sepals) text.push('Pollen arrived, but frost-damaged flowers could not use it.');
+    if (D.pollen !== D.stigma) text.push('<b>The stigma does not match the pollen.</b> ' + (D.pollen === 0
+      ? 'A feathery stigma is built to comb dusty pollen out of the air. Sticky pollen comes in on a bee and needs a sticky knob to rub off on.'
+      : 'A sticky knob is built to take pollen off a visiting bee. Dusty pollen drifting on the wind needs a feathery stigma with lots of surface to catch it.'));
+  } else if (weak === 3) {
+    var lost = s.seeds - s.landed;
+    text.push('<b>' + lost + ' of ' + plural(s.seeds, 'seed', 'seeds') + ' landed in a bad spot:</b> ' + s.taken + ' where a plant already grows, ' + s.out + ' outside the field, ' + s.rock + ' on rock.');
+    if (D.fruit === 0) text.push('Seeds that just drop land beside the parent, where the ground is already taken. Dispersal moves seeds to open ground.');
+    else if (D.fruit === 2 && C.animals < 40) text.push('Juicy fruit only travels if an animal eats it and carries the seeds away. With few animals, most fruit drops beside the parent.');
+    else if (D.fruit === 1 && C.wind < 30) text.push('Winged seeds need wind. In calm air they fall close to the parent.');
+    else if (s.out > s.taken) text.push('Seeds are travelling so far that many leave the field.');
+  } else if (weak === 4) {
+    if (s.beside > s.landed / 2) text.push('<b>Most seeds landed right beside their parent and did not make it.</b> There they are shaded by the parent and compete with it for water. Dispersal carries seeds to open ground where they have room.');
+    else text.push('<b>Most seeds landed on open soil but did not sprout.</b> A seed needs water to germinate' + (ev === 'drought' ? ', and this was a dry spell.' : ', and there is not much rain.'));
+  } else if (s.sprouted) {
+    text.push('<b>The whole chain worked.</b> Pollen from another plant reached the ovules, they were fertilized and became seeds, the seeds were dispersed to open soil, and they germinated.');
+  }
+  if (!s.sprouted && weak < 0 && !s.ovules) text.push('No ovules, no seeds.');
+  return { rows: rows, weak: weak, text: text };
+};
+
+var BEE = { petals: 2, pollen: 0, stigma: 0, ovules: 4, sepals: 0, fruit: 2 };
+var PLAIN = { petals: 0, pollen: 0, stigma: 0, ovules: 1, sepals: 0, fruit: 0 };
+G.levels = [
+  { name: 'Bee meadow', seed: 101,
+    brief: 'A meadow humming with bees. Your plant is a plain green thing with one ovule. <b>Design its flower</b> so it spreads across the field.',
+    start: [[6, 4], [7, 4], [7, 5], [1, 1]], rocks: [[3, 6], [10, 2], [11, 7]],
+    D: PLAIN, budD: 8, C: { bees: 80, wind: 15, rain: 70, animals: 40 }, lockC: 1,
+    target: 0.5, max: 7, par: [4, 5],
+    debrief: 'With bees around, the winning flower advertises (bright petals), hands over sticky pollen, catches it on a sticky stigma, and has plenty of ovules to turn into seeds. Did you notice the plant in the corner? Alone, it made no seeds until others grew close enough to share pollen.',
+    write: 'The plant in the top corner had a perfect flower but made no seeds at first. Explain why, using the term “cross-pollination”.' },
+  { name: 'Windy ridge', seed: 202,
+    brief: 'A bare, windy ridge with <b>no bees at all</b>. Your plant has a beautiful bee flower, and it is failing. <b>Redesign the flower</b> for this place.',
+    start: [[2, 4], [3, 4], [3, 3]], rocks: [[8, 1], [9, 6]],
+    D: BEE, budD: 8, C: { bees: 0, wind: 90, rain: 60, animals: 0 }, lockC: 1,
+    target: 0.5, max: 7, par: [4, 5],
+    debrief: 'Wind-pollinated plants, such as grasses and wheat, spend nothing on petals. They make light, dusty pollen, catch it on feathery stigmas, and often have seeds the wind can carry. A flower\'s parts match the way its pollen travels.',
+    write: 'Wheat flowers are tiny and green, with no scent. What does that tell you about how wheat is pollinated? Explain your reasoning.' },
+  { name: 'The gardener', seed: 303,
+    brief: 'This time the flower is fixed: a bee flower with juicy fruit. <b>You control the surroundings.</b> You have 200 help points to share between bees, wind, rain and animals.',
+    start: [[6, 4], [7, 4], [6, 5]], rocks: [[2, 2], [11, 6]],
+    D: BEE, lockD: 1, C: { bees: 10, wind: 60, rain: 20, animals: 10 }, budC: 200,
+    target: 0.5, max: 7, par: [6, 7],
+    debrief: 'This flower needs bees for pollination, animals to carry its fruit, and rain for germination. Wind does nothing for it, because sticky pollen and juicy fruit do not travel on wind. Each stage of reproduction depends on something different in the surroundings.',
+    write: 'Name the three stages where this plant depended on its surroundings, and say what it needed at each one.' },
+  { name: 'Frost, then disease', seed: 404,
+    brief: 'You control the flower <b>and</b> the surroundings. Read the forecast: a late frost is coming, and later a new disease. The field must be yours <b>after</b> the disease has passed.',
+    start: [[6, 4], [7, 4], [7, 5]], rocks: [[1, 7], [12, 1]],
+    D: PLAIN, budD: 9, C: { bees: 40, wind: 40, rain: 40, animals: 40 }, budC: 240,
+    events: { 2: 'frost', 3: 'frost', 5: 'disease' }, target: 0.45, max: 9, winAfter: 5, par: [5, 6],
+    debrief: 'Sepals protected the buds from frost. The disease killed every plant that was like the first ones, but seeds made by two parents are all slightly different, and some could resist it. Variation is the big advantage of sexual reproduction.',
+    write: 'After the disease, some plants were still alive. Explain where their resistance came from. Would a field of identical plants have done better or worse?' }
+];
+
+G.partCards = [
+  { id: 'petals', name: 'Petals', sys: 'Attract', job: 'Advertise the flower to pollinators with colour, shape and scent. The signal is aimed at bees and other animals, not at people. Wind-pollinated flowers do not need them.' },
+  { id: 'sepals', name: 'Sepals', sys: 'Protect', job: 'Small green leaf-like parts under the petals. They wrap around the bud and protect the parts inside before the flower opens.' },
+  { id: 'stamen', name: 'Stamen: anther + filament', sys: 'Male part', job: 'The anther makes pollen, which carries the male cells. The filament holds the anther up. Sticky pollen rides on animals. Light, dusty pollen rides on wind.' },
+  { id: 'stigma', name: 'Stigma', sys: 'Female part · top of the pistil', job: 'Catches pollen. Pollen landing here is pollination. A sticky knob takes pollen off a bee. A feathery stigma combs pollen out of the wind.' },
+  { id: 'style', name: 'Style', sys: 'Female part · middle of the pistil', job: 'The stalk joining the stigma to the ovary. Each pollen grain grows a thin tube down through it to reach an ovule.' },
+  { id: 'ovary', name: 'Ovary and ovules', sys: 'Female part · base of the pistil', job: 'The ovary holds the ovules. When a pollen tube reaches an ovule, the male cell joins the egg cell. That is fertilization. Each fertilized ovule becomes a seed.' },
+  { id: 'fruit', name: 'Fruit and seed dispersal', sys: 'After fertilization', job: 'The ovary becomes the fruit around the seeds. Dispersal carries seeds away from the parent to open ground: on the wind (wings) or inside an animal (juicy fruit). Then a seed needs water to germinate.' },
+  { id: 'cross', name: 'Cross-pollination', sys: 'Two parents', job: 'In this game a flower cannot pollinate itself. Pollen must come from another plant of the same kind. Two parents mean every seed is a little different from both.' }
+];
+
+G.howto = ['Your goal is to take over the field before you run out of seasons.',
+  'Set up your flower and the surroundings on the left. Some levels lock one side.',
+  'Flower parts cost energy points. You cannot afford everything, so choose what this field needs.',
+  'Press “Grow one season”. Then read the season report: it shows where seeds were lost, and why.',
+  'Change your set-up between seasons. Check the forecast for what is coming.'];
+
+G.draw = function (g, c, D) {
+  var HUES = ['#f472b6', '#c084fc', '#fb7185', '#f9a8d4', '#e879f9'], k, a;
+  el('line', { x1: 20, y1: 35, x2: 20, y2: c.age ? 20 : 27, stroke: '#15803d', 'stroke-width': 2.5, 'stroke-linecap': 'round' }, g);
+  el('path', { d: 'M20,31 c-7,-5 -11,-2 -12,2 c5,2 9,1 12,-2 Z M20,31 c7,-5 11,-2 12,2 c-5,2 -9,1 -12,-2 Z', fill: '#4ade80', stroke: '#15803d', 'stroke-width': 1 }, g);
+  if (!c.age) return;
+  if (D.petals) for (k = 0; k < 5; k++) {
+    a = k * 1.2566 - 1.5708;
+    el('circle', { cx: (20 + Math.cos(a) * 7.5).toFixed(1), cy: (15 + Math.sin(a) * 7.5).toFixed(1), r: 5,
+      fill: D.petals === 2 ? HUES[c.hue] : '#e7e5e4', stroke: D.petals === 2 ? '#be185d' : '#a8a29e', 'stroke-width': 1 }, g);
+  }
+  el('circle', { cx: 20, cy: 15, r: D.petals ? 4.5 : 5.5, fill: D.pollen ? '#fde68a' : '#fb923c', stroke: '#9a3412', 'stroke-width': 1.2 }, g);
+};
+
+/* ── Game shell (DOM) ── */
+var NS = 'http://www.w3.org/2000/svg', CELL = 40;
+function $(id) { return document.getElementById(id); }
+function el(tag, attrs, parent) {
+  var e = document.createElementNS(NS, tag), k;
+  for (k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function copy(o) { var r = {}, k; for (k in o) r[k] = o[k]; return r; }
+var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+var lvI = 0, lv, field, D, C, season, history, report, result, busy = false, diseased, note = '';
+var best = {};
+try { best = JSON.parse(localStorage.getItem(G.id + '-stars-v1') || '{}') || {}; } catch (e) { best = {}; }
+function saveBest() { try { localStorage.setItem(G.id + '-stars-v1', JSON.stringify(best)); } catch (e) {} }
+function stars(n) { return '★★★'.slice(0, n) + '☆☆☆'.slice(0, 3 - n); }
+
+function loadLevel(i) {
+  lvI = i; lv = G.levels[i];
+  field = makeField(lv); D = copy(lv.D); C = copy(lv.C);
+  season = 0; history = []; report = null; result = null; diseased = false; note = '';
+  buildCells(); renderLevels(); renderControls(); renderAll();
+}
+
+/* ── Level bar ── */
+function renderLevels() {
+  $('levels').innerHTML = G.levels.map(function (l, i) {
+    return '<button class="btn lv" data-lv="' + i + '" aria-pressed="' + (i === lvI) + '">' + (i + 1) + '. ' + l.name +
+      (best[i] ? ' <span class="st">' + stars(best[i]) + '</span>' : '') + '</button>';
+  }).join('');
+}
+
+/* ── Controls ── */
+function word(c, v) { return c.words[v < 10 ? 0 : v < 40 ? 1 : v < 80 ? 2 : 3]; }
+function renderControls() {
+  var h = '';
+  G.parts.forEach(function (p) {
+    h += '<div class="ctl"><div class="lab"><button class="info" data-card="' + p.part + '" title="What does this part do?">' + p.label + '</button>';
+    if (p.count) {
+      h += '<output id="o-' + p.key + '"></output></div><input type="range" data-d="' + p.key + '" min="' + p.min + '" max="' + p.max + '" step="1" aria-label="' + p.label + '">';
+    } else {
+      h += '</div><div class="seg" role="group" aria-label="' + p.label + '">' + p.opts.map(function (o) {
+        return '<button class="btn" data-d="' + p.key + '" data-val="' + o[0] + '">' + o[1] + (o[2] ? ' <span class="cost">' + o[2] + '</span>' : '') + '</button>';
+      }).join('') + '</div>';
+    }
+    h += '</div>';
+  });
+  $('partCtl').innerHTML = h;
+  h = '';
+  G.conds.forEach(function (c) {
+    h += '<div class="ctl"><label for="c-' + c.key + '"><span>' + c.label + '</span><output id="oc-' + c.key + '"></output></label>' +
+      '<input type="range" id="c-' + c.key + '" data-c="' + c.key + '" min="0" max="100" step="5"></div>';
+  });
+  $('condCtl').innerHTML = h;
+  $('fsParts').disabled = !!lv.lockD;
+  $('fsConds').disabled = !!lv.lockC;
+}
+function syncControls() {
+  var used = costOf(G, D), help = sumOf(G, C);
+  G.parts.forEach(function (p) {
+    if (p.count) {
+      var inp = document.querySelector('input[data-d="' + p.key + '"]');
+      inp.value = D[p.key];
+      $('o-' + p.key).textContent = D[p.key] + (p.each ? ' (' + D[p.key] * p.each + ' pts)' : '');
+    }
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('button[data-d]'), function (b) {
+    b.setAttribute('aria-pressed', String(D[b.getAttribute('data-d')] === Number(b.getAttribute('data-val'))));
+  });
+  G.conds.forEach(function (c) {
+    $('c-' + c.key).value = C[c.key];
+    $('oc-' + c.key).textContent = C[c.key] + ' (' + word(c, C[c.key]) + ')';
+  });
+  $('budD').innerHTML = lv.lockD ? '<span class="locked">Locked for this level</span>' : 'Energy points: <b>' + used + '</b> of ' + lv.budD + ' used';
+  $('budC').innerHTML = lv.lockC ? '<span class="locked">Locked for this level</span>' : lv.budC ? 'Help points: <b>' + help + '</b> of ' + lv.budC + ' used' : '';
+  $('note').textContent = note;
+}
+function bindControls() {
+  $('partCtl').addEventListener('click', function (e) {
+    var card = e.target.closest('[data-card]'), b = e.target.closest('button[data-d]'), t, k;
+    if (card) { openCard(card.getAttribute('data-card')); return; }
+    if (!b || busy) return;
+    k = b.getAttribute('data-d'); t = copy(D); t[k] = Number(b.getAttribute('data-val'));
+    if (costOf(G, t) > lv.budD) note = 'Not enough energy points for that. Take some from another part first.';
+    else { D = t; note = ''; }
+    syncControls(); renderField();
+  });
+  $('partCtl').addEventListener('input', function (e) {
+    var k = e.target.getAttribute && e.target.getAttribute('data-d'), t;
+    if (!k || busy) return;
+    t = copy(D); t[k] = Number(e.target.value);
+    while (costOf(G, t) > lv.budD && t[k] > 0) t[k]--;
+    note = t[k] < Number(e.target.value) ? 'Not enough energy points for more. Take some from another part first.' : '';
+    D = t; syncControls(); renderField();
+  });
+  $('condCtl').addEventListener('input', function (e) {
+    var k = e.target.getAttribute && e.target.getAttribute('data-c'), v, others;
+    if (!k || busy) return;
+    v = Number(e.target.value);
+    if (lv.budC) {
+      others = sumOf(G, C) - C[k];
+      if (v > lv.budC - others) { v = Math.max(0, Math.floor((lv.budC - others) / 5) * 5); note = 'You have used all your help points. Lower something else first.'; }
+      else note = '';
+    }
+    C[k] = v; syncControls();
+  });
+}
+
+/* ── Field ── */
+function buildCells() {
+  var g = $('cells'), i, x, y, c;
+  g.innerHTML = '';
+  for (i = 0; i < field.length; i++) {
+    x = (i % W) * CELL; y = Math.floor(i / W) * CELL; c = field[i];
+    el('rect', { x: x, y: y, width: CELL, height: CELL, 'class': c && c.t === 'water' ? 'cell water' : 'cell' }, g);
+    if (c && c.t === 'rock') el('path', { 'class': 'rock', d: 'M' + (x + 7) + ',' + (y + 31) + ' l3,-15 l10,-8 l11,5 l3,14 l-6,5 h-16 Z' }, g);
+    if (c && c.t === 'water') el('path', { 'class': 'wave', d: 'M' + (x + 6) + ',' + (y + 20) + ' q7,-7 14,0 t14,0' }, g);
+  }
+}
+function renderField() {
+  var g = $('plants'), i, c, pg, x, y;
+  g.innerHTML = '';
+  for (i = 0; i < field.length; i++) {
+    c = field[i];
+    if (!isPlant(c)) continue;
+    x = (i % W) * CELL; y = Math.floor(i / W) * CELL;
+    pg = el('g', { transform: 'translate(' + x + ',' + y + ')' }, g);
+    if (diseased && c.r) el('circle', { cx: 20, cy: 20, r: 17, 'class': 'resist' }, pg);
+    G.draw(pg, c, D);
+    if (c.tag === 'lonely') {
+      el('circle', { cx: 32, cy: 8, r: 7, 'class': 'badge' }, pg);
+      el('text', { x: 32, y: 12, 'class': 'badge-t', 'text-anchor': 'middle' }, pg).textContent = '?';
+    }
+  }
+}
+function centre(p) {
+  if (typeof p === 'number') return [(p % W) * CELL + 20, Math.floor(p / W) * CELL + 20];
+  return [p[0] * CELL + 20, p[1] * CELL + 20];
+}
+function animate(anim, done) {
+  var ov = $('overlay'), items = [], i, m, a, b, e, t0 = null, DUR = 1700;
+  ov.innerHTML = '';
+  if (reduceMotion) { done(); return; }
+  for (i = 0; i < anim.deaths.length; i++) {
+    a = centre(anim.deaths[i]);
+    el('text', { x: a[0], y: a[1] + 7, 'class': 'dead', 'text-anchor': 'middle' }, ov).textContent = '✕';
+  }
+  var hasPollen = anim.pollen.length > 0, split = hasPollen ? 0.42 : 0.08;
+  for (i = 0; i < anim.pollen.length; i++) {
+    a = centre(anim.pollen[i][0]); b = centre(anim.pollen[i][1]);
+    items.push({ e: el('circle', { r: 3, 'class': 'a-pollen', opacity: 0 }, ov), a: a, b: b, s: Math.random() * 0.1, d: split - 0.1 });
+  }
+  var step = Math.max(1, Math.ceil(anim.moves.length / 180));
+  for (i = 0; i < anim.moves.length; i += step) {
+    m = anim.moves[i]; a = centre(m.from); b = centre(m.to);
+    e = m.line ? el('line', { x1: a[0], y1: a[1], x2: a[0], y2: a[1], 'class': 'a-runner' }, ov)
+               : el('circle', { r: 3.5, 'class': m.ok ? 'a-seed' : 'a-seed fail', opacity: 0 }, ov);
+    items.push({ e: e, a: a, b: b, s: split + Math.random() * 0.12, d: 1 - split - 0.14, line: m.line, ok: m.ok });
+  }
+  function frame(now) {
+    if (t0 == null) t0 = now;
+    var t = (now - t0) / DUR, k, it, u, x, y;
+    for (k = 0; k < items.length; k++) {
+      it = items[k]; u = Math.max(0, Math.min(1, (t - it.s) / it.d));
+      x = it.a[0] + (it.b[0] - it.a[0]) * u; y = it.a[1] + (it.b[1] - it.a[1]) * u - (it.line ? 0 : Math.sin(u * Math.PI) * 14);
+      if (it.line) { it.e.setAttribute('x2', x.toFixed(1)); it.e.setAttribute('y2', y.toFixed(1)); }
+      else {
+        it.e.setAttribute('cx', x.toFixed(1)); it.e.setAttribute('cy', y.toFixed(1));
+        it.e.setAttribute('opacity', u <= 0 ? 0 : u >= 1 ? (it.ok === 0 ? 0.25 : 0.9) : 1);
+      }
+    }
+    if (t < 1) requestAnimationFrame(frame);
+    else { ov.innerHTML = ''; done(); }
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ── Season ── */
+function grow() {
+  if (busy || result) return;
+  var s = season + 1, ev = (lv.events || {})[s] || '';
+  var res = G.simulate(field, D, C, ev, RNG(lv.seed + s * 7919));
+  busy = true; note = ''; setBusy(true);
+  animate(res.anim, function () {
+    field = res.field; season = s;
+    if (ev === 'disease') diseased = true;
+    var cov = coverage(field), n = countPlants(field);
+    history.push({ s: s, cov: cov, ev: ev });
+    report = { s: s, ev: ev, ex: G.explain(res.stats, D, C, ev) };
+    if (cov >= lv.target && s >= (lv.winAfter || 0)) {
+      result = { win: 1, stars: s <= lv.par[0] ? 3 : s <= lv.par[1] ? 2 : 1 };
+      if (!best[lvI] || result.stars > best[lvI]) { best[lvI] = result.stars; saveBest(); renderLevels(); }
+    } else if (n === 0) result = { win: 0, why: 'Every plant is dead.' };
+    else if (s >= lv.max) result = { win: 0, why: 'You ran out of seasons.' };
+    busy = false; setBusy(false); renderAll(); showTab('report');
+  });
+}
+function setBusy(on) {
+  $('bGrow').disabled = on || !!result; $('bRestart').disabled = on;
+  $('fsParts').disabled = on || !!lv.lockD; $('fsConds').disabled = on || !!lv.lockC;
+}
+
+/* ── Status + report ── */
+function forecastHTML() {
+  var out = [], s, ev;
+  for (s = season + 1; s <= lv.max; s++) {
+    ev = (lv.events || {})[s];
+    if (ev) out.push('<span class="chip ev" title="' + G.events[ev][1] + '">Season ' + s + ': ' + G.events[ev][0] + '</span>');
+  }
+  return '<b>Forecast:</b> ' + (out.length ? out.join(' ') : '<span class="chip">nothing unusual</span>');
+}
+function renderStatus() {
+  var cov = coverage(field), p = Math.round(cov * 100), t = Math.round(lv.target * 100);
+  $('season').textContent = 'Season ' + season + ' of ' + lv.max;
+  $('covFill').style.width = Math.min(100, p) + '%';
+  $('covMark').style.left = t + '%';
+  $('covText').innerHTML = 'Field covered: <b>' + p + '%</b> · goal ' + t + '%' + (lv.winAfter ? ' after season ' + lv.winAfter : '');
+  $('forecast').innerHTML = forecastHTML();
+  $('bGrow').disabled = busy || !!result;
+  $('bGrow').textContent = season === 0 ? 'Grow the first season' : 'Grow one season';
+}
+function renderReport() {
+  var h = '', ex, top, i, r, evs = [], k;
+  if (result) {
+    if (result.win) {
+      h += '<div class="result win"><div class="big">' + stars(result.stars) + '</div><h3>The field is yours, in ' + plural(season, 'season', 'seasons') + '.</h3>' +
+        '<p>' + lv.debrief + '</p><div class="write"><b>In your notebook:</b> ' + lv.write + '</div>' +
+        '<div class="row">' + (lvI < G.levels.length - 1 ? '<button class="btn primary" data-go="' + (lvI + 1) + '">Next level</button>' : '') +
+        '<button class="btn" data-go="' + lvI + '">Play again for more stars</button></div></div>';
+    } else {
+      h += '<div class="result lose"><h3>' + result.why + '</h3><p>Your plants covered <b>' + Math.round(coverage(field) * 100) + '%</b> of the field. The goal was ' + Math.round(lv.target * 100) + '%.</p>' +
+        '<p>Read the season report below. It shows the step where the most was lost. Fix that step first.</p>' +
+        '<div class="row"><button class="btn primary" data-go="' + lvI + '">Try again</button></div></div>';
+    }
+  }
+  if (!report) {
+    for (k in (lv.events || {})) evs.push('<li><b>Season ' + k + ', ' + G.events[lv.events[k]][0] + ':</b> ' + G.events[lv.events[k]][1] + '</li>');
+    h += '<div class="brief"><h3>Level ' + (lvI + 1) + ': ' + lv.name + '</h3><p>' + lv.brief + '</p>' +
+      '<p><b>Goal:</b> cover ' + Math.round(lv.target * 100) + '% of the field ' + (lv.winAfter ? 'after season ' + lv.winAfter + ', and before season ' + lv.max + ' ends.' : 'within ' + lv.max + ' seasons.') + '</p>' +
+      (evs.length ? '<ul class="evs">' + evs.join('') + '</ul>' : '') +
+      '<p class="hint">Before you press Grow, predict: which part will matter most here? Check your prediction against the season report.</p></div>';
+  } else {
+    ex = report.ex; top = Math.max(1, ex.rows[0][1]);
+    h += '<div class="group-h">Season ' + report.s + ' report' + (report.ev ? ' · ' + G.events[report.ev][0] : '') + '</div>';
+    for (i = 0; i < ex.rows.length; i++) {
+      r = ex.rows[i];
+      h += '<div class="funnel' + (i === ex.weak ? ' weak' : '') + '"><span class="name">' + r[0] + '</span><span class="track"><span class="fill" style="width:' +
+        Math.min(100, r[1] / top * 100).toFixed(0) + '%"></span></span><span class="num">' + r[1] + '</span></div>';
+    }
+    h += '<div class="why"><div class="why-h">What happened, and why?</div>' + ex.text.map(function (t) { return '<p>' + t + '</p>'; }).join('') + '</div>';
+    h += '<div class="group-h">Field covered each season</div><div class="hist">' + history.map(function (x) {
+      return '<span class="chip' + (x.ev ? ' ev' : '') + '">S' + x.s + ': ' + Math.round(x.cov * 100) + '%</span>';
+    }).join('') + '</div>';
+  }
+  $('pane-report').innerHTML = h;
+}
+function renderAll() { syncControls(); renderField(); renderStatus(); renderReport(); }
+
+/* ── Tabs + cards ── */
+var TABS = ['report', 'parts', 'how'];
+function showTab(name) {
+  TABS.forEach(function (t) {
+    $('tab-' + t).setAttribute('aria-selected', String(t === name));
+    $('pane-' + t).hidden = t !== name;
+  });
+}
+function buildCards() {
+  $('pane-parts').innerHTML = G.partCards.map(function (p) {
+    return '<div class="pcard" id="pc-' + p.id + '"><div class="sys">' + p.sys + '</div><h3>' + p.name + '</h3><p>' + p.job + '</p></div>';
+  }).join('');
+  $('pane-how').innerHTML = '<ol class="steps">' + G.howto.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ol>';
+}
+function openCard(id) {
+  showTab('parts');
+  Array.prototype.forEach.call(document.querySelectorAll('.pcard.sel'), function (x) { x.classList.remove('sel'); });
+  var card = $('pc-' + id);
+  if (!card) return;
+  card.classList.add('sel');
+  card.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+}
+
+/* ── Start ── */
+bindControls(); buildCards();
+TABS.forEach(function (t) { $('tab-' + t).addEventListener('click', function () { showTab(t); }); });
+$('levels').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-lv]');
+  if (b && !busy) { loadLevel(Number(b.getAttribute('data-lv'))); showTab('report'); }
+});
+$('pane-report').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-go]');
+  if (b && !busy) loadLevel(Number(b.getAttribute('data-go')));
+});
+$('bGrow').addEventListener('click', grow);
+$('bRestart').addEventListener('click', function () { if (!busy) loadLevel(lvI); });
+loadLevel(0);
+
+})();
+</script>
+</body>
+</html>

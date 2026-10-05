@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clone Field — Asexual Reproduction Game | Grade 7 Science</title>
+<style>
+/* ─────────────────────────────────────────
+   CLONE FIELD — ASEXUAL REPRODUCTION GAME (runners, tubers, cuttings)
+   Grade 7 Science | Plants for Food and Fibre | LO 7-2-04
+   A turn-based field game. Each press of "Grow" runs one season.
+   The season report shows the step where the most offspring were lost.
+   Sister game: sci7-flower-field-game-v1.html (same shell, different reproduction model).
+   ───────────────────────────────────────── */
+
+:root {
+  --accent: #15803d;
+  --accent-light: #f0fdf4;
+  --accent-mid: #22c55e;
+  --ink: #0f172a;
+  --body: #1e293b;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --bad: #b91c1c;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: var(--body); line-height: 1.5; }
+button, input { font: inherit; color: inherit; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 14px 16px 28px; }
+
+.top { border-bottom: 4px solid var(--accent); padding-bottom: 10px; margin-bottom: 12px; }
+.unit-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.top h1 { font-size: 1.5rem; font-weight: 800; color: var(--ink); line-height: 1.2; }
+.i-can {
+  background: var(--accent-light); border-left: 4px solid var(--accent); border-radius: 0 6px 6px 0;
+  padding: 7px 12px; font-weight: 700; color: #14532d; font-size: 0.92rem; margin-top: 8px;
+}
+
+.btn {
+  border: 1.5px solid #94a3b8; background: #fff; border-radius: 8px; padding: 5px 12px;
+  font-weight: 700; font-size: 0.86rem; cursor: pointer; color: var(--body);
+}
+.btn:hover { border-color: var(--accent); }
+.btn[aria-pressed="true"], .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:focus-visible, input:focus-visible, .tab:focus-visible, .info:focus-visible { outline: 3px solid #0ea5e9; outline-offset: 2px; }
+.btn.big { font-size: 1rem; padding: 8px 18px; }
+.seg { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+
+.levels { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.levels .st { color: #ca8a04; letter-spacing: 1px; }
+.levels .btn[aria-pressed="true"] .st { color: #fde68a; }
+
+.grid { display: grid; grid-template-columns: 270px minmax(320px, 1fr) 350px; gap: 12px; align-items: start; }
+.panel { background: #fff; border: 1.5px solid var(--line); border-radius: 10px; padding: 12px; }
+.panel h2 { font-size: 0.74rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 2px; }
+.hint { font-size: 0.8rem; color: var(--muted); }
+@media (max-width: 1100px) {
+  .grid { grid-template-columns: minmax(300px, 1.2fr) minmax(280px, 1fr); }
+  .controls { grid-column: 1 / -1; order: 3; display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+  .controls hr.div { display: none; }
+}
+@media (max-width: 700px) {
+  .grid { grid-template-columns: 1fr; }
+  .controls { display: block; }
+  .controls hr.div { display: block; }
+}
+
+fieldset { border: 0; min-width: 0; }
+fieldset:disabled { opacity: 0.7; }
+.budget { font-size: 0.82rem; color: #334155; margin-bottom: 8px; }
+.budget .locked { font-weight: 700; color: #92400e; background: #fef3c7; border-radius: 4px; padding: 1px 6px; }
+.note { font-size: 0.8rem; font-weight: 700; color: var(--bad); min-height: 1.2em; margin-top: 4px; }
+.ctl { margin-bottom: 9px; }
+.ctl label, .ctl .lab { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 0.88rem; color: var(--ink); }
+.ctl output { font-weight: 600; font-size: 0.8rem; color: var(--muted); }
+.ctl input[type=range] { width: 100%; accent-color: var(--accent); margin-top: 2px; }
+.ctl .seg { margin-top: 3px; }
+.ctl .seg .btn { padding: 3px 9px; font-size: 0.8rem; }
+.info { border: 0; background: none; font-weight: 700; font-size: 0.88rem; color: var(--ink); cursor: pointer; padding: 0; text-decoration: underline dotted #94a3b8; text-underline-offset: 3px; }
+.info:hover { color: var(--accent); }
+.cost { display: inline-block; font-size: 0.68rem; font-weight: 800; background: #fef3c7; color: #92400e; border-radius: 999px; padding: 0 5px; margin-left: 2px; }
+.btn[aria-pressed="true"] .cost { background: #fde68a; }
+hr.div { border: 0; border-top: 1.5px dashed var(--line); margin: 12px 0; }
+
+.statusbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 8px; }
+.season { font-weight: 800; color: var(--ink); font-size: 1.05rem; }
+.spacer { flex: 1; }
+.cov { position: relative; height: 14px; background: #f1f5f9; border-radius: 999px; margin-bottom: 4px; }
+.cov .fill { height: 100%; background: var(--accent-mid); border-radius: 999px; width: 0; transition: width 0.4s; }
+.cov .mark { position: absolute; top: -4px; bottom: -4px; width: 3px; background: var(--ink); border-radius: 2px; }
+.covtext { font-size: 0.86rem; color: #334155; }
+.forecast { font-size: 0.84rem; margin: 6px 0 8px; }
+.chip { display: inline-block; font-size: 0.78rem; font-weight: 700; background: #f1f5f9; border-radius: 999px; padding: 1px 9px; margin: 2px 2px 2px 0; color: #334155; }
+.chip.ev { background: #fee2e2; color: #991b1b; }
+
+.stage svg { display: block; width: 100%; height: auto; border-radius: 6px; }
+svg .cell { fill: #f3ead8; stroke: #e3d5b8; stroke-width: 1; }
+svg .cell.water { fill: #bae6fd; stroke: #7dd3fc; }
+svg .wave { fill: none; stroke: #0284c7; stroke-width: 2; stroke-linecap: round; }
+svg .rock { fill: #a8a29e; stroke: #57534e; stroke-width: 1.5; }
+svg .badge { fill: #fff; stroke: #b91c1c; stroke-width: 1.5; }
+svg .badge-t { font: 800 11px 'Segoe UI', Arial, sans-serif; fill: #b91c1c; }
+svg .resist { fill: none; stroke: #0ea5e9; stroke-width: 2; stroke-dasharray: 4 3; }
+svg .dead { font: 800 22px 'Segoe UI', Arial, sans-serif; fill: #b91c1c; }
+svg .a-pollen { fill: #facc15; stroke: #a16207; stroke-width: 1; }
+svg .a-seed { fill: #92400e; stroke: #451a03; stroke-width: 1; }
+svg .a-seed.fail { fill: #d6d3d1; stroke: #78716c; }
+svg .a-runner { stroke: #15803d; stroke-width: 3; stroke-linecap: round; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.78rem; font-weight: 600; color: #334155; margin-top: 6px; }
+.legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
+
+.tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+.tab { flex: 1; border: 1.5px solid var(--line); background: #f8fafc; border-radius: 8px; padding: 6px 4px; font-weight: 800; font-size: 0.82rem; cursor: pointer; color: #475569; }
+.tab[aria-selected="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+.tabpane[hidden] { display: none; }
+
+.brief h3, .result h3 { font-size: 1rem; font-weight: 800; color: var(--ink); }
+.brief p, .result p { font-size: 0.9rem; margin-top: 6px; }
+.evs { margin: 6px 0 0 1.1rem; font-size: 0.86rem; }
+.result { border: 2px solid var(--accent); background: var(--accent-light); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
+.result.lose { border-color: #f97316; background: #fff7ed; }
+.result .big { font-size: 1.7rem; color: #ca8a04; letter-spacing: 3px; line-height: 1.1; }
+.result .row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.write { border: 1.5px dashed #94a3b8; border-radius: 8px; padding: 8px 11px; margin-top: 10px; font-size: 0.88rem; background: #fff; }
+.group-h { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 10px 0 4px; }
+.funnel { display: grid; grid-template-columns: 1fr 2.4em; gap: 1px 6px; font-size: 0.82rem; margin: 5px 0; }
+.funnel .name { font-weight: 700; color: var(--ink); grid-column: 1 / -1; }
+.funnel .track { height: 10px; background: #f1f5f9; border-radius: 999px; overflow: hidden; align-self: center; }
+.funnel .fill { display: block; height: 100%; background: #f59e0b; border-radius: 999px; }
+.funnel .num { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.funnel.weak .fill { background: var(--bad); }
+.funnel.weak .name::after {
+  content: 'biggest loss'; display: inline-block; margin-left: 6px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+  color: #991b1b; background: #fee2e2; border-radius: 4px; padding: 0 4px; vertical-align: 1px;
+}
+.why { background: #fefce8; border-left: 4px solid #ca8a04; border-radius: 0 6px 6px 0; padding: 8px 12px; font-size: 0.88rem; margin-top: 10px; }
+.why p + p { margin-top: 5px; }
+.why-h { font-weight: 800; color: #a16207; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.pcard { border: 1.5px solid var(--line); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 8px 11px; margin-bottom: 8px; font-size: 0.86rem; }
+.pcard.sel { background: var(--accent-light); border-color: var(--accent); }
+.pcard h3 { font-size: 0.95rem; font-weight: 800; color: var(--ink); }
+.pcard .sys { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.steps { margin-left: 1.2rem; font-size: 0.9rem; }
+.steps li { margin: 5px 0; }
+.foot { font-size: 0.76rem; color: var(--muted); margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="unit-label">Grade 7 Science · Plants for Food and Fibre</div>
+    <h1>Clone Field: Take Over the Meadow without Seeds</h1>
+    <div class="i-can">I can explain how a plant reproduces from one parent with runners, tubers and cuttings, and weigh the advantages against reproducing by seed.</div>
+  </header>
+
+  <div class="levels" id="levels" aria-label="Levels"></div>
+
+  <div class="grid">
+
+    <section class="panel controls" aria-label="Controls">
+      <fieldset id="fsParts">
+        <h2>Your plant</h2>
+        <div class="budget" id="budD"></div>
+        <div id="partCtl"></div>
+      </fieldset>
+      <fieldset id="fsConds">
+        <hr class="div">
+        <h2>Surroundings</h2>
+        <div class="budget" id="budC"></div>
+        <div id="condCtl"></div>
+      </fieldset>
+      <div class="note" id="note" aria-live="polite"></div>
+    </section>
+
+    <section class="panel stage" aria-label="The field">
+      <div class="statusbar">
+        <span class="season" id="season"></span>
+        <span class="spacer"></span>
+        <button class="btn" id="bRestart">Restart level</button>
+        <button class="btn primary big" id="bGrow">Grow one season</button>
+      </div>
+      <div class="cov" aria-hidden="true"><div class="fill" id="covFill"></div><div class="mark" id="covMark"></div></div>
+      <div class="covtext" id="covText" aria-live="polite"></div>
+      <div class="forecast" id="forecast"></div>
+      <svg viewBox="0 0 560 360" role="img" aria-label="The field, shown as a grid of squares">
+        <g id="cells"></g>
+        <g id="plants"></g>
+        <g id="overlay" aria-hidden="true"></g>
+      </svg>
+      <div class="legend"><span><i style="background:#15803d"></i>runner or tuber shoot</span><span><i style="background:#92400e"></i>stem piece or seed carried away</span><span><i style="background:#d6d3d1"></i>did not root</span><span><b style="color:#0ea5e9">◌</b> resists the disease</span></div>
+    </section>
+
+    <section class="panel" aria-label="Feedback">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" id="tab-report" aria-selected="true" aria-controls="pane-report">Season report</button>
+        <button class="tab" role="tab" id="tab-parts" aria-selected="false" aria-controls="pane-parts">Parts</button>
+        <button class="tab" role="tab" id="tab-how" aria-selected="false" aria-controls="pane-how">How to play</button>
+      </div>
+      <div class="tabpane" id="pane-report" role="tabpanel" aria-labelledby="tab-report"></div>
+      <div class="tabpane" id="pane-parts" role="tabpanel" aria-labelledby="tab-parts" hidden></div>
+      <div class="tabpane" id="pane-how" role="tabpanel" aria-labelledby="tab-how" hidden></div>
+    </section>
+
+  </div>
+
+  <p class="foot">This is a model. Energy for new clones comes from photosynthesis, so it is limited by light and leaves or by water and roots, whichever is scarcer. Real plants are more complicated.</p>
+</div>
+
+<script>
+(function () {
+'use strict';
+/* ── Field model (no DOM in this part) ── */
+var W = 14, H = 9;
+function RNG(seed) {
+  var s = seed % 4294967296 || 1;
+  return function () { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; };
+}
+function inb(x, y) { return x >= 0 && y >= 0 && x < W && y < H; }
+function isPlant(c) { return !!c && c.t === 'plant'; }
+function newPlantCell(r, hue, age, fromSeed) { return { t: 'plant', r: r, hue: hue, age: age, seed: fromSeed ? 1 : 0, tag: '' }; }
+function makeField(level) {
+  var f = [], i, p;
+  for (i = 0; i < W * H; i++) f.push(null);
+  for (i = 0; i < (level.rocks || []).length; i++) { p = level.rocks[i]; f[p[1] * W + p[0]] = { t: 'rock' }; }
+  for (i = 0; i < (level.water || []).length; i++) { p = level.water[i]; f[p[1] * W + p[0]] = { t: 'water' }; }
+  for (i = 0; i < level.start.length; i++) { p = level.start[i]; f[p[1] * W + p[0]] = newPlantCell(0, 0, 1, 0); }
+  return f;
+}
+function copyField(f) {
+  var n = [], i, c;
+  for (i = 0; i < f.length; i++) {
+    c = f[i];
+    n.push(!c ? null : isPlant(c) ? { t: 'plant', r: c.r, hue: c.hue, age: c.age + 1, seed: c.seed, tag: '' } : c);
+  }
+  return n;
+}
+function countPlants(f) { var n = 0, i; for (i = 0; i < f.length; i++) if (isPlant(f[i])) n++; return n; }
+function plantable(f) { var n = 0, i; for (i = 0; i < f.length; i++) if (!f[i] || isPlant(f[i])) n++; return n; }
+function coverage(f) { return countPlants(f) / plantable(f); }
+function plantList(f) { var a = [], i; for (i = 0; i < f.length; i++) if (isPlant(f[i])) a.push(i); return a; }
+/* nearest other plant within a square distance of rad, or -1 */
+function nearestOther(f, i, rad) {
+  var x = i % W, y = Math.floor(i / W), best = -1, bd = 99, dx, dy, d, j;
+  for (dy = -rad; dy <= rad; dy++) for (dx = -rad; dx <= rad; dx++) {
+    if ((dx || dy) && inb(x + dx, y + dy)) {
+      j = (y + dy) * W + x + dx;
+      if (isPlant(f[j])) { d = Math.max(Math.abs(dx), Math.abs(dy)); if (d < bd) { bd = d; best = j; } }
+    }
+  }
+  return best;
+}
+function randInt(rng, a, b) { return a + Math.floor(rng() * (b - a + 1)); }
+/* a random square within rad of i (never i itself); may be off the field */
+function scatter(rng, i, rad) {
+  var x = i % W, y = Math.floor(i / W), dx = 0, dy = 0;
+  while (!dx && !dy) { dx = randInt(rng, -rad, rad); dy = randInt(rng, -rad, rad); }
+  return [x + dx, y + dy];
+}
+function emptyNeighbour(rng, f, i) {
+  var x = i % W, y = Math.floor(i / W), opts = [], dx, dy;
+  for (dy = -1; dy <= 1; dy++) for (dx = -1; dx <= 1; dx++) {
+    if ((dx || dy) && inb(x + dx, y + dy) && !f[(y + dy) * W + x + dx]) opts.push((y + dy) * W + x + dx);
+  }
+  return opts.length ? opts[Math.floor(rng() * opts.length)] : -1;
+}
+function costOf(G, D) {
+  var t = 0, i, j, p;
+  for (i = 0; i < G.parts.length; i++) {
+    p = G.parts[i];
+    if (p.count) t += D[p.key] * p.each;
+    else for (j = 0; j < p.opts.length; j++) if (p.opts[j][0] === D[p.key]) t += p.opts[j][2];
+  }
+  return t;
+}
+function sumOf(G, C) { var t = 0, i; for (i = 0; i < G.conds.length; i++) t += C[G.conds[i].key]; return t; }
+function pct(a, b) { return b ? Math.round(a / b * 100) : 0; }
+function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+
+/* ── Clone game: asexual reproduction ── */
+var G = {
+  id: 'clonefield',
+  plantWord: 'plant',
+  parts: [
+    { key: 'leaves', label: 'Leaves', part: 'leaves', opts: [[0, 'Small', 0], [1, 'Large', 2]] },
+    { key: 'roots', label: 'Roots', part: 'roots', opts: [[0, 'Shallow', 0], [1, 'Deep', 2]] },
+    { key: 'runners', label: 'Runners', part: 'runners', count: 1, min: 0, max: 3, each: 1 },
+    { key: 'tubers', label: 'Tubers', part: 'tubers', opts: [[0, 'None', 0], [1, 'Grows tubers', 2]] },
+    { key: 'brittle', label: 'Stems', part: 'cuttings', opts: [[0, 'Tough', 0], [1, 'Snap off and root', 1]] },
+    { key: 'flowers', label: 'Flowers', part: 'flowers', opts: [[0, 'None', 0], [1, 'Makes flowers too', 2]] }
+  ],
+  conds: [
+    { key: 'light', label: 'Light', words: ['dark', 'shade', 'bright', 'full sun'] },
+    { key: 'water', label: 'Water', words: ['dry', 'a little', 'steady', 'wet'] },
+    { key: 'passers', label: 'Animals and people passing', words: ['none', 'a few', 'plenty', 'lots'] },
+    { key: 'bees', label: 'Bees', words: ['none', 'a few', 'plenty', 'lots'] }
+  ],
+  events: {
+    drought: ['Drought', 'Almost no water. Plants die back. Only those with food stored in tubers regrow.'],
+    disease: ['New disease', 'A disease the first plant cannot resist. Every clone of it shares the same weakness.']
+  }
+};
+
+G.energy = function (D, C, ev) {
+  var light = C.light / 100 * (D.leaves ? 1 : 0.5);
+  var water = Math.min(1, (ev === 'drought' ? C.water * 0.3 : C.water) / 100 * (D.roots ? 1 : 0.5) * 1.25);
+  return { light: light, water: water, e: Math.min(light, water) };
+};
+
+G.simulate = function (f, D, C, ev, rng) {
+  var nf = copyField(f), i, k, n, j, pos, idx, list, tries;
+  var s = { plants: 0, tries: 0, powered: 0, clones: 0, blocked: 0, died: 0, plants0: 0, far: 0, farTries: 0,
+            seedTries: 0, seedlings: 0, light: 0, water: 0 };
+  var anim = { deaths: [], pollen: [], moves: [] };
+  var en = G.energy(D, C, ev), e = en.e;
+  s.light = en.light; s.water = en.water;
+  if (ev === 'disease') {
+    for (i = 0; i < nf.length; i++) if (isPlant(nf[i]) && !nf[i].r) { nf[i] = null; s.died++; anim.deaths.push(i); }
+  }
+  if (ev === 'drought' && !D.tubers) {
+    for (i = 0; i < nf.length; i++) if (isPlant(nf[i]) && rng() < 0.85) { nf[i] = null; s.died++; anim.deaths.push(i); }
+  }
+  list = plantList(nf);
+  s.plants0 = list.length;
+  var base = nf.slice(0);
+  for (k = 0; k < list.length; k++) {
+    i = list[k];
+    s.plants++;
+    tries = D.runners + (D.tubers ? 1 : 0);
+    for (n = 0; n < tries; n++) {
+      s.tries++;
+      if (rng() >= e) continue;
+      s.powered++;
+      j = emptyNeighbour(rng, nf, i);
+      if (j < 0) { s.blocked++; continue; }
+      nf[j] = newPlantCell(nf[i].r, nf[i].hue, 0, 0);
+      s.clones++;
+      anim.moves.push({ from: i, to: [j % W, Math.floor(j / W)], ok: 1, line: 1 });
+    }
+    if (D.brittle) {
+      s.tries++; s.farTries++;
+      if (rng() < e) {
+        s.powered++;
+        if (rng() < C.passers / 100) {
+          pos = scatter(rng, i, 7); idx = pos[1] * W + pos[0];
+          if (inb(pos[0], pos[1]) && !nf[idx]) {
+            nf[idx] = newPlantCell(nf[i].r, nf[i].hue, 0, 0);
+            s.clones++; s.far++;
+            anim.moves.push({ from: i, to: pos, ok: 1 });
+          } else { s.blocked++; anim.moves.push({ from: i, to: pos, ok: 0 }); }
+        } else s.blocked++;
+      }
+    }
+    if (D.flowers) {
+      s.seedTries++;
+      j = nearestOther(base, i, 3);
+      if (j >= 0 && rng() < C.bees / 100 * e) {
+        if (anim.pollen.length < 60) anim.pollen.push([j, i]);
+        pos = scatter(rng, i, 4); idx = pos[1] * W + pos[0];
+        if (inb(pos[0], pos[1]) && !nf[idx]) {
+          nf[idx] = newPlantCell(rng() < (nf[i].r ? 0.8 : 0.45) ? 1 : 0, randInt(rng, 1, 3), 0, 1);
+          s.seedlings++;
+          anim.moves.push({ from: i, to: pos, ok: 1, seed: 1 });
+        } else anim.moves.push({ from: i, to: pos, ok: 0, seed: 1 });
+      }
+    }
+  }
+  return { field: nf, stats: s, anim: anim };
+};
+
+G.explain = function (s, D, C, ev) {
+  var rows = [['Clone attempts', s.tries], ['Had the energy to grow', s.powered], ['Found a place to root', s.clones]];
+  var weak = -1, worst = 0.7, i, r, text = [];
+  if (D.flowers) rows.push(['Seedlings from flowers', s.seedlings]);
+  for (i = 1; i < 3; i++) {
+    if (rows[i - 1][1] > 0) { r = rows[i][1] / rows[i - 1][1]; if (r < worst) { worst = r; weak = i; } }
+  }
+  if (ev === 'disease') {
+    text.push('<b>The disease killed ' + plural(s.died, 'plant', 'plants') + '.</b> ' + (s.plants0
+      ? plural(s.plants0, 'plant', 'plants') + ' survived. They grew from seeds, with two parents, so they were different from the clones. Now their own clones will carry the same resistance.'
+      : 'A clone is an exact copy of its parent. The first plant could not resist this disease, so not one of its clones could either.'));
+  }
+  if (ev === 'drought') {
+    text.push(D.tubers ? '<b>Drought:</b> the plants died back above ground, but the food stored in their tubers let every one regrow.'
+      : '<b>The drought killed ' + plural(s.died, 'plant', 'plants') + '.</b> With no stored food underground, most could not regrow. A tuber is a swollen underground stem packed with stored food.');
+  }
+  if (!s.plants) { text.push('There are no plants left.'); return { rows: rows, weak: -1, text: text }; }
+  if (!s.tries && !D.flowers) text.push('<b>Your plant has no way to reproduce.</b> Give it runners, tubers, or stems that snap off and root.');
+  if (weak === 1) {
+    if (s.light <= s.water) text.push('<b>Not enough energy, and light is the limit.</b> Growing a new plant takes glucose. ' + (D.leaves ? 'There is not much light to capture.' : 'Small leaves capture only half the light that reaches them.'));
+    else text.push('<b>Not enough energy, and water is the limit.</b> Photosynthesis needs water as well as light. ' + (ev === 'drought' ? 'This was a drought.' : D.roots ? 'There is not much water in the soil.' : 'Shallow roots reach only half the water in the soil.'));
+  } else if (weak === 2) {
+    if (D.brittle && s.farTries && C.passers < 40 && s.blocked >= s.farTries / 2) text.push('<b>Broken stem pieces are not going anywhere.</b> A piece only becomes a new plant if an animal, a person or water carries it to bare soil. Few are passing by.');
+    text.push('<b>Many new shoots had nowhere to root.</b> A runner or tuber can only start a plant in the very next square. Plants in the middle of a patch are boxed in, and runners cannot cross water or rock.');
+  } else if (s.clones) {
+    text.push('<b>The clones are spreading.</b> Each one is an exact copy of its parent. No pollen, no seeds and no second plant were needed.');
+  }
+  if (D.flowers) {
+    if (C.bees < 20) text.push('The flowers made almost no seeds: there are too few bees to carry pollen.');
+    else if (s.seedlings) text.push(plural(s.seedlings, 'seedling', 'seedlings') + ' grew from seeds this season. They are a different shade because, unlike clones, each one is a little different from its parents.');
+  }
+  return { rows: rows, weak: weak, text: text };
+};
+
+var BARE = { leaves: 0, roots: 0, runners: 0, tubers: 0, brittle: 0, flowers: 0 };
+var STREAM = [[7, 0], [7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6], [7, 7], [7, 8]];
+G.levels = [
+  { name: 'One plant, no bees', seed: 111,
+    brief: 'A single plant in an empty field. There are no bees and no other plants, so it will never make a seed. <b>Give it a way to copy itself</b> and take over the field.',
+    start: [[7, 4]], rocks: [[2, 1], [11, 7]],
+    D: BARE, budD: 6, C: { light: 80, water: 80, passers: 0, bees: 0 }, lockC: 1,
+    target: 0.5, max: 8, par: [5, 6],
+    debrief: 'One parent was enough. Asexual reproduction needs no pollen, no pollinators and no partner, and every clone is ready-made for the spot its parent already grows in. But a new clone costs glucose, so the plant also needed leaves and roots good enough to pay for it.',
+    write: 'A flower in this field would have made zero seeds. Explain why, and explain why runners still worked.' },
+  { name: 'Dry summer', seed: 222,
+    brief: 'Two plants and a good field, but read the forecast: <b>drought is coming, twice</b>. Design a plant that takes over the field anyway.',
+    start: [[4, 4], [9, 4]], rocks: [[6, 1], [7, 7]],
+    D: BARE, budD: 7, C: { light: 80, water: 70, passers: 0, bees: 0 }, lockC: 1,
+    events: { 3: 'drought', 6: 'drought' }, target: 0.5, max: 7, par: [4, 5],
+    debrief: 'A tuber is an underground stem swollen with stored food. When the top of the plant dies in a drought or a winter, the tuber regrows it. Potatoes are tubers. That is why one potato in the ground becomes a new potato plant.',
+    write: 'A farmer plants pieces of potato, not potato seeds. What are two advantages of doing it this way?' },
+  { name: 'Across the stream', seed: 333,
+    brief: 'The plant is fixed this time, and a stream cuts the field in half. Runners cannot cross water. <b>You control the surroundings</b>, with 200 help points to share out.',
+    start: [[2, 4]], water: STREAM,
+    D: { leaves: 1, roots: 1, runners: 2, tubers: 0, brittle: 1, flowers: 0 }, lockD: 1,
+    C: { light: 50, water: 50, passers: 0, bees: 0 }, budC: 200,
+    target: 0.6, max: 10, par: [6, 7],
+    debrief: 'Runners are reliable but slow, and they cannot jump a gap. Pieces of stem that snap off and root can travel a long way, but only if something carries them. Many water weeds and garden weeds spread this way. Bees were no help: this plant has no flowers.',
+    write: 'Gardeners are told never to put pieces of some weeds in the compost. Use this level to explain why.' },
+  { name: 'The disease', seed: 444,
+    brief: 'You control everything. But the forecast shows a <b>new disease</b> that the first plant cannot resist. The field must be yours <b>after</b> the disease has passed.',
+    start: [[6, 4]], rocks: [[1, 1], [12, 7]],
+    D: BARE, budD: 8, C: { light: 60, water: 60, passers: 0, bees: 0 }, budC: 260,
+    events: { 5: 'disease' }, target: 0.4, max: 10, winAfter: 5, par: [6, 7],
+    debrief: 'Clones are identical, so one disease can kill them all. Seeds have two parents and vary, so some seedlings survived. Then cloning became an advantage again: the resistant survivors copied themselves quickly. Many plants, such as strawberries, use both strategies.',
+    write: 'Give one advantage of asexual reproduction and one advantage of sexual reproduction. Support each with something that happened in this level.' }
+];
+
+G.partCards = [
+  { id: 'runners', name: 'Runners', sys: 'Asexual reproduction', job: 'A stem that grows out along the ground and roots to make a new plant beside the parent. Strawberries and spider plants do this.' },
+  { id: 'tubers', name: 'Tubers and bulbs', sys: 'Asexual reproduction + storage', job: 'A tuber is a swollen underground stem full of stored food (a potato). A bulb is a short stem wrapped in food-storing leaves (a tulip or onion). Both can grow a new plant, and both let the plant survive a drought or a winter.' },
+  { id: 'cuttings', name: 'Cuttings', sys: 'Asexual reproduction', job: 'A piece of stem that breaks off can grow its own roots and become a new plant. In nature animals, people or water carry the pieces. Gardeners do it on purpose, and grafting joins a cutting onto another plant\'s roots.' },
+  { id: 'leaves', name: 'Leaves', sys: 'Shoot system', job: 'Make glucose by photosynthesis. Growing a clone costs glucose, so a plant with small leaves cannot afford many.' },
+  { id: 'roots', name: 'Roots', sys: 'Root system', job: 'Absorb the water that photosynthesis needs. Deep roots reach water that shallow roots miss.' },
+  { id: 'flowers', name: 'Flowers', sys: 'Sexual reproduction', job: 'Flowers make seeds, which need pollen from another plant and something to carry it. Seeds have two parents, so each seedling is a little different.' },
+  { id: 'clone', name: 'Clone', sys: 'One parent', job: 'Offspring made by asexual reproduction is a clone: an exact copy of its one parent. Same strengths, same weaknesses.' }
+];
+
+G.howto = ['Your goal is to take over the field before you run out of seasons.',
+  'Set up your plant and the surroundings on the left. Some levels lock one side.',
+  'Plant parts cost energy points. You cannot afford everything, so choose what this field needs.',
+  'Press “Grow one season”. Then read the season report: it shows where new plants were lost, and why.',
+  'Change your set-up between seasons. Check the forecast for what is coming.'];
+
+G.draw = function (g, c, D) {
+  var HUES = ['#22c55e', '#a3e635', '#2dd4bf', '#facc15'], fill = HUES[c.hue], k, a, s = c.age ? 1 : 0.6;
+  if (D.tubers && c.age) el('ellipse', { cx: 20, cy: 33, rx: 6, ry: 3.5, fill: '#d6a56a', stroke: '#92400e', 'stroke-width': 1 }, g);
+  for (k = 0; k < 5; k++) {
+    a = k * 72 - 90;
+    el('ellipse', { cx: 20, cy: 20 - 8 * s, rx: 4.2 * s, ry: 8.5 * s, fill: fill, stroke: '#166534', 'stroke-width': 1,
+      transform: 'rotate(' + a + ' 20 21)' }, g);
+  }
+  el('circle', { cx: 20, cy: 21, r: 2.5 * s, fill: '#166534' }, g);
+  if (D.flowers && c.age) el('circle', { cx: 20, cy: 21, r: 3.5, fill: '#f9a8d4', stroke: '#be185d', 'stroke-width': 1 }, g);
+};
+
+/* ── Game shell (DOM) ── */
+var NS = 'http://www.w3.org/2000/svg', CELL = 40;
+function $(id) { return document.getElementById(id); }
+function el(tag, attrs, parent) {
+  var e = document.createElementNS(NS, tag), k;
+  for (k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function copy(o) { var r = {}, k; for (k in o) r[k] = o[k]; return r; }
+var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+var lvI = 0, lv, field, D, C, season, history, report, result, busy = false, diseased, note = '';
+var best = {};
+try { best = JSON.parse(localStorage.getItem(G.id + '-stars-v1') || '{}') || {}; } catch (e) { best = {}; }
+function saveBest() { try { localStorage.setItem(G.id + '-stars-v1', JSON.stringify(best)); } catch (e) {} }
+function stars(n) { return '★★★'.slice(0, n) + '☆☆☆'.slice(0, 3 - n); }
+
+function loadLevel(i) {
+  lvI = i; lv = G.levels[i];
+  field = makeField(lv); D = copy(lv.D); C = copy(lv.C);
+  season = 0; history = []; report = null; result = null; diseased = false; note = '';
+  buildCells(); renderLevels(); renderControls(); renderAll();
+}
+
+/* ── Level bar ── */
+function renderLevels() {
+  $('levels').innerHTML = G.levels.map(function (l, i) {
+    return '<button class="btn lv" data-lv="' + i + '" aria-pressed="' + (i === lvI) + '">' + (i + 1) + '. ' + l.name +
+      (best[i] ? ' <span class="st">' + stars(best[i]) + '</span>' : '') + '</button>';
+  }).join('');
+}
+
+/* ── Controls ── */
+function word(c, v) { return c.words[v < 10 ? 0 : v < 40 ? 1 : v < 80 ? 2 : 3]; }
+function renderControls() {
+  var h = '';
+  G.parts.forEach(function (p) {
+    h += '<div class="ctl"><div class="lab"><button class="info" data-card="' + p.part + '" title="What does this part do?">' + p.label + '</button>';
+    if (p.count) {
+      h += '<output id="o-' + p.key + '"></output></div><input type="range" data-d="' + p.key + '" min="' + p.min + '" max="' + p.max + '" step="1" aria-label="' + p.label + '">';
+    } else {
+      h += '</div><div class="seg" role="group" aria-label="' + p.label + '">' + p.opts.map(function (o) {
+        return '<button class="btn" data-d="' + p.key + '" data-val="' + o[0] + '">' + o[1] + (o[2] ? ' <span class="cost">' + o[2] + '</span>' : '') + '</button>';
+      }).join('') + '</div>';
+    }
+    h += '</div>';
+  });
+  $('partCtl').innerHTML = h;
+  h = '';
+  G.conds.forEach(function (c) {
+    h += '<div class="ctl"><label for="c-' + c.key + '"><span>' + c.label + '</span><output id="oc-' + c.key + '"></output></label>' +
+      '<input type="range" id="c-' + c.key + '" data-c="' + c.key + '" min="0" max="100" step="5"></div>';
+  });
+  $('condCtl').innerHTML = h;
+  $('fsParts').disabled = !!lv.lockD;
+  $('fsConds').disabled = !!lv.lockC;
+}
+function syncControls() {
+  var used = costOf(G, D), help = sumOf(G, C);
+  G.parts.forEach(function (p) {
+    if (p.count) {
+      var inp = document.querySelector('input[data-d="' + p.key + '"]');
+      inp.value = D[p.key];
+      $('o-' + p.key).textContent = D[p.key] + (p.each ? ' (' + D[p.key] * p.each + ' pts)' : '');
+    }
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('button[data-d]'), function (b) {
+    b.setAttribute('aria-pressed', String(D[b.getAttribute('data-d')] === Number(b.getAttribute('data-val'))));
+  });
+  G.conds.forEach(function (c) {
+    $('c-' + c.key).value = C[c.key];
+    $('oc-' + c.key).textContent = C[c.key] + ' (' + word(c, C[c.key]) + ')';
+  });
+  $('budD').innerHTML = lv.lockD ? '<span class="locked">Locked for this level</span>' : 'Energy points: <b>' + used + '</b> of ' + lv.budD + ' used';
+  $('budC').innerHTML = lv.lockC ? '<span class="locked">Locked for this level</span>' : lv.budC ? 'Help points: <b>' + help + '</b> of ' + lv.budC + ' used' : '';
+  $('note').textContent = note;
+}
+function bindControls() {
+  $('partCtl').addEventListener('click', function (e) {
+    var card = e.target.closest('[data-card]'), b = e.target.closest('button[data-d]'), t, k;
+    if (card) { openCard(card.getAttribute('data-card')); return; }
+    if (!b || busy) return;
+    k = b.getAttribute('data-d'); t = copy(D); t[k] = Number(b.getAttribute('data-val'));
+    if (costOf(G, t) > lv.budD) note = 'Not enough energy points for that. Take some from another part first.';
+    else { D = t; note = ''; }
+    syncControls(); renderField();
+  });
+  $('partCtl').addEventListener('input', function (e) {
+    var k = e.target.getAttribute && e.target.getAttribute('data-d'), t;
+    if (!k || busy) return;
+    t = copy(D); t[k] = Number(e.target.value);
+    while (costOf(G, t) > lv.budD && t[k] > 0) t[k]--;
+    note = t[k] < Number(e.target.value) ? 'Not enough energy points for more. Take some from another part first.' : '';
+    D = t; syncControls(); renderField();
+  });
+  $('condCtl').addEventListener('input', function (e) {
+    var k = e.target.getAttribute && e.target.getAttribute('data-c'), v, others;
+    if (!k || busy) return;
+    v = Number(e.target.value);
+    if (lv.budC) {
+      others = sumOf(G, C) - C[k];
+      if (v > lv.budC - others) { v = Math.max(0, Math.floor((lv.budC - others) / 5) * 5); note = 'You have used all your help points. Lower something else first.'; }
+      else note = '';
+    }
+    C[k] = v; syncControls();
+  });
+}
+
+/* ── Field ── */
+function buildCells() {
+  var g = $('cells'), i, x, y, c;
+  g.innerHTML = '';
+  for (i = 0; i < field.length; i++) {
+    x = (i % W) * CELL; y = Math.floor(i / W) * CELL; c = field[i];
+    el('rect', { x: x, y: y, width: CELL, height: CELL, 'class': c && c.t === 'water' ? 'cell water' : 'cell' }, g);
+    if (c && c.t === 'rock') el('path', { 'class': 'rock', d: 'M' + (x + 7) + ',' + (y + 31) + ' l3,-15 l10,-8 l11,5 l3,14 l-6,5 h-16 Z' }, g);
+    if (c && c.t === 'water') el('path', { 'class': 'wave', d: 'M' + (x + 6) + ',' + (y + 20) + ' q7,-7 14,0 t14,0' }, g);
+  }
+}
+function renderField() {
+  var g = $('plants'), i, c, pg, x, y;
+  g.innerHTML = '';
+  for (i = 0; i < field.length; i++) {
+    c = field[i];
+    if (!isPlant(c)) continue;
+    x = (i % W) * CELL; y = Math.floor(i / W) * CELL;
+    pg = el('g', { transform: 'translate(' + x + ',' + y + ')' }, g);
+    if (diseased && c.r) el('circle', { cx: 20, cy: 20, r: 17, 'class': 'resist' }, pg);
+    G.draw(pg, c, D);
+    if (c.tag === 'lonely') {
+      el('circle', { cx: 32, cy: 8, r: 7, 'class': 'badge' }, pg);
+      el('text', { x: 32, y: 12, 'class': 'badge-t', 'text-anchor': 'middle' }, pg).textContent = '?';
+    }
+  }
+}
+function centre(p) {
+  if (typeof p === 'number') return [(p % W) * CELL + 20, Math.floor(p / W) * CELL + 20];
+  return [p[0] * CELL + 20, p[1] * CELL + 20];
+}
+function animate(anim, done) {
+  var ov = $('overlay'), items = [], i, m, a, b, e, t0 = null, DUR = 1700;
+  ov.innerHTML = '';
+  if (reduceMotion) { done(); return; }
+  for (i = 0; i < anim.deaths.length; i++) {
+    a = centre(anim.deaths[i]);
+    el('text', { x: a[0], y: a[1] + 7, 'class': 'dead', 'text-anchor': 'middle' }, ov).textContent = '✕';
+  }
+  var hasPollen = anim.pollen.length > 0, split = hasPollen ? 0.42 : 0.08;
+  for (i = 0; i < anim.pollen.length; i++) {
+    a = centre(anim.pollen[i][0]); b = centre(anim.pollen[i][1]);
+    items.push({ e: el('circle', { r: 3, 'class': 'a-pollen', opacity: 0 }, ov), a: a, b: b, s: Math.random() * 0.1, d: split - 0.1 });
+  }
+  var step = Math.max(1, Math.ceil(anim.moves.length / 180));
+  for (i = 0; i < anim.moves.length; i += step) {
+    m = anim.moves[i]; a = centre(m.from); b = centre(m.to);
+    e = m.line ? el('line', { x1: a[0], y1: a[1], x2: a[0], y2: a[1], 'class': 'a-runner' }, ov)
+               : el('circle', { r: 3.5, 'class': m.ok ? 'a-seed' : 'a-seed fail', opacity: 0 }, ov);
+    items.push({ e: e, a: a, b: b, s: split + Math.random() * 0.12, d: 1 - split - 0.14, line: m.line, ok: m.ok });
+  }
+  function frame(now) {
+    if (t0 == null) t0 = now;
+    var t = (now - t0) / DUR, k, it, u, x, y;
+    for (k = 0; k < items.length; k++) {
+      it = items[k]; u = Math.max(0, Math.min(1, (t - it.s) / it.d));
+      x = it.a[0] + (it.b[0] - it.a[0]) * u; y = it.a[1] + (it.b[1] - it.a[1]) * u - (it.line ? 0 : Math.sin(u * Math.PI) * 14);
+      if (it.line) { it.e.setAttribute('x2', x.toFixed(1)); it.e.setAttribute('y2', y.toFixed(1)); }
+      else {
+        it.e.setAttribute('cx', x.toFixed(1)); it.e.setAttribute('cy', y.toFixed(1));
+        it.e.setAttribute('opacity', u <= 0 ? 0 : u >= 1 ? (it.ok === 0 ? 0.25 : 0.9) : 1);
+      }
+    }
+    if (t < 1) requestAnimationFrame(frame);
+    else { ov.innerHTML = ''; done(); }
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ── Season ── */
+function grow() {
+  if (busy || result) return;
+  var s = season + 1, ev = (lv.events || {})[s] || '';
+  var res = G.simulate(field, D, C, ev, RNG(lv.seed + s * 7919));
+  busy = true; note = ''; setBusy(true);
+  animate(res.anim, function () {
+    field = res.field; season = s;
+    if (ev === 'disease') diseased = true;
+    var cov = coverage(field), n = countPlants(field);
+    history.push({ s: s, cov: cov, ev: ev });
+    report = { s: s, ev: ev, ex: G.explain(res.stats, D, C, ev) };
+    if (cov >= lv.target && s >= (lv.winAfter || 0)) {
+      result = { win: 1, stars: s <= lv.par[0] ? 3 : s <= lv.par[1] ? 2 : 1 };
+      if (!best[lvI] || result.stars > best[lvI]) { best[lvI] = result.stars; saveBest(); renderLevels(); }
+    } else if (n === 0) result = { win: 0, why: 'Every plant is dead.' };
+    else if (s >= lv.max) result = { win: 0, why: 'You ran out of seasons.' };
+    busy = false; setBusy(false); renderAll(); showTab('report');
+  });
+}
+function setBusy(on) {
+  $('bGrow').disabled = on || !!result; $('bRestart').disabled = on;
+  $('fsParts').disabled = on || !!lv.lockD; $('fsConds').disabled = on || !!lv.lockC;
+}
+
+/* ── Status + report ── */
+function forecastHTML() {
+  var out = [], s, ev;
+  for (s = season + 1; s <= lv.max; s++) {
+    ev = (lv.events || {})[s];
+    if (ev) out.push('<span class="chip ev" title="' + G.events[ev][1] + '">Season ' + s + ': ' + G.events[ev][0] + '</span>');
+  }
+  return '<b>Forecast:</b> ' + (out.length ? out.join(' ') : '<span class="chip">nothing unusual</span>');
+}
+function renderStatus() {
+  var cov = coverage(field), p = Math.round(cov * 100), t = Math.round(lv.target * 100);
+  $('season').textContent = 'Season ' + season + ' of ' + lv.max;
+  $('covFill').style.width = Math.min(100, p) + '%';
+  $('covMark').style.left = t + '%';
+  $('covText').innerHTML = 'Field covered: <b>' + p + '%</b> · goal ' + t + '%' + (lv.winAfter ? ' after season ' + lv.winAfter : '');
+  $('forecast').innerHTML = forecastHTML();
+  $('bGrow').disabled = busy || !!result;
+  $('bGrow').textContent = season === 0 ? 'Grow the first season' : 'Grow one season';
+}
+function renderReport() {
+  var h = '', ex, top, i, r, evs = [], k;
+  if (result) {
+    if (result.win) {
+      h += '<div class="result win"><div class="big">' + stars(result.stars) + '</div><h3>The field is yours, in ' + plural(season, 'season', 'seasons') + '.</h3>' +
+        '<p>' + lv.debrief + '</p><div class="write"><b>In your notebook:</b> ' + lv.write + '</div>' +
+        '<div class="row">' + (lvI < G.levels.length - 1 ? '<button class="btn primary" data-go="' + (lvI + 1) + '">Next level</button>' : '') +
+        '<button class="btn" data-go="' + lvI + '">Play again for more stars</button></div></div>';
+    } else {
+      h += '<div class="result lose"><h3>' + result.why + '</h3><p>Your plants covered <b>' + Math.round(coverage(field) * 100) + '%</b> of the field. The goal was ' + Math.round(lv.target * 100) + '%.</p>' +
+        '<p>Read the season report below. It shows the step where the most was lost. Fix that step first.</p>' +
+        '<div class="row"><button class="btn primary" data-go="' + lvI + '">Try again</button></div></div>';
+    }
+  }
+  if (!report) {
+    for (k in (lv.events || {})) evs.push('<li><b>Season ' + k + ', ' + G.events[lv.events[k]][0] + ':</b> ' + G.events[lv.events[k]][1] + '</li>');
+    h += '<div class="brief"><h3>Level ' + (lvI + 1) + ': ' + lv.name + '</h3><p>' + lv.brief + '</p>' +
+      '<p><b>Goal:</b> cover ' + Math.round(lv.target * 100) + '% of the field ' + (lv.winAfter ? 'after season ' + lv.winAfter + ', and before season ' + lv.max + ' ends.' : 'within ' + lv.max + ' seasons.') + '</p>' +
+      (evs.length ? '<ul class="evs">' + evs.join('') + '</ul>' : '') +
+      '<p class="hint">Before you press Grow, predict: which part will matter most here? Check your prediction against the season report.</p></div>';
+  } else {
+    ex = report.ex; top = Math.max(1, ex.rows[0][1]);
+    h += '<div class="group-h">Season ' + report.s + ' report' + (report.ev ? ' · ' + G.events[report.ev][0] : '') + '</div>';
+    for (i = 0; i < ex.rows.length; i++) {
+      r = ex.rows[i];
+      h += '<div class="funnel' + (i === ex.weak ? ' weak' : '') + '"><span class="name">' + r[0] + '</span><span class="track"><span class="fill" style="width:' +
+        Math.min(100, r[1] / top * 100).toFixed(0) + '%"></span></span><span class="num">' + r[1] + '</span></div>';
+    }
+    h += '<div class="why"><div class="why-h">What happened, and why?</div>' + ex.text.map(function (t) { return '<p>' + t + '</p>'; }).join('') + '</div>';
+    h += '<div class="group-h">Field covered each season</div><div class="hist">' + history.map(function (x) {
+      return '<span class="chip' + (x.ev ? ' ev' : '') + '">S' + x.s + ': ' + Math.round(x.cov * 100) + '%</span>';
+    }).join('') + '</div>';
+  }
+  $('pane-report').innerHTML = h;
+}
+function renderAll() { syncControls(); renderField(); renderStatus(); renderReport(); }
+
+/* ── Tabs + cards ── */
+var TABS = ['report', 'parts', 'how'];
+function showTab(name) {
+  TABS.forEach(function (t) {
+    $('tab-' + t).setAttribute('aria-selected', String(t === name));
+    $('pane-' + t).hidden = t !== name;
+  });
+}
+function buildCards() {
+  $('pane-parts').innerHTML = G.partCards.map(function (p) {
+    return '<div class="pcard" id="pc-' + p.id + '"><div class="sys">' + p.sys + '</div><h3>' + p.name + '</h3><p>' + p.job + '</p></div>';
+  }).join('');
+  $('pane-how').innerHTML = '<ol class="steps">' + G.howto.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ol>';
+}
+function openCard(id) {
+  showTab('parts');
+  Array.prototype.forEach.call(document.querySelectorAll('.pcard.sel'), function (x) { x.classList.remove('sel'); });
+  var card = $('pc-' + id);
+  if (!card) return;
+  card.classList.add('sel');
+  card.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+}
+
+/* ── Start ── */
+bindControls(); buildCards();
+TABS.forEach(function (t) { $('tab-' + t).addEventListener('click', function () { showTab(t); }); });
+$('levels').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-lv]');
+  if (b && !busy) { loadLevel(Number(b.getAttribute('data-lv'))); showTab('report'); }
+});
+$('pane-report').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-go]');
+  if (b && !busy) loadLevel(Number(b.getAttribute('data-go')));
+});
+$('bGrow').addEventListener('click', grow);
+$('bRestart').addEventListener('click', function () { if (!busy) loadLevel(lvI); });
+loadLevel(0);
+
+})();
+</script>
+</body>
+</html>
