@@ -193,15 +193,33 @@
 
   .fatal { margin: 30px; padding: 16px; border: 2px solid var(--bad); background: #fef2f2; border-radius: 8px; }
 
+  #btnSteps { display: none; }
+  /* Medium widths (small laptops, zoomed-in browsers): keep instructions beside the code,
+     and tuck the step list behind the Steps button. */
   @media (max-width: 1040px) {
+    .top { gap: 12px; padding: 6px 12px; }
+    .top h1 { font-size: 17px; }
+    .top-actions .btn { padding: 5px 9px; font-size: 12.5px; }
+    #btnSteps { display: inline-block; }
+    .layout { position: relative; grid-template-columns: minmax(220px, 1fr) minmax(300px, 1.25fr); }
+    #nav {
+      display: none; position: absolute; top: 0; bottom: 0; left: 0; width: 260px; z-index: 5;
+      box-shadow: 6px 0 24px rgba(15,23,42,.25);
+    }
+    .layout.nav-open #nav { display: block; }
+    #task { padding: 14px 16px 32px; }
+    .toolbar .kbd { display: none; }
+  }
+  /* Phones only: stack everything. */
+  @media (max-width: 600px) {
     body { overflow: auto; display: block; }
     html, body { height: auto; }
     .layout { display: block; }
-    #nav { max-height: 190px; border-right: none; border-bottom: 1px solid var(--line); }
     #task { border-right: none; }
     .editor { height: 300px; flex: none; }
     #console { height: 220px; flex: none; }
     .top { flex-wrap: wrap; }
+    #nav { position: fixed; top: 0; }
   }
   @media print {
     #work, #nav, .top-actions { display: none; }
@@ -222,6 +240,7 @@
     <span class="txt" id="progText"></span>
   </div>
   <div class="top-actions">
+    <button class="btn" id="btnSteps" type="button" aria-controls="nav" aria-expanded="false">☰ Steps</button>
     <button class="btn" id="btnCard" type="button">Syntax card</button>
     <button class="btn" id="btnSave" type="button" title="Download all your work as a file you can keep or move to another computer">Save my work to a file</button>
     <button class="btn" id="btnLoad" type="button" title="Open a file you saved earlier">Load my work</button>
@@ -1410,7 +1429,15 @@ function select(id) {
 
 /* ---------- events ---------- */
 
-$('nav').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) select(b.dataset.go); });
+const layoutEl = document.querySelector('.layout');
+function setNavOpen(open) {
+  layoutEl.classList.toggle('nav-open', open);
+  $('btnSteps').setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+$('btnSteps').addEventListener('click', () => setNavOpen(!layoutEl.classList.contains('nav-open')));
+$('task').addEventListener('click', () => setNavOpen(false), true);
+$('work').addEventListener('click', () => setNavOpen(false), true);
+$('nav').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) { select(b.dataset.go); setNavOpen(false); } });
 $('task').addEventListener('click', e => {
   const go = e.target.closest('[data-go]');
   if (go) { select(go.dataset.go); return; }
