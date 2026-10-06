@@ -85,7 +85,7 @@ Materials are organized inside type folders by subject and unit:
 | `_courses/grade-7-science/[unit]/_context.md` | Unit-level contexts: interactions-ecosystems, plants-food-fibre, heat-temperature, structures-forces, planet-earth |
 | `_courses/math-9/_context.md` | Math 9: 11 topics, depth ceilings, misconception inventory, recommended sequence |
 | `_courses/grade-8-social/_context.md` | Social 8 (draft 7–9 curriculum): 4 units, outcomes, misconceptions |
-| `_courses/eSports/_context.md` | eSports club course design: domains, 9-week season, source PDFs |
+| `_courses/esports/_context.md` | eSports club course design: domains, 9-week season, source PDFs |
 | `_courses/phys-ed-56/_context.md` | PEW Grades 5–6: organizing ideas, KUSP framework, activity categories, misconceptions |
 | `_courses/phys-ed-56/[unit]/_context.md` | Unit-level contexts: invasion-games, net-wall, target, striking-fielding, dance, gymnastics, fitness |
 | `_courses/phys-ed-79/_context.md` | PEW Grades 7–9: organizing ideas, KUSP framework, activity categories, misconceptions |

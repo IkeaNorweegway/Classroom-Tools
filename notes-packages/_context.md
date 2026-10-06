@@ -361,7 +361,7 @@ All SVG diagrams in HTML notes packages must use the `dg-*` CSS class system. **
 **Attributes that stay on the element** (positional/structural, not styling):
 `cx cy r x1 y1 x2 y2 d points` — geometry | `viewBox width height role aria-label` — SVG structure | `text-anchor dominant-baseline` — text alignment | `font-weight="700"` — meaningful bold
 
-**Reference implementation:** `notes-packages/math-9/circle-geometry/math9-circle-geometry-notes-v1.html`
+**Reference implementation:** `public/materials/math-9/notes/circle-geometry/math9-circle-geometry-notes-v1.html`
 
 ---
 

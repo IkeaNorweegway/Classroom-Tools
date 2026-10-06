@@ -130,4 +130,4 @@ None for the routine itself. No controlled comparison of slow reveal against sho
 
 Most premade decks use US data and contexts. For Alberta classrooms, build from Statistics Canada, Environment and Climate Change Canada, and Alberta open data so the context is recognisable and the source can be named. Math 9 fit: scatter plots, line of best fit by inspection, interpolation and extrapolation, slope as rate of change.
 
-First trial built in this workspace: `worksheets/math-9/statistics-probability/statistics/math9-statistics-slowreveal-v1.html` (Canada census population, 1951–2011) with a matching worksheet.
+First trial built in this workspace: `public/materials/math-9/worksheets/statistics-probability/statistics/math9-statistics-slowreveal-v1.html` (Canada census population, 1951–2011) with a matching worksheet.

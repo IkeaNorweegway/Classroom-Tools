@@ -75,7 +75,7 @@ Exit 0 = pass. Exit 1 = violations found (must fix before marking complete). Exi
 
 ```bash
 python ".claude/skills/svg-audit/scripts/audit.py" \
-  notes-packages/math-9/circle-geometry/math9-circle-geometry-notes-v1.html \
+  public/materials/math-9/notes/circle-geometry/math9-circle-geometry-notes-v1.html \
   notes-packages/grade-6-science/living-systems/sci6-living-systems-notes-v1.html
 ```
 
@@ -90,4 +90,4 @@ python ".claude/skills/svg-audit/scripts/audit.py" notes-packages/math-9/**/*.ht
 
 - `notes-packages/_svg-classes.md` — full CSS snippet, class vocabulary, unit theming
 - `notes-packages/_context.md` → "SVG Diagram Class System" — design rationale
-- `notes-packages/math-9/circle-geometry/math9-circle-geometry-notes-v1.html` — reference implementation (passes audit)
+- `public/materials/math-9/notes/circle-geometry/math9-circle-geometry-notes-v1.html` — reference implementation (passes audit)

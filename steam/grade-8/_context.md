@@ -1,5 +1,5 @@
 # STEAM — Grade 8 Year Plan
-*Read alongside `steam/_context.md` (equipment map, unit archetype, evidence base — revised 2026-09), `research/steam-progression-research.md`, and `research/design-thinking-graphic-web-research.md` (Grade 8 is still in that file's 7–8 band). Assumes Grade 7's CT transfer across a platform gap, micro:bit sensor data logging and redesign, branching-program planning/playtesting, and wood-shop tool use under a fixed-material constraint.*
+*Read alongside `steam/_context.md` (equipment map, unit archetype, evidence base — revised 2026-09), the STEAM progression research summary (planned, not yet written), and the design-thinking, graphic and web design research summary (planned, not yet written) (Grade 8 is still in that file's 7–8 band). Assumes Grade 7's CT transfer across a platform gap, micro:bit sensor data logging and redesign, branching-program planning/playtesting, and wood-shop tool use under a fixed-material constraint.*
 
 ---
 

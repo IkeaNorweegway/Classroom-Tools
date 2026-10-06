@@ -27,15 +27,15 @@ Current state only. Keep this file short: update the tables and the open list, a
 - **Materials suite:** `_meta-context.md` lists a PPTX deck per unit. None have been built. Decide whether to keep it in the suite.
 
 ### Not yet checked or finished
-- **HTML never opened in a browser:** photosynthesis sim, Science 7 notes answer keys v2, Math 9 Rational Numbers test and question bank, slow reveal projector page and worksheet.
+- **HTML never opened in a browser:** photosynthesis sim, Flower Field and Clone Field games (`sci7-flower-field-game-v1`, `sci7-clone-field-game-v1`; game rules were play-tested by script, the pages were not; not committed), Science 7 notes answer keys v2, Math 9 Rational Numbers test and question bank, slow reveal projector page and worksheet.
 - **Plant Hunt PDFs** in `public/materials/` may be stale against their HTML (the icon-flowchart revision). Re-render and compare.
 - **Photosynthesis sim:** no recording sheet or teacher notes. Grade 6 would need a cut-down version.
 - **Plant Hunt:** no answer key.
 - **Slow reveal trial:** not on the site.
 - **Social 9:** 7 units are published (HTML only) with no course context in `_courses/` and no markdown source.
 - **Social 8 teacher guides:** HTML only, no markdown source.
-- **ASCII-to-SVG conversion** is unfinished: `_ascii-to-svg-status.md` still lists 16 files as pending or in progress.
-- **`steam/_context.md`** cites `research/steam-progression-research.md` and `research/design-thinking-graphic-web-research.md`. Neither file exists.
+- **ASCII-to-SVG conversion** is unfinished: `notes-packages/_ascii-to-svg-status.md` still lists 16 files as pending or in progress.
+- **STEAM research summaries:** the STEAM progression summary and the design-thinking, graphic and web design summary that the STEAM contexts lean on have never been written. The contexts now mark both as planned.
 - **Grade 6 Science markdown sources** still missing for HTML-only materials: workbook answer keys (5 of 7), all EF notes except the year notes, all EF workbooks and their keys, teacher notes (5 of 6), all FR notes and workbooks.
 - **Grade 6 unit pages** (`src/content/units/*.md`) still read like spec documents. Planned rewrite: opening hook → what students explore → what they will be able to do → one real-world connection.
 
@@ -59,7 +59,7 @@ All six units plus the year review have, on the site: notes, workbook, teacher n
 | Structures and Forces | 2 | ✓ | ✓ v2 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Planet Earth | 2 | ✓ | ✓ v2 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
-- The workbook on the site is named `workbook-v1.html` but is rendered from the `workbook-v2.md` source.
+- The workbook on the site (`workbook-v1.html`) was rebuilt directly as HTML (commit `01a1b76`, 12 questions plus 3 stretch). It is newer than the `workbook-v2.md` source and does not match it, so the markdown cannot simply be re-rendered.
 - **Plants extras (site):** Plant Hunt outdoor activity (+ IPP), Lily Lab (+ IPP + teacher notes), photosynthesis and flower reproduction simulations, organizers (IPP and non-reader versions) for photosynthesis, plant systems, plant cells, and reproduction.
 - Not built: FR or EF adaptations of the core materials.
 

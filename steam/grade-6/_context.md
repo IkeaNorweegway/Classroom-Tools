@@ -1,5 +1,5 @@
 # STEAM — Grade 6 Year Plan
-*Read alongside `steam/_context.md` (equipment map, unit archetype, evidence base — revised 2026-09), `research/steam-progression-research.md`, and `research/design-thinking-graphic-web-research.md` (Grade 6 is still in that file's 5–6 band, deepening). Assumes Grade 5's vocabulary (sequence, loop, conditional, sensor, input, output, debug), one design-cycle pass repeated across three contexts, practice sketching multiple concepts before choosing one, and one produced video for a real audience.*
+*Read alongside `steam/_context.md` (equipment map, unit archetype, evidence base — revised 2026-09), the STEAM progression research summary (planned, not yet written), and the design-thinking, graphic and web design research summary (planned, not yet written) (Grade 6 is still in that file's 5–6 band, deepening). Assumes Grade 5's vocabulary (sequence, loop, conditional, sensor, input, output, debug), one design-cycle pass repeated across three contexts, practice sketching multiple concepts before choosing one, and one produced video for a real audience.*
 
 ---
 

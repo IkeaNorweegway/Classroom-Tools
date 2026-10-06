@@ -24,7 +24,7 @@ Produce textbook-quality PDF files for classroom materials. The HTML file is the
 
 | Input | Output |
 |---|---|
-| `notes-packages/math-9/circle-geometry/math9-circle-geometry-notes-v1.html` | `notes-packages/math-9/circle-geometry/math9-circle-geometry-notes-v1.tex` + `.pdf` |
+| `public/materials/math-9/notes/circle-geometry/math9-circle-geometry-notes-v1.html` | `notes-packages/math-9/circle-geometry/math9-circle-geometry-notes-v1.tex`, compiled beside it, then the `.pdf` moved to the same `public/materials/` folder as the `.html` |
 
 Name the `.tex` file identically to the `.html` file (same stem, different extension).
 
@@ -145,4 +145,4 @@ When converting HTML → LaTeX, find these classes and substitute the correspond
 ## Example
 
 Existing file: `notes-packages/math-9/circle-geometry/math9-circle-geometry-notes-v1.tex`
-Compiled PDF: `notes-packages/math-9/circle-geometry/math9-circle-geometry-notes-v1.pdf`
+Compiled PDF: `public/materials/math-9/notes/circle-geometry/math9-circle-geometry-notes-v1.pdf`

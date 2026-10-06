@@ -55,9 +55,9 @@ By the end of the season, students will:
 
 ### Printed materials (distribute in Week 1)
 - Domain Sorting Survey (NASEF 20-question self-assessment — available free at NASEF.org)
-- Club Charter template (see `worksheets/esports/` once built)
+- Club Charter template (see `worksheets/esports/season/` once built)
 - Role rotation schedule (blank — completed in Week 2 with students)
-- Season Workbook (one per student — `worksheets/esports/esports-season-workbook-v1.md`)
+- Season Workbook (one per student — `worksheets/esports/season/esports-season-workbook-v1.md`)
 
 ### Ongoing
 - Premiership ladder display (whiteboard, poster, or projected spreadsheet)

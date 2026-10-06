@@ -10,18 +10,20 @@ Templates are the blank shells for every artifact type in this workspace. When s
 
 ## File naming
 `[type]-template.md`
-Example: `worksheet-template.md`
+Example: `workbook-template.md`
 Example: `quiz-template.md`
-Example: `cornell-notes-template.md`
 
-## Templates to build
-- `worksheet-template.md` — header, learning target, worked example block, practice items, stretch item, reflection line
+## Templates in this folder
+- `workbook-template.md` — interleaved unit workbook: ★ Core and ★★ Extended questions, hints and word banks, reflection
+- `notes-package-template.md` — guided notes: pre-knowledge check, progressive blanking, refutation-first misconception sections
+- `easy-read-notes-template.html` — easy-read HTML notes (design spec: `notes-packages/easy-read-context.md`)
 - `quiz-template.md` — header, outcome map table, instructions, item sections by type, answer key section
 - `test-template.md` — same as quiz with extended response section and rubric block
-- `exit-ticket-template.md` — minimal: 1–2 items, 3-minute target, teacher feedback section
-- `cornell-notes-template.md` — two-column layout, summary footer, vocabulary sidebar
-- `guided-notes-template.md` — fill-in structure with blanks, connection prompt, retrieval section
-- `thinking-prompt-template.md` — anchor line, reasoning demand, sentence starter, response space
+- `exit-ticket-template.md` — one ticket per knowledge cluster, 3 questions each, 3–5 minutes, every question mapped to an LO
+
+Also here: `evidence-design-principles.md` (build-time checklist) and `teacher-notes-format-context.md` (teacher notes format spec).
+
+Not templated: worksheets and thinking prompts have no template. Build them from `worksheets/_context.md` and `prompts/_context.md`.
 
 ## Rules for templates
 - Templates contain structure and instructions, not content

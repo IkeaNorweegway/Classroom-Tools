@@ -1,5 +1,5 @@
 # STEAM, Grades 5–9 — Course Context
-*Read alongside `_meta-context.md`, `research/steam-progression-research.md` (coding, robotics, spatial reasoning, engineering design cycle), and `research/design-thinking-graphic-web-research.md` (sketching, graphic design, web design/UX, design-thinking process — the evidence base for the Art & Media Strand below).*
+*Read alongside `_meta-context.md`, the STEAM progression research summary (planned, not yet written) (coding, robotics, spatial reasoning, engineering design cycle), and the design-thinking, graphic and web design research summary (planned, not yet written) (sketching, graphic design, web design/UX, design-thinking process — the evidence base for the Art & Media Strand below).*
 
 ---
 
@@ -17,7 +17,7 @@
 
 ## Evidence Foundation
 
-Every structural decision in this course traces to `research/steam-progression-research.md`. Read it for the full "why." The short version, restated as course rules:
+Every structural decision in this course traces to the STEAM progression research summary (planned, not yet written). Read it for the full "why." The short version, restated as course rules:
 
 1. **Concrete before abstract, faded one step per grade band** — not skipped, not held onto too long.
 2. **All five strands run every unit, every year** — coding, robotics, spatial/construction, art/design, and the engineering design cycle are never taught as separate terms.
@@ -55,7 +55,7 @@ Every structural decision in this course traces to `research/steam-progression-r
 
 ## Art & Media Strand
 
-The equipment map above is a coding/robotics ladder because that's what needs platform sequencing across five years. Art doesn't need new hardware to fade in the same way — it needs a standing requirement that keeps it from being displaced by whichever robot is newest, plus its own concrete-to-abstract fade for sketching, graphic design, and web design/UX specifically. This section covers four rules; the evidence for all of them is in `research/design-thinking-graphic-web-research.md`.
+The equipment map above is a coding/robotics ladder because that's what needs platform sequencing across five years. Art doesn't need new hardware to fade in the same way — it needs a standing requirement that keeps it from being displaced by whichever robot is newest, plus its own concrete-to-abstract fade for sketching, graphic design, and web design/UX specifically. This section covers four rules; the evidence for all of them is in the design-thinking, graphic and web design research summary (planned, not yet written).
 
 **1. Every unit needs at least one dedicated non-robot art/design task.** Not aesthetics applied to a robot build (a nicer paint job on the Dash attachment doesn't count) — a task where the deliverable is a drawing, a physical model, a diagram, a storyboard, or another visual/design artifact that stands on its own, produced with no robot involved. This sits alongside the "at least one open-ended task per unit" rule (Cross-Cutting Rules, below) — the two can be the same task but don't have to be. Concrete anchors for this task by unit:
    - **Unit 1 (Foundations):** a sketch/diagram task — e.g., students draw and label the program flow they're about to build, or sketch the object/character a robot behavior represents, before touching a device.
@@ -127,7 +127,7 @@ This table is the *shape*; the grade files below fill in the platform, the speci
 - ~~The Art & Media Strand and Capstone video requirement are new — none of the 5 grade-year files have been revised to reflect them yet.~~ **Done.** All 5 grade files (5–9) now name the per-unit art/design task, the sketching/graphic-design/web-design content for that grade band, and the Unit 4 video spec.
 - Video equipment/software is not yet confirmed (tablets already on hand for the coding apps may suffice for recording, but editing tool — if any — is unconfirmed). Confirm before Grade 8–9 sessions run, where student-led editing is assumed.
 - **Graphic design and wireframing/web-building tools are named as open choices inside the Grade 7, 8, and 9 files** (a free graphic design tool, a low-fidelity wireframing tool for Grade 7, a simple website-builder for Grades 8–9) — confirm what's actually available/licensed before those specific sessions are run; paper-first activities in every grade don't depend on this.
-- **A structured peer-critique protocol (specific prompts, timing, norms) hasn't been drafted yet.** The research supports having *a* protocol from Grade 7 onward; the actual prompts/format for this workspace still need to be written — flagged in `research/design-thinking-graphic-web-research.md`'s open questions.
+- **A structured peer-critique protocol (specific prompts, timing, norms) hasn't been drafted yet.** The research supports having *a* protocol from Grade 7 onward; the actual prompts/format for this workspace still need to be written — flagged in the design-thinking, graphic and web design research summary (planned, not yet written)'s open questions.
 - Graphic design and web design software/tools for Grades 7–9 are not yet chosen (paper-first is specified for Grades 5–6, so this only blocks the 7–9 unit builds) — confirm what's free/available before writing those sections.
 - Rubric design for graphic/web/interface design work is a separate, uncovered gap from the build/robotics rubric gap above — both are needed before assessment materials for this course are built.
 - **Confirm the CAD tool paired with MakerBot Sketch.** Plans below assume Tinkercad (the standard free classroom pairing) — correct this if the school has set up a different design tool.

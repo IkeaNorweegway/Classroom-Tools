@@ -32,9 +32,9 @@ Quizzes check understanding during a unit. Tests assess it at the end. Both must
 - **Tests should have no surprises.** If a student studied the outcomes, they should know what's coming. Surprise ≠ rigor.
 
 ## File naming
-`[subject]-[unit]-[type]-[grade]-v[N].md`
-Example: `science-cells-quiz-gr7-v1.md`
-Types: `quiz` · `test` · `exit-ticket` · `question-bank`
+`[subject]-[unit]-[type]-v[N].md`
+Example: `sci6-forces-exits-v1.md`
+Types: `quiz` · `test` · `exits` · `question-bank`
 
 ## What to include in every assessment
 1. **Header:** Subject, unit, type, grade, total marks, time allocation

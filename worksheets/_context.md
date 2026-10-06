@@ -17,8 +17,8 @@ Worksheets give students structured practice on a specific concept. They are not
 - **Include a "stretch" item.** One question that requires transfer or deeper reasoning — optional for most, expected for some.
 
 ## File naming
-`[subject]-[concept]-[grade]-v[N].md`
-Example: `math-fractions-gr4-v1.md`
+`[subject]-[unit]-[type]-v[N].md`
+Example: `sci6-forces-workbook-v1.md`
 
 ## What to include in every worksheet
 1. **Header:** Subject, concept, grade, student name/date line

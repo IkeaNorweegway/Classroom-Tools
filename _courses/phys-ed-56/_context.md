@@ -55,7 +55,7 @@ All outcomes are written using KUSP:
 | Dance and Rhythmic Activity | `dance/` | Creative movement, folk dance, hip hop, rhythmic sequences |
 | Gymnastics and Body Management | `gymnastics/` | Stability, balance, body weight skills, movement sequences |
 | Fitness and Active Living | `fitness/` | Components of fitness, goal setting, personal challenges |
-| Outdoor Education | `outdoor/` | Navigation, cooperative challenges, environmental awareness |
+| Outdoor Education | *(no unit context yet)* | Navigation, cooperative challenges, environmental awareness |
 
 ---
 

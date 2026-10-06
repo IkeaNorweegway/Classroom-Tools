@@ -1,5 +1,5 @@
 # STEAM — Grade 9 Year Plan
-*Read alongside `steam/_context.md` (equipment map, unit archetype, evidence base — revised 2026-09; REV DUO confirmed as competition-grade FTC hardware coded in Java/Blockly-for-Java), and `research/design-thinking-graphic-web-research.md` (Grade 9 is that file's HS-readiness band). Assumes Grade 8's measurement-constrained fabrication, soldering, mechanical-advantage reasoning with a quantitative baseline, and one large-scale collaborative systems project (Rube Goldberg).*
+*Read alongside `steam/_context.md` (equipment map, unit archetype, evidence base — revised 2026-09; REV DUO confirmed as competition-grade FTC hardware coded in Java/Blockly-for-Java), and the design-thinking, graphic and web design research summary (planned, not yet written) (Grade 9 is that file's HS-readiness band). Assumes Grade 8's measurement-constrained fabrication, soldering, mechanical-advantage reasoning with a quantitative baseline, and one large-scale collaborative systems project (Rube Goldberg).*
 
 ---
 

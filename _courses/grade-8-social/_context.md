@@ -186,7 +186,7 @@ Major misconceptions to address *(this workspace's addition — confirm)*:
 | Guided notes | `soc8-[unit]-notes-v[N].md` | `soc8-ideologies-notes-v1.md` |
 | Entry brain dump | `soc8-[unit]-entry-v[N].md` | `soc8-ideologies-entry-v1.md` |
 | Unit workbook | `soc8-[unit]-workbook-v[N].md` | `soc8-ideologies-workbook-v1.md` |
-| Exit tickets | `soc8-[unit]-exits-v[N].md` | 63666.3`soc8-ideologies-exits-v1.md` |
+| Exit tickets | `soc8-[unit]-exits-v[N].md` | `soc8-ideologies-exits-v1.md` |
 | Unit quiz | `soc8-[unit]-quiz-v[N].md` | `soc8-ideologies-quiz-v1.md` |
 | Unit test | `soc8-[unit]-test-v[N].md` | `soc8-ideologies-test-v1.md` |
 | Inquiry project brief | `soc8-[unit]-project-v[N].md` | `soc8-ideologies-project-v1.md` |

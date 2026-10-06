@@ -228,7 +228,7 @@ Renders live only here. The type folders hold the markdown sources.
 ### Naming
 - Student notes: `math9-[unit]-notes-v1.html`
 - Answer key: `math9-[unit]-notes-answers-v1.html`
-- Teacher notes: `math9-[unit]-teachernotes-v1.html`
+- Teacher notes: `math9-[unit]-teachernotes-v2.html`
 - Worksheet: `math9-[unit]-worksheet-[tier]-v1.html`
 
 ---

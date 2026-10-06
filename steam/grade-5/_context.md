@@ -1,5 +1,5 @@
 # STEAM — Grade 5 Year Plan
-*Read alongside `_courses/steam/_context.md` (equipment map, unit archetype, evidence base), `research/steam-progression-research.md`, and `research/design-thinking-graphic-web-research.md` (sketching/graphic design/web design progression — Grade 5 sits in that file's 5–6 band).*
+*Read alongside `steam/_context.md` (equipment map, unit archetype, evidence base), the STEAM progression research summary (planned, not yet written), and the design-thinking, graphic and web design research summary (planned, not yet written) (sketching/graphic design/web design progression — Grade 5 sits in that file's 5–6 band).*
 
 ---
 

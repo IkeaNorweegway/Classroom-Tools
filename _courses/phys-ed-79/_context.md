@@ -55,7 +55,7 @@ All outcomes are written using KUSP:
 | Dance and Rhythmic Activity | `dance/` | Choreography, cultural dance forms, rhythmic gymnastics |
 | Gymnastics and Body Management | `gymnastics/` | Complex sequences, partner/group work, apparatus |
 | Fitness and Active Living | `fitness/` | Training principles (FITT), periodization basics, personal program design |
-| Outdoor Education | `outdoor/` | Navigation, wilderness skills, environmental responsibility |
+| Outdoor Education | *(no unit context yet)* | Navigation, wilderness skills, environmental responsibility |
 
 ---
 

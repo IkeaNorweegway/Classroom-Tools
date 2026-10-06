@@ -1,5 +1,5 @@
 # STEAM — Grade 7 Year Plan
-*Read alongside `steam/_context.md` (equipment map, unit archetype, evidence base — revised 2026-09), `research/steam-progression-research.md`, and `research/design-thinking-graphic-web-research.md` (Grade 7 moves into that file's 7–8 band: software tools introduced paper-first, first formal critique protocol). Assumes Grade 6's circuit-level CT vocabulary (littleBits), a first CAD/3D-print pass, load-bearing structural reasoning, and one research-based presentation — but not a robot platform, since Grade 6 didn't use one.*
+*Read alongside `steam/_context.md` (equipment map, unit archetype, evidence base — revised 2026-09), the STEAM progression research summary (planned, not yet written), and the design-thinking, graphic and web design research summary (planned, not yet written) (Grade 7 moves into that file's 7–8 band: software tools introduced paper-first, first formal critique protocol). Assumes Grade 6's circuit-level CT vocabulary (littleBits), a first CAD/3D-print pass, load-bearing structural reasoning, and one research-based presentation — but not a robot platform, since Grade 6 didn't use one.*
 
 ---
 

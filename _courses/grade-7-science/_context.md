@@ -215,12 +215,12 @@ Major misconceptions to address:
 | Material | Pattern | Example |
 |---|---|---|
 | Guided notes | `sci7-[unit]-notes-v[N].md` | `sci7-heat-temperature-notes-v1.md` |
-| Unit workbook | `sci7-[unit]-workbook-v[N].md` | `sci7-interactions-ecosystems-workbook-v1.md` |
+| Unit workbook | `sci7-[unit]-workbook-v[N].md` | `sci7-interactions-ecosystems-workbook-v2.md` |
 | Exit tickets | `sci7-[unit]-exits-v[N].md` | `sci7-planet-earth-exits-v1.md` |
 | Unit quiz | `sci7-[unit]-quiz-v[N].md` | `sci7-structures-forces-quiz-v1.md` |
 | Unit test | `sci7-[unit]-test-v[N].md` | `sci7-plants-food-fibre-test-v1.md` |
 | Teacher guide | `sci7-[unit]-teacherguide-v[N].md` | `sci7-heat-temperature-teacherguide-v1.md` |
-| Answer key | `sci7-[unit]-[type]-answers-v[N].md` | `sci7-heat-temperature-notes-answers-v1.md` |
+| Answer key | `sci7-[unit]-[type]-answers-v[N].md` | `sci7-heat-temperature-notes-answers-v2.md` |
 | Inquiry project brief | `sci7-[unit]-project-v[N].md` | `sci7-interactions-ecosystems-project-v1.md` |
 
 All files live in the appropriate type folder under `grade-7-science/[unit-name]/`.
