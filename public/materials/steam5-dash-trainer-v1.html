@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dash Trainer | STEAM Grade 5</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --accent: #7c3aed;
+    --accent-light: #ede9fe;
+    --accent-dark: #6d28d9;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --good: #059669;
+    --bad: #dc2626;
+    --c-move: #2563eb;
+    --c-turn: #0e7490;
+    --c-out: #be185d;
+    --c-loop: #c2410c;
+    --c-if: #047857;
+  }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  button { font: inherit; cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .5; }
+
+  /* ---------- top bar ---------- */
+  .top {
+    display: flex; align-items: center; gap: 20px; flex-shrink: 0;
+    background: #fff; border-bottom: 1px solid var(--line);
+    border-left: 5px solid var(--accent); padding: 8px 16px;
+  }
+  .top .course-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+  .top h1 { font-size: 20px; font-weight: 700; line-height: 1.2; }
+  .progress { flex: 1; display: flex; align-items: center; gap: 10px; min-width: 120px; }
+  .progress .bar { flex: 1; max-width: 280px; height: 10px; border-radius: 5px; background: var(--accent-light); overflow: hidden; }
+  .progress .bar span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s; }
+  .progress .txt { font-size: 14px; color: var(--muted); white-space: nowrap; }
+  .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    border: 1px solid #cbd5e1; background: #fff; color: #334155;
+    border-radius: 10px; padding: 8px 14px; font-size: 15px; font-weight: 600;
+  }
+  .btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover:not(:disabled) { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .btn.go { background: var(--good); border-color: var(--good); color: #fff; font-size: 18px; padding: 8px 22px; }
+  .btn.go:hover:not(:disabled) { background: #047857; border-color: #047857; }
+  .btn.stop { border-color: var(--bad); color: var(--bad); }
+  .btn.small { padding: 5px 12px; font-size: 14px; }
+
+  /* ---------- layout ---------- */
+  .layout {
+    flex: 1; min-height: 0; display: grid;
+    grid-template-columns: 200px minmax(260px, .75fr) minmax(480px, 1.6fr);
+  }
+  #nav { background: #fff; border-right: 1px solid var(--line); overflow-y: auto; padding: 10px 0 20px; }
+  #task { overflow-y: auto; padding: 18px 20px 40px; background: #fff; border-right: 1px solid var(--line); }
+  #work {
+    min-height: 0; min-width: 0; background: #eef2f7;
+    display: grid; grid-template-columns: 136px minmax(190px, 1fr) minmax(240px, 350px);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "bar bar bar" "pal prog stage";
+  }
+
+  /* ---------- nav ---------- */
+  .nav-stage { padding: 10px 14px 2px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .nav-stage small { display: block; text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 12px; color: #94a3b8; }
+  .nav-item {
+    display: flex; align-items: flex-start; gap: 8px; width: 100%; text-align: left;
+    border: none; background: none; padding: 7px 14px; font-size: 15px; color: #334155;
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover { background: #f1f5f9; }
+  .nav-item.current { background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; color: #4c1d95; }
+  .nav-item .dot {
+    flex-shrink: 0; width: 18px; height: 18px; margin-top: 2px; border-radius: 50%;
+    border: 2px solid #cbd5e1; font-size: 11px; line-height: 14px; text-align: center; color: #fff;
+  }
+  .nav-item.done .dot { background: var(--good); border-color: var(--good); }
+  .nav-item .dot.free { border-style: dashed; }
+
+  /* ---------- task panel ---------- */
+  .crumb { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--accent); }
+  #task h2 { font-size: 23px; font-weight: 700; margin: 2px 0 6px; }
+  #task p { margin-bottom: 10px; }
+  #task ul, #task ol { margin: 4px 0 12px 24px; }
+  #task li { margin-bottom: 6px; }
+  .tag { font-size: 12px; font-weight: 700; background: #fef3c7; color: #92400e; border-radius: 999px; padding: 2px 9px; vertical-align: middle; }
+  .paperref { display: inline-block; font-size: 13px; font-weight: 600; color: #c2410c; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 999px; padding: 1px 10px; margin-bottom: 12px; }
+  .paper { border-left: 5px solid #f97316; background: #fff7ed; padding: 10px 14px; margin: 12px 0; border-radius: 0 8px 8px 0; }
+  .paper .label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #c2410c; margin-bottom: 3px; }
+  .paper p:last-child, .paper ul:last-child { margin-bottom: 0; }
+  .word { border: 2px solid #c4b5fd; background: #f5f3ff; border-radius: 10px; padding: 10px 14px; margin: 12px 0; }
+  .word .label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent-dark); margin-bottom: 2px; }
+  .word p:last-child { margin-bottom: 0; }
+  .todo { border: 2px solid #bfdbfe; background: #eff6ff; border-radius: 10px; padding: 10px 14px; margin: 12px 0; }
+  .todo .label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #1d4ed8; margin-bottom: 3px; }
+  .todo p:last-child, .todo ol:last-child, .todo ul:last-child { margin-bottom: 0; }
+  .chip { display: inline-block; color: #fff; font-weight: 700; font-size: .88em; border-radius: 7px; padding: 0 8px; white-space: nowrap; }
+  .chip.move { background: var(--c-move); } .chip.turn { background: var(--c-turn); } .chip.out { background: var(--c-out); }
+  .chip.loop { background: var(--c-loop); } .chip.if { background: var(--c-if); }
+
+  .predict { border: 2px solid #a5b4fc; background: #eef2ff; border-radius: 10px; padding: 12px 14px; margin: 14px 0; }
+  .predict .label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #4338ca; margin-bottom: 4px; }
+  .predict .opts { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .predict .opt { text-align: left; border: 2px solid #c7d2fe; background: #fff; color: var(--ink); border-radius: 8px; padding: 9px 12px; font-size: 16px; }
+  .predict .opt:hover:not(:disabled) { border-color: #6366f1; }
+  .predict .opt.picked { border-color: #4338ca; background: #e0e7ff; color: #312e81; font-weight: 600; opacity: 1; }
+  .predict .verdict { margin-top: 10px; }
+  .predict .verdict b.yes { color: var(--good); }
+  .predict .verdict b.no { color: #b45309; }
+
+  .hintbox { margin: 14px 0; }
+  .hint { border-left: 5px solid #a3a3a3; background: #fafafa; padding: 8px 12px; margin: 8px 0; border-radius: 0 8px 8px 0; }
+  .results { margin: 16px 0; border: 2px solid #fecaca; border-radius: 10px; overflow: hidden; }
+  .results .head { padding: 8px 14px; font-weight: 700; background: #fef2f2; color: #b91c1c; }
+  .results ul { list-style: none; margin: 0 !important; }
+  .results li { padding: 9px 14px; border-top: 1px solid #fecaca; margin: 0 !important; }
+  .donebox { border: 2px solid var(--good); background: #ecfdf5; border-radius: 10px; padding: 12px 14px; margin: 16px 0; }
+  .donebox .label { font-weight: 700; font-size: 19px; color: #047857; margin-bottom: 4px; }
+  .rowbtns { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 0; }
+
+  /* ---------- work: toolbar ---------- */
+  .toolbar { grid-area: bar; display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #fff; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .toolbar .spacer { flex: 1; }
+
+  /* ---------- work: blocks ---------- */
+  .pane-head { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); padding: 8px 10px 2px; display: flex; justify-content: space-between; gap: 8px; }
+  #palWrap { grid-area: pal; background: #e2e8f0; overflow-y: auto; min-height: 0; position: relative; }
+  #palette { padding: 2px 8px 12px; }
+  #palette .blk { min-width: 0; width: 100%; }
+  #palNote { font-size: 14px; color: #475569; padding: 4px 10px; }
+  #palWrap.bin::after {
+    content: 'Drop here to throw away'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 10px; background: rgba(254, 226, 226, .94); color: #b91c1c; font-weight: 700; border: 3px dashed #f87171;
+  }
+  #progWrap { grid-area: prog; display: flex; flex-direction: column; min-height: 0; min-width: 0; background: #f8fafc; border-right: 1px solid var(--line); }
+  #prog { flex: 1; overflow-x: hidden; overflow-y: auto; padding: 2px 8px 60px; min-height: 0; }
+  #prog > .stack { min-height: 100%; }
+  #prog > .stack:empty::after { content: 'Your program is empty. Tap a block, or drag it here.'; display: block; color: #64748b; font-size: 15px; padding: 14px 4px; }
+  .builder-locked .blk { cursor: default; }
+
+  .blk {
+    display: flex; align-items: center; gap: 8px; width: fit-content; max-width: 100%; min-width: min(168px, 100%); min-height: 44px;
+    padding: 8px 12px; margin: 5px 0; border-radius: 10px; color: #fff; font-weight: 700; font-size: 16px; line-height: 1.2;
+    cursor: grab; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: none;
+    box-shadow: 0 3px 0 rgba(15, 23, 42, .28);
+  }
+  .blk:focus-visible { outline: 3px solid #1e293b; outline-offset: 2px; }
+  .blk .ic { font-size: 19px; width: 20px; text-align: center; flex-shrink: 0; }
+  .b-move { background: var(--c-move); } .b-turn { background: var(--c-turn); } .b-out { background: var(--c-out); }
+  .b-loop { background: var(--c-loop); } .b-if { background: var(--c-if); }
+  .blk.cont { display: block; padding: 0; width: auto; min-width: 0; }
+  .blk.cont > .bh { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; padding: 8px 10px; min-height: 44px; border-radius: 10px; }
+  .blk.cont > .bh.mid { min-height: 34px; padding: 4px 10px; }
+  .blk.cont > .stack { margin-left: 12px; background: #f8fafc; border-radius: 8px 0 0 8px; padding: 2px 5px 2px 7px; min-height: 44px; }
+  .blk.cont > .stack:empty::after { content: 'put blocks here'; display: block; color: #94a3b8; font-weight: 400; font-size: 14px; padding: 10px 2px; }
+  .blk.cont > .bf { height: 12px; }
+  .blk.on { outline: 5px solid #facc15; outline-offset: 1px; }
+  .blk.cont.on { outline: none; }
+  .blk.cont.on > .bh:not(.mid) { box-shadow: inset 0 0 0 4px #facc15; }
+  .blk.bad { outline: 5px solid #ef4444; outline-offset: 1px; }
+  .blk.dragging { opacity: .3; }
+  .blk.ghost { position: fixed; z-index: 50; pointer-events: none; opacity: .92; margin: 0; box-shadow: 0 10px 24px rgba(15, 23, 42, .35); }
+  .blk.flash { animation: flash .5s; }
+  @keyframes flash { from { transform: scale(1.08); } to { transform: scale(1); } }
+  .marker { height: 7px; border-radius: 4px; background: #facc15; margin: 3px 0; box-shadow: 0 0 0 2px #ca8a04; }
+  .num { display: inline-flex; align-items: center; background: #fff; border-radius: 999px; color: #0f172a; }
+  .num button { width: 34px; height: 34px; border: none; background: none; font-size: 22px; font-weight: 700; line-height: 1; color: #0f172a; border-radius: 50%; }
+  .num button:hover:not(:disabled) { background: #e2e8f0; }
+  .num b { min-width: 24px; text-align: center; font-size: 17px; }
+  .colbtn { display: inline-flex; align-items: center; gap: 6px; border: none; background: #fff; color: #0f172a; font-weight: 700; font-size: 15px; border-radius: 999px; padding: 5px 12px 5px 8px; }
+  .colbtn .dot { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .3); }
+
+  /* ---------- work: stage ---------- */
+  #stageWrap { grid-area: stage; overflow-y: auto; min-height: 0; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  #stage { width: 100%; height: auto; max-height: 52vh; display: block; }
+  #stage .cell.edit { cursor: pointer; }
+  #say { background: #fff; border: 2px solid var(--line); border-radius: 10px; padding: 8px 12px; min-height: 62px; font-size: 16px; }
+  #say.good { border-color: var(--good); background: #ecfdf5; font-weight: 700; color: #047857; }
+  #say.oops { border-color: #fca5a5; background: #fef2f2; }
+  .io { display: flex; gap: 8px; flex-wrap: wrap; }
+  .iobox { flex: 1; min-width: 130px; background: #fff; border: 2px solid var(--line); border-radius: 10px; padding: 6px 10px; }
+  .iobox .lab { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .iobox.in { border-color: #fde047; }
+  .iobox.in b { font-size: 26px; line-height: 1.1; }
+  .iobox.in span { font-size: 13px; color: var(--muted); }
+  .iobox.out .row { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+  .iobox.out .dot { width: 16px; height: 16px; border-radius: 50%; border: 1px solid #94a3b8; background: #e2e8f0; display: inline-block; }
+  .iobox.out .snd { font-weight: 700; color: #cbd5e1; font-size: 18px; }
+  .iobox.out .snd.live { color: var(--c-out); }
+
+  .fatal { margin: 30px; padding: 16px; border: 2px solid var(--bad); background: #fef2f2; border-radius: 8px; }
+
+  #btnSteps { display: none; }
+  /* Tablets and small laptops: tuck the step list behind the Steps button. */
+  @media (max-width: 1180px) {
+    .top { gap: 12px; padding: 6px 12px; }
+    #btnSteps { display: inline-block; }
+    .layout { position: relative; grid-template-columns: minmax(230px, .6fr) minmax(470px, 1.6fr); }
+    #work { grid-template-columns: 128px minmax(200px, 1fr) minmax(220px, 320px); }
+    #nav {
+      display: none; position: absolute; top: 0; bottom: 0; left: 0; width: 260px; z-index: 5;
+      box-shadow: 6px 0 24px rgba(15, 23, 42, .25);
+    }
+    .layout.nav-open #nav { display: block; }
+    #task { padding: 14px 16px 32px; }
+  }
+  /* Narrow screens: one column, the page scrolls. */
+  @media (max-width: 860px) {
+    body { overflow: auto; display: block; }
+    html, body { height: auto; }
+    .layout { display: block; }
+    #task { border-right: none; }
+    #work { grid-template-columns: 136px minmax(0, 1fr); grid-template-rows: auto auto minmax(320px, auto); grid-template-areas: "bar bar" "stage stage" "pal prog"; }
+    #stageWrap { overflow: visible; }
+    #stage { max-width: 420px; margin: 0 auto; max-height: none; }
+    #prog { min-height: 320px; overflow: visible; }
+    .top { flex-wrap: wrap; }
+    #nav { position: fixed; top: 0; }
+  }
+  @media print {
+    #work, #nav, .top-actions { display: none; }
+    body { overflow: visible; display: block; background: #fff; }
+    .layout { display: block; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .blk.flash { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="course-label">STEAM · Grade 5 · Unit 1</div>
+    <h1>Dash Trainer</h1>
+  </div>
+  <div class="progress">
+    <div class="bar"><span id="progFill"></span></div>
+    <span class="txt" id="progText"></span>
+  </div>
+  <div class="top-actions">
+    <button class="btn" id="btnSteps" type="button" aria-controls="nav" aria-expanded="false">☰ Steps</button>
+    <button class="btn" id="btnRead" type="button" hidden>Read to me</button>
+    <button class="btn" id="btnNew" type="button" title="Erase the work on this device and start at step 1">New student</button>
+  </div>
+</header>
+
+<div class="layout">
+  <nav id="nav" aria-label="Trainer steps"></nav>
+  <section id="task" aria-live="polite"></section>
+  <section id="work">
+    <div class="toolbar">
+      <button class="btn go" id="btnGo" type="button">▶ Go</button>
+      <button class="btn stop" id="btnStop" type="button" disabled>■ Stop</button>
+      <button class="btn" id="btnBack" type="button">Put Dash back</button>
+      <span class="spacer"></span>
+      <button class="btn small" id="btnSpeed" type="button"></button>
+      <button class="btn small" id="btnReset" type="button">Start over</button>
+    </div>
+    <div id="palWrap">
+      <div class="pane-head"><span>Blocks</span></div>
+      <div id="palNote" hidden></div>
+      <div id="palette"></div>
+    </div>
+    <div id="progWrap">
+      <div class="pane-head"><span>Your program</span><span id="blockCount"></span></div>
+      <div id="prog" aria-label="Your program"></div>
+    </div>
+    <div id="stageWrap">
+      <svg id="stage" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dash on the floor grid"></svg>
+      <div id="say"></div>
+      <div class="io" id="io">
+        <div class="iobox in" id="ioIn"><div class="lab" id="inLab">Sensor says</div><b id="sensVal">0</b> <span>empty squares in front</span></div>
+        <div class="iobox out" id="ioOut"><div class="lab">Output</div>
+          <div class="row"><span class="dot" id="outLight"></span> light <span class="snd" id="outSound">♪</span> sound</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* =====================================================================
+   Dash Trainer — STEAM Grade 5 Unit 1
+   Companion to steam5-dash-notes-v1 and steam5-dash-workbook-v1.
+   No libraries. Blocks are dragged (or tapped) into a program, and the
+   program drives a robot on a grid.
+   ===================================================================== */
+
+/* ---------- blocks ---------- */
+
+const BLOCKS = {
+  fwd:    { cls: 'b-move', ic: '↑', label: 'drive forward' },
+  left:   { cls: 'b-turn', ic: '←', label: 'turn left' },
+  right:  { cls: 'b-turn', ic: '→', label: 'turn right' },
+  beep:   { cls: 'b-out',  ic: '♪', label: 'beep' },
+  light:  { cls: 'b-out',  ic: '●', label: 'light' },
+  repeat: { cls: 'b-loop', ic: '↻', label: 'repeat' },
+  if:     { cls: 'b-if',   ic: '?', label: 'if / else' },
+};
+const COLORS = { green: '#22c55e', red: '#ef4444', blue: '#3b82f6', yellow: '#facc15' };
+const COLOR_ORDER = ['green', 'red', 'blue', 'yellow'];
+const MAX_BLOCKS = 40;
+
+let uid = 1;
+const mk = (t, extra) => Object.assign({ id: 'n' + (uid++), t }, extra);
+const F = () => mk('fwd'), TL = () => mk('left'), TR = () => mk('right'), BP = () => mk('beep');
+const LT = c => mk('light', { c });
+const REP = (n, body) => mk('repeat', { n, body });
+const IF = (n, body, els) => mk('if', { n, body, else: els });
+function newNode(t) {
+  if (t === 'repeat') return REP(3, []);
+  if (t === 'if') return IF(1, [], []);
+  if (t === 'light') return LT('green');
+  return mk(t);
+}
+
+const P_SEQ = ['fwd', 'left', 'right'];
+const P_LOOP = ['fwd', 'left', 'right', 'repeat'];
+const P_IF = ['fwd', 'left', 'right', 'beep', 'repeat', 'if'];
+const P_ALL = ['fwd', 'left', 'right', 'beep', 'light', 'repeat', 'if'];
+
+/* ---------- small helpers for checking ---------- */
+
+const countBlocks = list => list.reduce((n, b) => n + 1 + (b.body ? countBlocks(b.body) : 0) + (b.else ? countBlocks(b.else) : 0), 0);
+const flatTypes = list => list.reduce((a, b) => a.concat(b.t, b.body ? flatTypes(b.body) : [], b.else ? flatTypes(b.else) : []), []);
+const uses = (list, t) => flatTypes(list).includes(t);
+const sig = list => JSON.stringify(list, (k, v) => k === 'id' ? undefined : v);
+
+const RULE = {
+  max: n => ({ test: p => countBlocks(p) <= n, msg: p => 'Dash got there! Now make it shorter. Use ' + n + ' blocks or fewer. You used ' + countBlocks(p) + '.' }),
+  uses: (t, msg) => ({ test: p => uses(p, t), msg }),
+  sameAs: (starter, msg) => ({ test: p => flatTypes(p).sort().join() === flatTypes(starter()).sort().join(), msg }),
+  light: c => ({ test: (p, r) => r.end.light === c, msg: 'The light should be ' + c + ' at the wall. Tap the colour on the light block to change it.' }),
+  beepAtWall: { test: (p, r) => r.beeps.length > 0 && r.beeps.every(x => x === 0), msg: 'Dash should beep at the wall, and only at the wall. Put the beep block in the THEN part.' },
+  ifRan: { test: (p, r) => r.ifRan, msg: 'Dash got there! One more rule: your program must use an IF block, so Dash uses its sensor.' },
+  endOnStar: { test: (p, r, L) => L.stars.some(s => s.x === r.end.x && s.y === r.end.y), msg: 'Dash should stop on the star.' },
+};
+
+/* ---------- content ---------- */
+
+const chip = (cls, text) => '<span class="chip ' + cls + '">' + text + '</span>';
+const C_FWD = chip('move', 'drive forward'), C_LEFT = chip('turn', 'turn left'), C_RIGHT = chip('turn', 'turn right');
+const C_BEEP = chip('out', 'beep'), C_LIGHT = chip('out', 'light'), C_REP = chip('loop', 'repeat'), C_IF = chip('if', 'if / else');
+
+const seqSwapStart = () => [F(), TR(), F(), F()];
+
+const STAGES = [
+  {
+    id: 's0', title: 'Start here', sub: 'Notes: Before We Start',
+    ex: [
+      {
+        id: 'start', title: 'Meet Dash', paper: 'Notes · Before We Start', pal: P_SEQ,
+        map: ['.....', '>.*..', '.....'],
+        body: `
+          <div class="paper"><div class="label">On paper first</div>
+          <p>Open your notes to <b>Before We Start</b>. Answer both questions. There are no wrong answers.</p></div>
+          <p>This is Dash. Dash does what the blocks say. The blocks are your <b>program</b>.</p>
+          <div class="todo"><div class="label">Your job</div>
+          <ol><li>Press <b>Go</b>. Watch Dash.</li>
+          <li>Dash did not get to the star. Add one more ${C_FWD} block. Tap it, or drag it under the first block.</li>
+          <li>Press <b>Go</b> again.</li></ol></div>`,
+        starter: () => [F()],
+        hints: ['One block moves Dash one square. How many squares away is the star?'],
+        after: `<p>Every step works like this. Build with blocks. Press <b>Go</b>. If it does not work, change one thing and try again.</p>`,
+      },
+    ],
+  },
+  {
+    id: 's1', title: '1 · Sequence', sub: 'Notes: Part 1',
+    ex: [
+      {
+        id: 'seq-order', title: 'Steps in order', paper: 'Notes · Part 1', pal: P_SEQ,
+        map: ['>..#.', '##.#.', '..*..', '.....'],
+        body: `
+          <div class="word"><div class="label">New word: sequence</div>
+          <p>A list of steps done in order. Step 1, then step 2, then step 3.</p></div>
+          <p>Dash does the top block first. Then the next one. Then the next one.</p>
+          <div class="todo"><div class="label">Your job</div>
+          <p>Get Dash to the star. Dash will need to turn.</p></div>`,
+        starter: () => [],
+        hints: [
+          'Count the squares. How many times does Dash drive before it turns?',
+          'A turn block spins Dash on the spot. It does not move Dash to a new square.',
+        ],
+      },
+      {
+        id: 'seq-swap', title: 'Order matters', paper: 'Notes · Part 1', pal: [], noDelete: true,
+        map: ['>...', '..*.', '.A..', 'B...'],
+        body: `<p>Look at the program. Do not press Go yet.</p>`,
+        predict: {
+          q: 'Where will Dash stop?',
+          options: ['On A', 'On B', 'On the star'], answer: 0,
+          explain: 'Dash drove 1 square and then turned. To get the star, Dash needs to drive 2 squares before it turns.',
+        },
+        then: `<div class="todo"><div class="label">Your job</div>
+          <p>Get Dash to the star. Use the same 4 blocks. Only change the <b>order</b>. Drag a block up or down to move it.</p></div>`,
+        starter: seqSwapStart,
+        rules: [RULE.sameAs(seqSwapStart, 'Use the same 4 blocks. Press <b>Start over</b> to get them back.')],
+        hints: ['Which block should be third?'],
+        after: `<p>Same blocks. New order. New place. Dash did exactly what the blocks said.</p>`,
+      },
+      {
+        id: 'seq-debug', title: 'Find the bug', paper: 'Notes · New Words', pal: P_SEQ,
+        map: ['.....', '>..#.', '.#...', '..*..'],
+        body: `
+          <div class="word"><div class="label">New word: debug</div>
+          <p>To find a mistake in a program and fix it.</p></div>
+          <p>This program has <b>one</b> wrong block.</p>
+          <div class="todo"><div class="label">Your job</div>
+          <ol><li>Press <b>Go</b>. Watch where it goes wrong.</li>
+          <li>Fix the one wrong block. To throw a block away, drag it out of your program.</li></ol></div>`,
+        starter: () => [F(), F(), TL(), F(), F()],
+        hints: [
+          'Dash bumped at the last block. But was that block the mistake? Look at the blocks before it.',
+          'Which way did Dash turn? Which way is the star?',
+        ],
+        after: `<p>The block where Dash bumped was not the wrong block. The mistake came before it. Good debuggers look back.</p>`,
+      },
+      {
+        id: 'seq-maze', title: 'Maze: two ways', paper: 'Journal · Part A', pal: P_SEQ,
+        map: ['>...', '.##.', '.##.', '...*'],
+        body: `
+          <div class="paper"><div class="label">On paper first</div>
+          <p>Open your journal to <b>Part A</b>. Draw two different paths through this maze. Pick one. Show your teacher.</p></div>
+          <div class="todo"><div class="label">Your job</div>
+          <p>Build your path. Get Dash to the star. Rule: no loops yet.</p></div>`,
+        starter: () => [],
+        hints: ['Build a few blocks. Press Go. See where Dash stops. Then add a few more.'],
+        after: `<div class="paper"><div class="label">Now on paper</div>
+          <p><b>Journal Part A:</b> fill in a row of the Build &amp; Test Log. Then try your other path here. Which path uses fewer blocks?</p>
+          <p><b>Notes:</b> write <b>Sequence</b> and <b>Debug</b> in your New Words table. Use your own words.</p></div>`,
+      },
+    ],
+  },
+  {
+    id: 's2', title: '2 · Loop', sub: 'Notes: Part 1',
+    ex: [
+      {
+        id: 'loop-first', title: 'Use a loop', paper: 'Notes · Part 1', pal: P_LOOP,
+        map: ['......', '>....*', '......'],
+        body: `
+          <div class="word"><div class="label">New word: loop</div>
+          <p>A block that says "do this ___ times." It does the same job with fewer blocks.</p></div>
+          <p>This program works. But it uses the same block 5 times.</p>
+          <div class="todo"><div class="label">Your job</div>
+          <p>Do the same job with only <b>2 blocks</b>.</p>
+          <ol><li>Drag a ${C_REP} block into your program.</li>
+          <li>Put one ${C_FWD} block inside it.</li>
+          <li>Tap <b>+</b> or <b>−</b> to change the number.</li>
+          <li>Throw away the blocks you do not need.</li></ol></div>`,
+        starter: () => [F(), F(), F(), F(), F()],
+        rules: [RULE.uses('repeat', 'Dash got there! Now do it with a ' + C_REP + ' block.'), RULE.max(2)],
+        hints: ['How many squares away is the star? That is the number for the loop.'],
+      },
+      {
+        id: 'loop-stairs', title: 'Loop a pattern', paper: 'Notes · Part 1', pal: P_LOOP,
+        map: ['####.', '###*.', '##..#', '#..##', '>.###'],
+        body: `<p>A loop can hold more than one block. Then it repeats the whole <b>pattern</b>.</p>
+          <p>The 4 blocks inside this loop climb one stair. Do not press Go yet.</p>`,
+        predict: {
+          q: 'The loop says 2 times. How many stairs will Dash climb?',
+          options: ['1 stair', '2 stairs', '4 stairs'], answer: 1,
+          explain: 'The loop does all 4 blocks inside. Then it does all 4 again. 2 times around is 2 stairs.',
+        },
+        then: `<div class="todo"><div class="label">Your job</div>
+          <p>Change <b>one number</b> so Dash gets to the star.</p></div>`,
+        starter: () => [REP(2, [F(), TL(), F(), TR()])],
+        rules: [RULE.uses('repeat', 'Keep the ' + C_REP + ' block. Change its number.')],
+        hints: ['Count the stairs up to the star.'],
+      },
+      {
+        id: 'loop-square', title: 'Loop it yourself', paper: 'Journal · Part B', pal: P_LOOP,
+        map: ['.....', '.>.*.', '..#..', '.*.*.', '.....'],
+        body: `
+          <div class="todo"><div class="label">Your job</div>
+          <p>Get all <b>3 stars</b>. Use a loop. Use <b>4 blocks or fewer</b>.</p></div>`,
+        starter: () => [],
+        rules: [RULE.uses('repeat', 'Dash got the stars! Now do it with a ' + C_REP + ' block.'), RULE.max(4)],
+        hints: [
+          'Find the pattern. What does Dash do to get from one star to the next?',
+          'The pattern is: drive, drive, turn. Put that inside a loop. How many times?',
+        ],
+        after: `<div class="paper"><div class="label">Now on paper</div>
+          <p><b>Journal Part B:</b> how many blocks would this trip need with no loop? Count them. Write both numbers.</p>
+          <p><b>Notes Part 1:</b> answer <b>Check yourself</b> without looking back. Then write <b>Loop</b> in your New Words table.</p></div>`,
+      },
+    ],
+  },
+  {
+    id: 's3', title: '3 · If this, then that', sub: 'Notes: Part 2',
+    ex: [
+      {
+        id: 'if-first', title: 'If this, then that', paper: 'Notes · Part 2', pal: P_IF, sensor: true,
+        map: ['.....', '>...#', '...*.', '.....'],
+        body: `
+          <div class="word"><div class="label">New word: conditional</div>
+          <p>A block that says: "IF something is true, THEN do this. If not, do something else."</p></div>
+          <p>Dash has a sensor on its front. The sensor sends a <b>number</b>: how many empty squares are in front of Dash. The yellow beam shows what the sensor is counting.</p>
+          <p>"Less than 1" means 0. No empty squares. A wall is right in front.</p>
+          <p>Read the program. Do not press Go yet.</p>`,
+        predict: {
+          q: 'Dash is 3 squares from the wall. What will Dash do?',
+          options: ['Drive into the wall and bump', 'Drive 3 squares, then beep 2 times', 'Beep 5 times and not move'], answer: 1,
+          explain: 'Each time around the loop, the sensor sends a number. The IF block checks it. The number was 3, then 2, then 1, so Dash drove. Then it was 0, so Dash beeped.',
+        },
+        then: `<div class="todo"><div class="label">Your job</div>
+          <p>Change the program. At the wall, Dash should <b>turn right</b>, not beep. Then Dash can get the star.</p></div>`,
+        starter: () => [REP(5, [IF(1, [BP()], [F()])])],
+        rules: [RULE.uses('if', 'Keep the ' + C_IF + ' block. Change what is inside it.')],
+        hints: ['Find the ' + C_BEEP + ' block. It is in the THEN part. Drag it out. Put ' + C_RIGHT + ' there.'],
+      },
+      {
+        id: 'if-number', title: 'Change the number', paper: 'Notes · Part 2', pal: P_IF, sensor: true,
+        map: ['.......', '>..AB*#', '.......'],
+        body: `<p>Dash should drive to the star and stop there. Read the IF block. Do not press Go yet.</p>`,
+        predict: {
+          q: 'The IF block says "less than 3". Where will Dash stop?',
+          options: ['On A', 'On B', 'On the star'], answer: 0,
+          explain: 'On A, the sensor says 2. 2 is less than 3. So Dash does the THEN part and beeps. It never drives again.',
+        },
+        then: `<div class="todo"><div class="label">Your job</div>
+          <p>Dash stops too early. Change <b>one number</b> so Dash stops on the star.</p></div>`,
+        starter: () => [REP(6, [IF(3, [BP()], [F()])])],
+        rules: [RULE.uses('if', 'Keep the ' + C_IF + ' block. Change its number.'), RULE.endOnStar],
+        hints: ['When Dash is on the star, what number does the sensor send? Count the empty squares in front.'],
+        after: `<p>The wall did not move. The sensor did not change. You changed the number in the IF block.</p>`,
+      },
+      {
+        id: 'if-who', title: 'Who decides?', paper: 'Notes · Part 2', pal: P_IF, sensor: true,
+        map: ['...*.', '>...#', '.....', '.....'],
+        body: `
+          <p>Same wall. Same Dash. Same sensor. This time the star is on the other side.</p>
+          <div class="todo"><div class="label">Your job</div>
+          <ol><li>Press <b>Go</b>. See what the program does now.</li>
+          <li>Change the program so Dash gets the star.</li></ol></div>`,
+        starter: () => [REP(5, [IF(1, [TR()], [F()])])],
+        rules: [RULE.uses('if', 'Keep the ' + C_IF + ' block. Change what is inside it.')],
+        hints: ['What should Dash do at the wall this time?'],
+        after: `<p><b>Who decided?</b> Dash did not see the wall and choose to turn. The sensor sent a number. Your IF block said what to do with that number. You changed the block, so Dash did a new thing.</p>
+          <p>You decide. Dash follows.</p>
+          <div class="paper"><div class="label">Now on paper</div>
+          <p><b>Notes Part 2:</b> read the <b>Common mistake</b> box. Answer <b>Check yourself</b>. Then write <b>Conditional</b> in your New Words table.</p></div>`,
+      },
+      {
+        id: 'if-spiral', title: 'Small program, long trip', tier: 'ext', paper: 'Notes · Part 2', pal: P_IF, sensor: true,
+        map: ['>...', '###.', '.*#.', '....'],
+        body: `
+          <p>This one is extra. It is harder.</p>
+          <div class="todo"><div class="label">Your job</div>
+          <p>The ${C_REP} block is ready. Put blocks inside it so Dash gets to the star. You only need <b>3 more blocks</b>.</p></div>`,
+        starter: () => [REP(15, [])],
+        rules: [RULE.uses('if', 'Dash got there! Now do it with an ' + C_IF + ' block inside the loop.'), RULE.max(6)],
+        hints: [
+          'Dash drives until it meets a wall. What should it do at every wall?',
+          'IF the sensor is less than 1, THEN turn right. ELSE drive forward.',
+        ],
+        after: `<p>4 blocks did a trip with 15 steps. A loop with an IF inside can do a lot of work.</p>`,
+      },
+    ],
+  },
+  {
+    id: 's4', title: '4 · Sensors: in and out', sub: 'Notes: Part 3',
+    ex: [
+      {
+        id: 'io-warn', title: 'Input and output', paper: 'Notes · Part 3', pal: P_ALL, sensor: true, io: true,
+        map: ['.....', '>..*#', '.....'],
+        body: `
+          <div class="word"><div class="label">New word: input</div>
+          <p>Information going INTO the program. The sensor number is an input.</p></div>
+          <div class="word"><div class="label">New word: output</div>
+          <p>Something the program sends OUT. Dash moving, a light, a sound.</p></div>
+          <div class="todo"><div class="label">Your job</div>
+          <p>At the wall, Dash should warn us. Put 2 outputs in the THEN part:</p>
+          <ol><li>a ${C_LIGHT} block. Tap the colour until it says <b>red</b>.</li>
+          <li>a ${C_BEEP} block.</li></ol></div>`,
+        starter: () => [REP(4, [IF(1, [], [F()])])],
+        rules: [RULE.light('red'), RULE.beepAtWall],
+        hints: ['The THEN part is the empty space right under the word IF.'],
+        after: `<p>The sensor number went <b>in</b>. That is the input. The red light and the beep came <b>out</b>. Those are outputs. The IF block is in the middle. It checks the input and picks the output.</p>`,
+      },
+      {
+        id: 'io-box', title: 'Too short to see', paper: 'Notes · Part 3', pal: P_ALL, sensor: true, io: true,
+        map: ['......', '>.o.*#', '......'],
+        body: `
+          <div class="word"><div class="label">New word: sensor</div>
+          <p>A part that reports a number or signal. It does not decide anything by itself.</p></div>
+          <p>There is a small box in the way. Dash's sensor points too high to see it. Look at the yellow beam. Do not press Go yet.</p>`,
+        predict: {
+          q: 'What will happen at the small box?',
+          options: ['Dash stops and beeps in front of the box', 'Dash bumps into the box', 'Dash turns and goes around the box'], answer: 1,
+          explain: 'The sensor did not see the box. The number it sent was for the wall far away. The IF block only knows the number, so Dash kept driving.',
+        },
+        then: `<div class="todo"><div class="label">Your job</div>
+          <p>The sensor cannot help with this box. Build a program that drives <b>around</b> the box and gets the star.</p></div>`,
+        starter: () => [REP(5, [IF(1, [BP()], [F()])])],
+        hints: [
+          'Press Start over if you want. Then plan a path with your finger first.',
+          'Go up one row, drive past the box, then come back down.',
+        ],
+        after: `<div class="paper"><div class="label">Now on paper</div>
+          <p><b>Notes Part 3:</b> answer <b>Check yourself</b> question 2. You just watched it happen.</p></div>`,
+      },
+      {
+        id: 'io-course', title: 'Obstacle course', paper: 'Journal · Parts C and D', pal: P_ALL, sensor: true, io: true,
+        map: ['*....', '.###.', 'o###.', '>....'],
+        body: `
+          <div class="paper"><div class="label">On paper first</div>
+          <p>Open your journal to <b>Part C</b>. Draw a map of this course. Mark the small box. Write your prediction: will the sensor see the box?</p></div>
+          <div class="todo"><div class="label">Your job</div>
+          <p>Get Dash to the star. Rule: your program must use an ${C_IF} block.</p></div>`,
+        starter: () => [],
+        rules: [RULE.ifRan],
+        hints: [
+          'The short way has a small box in it. Can the sensor see it?',
+          'Try the long way. What should Dash do at each wall?',
+          'Put an IF block inside a repeat block. IF the sensor is less than 1, THEN turn left. ELSE drive forward.',
+        ],
+        after: `<div class="paper"><div class="label">Now on paper</div>
+          <p><b>Journal Part C and Part D:</b> fill in the Build &amp; Test Log and the Live Test questions for this course.</p>
+          <p><b>Notes Part 3:</b> finish <b>Check yourself</b>. Write <b>Sensor</b>, <b>Input</b> and <b>Output</b> in your New Words table.</p>
+          <p><b>Notes Unit Wrap-Up:</b> close this page and your notes. Answer from memory. Then go back to <b>Before We Start</b> and read what you wrote.</p></div>`,
+      },
+    ],
+  },
+  {
+    id: 's5', title: 'Free play', sub: 'Build your own course',
+    ex: [
+      {
+        id: 'play', kind: 'play', title: 'Build your own course', pal: P_ALL, sensor: true, io: true,
+        map: ['......', '......', '......', '......', '>.....'],
+        body: `
+          <p>Nothing is checked here. Try any idea you like.</p>
+          <div class="todo"><div class="label">Make a course</div>
+          <p>Tap a square on the floor to change it. Keep tapping:</p>
+          <p>wall → small box → star → empty</p></div>
+          <p>Ideas:</p>
+          <ul><li>Make a course that needs a loop.</li>
+          <li>Make a course that tricks the sensor.</li>
+          <li>Swap seats with a partner. Can they solve your course?</li></ul>`,
+        starter: () => [],
+      },
+    ],
+  },
+];
+
+/* ---------- small helpers ---------- */
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+const ALL = [];
+STAGES.forEach((st, si) => st.ex.forEach(ex => { ex.stage = si; ex.kind = ex.kind || 'task'; ex.tier = ex.tier || 'core'; ALL.push(ex); }));
+const byId = id => ALL.find(e => e.id === id);
+const CORE = ALL.filter(e => e.kind === 'task' && e.tier === 'core');
+const cur = () => byId(state.current);
+
+/* ---------- saved state ---------- */
+
+const STORE_KEY = 'steam5-dash-trainer-v1';
+function blankState() { return { current: ALL[0].id, code: {}, done: {}, predict: {}, ran: {}, hints: {}, speed: 'normal', play: null }; }
+let state = blankState();
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) state = Object.assign(blankState(), JSON.parse(raw));
+  } catch (e) { /* storage blocked: the trainer still works, it just will not remember */ }
+  if (!byId(state.current)) state.current = ALL[0].id;
+}
+let saveTimer = null;
+function saveState() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }, 250);
+}
+
+/* ---------- the world ---------- */
+
+const DX = [0, 1, 0, -1], DY = [-1, 0, 1, 0];   // 0 up, 1 right, 2 down, 3 left
+const START = { '^': 0, '>': 1, 'v': 2, '<': 3 };
+
+function parseMap(rows) {
+  const L = { w: rows[0].length, h: rows.length, cells: [], start: { x: 0, y: 0, d: 1 }, stars: [], marks: [] };
+  rows.forEach((row, y) => {
+    L.cells.push([]);
+    row.split('').forEach((ch, x) => {
+      let c = '.';
+      if (ch === '#' || ch === 'o') c = ch;
+      else if (ch === '*') L.stars.push({ x, y });
+      else if (ch in START) L.start = { x, y, d: START[ch] };
+      else if (/[A-Z]/.test(ch)) L.marks.push({ x, y, label: ch });
+      L.cells[y].push(c);
+    });
+  });
+  return L;
+}
+const cellAt = (L, x, y) => (x < 0 || y < 0 || x >= L.w || y >= L.h) ? null : L.cells[y][x];
+
+// What the sensor reports: empty squares in front, up to the next wall.
+// It points too high to notice a small box, so a box counts as empty.
+function reading(L, s) {
+  let n = 0, x = s.x + DX[s.d], y = s.y + DY[s.d];
+  while (cellAt(L, x, y) !== null && cellAt(L, x, y) !== '#') { n++; x += DX[s.d]; y += DY[s.d]; }
+  return n;
+}
+
+// Runs the whole program at once and returns every step, so the stage can replay it.
+function simulate(program, L) {
+  const s = { x: L.start.x, y: L.start.y, d: L.start.d, light: null };
+  const got = new Set(), tr = [], beeps = [];
+  const res = { tr, bumped: null, bumpId: null, capped: false, ifRan: false };
+  let halt = false;
+  const push = ev => { ev.s = { x: s.x, y: s.y, d: s.d }; tr.push(ev); if (tr.length >= 400) { res.capped = true; halt = true; } };
+  (function run(list) {
+    for (const n of list) {
+      if (halt) return;
+      if (n.t === 'fwd') {
+        const nx = s.x + DX[s.d], ny = s.y + DY[s.d], c = cellAt(L, nx, ny);
+        if (c !== '.') {
+          res.bumped = c === 'o' ? 'box' : 'wall'; res.bumpId = n.id;
+          push({ k: 'bump', id: n.id, what: res.bumped }); halt = true; return;
+        }
+        s.x = nx; s.y = ny;
+        const ev = { k: 'move', id: n.id };
+        const si = L.stars.findIndex(st => st.x === nx && st.y === ny);
+        if (si >= 0 && !got.has(si)) { got.add(si); ev.star = si; }
+        push(ev);
+      } else if (n.t === 'left' || n.t === 'right') {
+        s.d = (s.d + (n.t === 'right' ? 1 : 3)) % 4;
+        push({ k: 'turn', id: n.id, dir: n.t });
+      } else if (n.t === 'beep') {
+        beeps.push(reading(L, s));
+        push({ k: 'beep', id: n.id });
+      } else if (n.t === 'light') {
+        s.light = n.c;
+        push({ k: 'light', id: n.id, c: n.c });
+      } else if (n.t === 'repeat') {
+        for (let i = 1; i <= n.n; i++) {
+          if (halt) return;
+          push({ k: 'loop', id: n.id, i, n: n.n });
+          run(n.body);
+        }
+      } else if (n.t === 'if') {
+        const r = reading(L, s), yes = r < n.n;
+        res.ifRan = true;
+        push({ k: 'if', id: n.id, r, n: n.n, yes });
+        run(yes ? n.body : n.else);
+      }
+    }
+  })(program);
+  res.end = s; res.stars = got.size; res.all = got.size === L.stars.length; res.beeps = beeps;
+  return res;
+}
+
+function evaluate(ex, program, res, L) {
+  const msgs = [];
+  if (res.capped) msgs.push('That is too many steps. Dash needs a rest! Try a smaller number in your loop.');
+  else if (res.bumped === 'box') msgs.push('Bump! Dash hit the small box.' + (ex.sensor ? ' The sensor points too high to see it.' : ''));
+  else if (res.bumped) msgs.push('Bump! Dash hit a wall. The block with the red edge is where Dash bumped. Is that block wrong, or is it a block before it?');
+  else if (!res.all) {
+    msgs.push(L.stars.length === 1
+      ? 'Dash did not get to the star. Look where Dash stopped. What should happen next?'
+      : 'Dash got ' + res.stars + ' of ' + L.stars.length + ' stars. Look where Dash stopped. What should happen next?');
+  } else {
+    (ex.rules || []).forEach(r => { if (!r.test(program, res, L)) msgs.push(typeof r.msg === 'function' ? r.msg(program, res) : r.msg); });
+  }
+  return { ok: msgs.length === 0, msgs: msgs.slice(0, 1) };
+}
+
+/* ---------- the program being built ---------- */
+
+let prog = [];          // the blocks for the current step
+let level = null;       // the parsed map for the current step
+const progEl = $('prog'), palEl = $('palette'), palWrap = $('palWrap');
+
+function reid(list) { list.forEach(n => { n.id = 'n' + (uid++); if (n.body) reid(n.body); if (n.else) reid(n.else); }); return list; }
+function findCtx(id, list) {
+  list = list || prog;
+  for (let i = 0; i < list.length; i++) {
+    const n = list[i];
+    if (n.id === id) return { list, idx: i, node: n };
+    const inner = (n.body && findCtx(id, n.body)) || (n.else && findCtx(id, n.else));
+    if (inner) return inner;
+  }
+  return null;
+}
+function listOf(owner, slot) {
+  if (owner === 'root') return prog;
+  const c = findCtx(owner);
+  return c ? c.node[slot] : null;
+}
+
+const numHtml = n => '<span class="num"><button type="button" class="ctl" data-op="dec" data-id="' + n.id + '" aria-label="one less">−</button><b>' + n.n +
+  '</b><button type="button" class="ctl" data-op="inc" data-id="' + n.id + '" aria-label="one more">+</button></span>';
+const stackHtml = (list, owner, slot) => '<div class="stack" data-owner="' + owner + '" data-slot="' + slot + '">' + list.map(blockHtml).join('') + '</div>';
+function blockHtml(n) {
+  const B = BLOCKS[n.t];
+  const open = '<div class="blk ' + B.cls + (n.body ? ' cont' : '') + '" data-id="' + n.id + '" data-t="' + n.t + '" tabindex="0">';
+  if (n.t === 'repeat') {
+    return open + '<div class="bh"><span class="ic">' + B.ic + '</span> repeat ' + numHtml(n) + ' times</div>' + stackHtml(n.body, n.id, 'body') + '<div class="bf"></div></div>';
+  }
+  if (n.t === 'if') {
+    return open + '<div class="bh"><span class="ic">' + B.ic + '</span> IF sensor is less than ' + numHtml(n) + ' THEN</div>' + stackHtml(n.body, n.id, 'body') +
+      '<div class="bh mid">ELSE</div>' + stackHtml(n.else, n.id, 'else') + '<div class="bf"></div></div>';
+  }
+  if (n.t === 'light') {
+    return open + '<span class="ic">' + B.ic + '</span> light <button type="button" class="ctl colbtn" data-op="col" data-id="' + n.id + '" aria-label="change colour">' +
+      '<span class="dot" style="background:' + COLORS[n.c] + '"></span>' + n.c + '</button></div>';
+  }
+  return open + '<span class="ic">' + B.ic + '</span> ' + B.label + '</div>';
+}
+
+function renderProgram() {
+  progEl.innerHTML = stackHtml(prog, 'root', 'body');
+  const n = countBlocks(prog);
+  $('blockCount').textContent = n + (n === 1 ? ' block' : ' blocks');
+}
+function renderPalette() {
+  const ex = cur();
+  palEl.innerHTML = ex.pal.map(t => '<div class="blk ' + BLOCKS[t].cls + '" data-t="' + t + '" data-pal="1" tabindex="0" role="button">' +
+    '<span class="ic">' + BLOCKS[t].ic + '</span> ' + BLOCKS[t].label + '</div>').join('');
+  $('palNote').hidden = ex.pal.length > 0;
+  $('palNote').textContent = ex.pal.length ? '' : 'No new blocks in this step. Move the blocks you have.';
+}
+function programChanged(flashId) {
+  state.code[state.current] = prog;
+  saveState();
+  renderProgram();
+  resetStage();
+  if (flashId) {
+    const el = progEl.querySelector('[data-id="' + flashId + '"]');
+    if (el) { el.classList.add('flash'); if (el.scrollIntoView) el.scrollIntoView({ block: 'nearest' }); }
+  }
+}
+function addBlock(t, owner, slot, idx) {
+  if (countBlocks(prog) >= MAX_BLOCKS) { say('That is a lot of blocks! Take some out first.', 'oops'); return; }
+  const list = listOf(owner || 'root', slot || 'body') || prog;
+  const node = newNode(t);
+  list.splice(idx == null ? list.length : Math.min(idx, list.length), 0, node);
+  programChanged(node.id);
+}
+function removeBlock(id) {
+  const c = findCtx(id);
+  if (!c) return;
+  c.list.splice(c.idx, 1);
+  programChanged();
+}
+
+/* ---------- dragging blocks ---------- */
+
+let drag = null, marker = null;
+function clearMarker() { if (marker) { marker.remove(); marker = null; } }
+
+function dropTarget(x, y) {
+  clearMarker();
+  const pr = progEl.getBoundingClientRect();
+  if (x < pr.left || x > pr.right || y < pr.top || y > pr.bottom) return null;
+  let target = progEl.firstElementChild;
+  progEl.querySelectorAll('.stack').forEach(s => {
+    if (!drag.fromPal && drag.el.contains(s)) return;
+    const r = s.getBoundingClientRect();
+    if (x >= r.left - 6 && x <= r.right + 6 && y >= r.top - 4 && y <= r.bottom + 4) target = s;
+  });
+  const kids = Array.prototype.filter.call(target.children, c => c.classList.contains('blk') && c !== drag.el);
+  let idx = 0;
+  kids.forEach(k => { const r = k.getBoundingClientRect(); if (y > r.top + r.height / 2) idx++; });
+  marker = document.createElement('div');
+  marker.className = 'marker';
+  target.insertBefore(marker, kids[idx] || null);
+  return { owner: target.dataset.owner, slot: target.dataset.slot, idx };
+}
+
+function startDrag(e) {
+  drag.moved = true;
+  const r = drag.el.getBoundingClientRect();
+  drag.dx = e.clientX - r.left; drag.dy = e.clientY - r.top;
+  drag.ghost = drag.el.cloneNode(true);
+  drag.ghost.classList.add('ghost');
+  drag.ghost.classList.remove('on', 'bad', 'flash');
+  drag.ghost.style.width = r.width + 'px';
+  document.body.appendChild(drag.ghost);
+  if (!drag.fromPal) {
+    drag.el.classList.add('dragging');
+    if (!cur().noDelete) palWrap.classList.add('bin');
+  }
+}
+function endDrag() {
+  if (!drag) return;
+  if (drag.ghost) drag.ghost.remove();
+  drag.el.classList.remove('dragging');
+  palWrap.classList.remove('bin');
+  clearMarker();
+  drag = null;
+}
+
+$('work').addEventListener('pointerdown', e => {
+  if (running || drag || (e.button && e.button !== 0)) return;
+  if (e.target.closest('.ctl')) return;
+  const b = e.target.closest('.blk');
+  if (!b) return;
+  drag = { el: b, fromPal: !!b.dataset.pal, t: b.dataset.t, id: b.dataset.id, x0: e.clientX, y0: e.clientY, pid: e.pointerId, moved: false, drop: null };
+});
+document.addEventListener('pointermove', e => {
+  if (!drag || e.pointerId !== drag.pid) return;
+  if (!drag.moved) {
+    if (Math.abs(e.clientX - drag.x0) + Math.abs(e.clientY - drag.y0) < 8) return;
+    startDrag(e);
+  }
+  e.preventDefault();
+  drag.ghost.style.left = (e.clientX - drag.dx) + 'px';
+  drag.ghost.style.top = (e.clientY - drag.dy) + 'px';
+  drag.drop = dropTarget(e.clientX, e.clientY);
+}, { passive: false });
+document.addEventListener('pointerup', e => {
+  if (!drag || e.pointerId !== drag.pid) return;
+  const d = drag;
+  endDrag();
+  if (!d.moved) { if (d.fromPal) addBlock(d.t); return; }   // a tap on a block in the list adds it to the end
+  if (d.fromPal) { if (d.drop) addBlock(d.t, d.drop.owner, d.drop.slot, d.drop.idx); return; }
+  if (!d.drop) { if (!cur().noDelete) removeBlock(d.id); return; }
+  const c = findCtx(d.id);
+  if (!c) return;
+  c.list.splice(c.idx, 1);
+  const list = listOf(d.drop.owner, d.drop.slot) || prog;
+  list.splice(Math.min(d.drop.idx, list.length), 0, c.node);
+  programChanged(c.node.id);
+});
+document.addEventListener('pointercancel', endDrag);
+
+// Keyboard: Enter adds a block from the list. In the program, Delete removes a block and the arrow keys move it.
+$('work').addEventListener('keydown', e => {
+  const b = e.target.closest && e.target.closest('.blk');
+  if (!b || running || e.target !== b) return;
+  if (b.dataset.pal) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); addBlock(b.dataset.t); }
+    return;
+  }
+  const c = findCtx(b.dataset.id);
+  if (!c) return;
+  let moved = false;
+  if ((e.key === 'Delete' || e.key === 'Backspace') && !cur().noDelete) { e.preventDefault(); removeBlock(c.node.id); return; }
+  if (e.key === 'ArrowUp' && c.idx > 0) { c.list.splice(c.idx, 1); c.list.splice(c.idx - 1, 0, c.node); moved = true; }
+  if (e.key === 'ArrowDown' && c.idx < c.list.length - 1) { c.list.splice(c.idx, 1); c.list.splice(c.idx + 1, 0, c.node); moved = true; }
+  if (moved) {
+    e.preventDefault();
+    programChanged();
+    const el = progEl.querySelector('[data-id="' + c.node.id + '"]');
+    if (el) el.focus();
+  }
+});
+
+progEl.addEventListener('click', e => {
+  const b = e.target.closest('.ctl');
+  if (!b || running) return;
+  const c = findCtx(b.dataset.id);
+  if (!c) return;
+  const n = c.node, max = n.t === 'repeat' ? 20 : 6;
+  if (b.dataset.op === 'inc') n.n = Math.min(max, n.n + 1);
+  if (b.dataset.op === 'dec') n.n = Math.max(1, n.n - 1);
+  if (b.dataset.op === 'col') n.c = COLOR_ORDER[(COLOR_ORDER.indexOf(n.c) + 1) % COLOR_ORDER.length];
+  programChanged();
+});
+
+/* ---------- drawing the stage ---------- */
+
+const svg = $('stage'), C = 60;
+const cx = x => x * C + C / 2, cy = y => y * C + C / 2;
+const bot = { x: 0, y: 0, a: 0 };
+let botEl = null, runToken = 0, INSTANT = false;
+
+function starPoints(x, y) {
+  let p = '';
+  for (let i = 0; i < 10; i++) {
+    const r = i % 2 ? 8 : 19, a = Math.PI * i / 5 - Math.PI / 2;
+    p += (x + r * Math.cos(a)).toFixed(1) + ',' + (y + r * Math.sin(a)).toFixed(1) + ' ';
+  }
+  return p;
+}
+function drawStage() {
+  const L = level, edit = cur().kind === 'play';
+  svg.setAttribute('viewBox', '-6 -6 ' + (L.w * C + 12) + ' ' + (L.h * C + 12));
+  let h = '<rect x="-6" y="-6" width="' + (L.w * C + 12) + '" height="' + (L.h * C + 12) + '" rx="12" fill="#475569"/>';
+  for (let y = 0; y < L.h; y++) for (let x = 0; x < L.w; x++) {
+    const c = L.cells[y][x], px = x * C, py = y * C;
+    const home = x === L.start.x && y === L.start.y;
+    h += '<rect class="cell' + (edit && !home ? ' edit' : '') + '" data-x="' + x + '" data-y="' + y + '" x="' + (px + 1.5) + '" y="' + (py + 1.5) + '" width="' + (C - 3) + '" height="' + (C - 3) +
+      '" rx="7" fill="' + (c === '#' ? '#64748b' : (x + y) % 2 ? '#f1f5f9' : '#ffffff') + '"/>';
+    if (c === '#') h += '<rect x="' + (px + 8) + '" y="' + (py + 8) + '" width="' + (C - 16) + '" height="' + (C - 16) + '" rx="5" fill="#94a3b8" pointer-events="none"/>';
+    if (c === 'o') h += '<g pointer-events="none"><rect x="' + (px + 17) + '" y="' + (py + 17) + '" width="26" height="26" rx="4" fill="#f59e0b" stroke="#b45309" stroke-width="2.5"/>' +
+      '<path d="M' + (px + 17) + ' ' + (py + 17) + 'l26 26M' + (px + 43) + ' ' + (py + 17) + 'l-26 26" stroke="#b45309" stroke-width="2"/></g>';
+    if (home) h += '<circle cx="' + cx(x) + '" cy="' + cy(y) + '" r="25" fill="none" stroke="#c4b5fd" stroke-width="3" stroke-dasharray="5 5" pointer-events="none"/>';
+  }
+  L.marks.forEach(m => {
+    h += '<g pointer-events="none"><circle cx="' + cx(m.x) + '" cy="' + cy(m.y) + '" r="17" fill="#ddd6fe"/><text x="' + cx(m.x) + '" y="' + (cy(m.y) + 8) +
+      '" text-anchor="middle" font-size="22" font-weight="700" fill="#4c1d95" font-family="Segoe UI, system-ui, sans-serif">' + m.label + '</text></g>';
+  });
+  h += '<g id="beam" pointer-events="none"></g>';
+  L.stars.forEach((s, i) => { h += '<polygon id="star' + i + '" points="' + starPoints(cx(s.x), cy(s.y)) + '" fill="#facc15" stroke="#a16207" stroke-width="2.5" stroke-linejoin="round" pointer-events="none"/>'; });
+  // Dash, drawn facing up. The orange point and the eye are at the front.
+  h += '<g id="bot" pointer-events="none"><path d="M-8 -22 L0 -31 L8 -22Z" fill="#f97316"/>' +
+    '<circle r="22" fill="#0ea5e9" stroke="#0369a1" stroke-width="2.5"/>' +
+    '<circle class="ear" cx="-18" cy="6" r="6.5" fill="#e2e8f0" stroke="#0369a1" stroke-width="2"/><circle class="ear" cx="18" cy="6" r="6.5" fill="#e2e8f0" stroke="#0369a1" stroke-width="2"/>' +
+    '<circle cy="-7" r="10.5" fill="#fff" stroke="#0369a1" stroke-width="2"/><circle cy="-10" r="5" fill="#0f172a"/></g>';
+  h += '<g id="fx" pointer-events="none"></g>';
+  svg.innerHTML = h;
+  botEl = svg.querySelector('#bot');
+}
+function placeBot() { botEl.setAttribute('transform', 'translate(' + bot.x.toFixed(2) + ' ' + bot.y.toFixed(2) + ') rotate(' + bot.a.toFixed(2) + ')'); }
+function setLight(c) {
+  const fill = c ? COLORS[c] : '#e2e8f0';
+  svg.querySelectorAll('.ear').forEach(e => e.setAttribute('fill', fill));
+  $('outLight').style.background = fill;
+}
+function showSensor(s) {
+  const beam = svg.querySelector('#beam');
+  if (!cur().sensor) { beam.innerHTML = ''; return; }
+  const r = reading(level, s);
+  let h = '';
+  for (let i = 1; i <= r; i++) {
+    h += '<rect x="' + ((s.x + DX[s.d] * i) * C + 9) + '" y="' + ((s.y + DY[s.d] * i) * C + 9) + '" width="' + (C - 18) + '" height="' + (C - 18) + '" rx="8" fill="#fde047" opacity=".6"/>';
+  }
+  beam.innerHTML = h;
+  $('sensVal').textContent = r;
+}
+function fx(text, x, y, color) {
+  const g = svg.querySelector('#fx');
+  g.innerHTML = '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-size="24" font-weight="800" fill="' + color + '" stroke="#fff" stroke-width="5" paint-order="stroke" font-family="Segoe UI, system-ui, sans-serif">' + text + '</text>';
+  const tk = runToken;
+  setTimeout(() => { if (tk === runToken) g.innerHTML = ''; }, 700);
+}
+function say(text, cls) { const el = $('say'); el.textContent = text; el.className = cls || ''; }
+function highlight(id, bad) {
+  progEl.querySelectorAll('.blk.on, .blk.bad').forEach(b => b.classList.remove('on', 'bad'));
+  if (!id) return;
+  const el = progEl.querySelector('[data-id="' + id + '"]');
+  if (!el) return;
+  el.classList.add(bad ? 'bad' : 'on');
+  if (el.scrollIntoView && !INSTANT) el.scrollIntoView({ block: 'nearest' });
+}
+function resetStage() {
+  runToken++;
+  drawStage();
+  const s = level.start;
+  bot.x = cx(s.x); bot.y = cy(s.y); bot.a = s.d * 90;
+  placeBot(); setLight(null); showSensor(s);
+  $('outSound').classList.remove('live');
+  highlight(null);
+  say(cur().kind === 'play' ? 'Tap the floor to build a course. Then press Go.' : 'Press Go to run your program.');
+}
+
+function tween(to, dur) {
+  return new Promise(res => {
+    const tk = runToken, from = Object.assign({}, bot), t0 = performance.now();
+    let done = false;
+    const fin = () => {
+      if (done) return;
+      done = true;
+      if (tk === runToken) { Object.assign(bot, to); placeBot(); }
+      res();
+    };
+    if (!dur) { fin(); return; }
+    const step = now => {
+      if (done) return;
+      if (tk !== runToken) { fin(); return; }
+      const k = Math.min(1, Math.max(0, (now - t0) / dur)), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      for (const key in to) bot[key] = from[key] + (to[key] - from[key]) * e;
+      placeBot();
+      if (k < 1) requestAnimationFrame(step); else fin();
+    };
+    requestAnimationFrame(step);
+    setTimeout(fin, dur + 300);   // keeps going if the tab is in the background
+  });
+}
+
+let audio = null;
+function beepSound() {
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audio.createOscillator(), g = audio.createGain();
+    o.frequency.value = 880; g.gain.value = .08;
+    o.connect(g); g.connect(audio.destination);
+    o.start(); o.stop(audio.currentTime + .15);
+  } catch (e) { /* no sound on this device: the stage still shows the beep */ }
+}
+
+/* ---------- running a program ---------- */
+
+let running = false, stopFlag = false, lastResult = null;
+
+async function play(res, token) {
+  const D = INSTANT ? 0 : (state.speed === 'fast' ? 170 : 480);
+  const pause = ms => INSTANT ? Promise.resolve() : wait(ms);
+  for (const ev of res.tr) {
+    if (stopFlag || token !== runToken) return;
+    highlight(ev.id, ev.k === 'bump');
+    $('outSound').classList.remove('live');
+    if (ev.k === 'move') {
+      say('Drive forward.');
+      await tween({ x: cx(ev.s.x), y: cy(ev.s.y) }, D);
+      if (token !== runToken) return;
+      if (ev.star != null) {
+        const st = svg.querySelector('#star' + ev.star);
+        if (st) st.setAttribute('opacity', '.15');
+        say('Drive forward. You got a star!');
+      }
+    } else if (ev.k === 'turn') {
+      say(ev.dir === 'left' ? 'Turn left.' : 'Turn right.');
+      await tween({ a: bot.a + (ev.dir === 'left' ? -90 : 90) }, D);
+    } else if (ev.k === 'bump') {
+      say(ev.what === 'box' ? 'Bump! Dash hit the small box.' : 'Bump! Dash hit a wall.', 'oops');
+      const bx = bot.x, by = bot.y;
+      await tween({ x: bx + DX[ev.s.d] * 13, y: by + DY[ev.s.d] * 13 }, D * .4);
+      if (token !== runToken) return;
+      fx('Bump!', Math.min(Math.max(bot.x, 40), level.w * C - 40), Math.max(bot.y - 26, 22), '#dc2626');
+      await tween({ x: bx, y: by }, D * .4);
+      await pause(D);
+    } else if (ev.k === 'beep') {
+      say('Beep!');
+      beepSound();
+      $('outSound').classList.add('live');
+      fx('♪ beep', Math.min(Math.max(bot.x, 46), level.w * C - 46), Math.max(bot.y - 28, 22), '#be185d');
+      await pause(D * .9);
+    } else if (ev.k === 'light') {
+      setLight(ev.c);
+      say('The light is ' + ev.c + '.');
+      await pause(D * .7);
+    } else if (ev.k === 'loop') {
+      say('Loop: time ' + ev.i + ' of ' + ev.n + '.');
+      await pause(D * .5);
+    } else if (ev.k === 'if') {
+      say('Sensor says ' + ev.r + '. Is ' + ev.r + ' less than ' + ev.n + '? ' + (ev.yes ? 'Yes. Do the THEN part.' : 'No. Do the ELSE part.'));
+      await pause(D * 1.9);
+    }
+    if (token !== runToken) return;
+    showSensor(ev.s);
+  }
+}
+
+function setBusy(b) {
+  running = b;
+  $('btnGo').disabled = b; $('btnReset').disabled = b; $('btnBack').disabled = b;
+  $('btnStop').disabled = !b;
+  $('work').classList.toggle('builder-locked', b);
+}
+function needsPrediction(ex) { return ex.predict && state.predict[ex.id] == null; }
+function nudgePredict() {
+  const p = document.querySelector('.predict');
+  if (p) { p.scrollIntoView({ block: 'center', behavior: 'smooth' }); p.style.boxShadow = '0 0 0 4px #fde68a'; setTimeout(() => { p.style.boxShadow = ''; }, 1400); }
+  say('First, pick what you think will happen.', 'oops');
+}
+
+async function doGo() {
+  if (running) return;
+  const ex = cur();
+  if (needsPrediction(ex)) { nudgePredict(); return; }
+  if (!prog.length) { say('Your program is empty. Tap a block to add it.', 'oops'); return; }
+  resetStage();
+  const token = runToken;
+  stopFlag = false; setBusy(true);
+  const res = simulate(prog, level);
+  await play(res, token);
+  if (token !== runToken) return;          // the student moved on while Dash was driving
+  setBusy(false);
+  if (stopFlag) { say('Stopped.'); return; }
+  if (!res.bumped) highlight(null);
+  if (ex.kind !== 'task') { say(res.bumped ? 'Bump! Change your blocks or your course and try again.' : 'Done.', res.bumped ? 'oops' : ''); return; }
+  lastResult = evaluate(ex, prog, res, level);
+  lastResult.quiet = !!ex.predict && !state.ran[ex.id] && sig(prog) === sig(ex.starter());
+  if (ex.predict) state.ran[ex.id] = true;
+  if (lastResult.ok) { state.done[ex.id] = true; say('You did it!', 'good'); }
+  else if (!res.bumped) say(lastResult.quiet ? 'Done. Was your guess right?' : 'Not yet. Change one thing and try again.', lastResult.quiet ? '' : 'oops');
+  saveState();
+  renderNav(); renderTask();
+  const box = document.querySelector('.donebox, .results, .predict .verdict');
+  const stacked = window.innerWidth <= 860;   // on a narrow screen, stay with the stage unless the step is finished
+  if (box && box.scrollIntoView && (!stacked || lastResult.ok)) box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+/* ---------- drawing the page ---------- */
+
+function renderNav() {
+  let h = '';
+  STAGES.forEach(st => {
+    h += '<div class="nav-stage">' + esc(st.title) + '<small>' + esc(st.sub) + '</small></div>';
+    st.ex.forEach(ex => {
+      const done = !!state.done[ex.id];
+      h += '<button type="button" class="nav-item' + (ex.id === state.current ? ' current' : '') + (done ? ' done' : '') + '" data-go="' + ex.id + '">' +
+        '<span class="dot' + (ex.kind !== 'task' ? ' free' : '') + '">' + (done ? '✓' : '') + '</span><span>' + esc(ex.title) + (ex.tier === 'ext' ? ' ★★' : '') + '</span></button>';
+    });
+  });
+  $('nav').innerHTML = h;
+  const n = CORE.filter(e => state.done[e.id]).length;
+  $('progFill').style.width = Math.round(100 * n / CORE.length) + '%';
+  $('progText').textContent = n + ' of ' + CORE.length + ' steps';
+}
+
+function predictHtml(ex) {
+  const p = ex.predict, picked = state.predict[ex.id], ran = !!state.ran[ex.id];
+  let h = '<div class="predict"><div class="label">Guess first</div><div>' + p.q + '</div><div class="opts">';
+  p.options.forEach((o, i) => {
+    h += '<button type="button" class="opt' + (picked === i ? ' picked' : '') + '" data-pick="' + i + '"' + (picked != null ? ' disabled' : '') + '>' + esc(o) + '</button>';
+  });
+  h += '</div>';
+  if (picked == null) h += '<div class="verdict">Pick one. Then you can press <b>Go</b>.</div>';
+  else if (!ran) h += '<div class="verdict">Locked in! Now press <b>Go</b> and watch.</div>';
+  else h += '<div class="verdict">' + (picked === p.answer ? '<b class="yes">Your guess was right.</b> ' : '<b class="no">That is not what happened.</b> That is okay. Now you know something new. ') + p.explain + '</div>';
+  return h + '</div>';
+}
+
+function renderTask() {
+  const ex = cur(), st = STAGES[ex.stage];
+  let h = '<div class="crumb">' + esc(st.title) + '</div><h2>' + esc(ex.title) + (ex.tier === 'ext' ? ' <span class="tag">Extra ★★</span>' : '') + '</h2>';
+  if (ex.paper) h += '<div><span class="paperref">Goes with: ' + esc(ex.paper) + '</span></div>';
+  h += ex.body;
+  if (ex.predict) h += predictHtml(ex);
+  if (ex.then) h += ex.then;
+  if (ex.hints && ex.hints.length) {
+    const shown = Math.min(state.hints[ex.id] || 0, ex.hints.length);
+    h += '<div class="hintbox">';
+    for (let i = 0; i < shown; i++) h += '<div class="hint"><b>Hint ' + (i + 1) + '.</b> ' + ex.hints[i] + '</div>';
+    if (shown < ex.hints.length) h += '<button type="button" class="btn small" data-act="hint">' + (shown ? 'Another hint' : 'I am stuck. Give me a hint') + ' (' + (shown + 1) + ' of ' + ex.hints.length + ')</button>';
+    h += '</div>';
+  }
+  if (lastResult && !lastResult.ok && !lastResult.quiet) {
+    h += '<div class="results"><div class="head">Not yet. Change one thing and try again.</div><ul>' + lastResult.msgs.map(m => '<li>' + m + '</li>').join('') + '</ul></div>';
+  }
+  if (state.done[ex.id]) {
+    const next = ALL[ALL.indexOf(ex) + 1];
+    h += '<div class="donebox"><div class="label">★ You did it!</div>' + (ex.after || '');
+    if (next) h += '<div class="rowbtns"><button type="button" class="btn primary" data-go="' + next.id + '">Next: ' + esc(next.title) + ' →</button></div>';
+    h += '</div>';
+  }
+  $('task').innerHTML = h;
+}
+
+function loadLevel(ex) {
+  level = parseMap(ex.kind === 'play' && state.play ? state.play : ex.map);
+  $('ioIn').hidden = !ex.sensor;
+  $('ioOut').hidden = !ex.io;
+  $('inLab').textContent = ex.io ? 'Input: sensor says' : 'Sensor says';
+}
+function select(id) {
+  const ex = byId(id);
+  if (!ex) return;
+  stopFlag = true; setBusy(false);
+  stopReading();
+  state.current = id;
+  lastResult = null;
+  prog = state.code[id] ? reid(state.code[id]) : ex.starter();
+  state.code[id] = prog;
+  loadLevel(ex);
+  renderPalette(); renderProgram(); resetStage();
+  renderNav(); renderTask();
+  $('task').scrollTop = 0;
+  saveState();
+}
+
+/* ---------- events ---------- */
+
+const layoutEl = document.querySelector('.layout');
+function setNavOpen(open) {
+  layoutEl.classList.toggle('nav-open', open);
+  $('btnSteps').setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+$('btnSteps').addEventListener('click', () => setNavOpen(!layoutEl.classList.contains('nav-open')));
+$('task').addEventListener('click', () => setNavOpen(false), true);
+$('work').addEventListener('click', () => setNavOpen(false), true);
+$('nav').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) { select(b.dataset.go); setNavOpen(false); } });
+$('task').addEventListener('click', e => {
+  const go = e.target.closest('[data-go]');
+  if (go) { select(go.dataset.go); return; }
+  const pick = e.target.closest('[data-pick]');
+  if (pick) { state.predict[state.current] = +pick.dataset.pick; saveState(); renderTask(); say('Locked in! Now press Go.'); return; }
+  const act = e.target.closest('[data-act]');
+  if (act && act.dataset.act === 'hint') { state.hints[state.current] = (state.hints[state.current] || 0) + 1; saveState(); renderTask(); }
+});
+$('btnGo').addEventListener('click', doGo);
+$('btnStop').addEventListener('click', () => { stopFlag = true; });
+$('btnBack').addEventListener('click', () => { if (!running) resetStage(); });
+$('btnReset').addEventListener('click', () => {
+  const ex = cur();
+  if (!confirm('Put this step back to how it started? Your blocks for this step will be erased.')) return;
+  prog = ex.starter();
+  if (ex.kind === 'play') { state.play = null; loadLevel(ex); }
+  lastResult = null;
+  programChanged(); renderTask();
+});
+function drawSpeed() { $('btnSpeed').textContent = 'Speed: ' + (state.speed === 'fast' ? 'fast' : 'normal'); }
+$('btnSpeed').addEventListener('click', () => { state.speed = state.speed === 'fast' ? 'normal' : 'fast'; drawSpeed(); saveState(); });
+$('btnNew').addEventListener('click', () => {
+  if (!confirm('Start again from step 1? All the work saved on this device will be erased.')) return;
+  state = blankState();
+  drawSpeed(); select(state.current);
+});
+
+// Free play: tap a floor square to change it.
+const CYCLE = { '.': '#', '#': 'o', 'o': '*', '*': '.' };
+svg.addEventListener('click', e => {
+  const cell = e.target.closest && e.target.closest('.cell.edit');
+  if (!cell || running || cur().kind !== 'play') return;
+  const x = +cell.dataset.x, y = +cell.dataset.y;
+  const rows = (state.play || cur().map).map(r => r.split(''));
+  rows[y][x] = CYCLE[rows[y][x]] || '.';
+  state.play = rows.map(r => r.join(''));
+  saveState(); loadLevel(cur()); resetStage();
+});
+
+// Read to me: the browser reads the instructions out loud, where it can.
+const canRead = 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
+function stopReading() { if (canRead) { speechSynthesis.cancel(); $('btnRead').textContent = 'Read to me'; } }
+if (canRead) {
+  $('btnRead').hidden = false;
+  $('btnRead').addEventListener('click', () => {
+    if (speechSynthesis.speaking) { stopReading(); return; }
+    const u = new SpeechSynthesisUtterance($('task').innerText);
+    u.rate = .9;
+    u.onend = () => { $('btnRead').textContent = 'Read to me'; };
+    $('btnRead').textContent = 'Stop reading';
+    speechSynthesis.speak(u);
+  });
+}
+
+/* ---------- start ---------- */
+
+loadState();
+drawSpeed();
+select(state.current);
+</script>
+</body>
+</html>
