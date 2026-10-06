@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fraction Simulator | Math 9</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --accent: #4f46e5;
+    --accent-light: #e0e7ff;
+    --accent-dark: #4338ca;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --good: #059669;
+    --bad: #dc2626;
+    --fill: #818cf8;
+    --fa: #4338ca;   /* first fraction */
+    --fb: #0f766e;   /* second fraction */
+  }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: #f8fafc;
+  }
+  button, input, select { font: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .45; }
+
+  /* ---------- top bar ---------- */
+  .top {
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    background: #fff; border-bottom: 1px solid var(--line);
+    border-left: 5px solid var(--accent); padding: 8px 16px;
+  }
+  .top .course-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+  .top h1 { font-size: 20px; font-weight: 700; line-height: 1.2; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tab {
+    border: 2px solid #cbd5e1; background: #fff; color: #334155;
+    border-radius: 999px; padding: 6px 16px; font-size: 16px; font-weight: 600;
+  }
+  .tab:hover { border-color: #94a3b8; }
+  .tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn {
+    border: 1px solid #cbd5e1; background: #fff; color: #334155;
+    border-radius: 10px; padding: 8px 14px; font-size: 15px; font-weight: 600;
+  }
+  .btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover:not(:disabled) { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .btn.small { padding: 5px 12px; font-size: 14px; }
+
+  /* ---------- layout ---------- */
+  .layout { display: grid; grid-template-columns: minmax(280px, 360px) minmax(0, 1fr); align-items: start; }
+  #task { background: #fff; border-right: 1px solid var(--line); padding: 18px 20px 40px; min-height: calc(100vh - 60px); }
+  #work { padding: 16px 20px 48px; min-width: 0; }
+
+  /* ---------- task panel ---------- */
+  .crumb { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--accent); }
+  #task h2 { font-size: 23px; font-weight: 700; margin: 2px 0 6px; }
+  #task p { margin-bottom: 10px; }
+  #task ol, #task ul { margin: 4px 0 4px 22px; }
+  #task li { margin-bottom: 6px; }
+  .box { border-radius: 10px; padding: 10px 14px; margin: 12px 0; border: 2px solid; }
+  .box .label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+  .box p:last-child { margin-bottom: 0; }
+  .box.example { border-color: #c7d2fe; background: #eef2ff; } .box.example .label { color: var(--accent-dark); }
+  .box.todo { border-color: #bfdbfe; background: #eff6ff; } .box.todo .label { color: #1d4ed8; }
+  .box.watch { border-color: #fecaca; background: #fef2f2; } .box.watch .label { color: #b91c1c; }
+  .box.paper { border-color: #fed7aa; background: #fff7ed; } .box.paper .label { color: #c2410c; }
+
+  /* ---------- fractions ---------- */
+  .frac { display: inline-flex; flex-direction: column; align-items: center; font-weight: 700; line-height: 1.15; vertical-align: middle; font-variant-numeric: tabular-nums; }
+  .frac .n, .frac .d { padding: 0 .3em; }
+  .frac .n { border-bottom: .09em solid currentColor; }
+  .frac.big { font-size: 46px; } .frac.mid { font-size: 28px; } .frac.sm { font-size: 17px; }
+  .whole { font-size: 46px; font-weight: 700; }
+
+  /* ---------- shared pieces ---------- */
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; }
+  .pane-head { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 6px; }
+  .controls { display: flex; align-items: center; gap: 10px 16px; flex-wrap: wrap; }
+  .controls label { font-weight: 600; font-size: 15px; display: inline-flex; align-items: center; gap: 6px; }
+  .controls input[type=number], .other input { width: 70px; padding: 6px 8px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 18px; font-weight: 700; text-align: center; }
+  .controls select { padding: 6px 8px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 20px; font-weight: 700; background: #fff; }
+  .controls .spacer { flex: 1; }
+  .stepper { display: inline-flex; align-items: center; gap: 6px; }
+  .stepper button { width: 38px; height: 38px; border-radius: 10px; border: 2px solid #cbd5e1; background: #fff; font-size: 22px; font-weight: 700; line-height: 1; color: #334155; }
+  .stepper button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .stepper output { min-width: 34px; text-align: center; font-size: 22px; font-weight: 700; }
+  .seg { display: inline-flex; border: 2px solid #cbd5e1; border-radius: 10px; overflow: hidden; }
+  .seg button { border: none; background: #fff; padding: 7px 12px; font-size: 15px; font-weight: 600; color: #334155; }
+  .seg button + button { border-left: 2px solid #cbd5e1; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .seg button.warn[aria-pressed="true"] { background: #b91c1c; }
+
+  .say { border: 2px solid var(--line); background: #fff; border-radius: 10px; padding: 9px 13px; min-height: 48px; font-size: 16px; margin-bottom: 14px; }
+  .say.good { border-color: var(--good); background: #ecfdf5; }
+  .say.oops { border-color: #fca5a5; background: #fef2f2; }
+  .say.done { border-color: var(--good); background: #ecfdf5; font-weight: 600; color: #065f46; }
+
+  .bars { display: flex; flex-direction: column; gap: 6px; }
+  .bar { display: flex; height: 56px; border: 2px solid var(--ink); border-radius: 6px; overflow: hidden; background: #fff; }
+  .bars.multi .bar { height: 34px; }
+  .bar i { flex: 1; border-left: 1px solid #475569; transition: border-color .5s; }
+  .bar i:first-child { border-left: none; }
+  .bar i.on { background: var(--fill); }
+  .bar i.major { border-left: 3px solid var(--ink); }
+  .bars.merge .bar i:not(.major) { border-left-color: transparent; }
+  .barlabel { display: flex; align-items: center; gap: 10px; margin: 10px 0 4px; font-size: 15px; color: #475569; }
+  .barlabel:first-child { margin-top: 0; }
+
+  .pad-label { font-weight: 700; margin-bottom: 6px; }
+  .pad-keys { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .key { min-width: 58px; min-height: 44px; border: 2px solid var(--accent); background: #fff; color: var(--accent-dark); border-radius: 10px; font-size: 17px; font-weight: 700; }
+  .key:hover:not(:disabled) { background: var(--accent-light); }
+  .other { display: inline-flex; align-items: center; gap: 6px; margin-left: 6px; font-size: 15px; font-weight: 600; }
+
+  /* ---------- 1. equivalent ---------- */
+  .eq-row { display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap; padding: 6px 0; }
+  .arrow { display: inline-flex; flex-direction: column; align-items: center; font-weight: 700; color: var(--accent-dark); }
+  .arrow .opn { font-size: 17px; background: var(--accent-light); border-radius: 999px; padding: 0 10px; white-space: nowrap; }
+  .arrow .sign { font-size: 34px; line-height: 1.1; color: var(--good); }
+  .arrow.no .opn { background: #fee2e2; color: #b91c1c; }
+  .arrow.no .sign { color: var(--bad); }
+  .family { display: flex; flex-wrap: wrap; gap: 6px; }
+  .family button { border: 2px solid var(--line); background: #fff; border-radius: 10px; padding: 4px 6px; min-width: 46px; color: var(--ink); }
+  .family button:hover { border-color: #94a3b8; }
+  .family button.cur { border-color: var(--accent); background: var(--accent-light); color: var(--accent-dark); }
+
+  /* ---------- 2. simplify ---------- */
+  .trail { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; min-height: 112px; }
+  .trail .frac.mid { color: #94a3b8; }
+  .trail .step { display: inline-flex; flex-direction: column; align-items: center; color: var(--accent-dark); font-weight: 700; font-size: 15px; line-height: 1.2; }
+  .trail .step b { font-size: 24px; line-height: 1; }
+  .factors { margin-top: 10px; }
+  .factors .row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+  .factors .row > b { min-width: 118px; }
+  .fchip { display: inline-block; min-width: 30px; text-align: center; border: 1px solid #cbd5e1; border-radius: 7px; padding: 0 6px; font-weight: 600; background: #fff; }
+  .fchip.common { border-color: var(--accent); background: var(--accent-light); color: var(--accent-dark); }
+  .fchip.gcf { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* ---------- 3. cross-cancel ---------- */
+  .xrow { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+  .xfrac { display: inline-flex; flex-direction: column; align-items: center; }
+  .xfrac .hist { min-height: 26px; display: flex; flex-direction: column; align-items: center; font-size: 19px; font-weight: 700; color: #94a3b8; line-height: 1.2; text-decoration: line-through; text-decoration-color: var(--bad); text-decoration-thickness: 2px; }
+  .xfrac .rule { width: 100%; height: 4px; background: var(--ink); border-radius: 2px; margin: 6px 0; }
+  .num { min-width: 78px; min-height: 62px; border: 3px solid #cbd5e1; background: #fff; border-radius: 12px; font-size: 40px; font-weight: 700; line-height: 1; padding: 6px 12px; font-variant-numeric: tabular-nums; }
+  .xfrac.a .num { color: var(--fa); } .xfrac.b .num { color: var(--fb); }
+  .num:hover:not(:disabled) { border-color: #94a3b8; }
+  .num.picked { border-color: #f59e0b; background: #fffbeb; box-shadow: 0 0 0 3px #fde68a; }
+  .xop { font-size: 40px; font-weight: 700; color: #475569; }
+  .xnote { text-align: center; font-size: 15px; color: #475569; margin-top: 8px; }
+  .big-frac { display: inline-flex; flex-direction: column; align-items: stretch; min-width: 220px; }
+  .big-frac .rule { height: 3px; background: var(--ink); border-radius: 2px; margin: 6px 0; }
+  .chips { display: flex; align-items: center; justify-content: center; gap: 5px; flex-wrap: wrap; min-height: 34px; }
+  .chip { display: inline-block; min-width: 32px; text-align: center; color: #fff; font-weight: 700; border-radius: 8px; padding: 2px 8px; }
+  .chip.a { background: var(--fa); } .chip.b { background: var(--fb); }
+  .chip.x { background: #e2e8f0; color: #94a3b8; text-decoration: line-through; text-decoration-color: var(--bad); text-decoration-thickness: 2px; }
+  .chip.one { background: #fff; color: #64748b; border: 1px dashed #94a3b8; }
+  .chips .times { color: #64748b; font-weight: 700; padding: 0 4px; }
+  .center { display: flex; justify-content: center; }
+
+  @media (max-width: 900px) {
+    .layout { display: flex; flex-direction: column; }
+    #work { order: 1; padding: 12px 12px 24px; }
+    #task { order: 2; border-right: none; border-top: 1px solid var(--line); min-height: 0; }
+    .frac.big, .whole { font-size: 38px; }
+    .num { font-size: 32px; min-width: 64px; min-height: 54px; }
+  }
+  @media print {
+    .tabs, .controls, .pad, #task .todo { display: none; }
+    body { background: #fff; }
+    .bar i.on { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bar i { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="course-label">Math 9 · Number · Rational Numbers</div>
+    <h1>Fraction Simulator</h1>
+  </div>
+  <div class="tabs" role="tablist" aria-label="Simulator">
+    <button class="tab" role="tab" data-tab="equiv" aria-selected="true">1 · Equivalent fractions</button>
+    <button class="tab" role="tab" data-tab="simp" aria-selected="false">2 · Simplifying</button>
+    <button class="tab" role="tab" data-tab="cross" aria-selected="false">3 · Cross-cancelling</button>
+  </div>
+</header>
+
+<div class="layout">
+  <section id="task"></section>
+
+  <section id="work">
+
+    <!-- ============ 1. Equivalent fractions ============ -->
+    <div id="pane-equiv">
+      <div class="card">
+        <div class="controls">
+          <span class="stepper" data-key="n"><label>Top</label><button type="button" data-step="-1" aria-label="Top down">−</button><output></output><button type="button" data-step="1" aria-label="Top up">+</button></span>
+          <span class="stepper" data-key="d"><label>Bottom</label><button type="button" data-step="-1" aria-label="Bottom down">−</button><output></output><button type="button" data-step="1" aria-label="Bottom up">+</button></span>
+          <span class="spacer"></span>
+          <span class="seg" id="eWay">
+            <button type="button" data-way="mult" aria-pressed="true">Multiply top and bottom</button>
+            <button type="button" data-way="add" class="warn" aria-pressed="false">Add to top and bottom</button>
+          </span>
+          <span class="stepper" data-key="k"><label id="eKLabel">by</label><button type="button" data-step="-1" aria-label="Number down">−</button><output></output><button type="button" data-step="1" aria-label="Number up">+</button></span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="eq-row" id="eEq"></div>
+      </div>
+      <div class="say" id="eSay" aria-live="polite"></div>
+      <div class="card" id="eBars"></div>
+      <div class="card">
+        <div class="pane-head" id="eFamHead"></div>
+        <div class="family" id="eFam"></div>
+      </div>
+    </div>
+
+    <!-- ============ 2. Simplifying ============ -->
+    <div id="pane-simp" hidden>
+      <div class="card">
+        <div class="controls">
+          <label>Top <input type="number" id="sN" min="1" max="99" inputmode="numeric"></label>
+          <label>Bottom <input type="number" id="sD" min="1" max="60" inputmode="numeric"></label>
+          <button class="btn" type="button" id="sRandom">Random fraction</button>
+          <span class="spacer"></span>
+          <button class="btn small" type="button" id="sUndo">Undo</button>
+          <button class="btn small" type="button" id="sReset">Start over</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="trail" id="sTrail"></div>
+      </div>
+      <div class="say" id="sSay" aria-live="polite"></div>
+      <div class="card" id="sBarsCard"><div id="sBars"></div></div>
+      <div class="card" id="sPad"></div>
+      <div class="card">
+        <button class="btn small" type="button" id="sShowF" aria-expanded="false">Show the factors</button>
+        <div class="factors" id="sFactors" hidden></div>
+      </div>
+    </div>
+
+    <!-- ============ 3. Cross-cancelling ============ -->
+    <div id="pane-cross" hidden>
+      <div class="card">
+        <div class="controls">
+          <label><input type="number" id="xA" min="1" max="60" inputmode="numeric" aria-label="First top"> over <input type="number" id="xB" min="1" max="60" inputmode="numeric" aria-label="First bottom"></label>
+          <select id="xOp" aria-label="Operation"><option value="×">×</option><option value="÷">÷</option></select>
+          <label><input type="number" id="xC" min="1" max="60" inputmode="numeric" aria-label="Second top"> over <input type="number" id="xD" min="1" max="60" inputmode="numeric" aria-label="Second bottom"></label>
+          <button class="btn" type="button" id="xRandom">Random problem</button>
+          <span class="spacer"></span>
+          <button class="btn small" type="button" id="xReset">Start over</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="xrow" id="xRow"></div>
+        <div class="xnote" id="xNote"></div>
+      </div>
+      <div class="say" id="xSay" aria-live="polite"></div>
+      <div class="card" id="xPad"></div>
+      <div class="card">
+        <div class="pane-head">One big fraction, split into prime factors</div>
+        <div class="center"><div class="big-frac" id="xChips"></div></div>
+      </div>
+    </div>
+
+  </section>
+</div>
+
+<script>
+/* =====================================================================
+   Fraction Simulator — Math 9, Rational Numbers
+   Three tabs: equivalent fractions, simplifying, cross-cancelling.
+   No libraries. Positive fractions only: signs are handled separately
+   in the notes (work out the sign, then cancel the sizes).
+   ===================================================================== */
+
+const $ = id => document.getElementById(id);
+const gcd = (a, b) => b ? gcd(b, a % b) : a;
+const rnd = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
+const pick = arr => arr[rnd(0, arr.length - 1)];
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, Math.round(v) || lo));
+const factorsOf = n => { const f = []; for (let i = 1; i <= n; i++) if (n % i === 0) f.push(i); return f; };
+const primesOf = n => { const p = []; for (let q = 2; n > 1;) { if (n % q === 0) { p.push(q); n /= q; } else q++; } return p; };
+const frac = (n, d, cls) => '<span class="frac ' + (cls || '') + '"><span class="n">' + n + '</span><span class="d">' + d + '</span></span>';
+const plural = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
+
+function decimal(n, d) {
+  const v = Math.round(n / d * 1000) / 1000;
+  return (Math.abs(v - n / d) < 1e-12 ? '= ' : '≈ ') + v;
+}
+
+// One bar per whole. The first n pieces are shaded. `major` draws a heavy line every `major` pieces.
+function bars(n, d, major) {
+  const wholes = Math.max(1, Math.ceil(n / d));
+  if (wholes > 4) return '<p>' + n + '/' + d + ' is more than 4 wholes, which is too many bars to draw.</p>';
+  let h = '<div class="bars' + (wholes > 1 ? ' multi' : '') + '" role="img" aria-label="' + n + ' of ' + d + ' equal pieces shaded">';
+  for (let w = 0; w < wholes; w++) {
+    h += '<div class="bar">';
+    for (let i = 0; i < d; i++) {
+      h += '<i class="' + (w * d + i < n ? 'on' : '') + (major && i && i % major === 0 ? ' major' : '') + '"></i>';
+    }
+    h += '</div>';
+  }
+  return h + '</div>';
+}
+
+function padHTML(label) {
+  let h = '<div class="pad"><div class="pad-label">' + label + '</div><div class="pad-keys">';
+  for (let k = 2; k <= 12; k++) h += '<button type="button" class="key" data-k="' + k + '">÷ ' + k + '</button>';
+  return h + '<span class="other"><label>other: ÷ <input type="number" class="otherIn" min="2" max="99" inputmode="numeric" aria-label="Divide by another number"></label>' +
+    '<button type="button" class="btn small otherGo">Go</button></span></div></div>';
+}
+function wirePad(root, fn) {
+  const other = () => { const v = parseInt(root.querySelector('.otherIn').value, 10); if (v) fn(v); };
+  root.addEventListener('click', e => {
+    const key = e.target.closest('[data-k]');
+    if (key) fn(+key.dataset.k);
+    else if (e.target.closest('.otherGo')) other();
+  });
+  root.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.classList.contains('otherIn')) other(); });
+}
+const remainder = (x, k) => x + ' ÷ ' + k + ' = ' + Math.floor(x / k) + ' remainder ' + (x % k);
+
+// Why k is not a common factor of x and y.
+function whyNot(k, x, y) {
+  if (k < 2) return 'Dividing by 1 changes nothing. Choose 2 or more.';
+  const fx = x % k === 0, fy = y % k === 0;
+  let s;
+  if (!fx && !fy) s = '<b>' + k + ' is not a factor of ' + x + ' or ' + y + '.</b> ' + remainder(x, k) + ', and ' + remainder(y, k) + '.';
+  else {
+    const ok = fx ? x : y, no = fx ? y : x;
+    s = '<b>' + k + ' goes into ' + ok + ' but not into ' + no + '.</b> ' + ok + ' ÷ ' + k + ' = ' + ok / k + ', but ' + remainder(no, k) + '. A common factor has to divide both numbers.';
+  }
+  if (gcd(x, y) === 1) s += ' In fact ' + x + ' and ' + y + ' share no factor except 1, so this pair cannot be made smaller.';
+  return s;
+}
+
+/* ---------- task panel text ---------- */
+
+const TASKS = {
+  equiv:
+    '<div class="crumb">Tab 1</div><h2>Equivalent fractions</h2>' +
+    '<p>Two fractions are <b>equivalent</b> when they name the same amount. The pieces change size. The amount does not.</p>' +
+    '<div class="box example"><div class="label">Worked example</div><p>Start with 2/3. Multiply the top and the bottom by 4.</p>' +
+    '<p>Each third is cut into 4 pieces, so there are 12 pieces and 8 are shaded. 2/3 = 8/12.</p></div>' +
+    '<div class="box todo"><div class="label">Try this</div><ol>' +
+    '<li>Set the fraction to 3/4. <b>Predict</b> what the second bar will look like when you multiply by 3. Then check.</li>' +
+    '<li>Find three fractions equivalent to 2/5. What do you multiply by to get a bottom number of 20?</li>' +
+    '<li>Switch to <b>Add to top and bottom</b>. Predict first: is 1/2 the same as 2/3? Test it.</li>' +
+    '</ol></div>' +
+    '<div class="box paper"><div class="label">Explain it in your notes</div><p>Multiplying the top and bottom by 4 is the same as multiplying the fraction by 4/4. Why does that leave the amount unchanged?</p></div>',
+  simp:
+    '<div class="crumb">Tab 2</div><h2>Simplifying</h2>' +
+    '<p>Simplifying is equivalent fractions run backwards. Divide the top and the bottom by a <b>common factor</b> and the small pieces join into bigger ones.</p>' +
+    '<p>When the only common factor left is 1, the fraction is in <b>lowest terms</b>.</p>' +
+    '<div class="box example"><div class="label">Worked example</div><p>12/18: divide both by 2 to get 6/9. Divide both by 3 to get 2/3.</p>' +
+    '<p>One step also works: the greatest common factor of 12 and 18 is 6, and 12/18 ÷ 6/6 = 2/3.</p></div>' +
+    '<div class="box todo"><div class="label">Try this</div><ol>' +
+    '<li>Simplify 24/36 and count your steps. Then start over and do it in one step.</li>' +
+    '<li>Before you press a number, <b>predict</b> how many pieces the bar will have afterwards.</li>' +
+    '<li>Enter 8/12 and try to divide by 3. Read why it does not work.</li>' +
+    '<li>Press <b>Random fraction</b> five times. Try to use the greatest common factor each time. List the factors on paper before you open <b>Show the factors</b>.</li>' +
+    '</ol></div>' +
+    '<div class="box paper"><div class="label">Explain it in your notes</div><p>How do you know for certain that a fraction is in lowest terms? Use 9/16 as your example.</p></div>',
+  cross:
+    '<div class="crumb">Tab 3</div><h2>Cross-cancelling</h2>' +
+    '<p>To multiply fractions, multiply the tops together and the bottoms together. That makes one big fraction, so <b>any top can cancel with any bottom</b>.</p>' +
+    '<p>Tap one number on top and one on the bottom, then divide both by a common factor. Cancel first and the numbers stay small.</p>' +
+    '<div class="box example"><div class="label">Worked example</div><p>3/8 × 4/9. The 3 and the 9 share a factor of 3: they become 1 and 3. The 4 and the 8 share a factor of 4: they become 1 and 2.</p>' +
+    '<p>Now multiply: (1 × 1)/(2 × 3) = 1/6.</p></div>' +
+    '<div class="box todo"><div class="label">Try this</div><ol>' +
+    '<li>For 3/8 × 4/9, press <b>Multiply</b> without cancelling anything. Then start over, cancel first, and compare the numbers you had to work with.</li>' +
+    '<li>Tap two top numbers. Read why they do not cancel.</li>' +
+    '<li>Change × to ÷. What has to happen before you can cancel?</li>' +
+    '<li>Press <b>Random problem</b>. <b>Predict</b> the answer in lowest terms before you touch anything.</li>' +
+    '</ol></div>' +
+    '<div class="box watch"><div class="label">Watch out</div><p>Cancelling only works when you multiply. In 1/2 + 2/3 you cannot cancel the 2s. That would give 1 + 1/3 = 4/3, but the real sum is 7/6.</p></div>' +
+    '<div class="box paper"><div class="label">Explain it in your notes</div><p>Why does cross-cancelling give the same answer as multiplying first and simplifying after? Use the prime factor row to help. Which way is easier, and why?</p></div>',
+};
+
+/* ---------- tabs ---------- */
+
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === name));
+  ['equiv', 'simp', 'cross'].forEach(n => { $('pane-' + n).hidden = n !== name; });
+  $('task').innerHTML = TASKS[name];
+}
+document.querySelector('.tabs').addEventListener('click', e => {
+  const t = e.target.closest('.tab');
+  if (t) showTab(t.dataset.tab);
+});
+
+/* =====================================================================
+   1. Equivalent fractions
+   ===================================================================== */
+
+const E = { n: 2, d: 3, k: 2, way: 'mult' };
+const E_LIMITS = { n: [1, 12], d: [1, 12], k: [1, 10] };
+
+function renderE() {
+  const n = E.n, d = E.d, k = E.k, mult = E.way === 'mult';
+  const n2 = mult ? n * k : n + k, d2 = mult ? d * k : d + k;
+  const same = n * d2 === n2 * d;
+  const op = (mult ? '× ' : '+ ') + k;
+
+  document.querySelectorAll('#pane-equiv .stepper').forEach(s => {
+    const key = s.dataset.key, lim = E_LIMITS[key];
+    const hi = key === 'n' ? d : lim[1];
+    s.querySelector('output').textContent = E[key];
+    s.querySelector('[data-step="-1"]').disabled = E[key] <= lim[0];
+    s.querySelector('[data-step="1"]').disabled = E[key] >= hi;
+  });
+  document.querySelectorAll('#eWay button').forEach(b => b.setAttribute('aria-pressed', b.dataset.way === E.way));
+
+  $('eEq').innerHTML = frac(n, d, 'big') +
+    '<span class="arrow' + (same ? '' : ' no') + '"><span class="opn">' + op + '</span><span class="sign">' + (same ? '=' : '≠') + '</span><span class="opn">' + op + '</span></span>' +
+    frac(n2, d2, 'big');
+
+  const say = $('eSay');
+  if (mult) {
+    say.className = 'say good';
+    say.innerHTML = k === 1
+      ? 'Multiplying by 1 changes nothing. Raise the number to cut the pieces.'
+      : 'Each of the ' + plural(d, 'piece') + ' was cut into ' + k + '. There are ' + k + ' times as many pieces and ' + k + ' times as many are shaded, so <b>the shaded amount is the same</b>. Multiplying by ' + k + '/' + k + ' is multiplying by 1.';
+  } else if (same) {
+    say.className = 'say';
+    say.innerHTML = 'These two are equal, but only because both are exactly one whole. Lower the top number and try again.';
+  } else {
+    say.className = 'say oops';
+    say.innerHTML = '<b>Not equivalent.</b> Adding ' + k + ' to the top and the bottom changed the amount: ' + n + '/' + d + ' ' + decimal(n, d) + ', but ' + n2 + '/' + d2 + ' ' + decimal(n2, d2) + '. Only multiplying or dividing both by the same number keeps a fraction equal.';
+  }
+
+  $('eBars').innerHTML =
+    '<div class="barlabel">' + frac(n, d, 'sm') + '<span>' + decimal(n, d) + '</span></div>' + bars(n, d, 0) +
+    '<div class="barlabel">' + frac(n2, d2, 'sm') + '<span>' + decimal(n2, d2) + (mult && k > 1 ? ' · heavy lines show the original pieces' : '') + '</span></div>' + bars(n2, d2, mult ? k : 0);
+
+  $('eFamHead').textContent = 'The family of ' + n + '/' + d + ' (tap one)';
+  let fam = '';
+  for (let j = 1; j <= 10; j++) fam += '<button type="button" data-j="' + j + '"' + (mult && j === k ? ' class="cur"' : '') + ' aria-label="' + n * j + ' over ' + d * j + '">' + frac(n * j, d * j, 'sm') + '</button>';
+  $('eFam').innerHTML = fam;
+}
+
+$('pane-equiv').addEventListener('click', e => {
+  const step = e.target.closest('[data-step]');
+  if (step) {
+    const key = step.closest('.stepper').dataset.key, lim = E_LIMITS[key];
+    E[key] = clamp(E[key] + +step.dataset.step, lim[0], lim[1]);
+    if (E.n > E.d) E.n = E.d;
+    return renderE();
+  }
+  const way = e.target.closest('[data-way]');
+  if (way) { E.way = way.dataset.way; return renderE(); }
+  const j = e.target.closest('[data-j]');
+  if (j) { E.k = +j.dataset.j; E.way = 'mult'; renderE(); }
+});
+
+/* =====================================================================
+   2. Simplifying
+   ===================================================================== */
+
+const S = { n0: 24, d0: 36, n: 24, d: 36, steps: [], msg: null, busy: false, showF: false };
+
+function setS(n, d) {
+  S.n0 = S.n = n; S.d0 = S.d = d; S.steps = []; S.msg = null; S.busy = false;
+  $('sN').value = n; $('sD').value = d;
+  renderS();
+}
+
+function renderS() {
+  const n = S.n, d = S.d, done = gcd(n, d) === 1;
+
+  let trail = '';
+  S.steps.forEach(st => { trail += frac(st.n, st.d, 'mid') + '<span class="step">÷ ' + st.k + '<b>→</b>÷ ' + st.k + '</span>'; });
+  $('sTrail').innerHTML = trail + frac(n, d, 'big');
+
+  const say = $('sSay');
+  if (done) {
+    const g = gcd(S.n0, S.d0);
+    say.className = 'say done';
+    if (!S.steps.length) say.innerHTML = n + '/' + d + ' is already in lowest terms. The only common factor of ' + n + ' and ' + d + ' is 1.';
+    else say.innerHTML = 'Lowest terms: ' + S.n0 + '/' + S.d0 + ' = ' + n + '/' + d + '. The only common factor of ' + n + ' and ' + d + ' is 1. You used ' + plural(S.steps.length, 'step') + '.' +
+      (S.steps.length > 1 ? ' Dividing by the greatest common factor, ' + g + ', does it in one.' : ' You divided by the greatest common factor.');
+  } else if (S.msg) {
+    say.className = 'say ' + S.msg.cls; say.innerHTML = S.msg.html;
+  } else {
+    say.className = 'say';
+    say.innerHTML = 'Choose a number that divides both ' + n + ' and ' + d + ' with no remainder.';
+  }
+
+  $('sBars').className = '';
+  $('sBars').innerHTML = '<div class="barlabel">' + frac(n, d, 'sm') + '<span>' + decimal(n, d) + '</span></div>' + bars(n, d, 0);
+  $('sPad').innerHTML = padHTML('Divide the top and the bottom by:');
+  $('sPad').querySelectorAll('button, input').forEach(el => { el.disabled = done; });
+  $('sUndo').disabled = !S.steps.length;
+  renderFactors();
+}
+
+function renderFactors() {
+  $('sFactors').hidden = !S.showF;
+  $('sShowF').textContent = S.showF ? 'Hide the factors' : 'Show the factors';
+  $('sShowF').setAttribute('aria-expanded', S.showF);
+  if (!S.showF) return;
+  const g = gcd(S.n, S.d);
+  const row = x => '<div class="row"><b>Factors of ' + x + ':</b>' + factorsOf(x).map(f =>
+    '<span class="fchip' + (f === g ? ' gcf' : S.n % f === 0 && S.d % f === 0 ? ' common' : '') + '">' + f + '</span>').join('') + '</div>';
+  $('sFactors').innerHTML = row(S.n) + row(S.d) +
+    '<p>Shaded factors are in both lists. The greatest common factor is <b>' + g + '</b>.</p>';
+}
+
+function divideS(k) {
+  if (S.busy) return;
+  const n = S.n, d = S.d;
+  if (k >= 2 && n % k === 0 && d % k === 0) {
+    // Show the groups first, fade the cuts inside each group, then redraw with the bigger pieces.
+    S.busy = true;
+    const el = $('sBars');
+    el.innerHTML = '<div class="barlabel">' + frac(n, d, 'sm') + '<span>joining the pieces in groups of ' + k + '</span></div>' + bars(n, d, k);
+    const group = el.querySelector('.bars');
+    requestAnimationFrame(() => group && group.classList.add('merge'));
+    setTimeout(() => {
+      S.steps.push({ k: k, n: n, d: d });
+      S.n = n / k; S.d = d / k; S.busy = false;
+      S.msg = { cls: 'good', html: '<b>' + n + ' ÷ ' + k + ' = ' + S.n + ' and ' + d + ' ÷ ' + k + ' = ' + S.d + '.</b> Every ' + k + ' pieces joined into one. Same amount, bigger pieces. Is there another common factor?' };
+      renderS();
+    }, 650);
+  } else {
+    S.msg = { cls: 'oops', html: whyNot(k, n, d) };
+    renderS();
+  }
+}
+
+function randomS() {
+  let d, n, m;
+  do {
+    d = rnd(2, 9); n = rnd(1, d - 1);
+    m = pick([4, 6, 8, 9, 10, 12, 15, 18]);
+  } while (gcd(n, d) !== 1 || d * m > 60);
+  setS(n * m, d * m);
+}
+
+wirePad($('sPad'), divideS);
+$('sRandom').addEventListener('click', randomS);
+$('sReset').addEventListener('click', () => setS(S.n0, S.d0));
+$('sUndo').addEventListener('click', () => {
+  if (S.busy || !S.steps.length) return;
+  const st = S.steps.pop(); S.n = st.n; S.d = st.d; S.msg = null; renderS();
+});
+$('sShowF').addEventListener('click', () => { S.showF = !S.showF; renderFactors(); });
+['sN', 'sD'].forEach(id => $(id).addEventListener('change', () => setS(clamp(+$('sN').value, 1, 99), clamp(+$('sD').value, 1, 60))));
+
+/* =====================================================================
+   3. Cross-cancelling
+   Cells: t0/b0 are the first fraction, t1/b1 the second.
+   ===================================================================== */
+
+const X = { entry: { a: 3, b: 8, c: 4, d: 9, op: '×' }, cells: {}, op: '×', flipped: null, picks: [], done: false, msg: null };
+const cur = id => { const h = X.cells[id].hist; return h[h.length - 1]; };
+const cell = v => ({ hist: [v], chips: primesOf(v).map(p => ({ p: p, x: false })) });
+
+function setX(en) {
+  X.entry = en;
+  X.cells = { t0: cell(en.a), b0: cell(en.b), t1: cell(en.c), b1: cell(en.d) };
+  X.op = en.op; X.flipped = null; X.picks = []; X.done = false; X.msg = null;
+  $('xA').value = en.a; $('xB').value = en.b; $('xC').value = en.c; $('xD').value = en.d; $('xOp').value = en.op;
+  renderX();
+}
+
+function flipX() {
+  const en = X.entry;
+  X.flipped = en.c + '/' + en.d;
+  X.cells.t1 = cell(en.d); X.cells.b1 = cell(en.c);
+  X.op = '×'; X.picks = [];
+  X.msg = { cls: 'good', html: 'Dividing by ' + en.c + '/' + en.d + ' is the same as multiplying by its reciprocal, ' + en.d + '/' + en.c + '. Now you can cancel.' };
+  renderX();
+}
+
+function xfracHTML(i) {
+  const side = i ? 'b' : 'a', t = 't' + i, b = 'b' + i;
+  const old = id => X.cells[id].hist.slice(0, -1);
+  const btn = (id, where) => '<button type="button" class="num' + (X.picks.indexOf(id) >= 0 ? ' picked' : '') + '" data-cell="' + id + '" aria-pressed="' + (X.picks.indexOf(id) >= 0) + '" aria-label="' + where + ' number ' + cur(id) + '">' + cur(id) + '</button>';
+  return '<span class="xfrac ' + side + '">' +
+    '<span class="hist">' + old(t).map(v => '<span>' + v + '</span>').join('') + '</span>' +
+    btn(t, 'Top') + '<span class="rule"></span>' + btn(b, 'Bottom') +
+    '<span class="hist">' + old(b).reverse().map(v => '<span>' + v + '</span>').join('') + '</span></span>';
+}
+
+function resultX() {
+  const P = cur('t0') * cur('t1'), Q = cur('b0') * cur('b1'), g = gcd(P, Q);
+  const lowest = Q / g === 1 ? '<span class="whole">' + P / g + '</span>' : frac(P / g, Q / g, 'big');
+  return { P: P, Q: Q, g: g, html: g === 1 ? lowest : frac(P, Q, 'big') + '<span class="xop">=</span>' + lowest };
+}
+
+function renderX() {
+  const en = X.entry, r = resultX();
+  $('xRow').innerHTML = xfracHTML(0) + '<span class="xop">' + X.op + '</span>' + xfracHTML(1) + '<span class="xop">=</span>' +
+    (X.done ? r.html : '<button type="button" class="btn primary" id="xGo"' + (X.op === '÷' ? ' disabled' : '') + '>Multiply</button>');
+  $('xNote').innerHTML = X.flipped ? 'Started as ' + en.a + '/' + en.b + ' ÷ ' + X.flipped + '. The second fraction was flipped.' : '';
+
+  const say = $('xSay');
+  if (X.msg) { say.className = 'say ' + X.msg.cls; say.innerHTML = X.msg.html; }
+  else if (X.op === '÷') { say.className = 'say'; say.innerHTML = 'You cannot cancel across a ÷ sign. First change the division into a multiplication.'; }
+  else if (X.picks.length === 2) { say.className = 'say'; say.innerHTML = 'What number divides both ' + cur(X.picks[0]) + ' and ' + cur(X.picks[1]) + ' with no remainder?'; }
+  else { say.className = 'say'; say.innerHTML = 'Tap one number on top and one number on the bottom that share a common factor.'; }
+
+  const pad = $('xPad');
+  if (X.op === '÷') {
+    pad.innerHTML = '<div class="pad-label">Dividing by a fraction</div><button type="button" class="btn primary" id="xFlip">Flip the second fraction and multiply</button>';
+  } else if (X.picks.length === 2) {
+    pad.innerHTML = padHTML('Divide ' + cur(X.picks[0]) + ' and ' + cur(X.picks[1]) + ' by:');
+  } else {
+    pad.innerHTML = '<div class="pad-label">' + (X.picks.length ? 'Now tap a number on the ' + (X.picks[0][0] === 't' ? 'bottom' : 'top') + '.' : 'Pick a pair to cancel.') + '</div>';
+  }
+
+  const chips = (id, side) => {
+    const c = X.cells[id].chips;
+    if (!c.length) return '<span class="chip one">1</span>';
+    return c.map(ch => '<span class="chip ' + (ch.x ? 'x' : side) + '">' + ch.p + '</span>').join('');
+  };
+  $('xChips').innerHTML =
+    '<div class="chips">' + chips('t0', 'a') + '<span class="times">×</span>' + chips('t1', 'b') + '</div><div class="rule"></div>' +
+    '<div class="chips">' + chips('b0', 'a') + '<span class="times">×</span>' + chips('b1', 'b') + '</div>';
+}
+
+function pickX(id) {
+  if (X.op === '÷') { X.msg = { cls: 'oops', html: '<b>Flip first.</b> Cancelling only works across a × sign. Change the division into a multiplication, then cancel.' }; return renderX(); }
+  X.done = false; X.msg = null;
+  const at = X.picks.indexOf(id);
+  if (at >= 0) X.picks.splice(at, 1);
+  else if (X.picks.length === 1 && X.picks[0][0] === id[0]) {
+    const tops = id[0] === 't';
+    X.msg = { cls: 'oops', html: '<b>Those are both ' + (tops ? 'top' : 'bottom') + ' numbers.</b> Cancelling divides the top and the bottom of the answer by the same number, so you need one of each. Two ' + (tops ? 'tops' : 'bottoms') + ' never cancel.' };
+    X.picks = [id];
+  } else {
+    if (X.picks.length === 2) X.picks = [];
+    X.picks.push(id);
+  }
+  renderX();
+}
+
+function divideX(k) {
+  if (X.picks.length !== 2) return;
+  const t = X.picks[0][0] === 't' ? X.picks[0] : X.picks[1], b = t === X.picks[0] ? X.picks[1] : X.picks[0];
+  const tv = cur(t), bv = cur(b);
+  if (k < 2 || tv % k || bv % k) { X.msg = { cls: 'oops', html: whyNot(k, tv, bv) }; return renderX(); }
+  [t, b].forEach(id => {
+    X.cells[id].hist.push(cur(id) / k);
+    primesOf(k).forEach(p => { X.cells[id].chips.find(ch => ch.p === p && !ch.x).x = true; });
+  });
+  const r = resultX();
+  X.msg = { cls: 'good', html: '<b>' + tv + ' ÷ ' + k + ' = ' + tv / k + ' and ' + bv + ' ÷ ' + k + ' = ' + bv / k + '.</b> ' +
+    (t[1] !== b[1] ? 'A top from one fraction cancelled with the bottom of the other: that is cross-cancelling.' : 'Both numbers were in the same fraction, so that was simplifying. It counts too.') +
+    (r.g === 1 ? ' Nothing else cancels. Multiply.' : ' Look for another pair.') };
+  X.picks = [];
+  renderX();
+}
+
+function multiplyX() {
+  const r = resultX();
+  const a = X.cells.t0.hist[0], b = X.cells.b0.hist[0], c = X.cells.t1.hist[0], d = X.cells.b1.hist[0];
+  const A = a * c, B = b * d, G = gcd(A, B);
+  const low = () => (B / G === 1 ? '' + A / G : A / G + '/' + B / G);
+  const cancelled = cur('t0') !== a || cur('t1') !== c || cur('b0') !== b || cur('b1') !== d;
+  let html = 'Tops: ' + cur('t0') + ' × ' + cur('t1') + ' = ' + r.P + '. Bottoms: ' + cur('b0') + ' × ' + cur('b1') + ' = ' + r.Q + '. ';
+  if (r.g === 1) html += '<b>The answer is ' + low() + ', already in lowest terms.</b>';
+  else html += '<b>' + r.P + '/' + r.Q + ' is correct but not in lowest terms.</b> ' + r.P + ' and ' + r.Q + ' still share a factor of ' + r.g + ', so it simplifies to ' + low() + '.';
+  if (cancelled) html += ' Check the long way: ' + a + ' × ' + c + ' over ' + b + ' × ' + d + ' is ' + A + '/' + B + (G > 1 ? ', and dividing both by ' + G + ' gives ' + low() + '. Same answer, bigger numbers.' : '.');
+  else if (G > 1) html += ' Start over and cancel first: you will never have to handle a number as big as ' + Math.max(A, B) + '.';
+  else html += ' There was nothing to cancel in this one.';
+  X.picks = []; X.done = true;
+  X.msg = { cls: r.g === 1 ? 'done' : 'good', html: html };
+  renderX();
+}
+
+function randomX() {
+  let v;
+  do {
+    const f = rnd(2, 6), g = rnd(2, 6);
+    v = { a: rnd(1, 5) * f, d: rnd(1, 5) * f, c: rnd(1, 5) * g, b: rnd(1, 5) * g };
+  } while (v.a === v.b || v.c === v.d);
+  setX({ a: v.a, b: v.b, c: v.c, d: v.d, op: X.entry.op });
+}
+
+wirePad($('xPad'), divideX);
+$('pane-cross').addEventListener('click', e => {
+  const c = e.target.closest('[data-cell]');
+  if (c) return pickX(c.dataset.cell);
+  if (e.target.closest('#xGo')) return multiplyX();
+  if (e.target.closest('#xFlip')) flipX();
+});
+$('xRandom').addEventListener('click', randomX);
+$('xReset').addEventListener('click', () => setX(X.entry));
+['xA', 'xB', 'xC', 'xD', 'xOp'].forEach(id => $(id).addEventListener('change', () => setX({
+  a: clamp(+$('xA').value, 1, 60), b: clamp(+$('xB').value, 1, 60),
+  c: clamp(+$('xC').value, 1, 60), d: clamp(+$('xD').value, 1, 60), op: $('xOp').value,
+})));
+
+/* ---------- start ---------- */
+renderE();
+setS(24, 36);
+setX(X.entry);
+// #simp or #cross in the address opens that tab.
+showTab(TASKS[location.hash.slice(1)] ? location.hash.slice(1) : 'equiv');
+</script>
+</body>
+</html>

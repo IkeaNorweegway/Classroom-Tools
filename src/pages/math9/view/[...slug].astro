@@ -133,7 +133,11 @@ export async function getStaticPaths() {
     'tests/rational-numbers/math9-rational-numbers-practice-test-answers-v1',
   ];
 
-  return [...notes, ...worksheets, ...exits, ...tests].map(slug => ({ params: { slug } }));
+  const interactives = [
+    'practice/math9-fraction-sim-v1',
+  ];
+
+  return [...notes, ...worksheets, ...exits, ...tests, ...interactives].map(slug => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;
@@ -167,6 +171,7 @@ function backHref(slug: string): string {
     const strand = strandMap[topic] ?? 'number';
     return `${base}math9/materials/${strand}`;
   }
+  if (slug === 'practice/math9-fraction-sim-v1') return `${base}math9/materials/number`;
   return `${base}math9/materials`;
 }
 ---
