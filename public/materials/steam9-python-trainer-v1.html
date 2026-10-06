@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Trainer | STEAM Grade 9</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --accent-mid: #3b82f6;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --good: #059669;
+    --bad: #dc2626;
+    --mono: 'Consolas', 'Cascadia Mono', 'Courier New', monospace;
+  }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink);
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  button { font: inherit; cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .5; }
+  code, pre, textarea { font-family: var(--mono); }
+  code { background: #f1f5f9; border-radius: 4px; padding: 1px 5px; font-size: .92em; }
+
+  /* ---------- top bar ---------- */
+  .top {
+    display: flex; align-items: center; gap: 20px; flex-shrink: 0;
+    background: #fff; border-bottom: 1px solid var(--line);
+    border-left: 5px solid var(--accent); padding: 8px 16px;
+  }
+  .top .course-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent-mid); }
+  .top h1 { font-size: 19px; font-weight: 700; line-height: 1.2; }
+  .progress { flex: 1; display: flex; align-items: center; gap: 10px; min-width: 120px; }
+  .progress .bar { flex: 1; max-width: 280px; height: 8px; border-radius: 4px; background: var(--accent-light); overflow: hidden; }
+  .progress .bar span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s; }
+  .progress .txt { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    border: 1px solid #cbd5e1; background: #fff; color: #334155;
+    border-radius: 8px; padding: 6px 12px; font-size: 13.5px; font-weight: 600;
+  }
+  .btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover:not(:disabled) { background: #1d4ed8; border-color: #1d4ed8; }
+  .btn.go { background: var(--good); border-color: var(--good); color: #fff; }
+  .btn.go:hover:not(:disabled) { background: #047857; border-color: #047857; }
+  .btn.stop { background: #fff; border-color: var(--bad); color: var(--bad); }
+  .btn.small { padding: 3px 10px; font-size: 12.5px; }
+
+  /* ---------- layout ---------- */
+  .layout {
+    flex: 1; min-height: 0; display: grid;
+    grid-template-columns: 236px minmax(300px, 1fr) minmax(380px, 1.2fr);
+  }
+  #nav { background: #fff; border-right: 1px solid var(--line); overflow-y: auto; padding: 10px 0 20px; }
+  #task { overflow-y: auto; padding: 18px 22px 40px; background: #fff; border-right: 1px solid var(--line); }
+  #work { display: flex; flex-direction: column; min-height: 0; min-width: 0; background: #0f172a; }
+
+  /* ---------- nav ---------- */
+  .nav-stage { padding: 10px 14px 2px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .nav-stage small { display: block; text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 11.5px; color: #94a3b8; }
+  .nav-item {
+    display: flex; align-items: flex-start; gap: 8px; width: 100%; text-align: left;
+    border: none; background: none; padding: 5px 14px; font-size: 13.5px; color: #334155;
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover { background: #f1f5f9; }
+  .nav-item.current { background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; color: #1e3a8a; }
+  .nav-item .dot {
+    flex-shrink: 0; width: 16px; height: 16px; margin-top: 3px; border-radius: 50%;
+    border: 2px solid #cbd5e1; font-size: 10px; line-height: 12px; text-align: center; color: #fff;
+  }
+  .nav-item.done .dot { background: var(--good); border-color: var(--good); }
+  .nav-item .dot.free { border-style: dashed; }
+
+  /* ---------- task panel ---------- */
+  .crumb { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-mid); }
+  #task h2 { font-size: 21px; font-weight: 700; margin: 2px 0 6px; }
+  #task p { margin-bottom: 10px; }
+  #task ul, #task ol { margin: 4px 0 12px 22px; }
+  #task li { margin-bottom: 5px; }
+  .tag { font-size: 11px; font-weight: 700; background: #fef3c7; color: #92400e; border-radius: 999px; padding: 2px 9px; vertical-align: middle; }
+  .paperref { display: inline-block; font-size: 12px; font-weight: 600; color: #c2410c; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 999px; padding: 1px 10px; margin-bottom: 12px; }
+  .paper { border-left: 4px solid #f97316; background: #fff7ed; padding: 10px 14px; margin: 12px 0; border-radius: 0 6px 6px 0; }
+  .paper .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #ea580c; margin-bottom: 3px; }
+  .paper p:last-child { margin-bottom: 0; }
+  .idea { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; margin: 12px 0; }
+  .idea p:last-child { margin-bottom: 0; }
+  .todo { border: 1px solid var(--accent-light); background: #eff6ff; border-radius: 8px; padding: 10px 14px; margin: 12px 0; }
+  .todo .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #1d4ed8; margin-bottom: 3px; }
+  .todo p:last-child, .todo ol:last-child, .todo ul:last-child { margin-bottom: 0; }
+  #task pre.sample { background: #f8fafc; border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; font-size: 13px; margin: 6px 0 10px; white-space: pre-wrap; }
+
+  .predict { border: 2px solid #a5b4fc; background: #eef2ff; border-radius: 8px; padding: 12px 14px; margin: 14px 0; }
+  .predict .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #4338ca; margin-bottom: 4px; }
+  .predict .opts { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .predict .opt { text-align: left; border: 1px solid #c7d2fe; background: #fff; color: var(--ink); border-radius: 6px; padding: 7px 11px; font-size: 14px; }
+  .predict .opt:hover:not(:disabled) { border-color: #6366f1; }
+  .predict .opt.picked { border-color: #4338ca; background: #e0e7ff; color: #312e81; font-weight: 600; opacity: 1; }
+  .predict .verdict { margin-top: 10px; font-size: 14px; }
+  .predict .verdict b.yes { color: var(--good); }
+  .predict .verdict b.no { color: #b45309; }
+
+  .hintbox { margin: 14px 0; }
+  .hint { border-left: 4px solid #a3a3a3; background: #fafafa; padding: 8px 12px; margin: 8px 0; border-radius: 0 6px 6px 0; font-size: 14px; }
+  .results { margin: 16px 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .results .head { padding: 8px 14px; font-weight: 700; font-size: 14px; }
+  .results.pass .head { background: #ecfdf5; color: #047857; }
+  .results.fail .head { background: #fef2f2; color: #b91c1c; }
+  .results ul { list-style: none; margin: 0 !important; }
+  .results li { padding: 8px 14px; border-top: 1px solid var(--line); font-size: 14px; margin: 0 !important; }
+  .results li .mark { font-weight: 700; margin-right: 6px; }
+  .results li.ok .mark { color: var(--good); }
+  .results li.no .mark { color: var(--bad); }
+  .results pre { background: #f8fafc; border: 1px solid var(--line); border-radius: 4px; padding: 6px 8px; font-size: 12.5px; margin-top: 5px; white-space: pre-wrap; max-height: 160px; overflow: auto; }
+  .results .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .results .two div > span { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); }
+  .donebox { border: 2px solid var(--good); background: #ecfdf5; border-radius: 8px; padding: 12px 14px; margin: 16px 0; }
+  .donebox .label { font-weight: 700; color: #047857; margin-bottom: 4px; }
+  .checklist { list-style: none; margin: 6px 0 14px !important; }
+  .checklist li { margin: 0 0 6px !important; }
+  .checklist label { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; }
+  .checklist input { margin-top: 5px; flex-shrink: 0; }
+  #task h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #334155; margin: 16px 0 4px; }
+  .rowbtns { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+
+  /* ---------- editor ---------- */
+  .toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #1e293b; flex-shrink: 0; flex-wrap: wrap; }
+  .toolbar .spacer { flex: 1; }
+  .toolbar .kbd { font-size: 11.5px; color: #94a3b8; }
+  .toolbar .btn { border-color: #475569; background: #334155; color: #e2e8f0; }
+  .toolbar .btn:hover:not(:disabled) { background: #475569; border-color: #64748b; }
+  .toolbar .btn.go { background: var(--good); border-color: var(--good); color: #fff; }
+  .toolbar .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .toolbar .btn.stop { background: #7f1d1d; border-color: #b91c1c; color: #fff; }
+  .lockmsg { background: #fef3c7; color: #78350f; font-size: 13.5px; padding: 7px 12px; flex-shrink: 0; }
+  .editor { flex: 3; min-height: 140px; display: flex; background: #0f172a; border-bottom: 1px solid #334155; }
+  .gutter {
+    flex-shrink: 0; width: 44px; overflow: hidden; padding: 10px 0; text-align: right;
+    font-family: var(--mono); font-size: 14px; line-height: 21px; color: #64748b;
+    background: #0b1220; user-select: none;
+  }
+  .gutter div { padding-right: 9px; }
+  .gutter div.err { background: #7f1d1d; color: #fecaca; font-weight: 700; }
+  #code {
+    flex: 1; min-width: 0; border: none; outline: none; resize: none;
+    padding: 10px 12px; font-size: 14px; line-height: 21px; tab-size: 4;
+    background: #0f172a; color: #e2e8f0; caret-color: #fff; white-space: pre; overflow: auto;
+  }
+  #code[readonly] { color: #64748b; }
+
+  /* ---------- console ---------- */
+  .con-head { display: flex; align-items: center; justify-content: space-between; background: #1e293b; color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; padding: 4px 12px; flex-shrink: 0; }
+  #console { flex: 2; min-height: 110px; overflow: auto; background: #020617; color: #e2e8f0; padding: 10px 12px; font-family: var(--mono); font-size: 14px; line-height: 21px; }
+  #conOut { white-space: pre-wrap; word-break: break-word; display: inline; }
+  #conOut .err { color: #fca5a5; font-weight: 700; }
+  #conOut .sys { color: #64748b; font-style: italic; }
+  #conOut .typed { color: #7dd3fc; }
+  #conIn { display: inline; }
+  #conIn input { font-family: var(--mono); font-size: 14px; background: #1e293b; color: #7dd3fc; border: 1px solid #38bdf8; border-radius: 4px; padding: 1px 6px; width: 180px; outline: none; }
+  .errhelp { margin-top: 10px; padding: 9px 11px; border: 1px solid #475569; border-radius: 6px; background: #0f172a; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13.5px; color: #cbd5e1; white-space: normal; }
+  .errhelp .q { font-weight: 600; margin-bottom: 6px; color: #f1f5f9; }
+  .errhelp .btn { border-color: #475569; background: #1e293b; color: #e2e8f0; margin-right: 6px; }
+  .errhelp .btn:hover:not(:disabled) { background: #334155; }
+  .errhelp .ans { margin-top: 7px; }
+  .errhelp .ans.yes b { color: #6ee7b7; }
+  .errhelp .ans.no b { color: #fcd34d; }
+  .errhelp .clue { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #475569; }
+
+  /* ---------- syntax card ---------- */
+  dialog { border: none; border-radius: 12px; padding: 0; max-width: 640px; width: calc(100% - 32px); box-shadow: 0 20px 50px rgba(0,0,0,.3); margin: auto; }
+  dialog::backdrop { background: rgba(15,23,42,.5); }
+  .card-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; background: var(--accent-light); }
+  .card-head h2 { font-size: 17px; color: var(--accent); }
+  .card-body { padding: 12px 18px 18px; max-height: 70vh; overflow: auto; }
+  .card-body table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .card-body td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .card-body td:first-child { font-weight: 600; white-space: nowrap; color: #334155; }
+  .card-body pre { font-size: 13px; white-space: pre-wrap; }
+  .card-body p { font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+  .fatal { margin: 30px; padding: 16px; border: 2px solid var(--bad); background: #fef2f2; border-radius: 8px; }
+
+  @media (max-width: 1040px) {
+    body { overflow: auto; display: block; }
+    html, body { height: auto; }
+    .layout { display: block; }
+    #nav { max-height: 190px; border-right: none; border-bottom: 1px solid var(--line); }
+    #task { border-right: none; }
+    .editor { height: 300px; flex: none; }
+    #console { height: 220px; flex: none; }
+    .top { flex-wrap: wrap; }
+  }
+  @media print {
+    #work, #nav, .top-actions { display: none; }
+    body { overflow: visible; display: block; background: #fff; }
+    .layout { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="course-label">STEAM · Grade 9 · Unit 1</div>
+    <h1>Python Trainer</h1>
+  </div>
+  <div class="progress">
+    <div class="bar"><span id="progFill"></span></div>
+    <span class="txt" id="progText"></span>
+  </div>
+  <div class="top-actions">
+    <button class="btn" id="btnCard" type="button">Syntax card</button>
+    <button class="btn" id="btnSave" type="button" title="Download all your work as a file you can keep or move to another computer">Save my work to a file</button>
+    <button class="btn" id="btnLoad" type="button" title="Open a file you saved earlier">Load my work</button>
+    <input type="file" id="fileLoad" accept=".json,application/json" hidden>
+    <input type="file" id="filePy" accept=".py,.txt,text/plain" hidden>
+  </div>
+</header>
+
+<div class="layout">
+  <nav id="nav" aria-label="Trainer steps"></nav>
+  <section id="task" aria-live="polite"></section>
+  <section id="work">
+    <div class="toolbar">
+      <button class="btn go" id="btnRun" type="button">▶ Run</button>
+      <button class="btn stop" id="btnStop" type="button" disabled>■ Stop</button>
+      <button class="btn primary" id="btnCheck" type="button">Check</button>
+      <span class="spacer"></span>
+      <span class="kbd">Ctrl + Enter runs</span>
+      <button class="btn small" id="btnReset" type="button">Start over</button>
+    </div>
+    <div class="lockmsg" id="lockMsg" hidden></div>
+    <div class="editor">
+      <div class="gutter" id="gutter" aria-hidden="true"></div>
+      <textarea id="code" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off" aria-label="Python code editor. Press Escape, then Tab, to leave the editor."></textarea>
+    </div>
+    <div class="con-head"><span>Console</span><button class="btn small" id="btnClear" type="button" style="background:#334155;border-color:#475569;color:#e2e8f0;">Clear</button></div>
+    <div id="console" role="log" aria-label="Program output"><span id="conOut"></span><span id="conIn" hidden><input type="text" id="conInput" autocomplete="off" aria-label="Type your answer for the program, then press Enter"></span><div id="conHelp"></div></div>
+  </section>
+</div>
+
+<dialog id="card">
+  <div class="card-head"><h2>Syntax card</h2><button class="btn small" id="btnCardClose" type="button">Close</button></div>
+  <div class="card-body">
+    <table>
+      <tr><td>Show something</td><td><pre>print("Score:", score)</pre></td></tr>
+      <tr><td>Store a value</td><td><pre>lives = 3
+name = "Ada"</pre></td></tr>
+      <tr><td>Ask the player</td><td><pre>name = input("Your name? ")      # always gives text
+age = int(input("Your age? "))   # int(...) turns text into a number</pre></td></tr>
+      <tr><td>Compare</td><td><pre>==   !=   &lt;   &gt;   &lt;=   &gt;=      and   or   not</pre></td></tr>
+      <tr><td>Decide</td><td><pre>if lives == 0:
+    print("Game over")
+elif lives == 1:
+    print("Last life!")
+else:
+    print("Keep going")</pre></td></tr>
+      <tr><td>Repeat a set number of times</td><td><pre>for i in range(3):       # i is 0, then 1, then 2
+    print(i)</pre></td></tr>
+      <tr><td>Repeat for each item</td><td><pre>for square in row:
+    print(square)</pre></td></tr>
+      <tr><td>Repeat while true</td><td><pre>while lives &gt; 0:
+    lives = lives - 1</pre></td></tr>
+      <tr><td>List</td><td><pre>row = ["X", "O", " "]
+row[0]         # first item (counting starts at 0)
+len(row)       # how many items
+board[1][2]    # list of lists: row 1, column 2</pre></td></tr>
+      <tr><td>Function</td><td><pre>def double(n):
+    return n * 2
+
+answer = double(4)</pre></td></tr>
+      <tr><td>Note to yourself</td><td><pre># Python ignores anything after a hash</pre></td></tr>
+    </table>
+    <p>This card shows how to write things down. It does not tell you what to write. Keep it closed when your notes say "no peeking".</p>
+  </div>
+</dialog>
+
+<script src="../vendor/skulpt/skulpt.min.js"></script>
+<script src="../vendor/skulpt/skulpt-stdlib.js"></script>
+<script>
+/* =====================================================================
+   Python Trainer — STEAM Grade 9 Unit 1
+   Companion to steam9-python-notes-v1 and steam9-python-workbook-v1.
+   Python runs in the browser through Skulpt (public/vendor/skulpt, MIT).
+   ===================================================================== */
+
+/* ---------- content ---------- */
+
+const STAGES = [
+  {
+    id: 's0', title: 'Start here', sub: 'Notes: Before We Start',
+    ex: [
+      {
+        id: 'start-run', title: 'Run your first program', paper: 'Notes · Before We Start',
+        body: `
+          <div class="paper"><div class="label">On paper first</div>
+          <p>Open your notes to <b>Before We Start</b> and answer both questions. Honest first thoughts, no right or wrong. You will come back to them at the end of the unit.</p></div>
+          <p>The <b>editor</b> on the right is where you type Python. <b>Run</b> hands your code to Python. The <b>console</b> under the editor shows what your program prints, and any errors.</p>
+          <div class="todo"><div class="label">Your task</div>
+          <ol><li>Press <b>Run</b> and read the console.</li>
+          <li>Add a second <code>print</code> line so the program prints two lines.</li>
+          <li>Press <b>Check</b>.</li></ol></div>`,
+        starter: 'print("Hello from Python")\n',
+        checks: [
+          { type: 'custom', label: 'Two lines of output', test: r => nonBlank(r.output).length >= 2,
+            msg: 'The console should show at least two lines. Add another <code>print</code> on line 2.' },
+        ],
+        hints: ['Copy the pattern of line 1 onto line 2. The text goes inside quotes, and the quotes go inside the brackets.'],
+        after: `<p>Every step works this way: <b>Run</b> to try things, <b>Check</b> when you think it is right. Your code is saved in this browser as you type. Use <b>Save my work to a file</b> if you share this computer.</p>`,
+      },
+    ],
+  },
+  {
+    id: 's1', title: '1 · Indentation', sub: 'Notes: Concept 1',
+    ex: [
+      {
+        id: 'indent-inside', title: 'What is inside the loop?', paper: 'Notes · Concept 1',
+        body: `
+          <p>In block coding, a block snapped inside a loop belonged to the loop. Python has no blocks to snap. The spacing at the start of a line does that job.</p>
+          <p>Read the program in the editor. Do not run it yet.</p>`,
+        predict: {
+          q: 'How many times will <code>Finished</code> be printed?',
+          options: ['0 times', '1 time', '3 times'], answer: 1,
+          explain: 'Lines 2 and 3 are indented under <code>for</code>, so they repeat on every lap. Line 4 lines up with <code>for</code>, so it is outside the loop and runs once, after the loop ends.',
+        },
+        then: `<div class="todo"><div class="label">Your task</div>
+          <p>Change the program so that <code>Keep going</code> prints only <b>once</b>, after all three laps and before <code>Finished</code>. Do not delete or retype any words. Change only the spacing.</p></div>`,
+        starter: 'for lap in range(3):\n    print("Lap", lap)\n    print("Keep going")\nprint("Finished")\n',
+        checks: [
+          { type: 'exact', want: 'Lap 0\nLap 1\nLap 2\nKeep going\nFinished' },
+        ],
+        hints: [
+          'Lines indented under the <code>for</code> line repeat. Lines that line up with <code>for</code> run once, after the loop.',
+          'Put the cursor in front of <code>print("Keep going")</code> and press Backspace, or press Shift + Tab, to pull the line back to the left edge.',
+        ],
+        after: `<p>Same words, different spacing, different program. Python read the spacing as part of your instructions.</p>`,
+      },
+      {
+        id: 'indent-fix', title: 'Python refuses to start', paper: 'Notes · Concept 1',
+        body: `
+          <p>This program should print <code>New high score!</code> only when the score is above 10, and then always print <code>Game over</code>.</p>
+          <div class="todo"><div class="label">Your task</div>
+          <ol><li>Run it. Read the error in the console, including the line number.</li>
+          <li>Fix the spacing so the program does what the description says.</li>
+          <li>Change <code>score</code> to <code>5</code> and run it again to make sure <code>New high score!</code> does <b>not</b> print. Then set it back to <code>12</code> and press Check.</li></ol></div>`,
+        starter: 'score = 12\nif score > 10:\nprint("New high score!")\nprint("Game over")\n',
+        checks: [
+          { type: 'src', must: /^score\s*=\s*12\s*$/m, msg: 'Set <code>score</code> back to <code>12</code> on line 1 before you check.' },
+          { type: 'src', must: /^[ \t]+print\("New high score!"\)/m, msg: 'The <code>New high score!</code> line should belong to the <code>if</code>.' },
+          { type: 'src', must: /^print\("Game over"\)/m, msg: '<code>Game over</code> should print whatever the score is, so it should not belong to the <code>if</code>.' },
+          { type: 'exact', want: 'New high score!\nGame over' },
+        ],
+        hints: [
+          'A line that ends with a colon is a promise that an indented line comes next.',
+          'Only the line that depends on the score goes inside the <code>if</code>. Which of the two print lines is that?',
+        ],
+      },
+      {
+        id: 'indent-write', title: 'Write it yourself', paper: 'Notes · Concept 1',
+        body: `
+          <div class="todo"><div class="label">Your task</div>
+          <p>Write a program that prints your first name <b>three times</b>, each on its own line, and then prints <code>Done</code> <b>once</b>.</p>
+          <p>Use a loop. Your whole program should need only two <code>print</code> lines.</p></div>`,
+        starter: '',
+        checks: [
+          { type: 'src', must: /\b(for|while)\b/, msg: 'Use a loop so Python does the repeating for you.' },
+          { type: 'custom', label: 'Only two print lines', src: true, test: (r, code) => (code.match(/print\s*\(/g) || []).length <= 2,
+            msg: 'You have more than two <code>print</code> lines. Let the loop repeat one of them.' },
+          { type: 'custom', label: 'Name three times, then Done once',
+            test: r => { const l = nonBlank(r.output); return l.length === 4 && l[0] === l[1] && l[1] === l[2] && l[3] === 'Done' && l[0] !== 'Done'; },
+            msg: 'The console should show your name on three lines and then <code>Done</code> on one line. Run it and count the lines.' },
+        ],
+        hints: [
+          'Look back at the last two steps. One <code>print</code> goes inside the loop and one goes after it.',
+          '<code>for i in range(3):</code> repeats the indented lines under it three times.',
+        ],
+        after: `<div class="paper"><div class="label">Now in your notes</div>
+          <p><b>Concept 1:</b> fill in the blank, then cover the paragraph and answer <b>Check yourself</b> 1 and 2 from memory. Add <b>Indentation</b> to your Vocabulary table in your own words.</p></div>`,
+      },
+    ],
+  },
+  {
+    id: 's2', title: '2 · Variables, loops, conditionals', sub: 'Notes: Concept 2',
+    ex: [
+      {
+        id: 'vars', title: 'Variables store values', paper: 'Notes · Concept 2',
+        body: `
+          <p>A <b>variable</b> is a name that stores a value, and the value can change. In Python you do not say what type of value it will hold. You just store something in it.</p>
+          <div class="idea"><p><code>=</code> means <b>store</b>, not "is equal to". Read line 2 from right to left: work out <code>lives - 1</code>, then store the answer back in <code>lives</code>.</p></div>`,
+        predict: {
+          q: 'What will line 3 print?',
+          options: ['Lives: 3', 'Lives: 2', 'Lives: lives - 1'], answer: 1,
+          explain: 'Line 1 stored 3. Line 2 worked out 3 - 1 and stored 2 over the top of the 3. By line 3 the old value is gone.',
+        },
+        then: `<div class="todo"><div class="label">Your task</div>
+          <p>Below the comment:</p>
+          <ol><li>Make a variable called <code>score</code> that starts at <code>0</code>.</li>
+          <li>Add 50 to <code>score</code>, twice, on two separate lines. Use <code>score</code> itself each time.</li>
+          <li>Print it so the last line of output is exactly <code>Score: 100</code>.</li></ol></div>`,
+        starter: 'lives = 3\nlives = lives - 1\nprint("Lives:", lives)\n\n# Your code goes below this line\n',
+        checks: [
+          { type: 'src', mustNot: /score\s*=\s*100\b/, msg: 'Do not type 100 yourself. Make Python work it out from <code>score</code>.' },
+          { type: 'var', name: 'score', want: 100 },
+          { type: 'custom', label: 'Last line is Score: 100', test: r => { const l = nonBlank(r.output); return l[l.length - 1] === 'Score: 100'; },
+            msg: 'The last line in the console should be exactly <code>Score: 100</code>. Check capitals, the colon, and the space.' },
+        ],
+        hints: [
+          'Line 2 shows the pattern for changing a variable using its own value.',
+          '<code>print("Lives:", lives)</code> printed a label and then a value. Do the same for score.',
+        ],
+      },
+      {
+        id: 'input-types', title: 'Input is always text', paper: 'Notes · Concept 2',
+        body: `
+          <p><code>input()</code> pauses the program and waits for the player to type. When you run this program, type your answers in the <b>console</b> and press Enter.</p>
+          <p>Read all four lines first.</p>`,
+        predict: {
+          q: 'The player types <code>14</code> for their age. What happens on line 4?',
+          options: ['It prints: Next year you will be 15', 'It prints: Next year you will be 141', 'The program crashes with an error'], answer: 2,
+          explain: '<code>input()</code> always hands back <b>text</b>, even when the player types digits. To Python, <code>"14"</code> is two characters, not a number, and it refuses to add a number to text. <code>int("14")</code> turns the text into the number 14.',
+        },
+        then: `<div class="todo"><div class="label">Your task</div>
+          <p>Fix the program so that a player who types <code>14</code> is told <code>Next year you will be 15</code>.</p></div>`,
+        starter: 'name = input("What is your name? ")\nprint("Hello,", name)\nage = input("How old are you? ")\nprint("Next year you will be", age + 1)\n',
+        checks: [
+          { type: 'io', label: 'Player types Sam, then 14', inputs: ['Sam', '14'], expect: ['Hello, Sam', 'Next year you will be 15'] },
+          { type: 'io', label: 'Player types Li, then 9', inputs: ['Li', '9'], expect: ['Next year you will be 10'] },
+        ],
+        hints: [
+          'The error message names two types: <code>str</code> (text) and <code>int</code> (whole number). Which variable is holding text?',
+          '<code>int( )</code> turns text into a whole number. You can wrap it around the whole <code>input(...)</code> on line 3.',
+        ],
+      },
+      {
+        id: 'conditionals', title: 'if, elif, else', paper: 'Notes · Concept 2',
+        body: `
+          <p>A <b>conditional</b> branches. Python checks the conditions from top to bottom, runs the <b>first</b> branch that is true, and skips the rest.</p>
+          <div class="todo"><div class="label">Your task</div>
+          <p>A theatre sells tickets by age. Finish the program so it prints exactly one of these:</p>
+          <ul><li>Under 13: <code>Child: $8</code></li>
+          <li>65 and over: <code>Senior: $9</code></li>
+          <li>Everyone else: <code>Adult: $12</code></li></ul>
+          <p>Before you press Check, run it yourself with the ages that sit right on the edges. Which ages are those?</p></div>`,
+        starter: 'age = int(input("Age? "))\nif age < 13:\n    print("Child: $8")\n# Add an elif for 65 and over, then an else for everyone else.\n',
+        checks: [
+          { type: 'io', label: 'Age 5', inputs: ['5'], expect: ['Child: $8'], reject: ['Adult', 'Senior'] },
+          { type: 'io', label: 'Age 12', inputs: ['12'], expect: ['Child: $8'], reject: ['Adult', 'Senior'] },
+          { type: 'io', label: 'Age 13', inputs: ['13'], expect: ['Adult: $12'], reject: ['Child', 'Senior'] },
+          { type: 'io', label: 'Age 64', inputs: ['64'], expect: ['Adult: $12'], reject: ['Child', 'Senior'] },
+          { type: 'io', label: 'Age 65', inputs: ['65'], expect: ['Senior: $9'], reject: ['Child', 'Adult'] },
+          { type: 'io', label: 'Age 80', inputs: ['80'], expect: ['Senior: $9'], reject: ['Child', 'Adult'] },
+        ],
+        hints: [
+          '<code>elif</code> and <code>else</code> line up with <code>if</code>. Each one ends with a colon, and its print is indented under it.',
+          '"65 and over" includes 65. What does <code>age &gt; 65</code> do with someone who is exactly 65?',
+        ],
+        after: `<p>The checks that matter most were ages 12, 13, 64 and 65: the edges. A program can be right for most inputs and wrong at the edges, and it will not crash to tell you.</p>`,
+      },
+      {
+        id: 'for-range', title: 'for loops count for you', paper: 'Notes · Concept 2',
+        body: `
+          <p>A <b>loop</b> repeats instructions so you do not write them out over and over. <code>for i in range(3)</code> runs the indented lines three times, and <code>i</code> holds a different number on each pass.</p>`,
+        predict: {
+          q: 'What does this loop print, one number per line?',
+          options: ['1 2 3', '0 1 2', '0 1 2 3'], answer: 1,
+          explain: '<code>range(3)</code> gives three numbers, and Python starts counting at 0. So <code>i</code> is 0, then 1, then 2. It never reaches 3.',
+        },
+        then: `<div class="todo"><div class="label">Your task</div>
+          <p>Replace the program with a countdown. The console should show <code>5</code>, <code>4</code>, <code>3</code>, <code>2</code>, <code>1</code>, each on its own line, and then <code>Liftoff!</code></p>
+          <p>Use a loop. Five separate print lines for the numbers does not count.</p></div>`,
+        starter: 'for i in range(3):\n    print(i)\n',
+        checks: [
+          { type: 'src', must: /\b(for|while)\b/, msg: 'Use a loop for the countdown.' },
+          { type: 'custom', label: 'Loop does the counting', src: true, test: (r, code) => (code.match(/print\s*\(/g) || []).length <= 3,
+            msg: 'You have a lot of <code>print</code> lines. One print inside the loop should handle all five numbers.' },
+          { type: 'exact', want: '5\n4\n3\n2\n1\nLiftoff!' },
+        ],
+        hints: [
+          '<code>range(5)</code> gives 0, 1, 2, 3, 4. You can do arithmetic before you print. What is <code>5 - i</code> on each pass?',
+          '<code>range</code> can also take a start, a stop and a step, for example <code>range(10, 0, -2)</code> gives 10, 8, 6, 4, 2.',
+        ],
+      },
+      {
+        id: 'while-loop', title: 'while loops and the loop that never ends', paper: 'Journal · Part C',
+        body: `
+          <p>A <code>while</code> loop keeps repeating for as long as its condition is true. It checks the condition, runs the indented lines, then checks again.</p>
+          <p>This program is meant to count the fuel down from 3 and then print <code>Empty</code>.</p>`,
+        predict: {
+          q: 'What will actually happen when you run it?',
+          options: ['It prints Fuel left: 3, then 2, then 1, then Empty', 'It prints Fuel left: 3 over and over and never stops', 'Python reports an error and nothing runs'], answer: 1,
+          explain: 'Nothing inside the loop ever changes <code>fuel</code>, so <code>fuel &gt; 0</code> stays true forever. Notice there was no red error text. Python did exactly what the code said.',
+        },
+        then: `<div class="todo"><div class="label">Your task</div>
+          <ol><li>Run it, watch, then press <b>Stop</b>. (The trainer will also stop it for you after a few hundred lines.)</li>
+          <li>Fix it so the console shows <code>Fuel left: 3</code>, <code>Fuel left: 2</code>, <code>Fuel left: 1</code>, then <code>Empty</code>.</li></ol></div>`,
+        starter: 'fuel = 3\nwhile fuel > 0:\n    print("Fuel left:", fuel)\nprint("Empty")\n',
+        checks: [
+          { type: 'src', must: /\bwhile\b/, msg: 'Keep the <code>while</code> loop. Fix it instead of replacing it.' },
+          { type: 'exact', want: 'Fuel left: 3\nFuel left: 2\nFuel left: 1\nEmpty' },
+        ],
+        hints: [
+          'For the loop to end, <code>fuel &gt; 0</code> has to become false at some point. What would have to happen to <code>fuel</code>?',
+          'The line that changes <code>fuel</code> has to be inside the loop, so check its indentation.',
+        ],
+        after: `<div class="paper"><div class="label">Now in your journal</div>
+          <p><b>Part C: Tutorial Log.</b> The example row is this same bug. Add a row of your own for something in this stage that tripped <b>you</b> up, and how you sorted it out. Keep adding rows as you go.</p></div>`,
+      },
+      {
+        id: 'lists', title: 'Lists, and lists of lists', paper: 'Notes · Concept 2 and Vocabulary',
+        body: `
+          <p>A <b>list</b> stores several values in order under one name. You reach one item with its position in square brackets.</p>`,
+        predict: {
+          q: 'What does <code>print(row[1])</code> show?',
+          options: ['X', 'O', 'An error'], answer: 1,
+          explain: 'Positions start at 0. <code>row[0]</code> is the first item, so <code>row[1]</code> is the second item, <code>"O"</code>.',
+        },
+        then: `<p>A game board is a list of rows, and each row is a list of squares. <code>board[r][c]</code> means "row <code>r</code>, then column <code>c</code>", both counted from 0.</p>
+          <div class="todo"><div class="label">Your task</div>
+          <p>Add code below the comments, in this order:</p>
+          <ol><li>Print the <b>middle</b> square of the board (it should show <code>X</code>).</li>
+          <li>Change the <b>top-right</b> square to <code>"O"</code>.</li>
+          <li>Use a loop to print each row of the board on its own line. Printing the row list as it is, like <code>['X', 'O', 'O']</code>, is fine.</li></ol></div>`,
+        starter: 'row = ["X", "O", "X"]\nprint(row[1])\n\nboard = [\n    ["X", "O", " "],\n    [" ", "X", " "],\n    ["O", " ", "X"],\n]\n# 1. Print the middle square.\n# 2. Change the top-right square to "O".\n# 3. Loop over the board and print each row.\n',
+        checks: [
+          { type: 'src', must: /\b(for|while)\b/, msg: 'Use a loop to print the rows.' },
+          { type: 'var', name: 'board', want: [['X', 'O', 'O'], [' ', 'X', ' '], ['O', ' ', 'X']],
+            hint: 'Only the top-right square should change. That is row 0, column 2.' },
+          { type: 'custom', label: 'Middle square printed', test: r => nonBlank(r.output).slice(1).includes('X'),
+            msg: 'After the first line of output, the console should show a line that is just <code>X</code> (the middle square).' },
+          { type: 'custom', label: 'Each row printed',
+            test: r => ["['X', 'O', 'O']", "[' ', 'X', ' ']", "['O', ' ', 'X']"].every(s => r.output.includes(s)),
+            msg: 'The console should show all three rows, one per line, with the top-right square already changed to O.' },
+        ],
+        hints: [
+          'The middle square is in the middle row and the middle column. Counting from 0, what number is "middle" out of three?',
+          'You change a list item the same way you change a variable: put it on the left of <code>=</code>.',
+          '<code>for r in board:</code> hands you one row at a time.',
+        ],
+        after: `<div class="paper"><div class="label">Now in your notes</div>
+          <p><b>Concept 2:</b> answer <b>Check yourself</b> from memory. Then fill in <b>Variable</b>, <b>Conditional</b>, <b>Loop</b> and <b>List</b> in your Vocabulary table, each with an example you wrote in this stage.</p></div>`,
+      },
+    ],
+  },
+  {
+    id: 's3', title: '3 · Functions', sub: 'Notes: Concept 3',
+    ex: [
+      {
+        id: 'def-call', title: 'Defining is not running', paper: 'Notes · Concept 3',
+        body: `
+          <p>A <b>function</b> is a named block of code that does one job. <code>def</code> teaches Python the name and the steps. Read the program before you run it.</p>`,
+        predict: {
+          q: 'What will the console show?',
+          options: ['Go team! and then Ready', 'Only Ready', 'Ready and then Go team!'], answer: 1,
+          explain: '<code>def</code> only <b>defines</b> the function: Python remembers the steps but does not do them. Nothing inside runs until the function is <b>called</b> by writing its name with brackets: <code>cheer()</code>.',
+        },
+        then: `<div class="todo"><div class="label">Your task</div>
+          <p>After <code>Ready</code>, make the console show <code>Go team!</code> <b>three times</b>. The words <code>Go team!</code> must still appear only once in your code.</p></div>`,
+        starter: 'def cheer():\n    print("Go team!")\n\nprint("Ready")\n',
+        checks: [
+          { type: 'custom', label: 'Go team! written once', src: true, test: (r, code) => (code.match(/Go team!/g) || []).length === 1,
+            msg: 'Keep <code>Go team!</code> in your code exactly once, inside the function. Call the function to repeat it.' },
+          { type: 'exact', want: 'Ready\nGo team!\nGo team!\nGo team!' },
+        ],
+        hints: [
+          'Call a function by writing its name followed by brackets.',
+          'You already know how to make Python do one line three times.',
+        ],
+      },
+      {
+        id: 'fn-return', title: 'Parameters in, return out', paper: 'Notes · Concept 3',
+        body: `
+          <p>A <b>parameter</b> is a value handed <i>in</i> to a function. <code>return</code> hands a value back <i>out</i> to the code that called it.</p>
+          <div class="idea"><p><code>print</code> shows a value to the human. <code>return</code> gives a value to the program, so the program can keep using it. They are not the same thing.</p></div>
+          <div class="todo"><div class="label">Your task</div>
+          <p>Finish <code>switch_player</code>. Given <code>"X"</code> it returns <code>"O"</code>. Given <code>"O"</code> it returns <code>"X"</code>.</p>
+          <p><code>pass</code> means "nothing here yet". Replace that line with your own code.</p></div>`,
+        starter: 'def switch_player(player):\n    pass   # replace this line\n\n\nprint(switch_player("X"))   # should print O\nprint(switch_player("O"))   # should print X\n',
+        checks: [
+          { type: 'fn', name: 'switch_player', args: ['X'], want: 'O' },
+          { type: 'fn', name: 'switch_player', args: ['O'], want: 'X' },
+        ],
+        hints: [
+          'Inside the function you need a decision: one answer if <code>player</code> is <code>"X"</code>, a different answer otherwise.',
+          'If the console shows <code>None</code>, your function finished without returning anything. Did you <code>print</code> the answer inside the function when you meant to <code>return</code> it?',
+        ],
+      },
+      {
+        id: 'fn-count', title: 'A function with a loop inside', paper: 'Notes · Concept 3',
+        body: `
+          <div class="todo"><div class="label">Your task</div>
+          <p>Finish <code>count_marks</code>. It is given one row of a board and a player, and returns how many squares in that row belong to that player.</p>
+          <p>The test line at the bottom should print <code>2</code>. Add two more test lines of your own before you press Check.</p></div>`,
+        starter: 'def count_marks(row, player):\n    count = 0\n\n    return count\n\n\nprint(count_marks(["X", "O", "X"], "X"))   # should print 2\n',
+        checks: [
+          { type: 'fn', name: 'count_marks', args: [['X', 'O', 'X'], 'X'], want: 2 },
+          { type: 'fn', name: 'count_marks', args: [['X', 'O', 'X'], 'O'], want: 1 },
+          { type: 'fn', name: 'count_marks', args: [[' ', ' ', ' '], 'X'], want: 0 },
+          { type: 'fn', name: 'count_marks', args: [['O', 'O', 'O'], 'O'], want: 3 },
+        ],
+        hints: [
+          'Look at each square in the row, one at a time. That is a loop.',
+          'When a square matches <code>player</code>, <code>count</code> should go up by one.',
+          'Check the indentation of <code>return count</code>. If it is inside the loop, the function leaves after looking at only one square.',
+        ],
+      },
+      {
+        id: 'fn-full', title: 'Is the board full?', tier: 'ext', paper: 'Journal · Part B',
+        body: `
+          <p>This one is optional and harder. It is a building block you may want for your own game.</p>
+          <div class="todo"><div class="label">Your task</div>
+          <p>Write a function <code>board_is_full(board)</code>. It is given a board (a list of rows) and returns <code>True</code> if no square is an empty <code>" "</code>, and <code>False</code> if at least one square is still empty.</p>
+          <p>Write your own test lines. Try a full board, an empty board, and a board with a single empty square in an awkward place.</p></div>`,
+        starter: '# Write board_is_full(board) here.\n\n\n# Then test it. A full board should print True:\n# print(board_is_full([["X", "O", "X"], ["O", "X", "O"], ["O", "X", "O"]]))\n',
+        checks: [
+          { type: 'fn', name: 'board_is_full', args: [[['X', 'O', 'X'], ['O', 'X', 'O'], ['O', 'X', 'O']]], want: true },
+          { type: 'fn', name: 'board_is_full', args: [[[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]], want: false },
+          { type: 'fn', name: 'board_is_full', args: [[['X', 'O', 'X'], ['O', 'X', 'O'], ['O', 'X', ' ']]], want: false },
+          { type: 'fn', name: 'board_is_full', args: [[[' ', 'O', 'X'], ['O', 'X', 'O'], ['O', 'X', 'O']]], want: false },
+          { type: 'fn', name: 'board_is_full', args: [[['X', 'O', 'X'], ['O', ' ', 'O'], ['O', 'X', 'O']]], want: false },
+        ],
+        hints: [
+          'You need to look at every square in every row. That is a loop inside a loop.',
+          'You can answer <code>False</code> the moment you find one empty square. You can only answer <code>True</code> after you have looked at all of them.',
+        ],
+        after: `<p>A full board with no winner is a tie. Your flowchart in Journal Part B has to handle that case.</p>`,
+      },
+    ],
+    after: `<div class="paper"><div class="label">Now in your notes</div>
+      <p><b>Concept 3:</b> answer the <b>Connection</b> question and both <b>Check yourself</b> questions from memory. Add <b>Function</b> to your Vocabulary table.</p></div>`,
+  },
+  {
+    id: 's4', title: '4 · Three kinds of errors', sub: 'Notes: Concept 4',
+    ex: [
+      {
+        id: 'err-syntax', title: 'Error one: Python cannot read it', paper: 'Notes · Concept 4',
+        body: `
+          <p>From here on, whenever a program stops with an error, the console will ask you <b>which kind</b> it is. Answer every time.</p>
+          <p>Read the program. Line 1 is fine. The problem is further down.</p>`,
+        predict: {
+          q: 'Will <code>Starting...</code> appear in the console before the error?',
+          options: ['Yes, line 1 runs first', 'No, nothing will run at all'], answer: 1,
+          explain: 'A <b>syntax error</b> means Python cannot understand what you typed. It reads the whole program before it runs anything, so it stopped before line 1 ever ran.',
+        },
+        then: `<div class="todo"><div class="label">Your task</div>
+          <p>Fix the error so the console shows <code>Starting...</code> and then <code>Keep playing</code>.</p></div>`,
+        starter: 'print("Starting...")\npoints = 40\nif points >= 50\n    print("Level up!")\nelse:\n    print("Keep playing")\n',
+        checks: [{ type: 'exact', want: 'Starting...\nKeep playing' }],
+        hints: ['Compare the <code>if</code> line with the <code>else</code> line. What does one end with that the other does not?'],
+      },
+      {
+        id: 'err-runtime', title: 'Error two: it starts, then crashes', paper: 'Notes · Concept 4',
+        body: `<p>Read the program. Every line is written in correct Python.</p>`,
+        predict: {
+          q: 'Will <code>Starting...</code> and <code>First score: 12</code> appear before the error?',
+          options: ['Yes, the program runs until it reaches the problem', 'No, Python finds the problem before running anything'], answer: 0,
+          explain: 'This is a <b>runtime error</b> (Python calls it an exception). Python could read every line, so it started. It crashed only when it reached a line it could not carry out: there is no item at position 3 in a list of three.',
+        },
+        then: `<div class="todo"><div class="label">Your task</div>
+          <p>Fix it so the console shows all four lines, with <code>Last score: 30</code>, and ends with <code>Done</code>.</p></div>`,
+        starter: 'print("Starting...")\nscores = [12, 7, 30]\nprint("First score:", scores[0])\nprint("Last score:", scores[3])\nprint("Done")\n',
+        checks: [{ type: 'exact', want: 'Starting...\nFirst score: 12\nLast score: 30\nDone' }],
+        hints: ['Count the positions in <code>scores</code> out loud, starting from 0. What is the position of the last one?'],
+      },
+      {
+        id: 'err-logic', title: 'Error three: it runs, and it is wrong', paper: 'Notes · Concept 4 and the Misconception box',
+        body: `<p>This function is supposed to return the average of three numbers. Do not run it yet.</p>`,
+        predict: {
+          q: 'First, the maths. What <b>should</b> the average of 10, 20 and 30 be?',
+          options: ['20', '40', '60'], answer: 0,
+          explain: 'The correct average is 20. Now look at the console: Python printed <code>40.0</code>, and there is no red text anywhere. The program ran. The program is wrong. That is a <b>logic error</b>, and Python will never point at it for you.',
+        },
+        then: `<div class="todo"><div class="label">Your task</div>
+          <p>Find the logic error and fix it. Then add at least one more test line with different numbers, where you worked out the right answer yourself first.</p></div>`,
+        starter: 'def average(a, b, c):\n    return a + b + c / 3\n\n\nprint("Average of 10, 20, 30 is", average(10, 20, 30))\n',
+        checks: [
+          { type: 'fn', name: 'average', args: [10, 20, 30], want: 20 },
+          { type: 'fn', name: 'average', args: [3, 3, 3], want: 3 },
+          { type: 'fn', name: 'average', args: [0, 0, 9], want: 3 },
+        ],
+        hints: [
+          'Work out <code>10 + 20 + 30 / 3</code> on paper using the order of operations from math class. Which part happens first?',
+          'Brackets change the order, the same way they do in math.',
+        ],
+        after: `<div class="paper"><div class="label">Now in your notes</div>
+          <p><b>Concept 4:</b> read the <b>Misconception</b> box, then answer <b>Check yourself</b> 1 and 2 from memory. For question 2, invent your own example. Do not reuse this one.</p></div>`,
+      },
+      {
+        id: 'write-test', title: 'Write a test that catches it', paper: 'Journal · Part F',
+        body: `
+          <p><code>is_winner_row</code> should return <code>True</code> only when <b>all three</b> squares in a row belong to the player. It has a logic error.</p>
+          <p>Run it. Both tests at the bottom give the right answer. That is the problem with only two tests.</p>
+          <div class="todo"><div class="label">Your task</div>
+          <ol><li><b>Do not fix the function yet.</b> Add a third test line: a row where the function gives the <b>wrong</b> answer. Run it and see the wrong answer for yourself.</li>
+          <li>Now fix the function, and run all three tests again.</li></ol></div>`,
+        starter: 'def is_winner_row(row, player):\n    return row[0] == player and row[1] == player\n\n\nprint(is_winner_row(["X", "X", "X"], "X"))   # should print True\nprint(is_winner_row(["O", "X", "X"], "X"))   # should print False\n',
+        checks: [
+          { type: 'custom', label: 'A third test line', src: true, test: (r, code) => (code.match(/is_winner_row\s*\(/g) || []).length >= 4,
+            msg: 'Add a third test line that calls <code>is_winner_row</code> with a row that shows the bug.' },
+          { type: 'fn', name: 'is_winner_row', args: [['X', 'X', 'X'], 'X'], want: true },
+          { type: 'fn', name: 'is_winner_row', args: [['O', 'X', 'X'], 'X'], want: false },
+          { type: 'fn', name: 'is_winner_row', args: [['X', 'X', 'O'], 'X'], want: false },
+          { type: 'fn', name: 'is_winner_row', args: [['O', 'O', 'O'], 'O'], want: true },
+          { type: 'fn', name: 'is_winner_row', args: [['X', 'X', ' '], 'X'], want: false },
+        ],
+        hints: [
+          'Read the <code>return</code> line slowly. Which squares does it look at? Which square does it never look at?',
+          'A good test is a row where the squares the function checks say "win" but the square it ignores says "no".',
+        ],
+        after: `<p>You just did what Journal <b>Part F</b> asks for: a specific input, an answer you knew in advance, and a run that showed whether the program agreed.</p>
+          <div class="paper"><div class="label">Now in your notes</div>
+          <p>Fill in <b>Syntax error</b>, <b>Runtime error</b>, <b>Logic error</b> and <b>Debug</b> in your Vocabulary table. Then close your notes and this tab's syntax card, and complete the <b>Unit Synthesis</b> from memory. Last, reread what you wrote in <b>Before We Start</b>.</p></div>`,
+      },
+    ],
+  },
+  {
+    id: 's5', title: '5 · Debug the broken program', sub: 'Journal: Part D',
+    ex: [
+      {
+        id: 'debug', title: 'Guess the Number is broken', paper: 'Journal · Part D', quiet: true,
+        body: `
+          <p>Someone wrote this game and it does not work. Here is what it is <b>supposed</b> to do:</p>
+          <ul><li>The secret number is 7. (It is fixed for now so the game can be tested.)</li>
+          <li>The player gets up to <b>3</b> guesses.</li>
+          <li>After a wrong guess the game says <code>Too low</code> or <code>Too high</code>, whichever is true.</li>
+          <li>On a correct guess it says <code>You got it in N guesses!</code> and stops. (<code>break</code> jumps out of a loop straight away.)</li>
+          <li>If all 3 guesses are used up it says <code>Out of guesses. The number was 7</code></li></ul>
+          <div class="todo"><div class="label">Your task</div>
+          <p>There are <b>three</b> bugs. Find and fix all of them. Play the game in the console as many times as you need.</p></div>
+          <div class="paper"><div class="label">In your journal as you go</div>
+          <p><b>Part D:</b> one row per bug. Write what you saw, which type of error it was, how you found it, and the fix. Fill in the row <b>when you find the bug</b>, not afterwards from memory.</p></div>`,
+        starter: 'secret = 7\nguesses_left = 3\nguess_count = 0\n\nprint("I am thinking of a number from 1 to 10.")\n\nwhile guesses_left > 0:\n    guess = int(input("Your guess: "))\n    guess_count = guess_count + 1\n    if guess == secret:\n        print("You got it in", guess_count, "guesses!")\n        break\n    elif guess < secret\n        print("Too high")\n    else:\n        print("Too low")\n    guesses_left = guesses_left - 1\n\nif guesses_left == 0:\n    print("Out of guesses. The number was", secrt)\n',
+        checks: [
+          { type: 'io', label: 'Correct on the first guess', inputs: ['7'], expect: ['You got it in 1 guess'], reject: ['Too low', 'Too high', 'Out of guesses'] },
+          { type: 'io', label: 'A low guess, then correct', inputs: ['3', '7'], expect: ['Too low', 'You got it in 2 guess'], reject: ['Too high', 'Out of guesses'] },
+          { type: 'io', label: 'A high guess, then correct', inputs: ['9', '7'], expect: ['Too high', 'You got it in 2 guess'], reject: ['Too low', 'Out of guesses'] },
+          { type: 'io', label: 'Three wrong guesses', inputs: ['1', '2', '3'], expect: ['Out of guesses. The number was 7'], reject: ['You got it'] },
+        ],
+        quietMsg: 'Not every way of playing the game works yet. A bug can hide in a part of the program you have not run. Have you tried winning straight away, guessing too low, guessing too high, and using up every guess?',
+        hints: [
+          'Fix what Python complains about first. Then stop trusting Python: it has told you everything it is going to.',
+          'Play as a player who knows the secret is 7. Guess 3 on purpose. Is the reply true?',
+          'Some lines only run in one ending of the game. Have you played through to every ending?',
+        ],
+        after: `<div class="paper"><div class="label">Now in your journal</div>
+          <p><b>Part D:</b> check you have three rows, one per bug, each with its error type. Then answer the question underneath: one habit from this exercise you will use while building your own game.</p></div>
+          <p>One of those bugs only showed up when the player lost. Python checks a line when that line runs, not before.</p>`,
+      },
+    ],
+  },
+  {
+    id: 's6', title: '6 · Build your game', sub: 'Journal: Parts A to G',
+    ex: [
+      { id: 'workshop', kind: 'workshop', title: 'Game workshop', paper: 'Journal · Parts A, B, E, F, G',
+        body: `
+          <p>This is where you build the game from your Design Journal. Nothing here is checked for you. Deciding whether your game is correct is your job now, and Part F is how you do it.</p>`,
+        starter: '# My game: \n# Built by: \n\n',
+      },
+    ],
+  },
+  {
+    id: 's7', title: 'Playground', sub: 'Try anything',
+    ex: [
+      { id: 'playground', kind: 'play', title: 'Playground',
+        body: `
+          <p>A blank space. Nothing is checked and nothing here counts. Use it to try an idea, test one line on its own, or work through a tutorial your teacher gives you.</p>
+          <p>A good habit: when you are not sure what a line of Python does, do not guess. Bring it here, predict what it will print, and run it.</p>`,
+        starter: '',
+      },
+    ],
+  },
+];
+
+const WORKSHOP_LIST = [
+  { head: 'Plan on paper (this unlocks the editor)' },
+  { id: 'planA', gate: true, text: '<b>Part A</b> is filled in: I know which game I am building and what it must detect to count as working.' },
+  { id: 'planB', gate: true, text: '<b>Part B</b> is drawn: my flowchart is on paper, and I traced a tie through it with a pencil.' },
+  { head: 'Build in small steps (log every attempt in Part E)' },
+  { id: 'b1', text: 'The board or grid is stored in a variable and printed so a player can read it.' },
+  { id: 'b2', text: 'One turn works: what the player types changes the board.' },
+  { id: 'b3', text: 'An illegal turn is refused (a taken square, or a spot that is off the board).' },
+  { id: 'b4', text: 'Turns repeat until the game ends.' },
+  { id: 'b5', text: 'The end of the game is detected correctly (a win, a loss, a tie).' },
+  { id: 'b6', text: '<b>Part E mid-project check-in</b> is answered: does my flowchart still match what my code does?' },
+  { head: 'Test and share' },
+  { id: 't1', text: '<b>Part F:</b> I wrote a test case that would catch a logic error, ran it, and recorded the result.' },
+  { id: 't2', text: '<b>Part G:</b> a partner played my game without my help, and I changed something because of what they found.' },
+  { id: 't3', text: '<b>Reflection</b> and <b>Self-Assessment</b> are finished on paper.' },
+];
+
+/* ---------- small helpers ---------- */
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const nonBlank = out => normOut(out).split('\n').filter(l => l.trim() !== '');
+function normOut(out) {
+  return String(out).replace(/\r/g, '').split('\n').map(l => l.replace(/\s+$/, '')).join('\n').replace(/\n+$/, '');
+}
+function pyRepr(v) {
+  if (v === null || v === undefined) return 'None';
+  if (v === true) return 'True';
+  if (v === false) return 'False';
+  if (typeof v === 'string') return "'" + v + "'";
+  if (Array.isArray(v)) return '[' + v.map(pyRepr).join(', ') + ']';
+  if (typeof v === 'object') return '{' + Object.keys(v).map(k => pyRepr(k) + ': ' + pyRepr(v[k])).join(', ') + '}';
+  return String(v);
+}
+function sameValue(a, b) {
+  if (typeof a === 'number' && typeof b === 'number') return Math.abs(a - b) < 1e-9;
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+const ALL = [];
+STAGES.forEach((st, si) => st.ex.forEach(ex => { ex.stage = si; ex.kind = ex.kind || 'task'; ex.tier = ex.tier || 'core'; ALL.push(ex); }));
+const byId = id => ALL.find(e => e.id === id);
+const CORE = ALL.filter(e => e.kind === 'task' && e.tier === 'core');
+const ERR_STAGE = STAGES.findIndex(s => s.id === 's4');
+
+/* ---------- saved state ---------- */
+
+const STORE_KEY = 'steam9-python-trainer-v1';
+function blankState() { return { current: ALL[0].id, code: {}, done: {}, predict: {}, ran: {}, flags: {}, hints: {} }; }
+let state = blankState();
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) state = Object.assign(blankState(), JSON.parse(raw));
+  } catch (e) { /* storage blocked: the trainer still works, it just will not remember */ }
+  if (!byId(state.current)) state.current = ALL[0].id;
+}
+let saveTimer = null;
+function saveState() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }, 250);
+}
+
+/* ---------- running Python ---------- */
+
+const STOP = '__TRAINER_STOP__';
+let active = null;   // the run in progress, if any
+
+function describeError(e, code) {
+  const type = e && e.tp$name;
+  if (!type) return { kind: 'internal', type: 'Trainer problem', msg: String((e && e.message) || e), line: null };
+  let line = null;
+  if (e.traceback && e.traceback.length) line = e.traceback[0].lineno || null;
+  let msg = String(e.toString()).replace(/^\w+:\s*/, '').replace(/ on line \d+$/, '');
+  if (/^(SyntaxError|IndentationError|TabError|ParseError)$/.test(type)) {
+    const s = readSyntax(code || '', line, msg);
+    return { kind: 'syntax', type: s.type, msg: s.msg, line: s.line || line, clue: s.clue };
+  }
+  return { kind: 'runtime', type, msg, line, clue: RUNTIME_CLUES[type] || 'Python could read this line but could not carry it out. Read the message, then look at the values your variables are holding when this line runs.' };
+}
+
+const RUNTIME_CLUES = {
+  NameError: 'Python reached a name it has never been told about. Check the spelling and the capital letters, and check that the variable is created on an earlier line.',
+  TypeError: 'Two values of the wrong type were used together, for example text and a number. Remember that <code>input()</code> always gives text.',
+  IndexError: 'The program asked for a position that is not in the list. Positions start at 0, so a list of three items ends at position 2.',
+  ValueError: 'A value had the right type but could not be used, for example <code>int("hello")</code>. What did the player actually type?',
+  ZeroDivisionError: 'The program tried to divide by zero. Which variable was zero when this line ran?',
+  KeyError: 'The program asked a dictionary for a key it does not have.',
+  AttributeError: 'The program used a dot to ask a value for something that kind of value does not have. Check the spelling after the dot.',
+  UnboundLocalError: 'A function used a variable before giving it a value. Is it a variable from outside the function that you are trying to change inside it?',
+};
+
+function stripComment(s) {
+  let q = null;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (q) { if (c === '\\') i++; else if (c === q) q = null; }
+    else if (c === '"' || c === "'") q = c;
+    else if (c === '#') return s.slice(0, i);
+  }
+  return s;
+}
+function openQuote(s) {
+  let q = null;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (q) { if (c === '\\') i++; else if (c === q) q = null; }
+    else if (c === '"' || c === "'") q = c;
+    else if (c === '#') break;
+  }
+  return q !== null;
+}
+function openBracketLine(lines, upto) {
+  let depth = 0, at = null, q = null;
+  for (let n = 0; n < upto && n < lines.length; n++) {
+    const s = lines[n]; q = null;
+    for (let i = 0; i < s.length; i++) {
+      const c = s[i];
+      if (q) { if (c === '\\') i++; else if (c === q) q = null; continue; }
+      if (c === '"' || c === "'") { q = c; continue; }
+      if (c === '#') break;
+      if ('([{'.includes(c)) { if (depth === 0) at = { line: n + 1, ch: c }; depth++; }
+      else if (')]}'.includes(c)) depth = Math.max(0, depth - 1);
+    }
+  }
+  return depth > 0 ? at : null;
+}
+const indentOf = s => s.match(/^[ \t]*/)[0].replace(/\t/g, '    ').length;
+
+// Skulpt reports most syntax problems as "bad input". Work out what real Python would say.
+function readSyntax(code, line, raw) {
+  const lines = code.replace(/\r/g, '').split('\n');
+  const generic = { type: 'SyntaxError', msg: 'invalid syntax', clue: 'Python could not read this line. Check the brackets, quotes, colons and spelling on this line and on the line above it.' };
+  if (!line) return generic;
+  if (/unindent/.test(raw)) return { type: 'IndentationError', msg: 'unindent does not match any outer indentation level', clue: 'The spacing at the start of this line does not line up with any block above it. Use 4 spaces for each level.' };
+  const L = lines[line - 1] || '';
+  if (openQuote(L)) return { type: 'SyntaxError', msg: 'unterminated string literal', clue: 'A piece of text on this line starts with a quote mark but never ends with one.' };
+  const openedBefore = openBracketLine(lines, line - 1);
+  if (openedBefore) return { type: 'SyntaxError', msg: "'" + openedBefore.ch + "' was never closed", line: openedBefore.line, clue: 'A bracket opened on line ' + openedBefore.line + ' has no closing partner.' };
+  const openedHere = openBracketLine(lines, line);
+  if (openedHere) return { type: 'SyntaxError', msg: "'" + openedHere.ch + "' was never closed", line: openedHere.line, clue: 'A bracket on this line has no closing partner. Count the opening and closing brackets.' };
+  const Lc = stripComment(L).trim();
+  if (/^(if|elif|else|for|while|def|class)\b/.test(Lc) && !Lc.endsWith(':')) return { type: 'SyntaxError', msg: "expected ':'", clue: 'A line that starts a block (<code>if</code>, <code>elif</code>, <code>else</code>, <code>for</code>, <code>while</code>, <code>def</code>) must end with a colon.' };
+  if (/^(if|elif|while)\b/.test(Lc) && /[^=!<>]=[^=]/.test(Lc)) return { type: 'SyntaxError', msg: "invalid syntax. Maybe you meant '==' instead of '='?", clue: 'One <code>=</code> stores a value. Two, <code>==</code>, asks "are these equal?".' };
+  let p = line - 2;
+  while (p >= 0 && stripComment(lines[p]).trim() === '') p--;
+  if (p >= 0) {
+    const prev = lines[p], prevC = stripComment(prev).trimEnd();
+    if (prevC.endsWith(':') && indentOf(L) <= indentOf(prev)) return { type: 'IndentationError', msg: 'expected an indented block', clue: 'Line ' + (p + 1) + ' ends with a colon, so Python expects the next line of code to be indented under it.' };
+    if (!prevC.endsWith(':') && indentOf(L) > indentOf(prev)) return { type: 'IndentationError', msg: 'unexpected indent', clue: 'This line is indented, but the line above it does not start a block. Line it up with the line above.' };
+  }
+  return generic;
+}
+
+function skConfigure(output, inputfun) {
+  Sk.configure({
+    output,
+    inputfun,
+    inputfunTakesPrompt: true,
+    read(f) {
+      if (Sk.builtinFiles === undefined || Sk.builtinFiles.files[f] === undefined) throw "File not found: '" + f + "'";
+      return Sk.builtinFiles.files[f];
+    },
+    __future__: Sk.python3,
+    yieldLimit: 100,
+    killableWhile: true,
+    killableFor: true,
+  });
+}
+
+// opts: inputs (array, for scripted runs) | askInput (function returning a promise, for live runs),
+//       onOut(text, cls), timeLimit (ms), outLimit (characters)
+function runPython(code, opts) {
+  opts = opts || {};
+  return new Promise(resolve => {
+    let out = '', stopReason = null, rejectInput = null;
+    const started = Date.now();
+    const queue = opts.inputs ? opts.inputs.slice() : null;
+    const outLimit = opts.outLimit || 12000;
+    const emit = (t, cls) => {
+      if (stopReason) return;
+      out += t;
+      if (opts.onOut) opts.onOut(t, cls);
+      if (out.length > outLimit) stopReason = 'output';
+    };
+    const guard = () => {
+      if (stopReason) throw new Error(STOP);
+      if (opts.timeLimit && Date.now() - started > opts.timeLimit) { stopReason = 'time'; throw new Error(STOP); }
+    };
+    const run = { stop(reason) { if (!stopReason) stopReason = reason || 'user'; if (rejectInput) rejectInput(new Error(STOP)); }, guard };
+    active = run;
+    skConfigure(t => emit(t), prompt => {
+      prompt = prompt == null ? '' : String(prompt);
+      if (queue) {
+        if (!queue.length) { stopReason = 'noinput'; return Promise.reject(new Error(STOP)); }
+        const v = String(queue.shift());
+        emit(prompt + v + '\n');
+        return Promise.resolve(v);
+      }
+      if (!opts.askInput) { stopReason = 'noinput'; return Promise.reject(new Error(STOP)); }
+      emit(prompt);
+      return new Promise((res, rej) => {
+        rejectInput = rej;
+        opts.askInput().then(v => { rejectInput = null; emit(v + '\n', 'typed'); res(v); });
+      });
+    });
+    const finish = (mod, err) => {
+      if (active === run) active = null;
+      const res = { output: out, stopped: stopReason, error: null, module: mod || null, guard };
+      if (!stopReason && err) {
+        if (err && err.message === STOP) res.stopped = 'user';
+        else res.error = describeError(err, code);
+      }
+      res.ok = !res.stopped && !res.error;
+      resolve(res);
+    };
+    let promise;
+    try {
+      promise = Sk.misceval.asyncToPromise(() => Sk.importMainWithBody('<stdin>', false, code, true), { '*': guard });
+    } catch (e) { finish(null, e); return; }
+    promise.then(mod => finish(mod, null), err => finish(null, err));
+  });
+}
+
+async function callFunction(run, name, args) {
+  const d = run.module && run.module.$d;
+  const f = d && (d[name] !== undefined ? d[name] : d[name + '_$rw$']);
+  if (f === undefined) return { missing: true };
+  const started = Date.now();
+  const guard = () => { if (Date.now() - started > 2000) throw new Error(STOP); };
+  try {
+    const r = await Sk.misceval.asyncToPromise(
+      () => Sk.misceval.callsimOrSuspendArray(f, args.map(a => Sk.ffi.remapToPy(a))), { '*': guard });
+    return { value: Sk.ffi.remapToJs(r) };
+  } catch (e) {
+    if (e && e.message === STOP) return { timeout: true };
+    return { error: describeError(e, '') };
+  }
+}
+function readVariable(run, name) {
+  const d = run.module && run.module.$d;
+  const v = d && (d[name] !== undefined ? d[name] : d[name + '_$rw$']);
+  if (v === undefined) return { missing: true };
+  try { return { value: Sk.ffi.remapToJs(v) }; } catch (e) { return { missing: true }; }
+}
+
+/* ---------- checking ---------- */
+
+const pre = s => '<pre>' + (s === '' ? '<i>(nothing)</i>' : esc(s.split('\n').slice(0, 14).join('\n'))) + '</pre>';
+function runFailText(r) {
+  if (r.error) return 'the program stopped with <b>' + esc(r.error.type) + '</b>' + (r.error.line ? ' on line ' + r.error.line : '') + '. Press <b>Run</b> to see it for yourself.';
+  if (r.stopped === 'time' || r.stopped === 'output') return 'the program did not finish. Is a loop running forever?';
+  if (r.stopped === 'noinput') return 'the program asked for more input than this step needs. Check how many times it calls <code>input()</code>.';
+  return 'the program was stopped.';
+}
+
+async function runChecks(ex, code) {
+  const results = [];
+  let base = null;
+  const getBase = async () => base || (base = await runPython(code, { inputs: [], timeLimit: 3000 }));
+
+  for (const c of ex.checks) {
+    if (c.type === 'src') {
+      const ok = c.must ? c.must.test(code) : !c.mustNot.test(code);
+      results.push({ pass: ok, label: 'Your code', detail: ok ? '' : c.msg });
+      continue;
+    }
+    if (c.type === 'io') {
+      const r = await runPython(code, { inputs: c.inputs, timeLimit: 3000 });
+      const label = c.label;
+      if (!r.ok) { results.push({ pass: false, label, detail: 'With these inputs, ' + runFailText(r), fatal: r.error && r.error.kind === 'syntax' }); if (r.error && r.error.kind === 'syntax') break; continue; }
+      const missing = (c.expect || []).find(s => !r.output.includes(s));
+      const extra = (c.reject || []).find(s => r.output.includes(s));
+      if (missing) results.push({ pass: false, label, detail: 'Expected to see <code>' + esc(missing) + '</code>. Your program printed:' + pre(normOut(r.output)) });
+      else if (extra) results.push({ pass: false, label, detail: 'The output should not include <code>' + esc(extra) + '</code> here. Your program printed:' + pre(normOut(r.output)) });
+      else results.push({ pass: true, label });
+      continue;
+    }
+    // everything else looks at one plain run with no typed input
+    const r = await getBase();
+    if (!r.ok) {
+      results.push({ pass: false, label: 'Running your program', detail: 'When I ran it, ' + runFailText(r), fatal: true });
+      break;
+    }
+    if (c.type === 'exact') {
+      const got = normOut(r.output);
+      const ok = got === c.want;
+      results.push({ pass: ok, label: 'Console output', detail: ok ? '' :
+        '<div class="two"><div><span>The console should show</span>' + pre(c.want) + '</div><div><span>Your program printed</span>' + pre(got) + '</div></div>' });
+    } else if (c.type === 'var') {
+      const v = readVariable(r, c.name);
+      if (v.missing) results.push({ pass: false, label: 'Variable ' + c.name, detail: 'I cannot find a variable called <code>' + esc(c.name) + '</code>. Check the spelling.' });
+      else {
+        const ok = sameValue(v.value, c.want);
+        results.push({ pass: ok, label: 'Variable ' + c.name, detail: ok ? '' :
+          'When your program finished, <code>' + esc(c.name) + '</code> held <code>' + esc(pyRepr(v.value)) + '</code>. It should hold <code>' + esc(pyRepr(c.want)) + '</code>.' + (c.hint ? ' ' + c.hint : '') });
+      }
+    } else if (c.type === 'fn') {
+      const call = c.name + '(' + c.args.map(pyRepr).join(', ') + ')';
+      const v = await callFunction(r, c.name, c.args);
+      if (v.missing) { results.push({ pass: false, label: call, detail: 'I cannot find a function called <code>' + esc(c.name) + '</code>. Check the spelling on the <code>def</code> line.' }); break; }
+      if (v.timeout) results.push({ pass: false, label: call, detail: 'This call never finished. Is a loop running forever?' });
+      else if (v.error) results.push({ pass: false, label: call, detail: 'This call stopped with <b>' + esc(v.error.type) + '</b>: ' + esc(v.error.msg) + (v.error.line ? ' (line ' + v.error.line + ')' : '') + '.' });
+      else {
+        const ok = sameValue(v.value, c.want);
+        let d = '';
+        if (!ok) {
+          d = 'It gave back <code>' + esc(pyRepr(v.value)) + '</code>. It should give back <code>' + esc(pyRepr(c.want)) + '</code>.';
+          if (v.value === null) d += ' <code>None</code> means the function ended without returning a value.';
+        }
+        results.push({ pass: ok, label: call, detail: d });
+      }
+    } else if (c.type === 'custom') {
+      const ok = !!c.test(r, code);
+      results.push({ pass: ok, label: c.label, detail: ok ? '' : c.msg });
+    }
+  }
+  return { results, allPass: results.length > 0 && results.every(x => x.pass) && !results.some(x => x.fatal) };
+}
+
+/* ---------- editor ---------- */
+
+const codeEl = $('code'), gutterEl = $('gutter');
+let errLine = null;
+
+function drawGutter() {
+  const n = codeEl.value.split('\n').length;
+  let h = '';
+  for (let i = 1; i <= n; i++) h += '<div' + (i === errLine ? ' class="err"' : '') + '>' + i + '</div>';
+  gutterEl.innerHTML = h;
+  gutterEl.scrollTop = codeEl.scrollTop;
+}
+function setErrLine(n) { errLine = n; drawGutter(); }
+function setCode(text) { codeEl.value = text; codeEl.scrollTop = 0; errLine = null; drawGutter(); }
+function insertText(text) {
+  codeEl.focus();
+  const a = codeEl.selectionStart, b = codeEl.selectionEnd, before = codeEl.value;
+  let ok = false;
+  // execCommand keeps the browser's undo history working; fall back if it is refused
+  try { ok = text === '' ? document.execCommand('delete') : document.execCommand('insertText', false, text); } catch (e) {}
+  if (!ok || codeEl.value === before && (text !== '' || a !== b)) {
+    codeEl.value = before;
+    codeEl.setRangeText(text, a, b, 'end');
+  }
+  codeEl.dispatchEvent(new Event('input'));
+}
+function shiftLines(dedent) {
+  const v = codeEl.value;
+  let a = codeEl.selectionStart, b = codeEl.selectionEnd;
+  const start = v.lastIndexOf('\n', a - 1) + 1;
+  let end = v.indexOf('\n', b > a && v[b - 1] === '\n' ? b - 1 : b);
+  if (end === -1) end = v.length;
+  const block = v.slice(start, end).split('\n').map(l => dedent ? l.replace(/^( {1,4}|\t)/, '') : '    ' + l).join('\n');
+  codeEl.setSelectionRange(start, end);
+  insertText(block);
+  codeEl.setSelectionRange(start, start + block.length);
+}
+let escArmed = false;
+codeEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); doRun(); return; }
+  if (e.key === 'Escape') { escArmed = true; return; }
+  if (codeEl.readOnly) return;
+  const v = codeEl.value, a = codeEl.selectionStart, b = codeEl.selectionEnd;
+  if (e.key === 'Tab') {
+    if (escArmed) { escArmed = false; return; }   // Escape then Tab leaves the editor
+    e.preventDefault();
+    if (a !== b && v.slice(a, b).includes('\n') || e.shiftKey) shiftLines(e.shiftKey);
+    else insertText(' '.repeat(4 - ((a - (v.lastIndexOf('\n', a - 1) + 1)) % 4)));
+  } else if (e.key === 'Enter' && !e.shiftKey && !e.altKey) {
+    e.preventDefault();
+    const lineStart = v.lastIndexOf('\n', a - 1) + 1;
+    const before = v.slice(lineStart, a);
+    let ind = before.match(/^[ \t]*/)[0];
+    if (stripComment(before).trimEnd().endsWith(':')) ind += '    ';
+    insertText('\n' + ind);
+  } else if (e.key === 'Backspace' && a === b) {
+    const lineStart = v.lastIndexOf('\n', a - 1) + 1;
+    const before = v.slice(lineStart, a);
+    if (before.length && /^ +$/.test(before)) {
+      e.preventDefault();
+      const cut = (before.length % 4) || 4;
+      codeEl.setSelectionRange(a - cut, a);
+      insertText('');
+    }
+  }
+  escArmed = false;
+});
+codeEl.addEventListener('input', () => {
+  if (errLine !== null) errLine = null;
+  drawGutter();
+  state.code[state.current] = codeEl.value;
+  saveState();
+});
+codeEl.addEventListener('scroll', () => { gutterEl.scrollTop = codeEl.scrollTop; });
+
+/* ---------- console ---------- */
+
+const conEl = $('console'), conOut = $('conOut'), conIn = $('conIn'), conInput = $('conInput'), conHelp = $('conHelp');
+let inputResolve = null;
+
+function conClear() { conOut.textContent = ''; conHelp.innerHTML = ''; hideInput(); }
+function conWrite(text, cls) {
+  const last = conOut.lastChild;
+  if (!cls && last && last.nodeType === 3) last.appendData(text);
+  else if (!cls) conOut.appendChild(document.createTextNode(text));
+  else { const s = document.createElement('span'); s.className = cls; s.textContent = text; conOut.appendChild(s); }
+  conEl.scrollTop = conEl.scrollHeight;
+}
+function hideInput() { conIn.hidden = true; inputResolve = null; }
+function askInput() {
+  return new Promise(res => {
+    inputResolve = res;
+    conInput.value = '';
+    conIn.hidden = false;
+    conInput.focus();
+    conEl.scrollTop = conEl.scrollHeight;
+  });
+}
+conInput.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || !inputResolve) return;
+  e.preventDefault();
+  const res = inputResolve, v = conInput.value;
+  hideInput();
+  res(v);
+});
+
+function showError(err) {
+  const ex = cur();
+  conWrite((conOut.textContent && !conOut.textContent.endsWith('\n') ? '\n' : '') +
+    err.type + ': ' + err.msg + (err.line ? ' (line ' + err.line + ')' : '') + '\n', 'err');
+  if (err.line) setErrLine(err.line);
+  if (err.kind === 'internal') return;
+  const box = document.createElement('div');
+  box.className = 'errhelp';
+  const ask = ex.stage >= ERR_STAGE;
+  box.innerHTML =
+    (ask ? '<div class="q">Which kind of error is this?</div>' +
+      '<button class="btn small" data-kind="syntax" type="button">Syntax error</button>' +
+      '<button class="btn small" data-kind="runtime" type="button">Runtime error</button>' +
+      '<button class="btn small" data-kind="logic" type="button">Logic error</button>' +
+      '<div class="ans" hidden></div>' : '') +
+    '<div' + (ask ? ' class="clue"' : '') + '><button class="btn small" data-clue type="button">Help me read this error</button><div class="cluetext" hidden style="margin-top:6px;"></div></div>';
+  box.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    if (b.dataset.kind) {
+      const right = b.dataset.kind === err.kind;
+      const ans = box.querySelector('.ans');
+      const why = err.kind === 'syntax'
+        ? 'Python could not read the program, so it stopped before running a single line. Look at the console: nothing from your program was printed.'
+        : 'Python could read every line, so the program started. It crashed part-way through, when it reached line ' + (err.line || '?') + '.';
+      const wrongLogic = b.dataset.kind === 'logic' ? ' A logic error never produces red text. The program finishes and the answer is wrong.' : '';
+      ans.hidden = false;
+      ans.className = 'ans ' + (right ? 'yes' : 'no');
+      ans.innerHTML = (right ? '<b>Yes.</b> ' : '<b>Not this time.</b>' + wrongLogic + ' This is a <b>' + err.kind + ' error</b>. ') + why;
+      box.querySelectorAll('[data-kind]').forEach(x => { x.disabled = true; });
+    } else if (b.hasAttribute('data-clue')) {
+      const t = box.querySelector('.cluetext');
+      t.hidden = false; t.innerHTML = err.clue; b.disabled = true;
+    }
+    conEl.scrollTop = conEl.scrollHeight;
+  });
+  conHelp.appendChild(box);
+  conEl.scrollTop = conEl.scrollHeight;
+}
+
+/* ---------- run / check ---------- */
+
+let busy = false, lastResults = null;
+const cur = () => byId(state.current);
+
+function setBusy(b) {
+  busy = b;
+  $('btnRun').disabled = b;
+  $('btnCheck').disabled = b;
+  $('btnReset').disabled = b;
+  $('btnStop').disabled = !b;
+}
+function needsPrediction(ex) { return ex.predict && state.predict[ex.id] == null; }
+function nudgePredict() {
+  const p = document.querySelector('.predict');
+  if (p) { p.scrollIntoView({ block: 'center', behavior: 'smooth' }); p.style.boxShadow = '0 0 0 4px #fde68a'; setTimeout(() => { p.style.boxShadow = ''; }, 1400); }
+}
+function workshopLocked() { return cur().kind === 'workshop' && !(state.flags.planA && state.flags.planB); }
+
+async function doRun() {
+  if (busy) return;
+  const ex = cur();
+  if (needsPrediction(ex)) { nudgePredict(); return; }
+  if (workshopLocked()) return;
+  conClear(); setErrLine(null); setBusy(true);
+  const res = await runPython(codeEl.value, { onOut: conWrite, askInput });
+  hideInput(); setBusy(false);
+  const gap = conOut.textContent && !conOut.textContent.endsWith('\n') ? '\n' : '';
+  if (res.error) showError(res.error);
+  else if (res.stopped === 'output') conWrite(gap + 'Stopped by the trainer: the program printed a huge amount of text. Is a loop running forever?\n', 'sys');
+  else if (res.stopped) conWrite(gap + 'Stopped.\n', 'sys');
+  else conWrite(gap + (ex.stage >= ERR_STAGE ? 'Finished with no errors. That does not mean it is correct. Is the output what it should be?\n' : 'Finished.\n'), 'sys');
+  if (ex.predict && !state.ran[ex.id]) { state.ran[ex.id] = true; saveState(); renderTask(); }
+  return res;
+}
+function doStop() { if (active) active.stop('user'); }
+
+async function doCheck() {
+  if (busy) return;
+  const ex = cur();
+  if (ex.kind !== 'task') return;
+  if (needsPrediction(ex)) { nudgePredict(); return; }
+  setBusy(true);
+  lastResults = await runChecks(ex, codeEl.value);
+  setBusy(false);
+  if (lastResults.allPass && !state.done[ex.id]) { state.done[ex.id] = true; saveState(); }
+  renderNav(); renderTask();
+  const box = document.querySelector('.results');
+  if (box) box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  return lastResults;
+}
+
+/* ---------- drawing the page ---------- */
+
+function renderNav() {
+  let h = '';
+  STAGES.forEach(st => {
+    h += '<div class="nav-stage">' + esc(st.title) + '<small>' + esc(st.sub) + '</small></div>';
+    st.ex.forEach(ex => {
+      const done = !!state.done[ex.id];
+      h += '<button type="button" class="nav-item' + (ex.id === state.current ? ' current' : '') + (done ? ' done' : '') + '" data-go="' + ex.id + '">' +
+        '<span class="dot' + (ex.kind !== 'task' ? ' free' : '') + '">' + (done ? '✓' : '') + '</span><span>' + esc(ex.title) + (ex.tier === 'ext' ? ' ★★' : '') + '</span></button>';
+    });
+  });
+  $('nav').innerHTML = h;
+  const n = CORE.filter(e => state.done[e.id]).length;
+  $('progFill').style.width = Math.round(100 * n / CORE.length) + '%';
+  $('progText').textContent = n + ' of ' + CORE.length + ' steps';
+}
+
+function predictHtml(ex) {
+  const p = ex.predict, picked = state.predict[ex.id], ran = !!state.ran[ex.id];
+  let h = '<div class="predict"><div class="label">Predict before you run</div><div>' + p.q + '</div><div class="opts">';
+  p.options.forEach((o, i) => {
+    h += '<button type="button" class="opt' + (picked === i ? ' picked' : '') + '" data-pick="' + i + '"' + (picked != null ? ' disabled' : '') + '>' + esc(o) + '</button>';
+  });
+  h += '</div>';
+  if (picked == null) h += '<div class="verdict">Choose one. <b>Run</b> unlocks once you have committed to a prediction.</div>';
+  else if (!ran) h += '<div class="verdict">Locked in. Now press <b>Run</b> and compare.</div>';
+  else h += '<div class="verdict">' + (picked === p.answer ? '<b class="yes">Your prediction was right.</b> ' : '<b class="no">Your prediction did not match.</b> That is useful: it shows exactly which idea to fix. ') + p.explain + '</div>';
+  return h + '</div>';
+}
+
+function resultsHtml(ex) {
+  if (!lastResults) return '';
+  const R = lastResults.results, passed = R.filter(r => r.pass).length;
+  if (lastResults.allPass) return '';
+  let h = '<div class="results fail"><div class="head">';
+  const fatal = R.find(r => r.fatal);
+  if (ex.quiet && !fatal) {
+    h += passed + ' of ' + R.length + ' ways of playing work correctly</div><ul><li class="no">' + ex.quietMsg + '</li></ul></div>';
+    return h;
+  }
+  h += 'Not yet. Read what happened, change one thing, and run it again.</div><ul>';
+  (fatal ? [fatal] : R).forEach(r => {
+    h += '<li class="' + (r.pass ? 'ok' : 'no') + '"><span class="mark">' + (r.pass ? '✓' : '✗') + '</span><b>' + esc(r.label) + '</b>' + (r.detail ? '<div>' + r.detail + '</div>' : '') + '</li>';
+  });
+  return h + '</ul></div>';
+}
+
+function workshopHtml() {
+  let h = '';
+  let open = false;
+  WORKSHOP_LIST.forEach(it => {
+    if (it.head) { if (open) h += '</ul>'; h += '<h3>' + esc(it.head) + '</h3><ul class="checklist">'; open = true; return; }
+    h += '<li><label><input type="checkbox" data-flag="' + it.id + '"' + (state.flags[it.id] ? ' checked' : '') + '><span>' + it.text + '</span></label></li>';
+  });
+  if (open) h += '</ul>';
+  h += '<div class="idea"><p><b>Work in small steps.</b> Write a few lines, run them, read the output, then add a few more. When something breaks, you will know it is in the lines you just added. A build that crashes is data for Part E, not a failure.</p></div>';
+  h += '<div class="rowbtns"><button type="button" class="btn" data-act="dl">Download my game (.py)</button><button type="button" class="btn" data-act="open">Open a .py file</button></div>';
+  h += '<p style="font-size:13px;color:#64748b;">For Part G, your partner can play right here: they press Run and type in the console. Do not help them.</p>';
+  return h;
+}
+
+function renderTask() {
+  const ex = cur(), st = STAGES[ex.stage];
+  let h = '<div class="crumb">' + esc(st.title) + '</div><h2>' + esc(ex.title) + (ex.tier === 'ext' ? ' <span class="tag">Extended ★★</span>' : '') + '</h2>';
+  if (ex.paper) h += '<div><span class="paperref">Goes with: ' + esc(ex.paper) + '</span></div>';
+  h += ex.body;
+  if (ex.predict) h += predictHtml(ex);
+  if (ex.then) h += ex.then;
+  if (ex.kind === 'workshop') h += workshopHtml();
+  if (ex.hints && ex.hints.length) {
+    const shown = Math.min(state.hints[ex.id] || 0, ex.hints.length);
+    h += '<div class="hintbox">';
+    for (let i = 0; i < shown; i++) h += '<div class="hint"><b>Hint ' + (i + 1) + '.</b> ' + ex.hints[i] + '</div>';
+    if (shown < ex.hints.length) h += '<button type="button" class="btn small" data-act="hint">' + (shown ? 'Another hint' : 'I am stuck: give me a hint') + ' (' + (shown + 1) + ' of ' + ex.hints.length + ')</button>';
+    h += '</div>';
+  }
+  h += resultsHtml(ex);
+  if (state.done[ex.id]) {
+    const i = ALL.indexOf(ex), next = ALL[i + 1];
+    const lastOfStage = st.ex[st.ex.length - 1] === ex || st.ex.filter(e => e.tier === 'core').slice(-1)[0] === ex;
+    h += '<div class="donebox"><div class="label">✓ All checks passed</div>' + (ex.after || '') + (lastOfStage && st.after ? st.after : '');
+    if (next) h += '<div class="rowbtns"><button type="button" class="btn primary" data-go="' + next.id + '">Next: ' + esc(next.title) + ' →</button></div>';
+    h += '</div>';
+  }
+  $('task').innerHTML = h;
+
+  const locked = workshopLocked();
+  codeEl.readOnly = locked;
+  $('lockMsg').hidden = !locked;
+  if (locked) $('lockMsg').textContent = 'Plan first. Tick Part A and Part B in the checklist to unlock the editor.';
+  $('btnCheck').hidden = ex.kind !== 'task';
+}
+
+function select(id) {
+  if (busy) doStop();
+  const ex = byId(id);
+  if (!ex) return;
+  state.current = id;
+  lastResults = null;
+  setCode(state.code[id] != null ? state.code[id] : ex.starter);
+  conClear();
+  renderNav(); renderTask();
+  $('task').scrollTop = 0;
+  saveState();
+}
+
+/* ---------- events ---------- */
+
+$('nav').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) select(b.dataset.go); });
+$('task').addEventListener('click', e => {
+  const go = e.target.closest('[data-go]');
+  if (go) { select(go.dataset.go); return; }
+  const pick = e.target.closest('[data-pick]');
+  if (pick) { state.predict[state.current] = +pick.dataset.pick; saveState(); renderTask(); return; }
+  const act = e.target.closest('[data-act]');
+  if (!act) return;
+  if (act.dataset.act === 'hint') { state.hints[state.current] = (state.hints[state.current] || 0) + 1; saveState(); renderTask(); }
+  if (act.dataset.act === 'dl') download('my_game.py', codeEl.value, 'text/plain');
+  if (act.dataset.act === 'open') $('filePy').click();
+});
+$('task').addEventListener('change', e => {
+  const f = e.target.closest('[data-flag]');
+  if (!f) return;
+  state.flags[f.dataset.flag] = f.checked;
+  saveState();
+  if (f.dataset.flag === 'planA' || f.dataset.flag === 'planB') { const top = $('task').scrollTop; renderTask(); $('task').scrollTop = top; }
+});
+$('btnRun').addEventListener('click', doRun);
+$('btnStop').addEventListener('click', doStop);
+$('btnCheck').addEventListener('click', doCheck);
+$('btnClear').addEventListener('click', () => { if (!busy) conClear(); });
+$('btnReset').addEventListener('click', () => {
+  const ex = cur();
+  if (!confirm('Put this step back to how it started? The code you typed for this step will be erased.')) return;
+  delete state.code[ex.id];
+  setCode(ex.starter); conClear(); lastResults = null; saveState(); renderTask();
+});
+$('btnCard').addEventListener('click', () => { const d = $('card'); if (d.showModal) d.showModal(); else d.setAttribute('open', ''); });
+$('btnCardClose').addEventListener('click', () => { const d = $('card'); if (d.close) d.close(); else d.removeAttribute('open'); });
+
+function download(name, text, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type }));
+  a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+$('btnSave').addEventListener('click', () => {
+  download('python-trainer-my-work.json', JSON.stringify({ app: STORE_KEY, saved: new Date().toISOString(), state }, null, 1), 'application/json');
+});
+$('btnLoad').addEventListener('click', () => $('fileLoad').click());
+$('fileLoad').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try {
+      const data = JSON.parse(rd.result);
+      if (data.app !== STORE_KEY || !data.state) throw new Error('wrong file');
+      if (!confirm('Replace the work in this browser with the work in that file?')) return;
+      state = Object.assign(blankState(), data.state);
+      if (!byId(state.current)) state.current = ALL[0].id;
+      saveState(); select(state.current);
+    } catch (err) { alert('That file is not a Python Trainer save file.'); }
+  };
+  rd.readAsText(file);
+  e.target.value = '';
+});
+$('filePy').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    if (codeEl.value.trim() && !confirm('Replace the code in the editor with this file?')) return;
+    setCode(String(rd.result)); state.code[state.current] = codeEl.value; saveState();
+  };
+  rd.readAsText(file);
+  e.target.value = '';
+});
+
+/* ---------- start ---------- */
+
+if (typeof Sk === 'undefined') {
+  document.querySelector('.layout').innerHTML = '<div class="fatal"><b>Python did not load.</b> Reload the page. If this keeps happening, tell your teacher: the trainer could not find its Python files (vendor/skulpt).</div>';
+} else {
+  loadState();
+  select(state.current);
+}
+</script>
+</body>
+</html>

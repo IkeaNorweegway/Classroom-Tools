@@ -66,6 +66,8 @@
 
 **Misconception to watch:** Students often believe a program that runs without crashing is therefore correct. Distinguish "runs without error" from "produces the right result" explicitly (a Tic-Tac-Toe that never detects a win still "runs"). Build at least one test case into the demo step that specifically checks correctness, not just execution. A second misconception worth watching for this path specifically: because Python is forgiving about types and structure, students can get a program "working" through trial and error without a clear mental model of why — the paper flowchart step (below) exists partly to catch this before it hardens into a habit.
 
+**Trainer (Python path only):** `public/materials/steam9-python-trainer-v1.html` is the tutorial sequence and coding environment for this option — a browser editor and console (no install, no accounts) whose steps follow the notes' Concepts 1–4 and the journal's Part D debugging exercise, then give a workshop space for the game. It sends students back to the paper notes and journal at each stage and does not replace them. Its Python engine (Skulpt) covers everything this unit needs but is not full Python: no file access and no third-party libraries, and syntax-error wording is reworded by the trainer to match real Python.
+
 ### Shared across both options
 
 **Design & Media:** Before coding, students sketch/flowchart their game's logic (e.g., Tic-Tac-Toe's win-check logic, or Minesweeper's reveal/flag behavior) on paper — continuing the "plan the logic before coding it" habit established in Grade 7's CYOA flowchart, now applied to a general program rather than a branching story.
