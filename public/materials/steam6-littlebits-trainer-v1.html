@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>littleBits Trainer | STEAM Grade 6</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --accent: #7c3aed;
+    --accent-light: #ede9fe;
+    --accent-dark: #6d28d9;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --good: #059669;
+    --bad: #dc2626;
+    --c-move: #2563eb;
+    --c-turn: #0e7490;
+    --c-out: #be185d;
+    --c-loop: #c2410c;
+    --c-if: #047857;
+  }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  button { font: inherit; cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .5; }
+
+  /* ---------- top bar ---------- */
+  .top {
+    display: flex; align-items: center; gap: 20px; flex-shrink: 0;
+    background: #fff; border-bottom: 1px solid var(--line);
+    border-left: 5px solid var(--accent); padding: 8px 16px;
+  }
+  .top .course-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+  .top h1 { font-size: 20px; font-weight: 700; line-height: 1.2; }
+  .progress { flex: 1; display: flex; align-items: center; gap: 10px; min-width: 120px; }
+  .progress .bar { flex: 1; max-width: 280px; height: 10px; border-radius: 5px; background: var(--accent-light); overflow: hidden; }
+  .progress .bar span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s; }
+  .progress .txt { font-size: 14px; color: var(--muted); white-space: nowrap; }
+  .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    border: 1px solid #cbd5e1; background: #fff; color: #334155;
+    border-radius: 10px; padding: 8px 14px; font-size: 15px; font-weight: 600;
+  }
+  .btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover:not(:disabled) { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .btn.go { background: var(--good); border-color: var(--good); color: #fff; font-size: 18px; padding: 8px 22px; }
+  .btn.go:hover:not(:disabled) { background: #047857; border-color: #047857; }
+  .btn.stop { border-color: var(--bad); color: var(--bad); }
+  .btn.small { padding: 5px 12px; font-size: 14px; }
+
+  /* ---------- layout ---------- */
+  .layout {
+    flex: 1; min-height: 0; display: grid;
+    grid-template-columns: 200px minmax(260px, .75fr) minmax(480px, 1.6fr);
+  }
+  #nav { background: #fff; border-right: 1px solid var(--line); overflow-y: auto; padding: 10px 0 20px; }
+  #task { overflow-y: auto; padding: 18px 20px 40px; background: #fff; border-right: 1px solid var(--line); }
+  #work {
+    min-height: 0; min-width: 0; background: #eef2f7;
+    display: grid; grid-template-columns: 136px minmax(190px, 1fr) minmax(240px, 350px);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "bar bar bar" "pal prog stage";
+  }
+
+  /* ---------- nav ---------- */
+  .nav-stage { padding: 10px 14px 2px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .nav-stage small { display: block; text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 12px; color: #94a3b8; }
+  .nav-item {
+    display: flex; align-items: flex-start; gap: 8px; width: 100%; text-align: left;
+    border: none; background: none; padding: 7px 14px; font-size: 15px; color: #334155;
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover { background: #f1f5f9; }
+  .nav-item.current { background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; color: #4c1d95; }
+  .nav-item .dot {
+    flex-shrink: 0; width: 18px; height: 18px; margin-top: 2px; border-radius: 50%;
+    border: 2px solid #cbd5e1; font-size: 11px; line-height: 14px; text-align: center; color: #fff;
+  }
+  .nav-item.done .dot { background: var(--good); border-color: var(--good); }
+  .nav-item .dot.free { border-style: dashed; }
+
+  /* ---------- task panel ---------- */
+  .crumb { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--accent); }
+  #task h2 { font-size: 23px; font-weight: 700; margin: 2px 0 6px; }
+  #task p { margin-bottom: 10px; }
+  #task ul, #task ol { margin: 4px 0 12px 24px; }
+  #task li { margin-bottom: 6px; }
+  .tag { font-size: 12px; font-weight: 700; background: #fef3c7; color: #92400e; border-radius: 999px; padding: 2px 9px; vertical-align: middle; }
+  .paperref { display: inline-block; font-size: 13px; font-weight: 600; color: #c2410c; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 999px; padding: 1px 10px; margin-bottom: 12px; }
+  .paper { border-left: 5px solid #f97316; background: #fff7ed; padding: 10px 14px; margin: 12px 0; border-radius: 0 8px 8px 0; }
+  .paper .label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #c2410c; margin-bottom: 3px; }
+  .paper p:last-child, .paper ul:last-child { margin-bottom: 0; }
+  .word { border: 2px solid #c4b5fd; background: #f5f3ff; border-radius: 10px; padding: 10px 14px; margin: 12px 0; }
+  .word .label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent-dark); margin-bottom: 2px; }
+  .word p:last-child { margin-bottom: 0; }
+  .todo { border: 2px solid #bfdbfe; background: #eff6ff; border-radius: 10px; padding: 10px 14px; margin: 12px 0; }
+  .todo .label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #1d4ed8; margin-bottom: 3px; }
+  .todo p:last-child, .todo ol:last-child, .todo ul:last-child { margin-bottom: 0; }
+  .chip { display: inline-block; color: #fff; font-weight: 700; font-size: .88em; border-radius: 7px; padding: 0 8px; white-space: nowrap; }
+  .chip.move { background: var(--c-move); } .chip.turn { background: var(--c-turn); } .chip.out { background: var(--c-out); }
+  .chip.loop { background: var(--c-loop); } .chip.if { background: var(--c-if); }
+
+  .predict { border: 2px solid #a5b4fc; background: #eef2ff; border-radius: 10px; padding: 12px 14px; margin: 14px 0; }
+  .predict .label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #4338ca; margin-bottom: 4px; }
+  .predict .opts { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .predict .opt { text-align: left; border: 2px solid #c7d2fe; background: #fff; color: var(--ink); border-radius: 8px; padding: 9px 12px; font-size: 16px; }
+  .predict .opt:hover:not(:disabled) { border-color: #6366f1; }
+  .predict .opt.picked { border-color: #4338ca; background: #e0e7ff; color: #312e81; font-weight: 600; opacity: 1; }
+  .predict .verdict { margin-top: 10px; }
+  .predict .verdict b.yes { color: var(--good); }
+  .predict .verdict b.no { color: #b45309; }
+
+  .hintbox { margin: 14px 0; }
+  .hint { border-left: 5px solid #a3a3a3; background: #fafafa; padding: 8px 12px; margin: 8px 0; border-radius: 0 8px 8px 0; }
+  .results { margin: 16px 0; border: 2px solid #fecaca; border-radius: 10px; overflow: hidden; }
+  .results .head { padding: 8px 14px; font-weight: 700; background: #fef2f2; color: #b91c1c; }
+  .results ul { list-style: none; margin: 0 !important; }
+  .results li { padding: 9px 14px; border-top: 1px solid #fecaca; margin: 0 !important; }
+  .donebox { border: 2px solid var(--good); background: #ecfdf5; border-radius: 10px; padding: 12px 14px; margin: 16px 0; }
+  .donebox .label { font-weight: 700; font-size: 19px; color: #047857; margin-bottom: 4px; }
+  .rowbtns { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 0; }
+
+  /* ---------- work area ---------- */
+  :root { --k-power: #2563eb; --k-in: #db2777; --k-out: #15803d; --k-wire: #c2410c; --sig: #facc15; }
+  #work { display: flex; flex-direction: column; min-height: 0; min-width: 0; background: #eef2f7; }
+  .toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #fff; border-bottom: 1px solid var(--line); flex-wrap: wrap; flex-shrink: 0; }
+  .toolbar .spacer { flex: 1; }
+  .switch { display: inline-flex; align-items: center; gap: 10px; border: 2px solid #94a3b8; background: #fff; color: #334155; border-radius: 999px; padding: 6px 16px 6px 8px; font-size: 17px; font-weight: 700; }
+  .switch .knob { width: 46px; height: 26px; border-radius: 13px; background: #cbd5e1; position: relative; transition: background .15s; }
+  .switch .knob::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: left .15s; }
+  .switch.on { border-color: var(--k-power); color: #1e3a8a; }
+  .switch.on .knob { background: var(--k-power); }
+  .switch.on .knob::after { left: 23px; }
+  .pane-head { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); padding: 8px 12px 2px; display: flex; justify-content: space-between; gap: 8px; }
+
+  #trayWrap { background: #e2e8f0; position: relative; flex-shrink: 0; }
+  #tray { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 12px 10px; }
+  #trayNote { font-size: 15px; color: #475569; padding: 4px 12px 10px; }
+  #trayWrap.bin::after {
+    content: 'Drop here to take the bit out'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(254, 226, 226, .94); color: #b91c1c; font-weight: 700; border: 3px dashed #f87171;
+  }
+  #benchWrap { flex: 1; min-height: 190px; display: flex; flex-direction: column; overflow-y: auto; }
+  #bench { flex: 1; display: flex; flex-wrap: wrap; align-content: flex-start; align-items: flex-start; row-gap: 14px; padding: 8px 12px 30px; }
+  #bench:empty::after { content: 'Your circuit is empty. Tap a bit, or drag it here.'; color: #64748b; font-size: 15px; padding: 14px 4px; }
+
+  .bit {
+    position: relative; width: 98px; margin-right: 16px; background: #fff; border: 3px solid var(--kc); border-radius: 12px;
+    cursor: grab; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: none;
+    box-shadow: 0 3px 0 rgba(15, 23, 42, .25); color: var(--kc); text-align: center;
+  }
+  .bit.k-power { --kc: var(--k-power); } .bit.k-in { --kc: var(--k-in); } .bit.k-out { --kc: var(--k-out); } .bit.k-wire { --kc: var(--k-wire); }
+  .bit:focus-visible { outline: 3px solid #1e293b; outline-offset: 2px; }
+  .bit .bn { background: var(--kc); color: #fff; font-weight: 700; font-size: 14px; line-height: 1.2; padding: 4px 2px; border-radius: 8px 8px 0 0; }
+  .bit .bi { height: 56px; display: flex; align-items: center; justify-content: center; }
+  .bit .bi svg { width: 46px; height: 46px; }
+  .bit .bd { display: flex; align-items: center; justify-content: space-between; gap: 4px; padding: 0 5px 5px; font-size: 13px; font-weight: 700; color: #475569; }
+  .bit .bd .dir { font-size: 18px; line-height: 1; }
+  .flipbtn { border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; border-radius: 8px; font-size: 13px; font-weight: 600; padding: 3px 7px; min-height: 30px; }
+  .flipbtn:hover { background: #e2e8f0; }
+  #tray .bit { width: 86px; margin-right: 0; }
+  #tray .bit .bn { min-height: 2.6em; display: flex; align-items: center; justify-content: center; }
+  #tray .bit .bi { height: 42px; }
+  #tray .bit .bi svg { width: 34px; height: 34px; }
+  /* the link to the next bit: grey with no signal, yellow with signal */
+  #bench .bit::after { content: ''; position: absolute; left: 100%; top: 50%; width: 16px; height: 10px; margin: -5px 0 0 3px; background: #cbd5e1; border-radius: 0 5px 5px 0; }
+  #bench .bit.sig::after { background: var(--sig); box-shadow: 0 0 8px 2px var(--sig); }
+  #bench .bit.sig { box-shadow: 0 0 0 3px var(--sig), 0 3px 0 rgba(15, 23, 42, .25); }
+  #bench .bit.stopped { box-shadow: 0 0 0 3px #f87171, 0 3px 0 rgba(15, 23, 42, .25); }
+  .bit.flip .bd .dir, .bit.flip .bd .back { color: var(--bad); }
+  .bit.flip .bi { transform: scaleX(-1); opacity: .55; }
+  .bit .bulb { fill: #e2e8f0; stroke: currentColor; stroke-width: 2.5; }
+  .bit.lit .bulb { fill: #fde047; filter: drop-shadow(0 0 6px #facc15); }
+  .bit .waves { opacity: 0; }
+  .bit.lit .waves { opacity: 1; }
+  .bit.lit .spin { animation: spin .5s linear infinite; transform-origin: 20px 20px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .bit .cap { fill: #fbcfe8; }
+  .bit.open .cap { fill: var(--k-in); }
+  .bit .moon { display: none; }
+  .bit.dark .moon { display: inline; } .bit.dark .sun { display: none; }
+  .bit.dragging { opacity: .3; }
+  .bit.ghost { position: fixed; z-index: 50; pointer-events: none; opacity: .92; margin: 0; box-shadow: 0 10px 24px rgba(15, 23, 42, .35); }
+  .bit.ghost::after { display: none; }
+  .bit.flash { animation: flash .5s; }
+  @keyframes flash { from { transform: scale(1.1); } to { transform: scale(1); } }
+  .marker { width: 8px; height: 110px; border-radius: 4px; background: var(--sig); box-shadow: 0 0 0 2px #ca8a04; margin: 0 12px 0 -4px; flex-shrink: 0; }
+  .builder-locked .bit { cursor: default; }
+
+  #panel { flex-shrink: 0; padding: 10px 12px 14px; display: flex; flex-direction: column; gap: 8px; background: #e2e8f0; }
+  #say { background: #fff; border: 2px solid var(--line); border-radius: 10px; padding: 8px 12px; min-height: 46px; font-size: 16px; }
+  #say.good { border-color: var(--good); background: #ecfdf5; font-weight: 700; color: #047857; }
+  #say.oops { border-color: #fca5a5; background: #fef2f2; }
+  #world { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  #world .lab { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); width: 100%; }
+  .wbtn { border: 2px solid var(--k-in); background: #fff; color: #9d174d; border-radius: 12px; padding: 10px 16px; font-size: 16px; font-weight: 700; min-height: 48px; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .wbtn.active { background: var(--k-in); color: #fff; }
+
+  #btnSteps { display: none; }
+  @media (max-width: 1180px) {
+    .top { gap: 12px; padding: 6px 12px; }
+    #btnSteps { display: inline-block; }
+    .layout { position: relative; grid-template-columns: minmax(240px, .7fr) minmax(430px, 1.5fr); }
+    #nav {
+      display: none; position: absolute; top: 0; bottom: 0; left: 0; width: 260px; z-index: 5;
+      box-shadow: 6px 0 24px rgba(15, 23, 42, .25);
+    }
+    .layout.nav-open #nav { display: block; }
+    #task { padding: 14px 16px 32px; }
+  }
+  @media (max-width: 860px) {
+    body { overflow: auto; display: block; }
+    html, body { height: auto; }
+    .layout { display: block; }
+    #task { border-right: none; }
+    #benchWrap { overflow: visible; }
+    .top { flex-wrap: wrap; }
+    #nav { position: fixed; top: 0; }
+  }
+  @media print {
+    #work, #nav, .top-actions { display: none; }
+    body { overflow: visible; display: block; background: #fff; }
+    .layout { display: block; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bit.flash, .bit.lit .spin { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="course-label">STEAM · Grade 6 · Unit 1</div>
+    <h1>littleBits Trainer</h1>
+  </div>
+  <div class="progress">
+    <div class="bar"><span id="progFill"></span></div>
+    <span class="txt" id="progText"></span>
+  </div>
+  <div class="top-actions">
+    <button class="btn" id="btnSteps" type="button" aria-controls="nav" aria-expanded="false">☰ Steps</button>
+    <button class="btn" id="btnRead" type="button" hidden>Read to me</button>
+    <button class="btn" id="btnNew" type="button" title="Erase the work on this device and start at step 1">New student</button>
+  </div>
+</header>
+
+<div class="layout">
+  <nav id="nav" aria-label="Trainer steps"></nav>
+  <section id="task" aria-live="polite"></section>
+  <section id="work">
+    <div class="toolbar">
+      <button class="switch" id="btnPower" type="button" aria-pressed="false"><span class="knob"></span><span id="powerTxt">Power is OFF</span></button>
+      <button class="btn primary" id="btnCheck" type="button">Check my circuit</button>
+      <span class="spacer"></span>
+      <button class="btn small" id="btnSound" type="button"></button>
+      <button class="btn small" id="btnReset" type="button">Start over</button>
+    </div>
+    <div id="trayWrap">
+      <div class="pane-head"><span>Bits</span></div>
+      <div id="trayNote" hidden></div>
+      <div id="tray"></div>
+    </div>
+    <div id="benchWrap">
+      <div class="pane-head"><span>Your circuit</span><span id="bitCount"></span></div>
+      <div id="bench" aria-label="Your circuit"></div>
+    </div>
+    <div id="panel">
+      <div id="say"></div>
+      <div id="world"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* =====================================================================
+   littleBits Trainer — STEAM Grade 6 Unit 1
+   Companion to steam6-littlebits-notes-v1 and steam6-littlebits-workbook-v1.
+   No libraries. Bits are dragged (or tapped) into one chain, and the
+   signal is worked out from left to right every time something changes.
+   This is a simplified model: see the notes in evalChain.
+   ===================================================================== */
+
+/* ---------- bits ---------- */
+
+const SVG = body => '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + body + '</svg>';
+const BITS = {
+  power:  { kind: 'power', name: 'power',        icon: SVG('<rect x="6" y="12" width="24" height="16" rx="3"/><path d="M33 17v6"/><path d="M19 15l-4 6h6l-4 5" stroke-width="2"/>') },
+  wire:   { kind: 'wire',  name: 'wire',         icon: SVG('<path d="M4 20C12 6 28 34 36 20"/>') },
+  button: { kind: 'in',    name: 'button',       icon: SVG('<circle cx="20" cy="20" r="13"/><circle class="cap" cx="20" cy="20" r="7.5" stroke="none"/>') },
+  light:  { kind: 'in',    name: 'light sensor', icon: SVG('<g class="sun"><circle cx="20" cy="20" r="6"/><path d="M20 6v4M20 30v4M6 20h4M30 20h4M10 10l3 3M27 27l3 3M30 10l-3 3M13 27l-3 3"/></g><path class="moon" d="M26 27a11 11 0 1 1-6-20 9 9 0 0 0 6 20z" fill="currentColor"/>') },
+  sound:  { kind: 'in',    name: 'sound sensor', icon: SVG('<rect x="15" y="7" width="10" height="17" rx="5"/><path d="M10 20a10 10 0 0 0 20 0M20 30v4"/>') },
+  pulse:  { kind: 'in',    name: 'pulse',        icon: SVG('<path d="M4 27h7V13h8v14h8V13h9"/>') },
+  led:    { kind: 'out',   name: 'LED',          icon: SVG('<circle class="bulb" cx="20" cy="20" r="11"/>') },
+  buzzer: { kind: 'out',   name: 'buzzer',       icon: SVG('<circle cx="20" cy="20" r="8"/><circle cx="20" cy="20" r="2" fill="currentColor"/><path class="waves" d="M32 12a12 12 0 0 1 0 16M8 12a12 12 0 0 0 0 16"/>') },
+  motor:  { kind: 'out',   name: 'motor',        icon: SVG('<circle cx="20" cy="20" r="14"/><g class="spin"><path d="M20 8v24M8 20h24"/></g>') },
+};
+const OUTS = ['led', 'buzzer', 'motor'];
+const MAX_BITS = 10;
+
+let uid = 1;
+const B = (t, flip) => ({ id: 'b' + (uid++), t, flip: !!flip });
+const chainOf = (...ts) => () => ts.map(t => t[0] === '!' ? B(t.slice(1), true) : B(t));
+
+const T_BASIC = ['power', 'wire', 'led', 'buzzer', 'motor'];
+const T_IN = ['power', 'wire', 'button', 'light', 'led', 'buzzer', 'motor'];
+const T_LOOP = ['power', 'wire', 'button', 'light', 'pulse', 'led', 'buzzer', 'motor'];
+const T_ALL = ['power', 'wire', 'button', 'light', 'sound', 'pulse', 'led', 'buzzer', 'motor'];
+
+/* ---------- the circuit model ---------- */
+
+// Works out where the signal gets to, reading the chain from left to right.
+// world: { press, dark, loud }.  phase: whether a pulse bit is in its "on" half right now.
+// Simplified on purpose: the light sensor lets the signal through when the room is dark (as in the notes),
+// the sound sensor lets it through when it is loud, and a backwards bit stops the signal.
+function evalChain(chain, world, phase) {
+  let sig = false, stop = null, hasPower = false;
+  const after = [], lit = [];
+  chain.forEach((b, i) => {
+    const before = sig;
+    if (b.flip) sig = false;
+    else if (b.t === 'power') { sig = true; hasPower = true; }
+    else if (b.t === 'button') sig = sig && !!world.press;
+    else if (b.t === 'light') sig = sig && !!world.dark;
+    else if (b.t === 'sound') sig = sig && !!world.loud;
+    else if (b.t === 'pulse') sig = sig && phase;
+    if (before && !sig && !stop) stop = { i, why: b.flip ? 'flip' : b.t };
+    after.push(sig);
+    lit.push(sig && BITS[b.t].kind === 'out');
+  });
+  return { after, lit, stop, hasPower };
+}
+// 'on', 'off', 'blink', or 'none' (no bit of that type) for one kind of output in one world.
+function status(chain, world, type) {
+  if (!chain.some(b => b.t === type)) return 'none';
+  const on = ph => { const r = evalChain(chain, world, ph); return chain.some((b, i) => b.t === type && r.lit[i]); };
+  const a = on(true), b = on(false);
+  return a && b ? 'on' : a || b ? 'blink' : 'off';
+}
+const WORLDS = [];
+[false, true].forEach(press => [false, true].forEach(dark => [false, true].forEach(loud => WORLDS.push({ press, dark, loud }))));
+const allStatuses = chain => WORLDS.map(w => OUTS.map(t => status(chain, w, t)));
+
+const uses = (chain, t) => chain.some(b => b.t === t);
+const typeList = chain => chain.map(b => b.t).sort().join();
+
+const SHOULD = { on: 'be on', off: 'be off', blink: 'turn on and off, over and over' };
+const DOES = { on: 'is on', off: 'is off', blink: 'turns on and off, over and over' };
+
+function evaluate(ex, chain) {
+  const msgs = [];
+  if (!uses(chain, 'power')) msgs.push('Your circuit has no power bit. Nothing can turn on without power.');
+  (ex.tests || []).forEach(t => {
+    Object.keys(t.want).forEach(type => {
+      const got = status(chain, t.w, type), name = BITS[type].name;
+      if (got === 'none') msgs.push('Your circuit needs ' + (type === 'led' ? 'an LED' : 'a ' + name) + ' bit.');
+      else if (got !== t.want[type]) msgs.push(t.when + ', the ' + name + ' should ' + SHOULD[t.want[type]] + '. In your circuit it ' + DOES[got] + '.');
+    });
+  });
+  if (!msgs.length) (ex.rules || []).forEach(r => { if (!r.test(chain)) msgs.push(r.msg); });
+  return { ok: msgs.length === 0, msgs: msgs.slice(0, 1) };
+}
+
+const RULE = {
+  uses: (t, msg) => ({ test: c => uses(c, t), msg }),
+  sameAs: (starter, msg) => ({ test: c => typeList(c) === typeList(starter()), msg }),
+  responds: { test: c => { const all = allStatuses(c); return OUTS.some((t, k) => new Set(all.map(s => s[k])).size > 1); },
+    msg: 'Your circuit needs an input bit that changes what an output does. Put the input between the power bit and the output.' },
+  loops: { test: c => { const all = allStatuses(c); return OUTS.some((t, k) => all.some(s => s[k] === 'blink') && all.some(s => s[k] === 'off')); },
+    msg: 'One output should repeat (turn on and off) some of the time, and be off the rest of the time. Check where your input bits and your pulse bit sit.' },
+};
+
+/* ---------- content ---------- */
+
+const chip = (kind, text) => '<span class="chip ' + kind + '">' + text + '</span>';
+const C = {};
+Object.keys(BITS).forEach(t => { C[t] = chip({ power: 'move', in: 'out', out: 'if', wire: 'loop' }[BITS[t].kind], BITS[t].name); });
+const W0 = {}, PRESS = { press: true }, DARK = { dark: true };
+
+const flowStart = chainOf('buzzer', 'power', 'led');
+const whoStart = chainOf('power', 'light', 'led', 'buzzer');
+const insideStart = chainOf('power', 'pulse', 'led', 'buzzer');
+
+const STAGES = [
+  {
+    id: 's0', title: 'Start here', sub: 'Notes: Before We Start',
+    ex: [
+      {
+        id: 'start', title: 'Switch it on', paper: 'Notes · Before We Start', tray: T_BASIC, startOff: true,
+        body: `
+          <div class="paper"><div class="label">On paper first</div>
+          <p>Open your notes to <b>Before We Start</b>. Answer both questions. There are no wrong answers.</p></div>
+          <p>These are bits. They snap together in a row to make a <b>circuit</b>. The blue ${C.power} bit is where the power comes from.</p>
+          <div class="todo"><div class="label">Your job</div>
+          <ol><li>Add an ${C.led} bit after the power bit. Tap it, or drag it into your circuit.</li>
+          <li>Flip the <b>power switch</b> on. Watch the yellow signal.</li>
+          <li>Press <b>Check my circuit</b>.</li></ol></div>`,
+        starter: chainOf('power'),
+        tests: [{ when: 'With the power on', w: W0, want: { led: 'on' } }],
+        hints: ['The LED goes to the right of the power bit. The signal travels from left to right.'],
+        after: `<p>Every step works like this. Build with bits. Try it. Press <b>Check my circuit</b>. If it is not right, change one thing and try again.</p>`,
+      },
+    ],
+  },
+  {
+    id: 's1', title: '1 · Circuits', sub: 'Notes: Part 1',
+    ex: [
+      {
+        id: 'path', title: 'Power has to flow', paper: 'Notes · Part 1', tray: T_BASIC,
+        body: `
+          <div class="word"><div class="label">New word: circuit</div>
+          <p>A connected path that power can travel along.</p></div>
+          <div class="word"><div class="label">New word: signal</div>
+          <p>The power moving through the chain. If one bit is not connected properly, the signal stops there.</p></div>
+          <p>Look at the circuit. The ${C.wire} bit has been snapped in <b>backwards</b>. The power is off for now.</p>`,
+        predict: {
+          q: 'You switch the power on. What will the LED do?',
+          options: ['Light up', 'Stay off', 'Blink on and off'], answer: 1,
+          explain: 'The signal left the power bit and stopped at the backwards wire. Nothing past that point can turn on.',
+        },
+        then: `<div class="todo"><div class="label">Your job</div>
+          <p>Fix the circuit so the LED turns on. Tap <b>turn</b> on a bit to turn it around.</p></div>`,
+        starter: chainOf('power', '!wire', 'led'),
+        tests: [{ when: 'With the power on', w: W0, want: { led: 'on' } }],
+        hints: ['Find the bit with the red arrow. That arrow shows it is pointing the wrong way.'],
+      },
+      {
+        id: 'flow', title: 'One way only', paper: 'Notes · Part 1', tray: [], noDelete: true,
+        body: `
+          <p>This is the same <b>sequence</b> idea from Dash and Scratch. Step 1, then step 2, then step 3. The signal starts at the power bit and moves to the right, one bit at a time.</p>
+          <div class="todo"><div class="label">Your job</div>
+          <ol><li>Switch the power on. Which output is off? Why?</li>
+          <li>Make <b>both</b> outputs turn on. Do not add any bits. Drag one bit to a new place.</li></ol></div>`,
+        starter: flowStart,
+        tests: [{ when: 'With the power on', w: W0, want: { led: 'on', buzzer: 'on' } }],
+        rules: [RULE.sameAs(flowStart, 'Use the same 3 bits. Press <b>Start over</b> to get them back.')],
+        hints: ['The signal never travels to the left. Which bit is sitting on the wrong side of the power bit?'],
+        after: `<p>A bit only gets the signal if it comes <b>after</b> the power bit. Order matters, just like the order of blocks in a program.</p>`,
+      },
+      {
+        id: 'debug', title: 'Find the bugs', paper: 'Notes · Part 1', tray: [], noDelete: true,
+        body: `
+          <div class="word"><div class="label">Word to remember: debug</div>
+          <p>To find a mistake and fix it. In a circuit, you check each connection in order, starting at the power bit.</p></div>
+          <p>This chain of four bits has <b>two</b> things wrong with it.</p>
+          <div class="todo"><div class="label">Your job</div>
+          <p>Make the motor <b>and</b> the LED turn on. Do not add any bits. Read the line under your circuit: it tells you where the signal stops.</p></div>`,
+        starter: chainOf('motor', 'power', '!wire', 'led'),
+        tests: [{ when: 'With the power on', w: W0, want: { led: 'on', motor: 'on' } }],
+        rules: [RULE.sameAs(chainOf('motor', 'power', 'wire', 'led'), 'Use the same 4 bits. Press <b>Start over</b> to get them back.')],
+        hints: [
+          'Start at the power bit. Follow the yellow signal to the right. Where does it stop?',
+          'One bit is backwards. One bit is on the wrong side of the power bit.',
+        ],
+        after: `<div class="paper"><div class="label">Now on paper</div>
+          <p><b>Notes Part 1:</b> answer <b>Check yourself</b> without looking back. Then write <b>Circuit</b>, <b>Signal</b>, <b>Sequence</b> and <b>Debug</b> in your New Words table. Use your own words.</p></div>`,
+      },
+    ],
+  },
+  {
+    id: 's2', title: '2 · Input, output, conditional', sub: 'Notes: Part 2',
+    ex: [
+      {
+        id: 'button', title: 'Add an input', paper: 'Notes · Part 2', tray: T_IN,
+        body: `
+          <div class="word"><div class="label">New word: input bit</div>
+          <p>A button, light sensor, or sound sensor. It reports something happening in the world into the circuit. Input bits are pink.</p></div>
+          <div class="word"><div class="label">New word: output bit</div>
+          <p>An LED, buzzer, or motor. It is what the circuit does. Output bits are green.</p></div>
+          <div class="todo"><div class="label">Your job</div>
+          <p>Add a ${C.button} bit so the LED is on <b>only while the button is pressed</b>.</p>
+          <p>To test it, hold down <b>Press the button</b> under your circuit.</p></div>`,
+        starter: chainOf('power', 'led'),
+        tests: [
+          { when: 'When the button is not pressed', w: W0, want: { led: 'off' } },
+          { when: 'When the button is pressed', w: PRESS, want: { led: 'on' } },
+        ],
+        hints: ['Where does the button go: before the LED, or after it? Try both and watch the signal.'],
+        after: `<p>Power → input → output. The button only controls the bits that come <b>after</b> it.</p>`,
+      },
+      {
+        id: 'dark', title: 'If it is dark, then buzz', paper: 'Notes · Part 2', tray: T_IN,
+        body: `
+          <div class="word"><div class="label">New word: conditional</div>
+          <p>A response built into the circuit itself. Physical wiring instead of an "if, then" block.</p></div>
+          <p>A ${C.light} bit reports how much light there is. In this trainer it lets the signal through when the room is <b>dark</b>.</p>
+          <p>The room is bright right now. The power is off.</p>`,
+        predict: {
+          q: 'You switch the power on. What will the buzzer do?',
+          options: ['Buzz right away', 'Stay quiet until the room gets dark', 'Buzz once, then stop'], answer: 1,
+          explain: 'The room is bright, so the signal stops at the light sensor. Press <b>Room light</b> to make it dark and watch what changes.',
+        },
+        then: `<div class="todo"><div class="label">Your job</div>
+          <p>Turn this alarm into a <b>night light</b>. Take out the buzzer. Use an LED. In the dark the LED is on. In the light it is off.</p></div>`,
+        starter: chainOf('power', 'light', 'buzzer'),
+        tests: [
+          { when: 'When the room is bright', w: W0, want: { led: 'off' } },
+          { when: 'When the room is dark', w: DARK, want: { led: 'on' } },
+        ],
+        rules: [{ test: c => !uses(c, 'buzzer'), msg: 'Take the buzzer out. Drag it up to the Bits tray.' }],
+        hints: ['Drag the buzzer out of your circuit. Put an LED in the same spot.'],
+        after: `<p>"If the light level is low, then turn on." There is no IF block anywhere. The conditional is in how the bits are joined.</p>`,
+      },
+      {
+        id: 'who', title: 'Who decides?', paper: 'Notes · Part 2', tray: [], noDelete: true,
+        body: `
+          <p>Same bits. Same light sensor. A new job.</p>
+          <div class="todo"><div class="label">Your job</div>
+          <p>Make the LED stay on <b>all the time</b>. The buzzer should sound <b>only in the dark</b>.</p>
+          <p>Do not add or take out any bits. Move them.</p></div>`,
+        starter: whoStart,
+        tests: [
+          { when: 'When the room is bright', w: W0, want: { led: 'on', buzzer: 'off' } },
+          { when: 'When the room is dark', w: DARK, want: { led: 'on', buzzer: 'on' } },
+        ],
+        rules: [RULE.sameAs(whoStart, 'Use the same 4 bits. Press <b>Start over</b> to get them back.')],
+        hints: ['The light sensor only controls the bits that come after it. Which bit should come before it?'],
+        after: `<p><b>Who decided?</b> The light sensor did not decide anything. It only reports how much light there is. You moved it, so the same report now does a different job.</p>
+          <p>The sensor reports. The circuit you build decides.</p>
+          <div class="paper"><div class="label">Now on paper</div>
+          <p><b>Notes Part 2:</b> read the <b>Common mistake</b> box. Answer <b>Check yourself</b>. Then write <b>Conditional</b>, <b>Input</b> and <b>Output</b> in your New Words table.</p>
+          <p><b>Journal Step 3:</b> use what you found here when you add a sensor bit to your real circuit.</p></div>`,
+      },
+      {
+        id: 'both', title: 'Two conditions', tier: 'ext', paper: 'Notes · Part 2', tray: T_IN,
+        body: `
+          <p>This one is extra. It is harder.</p>
+          <div class="todo"><div class="label">Your job</div>
+          <p>Build a doorbell that only works at night. The buzzer sounds only when it is dark <b>and</b> the button is pressed.</p></div>`,
+        starter: chainOf('power'),
+        tests: [
+          { when: 'When the room is bright and the button is not pressed', w: W0, want: { buzzer: 'off' } },
+          { when: 'When the room is bright and the button is pressed', w: PRESS, want: { buzzer: 'off' } },
+          { when: 'When the room is dark and the button is not pressed', w: DARK, want: { buzzer: 'off' } },
+          { when: 'When the room is dark and the button is pressed', w: { dark: true, press: true }, want: { buzzer: 'on' } },
+        ],
+        hints: ['The signal has to get past every input bit in front of the buzzer. What if there are two of them?'],
+        after: `<p>Two input bits in a row make an "and". The signal only gets through when both let it pass.</p>`,
+      },
+    ],
+  },
+  {
+    id: 's3', title: '3 · Loops', sub: 'Notes: Part 3',
+    ex: [
+      {
+        id: 'pulse', title: 'A loop you can hold', paper: 'Notes · Part 3', tray: T_LOOP,
+        body: `
+          <p>In Dash and Scratch, a <b>loop</b> block said "repeat this". Here is a bit that does that job: the ${C.pulse} bit.</p>
+          <p>Look at the circuit. The power is off.</p>`,
+        predict: {
+          q: 'You switch the power on. What will the LED do?',
+          options: ['Turn on and stay on', 'Stay off', 'Turn on, off, on, off, over and over'], answer: 2,
+          explain: 'The pulse bit lets the signal through, then stops it, then lets it through again. Nobody has to snap the LED in again each time.',
+        },
+        then: `<div class="todo"><div class="label">Your job</div>
+          <p>Add a ${C.buzzer} bit so the buzzer turns on and off <b>in time with the LED</b>.</p></div>`,
+        starter: chainOf('power', 'pulse', 'led'),
+        tests: [{ when: 'With the power on', w: W0, want: { led: 'blink', buzzer: 'blink' } }],
+        hints: ['The buzzer has to come after the pulse bit to repeat.'],
+      },
+      {
+        id: 'inside', title: 'Inside the loop', paper: 'Notes · Part 3', tray: [], noDelete: true,
+        body: `
+          <p>In a program, only the blocks <b>inside</b> the loop repeat. In a circuit, only the bits <b>after</b> the pulse bit repeat.</p>
+          <div class="todo"><div class="label">Your job</div>
+          <p>Make the LED stay <b>on</b> all the time. Only the buzzer should repeat. Move one bit.</p></div>`,
+        starter: insideStart,
+        tests: [{ when: 'With the power on', w: W0, want: { led: 'on', buzzer: 'blink' } }],
+        rules: [RULE.sameAs(insideStart, 'Use the same 4 bits. Press <b>Start over</b> to get them back.')],
+        hints: ['Which bit should be "outside the loop"? Put it before the pulse bit.'],
+      },
+      {
+        id: 'warn', title: 'Loop and conditional', paper: 'Journal · Step 2', tray: T_LOOP,
+        body: `
+          <div class="todo"><div class="label">Your job</div>
+          <p>Build a warning light. In the dark, the LED turns on and off, over and over. In a bright room, the LED is off.</p></div>`,
+        starter: chainOf('power'),
+        tests: [
+          { when: 'When the room is bright', w: W0, want: { led: 'off' } },
+          { when: 'When the room is dark', w: DARK, want: { led: 'blink' } },
+        ],
+        hints: [
+          'You need two pink bits: one for "only in the dark" and one for "over and over".',
+          'Power, then the light sensor, then the pulse bit, then the LED.',
+        ],
+        after: `<div class="paper"><div class="label">Now on paper</div>
+          <p><b>Notes Part 3:</b> answer <b>Think about it</b> and <b>Check yourself</b>. Then write <b>Loop</b> in your New Words table.</p>
+          <p><b>Journal Step 2:</b> build a repeating circuit with real bits and fill in the log.</p></div>`,
+      },
+    ],
+  },
+  {
+    id: 's4', title: '4 · Plan, then build', sub: 'Notes: Part 4',
+    ex: [
+      {
+        id: 'plan', title: 'Diagram first', paper: 'Journal · Step 1', tray: T_ALL,
+        body: `
+          <div class="paper"><div class="label">On paper first</div>
+          <p>Open your journal to <b>Step 1</b>. Draw your own circuit with boxes and arrows: power → input → output. Write what you predict it will do.</p></div>
+          <div class="todo"><div class="label">Your job</div>
+          <p>Build <b>your</b> diagram here. Test it with the buttons under your circuit. Did it do what you predicted?</p></div>`,
+        starter: () => [],
+        rules: [
+          { test: c => OUTS.some(t => uses(c, t)), msg: 'Your circuit needs an output bit (a green one).' },
+          RULE.responds,
+        ],
+        hints: ['Start with the power bit. Then one pink input bit. Then one green output bit.'],
+        after: `<div class="paper"><div class="label">Now on paper</div>
+          <p><b>Journal Step 1:</b> fill in a row of the Build &amp; Test Log. Was your prediction right?</p>
+          <p><b>Notes Part 4:</b> answer <b>Check yourself</b>.</p></div>`,
+      },
+      {
+        id: 'full', title: 'The full chain', paper: 'Journal · Steps 4 and 5', tray: T_ALL,
+        body: `
+          <div class="paper"><div class="label">On paper first</div>
+          <p><b>Journal Step 4:</b> choose a game or an instrument. Then plan the chain you will build in <b>Step 5</b>.</p></div>
+          <div class="todo"><div class="label">Your job</div>
+          <p>Try your chain here before you build it with real bits. It needs:</p>
+          <ul><li>at least one input bit</li>
+          <li>one output that responds to the input</li>
+          <li>one repeating (loop) behaviour</li></ul></div>`,
+        starter: () => [],
+        rules: [
+          RULE.uses('pulse', 'Your chain needs something that repeats. Which bit does the job of a loop?'),
+          { test: c => ['button', 'light', 'sound'].some(t => uses(c, t)), msg: 'Your chain needs an input bit: a button, a light sensor, or a sound sensor.' },
+          RULE.loops,
+        ],
+        hints: [
+          'Look back at the warning light you built in stage 3. It had an input, an output, and a loop.',
+          'Where a bit sits changes what it controls. Test with the buttons under your circuit.',
+        ],
+        after: `<div class="paper"><div class="label">Now on paper</div>
+          <p><b>Journal Step 5:</b> build this chain with real bits. Fill in the Build &amp; Test Log. Did the real bits do what the trainer did?</p>
+          <p><b>Journal Step 6:</b> get ready for your live demo. Be ready to say what each bit does and why it is there.</p>
+          <p><b>Notes Unit Wrap-Up:</b> close this page and your notes. Answer from memory. Then go back to <b>Before We Start</b> and read what you wrote.</p></div>`,
+      },
+    ],
+  },
+  {
+    id: 's5', title: 'Free play', sub: 'Try anything',
+    ex: [
+      {
+        id: 'play', kind: 'play', title: 'Free play', tray: T_ALL,
+        body: `
+          <p>Nothing is checked here. Try any idea you like.</p>
+          <p>Ideas:</p>
+          <ul><li>A game buzzer: who can press the button first?</li>
+          <li>An instrument that makes sound when you cover the light sensor.</li>
+          <li>A circuit with a bug in it. Swap seats with a partner. Can they find it?</li></ul>
+          <p>Real bits can do things this trainer cannot. If the real circuit and the trainer do not match, trust the real one, and write down what was different.</p>`,
+        starter: chainOf('power'),
+      },
+    ],
+  },
+];
+
+/* ---------- small helpers ---------- */
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+const ALL = [];
+STAGES.forEach((st, si) => st.ex.forEach(ex => { ex.stage = si; ex.kind = ex.kind || 'task'; ex.tier = ex.tier || 'core'; ALL.push(ex); }));
+const byId = id => ALL.find(e => e.id === id);
+const CORE = ALL.filter(e => e.kind === 'task' && e.tier === 'core');
+const cur = () => byId(state.current);
+
+/* ---------- saved state ---------- */
+
+const STORE_KEY = 'steam6-littlebits-trainer-v1';
+function blankState() { return { current: ALL[0].id, code: {}, done: {}, predict: {}, ran: {}, hints: {}, sound: false }; }
+let state = blankState();
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) state = Object.assign(blankState(), JSON.parse(raw));
+  } catch (e) { /* storage blocked: the trainer still works, it just will not remember */ }
+  if (!byId(state.current)) state.current = ALL[0].id;
+}
+let saveTimer = null;
+function saveState() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }, 250);
+}
+
+/* ---------- the circuit being built ---------- */
+
+let chain = [];                                   // the bits for the current step, left to right
+let powerOn = false, phase = true, lastResult = null;
+const world = { press: false, dark: false, loud: false };
+const benchEl = $('bench'), trayEl = $('tray'), trayWrap = $('trayWrap');
+
+function bitHtml(b, inTray) {
+  const D = BITS[b.t];
+  let h = '<div class="bit k-' + D.kind + (b.flip ? ' flip' : '') + '" data-t="' + b.t + '"' + (inTray ? ' data-tray="1" role="button"' : ' data-id="' + b.id + '"') + ' tabindex="0">' +
+    '<div class="bn">' + D.name + '</div><div class="bi">' + D.icon + '</div>';
+  if (!inTray) {
+    h += '<div class="bd"><span class="dir" title="' + (b.flip ? 'backwards' : 'the way the signal goes') + '">' + (b.flip ? '←' : '→') + '</span>' +
+      '<button type="button" class="ctl flipbtn" data-op="flip" data-id="' + b.id + '" aria-label="turn the ' + D.name + ' bit around">turn</button></div>';
+  }
+  return h + '</div>';
+}
+function renderBench() {
+  benchEl.innerHTML = chain.map(b => bitHtml(b, false)).join('');
+  $('bitCount').textContent = chain.length + (chain.length === 1 ? ' bit' : ' bits');
+  renderWorld();
+  update();
+}
+function renderTray() {
+  const ex = cur();
+  trayEl.innerHTML = ex.tray.map(t => bitHtml({ t }, true)).join('');
+  trayEl.hidden = !ex.tray.length;
+  $('trayNote').hidden = ex.tray.length > 0;
+  $('trayNote').textContent = ex.tray.length ? '' : 'No new bits in this step. Move the bits you have.';
+}
+function renderWorld() {
+  let h = '';
+  if (uses(chain, 'button')) h += '<button type="button" class="wbtn" data-hold="press">Press the button (hold)</button>';
+  if (uses(chain, 'light')) h += '<button type="button" class="wbtn' + (world.dark ? ' active' : '') + '" data-toggle="dark">Room light: ' + (world.dark ? 'DARK' : 'BRIGHT') + '</button>';
+  if (uses(chain, 'sound')) h += '<button type="button" class="wbtn" data-hold="loud">Make a noise (hold)</button>';
+  $('world').innerHTML = h ? '<div class="lab">Try it: change what the inputs sense</div>' + h : '';
+  $('world').hidden = !h;
+}
+
+function narrate(r) {
+  if (!chain.length) return 'Your circuit is empty.';
+  if (!r.hasPower) return 'There is no power bit that is the right way around. Nothing can turn on.';
+  if (!powerOn) return 'The power is switched off.';
+  if (r.stop) {
+    const name = BITS[chain[r.stop.i].t].name;
+    const why = { flip: 'It is backwards.', button: 'Nobody is pressing it.', light: 'The room is bright.', sound: 'It is quiet.' }[r.stop.why];
+    return 'The signal stops at the ' + name + ' bit. ' + why;
+  }
+  let t = chain.some(b => BITS[b.t].kind === 'out') ? 'The signal goes all the way to the end.' : 'The signal is flowing, but there is no output bit after the power bit, so there is nothing to see.';
+  if (chain.some((b, i) => b.t === 'pulse' && !b.flip && (i === 0 || evalChain(chain, world, true).after[i - 1]))) t += ' The pulse bit switches it on and off, over and over.';
+  return t;
+}
+
+let audio = null, wasBuzzing = false;
+function buzz() {
+  if (!state.sound) return;
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audio.createOscillator(), g = audio.createGain();
+    o.type = 'square'; o.frequency.value = 440; g.gain.value = .04;
+    o.connect(g); g.connect(audio.destination);
+    o.start(); o.stop(audio.currentTime + .18);
+  } catch (e) { /* no sound on this device: the buzzer still shows its sound waves */ }
+}
+
+// Redraws the signal on the bits that are already on the bench (no rebuild, so a drag is never interrupted).
+function update() {
+  const live = evalChain(chain, world, phase);
+  const els = benchEl.querySelectorAll('.bit[data-id]');
+  let buzzing = false;
+  chain.forEach((b, i) => {
+    const el = els[i];
+    if (!el) return;
+    const on = powerOn && live.after[i], got = powerOn && (i > 0 ? live.after[i - 1] : false);
+    el.classList.toggle('sig', on);
+    el.classList.toggle('lit', powerOn && live.lit[i]);
+    el.classList.toggle('stopped', got && !on && b.t !== 'pulse');
+    el.classList.toggle('open', b.t === 'button' && world.press);
+    el.classList.toggle('dark', b.t === 'light' && world.dark);
+    if (b.t === 'buzzer' && powerOn && live.lit[i]) buzzing = true;
+  });
+  if (buzzing && !wasBuzzing) buzz();
+  wasBuzzing = buzzing;
+  if (!lastSayLocked) { const el = $('say'); el.textContent = narrate(evalChain(chain, world, true)); el.className = ''; }
+}
+let lastSayLocked = false;
+function say(text, cls) {
+  const el = $('say'); el.textContent = text; el.className = cls || '';
+  lastSayLocked = true;
+  setTimeout(() => { lastSayLocked = false; }, 2500);
+}
+setInterval(() => { phase = !phase; if (chain.some(b => b.t === 'pulse')) update(); }, 600);
+
+function drawPower() {
+  const b = $('btnPower');
+  b.classList.toggle('on', powerOn);
+  b.setAttribute('aria-pressed', powerOn ? 'true' : 'false');
+  $('powerTxt').textContent = powerOn ? 'Power is ON' : 'Power is OFF';
+}
+function chainChanged(flashId) {
+  state.code[state.current] = chain;
+  saveState();
+  lastSayLocked = false;
+  renderBench();
+  if (flashId) {
+    const el = benchEl.querySelector('[data-id="' + flashId + '"]');
+    if (el) { el.classList.add('flash'); if (el.scrollIntoView) el.scrollIntoView({ block: 'nearest' }); }
+  }
+}
+function addBit(t, idx) {
+  if (chain.length >= MAX_BITS) { say('That is a lot of bits! Take some out first.', 'oops'); return; }
+  const b = B(t);
+  chain.splice(idx == null ? chain.length : Math.min(idx, chain.length), 0, b);
+  chainChanged(b.id);
+}
+function removeBit(id) {
+  const i = chain.findIndex(b => b.id === id);
+  if (i < 0) return;
+  chain.splice(i, 1);
+  chainChanged();
+}
+
+/* ---------- dragging bits ---------- */
+
+let drag = null, marker = null;
+function clearMarker() { if (marker) { marker.remove(); marker = null; } }
+
+// Where a dropped bit would land. Bits wrap onto new rows, so "before" means an earlier row, or the same row and further left.
+function dropIndex(x, y) {
+  clearMarker();
+  const br = $('benchWrap').getBoundingClientRect();
+  if (x < br.left || x > br.right || y < br.top || y > br.bottom) return null;
+  const kids = Array.prototype.filter.call(benchEl.children, c => c.classList.contains('bit') && c !== drag.el);
+  let idx = 0;
+  kids.forEach(k => {
+    const r = k.getBoundingClientRect();
+    if (y > r.bottom || (y >= r.top && x > r.left + r.width / 2)) idx++;
+  });
+  marker = document.createElement('div');
+  marker.className = 'marker';
+  benchEl.insertBefore(marker, kids[idx] || null);
+  return idx;
+}
+function startDrag(e) {
+  drag.moved = true;
+  const r = drag.el.getBoundingClientRect();
+  drag.dx = e.clientX - r.left; drag.dy = e.clientY - r.top;
+  drag.ghost = drag.el.cloneNode(true);
+  drag.ghost.classList.add('ghost');
+  drag.ghost.classList.remove('flash', 'sig', 'stopped');
+  drag.ghost.style.width = r.width + 'px';
+  document.body.appendChild(drag.ghost);
+  if (!drag.fromTray) {
+    drag.el.classList.add('dragging');
+    if (!cur().noDelete) trayWrap.classList.add('bin');
+  }
+}
+function endDrag() {
+  if (!drag) return;
+  if (drag.ghost) drag.ghost.remove();
+  drag.el.classList.remove('dragging');
+  trayWrap.classList.remove('bin');
+  clearMarker();
+  drag = null;
+}
+$('work').addEventListener('pointerdown', e => {
+  if (drag || (e.button && e.button !== 0)) return;
+  if (e.target.closest('.ctl')) return;
+  const b = e.target.closest('.bit');
+  if (!b) return;
+  drag = { el: b, fromTray: !!b.dataset.tray, t: b.dataset.t, id: b.dataset.id, x0: e.clientX, y0: e.clientY, pid: e.pointerId, moved: false, drop: null };
+});
+document.addEventListener('pointermove', e => {
+  if (!drag || e.pointerId !== drag.pid) return;
+  if (!drag.moved) {
+    if (Math.abs(e.clientX - drag.x0) + Math.abs(e.clientY - drag.y0) < 8) return;
+    startDrag(e);
+  }
+  e.preventDefault();
+  drag.ghost.style.left = (e.clientX - drag.dx) + 'px';
+  drag.ghost.style.top = (e.clientY - drag.dy) + 'px';
+  drag.drop = dropIndex(e.clientX, e.clientY);
+}, { passive: false });
+document.addEventListener('pointerup', e => {
+  if (!drag || e.pointerId !== drag.pid) return;
+  const d = drag;
+  endDrag();
+  if (!d.moved) { if (d.fromTray) addBit(d.t); return; }     // a tap on a bit in the tray adds it to the end
+  if (d.fromTray) { if (d.drop != null) addBit(d.t, d.drop); return; }
+  if (d.drop == null) { if (!cur().noDelete) removeBit(d.id); return; }
+  const i = chain.findIndex(b => b.id === d.id);
+  if (i < 0) return;
+  const b = chain.splice(i, 1)[0];
+  chain.splice(Math.min(d.drop, chain.length), 0, b);
+  chainChanged(b.id);
+});
+document.addEventListener('pointercancel', endDrag);
+
+// Keyboard: Enter adds a bit from the tray. On the bench, Delete removes a bit, the arrow keys move it, and T turns it around.
+$('work').addEventListener('keydown', e => {
+  const el = e.target.closest && e.target.closest('.bit');
+  if (!el || e.target !== el) return;
+  if (el.dataset.tray) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); addBit(el.dataset.t); }
+    return;
+  }
+  const i = chain.findIndex(b => b.id === el.dataset.id);
+  if (i < 0) return;
+  const b = chain[i];
+  let changed = false;
+  if ((e.key === 'Delete' || e.key === 'Backspace') && !cur().noDelete) { e.preventDefault(); removeBit(b.id); return; }
+  if (e.key === 'ArrowLeft' && i > 0) { chain.splice(i, 1); chain.splice(i - 1, 0, b); changed = true; }
+  if (e.key === 'ArrowRight' && i < chain.length - 1) { chain.splice(i, 1); chain.splice(i + 1, 0, b); changed = true; }
+  if (e.key === 't' || e.key === 'T') { b.flip = !b.flip; changed = true; }
+  if (changed) {
+    e.preventDefault();
+    chainChanged();
+    const again = benchEl.querySelector('[data-id="' + b.id + '"]');
+    if (again) again.focus();
+  }
+});
+benchEl.addEventListener('click', e => {
+  const c = e.target.closest('.ctl');
+  if (!c) return;
+  const b = chain.find(x => x.id === c.dataset.id);
+  if (!b) return;
+  b.flip = !b.flip;
+  chainChanged();
+});
+
+/* ---------- the world: what the inputs sense ---------- */
+
+const worldEl = $('world');
+function setHold(btn, on) {
+  world[btn.dataset.hold] = on;
+  btn.classList.toggle('active', on);
+  lastSayLocked = false;
+  update();
+}
+worldEl.addEventListener('pointerdown', e => { const b = e.target.closest('[data-hold]'); if (b) setHold(b, true); });
+['pointerup', 'pointercancel'].forEach(type => document.addEventListener(type, () => {
+  worldEl.querySelectorAll('[data-hold].active').forEach(b => setHold(b, false));
+}));
+worldEl.addEventListener('keydown', e => { const b = e.target.closest('[data-hold]'); if (b && (e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); setHold(b, true); } });
+worldEl.addEventListener('keyup', e => { const b = e.target.closest('[data-hold]'); if (b && (e.key === ' ' || e.key === 'Enter')) setHold(b, false); });
+worldEl.addEventListener('click', e => {
+  const b = e.target.closest('[data-toggle]');
+  if (!b) return;
+  world[b.dataset.toggle] = !world[b.dataset.toggle];
+  lastSayLocked = false;
+  renderWorld(); update();
+});
+
+/* ---------- power and checking ---------- */
+
+function needsPrediction(ex) { return ex.predict && state.predict[ex.id] == null; }
+function nudgePredict() {
+  const p = document.querySelector('.predict');
+  if (p) { p.scrollIntoView({ block: 'center', behavior: 'smooth' }); p.style.boxShadow = '0 0 0 4px #fde68a'; setTimeout(() => { p.style.boxShadow = ''; }, 1400); }
+  say('First, pick what you think will happen.', 'oops');
+}
+function togglePower() {
+  const ex = cur();
+  if (!powerOn && needsPrediction(ex)) { nudgePredict(); return; }
+  powerOn = !powerOn;
+  drawPower();
+  lastSayLocked = false;
+  update();
+  if (powerOn && ex.predict && !state.ran[ex.id]) { state.ran[ex.id] = true; saveState(); renderTask(); }
+}
+function doCheck() {
+  const ex = cur();
+  if (ex.kind !== 'task') return;
+  if (needsPrediction(ex)) { nudgePredict(); return; }
+  if (ex.predict && !state.ran[ex.id]) { say('Switch the power on first and see if your guess was right.', 'oops'); return; }
+  lastResult = evaluate(ex, chain);
+  if (lastResult.ok) { state.done[ex.id] = true; say('You did it!', 'good'); }
+  else say('Not yet. Change one thing and try again.', 'oops');
+  saveState();
+  renderNav(); renderTask();
+  const box = document.querySelector('.donebox, .results');
+  if (box && box.scrollIntoView) box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+/* ---------- drawing the page ---------- */
+
+function renderNav() {
+  let h = '';
+  STAGES.forEach(st => {
+    h += '<div class="nav-stage">' + esc(st.title) + '<small>' + esc(st.sub) + '</small></div>';
+    st.ex.forEach(ex => {
+      const done = !!state.done[ex.id];
+      h += '<button type="button" class="nav-item' + (ex.id === state.current ? ' current' : '') + (done ? ' done' : '') + '" data-go="' + ex.id + '">' +
+        '<span class="dot' + (ex.kind !== 'task' ? ' free' : '') + '">' + (done ? '✓' : '') + '</span><span>' + esc(ex.title) + (ex.tier === 'ext' ? ' ★★' : '') + '</span></button>';
+    });
+  });
+  $('nav').innerHTML = h;
+  const n = CORE.filter(e => state.done[e.id]).length;
+  $('progFill').style.width = Math.round(100 * n / CORE.length) + '%';
+  $('progText').textContent = n + ' of ' + CORE.length + ' steps';
+}
+function predictHtml(ex) {
+  const p = ex.predict, picked = state.predict[ex.id], ran = !!state.ran[ex.id];
+  let h = '<div class="predict"><div class="label">Guess first</div><div>' + p.q + '</div><div class="opts">';
+  p.options.forEach((o, i) => {
+    h += '<button type="button" class="opt' + (picked === i ? ' picked' : '') + '" data-pick="' + i + '"' + (picked != null ? ' disabled' : '') + '>' + esc(o) + '</button>';
+  });
+  h += '</div>';
+  if (picked == null) h += '<div class="verdict">Pick one. Then you can switch the power on.</div>';
+  else if (!ran) h += '<div class="verdict">Locked in! Now switch the <b>power</b> on and watch.</div>';
+  else h += '<div class="verdict">' + (picked === p.answer ? '<b class="yes">Your guess was right.</b> ' : '<b class="no">That is not what happened.</b> That is okay. Now you know something new. ') + p.explain + '</div>';
+  return h + '</div>';
+}
+function renderTask() {
+  const ex = cur(), st = STAGES[ex.stage];
+  let h = '<div class="crumb">' + esc(st.title) + '</div><h2>' + esc(ex.title) + (ex.tier === 'ext' ? ' <span class="tag">Extra ★★</span>' : '') + '</h2>';
+  if (ex.paper) h += '<div><span class="paperref">Goes with: ' + esc(ex.paper) + '</span></div>';
+  h += ex.body;
+  if (ex.predict) h += predictHtml(ex);
+  if (ex.then) h += ex.then;
+  if (ex.hints && ex.hints.length) {
+    const shown = Math.min(state.hints[ex.id] || 0, ex.hints.length);
+    h += '<div class="hintbox">';
+    for (let i = 0; i < shown; i++) h += '<div class="hint"><b>Hint ' + (i + 1) + '.</b> ' + ex.hints[i] + '</div>';
+    if (shown < ex.hints.length) h += '<button type="button" class="btn small" data-act="hint">' + (shown ? 'Another hint' : 'I am stuck. Give me a hint') + ' (' + (shown + 1) + ' of ' + ex.hints.length + ')</button>';
+    h += '</div>';
+  }
+  if (lastResult && !lastResult.ok) {
+    h += '<div class="results"><div class="head">Not yet. Change one thing and try again.</div><ul>' + lastResult.msgs.map(m => '<li>' + m + '</li>').join('') + '</ul></div>';
+  }
+  if (state.done[ex.id]) {
+    const next = ALL[ALL.indexOf(ex) + 1];
+    h += '<div class="donebox"><div class="label">★ You did it!</div>' + (ex.after || '');
+    if (next) h += '<div class="rowbtns"><button type="button" class="btn primary" data-go="' + next.id + '">Next: ' + esc(next.title) + ' →</button></div>';
+    h += '</div>';
+  }
+  $('task').innerHTML = h;
+  $('btnCheck').hidden = ex.kind !== 'task';
+}
+function reid(list) { list.forEach(b => { b.id = 'b' + (uid++); b.flip = !!b.flip; }); return list; }
+function select(id) {
+  const ex = byId(id);
+  if (!ex) return;
+  stopReading();
+  state.current = id;
+  lastResult = null; lastSayLocked = false;
+  world.press = world.dark = world.loud = false;
+  chain = state.code[id] ? reid(state.code[id].filter(b => BITS[b.t])) : ex.starter();
+  state.code[id] = chain;
+  powerOn = !(ex.startOff && !state.done[id]) && !(ex.predict && !state.ran[id]);
+  drawPower();
+  renderTray(); renderBench();
+  renderNav(); renderTask();
+  $('task').scrollTop = 0;
+  saveState();
+}
+
+/* ---------- events ---------- */
+
+const layoutEl = document.querySelector('.layout');
+function setNavOpen(open) {
+  layoutEl.classList.toggle('nav-open', open);
+  $('btnSteps').setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+$('btnSteps').addEventListener('click', () => setNavOpen(!layoutEl.classList.contains('nav-open')));
+$('task').addEventListener('click', () => setNavOpen(false), true);
+$('work').addEventListener('click', () => setNavOpen(false), true);
+$('nav').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) { select(b.dataset.go); setNavOpen(false); } });
+$('task').addEventListener('click', e => {
+  const go = e.target.closest('[data-go]');
+  if (go) { select(go.dataset.go); return; }
+  const pick = e.target.closest('[data-pick]');
+  if (pick) { state.predict[state.current] = +pick.dataset.pick; saveState(); renderTask(); say('Locked in! Now switch the power on.'); return; }
+  const act = e.target.closest('[data-act]');
+  if (act && act.dataset.act === 'hint') { state.hints[state.current] = (state.hints[state.current] || 0) + 1; saveState(); renderTask(); }
+});
+$('btnPower').addEventListener('click', togglePower);
+$('btnCheck').addEventListener('click', doCheck);
+$('btnReset').addEventListener('click', () => {
+  if (!confirm('Put this step back to how it started? Your circuit for this step will be erased.')) return;
+  chain = cur().starter();
+  lastResult = null;
+  chainChanged(); renderTask();
+});
+function drawSound() { $('btnSound').textContent = 'Sound: ' + (state.sound ? 'on' : 'off'); }
+$('btnSound').addEventListener('click', () => { state.sound = !state.sound; drawSound(); saveState(); });
+$('btnNew').addEventListener('click', () => {
+  if (!confirm('Start again from step 1? All the work saved on this device will be erased.')) return;
+  state = blankState();
+  drawSound(); select(state.current);
+});
+
+// Read to me: the browser reads the instructions out loud, where it can.
+const canRead = 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
+function stopReading() { if (canRead) { speechSynthesis.cancel(); $('btnRead').textContent = 'Read to me'; } }
+if (canRead) {
+  $('btnRead').hidden = false;
+  $('btnRead').addEventListener('click', () => {
+    if (speechSynthesis.speaking) { stopReading(); return; }
+    const u = new SpeechSynthesisUtterance($('task').innerText);
+    u.rate = .9;
+    u.onend = () => { $('btnRead').textContent = 'Read to me'; };
+    $('btnRead').textContent = 'Stop reading';
+    speechSynthesis.speak(u);
+  });
+}
+
+/* ---------- start ---------- */
+
+loadState();
+drawSound();
+select(state.current);
+</script>
+</body>
+</html>
