@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seed to Seed — Grow and Breed a Plant | Grade 7 Science</title>
+<style>
+/* ─────────────────────────────────────────
+   SEED TO SEED — GROW AND BREED A PLANT
+   Grade 7 Science | Plants for Food and Fibre
+   LO 7-2-02 (root and shoot systems, xylem, phloem) · LO 7-2-03 (photosynthesis)
+   LO 7-2-04 (sexual and asexual reproduction) · LO 7-2-05 (selective breeding)
+   A real-time upgrade game. One wild strawberry plant makes glucose in its leaves.
+   Students spend the glucose on plant parts, then on flowers and runners, and
+   choose which offspring to plant next year.
+   Model: glucose = scarcest of (light captured, water at leaves, CO2) x leaf area,
+   the same rule as sci7-photosynthesis-sim-v1.html. Glucose is the only currency.
+   A plant never changes its own traits: traits change only between generations.
+   v2: the same model as v1. Icon gauges, a tutorial, moving water, sugar and bees, and plant alerts
+   (the game stops when trouble starts and asks what would help) in place of the ten-day check-ins.
+   ───────────────────────────────────────── */
+
+:root {
+  --accent: #15803d;
+  --accent-light: #f0fdf4;
+  --accent-mid: #22c55e;
+  --ink: #0f172a;
+  --body: #1e293b;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --water: #0284c7;
+  --light: #ca8a04;
+  --gas: #64748b;
+  --sugar: #b45309;
+  --bad: #b91c1c;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
+html { font-size: 16px; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: var(--body); line-height: 1.5; }
+button, input { font: inherit; color: inherit; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 14px 16px 28px; }
+
+.top { border-bottom: 4px solid var(--accent); padding-bottom: 10px; margin-bottom: 12px; }
+.unit-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.top h1 { font-size: 1.5rem; font-weight: 800; color: var(--ink); line-height: 1.2; }
+.i-can {
+  background: var(--accent-light); border-left: 4px solid var(--accent); border-radius: 0 6px 6px 0;
+  padding: 7px 12px; font-weight: 700; color: #14532d; font-size: 0.92rem; margin-top: 8px;
+}
+
+.btn {
+  border: 1.5px solid #94a3b8; background: #fff; border-radius: 8px; padding: 8px 14px; min-height: 44px;
+  font-weight: 700; font-size: 0.9rem; cursor: pointer; color: var(--body);
+}
+.btn:hover:not(:disabled) { border-color: var(--accent); }
+.btn[aria-pressed="true"], .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:focus-visible, input:focus-visible { outline: 3px solid #0ea5e9; outline-offset: 2px; }
+.btn.big { font-size: 1rem; padding: 10px 20px; }
+
+/* ── Status bar ── */
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-bottom: 10px; }
+.badge { font-weight: 800; font-size: 0.86rem; border-radius: 999px; padding: 3px 12px; background: var(--accent); color: #fff; white-space: nowrap; }
+.badge.year { background: #fef3c7; color: #92400e; }
+.badge.mode { background: #e2e8f0; color: #334155; }
+.track { position: relative; height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+.track span { display: block; height: 100%; width: 0; border-radius: 999px; background: var(--accent-mid); }
+.spacer { flex: 1; }
+.seg { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.seg .btn { padding: 8px 11px; }
+
+/* ── Layout ── */
+.grid { display: grid; grid-template-columns: minmax(320px, 1.5fr) 264px 320px; gap: 12px; align-items: start; grid-template-areas: "scene factory shop"; }
+.scene { grid-area: scene; } .factory { grid-area: factory; } .shop { grid-area: shop; }
+.panel { background: #fff; border: 1.5px solid var(--line); border-radius: 10px; padding: 12px; }
+.panel h2 { font-size: 0.74rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+@media (max-width: 1100px) {
+  .grid { grid-template-columns: minmax(280px, 1fr) minmax(280px, 1fr); grid-template-areas: "scene shop" "factory shop"; }
+}
+@media (max-width: 700px) {
+  .grid { grid-template-columns: 1fr; grid-template-areas: "scene" "factory" "shop"; }
+  .top h1 { font-size: 1.25rem; }
+}
+
+/* ── Day and weather ── */
+.daywx { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; align-items: center; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; background: #fef9c3; color: var(--ink); }
+.daywx.cloud { background: #e2e8f0; } .daywx.rain { background: #dbeafe; } .daywx.hot { background: #ffedd5; }
+.daywx.night { background: #1e293b; color: #f8fafc; }
+.daywx .now { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.daywx .now svg { flex-shrink: 0; }
+.wxname { font-size: 1.3rem; font-weight: 800; line-height: 1.15; }
+.wxsub { font-size: 0.82rem; font-weight: 600; opacity: 0.85; }
+.daynum { text-align: right; line-height: 1.1; white-space: nowrap; }
+.daynum b { font-size: 1.7rem; font-weight: 800; }
+.daynum span { font-size: 0.9rem; font-weight: 700; opacity: 0.85; }
+.frost { font-size: 0.8rem; font-weight: 700; text-align: right; opacity: 0.9; }
+.frost.soon { color: var(--bad); opacity: 1; }
+.daywx.night .frost.soon { color: #fca5a5; }
+.daywx .track { grid-column: 1 / -1; height: 8px; background: rgba(100, 116, 139, 0.3); }
+.fc { display: grid; grid-template-columns: auto repeat(3, 1fr); gap: 6px; align-items: center; margin-bottom: 8px; }
+.fc .lab { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.fcd { display: flex; align-items: center; gap: 6px; border: 1.5px solid var(--line); border-radius: 8px; padding: 3px 8px; font-size: 0.8rem; font-weight: 700; color: var(--ink); line-height: 1.2; min-width: 0; }
+.fcd small { display: block; font-weight: 600; color: var(--muted); font-size: 0.72rem; }
+.fcd svg { flex-shrink: 0; }
+.fcd.gone { visibility: hidden; }
+.wrow b.low { color: var(--bad); }
+
+/* ── Scene ── */
+.scene { padding: 8px; }
+#scene { display: block; width: 100%; height: auto; max-height: 460px; border-radius: 8px; }
+.root { fill: none; stroke: #f1e4c6; stroke-width: 2.2; stroke-linecap: round; }
+.root.thin { stroke-width: 1.3; }
+.stalk { fill: none; stroke: #4d7c0f; stroke-width: 2.4; stroke-linecap: round; }
+.stalk.fl { stroke: #65a30d; stroke-width: 1.8; }
+.runner { fill: none; stroke: #b45309; stroke-width: 2; stroke-linecap: round; }
+.blade { fill: none; stroke: #84cc16; stroke-width: 3; stroke-linecap: round; opacity: 0.75; }
+.rain line { stroke: #38bdf8; stroke-width: 2; stroke-linecap: round; }
+.diary { margin-top: 8px; font-size: 0.9rem; min-height: 1.6em; }
+.diary p { border-radius: 6px; animation: note 2s ease-out; }
+@keyframes note { from { background: #fef08a; } to { background: transparent; } }
+.diary p { padding: 2px 0; color: #334155; }
+.diary p:first-child { font-weight: 700; color: var(--ink); }
+.diary p.bad { color: var(--bad); }
+.diary p.good { color: var(--accent); }
+
+/* ── Photosynthesis panel ── */
+.gauges { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.gauge { border: 2px solid var(--line); border-radius: 8px; padding: 6px 4px 5px; text-align: center; font-weight: 800; font-size: 0.8rem; color: var(--ink); }
+.gauge svg { display: block; margin: 0 auto 4px; }
+.gauge .gt { position: relative; height: 78px; width: 20px; margin: 0 auto 4px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+.gauge .gt span { position: absolute; left: 0; right: 0; bottom: 0; height: 0; border-radius: 999px; transition: height 0.3s; }
+.gauge.light .gt span { background: var(--light); }
+.gauge.water .gt span { background: var(--water); }
+.gauge.co2 .gt span { background: var(--gas); }
+.gauge .tag { visibility: hidden; display: block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; background: var(--bad); color: #fff; border-radius: 999px; margin-top: 3px; }
+.gauge.lim { border-color: var(--bad); background: #fef2f2; }
+.gauge.lim .tag { visibility: visible; }
+.arrow { text-align: center; font-weight: 800; color: var(--muted); line-height: 1; margin: 6px 0; font-size: 0.82rem; }
+.out { display: flex; align-items: center; gap: 8px; border: 2px solid var(--sugar); background: #fffbeb; border-radius: 8px; padding: 6px 9px; }
+.out .big { font-size: 1.05rem; font-weight: 800; color: var(--sugar); line-height: 1.2; }
+.out small { color: #78350f; font-weight: 600; font-size: 0.8rem; display: block; }
+.why { font-size: 0.88rem; font-weight: 600; color: var(--ink); margin: 8px 0; min-height: 2.7em; }
+.wpath { border-top: 1.5px dashed #bae6fd; padding-top: 4px; }
+.wpath summary { cursor: pointer; font-weight: 700; font-size: 0.82rem; color: #075985; padding: 4px 0; }
+.wpath .track { height: 6px; margin: 0 0 2px; }
+.wpath .track span { background: #7dd3fc; }
+.wrow { display: flex; justify-content: space-between; gap: 8px; font-size: 0.82rem; color: #334155; padding: 1px 0; }
+.wrow b { color: #075985; white-space: nowrap; }
+.meter { position: relative; margin-top: 8px; }
+.meter .row { display: flex; justify-content: space-between; font-weight: 800; font-size: 0.86rem; color: var(--ink); }
+.meter .track { height: 12px; }
+.meter.sugar .track span { background: var(--sugar); }
+.meter.health .track span { background: var(--accent-mid); }
+.meter.health.low .track span { background: var(--bad); }
+.spent { position: absolute; right: 0; top: -4px; font-weight: 800; color: var(--bad); pointer-events: none; animation: spent 1.2s ease-out forwards; }
+@keyframes spent { to { transform: translateY(-26px); opacity: 0; } }
+
+/* ── Motion in the scene ── */
+.shoot { animation: sway 5s ease-in-out infinite; }
+@keyframes sway { 25% { transform: rotate(1deg); } 75% { transform: rotate(-1deg); } }
+.pop { animation: pop 0.35s ease-out; }
+@keyframes pop { 40% { transform: scale(1.07); } }
+.ray { stroke: #fde047; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 2 9; animation: rays 0.9s linear infinite; }
+@keyframes rays { to { stroke-dashoffset: -11; } }
+.grass.shading .blade { stroke: #3f6212; opacity: 0.95; }
+.ring { fill: none; stroke: #dc2626; stroke-width: 3; animation: ring 1.2s ease-in-out infinite; }
+@keyframes ring { 50% { opacity: 0.25; } }
+@media (prefers-reduced-motion: reduce) {
+  .shoot, .pop, .ray, .ring, .spent, .item.pulse, .diary p { animation: none; }
+  .gauge .gt span { transition: none; }
+}
+
+/* ── Shop ── */
+.shop h2:not(:first-child) { margin-top: 12px; }
+.item { border: 1.5px solid var(--line); border-radius: 8px; padding: 6px 8px; margin-bottom: 6px; display: grid; grid-template-columns: 30px 1fr auto; gap: 1px 8px; align-items: center; }
+.item .ic { grid-column: 1; grid-row: 1 / span 2; line-height: 0; }
+.item .name { grid-column: 2; grid-row: 1; font-weight: 800; color: var(--ink); font-size: 0.92rem; cursor: pointer; }
+.item .name::after { content: ' ⓘ'; font-weight: 600; color: var(--muted); }
+.item .pips { grid-column: 2; grid-row: 2; display: flex; flex-wrap: wrap; gap: 2px; }
+.item .pips i { width: 8px; height: 8px; border-radius: 50%; background: #e2e8f0; }
+.item .pips i.on { background: var(--accent-mid); }
+.item .does { display: none; grid-column: 2 / -1; grid-row: 3; font-size: 0.8rem; color: #475569; margin-top: 3px; }
+.item.open .does, .item.off .does { display: block; }
+.item.off { background: #f8fafc; border-style: dashed; }
+.item .buy { grid-column: 3; grid-row: 1 / span 2; min-width: 78px; text-align: center; }
+.item .helps { display: none; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; background: #dcfce7; color: #166534; border-radius: 999px; padding: 0 7px; margin-left: 6px; }
+.item.hint { border-color: var(--accent-mid); }
+.item.hint .helps { display: inline-block; }
+.item.pulse { animation: pulse 0.8s ease-in-out 5; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.55); border-color: #f59e0b; } }
+.tally { font-size: 0.84rem; font-weight: 700; color: var(--ink); margin-top: 4px; }
+
+/* ── Plant alerts ── */
+.alertpic { display: block; width: 100%; max-width: 300px; height: auto; margin: 6px auto; border-radius: 8px; }
+.chain { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px; margin: 8px 0; }
+.chip { display: flex; flex-direction: column; align-items: center; border: 2px solid var(--line); border-radius: 8px; padding: 4px 8px; font-weight: 800; font-size: 0.78rem; color: var(--ink); min-width: 62px; }
+.chip.weak { border-color: var(--bad); background: #fef2f2; }
+.chain .ar { font-weight: 800; color: var(--muted); }
+.opt.pic { display: flex; align-items: center; gap: 10px; }
+.opt.pic svg { flex-shrink: 0; }
+
+/* ── Tutorial ── */
+.spot { position: relative; z-index: 20; border-radius: 8px; box-shadow: 0 0 0 4px #f59e0b, 0 0 0 9999px rgba(15, 23, 42, 0.55); }
+#coachBlock { position: fixed; inset: 0; z-index: 15; }
+#coach { position: absolute; z-index: 30; width: min(300px, calc(100vw - 16px)); background: #fff; border-radius: 10px; border-top: 5px solid #f59e0b; padding: 10px 12px; box-shadow: 0 6px 24px rgba(15, 23, 42, 0.35); }
+#coach p { font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+#coach .actions { display: flex; gap: 8px; justify-content: space-between; align-items: center; }
+#coach .n { font-size: 0.78rem; font-weight: 700; color: var(--muted); }
+
+/* ── Modal ── */
+#modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); display: flex; align-items: flex-start; justify-content: center; padding: 16px; overflow-y: auto; z-index: 10; }
+.box { background: #fff; border-radius: 12px; border-top: 6px solid var(--accent); padding: 18px 20px 20px; width: 100%; max-width: 760px; margin: auto; }
+.box h2 { font-size: 1.3rem; font-weight: 800; color: var(--ink); line-height: 1.25; margin-bottom: 6px; }
+.box h3 { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 14px 0 4px; }
+.box p { margin-bottom: 8px; }
+.box ol, .box ul { margin: 0 0 8px 22px; }
+.box li { margin-bottom: 4px; }
+.box .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.box .eg { background: var(--accent-light); border-left: 4px solid var(--accent); border-radius: 0 6px 6px 0; padding: 8px 12px; margin: 10px 0; }
+.box .eg p:last-child { margin-bottom: 0; }
+.opts { display: grid; gap: 8px; margin-top: 10px; }
+.opt { text-align: left; font-weight: 600; font-size: 0.98rem; padding: 10px 14px; }
+.opt.no { border-color: var(--bad); background: #fef2f2; opacity: 1; color: #7f1d1d; }
+.opt.yes { border-color: var(--accent); background: var(--accent-light); opacity: 1; color: #14532d; }
+.fb { font-weight: 700; margin-top: 10px; min-height: 1.5em; }
+.fb.no { color: var(--bad); } .fb.yes { color: var(--accent); }
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.modes .btn { text-align: left; padding: 12px 14px; }
+.modes .btn small { display: block; font-weight: 600; font-size: 0.82rem; opacity: 0.9; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-top: 8px; }
+.card { border: 2px solid var(--line); border-radius: 10px; padding: 8px; background: #fff; cursor: pointer; text-align: left; }
+.card[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-light); }
+.card:focus-visible { outline: 3px solid #0ea5e9; outline-offset: 2px; }
+.card svg { display: block; width: 100%; height: auto; background: #f1f5f9; border-radius: 6px; }
+.card .kind { font-weight: 800; font-size: 0.84rem; color: var(--ink); margin-top: 4px; }
+.card ul { list-style: none; margin: 4px 0 0; font-size: 0.78rem; }
+.card li { display: flex; justify-content: space-between; margin: 0; }
+.card .up { color: var(--accent); font-weight: 800; } .card .down { color: var(--bad); font-weight: 800; }
+.card .res { display: inline-block; font-size: 0.7rem; font-weight: 800; border-radius: 999px; padding: 0 7px; margin-top: 4px; }
+.card .res.y { background: #dcfce7; color: #166534; } .card .res.n { background: #fee2e2; color: #991b1b; }
+.note-in { width: 100%; border: 1.5px solid #94a3b8; border-radius: 8px; padding: 9px 12px; margin-top: 4px; }
+.outlook { background: #fef3c7; border-radius: 8px; padding: 8px 12px; font-weight: 700; color: #78350f; }
+table.rep { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+table.rep th, table.rep td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+table.rep th { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.stars { color: #ca8a04; letter-spacing: 1px; white-space: nowrap; }
+@media (max-width: 520px) { .modes { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="unit-label">Grade 7 Science · Plants for Food and Fibre</div>
+    <h1>Seed to Seed</h1>
+    <p class="i-can">I can explain how a plant's parts work together to make glucose, and how choosing offspring changes a species over generations.</p>
+  </header>
+
+  <div class="bar">
+    <span class="badge" id="genBadge">Generation 1</span>
+    <span class="badge year" id="yearBadge"></span>
+    <span class="badge mode" id="modeBadge"></span>
+    <span class="spacer"></span>
+    <div class="seg" id="speed" role="group" aria-label="Game speed">
+      <button class="btn" id="pauseBtn" type="button" aria-pressed="false">Pause</button>
+      <button class="btn spd" type="button" data-s="1" aria-pressed="true">1×</button>
+      <button class="btn spd" type="button" data-s="2" aria-pressed="false">2×</button>
+      <button class="btn spd" type="button" data-s="4" aria-pressed="false">4×</button>
+      <button class="btn spd" type="button" data-s="8" aria-pressed="false">8×</button>
+    </div>
+    <div class="seg">
+      <button class="btn" id="helpBtn" type="button">How to play</button>
+      <button class="btn" id="reportBtn" type="button">Report</button>
+      <button class="btn" id="newBtn" type="button">New game</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <section class="panel scene" aria-label="Your plant">
+      <div class="daywx" id="daywx">
+        <div class="now"><span id="wxIcon"></span><div><div class="wxname" id="wxName"></div><div class="wxsub" id="wxSub"></div></div></div>
+        <div><div class="daynum"><b id="dayNum">Day 1</b> <span id="dayOf"></span></div><div class="frost" id="frostTxt"></div></div>
+        <div class="track" aria-hidden="true"><span id="dayBar"></span></div>
+      </div>
+      <div class="fc" id="fc" aria-label="Weather for the next three days"><span class="lab">Next</span></div>
+      <svg id="scene" viewBox="0 0 420 460" role="img" aria-label="Drawing of your strawberry plant, its roots, and the weather"></svg>
+      <div class="diary" id="diary" aria-live="polite"></div>
+    </section>
+
+    <section class="panel factory" aria-label="Photosynthesis right now">
+      <h2>Making sugar right now</h2>
+      <div class="gauges" id="gauges">
+        <div class="gauge light" id="inLight"><span id="giLight"></span><div class="gt"><span id="bLight"></span></div>Light<span class="tag">limiting</span></div>
+        <div class="gauge water" id="inWater"><span id="giWater"></span><div class="gt"><span id="bWater"></span></div>Water<span class="tag">limiting</span></div>
+        <div class="gauge co2" id="inCo2"><span id="giCo2"></span><div class="gt"><span id="bCo2"></span></div>CO₂<span class="tag">limiting</span></div>
+      </div>
+      <div class="arrow" aria-hidden="true">↓ in the leaves ↓</div>
+      <div class="out"><span id="giSugar"></span><div><div class="big" id="vMake"></div><small id="vUse"></small></div></div>
+      <p class="why" id="why"></p>
+      <details class="wpath">
+        <summary>Follow the water</summary>
+        <div class="wrow"><span>Water in the soil</span><b id="vSoil"></b></div>
+        <div class="track"><span id="bSoil"></span></div>
+        <div class="wrow"><span>Roots bring in</span><b id="vUptake"></b></div>
+        <div class="wrow"><span>Xylem can carry</span><b id="vXylem"></b></div>
+        <div class="wrow"><span>Leaves could use</span><b id="vNeed"></b></div>
+      </details>
+      <div class="meter sugar" id="mSugar"><div class="row"><span>Stored sugar</span><span id="vStore"></span></div><div class="track"><span id="bStore"></span></div></div>
+      <div class="meter health" id="mHealth"><div class="row"><span>Plant health</span><span id="vHealth"></span></div><div class="track"><span id="bHealth"></span></div></div>
+    </section>
+
+    <section class="panel shop" aria-label="Spend sugar">
+      <h2>Grow (costs stored sugar)</h2>
+      <div id="shopGrow"></div>
+      <h2>Reproduce</h2>
+      <div id="shopRepro"></div>
+      <p class="tally" id="tally"></p>
+    </section>
+  </div>
+</div>
+
+<div id="coachBlock" hidden></div>
+<div id="coach" role="dialog" aria-label="Tutorial" hidden>
+  <p id="coachTxt" aria-live="polite"></p>
+  <div class="actions"><span class="n" id="coachN"></span><span><button class="btn" id="coachSkip" type="button">Skip</button> <button class="btn primary" id="coachNext" type="button">Next</button></span></div>
+</div>
+<div id="modal" hidden><div class="box" id="box" role="dialog" aria-modal="true" aria-labelledby="boxTitle"></div></div>
+
+<script>
+(function () {
+'use strict';
+
+/* ── Model (no DOM in this part) ── */
+var SAVE_KEY = 'sci7-seed-to-seed-v2';
+var SEC_PER_DAY = 8;          // real seconds for one game day at 1x
+var STEP = 1 / 30;            // model step, in days
+var K = 0.2;                  // glucose made per leaf per day, per unit of the scarcest input
+var CO2 = 60;                 // carbon dioxide available to each leaf (the air sets this)
+var OVULES = 6, BUD_DAYS = 3, OPEN_DAYS = 8, RUNNER_DAYS = 12, SEED_COST = 6;
+var MAX_FLOWERS = 8, MAX_RUNNERS = 3;
+
+var PARTS = {
+  leaves: { name: 'Leaves', start: 2, max: 14, base: 8, grow: 1.27, keep: 0.6, does: 'More leaf area to catch light and make glucose.' },
+  roots:  { name: 'Roots', start: 1, max: 9, base: 10, grow: 1.5, keep: 0.5, does: 'Take in more water and minerals from the soil.' },
+  xylem:  { name: 'Xylem', start: 1, max: 5, base: 14, grow: 1.6, keep: 0.3, does: 'Tubes that carry water up. More xylem moves more water to the leaves.' },
+  chl:    { name: 'Chloroplasts', start: 1, max: 5, base: 12, grow: 1.6, keep: 0.4, does: 'More chloroplasts in each leaf capture more of the light.' },
+  phloem: { name: 'Phloem', start: 1, max: 4, base: 16, grow: 1.8, keep: 0.3, does: 'Tubes that carry sugar down. Feeds more roots and stores more sugar.' },
+  stem:   { name: 'Leaf stalks', start: 1, max: 4, base: 15, grow: 1.7, keep: 0.5, does: 'Longer stalks lift the leaves above the grass, out of the shade.' },
+  petals: { name: 'Petals and nectar', start: 0, max: 3, base: 12, grow: 1.6, keep: 0.2, does: 'Bigger petals and more nectar bring more pollinators.' }
+};
+var GROW_ORDER = ['leaves', 'roots', 'xylem', 'chl', 'phloem', 'stem'];
+var TRAITS = [
+  { key: 'roots', name: 'Deep roots' },
+  { key: 'leaf', name: 'Large leaves' },
+  { key: 'drought', name: 'Drought tolerance' },
+  { key: 'early', name: 'Early flowering' },
+  { key: 'show', name: 'Showy flowers' }
+];
+var TRAIT_MAX = 4;
+var WX = {
+  sun:   { name: 'Sunny', light: 100, evap: 7, bees: 1 },
+  cloud: { name: 'Cloudy', light: 55, evap: 3, bees: 0.6 },
+  rain:  { name: 'Rain', light: 40, evap: -28, bees: 0.1 },
+  hot:   { name: 'Hot and dry', light: 100, evap: 12, bees: 0.8 }
+};
+var WX_KEYS = ['sun', 'cloud', 'rain', 'hot'];
+var YEARS = {
+  ordinary: { name: 'An ordinary year', note: 'A mix of sun and rain.', season: 90, p: [0.45, 0.25, 0.22, 0.08], soil: 70, bees: 1 },
+  dry:      { name: 'A dry year', note: 'Little rain. The soil dries out.', season: 90, p: [0.5, 0.17, 0.13, 0.2], soil: 50, bees: 1 },
+  short:    { name: 'A short season', note: 'Frost comes early, so there is less time to make seeds.', season: 72, p: [0.45, 0.25, 0.22, 0.08], soil: 70, bees: 1 },
+  fewbees:  { name: 'A poor year for pollinators', note: 'Few bees are flying, so less pollen is carried.', season: 90, p: [0.45, 0.25, 0.22, 0.08], soil: 70, bees: 0.45 },
+  disease:  { name: 'A leaf-spot year', note: 'A leaf disease is spreading. It attacks plants that are like this year’s parent.', season: 90, p: [0.45, 0.25, 0.22, 0.08], soil: 70, bees: 1 }
+};
+var YEAR_SEQ = ['ordinary', 'dry', 'short', 'fewbees', 'disease'];
+var GOAL_GEN = 5;
+
+var S = null;      // the whole game state: plain data, saved as JSON
+var EV = [];       // events from the model for the page to react to
+
+function RNG(seed) {
+  var s = seed % 4294967296 || 1;
+  return function () { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; };
+}
+function copy(o) { var r = {}, k; for (k in o) r[k] = o[k]; return r; }
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+function R(v) { return Math.round(v); }
+function R1(v) { return Math.round(v * 10) / 10; }
+function newSeed() { return Math.floor(Math.random() * 1e9) + 1; }
+function yearFor(gen) { return gen <= YEAR_SEQ.length ? YEAR_SEQ[gen - 1] : YEAR_SEQ[(gen * 7 + 3) % YEAR_SEQ.length]; }
+function starsFor(seeds) { return seeds >= 30 ? 3 : seeds >= 18 ? 2 : seeds >= 8 ? 1 : 0; }
+
+function newGame(diff, seed) {
+  S = { v: 2, alerts: {}, tourDone: false, diff: diff, gen: 1, traits: { roots: 0, leaf: 0, drought: 0, early: 0, show: 0 }, resist: true, fromClone: false,
+        prompts: {}, history: [], notes: [], log: [], won: false };
+  S.year = yearFor(1);
+  newSeason(seed);
+}
+function newSeason(seed) {
+  var Y = YEARS[S.year], rng = RNG(seed), i, r, k, w = [];
+  for (i = 0; i < Y.season + 1; i++) {
+    r = rng();
+    k = r < Y.p[0] ? 0 : r < Y.p[0] + Y.p[1] ? 1 : r < Y.p[0] + Y.p[1] + Y.p[2] ? 2 : 3;
+    w.push(i < 3 ? 'sun' : WX_KEYS[k]);
+  }
+  S.seed = seed; S.season = Y.season; S.weather = w;
+  S.day = 0; S.soil = Y.soil; S.store = 14; S.health = 100; S.rootEnergy = 100;
+  S.parts = {}; for (k in PARTS) S.parts[k] = PARTS[k].start;
+  S.flowers = []; S.runners = [];
+  S.dead = false; S.over = false; S.offspring = null;
+  S.made = 0; S.used = 0; S.yMade = 0; S.yUsed = 0;
+  S.limTime = { light: 0, water: 0, co2: 0 };
+  S.flags = {};
+  S.tm = { shade: 0, full: 0, low: 0, noSeeds: -99 };   // timers and marks for the early warnings
+  S.lastAlert = -99; for (k in S.alerts) S.alerts[k].at = -99;
+}
+
+function weatherAt(day) { return S.weather[Math.min(Math.floor(day), S.weather.length - 1)]; }
+function dayLight(day) { var f = day - Math.floor(day); return f < 0.7 ? Math.sin(Math.PI * f / 0.7) : 0; }
+function storeCap() { return 30 + 35 * S.parts.phloem; }
+function flowerDay() { return 40 - 4 * S.traits.early; }
+function canFlower() { return S.day >= flowerDay() && S.parts.leaves >= 5; }
+function canRunner() { return S.parts.leaves >= 4; }
+function attract() { return 0.5 + 0.17 * S.parts.petals + 0.1 * S.traits.show; }
+function costOf(k) { var p = PARTS[k]; return R(p.base * Math.pow(p.grow, S.parts[k] - p.start)); }
+function flowerCost() { return R(26 * Math.pow(1.3, S.flowers.length)); }
+function runnerCost() { return R(28 * Math.pow(1.3, S.runners.length)); }
+function seedCount() { var n = 0, i; for (i = 0; i < S.flowers.length; i++) n += Math.floor(S.flowers[i].ripe + 1e-6); return n; }
+function cloneCount() { var n = 0, i; for (i = 0; i < S.runners.length; i++) if (S.runners[i].age >= RUNNER_DAYS) n++; return n; }
+
+function upkeep() {
+  var u = 0.5, k, i;
+  for (k in PARTS) u += PARTS[k].keep * S.parts[k] * (k === 'leaves' ? 1 + 0.06 * S.traits.leaf : 1);
+  for (i = 0; i < S.flowers.length; i++) if (!S.flowers[i].done) u += 0.8;
+  for (i = 0; i < S.runners.length; i++) if (S.runners[i].age < RUNNER_DAYS) u += 1;
+  return u;
+}
+
+function compute() {
+  var P = S.parts, T = S.traits, w = WX[weatherAt(S.day)];
+  var sun = w.light * dayLight(S.day);
+  var reach = 0.7 + 0.1 * (P.stem - 1);
+  var chlF = 0.6 + 0.1 * (P.chl - 1);
+  var lightL = sun * reach * chlF;
+  var area = P.leaves * (1 + 0.15 * T.leaf);
+  var soilEff = Math.min(1, S.soil / 100 + 0.1 * T.drought);
+  var fedRoots = Math.min(P.roots, P.phloem * 3);
+  var rootFn = 0.2 + 0.8 * S.rootEnergy / 100;
+  var uptake = soilEff * 150 * fedRoots * (1 + 0.2 * T.roots) * rootFn;
+  var cap = P.xylem * 240;
+  var waterL = Math.min(100, Math.min(uptake, cap) / area);
+  var per = Math.min(lightL, waterL, CO2);
+  var sick = S.year === 'disease' && !S.resist;
+  var glucose = per * area * K * (sick ? 0.75 : 1);
+  var lim, kind, helps = '';
+  if (sun <= 0.5) { lim = 'night'; kind = 'night'; }
+  else if (per === CO2) { lim = 'co2'; kind = 'co2'; helps = 'leaves'; }
+  else if (per === lightL) {
+    kind = 'light';
+    if (sun < CO2) lim = 'lowsun';
+    else if (reach <= chlF && P.stem < PARTS.stem.max) { lim = 'shade'; helps = 'stem'; }
+    else if (P.chl < PARTS.chl.max) { lim = 'chl'; helps = 'chl'; }
+    else if (P.stem < PARTS.stem.max) { lim = 'shade'; helps = 'stem'; }
+    else lim = 'lowsun';
+  } else {
+    kind = 'water';
+    if (uptake > cap) { lim = 'xylem'; helps = 'xylem'; }
+    else if (P.roots > fedRoots) { lim = 'phloem'; helps = 'phloem'; }
+    else if (S.rootEnergy < 60) lim = 'rootsStarved';
+    else { lim = soilEff < 0.35 ? 'drysoil' : 'roots'; helps = 'roots'; }
+  }
+  return { sun: sun, lightL: lightL, waterL: waterL, co2L: CO2, per: per, glucose: glucose, lim: lim, kind: kind,
+           helps: helps, sick: sick, wx: w, soilEff: soilEff,
+           water: { uptake: uptake / 10, cap: cap / 10, need: area * CO2 / 10 } };
+}
+
+// Push an event the first time a condition turns on, and not again for 3 days.
+function edge(name, on) {
+  var F = S.flags;
+  if (on && !F[name] && S.day - (F[name + 'At'] === undefined ? -9 : F[name + 'At']) > 3) { EV.push(name); F[name + 'At'] = S.day; }
+  F[name] = on;
+}
+
+function step(dt) {
+  if (S.dead || S.over) return;
+  var c = compute(), cap = storeCap(), use = upkeep(), net = c.glucose - use;
+  var d0 = Math.floor(S.day), Y = YEARS[S.year], i, fl, rn, a0, want, d;
+
+  S.store += net * dt;
+  S.made += c.glucose * dt; S.used += use * dt;
+  if (S.store >= cap) { S.store = cap; edge('full', net > 0); } else edge('full', false);
+  var starving = S.store <= 0 && net < 0;
+  if (S.store < 0) S.store = 0;
+  S.rootEnergy = clamp(S.rootEnergy + (S.store > 0 ? 30 : -20) * dt, 0, 100);
+  var wilting = c.waterL < 15;
+  if (wilting || starving) S.health -= ((wilting ? 8 * (1 - 0.15 * S.traits.drought) : 0) + (starving ? 10 : 0)) * dt;
+  else S.health += 6 * dt;
+  S.health = clamp(S.health, 0, 100);
+  edge('wilt', wilting); edge('starve', starving); edge('rootsStarved', S.rootEnergy < 40);
+  if (c.kind !== 'night') S.limTime[c.kind] += dt;
+  // Time in full daylight with the leaves catching under half the light, and time with storage full
+  if (c.sun >= CO2) S.tm.shade = c.kind === 'light' && c.lightL < 0.5 * c.sun ? S.tm.shade + dt : 0;
+  if (S.store >= cap) S.tm.full += dt; else if (S.store < 0.6 * cap) S.tm.full = 0;
+
+  if (S.diff === 'gentle') {
+    if (S.health <= 20) {
+      if (S.parts.leaves > 1) { S.parts.leaves--; EV.push('shed'); }
+      S.health = 40;
+    }
+  } else if (S.health <= 0) {
+    S.dead = true;
+    S.history.push(historyEntry(true));
+    EV.push('dead');
+    return;
+  }
+
+  for (i = 0; i < S.flowers.length; i++) {
+    fl = S.flowers[i];
+    if (fl.done) continue;
+    a0 = fl.age; fl.age += dt;
+    if (a0 < BUD_DAYS && fl.age >= BUD_DAYS) EV.push('open');
+    if (fl.age >= BUD_DAYS && fl.age < BUD_DAYS + OPEN_DAYS) {
+      if (c.sun > 0.5) fl.fert = Math.min(OVULES, fl.fert + c.wx.bees * Y.bees * attract() * 1.5 * dt);
+    } else if (fl.age >= BUD_DAYS + OPEN_DAYS) {
+      if (a0 < BUD_DAYS + OPEN_DAYS) { EV.push('petalsFall'); if (fl.fert < 1) S.tm.noSeeds = S.day; }
+      want = Math.floor(fl.fert + 1e-6);
+      if (fl.ripe >= want) fl.done = true;
+      else if (S.store > 0.5) {
+        d = Math.min(0.5 * dt, want - fl.ripe);
+        fl.ripe += d; S.store = Math.max(0, S.store - d * SEED_COST);
+        if (fl.ripe >= want) { fl.ripe = want; fl.done = true; EV.push('ripe'); }
+      }
+    }
+  }
+  for (i = 0; i < S.runners.length; i++) {
+    rn = S.runners[i]; a0 = rn.age; rn.age += dt;
+    if (a0 < RUNNER_DAYS && rn.age >= RUNNER_DAYS) EV.push('rooted');
+  }
+
+  S.soil = clamp(S.soil - c.wx.evap * dt, 20, 100);
+  S.day += dt;
+  edge('canFlower', canFlower());
+  if (Math.floor(S.day) !== d0) {
+    S.yMade = S.made; S.yUsed = S.used; S.made = 0; S.used = 0; EV.push('newday');
+    S.tm.low = S.store < 0.15 * cap && S.yMade < S.yUsed ? S.tm.low + 1 : 0;     // days in a row, nearly empty and using more than it makes
+  }
+  if (S.day < S.season) checkAlerts(c);
+  if (S.day >= S.season) {
+    S.day = S.season; S.over = true;
+    S.offspring = makeOffspring();
+    S.history.push(historyEntry(false));
+    EV.push('frost');
+  }
+}
+
+// Early warnings. The model raises one when trouble starts, and the page stops the game and asks what would help.
+// Nothing is raised in the first 3 days. One kind stops the game at most every 10 days, and any kind at most every 3.
+// Once a kind has been solved on the first try twice, or seen 4 times, it becomes a short note and no longer stops the game.
+function raise(id) {
+  var a = S.alerts[id] || (S.alerts[id] = { seen: 0, first: 0, at: -99 }), stop = a.first < 2 && a.seen < 4;
+  if (S.day < 3 || S.day - a.at < 10 || (stop && S.day - S.lastAlert < 3)) return false;
+  a.at = S.day;
+  if (stop) { a.seen++; S.lastAlert = S.day; }
+  EV.push((stop ? 'alert:' : 'note:') + id);
+  return true;
+}
+function checkAlerts(c) {
+  var day = c.sun >= CO2, thirsty = day && c.kind === 'water' && c.waterL < 35, i;
+  var on = [
+    ['drysoil', thirsty && c.lim === 'drysoil'],
+    ['thirsty', thirsty && c.lim !== 'drysoil'],
+    ['lowSugar', S.tm.low >= 2],
+    ['lateRepro', S.season - S.day <= 35 && S.season - S.day >= 15 && canFlower() && !S.flowers.length && !S.runners.length],
+    ['noSeeds', S.day - S.tm.noSeeds < 3],
+    ['full', S.tm.full >= 0.5],
+    ['shaded', day && c.kind === 'light' && S.tm.shade >= 0.8]
+  ];
+  for (i = 0; i < on.length; i++) if (on[i][1] && raise(on[i][0])) return;
+}
+
+function mostLimiting() {
+  var L = S.limTime, k = 'light';
+  if (L.water > L[k]) k = 'water';
+  if (L.co2 > L[k]) k = 'co2';
+  return L[k] > 0 ? k : '';
+}
+function historyEntry(died) {
+  var seeds = died ? 0 : seedCount(), clones = died ? 0 : cloneCount();
+  return { gen: S.gen, year: S.year, diff: S.diff, died: died, days: Math.min(Math.floor(S.day) + 1, S.season), seeds: seeds, clones: clones,
+           stars: starsFor(seeds), lim: mostLimiting() };
+}
+
+function buy(k) {
+  var cost = costOf(k);
+  if (S.dead || S.over || S.parts[k] >= PARTS[k].max || S.store < cost) return false;
+  if (k === 'petals' && !canFlower()) return false;
+  S.store -= cost; S.parts[k]++;
+  return true;
+}
+function buyFlower() {
+  var cost = flowerCost();
+  if (S.dead || S.over || !canFlower() || S.flowers.length >= MAX_FLOWERS || S.store < cost) return false;
+  S.store -= cost; S.flowers.push({ age: 0, fert: 0, ripe: 0, done: false });
+  return true;
+}
+function buyRunner() {
+  var cost = runnerCost();
+  if (S.dead || S.over || !canRunner() || S.runners.length >= MAX_RUNNERS || S.store < cost) return false;
+  S.store -= cost; S.runners.push({ age: 0 });
+  return true;
+}
+
+// Seeds mix two parents, so each trait can shift. Runner plants are exact copies.
+function makeOffspring() {
+  var rng = RNG(S.seed + 7919 * S.gen), out = [], i, j, t, r, same, k;
+  var nSeed = Math.min(4, seedCount()), nClone = Math.min(2, cloneCount());
+  for (i = 0; i < nSeed; i++) {
+    t = copy(S.traits); same = true;
+    for (j = 0; j < TRAITS.length; j++) {
+      k = TRAITS[j].key; r = rng();
+      if (r < 0.3 && t[k] < TRAIT_MAX) { t[k]++; same = false; }
+      else if (r >= 0.3 && r < 0.45 && t[k] > 0) { t[k]--; same = false; }
+    }
+    if (same) { k = TRAITS[Math.floor(rng() * TRAITS.length)].key; t[k] += t[k] < TRAIT_MAX ? 1 : -1; }
+    out.push({ kind: 'seed', traits: t, resist: rng() < 0.55 });
+  }
+  for (i = 0; i < nClone; i++) out.push({ kind: 'clone', traits: copy(S.traits), resist: false });
+  return out;
+}
+function nextGeneration(i, seed) {
+  var card = S.offspring[i];
+  if (!S.over || !card) return false;
+  S.gen++;
+  if (S.gen > GOAL_GEN) S.won = true;
+  S.traits = copy(card.traits); S.resist = card.resist; S.fromClone = card.kind === 'clone';
+  S.year = yearFor(S.gen);
+  newSeason(seed);
+  return true;
+}
+function replant(seed) { newSeason(seed); }
+
+function validSave(o) {
+  var k;
+  if (!o || o.v !== 2 || (o.diff !== 'gentle' && o.diff !== 'real') || !YEARS[o.year]) return false;
+  if (!o.parts || !o.traits || !o.flags || !o.limTime || !o.prompts || !o.alerts || !o.tm) return false;
+  if (!Array.isArray(o.weather) || !Array.isArray(o.flowers) || !Array.isArray(o.runners)) return false;
+  if (!Array.isArray(o.history) || !Array.isArray(o.notes) || !Array.isArray(o.log)) return false;
+  for (k in PARTS) if (typeof o.parts[k] !== 'number' || !isFinite(o.parts[k])) return false;
+  for (k = 0; k < TRAITS.length; k++) if (typeof o.traits[TRAITS[k].key] !== 'number') return false;
+  var nums = ['gen', 'day', 'soil', 'store', 'health', 'rootEnergy', 'season', 'seed'];
+  for (k = 0; k < nums.length; k++) if (typeof o[nums[k]] !== 'number' || !isFinite(o[nums[k]])) return false;
+  if (o.over && !Array.isArray(o.offspring)) return false;
+  return true;
+}
+
+/* ── Page ── */
+var NS = 'http://www.w3.org/2000/svg';
+var debug = /[?&]debug=1/.test(location.search);
+function $(id) { return document.getElementById(id); }
+function el(tag, attrs, parent) {
+  var e = document.createElementNS(NS, tag), k;
+  for (k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function h(tag, cls, text, parent) {
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined && text !== null) e.textContent = text;
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function btn(cls, text, parent, fn) {
+  var b = h('button', 'btn' + (cls ? ' ' + cls : ''), text, parent);
+  b.type = 'button';
+  if (fn) b.addEventListener('click', fn);
+  return b;
+}
+var cache = {};
+function setText(id, t) { if (cache[id] !== t) { cache[id] = t; $(id).textContent = t; } }
+function setW(id, pct) { var t = clamp(R(pct), 0, 100) + '%'; if (cache[id] !== t) { cache[id] = t; $(id).style.width = t; } }
+function setCls(id, cls, on) { var key = id + '.' + cls; if (cache[key] !== on) { cache[key] = on; $(id).classList.toggle(cls, on); } }
+function starStr(n) { return '★★★'.slice(0, n) + '☆☆☆'.slice(0, 3 - n); }
+
+var paused = false, speed = 1, last = 0, acc = 0, modalQ = [], modalOpen = false;
+
+function loadSave() {
+  try {
+    var o = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+    if (!validSave(o)) return null;
+    return o;
+  } catch (e) { return null; }
+}
+function save() {
+  if (debug || !S) return;
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {}
+}
+function log(text, cls) {
+  S.log.unshift({ d: Math.floor(S.day) + 1, t: text, c: cls || '' });
+  if (S.log.length > 30) S.log.length = 30;
+  renderDiary();
+}
+
+/* ── Modal ── */
+function openModal(build) {
+  modalQ.push(build);
+  if (!modalOpen) nextModal();
+}
+function nextModal() {
+  var build = modalQ.shift(), box = $('box');
+  if (!build) { modalOpen = false; $('modal').hidden = true; last = 0; return; }
+  modalOpen = true;
+  box.textContent = '';
+  build(box);
+  $('modal').hidden = false;
+  $('modal').scrollTop = 0;
+  var f = box.querySelector('button, input');
+  if (f) f.focus();
+}
+function closeModal() { nextModal(); }
+function title(box, text) { var t = h('h2', '', text, box); t.id = 'boxTitle'; return t; }
+
+/* ── Reasoning prompts: each option is a full explanation ── */
+var PROMPTS = {
+  flower: {
+    q: 'A flower costs a lot of sugar. What does the plant get for it?',
+    opts: [
+      { t: 'A chance to make seeds. Petals and nectar bring pollinators, which carry pollen between plants.', ok: true,
+        fb: 'Yes. A flower makes no glucose. Its job is sexual reproduction.' },
+      { t: 'More glucose. Petals do photosynthesis.',
+        fb: 'Petals have very few chloroplasts. A flower uses glucose.' },
+      { t: 'Nothing. Flowers only look nice.',
+        fb: 'The colour and scent are there to attract pollinators.' }
+    ]
+  },
+  offspring: {
+    q: 'Seedlings differ from the parent. Runner plants are identical to it. Why?',
+    opts: [
+      { t: 'A seed mixes genetic information from two parents. A runner is a piece of one parent.', ok: true,
+        fb: 'Yes. Sexual reproduction gives variation. Asexual reproduction gives copies.' },
+      { t: 'Runner plants are younger, so they have not changed yet.',
+        fb: 'Age is not the reason. A runner plant has the same genetic information as its parent and keeps it.' },
+      { t: 'Seedlings change themselves to suit next year’s weather.',
+        fb: 'A plant cannot choose its traits. The variation is random. You select which offspring go on.' }
+    ]
+  }
+};
+function askPrompt(id) {
+  if (S.prompts[id]) return;
+  S.prompts[id] = { first: null };
+  openModal(function (box) {
+    var P = PROMPTS[id], order = P.opts.slice(), i, j, t, fb, done;
+    for (i = order.length - 1; i > 0; i--) { j = Math.floor(Math.random() * (i + 1)); t = order[i]; order[i] = order[j]; order[j] = t; }
+    h('h3', '', 'Stop and think', box);
+    title(box, P.q);
+    h('p', '', 'Choose the best explanation.', box);
+    var list = h('div', 'opts', null, box);
+    fb = h('p', 'fb', '', box); fb.setAttribute('aria-live', 'polite');
+    done = btn('primary big', 'Keep growing', h('div', 'actions', null, box), closeModal);
+    done.hidden = true;
+    order.forEach(function (o) {
+      var b = btn('opt', o.t, list, function () {
+        if (S.prompts[id].first === null) S.prompts[id].first = !!o.ok;
+        fb.textContent = o.fb; fb.className = 'fb ' + (o.ok ? 'yes' : 'no');
+        b.classList.add(o.ok ? 'yes' : 'no'); b.disabled = true;
+        if (o.ok) {
+          Array.prototype.forEach.call(list.children, function (x) { x.disabled = true; });
+          done.hidden = false; done.focus(); save();
+        }
+      });
+    });
+  });
+}
+
+/* ── Start and report ── */
+function startModal(box) {
+  var old = loadSave();
+  title(box, 'Seed to Seed');
+  h('p', '', 'Grow a wild strawberry from seed. Keep it alive, get it to make seeds, and choose which offspring to plant next year. Can your line last ' + GOAL_GEN + ' generations?', box);
+  h('h3', '', old ? 'Carry on or start again' : 'Choose how to play', box);
+  if (old) {
+    btn('primary big', 'Continue (generation ' + old.gen + ', ' + (old.diff === 'real' ? 'Real' : 'Gentle') + ')',
+        h('div', 'actions', null, box), function () { S = old; resume(); closeModal(); });
+    h('p', '', 'Or start a new game. This replaces your saved game.', box).style.marginTop = '10px';
+  }
+  var m = h('div', 'modes', null, box);
+  var g = btn(old ? '' : 'primary', 'Gentle', m, function () { begin('gentle'); });
+  h('small', '', 'The plant cannot die. Hints show which part helps.', g);
+  var r = btn('', 'Real', m, function () { begin('real'); });
+  h('small', '', 'The plant can die. No hints.', r);
+}
+function begin(diff) {
+  newGame(diff, newSeed());
+  log('A seed sprouts. ' + YEARS[S.year].name + '.', 'good');
+  resume(); save(); closeModal();
+}
+function resume() {
+  cache = {}; plantSig = ''; shopSig = '';
+  renderDiary();
+  paused = false; setSpeedUI();
+  render();
+  if (S.dead) openModal(deadModal);
+  else if (S.over) openModal(offspringModal);
+}
+var LIM_NAME = { light: 'Light', water: 'Water', co2: 'Carbon dioxide', '': '—' };
+function reportModal(box) {
+  var i, e, tr, tb, k, n = 0, right = 0;
+  title(box, 'Report');
+  h('h3', '', 'Generations', box);
+  if (!S.history.length) h('p', '', 'No season finished yet.', box);
+  else {
+    var tbl = h('table', 'rep', null, box);
+    tr = h('tr', '', null, h('thead', '', null, tbl));
+    ['Gen', 'Year', 'Result', 'Seeds', 'Runners', 'Limited most by'].forEach(function (x) { h('th', '', x, tr); });
+    tb = h('tbody', '', null, tbl);
+    for (i = 0; i < S.history.length; i++) {
+      e = S.history[i]; tr = h('tr', '', null, tb);
+      h('td', '', String(e.gen), tr);
+      h('td', '', YEARS[e.year].name, tr);
+      if (e.died) h('td', '', 'Died on day ' + e.days, tr); else h('td', 'stars', starStr(e.stars), tr);
+      h('td', '', String(e.seeds), tr);
+      h('td', '', String(e.clones), tr);
+      h('td', '', LIM_NAME[e.lim], tr);
+    }
+  }
+  h('h3', '', 'Stop-and-think questions', box);
+  for (k in PROMPTS) if (S.prompts[k] && S.prompts[k].first !== null) { n++; if (S.prompts[k].first) right++; }
+  h('p', '', n ? right + ' of ' + n + ' explained correctly on the first try.' : 'None answered yet.', box);
+  h('h3', '', 'Breeder’s notes', box);
+  if (!S.notes.length) h('p', '', 'No notes yet. You write one each time you choose an offspring.', box);
+  else {
+    var ul = h('ul', '', null, box);
+    for (i = 0; i < S.notes.length; i++) h('li', '', 'Generation ' + S.notes[i].gen + ' (' + S.notes[i].kind + '): ' + S.notes[i].t, ul);
+  }
+  h('h3', '', 'This season so far', box);
+  if (!S.log.length) h('p', '', 'Nothing yet.', box);
+  else {
+    var ev = h('ul', '', null, box);
+    for (i = 0; i < Math.min(8, S.log.length); i++) h('li', '', 'Day ' + S.log[i].d + ': ' + S.log[i].t, ev);
+  }
+  h('h3', '', 'Plant alerts', box);
+  n = 0; right = 0;
+  for (k in S.alerts) { n += S.alerts[k].seen; right += S.alerts[k].first; }
+  h('p', '', n ? right + ' of ' + n + ' solved on the first try.' : 'None yet.', box);
+  h('p', '', 'Mode: ' + (S.diff === 'real' ? 'Real' : 'Gentle') + '.', box);
+  btn('primary big', 'Back to the plant', h('div', 'actions', null, box), closeModal);
+}
+function newModal(box) {
+  title(box, 'Start a new game?');
+  h('p', '', 'This erases your saved plant, your generations, and your notes.', box);
+  var a = h('div', 'actions', null, box);
+  btn('primary big', 'Keep playing', a, closeModal);
+  btn('big', 'Erase and start again', a, function () {
+    try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+    modalQ.unshift(startModal); closeModal();
+  });
+}
+
+/* ── Icons: one drawing for each input and plant part, shared by the gauges, the shop, and the alerts ── */
+function icon(kind, size) {
+  var s = el('svg', { viewBox: '0 0 24 24', width: size, height: size, 'aria-hidden': 'true' }), i, a;
+  function ln(d, col, w) { el('path', { d: d, fill: 'none', stroke: col, 'stroke-width': w, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, s); }
+  function bloom(col) {
+    for (i = 0; i < 5; i++) {
+      a = i * 2 * Math.PI / 5 - Math.PI / 2;
+      el('circle', { cx: R1(12 + 5.5 * Math.cos(a)), cy: R1(12 + 5.5 * Math.sin(a)), r: 4, fill: col, stroke: '#94a3b8', 'stroke-width': 0.7 }, s);
+    }
+    el('circle', { cx: 12, cy: 12, r: 3, fill: '#facc15' }, s);
+  }
+  function tube(fill, col, up) {
+    el('rect', { x: 7.5, y: 2, width: 9, height: 20, rx: 4.5, fill: fill, stroke: col, 'stroke-width': 1.5 }, s);
+    ln(up ? 'M12 17 V7 M8.8 10.5 L12 7 L15.2 10.5' : 'M12 7 V17 M8.8 13.5 L12 17 L15.2 13.5', col, 2);
+  }
+  if (kind === 'water') el('path', { d: 'M12 2.5 C12 2.5 5 11 5 15 a7 7 0 0 0 14 0 C19 11 12 2.5 12 2.5 Z', fill: '#0284c7' }, s);
+  else if (kind === 'co2') {
+    el('circle', { cx: 12, cy: 12, r: 10.5, fill: '#64748b' }, s);
+    el('text', { x: 12, y: 15, 'text-anchor': 'middle', 'font-size': 8, 'font-weight': 800, 'font-family': 'Arial, sans-serif', fill: '#fff' }, s).textContent = 'CO₂';
+  } else if (kind === 'sugar' || kind === 'save') {
+    el('polygon', { points: '12,2.5 20.5,7.2 20.5,16.8 12,21.5 3.5,16.8 3.5,7.2', fill: '#b45309' }, s);
+    if (kind === 'save') ln('M9.5 8.5 V15.5 M14.5 8.5 V15.5', '#fff', 2.6);
+  } else if (kind === 'leaves') {
+    el('path', { d: 'M4 20 C4 9 11 4 20 4 C20 15 14 20 4 20 Z', fill: '#22c55e', stroke: '#15803d', 'stroke-width': 1 }, s);
+    ln('M4 20 L15 9', '#15803d', 1.4);
+  } else if (kind === 'roots') ln('M12 2 V9 M12 9 Q7 13 4 21 M12 9 V22 M12 9 Q17 13 20 21 M8 14.5 L5.5 13 M16 14.5 L18.5 13', '#92400e', 2.2);
+  else if (kind === 'xylem') tube('#e0f2fe', '#0284c7', true);
+  else if (kind === 'phloem') tube('#fef3c7', '#b45309', false);
+  else if (kind === 'chl') {
+    el('ellipse', { cx: 12, cy: 12, rx: 10.5, ry: 6.5, fill: '#15803d' }, s);
+    ln('M7 9.5 V14.5 M12 8.5 V15.5 M17 9.5 V14.5', '#86efac', 2);
+  } else if (kind === 'stem') {
+    ln('M10 22 V9', '#4d7c0f', 2.6);
+    el('ellipse', { cx: 10, cy: 6, rx: 5.5, ry: 4, fill: '#22c55e', stroke: '#15803d', 'stroke-width': 1 }, s);
+    ln('M20 19 V9 M17.5 11.5 L20 9 L22.5 11.5', '#64748b', 1.8);
+  } else if (kind === 'flower') bloom('#fff');
+  else if (kind === 'petals') bloom('#f9a8d4');
+  else if (kind === 'runner') {
+    ln('M2 20 H22', '#8b6b45', 2);
+    ln('M5 18 Q12 4 19 18', '#b45309', 2);
+    el('ellipse', { cx: 5, cy: 15, rx: 3, ry: 4.5, fill: '#22c55e' }, s);
+    el('ellipse', { cx: 19, cy: 16, rx: 2.2, ry: 3.2, fill: '#4ade80' }, s);
+  } else if (kind === 'soil') {
+    el('rect', { x: 2, y: 9, width: 20, height: 13, rx: 2, fill: '#8b6b45' }, s);
+    ln('M2 9 H22', '#65a30d', 2.5);
+    for (i = 0; i < 3; i++) el('circle', { cx: 7 + i * 5, cy: 14 + (i % 2) * 3, r: 1.6, fill: '#7dd3fc' }, s);
+  }
+  return s;
+}
+
+/* ── Plant alerts: what is going wrong, then the student picks what would help ── */
+var NAME = { roots: 'Grow roots', xylem: 'Grow xylem', phloem: 'Grow phloem', leaves: 'Grow leaves', chl: 'Grow chloroplasts', stem: 'Grow leaf stalks',
+             flower: 'Grow a flower', petals: 'Grow petals and nectar', runner: 'Grow a runner', save: 'Stop spending for a while',
+             spend: 'Grow the part the limiting gauge needs' };
+var MORE_LEAVES = 'New leaves share the same water, so every leaf gets less.';
+// One list for each cause of a water shortage: [choice, right?, feedback]
+var THIRST = {
+  roots: [['roots', 1, 'Yes. More roots take in more water.'],
+          ['xylem', 0, 'The xylem can already carry all the water the roots bring in.'], ['leaves', 0, MORE_LEAVES]],
+  xylem: [['xylem', 1, 'Yes. The roots bring in more water than the xylem can carry up.'],
+          ['roots', 0, 'The roots already bring in more than the xylem can carry.'], ['leaves', 0, MORE_LEAVES]],
+  phloem: [['phloem', 1, 'Yes. Roots need sugar to work, and phloem carries it down to them.'],
+           ['roots', 0, 'Some roots are already going without sugar. New ones would too.'], ['xylem', 0, 'The xylem can already carry what the roots bring in.']],
+  rootsStarved: [['save', 1, 'Yes. Roots cannot make sugar. With some in storage they work again.'],
+                 ['roots', 0, 'New roots would have no sugar to run on either.'], ['leaves', 0, MORE_LEAVES]],
+  drysoil: [['roots', 1, 'Yes. More roots reach more of the water that is left. Rain will help too.'],
+            ['xylem', 0, 'There is little water to carry. The xylem is not the problem.'], ['leaves', 0, MORE_LEAVES]]
+};
+var WEAK = { drysoil: 0, roots: 1, phloem: 1, rootsStarved: 1, xylem: 2 };   // the weak step on the water path
+function thirstOpts(c) { return THIRST[c.lim] || THIRST.roots; }
+var ALERTS = {
+  thirsty: { say: 'The leaves are not getting enough water.', at: 'leaf', chain: true, opts: thirstOpts },
+  drysoil: { say: 'The soil is drying out. Little water is reaching the leaves.', at: 'root', chain: true, opts: thirstOpts },
+  stall: { say: 'The new leaf did not make more sugar. Water is the limiting gauge.', at: 'leaf', chain: true, opts: thirstOpts },
+  shaded: {
+    say: function (c) { return c.lim === 'chl' ? 'The leaves are catching only some of the light that reaches them.' : 'The grass is shading the leaves. They are short of light.'; },
+    at: 'leaf',
+    opts: function (c) {
+      var k = c.helps === 'chl' ? 'chl' : 'stem';
+      return [[k, 1, k === 'chl' ? 'Yes. More chloroplasts capture more of the light that reaches a leaf.' : 'Yes. Longer stalks lift the leaves above the grass.'],
+              ['leaves', 0, 'New leaves would get the same poor light.'], ['roots', 0, 'Roots bring in water. These leaves are short of light.']];
+    }
+  },
+  lowSugar: { say: 'The plant is using more sugar than it makes, and storage is almost empty.', at: 'crown',
+              opts: [['save', 1, 'Yes. Let sugar build up, then spend it on the limiting gauge.'],
+                     ['flower', 0, 'A flower uses sugar and makes none.'], ['runner', 0, 'A runner uses sugar until it has rooted.']] },
+  full: { say: 'Sugar storage is full. New sugar is being wasted.', at: 'crown',
+          opts: [['phloem', 1, 'Yes. More phloem lets the plant store more sugar.'],
+                 ['spend', 1, 'Yes. Sugar spent on a useful part is not wasted.'], ['save', 0, 'Storage cannot hold any more. Sugar made now is lost.']] },
+  noSeeds: { say: 'A flower closed without making seeds. No pollen reached it.', at: 'flower',
+             opts: [['petals', 1, 'Yes. Bigger petals and more nectar bring more pollinators.'],
+                    ['leaves', 0, 'Leaves make sugar. Seeds also need pollen from another flower.'], ['roots', 0, 'Water was not the problem. No pollinator brought pollen.']] },
+  lateRepro: { say: 'Frost is coming, and the plant has no flowers or runners.', at: 'crown',
+               opts: [['flower', 1, 'Yes. Seeds take two to three weeks, so start now.'],
+                      ['runner', 1, 'Yes. A runner roots a copy of the plant in ' + RUNNER_DAYS + ' days.'],
+                      ['leaves', 0, 'Leaves alone leave no offspring. The frost ends the season.']] }
+};
+function alertSay(id, c) { var s = ALERTS[id].say; return typeof s === 'function' ? s(c) : s; }
+function alertPic(box, at, c) {
+  var svg = el('svg', { viewBox: '0 0 300 170', 'class': 'alertpic', 'aria-hidden': 'true' }, box), g, A, pts, p = [0, 0], r = 20, i;
+  el('rect', { x: 0, y: 0, width: 300, height: 110, fill: '#e0f2fe' }, svg);
+  el('rect', { x: 0, y: 110, width: 300, height: 60, fill: '#8b6b45' }, svg);
+  g = el('g', {}, svg);
+  A = drawPlant(g, plantLook(c), 150, 110, 0.7);
+  pts = at === 'leaf' ? A.leaves : at === 'root' ? A.roots : at === 'flower' && A.flowers.length ? A.flowers : [[150, 108]];
+  for (i = 0; i < pts.length; i++) { p[0] += pts[i][0] / pts.length; p[1] += pts[i][1] / pts.length; }
+  for (i = 0; i < pts.length; i++) r = Math.max(r, 16 + Math.abs(pts[i][0] - p[0]), 16 + Math.abs(pts[i][1] - p[1]));
+  el('circle', { cx: R(p[0]), cy: R(p[1]), r: R(Math.min(r, 60)), 'class': 'ring' }, svg);
+}
+var CHAIN = [['soil', 'Soil'], ['roots', 'Roots'], ['xylem', 'Xylem'], ['leaves', 'Leaves']];
+function chain(box, weak) {
+  var d = h('div', 'chain', null, box);
+  CHAIN.forEach(function (x, i) {
+    if (i) h('span', 'ar', '→', d);
+    var chip = h('div', 'chip' + (i === weak ? ' weak' : ''), null, d);
+    chip.appendChild(icon(x[0], 28));
+    h('span', '', x[1], chip);
+  });
+}
+function alertModal(id, c) {
+  return function (box) {
+    var A = ALERTS[id], opts = (typeof A.opts === 'function' ? A.opts(c) : A.opts).slice(), first = true, key = '', i, j, t, list, fb, done;
+    for (i = opts.length - 1; i > 0; i--) { j = Math.floor(Math.random() * (i + 1)); t = opts[i]; opts[i] = opts[j]; opts[j] = t; }
+    h('h3', '', 'Plant alert', box);
+    title(box, alertSay(id, c));
+    alertPic(box, A.at, c);
+    if (A.chain) chain(box, S.diff === 'gentle' ? WEAK[c.lim] : -1);
+    h('p', '', 'What would help?', box).style.fontWeight = '700';
+    list = h('div', 'opts', null, box);
+    fb = h('p', 'fb', '', box); fb.setAttribute('aria-live', 'polite');
+    done = btn('primary big', 'Back to the plant', h('div', 'actions', null, box), function () {
+      pulse = { key: key, until: performance.now() + 4000 };
+      closeModal();
+    });
+    done.hidden = true;
+    opts.forEach(function (o) {
+      var b = btn('opt pic', null, list, function () {
+        fb.textContent = o[2]; fb.className = 'fb ' + (o[1] ? 'yes' : 'no');
+        b.classList.add(o[1] ? 'yes' : 'no'); b.disabled = true;
+        if (o[1]) {
+          if (first && S.alerts[id]) S.alerts[id].first++;
+          Array.prototype.forEach.call(list.children, function (x) { x.disabled = true; });
+          key = o[0]; done.hidden = false; done.focus(); save();
+        }
+        first = false;
+      });
+      b.appendChild(icon(o[0] === 'spend' ? 'sugar' : o[0], 30));
+      h('span', '', NAME[o[0]], b);
+    });
+  };
+}
+
+/* ── Tutorial: five pointers at the real controls, with the game stopped ── */
+var tour = null;
+var KIND_NAME = { light: 'light', water: 'water', co2: 'carbon dioxide', night: 'light, because it is night' };
+function tourSteps() {
+  var c = compute(), k = c.helps, can = !!k && S.parts[k] < PARTS[k].max && S.store >= costOf(k);
+  return [
+    { sel: '#scene', t: 'This is your strawberry plant. Its leaves make sugar from light, water, and carbon dioxide.' },
+    { sel: '#gauges', t: 'The lowest gauge is the limiting one. It holds the plant back. Right now it is ' + KIND_NAME[c.kind] + '.' },
+    can ? { sel: '[data-k="' + k + '"]', t: PARTS[k].name + ' would help. Press the green button to grow more.', wait: true }
+        : { sel: '#shopGrow', t: 'Spend sugar here to grow parts. Grow the part that lifts the limiting gauge.' },
+    { sel: '#mSugar', t: 'Every part uses a little sugar each day. Do not let the store run out.' },
+    { sel: '#speed', t: 'Pause or speed up time here. If something starts to go wrong, the game stops and asks what would help.' }
+  ];
+}
+function unspot() { var o = document.querySelector('.spot'); if (o) o.classList.remove('spot'); }
+function placeCoach() {
+  var n = document.querySelector('.spot'), co = $('coach'), r, w, hh, x, y;
+  if (!n) return;
+  r = n.getBoundingClientRect(); w = co.offsetWidth; hh = co.offsetHeight;
+  x = clamp(r.left + r.width / 2 - w / 2, 8, document.documentElement.clientWidth - w - 8);
+  if (r.bottom + 12 + hh <= window.innerHeight) y = r.bottom + 12;
+  else if (r.top - 12 - hh >= 0) y = r.top - 12 - hh;
+  else y = Math.max(8, window.innerHeight - hh - 8);
+  co.style.left = R(x + window.pageXOffset) + 'px'; co.style.top = R(y + window.pageYOffset) + 'px';
+}
+function startTour() {
+  if (tour || modalOpen || !S || S.dead || S.over) return;
+  tour = { steps: tourSteps(), i: -1 };
+  $('coachBlock').hidden = false; $('coach').hidden = false;
+  tourNext();
+}
+function tourNext() {
+  var st, n, f;
+  unspot();
+  if (!tour) return;
+  do { tour.i++; st = tour.steps[tour.i]; n = st && document.querySelector(st.sel); } while (st && !n);
+  if (!st) { endTour(); return; }
+  n.classList.add('spot');
+  setText('coachTxt', st.t);
+  setText('coachN', (tour.i + 1) + ' of ' + tour.steps.length);
+  $('coachNext').hidden = !!st.wait;
+  $('coachNext').textContent = tour.i === tour.steps.length - 1 ? 'Start growing' : 'Next';
+  n.scrollIntoView({ block: 'nearest' });
+  placeCoach();
+  f = st.wait ? n.querySelector('button') : $('coachNext');
+  if (f) f.focus({ preventScroll: true });
+}
+function endTour() {
+  unspot();
+  tour = null; $('coach').hidden = true; $('coachBlock').hidden = true;
+  if (S) { S.tourDone = true; save(); }
+  last = 0;
+}
+
+/* ── End of a season ── */
+var WHY_DEAD = {
+  light: 'For most of its life it was short of light. Chloroplasts and longer leaf stalks help a plant capture more.',
+  water: 'For most of its life it was short of water. Roots take water in and xylem carries it up.',
+  co2: 'Its leaves were working as fast as the air allowed, so it needed more leaf area, and enough stored sugar to get through the nights.',
+  '': 'It ran out of stored sugar before it could grow.'
+};
+function deadModal(box) {
+  var e = S.history[S.history.length - 1];
+  title(box, 'Your plant died on day ' + e.days + '.');
+  h('p', '', WHY_DEAD[e.lim], box);
+  h('p', '', 'A plant dies when its leaves get no water for too long, or when it has no stored sugar left to live on.', box);
+  h('p', '', 'You still have a seed like the one you planted. Try this year again.', box);
+  btn('primary big', 'Plant the seed again', h('div', 'actions', null, box), function () {
+    replant(newSeed());
+    log('A new seed sprouts. ' + YEARS[S.year].name + '.', 'good');
+    resume(); save(); closeModal();
+  });
+}
+function miniPlant(svg, traits) {
+  var g = el('g', {}, svg);
+  el('rect', { x: 0, y: 92, width: 150, height: 58, fill: '#8b6b45' }, svg);
+  svg.appendChild(g);
+  drawPlant(g, { leaves: 6, stem: 2, roots: 3, chl: 3, petals: 1, traits: traits, health: 100, wilt: 0,
+                 flowers: [{ st: 'open' }], runners: [] }, 75, 92, 0.62);
+}
+function offspringModal(box) {
+  var e = S.history[S.history.length - 1], cards = S.offspring, next = YEARS[yearFor(S.gen + 1)], isDisease = yearFor(S.gen + 1) === 'disease';
+  var pick = -1, grid, input, go, a;
+  title(box, 'First frost. The season is over.');
+  h('p', '', 'Your plant made ' + e.seeds + (e.seeds === 1 ? ' seed' : ' seeds') + ' and ' + e.clones + (e.clones === 1 ? ' runner plant' : ' runner plants') + '.  ', box)
+    .appendChild(h('span', 'stars', starStr(e.stars)));
+  if (!cards.length) {
+    h('p', '', 'With no seeds and no runner plants, this plant leaves no offspring. Seeds need a flower, pollinators, and enough time and sugar to ripen before the frost.', box);
+    h('p', '', 'You still have a seed like the one you planted. Try this year again.', box);
+    btn('primary big', 'Plant the seed again', h('div', 'actions', null, box), function () {
+      replant(newSeed());
+      log('A new seed sprouts. ' + YEARS[S.year].name + '.', 'good');
+      resume(); save(); closeModal();
+    });
+    return;
+  }
+  if (S.gen === GOAL_GEN) h('p', 'fb yes', 'You bred a line that lasted ' + GOAL_GEN + ' generations. Keep going to see how far it can go.', box);
+  h('p', 'outlook', 'Outlook for next year: ' + next.name + '. ' + next.note, box);
+  h('h3', '', 'Choose one offspring to plant', box);
+  h('p', '', 'Arrows show how each one differs from this year’s parent.', box);
+  grid = h('div', 'cards', null, box);
+  cards.forEach(function (c, i) {
+    var b = h('button', 'card', null, grid), svg, ul;
+    b.type = 'button'; b.setAttribute('aria-pressed', 'false');
+    svg = el('svg', { viewBox: '0 0 150 150', 'aria-hidden': 'true' }, b);
+    miniPlant(svg, c.traits);
+    h('div', 'kind', c.kind === 'seed' ? 'Seedling (from seed)' : 'Runner plant (copy)', b);
+    ul = h('ul', '', null, b);
+    TRAITS.forEach(function (t) {
+      var li = h('li', '', null, ul), d = c.traits[t.key] - S.traits[t.key];
+      h('span', '', t.name, li);
+      h('span', d > 0 ? 'up' : d < 0 ? 'down' : '', c.traits[t.key] + (d > 0 ? ' ▲' : d < 0 ? ' ▼' : ''), li);
+    });
+    if (isDisease) h('span', 'res ' + (c.resist ? 'y' : 'n'), c.resist ? 'Resists leaf spot' : 'Catches leaf spot', b);
+    b.addEventListener('click', function () {
+      pick = i;
+      Array.prototype.forEach.call(grid.children, function (x, j) { x.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+      check();
+    });
+  });
+  h('h3', '', 'Breeder’s note', box);
+  var lab = h('label', '', 'Why this one? Write one sentence that links its traits to next year.', box);
+  input = h('input', 'note-in', null, box);
+  input.type = 'text'; input.maxLength = 160; input.id = 'noteIn'; lab.htmlFor = 'noteIn';
+  input.addEventListener('input', check);
+  a = h('div', 'actions', null, box);
+  go = btn('primary big', 'Plant it', a, function () {
+    var c = cards[pick];
+    S.notes.push({ gen: S.gen, kind: c.kind === 'seed' ? 'seedling' : 'runner plant', t: input.value.trim() });
+    nextGeneration(pick, newSeed());
+    S.log = [];
+    log('Generation ' + S.gen + ' sprouts. ' + YEARS[S.year].name + '. ' + YEARS[S.year].note, 'good');
+    if (S.year === 'disease') log(S.resist ? 'Your plant resists the leaf spot.' : 'Your plant has caught leaf spot. Its leaves make a quarter less glucose this year.', S.resist ? 'good' : 'bad');
+    resume(); save(); closeModal();
+  });
+  function check() { go.disabled = pick < 0 || input.value.trim().length < 8; }
+  check();
+}
+
+/* ── Plant drawing ── */
+function mix(a, b, t) { return [0, 1, 2].map(function (i) { return R(a[i] + (b[i] - a[i]) * t); }); }
+function rgb(c) { return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')'; }
+var FLOWER_X = [-10, 13, -27, 30, -44, 46, 2, -19];
+// L: { leaves, stem, roots, chl, petals, traits, health, wilt (0 or 1), flowers: [{st, ripe}], runners: [progress 0..1] }
+function drawPlant(g, L, cx, gy, sc) {
+  var T = L.traits, i, a, side, rank, half, spread, len, tx, ty, dir, s, col, p, x, hgt;
+  while (g.firstChild) g.removeChild(g.firstChild);
+  sc = sc || 1;
+  var A = { roots: [], leaves: [], flowers: [] };   // where the root tips, leaves and flowers are, for the moving dots and bees
+
+  var nr = 2 + L.roots, depth = (26 + 11 * L.roots + 6 * T.roots) * sc, t, ex, ey;
+  for (i = 0; i < nr; i++) {
+    t = i / (nr - 1) - 0.5;
+    ex = cx + t * (44 + 14 * L.roots) * sc; ey = gy + depth * (1 - 0.6 * Math.abs(t));
+    A.roots.push([ex, ey]);
+    el('path', { 'class': 'root', d: 'M' + cx + ' ' + gy + ' Q' + R1(cx + t * 18 * sc) + ' ' + R1(gy + depth * 0.55) + ' ' + R1(ex) + ' ' + R1(ey) }, g);
+    if (L.roots > 2 && i % 2 === 0) {
+      el('path', { 'class': 'root thin', d: 'M' + R1(cx + (ex - cx) * 0.6) + ' ' + R1(gy + (ey - gy) * 0.62) + ' l' + R1((t < 0 ? -1 : 1) * 12 * sc) + ' ' + R1(9 * sc) }, g);
+    }
+  }
+
+  for (i = 0; i < L.runners.length; i++) {
+    side = i % 2 ? -1 : 1; p = L.runners[i];
+    x = cx + side * (62 + 30 * Math.floor(i / 2)) * p * sc;
+    el('path', { 'class': 'runner', d: 'M' + cx + ' ' + (gy - 2) + ' Q' + R1((cx + x) / 2) + ' ' + R1(gy - 16 * sc) + ' ' + R1(x) + ' ' + (gy - 2) }, g);
+    if (p > 0.35) {
+      el('ellipse', { cx: R1(x - 5 * p), cy: R1(gy - 8 * p), rx: R1(5 * p), ry: R1(7 * p), fill: '#4ade80', transform: 'rotate(-30 ' + R1(x - 5 * p) + ' ' + R1(gy - 8 * p) + ')' }, g);
+      el('ellipse', { cx: R1(x + 5 * p), cy: R1(gy - 8 * p), rx: R1(5 * p), ry: R1(7 * p), fill: '#4ade80', transform: 'rotate(30 ' + R1(x + 5 * p) + ' ' + R1(gy - 8 * p) + ')' }, g);
+    }
+  }
+
+  var shoot = el('g', { 'class': 'shoot', style: 'transform-origin: ' + cx + 'px ' + gy + 'px' }, g);
+  col = mix([150, 200, 100], [21, 128, 61], (L.chl - 1) / 4);
+  col = mix(col, [86, 140, 125], 0.1 * T.drought);
+  col = mix(col, [202, 176, 55], clamp((100 - L.health) / 100, 0, 1) * 0.85);
+  s = (1 + 0.15 * T.leaf) * sc;
+  half = Math.ceil(L.leaves / 2); spread = half > 1 ? 62 / (half - 1) : 0;
+  for (i = 0; i < L.leaves; i++) {
+    side = i % 2 ? -1 : 1; rank = Math.floor(i / 2);
+    a = Math.min(100, (15 + rank * spread) * (1 + 0.3 * L.wilt)) * side * Math.PI / 180;
+    len = (34 + 18 * L.stem) * (1 - 0.22 * rank / half) * (rank % 2 ? 0.78 : 1) * sc;
+    tx = cx + len * Math.sin(a); ty = gy - len * Math.cos(a) + L.wilt * 8 * sc;
+    A.leaves.push([tx, ty]);
+    el('path', { 'class': 'stalk', d: 'M' + cx + ' ' + gy + ' Q' + R1(cx + len * 0.12 * Math.sin(a)) + ' ' + R1(gy - len * 0.8 * Math.cos(a)) + ' ' + R1(tx) + ' ' + R1(ty) }, shoot);
+    [0, -62, 62].forEach(function (off) {
+      dir = a * 180 / Math.PI + off + L.wilt * side * 25;
+      var r = dir * Math.PI / 180, lx = tx + 9 * s * Math.sin(r), ly = ty - 9 * s * Math.cos(r);
+      el('ellipse', { cx: R1(lx), cy: R1(ly), rx: R1(7.5 * s), ry: R1(11 * s), fill: rgb(col), stroke: rgb(mix(col, [0, 0, 0], 0.25)), 'stroke-width': 0.8,
+                      transform: 'rotate(' + R1(dir) + ' ' + R1(lx) + ' ' + R1(ly) + ')' }, shoot);
+    });
+  }
+
+  var petal = rgb(mix([255, 255, 255], [244, 114, 182], T.show / TRAIT_MAX * 0.85)), pr = (4.2 + 0.9 * L.petals + 0.3 * T.show) * sc, fl, j, ang, red;
+  for (i = 0; i < L.flowers.length; i++) {
+    fl = L.flowers[i];
+    x = cx + FLOWER_X[i % FLOWER_X.length] * sc; hgt = (44 + 14 * L.stem + (i % 3) * 9) * sc; ty = gy - hgt;
+    A.flowers.push([x, ty, fl.st]);
+    el('path', { 'class': 'stalk fl', d: 'M' + cx + ' ' + gy + ' Q' + R1(cx + (x - cx) * 0.2) + ' ' + R1(gy - hgt * 0.7) + ' ' + R1(x) + ' ' + R1(ty) }, shoot);
+    if (fl.st === 'bud') el('ellipse', { cx: R1(x), cy: R1(ty), rx: R1(3.6 * sc), ry: R1(5.4 * sc), fill: '#65a30d' }, shoot);
+    else if (fl.st === 'open') {
+      for (j = 0; j < 5; j++) {
+        ang = j * 2 * Math.PI / 5 - Math.PI / 2;
+        el('circle', { cx: R1(x + (pr + 1) * Math.cos(ang)), cy: R1(ty + (pr + 1) * Math.sin(ang)), r: R1(pr), fill: petal, stroke: '#cbd5e1', 'stroke-width': 0.7 }, shoot);
+      }
+      el('circle', { cx: R1(x), cy: R1(ty), r: R1(3.3 * sc), fill: '#facc15' }, shoot);
+    } else if (fl.st === 'none') el('circle', { cx: R1(x), cy: R1(ty), r: R1(2.4 * sc), fill: '#a16207' }, shoot);
+    else {
+      red = rgb(mix([190, 220, 120], [220, 38, 38], clamp(fl.ripe, 0, 1)));
+      el('path', { d: 'M' + R1(x - 6 * sc) + ' ' + R1(ty) + ' Q' + R1(x - 6 * sc) + ' ' + R1(ty + 13 * sc) + ' ' + R1(x) + ' ' + R1(ty + 15 * sc) +
+                      ' Q' + R1(x + 6 * sc) + ' ' + R1(ty + 13 * sc) + ' ' + R1(x + 6 * sc) + ' ' + R1(ty) + ' Z', fill: red, stroke: '#7f1d1d', 'stroke-width': 0.6 }, shoot);
+      el('path', { d: 'M' + R1(x - 6 * sc) + ' ' + R1(ty) + ' L' + R1(x) + ' ' + R1(ty - 3 * sc) + ' L' + R1(x + 6 * sc) + ' ' + R1(ty) + ' Z', fill: '#4d7c0f' }, shoot);
+      for (j = 0; j < Math.min(6, fl.seeds); j++) el('circle', { cx: R1(x + (j % 3 - 1) * 3 * sc), cy: R1(ty + (4 + Math.floor(j / 3) * 4.5) * sc), r: R1(0.9 * sc), fill: '#fde68a' }, shoot);
+    }
+  }
+  el('ellipse', { cx: cx, cy: gy, rx: R1(7 * sc), ry: R1(4 * sc), fill: '#92400e' }, g);
+  return A;
+}
+
+/* ── Scene ── */
+var CX = 210, X0 = -320, SW = 1280, GY = 290, sc = {}, plantSig = '', shopSig = '', anchors = null, sceneT = 0;
+var still = !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function bee(svg) {
+  var g = el('g', { opacity: 0 }, svg);
+  el('ellipse', { cx: -1.5, cy: -3.2, rx: 3, ry: 2, fill: '#e0f2fe', stroke: '#94a3b8', 'stroke-width': 0.4 }, g);
+  el('ellipse', { cx: 0, cy: 0, rx: 4.2, ry: 2.8, fill: '#facc15', stroke: '#1e293b', 'stroke-width': 0.8 }, g);
+  el('line', { x1: 0, y1: -2.6, x2: 0, y2: 2.6, stroke: '#1e293b', 'stroke-width': 1.3 }, g);
+  return g;
+}
+function buildScene() {
+  var svg = $('scene'), i, x, hh;
+  sc.sky = el('rect', { x: X0, y: 0, width: SW, height: GY, fill: '#bae6fd' }, svg);
+  sc.sun = el('circle', { cx: 60, cy: 60, r: 20, fill: '#facc15' }, svg);
+  sc.moon = el('circle', { cx: 345, cy: 52, r: 13, fill: '#e2e8f0', opacity: 0 }, svg);
+  sc.rays = el('g', { opacity: 0 }, svg); sc.ray = [];
+  for (i = 0; i < 3; i++) sc.ray.push(el('line', { 'class': 'ray' }, sc.rays));
+  sc.cloud = el('g', { fill: '#f1f5f9', opacity: 0 }, svg);
+  [[110, 62, 44, 17], [150, 52, 34, 18], [290, 84, 48, 17], [325, 74, 30, 17]].forEach(function (c) {
+    el('ellipse', { cx: c[0], cy: c[1], rx: c[2], ry: c[3] }, sc.cloud);
+  });
+  sc.rain = el('g', { 'class': 'rain', opacity: 0 }, svg);
+  for (i = 0; i < 53; i++) { x = X0 + 14 + i * 24; hh = 105 + (i * 37) % 120; el('line', { x1: x, y1: hh, x2: x - 5, y2: hh + 15 }, sc.rain); }
+  sc.soil = el('rect', { x: X0, y: GY, width: SW, height: 460 - GY, fill: '#8b6b45' }, svg);
+  sc.grass = el('g', { 'class': 'grass' }, svg);
+  for (i = 0; i < 92; i++) {
+    x = i < 46 ? 118 - i * 11 : 302 + (i - 46) * 11; hh = 58 + (i * 29) % 26;
+    el('path', { 'class': 'blade', d: 'M' + x + ' ' + GY + ' q' + ((i % 3) - 1) * 7 + ' ' + (-hh * 0.6) + ' ' + ((i % 2) * 10 - 5) + ' ' + (-hh) }, sc.grass);
+  }
+  sc.plant = el('g', { style: 'transform-origin: ' + CX + 'px ' + GY + 'px' }, svg);
+  // Moving dots: 8 blue for water going up, 6 amber for sugar going down
+  sc.dots = [];
+  for (i = 0; i < 14; i++) sc.dots.push(el('circle', { r: i < 8 ? 2.6 : 2.3, fill: i < 8 ? '#38bdf8' : '#f59e0b', stroke: '#fff', 'stroke-width': 0.6, opacity: 0 }, svg));
+  sc.bees = [bee(svg), bee(svg), bee(svg)];
+  sc.dark = el('rect', { x: X0, y: 0, width: SW, height: 460, fill: '#0f172a', opacity: 0, 'pointer-events': 'none' }, svg);
+}
+function setAttr(key, node, name, val) { var k = key + name; if (cache[k] !== val) { cache[k] = val; node.setAttribute(name, val); } }
+var SKY = { sun: [186, 230, 253], cloud: [203, 213, 225], rain: [148, 163, 184], hot: [254, 240, 190] };
+function flowerLook(fl) {
+  if (fl.age < BUD_DAYS) return { st: 'bud' };
+  if (fl.age < BUD_DAYS + OPEN_DAYS) return { st: 'open' };
+  var want = Math.floor(fl.fert + 1e-6);
+  if (!want) return { st: 'none' };
+  return { st: 'fruit', ripe: Math.floor(fl.ripe / want * 4) / 4, seeds: Math.floor(fl.ripe + 1e-6) };
+}
+// What the plant looks like now. The leaves droop in four steps as the water reaching them falls from 40 to 15.
+function plantLook(c) {
+  return { leaves: S.parts.leaves, stem: S.parts.stem, roots: S.parts.roots, chl: S.parts.chl, petals: S.parts.petals, traits: S.traits,
+           health: S.dead ? 0 : S.health, wilt: S.dead ? 1 : Math.round(clamp((40 - c.waterL) / 25, 0, 1) * 4) / 4,
+           flowers: S.flowers.map(flowerLook), runners: S.runners.map(function (r) { return Math.floor(Math.min(1, r.age / RUNNER_DAYS) * 6) / 6; }) };
+}
+function popPlant() {
+  sc.plant.removeAttribute('class');
+  sc.plant.getBoundingClientRect();     // restart the animation
+  sc.plant.setAttribute('class', 'pop');
+}
+function renderScene(c) {
+  var wk = weatherAt(S.day), f = S.day - Math.floor(S.day), dl = dayLight(S.day), t = f / 0.7;
+  var night = dl <= 0, dim = R((1 - Math.min(1, dl * 2.5)) * 10) / 10;
+  var sx = R(40 + 340 * Math.min(1, t)), sy = R(120 - 85 * Math.sin(Math.PI * Math.min(1, t)));
+  var i, d, p, a, b, x, y, dx, dy, len, nW, nS, open = [], rate, nB;
+  setAttr('sky', sc.sky, 'fill', night ? '#334155' : rgb(SKY[wk]));
+  setAttr('sun', sc.sun, 'cx', sx);
+  setAttr('sun', sc.sun, 'cy', sy);
+  setAttr('sun', sc.sun, 'opacity', night || wk === 'rain' ? 0 : wk === 'cloud' ? 0.55 : 1);
+  setAttr('sun', sc.sun, 'fill', wk === 'hot' ? '#f97316' : '#facc15');
+  setAttr('moon', sc.moon, 'opacity', night ? 1 : 0);
+  setAttr('cloud', sc.cloud, 'opacity', wk === 'cloud' || wk === 'rain' ? 1 : 0);
+  setAttr('rain', sc.rain, 'opacity', wk === 'rain' ? 1 : 0);
+  setAttr('soil', sc.soil, 'fill', rgb(mix([201, 168, 117], [84, 56, 30], clamp((R(S.soil / 5) * 5 - 20) / 80, 0, 1))));
+  setAttr('dark', sc.dark, 'opacity', R(dim * 0.5 * 100) / 100);
+  setAttr('grass', sc.grass, 'class', c.lim === 'shade' ? 'grass shading' : 'grass');
+
+  // Light: dashed rays from the sun toward the leaves
+  setAttr('rays', sc.rays, 'opacity', night || wk === 'rain' ? 0 : R(c.wx.light * dl) / 125);
+  for (i = 0; i < 3; i++) {
+    dx = CX + (i - 1) * 46 - sx; dy = GY - 70 - sy; len = Math.sqrt(dx * dx + dy * dy) || 1;
+    setAttr('ray' + i, sc.ray[i], 'x1', R(sx + dx / len * 28)); setAttr('ray' + i, sc.ray[i], 'y1', R(sy + dy / len * 28));
+    setAttr('ray' + i, sc.ray[i], 'x2', R(sx + dx / len * (len - 18))); setAttr('ray' + i, sc.ray[i], 'y2', R(sy + dy / len * (len - 18)));
+  }
+
+  var L = plantLook(c);
+  var sig = [S.gen, L.leaves, L.stem, L.roots, L.chl, L.petals, Math.floor(L.health / 10), L.wilt, JSON.stringify(L.flowers), L.runners.join()].join('|');
+  if (sig !== plantSig || !anchors) {
+    plantSig = sig;
+    anchors = drawPlant(sc.plant, L, CX, GY, 1);
+  }
+
+  // Water goes root tip → crown → leaf. Sugar goes leaf → crown → root tip. More water at the leaves shows as more dots.
+  nW = still || S.dead ? 0 : night ? 1 : Math.ceil(c.waterL / 100 * 8);
+  nS = still || S.dead || S.store <= 0 ? 0 : Math.min(6, 2 + S.parts.phloem);
+  for (i = 0; i < 14; i++) {
+    d = sc.dots[i];
+    if (i < 8 ? i >= nW : i - 8 >= nS) { setAttr('dot' + i, d, 'opacity', 0); continue; }
+    setAttr('dot' + i, d, 'opacity', 1);
+    if (i < 8) { p = (sceneT * 0.22 + i / 8) % 1; a = anchors.roots[i % anchors.roots.length]; b = anchors.leaves[i % anchors.leaves.length]; }
+    else { p = (sceneT * 0.16 + (i - 8) / 6) % 1; a = anchors.leaves[(i * 3) % anchors.leaves.length]; b = anchors.roots[(i * 2) % anchors.roots.length]; }
+    if (p < 0.5) { x = a[0] + (CX - a[0]) * p * 2; y = a[1] + (GY - a[1]) * p * 2; }
+    else { x = CX + (b[0] - CX) * (p - 0.5) * 2; y = GY + (b[1] - GY) * (p - 0.5) * 2; }
+    d.setAttribute('cx', R1(x + (i < 8 ? -2 : 2))); d.setAttribute('cy', R1(y));
+  }
+
+  // Bees visit open flowers. Fewer fly in poor weather, in a poor year, and to plain flowers.
+  for (i = 0; i < anchors.flowers.length; i++) if (anchors.flowers[i][2] === 'open') open.push(anchors.flowers[i]);
+  rate = night ? 0 : c.wx.bees * YEARS[S.year].bees * attract();
+  nB = Math.min(open.length, 3, Math.round(rate * 2.5));
+  for (i = 0; i < 3; i++) {
+    if (i >= nB) { setAttr('bee' + i, sc.bees[i], 'opacity', 0); continue; }
+    setAttr('bee' + i, sc.bees[i], 'opacity', 1);
+    sc.bees[i].setAttribute('transform', 'translate(' + R1(open[i][0] + 13 * Math.cos(sceneT * 2.3 + i * 2)) + ' ' + R1(open[i][1] - 4 + 7 * Math.sin(sceneT * 3.1 + i)) + ')');
+  }
+}
+
+/* ── Photosynthesis panel and status bar ── */
+var WHY = {
+  night: 'Night. No light, so no photosynthesis. The plant lives on stored sugar.',
+  lowsun: 'Light is limiting. There is not much light right now.',
+  shade: 'Light is limiting. The grass is shading the leaves.',
+  chl: 'Light is limiting. The leaves are not catching all the light that reaches them.',
+  xylem: 'Water is limiting. The xylem cannot carry all the water the roots take in.',
+  phloem: 'Water is limiting. Some roots get no sugar, so they are not working.',
+  rootsStarved: 'Water is limiting. The roots ran out of sugar and take in less water.',
+  drysoil: 'Water is limiting. The soil is dry.',
+  roots: 'Water is limiting. The roots cannot take in enough for this many leaves.',
+  co2: 'Carbon dioxide is limiting. Every leaf is working as fast as the air allows.'
+};
+var WX_NOTE = { sun: 'Full light', cloud: 'Less light for the leaves', rain: 'Low light. The soil gets wetter.', hot: 'Full light. The soil dries fast.' };
+// Weather icons, drawn the same way everywhere they appear.
+function wxIcon(kind, size) {
+  var s = el('svg', { viewBox: '0 0 32 32', width: size, height: size, 'aria-hidden': 'true' }), hot = kind === 'hot', i, a, cy, ray, dy;
+  if (kind === 'sun' || hot) {
+    cy = hot ? 13 : 16; ray = hot ? '#dc2626' : '#f59e0b';
+    for (i = 0; i < 8; i++) {
+      a = i * Math.PI / 4;
+      el('line', { x1: R1(16 + 9 * Math.cos(a)), y1: R1(cy + 9 * Math.sin(a)), x2: R1(16 + 12.5 * Math.cos(a)), y2: R1(cy + 12.5 * Math.sin(a)),
+                   stroke: ray, 'stroke-width': 2.5, 'stroke-linecap': 'round' }, s);
+    }
+    el('circle', { cx: 16, cy: cy, r: 6.5, fill: hot ? '#f97316' : '#facc15' }, s);
+    if (hot) el('path', { d: 'M4 30 q3 -3 6 0 t6 0 t6 0 t6 0', fill: 'none', stroke: ray, 'stroke-width': 2, 'stroke-linecap': 'round' }, s);
+  } else if (kind === 'night') {
+    el('path', { d: 'M20 4 A12 12 0 1 0 28 22 A10 10 0 0 1 20 4 Z', fill: '#e2e8f0' }, s);
+  } else {
+    dy = kind === 'rain' ? -4 : 0;
+    [[11, 19, 7, 5.5], [18, 15, 7.5, 7], [23.5, 19.5, 5.5, 5]].forEach(function (c) {
+      el('ellipse', { cx: c[0], cy: c[1] + dy, rx: c[2], ry: c[3], fill: kind === 'rain' ? '#64748b' : '#94a3b8' }, s);
+    });
+    if (kind === 'rain') for (i = 0; i < 3; i++) el('line', { x1: 11 + i * 6, y1: 23, x2: 9 + i * 6, y2: 29, stroke: '#0284c7', 'stroke-width': 2.2, 'stroke-linecap': 'round' }, s);
+  }
+  return s;
+}
+function setIcon(id, kind, size) {
+  var k = 'icon.' + id, n;
+  if (cache[k] === kind) return;
+  cache[k] = kind; n = $(id); n.textContent = ''; n.appendChild(wxIcon(kind, size));
+}
+function buildForecast() {
+  var fc = $('fc'), i, d, t;
+  for (i = 0; i < 3; i++) {
+    d = h('div', 'fcd', null, fc); d.id = 'fc' + i;
+    h('span', '', null, d).id = 'fcI' + i;
+    t = h('div', '', null, d);
+    h('span', '', null, t).id = 'fcN' + i;
+    h('small', '', null, t).id = 'fcD' + i;
+  }
+}
+// One status line: the newest event. The whole log is in the Report.
+function renderDiary() {
+  var d = $('diary'), e = S.log[0];
+  d.textContent = '';
+  if (e) h('p', e.c, e.t, d);
+}
+function soilWord(v) { return v < 30 ? 'dry' : v < 55 ? 'damp' : v < 80 ? 'moist' : 'wet'; }
+function setH(id, pct) { var t = clamp(R(pct), 0, 100) + '%'; if (cache[id] !== t) { cache[id] = t; $(id).style.height = t; } }
+function renderHUD(c) {
+  var cap = storeCap(), use = upkeep(), d = Math.min(Math.floor(S.day) + 1, S.season), i, left = S.season - d;
+  var wk = weatherAt(S.day), night = c.kind === 'night', fd, fk;
+  setText('genBadge', 'Generation ' + S.gen);
+  setText('yearBadge', YEARS[S.year].name);
+  setText('modeBadge', S.diff === 'real' ? 'Real' : 'Gentle');
+
+  setText('dayNum', 'Day ' + d); setText('dayOf', 'of ' + S.season);
+  setText('frostTxt', S.over ? 'First frost' : left === 0 ? 'Frost tonight' : left + (left === 1 ? ' day' : ' days') + ' until frost');
+  setCls('frostTxt', 'soon', left <= 10);
+  setW('dayBar', S.day / S.season * 100);
+  setIcon('wxIcon', night ? 'night' : wk, 46);
+  setText('wxName', night ? 'Night' : c.wx.name);
+  setText('wxSub', night ? 'No light until morning' : WX_NOTE[wk]);
+  var cls = 'daywx ' + (night ? 'night' : wk);
+  if (cache.daywx !== cls) { cache.daywx = cls; $('daywx').className = cls; }
+  for (i = 0; i < 3; i++) {
+    fd = Math.floor(S.day) + i + 1; fk = fd < S.season ? weatherAt(fd) : '';
+    setCls('fc' + i, 'gone', !fk);
+    if (fk) { setIcon('fcI' + i, fk, 26); setText('fcN' + i, WX[fk].name); setText('fcD' + i, 'Day ' + (fd + 1)); }
+  }
+
+  var W = c.water, need = Math.max(W.need, 0.1), got = Math.min(W.uptake, W.cap);
+  setH('bLight', c.lightL); setH('bWater', c.waterL); setH('bCo2', c.co2L);
+  setCls('inLight', 'lim', c.kind === 'light'); setCls('inWater', 'lim', c.kind === 'water'); setCls('inCo2', 'lim', c.kind === 'co2');
+  setW('bSoil', S.soil); setText('vSoil', R(S.soil) + '% · ' + soilWord(S.soil));
+  setText('vUptake', R(W.uptake) + ' mL a day');
+  setText('vXylem', R(W.cap) + ' mL a day');
+  setText('vNeed', R(W.need) + ' mL a day');
+  setCls('vUptake', 'low', got < need && W.uptake <= W.cap); setCls('vXylem', 'low', got < need && W.cap < W.uptake);
+  setText('vMake', 'Glucose: ' + R1(c.glucose) + ' g a day');
+  setText('vUse', 'The plant uses ' + R1(use) + ' g a day.');
+  setText('why', WHY[c.lim] + (c.sick && c.kind !== 'night' ? ' Leaf spot is damaging the leaves.' : '') +
+                 (S.flags.full ? ' Storage is full, so sugar is being wasted.' : ''));
+  setW('bStore', S.store / cap * 100); setText('vStore', Math.floor(S.store) + ' / ' + cap + ' g');
+  setW('bHealth', S.health); setText('vHealth', R(S.health) + '%');
+  setCls('mHealth', 'low', S.health < 45);
+}
+
+/* ── Shop ── */
+var shopBtns = [], pulse = { key: '', until: 0 };
+// Every purchase is always listed: icon, name, one dot for each size, and the price. Tap the name to read what the part does.
+// A locked one shows what unlocks it.
+function shopItem(parent, key, name, n, max, does, cost, keep, onBuy, locked) {
+  var maxed = n >= max, it = h('div', 'item' + (locked ? ' off' : ''), null, parent), nm, b, pips, i;
+  it.setAttribute('data-k', key); it.title = does;
+  h('span', 'ic', null, it).appendChild(icon(key, 30));
+  nm = h('div', 'name', name, it);
+  h('span', 'helps', 'helps now', nm);
+  nm.addEventListener('click', function () { it.classList.toggle('open'); });
+  b = btn('buy primary', locked ? 'Locked' : maxed ? 'Full size' : cost + ' g', it, onBuy);
+  if (!locked && !maxed) b.setAttribute('aria-label', 'Grow ' + name + ' for ' + cost + ' grams of sugar');
+  pips = h('div', 'pips', null, it);
+  pips.setAttribute('role', 'img'); pips.setAttribute('aria-label', n + ' of ' + max);
+  for (i = 0; i < max; i++) h('i', i < n ? 'on' : '', null, pips);
+  h('div', 'does', does + (keep && !maxed && !locked ? ' Uses ' + keep + ' g of sugar a day.' : ''), it);
+  shopBtns.push({ key: key, b: b, it: it, cost: cost, off: maxed || locked });
+}
+function buildShop() {
+  var g = $('shopGrow'), r = $('shopRepro'), P = S.parts, cap = storeCap(), fl = canFlower(), rn = canRunner();
+  g.textContent = ''; r.textContent = ''; shopBtns = [];
+  GROW_ORDER.forEach(function (k) {
+    var p = PARTS[k], cost = costOf(k), big = cost > cap && P[k] < p.max;
+    shopItem(g, k, p.name, P[k], p.max, big ? 'Costs more than the plant can store. Grow phloem first.' : p.does,
+             cost, p.keep, function () { doBuy(k); }, false);
+    if (big) g.lastChild.classList.add('open');
+  });
+  shopItem(r, 'flower', 'Flower', S.flowers.length, MAX_FLOWERS,
+           fl ? 'Each flower can make up to ' + OVULES + ' seeds if pollinators visit. Seeds cost sugar to ripen.' : 'From day ' + (flowerDay() + 1) + ', with 5 or more leaves.',
+           flowerCost(), 0.8, function () { doBuy('flower'); }, !fl);
+  shopItem(r, 'petals', PARTS.petals.name, P.petals, PARTS.petals.max, fl ? PARTS.petals.does : 'Unlocks when the plant can flower.',
+           costOf('petals'), PARTS.petals.keep, function () { doBuy('petals'); }, !fl);
+  shopItem(r, 'runner', 'Runner', S.runners.length, MAX_RUNNERS,
+           rn ? 'A stem that grows along the ground and roots a copy of this plant. Takes ' + RUNNER_DAYS + ' days.' : 'Needs 4 or more leaves.',
+           runnerCost(), 1, function () { doBuy('runner'); }, !rn);
+}
+function renderShop(c) {
+  var sig = [JSON.stringify(S.parts), S.flowers.length, S.runners.length, canFlower(), canRunner(), S.over || S.dead].join('|'), i, x, dis;
+  var glow = performance.now() < pulse.until ? pulse.key : '';
+  if (sig !== shopSig) { shopSig = sig; buildShop(); }
+  for (i = 0; i < shopBtns.length; i++) {
+    x = shopBtns[i]; dis = x.off || S.over || S.dead || S.store < x.cost;
+    if (x.b.disabled !== dis) x.b.disabled = dis;
+    x.it.classList.toggle('hint', S.diff === 'gentle' && c.helps === x.key && !x.off);
+    x.it.classList.toggle('pulse', glow === x.key);
+  }
+  var seeds = seedCount(), clones = cloneCount();
+  setText('tally', S.flowers.length || S.runners.length ? 'So far: ' + seeds + (seeds === 1 ? ' ripe seed' : ' ripe seeds') + ', ' + clones + (clones === 1 ? ' rooted runner plant' : ' rooted runner plants') + '.' : '');
+}
+function spent(cost) {
+  var s = h('span', 'spent', '−' + cost + ' g', $('mSugar'));
+  setTimeout(function () { if (s.parentNode) s.parentNode.removeChild(s); }, 1200);
+}
+var WATER_LIMS = { xylem: 1, phloem: 1, rootsStarved: 1, drysoil: 1, roots: 1 };
+function doBuy(k) {
+  var before = compute(), cost = k === 'flower' ? flowerCost() : k === 'runner' ? runnerCost() : costOf(k), ok;
+  ok = k === 'flower' ? buyFlower() : k === 'runner' ? buyRunner() : buy(k);
+  if (!ok) return;
+  var after = compute();
+  spent(cost); popPlant();
+  if (k === 'flower') log('A flower bud forms. It opens in ' + BUD_DAYS + ' days.', 'good');
+  else if (k === 'runner') log('A runner starts to grow along the ground.', 'good');
+  // A new leaf that makes no more sugar, because the leaves were already short of water
+  if (k === 'leaves' && before.sun > 0.5 && WATER_LIMS[before.lim] && after.glucose < before.glucose * 1.05 && raise('stall')) handleEvents();
+  render(); save();
+  if (tour && tour.steps[tour.i] && tour.steps[tour.i].wait) tourNext();
+}
+
+/* ── Events from the model ── */
+function handleEvents() {
+  var ev;
+  while (EV.length) {
+    ev = EV.shift();
+    if (ev.indexOf('alert:') === 0) { save(); openModal(alertModal(ev.slice(6), compute())); }
+    else if (ev.indexOf('note:') === 0) log(alertSay(ev.slice(5), compute()), 'bad');
+    else if (ev === 'newday') { if (Math.floor(S.day) % 2 === 0) save(); }
+    else if (ev === 'wilt') log('The leaves are wilting. Almost no water is reaching them.', 'bad');
+    else if (ev === 'starve') log('The stored sugar is gone. The plant has nothing to live on.', 'bad');
+    else if (ev === 'rootsStarved') log('The roots are running out of sugar, so they take in less water.', 'bad');
+    else if (ev === 'full') log('Sugar storage is full. Spend some, or grow phloem to store more.');
+    else if (ev === 'shed') log('The plant dropped a leaf to save water and sugar.', 'bad');
+    else if (ev === 'canFlower') log('The plant can flower now.', 'good');
+    else if (ev === 'open') { log('A flower has opened. Pollinators can visit it for ' + OPEN_DAYS + ' days.', 'good'); askPrompt('flower'); }
+    else if (ev === 'petalsFall') log('Petals fall from a flower. Its fertilized ovules start to ripen into seeds.');
+    else if (ev === 'ripe') log('The seeds on one fruit are ripe.', 'good');
+    else if (ev === 'rooted') log('A runner has rooted. It is now a new plant, a copy of this one.', 'good');
+    else if (ev === 'dead') { save(); openModal(deadModal); }
+    else if (ev === 'frost') {
+      log('First frost. The season is over.');
+      save();
+      if (S.offspring.length) askPrompt('offspring');
+      openModal(offspringModal);
+    }
+  }
+}
+
+/* ── Main loop ── */
+function render() {
+  if (!S) return;
+  var c = compute();
+  renderScene(c); renderHUD(c); renderShop(c);
+}
+function frame(now) {
+  requestAnimationFrame(frame);
+  if (!S) return;
+  var dtReal = last ? Math.min(0.25, (now - last) / 1000) : 0, n = 0;
+  last = now;
+  if (!paused && !modalOpen && !tour && !S.dead && !S.over) {
+    sceneT += dtReal;
+    acc += dtReal * speed / SEC_PER_DAY;
+    while (acc >= STEP && n < 40) {
+      step(STEP); acc -= STEP; n++;
+      handleEvents();
+      if (modalOpen || S.dead || S.over) { acc = 0; break; }
+    }
+    if (n === 40) acc = 0;
+    // The tutorial opens a few seconds into the first morning, once the sun is up and the gauges have something to show.
+    if (!modalOpen && S.gen === 1 && !S.tourDone && S.day >= 0.3 && !S.dead && !S.over) startTour();
+  }
+  render();
+}
+function setSpeedUI() {
+  var b = document.querySelectorAll('.spd'), i;
+  for (i = 0; i < b.length; i++) b[i].setAttribute('aria-pressed', String(Number(b[i].getAttribute('data-s')) === speed));
+  $('pauseBtn').setAttribute('aria-pressed', String(paused));
+  $('pauseBtn').textContent = paused ? 'Play' : 'Pause';
+}
+function bind() {
+  var b = document.querySelectorAll('.spd'), i;
+  for (i = 0; i < b.length; i++) b[i].addEventListener('click', function () { speed = Number(this.getAttribute('data-s')); paused = false; setSpeedUI(); });
+  $('pauseBtn').addEventListener('click', function () { paused = !paused; setSpeedUI(); });
+  $('helpBtn').addEventListener('click', startTour);
+  $('coachNext').addEventListener('click', tourNext);
+  $('coachSkip').addEventListener('click', endTour);
+  window.addEventListener('resize', placeCoach);
+  $('reportBtn').addEventListener('click', function () { if (S) openModal(reportModal); });
+  $('newBtn').addEventListener('click', function () { openModal(newModal); });
+  document.addEventListener('visibilitychange', function () { if (document.hidden) save(); else last = 0; });
+  window.addEventListener('pagehide', save);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === ' ' && e.target === document.body && !modalOpen) { e.preventDefault(); paused = !paused; setSpeedUI(); }
+  });
+}
+
+/* ── Start ── */
+buildScene();
+buildForecast();
+$('giLight').appendChild(wxIcon('sun', 26)); $('giWater').appendChild(icon('water', 26));
+$('giCo2').appendChild(icon('co2', 26)); $('giSugar').appendChild(icon('sugar', 30));
+bind();
+if (debug) {
+  // Test hook: open the page with ?debug=1. Nothing is saved in this mode.
+  window.seedToSeed = {
+    state: function () { return S; }, setState: function (o) { S = o; }, events: EV,
+    newGame: newGame, newSeason: newSeason, step: step, compute: compute, upkeep: upkeep, storeCap: storeCap,
+    buy: buy, buyFlower: buyFlower, buyRunner: buyRunner, costOf: costOf, flowerCost: flowerCost, runnerCost: runnerCost,
+    canFlower: canFlower, canRunner: canRunner, seedCount: seedCount, cloneCount: cloneCount,
+    nextGeneration: nextGeneration, replant: replant, raise: raise, checkAlerts: checkAlerts, startTour: startTour, tourNext: tourNext, endTour: endTour, tour: function () { return tour; }, doBuy: doBuy, ALERTS: ALERTS, validSave: validSave, yearFor: yearFor,
+    resume: resume, render: render, pump: handleEvents, pause: function (p) { paused = p; setSpeedUI(); },
+    PARTS: PARTS, STEP: STEP, SEC_PER_DAY: SEC_PER_DAY, MAX_FLOWERS: MAX_FLOWERS, MAX_RUNNERS: MAX_RUNNERS
+  };
+}
+if (!/[?&]nostart=1/.test(location.search) || !debug) openModal(startModal);
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
