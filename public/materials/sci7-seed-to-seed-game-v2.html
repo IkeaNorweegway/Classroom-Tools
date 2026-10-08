@@ -56,7 +56,7 @@ button, input { font: inherit; color: inherit; }
 .btn:hover:not(:disabled) { border-color: var(--accent); }
 .btn[aria-pressed="true"], .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-.btn:focus-visible, input:focus-visible { outline: 3px solid #0ea5e9; outline-offset: 2px; }
+.btn:focus-visible, input:focus-visible, .item .name:focus-visible { outline: 3px solid #0ea5e9; outline-offset: 2px; }
 .btn.big { font-size: 1rem; padding: 10px 20px; }
 
 /* ── Status bar ── */
@@ -1447,7 +1447,11 @@ function shopItem(parent, key, name, n, max, does, cost, keep, onBuy, locked) {
   h('span', 'ic', null, it).appendChild(icon(key, 30));
   nm = h('div', 'name', name, it);
   h('span', 'helps', 'helps now', nm);
-  nm.addEventListener('click', function () { it.classList.toggle('open'); });
+  // The name opens the description: by tap, or by Enter or Space from the keyboard
+  nm.tabIndex = 0; nm.setAttribute('role', 'button'); nm.setAttribute('aria-expanded', 'false');
+  function toggle() { nm.setAttribute('aria-expanded', String(it.classList.toggle('open'))); }
+  nm.addEventListener('click', toggle);
+  nm.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
   b = btn('buy primary', locked ? 'Locked' : maxed ? 'Full size' : cost + ' g', it, onBuy);
   if (!locked && !maxed) b.setAttribute('aria-label', 'Grow ' + name + ' for ' + cost + ' grams of sugar');
   pips = h('div', 'pips', null, it);
