@@ -31,6 +31,7 @@ Before writing the first line of any artifact: (1) copy the relevant template fr
 | Unit test | `templates/test-template.md` | "Outcome map complete. All LOs covered: [codes]. Extended response rubric included." — full gate in `tests-quizzes/_context.md` |
 | Exit tickets | `templates/exit-ticket-template.md` | "One ticket per cluster. Every question maps to a specific LO." |
 | Thinking prompt | *(no template)* | "Prompt requires showing reasoning, not recalling a fact." |
+| Game | *(no template)* | "Outcomes: [codes]. Model: [one line]. Real-time or turn-based. Test hook included." — full rules in `_games-context.md` |
 
 ### Trust mode
 Activated when the user says **"i trust you."** Resets at the start of each new conversation.
@@ -58,6 +59,7 @@ When active:
 | `templates/` | Reusable blank structures | Start any new artifact from the relevant template — structure is pre-built, just fill content |
 | `scripts/` | Render scripts (markdown → HTML, posters) | Re-render a workbook or poster. Read `scripts/_context.md` first |
 | `src/`, `public/` | The Astro site and its published files | Change a page, the nav, or what the site links to. Read `_site-context.md` first |
+| `public/materials/*-game-*.html` | Browser games. HTML only, no markdown source | Build or revise a game. Read `_games-context.md` first |
 
 Each folder has its own `_context.md` — read it before working in that area.
 
@@ -109,6 +111,7 @@ Materials are organized inside type folders by subject and unit:
 | "Make a template" | `templates/_context.md` | everything else |
 | "Change the site / add it to the site" | `_site-context.md` | type-folder contexts |
 | "Render / re-render" | `scripts/_context.md` | everything else |
+| "Build / revise a game" | `_games-context.md` → unit `_context.md` in `_courses/` | type-folder contexts, `templates/` |
 | "Start a [type] build" | Copy relevant template from `templates/` first, then read artifact context | everything else |
 | "Build/revise a STEAM [unit/grade] [notes/design journal/plan]" | `steam/_context.md` → `steam/grade-[N]/_context.md` | `templates/`, `worksheets/`, `notes-packages/`, `_courses/` — STEAM doesn't use the standard templates (see `steam/grade-5/` for the established simplified-notes + design-journal format) |
 
@@ -125,6 +128,7 @@ Materials are organized inside type folders by subject and unit:
 | A PhysEd 5–6 material | `pew56-[unit]-[type]-v[N].md` | `pew56-invasion-games-exits-v1.md` |
 | A PhysEd 7–9 material | `pew79-[unit]-[type]-v[N].md` | `pew79-fitness-program-template-v1.md` |
 | A thinking prompt | `[topic]-prompt-v[N].md` | `metacognition-prompt-v2.md` |
+| A game | `[subject]-[topic]-game-v[N].html` (in `public/materials/`) | `sci7-seed-to-seed-game-v2.html` |
 | A research summary | `[topic]-research.md` | `formative-assessment-research.md` |
 | A template | `[type]-template.md` | `worksheet-template.md` |
 

@@ -33,7 +33,7 @@ $PrefixMap = @{
 
 # Files allowed at the repo root
 $RootFiles = @('CLAUDE.md', 'README.md', '_status.md', '_status-archive.md', '_meta-context.md',
-    '_site-context.md', '_pedagogy-reference.md', '.gitignore', 'astro.config.mjs', 'netlify.toml',
+    '_site-context.md', '_games-context.md', '_pedagogy-reference.md', '.gitignore', 'astro.config.mjs', 'netlify.toml',
     'package.json', 'package-lock.json', 'tailwind.config.mjs', 'tsconfig.json')
 
 # Files read at the start of every conversation, with line budgets

@@ -225,6 +225,8 @@ public/materials/
 
 Renders live only here. The type folders hold the markdown sources.
 
+Games are the exception: a game is written directly as HTML and has no markdown source. Design, build, and test rules for games are in `_games-context.md`.
+
 ### Naming
 - Student notes: `math9-[unit]-notes-v1.html`
 - Answer key: `math9-[unit]-notes-answers-v1.html`
