@@ -1,0 +1,60 @@
+---
+// Page header for course and unit pages. `numeral` renders the large grade
+// mark; it shares a view-transition name with the home page tile so the
+// numeral glides into place when you open a course.
+interface Props {
+  eyebrow: string;
+  title: string;
+  description?: string;
+  numeral?: string;
+  vtName?: string;
+  facts?: { n: string; label: string }[];
+  back?: { href: string; label: string };
+  italic?: boolean;
+}
+
+const { eyebrow, title, description, numeral, vtName, facts, back, italic = false } = Astro.props;
+---
+
+<header class="mb-12 sm:mb-16">
+  {back && (
+    <a
+      href={back.href}
+      class="group mb-8 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 transition-colors duration-200 hover:text-slate-900"
+    >
+      <span class="transition-transform duration-200 ease-out group-hover:-translate-x-1" aria-hidden="true">←</span>
+      {back.label}
+    </a>
+  )}
+
+  <div class="flex items-start gap-6 sm:gap-8">
+    {numeral && (
+      <span
+        class="font-display hidden sm:block shrink-0 text-[5.5rem] leading-[0.8] font-medium tracking-tight text-accent tabular"
+        style={vtName ? `view-transition-name: ${vtName}` : undefined}
+        aria-hidden="true"
+      >{numeral}</span>
+    )}
+    <div class="min-w-0">
+      <p class="mb-3 text-sm font-semibold text-accent-ink">{eyebrow}</p>
+      <h1 class="font-display text-[2.5rem] sm:text-[3.25rem] leading-[1.05] font-medium tracking-[-0.02em] text-slate-900">
+        {title}
+      </h1>
+      {description && (
+        <p class={`mt-5 max-w-[58ch] text-lg leading-relaxed text-slate-600 ${italic ? 'italic' : ''}`}>{description}</p>
+      )}
+      {facts && facts.length > 0 && (
+        <dl class="mt-7 flex flex-wrap gap-x-8 gap-y-3">
+          {facts.map((f) => (
+            <div class="flex items-baseline gap-2">
+              <dt class="sr-only">{f.label}</dt>
+              <dd class="font-display text-2xl font-medium text-slate-900 tabular">{f.n}</dd>
+              <span class="text-sm text-slate-500" aria-hidden="true">{f.label}</span>
+            </div>
+          ))}
+        </dl>
+      )}
+      <slot />
+    </div>
+  </div>
+</header>

@@ -1,0 +1,58 @@
+---
+// A section of openable documents on a unit page. With `answerKeys`, the list
+// sits inside a closed disclosure so keys stay out of the way for students.
+interface Item {
+  label: string;
+  href: string;
+  badge?: string;
+}
+
+interface Props {
+  heading: string;
+  items: Item[];
+  answerKeys?: boolean;
+}
+
+const { heading, items, answerKeys = false } = Astro.props;
+---
+
+{answerKeys ? (
+  <details class="disclosure mt-4 mb-10">
+    <summary class="inline-flex cursor-pointer select-none list-none items-center gap-2 rounded-full px-1 text-sm font-semibold text-slate-500 transition-colors duration-200 hover:text-slate-900">
+      <span class="chev inline-block text-xs" aria-hidden="true">▶</span>
+      {heading}
+    </summary>
+    <ul class="mt-4 overflow-hidden rounded-2xl border border-dashed border-slate-900/15 divide-y divide-slate-900/[0.06]">
+      {items.map((item) => (
+        <li>
+          <a href={item.href} class="row group flex items-center justify-between gap-4 px-5 py-4 sm:px-6">
+            <span class="flex min-w-0 flex-wrap items-center gap-2">
+              <span class="text-[0.9375rem] font-semibold text-slate-700">{item.label}</span>
+              <span class="rounded-md bg-slate-900/[0.06] px-1.5 py-0.5 text-xs font-semibold text-slate-600">Answer key</span>
+            </span>
+            <span class="arrow shrink-0 text-sm font-semibold text-slate-500 opacity-70">Open →</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </details>
+) : (
+  <section class="mb-10">
+    <h2 class="mb-4 font-display text-[1.375rem] font-medium tracking-[-0.01em] text-slate-900">{heading}</h2>
+    <ul class="overflow-hidden rounded-2xl border border-slate-900/[0.07] bg-[rgb(var(--surface))] divide-y divide-slate-900/[0.06]">
+      {items.map((item, i) => (
+        <li class="rise" style={`--i: ${i}`}>
+          <a href={item.href} class="row group flex items-center justify-between gap-4 px-5 py-4 sm:px-6">
+            <span class="flex min-w-0 flex-wrap items-center gap-2">
+              <span class="text-[0.9375rem] font-semibold text-slate-900">{item.label}</span>
+              {item.badge && (
+                <span class="rounded-md bg-accent-soft px-1.5 py-0.5 text-xs font-semibold text-accent-ink">{item.badge}</span>
+              )}
+            </span>
+            <span class="arrow shrink-0 text-sm font-semibold text-accent-ink opacity-80">Open →</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}

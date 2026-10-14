@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import CourseHero from '../../components/CourseHero.astro';
+import TopicList from '../../components/TopicList.astro';
 const base = import.meta.env.BASE_URL;
 
 const grades = [
@@ -37,49 +39,22 @@ const grades = [
 ---
 
 <BaseLayout course="steam" title="STEAM">
+  <CourseHero
+    eyebrow="STEAM · Grades 5 to 9"
+    title="STEAM"
+    numeral="5–9"
+    vtName="course-num-steam"
+    description="Pick a grade. Each unit has a Notes booklet and a Design Journal for planning, sketching, testing, and reflection."
+    facts={[
+      { n: '5', label: 'grades' },
+      { n: '22', label: 'projects' },
+      { n: '44', label: 'materials' },
+    ]}
+  />
 
-  <div class="mb-10">
-    <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color: #6d28d9;">STEAM · Grades 5–9</p>
-    <h1 class="text-4xl font-bold text-slate-900 mb-3">STEAM</h1>
-    <p class="text-slate-500 text-lg max-w-xl">
-      Pick a grade. Each unit has a Notes booklet and a Design Journal — planning, sketching, testing, and reflection, all in one place.
-    </p>
-  </div>
-
-  <!-- Quick stats -->
-  <div class="grid grid-cols-3 gap-3 mb-10">
-    {[
-      { n: '5', label: 'Grades' },
-      { n: '22', label: 'Projects' },
-      { n: '44', label: 'Materials' },
-    ].map(s => (
-      <div class="bg-white rounded-xl border border-slate-200 p-4 text-center">
-        <p class="text-2xl font-bold" style="color: #6d28d9;">{s.n}</p>
-        <p class="text-xs text-slate-400 mt-1 uppercase tracking-wide">{s.label}</p>
-      </div>
-    ))}
-  </div>
-
-  <!-- Grade cards -->
-  <div class="space-y-3">
-    {grades.map(g => (
-      <a
-        href={`${base}steam/materials/${g.slug}`}
-        class="group block bg-white rounded-xl border border-slate-200 border-l-4 p-5 transition-colors hover:opacity-90"
-        style={`border-left-color: ${g.color};`}
-      >
-        <div class="flex items-start justify-between gap-4">
-          <div class="min-w-0">
-            <p class="text-xs font-bold uppercase tracking-widest mb-1" style={`color: ${g.colorDark};`}>{g.units} Units</p>
-            <p class="font-semibold text-slate-900 mb-1">{g.label}</p>
-            <p class="text-sm text-slate-500 leading-relaxed">{g.description}</p>
-          </div>
-          <span class="flex-shrink-0 text-sm font-semibold group-hover:underline whitespace-nowrap" style={`color: ${g.colorDark};`}>
-            View →
-          </span>
-        </div>
-      </a>
-    ))}
-  </div>
-
+  <TopicList
+    heading="Grades"
+    numbered={false}
+    items={grades.map(g => ({ href: `${base}steam/materials/${g.slug}`, title: g.label, kicker: `${g.units} units`, description: g.description }))}
+  />
 </BaseLayout>

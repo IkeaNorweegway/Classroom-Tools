@@ -1,348 +1,148 @@
 ---
+import '../styles/global.css';
+import { courses, courseByKey, type CourseKey } from '../data/courses';
+
 interface Props {
-  course?: 'science' | 'math9' | 'science7' | 'social9' | 'social8' | 'steam';
+  course?: CourseKey;
   teacherMode?: boolean;
 }
 const { course, teacherMode = false } = Astro.props;
 
 const base = import.meta.env.BASE_URL;
 const currentPath = Astro.url.pathname;
+const active = courseByKey(course);
 
-const scienceUnits = [
-  { slug: 'matter',           label: 'Matter' },
-  { slug: 'forces',           label: 'Forces' },
-  { slug: 'living-systems',   label: 'Living Systems' },
-  { slug: 'climate',          label: 'Climate' },
-  { slug: 'energy-resources', label: 'Energy Resources' },
-  { slug: 'space',            label: 'Space' },
-];
+// Teacher link: from a student page go to the course's teacher index; from a
+// teacher page go back to the course. Hidden where there is no teacher index.
+const teacherHref = active?.teacherPath
+  ? `${base}${teacherMode ? active.path : active.teacherPath}`
+  : null;
 
-const math9Strands = [
-  { slug: 'number',                 label: 'Number' },
-  { slug: 'algebra',                label: 'Algebra' },
-  { slug: 'measurement-geometry',   label: 'M&G' },
-  { slug: 'statistics-probability', label: 'Stats & Prob' },
-  { slug: 'practice',               label: 'Practice', href: `${base}math9/practice` },
-  { slug: 'pat-prep',               label: 'PAT Prep', href: `${base}math9/pat-prep` },
-  { slug: 'potd',                    label: 'POTD', href: `${base}math9/potd` },
-];
-
-const science7Units = [
-  { slug: 'interactions-ecosystems', label: 'Ecosystems' },
-  { slug: 'plants-food-fibre',       label: 'Plants' },
-  { slug: 'heat-temperature',        label: 'Heat' },
-  { slug: 'structures-forces',       label: 'Structures' },
-  { slug: 'planet-earth',            label: 'Planet Earth' },
-  { slug: 'practice',                label: 'Practice', href: `${base}science7/practice` },
-];
-
-const social9Units = [
-  { slug: 'urbanization-industry',            label: 'Urbanization' },
-  { slug: 'independence-democratic-rights',   label: 'Independence' },
-  { slug: 'canada-in-wwii',                   label: 'WWII' },
-  { slug: 'postwar-canada',                   label: 'Post-War' },
-  { slug: 'modern-economy',                   label: 'Economy' },
-  { slug: 'system-of-government',             label: 'Government' },
-  { slug: 'evolving-citizenship',             label: 'Citizenship' },
-];
-
-const social8Units = [
-  { slug: 'ideologies',        label: 'Ideologies' },
-  { slug: 'economic-systems',  label: 'Economy' },
-  { slug: 'political-systems', label: 'Politics' },
-  { slug: 'civic-engagement',  label: 'Citizenship' },
-];
-
-const steamGrades = [
-  { slug: 'grade-5', label: 'Gr. 5' },
-  { slug: 'grade-6', label: 'Gr. 6' },
-  { slug: 'grade-7', label: 'Gr. 7' },
-  { slug: 'grade-8', label: 'Gr. 8' },
-  { slug: 'grade-9', label: 'Gr. 9' },
-];
-
-const navBg   = teacherMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200';
-const textBase = teacherMode ? 'text-slate-300' : 'text-slate-600';
-const hoverBase = teacherMode ? 'hover:bg-slate-700 hover:text-white' : 'hover:bg-slate-100 hover:text-slate-900';
+const dark = teacherMode;
+const tabIdle = dark
+  ? 'text-slate-300 hover:text-white hover:bg-white/10'
+  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-900/[0.04]';
 ---
 
-<nav class={`border-b ${navBg} sticky top-0 z-50`}>
-  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+<header
+  class={`site-nav sticky top-0 z-40 border-b ${dark ? 'bg-slate-900 border-white/10' : 'bg-paper/95 border-slate-900/[0.07]'}`}
+  data-course={course}
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
 
-    <!-- ── Top bar ── -->
-    <div class="flex items-center justify-between h-14">
-
-      <!-- Site name → home -->
+    <div class="vt-nav-top flex h-16 items-center gap-6">
       <a
         href={base}
-        class={`font-bold text-base tracking-tight ${teacherMode ? 'text-white' : 'text-slate-800'} hover:opacity-80 transition-opacity`}
+        class={`group flex items-center gap-2.5 shrink-0 font-display text-[1.15rem] font-semibold tracking-tight ${dark ? 'text-white' : 'text-slate-900'}`}
       >
+        <span class="block h-2.5 w-2.5 rounded-full bg-accent transition-transform duration-300 ease-out group-hover:scale-125" aria-hidden="true"></span>
         Mr. Bremness
       </a>
 
-      <!-- Course tabs (desktop) -->
-      <div class="hidden sm:flex items-center gap-1">
-        <a
-          href={`${base}materials`}
-          class={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors
-            ${course === 'science'
-              ? (teacherMode ? 'bg-teacher-600 text-white' : 'bg-science-600 text-white')
-              : `${textBase} ${hoverBase}`
-            }`}
-        >
-          Gr. 6 Science
-        </a>
-        <a
-          href={`${base}math9`}
-          class={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors
-            ${course === 'math9'
-              ? 'bg-math9-600 text-white'
-              : `${textBase} ${hoverBase}`
-            }`}
-        >
-          Math 9
-        </a>
-        <a
-          href={`${base}science7`}
-          class={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors
-            ${course === 'science7'
-              ? 'text-white'
-              : `${textBase} ${hoverBase}`
-            }`}
-          style={course === 'science7' ? 'background-color: #059669;' : ''}
-        >
-          Gr. 7 Science
-        </a>
-        <a
-          href={`${base}social9`}
-          class={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors
-            ${course === 'social9'
-              ? 'text-white'
-              : `${textBase} ${hoverBase}`
-            }`}
-          style={course === 'social9' ? 'background-color: #b91c1c;' : ''}
-        >
-          Social 9
-        </a>
-        <a
-          href={`${base}social8`}
-          class={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors
-            ${course === 'social8'
-              ? 'text-white'
-              : `${textBase} ${hoverBase}`
-            }`}
-          style={course === 'social8' ? 'background-color: #4338ca;' : ''}
-        >
-          Social 8
-        </a>
-        <a
-          href={`${base}steam`}
-          class={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors
-            ${course === 'steam'
-              ? 'text-white'
-              : `${textBase} ${hoverBase}`
-            }`}
-          style={course === 'steam' ? 'background-color: #6d28d9;' : ''}
-        >
-          STEAM
-        </a>
-      </div>
+      <nav aria-label="Courses" class="hidden lg:block flex-1">
+        <ul class="flex items-center gap-0.5">
+          {courses.map((c) => {
+            const isActive = c.key === course;
+            return (
+              <li>
+                <a
+                  href={`${base}${c.path}`}
+                  data-course={c.key}
+                  aria-current={isActive ? 'true' : undefined}
+                  class={`relative block rounded-full px-3.5 py-1.5 text-[0.8125rem] font-semibold transition-colors duration-200
+                    ${isActive ? (dark ? 'text-white' : 'text-accent-ink') : tabIdle}`}
+                >
+                  {isActive && (
+                    <span
+                      class={`absolute inset-0 rounded-full ${dark ? 'bg-accent/40' : 'bg-accent-soft vt-nav-pill'}`}
+                      aria-hidden="true"
+                    ></span>
+                  )}
+                  <span class="relative">{c.tab}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
 
-      <!-- Right: Teacher toggle -->
-      <a
-        href={teacherMode
-          ? (course === 'math9' ? `${base}math9` : course === 'science7' ? `${base}science7` : course === 'social9' ? `${base}social9` : course === 'social8' ? `${base}social8` : course === 'steam' ? `${base}steam` : `${base}materials`)
-          : (course === 'math9' ? `${base}math9/teacher` : course === 'science7' ? `${base}science7/teacher` : course === 'social9' ? `${base}social9/teacher` : course === 'social8' ? `${base}social8/teacher` : course === 'steam' ? `${base}steam` : `${base}teacher`)}
-        class={`text-xs px-3 py-1.5 rounded-md font-medium border transition-colors
-          ${teacherMode
-            ? 'border-teacher-500 text-teacher-400 hover:bg-teacher-700 hover:text-white'
-            : 'border-slate-300 text-slate-500 hover:bg-slate-100 hover:text-slate-800'
-          }`}
-      >
-        {teacherMode ? '← Student view' : 'Teacher'}
-      </a>
+      <div class="ml-auto flex items-center">
+        {teacherHref && (
+          <a
+            href={teacherHref}
+            class={`rounded-full px-3.5 py-1.5 text-[0.8125rem] font-semibold border transition-colors duration-200
+              ${dark
+                ? 'border-teacher-400/60 text-teacher-400 hover:bg-teacher-400 hover:text-slate-900'
+                : 'border-slate-900/15 text-slate-600 hover:border-slate-900/30 hover:text-slate-900'}`}
+          >
+            {teacherMode ? '← Student view' : 'Teacher'}
+          </a>
+        )}
+      </div>
     </div>
 
-    <!-- ── Course subnav ── -->
-    {course === 'science' && (
-      <div class="flex gap-1 pb-2 overflow-x-auto">
-        {scienceUnits.map(u => (
-          <a
-            href={`${base}units/${u.slug}`}
-            class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
-              ${currentPath.includes(u.slug)
-                ? (teacherMode ? 'bg-teacher-600 text-white' : 'bg-science-600 text-white')
-                : (teacherMode ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-600 hover:bg-slate-100')
-              }`}
-          >
-            {u.label}
-          </a>
-        ))}
-        <a
-          href={`${base}materials`}
-          class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
-            ${currentPath.includes('/materials') && !currentPath.includes('/materials/fr') && !currentPath.includes('/units/')
-              ? (teacherMode ? 'bg-teacher-600 text-white' : 'bg-science-600 text-white')
-              : (teacherMode ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-600 hover:bg-slate-100')
-            }`}
-        >
-          All Materials
-        </a>
-        <a
-          href={`${base}materials/fr`}
-          class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
-            ${currentPath.includes('/materials/fr')
-              ? 'bg-blue-600 text-white'
-              : (teacherMode ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-blue-600 hover:bg-blue-50')
-            }`}
-        >
-          Français
-        </a>
-      </div>
-    )}
+    <!-- Course tabs on small screens: one scrollable row -->
+    <nav aria-label="Courses" class="lg:hidden -mx-4 px-4 sm:-mx-6 sm:px-6 pb-2 overflow-x-auto [scrollbar-width:none]">
+      <ul class="flex items-center gap-1 w-max">
+        {courses.map((c) => {
+          const isActive = c.key === course;
+          return (
+            <li>
+              <a
+                href={`${base}${c.path}`}
+                data-course={c.key}
+                aria-current={isActive ? 'true' : undefined}
+                class={`relative block whitespace-nowrap rounded-full px-3 py-1.5 text-[0.8125rem] font-semibold transition-colors duration-200
+                  ${isActive ? (dark ? 'text-white' : 'text-accent-ink') : tabIdle}`}
+              >
+                {isActive && (
+                  <span
+                    class={`absolute inset-0 rounded-full ${dark ? 'bg-accent/40' : 'bg-accent-soft vt-nav-pill'}`}
+                    aria-hidden="true"
+                  ></span>
+                )}
+                <span class="relative">{c.tab}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
 
-    {course === 'math9' && (
-      <div class="flex gap-1 pb-2 overflow-x-auto">
-        {math9Strands.map(s => (
-          <a
-            href={s.href || `${base}math9/materials/${s.slug}`}
-            class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
-              ${currentPath.includes(s.slug)
-                ? 'bg-math9-600 text-white'
-                : 'text-slate-600 hover:bg-slate-100'
-              }`}
-          >
-            {s.label}
-          </a>
-        ))}
-        <a
-          href={`${base}math9/materials`}
-          class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
-            ${currentPath.endsWith('/math9/materials') || currentPath.endsWith('/math9/materials/')
-              ? 'bg-math9-600 text-white'
-              : 'text-slate-600 hover:bg-slate-100'
-            }`}
-        >
-          All Materials
-        </a>
-      </div>
+    {active && (
+      <nav
+        aria-label={`${active.grade} ${active.name}`}
+        class="-mx-4 px-4 sm:-mx-6 sm:px-6 overflow-x-auto [scrollbar-width:none]"
+      >
+        <ul class="flex items-center gap-1 w-max">
+          {active.subnav.map((item) => {
+            const isActive = item.match(currentPath);
+            return (
+              <li>
+                <a
+                  href={`${base}${item.path}`}
+                  aria-current={isActive ? 'page' : undefined}
+                  class={`relative block whitespace-nowrap px-2.5 pt-1.5 pb-3 text-sm transition-colors duration-200
+                    ${isActive
+                      ? (dark ? 'text-white font-semibold' : 'text-slate-900 font-semibold')
+                      : (dark ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-900')}`}
+                >
+                  {item.label}
+                  {isActive && (
+                    <span class="vt-subnav-bar absolute inset-x-2.5 bottom-0 h-[3px] rounded-t-full bg-accent" aria-hidden="true"></span>
+                  )}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
     )}
-
-    {course === 'science7' && (
-      <div class="flex gap-1 pb-2 overflow-x-auto">
-        {science7Units.map(u => (
-          <a
-            href={u.href || `${base}science7/materials/${u.slug}`}
-            class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
-              ${currentPath.includes(u.slug)
-                ? 'text-white'
-                : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            style={currentPath.includes(u.slug) ? 'background-color: #059669;' : ''}
-          >
-            {u.label}
-          </a>
-        ))}
-        <a
-          href={`${base}science7`}
-          class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
-            ${currentPath.endsWith('/science7') || currentPath.endsWith('/science7/')
-              ? 'text-white'
-              : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          style={currentPath.endsWith('/science7') || currentPath.endsWith('/science7/') ? 'background-color: #059669;' : ''}
-        >
-          All Units
-        </a>
-      </div>
-    )}
-
-    {course === 'social9' && (
-      <div class="flex gap-1 pb-2 overflow-x-auto">
-        {social9Units.map(u => (
-          <a
-            href={`${base}social9/materials/${u.slug}`}
-            class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
-              ${currentPath.includes(u.slug)
-                ? 'text-white'
-                : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            style={currentPath.includes(u.slug) ? 'background-color: #b91c1c;' : ''}
-          >
-            {u.label}
-          </a>
-        ))}
-        <a
-          href={`${base}social9`}
-          class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
-            ${currentPath.endsWith('/social9') || currentPath.endsWith('/social9/')
-              ? 'text-white'
-              : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          style={currentPath.endsWith('/social9') || currentPath.endsWith('/social9/') ? 'background-color: #b91c1c;' : ''}
-        >
-          All Units
-        </a>
-      </div>
-    )}
-
-    {course === 'social8' && (
-      <div class="flex gap-1 pb-2 overflow-x-auto">
-        {social8Units.map(u => (
-          <a
-            href={`${base}social8/materials/${u.slug}`}
-            class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
-              ${currentPath.includes(u.slug)
-                ? 'text-white'
-                : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            style={currentPath.includes(u.slug) ? 'background-color: #4338ca;' : ''}
-          >
-            {u.label}
-          </a>
-        ))}
-        <a
-          href={`${base}social8`}
-          class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
-            ${currentPath.endsWith('/social8') || currentPath.endsWith('/social8/')
-              ? 'text-white'
-              : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          style={currentPath.endsWith('/social8') || currentPath.endsWith('/social8/') ? 'background-color: #4338ca;' : ''}
-        >
-          All Units
-        </a>
-      </div>
-    )}
-
-    {course === 'steam' && (
-      <div class="flex gap-1 pb-2 overflow-x-auto">
-        {steamGrades.map(g => (
-          <a
-            href={`${base}steam/materials/${g.slug}`}
-            class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
-              ${currentPath.includes(g.slug)
-                ? 'text-white'
-                : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            style={currentPath.includes(g.slug) ? 'background-color: #6d28d9;' : ''}
-          >
-            {g.label}
-          </a>
-        ))}
-        <a
-          href={`${base}steam`}
-          class={`text-xs px-2.5 py-1 rounded-md font-medium whitespace-nowrap transition-colors
-            ${currentPath.endsWith('/steam') || currentPath.endsWith('/steam/')
-              ? 'text-white'
-              : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          style={currentPath.endsWith('/steam') || currentPath.endsWith('/steam/') ? 'background-color: #6d28d9;' : ''}
-        >
-          All Grades
-        </a>
-      </div>
-    )}
-
   </div>
-</nav>
+</header>
+
+<style>
+  /* The pill is a soft tint; multiply keeps tab text readable through it
+     while it slides between tabs during a page transition. */
+  :global(::view-transition-group(nav-pill)) { mix-blend-mode: multiply; }
+</style>

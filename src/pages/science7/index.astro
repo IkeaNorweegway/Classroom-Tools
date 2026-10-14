@@ -1,5 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import CourseHero from '../../components/CourseHero.astro';
+import TopicList from '../../components/TopicList.astro';
+import ActionCard from '../../components/ActionCard.astro';
 const base = import.meta.env.BASE_URL;
 
 const units = [
@@ -47,68 +50,32 @@ const units = [
 ---
 
 <BaseLayout course="science7" title="Grade 7 Science">
+  <CourseHero
+    eyebrow="Alberta curriculum · 2007"
+    title="Grade 7 Science"
+    numeral="7"
+    vtName="course-num-science7"
+    description="Five units. Notes, workbooks, quizzes, tests, and answer keys."
+    facts={[
+      { n: '5', label: 'units' },
+      { n: '~26', label: 'weeks' },
+      { n: '40', label: 'materials' },
+      { n: '30', label: 'exit tickets' },
+    ]}
+  />
 
-  <div class="mb-10">
-    <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color: #059669;">Alberta Curriculum</p>
-    <h1 class="text-4xl font-bold text-slate-900 mb-3">Grade 7 Science</h1>
-    <p class="text-slate-500 text-lg max-w-xl">
-      Five units. Notes, workbooks, quizzes, tests, and answer keys. Alberta 2007 curriculum.
-    </p>
-  </div>
+  <TopicList
+    heading="Units"
+    items={units.map(u => ({ href: `${base}science7/materials/${u.slug}`, title: u.label, description: u.description }))}
+  />
 
-  <!-- Quick stats -->
-  <div class="grid grid-cols-4 gap-3 mb-10">
-    {[
-      { n: '5', label: 'Units' },
-      { n: '~26 weeks', label: 'Duration' },
-      { n: '40', label: 'Materials' },
-      { n: '30', label: 'Exit tickets' },
-    ].map(s => (
-      <div class="bg-white rounded-xl border border-slate-200 p-4 text-center">
-        <p class="text-2xl font-bold" style="color: #047857;">{s.n}</p>
-        <p class="text-xs text-slate-400 mt-1 uppercase tracking-wide">{s.label}</p>
-      </div>
-    ))}
-  </div>
-
-  <!-- Unit cards -->
-  <div class="space-y-3">
-    {units.map(u => (
-      <a
-        href={`${base}science7/materials/${u.slug}`}
-        class="group block bg-white rounded-xl border border-slate-200 border-l-4 p-5 transition-colors hover:opacity-90"
-        style={`border-left-color: ${u.color};`}
-      >
-        <div class="flex items-start justify-between gap-4">
-          <div class="min-w-0">
-            <p class="text-xs font-bold uppercase tracking-widest mb-1" style={`color: ${u.colorDark};`}>{u.label}</p>
-            <p class="text-sm text-slate-500 leading-relaxed">{u.description}</p>
-          </div>
-          <span class="flex-shrink-0 text-sm font-semibold group-hover:underline whitespace-nowrap" style={`color: ${u.colorDark};`}>
-            View →
-          </span>
-        </div>
-      </a>
-    ))}
-  </div>
-
-  <!-- Prereq Practice -->
-  <div class="mt-6">
-    <a
+  <div class="grid gap-4 sm:grid-cols-2">
+    <ActionCard
       href={`${base}science7/practice`}
-      class="group block rounded-xl border border-slate-200 border-l-4 p-5 transition-colors hover:opacity-90"
-      style="border-left-color: #059669; background-color: #f0fdf4;"
-    >
-      <div class="flex items-start justify-between gap-4">
-        <div class="min-w-0">
-          <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #059669;">Prereq Practice</p>
-          <p class="text-sm text-slate-500 leading-relaxed">Review the vocabulary and concepts you need before each unit. Randomized questions with worked answers.</p>
-        </div>
-        <span class="flex-shrink-0 text-sm font-semibold group-hover:underline whitespace-nowrap" style="color: #047857;">
-          Practice →
-        </span>
-      </div>
-    </a>
+      title="Prereq practice"
+      description="Review the vocabulary and concepts you need before each unit. Randomized questions with worked answers."
+      cta="Practice"
+      index={5}
+    />
   </div>
-
 </BaseLayout>
