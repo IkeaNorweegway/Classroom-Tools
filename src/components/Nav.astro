@@ -22,7 +22,19 @@ const dark = teacherMode;
 const tabIdle = dark
   ? 'text-slate-300 hover:text-white hover:bg-white/10'
   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-900/[0.04]';
+// Desktop lists: the gliding hover pill replaces per-tab hover backgrounds.
+const tabIdleDesktop = dark ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900';
+let n = 0; // entry stagger index
 ---
+
+<script is:inline>
+  // Play the nav's entry animation only when arriving from outside the site.
+  try {
+    if (!document.referrer || new URL(document.referrer).origin !== location.origin) {
+      document.documentElement.dataset.entry = '';
+    }
+  } catch (e) {}
+</script>
 
 <header
   class={`site-nav sticky top-0 z-40 border-b ${dark ? 'bg-slate-900 border-white/10' : 'bg-paper/95 border-slate-900/[0.07]'}`}
@@ -33,13 +45,15 @@ const tabIdle = dark
     <div class="vt-nav-top flex h-16 items-center gap-6">
       <a
         href={base}
-        class={`group flex items-center gap-2.5 shrink-0 font-display text-[1.15rem] font-semibold tracking-tight ${dark ? 'text-white' : 'text-slate-900'}`}
+        class={`nav-intro group flex items-center gap-2.5 shrink-0 font-display text-[1.15rem] font-semibold tracking-tight ${dark ? 'text-white' : 'text-slate-900'}`}
       >
-        <span class="block h-2.5 w-2.5 rounded-full bg-accent transition-transform duration-300 ease-out group-hover:scale-125" aria-hidden="true"></span>
+        <span class="brand-dot block h-2.5 w-2.5 rounded-full bg-accent transition-transform duration-300 ease-out group-hover:scale-125" aria-hidden="true"></span>
         Mr. Bremness
       </a>
 
       <nav aria-label="Courses" class="hidden lg:block flex-1">
+        <div class="relative w-max" data-hover-track>
+        <span class={`hover-pill ${dark ? 'hover-pill--dark' : ''}`} aria-hidden="true"></span>
         <ul class="flex items-center gap-0.5">
           {courses.map((c) => {
             const isActive = c.key === course;
@@ -49,8 +63,9 @@ const tabIdle = dark
                   href={`${base}${c.path}`}
                   data-course={c.key}
                   aria-current={isActive ? 'true' : undefined}
-                  class={`relative block rounded-full px-3.5 py-1.5 text-[0.8125rem] font-semibold transition-colors duration-200
-                    ${isActive ? (dark ? 'text-white' : 'text-accent-ink') : tabIdle}`}
+                  class={`nav-intro relative block rounded-full px-3.5 py-1.5 text-[0.8125rem] font-semibold transition-colors duration-200
+                    ${isActive ? (dark ? 'text-white' : 'text-accent-ink') : tabIdleDesktop}`}
+                  style={`--n: ${++n}`}
                 >
                   {isActive && (
                     <span
@@ -64,9 +79,10 @@ const tabIdle = dark
             );
           })}
         </ul>
+        </div>
       </nav>
 
-      <div class="ml-auto flex items-center">
+      <div class="nav-intro ml-auto flex items-center" style="--n: 8">
         {teacherHref && (
           <a
             href={teacherHref}
@@ -114,15 +130,18 @@ const tabIdle = dark
         aria-label={`${active.grade} ${active.name}`}
         class="-mx-4 px-4 sm:-mx-6 sm:px-6 overflow-x-auto [scrollbar-width:none]"
       >
+        <div class="relative w-max" data-hover-track>
+        <span class={`hover-pill hover-pill--sub ${dark ? 'hover-pill--dark' : ''}`} aria-hidden="true"></span>
         <ul class="flex items-center gap-1 w-max">
-          {active.subnav.map((item) => {
+          {active.subnav.map((item, j) => {
             const isActive = item.match(currentPath);
             return (
               <li>
                 <a
                   href={`${base}${item.path}`}
                   aria-current={isActive ? 'page' : undefined}
-                  class={`relative block whitespace-nowrap px-2.5 pt-1.5 pb-3 text-sm transition-colors duration-200
+                  style={`--n: ${9 + j}`}
+                  class={`nav-intro relative block whitespace-nowrap px-2.5 pt-1.5 pb-3 text-sm transition-colors duration-200
                     ${isActive
                       ? (dark ? 'text-white font-semibold' : 'text-slate-900 font-semibold')
                       : (dark ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-900')}`}
@@ -136,10 +155,67 @@ const tabIdle = dark
             );
           })}
         </ul>
+        </div>
       </nav>
     )}
   </div>
 </header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('.site-nav');
+
+  // Hover pill: one tint per list that glides to whichever item is pointed
+  // at or keyboard-focused. Only clip-path and opacity animate.
+  document.querySelectorAll<HTMLElement>('[data-hover-track]').forEach((track) => {
+    const pill = track.querySelector<HTMLElement>('.hover-pill');
+    if (!pill) return;
+    const moveTo = (link: HTMLElement) => {
+      const t = track.getBoundingClientRect();
+      const r = link.getBoundingClientRect();
+      const fresh = !track.classList.contains('is-hovering');
+      if (fresh) pill.classList.add('no-slide');
+      pill.style.clipPath = `inset(0 ${t.right - r.right}px 0 ${r.left - t.left}px round 999px)`;
+      if (fresh) {
+        void pill.offsetWidth; // place the pill without sliding in from the edge
+        pill.classList.remove('no-slide');
+      }
+      track.classList.add('is-hovering');
+    };
+    track.querySelectorAll<HTMLElement>('a').forEach((link) => {
+      link.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') moveTo(link); });
+      link.addEventListener('focus', () => { if (link.matches(':focus-visible')) moveTo(link); });
+    });
+    track.addEventListener('pointerleave', () => track.classList.remove('is-hovering'));
+    track.addEventListener('focusout', (e) => {
+      if (!track.contains(e.relatedTarget as Node | null)) track.classList.remove('is-hovering');
+    });
+  });
+
+  // Scroll: a soft shadow once the page moves; the bar tucks away while
+  // scrolling down and returns on any scroll up.
+  if (header) {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+    let lastY = window.scrollY;
+    let queued = false;
+    const update = () => {
+      queued = false;
+      const y = window.scrollY;
+      header.classList.toggle('is-scrolled', y > 8);
+      if (y <= 240 || y < lastY - 6) {
+        header.classList.remove('is-hidden');
+        lastY = y;
+      } else if (y > lastY + 6) {
+        if (!reduce.matches && !header.contains(document.activeElement)) header.classList.add('is-hidden');
+        lastY = y;
+      }
+    };
+    window.addEventListener('scroll', () => {
+      if (!queued) { queued = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    header.addEventListener('focusin', () => header.classList.remove('is-hidden'));
+    update();
+  }
+</script>
 
 <style>
   /* The pill is a soft tint; multiply keeps tab text readable through it

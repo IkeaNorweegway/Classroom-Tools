@@ -1,0 +1,103 @@
+---
+// Long unit/topic descriptions start collapsed to a short faded preview so the
+// materials list sits near the top of the page. Without JavaScript the full
+// text shows and the toggle stays hidden.
+interface Props {
+  label?: string;
+  class?: string;
+}
+
+const { label = 'this unit', class: className = '' } = Astro.props;
+const id = `collapsible-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div class={`collapsible ${className}`} data-collapsible>
+  <div class="collapsible-body" id={id}>
+    <slot />
+  </div>
+  <button type="button" class="collapsible-toggle" aria-expanded="false" aria-controls={id}>
+    <span class="collapsible-more">Read more about {label}</span>
+    <span class="collapsible-less">Show less</span>
+    <svg class="collapsible-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 6l4 4 4-4" />
+    </svg>
+  </button>
+</div>
+
+<style is:global>
+  .collapsible-toggle { display: none; }
+  .js .collapsible:not(.is-short) .collapsible-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.75rem;
+    padding: 0.4rem 0.9rem 0.4rem 1rem;
+    border-radius: 999px;
+    border: 1px solid rgb(var(--accent) / 0.25);
+    background: rgb(var(--accent-soft) / 0.6);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgb(var(--accent-ink));
+    transition: background-color 200ms var(--ease-out), border-color 200ms var(--ease-out), transform 160ms var(--ease-out);
+  }
+  @media (hover: hover) {
+    .js .collapsible-toggle:hover { background: rgb(var(--accent-soft)); border-color: rgb(var(--accent) / 0.45); }
+  }
+  .js .collapsible-toggle:active { transform: scale(0.97); }
+  .collapsible-chev { width: 1rem; height: 1rem; transition: transform 320ms var(--ease-out); }
+  .collapsible.is-open .collapsible-chev { transform: rotate(180deg); }
+  .collapsible-less, .collapsible.is-open .collapsible-more { display: none; }
+  .collapsible.is-open .collapsible-less { display: inline; }
+
+  /* Collapsed before the script runs, so there is no flash of full text. */
+  .js .collapsible:not(.is-short) .collapsible-body {
+    overflow: hidden;
+    transition: height 460ms var(--ease-out);
+  }
+  .js .collapsible:not(.is-short):not(.is-open):not(.is-measured) .collapsible-body { height: 8.5rem; }
+  .js .collapsible:not(.is-short):not(.is-open) .collapsible-body {
+    -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent);
+    mask-image: linear-gradient(to bottom, #000 40%, transparent);
+  }
+</style>
+
+<script>
+  // Height is the one layout property animated on the site: it runs once per
+  // click and the content below has to move with it.
+  const PREVIEW_REM = 8.5;
+
+  document.querySelectorAll<HTMLElement>('[data-collapsible]').forEach((root) => {
+    const body = root.querySelector<HTMLElement>('.collapsible-body')!;
+    const toggle = root.querySelector<HTMLButtonElement>('.collapsible-toggle')!;
+    const preview = () => PREVIEW_REM * parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+    if (body.scrollHeight <= preview() + 48) {
+      root.classList.add('is-short');
+      return;
+    }
+    body.style.height = `${preview()}px`;
+    root.classList.add('is-measured');
+
+    const finish = (e: TransitionEvent) => {
+      if (e.propertyName !== 'height') return;
+      if (root.classList.contains('is-open')) body.style.height = 'auto';
+    };
+    body.addEventListener('transitionend', finish);
+
+    toggle.addEventListener('click', () => {
+      const opening = !root.classList.contains('is-open');
+      if (opening) {
+        body.style.height = `${body.scrollHeight}px`;
+        root.classList.add('is-open');
+      } else {
+        body.style.height = `${body.scrollHeight}px`;
+        void body.offsetHeight; // commit the start height before shrinking
+        body.style.height = `${preview()}px`;
+        root.classList.remove('is-open');
+        const top = root.getBoundingClientRect().top;
+        if (top < 80) window.scrollBy({ top: top - 120, behavior: 'smooth' });
+      }
+      toggle.setAttribute('aria-expanded', String(opening));
+    });
+  });
+</script>
