@@ -20,6 +20,8 @@ Every design decision here traces back to one of the research files below. Read 
 - `research/three-act-math-research.md` — Three Act Math structure, information gap theory (Loewenstein), productive failure in math contexts, pseudo-context critique, mathematical modeling cycle
 - `research/math-notebook-workbook-design-research.md` — Rule of Four (multiple representations), recording vs. processing distinction, self-explanation effect, low floor/high ceiling tasks, Cornell notes for math, writing-to-learn
 - `research/significant-learning-gaps-research.md` — students significantly below grade level, learning disabilities, and intellectual/significant cognitive disabilities: the skill-gap vs. cognitive-disability distinction, explicit/Direct Instruction and CRA evidence, systematic instruction for ID/SCD, and Alberta IPP/Modified-programming context
+- `research/graphic-organizers-research.md` — consolidated graphic organizer evidence (d/g ≈ 0.57–0.63 across sources): learner-generated vs. pre-filled distinction, hard/static scaffold classification, LD + ELL populations, science-specific evidence
+- `research/ld-ipp-reading-gap-research.md` — teaching Grade 7–9 students on an IPP for LD with severe reading gaps (e.g., Grade 2 reading level): reading intervention effect sizes vs. content-access strategies, graphic organizers, TTS/read-aloud accommodations, Alberta IPP framework
 
 The short version: memory is built through retrieval under effort, not re-exposure. Difficulty is the mechanism, not the obstacle. Feedback only works if someone acts on it.
 
