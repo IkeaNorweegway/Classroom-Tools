@@ -1,7 +1,12 @@
 ---
 // Numbered list of units, strands or grades as raised cards. Each card lifts
 // with a course-tinted shadow on hover; cards rise in with a short stagger.
+// Items with `art` (a key in src/data/unitArt.ts) show a spot illustration of
+// the unit's core idea, which moves on hover.
+import { unitArt } from '../data/unitArt';
+
 interface Item {
+  art?: string;
   href: string;
   title: string;
   kicker?: string;
@@ -23,8 +28,13 @@ const { items, heading, numbered = true } = Astro.props;
   <ol class="grid gap-3">
     {items.map((item, i) => (
       <li class="rise" style={`--i: ${i}`}>
-        <a href={item.href} class="lift group flex items-start gap-5 rounded-2xl px-5 py-5 sm:px-7 sm:py-6">
-          {numbered && (
+        <a href={item.href} class="lift group flex items-center gap-5 rounded-2xl px-5 py-5 sm:px-7 sm:py-6">
+          {item.art && unitArt[item.art] ? (
+            <span class="unit-art-tile" aria-hidden="true">
+              <svg class="unit-art" data-m={unitArt[item.art].m} viewBox="0 0 64 64" fill="none" set:html={unitArt[item.art].svg} />
+              {numbered && <span class="unit-art-num font-display tabular">{String(i + 1).padStart(2, '0')}</span>}
+            </span>
+          ) : numbered && (
             <span class="num-chip font-display shrink-0 tabular" aria-hidden="true">
               {String(i + 1).padStart(2, '0')}
             </span>
