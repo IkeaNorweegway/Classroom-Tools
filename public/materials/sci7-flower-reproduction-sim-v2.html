@@ -229,6 +229,15 @@ svg .hit    { fill: transparent; stroke: transparent; }
 
 /* v2: icons, tutorial, flower alert */
 [hidden] { display: none !important; }
+.qbtn {
+  display: inline-flex; align-items: center; justify-content: center; vertical-align: middle;
+  min-width: 44px; min-height: 44px; margin: -12px -8px -12px 2px; border: 0; background: none;
+  font-weight: 800; font-size: 0.9rem; color: var(--accent); cursor: pointer;
+}
+.qbtn:focus-visible, .btn:focus-visible { outline: 3px solid #0ea5e9; outline-offset: 2px; }
+.ibody p, .ibody li { font-size: 0.95rem; color: var(--body); margin-bottom: 8px; }
+.ibody ol { padding-left: 20px; margin-bottom: 10px; }
+.iactions { display: flex; justify-content: flex-end; margin-top: 12px; }
 .ctl svg { vertical-align: -4px; margin-right: 6px; flex-shrink: 0; }
 .spot { position: relative; z-index: 20; border-radius: 8px; box-shadow: 0 0 0 4px #f59e0b, 0 0 0 9999px rgba(15, 23, 42, 0.55); }
 #coach {
@@ -283,6 +292,7 @@ svg .hit    { fill: transparent; stroke: transparent; }
       <button class="btn" id="bPlay" aria-pressed="true">Play</button>
       <button class="btn" id="bFast" aria-pressed="false">Fast</button>
     </span>
+    <button class="btn" id="bHelp" aria-haspopup="dialog">How this works</button>
     <button class="btn" id="bTour" title="Show the controls one at a time">Tutorial</button>
     <button class="btn" id="bNew" title="Start a new flower with the same settings">New season</button>
     <button class="btn" id="bReset" title="Put every setting back to the start">Reset settings</button>
@@ -294,8 +304,7 @@ svg .hit    { fill: transparent; stroke: transparent; }
     <section class="panel controls" aria-label="Controls">
       <fieldset id="ctl">
         <div>
-          <h2>Surroundings</h2>
-          <p class="hint">What is around the flower.</p>
+          <h2>Surroundings <button class="qbtn" data-info="surr" aria-label="About the surroundings">?</button></h2>
           <div class="ctl">
             <label for="s-bees"><span>Bees</span><output id="o-bees"></output></label>
             <input type="range" id="s-bees" data-key="bees" min="0" max="100" step="5">
@@ -311,8 +320,7 @@ svg .hit    { fill: transparent; stroke: transparent; }
         </div>
         <div>
           <hr class="div">
-          <h2>Flower parts</h2>
-          <p class="hint">Damage a part to find out what it does.</p>
+          <h2>Flower parts <button class="qbtn" data-info="parts" aria-label="About the flower parts">?</button></h2>
           <div class="ctl">
             <div class="lab"><span>Petals</span></div>
             <div class="seg" role="group" aria-label="Petals">
@@ -363,8 +371,7 @@ svg .hit    { fill: transparent; stroke: transparent; }
         </div>
         <div>
           <hr class="div">
-          <h2>The plant's strategy</h2>
-          <p class="hint">Other ways to get offspring into next year.</p>
+          <h2>The plant's strategy <button class="qbtn" data-info="strategy" aria-label="About the plant's strategy">?</button></h2>
           <div class="ctl">
             <div class="lab"><span>Runners (asexual)</span></div>
             <div class="seg" role="group" aria-label="Runners">
@@ -517,7 +524,6 @@ svg .hit    { fill: transparent; stroke: transparent; }
         <span><i style="background:#fde047;border:2px solid #4d7c0f"></i>fertilized ovule</span>
         <span><i style="background:#92400e"></i>ripe seed</span>
       </div>
-      <p class="tap-hint">Click any part of the flower to find out what it does.</p>
     </section>
 
     <!-- REPORT / MISSIONS / PARTS -->
@@ -548,7 +554,7 @@ svg .hit    { fill: transparent; stroke: transparent; }
       </div>
 
       <div class="tabpane" id="pane-missions" role="tabpanel" aria-labelledby="tab-missions" hidden>
-        <p class="hint">Predict first. Then test. A wrong prediction is useful evidence.</p>
+        <button class="btn" data-info="missions">How missions work</button>
         <div class="mlist" id="mlist"></div>
         <div class="mcard" id="mcard"></div>
       </div>
@@ -560,7 +566,6 @@ svg .hit    { fill: transparent; stroke: transparent; }
 
   </div>
 
-  <p class="foot">This is a model. The numbers are made-up units, chosen to show how the parts depend on each other. One season here is 20 days. Real flowers are more complicated, and many kinds cannot pollinate themselves.</p>
 </div>
 
 <div id="coach" role="dialog" aria-label="Tutorial" hidden>
@@ -568,6 +573,14 @@ svg .hit    { fill: transparent; stroke: transparent; }
   <div class="cactions">
     <span class="n" id="coachN"></span>
     <span><button class="btn" id="coachSkip">Skip</button> <button class="btn primary" id="coachNext">Next</button></span>
+  </div>
+</div>
+
+<div id="info" hidden>
+  <div class="abox" role="dialog" aria-modal="true" aria-labelledby="iTitle">
+    <h2 id="iTitle"></h2>
+    <div id="iBody" class="ibody"></div>
+    <div class="iactions"><button class="btn primary big" id="iClose">Got it</button></div>
   </div>
 </div>
 
@@ -595,7 +608,7 @@ var SLIDERS = ['bees', 'wind', 'neigh', 'ovules'];
 var st = copy(DEF);
 var fl, flags, committed;
 var DEBUG = /[?&]debug=1/.test(window.location.search);
-var alerted = false, alertOpen = false, tour = null, tourDone = false;
+var alerted = false, alertOpen = false, tour = null, tourDone = false, infoOpen = false, infoReturn = null;
 var running = true, speed = 1, ff = null;
 var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -1227,7 +1240,7 @@ var TOUR_STEPS = [
   { sel: '#bPause', t: 'Pause or speed up time here. The tutorial and the flower alert also stop time.' },
   { sel: '#tab-missions', t: 'Missions ask you to predict first, then test. Try one when you are ready.' }
 ];
-function stopped() { return !!(tour || alertOpen); }
+function stopped() { return !!(tour || alertOpen || infoOpen); }
 function unspot() { var o = document.querySelector('.spot'); if (o) o.classList.remove('spot'); }
 function startTour() {
   if (tour || alertOpen || ff) return;
@@ -1319,7 +1332,43 @@ function openAlert(lim) {
   $('alert').hidden = false;
   list.firstChild.focus();
 }
+/* ── Help popups: the instructions live here, not on the page. Opening one stops the lab. ── */
+var INFO = {
+  overview: { title: 'How the Flower Lab works', body:
+    '<ol><li>Set the surroundings: bees, wind, and other flowers of this kind.</li>' +
+    '<li>Change a flower part and watch the chain from pollen to ovules.</li>' +
+    '<li>The meter marked <b>limiting</b> is where the chain breaks.</li>' +
+    '<li>In Missions, predict first, then test.</li></ol>' +
+    '<p>One season is 20 days. The petals fall on day 12.</p>' +
+    '<p>This is a model. The numbers are made-up units, chosen to show how the parts depend on each other. Real flowers are more complicated, and many kinds cannot pollinate themselves.</p>' },
+  surr: { title: 'Surroundings', body:
+    '<p>What is around the flower. Pollen needs a carrier: bees and wind move it, and other flowers of this kind supply it.</p>' },
+  parts: { title: 'Flower parts', body:
+    '<p>Damage a part to find out what it does. Pollination and fertilization are two different steps.</p>' },
+  strategy: { title: "The plant's strategy", body:
+    '<p>Other ways to get offspring into next year. Runners make clones (asexual). Seed dispersal and disease change how many offspring survive.</p>' },
+  missions: { title: 'Missions', body:
+    '<p>Predict first. Then test. A wrong prediction is useful evidence.</p>' }
+};
+function openInfo(key) {
+  var I = INFO[key];
+  infoReturn = document.activeElement;
+  $('iTitle').textContent = I.title;
+  $('iBody').innerHTML = I.body;
+  $('info').hidden = false; infoOpen = true;
+  $('iClose').focus();
+}
+function closeInfo() {
+  $('info').hidden = true; infoOpen = false;
+  if (infoReturn) infoReturn.focus();
+}
 function bindHelp() {
+  $('bHelp').addEventListener('click', function () { openInfo('overview'); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-info]'), function (b) {
+    b.addEventListener('click', function () { openInfo(b.dataset.info); });
+  });
+  $('iClose').addEventListener('click', closeInfo);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && infoOpen) closeInfo(); });
   $('bTour').addEventListener('click', startTour);
   $('coachNext').addEventListener('click', function () { if (tour) tourNext(); });
   $('coachSkip').addEventListener('click', function () { if (tour) endTour(); });
