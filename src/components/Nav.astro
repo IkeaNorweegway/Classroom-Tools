@@ -37,7 +37,7 @@ let n = 0; // entry stagger index
 </script>
 
 <header
-  class={`site-nav sticky top-0 z-40 border-b ${dark ? 'bg-slate-900 border-white/10' : 'bg-paper/95 border-slate-900/[0.07]'}`}
+  class={`site-nav sticky top-0 z-40 border-b ${dark ? 'bg-slate-900 border-white/10' : 'bg-paper border-slate-900/[0.07]'}`}
   data-course={course}
 >
   <div class="max-w-5xl mx-auto px-4 sm:px-6">
@@ -69,7 +69,7 @@ let n = 0; // entry stagger index
                 >
                   {isActive && (
                     <span
-                      class={`absolute inset-0 rounded-full ${dark ? 'bg-accent/40' : 'bg-accent-soft vt-nav-pill'}`}
+                      class={`absolute inset-0 rounded-full ${dark ? 'bg-accent/40' : 'pill-3d vt-nav-pill'}`}
                       aria-hidden="true"
                     ></span>
                   )}
@@ -89,7 +89,7 @@ let n = 0; // entry stagger index
             class={`rounded-full px-3.5 py-1.5 text-[0.8125rem] font-semibold border transition-colors duration-200
               ${dark
                 ? 'border-teacher-400/60 text-teacher-400 hover:bg-teacher-400 hover:text-slate-900'
-                : 'border-slate-900/15 text-slate-600 hover:border-slate-900/30 hover:text-slate-900'}`}
+                : 'btn-3d border-transparent text-slate-700 hover:text-slate-900'}`}
           >
             {teacherMode ? '← Student view' : 'Teacher'}
           </a>
@@ -113,7 +113,7 @@ let n = 0; // entry stagger index
               >
                 {isActive && (
                   <span
-                    class={`absolute inset-0 rounded-full ${dark ? 'bg-accent/40' : 'bg-accent-soft vt-nav-pill'}`}
+                    class={`absolute inset-0 rounded-full ${dark ? 'bg-accent/40' : 'pill-3d vt-nav-pill'}`}
                     aria-hidden="true"
                   ></span>
                 )}
@@ -164,8 +164,9 @@ let n = 0; // entry stagger index
 <script>
   const header = document.querySelector<HTMLElement>('.site-nav');
 
-  // Hover pill: one tint per list that glides to whichever item is pointed
-  // at or keyboard-focused. Only clip-path and opacity animate.
+  // Hover pill: one raised highlight per list that glides to whichever item
+  // is pointed at or keyboard-focused. It moves by transform; its width also
+  // transitions, which is a layout change on a single empty absolute element.
   document.querySelectorAll<HTMLElement>('[data-hover-track]').forEach((track) => {
     const pill = track.querySelector<HTMLElement>('.hover-pill');
     if (!pill) return;
@@ -174,7 +175,8 @@ let n = 0; // entry stagger index
       const r = link.getBoundingClientRect();
       const fresh = !track.classList.contains('is-hovering');
       if (fresh) pill.classList.add('no-slide');
-      pill.style.clipPath = `inset(0 ${t.right - r.right}px 0 ${r.left - t.left}px round 999px)`;
+      pill.style.width = `${r.width}px`;
+      pill.style.transform = `translateX(${r.left - t.left}px)`;
       if (fresh) {
         void pill.offsetWidth; // place the pill without sliding in from the edge
         pill.classList.remove('no-slide');
