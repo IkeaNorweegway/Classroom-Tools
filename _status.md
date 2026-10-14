@@ -79,6 +79,7 @@ All 11 topics have notes, notes answer key, teacher notes, concept one-pager, Co
 | Slow reveal graph (Statistics) | Trial built, not on site |
 
 **Fraction Simulator (site):** `public/materials/math-9/practice/math9-fraction-sim-v1.html`, HTML only, no libraries, linked from the Number page under Rational Numbers. Three tabs: equivalent fractions (bar model, with an "add to top and bottom" mode that shows the mistake), simplifying (divide by a common factor and the bar pieces join; optional factor lists), and cross-cancelling (tap a top and a bottom, divide both, prime-factor row, ÷ needs a flip first). Positive fractions only. Logic was tested in headless Chrome with scripted clicks; it has not been tried by students, on a touch screen, or on school devices, and the site build with the new link has not been run.
+- **Fraction Simulator v2 (site):** `public/materials/math-9/practice/math9-fraction-sim-v2.html`, linked from the Number page. v1 is kept and unlinked. Same three tabs and model. v2 adds a Tutorial button and a four-step tour for each tab that points at the real controls, runs once per tab on the first visit, and never blocks the controls. Tested in headless Chrome: tour steps, Next, Skip, Escape, replay, and one tour per tab. Untested: how the tour reads to students, touch, and school devices.
 
 Answer key design follows `research/answer-key-design-research.md`: full worked solutions for Core, partial solutions for Challenge, faded structure in strand workbooks.
 
