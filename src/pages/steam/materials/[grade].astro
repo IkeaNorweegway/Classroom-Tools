@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CourseHero from '../../../components/CourseHero.astro';
+import MaterialList from '../../../components/MaterialList.astro';
 const base = import.meta.env.BASE_URL;
 
 export function getStaticPaths() {
@@ -23,9 +25,6 @@ interface GradeData {
   projects: Project[];
 }
 
-const color = '#7c3aed';
-const colorDark = '#6d28d9';
-const colorLight = '#ede9fe';
 
 const grades: Record<string, GradeData> = {
   'grade-5': {
@@ -148,46 +147,20 @@ const grades: Record<string, GradeData> = {
 };
 
 const data = grades[grade!];
-const borderStyle = `border-left-color: ${color};`;
 ---
 
 <BaseLayout title={`${data.label} — STEAM Materials`} course="steam">
+  <CourseHero
+    back={{ href: `${base}steam`, label: 'STEAM' }}
+    eyebrow={`STEAM · ${data.label}`}
+    title={data.label}
+    description={data.tagline}
+  />
 
-  <!-- Back link -->
-  <a href={`${base}steam`} class="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-slate-600 mb-8 transition-colors">
-    ← STEAM
-  </a>
-
-  <!-- Header -->
-  <div class="mb-8">
-    <p class="text-xs font-bold uppercase tracking-widest mb-1" style={`color: ${colorDark};`}>STEAM · {data.label}</p>
-    <h1 class="text-4xl font-bold text-slate-900 mb-3">{data.label}</h1>
-    <p class="text-slate-500 text-lg max-w-xl">{data.tagline}</p>
-  </div>
-
-  <!-- Projects -->
   {data.projects.map(project => (
-    <section class="mb-10">
-      <h2 class="text-xs font-bold uppercase tracking-widest mb-3" style={`color: ${colorDark};`}>Unit {project.unit} · {project.label}</h2>
-      <div class="space-y-2">
-        {project.items.map(item => (
-          <div class="bg-white rounded-xl border border-slate-200 border-l-4 px-5 py-4 flex items-center justify-between gap-4" style={borderStyle}>
-            <div class="flex items-center gap-2 min-w-0">
-              <span class="text-sm font-medium text-slate-800">{item.label}</span>
-              {item.badge && (
-                <span class={`text-xs font-semibold px-2 py-0.5 rounded-full ${item.badgeStyle}`}>{item.badge}</span>
-              )}
-            </div>
-            <a
-              href={`${base}steam/view/${grade}/${item.doc}`}
-              class="flex-shrink-0 text-sm font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-400 px-4 py-1.5 rounded-lg transition-colors whitespace-nowrap"
-            >
-              Open
-            </a>
-          </div>
-        ))}
-      </div>
-    </section>
+    <MaterialList
+      heading={`Unit ${project.unit} · ${project.label}`}
+      items={project.items.map(item => ({ label: item.label, badge: item.badge, href: `${base}steam/view/${grade}/${item.doc}` }))}
+    />
   ))}
-
 </BaseLayout>

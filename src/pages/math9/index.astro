@@ -1,5 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import CourseHero from '../../components/CourseHero.astro';
+import TopicList from '../../components/TopicList.astro';
+import ActionCard from '../../components/ActionCard.astro';
 const base = import.meta.env.BASE_URL;
 
 const strands = [
@@ -39,103 +42,46 @@ const strands = [
 ---
 
 <BaseLayout course="math9" title="Grade 9 Mathematics">
+  <CourseHero
+    eyebrow="Alberta curriculum"
+    title="Grade 9 Mathematics"
+    numeral="9"
+    vtName="course-num-math9"
+    description="Four strands, eleven topics. Notes, concept pages, worksheets, exit tickets, and answer keys."
+    facts={[
+      { n: '4', label: 'strands' },
+      { n: '11', label: 'topics' },
+      { n: '98', label: 'materials' },
+      { n: '52', label: 'exit tickets' },
+    ]}
+  />
 
-  <div class="mb-10">
-    <p class="text-xs font-bold uppercase tracking-widest text-math9-600 mb-2">Alberta Curriculum</p>
-    <h1 class="text-4xl font-bold text-slate-900 mb-3">Grade 9 Mathematics</h1>
-    <p class="text-slate-500 text-lg max-w-xl">
-      Four strands, eleven topics. Notes, concept pages, worksheets, exit tickets, and answer keys.
-    </p>
-  </div>
+  <TopicList
+    heading="Strands"
+    items={strands.map(s => ({ art: s.slug, href: `${base}math9/materials/${s.slug}`, title: s.label, kicker: s.topics, description: s.description }))}
+  />
 
-  <!-- Quick stats -->
-  <div class="grid grid-cols-4 gap-3 mb-10">
-    {[
-      { n: '4', label: 'Strands' },
-      { n: '11', label: 'Topics' },
-      { n: '98', label: 'Materials' },
-      { n: '52', label: 'Exit tickets' },
-    ].map(s => (
-      <div class="bg-white rounded-xl border border-slate-200 p-4 text-center">
-        <p class="text-2xl font-bold text-math9-700">{s.n}</p>
-        <p class="text-xs text-slate-400 mt-1 uppercase tracking-wide">{s.label}</p>
-      </div>
-    ))}
-  </div>
-
-  <!-- Strand cards -->
-  <div class="space-y-3">
-    {strands.map(s => (
-      <a
-        href={`${base}math9/materials/${s.slug}`}
-        class={`group block bg-white rounded-xl border border-slate-200 border-l-4 ${s.border} p-5 transition-colors ${s.hover}`}
-      >
-        <div class="flex items-start justify-between gap-4">
-          <div class="min-w-0">
-            <p class={`text-xs font-bold uppercase tracking-widest ${s.text} mb-1`}>{s.label}</p>
-            <p class="text-xs text-slate-400 mb-2">{s.topics}</p>
-            <p class="text-sm text-slate-500 leading-relaxed">{s.description}</p>
-          </div>
-          <span class={`flex-shrink-0 text-sm font-semibold ${s.link} group-hover:underline whitespace-nowrap`}>
-            View →
-          </span>
-        </div>
-      </a>
-    ))}
-  </div>
-
-  <!-- Prereq Practice -->
-  <div class="mt-6">
-    <a
+  <div class="grid gap-4 sm:grid-cols-3">
+    <ActionCard
       href={`${base}math9/practice`}
-      class="group block bg-math9-50 rounded-xl border border-math9-200 border-l-4 border-l-math9-500 p-5 transition-colors hover:bg-math9-100"
-    >
-      <div class="flex items-start justify-between gap-4">
-        <div class="min-w-0">
-          <p class="text-xs font-bold uppercase tracking-widest text-math9-600 mb-1">Prereq Practice</p>
-          <p class="text-sm text-slate-500 leading-relaxed">Warm up on the foundational skills you need before each topic. Randomized problems with worked solutions.</p>
-        </div>
-        <span class="flex-shrink-0 text-sm font-semibold text-math9-600 group-hover:underline whitespace-nowrap">
-          Practice →
-        </span>
-      </div>
-    </a>
-  </div>
-
-  <!-- Problem of the Day -->
-  <div class="mt-3">
-    <a
+      title="Prereq practice"
+      description="Warm up on the foundational skills you need before each topic. Randomized problems with worked solutions."
+      cta="Practice"
+      index={4}
+    />
+    <ActionCard
       href={`${base}math9/potd`}
-      class="group block bg-rose-50 rounded-xl border border-rose-200 border-l-4 border-l-rose-500 p-5 transition-colors hover:bg-rose-100"
-    >
-      <div class="flex items-start justify-between gap-4">
-        <div class="min-w-0">
-          <p class="text-xs font-bold uppercase tracking-widest text-rose-700 mb-1">Problem of the Day</p>
-          <p class="text-sm text-slate-500 leading-relaxed">A daily curiosity-sparking problem to project at the start of class. Visual patterns, estimation, number puzzles, and more.</p>
-        </div>
-        <span class="flex-shrink-0 text-sm font-semibold text-rose-700 group-hover:underline whitespace-nowrap">
-          Today's Problem →
-        </span>
-      </div>
-    </a>
-  </div>
-
-  <!-- PAT Prep -->
-  <div class="mt-3">
-    <a
+      title="Problem of the Day"
+      description="A short problem to project at the start of class. Visual patterns, estimation, number puzzles, and more."
+      cta="Today's problem"
+      index={5}
+    />
+    <ActionCard
       href={`${base}math9/pat-prep`}
-      class="group block bg-amber-50 rounded-xl border border-amber-200 border-l-4 border-l-amber-500 p-5 transition-colors hover:bg-amber-100"
-    >
-      <div class="flex items-start justify-between gap-4">
-        <div class="min-w-0">
-          <p class="text-xs font-bold uppercase tracking-widest text-amber-700 mb-1">PAT Prep</p>
-          <p class="text-sm text-slate-500 leading-relaxed">Practice at Provincial Achievement Test level. Multiple choice and numerical response, organized by PAT strands.</p>
-        </div>
-        <span class="flex-shrink-0 text-sm font-semibold text-amber-700 group-hover:underline whitespace-nowrap">
-          Practice →
-        </span>
-      </div>
-    </a>
+      title="PAT prep"
+      description="Practice at Provincial Achievement Test level. Multiple choice and numerical response, by PAT strand."
+      cta="Practice"
+      index={6}
+    />
   </div>
-
 </BaseLayout>

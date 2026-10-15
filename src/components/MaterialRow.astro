@@ -1,0 +1,35 @@
+---
+// One openable document, drawn as a raised card in its material type's colour.
+import { materialTypes, inferType, type MaterialType } from '../data/materialTypes';
+
+interface Props {
+  label: string;
+  href: string;
+  badge?: string;
+  heading?: string;
+  type?: MaterialType;
+  index?: number;
+  compact?: boolean;
+}
+
+const { label, href, badge, heading, type, index = 0, compact = false } = Astro.props;
+const kind = type ?? inferType(label, heading);
+const t = materialTypes[kind];
+---
+
+<a
+  href={href}
+  class={`mcard ${compact ? 'mcard--compact' : ''} rise`}
+  data-type={kind}
+  style={`--t: ${t.rgb}; --t-soft: ${t.soft}; --i: ${index}`}
+>
+  <span class="mcard-icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={t.icon} />
+  </span>
+  <span class="min-w-0 flex-1">
+    <span class="mcard-type">{t.label}</span>
+    <span class="mcard-title">{label}</span>
+  </span>
+  {badge && <span class="mcard-badge">{badge}</span>}
+  <span class="mcard-open">Open <span class="mcard-arrow" aria-hidden="true">→</span></span>
+</a>

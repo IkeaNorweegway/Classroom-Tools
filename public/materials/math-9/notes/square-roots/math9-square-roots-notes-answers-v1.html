@@ -89,7 +89,22 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
     svg .dg-label       { font: 12px/1.3 system-ui, sans-serif; fill: var(--dg-stroke);    stroke: none; }
     svg .dg-label-sm    { font: 11px/1.3 system-ui, sans-serif; fill: var(--dg-secondary); stroke: none; }
     svg .dg-label-accent{ font: 11px/1.3 system-ui, sans-serif; fill: var(--dg-accent);    stroke: none; font-weight: 600; }
-  </style>
+  
+  /* ── Stacked fractions (scripts/stack_fractions.py) ── */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.15;
+    margin: 0 1px;
+  }
+  .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+  .frac .den { padding: 1px 3px 0; }
+
+  .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
 </head>
 <body>
   <div class="header-strip">
@@ -152,7 +167,7 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
       <tr><td>√144</td><td><strong>12</strong></td><td>12<sup>2</sup> = 144</td></tr>
       <tr><td>−√25</td><td><strong>−5</strong></td><td>Negative is in front; principal root is 5, then negated</td></tr>
       <tr><td>√(−16)</td><td><strong>undefined (no real solution)</strong></td><td>No real number squared gives a negative</td></tr>
-      <tr><td>√(49/64)</td><td><strong>7/8</strong></td><td>√49/√64 = 7/8</td></tr>
+      <tr><td>√(<span class="frac"><span class="num">49</span><span class="frac-slash">/</span><span class="den">64</span></span>)</td><td><strong><span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">8</span></span></strong></td><td><span class="frac"><span class="num">√49</span><span class="frac-slash">/</span><span class="den">√64</span></span> = <span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">8</span></span></td></tr>
     </table>
 
     <table>
@@ -164,9 +179,9 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
     <p><strong>Square roots of fractions:</strong></p>
     <table>
       <tr><th>Expression</th><th>Answer</th></tr>
-      <tr><td>√(9/25) = √9/√25 = ___/___</td><td><div class="answer"><strong>3/5</strong></div></td></tr>
-      <tr><td>√(4/49)</td><td><div class="answer"><strong>2/7</strong></div></td></tr>
-      <tr><td>√(16/81)</td><td><div class="answer"><strong>4/9</strong></div></td></tr>
+      <tr><td>√(<span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">25</span></span>) = <span class="frac"><span class="num">√9</span><span class="frac-slash">/</span><span class="den">√25</span></span> = <span class="frac"><span class="num">___</span><span class="frac-slash">/</span><span class="den">___</span></span></td><td><div class="answer"><strong><span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">5</span></span></strong></div></td></tr>
+      <tr><td>√(<span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">49</span></span>)</td><td><div class="answer"><strong><span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">7</span></span></strong></div></td></tr>
+      <tr><td>√(<span class="frac"><span class="num">16</span><span class="frac-slash">/</span><span class="den">81</span></span>)</td><td><div class="answer"><strong><span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">9</span></span></strong></div></td></tr>
     </table>
 
     <div class="retrieval">
@@ -175,7 +190,7 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
         <tr><th>Question</th><th>Answer</th></tr>
         <tr><td>1. √64</td><td><strong>8</strong></td></tr>
         <tr><td>2. −√36 and √(−36) — same?</td><td>−√36 = <strong>−6</strong> (negate the root). √(−36) = <strong>undefined</strong> (negative radicand). NOT the same.</td></tr>
-        <tr><td>3. √(25/144)</td><td><strong>5/12</strong></td></tr>
+        <tr><td>3. √(<span class="frac"><span class="num">25</span><span class="frac-slash">/</span><span class="den">144</span></span>)</td><td><strong><span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">12</span></span></strong></td></tr>
         <tr><td>4. "√100 = ±10" — correct?</td><td><strong>No.</strong> The principal square root is the positive root by definition. √100 = 10. Writing ±√100 gives ±10, but √100 alone = 10.</td></tr>
         <tr><td>5. (Stretch) √50 between which integers?</td><td>7<sup>2</sup> = 49 &lt; 50 &lt; 64 = 8<sup>2</sup>, so <strong>7 &lt; √50 &lt; 8</strong>. Since 50 is only 1 above 49, √50 ≈ 7.1.</td></tr>
       </table>
@@ -188,17 +203,17 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
     <h3>Vocabulary</h3>
     <table>
       <tr><th>Term</th><th>Definition</th><th>Example</th></tr>
-      <tr><td>Irrational number</td><td>A real number that cannot be written as a/b; decimal never terminates or repeats</td><td>√2 = 1.41421..., π</td></tr>
+      <tr><td>Irrational number</td><td>A real number that cannot be written as <span class="frac"><span class="num">a</span><span class="frac-slash">/</span><span class="den">b</span></span>; decimal never terminates or repeats</td><td>√2 = 1.41421..., π</td></tr>
       <tr><td>Non-perfect square</td><td>A positive integer that is not the square of any integer</td><td>2, 3, 5, 7, 50</td></tr>
       <tr><td>Estimate</td><td>An approximate value (not exact)</td><td>√47 ≈ 6.9</td></tr>
-      <tr><td>Real number</td><td>Any number on the number line — rational or irrational</td><td>−3, 1/2, √5, π</td></tr>
+      <tr><td>Real number</td><td>Any number on the number line — rational or irrational</td><td>−3, <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>, √5, π</td></tr>
     </table>
 
     <h3>Guided Notes</h3>
     <table>
       <tr><th>Blank / Prompt</th><th>Answer</th></tr>
       <tr><td>√3, √7, √10 are ___ numbers</td><td><div class="answer"><strong>irrational</strong></div></td></tr>
-      <tr><td>Connection prompt: square root = power of ___</td><td><div class="answer"><strong>1/2</strong> — √x = x<sup>(1/2)</sup></div></td></tr>
+      <tr><td>Connection prompt: square root = power of ___</td><td><div class="answer"><strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span></strong> — √x = x<sup>(1/2)</sup></div></td></tr>
     </table>
 
     <p><strong>Estimating √47:</strong></p>
@@ -318,25 +333,25 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
     <h3>Vocabulary</h3>
     <table>
       <tr><th>Term</th><th>Definition</th><th>Example</th></tr>
-      <tr><td>Square root of a fraction</td><td>√(a/b) = √a/√b (when a ≥ 0, b &gt; 0)</td><td>√(9/16) = 3/4</td></tr>
+      <tr><td>Square root of a fraction</td><td>√(<span class="frac"><span class="num">a</span><span class="frac-slash">/</span><span class="den">b</span></span>) = <span class="frac"><span class="num">√a</span><span class="frac-slash">/</span><span class="den">√b</span></span> (when a ≥ 0, b &gt; 0)</td><td>√(<span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">16</span></span>) = <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">4</span></span></td></tr>
       <tr><td>Square root of a decimal</td><td>Convert to fraction or recognize decimal pattern</td><td>√0.49 = 0.7</td></tr>
     </table>
 
     <h3>Guided Notes</h3>
     <table>
       <tr><th>Blank / Prompt</th><th>Answer</th></tr>
-      <tr><td>√(9/16) = √9/√16 = ___/___</td><td><div class="answer"><strong>3/4</strong></div></td></tr>
-      <tr><td>√0.49 = √(49/100) = ___/___ = ___</td><td><div class="answer">7/10 = <strong>0.7</strong></div></td></tr>
+      <tr><td>√(<span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">16</span></span>) = <span class="frac"><span class="num">√9</span><span class="frac-slash">/</span><span class="den">√16</span></span> = <span class="frac"><span class="num">___</span><span class="frac-slash">/</span><span class="den">___</span></span></td><td><div class="answer"><strong><span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">4</span></span></strong></div></td></tr>
+      <tr><td>√0.49 = √(<span class="frac"><span class="num">49</span><span class="frac-slash">/</span><span class="den">100</span></span>) = <span class="frac"><span class="num">___</span><span class="frac-slash">/</span><span class="den">___</span></span> = ___</td><td><div class="answer"><span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">10</span></span> = <strong>0.7</strong></div></td></tr>
       <tr><td>Method 2: ___ × ___ = 0.49</td><td><div class="answer">0.7 × 0.7</div></td></tr>
     </table>
 
     <p><strong>Practice table:</strong></p>
     <table>
       <tr><th>Expression</th><th>Answer</th></tr>
-      <tr><td>√0.25</td><td><strong>0.5</strong> (= √(1/4) = 1/2)</td></tr>
-      <tr><td>√(4/9)</td><td><strong>2/3</strong></td></tr>
-      <tr><td>√1.44</td><td><strong>1.2</strong> (= √(144/100) = 12/10)</td></tr>
-      <tr><td>√(0.01)</td><td><strong>0.1</strong> (= √(1/100) = 1/10)</td></tr>
+      <tr><td>√0.25</td><td><strong>0.5</strong> (= √(<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span>) = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>)</td></tr>
+      <tr><td>√(<span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">9</span></span>)</td><td><strong><span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span></strong></td></tr>
+      <tr><td>√1.44</td><td><strong>1.2</strong> (= √(<span class="frac"><span class="num">144</span><span class="frac-slash">/</span><span class="den">100</span></span>) = <span class="frac"><span class="num">12</span><span class="frac-slash">/</span><span class="den">10</span></span>)</td></tr>
+      <tr><td>√(0.01)</td><td><strong>0.1</strong> (= √(<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">100</span></span>) = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">10</span></span>)</td></tr>
     </table>
 
     <p><strong>Connecting to exponents:</strong></p>
@@ -350,7 +365,7 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
     <table>
       <tr><th>Expression</th><th>Distributes?</th><th>Example answer</th></tr>
       <tr><td>√(a × b)</td><td><strong>Yes</strong></td><td>√(4×9) = √36 = <strong>6</strong> = √4×√9 ✓</td></tr>
-      <tr><td>√(a ÷ b)</td><td><strong>Yes</strong></td><td>√(36/4) = √9 = <strong>3</strong> = √36/√4 ✓</td></tr>
+      <tr><td>√(a ÷ b)</td><td><strong>Yes</strong></td><td>√(<span class="frac"><span class="num">36</span><span class="frac-slash">/</span><span class="den">4</span></span>) = √9 = <strong>3</strong> = <span class="frac"><span class="num">√36</span><span class="frac-slash">/</span><span class="den">√4</span></span> ✓</td></tr>
       <tr><td>√(a + b)</td><td><strong>No</strong></td><td>√(9+16) = 5 ≠ 3+4 = 7</td></tr>
       <tr><td>√(a − b)</td><td><strong>No</strong></td><td>√(25−9) = 4 ≠ 5−3 = 2</td></tr>
     </table>
@@ -362,11 +377,11 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
       <div class="retrieval-header">Retrieval Check — Section 4</div>
       <table>
         <tr><th>Question</th><th>Answer</th></tr>
-        <tr><td>1. √(64/25)</td><td><strong>8/5</strong></td></tr>
-        <tr><td>2. √1.21</td><td>√(121/100) = 11/10 = <strong>1.1</strong></td></tr>
+        <tr><td>1. √(<span class="frac"><span class="num">64</span><span class="frac-slash">/</span><span class="den">25</span></span>)</td><td><strong><span class="frac"><span class="num">8</span><span class="frac-slash">/</span><span class="den">5</span></span></strong></td></tr>
+        <tr><td>2. √1.21</td><td>√(<span class="frac"><span class="num">121</span><span class="frac-slash">/</span><span class="den">100</span></span>) = <span class="frac"><span class="num">11</span><span class="frac-slash">/</span><span class="den">10</span></span> = <strong>1.1</strong></td></tr>
         <tr><td>3. √(16+9) = √16+√9 → disprove</td><td>√25 = 5; √16+√9 = 4+3 = 7. <strong>5 ≠ 7</strong>. Correct answer: <strong>5</strong>.</td></tr>
         <tr><td>4. 16<sup>(1/2)</sup></td><td><strong>4</strong> (= √16)</td></tr>
-        <tr><td>5. (Stretch) √(0.25)<sup>3</sup></td><td>(0.25)<sup>3</sup> = (1/4)<sup>3</sup> = 1/64. √(1/64) = 1/8 = <strong>0.125</strong>. <strong>Rational.</strong></td></tr>
+        <tr><td>5. (Stretch) √(0.25)<sup>3</sup></td><td>(0.25)<sup>3</sup> = (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span>)<sup>3</sup> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">64</span></span>. √(<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">64</span></span>) = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">8</span></span> = <strong>0.125</strong>. <strong>Rational.</strong></td></tr>
       </table>
     </div>
   </div>
@@ -378,7 +393,7 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
       <table>
         <tr><th>Question</th><th>Model answer</th></tr>
         <tr><td>1. Perfect vs. non-perfect square</td><td>Perfect: result of squaring an integer (e.g., 49 = 7<sup>2</sup>). Non-perfect: positive integer not the square of any integer (e.g., 50).</td></tr>
-        <tr><td>2. Why is √2 irrational?</td><td>Its decimal expansion never terminates and never repeats — it has been mathematically proven impossible to write √2 as any fraction a/b, no matter how precise.</td></tr>
+        <tr><td>2. Why is √2 irrational?</td><td>Its decimal expansion never terminates and never repeats — it has been mathematically proven impossible to write √2 as any fraction <span class="frac"><span class="num">a</span><span class="frac-slash">/</span><span class="den">b</span></span>, no matter how precise.</td></tr>
         <tr><td>3. Pythagorean theorem</td><td>a<sup>2</sup> + b<sup>2</sup> = c<sup>2</sup>, where a, b are the <strong>legs</strong> and c is the <strong>hypotenuse</strong> (side opposite the right angle).</td></tr>
         <tr><td>4. x<sup>(1/2)</sup> equals? Why?</td><td><strong>√x</strong>. Because x<sup>(1/2)</sup> × x<sup>(1/2)</sup> = x<sup>1</sup>, and √x × √x = x — they perform the same operation.</td></tr>
       </table>

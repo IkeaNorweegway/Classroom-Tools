@@ -1,0 +1,57 @@
+---
+// A section of openable documents on a unit page. The heading carries the
+// section's material type; cards sit two-up on wider screens. With
+// `answerKeys`, the list sits inside a closed disclosure so keys stay out of
+// the way for students.
+import MaterialRow from './MaterialRow.astro';
+import { materialTypes, inferType } from '../data/materialTypes';
+
+interface Item {
+  label: string;
+  href: string;
+  badge?: string;
+}
+
+interface Props {
+  heading: string;
+  items: Item[];
+  answerKeys?: boolean;
+}
+
+const { heading, items, answerKeys = false } = Astro.props;
+const kind = answerKeys ? 'key' : inferType(heading);
+const t = materialTypes[kind];
+const grid = items.length > 1
+  ? 'sm:grid-cols-2 sm:[&>*:last-child:nth-child(odd)]:col-span-2'
+  : '';
+---
+
+{answerKeys ? (
+  <details class="disclosure mt-6 mb-12">
+    <summary class="keys-toggle">
+      <span class="chev inline-block text-[0.625rem]" aria-hidden="true">▶</span>
+      {heading}
+      <span class="tabular text-slate-400">{items.length}</span>
+    </summary>
+    <div class="mt-4 grid gap-2.5 sm:grid-cols-2">
+      {items.map((item) => (
+        <MaterialRow label={item.label} href={item.href} type="key" compact />
+      ))}
+    </div>
+  </details>
+) : (
+  <section class="scroll-rise mb-10" style={`--t: ${t.rgb}; --t-soft: ${t.soft}`}>
+    <h2 class="mb-4 flex items-center gap-3">
+      <span class="section-chip" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={t.icon} />
+      </span>
+      <span class="font-display text-[1.375rem] font-medium tracking-[-0.01em] text-slate-900">{heading}</span>
+      <span class="text-sm font-semibold text-slate-400 tabular">{items.length}</span>
+    </h2>
+    <div class={`grid gap-3 ${grid}`}>
+      {items.map((item, i) => (
+        <MaterialRow label={item.label} href={item.href} badge={item.badge} heading={heading} index={i} />
+      ))}
+    </div>
+  </section>
+)}

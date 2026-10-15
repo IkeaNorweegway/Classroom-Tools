@@ -1,5 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import CourseHero from '../../components/CourseHero.astro';
+import TopicList from '../../components/TopicList.astro';
+import ActionCard from '../../components/ActionCard.astro';
 const base = import.meta.env.BASE_URL;
 
 const unitCards = [
@@ -42,47 +45,40 @@ const unitCards = [
 ];
 ---
 
-<BaseLayout title="Materials">
-  <div class="mb-10">
-    <p class="text-xs font-bold uppercase tracking-widest text-science-600 mb-2">Grade 6 Science</p>
-    <h1 class="text-4xl font-bold text-slate-900 mb-3">Materials</h1>
-    <p class="text-slate-500 text-lg max-w-xl">
-      Pick the unit your child is studying. You'll find notes, a practice workbook, and answer keys — all in one place.
-    </p>
-  </div>
+<BaseLayout course="science" title="Grade 6 Science">
+  <CourseHero
+    eyebrow="Alberta curriculum · 2023"
+    title="Grade 6 Science"
+    numeral="6"
+    vtName="course-num-science"
+    description="Pick the unit your child is studying. You'll find notes, a practice workbook, and answer keys, all in one place."
+    facts={[
+      { n: '6', label: 'units' },
+      { n: '~28', label: 'weeks' },
+      { n: '3', label: 'versions: English, Easy Read, French' },
+    ]}
+  />
 
-  <!-- Unit cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-    {unitCards.map(u => (
-      <a
-        href={`${base}materials/${u.slug}`}
-        class={`group block bg-white rounded-xl border border-slate-200 border-l-4 ${u.border} p-5 transition-colors ${u.hover}`}
-      >
-        <p class={`text-xs font-bold uppercase tracking-widest ${u.text} mb-2`}>{u.label}</p>
-        <p class="text-sm text-slate-500 mb-4 leading-relaxed">{u.description}</p>
-        <span class={`text-sm font-semibold ${u.link} group-hover:underline`}>View materials →</span>
-      </a>
-    ))}
-  </div>
+  <TopicList
+    heading="Units"
+    items={unitCards.map(u => ({ art: u.slug, href: `${base}materials/${u.slug}`, title: u.label, description: u.description }))}
+  />
 
-  <!-- Year Review + Français -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <a
+  <div class="grid gap-4 sm:grid-cols-2">
+    <ActionCard
       href={`${base}materials/year-review`}
-      class="group block bg-white rounded-xl border border-slate-200 border-l-4 border-science-400 p-5 transition-colors hover:bg-science-50"
-    >
-      <p class="text-xs font-bold uppercase tracking-widest text-science-700 mb-2">Year Review</p>
-      <p class="text-sm text-slate-500 mb-4 leading-relaxed">End-of-year review covering all six units. Notes and a mixed-topic practice workbook.</p>
-      <span class="text-sm font-semibold text-science-700 group-hover:underline">View materials →</span>
-    </a>
-
-    <a
+      title="Year review"
+      description="End-of-year review covering all six units. Notes and a mixed-topic practice workbook."
+      cta="View materials"
+      index={6}
+    />
+    <ActionCard
       href={`${base}materials/fr`}
-      class="group block bg-white rounded-xl border border-slate-200 border-l-4 border-blue-400 p-5 transition-colors hover:bg-blue-50"
-    >
-      <p class="text-xs font-bold uppercase tracking-widest text-blue-700 mb-2">Français — Immersion</p>
-      <p class="text-sm text-slate-500 mb-4 leading-relaxed">Notes guidées et cahiers d'exercices en français pour toutes les unités. Niveau H–I.</p>
-      <span class="text-sm font-semibold text-blue-700 group-hover:underline">Voir les matériaux →</span>
-    </a>
+      title="Français · immersion"
+      description="Notes guidées et cahiers d'exercices en français pour toutes les unités. Niveau H–I."
+      cta="Voir les matériaux"
+      index={7}
+      lang="fr"
+    />
   </div>
 </BaseLayout>

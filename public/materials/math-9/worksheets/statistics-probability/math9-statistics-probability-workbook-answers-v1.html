@@ -39,7 +39,22 @@
       h2, h3 { break-after: avoid; }
       p { orphans: 3; widows: 3; }
     }
-  </style>
+  
+  /* ── Stacked fractions (scripts/stack_fractions.py) ── */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.15;
+    margin: 0 1px;
+  }
+  .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+  .frac .den { padding: 1px 3px 0; }
+
+  .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
 </head>
 <body>
   <div class="header-strip">
@@ -64,14 +79,14 @@
     <table>
       <thead><tr><th>Event</th><th>Favourable</th><th>Fraction</th><th>Decimal</th></tr></thead>
       <tbody>
-        <tr><td>Rolling a 4</td><td>{4}</td><td><strong>1/6</strong></td><td><strong>≈0.167</strong></td></tr>
-        <tr><td>Rolling even</td><td>{2,4,6}</td><td><strong>3/6 = 1/2</strong></td><td><strong>0.5</strong></td></tr>
-        <tr><td>Rolling &lt; 3</td><td>{1,2}</td><td><strong>2/6 = 1/3</strong></td><td><strong>≈0.333</strong></td></tr>
+        <tr><td>Rolling a 4</td><td>{4}</td><td><strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span></strong></td><td><strong>≈0.167</strong></td></tr>
+        <tr><td>Rolling even</td><td>{2,4,6}</td><td><strong><span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">6</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span></strong></td><td><strong>0.5</strong></td></tr>
+        <tr><td>Rolling &lt; 3</td><td>{1,2}</td><td><strong><span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">6</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span></strong></td><td><strong>≈0.333</strong></td></tr>
         <tr><td>Rolling a 7</td><td>{ }</td><td><strong>0</strong></td><td><strong>0</strong></td></tr>
         <tr><td>Rolling &lt; 7</td><td>{1,2,3,4,5,6}</td><td><strong>1</strong></td><td><strong>1</strong></td></tr>
       </tbody>
     </table>
-    <p><strong>(c)</strong> P(not 3) = 1 − 1/6 = <strong>5/6</strong></p>
+    <p><strong>(c)</strong> P(not 3) = 1 − <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span> = <strong><span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">6</span></span></strong></p>
   </div>
 
   <div class="question">
@@ -89,8 +104,8 @@
     <div class="worked-example">
       <p>All outcomes: (H,R), (H,B), (H,Y), (T,R), (T,B), (T,Y)</p>
       <p>(b) Total: 2 × 3 = <strong>6</strong></p>
-      <p>(c) P(H and B) = <strong>1/6</strong></p>
-      <p>(d) P(T and NOT Y) = P(T,R) + P(T,B) = <strong>2/6 = 1/3</strong></p>
+      <p>(c) P(H and B) = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span></strong></p>
+      <p>(d) P(T and NOT Y) = P(T,R) + P(T,B) = <strong><span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">6</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span></strong></p>
     </div>
   </div>
 
@@ -111,10 +126,10 @@
   <div class="question">
     <h3>Q5 ★ — Independent events with replacement (4R, 6B, 10 total)</h3>
     <div class="worked-example">
-      <p>(a) P(R draw 1) = <strong>4/10 = 2/5</strong></p>
-      <p>(b) P(B draw 2) = <strong>6/10 = 3/5</strong> — same because marble was <strong>replaced</strong> (composition unchanged)</p>
-      <p>(c) P(R then B) = (4/10) × (6/10) = <strong>24/100 = 6/25</strong></p>
-      <p>(d) P(B then B) = (6/10) × (6/10) = <strong>36/100 = 9/25</strong></p>
+      <p>(a) P(R draw 1) = <strong><span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">10</span></span> = <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">5</span></span></strong></p>
+      <p>(b) P(B draw 2) = <strong><span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">10</span></span> = <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">5</span></span></strong> — same because marble was <strong>replaced</strong> (composition unchanged)</p>
+      <p>(c) P(R then B) = (<span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">10</span></span>) × (<span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">10</span></span>) = <strong><span class="frac"><span class="num">24</span><span class="frac-slash">/</span><span class="den">100</span></span> = <span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">25</span></span></strong></p>
+      <p>(d) P(B then B) = (<span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">10</span></span>) × (<span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">10</span></span>) = <strong><span class="frac"><span class="num">36</span><span class="frac-slash">/</span><span class="den">100</span></span> = <span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">25</span></span></strong></p>
     </div>
   </div>
 
@@ -123,7 +138,7 @@
     <div class="worked-example">
       <p>Data: (2,55), (4,63), (5,70), (7,74), (8,80), (10,87), (12,93)</p>
       <p>(a–b) Plot: points rise clearly — strong positive trend.</p>
-      <p>(c–d) Sample calculation with points (2,55) and (12,93): m = (93−55)/(12−2) = 38/10 = <strong>3.8</strong> <em>(accept any reasonable line; Q9 uses 3.5)</em></p>
+      <p>(c–d) Sample calculation with points (2,55) and (12,93): m = <span class="frac"><span class="num">93−55</span><span class="frac-slash">/</span><span class="den">12−2</span></span> = <span class="frac"><span class="num">38</span><span class="frac-slash">/</span><span class="den">10</span></span> = <strong>3.8</strong> <em>(accept any reasonable line; Q9 uses 3.5)</em></p>
       <p>(e) "For each additional hour of study per week, the test score increases by approximately <strong>3.5–3.8 percentage points</strong>."</p>
     </div>
   </div>
@@ -131,7 +146,7 @@
   <div class="question">
     <h3>Q7 ★★ — Gambler's Fallacy</h3>
     <div class="worked-example">
-      <p>(a) P(heads on flip 9) = <strong>1/2</strong>. Because: each coin flip is completely independent — the coin has no memory of previous flips. P(heads) is always 1/2.</p>
+      <p>(a) P(heads on flip 9) = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span></strong>. Because: each coin flip is completely independent — the coin has no memory of previous flips. P(heads) is always <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>.</p>
       <p>(b) <strong>The Gambler's Fallacy</strong> — the belief that past independent events affect future probabilities.</p>
       <p>(c) Over a very large number of flips, heads and tails will each appear close to 50% of the time (Law of Large Numbers). BUT this happens because future flips collectively balance out — not because any single flip "compensates" for the past. The coin does not adjust to correct an imbalance.</p>
     </div>
@@ -143,13 +158,13 @@
       <table>
         <thead><tr><th>Colour</th><th>Frequency</th><th>Experimental P</th></tr></thead>
         <tbody>
-          <tr><td>Red</td><td>18</td><td><strong>18/50 = 9/25 = 0.36</strong></td></tr>
-          <tr><td>Blue</td><td>14</td><td><strong>14/50 = 7/25 = 0.28</strong></td></tr>
-          <tr><td>Yellow</td><td>10</td><td><strong>10/50 = 1/5 = 0.20</strong></td></tr>
-          <tr><td>Green</td><td>8</td><td><strong>8/50 = 4/25 = 0.16</strong></td></tr>
+          <tr><td>Red</td><td>18</td><td><strong><span class="frac"><span class="num">18</span><span class="frac-slash">/</span><span class="den">50</span></span> = <span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">25</span></span> = 0.36</strong></td></tr>
+          <tr><td>Blue</td><td>14</td><td><strong><span class="frac"><span class="num">14</span><span class="frac-slash">/</span><span class="den">50</span></span> = <span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">25</span></span> = 0.28</strong></td></tr>
+          <tr><td>Yellow</td><td>10</td><td><strong><span class="frac"><span class="num">10</span><span class="frac-slash">/</span><span class="den">50</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">5</span></span> = 0.20</strong></td></tr>
+          <tr><td>Green</td><td>8</td><td><strong><span class="frac"><span class="num">8</span><span class="frac-slash">/</span><span class="den">50</span></span> = <span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">25</span></span> = 0.16</strong></td></tr>
         </tbody>
       </table>
-      <p>(b) Theoretical = <strong>1/4 = 0.25</strong> each (equal sections)</p>
+      <p>(b) Theoretical = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span> = 0.25</strong> each (equal sections)</p>
       <p>(c) Red is furthest above theoretical (0.36 vs 0.25); Green is furthest below (0.16 vs 0.25).</p>
       <p>(d) Yes — with 5000 spins, the Law of Large Numbers brings experimental probabilities closer to theoretical. The larger the sample, the less chance variation dominates.</p>
     </div>
@@ -167,10 +182,10 @@
   <div class="question">
     <h3>Q10 ★ — Dependent events without replacement (5G, 3Y, 8 total)</h3>
     <div class="worked-example">
-      <p>(a) P(G draw 1) = <strong>5/8</strong></p>
-      <p>(b) After drawing green: <strong>4 green</strong> remain, <strong>7 total</strong> remain. P(G draw 2 | G draw 1) = <strong>4/7</strong></p>
-      <p>(c) P(G,G) = (5/8)(4/7) = <strong>20/56 = 5/14 ≈ 0.357</strong></p>
-      <p>(d) With replacement: (5/8)(5/8) = <strong>25/64 ≈ 0.391</strong>. <strong>With replacement is larger.</strong> Replacing restores P(G) to 5/8 for draw 2; without replacement, it drops to 4/7 because one green is gone.</p>
+      <p>(a) P(G draw 1) = <strong><span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">8</span></span></strong></p>
+      <p>(b) After drawing green: <strong>4 green</strong> remain, <strong>7 total</strong> remain. P(G draw 2 | G draw 1) = <strong><span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">7</span></span></strong></p>
+      <p>(c) P(G,G) = (<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">8</span></span>)(<span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">7</span></span>) = <strong><span class="frac"><span class="num">20</span><span class="frac-slash">/</span><span class="den">56</span></span> = <span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">14</span></span> ≈ 0.357</strong></p>
+      <p>(d) With replacement: (<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">8</span></span>)(<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">8</span></span>) = <strong><span class="frac"><span class="num">25</span><span class="frac-slash">/</span><span class="den">64</span></span> ≈ 0.391</strong>. <strong>With replacement is larger.</strong> Replacing restores P(G) to <span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">8</span></span> for draw 2; without replacement, it drops to <span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">7</span></span> because one green is gone.</p>
     </div>
   </div>
 
@@ -186,9 +201,9 @@
   <div class="question">
     <h3>Q12 ★ — Two dice</h3>
     <div class="worked-example">
-      <p>(a) Sum = 7: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1) = <strong>6</strong>. P = <strong>6/36 = 1/6</strong></p>
-      <p>(b) Doubles: (1,1),(2,2),(3,3),(4,4),(5,5),(6,6) = <strong>6</strong>. P = <strong>6/36 = 1/6</strong></p>
-      <p>(c) Sum ≥ 10: (4,6),(5,5),(6,4),(5,6),(6,5),(6,6) = <strong>6</strong>. P = <strong>6/36 = 1/6</strong></p>
+      <p>(a) Sum = 7: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1) = <strong>6</strong>. P = <strong><span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">36</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span></strong></p>
+      <p>(b) Doubles: (1,1),(2,2),(3,3),(4,4),(5,5),(6,6) = <strong>6</strong>. P = <strong><span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">36</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span></strong></p>
+      <p>(c) Sum ≥ 10: (4,6),(5,5),(6,4),(5,6),(6,5),(6,6) = <strong>6</strong>. P = <strong><span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">36</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span></strong></p>
     </div>
   </div>
 
@@ -205,8 +220,8 @@
   <div class="question">
     <h3>Q14 ★★ — 12G, 8B, 3 chosen without replacement</h3>
     <div class="worked-example">
-      <p>(a) P(all girls): (12/20) × (11/19) × (10/18) = 1320/6840 = <strong>11/57</strong></p>
-      <p>(b) P(B then G then G): (8/20) × (12/19) × (11/18) = 1056/6840 = <strong>44/285</strong></p>
+      <p>(a) P(all girls): (<span class="frac"><span class="num">12</span><span class="frac-slash">/</span><span class="den">20</span></span>) × (<span class="frac"><span class="num">11</span><span class="frac-slash">/</span><span class="den">19</span></span>) × (<span class="frac"><span class="num">10</span><span class="frac-slash">/</span><span class="den">18</span></span>) = <span class="frac"><span class="num">1320</span><span class="frac-slash">/</span><span class="den">6840</span></span> = <strong><span class="frac"><span class="num">11</span><span class="frac-slash">/</span><span class="den">57</span></span></strong></p>
+      <p>(b) P(B then G then G): (<span class="frac"><span class="num">8</span><span class="frac-slash">/</span><span class="den">20</span></span>) × (<span class="frac"><span class="num">12</span><span class="frac-slash">/</span><span class="den">19</span></span>) × (<span class="frac"><span class="num">11</span><span class="frac-slash">/</span><span class="den">18</span></span>) = <span class="frac"><span class="num">1056</span><span class="frac-slash">/</span><span class="den">6840</span></span> = <strong><span class="frac"><span class="num">44</span><span class="frac-slash">/</span><span class="den">285</span></span></strong></p>
       <p>(c) <strong>Dependent</strong> — each selection removes a student from the pool, changing the probabilities for subsequent draws (denominator decreases each time).</p>
     </div>
   </div>
@@ -214,9 +229,9 @@
   <div class="question">
     <h3>Q15 ★ — Standard deck of 52 cards</h3>
     <div class="worked-example">
-      <p>(a) P(king) = 4/52 = <strong>1/13</strong>. P(not king) = 48/52 = <strong>12/13</strong></p>
-      <p>(b) P(red) = 26/52 = <strong>1/2</strong>. P(black) = <strong>1/2</strong></p>
-      <p>(c) P(face card) = 12/52 = <strong>3/13</strong>. P(not face card) = 40/52 = <strong>10/13</strong></p>
+      <p>(a) P(king) = <span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">52</span></span> = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">13</span></span></strong>. P(not king) = <span class="frac"><span class="num">48</span><span class="frac-slash">/</span><span class="den">52</span></span> = <strong><span class="frac"><span class="num">12</span><span class="frac-slash">/</span><span class="den">13</span></span></strong></p>
+      <p>(b) P(red) = <span class="frac"><span class="num">26</span><span class="frac-slash">/</span><span class="den">52</span></span> = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span></strong>. P(black) = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span></strong></p>
+      <p>(c) P(face card) = <span class="frac"><span class="num">12</span><span class="frac-slash">/</span><span class="den">52</span></span> = <strong><span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">13</span></span></strong>. P(not face card) = <span class="frac"><span class="num">40</span><span class="frac-slash">/</span><span class="den">52</span></span> = <strong><span class="frac"><span class="num">10</span><span class="frac-slash">/</span><span class="den">13</span></span></strong></p>
     </div>
   </div>
 
@@ -234,8 +249,8 @@
     <h3>Q17 ★ — Cafeteria combinations (2 soups × 3 sandwiches × 2 desserts)</h3>
     <div class="worked-example">
       <p>(a) 2 × 3 × 2 = <strong>12</strong></p>
-      <p>(b) P(chicken AND cheese AND fruit) = (1/2)(1/3)(1/2) = <strong>1/12</strong></p>
-      <p>(c) P(vegetable soup AND anything AND cookie) = (1/2)(1)(1/2) = <strong>1/4</strong></p>
+      <p>(b) P(chicken AND cheese AND fruit) = (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>)(<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>)(<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>) = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">12</span></span></strong></p>
+      <p>(c) P(vegetable soup AND anything AND cookie) = (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>)(1)(<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>) = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span></strong></p>
     </div>
   </div>
 
@@ -266,11 +281,11 @@
   <div class="question">
     <h3>Q20 ★★ — Win if both marbles same colour (6R,4B,2G, 12 total, no replacement)</h3>
     <div class="worked-example">
-      <p>(a) P(both R) = (6/12)(5/11) = 30/132 = <strong>5/22</strong></p>
-      <p>(b) P(both B) = (4/12)(3/11) = 12/132 = <strong>1/11</strong></p>
-      <p>(c) P(both G) = (2/12)(1/11) = 2/132 = <strong>1/66</strong></p>
-      <p>(d) P(winning) = 30/132 + 12/132 + 2/132 = 44/132 = <strong>1/3</strong></p>
-      <p>(e) P(not winning) = 1 − 1/3 = <strong>2/3</strong></p>
+      <p>(a) P(both R) = (<span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">12</span></span>)(<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">11</span></span>) = <span class="frac"><span class="num">30</span><span class="frac-slash">/</span><span class="den">132</span></span> = <strong><span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">22</span></span></strong></p>
+      <p>(b) P(both B) = (<span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">12</span></span>)(<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">11</span></span>) = <span class="frac"><span class="num">12</span><span class="frac-slash">/</span><span class="den">132</span></span> = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">11</span></span></strong></p>
+      <p>(c) P(both G) = (<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">12</span></span>)(<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">11</span></span>) = <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">132</span></span> = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">66</span></span></strong></p>
+      <p>(d) P(winning) = <span class="frac"><span class="num">30</span><span class="frac-slash">/</span><span class="den">132</span></span> + <span class="frac"><span class="num">12</span><span class="frac-slash">/</span><span class="den">132</span></span> + <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">132</span></span> = <span class="frac"><span class="num">44</span><span class="frac-slash">/</span><span class="den">132</span></span> = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span></strong></p>
+      <p>(e) P(not winning) = 1 − <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span> = <strong><span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span></strong></p>
     </div>
   </div>
 
@@ -279,7 +294,7 @@
     <div class="worked-example">
       <p>(a) <strong>Strong negative</strong> — as screen time increases, reading decreases.</p>
       <p>(b) Plot: generally descending. One point (6,4) is slightly above the trend.</p>
-      <p>(c) Using (1,7) and (8,1): m = (1−7)/(8−1) = −6/7 ≈ −0.86. Equation: <strong>y ≈ −0.86x + 7.86</strong> (or approximately y ≈ −x + 8)</p>
+      <p>(c) Using (1,7) and (8,1): m = <span class="frac"><span class="num">1−7</span><span class="frac-slash">/</span><span class="den">8−1</span></span> = −<span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">7</span></span> ≈ −0.86. Equation: <strong>y ≈ −0.86x + 7.86</strong> (or approximately y ≈ −x + 8)</p>
       <p>(d) No — correlation doesn't prove causation. Third variable: <strong>parental habits</strong> (parents who limit screen time may also encourage reading). Or <strong>homework load</strong> (more homework → less screen time AND more required reading).</p>
     </div>
   </div>
@@ -299,19 +314,19 @@
       </table>
       <div class="worked-example">
         <p>All very close — differences within normal random variation.</p>
-        <p>Green explanations: (1) <strong>Spinner design</strong> — green section might be physically slightly larger than 1/5. (2) <strong>Chance</strong> — with only 100 spins, small deviations from theoretical are expected.</p>
+        <p>Green explanations: (1) <strong>Spinner design</strong> — green section might be physically slightly larger than <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">5</span></span>. (2) <strong>Chance</strong> — with only 100 spins, small deviations from theoretical are expected.</p>
       </div>
     </div>
 
     <div class="question">
       <h3>S2 — 15 students (10G, 5B), 2 chosen without replacement</h3>
       <div class="worked-example">
-        <p>P(both G): (10/15)(9/14) = 90/210 = <strong>3/7</strong></p>
-        <p>P(GB): (10/15)(5/14) = 50/210 = <strong>5/21</strong></p>
-        <p>P(BG): (5/15)(10/14) = 50/210 = <strong>5/21</strong></p>
-        <p>P(one of each): 5/21 + 5/21 = <strong>10/21</strong></p>
-        <p>P(both B): (5/15)(4/14) = 20/210 = <strong>2/21</strong></p>
-        <p>Check: 9/21 + 2/21 + 10/21 = <strong>21/21 = 1 ✓</strong></p>
+        <p>P(both G): (<span class="frac"><span class="num">10</span><span class="frac-slash">/</span><span class="den">15</span></span>)(<span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">14</span></span>) = <span class="frac"><span class="num">90</span><span class="frac-slash">/</span><span class="den">210</span></span> = <strong><span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">7</span></span></strong></p>
+        <p>P(GB): (<span class="frac"><span class="num">10</span><span class="frac-slash">/</span><span class="den">15</span></span>)(<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">14</span></span>) = <span class="frac"><span class="num">50</span><span class="frac-slash">/</span><span class="den">210</span></span> = <strong><span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">21</span></span></strong></p>
+        <p>P(BG): (<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">15</span></span>)(<span class="frac"><span class="num">10</span><span class="frac-slash">/</span><span class="den">14</span></span>) = <span class="frac"><span class="num">50</span><span class="frac-slash">/</span><span class="den">210</span></span> = <strong><span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">21</span></span></strong></p>
+        <p>P(one of each): <span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">21</span></span> + <span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">21</span></span> = <strong><span class="frac"><span class="num">10</span><span class="frac-slash">/</span><span class="den">21</span></span></strong></p>
+        <p>P(both B): (<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">15</span></span>)(<span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">14</span></span>) = <span class="frac"><span class="num">20</span><span class="frac-slash">/</span><span class="den">210</span></span> = <strong><span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">21</span></span></strong></p>
+        <p>Check: <span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">21</span></span> + <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">21</span></span> + <span class="frac"><span class="num">10</span><span class="frac-slash">/</span><span class="den">21</span></span> = <strong><span class="frac"><span class="num">21</span><span class="frac-slash">/</span><span class="den">21</span></span> = 1 ✓</strong></p>
       </div>
     </div>
 

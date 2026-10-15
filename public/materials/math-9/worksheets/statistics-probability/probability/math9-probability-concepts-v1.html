@@ -40,7 +40,22 @@
       h2, h3, h4 { break-after: avoid; }
       p { orphans: 3; widows: 3; }
     }
-  </style>
+  
+  /* ── Stacked fractions (scripts/stack_fractions.py) ── */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.15;
+    margin: 0 1px;
+  }
+  .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+  .frac .den { padding: 1px 3px 0; }
+
+  .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
 </head>
 <body>
   <div class="header-strip">
@@ -55,8 +70,8 @@
     <tbody>
       <tr><td><strong>Sample space</strong></td><td>All possible outcomes</td><td>{H, T} for a coin flip</td></tr>
       <tr><td><strong>Event</strong></td><td>One or more outcomes of interest</td><td>Getting an even number</td></tr>
-      <tr><td><strong>Theoretical probability</strong></td><td>Calculated from equally likely outcomes</td><td>P(even on a die) = 3/6 = 1/2</td></tr>
-      <tr><td><strong>Experimental probability</strong></td><td>From actual trials</td><td>14 heads in 20 flips = 14/20 = 0.7</td></tr>
+      <tr><td><strong>Theoretical probability</strong></td><td>Calculated from equally likely outcomes</td><td>P(even on a die) = <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">6</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span></td></tr>
+      <tr><td><strong>Experimental probability</strong></td><td>From actual trials</td><td>14 heads in 20 flips = <span class="frac"><span class="num">14</span><span class="frac-slash">/</span><span class="den">20</span></span> = 0.7</td></tr>
       <tr><td><strong>Complementary event</strong></td><td>All outcomes that are NOT event A</td><td>P(not A) = 1 − P(A)</td></tr>
       <tr><td><strong>Independent events</strong></td><td>Outcome of one does not affect the other</td><td>Two coin flips</td></tr>
       <tr><td><strong>Dependent events</strong></td><td>Outcome of first changes the probability of the second</td><td>Drawing without replacement</td></tr>
@@ -77,18 +92,18 @@
   <h2>Worked Example 1 — Independent Events</h2>
   <div class="worked-example">
     <p><strong>Bag: 3 red, 5 blue (8 total). Draw one marble, replace it, draw again.</strong></p>
-    <p>P(red on draw 1) = 3/8</p>
-    <p>P(blue on draw 2) = 5/8 ← same because replacement restores the bag</p>
-    <p>P(red then blue) = (3/8) × (5/8) = <strong>15/64</strong></p>
+    <p>P(red on draw 1) = <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">8</span></span></p>
+    <p>P(blue on draw 2) = <span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">8</span></span> ← same because replacement restores the bag</p>
+    <p>P(red then blue) = (<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">8</span></span>) × (<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">8</span></span>) = <strong><span class="frac"><span class="num">15</span><span class="frac-slash">/</span><span class="den">64</span></span></strong></p>
   </div>
 
   <h2>Worked Example 2 — Dependent Events</h2>
   <div class="worked-example">
     <p><strong>Same bag (3 red, 5 blue). Draw WITHOUT replacement.</strong></p>
-    <p>P(red on draw 1) = 3/8</p>
+    <p>P(red on draw 1) = <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">8</span></span></p>
     <p>After removing 1 red: 2 red remain, 7 total remain</p>
-    <p>P(red on draw 2 | red on draw 1) = <strong>2/7</strong></p>
-    <p>P(red then red) = (3/8) × (2/7) = <strong>6/56 = 3/28</strong></p>
+    <p>P(red on draw 2 | red on draw 1) = <strong><span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">7</span></span></strong></p>
+    <p>P(red then red) = (<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">8</span></span>) × (<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">7</span></span>) = <strong><span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">56</span></span> = <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">28</span></span></strong></p>
   </div>
 
   <h2>Worked Example 3 — Sample Space</h2>
@@ -96,14 +111,14 @@
     <p><strong>Roll two dice. P(sum = 8).</strong></p>
     <p>Total outcomes = 6 × 6 = <strong>36</strong></p>
     <p>Outcomes summing to 8: (2,6), (3,5), (4,4), (5,3), (6,2) → <strong>5 outcomes</strong></p>
-    <p>P(sum = 8) = <strong>5/36</strong></p>
+    <p>P(sum = 8) = <strong><span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">36</span></span></strong></p>
   </div>
 
   <h2>The Gambler's Fallacy — Do NOT Believe This</h2>
   <div class="misconception">
     <div class="label">Misconception</div>
     <p>"Getting tails 5 times in a row means heads is 'due.'"</p>
-    <p><strong>Wrong.</strong> Independent events have no memory. P(heads) = 1/2 on every flip, regardless of past results.</p>
+    <p><strong>Wrong.</strong> Independent events have no memory. P(heads) = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> on every flip, regardless of past results.</p>
   </div>
 
   <h2>Common Mistakes</h2>

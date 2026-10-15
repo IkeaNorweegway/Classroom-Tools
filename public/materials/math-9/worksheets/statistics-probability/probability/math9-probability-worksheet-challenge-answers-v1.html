@@ -39,7 +39,22 @@
       h2, h3 { break-after: avoid; }
       p { orphans: 3; widows: 3; }
     }
-  </style>
+  
+  /* ── Stacked fractions (scripts/stack_fractions.py) ── */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.15;
+    margin: 0 1px;
+  }
+  .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+  .frac .den { padding: 1px 3px 0; }
+
+  .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
 </head>
 <body>
   <div class="header-strip">
@@ -63,13 +78,13 @@
     <p><strong>(a) "Tails 10 times — heads is overdue":</strong></p>
     <div class="worked-example">
       <p><strong>Error named: The Gambler's Fallacy.</strong></p>
-      <p><strong>Correct reasoning:</strong> A fair coin has no memory. Each flip is a completely independent event. P(heads) = 1/2 on every flip, regardless of what happened before. The coin does not "owe" any outcome.</p>
+      <p><strong>Correct reasoning:</strong> A fair coin has no memory. Each flip is a completely independent event. P(heads) = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> on every flip, regardless of what happened before. The coin does not "owe" any outcome.</p>
     </div>
     <p><strong>(b) P(both red) without replacement, treated as with replacement:</strong></p>
     <div class="worked-example">
       <p><strong>Error:</strong> Used the same denominator (10) for both draws — didn't account for "without replacement." After drawing one red, only 9 marbles remain and only 4 reds.</p>
-      <p><strong>Setup:</strong> P(both red) = (5/10) × (4/9)</p>
-      <p><strong>Final answer: P(both red) = 20/90 = 2/9</strong></p>
+      <p><strong>Setup:</strong> P(both red) = (<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">10</span></span>) × (<span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">9</span></span>)</p>
+      <p><strong>Final answer: P(both red) = <span class="frac"><span class="num">20</span><span class="frac-slash">/</span><span class="den">90</span></span> = <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">9</span></span></strong></p>
     </div>
     <p><strong>(c) "P(A or B) = P(A) × P(B)":</strong></p>
     <div class="worked-example">
@@ -82,18 +97,18 @@
     <p><strong>2.</strong> Dependent events — class of 15 (8 boys, 7 girls), 3 chosen without replacement</p>
     <p><strong>(a) P(all three girls):</strong></p>
     <div class="worked-example">
-      <p><strong>Setup:</strong> (7/15) × (6/14) × (5/13) = 210/2730</p>
-      <p><strong>Final answer: 210/2730 = 1/13</strong></p>
+      <p><strong>Setup:</strong> (<span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">15</span></span>) × (<span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">14</span></span>) × (<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">13</span></span>) = <span class="frac"><span class="num">210</span><span class="frac-slash">/</span><span class="den">2730</span></span></p>
+      <p><strong>Final answer: <span class="frac"><span class="num">210</span><span class="frac-slash">/</span><span class="den">2730</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">13</span></span></strong></p>
     </div>
     <p><strong>(b) P(first two boys, third girl):</strong></p>
     <div class="worked-example">
-      <p><strong>Setup:</strong> (8/15) × (7/14) × (7/13). After 2 boys drawn: 13 remain, still 7 girls. P(G|2 boys) = 7/13.</p>
-      <p><strong>Final answer: (8/15)(7/14)(7/13) = 392/2730 = 28/195</strong></p>
+      <p><strong>Setup:</strong> (<span class="frac"><span class="num">8</span><span class="frac-slash">/</span><span class="den">15</span></span>) × (<span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">14</span></span>) × (<span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">13</span></span>). After 2 boys drawn: 13 remain, still 7 girls. P(G|2 boys) = <span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">13</span></span>.</p>
+      <p><strong>Final answer: (<span class="frac"><span class="num">8</span><span class="frac-slash">/</span><span class="den">15</span></span>)(<span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">14</span></span>)(<span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">13</span></span>) = <span class="frac"><span class="num">392</span><span class="frac-slash">/</span><span class="den">2730</span></span> = <span class="frac"><span class="num">28</span><span class="frac-slash">/</span><span class="den">195</span></span></strong></p>
     </div>
     <p><strong>(c) P(at least one girl):</strong></p>
     <div class="worked-example">
-      <p><strong>Setup:</strong> P(all boys) = (8/15)(7/14)(6/13) = 336/2730 = 8/65</p>
-      <p>P(at least one girl) = 1 − 8/65 = <strong>57/65</strong></p>
+      <p><strong>Setup:</strong> P(all boys) = (<span class="frac"><span class="num">8</span><span class="frac-slash">/</span><span class="den">15</span></span>)(<span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">14</span></span>)(<span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">13</span></span>) = <span class="frac"><span class="num">336</span><span class="frac-slash">/</span><span class="den">2730</span></span> = <span class="frac"><span class="num">8</span><span class="frac-slash">/</span><span class="den">65</span></span></p>
+      <p>P(at least one girl) = 1 − <span class="frac"><span class="num">8</span><span class="frac-slash">/</span><span class="den">65</span></span> = <strong><span class="frac"><span class="num">57</span><span class="frac-slash">/</span><span class="den">65</span></span></strong></p>
     </div>
   </div>
 
@@ -114,27 +129,27 @@
     <p><strong>(b) P(sum is prime) — primes: {2,3,5,7,11}:</strong></p>
     <div class="worked-example">
       <p>Sum=2: 1 way | Sum=3: 2 ways | Sum=5: 4 ways | Sum=7: 6 ways | Sum=11: 2 ways</p>
-      <p>Total = <strong>15</strong> outcomes | <strong>P = 15/36 = 5/12</strong></p>
+      <p>Total = <strong>15</strong> outcomes | <strong>P = <span class="frac"><span class="num">15</span><span class="frac-slash">/</span><span class="den">36</span></span> = <span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">12</span></span></strong></p>
     </div>
     <p><strong>(c) P(sum divisible by 4):</strong></p>
     <div class="worked-example">
       <p>Sum=4: (1,3),(2,2),(3,1) = 3 | Sum=8: (2,6),(3,5),(4,4),(5,3),(6,2) = 5 | Sum=12: (6,6) = 1</p>
-      <p>Total = <strong>9</strong> | <strong>P = 9/36 = 1/4</strong></p>
+      <p>Total = <strong>9</strong> | <strong>P = <span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">36</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span></strong></p>
     </div>
     <p><strong>(d) P(at least one 6):</strong></p>
     <div class="worked-example">
-      <p><strong>Setup:</strong> P(no 6 on either die) = (5/6)(5/6) = 25/36</p>
-      <p>P(at least one 6) = 1 − 25/36 = <strong>11/36</strong></p>
+      <p><strong>Setup:</strong> P(no 6 on either die) = (<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">6</span></span>)(<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">6</span></span>) = <span class="frac"><span class="num">25</span><span class="frac-slash">/</span><span class="den">36</span></span></p>
+      <p>P(at least one 6) = 1 − <span class="frac"><span class="num">25</span><span class="frac-slash">/</span><span class="den">36</span></span> = <strong><span class="frac"><span class="num">11</span><span class="frac-slash">/</span><span class="den">36</span></span></strong></p>
     </div>
   </div>
 
   <div class="question">
     <p><strong>4.</strong> Experimental vs. theoretical — 200 coin flips, 112 heads</p>
     <div class="worked-example">
-      <p>(a) Experimental P(heads) = 112/200 = <strong>0.56</strong></p>
+      <p>(a) Experimental P(heads) = <span class="frac"><span class="num">112</span><span class="frac-slash">/</span><span class="den">200</span></span> = <strong>0.56</strong></p>
       <p>(b) Theoretical P(heads) = <strong>0.5</strong></p>
       <p>(c) <strong>Not "wrong" — expected due to chance.</strong> Experimental probability naturally varies from theoretical, especially with a relatively small sample. With 10,000 flips, the experimental probability would converge much closer to 0.5 (Law of Large Numbers) — because the influence of any short-term run diminishes as the sample grows.</p>
-      <p>(d) <strong>Conclusion of bias not justified.</strong> A difference of 12/200 (0.56 vs 0.5) falls within normal random variation. Claiming a coin is biased would require a proper statistical test and typically thousands more trials. 200 flips with 112 heads is plausible even for a perfectly fair coin.</p>
+      <p>(d) <strong>Conclusion of bias not justified.</strong> A difference of <span class="frac"><span class="num">12</span><span class="frac-slash">/</span><span class="den">200</span></span> (0.56 vs 0.5) falls within normal random variation. Claiming a coin is biased would require a proper statistical test and typically thousands more trials. 200 flips with 112 heads is plausible even for a perfectly fair coin.</p>
     </div>
   </div>
 
@@ -142,9 +157,9 @@
     <p><strong>5.</strong> Locker combination — 3 digits from 0–9</p>
     <div class="worked-example">
       <p>(a) Total combinations: 10 × 10 × 10 = <strong>1000</strong></p>
-      <p>(b) Combinations with all same digits: {000,111,...,999} = <strong>10</strong>. P = 10/1000 = <strong>1/100</strong></p>
-      <p>(c) First digit = 0: 1 × 10 × 10 = 100 combinations. P = 100/1000 = <strong>1/10</strong></p>
-      <p>(d) First digit must be 5,6,7,8, or 9: 5 × 10 × 10 = 500 combinations. P = 500/1000 = <strong>1/2</strong></p>
+      <p>(b) Combinations with all same digits: {000,111,...,999} = <strong>10</strong>. P = <span class="frac"><span class="num">10</span><span class="frac-slash">/</span><span class="den">1000</span></span> = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">100</span></span></strong></p>
+      <p>(c) First digit = 0: 1 × 10 × 10 = 100 combinations. P = <span class="frac"><span class="num">100</span><span class="frac-slash">/</span><span class="den">1000</span></span> = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">10</span></span></strong></p>
+      <p>(d) First digit must be 5,6,7,8, or 9: 5 × 10 × 10 = 500 combinations. P = <span class="frac"><span class="num">500</span><span class="frac-slash">/</span><span class="den">1000</span></span> = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span></strong></p>
     </div>
   </div>
 
@@ -152,28 +167,28 @@
     <p><strong>6.</strong> Cultural event — 12 cards (4 seasons × 3 each), 2 drawn without replacement</p>
     <p><strong>(a) P(both summer):</strong></p>
     <div class="worked-example">
-      <p><strong>Setup:</strong> (3/12) × (2/11) = 6/132 = <strong>1/22</strong></p>
+      <p><strong>Setup:</strong> (<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">12</span></span>) × (<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">11</span></span>) = <span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">132</span></span> = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">22</span></span></strong></p>
     </div>
     <p><strong>(b) P(both same season):</strong></p>
     <div class="worked-example">
-      <p>Each season contributes (3/12)(2/11) = 1/22. 4 seasons × 1/22 = <strong>4/22 = 2/11</strong></p>
+      <p>Each season contributes (<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">12</span></span>)(<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">11</span></span>) = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">22</span></span>. 4 seasons × <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">22</span></span> = <strong><span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">22</span></span> = <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">11</span></span></strong></p>
     </div>
     <p><strong>(c) P(different seasons):</strong></p>
-    <div class="worked-example"><p>1 − 2/11 = <strong>9/11</strong></p></div>
+    <div class="worked-example"><p>1 − <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">11</span></span> = <strong><span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">11</span></span></strong></p></div>
   </div>
 
   <div class="question">
     <p><strong>7.</strong> "At least one" strategy — 3 defective, 7 working (10 total)</p>
     <p><strong>(a) P(no defective bulbs):</strong></p>
     <div class="worked-example">
-      <p><strong>Setup:</strong> (7/10)(6/9)(5/8) = 210/720 = <strong>7/24</strong></p>
+      <p><strong>Setup:</strong> (<span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">10</span></span>)(<span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">9</span></span>)(<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">8</span></span>) = <span class="frac"><span class="num">210</span><span class="frac-slash">/</span><span class="den">720</span></span> = <strong><span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">24</span></span></strong></p>
     </div>
     <p><strong>(b) P(at least one defective):</strong></p>
-    <div class="worked-example"><p>1 − 7/24 = <strong>17/24 ≈ 0.708</strong></p></div>
+    <div class="worked-example"><p>1 − <span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">24</span></span> = <strong><span class="frac"><span class="num">17</span><span class="frac-slash">/</span><span class="den">24</span></span> ≈ 0.708</strong></p></div>
     <p><strong>(c) P(exactly three defective):</strong></p>
     <div class="worked-example">
-      <p>(3/10)(2/9)(1/8) = 6/720 = <strong>1/120 ≈ 0.008</strong></p>
-      <p>This is one component of P(at least one). P(exactly 1) + P(exactly 2) + P(exactly 3) should equal 17/24. The fact that P(exactly 3) = 1/120 is small confirms it's an uncommon outcome, consistent with 17/24 being the overall "at least one" probability.</p>
+      <p>(<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">10</span></span>)(<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">9</span></span>)(<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">8</span></span>) = <span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">720</span></span> = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">120</span></span> ≈ 0.008</strong></p>
+      <p>This is one component of P(at least one). P(exactly 1) + P(exactly 2) + P(exactly 3) should equal <span class="frac"><span class="num">17</span><span class="frac-slash">/</span><span class="den">24</span></span>. The fact that P(exactly 3) = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">120</span></span> is small confirms it's an uncommon outcome, consistent with <span class="frac"><span class="num">17</span><span class="frac-slash">/</span><span class="den">24</span></span> being the overall "at least one" probability.</p>
     </div>
   </div>
 
@@ -184,10 +199,10 @@
       <p><strong>Problem:</strong> An Edson community centre holds a raffle with 8 tickets: 5 winning and 3 losing. Two tickets are drawn without replacement. What is the probability that both are winning tickets?</p>
       <p><strong>Sample space:</strong> 8 tickets total; draw 1 from 8, then draw 1 from remaining 7.</p>
       <p><strong>Solution:</strong><br>
-      P(winning draw 1) = 5/8<br>
+      P(winning draw 1) = <span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">8</span></span><br>
       After one winning ticket removed: 4 winning remain, 7 total.<br>
-      P(winning draw 2 | winning draw 1) = 4/7</p>
-      <p>P(both winning) = (5/8)(4/7) = 20/56 = <strong>5/14 ≈ 0.357</strong></p>
+      P(winning draw 2 | winning draw 1) = <span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">7</span></span></p>
+      <p>P(both winning) = (<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">8</span></span>)(<span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">7</span></span>) = <span class="frac"><span class="num">20</span><span class="frac-slash">/</span><span class="den">56</span></span> = <strong><span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">14</span></span> ≈ 0.357</strong></p>
     </div>
   </div>
 </body>
