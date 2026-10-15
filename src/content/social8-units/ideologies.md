@@ -4,14 +4,22 @@ organizingIdea: "Time and Place"
 order: 1
 guidingQuestion: How have ideologies formed over time?
 learningOutcome: Students examine the foundations and influences of ideologies.
+hook: "Should the rules put each person first, or the whole group first? People have argued about that for 2,500 years, and the argument still shapes the news today."
+realWorld:
+  - title: "Class rules"
+    blurb: "Should everyone vote on class rules, or should the teacher decide? That’s an old question about who should lead."
+  - title: "Team or solo"
+    blurb: "Splitting chores at home or playing on a team shows the pull between “me” and “us”."
+  - title: "The news"
+    blurb: "When politicians argue about taxes or programs, they’re often arguing about ideologies."
+iCan:
+  - "I can compare individualism and collectivism."
+  - "I can place ideas on the political spectrum from left to right."
+  - "I can describe communism, socialism, liberalism and conservatism in my own words."
+  - "I can explain how an extreme ideology led to totalitarian government and the Holocaust."
+teacherSummary: "Plato and Aristotle, individualism vs. collectivism, the political spectrum, the four ideologies, and totalitarianism with the Holocaust as a primary-source case study. Watch for communism and socialism treated as the same, and ideologies confused with parties."
 ---
 
-Why do some countries put the individual first, and others put the group first? The answer starts almost 2,500 years ago, with two Greek philosophers who disagreed about who should run a society: Plato, who trusted wise leaders, and Aristotle, who trusted good laws. That disagreement never really ended — it just kept splitting into new forms.
+## What's the big idea?
 
-## What you will explore
-
-You will trace the line from **individualism vs. collectivism** — the single idea underneath every ideology — through the **political spectrum**, and into the four ideologies that shape real governments today: **communism, socialism, liberalism, and conservatism**. You will also confront what happens when an ideology is pushed to its most extreme and violent conclusion: **totalitarian government**, using the Holocaust as the case study that shows exactly how that happens and why it must never be treated as ancient history.
-
-## By the end of this unit
-
-You will be able to compare individualism and collectivism and explain why people are drawn to one or the other, place the four major ideologies on a political spectrum and describe what each one believes, and use primary sources to understand how an ideology can be used to justify the persecution of a group of people.
+An **ideology** is a set of big ideas about how society should work. Some ideologies put the **individual** first: your freedom and your choices. Others put the **collective**, the whole group, first. We line them up on a **political spectrum** from left to right. When an ideology is pushed to the extreme, a government can take total control. That's what happened in Nazi Germany, and it led to the Holocaust.

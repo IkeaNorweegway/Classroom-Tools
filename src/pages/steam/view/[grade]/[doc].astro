@@ -1,5 +1,8 @@
 ---
 import Nav from '../../../../components/Nav.astro';
+import { steam as manifest } from '../../../../data/steam';
+import { unitDocs } from '../../../../data/manifest';
+import { existsSync } from 'node:fs';
 const base = import.meta.env.BASE_URL;
 
 export function getStaticPaths() {
@@ -44,6 +47,14 @@ export function getStaticPaths() {
       paths.push({ params: { grade, doc } });
     }
   }
+  // Every document the course's pages link to (from the manifest), including
+  // the parent home sheets. Routes listed above stay even if no page links them.
+  for (const u of manifest.units) {
+    for (const doc of unitDocs(u)) {
+      if (!existsSync(`public/materials/${doc}.html`)) console.warn(`[${manifest.course}] missing material: ${doc}.html`);
+      if (!paths.some((p) => p.params.grade === u.slug && p.params.doc === doc)) paths.push({ params: { grade: u.slug, doc } });
+    }
+  }
   return paths;
 }
 
@@ -57,8 +68,10 @@ const gradeLabels: Record<string, string> = {
   'grade-9': 'Grade 9',
 };
 
-const backHref = `${base}steam/materials/${grade}`;
-const backLabel = `← ${gradeLabels[grade!] ?? 'STEAM'}`;
+// Home practice sheets belong to the parent guide; everything else to the unit page.
+const isHome = doc!.includes('-home-');
+const backHref = isHome ? `${base}${manifest.parentHref(grade!)}` : `${base}steam/materials/${grade}`;
+const backLabel = isHome ? '← Parent guide' : `← ${gradeLabels[grade!] ?? 'STEAM'}`;
 const fileUrl = `${base}materials/${doc}.html`;
 ---
 

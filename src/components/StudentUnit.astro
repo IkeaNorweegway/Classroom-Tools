@@ -1,0 +1,152 @@
+---
+// Student unit page, shared by every course: what the unit is about in kid
+// language, where it shows up in real life, and the materials as numbered
+// steps in the order they should be worked. Answer keys stay collapsed.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CourseHero from './CourseHero.astro';
+import MaterialRow from './MaterialRow.astro';
+import ActionCard from './ActionCard.astro';
+import { courseByKey } from '../data/courses';
+import type { CourseManifest, CourseUnit, Doc } from '../data/manifest';
+
+interface Props {
+  manifest: CourseManifest;
+  unit: CourseUnit;
+  title: string;
+  eyebrow: string;
+  back: { href: string; label: string };
+  /** Student intro from the unit's content entry; absent for review units. */
+  intro?: { hook: string; realWorld: { title: string; blurb: string }[]; iCan: string[] };
+  Content?: any;
+  /** Used as the hero text when there is no intro. */
+  description?: string;
+  /** Whether this unit has a parent guide; otherwise Parent goes to the overview. */
+  hasParentGuide?: boolean;
+  actions?: { href: string; title: string; description: string; cta: string }[];
+  prev?: CourseUnit;
+  next?: CourseUnit;
+}
+
+const { manifest: m, unit: u, title, eyebrow, back, intro, Content, description, hasParentGuide = true, actions = [], prev, next } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const course = courseByKey(m.course)!;
+const href = (d: Doc) => `${base}${d.href ?? m.viewHref(u.slug, d.doc)}`;
+
+const audienceLinks = {
+  parent: course.parentPath && (hasParentGuide ? m.parentHref(u.slug) : course.parentPath),
+  teacher: m.teacherHref?.(u.slug),
+};
+const noun = m.noun;
+---
+
+<BaseLayout course={m.course} title={title} description={intro?.hook ?? description} audienceLinks={audienceLinks}>
+  <CourseHero back={back} eyebrow={eyebrow} title={u.label} description={intro?.hook ?? description} />
+
+  {intro && (
+    <section class="mb-12" aria-labelledby="real-world">
+      <h2 id="real-world" class="mb-4 text-sm font-semibold text-slate-500">Where you’ll see this</h2>
+      <ul class="grid gap-3 sm:grid-cols-3">
+        {intro.realWorld.map((r, i) => (
+          <li class="rise raised rounded-2xl p-5" style={`--i: ${i}; background: linear-gradient(160deg, rgb(var(--accent-soft)), rgb(255 255 255) 80%)`}>
+            <p class="mb-1.5 text-[1rem] font-bold text-slate-900">{r.title}</p>
+            <p class="text-[0.9375rem] leading-relaxed text-slate-700">{r.blurb}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {intro && Content && (
+    <section class="mb-14 grid gap-6 lg:grid-cols-[1.35fr_1fr]">
+      <div class="prose max-w-[60ch] text-[1.0625rem] text-slate-800 [&>h2:first-child]:mt-0">
+        <Content />
+      </div>
+      <div class="raised self-start rounded-2xl p-5">
+        <h2 class="mb-3 text-sm font-semibold text-accent-ink">By the end, you can say…</h2>
+        <ul class="grid gap-2.5">
+          {intro.iCan.map((s) => (
+            <li class="flex gap-2.5 text-[0.9375rem] leading-snug text-slate-700">
+              <span class="mt-[0.2rem] grid h-4 w-4 shrink-0 place-items-center rounded-[5px] border-[1.5px] border-accent/60" aria-hidden="true"></span>
+              <span>{s}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <section class="mb-12" aria-labelledby="your-path">
+    <h2 id="your-path" class="mb-1.5 font-display text-[1.75rem] font-medium tracking-[-0.015em] text-slate-900">
+      {u.path.some((s) => s.title) ? 'Your projects' : 'Your path'}
+    </h2>
+    <p class="mb-6 text-slate-600">Work through these in order.</p>
+    <ol class="grid gap-4">
+      {u.path.map((step, i) => (
+        <li class="step grid grid-cols-[2.25rem_minmax(0,1fr)] items-start gap-x-2.5 sm:grid-cols-[3rem_minmax(0,1fr)] sm:gap-x-4">
+          <span class="num-chip font-display tabular mt-3" aria-hidden="true">{i + 1}</span>
+          <div class="min-w-0">
+            {step.title && <h3 class="mb-2.5 mt-3.5 text-[1.0625rem] font-bold text-slate-900">{step.title}</h3>}
+            <div class={step.items.length > 1 ? 'grid gap-2.5 sm:grid-cols-2' : ''}>
+              {step.items.map((d, j) => (
+                <MaterialRow label={d.label} href={href(d)} badge={d.badge} type={d.type} index={i + j} compact={step.items.length > 1} />
+              ))}
+            </div>
+            {step.hint && <p class="mt-1.5 pl-1 text-sm text-slate-500">{step.hint}</p>}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  {u.extras.map((g) => (
+    <section class="extras mb-10">
+      <h2 class="mb-4 text-sm font-semibold text-slate-500">{g.heading}</h2>
+      <div class="grid gap-3 sm:grid-cols-2">
+        {g.items.map((d, i) => (
+          <MaterialRow label={d.label} href={href(d)} badge={d.badge} type={d.type} index={i} />
+        ))}
+      </div>
+    </section>
+  ))}
+
+  {actions.length > 0 && (
+    <div class="mb-10 grid gap-4 sm:grid-cols-2">
+      {actions.map((a, i) => <ActionCard {...a} index={i} />)}
+    </div>
+  )}
+
+  {u.keys.length > 0 && (
+    <details class="disclosure mb-14">
+      <summary class="keys-toggle">
+        <span class="chev inline-block text-[0.625rem]" aria-hidden="true">▶</span> Show answer keys
+      </summary>
+      <div class="mt-4 grid gap-2.5 sm:grid-cols-2">
+        {u.keys.map((k) => <MaterialRow label={k.label} href={href(k)} type="key" compact />)}
+      </div>
+    </details>
+  )}
+
+  <nav aria-label={`Other ${noun}s`} class="grid gap-3 border-t border-slate-900/[0.07] pt-8 sm:grid-cols-2">
+    {prev ? (
+      <a href={`${base}${m.studentHref(prev.slug)}`} class="lift rounded-2xl px-5 py-4">
+        <span class="block text-sm text-slate-500">← Previous {noun}</span>
+        <span class="block font-bold text-slate-900">{prev.label}</span>
+      </a>
+    ) : <span></span>}
+    {next && (
+      <a href={`${base}${m.studentHref(next.slug)}`} class="lift rounded-2xl px-5 py-4 sm:text-right">
+        <span class="block text-sm text-slate-500">Next {noun} →</span>
+        <span class="block font-bold text-slate-900">{next.label}</span>
+      </a>
+    )}
+  </nav>
+</BaseLayout>
+
+<style>
+  /* Narrow screens: drop the badges to give the title room. The step number
+     already orders the path, and extra items name their version in the label. */
+  @media (max-width: 639px) {
+    .step :global(.mcard-badge),
+    .extras :global(.mcard-badge) { display: none; }
+  }
+</style>

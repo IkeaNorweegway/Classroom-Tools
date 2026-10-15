@@ -10,18 +10,22 @@ misconceptions:
   - Mass changes during a phase change
   - Ice is denser than liquid water
 csConnection: The particle model is itself an abstraction — a simplified version of something complex. Students learn what abstraction means through the science.
+hook: "Why does a puddle vanish on a hot day, and why does a can of pop burst in the freezer? The answer is too small to see."
+realWorld:
+  - title: "Pop in the freezer"
+    blurb: "Water expands when it freezes, so a frozen can can split open."
+  - title: "Hot-air balloons"
+    blurb: "Heated air spreads out and gets lighter, so the balloon floats up."
+  - title: "Thermometers"
+    blurb: "The liquid in a thermometer expands when it warms up and climbs the tube."
+iCan:
+  - "I can describe solids, liquids and gases using the particle model."
+  - "I can explain melting, freezing, evaporating and condensing."
+  - "I can explain why things expand when they’re heated."
+  - "I can explain why ice floats."
+teacherSummary: "The particle model, states of matter and phase changes, thermometers, thermal expansion and contraction, and water's unusual expansion when it freezes. Watch for particles seen as tiny pieces of the material, mass seen as changing in a phase change, and ice seen as denser than water."
 ---
 
-Have you ever wondered why a puddle disappears on a hot day, or why a can of pop explodes if you freeze it? The answer is the same in both cases — and it has to do with something too small to see.
+## What's the big idea?
 
-Everything around you is made of tiny particles. They are always moving. When things heat up, those particles move faster and spread out. When things cool down, they slow down and pack together. That one idea explains an enormous amount of the world.
-
-## What you will explore
-
-You will build and use the **particle model** — a scientific way of explaining why matter behaves the way it does. You will figure out why solids hold their shape, why liquids pour, and why gases fill whatever container they are in. You will look at how matter moves from one state to another (ice to water to steam) and why that does not actually change what the stuff *is*.
-
-You will also encounter one genuinely weird exception: **water expands when it freezes**, which is the opposite of almost every other substance. This is not a mistake. It is the reason fish survive winters under frozen lakes, and the reason ice floats instead of sinking to the bottom.
-
-## By the end of this unit
-
-You will be able to explain everyday events — why a thermometer works, why bridges have expansion gaps, why a balloon shrinks in the cold — using a model that scientists actually use. You will know how to tell the difference between a physical change (melting ice) and what stays the same underneath it.
+Everything around you is made of **particles**: tiny bits far too small to see, with empty space between them. In a **solid** they're packed tight and just jiggle. In a **liquid** they slide past each other. In a **gas** they zoom around far apart. Heat makes particles move faster and spread out, which is why things melt, boil and **expand**. Water is weird: it expands when it freezes, so ice floats.

@@ -4,14 +4,22 @@ organizingIdea: "Citizenship"
 order: 4
 guidingQuestion: In what ways can citizens influence issues and events?
 learningOutcome: Students examine civic engagement to understand and influence issues and events.
+hook: "You don’t have to be 18 to make a difference. Volunteering, speaking up and even what you buy are ways to change your community."
+realWorld:
+  - title: "Food banks"
+    blurb: "Collecting food or helping at a food bank helps people right in your community."
+  - title: "Election time"
+    blurb: "Teens can’t vote yet, but they can volunteer for a campaign and deliver flyers."
+  - title: "What you buy"
+    blurb: "Choosing fair-trade or local products is one way to act on issues like poverty and the environment."
+iCan:
+  - "I can list many ways to take part in my community, not just voting."
+  - "I can explain who can vote in Canada."
+  - "I can explain how global issues like drought or war affect Canadians."
+  - "I can plan one way to take action on an issue I care about."
+teacherSummary: "Voting and voter eligibility, global issues that affect Canadians, and forms of civic engagement (volunteering, advocacy, protest, ethical purchasing, party and campaign involvement). Watch for \"voting is the only way to take part\" and \"you have to be 18 to get involved.\""
 ---
 
-Voting is the most visible act of citizenship — but it isn't the only one, and you don't have to be 18 to start. Volunteering, joining a campaign, showing up to a community meeting, and even choosing what to buy are all ways citizens shape the issues around them.
+## What's the big idea?
 
-## What you will explore
-
-You will look at what it actually takes to vote in Canada, and then go far beyond voting to the full range of **civic engagement**: volunteering, advocacy, community initiatives, and election work like door-knocking and phone banking. You will also connect **global issues** — migration, conflict, drought, economic disruption — to real, local impacts on life in Canada.
-
-## By the end of this unit
-
-You will be able to identify multiple forms of civic engagement beyond voting, explain how global issues affect Canadian communities, and describe concrete ways a citizen — at any age — can get involved in a political party or a local issue.
+**Civic engagement** means taking part in your community and your country. Voting is one way, once you're 18 and a Canadian citizen. But there are many others: volunteering, joining a group, writing to a leader, joining a peaceful rally, or choosing carefully what you buy. Problems far away, like drought or war, affect Canadians too, through prices, jobs and newcomers arriving in our communities.

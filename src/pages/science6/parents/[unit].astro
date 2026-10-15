@@ -1,0 +1,33 @@
+---
+// Parent guide for one Grade 6 Science unit (shared ParentUnit layout), one per
+// file in src/content/parent-guides/science6/.
+import ParentUnit from '../../../components/ParentUnit.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { science6 as m } from '../../../data/science6';
+import type { CourseUnit } from '../../../data/manifest';
+
+export async function getStaticPaths() {
+  const guides = await getCollection('parent-guides', (e) => e.slug.startsWith('science6/'));
+  const pages = m.units
+    .map((u) => ({ u, entry: guides.find((e) => e.slug === `science6/${u.slug}`) }))
+    .filter((p) => p.entry);
+  return pages.map((p, k) => ({
+    params: { unit: p.u.slug },
+    props: { ...p, prev: pages[k - 1]?.u, next: pages[k + 1]?.u },
+  }));
+}
+
+interface Props { u: CourseUnit; entry: CollectionEntry<'parent-guides'>; prev?: CourseUnit; next?: CourseUnit }
+const { u, entry, prev, next } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<ParentUnit
+  manifest={m}
+  unit={u}
+  entry={entry}
+  eyebrow="Parent guide · Grade 6 Science"
+  thisYear="Grade 6"
+  prev={prev}
+  next={next}
+/>

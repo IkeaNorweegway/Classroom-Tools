@@ -10,20 +10,22 @@ misconceptions:
   - Action and reaction forces cancel each other out
   - Friction is not a force with direction
 csConnection: Force diagrams are abstractions of real interactions — students apply abstraction in design when they decide which forces to include and which to simplify away.
+hook: "Push off the wall of a pool and the wall pushes you back. Forces are everywhere, even when nothing seems to be moving."
+realWorld:
+  - title: "Swimming"
+    blurb: "When you push the water back, it pushes you forward. Every push gets a push back."
+  - title: "Bridges"
+    blurb: "A bridge holding up a truck isn’t moving, but forces are working hard in every beam."
+  - title: "Stretchy or not"
+    blurb: "A trampoline stretches and springs back. Modelling clay bends and stays bent."
+iCan:
+  - "I can draw a force diagram using arrows."
+  - "I can tell balanced and unbalanced forces apart."
+  - "I can explain elastic and plastic changes."
+  - "I can explain action and reaction forces."
+teacherSummary: "Pushes and pulls, force diagrams, balanced and unbalanced forces, internal forces, elasticity and plasticity, and Newton's third law. Watch for the bigger object seen as pushing harder, action-reaction pairs seen as cancelling, and friction drawn without a direction."
 ---
 
-When a bridge holds up a fully loaded truck, nothing is moving — but forces are working hard in every beam and cable. When you push off a wall in a swimming pool, the wall pushes back and sends you flying. Forces are happening everywhere, all the time, whether things are moving or completely still.
+## What's the big idea?
 
-This unit is about understanding those forces — where they come from, what they do, and why things bend, stretch, snap, or bounce back.
-
-## What you will explore
-
-You will look at forces from two directions: what happens *on the outside* of things (applied force, friction, spring force) and what happens *inside* things when forces act on them (tension, compression, shear, torsion). A rope being pulled from both ends and a beam being squeezed by a load are different situations — and the forces inside them are different too.
-
-You will also explore why some materials spring back to their original shape when a force is removed (**elastic**) while others stay deformed forever (**plastic**). This is the difference between a rubber band and a bent paperclip.
-
-The unit builds to **Newton's Third Law**: when you push on something, it pushes back with an equal force in the opposite direction. It sounds straightforward. It isn't. Every interaction involves two objects, and the forces act on *different* ones — which is what makes it tricky.
-
-## By the end of this unit
-
-You will be able to look at a structure — a bridge, a chair, a climbing harness — and identify the forces acting on it and inside it. You will be able to explain why things break when they do, and why the ground pushing up on you is just as real as gravity pulling you down.
+A **force** is a push or a pull. We draw forces as **arrows**: an arrow points the way the force pushes or pulls, and a longer arrow means a bigger force. Forces can make things speed up, slow down, turn or change shape. Some materials spring back after they're stretched (**elastic**); others stay bent (**plastic**). Forces always come in pairs: when you push on something, it pushes back on you just as hard.

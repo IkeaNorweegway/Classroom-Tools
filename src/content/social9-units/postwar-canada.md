@@ -4,16 +4,22 @@ organizingIdea: "Time and Place"
 order: 4
 guidingQuestion: How did political, economic, and social changes reshape Canada after WWII?
 learningOutcome: Students analyze how post-war developments shaped Canada as a modern nation.
+hook: "Free doctor visits, peacekeepers in blue helmets, new families arriving from around the world: much of today’s Canada took shape after 1945."
+realWorld:
+  - title: "Your health card"
+    blurb: "Your health card exists because Canada built public health care in the decades after the war."
+  - title: "Peacekeeping"
+    blurb: "Canadian Lester B. Pearson helped invent modern peacekeeping and won the Nobel Peace Prize."
+  - title: "Truth and reconciliation"
+    blurb: "Residential schools and the Sixties Scoop caused harm that Canada is still working to address."
+iCan:
+  - "I can describe how Canada built social programs like health care and pensions."
+  - "I can explain Canada’s role in NATO, the Korean War and peacekeeping."
+  - "I can describe how immigration and multiculturalism changed Canada."
+  - "I can explain the harm caused by residential schools and the Sixties Scoop, and conflicts like the October Crisis and Western alienation."
+teacherSummary: "The welfare state, NATO, Korea, NORAD and Suez peacekeeping, changing immigration and multiculturalism, residential schools and the Sixties Scoop, the October Crisis, Meech Lake, and Western alienation and the National Energy Program. Watch for this era told only as a story of progress."
 ---
 
-Peace in 1945 did not mean the story stopped — in many ways, it's where the Canada you recognize today actually starts. Universal healthcare, multiculturalism, the Charter of Rights and Freedoms, and lasting regional tensions over energy and unity all trace back to decisions made in the three decades after the war. This is the busiest, most consequential unit in the course.
+## What's the big idea?
 
-## What you will explore
-
-You will see Canada build a **welfare state** — universal healthcare, old-age pensions — in response to the hardships of the Great Depression and rising wartime expectations of government support. Abroad, Canada became a founding member of **NATO**, fought in the **Korean War** (Kapyong, Hill 355), partnered with the U.S. through **NORAD**, and helped resolve the **Suez Crisis** through Lester B. Pearson's peacekeeping proposal — work that earned him a Nobel Peace Prize and helped invent modern peacekeeping.
-
-At home, immigration patterns shifted toward non-European regions like India, China, and Vietnam, and the growth of **multiculturalism** reshaped what it meant to be Canadian — even as government policies like **residential schools** and the **Sixties Scoop** caused lasting harm to Indigenous communities by separating children from their families and cultures. You will also examine the fractures this era exposed: the **October Crisis (1970)** and Quebec separatism, the failed **Meech Lake Accord (1987)**, and **Western alienation** driven in part by the **National Energy Program**. The unit closes with the **Constitution Act (1982)**, which patriated Canada's constitution and entrenched the **Charter of Rights and Freedoms**.
-
-## By the end of this unit
-
-You will be able to evaluate the impact of social programs on Canadian society, evaluate how Canada's international actions shaped its global reputation, assess how multiculturalism shaped Canadian identity, analyze the impact of residential schools and the Sixties Scoop on Indigenous communities, analyze how events like the October Crisis reflected differing views of Canadian identity, assess the causes and consequences of Western alienation, and evaluate how the Constitution Act and the Charter of Rights and Freedoms transformed Canadian identity and participation.
+After the war, Canada changed fast. Governments created programs like **public health care** and **pensions** to protect people in hard times. Abroad, Canada joined **NATO**, fought in **Korea** and helped invent **peacekeeping**. At home, newcomers from around the world made Canada more **multicultural**. But it wasn't all progress: **residential schools** and the **Sixties Scoop** harmed Indigenous families, and debates about Quebec and the West tested the country.

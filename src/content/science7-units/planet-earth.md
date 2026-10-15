@@ -9,20 +9,22 @@ misconceptions:
   - Continents are fixed in place
   - Volcanoes and earthquakes happen everywhere on Earth
   - Sedimentary rocks form quickly
+hook: "The ground under you is moving right now, about as fast as your fingernails grow. Over millions of years, that slow motion built the Rocky Mountains."
+realWorld:
+  - title: "The Rockies"
+    blurb: "The mountains west of Calgary were pushed up when pieces of Earth's crust collided."
+  - title: "Drumheller fossils"
+    blurb: "Alberta's Badlands hold dinosaur fossils in rock layers that formed over millions of years."
+  - title: "Earthquakes and volcanoes"
+    blurb: "Most happen where Earth's plates meet, like along the coast of British Columbia."
+iCan:
+  - "I can describe Earth's layers: crust, mantle, outer core and inner core."
+  - "I can explain how rocks change through the rock cycle."
+  - "I can explain what happens where tectonic plates meet."
+  - "I can describe how fossils and rock layers show Earth's history."
+teacherSummary: "Earth's layers, the rock cycle, plate tectonics and boundaries, earthquakes and volcanoes, weathering and erosion, fossils and geological time; descriptive only, no radiometric dating. Watch for plates seen as only land, and for all geological change seen as sudden."
 ---
 
-The Rocky Mountains, visible from most of Alberta on a clear day, were once at the bottom of an ancient sea. That is not a metaphor — the layers of sedimentary rock exposed on their slopes contain fossils of marine creatures, lifted thousands of metres by forces that are still active today, just too slow for a human lifetime to notice.
+## What's the big idea?
 
-This unit is about the forces that build, break down, and rebuild Earth's surface — and about learning to think in timescales far longer than a single lifetime.
-
-## What you will explore
-
-You will start deep inside the planet, with **plate tectonics**: the idea that Earth's crust is broken into large plates that drift slowly on the semi-molten layer beneath them. You will see how plates colliding, separating, or sliding past each other explains mountain ranges, ocean trenches, earthquakes, and volcanoes — and why these events cluster along plate boundaries rather than happening randomly everywhere on Earth.
-
-From there, you will study the **rock cycle**: how igneous rock forms from cooling magma, how it breaks down through weathering and erosion into sediment, how that sediment compacts into sedimentary rock over enormous stretches of time, and how heat and pressure can transform any rock into metamorphic rock. You will also examine erosion and weathering more closely — wind, water, ice, and freeze-thaw cycles — and how these processes have carved features across the Alberta landscape, from the hoodoos of the badlands to the river valleys cutting through the prairies.
-
-Throughout, you will build a sense of **geological time** — the difference between a process that takes seconds (an earthquake) and one that takes millions of years (mountain building) — and why that distinction matters for understanding the planet's history.
-
-## By the end of this unit
-
-You will be able to explain why earthquakes and volcanoes occur where they do, trace a rock through the rock cycle, and identify evidence of erosion or ancient geological events in a real landscape — including features found right here in Alberta.
+Earth is built in layers, and its outer shell is cracked into giant **plates** that slowly drift on the hot, flowing mantle. Where plates pull apart, push together or slide past each other, you get mountains, earthquakes and volcanoes. Rocks are always being recycled from one type to another in the **rock cycle**. Rock layers and fossils are like the pages of a history book about Earth.

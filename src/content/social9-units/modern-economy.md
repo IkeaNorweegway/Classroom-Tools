@@ -4,16 +4,22 @@ organizingIdea: Systems
 order: 5
 guidingQuestion: How did economic changes transform Canada into a modern economy?
 learningOutcome: Students analyze how economic crisis, growth, and global trade shaped Canada's modern economy.
+hook: "In the 1930s, close to one in three Canadian workers had no job. How did Canada get from the Great Depression to building cars, pipelines and trade deals?"
+realWorld:
+  - title: "Oil and gas"
+    blurb: "Alberta’s energy industry grew after the war and is still a big part of our economy."
+  - title: "Cars and trucks"
+    blurb: "Many vehicles sold in Canada are built in Ontario, often with parts that cross the U.S. border."
+  - title: "Trade"
+    blurb: "Canada trades more with the United States than with any other country."
+iCan:
+  - "I can explain what caused the Great Depression and how governments responded."
+  - "I can describe the industries that grew after the war."
+  - "I can explain why trade with the United States matters to Canada."
+  - "I can weigh who gains and who loses from free trade."
+teacherSummary: "Causes of the Great Depression, government responses (public works, social programs, deficit spending), post-war industries (autos, petroleum, pulp and paper, hydro), and Canada–U.S. trade through NAFTA. Watch for free trade seen as all good or all bad."
 ---
 
-Twenty years separate the breadlines of the Great Depression from the suburban boom of the 1950s — and the distance between them is the story of how Canada learned that government could, and maybe should, manage the economy rather than just ride it out.
+## What's the big idea?
 
-## What you will explore
-
-You will start with the **Great Depression** of the 1930s: overproduction, collapsing demand, the failure of global trade, and the financial instability that followed. You will see how Canadian and American governments responded with **public works, social welfare programs, and deficit spending** — a genuinely new idea about what governments were for. From there, you will follow the postwar economy as it diversified into **automobile manufacturing, petroleum and energy production, pulp and paper, and hydroelectric power**, fueling the growth of cities and, eventually, suburbs.
-
-You will finish by examining Canada's deepening economic relationship with the **United States**, from geographic proximity and interdependence through to agreements like **NAFTA**, which expanded free trade and the movement of goods, services, and investment across the border — for better and for worse, depending on who you ask.
-
-## By the end of this unit
-
-You will be able to analyze the causes of the Great Depression and its impact on economic stability, analyze how governments responded to economic crisis, analyze how Canada's economy transformed after WWII, evaluate how economic growth contributed to urbanization and suburban development, evaluate how Canada's trade relationship with the United States shaped its economic development, and evaluate the impact of free trade agreements on growth and interdependence.
+In the **Great Depression** of the 1930s, factories closed, farms failed and huge numbers of Canadians lost their jobs. Governments tried something new: spending money on **public works** and **programs** to help people. After the war, Canada's economy grew in **cars**, **oil and gas**, **paper** and **hydroelectric power**. Today Canada trades more with the **United States** than with anyone else, and agreements like **NAFTA** made that trade easier.

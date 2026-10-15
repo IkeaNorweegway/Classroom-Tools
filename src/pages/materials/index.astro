@@ -3,7 +3,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import CourseHero from '../../components/CourseHero.astro';
 import TopicList from '../../components/TopicList.astro';
 import ActionCard from '../../components/ActionCard.astro';
+import { getCollection } from 'astro:content';
 const base = import.meta.env.BASE_URL;
+// Cards lead with the student hook; the topic list stays as small print.
+const hooks: Record<string, string> = Object.fromEntries((await getCollection('units')).map((e) => [e.slug, e.data.hook]));
 
 const unitCards = [
   {
@@ -61,12 +64,12 @@ const unitCards = [
 
   <TopicList
     heading="Units"
-    items={unitCards.map(u => ({ art: u.slug, href: `${base}materials/${u.slug}`, title: u.label, description: u.description }))}
+    items={unitCards.map(u => ({ art: u.slug, href: `${base}units/${u.slug}`, title: u.label, description: hooks[u.slug] ?? u.description, meta: hooks[u.slug] ? u.description : undefined }))}
   />
 
   <div class="grid gap-4 sm:grid-cols-2">
     <ActionCard
-      href={`${base}materials/year-review`}
+      href={`${base}units/year-review`}
       title="Year review"
       description="End-of-year review covering all six units. Notes and a mixed-topic practice workbook."
       cta="View materials"

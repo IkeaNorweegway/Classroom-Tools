@@ -111,7 +111,7 @@ Materials are organized inside type folders by subject and unit:
 | "Research assessment / delivery" | `research/_context.md` | `worksheets/`, `tests-quizzes/` |
 | "Make a template" | `templates/_context.md` | everything else |
 | "Change the site / add it to the site" | `_site-context.md` | type-folder contexts |
-| "Write a parent page / home practice sheet" | `_site-context.md` (Math 9 data) → `templates/home-practice-template.md` → unit `_context.md` and `_courses/math-9/math9-prereqs.md` | `research/`, `tests-quizzes/` |
+| "Write a parent page / home practice sheet" | `_site-context.md` (Course data and the three views) → `templates/home-practice-template.md` → unit `_context.md` in `_courses/` (and `_courses/math-9/math9-prereqs.md` for Math 9) | `research/`, `tests-quizzes/` |
 | "Render / re-render" | `scripts/_context.md` | everything else |
 | "Build / revise a game" | `_games-context.md` → unit `_context.md` in `_courses/` | type-folder contexts, `templates/` |
 | "Start a [type] build" | Copy relevant template from `templates/` first, then read artifact context | everything else |
@@ -142,7 +142,7 @@ Example: `notes-packages/grade-6-science/forces/sci6-forces-teachernotes-v1.md`
 ---
 
 ## What I always know about this project
-- **Audience:** Students, teachers and parents, Alberta curriculum context. The site has a student, a teacher and (Math 9 so far) a parent view of each topic
+- **Audience:** Students, teachers and parents, Alberta curriculum context. The site has a student, a parent and (except STEAM) a teacher view of every unit
 - **Design standard:** Every artifact should be clean enough to print and hand out as-is
 - **Research lens:** Assessment for learning, not just of learning — formative first, summative as confirmation
 - **Evidence standard:** Before finalising any artifact, check it against `templates/evidence-design-principles.md` — every material built here must embed at least one Tier 1 strategy and pass at least 3 of the 5 checklist items at the bottom of that file (all 5 for Tier 1 units)

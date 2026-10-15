@@ -74,7 +74,7 @@ Every page has two nav levels:
 
 ### Audience views (student, parent, teacher)
 - Every page is written for one audience: `audience` on `BaseLayout` (`'student' | 'parent' | 'teacher'`). Course pages default to `student`; the home page has none.
-- Each course in `courses.ts` has a student `path` and may have a `teacherPath` and a `parentPath`. Only Math 9 has a `parentPath` so far.
+- Each course in `courses.ts` has a student `path` and may have a `teacherPath` and a `parentPath`. Every course has a `parentPath` and a `parentSubnav`; STEAM has no teacher path.
 - The nav switch offers the views the course has. A page can pass `audienceLinks` so the switch lands on the same topic (for example, `/math9/linear-equations` ↔ `/math9/parents/linear-equations` ↔ `/math9/teacher#linear-equations`); otherwise it goes to that view's course landing. Outside a course it goes to the hubs: `/`, `/parents`, `/teachers`.
 - In a parent or teacher view, the course tabs go to each course's matching view when it has one.
 - The chosen view is saved in `localStorage` (`audience`). The home page's "I'm a…" chooser uses it to point turntable links at the matching view.
@@ -199,7 +199,7 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 /math9/materials/[strand]       Strand page — topic picker + strand workbook
 /math9/practice/, potd/, pat-prep/   Practice, problem of the day, PAT prep
 /math9/parents/                 Parent overview — course in plain words, progression, topic list
-/math9/parents/[topic]          Parent topic page (one per file in src/content/math9-parent/)
+/math9/parents/[topic]          Parent topic page (one per file in src/content/parent-guides/math9/)
 /math9/teacher/                 Math 9 teacher index (each topic has an #anchor)
 /math9/view/[...slug]           Math 9 material viewer (paths from src/data/math9.ts)
 /science7/                      Science 7 index (+ practice/, teacher/)
@@ -213,14 +213,16 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 
 ---
 
-## Math 9 data
+## Course data and the three views
 
-- `src/data/math9.ts` is the materials manifest: strands, topics, each topic's steps, extras, answer keys, teacher notes and home sheets. Student, parent and teacher pages and the viewer all read it. A new or renamed file is changed there only. The viewer warns at build time about any listed file missing from `public/materials/math-9/`.
-- `src/content/math9-units/*.md`: student topic text (`hook`, `realWorld`, `iCan`, a short "big idea" body) plus the one-line `teacherSummary` for the teacher hub.
-- `src/content/math9-parent/*.md`: parent topic guides (`plainSummary`, `comesFrom`, `assumed`, `leadsTo`, `watchFor`, `tips`; the body holds the worked examples).
-- Home practice sheets: sources in `worksheets/math-9/home/[topic]/`, rendered by `scripts/render_math9_home.py` to `public/materials/math-9/home/[topic]/`. Template: `templates/home-practice-template.md`.
+Every course follows one pattern, so the student, parent and teacher pages look and work the same.
 
-**To roll the three views out to another course:** add a manifest like `math9.ts`, a `parentPath` (and `parentSubnav`) in `courses.ts`, a parent collection, and parent routes, following Math 9.
+- **Manifest per course** in `src/data/`: `science6.ts`, `math9.ts`, `science7.ts`, `social8.ts`, `social9.ts`, `steam.ts`. Each lists every unit's numbered student path, extra materials, answer keys and two home sheets, in the shared shape in `manifest.ts` (`CourseManifest`; `math9Course` adapts Math 9's richer data). Pages and viewers read it, so a new or renamed file is changed in one place. Each viewer adds the manifest's documents to its routes and warns at build time about files missing from `public/materials/`.
+- **Shared components:** `StudentUnit.astro` (student unit page: hook, real-world cards, big idea and "I can" goals, numbered path, extras, collapsed keys, previous/next), `ParentUnit.astro` (parent guide) and `ParentOverview.astro` (parent course overview).
+- **Student text:** the unit collections (`units`, `science7-units`, `math9-units`, `social8-units`, `social9-units`, `steam-grades`) hold `hook`, `realWorld` (3), `iCan` (3–4) and a short "What's the big idea?" body. All but STEAM also hold `teacherSummary`, the one-line scope note on the teacher hub.
+- **Parent guides:** `src/content/parent-guides/<course>/<unit>.md` (`plainSummary`, `comesFrom`, `assumed`, `leadsTo`, `watchFor`, `tips`; the body holds 2–3 worked examples with "Say:" prompts). Course folders: `science6`, `math9`, `science7`, `social8`, `social9`, `steam`. A guide's page is built only when its file exists.
+- **Routes:** student unit pages are `units/[unit]` (Grade 6; old `materials/[unit]` URLs redirect there), `math9/[topic]`, `science7|social8|social9/materials/[unit]` and `steam/materials/[grade]`. Parent pages are `<prefix>/parents/` and `<prefix>/parents/[unit]`, with prefixes `science6`, `math9`, `science7`, `social8`, `social9` and `steam`.
+- **Home practice sheets:** sources follow the type-folder convention (`worksheets/grade-6-science/[unit]/`, `worksheets/grade-7-science/[unit]/`, `worksheets/grade-8-social/[unit]/`, `worksheets/grade-9-social/[unit]/`, `worksheets/math-9/home/[topic]/`, and `steam/grade-N/home/`). `scripts/render_home_practice.py` renders them: Math 9 to `public/materials/math-9/home/[topic]/`, the rest flat in `public/materials/` (`sci6-`, `sci7-`, `soc8-`, `soc9-`, `steam-grade-N-` prefixes). Template: `templates/home-practice-template.md`.
 
 ---
 
@@ -249,7 +251,7 @@ Games are the exception: a game is written directly as HTML and has no markdown 
 - Answer key: `math9-[unit]-notes-answers-v1.html`
 - Teacher notes: `math9-[unit]-teachernotes-v2.html`
 - Worksheet: `math9-[unit]-worksheet-[tier]-v1.html`
-- Home practice sheet: `math9-[topic]-home-[skill]-v1.html`, answers `math9-[topic]-home-[skill]-answers-v1.html` (named by topic slug, e.g. `powers-exponents`, not the `math9-powers` file stem)
+- Home practice sheet: `math9-[topic]-home-[skill]-v1.html`, answers `math9-[topic]-home-[skill]-answers-v1.html` (named by topic slug, e.g. `powers-exponents`, not the `math9-powers` file stem). Other courses: `[prefix]-[unit]-home-[skill]-v1.html` in `public/materials/`, e.g. `sci7-heat-temperature-home-heat-transfer-v1.html`
 
 ---
 

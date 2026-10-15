@@ -8,6 +8,7 @@
 // math9-powers-*), so every path is written out rather than derived.
 
 import type { MaterialType } from './materialTypes';
+import type { CourseManifest } from './manifest';
 
 export type StrandSlug = 'number' | 'algebra' | 'measurement-geometry' | 'statistics-probability';
 
@@ -111,7 +112,7 @@ export const topics: Topic[] = [
 ];
 
 // Home practice sheets for the parent pages, by topic: [file name part, skill].
-// Sources: worksheets/math-9/home/<topic>/; render with scripts/render_math9_home.py.
+// Sources: worksheets/math-9/home/<topic>/; render with scripts/render_home_practice.py.
 const homeSheets: Record<string, [string, string][]> = {
   'rational-numbers': [['add-subtract', 'Adding and subtracting with negatives'], ['multiply-divide', 'Multiplying and dividing with negatives']],
   'square-roots': [['estimating', 'Estimating square roots'], ['pythagorean', 'The Pythagorean theorem']],
@@ -178,3 +179,29 @@ export function backPathFor(path: string): string {
   const strand = strands.find((s) => s.workbook === path || s.workbookKey === path);
   return strand ? `math9/materials/${strand.slug}` : 'math9/materials';
 }
+
+const stepHints = [
+  'Start here. You fill these in during class.',
+  'The key ideas on one page. Keep it open while you practise.',
+  'The practice everyone does.',
+  'Ready for more? Try these.',
+  'Quick checks to see if you’ve got it.',
+];
+
+/** Math 9 in the shape the shared student and parent components use. */
+export const math9Course: CourseManifest = {
+  course: 'math9',
+  noun: 'topic',
+  units: topics.map((t) => ({
+    slug: t.slug,
+    label: t.label,
+    path: studentSteps(t).map((m, i) => ({ hint: stepHints[i], items: [{ label: m.label, doc: m.path, badge: m.badge, type: m.type }] })),
+    extras: t.extras.length ? [{ heading: 'Extra help', items: t.extras.map((m) => ({ label: m.label, doc: m.path, badge: m.badge, type: m.type })) }] : [],
+    keys: t.keys.map((k) => ({ label: k.label, doc: k.path })),
+    home: t.home.map((h) => ({ skill: h.skill, doc: h.path, keyDoc: h.keyPath })),
+  })),
+  studentHref: (slug) => `math9/${slug}`,
+  parentHref: (slug) => `math9/parents/${slug}`,
+  teacherHref: (slug) => `math9/teacher#${slug}`,
+  viewHref: (_slug, doc) => `math9/view/${doc}`,
+};

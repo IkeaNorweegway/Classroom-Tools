@@ -4,16 +4,22 @@ organizingIdea: Citizenship
 order: 7
 guidingQuestion: In what ways do citizen rights evolve?
 learningOutcome: Students examine the impact of changing legislation on citizenship in Canada.
+hook: "Until 1947 there was no such thing as Canadian citizenship. People here were officially British subjects. Since then, what it means to be Canadian has kept changing."
+realWorld:
+  - title: "Citizenship ceremonies"
+    blurb: "New Canadians take the oath of citizenship at ceremonies held across the country every year."
+  - title: "Your rights"
+    blurb: "The Charter protects rights like freedom of expression and equality for people in Canada."
+  - title: "Two languages"
+    blurb: "Federal government services are offered in English and French because of the Official Languages Act."
+iCan:
+  - "I can tell citizens, permanent residents, temporary residents and refugees apart."
+  - "I can trace how laws from 1947 to 1982 changed rights in Canada."
+  - "I can name the main kinds of rights in the Charter."
+  - "I can explain why rights can sometimes have reasonable limits."
+teacherSummary: "The Citizenship Act (1947) and its changes, immigration classes and statuses, the Bill of Rights, the royal commissions, the Official Languages Act, multiculturalism, and the Charter (1982) including section 1 limits. Watch for rights seen as unlimited, and for the Charter seen as protecting only citizens."
 ---
 
-Before 1947, there was no such legal thing as a "Canadian citizen" — everyone born here was a British subject. Rights in Canada have never been fixed; they've been built, argued over, taken away, and rebuilt, often by people the law didn't yet recognize as full participants in it.
+## What's the big idea?
 
-## What you will explore
-
-You will trace how the **Canadian Citizenship Act (1947)** first defined Canadian citizenship, and how it and later legislation were amended to reflect immigration from non-European countries and Canada's growing pluralism — including the ability to pass citizenship to the next generation and the creation of economic, family, refugee, and humanitarian immigration classes. You will distinguish between citizens, permanent residents, temporary residents, and refugees, and what rights and restrictions come with each status.
-
-You will follow the long arc from the **Canadian Bill of Rights (1960)** through commissions like the **Royal Commission on Bilingualism and Biculturalism (1963)**, the **Royal Commission on the Status of Women (1967)**, the **Official Languages Act (1969)**, and the **Canadian Multiculturalism Policy (1971)**, culminating in the **Constitution Act (1982)** and the entrenchment of the **Charter of Rights and Freedoms** — with its fundamental, democratic, mobility, legal, and equality rights, and its recognition, under Section 1, that even fundamental rights can carry reasonable limits.
-
-## By the end of this unit
-
-You will be able to determine the significance of individual and collective rights, relate ethical considerations to the growth of Canadian rights since Confederation, interpret evidence of pluralism in legislation, explain how amendments to legislation shaped multiculturalism and immigration, discuss historical and contemporary limits placed on rights and freedoms, and discuss the relationship between the rights and responsibilities afforded to Canadian citizens.
+Canadian **citizenship** was created in 1947, and the rules have changed many times since. Today people in Canada can be **citizens**, **permanent residents**, **temporary residents** or **refugees**, and each status comes with different rights. Over the years, laws like the **Bill of Rights** (1960), the **Official Languages Act** (1969) and finally the **Charter of Rights and Freedoms** (1982) protected more rights for more people. Even so, rights can have **reasonable limits**.

@@ -1,130 +1,30 @@
 ---
-import Collapsible from '../../../components/Collapsible.astro';
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import CourseHero from '../../../components/CourseHero.astro';
-import MaterialList from '../../../components/MaterialList.astro';
+// Student unit page (shared StudentUnit layout). Materials come from
+// src/data/social8.ts; the intro from src/content/social8-units/.
+import StudentUnit from '../../../components/StudentUnit.astro';
 import { getEntry } from 'astro:content';
-const base = import.meta.env.BASE_URL;
+import { social8 as m } from '../../../data/social8';
 
 export function getStaticPaths() {
-  return [
-    { params: { unit: 'ideologies' } },
-    { params: { unit: 'economic-systems' } },
-    { params: { unit: 'political-systems' } },
-    { params: { unit: 'civic-engagement' } },
-  ];
+  return m.units.map((u, i) => ({ params: { unit: u.slug }, props: { i } }));
 }
 
-const { unit } = Astro.params;
-
-type MaterialFile = { label: string; badge?: string; badgeStyle?: string; doc: string };
-type Section = { heading: string; items: MaterialFile[] };
-
-interface UnitData {
-  label: string;
-  tagline: string;
-  color: string;
-  colorDark: string;
-  colorLight: string;
-  sections: Section[];
-  answerKeys: MaterialFile[];
-}
-
-const units: Record<string, UnitData> = {
-  'ideologies': {
-    label: 'Foundations and Influences of Ideologies',
-    tagline: 'Individualism vs. collectivism, the political spectrum, the four major ideologies, and totalitarian government.',
-    color: '#92400e', colorDark: '#78350f', colorLight: '#fef3c7',
-    sections: [
-      { heading: 'Notes', items: [{ label: 'Guided Notes', doc: 'soc8-ideologies-notes-v1' }] },
-      { heading: 'Practice Workbook', items: [{ label: 'Workbook', doc: 'soc8-ideologies-workbook-v1' }] },
-    ],
-    answerKeys: [
-      { label: 'Notes Answer Key', doc: 'soc8-ideologies-notes-answers-v1' },
-      { label: 'Workbook Answer Key', doc: 'soc8-ideologies-workbook-answers-v1' },
-    ],
-  },
-  'economic-systems': {
-    label: 'Economic Systems',
-    tagline: 'Traditional, command, market, and mixed economies, how economies are measured, and government surplus, deficit, and debt.',
-    color: '#1d4ed8', colorDark: '#1e40af', colorLight: '#dbeafe',
-    sections: [
-      { heading: 'Notes', items: [{ label: 'Guided Notes', doc: 'soc8-economic-systems-notes-v1' }] },
-      { heading: 'Practice Workbook', items: [{ label: 'Workbook', doc: 'soc8-economic-systems-workbook-v1' }] },
-    ],
-    answerKeys: [
-      { label: 'Notes Answer Key', doc: 'soc8-economic-systems-notes-answers-v1' },
-      { label: 'Workbook Answer Key', doc: 'soc8-economic-systems-workbook-answers-v1' },
-    ],
-  },
-  'political-systems': {
-    label: 'Political Systems',
-    tagline: "Types of political systems, Canada's parliamentary democracy vs. the American presidential system, and political parties.",
-    color: '#4338ca', colorDark: '#3730a3', colorLight: '#e0e7ff',
-    sections: [
-      { heading: 'Notes', items: [{ label: 'Guided Notes', doc: 'soc8-political-systems-notes-v1' }] },
-      { heading: 'Practice Workbook', items: [{ label: 'Workbook', doc: 'soc8-political-systems-workbook-v1' }] },
-    ],
-    answerKeys: [
-      { label: 'Notes Answer Key', doc: 'soc8-political-systems-notes-answers-v1' },
-      { label: 'Workbook Answer Key', doc: 'soc8-political-systems-workbook-answers-v1' },
-    ],
-  },
-  'civic-engagement': {
-    label: 'Civic Engagement',
-    tagline: 'Voting, volunteering, advocacy, and how global issues connect to daily life in Canada.',
-    color: '#0f766e', colorDark: '#115e59', colorLight: '#ccfbf1',
-    sections: [
-      { heading: 'Notes', items: [{ label: 'Guided Notes', doc: 'soc8-civic-engagement-notes-v1' }] },
-      { heading: 'Practice Workbook', items: [{ label: 'Workbook', doc: 'soc8-civic-engagement-workbook-v1' }] },
-    ],
-    answerKeys: [
-      { label: 'Notes Answer Key', doc: 'soc8-civic-engagement-notes-answers-v1' },
-      { label: 'Workbook Answer Key', doc: 'soc8-civic-engagement-workbook-answers-v1' },
-    ],
-  },
-};
-
-const data = units[unit];
-
-const unitEntry = await getEntry('social8-units', unit!);
-const { Content } = unitEntry ? await unitEntry.render() : { Content: null };
+const { i } = Astro.props as { i: number };
+const u = m.units[i];
+const entry = await getEntry('social8-units', u.slug);
+if (!entry) throw new Error(`social8-units/${u.slug}.md is missing`);
+const { Content } = await entry.render();
+const base = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title={`${data.label} — Materials`} course="social8">
-  <CourseHero
-    back={{ href: `${base}social8`, label: 'Social Studies 8' }}
-    eyebrow={`Social Studies 8${unitEntry ? ` · ${unitEntry.data.organizingIdea}` : ''}`}
-    title={data.label}
-    description={unitEntry ? unitEntry.data.guidingQuestion : data.tagline}
-    italic={!!unitEntry}
-  />
-
-  {unitEntry && (
-    <>
-      <div class="raised mb-8 rounded-2xl p-6" style="background: linear-gradient(160deg, rgb(var(--accent-soft)), rgb(255 255 255) 80%)">
-        <p class="mb-1.5 text-sm font-semibold text-accent-ink">Learning outcome</p>
-        <p class="max-w-[68ch] text-slate-800 leading-relaxed">{unitEntry.data.learningOutcome}</p>
-      </div>
-      <Collapsible class="mb-12">
-        <div class="prose max-w-none">
-          <Content />
-        </div>
-      </Collapsible>
-    </>
-  )}
-
-  {data.sections.map(section => (
-    <MaterialList
-      heading={section.heading}
-      items={section.items.map(item => ({ label: item.label, badge: item.badge, href: `${base}social8/view/${unit}/${item.doc}` }))}
-    />
-  ))}
-
-
-  <MaterialList
-    answerKeys
-    heading="Show answer keys"
-    items={data.answerKeys.map(item => ({ label: item.label, href: `${base}social8/view/${unit}/${item.doc}` }))}
-  />
-</BaseLayout>
+<StudentUnit
+  manifest={m}
+  unit={u}
+  title={`${u.label} — Materials`}
+  eyebrow={`Social Studies 8 · Unit ${i + 1}`}
+  back={{ href: `${base}social8`, label: 'Social Studies 8' }}
+  intro={entry.data}
+  Content={Content}
+  prev={m.units[i - 1]}
+  next={m.units[i + 1]}
+/>

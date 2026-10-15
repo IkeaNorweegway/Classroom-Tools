@@ -17,7 +17,7 @@ const teacherLessons = (await getCollection('teacher-lessons'))
   .sort((a, b) => a.data.lessonNumber - b.data.lessonNumber);
 
 const base = import.meta.env.BASE_URL;
-const { title, tier, weeks, guidingQuestion } = unitEntry.data;
+const { title, tier, weeks, guidingQuestion, teacherSummary } = unitEntry.data;
 
 // Explicit file refs per unit (teacher materials don't use the -gr6- suffix)
 const teacherFileRefs: Record<string, { notes: string; notesEF: string; workbook: string }> = {
@@ -69,7 +69,12 @@ const borderColor = unitColors[unitSlug!] ?? 'border-l-slate-400';
 const TeacherContent = teacherUnit ? (await teacherUnit.render()).Content : null;
 ---
 
-<BaseLayout title={`Teacher — ${title}`} audience="teacher">
+<BaseLayout
+  title={`Teacher — ${title}`}
+  course="science"
+  audience="teacher"
+  audienceLinks={{ student: `units/${unitSlug}`, parent: `science6/parents/${unitSlug}` }}
+>
   <!-- Header -->
   <div class={`border-l-4 ${borderColor} pl-5 mb-8`}>
     <div class="flex items-center gap-2 mb-1">
@@ -80,6 +85,7 @@ const TeacherContent = teacherUnit ? (await teacherUnit.render()).Content : null
     </div>
     <h1 class="text-3xl font-bold text-slate-900 mb-2">{title}</h1>
     <p class="text-slate-500 italic text-base">{guidingQuestion}</p>
+    <p class="mt-3 max-w-[78ch] text-sm leading-relaxed text-slate-600">{teacherSummary}</p>
   </div>
 
   <!-- Teacher materials -->

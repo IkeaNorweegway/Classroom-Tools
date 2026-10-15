@@ -1,0 +1,191 @@
+---
+// Parent guide for one unit, shared by every course: the unit in plain
+// words, where it sits across the grades, what should already be in place,
+// how to help, worked examples, and short printable practice sheets.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CourseHero from './CourseHero.astro';
+import MaterialRow from './MaterialRow.astro';
+import Progression from './Progression.astro';
+import { courseByKey } from '../data/courses';
+import type { CollectionEntry } from 'astro:content';
+import type { CourseManifest, CourseUnit, Doc } from '../data/manifest';
+
+interface Props {
+  manifest: CourseManifest;
+  unit: CourseUnit;
+  entry: CollectionEntry<'parent-guides'>;
+  eyebrow: string;
+  /** The current year's stage on the progression strip, e.g. "Grade 9". */
+  thisYear: string;
+  /** What this year's stage says; defaults to the unit name. */
+  thisYearIdea?: string;
+  /** Link for "practise these skills", when the course has one. */
+  practice?: { href: string; label: string };
+  prev?: CourseUnit;
+  next?: CourseUnit;
+}
+
+const { manifest: m, unit: u, entry, eyebrow, thisYear, thisYearIdea, practice, prev, next } = Astro.props;
+const d = entry.data;
+const { Content } = await entry.render();
+
+const base = import.meta.env.BASE_URL;
+const course = courseByKey(m.course)!;
+const href = (doc: Doc) => `${base}${doc.href ?? m.viewHref(u.slug, doc.doc)}`;
+const view = (doc: string) => `${base}${m.viewHref(u.slug, doc)}`;
+const noun = m.noun;
+
+const stages = [
+  ...d.comesFrom.map((c) => ({ label: c.grade, idea: c.idea })),
+  { label: thisYear, idea: thisYearIdea ?? u.label, now: true },
+  ...d.leadsTo.map((l) => ({ label: l.course, idea: l.idea })),
+];
+// The materials the student works through, in order.
+const inClass = u.path.flatMap((s) => s.items.map((i) => ({ ...i, label: s.title && s.items.length > 1 ? `${s.title.replace(/^Unit \d+ · /, '')}: ${i.label}` : i.label })));
+---
+
+<BaseLayout
+  course={m.course}
+  audience="parent"
+  title={`${u.label} — Parent guide`}
+  description={d.plainSummary}
+  audienceLinks={{ student: m.studentHref(u.slug), teacher: m.teacherHref?.(u.slug) }}
+>
+  <CourseHero
+    back={{ href: `${base}${course.parentPath}`, label: `All ${course.tab} ${noun}s` }}
+    eyebrow={eyebrow}
+    title={u.label}
+  />
+
+  <section class="raised mb-12 rounded-2xl p-6 sm:p-7" style="background: linear-gradient(160deg, rgb(var(--accent-soft)), rgb(255 255 255) 80%)">
+    <h2 class="mb-2 text-sm font-semibold text-accent-ink">In plain words</h2>
+    <p class="max-w-[68ch] text-[1.0625rem] leading-relaxed text-slate-800">{d.plainSummary}</p>
+  </section>
+
+  <section class="mb-12" aria-labelledby="big-picture">
+    <h2 id="big-picture" class="mb-1.5 font-display text-[1.5rem] font-medium text-slate-900">The big picture</h2>
+    <p class="mb-6 text-slate-600">Where this {noun} comes from, and where it leads.</p>
+    <Progression stages={stages} />
+  </section>
+
+  <section class="mb-12 grid gap-5 lg:grid-cols-2">
+    <div class="raised rounded-2xl p-6">
+      <h2 class="mb-1 text-[1.0625rem] font-bold text-slate-900">What your child should already know</h2>
+      <p class="mb-4 text-sm text-slate-500">If any of these are shaky, start there.</p>
+      <ul class="grid gap-2.5">
+        {d.assumed.map((s) => (
+          <li class="flex gap-2.5 text-[0.9375rem] leading-snug text-slate-700">
+            <span class="mt-[0.2rem] h-4 w-4 shrink-0 rounded-[5px] border-[1.5px] border-slate-400" aria-hidden="true"></span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ul>
+      {practice && (
+        <a href={practice.href} class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-ink hover:underline">
+          {practice.label} <span aria-hidden="true">→</span>
+        </a>
+      )}
+    </div>
+    <div class="raised rounded-2xl p-6">
+      <h2 class="mb-1 text-[1.0625rem] font-bold text-slate-900">Common mix-ups to watch for</h2>
+      <p class="mb-4 text-sm text-slate-500">The mistakes students make most often in this {noun}.</p>
+      <ul class="grid gap-2.5">
+        {d.watchFor.map((s) => (
+          <li class="flex gap-2.5 text-[0.9375rem] leading-snug text-slate-700">
+            <span class="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="mb-12" aria-labelledby="how-to-help">
+    <h2 id="how-to-help" class="mb-4 font-display text-[1.5rem] font-medium text-slate-900">How to help</h2>
+    <ol class="grid gap-3 sm:grid-cols-2">
+      {d.tips.map((tip, i) => (
+        <li class="flex gap-3 rounded-2xl bg-white/70 p-4 shadow-[inset_0_0_0_1px_rgb(31_29_26/0.07)]">
+          <span class="num-chip font-display tabular shrink-0" aria-hidden="true">{i + 1}</span>
+          <span class="text-[0.9375rem] leading-relaxed text-slate-700">{tip}</span>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="mb-12" aria-labelledby="examples">
+    <h2 id="examples" class="mb-1.5 font-display text-[1.5rem] font-medium text-slate-900">Worked examples</h2>
+    <p class="mb-2 text-slate-600">Each one shows the steps, what to say while your child works, and the slip to look out for.</p>
+    <div class="worked prose max-w-none">
+      <Content />
+    </div>
+  </section>
+
+  <section class="mb-12" aria-labelledby="at-home">
+    <h2 id="at-home" class="mb-1.5 font-display text-[1.5rem] font-medium text-slate-900">Practice at home</h2>
+    <p class="mb-5 text-slate-600">Short sheets on one skill each, about 15 minutes. Print one, then check it together with the answers.</p>
+    {u.home.length > 0 ? (
+      <div class="grid gap-5 sm:grid-cols-2">
+        {u.home.map((h, i) => (
+          <div class="grid gap-2">
+            <MaterialRow label={h.skill} href={view(h.doc)} type="workbook" index={i} />
+            <MaterialRow label={`Answers: ${h.skill}`} href={view(h.keyDoc)} type="key" compact />
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p class="text-slate-500">Home practice sheets for this {noun} are on the way.</p>
+    )}
+  </section>
+
+  <section class="mb-14" aria-labelledby="in-class">
+    <h2 id="in-class" class="mb-1.5 font-display text-[1.5rem] font-medium text-slate-900">What your child is using in class</h2>
+    <p class="mb-5 text-slate-600">
+      The same materials on <a class="font-semibold text-accent-ink hover:underline" href={`${base}${m.studentHref(u.slug)}`}>your child’s {noun} page</a>, in the order they work through them.
+    </p>
+    <div class="grid gap-2.5 sm:grid-cols-2">
+      {inClass.map((doc, i) => (
+        <MaterialRow label={`${i + 1}. ${doc.label}`} href={href(doc)} type={doc.type} compact />
+      ))}
+    </div>
+    {u.keys.length > 0 && (
+      <details class="disclosure mt-4">
+        <summary class="keys-toggle">
+          <span class="chev inline-block text-[0.625rem]" aria-hidden="true">▶</span> Answer keys
+        </summary>
+        <div class="mt-4 grid gap-2.5 sm:grid-cols-2">
+          {u.keys.map((k) => <MaterialRow label={k.label} href={href(k)} type="key" compact />)}
+        </div>
+      </details>
+    )}
+  </section>
+
+  <nav aria-label={`Other ${noun}s`} class="grid gap-3 border-t border-slate-900/[0.07] pt-8 sm:grid-cols-2">
+    {prev ? (
+      <a href={`${base}${m.parentHref(prev.slug)}`} class="lift rounded-2xl px-5 py-4">
+        <span class="block text-sm text-slate-500">← Previous {noun}</span>
+        <span class="block font-bold text-slate-900">{prev.label}</span>
+      </a>
+    ) : <span></span>}
+    {next && (
+      <a href={`${base}${m.parentHref(next.slug)}`} class="lift rounded-2xl px-5 py-4 sm:text-right">
+        <span class="block text-sm text-slate-500">Next {noun} →</span>
+        <span class="block font-bold text-slate-900">{next.label}</span>
+      </a>
+    )}
+  </nav>
+</BaseLayout>
+
+<style>
+  /* Worked examples: each h3 starts a new example. */
+  .worked :global(h3) {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgb(31 29 26 / 0.08);
+    font-family: 'Fraunces Variable', Georgia, serif;
+    font-size: 1.1875rem;
+    font-weight: 500;
+  }
+  .worked :global(h3:first-child) { margin-top: 1rem; }
+  .worked :global(ol) { margin-top: 0.5rem; }
+  .worked :global(li em) { color: rgb(var(--accent-ink)); font-style: normal; font-weight: 600; }
+</style>

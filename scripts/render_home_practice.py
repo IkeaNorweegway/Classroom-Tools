@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""Render Math 9 home practice sheets (markdown) to printable HTML.
+"""Render home practice sheets (markdown) for the parent pages to printable HTML.
 
-Sources:  worksheets/math-9/home/<topic>/math9-<topic>-home-<skill>[-answers]-v<N>.md
-Output:   public/materials/math-9/home/<topic>/<same name>.html
+Sources and output, by course (front matter `course:`, default math9):
+  math9:   worksheets/math-9/home/<topic>/*.md  ->  public/materials/math-9/home/<topic>/
+  others:  worksheets/<course folder>/<unit>/*-home-*.md and steam/grade-N/home/*.md
+           ->  public/materials/ (flat, like the course's other materials)
 
 Run from the repo root:
-    python3 scripts/render_math9_home.py                      # every sheet
-    python3 scripts/render_math9_home.py path/to/sheet.md ... # just these
+    python3 scripts/render_home_practice.py                      # every sheet
+    python3 scripts/render_home_practice.py path/to/sheet.md ... # just these
 
 The format is the one in templates/home-practice-template.md. Styling matches
-the topic core worksheets (same header strip, name row and strand colours).
-After rendering, run scripts/stack_fractions.py on the output folder.
+the course worksheets (same header strip and name row; course or strand colour).
+After rendering, run scripts/stack_fractions.py on the output files.
 """
 import html
 import re
@@ -18,8 +20,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / 'worksheets' / 'math-9' / 'home'
-OUT = ROOT / 'public' / 'materials' / 'math-9' / 'home'
+MATERIALS = ROOT / 'public' / 'materials'
+SOURCES = ['worksheets/math-9/home/*/*.md', 'worksheets/*/*/*-home-*.md', 'steam/grade-*/home/*.md']
 
 # Same accents as the topic worksheets in public/materials/math-9/worksheets/.
 STRAND = {
@@ -27,6 +29,16 @@ STRAND = {
     'algebra':                ('Algebra',                  '#7c3aed', '#f5f3ff', '#8b5cf6'),
     'measurement-geometry':   ('Measurement & Geometry',   '#16a34a', '#f0fdf4', '#22c55e'),
     'statistics-probability': ('Statistics & Probability', '#0d9488', '#f0fdfa', '#14b8a6'),
+}
+
+# Other courses: (header label, accent, light, mid). Accents match the site's
+# course colours in src/styles/global.css.
+COURSE = {
+    'science':  ('Grade 6 Science',        '#1d7486', '#e8f2f4', '#4f9aa8'),
+    'science7': ('Grade 7 Science',        '#2e7d55', '#e9f3ed', '#5fa37f'),
+    'social8':  ('Grade 8 Social Studies', '#8a4a78', '#f4eaf1', '#b07aa2'),
+    'social9':  ('Grade 9 Social Studies', '#a6452f', '#f7ebe7', '#c97a66'),
+    'steam':    ('STEAM',                  '#6650c2', '#efecf9', '#9483d8'),
 }
 
 BOX_LABEL = {'example': 'Worked example', 'tip': '', 'check': 'Check yourself', 'answer': ''}
@@ -195,7 +207,17 @@ def body_html(text):
 
 def render(md_path):
     meta, body = front_matter(md_path.read_text(encoding='utf-8'))
-    strand_label, accent, light, mid = STRAND[meta['strand']]
+    course = meta.get('course', 'math9')
+    if course == 'math9':
+        strand_label, accent, light, mid = STRAND[meta['strand']]
+        course_label = f'Grade 9 Math · {strand_label}'
+        doc_suffix = 'Grade 9 Mathematics'
+        out = MATERIALS / 'math-9' / 'home' / meta['topic'] / (md_path.stem + '.html')
+    else:
+        label, accent, light, mid = COURSE[course]
+        course_label = f'{label} · {meta["unit"]}'
+        doc_suffix = label
+        out = MATERIALS / (md_path.stem + '.html')
     answers = '-answers-' in md_path.name
     title = meta['title'] + (' — Answers' if answers else '')
     name_row = '' if answers else (
@@ -206,13 +228,13 @@ def render(md_path):
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{html.escape(title)} — Home Practice | Grade 9 Mathematics</title>
+  <title>{html.escape(title)} — Home Practice | {html.escape(doc_suffix)}</title>
   <style>
     :root {{ --accent: {accent}; --accent-light: {light}; --accent-mid: {mid}; }}{CSS}  </style>
 </head>
 <body>
   <div class="header-strip">
-    <p class="course-label">Grade 9 Math · {html.escape(strand_label)} · Home practice</p>
+    <p class="course-label">{html.escape(course_label)} · Home practice</p>
     <h1>{html.escape(title)}</h1>
     <p class="meta">One skill: {html.escape(meta['skill'])} · {html.escape(meta.get('time', 'about 15 minutes'))}</p>
   </div>
@@ -221,14 +243,13 @@ def render(md_path):
 </body>
 </html>
 """
-    out = OUT / meta['topic'] / (md_path.stem + '.html')
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(doc, encoding='utf-8')
     return out
 
 
 def main():
-    paths = [Path(p) for p in sys.argv[1:]] or sorted(SRC.glob('*/*.md'))
+    paths = [Path(p) for p in sys.argv[1:]] or sorted({p for g in SOURCES for p in ROOT.glob(g)})
     for p in paths:
         print(render(p.resolve()).relative_to(ROOT))
 

@@ -9,20 +9,22 @@ misconceptions:
   - Plants get food from soil
   - Photosynthesis and respiration are opposites
   - GMO and selective breeding are the same
+hook: "The bread in your sandwich, the cotton in your T-shirt and the air you breathe all come from plants. And plants make their own food out of light, air and water."
+realWorld:
+  - title: "Alberta farms"
+    blurb: "Wheat, canola and barley grow across the prairies. Farmers need to know how plants grow to feed the world."
+  - title: "Your clothes"
+    blurb: "Cotton, linen (from flax) and many fabrics come from plant fibres."
+  - title: "Potatoes and strawberries"
+    blurb: "A potato can grow a whole new plant, and strawberries send out runners. Plants don't always need seeds."
+iCan:
+  - "I can name the parts of a plant cell and what each one does."
+  - "I can explain how photosynthesis turns light, water and carbon dioxide into food."
+  - "I can describe how plants reproduce with and without seeds."
+  - "I can give examples of how people use and change plants."
+teacherSummary: "Plant cells, root and shoot systems (xylem/phloem), photosynthesis at process level, sexual and asexual reproduction, crops and biotechnology; no respiration detail or genetics. Watch for \"plants get food from the soil\" and \"roots take in food.\""
 ---
 
-Every meal on your plate and most of the clothes on your back started as a plant. Wheat becomes bread. Cotton becomes a T-shirt. Canola becomes cooking oil. None of that works without understanding how plants actually grow, feed themselves, and reproduce — and Alberta's economy runs on getting that right at a massive scale.
+## What's the big idea?
 
-This unit looks at the plant from the inside out: how it is built, how it makes its own food, and how farmers and scientists work with (and sometimes redirect) its natural processes.
-
-## What you will explore
-
-You will study plant structures — roots, stems, leaves, flowers — and connect each one to a specific job the plant needs done: absorbing water, transporting nutrients, capturing sunlight, producing seeds. You will build a clear model of **photosynthesis** (using light, water, and carbon dioxide to produce sugar and oxygen) and see why it is not simply the reverse of respiration, even though the two processes use some of the same ingredients.
-
-You will also look at how plants reproduce, comparing **sexual reproduction** (pollination, fertilization, seed production) with **asexual reproduction** (cuttings, runners, tubers) — and why a farmer might deliberately choose one over the other. From there, you will explore how humans have shaped plants for thousands of years through **selective breeding**, and how modern **genetic modification** does something related but technically different: introducing specific genes directly, rather than selecting for traits over many generations.
-
-Throughout the unit, you will connect these ideas to real Alberta agriculture — canola, wheat, and flax fibre — and the practices farmers use to maximize yield while managing soil health, pests, and water use.
-
-## By the end of this unit
-
-You will be able to explain how a plant grows, feeds itself, and reproduces, and use that understanding to evaluate an agricultural practice — why irrigation matters where it does, why crop rotation works, or why a particular breeding technique was chosen for a particular crop.
+Plants are food factories. In **photosynthesis**, they use sunlight to turn water and carbon dioxide into sugar, and they give off the oxygen we breathe. Roots take in water and minerals, not food. Plants reproduce with flowers and seeds, or by growing copies of themselves from runners, bulbs and cuttings. People depend on plants for food and fibre, and farmers keep finding ways to grow them better.

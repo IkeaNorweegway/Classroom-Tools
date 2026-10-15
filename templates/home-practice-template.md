@@ -1,13 +1,15 @@
 ---
 title: [Skill name, e.g. Solving Two-Step Equations]
-topic: [topic slug, e.g. linear-equations]
-strand: [number | algebra | measurement-geometry | statistics-probability]
+course: [math9 | science | science7 | social8 | social9 | steam]  (math9 if left out)
+topic: [Math 9 only: topic slug, e.g. linear-equations]
+strand: [Math 9 only: number | algebra | measurement-geometry | statistics-probability]
+unit: [other courses: unit name for the header, e.g. Heat and Temperature]
 skill: [one skill, in a few words]
 time: [about 15 minutes]
 ---
 
 <!--
-HOME PRACTICE SHEET — Math 9 parent pages.
+HOME PRACTICE SHEET — parent pages (every course).
 One sheet = ONE targeted skill, 6–8 questions, fits on one printed page.
 Audience: a student working at home with a parent or guardian beside them
 who may not remember this math. Plain words; no notation without an example.
@@ -16,7 +18,10 @@ Gate (state before writing): "One skill: [skill]. Worked example first, then
 fading support: Q1–2 guided (partly filled in), Q3–5 independent, last
 question a short real-world one. Maps to: [prerequisite or core skill]."
 
-Render: python3 scripts/render_math9_home.py <this file>
+Render: python3 scripts/render_home_practice.py <this file>
+Name: [prefix]-[unit]-home-[skill]-v1.md in the unit's type folder (Math 9:
+worksheets/math-9/home/[topic]/; STEAM: steam/grade-N/home/), and list it in
+the course manifest in src/data/ so the pages and the viewer link it.
 Answers: same name with -answers, same format, with every step shown.
 
 Format rules for the renderer:

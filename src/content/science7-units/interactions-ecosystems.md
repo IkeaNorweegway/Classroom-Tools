@@ -9,20 +9,22 @@ misconceptions:
   - Ecosystems can recover from any disturbance
   - Decomposers are not important
   - Food chains are linear in nature
+hook: "Every living thing is connected to others, from the wolves in Banff to the fungi under your feet. Change one piece and the whole web feels it."
+realWorld:
+  - title: "Wolves in the Rockies"
+    blurb: "When wolves came back to parts of the Rockies, elk moved differently, and the plants along rivers grew back."
+  - title: "Your garden"
+    blurb: "Worms, bugs and fungi break down dead leaves and turn them into food for new plants. No decomposers, no garden."
+  - title: "Wildfire smoke"
+    blurb: "Fires, floods and droughts change ecosystems. Some recover in a few years, and some never fully do."
+iCan:
+  - "I can tell living (biotic) and non-living (abiotic) parts of an ecosystem apart."
+  - "I can build a food web and follow the energy through it."
+  - "I can explain why there's less energy at each step up a food chain."
+  - "I can describe how people change ecosystems, for better and worse."
+teacherSummary: "Biotic and abiotic factors, food webs and energy pyramids (~10% rule), biodiversity, natural vs. human change, and stewardship; no population equations. Watch for decomposers dismissed as unimportant and for energy increasing up the chain."
 ---
 
-Pull one thread out of a spiderweb and the whole web sags. Ecosystems work the same way — every organism, from the biggest predator to the smallest bacterium in the soil, is connected to dozens of others. Remove one, and the effects ripple outward in ways that are not always easy to predict.
+## What's the big idea?
 
-This unit is about learning to see those connections, and about what happens when human activity pulls on one of the threads.
-
-## What you will explore
-
-You will move past the simple food *chain* and build actual food **webs** — networks where energy flows through many overlapping paths, not a single line. You will trace energy as it moves from producers through consumers and finally to decomposers, and you will see why energy is lost at every step, which is why there are always far more plants than there are top predators in a healthy ecosystem.
-
-You will also look closely at **biotic** and **abiotic** factors — living things and the non-living conditions (water, temperature, soil) that support them — and how a change in one abiotic factor, like a shift in rainfall, can cascade through an entire food web. Alberta examples run through this unit: boreal forest food webs, wetland ecosystems, and the role of species like beavers and wolves in shaping the landscapes around them.
-
-Finally, you will examine population dynamics — what keeps populations in balance, what happens when a species is removed or introduced, and how human activity (habitat loss, invasive species, pollution) can push an ecosystem past the point where it can recover on its own.
-
-## By the end of this unit
-
-You will be able to build and interpret a food web, explain what happens to energy at each trophic level, and predict how a change to one part of an ecosystem — a new predator, a drought, a construction project — will affect the rest of it. You will also be able to evaluate a real human impact on an Alberta ecosystem and explain why some disturbances are recoverable and others are not.
+An **ecosystem** is all the living things in a place plus the non-living things they depend on, like water, soil and sunlight. Energy flows from the Sun to plants, then to the animals that eat them. Only a little energy makes it to each next step, which is why there are far fewer hawks than mice. When people change one part of an ecosystem, the effects spread through the whole web.

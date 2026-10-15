@@ -4,14 +4,22 @@ organizingIdea: "Systems"
 order: 2
 guidingQuestion: How should governments use spending, taxation, and economic systems to meet the needs of society?
 learningOutcome: Students compare the role of individuals and governments in economic systems.
+hook: "There’s never enough of everything to go around. Every country has to decide what to make, how to make it and who gets it, and they don’t all decide the same way."
+realWorld:
+  - title: "Your money"
+    blurb: "You can’t buy everything you want, so you choose. Countries face the same problem. It’s called scarcity."
+  - title: "Health care"
+    blurb: "In Canada the government pays for doctor visits, but most stores are private businesses. That blend is a mixed economy."
+  - title: "Taxes"
+    blurb: "Part of what you pay at a store goes to the government, for schools, roads and hospitals."
+iCan:
+  - "I can explain scarcity and the three economic questions."
+  - "I can compare traditional, command, market and mixed economies."
+  - "I can explain how governments collect and spend money."
+  - "I can tell a surplus, a deficit and debt apart."
+teacherSummary: "Scarcity and the three economic questions, traditional/command/market/mixed systems, measuring economies (GDP, CPI, unemployment), government revenue and spending, and surplus, deficit and debt. Watch for deficit confused with debt, and real economies seen as purely market or command."
 ---
 
-Every economy — from a small town to an entire country — has to answer three questions: what gets made, how it gets made, and who gets it. How a government answers those questions defines its economic system, and no two countries answer them quite the same way.
+## What's the big idea?
 
-## What you will explore
-
-You will compare the four main types of economic systems — **traditional, command, market, and mixed** — and place them on a spectrum based on how much control the government holds. You will learn how economies are measured (GDP, unemployment, prices) and how governments pay for the things they provide, including what happens when a government spends more than it collects: **surplus, deficit, and debt**.
-
-## By the end of this unit
-
-You will be able to compare how different economic systems make decisions about resources, evaluate the advantages and challenges of each system, and analyze why governments run deficits and what sustained debt means for a country's future choices.
+Because nothing is unlimited, every society has to answer three questions: **What** should we make? **How** should we make it? **Who** gets it? In a **market economy**, people and businesses decide. In a **command economy**, the government decides. Most countries, including Canada, are **mixed**. Governments also collect taxes and decide how to spend them, and sometimes they spend more than they collect.
