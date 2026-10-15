@@ -4,48 +4,26 @@ import CourseHero from '../../components/CourseHero.astro';
 import TopicList from '../../components/TopicList.astro';
 import ActionCard from '../../components/ActionCard.astro';
 import { getCollection } from 'astro:content';
+import { science6 } from '../../data/science6';
+import { materialCount, weeksRange } from '../../data/manifest';
 const base = import.meta.env.BASE_URL;
+
 // Cards lead with the student hook; the topic list stays as small print.
-const hooks: Record<string, string> = Object.fromEntries((await getCollection('units')).map((e) => [e.slug, e.data.hook]));
+const units = (await getCollection('units')).sort((a, b) => a.data.order - b.data.order);
+const hooks: Record<string, string> = Object.fromEntries(units.map((e) => [e.slug, e.data.hook]));
 
 const unitCards = [
-  {
-    slug: 'matter',
-    label: 'Matter',
-    description: 'Particle model, states of matter, phase changes, thermometers, expansion, and the water anomaly.',
-    bg: 'bg-cyan-50', text: 'text-cyan-800', border: 'border-cyan-400', link: 'text-cyan-700', hover: 'hover:bg-cyan-100',
-  },
-  {
-    slug: 'forces',
-    label: 'Forces',
-    description: 'Pushes and pulls, external and internal forces, elasticity, plasticity, and Newton\'s Third Law.',
-    bg: 'bg-violet-50', text: 'text-violet-800', border: 'border-violet-400', link: 'text-violet-700', hover: 'hover:bg-violet-100',
-  },
-  {
-    slug: 'living-systems',
-    label: 'Living Systems',
-    description: 'Biotic and abiotic factors, photosynthesis, food webs, trophic cascades, and Indigenous ecological knowledge.',
-    bg: 'bg-emerald-50', text: 'text-emerald-800', border: 'border-emerald-400', link: 'text-emerald-700', hover: 'hover:bg-emerald-100',
-  },
-  {
-    slug: 'climate',
-    label: 'Climate',
-    description: 'Weather vs. climate, greenhouse effect, causes of climate change, and Alberta-specific impacts.',
-    bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-400', link: 'text-amber-700', hover: 'hover:bg-amber-100',
-  },
-  {
-    slug: 'energy-resources',
-    label: 'Energy Resources',
-    description: 'Renewable vs. non-renewable energy, before and after processing, and the five selection factors.',
-    bg: 'bg-orange-50', text: 'text-orange-800', border: 'border-orange-400', link: 'text-orange-700', hover: 'hover:bg-orange-100',
-  },
-  {
-    slug: 'space',
-    label: 'Space',
-    description: 'Solar system objects, exploration technologies, satellites, orbital mechanics, and the ISS.',
-    bg: 'bg-indigo-50', text: 'text-indigo-800', border: 'border-indigo-400', link: 'text-indigo-700', hover: 'hover:bg-indigo-100',
-  },
+  { slug: 'matter', label: 'Matter', description: 'Particle model, states of matter, phase changes, thermometers, expansion, and the water anomaly.' },
+  { slug: 'forces', label: 'Forces', description: 'Pushes and pulls, external and internal forces, elasticity, plasticity, and Newton\'s Third Law.' },
+  { slug: 'living-systems', label: 'Living Systems', description: 'Biotic and abiotic factors, photosynthesis, food webs, trophic cascades, and Indigenous ecological knowledge.' },
+  { slug: 'climate', label: 'Climate', description: 'Weather vs. climate, greenhouse effect, causes of climate change, and Alberta-specific impacts.' },
+  { slug: 'energy-resources', label: 'Energy Resources', description: 'Renewable vs. non-renewable energy, before and after processing, and the five selection factors.' },
+  { slug: 'space', label: 'Space', description: 'Solar system objects, exploration technologies, satellites, orbital mechanics, and the ISS.' },
 ];
+
+// The same three facts as the other courses' landing pages, all read from the data.
+const weeks = weeksRange(units.map((u) => u.data.weeks));
+const materials = materialCount(science6.units);
 ---
 
 <BaseLayout course="science" title="Grade 6 Science">
@@ -54,11 +32,11 @@ const unitCards = [
     title="Grade 6 Science"
     numeral="6"
     vtName="course-num-science"
-    description="Pick the unit your child is studying. You'll find notes, a practice workbook, and answer keys, all in one place."
+    description="Six units. Guided notes, a practice workbook, Easy Read and French versions, and answer keys."
     facts={[
-      { n: '6', label: 'units' },
-      { n: '~28', label: 'weeks' },
-      { n: '3', label: 'versions: English, Easy Read, French' },
+      { n: `${units.length}`, label: 'units' },
+      { n: weeks, label: 'weeks' },
+      { n: `${materials}`, label: 'materials' },
     ]}
   />
 

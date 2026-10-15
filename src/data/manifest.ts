@@ -75,3 +75,24 @@ export function unitDocs(u: CourseUnit): string[] {
 }
 
 export const neighbours = <T>(list: T[], i: number) => ({ prev: list[i - 1], next: list[i + 1] });
+
+/** Student-facing files in a course: every unit's path, extras and answer keys.
+ *  Page links (e.g. a lesson page) are not files, so they are left out. */
+export function materialCount(units: CourseUnit[]): number {
+  return units.reduce(
+    (n, u) => n + [...u.path.flatMap((s) => s.items), ...u.extras.flatMap((g) => g.items), ...u.keys].filter((d) => !d.href).length,
+    0,
+  );
+}
+
+/** Sum the "5–6" style week ranges of several units into one range. */
+export function weeksRange(ranges: string[]): string {
+  let lo = 0;
+  let hi = 0;
+  for (const r of ranges) {
+    const [a, b] = r.split('–').map(Number);
+    lo += a;
+    hi += b ?? a;
+  }
+  return lo === hi ? `${lo}` : `${lo}–${hi}`;
+}

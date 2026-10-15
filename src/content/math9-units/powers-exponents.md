@@ -1,6 +1,6 @@
 ---
 title: Powers & Exponents
-order: 3
+order: 2
 guidingQuestion: What rules govern how powers combine, and why do those rules work?
 learningOutcome: Students apply the exponent laws to simplify expressions involving powers, including zero and negative exponents.
 hook: "Fold a piece of paper in half 7 times and it's 128 layers thick. That kind of doubling is what powers are about."

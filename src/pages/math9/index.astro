@@ -4,8 +4,11 @@ import CourseHero from '../../components/CourseHero.astro';
 import TopicList from '../../components/TopicList.astro';
 import ActionCard from '../../components/ActionCard.astro';
 import { getEntry } from 'astro:content';
-import { strands, topicsInStrand } from '../../data/math9';
+import { strands, topics, topicsInStrand, math9Course } from '../../data/math9';
+import { materialCount } from '../../data/manifest';
 const base = import.meta.env.BASE_URL;
+// The same three facts as the other courses' landing pages, all read from the data.
+const materials = materialCount(math9Course.units);
 
 // Every topic, one click away, grouped under its strand.
 const groups = await Promise.all(
@@ -30,10 +33,9 @@ const groups = await Promise.all(
     vtName="course-num-math9"
     description="Eleven topics in four strands. Pick a topic to see what it’s about and work through its materials step by step."
     facts={[
-      { n: '4', label: 'strands' },
-      { n: '11', label: 'topics' },
-      { n: '98', label: 'materials' },
-      { n: '52', label: 'exit tickets' },
+      { n: `${strands.length}`, label: 'strands' },
+      { n: `${topics.length}`, label: 'topics' },
+      { n: `${materials}`, label: 'materials' },
     ]}
   />
 

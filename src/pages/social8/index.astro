@@ -3,9 +3,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import CourseHero from '../../components/CourseHero.astro';
 import TopicList from '../../components/TopicList.astro';
 import { getCollection } from 'astro:content';
+import { social8 } from '../../data/social8';
+import { materialCount } from '../../data/manifest';
 const base = import.meta.env.BASE_URL;
 // Cards lead with the student hook; the topic list stays as small print.
 const hooks: Record<string, string> = Object.fromEntries((await getCollection('social8-units')).map((e) => [e.slug, e.data.hook]));
+
+// The same three facts as the other courses' landing pages, all read from the data.
+const materials = materialCount(social8.units);
 
 const units = [
   {
@@ -13,28 +18,24 @@ const units = [
     label: 'Foundations and Influences of Ideologies',
     description: 'Individualism vs. collectivism, the political spectrum, the four major ideologies, and totalitarian government.',
     organizingIdea: 'Time and Place',
-    color: '#92400e', colorDark: '#78350f', colorLight: '#fef3c7',
   },
   {
     slug: 'economic-systems',
     label: 'Economic Systems',
     description: 'Traditional, command, market, and mixed economies, how economies are measured, and government surplus, deficit, and debt.',
     organizingIdea: 'Systems',
-    color: '#1d4ed8', colorDark: '#1e40af', colorLight: '#dbeafe',
   },
   {
     slug: 'political-systems',
     label: 'Political Systems',
     description: "Types of political systems, Canada's parliamentary democracy vs. the American presidential system, and political parties.",
     organizingIdea: 'Systems',
-    color: '#4338ca', colorDark: '#3730a3', colorLight: '#e0e7ff',
   },
   {
     slug: 'civic-engagement',
     label: 'Civic Engagement',
     description: 'Voting, volunteering, advocacy, and how global issues connect to daily life in Canada.',
     organizingIdea: 'Citizenship',
-    color: '#0f766e', colorDark: '#115e59', colorLight: '#ccfbf1',
   },
 ];
 ---
@@ -48,8 +49,8 @@ const units = [
     description="Four units across Time and Place, Systems, and Citizenship. Notes, workbooks, and answer keys."
     facts={[
       { n: '4', label: 'units' },
-      { n: '3', label: 'organizing ideas' },
-      { n: '20', label: 'materials' },
+      { n: `${new Set(units.map((u) => u.organizingIdea)).size}`, label: 'organizing ideas' },
+      { n: `${materials}`, label: 'materials' },
     ]}
   />
 

@@ -1,6 +1,6 @@
 ---
 title: Square Roots
-order: 2
+order: 3
 guidingQuestion: How can square roots be estimated and applied, including to find unknown sides of right triangles?
 learningOutcome: Students determine square roots of rational numbers, estimate irrational square roots, and apply the Pythagorean theorem to solve problems.
 hook: "A 55-inch TV is measured corner to corner. Square roots tell you whether it will actually fit on your wall."

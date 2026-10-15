@@ -3,7 +3,7 @@ title: Heat and Temperature
 tier: 1
 weeks: "5–6"
 order: 3
-guidingQuestion: What is the difference between heat and temperature, and how does heat move?
+guidingQuestion: How does heat energy move and what effects does it have?
 learningOutcome: Students distinguish between heat and temperature and explain heat transfer using the particle model of matter.
 misconceptions:
   - Cold travels into warm spaces

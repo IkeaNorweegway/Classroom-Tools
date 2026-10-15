@@ -3,8 +3,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import CourseHero from '../../components/CourseHero.astro';
 import TopicList from '../../components/TopicList.astro';
 import { getCollection } from 'astro:content';
+import { social9 } from '../../data/social9';
+import { materialCount } from '../../data/manifest';
 const base = import.meta.env.BASE_URL;
 // Cards lead with the student hook; the topic list stays as small print.
+// The same three facts as the other courses' landing pages, all read from the data.
+const materials = materialCount(social9.units);
 const hooks: Record<string, string> = Object.fromEntries((await getCollection('social9-units')).map((e) => [e.slug, e.data.hook]));
 
 const units = [
@@ -13,49 +17,42 @@ const units = [
     label: 'Urbanization and the Growth of Industry',
     description: 'Push and pull factors, postwar immigration, the growth of Alberta industry, and the environmental cost of urban growth.',
     organizingIdea: 'Time and Place',
-    color: '#b45309', colorDark: '#92400e', colorLight: '#fef3c7',
   },
   {
     slug: 'independence-democratic-rights',
     label: "Canada's Independence and Democratic Rights",
     description: 'The Balfour Declaration, the Statute of Westminster, and the Persons Case.',
     organizingIdea: 'Time and Place',
-    color: '#4338ca', colorDark: '#3730a3', colorLight: '#e0e7ff',
   },
   {
     slug: 'canada-in-wwii',
     label: 'Canada in the Second World War',
     description: "Canada's independent declaration of war, key battles, and the contributions of Chinese Canadians and Cree code talkers.",
     organizingIdea: 'Time and Place',
-    color: '#b91c1c', colorDark: '#991b1b', colorLight: '#fee2e2',
   },
   {
     slug: 'postwar-canada',
     label: 'Post-War Canada: Change, Cooperation, and Conflict',
     description: 'The welfare state, peacekeeping, multiculturalism, residential schools, Western alienation, and the Charter of Rights and Freedoms.',
     organizingIdea: 'Time and Place',
-    color: '#0f766e', colorDark: '#115e59', colorLight: '#ccfbf1',
   },
   {
     slug: 'modern-economy',
     label: 'Building a Modern Economy',
     description: 'The Great Depression, government response, postwar industrial growth, and trade with the United States.',
     organizingIdea: 'Systems',
-    color: '#15803d', colorDark: '#166534', colorLight: '#dcfce7',
   },
   {
     slug: 'system-of-government',
     label: "Canada's System of Government",
     description: 'Responsible government, how laws are made, federalism and natural resources, and the judiciary.',
     organizingIdea: 'Systems',
-    color: '#1d4ed8', colorDark: '#1e40af', colorLight: '#dbeafe',
   },
   {
     slug: 'evolving-citizenship',
     label: 'Evolving Citizenship and Rights',
     description: 'Canadian citizenship categories, the legislative path to the Charter, and the balance of rights and responsibilities.',
     organizingIdea: 'Citizenship',
-    color: '#be185d', colorDark: '#9d174d', colorLight: '#fce7f3',
   },
 ];
 ---
@@ -68,9 +65,9 @@ const units = [
     vtName="course-num-social9"
     description="Seven units across Time and Place, Systems, and Citizenship. Notes, workbooks, and answer keys."
     facts={[
-      { n: '7', label: 'units' },
-      { n: '3', label: 'organizing ideas' },
-      { n: '35', label: 'materials' },
+      { n: `${units.length}`, label: 'units' },
+      { n: `${new Set(units.map((u) => u.organizingIdea)).size}`, label: 'organizing ideas' },
+      { n: `${materials}`, label: 'materials' },
     ]}
   />
 

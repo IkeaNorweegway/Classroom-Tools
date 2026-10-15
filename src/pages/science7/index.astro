@@ -4,52 +4,24 @@ import CourseHero from '../../components/CourseHero.astro';
 import TopicList from '../../components/TopicList.astro';
 import ActionCard from '../../components/ActionCard.astro';
 import { getCollection } from 'astro:content';
+import { science7 } from '../../data/science7';
+import { materialCount, weeksRange } from '../../data/manifest';
 const base = import.meta.env.BASE_URL;
 // Cards lead with the student hook; the topic list stays as small print.
-const hooks: Record<string, string> = Object.fromEntries((await getCollection('science7-units')).map((e) => [e.slug, e.data.hook]));
+const units = await getCollection('science7-units');
+const hooks: Record<string, string> = Object.fromEntries(units.map((e) => [e.slug, e.data.hook]));
 
-const units = [
-  {
-    slug: 'interactions-ecosystems',
-    label: 'Interactions and Ecosystems',
-    description: 'Ecosystems, food webs, energy pyramids, biodiversity, and human impacts on Alberta ecosystems.',
-    color: '#059669',
-    colorDark: '#047857',
-    colorLight: '#d1fae5',
-  },
-  {
-    slug: 'plants-food-fibre',
-    label: 'Plants for Food and Fibre',
-    description: 'Cell theory, plant systems, photosynthesis, reproduction, Alberta agriculture, and biotechnology.',
-    color: '#16a34a',
-    colorDark: '#15803d',
-    colorLight: '#dcfce7',
-  },
-  {
-    slug: 'heat-temperature',
-    label: 'Heat and Temperature',
-    description: 'Temperature scales, heat vs. temperature, the particle model, modes of heat transfer, and specific heat.',
-    color: '#ea580c',
-    colorDark: '#c2410c',
-    colorLight: '#ffedd5',
-  },
-  {
-    slug: 'structures-forces',
-    label: 'Structures and Forces',
-    description: 'Structure types, loads, internal forces, stability, simple machines, and materials.',
-    color: '#7c3aed',
-    colorDark: '#6d28d9',
-    colorLight: '#ede9fe',
-  },
-  {
-    slug: 'planet-earth',
-    label: 'Planet Earth',
-    description: "Earth's interior, the rock cycle, plate tectonics, earthquakes, landforms, and geological time.",
-    color: '#d97706',
-    colorDark: '#b45309',
-    colorLight: '#fef3c7',
-  },
+const cards = [
+  { slug: 'interactions-ecosystems', label: 'Interactions and Ecosystems', description: 'Ecosystems, food webs, energy pyramids, biodiversity, and human impacts on Alberta ecosystems.' },
+  { slug: 'plants-food-fibre', label: 'Plants for Food and Fibre', description: 'Cell theory, plant systems, photosynthesis, reproduction, Alberta agriculture, and biotechnology.' },
+  { slug: 'heat-temperature', label: 'Heat and Temperature', description: 'Temperature scales, heat vs. temperature, the particle model, modes of heat transfer, and specific heat.' },
+  { slug: 'structures-forces', label: 'Structures and Forces', description: 'Structure types, loads, internal forces, stability, simple machines, and materials.' },
+  { slug: 'planet-earth', label: 'Planet Earth', description: "Earth's interior, the rock cycle, plate tectonics, earthquakes, landforms, and geological time." },
 ];
+
+// The same three facts as the other courses' landing pages, all read from the data.
+const weeks = weeksRange(units.map((u) => u.data.weeks));
+const materials = materialCount(science7.units);
 ---
 
 <BaseLayout course="science7" title="Grade 7 Science">
@@ -60,16 +32,15 @@ const units = [
     vtName="course-num-science7"
     description="Five units. Notes, workbooks, quizzes, tests, and answer keys."
     facts={[
-      { n: '5', label: 'units' },
-      { n: '~26', label: 'weeks' },
-      { n: '40', label: 'materials' },
-      { n: '30', label: 'exit tickets' },
+      { n: `${units.length}`, label: 'units' },
+      { n: weeks, label: 'weeks' },
+      { n: `${materials}`, label: 'materials' },
     ]}
   />
 
   <TopicList
     heading="Units"
-    items={units.map(u => ({ art: u.slug, href: `${base}science7/materials/${u.slug}`, title: u.label, description: hooks[u.slug] ?? u.description, meta: hooks[u.slug] ? u.description : undefined }))}
+    items={cards.map(u => ({ art: u.slug, href: `${base}science7/materials/${u.slug}`, title: u.label, description: hooks[u.slug] ?? u.description, meta: hooks[u.slug] ? u.description : undefined }))}
   />
 
   <div class="grid gap-4 sm:grid-cols-2">

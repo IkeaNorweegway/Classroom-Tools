@@ -3,7 +3,7 @@ title: Plants for Food and Fibre
 tier: 1
 weeks: "5–6"
 order: 2
-guidingQuestion: How do plant structures and processes allow humans to grow food and fibre reliably?
+guidingQuestion: How do plants grow, reproduce, and meet human needs?
 learningOutcome: Students investigate plant structures, growth processes, and reproduction, and analyze practices used to grow plants for food and fibre.
 misconceptions:
   - Plants get food from soil

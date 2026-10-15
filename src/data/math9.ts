@@ -99,8 +99,8 @@ rational.keys.push({ label: 'Practice Test Answer Key', path: 'tests/rational-nu
 
 export const topics: Topic[] = [
   rational,
-  standard('square-roots', 'Square Roots', 'number', 'math9-square-roots'),
   standard('powers-exponents', 'Powers & Exponents', 'number', 'math9-powers'),
+  standard('square-roots', 'Square Roots', 'number', 'math9-square-roots'),
   standard('linear-relations', 'Linear Relations', 'algebra', 'math9-linear-relations'),
   standard('linear-equations', 'Linear Equations & Inequalities', 'algebra', 'math9-linear-equations'),
   standard('polynomials', 'Polynomials', 'algebra', 'math9-polynomials'),

@@ -3,7 +3,7 @@ title: Planet Earth
 tier: 2
 weeks: "4–5"
 order: 5
-guidingQuestion: What processes shape Earth's surface, and over what timescales do they act?
+guidingQuestion: What processes shape the Earth and how do we know?
 learningOutcome: Students explain the processes that shape Earth's crust and surface, including plate tectonics, the rock cycle, and erosion, and relate these to timescales of geological change.
 misconceptions:
   - Continents are fixed in place

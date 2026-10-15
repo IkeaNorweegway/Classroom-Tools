@@ -3,7 +3,7 @@ title: Structures and Forces
 tier: 2
 weeks: "5–6"
 order: 4
-guidingQuestion: How do external and internal forces affect the design and stability of structures?
+guidingQuestion: How do forces act on structures and what makes structures stable?
 learningOutcome: Students analyze the forces acting on and within structures and evaluate design choices that improve strength and stability.
 misconceptions:
   - Simple machines reduce the work done

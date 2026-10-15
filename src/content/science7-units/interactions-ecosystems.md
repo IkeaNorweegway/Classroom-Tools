@@ -3,7 +3,7 @@ title: Interactions and Ecosystems
 tier: 1
 weeks: "6–7"
 order: 1
-guidingQuestion: How do interactions among organisms and their environment shape an ecosystem?
+guidingQuestion: How do living things interact with and depend on each other and their environment?
 learningOutcome: Students analyze ecosystems in terms of interactions among biotic and abiotic components, and evaluate the impact of human activity on ecosystem stability.
 misconceptions:
   - Ecosystems can recover from any disturbance
