@@ -29,3 +29,16 @@ Both are done in the same commit as the render, once the HTML is checked.
 
 - Written without being run here. If the output looks wrong, send the first few lines of the source file and the HTML it produced.
 - It does not handle tables or nested lists. Exit tickets and quizzes don't use them.
+
+## Added: unit tests and answer keys (for the Google Drive folder, not the site)
+
+Unit tests are unreleased. Render them for the Drive folder only; do not publish them to `public/materials/`.
+
+Run `python3 scripts/render_assessments.py` for the Grade 6 Science, Grade 9 Social and Math 9 folders, and the same for the Grade 8 Social test files (these already contain their answer key at the end). Files:
+
+- `tests-quizzes/grade-6-science/*/sci6-*-test-v1.md` and `*-test-answers-v1.md` (6 + 6)
+- `tests-quizzes/math-9/*/math9-*-test-v1.md` and `*-test-answers-v1.md` (10 + 10)
+- `tests-quizzes/grade-9-social/*/soc9-*-test-v1.md` and `*-test-answers-v1.md` (7 + 7)
+- `tests-quizzes/grade-8-social/*/soc8-*-test-v1.md` (4, key included)
+
+Quiz answer keys are also in this run: `*-quiz-answers-v1.md`. Keep them out of student copies.
