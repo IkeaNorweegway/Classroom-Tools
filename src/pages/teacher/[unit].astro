@@ -1,6 +1,7 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { science6 } from '../../data/science6';
 
 export async function getStaticPaths() {
   const units = await getCollection('units');
@@ -19,41 +20,17 @@ const teacherLessons = (await getCollection('teacher-lessons'))
 const base = import.meta.env.BASE_URL;
 const { title, tier, weeks, guidingQuestion, teacherSummary } = unitEntry.data;
 
-// Explicit file refs per unit (teacher materials don't use the -gr6- suffix)
-const teacherFileRefs: Record<string, { notes: string; notesEF: string; workbook: string }> = {
-  'matter':           { notes: 'sci6-matter-notes-v1.html',                  notesEF: 'sci6-matter-notes-ef-v1.html',                  workbook: 'sci6-matter-workbook-v1.html' },
-  'forces':           { notes: 'sci6-forces-notes-v1.html',                  notesEF: 'sci6-forces-notes-ef-v1.html',                  workbook: 'sci6-forces-workbook-v1.html' },
-  'living-systems':   { notes: 'sci6-living-systems-notes-gr6-v1.html',      notesEF: 'sci6-living-systems-notes-ef-gr6-v1.html',      workbook: 'sci6-living-systems-workbook-gr6-v1.html' },
-  'climate':          { notes: 'sci6-climate-notes-v1.html',                 notesEF: 'sci6-climate-notes-ef-v1.html',                 workbook: 'sci6-climate-workbook-v1.html' },
-  'energy-resources': { notes: 'sci6-energy-resources-notes-v1.html',        notesEF: 'sci6-energy-resources-notes-ef-v1.html',        workbook: 'sci6-energy-resources-workbook-v1.html' },
-  'space':            { notes: 'sci6-space-notes-v1.html',                   notesEF: 'sci6-space-notes-ef-v1.html',                   workbook: 'sci6-space-workbook-v1.html' },
-};
-const refs = teacherFileRefs[unitSlug!] ?? teacherFileRefs['matter'];
+// Documents come from the course manifest, so the student and teacher pages agree.
+const m = science6.units.find(u => u.slug === unitSlug)!;
+const viewHref = (doc: string) => `${base}materials/view/${unitSlug}/${doc}`;
+const guidedNotes = m.path[0].items[0];
+const workbook = m.path[1].items[0];
+const easyReadNotes = m.extras.flatMap(g => g.items).find(d => d.label === 'Easy Read Notes')!;
 
-const teacherNotesVersion: Record<string, number> = {
-  'climate': 2,
-};
-
-// Teacher HTML materials (to be built and placed in public/materials/)
-const teacherMaterials: { label: string; href: string; tag: string; color: string }[] = [
-  {
-    label: 'Teacher Notes — Full SHOW/SAY/CUE Guide',
-    href: `${base}materials/sci6-${unitSlug}-teachernotes-v${teacherNotesVersion[unitSlug!] ?? 1}.html`,
-    tag: 'Teacher Notes',
-    color: 'border-l-amber-500 bg-amber-50',
-  },
-  {
-    label: 'Notes Answer Key',
-    href: `${base}materials/sci6-${unitSlug}-notes-answers-v1.html`,
-    tag: 'Answer Key',
-    color: 'border-l-rose-500 bg-rose-50',
-  },
-  {
-    label: 'Workbook Answer Key',
-    href: `${base}materials/sci6-${unitSlug}-workbook-answers-v1.html`,
-    tag: 'Answer Key',
-    color: 'border-l-rose-500 bg-rose-50',
-  },
+// Teaching materials: the teacher notes, then every answer key the unit has.
+const teacherItems = [
+  { label: 'Teacher Notes — Full SHOW/SAY/CUE Guide', doc: m.teacherGuide!, tag: 'Teacher Notes' },
+  ...m.keys.map(k => ({ label: k.label, doc: k.doc, tag: 'Answer Key' })),
 ];
 
 const unitColors: Record<string, string> = {
@@ -92,16 +69,16 @@ const TeacherContent = teacherUnit ? (await teacherUnit.render()).Content : null
   <section class="mb-8">
     <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400 mb-3">Teaching Materials</h2>
     <div class="space-y-2">
-      {teacherMaterials.map(m => (
-        <div class={`flex items-center justify-between gap-4 bg-white rounded-xl border border-slate-200 border-l-4 ${m.color.split(' ')[0]} p-4`}>
+      {teacherItems.map(item => (
+        <div class={`flex items-center justify-between gap-4 bg-white rounded-xl border border-slate-200 border-l-4 ${item.tag === 'Teacher Notes' ? 'border-l-amber-500' : 'border-l-rose-500'} p-4`}>
           <div class="flex items-center gap-3">
-            <span class={`text-xs font-semibold px-2 py-0.5 rounded-full ${m.color.split(' ')[1]} text-slate-700`}>
-              {m.tag}
+            <span class={`text-xs font-semibold px-2 py-0.5 rounded-full ${item.tag === 'Teacher Notes' ? 'bg-amber-50' : 'bg-rose-50'} text-slate-700`}>
+              {item.tag}
             </span>
-            <span class="text-sm font-medium text-slate-800">{m.label}</span>
+            <span class="text-sm font-medium text-slate-800">{item.label}</span>
           </div>
           <a
-            href={m.href.replace(/\.html$/, '').replace(`${base}materials/`, `${base}materials/view/${unitSlug}/`)}
+            href={viewHref(item.doc)}
             target="_blank"
             rel="noopener"
             class="flex-shrink-0 text-sm font-semibold text-teacher-700 hover:text-teacher-900 border border-teacher-300 hover:border-teacher-500 px-4 py-1.5 rounded-lg transition-colors whitespace-nowrap"
@@ -117,18 +94,14 @@ const TeacherContent = teacherUnit ? (await teacherUnit.render()).Content : null
   <section class="mb-8">
     <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400 mb-3">Student Materials</h2>
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-      {[
-        { label: 'Guided Notes', href: `${base}materials/${refs.notes}` },
-        { label: 'Easy Read Notes', href: `${base}materials/${refs.notesEF}` },
-        { label: 'Workbook', href: `${base}materials/${refs.workbook}` },
-      ].map(m => (
+      {[guidedNotes, easyReadNotes, workbook].map(d => (
         <a
-          href={m.href.replace(/\.html$/, '').replace(`${base}materials/`, `${base}materials/view/${unitSlug}/`)}
+          href={viewHref(d.doc)}
           target="_blank"
           rel="noopener"
           class="text-sm text-slate-600 hover:text-science-700 bg-white border border-slate-200 rounded-lg px-3 py-2.5 text-center transition-colors"
         >
-          {m.label} ↗
+          {d.label} ↗
         </a>
       ))}
     </div>

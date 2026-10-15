@@ -5,10 +5,14 @@ import { homeSheets, type CourseManifest, type CourseUnit } from './manifest';
 const ef = { badge: 'Easy Read' };
 const fr = { badge: 'Français' };
 
+// Teacher notes version per unit; every guide is v1 except climate, which is v2.
+const teacherNotesVersion: Record<string, number> = { climate: 2 };
+
 function unit(slug: string, label: string, notes: string, workbook: string, efWorkbook: string, sheets: [string, string][]): CourseUnit {
   return {
     slug,
     label,
+    teacherGuide: `sci6-${slug}-teachernotes-v${teacherNotesVersion[slug] ?? 1}`,
     path: [
       { hint: 'Start here. You fill these in during class.', items: [{ label: 'Guided Notes', doc: notes, type: 'notes' }] },
       { hint: 'Practice that mixes up everything in the unit.', items: [{ label: 'Workbook', doc: workbook, type: 'workbook' }] },
