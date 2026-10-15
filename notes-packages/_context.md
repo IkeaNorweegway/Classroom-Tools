@@ -266,6 +266,7 @@ Every notes package should exist in three formats:
 - Connection prompts: orange left border
 - Self-checks: light green background row
 - Print styles: colors preserved (`print-color-adjust: exact`)
+- Fractions: stacked, never inline `3/4`. Write `<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">4</span></span>`, or render first and run `python3 scripts/stack_fractions.py <file>`
 
 **Print pagination rules (required on every HTML render):**
 

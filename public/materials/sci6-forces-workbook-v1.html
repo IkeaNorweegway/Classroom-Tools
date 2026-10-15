@@ -5,7 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Grade 6 Science — Forces: Practice Workbook</title>
 <style>
+  /* ── Fonts (site redesign faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+
   :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
     --violet:       #6D28D9;
     --violet-mid:   #7C3AED;
     --violet-light: #EDE9FE;
@@ -13,37 +20,38 @@
     --violet-pale:  #FAF8FF;
 
     --star-core:    #6D28D9;
-    --star-ext:     #DC2626;
+    --star-ext:     #B91C1C;
     --ext-bg:       #FEF2F2;
     --ext-border:   #FCA5A5;
 
     --hint-bg:      #FFFBEB;
-    --hint-border:  #FDE68A;
+    --hint-border:  #FCD34D;
     --hint-text:    #78350F;
 
     --meta-bg:      #F0FDF4;
-    --meta-border:  #6EE7B7;
+    --meta-border:  #34D399;
     --meta-text:    #065F46;
 
     --stretch-bg:   #F0F9FF;
-    --stretch-border: #BAE6FD;
+    --stretch-border: #7DD3FC;
     --stretch-hdr:  #0369A1;
 
-    --line-color:   #9CA3AF;
-    --border:       #E5E7EB;
-    --text:         #111827;
-    --muted:        #6B7280;
+    --line-color:   #6B665D;
+    --border:       #C9C4B9;
+    --text:         #1F1D1A;
+    --muted:        #544F47;
     --surface:      #FFFFFF;
-    --page-bg:      #F8F8F6;
+    --page-bg:      #F6F4EF;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { font-size: 15px; }
   body {
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: var(--font-body);
     color: var(--text);
     background: var(--page-bg);
-    line-height: 1.65;
+    line-height: 1.6;
+    font-kerning: normal;
     padding-bottom: 4rem;
   }
 
@@ -58,13 +66,13 @@
     margin-bottom: 2rem;
   }
   .cover-grid { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; }
-  .header-strip h1 { font-family: system-ui, sans-serif; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.8; margin-bottom: 0.2rem; }
-  .header-strip h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.2rem; }
-  .header-strip .sub { font-family: system-ui, sans-serif; font-size: 0.82rem; opacity: 0.75; font-style: italic; }
+  .header-strip h1 { font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.9; margin-bottom: 0.2rem; }
+  .header-strip h2 { font-family: var(--font-display); font-size: 2rem; font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 0.2rem; }
+  .header-strip .sub { font-family: var(--font-body); font-size: 0.82rem; opacity: 0.9; font-style: italic; }
   .cover-fields { display: flex; flex-direction: column; gap: 0.6rem; min-width: 14rem; }
   .cover-field { display: flex; flex-direction: column; }
-  .cover-field label { font-family: system-ui, sans-serif; font-size: 0.7rem; opacity: 0.75; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.15rem; }
-  .cover-field .field-line { border-bottom: 1px solid rgba(255,255,255,0.5); height: 1.5rem; min-width: 10rem; }
+  .cover-field label { font-family: var(--font-body); font-size: 0.7rem; opacity: 0.9; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.15rem; }
+  .cover-field .field-line { border-bottom: 1.25px solid rgba(255,255,255,0.8); height: 1.5rem; min-width: 10rem; }
 
   /* ── Instructions box ── */
   .instr-box {
@@ -75,18 +83,18 @@
     margin-bottom: 1.75rem;
     font-size: 0.88rem;
   }
-  .instr-box h3 { font-family: system-ui, sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--violet); margin-bottom: 0.5rem; }
+  .instr-box h3 { font-family: var(--font-body); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--violet); margin-bottom: 0.5rem; }
   .instr-box p { margin-bottom: 0.45rem; }
   .instr-box p:last-child { margin-bottom: 0; }
   .star-legend { display: flex; gap: 1.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
-  .sl-item { display: flex; align-items: center; gap: 0.4rem; font-family: system-ui, sans-serif; font-size: 0.82rem; }
-  .badge { display: inline-block; font-family: system-ui, sans-serif; font-weight: 800; font-size: 0.72rem; letter-spacing: 0.04em; padding: 0.15em 0.5em; border-radius: 3px; text-transform: uppercase; }
+  .sl-item { display: flex; align-items: center; gap: 0.4rem; font-family: var(--font-body); font-size: 0.82rem; }
+  .badge { display: inline-block; font-family: var(--font-body); font-weight: 800; font-size: 0.72rem; letter-spacing: 0.04em; padding: 0.15em 0.5em; border-radius: 3px; text-transform: uppercase; }
   .badge-core { background: var(--violet-light); color: var(--violet); }
   .badge-ext  { background: var(--ext-bg);       color: var(--star-ext); }
 
   /* ── Section dividers ── */
   h3.section-label {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -107,7 +115,7 @@
     page-break-inside: avoid;
   }
   .meta-block h4 {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.72rem;
     font-weight: 800;
     letter-spacing: 0.08em;
@@ -142,7 +150,7 @@
   .q-card.ext .q-header { background: var(--ext-bg); border-color: var(--ext-border); }
 
   .q-num {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-weight: 800;
     font-size: 0.82rem;
     color: var(--violet);
@@ -160,7 +168,7 @@
 
   /* ── Response lines ── */
   .resp { margin-top: 0.6rem; }
-  .resp-line { border-bottom: 1px solid var(--line-color); min-height: 1.85rem; margin-bottom: 0.35rem; }
+  .resp-line { border-bottom: 1.25px solid var(--line-color); min-height: 1.85rem; margin-bottom: 0.35rem; }
 
   /* ── Drawing area ── */
   .draw-area {
@@ -176,7 +184,7 @@
   .draw-area-md  { height: 150px; }
   .draw-area-lg  { height: 200px; }
   .draw-label {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.72rem;
     color: var(--muted);
     text-transform: uppercase;
@@ -195,7 +203,7 @@
     color: var(--hint-text);
   }
   .hint-label {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-weight: 700;
     font-size: 0.7rem;
     letter-spacing: 0.05em;
@@ -206,16 +214,16 @@
   /* ── Diagram containers ── */
   .diagram { margin: 0.75rem 0; }
   .diagram svg { display: block; max-width: 100%; }
-  .diagram-caption { font-family: system-ui, sans-serif; font-size: 0.75rem; color: var(--muted); margin-top: 0.35rem; font-style: italic; }
+  .diagram-caption { font-family: var(--font-body); font-size: 0.75rem; color: var(--muted); margin-top: 0.35rem; font-style: italic; }
 
   /* ── Word bank ── */
   .word-bank {
-    background: #F9FAFB;
+    background: #FAF9F6;
     border: 1px solid var(--border);
     border-radius: 4px;
     padding: 0.45rem 0.75rem;
     margin: 0.5rem 0 0.6rem;
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.82rem;
   }
   .word-bank-label { font-weight: 700; font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin-right: 0.4em; }
@@ -225,9 +233,9 @@
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 0.6rem 0; }
   .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin: 0.6rem 0; }
   .diagram-cell { display: flex; flex-direction: column; align-items: center; }
-  .diagram-cell .cell-label { font-family: system-ui, sans-serif; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 0.3rem; }
-  .diagram-cell .cell-id { font-family: system-ui, sans-serif; font-size: 0.78rem; color: var(--violet); font-weight: 700; margin-bottom: 0.25rem; }
-  .diagram-cell .cell-resp { border-bottom: 1px solid var(--line-color); min-height: 1.6rem; width: 100%; margin-top: 0.4rem; }
+  .diagram-cell .cell-label { font-family: var(--font-body); font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 0.3rem; }
+  .diagram-cell .cell-id { font-family: var(--font-body); font-size: 0.78rem; color: var(--violet); font-weight: 700; margin-bottom: 0.25rem; }
+  .diagram-cell .cell-resp { border-bottom: 1.25px solid var(--line-color); min-height: 1.6rem; width: 100%; margin-top: 0.4rem; }
 
   /* ── Stretch zone ── */
   .stretch-header {
@@ -239,14 +247,14 @@
     page-break-before: always;
   }
   .stretch-header h3 {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.95rem;
     font-weight: 800;
     color: var(--stretch-hdr);
     margin-bottom: 0.3rem;
   }
   .stretch-header p {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.82rem;
     color: var(--muted);
   }
@@ -265,14 +273,20 @@
     padding: 0.75rem 1.25rem;
     border-radius: 4px 4px 0 0;
   }
-  .rubric-header h3 { font-family: system-ui, sans-serif; font-size: 0.95rem; font-weight: 700; }
-  .rubric-header p { font-family: system-ui, sans-serif; font-size: 0.78rem; opacity: 0.8; margin-top: 0.2rem; }
+  .rubric-header h3 { font-family: var(--font-body); font-size: 0.95rem; font-weight: 700; }
+  .rubric-header p { font-family: var(--font-body); font-size: 0.78rem; opacity: 0.9; margin-top: 0.2rem; }
   .rubric table { border-radius: 0 0 4px 4px; overflow: hidden; }
-  .rubric th { background: #374151; color: white; font-family: system-ui, sans-serif; font-size: 0.78rem; padding: 0.5rem 0.75rem; }
+  .rubric th { background: #3F3B35; color: white; font-family: var(--font-body); font-size: 0.78rem; padding: 0.5rem 0.75rem; }
   .rubric td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); font-size: 0.88rem; vertical-align: top; }
   .rubric tr:last-child td { border-bottom: none; }
-  .rubric tr:nth-child(even) td { background: #FAFAFA; }
-  .rubric .rating { font-family: system-ui, sans-serif; font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+  .rubric tr:nth-child(even) td { background: #FAF9F6; }
+  .rubric .rating { font-family: var(--font-body); font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+
+  /* ── Text and diagram polish ── */
+  h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+  svg text { font-family: var(--font-body); }
+  ::selection { background: var(--violet-light); color: var(--text); }
 
   /* ── Print ── */
   @media print {
@@ -327,7 +341,7 @@
 <div class="meta-block">
   <h4>Before you begin &mdash; forethought</h4>
   <p>Scan the first five questions below. Which one do you think will be hardest for you? Write the question number and why.</p>
-  <p>Hardest question: Q _____ &nbsp;&nbsp;&nbsp;&nbsp; Why: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:18rem">&nbsp;</span></p>
+  <p>Hardest question: Q _____ &nbsp;&nbsp;&nbsp;&nbsp; Why: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:18rem">&nbsp;</span></p>
 </div>
 
 
@@ -344,8 +358,8 @@
     <div class="hint"><span class="hint-label">Hint</span> A force is not the same as movement &mdash; think about what a force <em>is</em>, not what it <em>does</em>.</div>
     <p style="font-size:0.88rem;color:var(--muted)">Definition:</p>
     <div class="resp"><div class="resp-line"></div><div class="resp-line"></div></div>
-    <p style="font-size:0.88rem;color:var(--muted);margin-top:0.6rem">Example 1: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:60%">&nbsp;</span></p>
-    <p style="font-size:0.88rem;color:var(--muted);margin-top:0.4rem">Example 2: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:60%">&nbsp;</span></p>
+    <p style="font-size:0.88rem;color:var(--muted);margin-top:0.6rem">Example 1: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:60%">&nbsp;</span></p>
+    <p style="font-size:0.88rem;color:var(--muted);margin-top:0.4rem">Example 2: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:60%">&nbsp;</span></p>
   </div>
 </div>
 
@@ -359,8 +373,8 @@
     <p>A student is pushing a heavy box across a rough concrete floor. Name two external forces acting on the box as it moves. For each force, state its direction.</p>
     <div class="word-bank"><span class="word-bank-label">Word bank</span> <span class="word-bank-terms">applied force &nbsp; friction &nbsp; elastic force &nbsp; gravity &nbsp; normal force</span></div>
     <ol class="q-parts">
-      <li data-label="(a)">Force: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span> &nbsp; Direction: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
-      <li data-label="(b)">Force: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span> &nbsp; Direction: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
+      <li data-label="(a)">Force: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span> &nbsp; Direction: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
+      <li data-label="(b)">Force: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span> &nbsp; Direction: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
     </ol>
   </div>
 </div>
@@ -378,13 +392,13 @@
         <rect x="90" y="25" width="180" height="20" rx="4" fill="#EDE9FE" stroke="#6D28D9" stroke-width="1.5"/>
         <text x="180" y="38" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#6D28D9">ROPE</text>
         <!-- Left pull arrow -->
-        <line x1="90" y1="35" x2="25" y2="35" stroke="#374151" stroke-width="2.5"/>
-        <polygon points="17,35 29,29 29,41" fill="#374151"/>
-        <text x="12" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#374151">Pull</text>
+        <line x1="90" y1="35" x2="25" y2="35" stroke="#2B2824" stroke-width="2.5"/>
+        <polygon points="17,35 29,29 29,41" fill="#2B2824"/>
+        <text x="12" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#2B2824">Pull</text>
         <!-- Right pull arrow -->
-        <line x1="270" y1="35" x2="335" y2="35" stroke="#374151" stroke-width="2.5"/>
-        <polygon points="343,35 331,29 331,41" fill="#374151"/>
-        <text x="348" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#374151">Pull</text>
+        <line x1="270" y1="35" x2="335" y2="35" stroke="#2B2824" stroke-width="2.5"/>
+        <polygon points="343,35 331,29 331,41" fill="#2B2824"/>
+        <text x="348" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#2B2824">Pull</text>
       </svg>
     </div>
     <p style="font-size:0.88rem;color:var(--muted)">Internal force type:</p>
@@ -439,24 +453,24 @@
         <rect x="160" y="85" width="100" height="60" rx="3" fill="#F5F3FF" stroke="#6D28D9" stroke-width="2"/>
         <text x="210" y="118" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#6D28D9">BOX</text>
         <!-- Up arrow (normal) -->
-        <line x1="210" y1="85" x2="210" y2="35" stroke="#374151" stroke-width="2.5"/>
-        <polygon points="210,27 204,39 216,39" fill="#374151"/>
+        <line x1="210" y1="85" x2="210" y2="35" stroke="#2B2824" stroke-width="2.5"/>
+        <polygon points="210,27 204,39 216,39" fill="#2B2824"/>
         <!-- Up label line -->
-        <line x1="220" y1="35" x2="310" y2="35" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="4,3"/>
-        <text x="315" y="39" font-family="system-ui,sans-serif" font-size="11" fill="#9CA3AF">______________</text>
+        <line x1="220" y1="35" x2="310" y2="35" stroke="#6B665D" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="315" y="39" font-family="system-ui,sans-serif" font-size="11" fill="#6B665D">______________</text>
         <!-- Down arrow (gravity) -->
-        <line x1="210" y1="145" x2="210" y2="185" stroke="#374151" stroke-width="2.5"/>
-        <polygon points="210,193 204,181 216,181" fill="#374151"/>
-        <line x1="220" y1="185" x2="310" y2="185" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="4,3"/>
-        <text x="315" y="189" font-family="system-ui,sans-serif" font-size="11" fill="#9CA3AF">______________</text>
+        <line x1="210" y1="145" x2="210" y2="185" stroke="#2B2824" stroke-width="2.5"/>
+        <polygon points="210,193 204,181 216,181" fill="#2B2824"/>
+        <line x1="220" y1="185" x2="310" y2="185" stroke="#6B665D" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="315" y="189" font-family="system-ui,sans-serif" font-size="11" fill="#6B665D">______________</text>
         <!-- Right arrow (applied, longer) -->
-        <line x1="260" y1="115" x2="330" y2="115" stroke="#374151" stroke-width="2.5"/>
-        <polygon points="338,115 326,109 326,121" fill="#374151"/>
-        <text x="343" y="108" font-family="system-ui,sans-serif" font-size="11" fill="#9CA3AF">______________</text>
+        <line x1="260" y1="115" x2="330" y2="115" stroke="#2B2824" stroke-width="2.5"/>
+        <polygon points="338,115 326,109 326,121" fill="#2B2824"/>
+        <text x="343" y="108" font-family="system-ui,sans-serif" font-size="11" fill="#6B665D">______________</text>
         <!-- Left arrow (friction, shorter) -->
-        <line x1="160" y1="115" x2="100" y2="115" stroke="#374151" stroke-width="2.5"/>
-        <polygon points="92,115 104,109 104,121" fill="#374151"/>
-        <text x="5" y="108" font-family="system-ui,sans-serif" font-size="11" fill="#9CA3AF">______________</text>
+        <line x1="160" y1="115" x2="100" y2="115" stroke="#2B2824" stroke-width="2.5"/>
+        <polygon points="92,115 104,109 104,121" fill="#2B2824"/>
+        <text x="5" y="108" font-family="system-ui,sans-serif" font-size="11" fill="#6B665D">______________</text>
       </svg>
       <div class="diagram-caption">Four forces act on the box. Label each arrow with the correct force name.</div>
     </div>
@@ -501,13 +515,13 @@
     <p>Name the type of internal force acting in each situation.</p>
     <ol class="q-parts">
       <li data-label="(a)">A suspension bridge cable is being pulled down by the weight of the bridge deck.
-        <br>Internal force: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:12rem">&nbsp;</span>
+        <br>Internal force: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:12rem">&nbsp;</span>
       </li>
       <li data-label="(b)" style="margin-top:0.5rem">A concrete column supports the floor of a building; the floor presses down and the ground pushes up.
-        <br>Internal force: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:12rem">&nbsp;</span>
+        <br>Internal force: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:12rem">&nbsp;</span>
       </li>
       <li data-label="(c)" style="margin-top:0.5rem">You use scissors to cut a piece of cardboard &mdash; the two blades move in opposite directions.
-        <br>Internal force in the cardboard: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span>
+        <br>Internal force in the cardboard: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span>
       </li>
     </ol>
   </div>
@@ -522,8 +536,8 @@
   <div class="q-body">
     <p>A student bends a paper clip slightly &mdash; it springs back to its original shape. Then the student bends the same clip sharply and it stays permanently bent.</p>
     <ol class="q-parts">
-      <li data-label="(a)">What type of deformation occurred the first time? <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span></li>
-      <li data-label="(b)" style="margin-top:0.4rem">What type of deformation occurred the second time? <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span></li>
+      <li data-label="(a)">What type of deformation occurred the first time? <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span></li>
+      <li data-label="(b)" style="margin-top:0.4rem">What type of deformation occurred the second time? <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span></li>
       <li data-label="(c)" style="margin-top:0.4rem">Explain what happened in terms of the elastic limit.
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
       </li>
@@ -580,9 +594,9 @@
     <ol class="q-parts">
       <li data-label="(a)">Calculate the net force on the box. Show your working.
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div></div>
-        <p style="font-size:0.85rem;margin-top:0.3rem">Net force = <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:5rem">&nbsp;</span> N &nbsp; Direction: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:5rem">&nbsp;</span></p>
+        <p style="font-size:0.85rem;margin-top:0.3rem">Net force = <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:5rem">&nbsp;</span> N &nbsp; Direction: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:5rem">&nbsp;</span></p>
       </li>
-      <li data-label="(b)" style="margin-top:0.5rem">Which direction will the box accelerate?  <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
+      <li data-label="(b)" style="margin-top:0.5rem">Which direction will the box accelerate?  <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
       <li data-label="(c)" style="margin-top:0.5rem">If the 15 N force were reduced to 6 N, what would the net force be? What would happen to the box?
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div><div class="resp-line"></div></div>
       </li>
@@ -599,7 +613,7 @@
   <div class="q-body">
     <p>A car is travelling north on a highway at a steady speed. The driver brakes hard.</p>
     <ol class="q-parts">
-      <li data-label="(a)">In which direction does the friction force act on the car? <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
+      <li data-label="(a)">In which direction does the friction force act on the car? <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
       <li data-label="(b)" style="margin-top:0.4rem">Explain why friction acts in that direction.
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div><div class="resp-line"></div></div>
       </li>
@@ -624,10 +638,10 @@
         <div class="cell-id">(a)</div>
         <svg width="120" height="70" viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg" aria-label="Forces pushing inward from both sides">
           <rect x="30" y="20" width="60" height="30" rx="3" fill="#F5F3FF" stroke="#6D28D9" stroke-width="1.5"/>
-          <line x1="30" y1="35" x2="8" y2="35" stroke="#374151" stroke-width="2.5"/>
-          <polygon points="0,35 12,29 12,41" fill="#374151"/>
-          <line x1="90" y1="35" x2="112" y2="35" stroke="#374151" stroke-width="2.5"/>
-          <polygon points="120,35 108,29 108,41" fill="#374151"/>
+          <line x1="30" y1="35" x2="8" y2="35" stroke="#2B2824" stroke-width="2.5"/>
+          <polygon points="0,35 12,29 12,41" fill="#2B2824"/>
+          <line x1="90" y1="35" x2="112" y2="35" stroke="#2B2824" stroke-width="2.5"/>
+          <polygon points="120,35 108,29 108,41" fill="#2B2824"/>
         </svg>
         <div class="cell-resp"></div>
       </div>
@@ -637,10 +651,10 @@
         <svg width="120" height="70" viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg" aria-label="Two layers sliding in opposite directions">
           <rect x="15" y="15" width="90" height="18" rx="2" fill="#EDE9FE" stroke="#6D28D9" stroke-width="1.5"/>
           <rect x="15" y="37" width="90" height="18" rx="2" fill="#DDD6FE" stroke="#6D28D9" stroke-width="1.5"/>
-          <line x1="105" y1="24" x2="118" y2="24" stroke="#374151" stroke-width="2"/>
-          <polygon points="120,24 113,20 113,28" fill="#374151"/>
-          <line x1="15" y1="46" x2="2" y2="46" stroke="#374151" stroke-width="2"/>
-          <polygon points="0,46 7,42 7,50" fill="#374151"/>
+          <line x1="105" y1="24" x2="118" y2="24" stroke="#2B2824" stroke-width="2"/>
+          <polygon points="120,24 113,20 113,28" fill="#2B2824"/>
+          <line x1="15" y1="46" x2="2" y2="46" stroke="#2B2824" stroke-width="2"/>
+          <polygon points="0,46 7,42 7,50" fill="#2B2824"/>
         </svg>
         <div class="cell-resp"></div>
       </div>
@@ -649,10 +663,10 @@
         <div class="cell-id">(c)</div>
         <svg width="120" height="70" viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg" aria-label="Forces pulling outward from both sides">
           <rect x="30" y="20" width="60" height="30" rx="3" fill="#F5F3FF" stroke="#6D28D9" stroke-width="1.5"/>
-          <line x1="30" y1="35" x2="8" y2="35" stroke="#374151" stroke-width="2.5"/>
-          <polygon points="0,35 12,29 12,41" fill="#374151"/>
-          <line x1="90" y1="35" x2="112" y2="35" stroke="#374151" stroke-width="2.5"/>
-          <polygon points="120,35 108,29 108,41" fill="#374151"/>
+          <line x1="30" y1="35" x2="8" y2="35" stroke="#2B2824" stroke-width="2.5"/>
+          <polygon points="0,35 12,29 12,41" fill="#2B2824"/>
+          <line x1="90" y1="35" x2="112" y2="35" stroke="#2B2824" stroke-width="2.5"/>
+          <polygon points="120,35 108,29 108,41" fill="#2B2824"/>
           <!-- Indicate outward direction with text hint -->
           <text x="5" y="28" font-family="system-ui,sans-serif" font-size="9" fill="#6D28D9">Pull</text>
           <text x="90" y="28" font-family="system-ui,sans-serif" font-size="9" fill="#6D28D9">Pull</text>
@@ -693,21 +707,21 @@
   <div class="q-body">
     <p>Four force pairs are listed below. For each pair, decide whether it is a valid action-reaction pair. Circle <strong>Valid</strong> or <strong>Not valid</strong>, and explain your decision in one sentence.</p>
     <div style="margin-top:0.5rem;display:flex;flex-direction:column;gap:0.75rem">
-      <div style="background:#F9FAFB;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
+      <div style="background:#FAF9F6;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
         <p><strong>(a)</strong> &nbsp; Gravity pulls a book downward. &nbsp;/&nbsp; The table pushes the book upward.</p>
-        <p style="margin-top:0.3rem">Valid &nbsp; / &nbsp; Not valid &nbsp;&nbsp; <span style="font-size:0.82rem;color:var(--muted)">Reason:</span> <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:55%">&nbsp;</span></p>
+        <p style="margin-top:0.3rem">Valid &nbsp; / &nbsp; Not valid &nbsp;&nbsp; <span style="font-size:0.82rem;color:var(--muted)">Reason:</span> <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:55%">&nbsp;</span></p>
       </div>
-      <div style="background:#F9FAFB;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
+      <div style="background:#FAF9F6;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
         <p><strong>(b)</strong> &nbsp; You push a wall forward. &nbsp;/&nbsp; The wall pushes you backward.</p>
-        <p style="margin-top:0.3rem">Valid &nbsp; / &nbsp; Not valid &nbsp;&nbsp; <span style="font-size:0.82rem;color:var(--muted)">Reason:</span> <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:55%">&nbsp;</span></p>
+        <p style="margin-top:0.3rem">Valid &nbsp; / &nbsp; Not valid &nbsp;&nbsp; <span style="font-size:0.82rem;color:var(--muted)">Reason:</span> <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:55%">&nbsp;</span></p>
       </div>
-      <div style="background:#F9FAFB;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
+      <div style="background:#FAF9F6;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
         <p><strong>(c)</strong> &nbsp; Applied force pushes box right. &nbsp;/&nbsp; Friction pushes box left.</p>
-        <p style="margin-top:0.3rem">Valid &nbsp; / &nbsp; Not valid &nbsp;&nbsp; <span style="font-size:0.82rem;color:var(--muted)">Reason:</span> <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:55%">&nbsp;</span></p>
+        <p style="margin-top:0.3rem">Valid &nbsp; / &nbsp; Not valid &nbsp;&nbsp; <span style="font-size:0.82rem;color:var(--muted)">Reason:</span> <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:55%">&nbsp;</span></p>
       </div>
-      <div style="background:#F9FAFB;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
+      <div style="background:#FAF9F6;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
         <p><strong>(d)</strong> &nbsp; Earth pulls the book downward. &nbsp;/&nbsp; Book pulls the Earth upward.</p>
-        <p style="margin-top:0.3rem">Valid &nbsp; / &nbsp; Not valid &nbsp;&nbsp; <span style="font-size:0.82rem;color:var(--muted)">Reason:</span> <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:55%">&nbsp;</span></p>
+        <p style="margin-top:0.3rem">Valid &nbsp; / &nbsp; Not valid &nbsp;&nbsp; <span style="font-size:0.82rem;color:var(--muted)">Reason:</span> <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:55%">&nbsp;</span></p>
       </div>
     </div>
   </div>
@@ -741,11 +755,11 @@
         <rect x="155" y="35" width="80" height="50" rx="3" fill="#FEF2F2" stroke="#DC2626" stroke-width="2"/>
         <text x="195" y="63" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#6D28D9">BOX</text>
         <!-- Motion indicator -->
-        <text x="195" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#6B7280">moving this way &#8594;</text>
+        <text x="195" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#544F47">moving this way &#8594;</text>
         <!-- Applied force right (medium) -->
-        <line x1="235" y1="60" x2="290" y2="60" stroke="#374151" stroke-width="2.5"/>
-        <polygon points="298,60 286,54 286,66" fill="#374151"/>
-        <text x="266" y="50" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#374151" font-weight="600">Applied</text>
+        <line x1="235" y1="60" x2="290" y2="60" stroke="#2B2824" stroke-width="2.5"/>
+        <polygon points="298,60 286,54 286,66" fill="#2B2824"/>
+        <text x="266" y="50" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#2B2824" font-weight="600">Applied</text>
         <!-- Friction arrow — WRONG direction (also right) -->
         <line x1="155" y1="60" x2="100" y2="60" stroke="#DC2626" stroke-width="2.5"/>
         <polygon points="92,60 104,54 104,66" fill="#DC2626"/>
@@ -777,13 +791,13 @@
     <p>Name the type of internal force acting in each case.</p>
     <ol class="q-parts">
       <li data-label="(a)">A mechanic uses a wrench to turn a bolt. The bolt is being twisted.
-        <br>Internal force: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span>
+        <br>Internal force: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span>
       </li>
       <li data-label="(b)" style="margin-top:0.5rem">A river current pulls the top of a riverbank faster than the bottom, causing the bank to crack along a horizontal plane.
-        <br>Internal force: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span>
+        <br>Internal force: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span>
       </li>
       <li data-label="(c)" style="margin-top:0.5rem">A student wrings water from a wet towel by twisting both ends in opposite directions.
-        <br>Internal force in the towel: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span>
+        <br>Internal force in the towel: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span>
       </li>
       <li data-label="(d)" style="margin-top:0.5rem">Explain in one sentence how torsion is different from shear.
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div><div class="resp-line"></div></div>
@@ -801,8 +815,8 @@
   <div class="q-body">
     <p>You are cycling downhill and squeeze your brakes hard to slow down.</p>
     <ol class="q-parts">
-      <li data-label="(a)">Name the external force that slows the bike: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span></li>
-      <li data-label="(b)" style="margin-top:0.4rem">In which direction does this force act relative to the bike&rsquo;s motion? <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
+      <li data-label="(a)">Name the external force that slows the bike: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span></li>
+      <li data-label="(b)" style="margin-top:0.4rem">In which direction does this force act relative to the bike&rsquo;s motion? <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
       <li data-label="(c)" style="margin-top:0.4rem">Name one place on the bike where friction is <strong>helpful</strong> and one where it works <strong>against</strong> the rider.
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div><div class="resp-line"></div></div>
       </li>
@@ -844,26 +858,26 @@
     <div class="diagram">
       <svg width="460" height="110" viewBox="0 0 460 110" xmlns="http://www.w3.org/2000/svg" aria-label="Spring deformation sequence">
         <!-- Before -->
-        <text x="60" y="15" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#6B7280" font-weight="600">BEFORE</text>
+        <text x="60" y="15" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#544F47" font-weight="600">BEFORE</text>
         <path d="M15,55 Q25,35 35,55 Q45,75 55,55 Q65,35 75,55 Q85,75 95,55 Q105,35 105,55" fill="none" stroke="#6D28D9" stroke-width="2.5"/>
         <!-- During -->
-        <text x="220" y="15" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#6B7280" font-weight="600">DURING COMPRESSION</text>
+        <text x="220" y="15" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#544F47" font-weight="600">DURING COMPRESSION</text>
         <path d="M155,55 Q161,40 167,55 Q173,70 179,55 Q185,40 191,55 Q197,70 203,55 Q207,40 210,55" fill="none" stroke="#6D28D9" stroke-width="2.5"/>
-        <line x1="155" y1="55" x2="140" y2="55" stroke="#374151" stroke-width="2"/>
-        <polygon points="132,55 144,49 144,61" fill="#374151"/>
-        <line x1="210" y1="55" x2="225" y2="55" stroke="#374151" stroke-width="2"/>
-        <polygon points="233,55 221,49 221,61" fill="#374151"/>
+        <line x1="155" y1="55" x2="140" y2="55" stroke="#2B2824" stroke-width="2"/>
+        <polygon points="132,55 144,49 144,61" fill="#2B2824"/>
+        <line x1="210" y1="55" x2="225" y2="55" stroke="#2B2824" stroke-width="2"/>
+        <polygon points="233,55 221,49 221,61" fill="#2B2824"/>
         <!-- After — empty box -->
-        <text x="370" y="15" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#6B7280" font-weight="600">AFTER FORCE REMOVED</text>
-        <rect x="305" y="30" width="130" height="55" rx="4" fill="white" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="370" y="15" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#544F47" font-weight="600">AFTER FORCE REMOVED</text>
+        <rect x="305" y="30" width="130" height="55" rx="4" fill="white" stroke="#6B665D" stroke-width="1.5" stroke-dasharray="5,3"/>
         <text x="370" y="62" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#C4B5FD">Draw here</text>
         <!-- Arrows between -->
-        <text x="132" y="58" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#9CA3AF">&#8594;</text>
-        <text x="290" y="58" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#9CA3AF">&#8594;</text>
+        <text x="132" y="58" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#6B665D">&#8594;</text>
+        <text x="290" y="58" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#6B665D">&#8594;</text>
       </svg>
     </div>
     <ol class="q-parts">
-      <li data-label="(a)">Is this elastic or plastic deformation? <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
+      <li data-label="(a)">Is this elastic or plastic deformation? <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
       <li data-label="(b)" style="margin-top:0.4rem">How do you know? Use the diagram you drew as evidence.
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div><div class="resp-line"></div></div>
       </li>
@@ -883,7 +897,7 @@
   <div class="q-body">
     <p>You push down on the seat of a wooden chair with a large force.</p>
     <ol class="q-parts">
-      <li data-label="(a)">What type of external force are you applying? <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span></li>
+      <li data-label="(a)">What type of external force are you applying? <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span></li>
       <li data-label="(b)" style="margin-top:0.4rem">What type of internal force acts in the legs of the chair as a result?
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div></div>
       </li>
@@ -908,7 +922,7 @@
     <p>In the box below, draw a force diagram for the <strong>book</strong>. Include both forces as arrows. Make the arrow lengths proportional to each other.</p>
     <div class="draw-area draw-area-lg" style="margin-top:0.5rem"><span class="draw-label">Your force diagram</span></div>
     <ol class="q-parts" style="margin-top:0.75rem">
-      <li data-label="(a)">Is the net force on the book zero or non-zero? <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span> How do you know?
+      <li data-label="(a)">Is the net force on the book zero or non-zero? <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span> How do you know?
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div></div>
       </li>
       <li data-label="(b)" style="margin-top:0.4rem">Are the two forces in this diagram an action-reaction pair? Explain why or why not.
@@ -951,11 +965,11 @@
     <p>An archer pulls a bowstring back 30 cm and then releases it.</p>
     <ol class="q-parts">
       <li data-label="(a)">What type of external force acts on the arrow when the string is released?
-        <br>Force type: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span>
+        <br>Force type: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span>
       </li>
-      <li data-label="(b)" style="margin-top:0.4rem">In which direction does this force act? <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span></li>
+      <li data-label="(b)" style="margin-top:0.4rem">In which direction does this force act? <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span></li>
       <li data-label="(c)" style="margin-top:0.4rem">What type of internal force acts inside the bowstring while it is pulled back?
-        <br>Internal force: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span>
+        <br>Internal force: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span>
       </li>
       <li data-label="(d)" style="margin-top:0.4rem">If the archer pulls the string so far that it permanently deforms and does not return to its original shape, what type of deformation occurred?
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div></div>
@@ -977,7 +991,7 @@
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div><div class="resp-line"></div></div>
       </li>
       <li data-label="(b)" style="margin-top:0.5rem">What type of internal force acts in the rope above the climber?
-        <br>Internal force: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span>
+        <br>Internal force: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:10rem">&nbsp;</span>
       </li>
       <li data-label="(c)" style="margin-top:0.4rem">The climber is hanging motionless. What does this tell you about the net force on the climber? Explain.
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div><div class="resp-line"></div></div>
@@ -1027,9 +1041,9 @@
   <div class="q-body">
     <p>An engineer drops a concrete block onto a foam pad to test the foam&rsquo;s properties. The foam stays crushed after the block is removed.</p>
     <ol class="q-parts">
-      <li data-label="(a)">What external force acts on the foam pad when the block lands? <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
-      <li data-label="(b)" style="margin-top:0.4rem">What internal force acts inside the foam as it is crushed?  <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
-      <li data-label="(c)" style="margin-top:0.4rem">The foam stays crushed. What type of deformation occurred? <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
+      <li data-label="(a)">What external force acts on the foam pad when the block lands? <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
+      <li data-label="(b)" style="margin-top:0.4rem">What internal force acts inside the foam as it is crushed?  <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
+      <li data-label="(c)" style="margin-top:0.4rem">The foam stays crushed. What type of deformation occurred? <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
       <li data-label="(d)" style="margin-top:0.4rem">Is this the same deformation type you would want in a bicycle helmet? Explain your reasoning fully.
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
       </li>
@@ -1049,7 +1063,7 @@
       <li data-label="(a)">According to Newton&rsquo;s Third Law, how do the forces on each car compare during the collision?
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div><div class="resp-line"></div></div>
       </li>
-      <li data-label="(b)" style="margin-top:0.4rem">The lighter car&rsquo;s frame is permanently deformed. What type of deformation is this? <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
+      <li data-label="(b)" style="margin-top:0.4rem">The lighter car&rsquo;s frame is permanently deformed. What type of deformation is this? <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
       <li data-label="(c)" style="margin-top:0.4rem">An engineer says modern car frames should deform plastically in a crash rather than elastically. Explain why this design decision saves lives.
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
       </li>
@@ -1072,8 +1086,8 @@
       <li data-label="(a)">Should the spring deform elastically or plastically? Explain.
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div><div class="resp-line"></div></div>
       </li>
-      <li data-label="(b)" style="margin-top:0.4rem">What type of internal force acts inside the spring when it is compressed by a bump? <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
-      <li data-label="(c)" style="margin-top:0.4rem">When the rider hits a bump, the spring compresses. Identify the external force causing this compression: <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
+      <li data-label="(b)" style="margin-top:0.4rem">What type of internal force acts inside the spring when it is compressed by a bump? <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
+      <li data-label="(c)" style="margin-top:0.4rem">When the rider hits a bump, the spring compresses. Identify the external force causing this compression: <span style="border-bottom:1.25px solid var(--line-color);display:inline-block;width:8rem">&nbsp;</span></li>
       <li data-label="(d)" style="margin-top:0.4rem">On a small bump, the spring compresses 2 cm and fully returns. On a huge pothole, the spring compresses 9 cm and only returns to 5 cm compressed. Explain what happened on the huge pothole in terms of the elastic limit and deformation type.
         <div class="resp" style="margin-top:0.3rem"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
       </li>

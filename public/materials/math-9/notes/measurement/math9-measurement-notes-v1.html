@@ -91,7 +91,22 @@
     svg .dg-label       { font: 12px/1.3 system-ui, sans-serif; fill: var(--dg-stroke);    stroke: none; }
     svg .dg-label-sm    { font: 11px/1.3 system-ui, sans-serif; fill: var(--dg-secondary); stroke: none; }
     svg .dg-label-accent{ font: 11px/1.3 system-ui, sans-serif; fill: var(--dg-accent);    stroke: none; font-weight: 600; }
-  </style>
+  
+  /* ── Stacked fractions (scripts/stack_fractions.py) ── */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.15;
+    margin: 0 1px;
+  }
+  .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+  .frac .den { padding: 1px 3px 0; }
+
+  .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
 </head>
 <body>
 
@@ -146,7 +161,7 @@
         <tr><td>Triangle</td><td>A = (b × h) / 2</td><td>b = base, h = <span class="b b-lg"></span> height</td></tr>
         <tr><td>Parallelogram</td><td>A = b × h</td><td>h = perpendicular height</td></tr>
         <tr><td>Circle</td><td>A = π × r<sup>2</sup></td><td>r = radius</td></tr>
-        <tr><td>Trapezoid</td><td>A = (a + b)/2 × h</td><td>a, b = parallel sides</td></tr>
+        <tr><td>Trapezoid</td><td>A = <span class="frac"><span class="num">a + b</span><span class="frac-slash">/</span><span class="den">2</span></span> × h</td><td>a, b = parallel sides</td></tr>
       </tbody>
     </table>
     <p><strong>π = <span class="b b-md"></span> (to 2 decimal places)</strong></p>
@@ -155,11 +170,11 @@
       <p><strong>Worked Example — Composite 2D shape:</strong></p>
       <p>A shape made of a rectangle (4 cm × 6 cm) with a semicircle on top (diameter 4 cm).</p>
       <p>Rectangle area: <span class="b b-sm"></span> × <span class="b b-sm"></span> = <span class="b b-sm"></span> cm<sup>2</sup></p>
-      <p>Semicircle area: (1/2) × π × r<sup>2</sup> = (1/2) × π × <span class="b b-sm"></span><sup>2</sup> = <span class="b b-md"></span> cm<sup>2</sup></p>
+      <p>Semicircle area: (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>) × π × r<sup>2</sup> = (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>) × π × <span class="b b-sm"></span><sup>2</sup> = <span class="b b-md"></span> cm<sup>2</sup></p>
       <p>Total area: <span class="b b-sm"></span> + <span class="b b-sm"></span> ≈ <span class="b b-md"></span> cm<sup>2</sup></p>
     </div>
 
-    <p><strong>Explain:</strong> Why do we use (1/2) × πr<sup>2</sup> for the semicircle rather than the full formula?</p>
+    <p><strong>Explain:</strong> Why do we use (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>) × πr<sup>2</sup> for the semicircle rather than the full formula?</p>
     <span class="al"></span>
 
     <p><strong>Perpendicular height reminder:</strong></p>
@@ -258,7 +273,7 @@
     <div class="worked-example">
       <p><strong>Worked Example 2 — Triangular prism:</strong></p>
       <p>Equilateral triangle base (side 6 cm, height 5.2 cm), prism height = 10 cm.</p>
-      <p>Area of one triangular base = (6 × 5.2)/2 = <span class="b b-sm"></span> cm<sup>2</sup></p>
+      <p>Area of one triangular base = <span class="frac"><span class="num">6 × 5.2</span><span class="frac-slash">/</span><span class="den">2</span></span> = <span class="b b-sm"></span> cm<sup>2</sup></p>
       <p>Two bases: 2 × <span class="b b-sm"></span> = <span class="b b-sm"></span> cm<sup>2</sup></p>
       <p>Perimeter of base = 6 + 6 + 6 = <span class="b b-sm"></span> cm</p>
       <p>Lateral area = perimeter × height = <span class="b b-sm"></span> × 10 = <span class="b b-md"></span> cm<sup>2</sup></p>
@@ -383,7 +398,7 @@
     <div class="worked-example">
       <p><strong>Triangular prism:</strong></p>
       <p>Base is a right triangle with legs 6 cm and 8 cm. Prism height = 10 cm.</p>
-      <p>B = (base × height)/2 = (6 × 8)/2 = <span class="b b-sm"></span> cm<sup>2</sup></p>
+      <p>B = <span class="frac"><span class="num">base × height</span><span class="frac-slash">/</span><span class="den">2</span></span> = <span class="frac"><span class="num">6 × 8</span><span class="frac-slash">/</span><span class="den">2</span></span> = <span class="b b-sm"></span> cm<sup>2</sup></p>
       <p>V = <span class="b b-sm"></span> × 10 = <span class="b b-md"></span> cm<sup>3</sup></p>
     </div>
 
@@ -438,14 +453,14 @@
     <p><strong>Pyramid — Surface Area:</strong></p>
     <p>SA = area of <span class="b b-lg"></span> + area of <span class="b b-lg"></span> triangular faces</p>
     <p>For a square-based pyramid (base side s, slant height l):<br>
-    SA = s<sup>2</sup> + 4 × (1/2 × s × l) = s<sup>2</sup> + 2sl</p>
+    SA = s<sup>2</sup> + 4 × (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> × s × l) = s<sup>2</sup> + 2sl</p>
 
     <p><strong>Pyramid — Volume:</strong></p>
-    <p>V = (1/3) × B × h</p>
+    <p>V = (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>) × B × h</p>
     <p>where B = base area, h = perpendicular height (NOT slant height)</p>
 
     <div class="worked-example">
-      <p><strong>Key insight: Volume of pyramid = ⅓ × volume of matching prism</strong></p>
+      <p><strong>Key insight: Volume of pyramid = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span> × volume of matching prism</strong></p>
       <p>A square pyramid with the same base and height as a square prism fits exactly <span class="b b-sm"></span> times inside the prism. This is not a coincidence — it is a geometric fact.</p>
       <p>Similarly, a cone fits <span class="b b-sm"></span> times inside a cylinder with the same base and height.</p>
     </div>
@@ -455,7 +470,7 @@
       <p>Base 6 cm × 6 cm, perpendicular height 4 cm, slant height 5 cm.</p>
       <p>Base area = 6 × 6 = <span class="b b-sm"></span> cm<sup>2</sup></p>
       <p>SA = <span class="b b-sm"></span> + 2(6)(5) = <span class="b b-sm"></span> + <span class="b b-sm"></span> = <span class="b b-md"></span> cm<sup>2</sup></p>
-      <p>V = (1/3)(36)(4) = <span class="b b-md"></span> cm<sup>3</sup></p>
+      <p>V = (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>)(36)(4) = <span class="b b-md"></span> cm<sup>3</sup></p>
     </div>
 
     <p><strong>Explain:</strong> The slant height (5 cm) is used for surface area but NOT for volume. Why?</p>
@@ -468,7 +483,7 @@
       <li>πr<sup>2</sup> = area of the circular <span class="b b-sm"></span></li>
       <li>πrl = lateral surface area (l = slant height)</li>
     </ul>
-    <p>V = (1/3)πr<sup>2</sup>h</p>
+    <p>V = (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>)πr<sup>2</sup>h</p>
     <ul>
       <li>h = perpendicular height, NOT slant height</li>
     </ul>
@@ -482,19 +497,19 @@
       <p>Slant height: l = √(r<sup>2</sup> + h<sup>2</sup>) = √(9 + 16) = √<span class="b b-sm"></span> = <span class="b b-sm"></span> cm</p>
       <p>SA = π(3)<sup>2</sup> + π(3)(<span class="b b-sm"></span>)<br>
       = 9π + <span class="b b-sm"></span> π = <span class="b b-sm"></span> π ≈ <span class="b b-md"></span> cm<sup>2</sup></p>
-      <p>V = (1/3)π(3)<sup>2</sup>(4) = (1/3)π(<span class="b b-sm"></span>)(<span class="b b-sm"></span>)<br>
+      <p>V = (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>)π(3)<sup>2</sup>(4) = (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>)π(<span class="b b-sm"></span>)(<span class="b b-sm"></span>)<br>
       = <span class="b b-sm"></span> π ≈ <span class="b b-md"></span> cm<sup>3</sup></p>
     </div>
 
     <p><strong>Sphere:</strong></p>
     <p>SA = 4πr<sup>2</sup></p>
-    <p>V = (4/3)πr<sup>3</sup></p>
+    <p>V = (<span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">3</span></span>)πr<sup>3</sup></p>
 
     <div class="worked-example">
       <p><strong>Worked Example 3 — Sphere:</strong></p>
       <p>r = 6 cm.</p>
       <p>SA = 4π(6)<sup>2</sup> = 4π(36) = <span class="b b-sm"></span> π ≈ <span class="b b-md"></span> cm<sup>2</sup></p>
-      <p>V = (4/3)π(6)<sup>3</sup> = (4/3)π(216) = <span class="b b-sm"></span> π ≈ <span class="b b-md"></span> cm<sup>3</sup></p>
+      <p>V = (<span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">3</span></span>)π(6)<sup>3</sup> = (<span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">3</span></span>)π(216) = <span class="b b-sm"></span> π ≈ <span class="b b-md"></span> cm<sup>3</sup></p>
     </div>
 
     <div class="misconception">
@@ -502,8 +517,8 @@
       <p><strong>A cone has half the volume of a cylinder</strong></p>
       <p>Wrong idea: "The cone fits inside the cylinder — it must take up half the space."</p>
       <p>Why it fails: A cone takes up exactly one-third of the matching cylinder's volume. You can demonstrate this by filling a cone and pouring into the cylinder: you need exactly 3 cone-fulls to fill the cylinder.</p>
-      <p>The factor (1/3) in the formula is not an estimate — it is precise.</p>
-      <p>Calculate: Cylinder with r = 3, h = 6. Volume = π(9)(6) = 54π. Cone with same r and h: V = (1/3)π(9)(6) = <span class="b b-sm"></span> π. Ratio: <span class="b b-md"></span></p>
+      <p>The factor (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>) in the formula is not an estimate — it is precise.</p>
+      <p>Calculate: Cylinder with r = 3, h = 6. Volume = π(9)(6) = 54π. Cone with same r and h: V = (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>)π(9)(6) = <span class="b b-sm"></span> π. Ratio: <span class="b b-md"></span></p>
     </div>
 
     <p><strong>Summary table:</strong></p>
@@ -512,9 +527,9 @@
       <tbody>
         <tr><td>Rectangular prism</td><td>2(lw + lh + wh)</td><td>lwh</td></tr>
         <tr><td>Cylinder</td><td>2πr<sup>2</sup> + 2πrh</td><td>πr<sup>2</sup>h</td></tr>
-        <tr><td>Square pyramid</td><td>s<sup>2</sup> + 2sl</td><td>(1/3)s<sup>2</sup>h</td></tr>
-        <tr><td>Cone</td><td>πr<sup>2</sup> + πrl</td><td>(1/3)πr<sup>2</sup>h</td></tr>
-        <tr><td>Sphere</td><td>4πr<sup>2</sup></td><td>(4/3)πr<sup>3</sup></td></tr>
+        <tr><td>Square pyramid</td><td>s<sup>2</sup> + 2sl</td><td>(<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>)s<sup>2</sup>h</td></tr>
+        <tr><td>Cone</td><td>πr<sup>2</sup> + πrl</td><td>(<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>)πr<sup>2</sup>h</td></tr>
+        <tr><td>Sphere</td><td>4πr<sup>2</sup></td><td>(<span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">3</span></span>)πr<sup>3</sup></td></tr>
       </tbody>
     </table>
 
@@ -523,9 +538,9 @@
       <ol>
         <li>A cone has r = 5 cm and h = 12 cm. Find the slant height, then the surface area, then the volume.</li>
         <li>A sphere has radius 9 m. Find its volume and surface area.</li>
-        <li>Why is the volume of a pyramid (1/3)Bh rather than Bh?</li>
+        <li>Why is the volume of a pyramid (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>)Bh rather than Bh?</li>
         <li>A square pyramid has base 10 m × 10 m and slant height 13 m. Find its surface area.</li>
-        <li><em>(Stretch)</em> A sphere fits perfectly inside a cylinder (touching all sides and both caps). Show that the sphere's volume is (2/3) the cylinder's volume.</li>
+        <li><em>(Stretch)</em> A sphere fits perfectly inside a cylinder (touching all sides and both caps). Show that the sphere's volume is (<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span>) the cylinder's volume.</li>
       </ol>
     </div>
 
@@ -628,7 +643,7 @@
     <p>Volume:</p>
     <div class="worked-example">
       <p>V of prism = <span class="b b-md"></span> m<sup>3</sup></p>
-      <p>V of pyramid = (1/3)(64)(h). First find perpendicular height: h = √(l<sup>2</sup> − (s/2)<sup>2</sup>) = √(25 − 16) = <span class="b b-sm"></span> m</p>
+      <p>V of pyramid = (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>)(64)(h). First find perpendicular height: h = √(l<sup>2</sup> − (<span class="frac"><span class="num">s</span><span class="frac-slash">/</span><span class="den">2</span></span>)<sup>2</sup>) = √(25 − 16) = <span class="b b-sm"></span> m</p>
       <p>V of pyramid = <span class="b b-md"></span> m<sup>3</sup></p>
       <p>Total V = <span class="b b-md"></span> m<sup>3</sup></p>
     </div>

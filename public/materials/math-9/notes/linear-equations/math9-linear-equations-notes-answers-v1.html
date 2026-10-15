@@ -113,7 +113,22 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
     svg .dg-label       { font: 12px/1.3 system-ui, sans-serif; fill: var(--dg-stroke);    stroke: none; }
     svg .dg-label-sm    { font: 11px/1.3 system-ui, sans-serif; fill: var(--dg-secondary); stroke: none; }
     svg .dg-label-accent{ font: 11px/1.3 system-ui, sans-serif; fill: var(--dg-accent);    stroke: none; font-weight: 600; }
-  </style>
+  
+  /* ── Stacked fractions (scripts/stack_fractions.py) ── */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.15;
+    margin: 0 1px;
+  }
+  .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+  .frac .den { padding: 1px 3px 0; }
+
+  .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
 </head>
 <body>
 
@@ -156,10 +171,10 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
     <tr><td>Example 2</td><td>Divide by ___</td><td><strong>2</strong> → x = <strong>7</strong></td></tr>
     <tr><td>Example 2</td><td>Verify: 2(7)−5 = ___</td><td><strong>9 ✓</strong></td></tr>
     <tr><td>Example 2</td><td>Undo ___ first, then ___</td><td><strong>subtraction; multiplication</strong></td></tr>
-    <tr><td>x/4=−3</td><td>Multiply by ___; x = ___</td><td>Multiply by <strong>4</strong>; x = <strong>−12</strong>. Verify: −12/4 = −3 ✓</td></tr>
+    <tr><td><span class="frac"><span class="num">x</span><span class="frac-slash">/</span><span class="den">4</span></span>=−3</td><td>Multiply by ___; x = ___</td><td>Multiply by <strong>4</strong>; x = <strong>−12</strong>. Verify: −<span class="frac"><span class="num">12</span><span class="frac-slash">/</span><span class="den">4</span></span> = −3 ✓</td></tr>
     <tr><td>Practice</td><td>x − 9 = −4</td><td><strong>x = 5</strong>. Verify: 5−9=−4 ✓</td></tr>
     <tr><td>Practice</td><td>3x = −18</td><td><strong>x = −6</strong>. Verify: 3(−6)=−18 ✓</td></tr>
-    <tr><td>Practice</td><td>x/−2 = 5</td><td><strong>x = −10</strong>. Verify: −10/−2=5 ✓</td></tr>
+    <tr><td>Practice</td><td><span class="frac"><span class="num">x</span><span class="frac-slash">/</span><span class="den">−2</span></span> = 5</td><td><strong>x = −10</strong>. Verify: −<span class="frac"><span class="num">10</span><span class="frac-slash">/</span><span class="den">−2</span></span>=5 ✓</td></tr>
     <tr><td>Practice</td><td>−4 + x = 7</td><td><strong>x = 11</strong>. Verify: −4+11=7 ✓</td></tr>
   </table>
 
@@ -167,7 +182,7 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
   <table>
     <tr><th>Question</th><th>Answer + Annotation</th></tr>
     <tr><td>1. 5x = −35</td><td>x = <strong>−7</strong>. Verify: 5(−7)=−35 ✓</td></tr>
-    <tr><td>2. x/3 + 4 = 1</td><td>x/3=−3 → x=<strong>−9</strong>. Verify: −9/3+4=−3+4=1 ✓</td></tr>
+    <tr><td>2. <span class="frac"><span class="num">x</span><span class="frac-slash">/</span><span class="den">3</span></span> + 4 = 1</td><td><span class="frac"><span class="num">x</span><span class="frac-slash">/</span><span class="den">3</span></span>=−3 → x=<strong>−9</strong>. Verify: −<span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">3</span></span>+4=−3+4=1 ✓</td></tr>
     <tr><td>3. Student gets x=5 for x−7=12</td><td>Error: subtracted 7 instead of adding. <strong>x = 19</strong>. Verify: 19−7=12 ✓</td></tr>
     <tr><td>4. What does "verify" mean?</td><td>Substitute the answer back into the original equation and confirm both sides are equal. Use the original, not a derived step, in case an error crept in.</td></tr>
     <tr><td>5. (Stretch) −x = 4</td><td>Multiply both sides by −1. <strong>x = −4.</strong> The variable represents a negative number.</td></tr>
@@ -218,7 +233,7 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
     <tr><td>2. 6x−5=4x+3</td><td>2x=8 → <strong>x=4</strong>. Verify: 24−5=19=16+3 ✓</td></tr>
     <tr><td>3. 2(x+3)=−(x−9)</td><td>2x+6=−x+9 → 3x=3 → <strong>x=1</strong>. Verify: 2(4)=8; −(1−9)=8 ✓</td></tr>
     <tr><td>4. x+5=10 shortcut</td><td>Works here because both sides can be divided by 2. Could fail if the equation had additional terms that couldn't cleanly be divided first.</td></tr>
-    <tr><td>5. (Stretch)</td><td>3x+6−2x+2=5x−5+3 → x+8=5x−2 → 10=4x → <strong>x=5/2</strong>. Verify: LHS=21/2, RHS=21/2 ✓</td></tr>
+    <tr><td>5. (Stretch)</td><td>3x+6−2x+2=5x−5+3 → x+8=5x−2 → 10=4x → <strong>x=<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">2</span></span></strong>. Verify: LHS=<span class="frac"><span class="num">21</span><span class="frac-slash">/</span><span class="den">2</span></span>, RHS=<span class="frac"><span class="num">21</span><span class="frac-slash">/</span><span class="den">2</span></span> ✓</td></tr>
   </table>
 </div>
 
@@ -228,37 +243,37 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
   <h3>Vocabulary</h3>
   <table>
     <tr><th>Term</th><th>Definition</th><th>Example</th></tr>
-    <tr><td>Rational coefficient</td><td>A fractional or decimal coefficient</td><td>(2/3)x or 0.3x</td></tr>
+    <tr><td>Rational coefficient</td><td>A fractional or decimal coefficient</td><td>(<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span>)x or 0.3x</td></tr>
     <tr><td>LCD</td><td>Least common denominator — smallest number divisible by all denominators</td><td>LCD of 3, 4, 6 = 12</td></tr>
-    <tr><td>Clear the fractions</td><td>Multiply every term by LCD to eliminate all fractions</td><td>×6 turns x/3+1/2=5/6 into 2x+3=5</td></tr>
+    <tr><td>Clear the fractions</td><td>Multiply every term by LCD to eliminate all fractions</td><td>×6 turns <span class="frac"><span class="num">x</span><span class="frac-slash">/</span><span class="den">3</span></span>+<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>=<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">6</span></span> into 2x+3=5</td></tr>
   </table>
 
   <h3>Guided Notes — Blanks and Answers</h3>
   <table>
     <tr><th>Section</th><th>Blank / Prompt</th><th>Answer + Annotation</th></tr>
-    <tr><td>Example 1: x/3+1/2=5/6</td><td>LCD of 3, 2, 6</td><td><strong>6</strong></td></tr>
-    <tr><td>Example 1</td><td>6(x/3)+6(1/2)=6(5/6) gives ___x+___=___</td><td><strong>2</strong>x + <strong>3</strong> = <strong>5</strong></td></tr>
+    <tr><td>Example 1: <span class="frac"><span class="num">x</span><span class="frac-slash">/</span><span class="den">3</span></span>+<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>=<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">6</span></span></td><td>LCD of 3, 2, 6</td><td><strong>6</strong></td></tr>
+    <tr><td>Example 1</td><td>6(<span class="frac"><span class="num">x</span><span class="frac-slash">/</span><span class="den">3</span></span>)+6(<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>)=6(<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">6</span></span>) gives ___x+___=___</td><td><strong>2</strong>x + <strong>3</strong> = <strong>5</strong></td></tr>
     <tr><td>Example 1</td><td>x = ___</td><td><strong>1</strong></td></tr>
-    <tr><td>Example 1</td><td>Verify: 1/3+1/2 = 2/6+3/6 = ___</td><td><strong>5/6 ✓</strong></td></tr>
-    <tr><td>Explain first step</td><td>Why does ×LCD eliminate fractions?</td><td>Multiplying (x/3) by 6 gives (6/3)x = 2x — the fraction cancels. Doing this to every term simultaneously preserves the equation's balance.</td></tr>
-    <tr><td>Example 2: (2/3)x−4=x/4</td><td>LCD of 3 and 4</td><td><strong>12</strong></td></tr>
-    <tr><td>Example 2</td><td>8x − 48 = 3x (show work)</td><td>12×(2/3)=8; 12×4=48; 12×(1/4)=3</td></tr>
-    <tr><td>Example 2</td><td>Move: 5x=48 → x = ___</td><td>x = <strong>48/5</strong></td></tr>
+    <tr><td>Example 1</td><td>Verify: <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>+<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> = <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">6</span></span>+<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">6</span></span> = ___</td><td><strong><span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">6</span></span> ✓</strong></td></tr>
+    <tr><td>Explain first step</td><td>Why does ×LCD eliminate fractions?</td><td>Multiplying (<span class="frac"><span class="num">x</span><span class="frac-slash">/</span><span class="den">3</span></span>) by 6 gives (<span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">3</span></span>)x = 2x — the fraction cancels. Doing this to every term simultaneously preserves the equation's balance.</td></tr>
+    <tr><td>Example 2: (<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span>)x−4=<span class="frac"><span class="num">x</span><span class="frac-slash">/</span><span class="den">4</span></span></td><td>LCD of 3 and 4</td><td><strong>12</strong></td></tr>
+    <tr><td>Example 2</td><td>8x − 48 = 3x (show work)</td><td>12×(<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span>)=8; 12×4=48; 12×(<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span>)=3</td></tr>
+    <tr><td>Example 2</td><td>Move: 5x=48 → x = ___</td><td>x = <strong><span class="frac"><span class="num">48</span><span class="frac-slash">/</span><span class="den">5</span></span></strong></td></tr>
     <tr><td>Example 3 Option 1</td><td>×10: 3x+12=9 → x = ___</td><td><strong>−1</strong></td></tr>
     <tr><td>Example 3 Option 2</td><td>0.3x = 0.9−1.2 = ___</td><td><strong>−0.3</strong> → x = <strong>−1</strong></td></tr>
-    <tr><td>Practice 1</td><td>x/2−x/3=1/6</td><td>LCD=6. 3x−2x=1 → <strong>x=1</strong></td></tr>
-    <tr><td>Practice 2</td><td>(3/4)x+2=(1/2)x+5</td><td>LCD=4. 3x+8=2x+20 → <strong>x=12</strong></td></tr>
+    <tr><td>Practice 1</td><td><span class="frac"><span class="num">x</span><span class="frac-slash">/</span><span class="den">2</span></span>−<span class="frac"><span class="num">x</span><span class="frac-slash">/</span><span class="den">3</span></span>=<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span></td><td>LCD=6. 3x−2x=1 → <strong>x=1</strong></td></tr>
+    <tr><td>Practice 2</td><td>(<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">4</span></span>)x+2=(<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>)x+5</td><td>LCD=4. 3x+8=2x+20 → <strong>x=12</strong></td></tr>
     <tr><td>Practice 3</td><td>0.5x−3=0.2x+0.6</td><td>×10: 5x−30=2x+6 → 3x=36 → <strong>x=12</strong></td></tr>
   </table>
 
   <h3>Retrieval Check — Section 3</h3>
   <table>
     <tr><th>Question</th><th>Answer + Annotation</th></tr>
-    <tr><td>1. x/4 + x/6 = 5/12</td><td>LCD=12: 3x+2x=5 → 5x=5 → <strong>x=1</strong></td></tr>
-    <tr><td>2. (2/3)x−1/2=(5/6)x</td><td>LCD=6: 4x−3=5x → <strong>x=−3</strong></td></tr>
+    <tr><td>1. <span class="frac"><span class="num">x</span><span class="frac-slash">/</span><span class="den">4</span></span> + <span class="frac"><span class="num">x</span><span class="frac-slash">/</span><span class="den">6</span></span> = <span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">12</span></span></td><td>LCD=12: 3x+2x=5 → 5x=5 → <strong>x=1</strong></td></tr>
+    <tr><td>2. (<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span>)x−<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>=(<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">6</span></span>)x</td><td>LCD=6: 4x−3=5x → <strong>x=−3</strong></td></tr>
     <tr><td>3. 0.4x+1.8=0.6x−0.6</td><td>×10: 4x+18=6x−6 → 24=2x → <strong>x=12</strong></td></tr>
     <tr><td>4. Why multiply all terms?</td><td>Multiplying every term by the same number is the multiplication property of equality — same operation on both sides maintains balance.</td></tr>
-    <tr><td>5. (Stretch) (x+1)/3−(x−2)/4=1</td><td>LCD=12: 4(x+1)−3(x−2)=12 → 4x+4−3x+6=12 → x+10=12 → <strong>x=2</strong></td></tr>
+    <tr><td>5. (Stretch) <span class="frac"><span class="num">x+1</span><span class="frac-slash">/</span><span class="den">3</span></span>−<span class="frac"><span class="num">x−2</span><span class="frac-slash">/</span><span class="den">4</span></span>=1</td><td>LCD=12: 4(x+1)−3(x−2)=12 → 4x+4−3x+6=12 → x+10=12 → <strong>x=2</strong></td></tr>
   </table>
 </div>
 
@@ -361,10 +376,10 @@ code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f1f5
       <p>Verify: 3(7)−2(8)=21−16=5 ✓</p>
     </div>
 
-    <p><strong>b) −(2/3)x + 4 ≤ (1/6)x − 2</strong></p>
+    <p><strong>b) −(<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span>)x + 4 ≤ (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span>)x − 2</strong></p>
     <div class="answer">
-      <p>LCD=6: −4x+24 ≤ x−12 → −5x ≤ −36 → <strong>x ≥ 36/5</strong> (flip)</p>
-      <p>Graph: closed circle at 36/5 (=7.2), arrow right</p>
+      <p>LCD=6: −4x+24 ≤ x−12 → −5x ≤ −36 → <strong>x ≥ <span class="frac"><span class="num">36</span><span class="frac-slash">/</span><span class="den">5</span></span></strong> (flip)</p>
+      <p>Graph: closed circle at <span class="frac"><span class="num">36</span><span class="frac-slash">/</span><span class="den">5</span></span> (=7.2), arrow right</p>
     </div>
 
     <h4>Part C — Pre-Knowledge Check reflection</h4>

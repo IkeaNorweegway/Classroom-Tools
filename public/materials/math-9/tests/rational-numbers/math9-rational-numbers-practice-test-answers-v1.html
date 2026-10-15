@@ -56,7 +56,22 @@
       tr { break-inside: avoid; }
       @page { size: letter; margin: 0.6in 0.7in; }
     }
-  </style>
+  
+  /* ── Stacked fractions (scripts/stack_fractions.py) ── */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.15;
+    margin: 0 1px;
+  }
+  .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+  .frac .den { padding: 1px 3px 0; }
+
+  .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
 </head>
 <body>
   <div class="header-strip">
@@ -85,12 +100,12 @@
     <thead><tr><th style="width:5%;">Q</th><th style="width:8%;">Ans</th><th style="width:37%;">Why</th><th>Common errors</th></tr></thead>
     <tbody>
       <tr><td>1</td><td><strong>D</strong></td><td>√2 cannot be written as a fraction of two integers; its decimal never ends or repeats</td><td>A: thinks negatives or integers are not rational. B: thinks a repeating decimal is not rational. C: thinks decimals are not rational</td></tr>
-      <tr><td>2</td><td><strong>A</strong></td><td>−5/6 = −20/24 and −7/8 = −21/24; −20/24 is closer to zero</td><td>B, C, D: compares absolute values and ignores the negative sign</td></tr>
-      <tr><td>3</td><td><strong>B</strong></td><td>A negative sign in the denominator gives the same value as one in the numerator</td><td>A, C: two negatives make a positive, 3/5. D: flipped the fraction</td></tr>
-      <tr><td>4</td><td><strong>C</strong></td><td>−3/8 + 5/8 = 2/8 = 1/4</td><td>A: did not change subtracting a negative into adding. B: correct size, wrong sign. D: added the absolute values</td></tr>
+      <tr><td>2</td><td><strong>A</strong></td><td>−<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">6</span></span> = −<span class="frac"><span class="num">20</span><span class="frac-slash">/</span><span class="den">24</span></span> and −<span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">8</span></span> = −<span class="frac"><span class="num">21</span><span class="frac-slash">/</span><span class="den">24</span></span>; −<span class="frac"><span class="num">20</span><span class="frac-slash">/</span><span class="den">24</span></span> is closer to zero</td><td>B, C, D: compares absolute values and ignores the negative sign</td></tr>
+      <tr><td>3</td><td><strong>B</strong></td><td>A negative sign in the denominator gives the same value as one in the numerator</td><td>A, C: two negatives make a positive, <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">5</span></span>. D: flipped the fraction</td></tr>
+      <tr><td>4</td><td><strong>C</strong></td><td>−<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">8</span></span> + <span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">8</span></span> = <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">8</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span></td><td>A: did not change subtracting a negative into adding. B: correct size, wrong sign. D: added the absolute values</td></tr>
       <tr><td>5</td><td><strong>A</strong></td><td>4.6 − 1.85 = 2.75, and the larger absolute value is negative</td><td>B: added the absolute values. C: correct size, wrong sign. D: regrouping slip in the subtraction</td></tr>
-      <tr><td>6</td><td><strong>D</strong></td><td>Negative × negative is positive; 18/30 = 3/5</td><td>A: sign error. B: cross-multiplied (2 × 10 over 3 × 9). C: added numerators and added denominators</td></tr>
-      <tr><td>7</td><td><strong>C</strong></td><td>12 ÷ 3/4 = 12 × 4/3 = 16; dividing by a number between 0 and 1 gives a larger result</td><td>A, B: both equal 9. D: equals −16, large in size but negative</td></tr>
+      <tr><td>6</td><td><strong>D</strong></td><td>Negative × negative is positive; <span class="frac"><span class="num">18</span><span class="frac-slash">/</span><span class="den">30</span></span> = <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">5</span></span></td><td>A: sign error. B: cross-multiplied (2 × 10 over 3 × 9). C: added numerators and added denominators</td></tr>
+      <tr><td>7</td><td><strong>C</strong></td><td>12 ÷ <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">4</span></span> = 12 × <span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">3</span></span> = 16; dividing by a number between 0 and 1 gives a larger result</td><td>A, B: both equal 9. D: equals −16, large in size but negative</td></tr>
       <tr><td>8</td><td><strong>B</strong></td><td>Exponents come before multiplication and subtraction</td><td>A: works left to right. C: multiplies before the exponent. D: common denominators are only needed for the final subtraction</td></tr>
     </tbody>
   </table>
@@ -98,19 +113,19 @@
   <h2>Part B — Short Answer</h2>
 
   <div class="item">
-    <p><strong>9.</strong> (a) −2/3, &nbsp;−5/8, &nbsp;−0.6, &nbsp;0.58, &nbsp;3/5</p>
+    <p><strong>9.</strong> (a) −<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span>, &nbsp;−<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">8</span></span>, &nbsp;−0.6, &nbsp;0.58, &nbsp;<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">5</span></span></p>
     <ul>
       <li>1 mark: the three negatives in the correct order</li>
-      <li>1 mark: complete order correct (0.58 before 3/5 = 0.60)</li>
+      <li>1 mark: complete order correct (0.58 before <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">5</span></span> = 0.60)</li>
     </ul>
-    <p>(b) −2/3 = −16/24 and −5/8 = −15/24, so −2/3 is farther left on the number line. Decimal reasoning is also fine: −0.666… is less than −0.625.</p>
+    <p>(b) −<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span> = −<span class="frac"><span class="num">16</span><span class="frac-slash">/</span><span class="den">24</span></span> and −<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">8</span></span> = −<span class="frac"><span class="num">15</span><span class="frac-slash">/</span><span class="den">24</span></span>, so −<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span> is farther left on the number line. Decimal reasoning is also fine: −0.666… is less than −0.625.</p>
     <ul>
-      <li>1 mark: a valid comparison (common denominator, decimals, or number line) that reaches −2/3 &lt; −5/8. Award 0 for “2/3 is bigger so −2/3 is bigger.”</li>
+      <li>1 mark: a valid comparison (common denominator, decimals, or number line) that reaches −<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span> &lt; −<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">8</span></span>. Award 0 for “<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span> is bigger so −<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span> is bigger.”</li>
     </ul>
   </div>
 
   <div class="item">
-    <p><strong>10.</strong> −5/6 + 3/4 = −10/12 + 9/12 = <strong>−1/12</strong></p>
+    <p><strong>10.</strong> −<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">6</span></span> + <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">4</span></span> = −<span class="frac"><span class="num">10</span><span class="frac-slash">/</span><span class="den">12</span></span> + <span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">12</span></span> = <strong>−<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">12</span></span></strong></p>
     <ul>
       <li>1 mark: LCD of 12 with both fractions rewritten correctly</li>
       <li>1 mark: adds numerators with correct signs</li>
@@ -119,7 +134,7 @@
   </div>
 
   <div class="item">
-    <p><strong>11.</strong> (−8/15) × (5/12) = −40/180 = <strong>−2/9</strong> &nbsp; (cross-cancelling gives (−2/3) × (1/3) directly)</p>
+    <p><strong>11.</strong> (−<span class="frac"><span class="num">8</span><span class="frac-slash">/</span><span class="den">15</span></span>) × (<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">12</span></span>) = −<span class="frac"><span class="num">40</span><span class="frac-slash">/</span><span class="den">180</span></span> = <strong>−<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">9</span></span></strong> &nbsp; (cross-cancelling gives (−<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span>) × (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>) directly)</p>
     <ul>
       <li>1 mark: negative sign</li>
       <li>1 mark: correct product or correct cross-cancelling</li>
@@ -128,28 +143,28 @@
   </div>
 
   <div class="item">
-    <p><strong>12.</strong> (−5/9) ÷ (10/3) = (−5/9) × (3/10) = −15/90 = <strong>−1/6</strong></p>
+    <p><strong>12.</strong> (−<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">9</span></span>) ÷ (<span class="frac"><span class="num">10</span><span class="frac-slash">/</span><span class="den">3</span></span>) = (−<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">9</span></span>) × (<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">10</span></span>) = −<span class="frac"><span class="num">15</span><span class="frac-slash">/</span><span class="den">90</span></span> = <strong>−<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span></strong></p>
     <ul>
-      <li>1 mark: rewrites as multiplication by the reciprocal 3/10</li>
+      <li>1 mark: rewrites as multiplication by the reciprocal <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">10</span></span></li>
       <li>1 mark: correct product with correct sign</li>
       <li>1 mark: lowest terms</li>
     </ul>
   </div>
 
   <div class="item">
-    <p><strong>13.</strong> The student added the numerators (2 + 1) and added the denominators (3 + 4). Denominators name the size of the pieces; thirds and quarters are different sizes, so they cannot be counted together until both are rewritten in the same size of piece. 2/3 + 1/4 = 8/12 + 3/12 = <strong>11/12</strong></p>
+    <p><strong>13.</strong> The student added the numerators (2 + 1) and added the denominators (3 + 4). Denominators name the size of the pieces; thirds and quarters are different sizes, so they cannot be counted together until both are rewritten in the same size of piece. <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span> + <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span> = <span class="frac"><span class="num">8</span><span class="frac-slash">/</span><span class="den">12</span></span> + <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">12</span></span> = <strong><span class="frac"><span class="num">11</span><span class="frac-slash">/</span><span class="den">12</span></span></strong></p>
     <ul>
       <li>1 mark: identifies that numerators and denominators were both added</li>
-      <li>1 mark: explains why it fails (different-sized pieces need a common denominator, or a check such as 3/7 being less than 2/3)</li>
-      <li>1 mark: correct answer 11/12</li>
+      <li>1 mark: explains why it fails (different-sized pieces need a common denominator, or a check such as <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">7</span></span> being less than <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span>)</li>
+      <li>1 mark: correct answer <span class="frac"><span class="num">11</span><span class="frac-slash">/</span><span class="den">12</span></span></li>
     </ul>
   </div>
 
   <div class="item">
-    <p><strong>14.</strong> Brackets first: −1/2 + 1/3 = −3/6 + 2/6 = −1/6. Then (−1/6) ÷ (−5/6) = (−1/6) × (−6/5) = <strong>1/5</strong></p>
+    <p><strong>14.</strong> Brackets first: −<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> + <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span> = −<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">6</span></span> + <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">6</span></span> = −<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span>. Then (−<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span>) ÷ (−<span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">6</span></span>) = (−<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span>) × (−<span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">5</span></span>) = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">5</span></span></strong></p>
     <ul>
-      <li>1 mark: bracket evaluated as −1/6</li>
-      <li>1 mark: multiplies by the reciprocal −6/5</li>
+      <li>1 mark: bracket evaluated as −<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span></li>
+      <li>1 mark: multiplies by the reciprocal −<span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">5</span></span></li>
       <li>1 mark: correct positive answer in lowest terms</li>
     </ul>
   </div>
@@ -157,15 +172,15 @@
   <div class="item">
     <p><strong>15.</strong> (a) Negative. There are three negative factors, and an odd number of negatives gives a negative product.</p>
     <ul><li>1 mark: negative with a reason</li></ul>
-    <p>(b) 3 × 2 × 6 = 36 and 4 × 9 × 5 = 180, so the product is −36/180 = <strong>−1/5</strong></p>
+    <p>(b) 3 × 2 × 6 = 36 and 4 × 9 × 5 = 180, so the product is −<span class="frac"><span class="num">36</span><span class="frac-slash">/</span><span class="den">180</span></span> = <strong>−<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">5</span></span></strong></p>
     <ul>
       <li>1 mark: correct product or correct cross-cancelling</li>
-      <li>1 mark: −1/5 in lowest terms</li>
+      <li>1 mark: −<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">5</span></span> in lowest terms</li>
     </ul>
   </div>
 
   <div class="item">
-    <p><strong>16.</strong> 1&#8239;2/3 − 2&#8239;1/4 = 5/3 − 9/4 = 20/12 − 27/12 = <strong>−7/12</strong></p>
+    <p><strong>16.</strong> 1&#8239;<span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span> − 2&#8239;<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span> = <span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">3</span></span> − <span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">4</span></span> = <span class="frac"><span class="num">20</span><span class="frac-slash">/</span><span class="den">12</span></span> − <span class="frac"><span class="num">27</span><span class="frac-slash">/</span><span class="den">12</span></span> = <strong>−<span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">12</span></span></strong></p>
     <ul>
       <li>1 mark: both mixed numbers converted to improper fractions</li>
       <li>1 mark: common denominator of 12</li>
@@ -174,20 +189,20 @@
   </div>
 
   <div class="item">
-    <p><strong>17.</strong> 9 ÷ 3/4 = 9 × 4/3 = <strong>12</strong>. The answer is larger than 9. Dividing by 3/4 asks how many three-quarter pieces fit into 9, and more than 9 of them fit because each piece is smaller than 1. Dividing only makes a number smaller when the divisor is greater than 1.</p>
+    <p><strong>17.</strong> 9 ÷ <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">4</span></span> = 9 × <span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">3</span></span> = <strong>12</strong>. The answer is larger than 9. Dividing by <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">4</span></span> asks how many three-quarter pieces fit into 9, and more than 9 of them fit because each piece is smaller than 1. Dividing only makes a number smaller when the divisor is greater than 1.</p>
     <ul>
       <li>1 mark: calculates 12</li>
       <li>1 mark: states that 12 is greater than 9, so the claim is false</li>
-      <li>1 mark: explains why (pieces smaller than 1, or dividing by 3/4 is multiplying by 4/3, which is greater than 1)</li>
+      <li>1 mark: explains why (pieces smaller than 1, or dividing by <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">4</span></span> is multiplying by <span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">3</span></span>, which is greater than 1)</li>
     </ul>
   </div>
 
   <div class="item">
-    <p><strong>18.</strong> (−1/2)² = 1/4. Then 1/4 × 2/3 = 1/6. Then 3/4 − 1/6 = 9/12 − 2/12 = <strong>7/12</strong></p>
+    <p><strong>18.</strong> (−<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>)² = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span>. Then <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span> × <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span>. Then <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">4</span></span> − <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span> = <span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">12</span></span> − <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">12</span></span> = <strong><span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">12</span></span></strong></p>
     <ul>
-      <li>1 mark: exponent first, giving positive 1/4</li>
-      <li>1 mark: multiplication before subtraction, giving 1/6</li>
-      <li>1 mark: correct answer 7/12</li>
+      <li>1 mark: exponent first, giving positive <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span></li>
+      <li>1 mark: multiplication before subtraction, giving <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span></li>
+      <li>1 mark: correct answer <span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">12</span></span></li>
     </ul>
   </div>
 
@@ -196,22 +211,22 @@
   <h2>Part C — Extended Response</h2>
 
   <div class="item">
-    <p><strong>19.</strong> (a) 4 × 2&#8239;3/4 = 4 × 11/4 = <strong>11 °C</strong> &nbsp; (RN3)</p>
+    <p><strong>19.</strong> (a) 4 × 2&#8239;<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">4</span></span> = 4 × <span class="frac"><span class="num">11</span><span class="frac-slash">/</span><span class="den">4</span></span> = <strong>11 °C</strong> &nbsp; (RN3)</p>
     <ul>
-      <li>1 mark: sets up 4 × 2&#8239;3/4 (or repeated addition)</li>
+      <li>1 mark: sets up 4 × 2&#8239;<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">4</span></span> (or repeated addition)</li>
       <li>1 mark: 11 °C</li>
     </ul>
-    <p>(b) −9&#8239;1/2 + 11 = <strong>1&#8239;1/2 °C</strong> &nbsp; (RN2)</p>
+    <p>(b) −9&#8239;<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> + 11 = <strong>1&#8239;<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> °C</strong> &nbsp; (RN2)</p>
     <ul>
-      <li>1 mark: sets up −9&#8239;1/2 + 11</li>
-      <li>1 mark: 1&#8239;1/2 °C (or 1.5 °C)</li>
+      <li>1 mark: sets up −9&#8239;<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> + 11</li>
+      <li>1 mark: 1&#8239;<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> °C (or 1.5 °C)</li>
     </ul>
-    <p>(c) The temperature has to fall 11 °C. 11 ÷ 1&#8239;1/2 = 11 ÷ 3/2 = 11 × 2/3 = 22/3 = <strong>7&#8239;1/3 hours</strong> (7 h 20 min) &nbsp; (RN4)</p>
+    <p>(c) The temperature has to fall 11 °C. 11 ÷ 1&#8239;<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> = 11 ÷ <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">2</span></span> = 11 × <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">3</span></span> = <span class="frac"><span class="num">22</span><span class="frac-slash">/</span><span class="den">3</span></span> = <strong>7&#8239;<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span> hours</strong> (7 h 20 min) &nbsp; (RN4)</p>
     <ul>
-      <li>1 mark: sets up 11 ÷ 1&#8239;1/2</li>
-      <li>1 mark: 7&#8239;1/3 hours</li>
+      <li>1 mark: sets up 11 ÷ 1&#8239;<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span></li>
+      <li>1 mark: 7&#8239;<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span> hours</li>
     </ul>
-    <p>(d) The student subtracted before multiplying. Multiplication comes first: 1&#8239;1/2 × 3 = 4&#8239;1/2, then 1&#8239;1/2 − 4&#8239;1/2 = <strong>−3 °C</strong> &nbsp; (RN5)</p>
+    <p>(d) The student subtracted before multiplying. Multiplication comes first: 1&#8239;<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> × 3 = 4&#8239;<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>, then 1&#8239;<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> − 4&#8239;<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> = <strong>−3 °C</strong> &nbsp; (RN5)</p>
     <ul>
       <li>1 mark: names the order-of-operations error</li>
       <li>1 mark: −3 °C</li>
@@ -234,14 +249,14 @@
   <h2>Part D — Thinking</h2>
 
   <div class="item">
-    <p><strong>20.</strong> Model answer: Jordan is not correct. −1/3 = −4/12 and −1/4 = −3/12. Those look like neighbours, but writing them as −8/24 and −6/24 shows −7/24 sitting between them. Decimals show the same thing: −0.333… and −0.25 have −0.3 between them. −1/4 is the greater of the two because it is closer to zero. The denominators being consecutive does not matter, because any two different rational numbers have another rational number between them.</p>
+    <p><strong>20.</strong> Model answer: Jordan is not correct. −<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span> = −<span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">12</span></span> and −<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span> = −<span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">12</span></span>. Those look like neighbours, but writing them as −<span class="frac"><span class="num">8</span><span class="frac-slash">/</span><span class="den">24</span></span> and −<span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">24</span></span> shows −<span class="frac"><span class="num">7</span><span class="frac-slash">/</span><span class="den">24</span></span> sitting between them. Decimals show the same thing: −0.333… and −0.25 have −0.3 between them. −<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span> is the greater of the two because it is closer to zero. The denominators being consecutive does not matter, because any two different rational numbers have another rational number between them.</p>
   </div>
 
   <table>
     <thead><tr><th style="width:18%;">Level</th><th style="width:10%;">Marks</th><th>Descriptor</th></tr></thead>
     <tbody>
-      <tr><td>Full</td><td>4</td><td>States Jordan is wrong; rewrites both numbers in a common form; names a correct number between them; states −1/4 &gt; −1/3 with a reason</td></tr>
-      <tr><td>Substantial</td><td>3</td><td>States Jordan is wrong and names a correct number between, but the comparison of −1/3 and −1/4 is missing or unjustified</td></tr>
+      <tr><td>Full</td><td>4</td><td>States Jordan is wrong; rewrites both numbers in a common form; names a correct number between them; states −<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span> &gt; −<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span> with a reason</td></tr>
+      <tr><td>Substantial</td><td>3</td><td>States Jordan is wrong and names a correct number between, but the comparison of −<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span> and −<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span> is missing or unjustified</td></tr>
       <tr><td>Partial</td><td>1–2</td><td>Rewrites the fractions in a common form or compares them correctly, but does not find a number between; or says Jordan is wrong with no supporting mathematics (1)</td></tr>
       <tr><td>Not demonstrated</td><td>0</td><td>Agrees with Jordan, or no relevant mathematics</td></tr>
     </tbody>
