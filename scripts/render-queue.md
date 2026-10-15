@@ -32,9 +32,9 @@ Both are done in the same commit as the render, once the HTML is checked.
 
 ## Added: unit tests and answer keys (for the Google Drive folder, not the site)
 
-Unit tests are unreleased. Render them for the Drive folder only; do not publish them to `public/materials/`.
+Unit tests are unreleased. Render them for the Drive folder only. The script refuses to write tests into `public/materials/`: give an output folder outside the repo with `--out`, for example `python3 scripts/render_assessments.py --out ../test-renders <file>`.
 
-Run `python3 scripts/render_assessments.py` for the Grade 6 Science, Grade 9 Social and Math 9 folders, and the same for the Grade 8 Social test files (these already contain their answer key at the end). Files:
+Files, passed as paths with `--out` (the Grade 8 Social tests already include their answer key at the end):
 
 - `tests-quizzes/grade-6-science/*/sci6-*-test-v1.md` and `*-test-answers-v1.md` (6 + 6)
 - `tests-quizzes/math-9/*/math9-*-test-v1.md` and `*-test-answers-v1.md` (10 + 10)

@@ -27,8 +27,6 @@ OUT = ROOT / 'public' / 'materials'
 SOURCES = [
     'tests-quizzes/*/*/*-exits-v1.md',
     'tests-quizzes/*/*/*-quiz-v1.md',
-    'tests-quizzes/*/*/*-test-v1.md',
-    'tests-quizzes/*/*/*-answers-v1.md',
 ]
 
 # Accent for the page header: course colour, same family as the home practice sheets.
@@ -125,12 +123,24 @@ def sources(args):
 
 
 def main(argv):
+    # Unit tests and answer keys are unreleased: they never go to public/materials/.
+    # Give them an output folder outside the repo with --out.
+    out = OUT
+    if '--out' in argv:
+        i = argv.index('--out')
+        out = Path(argv[i + 1]).resolve()
+        argv = argv[:i] + argv[i + 2:]
+        out.mkdir(parents=True, exist_ok=True)
     for src in sources(argv):
+        unreleased = '-test-' in src.name or '-answers-' in src.name
+        if unreleased and out == OUT:
+            print(f'skipped (unreleased, pass --out): {src.relative_to(ROOT)}')
+            continue
         # File names are sci6-matter-exits-v1.md, so the first part is the course key.
         key = src.name.split('-')[0]
-        target = OUT / f'{src.stem}.html'
+        target = out / f'{src.stem}.html'
         target.write_text(render(src.read_text(encoding='utf-8'), key), encoding='utf-8')
-        print(f'{src.relative_to(ROOT)} -> {target.relative_to(ROOT)}')
+        print(f'{src.relative_to(ROOT)} -> {target}')
 
 
 if __name__ == '__main__':
