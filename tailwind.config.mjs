@@ -56,6 +56,16 @@ export default {
           600: '#b5761c',
           700: '#925d17',
         },
+        // Parent view: a calm sage, distinct from the teacher amber.
+        parent: {
+          50:  '#eff5f0',
+          100: '#dcebe0',
+          200: '#bcd8c4',
+          400: '#6fa983',
+          500: '#4f8f66',
+          600: '#3c7552',
+          700: '#2f5d41',
+        },
         math9: {
           50:  '#f0f2fa',
           100: '#dfe4f4',

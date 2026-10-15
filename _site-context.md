@@ -44,16 +44,15 @@ teacher-500  #f59e0b   teacher-600  #d97706   teacher-700  #b45309
 ```
 
 ### How accent colour propagates
-- `<BaseLayout>` accepts a `course` prop: `'science' | 'math9' | 'science7' | 'social9' | 'social8' | 'steam'` and passes it to `Nav.astro`
-- Grade 6 Science and Math 9 use Tailwind tokens (`bg-science-600`, `bg-math9-600`)
-- Science 7, Social 8, Social 9, and STEAM set their accent with an inline `background-color` hex in `Nav.astro` and their pages
-- There is no `data-course` attribute or `--accent` custom property. Moving every course to one mechanism is a target, not current state
-- Site-level pages (home, 404) use slate — no course accent
+- `<BaseLayout>` accepts a `course` prop (`CourseKey` in `src/data/courses.ts`) and sets `data-course` on `<body>`
+- `src/styles/global.css` sets `--accent`, `--accent-ink` and `--accent-soft` per `[data-course="…"]`; Tailwind's `accent` colours read them (`bg-accent`, `text-accent-ink`)
+- The old `science-*` and `math9-*` tokens remain for older pages
+- Site-level pages (home, hubs, 404) have no course accent
 
-### Teacher mode colour
-- Teacher mode adds an amber banner at the top (`teacher-600` background)
-- The nav background shifts to `slate-900` in teacher mode (already implemented)
-- Course accent colours remain unchanged in teacher mode — only the banner changes
+### Audience colours
+- Teacher view: amber banner (`teacher-500`) and a dark (`slate-900`) nav
+- Parent view: sage banner (`parent-100` / `parent-700`); the nav stays light
+- Course accents don't change between views; only the banner (and the teacher nav) does
 
 ---
 
@@ -66,17 +65,20 @@ Every page has two nav levels:
 **Level 1 — Site nav (top bar, always visible)**
 - Left: site name → links to home `/`
 - Centre: course tabs — `Gr. 6 Science` | `Math 9` | `Gr. 7 Science` | `Social 9` | `Social 8` | `STEAM` (active tab highlighted with course accent)
-- Right: `Teacher` link (reads `← Student view` when in teacher mode)
+- Right: the audience switch, `Student · Parent · Teacher` (see below)
 
 **Level 2 — Course subnav (below top bar, visible when inside a course)**
 - Grade 6 Science subnav: `Matter | Forces | Living Systems | Climate | Energy | Space | Materials`
-- Math 9 subnav: `Number | Algebra | M&G | Stats & Prob | Practice | PAT Prep | POTD | Materials`
+- Math 9 subnav: `Number | Algebra | M&G | Stats & Prob | Practice | PAT Prep | POTD | All materials`. A strand tab is also active on that strand's topic pages. Parent pages use `parentSubnav`: `Overview | Number | Algebra | M&G | Stats & Prob`
 - Science 7, Social 8, and Social 9 subnavs list their units; the STEAM subnav lists Grades 5–9
 
-### Teacher view
-- The `Teacher` link in the top-right goes to the current course's teacher index (`/teacher`, `/math9/teacher`, `/science7/teacher`, `/social8/teacher`, `/social9/teacher`). STEAM has no teacher index.
-- Teacher pages pass `teacherMode` to `BaseLayout`, which adds the amber banner and the dark nav.
-- Teacher mode is a set of separate routes, not a site-wide toggle. Nothing is hidden from students: every answer key in `public/materials/` is reachable by URL.
+### Audience views (student, parent, teacher)
+- Every page is written for one audience: `audience` on `BaseLayout` (`'student' | 'parent' | 'teacher'`). Course pages default to `student`; the home page has none.
+- Each course in `courses.ts` has a student `path` and may have a `teacherPath` and a `parentPath`. Only Math 9 has a `parentPath` so far.
+- The nav switch offers the views the course has. A page can pass `audienceLinks` so the switch lands on the same topic (for example, `/math9/linear-equations` ↔ `/math9/parents/linear-equations` ↔ `/math9/teacher#linear-equations`); otherwise it goes to that view's course landing. Outside a course it goes to the hubs: `/`, `/parents`, `/teachers`.
+- In a parent or teacher view, the course tabs go to each course's matching view when it has one.
+- The chosen view is saved in `localStorage` (`audience`). The home page's "I'm a…" chooser uses it to point turntable links at the matching view.
+- Views are separate routes, not a lock. Nothing is hidden from students: every answer key in `public/materials/` is reachable by URL, and student pages keep answer keys in a collapsed section.
 
 ### Active states
 - Top nav course tab: `bg-{course}-600 text-white` when on any page under that course
@@ -97,8 +99,9 @@ Every page has two nav levels:
 Props:
   title: string           — page title (goes in <title> and <h1>)
   description?: string    — meta description
-  course?: 'science' | 'math9' | 'science7' | 'social9' | 'social8' | 'steam'   — drives accent colour and subnav
-  teacherMode?: boolean   — adds amber banner + dark nav
+  course?: CourseKey      — drives accent colour and subnav
+  audience?: 'student' | 'parent' | 'teacher'   — banner, nav style, switch state (default: student inside a course)
+  audienceLinks?: { student?, parent?, teacher? }   — same-topic pages for the nav switch, below BASE_URL
 ```
 
 Structure:
@@ -106,8 +109,8 @@ Structure:
 <html>
   <head> ... </head>
   <body>
-    [teacher banner if teacherMode]
-    <Nav course={course} teacherMode={teacherMode} />   (top bar + course subnav)
+    [teacher or parent banner]
+    <Nav course={course} audience={audience} audienceLinks={audienceLinks} />   (top bar + course subnav)
     <main class="max-w-4xl mx-auto px-4 py-10 sm:px-6">
       <slot />
     </main>
@@ -124,20 +127,17 @@ Structure:
 | Course index (`/materials/`, `/math9/`) | BaseLayout + course subnav | Unit/strand overview cards |
 | Unit page | BaseLayout + course subnav | List of materials for a unit |
 | Material viewer | BaseLayout + course subnav | iFrame or direct HTML embed |
-| Teacher index | BaseLayout, teacherMode=true | Same layout, amber banner |
+| Teacher index | BaseLayout, audience="teacher" | Same layout, amber banner |
+| Parent page | BaseLayout, audience="parent" | Sage banner; plain-language guide, progression, worked examples, home sheets |
 
 ---
 
 ## Home Page
 
-**Layout:** Course card grid — 2 cards wide on desktop, 1 on mobile.
+**Layout:** intro, an "I'm a… Student / Parent / Teacher" chooser, and the course turntable (`LazySusan.astro`).
 
-**Each course card contains:**
-- Course name (bold, large)
-- Short description (1 sentence)
-- Number of units / topics
-- Accent colour border-left or top strip
-- Link to course index
+- Student keeps the reader on the turntable. Parent goes to `/parents`, Teacher to `/teachers`.
+- The choice is remembered, and turntable links then open the matching view of a course when it has one (`data-href-*` attributes on the links).
 
 **No other content on home.** The home page is a router, not a landing page.
 
@@ -172,7 +172,8 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 
 | Component | File | Purpose |
 |---|---|---|
-| `Nav` | `Nav.astro` | Top nav bar (site name, course tabs, teacher link) and the per-course subnav |
+| `Nav` | `Nav.astro` | Top nav bar (site name, course tabs, audience switch) and the per-course subnav |
+| `Progression` | `Progression.astro` | "The big picture" strip on parent pages: earlier grades → this year → later courses |
 | `UnitCard` | `UnitCard.astro` | Card on course index pages |
 | `LessonSection` | `LessonSection.astro` | Section within a lesson page |
 | `BaseLayout` | `BaseLayout.astro` | Base layout wrapping all pages |
@@ -183,7 +184,8 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 ## Routing Map
 
 ```
-/                               Home — course cards
+/                               Home — "I'm a…" chooser and course turntable
+/parents/, /teachers/           Site-wide parent and teacher hubs
 /materials/                     Grade 6 Science materials index
 /materials/[unit]               Unit materials page
 /materials/view/[unit]/[doc]    Material viewer
@@ -191,12 +193,15 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 /units/[unit]                   Grade 6 "what you will learn" unit page
 /units/[unit]/[lesson]          Grade 6 lesson page
 /teacher/, /teacher/[unit]      Grade 6 teacher index and unit page
-/math9/                         Math 9 index — strand cards
-/math9/materials/               All Math 9 materials
-/math9/materials/[strand]       number, algebra, measurement-geometry, statistics-probability
+/math9/                         Math 9 index — all 11 topics, grouped by strand
+/math9/[topic]                  Student topic page — hook, real-world cards, "Your path" steps, answer keys
+/math9/materials/               All Math 9 materials (strand list)
+/math9/materials/[strand]       Strand page — topic picker + strand workbook
 /math9/practice/, potd/, pat-prep/   Practice, problem of the day, PAT prep
-/math9/teacher/                 Math 9 teacher index
-/math9/view/[...slug]           Math 9 material viewer
+/math9/parents/                 Parent overview — course in plain words, progression, topic list
+/math9/parents/[topic]          Parent topic page (one per file in src/content/math9-parent/)
+/math9/teacher/                 Math 9 teacher index (each topic has an #anchor)
+/math9/view/[...slug]           Math 9 material viewer (paths from src/data/math9.ts)
 /science7/                      Science 7 index (+ practice/, teacher/)
 /science7/materials/[unit]      Unit materials page
 /science7/view/[unit]/[doc]     Material viewer
@@ -205,6 +210,17 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 /steam/materials/[grade]        Grade page
 /steam/view/[grade]/[doc]       Material viewer
 ```
+
+---
+
+## Math 9 data
+
+- `src/data/math9.ts` is the materials manifest: strands, topics, each topic's steps, extras, answer keys, teacher notes and home sheets. Student, parent and teacher pages and the viewer all read it. A new or renamed file is changed there only. The viewer warns at build time about any listed file missing from `public/materials/math-9/`.
+- `src/content/math9-units/*.md`: student topic text (`hook`, `realWorld`, `iCan`, a short "big idea" body) plus the one-line `teacherSummary` for the teacher hub.
+- `src/content/math9-parent/*.md`: parent topic guides (`plainSummary`, `comesFrom`, `assumed`, `leadsTo`, `watchFor`, `tips`; the body holds the worked examples).
+- Home practice sheets: sources in `worksheets/math-9/home/[topic]/`, rendered by `scripts/render_math9_home.py` to `public/materials/math-9/home/[topic]/`. Template: `templates/home-practice-template.md`.
+
+**To roll the three views out to another course:** add a manifest like `math9.ts`, a `parentPath` (and `parentSubnav`) in `courses.ts`, a parent collection, and parent routes, following Math 9.
 
 ---
 
@@ -221,6 +237,7 @@ public/materials/
     worksheets/[strand]/[topic]/
     tests/[topic]/
     practice/
+    home/[topic]/               Parent home practice sheets + answers
 ```
 
 Renders live only here. The type folders hold the markdown sources.
@@ -232,6 +249,7 @@ Games are the exception: a game is written directly as HTML and has no markdown 
 - Answer key: `math9-[unit]-notes-answers-v1.html`
 - Teacher notes: `math9-[unit]-teachernotes-v2.html`
 - Worksheet: `math9-[unit]-worksheet-[tier]-v1.html`
+- Home practice sheet: `math9-[topic]-home-[skill]-v1.html`, answers `math9-[topic]-home-[skill]-answers-v1.html` (named by topic slug, e.g. `powers-exponents`, not the `math9-powers` file stem)
 
 ---
 
@@ -241,6 +259,7 @@ Games are the exception: a game is written directly as HTML and has no markdown 
 2. **No inline styles** — use Tailwind classes or `@apply` in global CSS. Exception: SVG diagram attributes (geometry only).
 3. **One accent per course** — use the hex in the Courses table. New components take the accent from the `course` prop and do not introduce a new colour.
 4. **Teacher content sits behind the teacher routes** — a page should never show teacher content without the amber banner active.
+5. **Write for the page's audience.** Student pages: short, fun, real-world, next step obvious. Parent pages: plain words, no unexplained jargon. Teacher pages: brief scope notes.
 5. **Every material page has a print button** — materials are designed to be printed; the viewer must expose this.
 6. **Mobile-first nav** — subnav collapses to a horizontal scroll on small screens (already implemented in Nav.astro; carry this pattern forward).
 7. **Footer is consistent** — `[Course] · Alberta Curriculum 2023 · Built for learning`, set by `footerCourse` in `BaseLayout.astro` ("Classroom Materials" on site-level pages).

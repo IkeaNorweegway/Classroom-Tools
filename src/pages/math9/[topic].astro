@@ -1,0 +1,158 @@
+---
+// Student topic page: what the topic is about in kid language, where it
+// shows up in real life, and the materials as numbered steps in the order
+// they should be worked.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CourseHero from '../../components/CourseHero.astro';
+import MaterialRow from '../../components/MaterialRow.astro';
+import ActionCard from '../../components/ActionCard.astro';
+import { getEntry } from 'astro:content';
+import { topics, strandBySlug, studentSteps, type Topic } from '../../data/math9';
+
+export function getStaticPaths() {
+  return topics.map((t, i) => ({
+    params: { topic: t.slug },
+    props: { t, prev: topics[i - 1], next: topics[i + 1] },
+  }));
+}
+
+interface Props { t: Topic; prev?: Topic; next?: Topic }
+const { t, prev, next } = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+const view = (path: string) => `${base}math9/view/${path}`;
+const strand = strandBySlug(t.strand)!;
+const entry = await getEntry('math9-units', t.slug);
+if (!entry) throw new Error(`math9-units/${t.slug}.md is missing`);
+const { Content } = await entry.render();
+const d = entry.data;
+
+const stepHints = [
+  'Start here. You fill these in during class.',
+  'The key ideas on one page. Keep it open while you practise.',
+  'The practice everyone does.',
+  'Ready for more? Try these.',
+  'Quick checks to see if you’ve got it.',
+];
+const steps = studentSteps(t);
+---
+
+<BaseLayout
+  course="math9"
+  title={`${t.label} — Math 9`}
+  description={d.hook}
+  audienceLinks={{ parent: `math9/parents/${t.slug}`, teacher: `math9/teacher#${t.slug}` }}
+>
+  <CourseHero
+    back={{ href: `${base}math9`, label: 'All topics' }}
+    eyebrow={`Grade 9 Math · ${strand.label}`}
+    title={t.label}
+    description={d.hook}
+  />
+
+  <section class="mb-12" aria-labelledby="real-world">
+    <h2 id="real-world" class="mb-4 text-sm font-semibold text-slate-500">Where you’ll see this</h2>
+    <ul class="grid gap-3 sm:grid-cols-3">
+      {d.realWorld.map((r, i) => (
+        <li class="rise raised rounded-2xl p-5" style={`--i: ${i}; background: linear-gradient(160deg, rgb(var(--accent-soft)), rgb(255 255 255) 80%)`}>
+          <p class="mb-1.5 text-[1rem] font-bold text-slate-900">{r.title}</p>
+          <p class="text-[0.9375rem] leading-relaxed text-slate-700">{r.blurb}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="mb-14 grid gap-6 lg:grid-cols-[1.35fr_1fr]">
+    <div class="prose max-w-[60ch] text-[1.0625rem] text-slate-800 [&>h2:first-child]:mt-0">
+      <Content />
+    </div>
+    <div class="raised self-start rounded-2xl p-5">
+      <h2 class="mb-3 text-sm font-semibold text-accent-ink">By the end, you can say…</h2>
+      <ul class="grid gap-2.5">
+        {d.iCan.map((s) => (
+          <li class="flex gap-2.5 text-[0.9375rem] leading-snug text-slate-700">
+            <span class="mt-[0.2rem] grid h-4 w-4 shrink-0 place-items-center rounded-[5px] border-[1.5px] border-accent/60" aria-hidden="true"></span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="mb-12" aria-labelledby="your-path">
+    <h2 id="your-path" class="mb-1.5 font-display text-[1.75rem] font-medium tracking-[-0.015em] text-slate-900">Your path</h2>
+    <p class="mb-6 text-slate-600">Work through these in order.</p>
+    <ol class="grid gap-4">
+      {steps.map((m, i) => (
+        <li class="step grid grid-cols-[2.25rem_minmax(0,1fr)] items-start gap-x-2.5 sm:grid-cols-[3rem_minmax(0,1fr)] sm:gap-x-4">
+          <span class="num-chip font-display tabular mt-3" aria-hidden="true">{i + 1}</span>
+          <div class="min-w-0">
+            <MaterialRow label={m.label} href={view(m.path)} badge={m.badge} type={m.type} index={i} />
+            <p class="mt-1.5 pl-1 text-sm text-slate-500">{stepHints[i]}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  {t.extras.length > 0 && (
+    <section class="mb-12" aria-labelledby="extra-help">
+      <h2 id="extra-help" class="mb-4 text-sm font-semibold text-slate-500">Extra help</h2>
+      <div class="grid gap-3 sm:grid-cols-2">
+        {t.extras.map((m, i) => (
+          <MaterialRow label={m.label} href={view(m.path)} badge={m.badge} type={m.type} index={i} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <div class="mb-10 grid gap-4 sm:grid-cols-2">
+    <ActionCard
+      href={`${base}math9/practice`}
+      title="Need a warm-up?"
+      description="Practise the skills you need before this topic. Every problem comes with a worked solution."
+      cta="Warm up"
+    />
+    <ActionCard
+      href={view(strand.workbook)}
+      title={`${strand.label} workbook`}
+      description={`Mixed practice across every ${strand.label} topic. Good for reviewing before a test.`}
+      cta="Open workbook"
+      index={1}
+    />
+  </div>
+
+  <details class="disclosure mb-14">
+    <summary class="keys-toggle">
+      <span class="chev inline-block text-[0.625rem]" aria-hidden="true">▶</span> Show answer keys
+    </summary>
+    <div class="mt-4 grid gap-2.5 sm:grid-cols-2">
+      {t.keys.map((k) => (
+        <MaterialRow label={k.label} href={view(k.path)} type="key" compact />
+      ))}
+    </div>
+  </details>
+
+  <nav aria-label="Other topics" class="grid gap-3 border-t border-slate-900/[0.07] pt-8 sm:grid-cols-2">
+    {prev ? (
+      <a href={`${base}math9/${prev.slug}`} class="lift group rounded-2xl px-5 py-4">
+        <span class="block text-sm text-slate-500">← Previous topic</span>
+        <span class="block font-bold text-slate-900">{prev.label}</span>
+      </a>
+    ) : <span></span>}
+    {next && (
+      <a href={`${base}math9/${next.slug}`} class="lift group rounded-2xl px-5 py-4 sm:text-right">
+        <span class="block text-sm text-slate-500">Next topic →</span>
+        <span class="block font-bold text-slate-900">{next.label}</span>
+      </a>
+    )}
+  </nav>
+</BaseLayout>
+
+<style>
+  /* Narrow screens: the step number already orders the cards, so drop the
+     star and "Formative" badges to give the title room. */
+  @media (max-width: 639px) {
+    .step :global(.mcard-badge) { display: none; }
+  }
+</style>

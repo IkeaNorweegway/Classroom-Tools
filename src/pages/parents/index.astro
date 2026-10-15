@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CourseHero from '../../components/CourseHero.astro';
+import TopicList from '../../components/TopicList.astro';
+import { courses } from '../../data/courses';
+const base = import.meta.env.BASE_URL;
+
+const ready = courses.filter((c) => c.parentPath);
+const coming = courses.filter((c) => !c.parentPath);
+---
+
+<BaseLayout
+  title="For parents and guardians"
+  audience="parent"
+  description="What your child is learning, where it fits across the grades, and how to help at home."
+>
+  <CourseHero
+    eyebrow="For parents and guardians"
+    title="Helping at home"
+    description="For each topic: what your child is learning in plain words, what they should already know, where it leads, worked examples, and short practice sheets you can print."
+  />
+
+  <TopicList
+    heading="Courses with a parent guide"
+    numbered={false}
+    items={ready.map((c) => ({
+      href: `${base}${c.parentPath}`,
+      kicker: c.grade,
+      title: c.name,
+      description: c.blurb,
+    }))}
+  />
+
+  <section class="raised rounded-2xl p-6">
+    <h2 class="mb-2 text-[1.0625rem] font-bold text-slate-900">More courses coming</h2>
+    <p class="mb-4 max-w-[62ch] text-[0.9375rem] leading-relaxed text-slate-600">
+      Parent guides for these courses are on the way. Until then, the student pages show the notes and practice your child uses in class.
+    </p>
+    <ul class="flex flex-wrap gap-2">
+      {coming.map((c) => (
+        <li>
+          <a href={`${base}${c.path}`} data-course={c.key} class="btn-3d inline-block rounded-full px-3.5 py-1.5 text-[0.8125rem] font-semibold text-slate-700 hover:text-slate-900">
+            {c.grade} {c.name}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>

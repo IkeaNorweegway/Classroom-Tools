@@ -3,42 +3,23 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import CourseHero from '../../components/CourseHero.astro';
 import TopicList from '../../components/TopicList.astro';
 import ActionCard from '../../components/ActionCard.astro';
+import { getEntry } from 'astro:content';
+import { strands, topicsInStrand } from '../../data/math9';
 const base = import.meta.env.BASE_URL;
 
-const strands = [
-  {
-    slug: 'number',
-    label: 'Number',
-    topics: 'Rational Numbers · Square Roots · Powers & Exponents',
-    description: 'Operations with rational numbers, estimating square roots, the Pythagorean theorem, and the full exponent law set.',
-    bg: 'bg-blue-50', border: 'border-blue-400', text: 'text-blue-800', link: 'text-blue-700', hover: 'hover:bg-blue-100',
-    badge: 'bg-blue-100 text-blue-800',
-  },
-  {
-    slug: 'algebra',
-    label: 'Algebra',
-    topics: 'Linear Relations · Linear Equations & Inequalities · Polynomials',
-    description: 'Slope, y = mx + b, solving multi-step equations, graphing inequalities, and multiplying polynomials.',
-    bg: 'bg-violet-50', border: 'border-violet-400', text: 'text-violet-800', link: 'text-violet-700', hover: 'hover:bg-violet-100',
-    badge: 'bg-violet-100 text-violet-800',
-  },
-  {
-    slug: 'measurement-geometry',
-    label: 'Measurement & Geometry',
-    topics: 'Circle Geometry · Surface Area & Volume · Similarity & Scale',
-    description: 'Chord and tangent properties, composite 3D objects, similar triangles, and scale diagrams.',
-    bg: 'bg-green-50', border: 'border-green-400', text: 'text-green-800', link: 'text-green-700', hover: 'hover:bg-green-100',
-    badge: 'bg-green-100 text-green-800',
-  },
-  {
-    slug: 'statistics-probability',
-    label: 'Statistics & Probability',
-    topics: 'Statistics & Scatter Plots · Probability',
-    description: 'Correlation, lines of best fit, interpolation vs. extrapolation, independent and dependent events.',
-    bg: 'bg-teal-50', border: 'border-teal-400', text: 'text-teal-800', link: 'text-teal-700', hover: 'hover:bg-teal-100',
-    badge: 'bg-teal-100 text-teal-800',
-  },
-];
+// Every topic, one click away, grouped under its strand.
+const groups = await Promise.all(
+  strands.map(async (s) => ({
+    s,
+    items: await Promise.all(
+      topicsInStrand(s.slug).map(async (t) => ({
+        href: `${base}math9/${t.slug}`,
+        title: t.label,
+        description: (await getEntry('math9-units', t.slug))?.data.hook,
+      })),
+    ),
+  })),
+);
 ---
 
 <BaseLayout course="math9" title="Grade 9 Mathematics">
@@ -47,7 +28,7 @@ const strands = [
     title="Grade 9 Mathematics"
     numeral="9"
     vtName="course-num-math9"
-    description="Four strands, eleven topics. Notes, concept pages, worksheets, exit tickets, and answer keys."
+    description="Eleven topics in four strands. Pick a topic to see what it’s about and work through its materials step by step."
     facts={[
       { n: '4', label: 'strands' },
       { n: '11', label: 'topics' },
@@ -56,10 +37,16 @@ const strands = [
     ]}
   />
 
-  <TopicList
-    heading="Strands"
-    items={strands.map(s => ({ art: s.slug, href: `${base}math9/materials/${s.slug}`, title: s.label, kicker: s.topics, description: s.description }))}
-  />
+  {groups.map(({ s, items }) => (
+    <section id={s.slug} class="mb-4 scroll-mt-28">
+      <div class="mb-1 flex items-baseline justify-between gap-4">
+        <h2 class="font-display text-[1.5rem] font-medium tracking-[-0.01em] text-slate-900">{s.label}</h2>
+        <a href={`${base}math9/view/${s.workbook}`} class="shrink-0 text-sm font-semibold text-accent-ink hover:underline">Strand workbook →</a>
+      </div>
+      <p class="mb-4 max-w-[62ch] text-slate-600">{s.blurb}</p>
+      <TopicList items={items} />
+    </section>
+  ))}
 
   <div class="grid gap-4 sm:grid-cols-3">
     <ActionCard

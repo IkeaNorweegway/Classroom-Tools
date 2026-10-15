@@ -27,6 +27,8 @@ const science7Units = defineCollection({
   }),
 });
 
+// Student-facing topic page. The body is the short "big idea" in kid
+// language; teacherSummary is the one-line scope note on the teacher hub.
 const math9Units = defineCollection({
   type: 'content',
   schema: z.object({
@@ -34,6 +36,24 @@ const math9Units = defineCollection({
     guidingQuestion: z.string(),
     learningOutcome: z.string(),
     order: z.number(),
+    hook: z.string(),
+    realWorld: z.array(z.object({ title: z.string(), blurb: z.string() })).length(3),
+    iCan: z.array(z.string()).min(3).max(4),
+    teacherSummary: z.string(),
+  }),
+});
+
+// Parent-facing topic page. The body holds the worked examples.
+const math9Parent = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    plainSummary: z.string(),
+    comesFrom: z.array(z.object({ grade: z.string(), idea: z.string() })).min(1),
+    assumed: z.array(z.string()).min(3),
+    leadsTo: z.array(z.object({ course: z.string(), idea: z.string() })).min(1),
+    watchFor: z.array(z.string()).min(2),
+    tips: z.array(z.string()).min(2),
   }),
 });
 
@@ -103,6 +123,7 @@ export const collections = {
   units,
   'science7-units': science7Units,
   'math9-units': math9Units,
+  'math9-parent': math9Parent,
   'social9-units': social9Units,
   'social8-units': social8Units,
   lessons,

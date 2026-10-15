@@ -1,16 +1,23 @@
 ---
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
-import { footerNames, type CourseKey } from '../data/courses';
+import { footerNames, type Audience, type CourseKey } from '../data/courses';
 
 interface Props {
   title: string;
   description?: string;
   course?: CourseKey;
-  teacherMode?: boolean;
+  /** Who the page is for. Leave unset on neutral pages such as the home page. */
+  audience?: Audience;
+  /** Same-topic pages for the other audiences, below BASE_URL (see Nav). */
+  audienceLinks?: Partial<Record<Audience, string>>;
 }
 
-const { title, description = 'Alberta curriculum classroom materials', course, teacherMode = false } = Astro.props;
+const { title, description = 'Alberta curriculum classroom materials', course, audienceLinks } = Astro.props;
+// Course pages are student pages unless they say otherwise.
+const audience = Astro.props.audience ?? (course ? 'student' : undefined);
+const teacherMode = audience === 'teacher';
+const parentMode = audience === 'parent';
 
 const base = import.meta.env.BASE_URL;
 const footerCourse = course ? footerNames[course] : 'Classroom Materials';
@@ -29,14 +36,19 @@ const footerCourse = course ? footerNames[course] : 'Classroom Materials';
     <script is:inline>document.documentElement.classList.add('js');</script>
     <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
   </head>
-  <body class={`min-h-screen flex flex-col text-slate-900 font-sans ${teacherMode ? 'teacher-mode' : ''}`} data-course={course}>
+  <body class={`min-h-screen flex flex-col text-slate-900 font-sans ${teacherMode ? 'teacher-mode' : ''} ${parentMode ? 'parent-mode' : ''}`} data-course={course} data-audience={audience}>
     <a href="#main" class="skip-link rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">Skip to content</a>
     {teacherMode && (
       <div class="bg-teacher-500 text-slate-900 text-[0.8125rem] text-center py-1.5 font-semibold">
         Teacher view · answer keys and delivery notes
       </div>
     )}
-    <Nav course={course} teacherMode={teacherMode} />
+    {parentMode && (
+      <div class="bg-parent-100 text-parent-700 text-[0.8125rem] text-center py-1.5 font-semibold">
+        Parent view · what your child is learning and how to help at home
+      </div>
+    )}
+    <Nav course={course} audience={audience} audienceLinks={audienceLinks} />
     <main id="main" class="flex-1 w-full max-w-5xl mx-auto px-4 pt-12 pb-20 sm:px-6 sm:pt-16">
       <slot />
     </main>

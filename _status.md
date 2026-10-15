@@ -1,5 +1,5 @@
 # Project Status
-*Last updated: 2026-10-08*
+*Last updated: 2026-10-15*
 
 Current state only. Keep this file short: update the tables and the open list, and put session detail in the commit message. The session log up to 2026-10-05 is in `_status-archive.md`.
 
@@ -19,6 +19,8 @@ Current state only. Keep this file short: update the tables and the open list, a
 ## Open items
 
 ### Needs a teacher decision or a source check
+- **Student / parent / teacher views (Math 9 pilot, 2026-10-15):** built on `v2-redesign`, not yet committed. Math 9 has student topic pages, a parent guide for all 11 topics, and 22 home practice sheets with answers. Review the parent copy, especially the grade-by-grade progression (Grades 7–8 are written to the program students came through, and leads-to uses the 10C / 10-3 sequence). Then roll out the parent view to Grade 6 Science, Science 7, Social 8, Social 9 and STEAM (pattern in `_site-context.md` → Math 9 data).
+- **Science 7 teacher page** links `-notes-answers-v1` keys, but only `-v2` exists (5 broken links, there before the views work).
 - **Science 7 notes answer keys (v2):** Ecosystems S4 Alberta biodiversity counts and Plants S5 "over ___ billion dollars" are approximate and marked "confirm". Planet Earth S3 now says 7 major plates (v1 said 15). Planet Earth S4 notes say magnitude 7 releases 10× the energy of magnitude 6 (strictly 10× shaking, about 32× energy). Structures S2 notes call snow both a live load and a dead load.
 - **Math 9 circle geometry worksheets:** Core Q6 and Challenge Q3 have angle expressions with no valid solution. Flagged in the answer keys, not fixed.
 - **Math 9 outcome codes:** the Rational Numbers test and bank use local codes RN1–RN5 because the course context has no official codes.

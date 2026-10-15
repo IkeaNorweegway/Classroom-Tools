@@ -2,7 +2,19 @@
 // tiles, titles and footers all read from here. Accent colours live in
 // src/styles/global.css under [data-course="<key>"].
 
+import { strands as math9Strands, topicsInStrand, type StrandSlug } from './math9';
+
 export type CourseKey = 'science' | 'math9' | 'science7' | 'social9' | 'social8' | 'steam';
+
+/** Who a page is written for. Each course has a student path and may add a
+ *  teacher and a parent path; the nav switch offers only the ones that exist. */
+export type Audience = 'student' | 'parent' | 'teacher';
+
+export const audiences: { key: Audience; label: string }[] = [
+  { key: 'student', label: 'Student' },
+  { key: 'parent', label: 'Parent' },
+  { key: 'teacher', label: 'Teacher' },
+];
 
 export interface SubnavItem {
   label: string;
@@ -20,13 +32,20 @@ export interface Course {
   numeral: string;
   path: string;
   teacherPath?: string;
+  parentPath?: string;
   blurb: string;
   facts: string[];
   subnav: SubnavItem[];
+  /** Subnav shown on the course's parent pages; falls back to `subnav`. */
+  parentSubnav?: SubnavItem[];
 }
 
 const endsWith = (suffix: string) => (p: string) => p.endsWith(suffix) || p.endsWith(`${suffix}/`);
 const includes = (part: string) => (p: string) => p.includes(part);
+
+// True on any Math 9 topic page in the strand, below the given route prefix.
+const inTopicOf = (strand: StrandSlug, prefix: string) => (p: string) =>
+  topicsInStrand(strand).some((t) => new RegExp(`/${prefix}${t.slug}/?$`).test(p));
 
 const unitItems = (prefix: string, units: [string, string][]): SubnavItem[] =>
   units.map(([slug, label]) => ({ label, path: `${prefix}${slug}`, match: includes(slug) }));
@@ -67,19 +86,28 @@ export const courses: Course[] = [
     numeral: '9',
     path: 'math9',
     teacherPath: 'math9/teacher',
+    parentPath: 'math9/parents',
     blurb: 'Four strands and eleven topics. Notes, concept pages, worksheets and exit tickets.',
     facts: ['4 strands', '11 topics', '98 materials'],
     subnav: [
-      ...unitItems('math9/materials/', [
-        ['number', 'Number'],
-        ['algebra', 'Algebra'],
-        ['measurement-geometry', 'M&G'],
-        ['statistics-probability', 'Stats & Prob'],
-      ]),
+      // A strand tab is current on its strand page and on its topic pages.
+      ...math9Strands.map((s) => ({
+        label: s.short,
+        path: `math9/materials/${s.slug}`,
+        match: (p: string) => p.includes(`/materials/${s.slug}`) || inTopicOf(s.slug, 'math9/')(p),
+      })),
       { label: 'Practice', path: 'math9/practice', match: includes('practice') },
       { label: 'PAT Prep', path: 'math9/pat-prep', match: includes('pat-prep') },
       { label: 'POTD', path: 'math9/potd', match: includes('potd') },
       { label: 'All materials', path: 'math9/materials', match: endsWith('/math9/materials') },
+    ],
+    parentSubnav: [
+      { label: 'Overview', path: 'math9/parents', match: endsWith('/math9/parents') },
+      ...math9Strands.map((s) => ({
+        label: s.short,
+        path: `math9/parents#${s.slug}`,
+        match: inTopicOf(s.slug, 'math9/parents/'),
+      })),
     ],
   },
   {
@@ -170,6 +198,10 @@ export const courses: Course[] = [
 ];
 
 export const courseByKey = (key?: CourseKey) => courses.find((c) => c.key === key);
+
+/** A course's landing path for an audience, or undefined when it has none. */
+export const audiencePath = (course: Course, audience: Audience) =>
+  audience === 'student' ? course.path : audience === 'teacher' ? course.teacherPath : course.parentPath;
 
 export const footerNames: Record<CourseKey, string> = {
   science: 'Grade 6 Science',

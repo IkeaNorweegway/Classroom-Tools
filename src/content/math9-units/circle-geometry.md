@@ -3,18 +3,22 @@ title: Circle Geometry
 order: 1
 guidingQuestion: What special relationships exist between the parts of a circle, and how can they be used to solve problems?
 learningOutcome: Students apply circle geometry properties — including chord, tangent, and inscribed angle relationships — to solve problems and justify conclusions.
+hook: "Every circle, from a hockey puck to a Ferris wheel, follows the same hidden rules. Learn them and you can find missing angles without a protractor."
+realWorld:
+  - title: "Bike wheels"
+    blurb: "The spokes are radii, and the spot where the tire touches the road is a tangent. They always meet at a right angle."
+  - title: "Finding the centre"
+    blurb: "Got a round table or a broken plate? Two chords are enough to find its exact centre."
+  - title: "Laying out curves"
+    blurb: "Builders use circle rules to mark out arcs, from faceoff circles to curved garden paths."
+iCan:
+  - "I can name the parts of a circle: radius, chord, tangent and arc."
+  - "I can use the rule that a tangent meets the radius at 90°."
+  - "I can use the rule that an inscribed angle is half the central angle."
+  - "I can explain which circle rule I used and why."
+teacherSummary: "Chord, tangent-radius, and inscribed and central angle properties, used descriptively (no formal proof) and combined with Pythagoras and algebra. Watch for \"every inscribed angle is 90°\" and chords confused with diameters."
 ---
 
-Every circle, no matter its size, hides the exact same set of relationships between its chords, tangents, and angles. Once you know them, you can find missing lengths and angles in a circle diagram without measuring anything — pure logic gets you there.
+## What's the big idea?
 
-This unit builds up that toolkit of circle properties, one relationship at a time, and each one becomes a tool for the next.
-
-## What you will explore
-
-You will start with the relationship between a **chord** and the **perpendicular from the centre**: that perpendicular always bisects the chord exactly in half, which turns into a Pythagorean-theorem problem the moment you draw the radius. You will also study the **tangent-radius property** — a tangent line always meets the radius at a perfect right angle at the point of tangency — and use it to find tangent lengths from an external point.
-
-From there, you will explore the relationship between a **central angle** and an **inscribed angle** that subtend the same arc: the inscribed angle is always exactly half the central angle, no matter where on the circle it sits. You will use this and related properties — like the fact that an inscribed angle in a semicircle is always 90° — to solve multi-step problems that combine several circle properties with algebra.
-
-## By the end of this unit
-
-You will be able to identify which circle property applies to a given diagram, set up and solve for missing lengths or angles using that property, and combine multiple properties in a single multi-step problem — justifying each step with the correct geometric reasoning.
+Circles hide patterns. A line from the centre that meets a chord at a right angle cuts the chord exactly in half. A **tangent** always meets the radius at a right angle. An angle drawn from the edge of the circle is always half the matching angle drawn from the centre. Learn a few rules like these and you can solve circle puzzles with logic instead of a ruler.

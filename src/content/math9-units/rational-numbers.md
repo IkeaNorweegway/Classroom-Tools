@@ -3,18 +3,22 @@ title: Rational Numbers
 order: 1
 guidingQuestion: How can operations with positive and negative fractions and decimals be carried out accurately?
 learningOutcome: Students perform operations with rational numbers, including positive and negative fractions and decimals, and apply the correct order of operations.
+hook: "A −30°C morning and a +5°C afternoon is a 35-degree jump. Getting that sign right is what this topic is all about."
+realWorld:
+  - title: "Weather swings"
+    blurb: "A chinook can warm Calgary by 20 degrees in an hour. Working out the change means subtracting negatives."
+  - title: "Your bank balance"
+    blurb: "Spend more than you have and your balance drops below zero. Money in is positive. Money out is negative."
+  - title: "Recipes"
+    blurb: "Making half a batch of something that calls for ¾ cup? That's multiplying fractions."
+iCan:
+  - "I can add, subtract, multiply and divide fractions and decimals, even negative ones."
+  - "I can tell which of two negative numbers is bigger."
+  - "I can follow the order of operations through a long expression."
+  - "I can explain what a negative answer means in a real situation."
+teacherSummary: "All four operations and order of operations with positive and negative fractions and decimals; no complex fractions. Watch for adding numerators and denominators (1/2 + 1/3 = 2/5) and reversed comparison of negatives."
 ---
 
-Temperature swings in Alberta from a −30°C morning to a +5°C afternoon are not just weather trivia — they are a rational number problem, and getting the sign right actually matters if you're calculating how much the temperature changed.
+## What's the big idea?
 
-This unit extends everything you know about fractions and decimals to include negative values, and builds the fluency to combine them correctly no matter how many operations are involved.
-
-## What you will explore
-
-You will work with **rational numbers** — any number that can be written as a fraction, including negative fractions and decimals — across all four operations. Multiplying and dividing negative fractions follows the same sign rules as integers, but adding and subtracting them requires care with common denominators and negative signs at the same time.
-
-You will also apply the full **order of operations** to expressions that mix several rational numbers and operations, including exponents and brackets, making sure each step is done in the right sequence. Throughout, you will connect these skills to real contexts — temperature changes, elevation changes, financial gains and losses — where a wrong sign completely changes the meaning of the answer.
-
-## By the end of this unit
-
-You will be able to add, subtract, multiply, and divide any combination of positive and negative fractions and decimals, apply the order of operations correctly to multi-step expressions, and use rational numbers to solve real problems involving change, direction, or comparison.
+A **rational number** is any number you can write as a fraction, like ¾, −2½ or 0.4. You already know how to work with fractions, and with negative numbers. This topic puts them together. The rules you learned for integers still work. You just keep track of the sign and the common denominator at the same time.

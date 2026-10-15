@@ -1,0 +1,118 @@
+---
+// Parent overview for Math 9: what the course covers in plain words, where
+// it sits between Grade 8 and high school, general ways to help, and a
+// link to each topic's parent guide.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CourseHero from '../../../components/CourseHero.astro';
+import Progression from '../../../components/Progression.astro';
+import { getCollection } from 'astro:content';
+import { strands, topicsInStrand } from '../../../data/math9';
+
+const base = import.meta.env.BASE_URL;
+const written = new Map((await getCollection('math9-parent')).map((e) => [e.slug, e.data.plainSummary]));
+
+const stages = [
+  { label: 'Grade 7', idea: 'Integers, fractions and decimals, solving simple equations, and patterns in tables and graphs.' },
+  { label: 'Grade 8', idea: 'Square roots and the Pythagorean theorem, percents and rates, equations with brackets, and the surface area and volume of prisms and cylinders.' },
+  { label: 'Grade 9', idea: 'Algebra takes centre stage: equations, inequalities, straight-line graphs and polynomials. Plus circles, similar shapes, data and probability.', now: true },
+  { label: 'High school', idea: 'Math 10C leads on to the 20-1/30-1 and 20-2/30-2 courses. Math 10-3 leads on to 20-3 and 30-3, which focus on workplace math.' },
+];
+
+const plainStrand: Record<string, string> = {
+  number: 'Working confidently with fractions and negative numbers, square roots and powers. These skills show up in every other topic.',
+  algebra: 'Using letters for unknown numbers: solving equations, graphing straight lines and working with expressions like (x + 2)(x + 3).',
+  'measurement-geometry': 'Rules about circles, the surface area and volume of 3-D shapes, and using similar shapes to measure things that are hard to reach.',
+  'statistics-probability': 'Reading scatter plots, judging whether data can be trusted, and working out the chance of two events happening.',
+};
+
+const tips = [
+  ['Ask them to teach you', 'Have your child explain a problem from their notes. Explaining is one of the best ways to learn, and you don’t need to know the answer to listen.'],
+  ['Ask “How do you know?”', 'Instead of “Is that right?”, ask how they know. Checking their own work is a skill they need on tests.'],
+  ['Use their method', 'The notes show the method taught in class. If you learned it differently, use theirs; two methods at once is confusing.'],
+  ['Short and often', 'Fifteen focused minutes a few times a week beats a long session the night before a test.'],
+  ['Mistakes are clues', 'When an answer is wrong, have them find the step where it went off track. That is where the learning happens.'],
+  ['Keep the basics sharp', 'Times tables, negative numbers and fractions come up all year. A few minutes of practice on these pays off in every topic.'],
+];
+---
+
+<BaseLayout
+  course="math9"
+  audience="parent"
+  title="Grade 9 Math — Parent guide"
+  description="What your child learns in Grade 9 math, where it leads, and how to help at home."
+>
+  <CourseHero
+    eyebrow="Parent guide · Grade 9 Mathematics"
+    title="Grade 9 math at home"
+    numeral="9"
+    description="What your child is learning this year, how it connects to earlier grades and to high school, and simple ways to help, with worked examples and short practice sheets for each topic."
+  />
+
+  <section class="mb-12 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+    <div>
+      <h2 class="mb-3 font-display text-[1.5rem] font-medium text-slate-900">What Grade 9 math is about</h2>
+      <div class="grid max-w-[64ch] gap-3 text-[1.0625rem] leading-relaxed text-slate-700">
+        <p>Grade 9 is the year algebra becomes the main tool. Students learn to work with letters that stand for numbers, solve equations in several steps, and read relationships from tables and graphs.</p>
+        <p>Both halves matter. Students who can move symbols around but can’t read a graph, or the other way round, tend to find Math 10 harder. The course practises both all year.</p>
+      </div>
+    </div>
+    <div class="raised self-start rounded-2xl p-6">
+      <h2 class="mb-2 text-[1.0625rem] font-bold text-slate-900">On each topic page</h2>
+      <ul class="grid gap-1.5 text-[0.9375rem] text-slate-700">
+        <li>· The topic in plain words</li>
+        <li>· What your child should already know</li>
+        <li>· Where it leads in later grades</li>
+        <li>· Worked examples with what to say</li>
+        <li>· Short practice sheets with answers</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="mb-14" aria-labelledby="big-picture">
+    <h2 id="big-picture" class="mb-1.5 font-display text-[1.5rem] font-medium text-slate-900">The big picture</h2>
+    <p class="mb-6 text-slate-600">How Grade 9 fits between the grades before and after. Exact grade placements can shift a little from school to school.</p>
+    <Progression stages={stages} />
+  </section>
+
+  <section class="mb-14" aria-labelledby="topics">
+    <h2 id="topics" class="mb-1.5 font-display text-[1.5rem] font-medium text-slate-900">Topics this year</h2>
+    <p class="mb-6 text-slate-600">Four strands, eleven topics. Pick one to see the parent guide.</p>
+    <div class="grid gap-8">
+      {strands.map((s) => (
+        <div id={s.slug} class="scroll-mt-28">
+          <h3 class="text-[1.0625rem] font-bold text-slate-900">{s.label}</h3>
+          <p class="mb-3 max-w-[64ch] text-[0.9375rem] text-slate-600">{plainStrand[s.slug]}</p>
+          <ul class="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+            {topicsInStrand(s.slug).map((t) => (
+              <li>
+                {written.has(t.slug) ? (
+                  <a href={`${base}math9/parents/${t.slug}`} class="lift flex h-full items-center justify-between gap-3 rounded-2xl px-5 py-4">
+                    <span class="font-bold text-slate-900">{t.label}</span>
+                    <span class="arrow text-accent" aria-hidden="true">→</span>
+                  </a>
+                ) : (
+                  <span class="flex h-full items-center justify-between gap-3 rounded-2xl px-5 py-4 shadow-[inset_0_0_0_1px_rgb(31_29_26/0.08)]">
+                    <span class="font-semibold text-slate-500">{t.label}</span>
+                    <span class="text-xs text-slate-400">Coming soon</span>
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section aria-labelledby="help">
+    <h2 id="help" class="mb-4 font-display text-[1.5rem] font-medium text-slate-900">Helping, whatever the topic</h2>
+    <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {tips.map(([title, text]) => (
+        <li class="rounded-2xl bg-white/70 p-5 shadow-[inset_0_0_0_1px_rgb(31_29_26/0.07)]">
+          <p class="mb-1 font-bold text-slate-900">{title}</p>
+          <p class="text-[0.9375rem] leading-relaxed text-slate-600">{text}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>
