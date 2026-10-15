@@ -1,24 +1,40 @@
 ---
 import '../styles/global.css';
-import { courses, courseByKey, type CourseKey } from '../data/courses';
+import { courses, courseByKey, audiences, audiencePath, type Audience, type CourseKey } from '../data/courses';
 
 interface Props {
   course?: CourseKey;
-  teacherMode?: boolean;
+  /** The audience this page is written for; undefined on neutral pages (home). */
+  audience?: Audience;
+  /** Same-topic pages for the other audiences, below BASE_URL. */
+  audienceLinks?: Partial<Record<Audience, string>>;
 }
-const { course, teacherMode = false } = Astro.props;
+const { course, audience, audienceLinks = {} } = Astro.props;
 
 const base = import.meta.env.BASE_URL;
 const currentPath = Astro.url.pathname;
 const active = courseByKey(course);
 
-// Teacher link: from a student page go to the course's teacher index; from a
-// teacher page go back to the course. Hidden where there is no teacher index.
-const teacherHref = active?.teacherPath
-  ? `${base}${teacherMode ? active.path : active.teacherPath}`
-  : null;
+// Audience switch. Inside a course each option goes to the matching page for
+// this topic when the page names one, else to that audience's course landing;
+// options the course has no route for are left out. Outside a course the
+// options go to the site-wide hubs.
+const hubs: Record<Audience, string> = { student: '', parent: 'parents', teacher: 'teachers' };
+const switchItems = audiences
+  .map((a) => {
+    // The reader's own view stays on this page.
+    if (a.key === audience) return { ...a, href: currentPath };
+    const path = active ? audienceLinks[a.key] ?? audiencePath(active, a.key) : audienceLinks[a.key] ?? hubs[a.key];
+    return path === undefined ? null : { ...a, href: `${base}${path}` };
+  })
+  .filter((a): a is NonNullable<typeof a> => a !== null);
+const showSwitch = switchItems.length > 1;
 
-const dark = teacherMode;
+// Course tabs stay in the reader's view when the other course has one.
+const tabPath = (c: (typeof courses)[number]) => (audience && audiencePath(c, audience)) || c.path;
+const subnav = (audience === 'parent' && active?.parentSubnav) || active?.subnav || [];
+
+const dark = audience === 'teacher';
 const tabIdle = dark
   ? 'text-slate-300 hover:text-white hover:bg-white/10'
   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-900/[0.04]';
@@ -42,7 +58,7 @@ let n = 0; // entry stagger index
 >
   <div class="max-w-5xl mx-auto px-4 sm:px-6">
 
-    <div class="vt-nav-top flex h-16 items-center gap-6">
+    <div class="vt-nav-top flex h-16 items-center gap-3 sm:gap-6">
       <a
         href={base}
         class={`nav-intro group flex items-center gap-2.5 shrink-0 font-display text-[1.15rem] font-semibold tracking-tight ${dark ? 'text-white' : 'text-slate-900'}`}
@@ -60,7 +76,7 @@ let n = 0; // entry stagger index
             return (
               <li>
                 <a
-                  href={`${base}${c.path}`}
+                  href={`${base}${tabPath(c)}`}
                   data-course={c.key}
                   aria-current={isActive ? 'true' : undefined}
                   class={`nav-intro relative block rounded-full px-3.5 py-1.5 text-[0.8125rem] font-semibold transition-colors duration-200
@@ -83,16 +99,17 @@ let n = 0; // entry stagger index
       </nav>
 
       <div class="nav-intro ml-auto flex items-center" style="--n: 8">
-        {teacherHref && (
-          <a
-            href={teacherHref}
-            class={`rounded-full px-3.5 py-1.5 text-[0.8125rem] font-semibold border transition-colors duration-200
-              ${dark
-                ? 'border-teacher-400/60 text-teacher-400 hover:bg-teacher-400 hover:text-slate-900'
-                : 'btn-3d border-transparent text-slate-700 hover:text-slate-900'}`}
-          >
-            {teacherMode ? '← Student view' : 'Teacher'}
-          </a>
+        {showSwitch && (
+          <nav aria-label="View for" class={`aud-switch ${dark ? 'aud-switch--dark' : ''}`}>
+            {switchItems.map((a) => (
+              <a
+                href={a.href}
+                data-audience-link={a.key}
+                aria-current={a.key === audience ? 'page' : undefined}
+                class="aud-opt"
+              >{a.label}</a>
+            ))}
+          </nav>
         )}
       </div>
     </div>
@@ -105,7 +122,7 @@ let n = 0; // entry stagger index
           return (
             <li>
               <a
-                href={`${base}${c.path}`}
+                href={`${base}${tabPath(c)}`}
                 data-course={c.key}
                 aria-current={isActive ? 'true' : undefined}
                 class={`relative block whitespace-nowrap rounded-full px-3 py-1.5 text-[0.8125rem] font-semibold transition-colors duration-200
@@ -133,7 +150,7 @@ let n = 0; // entry stagger index
         <div class="relative w-max" data-hover-track>
         <span class={`hover-pill hover-pill--sub ${dark ? 'hover-pill--dark' : ''}`} aria-hidden="true"></span>
         <ul class="flex items-center gap-1 w-max">
-          {active.subnav.map((item, j) => {
+          {subnav.map((item, j) => {
             const isActive = item.match(currentPath);
             return (
               <li>
@@ -162,6 +179,14 @@ let n = 0; // entry stagger index
 </header>
 
 <script>
+  // Remember which audience the reader picked; the home page uses it to point
+  // course links at the matching view.
+  document.querySelectorAll<HTMLElement>('[data-audience-link]').forEach((link) => {
+    link.addEventListener('click', () => {
+      try { localStorage.setItem('audience', link.dataset.audienceLink!); } catch (e) {}
+    });
+  });
+
   const header = document.querySelector<HTMLElement>('.site-nav');
 
   // Hover pill: one raised highlight per list that glides to whichever item
@@ -223,4 +248,38 @@ let n = 0; // entry stagger index
   /* The pill is a soft tint; multiply keeps tab text readable through it
      while it slides between tabs during a page transition. */
   :global(::view-transition-group(nav-pill)) { mix-blend-mode: multiply; }
+
+  /* Audience switch: a small segmented control. The current view is a raised
+     pill; the others are plain text. */
+  .aud-switch {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    border-radius: 9999px;
+    background: rgb(31 29 26 / 0.05);
+    box-shadow: inset 0 0 0 1px rgb(31 29 26 / 0.06);
+  }
+  .aud-opt {
+    border-radius: 9999px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    color: rgb(84 79 71);
+    transition: color 200ms, background-color 200ms;
+  }
+  .aud-opt:hover { color: rgb(31 29 26); }
+  .aud-opt[aria-current='page'] {
+    background: white;
+    color: rgb(31 29 26);
+    box-shadow: 0 1px 2px rgb(31 29 26 / 0.12), inset 0 0 0 1px rgb(31 29 26 / 0.06);
+  }
+  .aud-switch--dark { background: rgb(255 255 255 / 0.08); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1); }
+  .aud-switch--dark .aud-opt { color: rgb(210 206 196); }
+  .aud-switch--dark .aud-opt:hover { color: white; }
+  .aud-switch--dark .aud-opt[aria-current='page'] { background: #e3a54a; color: #1f1d1a; box-shadow: none; }
+  @media (min-width: 640px) {
+    .aud-opt { padding: 0.375rem 0.875rem; font-size: 0.8125rem; }
+  }
 </style>

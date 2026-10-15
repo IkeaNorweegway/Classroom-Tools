@@ -3,18 +3,22 @@ title: Square Roots
 order: 2
 guidingQuestion: How can square roots be estimated and applied, including to find unknown sides of right triangles?
 learningOutcome: Students determine square roots of rational numbers, estimate irrational square roots, and apply the Pythagorean theorem to solve problems.
+hook: "A 55-inch TV is measured corner to corner. Square roots tell you whether it will actually fit on your wall."
+realWorld:
+  - title: "TV and phone screens"
+    blurb: "Screen sizes are measured on the diagonal. There's a right triangle hiding in every screen."
+  - title: "Ladders"
+    blurb: "How high up the house will a 6 m ladder reach? A right triangle tells you before you climb."
+  - title: "Shortcuts"
+    blurb: "Cutting across a field instead of walking around the edge saves steps. The diagonal is the shortcut, and you can work out how long it is."
+iCan:
+  - "I can find the square root of a perfect square, like √49 = 7."
+  - "I can estimate a square root that isn't a perfect square, like √30."
+  - "I can use the Pythagorean theorem to find a missing side of a right triangle."
+  - "I can spot a right triangle hiding in a real problem."
+teacherSummary: "Principal square roots of rational numbers, estimating non-perfect squares, and Pythagorean applications; irrationals as a concept only. Watch for √9 = ±3 and √(a + b) = √a + √b."
 ---
 
-A TV advertised as "55 inches" is measured diagonally — corner to corner, not side to side. Finding the actual width and height of that screen means working backward through a right triangle, which is exactly where square roots become genuinely useful rather than just an operation on a calculator.
+## What's the big idea?
 
-This unit connects square roots to one of the most widely used relationships in mathematics: the Pythagorean theorem.
-
-## What you will explore
-
-You will start by identifying **perfect squares** and finding their exact square roots, then move to **estimating** the square roots of numbers that aren't perfect squares — numbers like √20, which is irrational and never resolves to a clean decimal, but can still be pinned between two perfect squares and estimated with real precision.
-
-From there, you will apply square roots to the **Pythagorean theorem** (a² + b² = c²), using it to find a missing side of a right triangle whether the missing side is the hypotenuse or one of the legs. You will practice recognizing when a real-world situation — a ladder against a wall, a diagonal TV screen, a shortest path across a rectangular field — is secretly a right-triangle problem, and setting it up correctly before solving.
-
-## By the end of this unit
-
-You will be able to find or estimate the square root of any rational number, and use the Pythagorean theorem to find a missing side length in a right triangle, including in situations that require you to first identify the right triangle hidden inside a real problem.
+Squaring a number means multiplying it by itself: 7 × 7 = 49. A **square root** goes backwards: √49 = 7. Some square roots are whole numbers. Others, like √20, go on forever, so you estimate them. The best part is the **Pythagorean theorem**, a² + b² = c², which finds any missing side of a right triangle.

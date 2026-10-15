@@ -3,18 +3,22 @@ title: Linear Equations & Inequalities
 order: 2
 guidingQuestion: How can equations and inequalities be solved and interpreted to make decisions?
 learningOutcome: Students solve multi-step linear equations and inequalities and interpret their solutions in context.
+hook: "How many burgers does a food truck need to sell to pay for the day's gas? An equation can tell you in a few steps."
+realWorld:
+  - title: "Saving up"
+    blurb: "You have $40 and save $15 a week. When can you afford a $250 bike? Write an equation and solve it."
+  - title: "Running a booth"
+    blurb: "A farmers' market booth costs $60. How many $4 bags of carrots do you need to sell to make money? That's an inequality."
+  - title: "Gaming"
+    blurb: "Saving coins to unlock a skin? An inequality tells you the fewest rounds you need to play."
+iCan:
+  - "I can solve equations that take several steps."
+  - "I can solve an inequality and show the answer on a number line."
+  - "I can turn a word problem into an equation or inequality."
+  - "I can explain what my answer means in the real situation."
+teacherSummary: "Multi-step linear equations with rational coefficients, and one-variable linear inequalities graphed on a number line; no compound inequalities. Watch for flipping the sign when dividing by a negative in an equation (it only applies to inequalities)."
 ---
 
-"How many bags of vegetables does the farmer need to sell to cover the cost of the booth?" is not really a math-class question — it's the kind of question a linear equation answers every day, for real people making real decisions.
+## What's the big idea?
 
-This unit is about building the algebra skill to solve those questions reliably, whether the answer needs to be exact (an equation) or a range (an inequality).
-
-## What you will explore
-
-You will solve multi-step linear equations that combine several operations — distributing, collecting like terms, moving variables to one side — building on equation-solving skills from earlier grades toward more complex, real-context problems. You will also work with **inequalities**, where the goal is not a single answer but a whole range of values that make a statement true, and you will pay close attention to what happens to an inequality sign when you multiply or divide by a negative number.
-
-Throughout, you will practice translating a word problem into an equation or inequality in the first place — often the hardest step — and interpreting what the final answer actually means back in the original context. A solution of "b > 15" only matters once you can say what it means: the minimum number of bags needed to make a profit.
-
-## By the end of this unit
-
-You will be able to set up and solve a multi-step equation or inequality from a real scenario, solve it correctly, and explain what the solution means in terms of the original problem — including whether the answer needs to be rounded up, down, or left as an exact value.
+An **equation** is a balance. Whatever you do to one side, you do to the other, until the variable is on its own. An **inequality** works almost the same way, but its answer is a whole range of numbers, like "at least 15." One trap to remember: if you multiply or divide both sides by a negative number, flip the inequality sign.

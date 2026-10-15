@@ -4,16 +4,22 @@ organizingIdea: Systems
 order: 6
 guidingQuestion: How is power organized and exercised in Canada's system of government?
 learningOutcome: Students analyze how power is distributed and exercised in Canada's government, including how laws are made and how rights are protected.
+hook: "Who decides what you learn in school, who prints our money, and who owns Alberta’s oil? Canada splits those powers between governments, and they don’t always agree."
+realWorld:
+  - title: "School"
+    blurb: "Education is run by the provinces, so Alberta decides what’s taught in Alberta schools."
+  - title: "Money"
+    blurb: "The federal government handles money and banking for the whole country."
+  - title: "The courts"
+    blurb: "The Supreme Court of Canada can strike down a law that breaks the Charter of Rights and Freedoms."
+iCan:
+  - "I can explain responsible government."
+  - "I can describe the steps for a bill to become law."
+  - "I can explain which powers belong to the federal government and which to the provinces."
+  - "I can explain how courts protect rights under the Charter."
+teacherSummary: "Responsible government and confidence, the steps of a bill, orders in council and regulations, federal and provincial powers (with natural resources as the Alberta case), and the courts and the Charter. Watch for the prime minister seen as able to pass any law alone, and for confusion about which level of government does what."
 ---
 
-Every law that governs your life — from the speed limit outside your school to the rules for how your province spends its healthcare budget — passed through a specific, deliberate system designed so that no single person or institution holds all the power. This unit takes that system apart piece by piece.
+## What's the big idea?
 
-## What you will explore
-
-You will learn how **responsible government** works: the executive must keep the confidence of the elected House of Commons, or resign or call an election. You will trace how a bill becomes law through **first reading, second reading, committee stage, third reading, Senate approval, and royal assent**, and how governments also act through **orders in council, regulations, and ministerial decisions** outside that formal process entirely.
-
-You will map Canada's **federal system**, where the federal government handles defence, banking, trade, criminal law, and citizenship, while provinces control education, healthcare, property and civil rights, municipalities, and — critically for Alberta — **natural resources**. You will see how that division of power creates real conflict when resource decisions touch national interests like the environment. Finally, you will follow how the **judiciary**, from lower courts to the **Supreme Court of Canada**, interprets laws and checks government authority under the **Charter of Rights and Freedoms**.
-
-## By the end of this unit
-
-You will be able to examine how power is distributed between federal and provincial governments, assess how responsible government ensures accountability, explain how ridings connect citizens to government decision making, interpret how tools like orders in council shape decisions beyond Parliament, explain how the judiciary limits government authority, investigate how control over natural resources shapes provincial decision making, and formulate a judgement on how fairly power is distributed among governments and citizens in Canada.
+In Canada, the government must keep the support of the elected **House of Commons**. That's called **responsible government**. A new law starts as a **bill** and goes through several readings, a committee, the Senate and **royal assent**. Power is split: the **federal** government handles things like defence and money, while **provinces** like Alberta handle schools, hospitals and natural resources. **Courts** decide whether laws follow the Charter of Rights and Freedoms.

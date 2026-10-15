@@ -1,5 +1,5 @@
 # Project Status
-*Last updated: 2026-10-08*
+*Last updated: 2026-10-15*
 
 Current state only. Keep this file short: update the tables and the open list, and put session detail in the commit message. The session log up to 2026-10-05 is in `_status-archive.md`.
 
@@ -19,6 +19,7 @@ Current state only. Keep this file short: update the tables and the open list, a
 ## Open items
 
 ### Needs a teacher decision or a source check
+- **Student / parent / teacher views (2026-10-15):** built for all six courses. Every unit has a student page (fun hook, real-world cards, numbered path), a parent guide (plain summary, grade progression, assumed knowledge, mix-ups, tips, worked examples) and two one-page home practice sheets with keys (76 sheets in all). Teacher hubs show a one-line summary per unit. Needs a teacher read-through: the student and parent copy, and especially the grade-to-grade progressions, which are best guesses for the earlier grades (the 2023 K–6 science and draft 7–9 social curricula) and use the 10C/10-3, Science 10 and Social 10–30 sequences for high school.
 - **Science 7 notes answer keys (v2):** Ecosystems S4 Alberta biodiversity counts and Plants S5 "over ___ billion dollars" are approximate and marked "confirm". Planet Earth S3 now says 7 major plates (v1 said 15). Planet Earth S4 notes say magnitude 7 releases 10× the energy of magnitude 6 (strictly 10× shaking, about 32× energy). Structures S2 notes call snow both a live load and a dead load.
 - **Math 9 circle geometry worksheets:** Core Q6 and Challenge Q3 have angle expressions with no valid solution. Flagged in the answer keys, not fixed.
 - **Math 9 outcome codes:** the Rational Numbers test and bank use local codes RN1–RN5 because the course context has no official codes.

@@ -1,203 +1,33 @@
 ---
-import Collapsible from '../../components/Collapsible.astro';
-import { getCollection, getEntry } from 'astro:content';
-import UnitLayout from '../../layouts/UnitLayout.astro';
+// Grade 6 Science student unit page (shared StudentUnit layout). Materials
+// come from src/data/science6.ts; the intro from src/content/units/. The
+// year review has no intro file and uses a short description instead.
+import StudentUnit from '../../components/StudentUnit.astro';
+import { getEntry } from 'astro:content';
+import { science6 as m } from '../../data/science6';
 
-export async function getStaticPaths() {
-  const units = await getCollection('units');
-  return units.map(unit => ({ params: { unit: unit.slug } }));
+export function getStaticPaths() {
+  return m.units.map((u, i) => ({ params: { unit: u.slug }, props: { i } }));
 }
 
-const { unit: unitSlug } = Astro.params;
-const entry = await getEntry('units', unitSlug!);
-if (!entry) return Astro.redirect('/404');
+const { i } = Astro.props as { i: number };
+const u = m.units[i];
+const entry = u.slug === 'year-review' ? undefined : await getEntry('units', u.slug);
+if (u.slug !== 'year-review' && !entry) throw new Error(`units/${u.slug}.md is missing`);
+const Content = entry ? (await entry.render()).Content : undefined;
 const base = import.meta.env.BASE_URL;
-
-const lessons = (await getCollection('lessons'))
-  .filter(l => l.data.unit === unitSlug)
-  .sort((a, b) => a.data.lessonNumber - b.data.lessonNumber);
-
-const { Content } = await entry.render();
-const { title, tier, weeks, guidingQuestion, learningOutcome } = entry.data;
-
-type MaterialItem = { label: string; href: string; badges: { text: string; style: string }[] };
-type MaterialSection = { heading: string; items: MaterialItem[] };
-
-const unitBorderColor: Record<string, string> = {
-  'matter':           'border-l-cyan-400',
-  'forces':           'border-l-violet-400',
-  'living-systems':   'border-l-emerald-400',
-  'climate':          'border-l-amber-400',
-  'energy-resources': 'border-l-orange-400',
-  'space':            'border-l-indigo-400',
-};
-
-const teacherBadge = { text: 'Teacher Copy', style: 'bg-slate-800 text-white' };
-const efBadge      = { text: 'Easy Read',    style: 'bg-sky-100 text-sky-800' };
-
-const unitMaterials: Record<string, MaterialSection[]> = {
-  'matter': [
-    { heading: 'Notes', items: [
-      { label: 'Guided Notes',       href: `${base}materials/sci6-matter-notes-v1.html`,    badges: [] },
-      { label: 'Easy Read Notes',    href: `${base}materials/sci6-matter-notes-ef-v1.html`, badges: [efBadge] },
-    ]},
-    { heading: 'Workbooks', items: [
-      { label: 'Workbook',           href: `${base}materials/sci6-matter-workbook-v1.html`,    badges: [] },
-      { label: 'Easy Read Workbook', href: `${base}materials/sci6-matter-workbook-ef-v1.html`, badges: [efBadge] },
-    ]},
-    { heading: 'Answer Keys', items: [
-      { label: 'Notes Answer Key',              href: `${base}materials/sci6-matter-notes-answers-v1.html`,         badges: [teacherBadge] },
-      { label: 'Workbook Answer Key',           href: `${base}materials/sci6-matter-workbook-answers-v1.html`,      badges: [teacherBadge] },
-      { label: 'Easy Read Workbook Answer Key', href: `${base}materials/sci6-matter-workbook-ef-answers-v1.html`,   badges: [efBadge, teacherBadge] },
-    ]},
-  ],
-  'forces': [
-    { heading: 'Notes', items: [
-      { label: 'Guided Notes',       href: `${base}materials/sci6-forces-notes-v1.html`,    badges: [] },
-      { label: 'Easy Read Notes',    href: `${base}materials/sci6-forces-notes-ef-v1.html`, badges: [efBadge] },
-    ]},
-    { heading: 'Workbooks', items: [
-      { label: 'Workbook',           href: `${base}materials/sci6-forces-workbook-v1.html`,    badges: [] },
-      { label: 'Easy Read Workbook', href: `${base}materials/sci6-forces-workbook-ef-v1.html`, badges: [efBadge] },
-    ]},
-    { heading: 'Answer Keys', items: [
-      { label: 'Notes Answer Key',              href: `${base}materials/sci6-forces-notes-answers-v1.html`,         badges: [teacherBadge] },
-      { label: 'Workbook Answer Key',           href: `${base}materials/sci6-forces-workbook-answers-v1.html`,      badges: [teacherBadge] },
-      { label: 'Easy Read Workbook Answer Key', href: `${base}materials/sci6-forces-workbook-ef-answers-v1.html`,   badges: [efBadge, teacherBadge] },
-    ]},
-  ],
-  'living-systems': [
-    { heading: 'Notes', items: [
-      { label: 'Guided Notes',       href: `${base}materials/sci6-living-systems-notes-gr6-v1.html`,    badges: [] },
-      { label: 'Easy Read Notes',    href: `${base}materials/sci6-living-systems-notes-ef-gr6-v1.html`, badges: [efBadge] },
-    ]},
-    { heading: 'Workbooks', items: [
-      { label: 'Workbook',           href: `${base}materials/sci6-living-systems-workbook-gr6-v1.html`, badges: [] },
-      { label: 'Easy Read Workbook', href: `${base}materials/sci6-living-systems-workbook-ef-v1.html`,  badges: [efBadge] },
-    ]},
-    { heading: 'Answer Keys', items: [
-      { label: 'Notes Answer Key',              href: `${base}materials/sci6-living-systems-notes-answers-v1.html`,         badges: [teacherBadge] },
-      { label: 'Workbook Answer Key',           href: `${base}materials/sci6-living-systems-workbook-answers-v1.html`,      badges: [teacherBadge] },
-      { label: 'Easy Read Workbook Answer Key', href: `${base}materials/sci6-living-systems-workbook-ef-answers-v1.html`,   badges: [efBadge, teacherBadge] },
-    ]},
-  ],
-  'climate': [
-    { heading: 'Notes', items: [
-      { label: 'Guided Notes',       href: `${base}materials/sci6-climate-notes-v1.html`,    badges: [] },
-      { label: 'Easy Read Notes',    href: `${base}materials/sci6-climate-notes-ef-v1.html`, badges: [efBadge] },
-    ]},
-    { heading: 'Workbooks', items: [
-      { label: 'Workbook',           href: `${base}materials/sci6-climate-workbook-v1.html`,    badges: [] },
-      { label: 'Easy Read Workbook', href: `${base}materials/sci6-climate-workbook-ef-v1.html`, badges: [efBadge] },
-    ]},
-    { heading: 'Answer Keys', items: [
-      { label: 'Notes Answer Key',              href: `${base}materials/sci6-climate-notes-answers-v1.html`,         badges: [teacherBadge] },
-      { label: 'Workbook Answer Key',           href: `${base}materials/sci6-climate-workbook-answers-v1.html`,      badges: [teacherBadge] },
-      { label: 'Easy Read Workbook Answer Key', href: `${base}materials/sci6-climate-workbook-ef-answers-v1.html`,   badges: [efBadge, teacherBadge] },
-    ]},
-  ],
-  'energy-resources': [
-    { heading: 'Notes', items: [
-      { label: 'Guided Notes',       href: `${base}materials/sci6-energy-resources-notes-v1.html`,    badges: [] },
-      { label: 'Easy Read Notes',    href: `${base}materials/sci6-energy-resources-notes-ef-v1.html`, badges: [efBadge] },
-    ]},
-    { heading: 'Workbooks', items: [
-      { label: 'Workbook',           href: `${base}materials/sci6-energy-resources-workbook-v1.html`,    badges: [] },
-      { label: 'Easy Read Workbook', href: `${base}materials/sci6-energy-resources-workbook-ef-v1.html`, badges: [efBadge] },
-    ]},
-    { heading: 'Answer Keys', items: [
-      { label: 'Notes Answer Key',              href: `${base}materials/sci6-energy-resources-notes-answers-v1.html`,         badges: [teacherBadge] },
-      { label: 'Workbook Answer Key',           href: `${base}materials/sci6-energy-resources-workbook-answers-v1.html`,      badges: [teacherBadge] },
-      { label: 'Easy Read Workbook Answer Key', href: `${base}materials/sci6-energy-resources-workbook-ef-answers-v1.html`,   badges: [efBadge, teacherBadge] },
-    ]},
-  ],
-  'space': [
-    { heading: 'Notes', items: [
-      { label: 'Guided Notes',       href: `${base}materials/sci6-space-notes-v1.html`,    badges: [] },
-      { label: 'Easy Read Notes',    href: `${base}materials/sci6-space-notes-ef-v1.html`, badges: [efBadge] },
-    ]},
-    { heading: 'Workbooks', items: [
-      { label: 'Workbook',           href: `${base}materials/sci6-space-workbook-v1.html`,    badges: [] },
-      { label: 'Easy Read Workbook', href: `${base}materials/sci6-space-workbook-ef-v1.html`, badges: [efBadge] },
-    ]},
-    { heading: 'Answer Keys', items: [
-      { label: 'Notes Answer Key',              href: `${base}materials/sci6-space-notes-answers-v1.html`,         badges: [teacherBadge] },
-      { label: 'Workbook Answer Key',           href: `${base}materials/sci6-space-workbook-answers-v1.html`,      badges: [teacherBadge] },
-      { label: 'Easy Read Workbook Answer Key', href: `${base}materials/sci6-space-workbook-ef-answers-v1.html`,   badges: [efBadge, teacherBadge] },
-    ]},
-  ],
-};
-
-const materialSections = unitMaterials[unitSlug!] ?? [];
-const borderColor = unitBorderColor[unitSlug!] ?? 'border-l-slate-300';
 ---
 
-<UnitLayout
-  title={title}
-  tier={tier}
-  weeks={weeks}
-  guidingQuestion={guidingQuestion}
-  learningOutcome={learningOutcome}
-  slug={unitSlug!}
->
-  <Collapsible>
-    <Content />
-  </Collapsible>
-
-  {lessons.length > 0 && (
-    <div class="mt-8 not-prose">
-      <h2 class="text-lg font-bold text-slate-900 mb-3">Lessons</h2>
-      <div class="space-y-2">
-        {lessons.map(lesson => (
-          <a
-            href={`${base}units/${unitSlug}/lesson-${String(lesson.data.lessonNumber).padStart(2,'0')}`}
-            class="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3 hover:shadow-sm hover:border-science-300 transition-all group"
-          >
-            <span class="text-xs font-bold text-slate-400 w-14 flex-shrink-0">
-              Lesson {lesson.data.lessonNumber}
-            </span>
-            <span class="text-sm font-medium text-slate-700 group-hover:text-science-700 flex-1">
-              {lesson.data.title}
-            </span>
-            <svg class="w-4 h-4 text-slate-300 group-hover:text-science-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </a>
-        ))}
-      </div>
-    </div>
-  )}
-
-  {materialSections.length > 0 && (
-    <div class="mt-10 not-prose">
-      <h2 class="text-lg font-bold text-slate-900 mb-4">Materials</h2>
-      <div class="space-y-6">
-        {materialSections.map(section => (
-          <div>
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">{section.heading}</p>
-            <div class="space-y-2">
-              {section.items.map(item => (
-                <div class={`flex items-center gap-3 bg-white border border-slate-200 border-l-4 ${borderColor} rounded-lg px-4 py-3`}>
-                  <span class="text-sm font-medium text-slate-800 flex-1">{item.label}</span>
-                  <div class="flex items-center gap-1.5 flex-shrink-0">
-                    {item.badges.map(b => (
-                      <span class={`text-xs font-semibold px-2 py-0.5 rounded-full ${b.style}`}>{b.text}</span>
-                    ))}
-                  </div>
-                  <a
-                    href={item.href.replace(/\.html$/, '').replace(`${base}materials/`, `${base}materials/view/${unitSlug}/`)}
-                    target="_blank"
-                    rel="noopener"
-                    class="flex-shrink-0 text-xs font-semibold text-science-700 hover:text-science-900 border border-science-300 hover:border-science-500 px-3 py-1.5 rounded-lg transition-colors"
-                  >
-                    Open ↗
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )}
-</UnitLayout>
+<StudentUnit
+  manifest={m}
+  unit={u}
+  title={`${u.label} — Grade 6 Science`}
+  eyebrow={u.slug === 'year-review' ? 'Grade 6 Science · All six units' : `Grade 6 Science · Unit ${i + 1}`}
+  back={{ href: `${base}materials`, label: 'Grade 6 Science' }}
+  intro={entry?.data}
+  Content={Content}
+  description="Everything from the year in one place: a notes package covering all six units and a mixed practice workbook."
+  hasParentGuide={u.slug !== 'year-review'}
+  prev={m.units[i - 1]}
+  next={m.units[i + 1]}
+/>

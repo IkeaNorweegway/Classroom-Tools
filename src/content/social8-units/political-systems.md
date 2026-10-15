@@ -4,14 +4,22 @@ organizingIdea: "Systems"
 order: 3
 guidingQuestion: In what ways can society be organized?
 learningOutcome: Students compare government control and individual rights within political systems.
+hook: "Who gets to make the rules: one person, a few people, or everyone? Canada and the United States are both democracies, but they run in very different ways."
+realWorld:
+  - title: "Election day"
+    blurb: "In a federal election you don’t vote for the prime minister directly. You vote for your local MP."
+  - title: "News from the U.S."
+    blurb: "The American president is elected separately from Congress and can veto laws. Canada works differently."
+  - title: "Teams and clubs"
+    blurb: "Voting for a team captain, or letting the coach choose, are two ways of organising power."
+iCan:
+  - "I can compare democracy, monarchy, dictatorship and oligarchy."
+  - "I can explain how Canada’s Parliament works and how the prime minister is chosen."
+  - "I can compare Canada’s system with the American presidential system."
+  - "I can explain what political parties do."
+teacherSummary: "Types of political systems, direct vs. representative democracy, Canada's parliamentary system vs. the U.S. presidential system, the three branches, and parties and party systems. Watch for \"Canadians elect the PM directly\" and for the Governor General seen as holding real power."
 ---
 
-Canada is a parliamentary democracy. The United States, right next door, is a presidential democracy. Both are democracies — but they organize power in genuinely different ways, and understanding the difference is the key to understanding how any political system on the spectrum from total control to no control actually works.
+## What's the big idea?
 
-## What you will explore
-
-You will compare democracy, monarchy, dictatorship, and oligarchy, then go deep on how **Canada's own system** works: the executive, legislative, and judicial branches, the Governor General, Parliament, and your own riding or constituency. You will also study **political parties** — where they came from, how Canada's and Alberta's parties are organized, and why some countries have one party, some have two, and some, like Canada, have many.
-
-## By the end of this unit
-
-You will be able to describe the features of different political systems, compare Canada's parliamentary democracy to the United States' presidential democracy, and explain how political parties are organized and how citizens can get involved in one.
+Countries organise power in different ways, from **dictatorships**, where one person controls everything, to **democracies**, where citizens choose their leaders. Canada is a **parliamentary democracy**: you vote for a local MP, and the leader of the party with the most seats usually becomes prime minister. The United States is a **presidential democracy**, where people vote for the president separately. **Political parties** are groups who share ideas and try to get elected so they can turn those ideas into laws.

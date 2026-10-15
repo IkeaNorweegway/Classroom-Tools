@@ -1,5 +1,15 @@
 import { defineCollection, z } from 'astro:content';
 
+// Student intro shared by every course's unit pages: a fun one-line hook,
+// three real-world connections and "I can" goals. The body is the short
+// "big idea"; teacherSummary is the one-line scope note on the teacher hub.
+const studentIntro = {
+  hook: z.string(),
+  realWorld: z.array(z.object({ title: z.string(), blurb: z.string() })).length(3),
+  iCan: z.array(z.string()).min(3).max(4),
+};
+const teacherSummary = { teacherSummary: z.string() };
+
 const units = defineCollection({
   type: 'content',
   schema: z.object({
@@ -11,6 +21,8 @@ const units = defineCollection({
     order: z.number(),
     misconceptions: z.array(z.string()).optional(),
     csConnection: z.string().optional(),
+    ...studentIntro,
+    ...teacherSummary,
   }),
 });
 
@@ -24,9 +36,12 @@ const science7Units = defineCollection({
     learningOutcome: z.string(),
     order: z.number(),
     misconceptions: z.array(z.string()).optional(),
+    ...studentIntro,
+    ...teacherSummary,
   }),
 });
 
+// Math 9 topic page (same intro fields as the other courses).
 const math9Units = defineCollection({
   type: 'content',
   schema: z.object({
@@ -34,6 +49,33 @@ const math9Units = defineCollection({
     guidingQuestion: z.string(),
     learningOutcome: z.string(),
     order: z.number(),
+    ...studentIntro,
+    ...teacherSummary,
+  }),
+});
+
+// STEAM grade pages (student intro per grade; STEAM has no teacher hub).
+const steamGrades = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    order: z.number(),
+    ...studentIntro,
+  }),
+});
+
+// Parent guides, one folder per course (parent-guides/<course>/<unit>.md).
+// The body holds the worked examples.
+const parentGuides = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    plainSummary: z.string(),
+    comesFrom: z.array(z.object({ grade: z.string(), idea: z.string() })).min(1),
+    assumed: z.array(z.string()).min(3),
+    leadsTo: z.array(z.object({ course: z.string(), idea: z.string() })).min(1),
+    watchFor: z.array(z.string()).min(2),
+    tips: z.array(z.string()).min(2),
   }),
 });
 
@@ -45,6 +87,8 @@ const social9Units = defineCollection({
     guidingQuestion: z.string(),
     learningOutcome: z.string(),
     order: z.number(),
+    ...studentIntro,
+    ...teacherSummary,
   }),
 });
 
@@ -56,6 +100,8 @@ const social8Units = defineCollection({
     guidingQuestion: z.string(),
     learningOutcome: z.string(),
     order: z.number(),
+    ...studentIntro,
+    ...teacherSummary,
   }),
 });
 
@@ -103,6 +149,8 @@ export const collections = {
   units,
   'science7-units': science7Units,
   'math9-units': math9Units,
+  'steam-grades': steamGrades,
+  'parent-guides': parentGuides,
   'social9-units': social9Units,
   'social8-units': social8Units,
   lessons,

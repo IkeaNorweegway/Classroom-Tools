@@ -1,0 +1,64 @@
+---
+// Parent overview for Math 9: what the course covers in plain words, where
+// it sits between Grade 8 and high school, general ways to help, and a
+// link to each topic's parent guide.
+import ParentOverview from '../../../components/ParentOverview.astro';
+import { getCollection } from 'astro:content';
+import { strands, topicsInStrand } from '../../../data/math9';
+
+const base = import.meta.env.BASE_URL;
+const written = new Set((await getCollection('parent-guides')).map((e) => e.slug));
+
+const stages = [
+  { label: 'Grade 7', idea: 'Integers, fractions and decimals, solving simple equations, and patterns in tables and graphs.' },
+  { label: 'Grade 8', idea: 'Square roots and the Pythagorean theorem, percents and rates, equations with brackets, and the surface area and volume of prisms and cylinders.' },
+  { label: 'Grade 9', idea: 'Algebra takes centre stage: equations, inequalities, straight-line graphs and polynomials. Plus circles, similar shapes, data and probability.', now: true },
+  { label: 'High school', idea: 'Math 10C leads on to the 20-1/30-1 and 20-2/30-2 courses. Math 10-3 leads on to 20-3 and 30-3, which focus on workplace math.' },
+];
+
+const plainStrand: Record<string, string> = {
+  number: 'Working confidently with fractions and negative numbers, square roots and powers. These skills show up in every other topic.',
+  algebra: 'Using letters for unknown numbers: solving equations, graphing straight lines and working with expressions like (x + 2)(x + 3).',
+  'measurement-geometry': 'Rules about circles, the surface area and volume of 3-D shapes, and using similar shapes to measure things that are hard to reach.',
+  'statistics-probability': 'Reading scatter plots, judging whether data can be trusted, and working out the chance of two events happening.',
+};
+
+const tips: [string, string][] = [
+  ['Ask them to teach you', 'Have your child explain a problem from their notes. Explaining is one of the best ways to learn, and you don’t need to know the answer to listen.'],
+  ['Ask “How do you know?”', 'Instead of “Is that right?”, ask how they know. Checking their own work is a skill they need on tests.'],
+  ['Use their method', 'The notes show the method taught in class. If you learned it differently, use theirs; two methods at once is confusing.'],
+  ['Short and often', 'Fifteen focused minutes a few times a week beats a long session the night before a test.'],
+  ['Mistakes are clues', 'When an answer is wrong, have them find the step where it went off track. That is where the learning happens.'],
+  ['Keep the basics sharp', 'Times tables, negative numbers and fractions come up all year. A few minutes of practice on these pays off in every topic.'],
+];
+
+const groups = strands.map((s) => ({
+  id: s.slug,
+  label: s.label,
+  blurb: plainStrand[s.slug],
+  items: topicsInStrand(s.slug).map((t) => ({
+    label: t.label,
+    href: written.has(`math9/${t.slug}`) ? `${base}math9/parents/${t.slug}` : undefined,
+  })),
+}));
+---
+
+<ParentOverview
+  course="math9"
+  title="Grade 9 math at home"
+  pageTitle="Grade 9 Math — Parent guide"
+  metaDescription="What your child learns in Grade 9 math, where it leads, and how to help at home."
+  eyebrow="Parent guide · Grade 9 Mathematics"
+  numeral="9"
+  description="What your child is learning this year, how it connects to earlier grades and to high school, and simple ways to help, with worked examples and short practice sheets for each topic."
+  aboutHeading="What Grade 9 math is about"
+  about={[
+    'Grade 9 is the year algebra becomes the main tool. Students learn to work with letters that stand for numbers, solve equations in several steps, and read relationships from tables and graphs.',
+    'Both halves matter. Students who can move symbols around but can’t read a graph, or the other way round, tend to find Math 10 harder. The course practises both all year.',
+  ]}
+  stages={stages}
+  groups={groups}
+  listHeading="Topics this year"
+  listIntro="Four strands, eleven topics. Pick one to see the parent guide."
+  tips={tips}
+/>

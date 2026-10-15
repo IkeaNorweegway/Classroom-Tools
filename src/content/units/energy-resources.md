@@ -9,20 +9,22 @@ misconceptions:
   - Renewable always means clean
   - Before/after processing maps onto renewable/non-renewable
 csConnection: Technology is both an energy consumer and an energy enabler. Impacts of technology — environmental, social, economic — are examined directly through Alberta's energy context.
+hook: "Alberta has some of the world’s biggest oil reserves and some of Canada’s best wind and sunshine for power. How do we choose what to use?"
+realWorld:
+  - title: "Wind farms"
+    blurb: "Near Pincher Creek, giant wind turbines turn wind into electricity."
+  - title: "Gas stations"
+    blurb: "Gasoline is made from crude oil, which has to be processed before we can use it."
+  - title: "Solar panels"
+    blurb: "More Alberta homes and farms are adding solar panels to make their own power."
+iCan:
+  - "I can tell renewable and non-renewable resources apart."
+  - "I can explain what happens to a resource before and after processing."
+  - "I can compare energy sources using factors like cost and the environment."
+  - "I can explain why no energy source is perfect."
+teacherSummary: "Renewable and non-renewable resources, resources before and after processing, and the factors that influence energy choices, in Alberta's context. Watch for \"renewable always means clean\" and for processed vs. unprocessed confused with renewable vs. non-renewable."
 ---
 
-Alberta sits on one of the largest oil reserves in the world. It also has some of the best wind and solar potential in Canada. Both of those things are true at the same time — and they create a real tension that Alberta is actively trying to navigate.
+## What's the big idea?
 
-This unit is about understanding that tension. Not solving it, but understanding it well enough to think clearly about it.
-
-## What you will explore
-
-You will learn the difference between **renewable** and **non-renewable** energy sources — not just what the words mean, but what the difference actually implies for how long we can rely on each one. You will look at how energy sources get used (some go straight to work; others are converted first) and why "renewable" does not automatically mean "clean" or "simple."
-
-The centre of the unit is a decision-making framework: five factors that engineers, governments, and communities use when choosing an energy source — availability, cost, reliability, environmental impact, and responsible management. You will apply these factors to real cases, including Alberta's own energy decisions.
-
-You will also look at who is most affected when energy choices go wrong — including Indigenous communities whose treaty rights and traditional lands intersect with pipelines, oil sands, and hydroelectric dams.
-
-## By the end of this unit
-
-You will be able to compare energy sources using real criteria, explain why there is no perfect option, and make a supported case for an energy choice — the kind of thinking that actual engineers and policy-makers do.
+We use energy for everything: lights, heat, cars and phones. Some energy resources are **renewable**, which means they won't run out, like wind, sunlight and moving water. Others are **non-renewable**, like oil, natural gas and coal, which took millions of years to form. Many resources have to be **processed** before we can use them. Choosing an energy source means weighing cost, reliability, and the effects on the environment and people, and every choice has trade-offs.

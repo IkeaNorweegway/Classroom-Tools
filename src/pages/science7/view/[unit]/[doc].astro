@@ -1,5 +1,8 @@
 ---
 import Nav from '../../../../components/Nav.astro';
+import { science7 as manifest } from '../../../../data/science7';
+import { unitDocs } from '../../../../data/manifest';
+import { existsSync } from 'node:fs';
 const base = import.meta.env.BASE_URL;
 
 export function getStaticPaths() {
@@ -38,9 +41,7 @@ export function getStaticPaths() {
       'sci7-lily-dissection-lab-v1',
       'sci7-lily-dissection-lab-ipp-v1',
       'sci7-lily-dissection-lab-teachernotes-v1',
-      'sci7-photosynthesis-sim-v1',
       'sci7-photosynthesis-sim-v2',
-      'sci7-flower-reproduction-sim-v1',
       'sci7-flower-reproduction-sim-v2',
       'sci7-flower-field-game-v1',
       'sci7-flower-field-game-v2',
@@ -90,6 +91,14 @@ export function getStaticPaths() {
       paths.push({ params: { unit, doc } });
     }
   }
+  // Every document the course's pages link to (from the manifest), including
+  // the parent home sheets. Routes listed above stay even if no page links them.
+  for (const u of manifest.units) {
+    for (const doc of unitDocs(u)) {
+      if (!existsSync(`public/materials/${doc}.html`)) console.warn(`[${manifest.course}] missing material: ${doc}.html`);
+      if (!paths.some((p) => p.params.unit === u.slug && p.params.doc === doc)) paths.push({ params: { unit: u.slug, doc } });
+    }
+  }
   return paths;
 }
 
@@ -103,8 +112,10 @@ const unitLabels: Record<string, string> = {
   'planet-earth': 'Planet Earth',
 };
 
-const backHref = `${base}science7/materials/${unit}`;
-const backLabel = `← ${unitLabels[unit] ?? 'Science 7'}`;
+// Home practice sheets belong to the parent guide; everything else to the unit page.
+const isHome = doc!.includes('-home-');
+const backHref = isHome ? `${base}${manifest.parentHref(unit!)}` : `${base}science7/materials/${unit}`;
+const backLabel = isHome ? '← Parent guide' : `← ${unitLabels[unit] ?? 'Science 7'}`;
 const fileUrl = `${base}materials/${doc}.html`;
 ---
 

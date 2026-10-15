@@ -1,166 +1,31 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import CourseHero from '../../../components/CourseHero.astro';
-import MaterialList from '../../../components/MaterialList.astro';
-const base = import.meta.env.BASE_URL;
+// STEAM grade page (shared StudentUnit layout): the grade's four projects as
+// numbered steps. Materials come from src/data/steam.ts; the intro from
+// src/content/steam-grades/.
+import StudentUnit from '../../../components/StudentUnit.astro';
+import { getEntry } from 'astro:content';
+import { steam as m } from '../../../data/steam';
 
 export function getStaticPaths() {
-  return [
-    { params: { grade: 'grade-5' } },
-    { params: { grade: 'grade-6' } },
-    { params: { grade: 'grade-7' } },
-    { params: { grade: 'grade-8' } },
-    { params: { grade: 'grade-9' } },
-  ];
+  return m.units.map((u, i) => ({ params: { grade: u.slug }, props: { i } }));
 }
 
-const { grade } = Astro.params;
-
-type MaterialFile = { label: string; badge?: string; badgeStyle?: string; doc: string };
-type Project = { unit: number; label: string; items: MaterialFile[] };
-
-interface GradeData {
-  label: string;
-  tagline: string;
-  projects: Project[];
-}
-
-
-const grades: Record<string, GradeData> = {
-  'grade-5': {
-    label: 'Grade 5',
-    tagline: 'Sequence, loop, conditional, energy, and the engineering design cycle — introduced through Dash robots, a marble-run coaster, a water filter, and a Scratch story capstone.',
-    projects: [
-      { unit: 1, label: 'Dash Bot: Algorithms & Sensors', items: [
-        { label: 'Notes', doc: 'steam5-dash-notes-v1' },
-        { label: 'Design Journal', doc: 'steam5-dash-workbook-v1' },
-        { label: 'Dash Trainer (build with blocks, drive the robot)', doc: 'steam5-dash-trainer-v1', badge: 'Interactive', badgeStyle: 'bg-violet-100 text-violet-800' },
-      ]},
-      { unit: 2, label: 'The Slow Coaster', items: [
-        { label: 'Notes', doc: 'steam5-coaster-notes-v1' },
-        { label: 'Design Journal', doc: 'steam5-coaster-workbook-v1' },
-      ]},
-      { unit: 3, label: 'Water Filter', items: [
-        { label: 'Notes', doc: 'steam5-waterfilter-notes-v1' },
-        { label: 'Design Journal', doc: 'steam5-waterfilter-workbook-v1' },
-      ]},
-      { unit: 4, label: 'Capstone: Scratch Story', items: [
-        { label: 'Notes', doc: 'steam5-scratch-notes-v1' },
-        { label: 'Design Journal', doc: 'steam5-scratch-workbook-v1' },
-      ]},
-    ],
-  },
-  'grade-6': {
-    label: 'Grade 6',
-    tagline: 'Circuits, CAD, triangulation, and the four forces of flight — introduced through littleBits, 3D-printed bag tags, bridges, and a glider capstone.',
-    projects: [
-      { unit: 1, label: 'littleBits: Circuits, Algorithms & Sensors', items: [
-        { label: 'Notes', doc: 'steam6-littlebits-notes-v1' },
-        { label: 'Design Journal', doc: 'steam6-littlebits-workbook-v1' },
-        { label: 'littleBits Trainer (snap bits together, watch the signal)', doc: 'steam6-littlebits-trainer-v1', badge: 'Interactive', badgeStyle: 'bg-violet-100 text-violet-800' },
-      ]},
-      { unit: 2, label: '3D-Printed Bag Tag & Digital Portfolio', items: [
-        { label: 'Notes', doc: 'steam6-bagtag-notes-v1' },
-        { label: 'Design Journal', doc: 'steam6-bagtag-workbook-v1' },
-      ]},
-      { unit: 3, label: 'Bridges & Structures', items: [
-        { label: 'Notes', doc: 'steam6-bridges-notes-v1' },
-        { label: 'Design Journal', doc: 'steam6-bridges-workbook-v1' },
-      ]},
-      { unit: 4, label: 'Capstone: Glider / Airplane Build', items: [
-        { label: 'Notes', doc: 'steam6-glider-notes-v1' },
-        { label: 'Design Journal', doc: 'steam6-glider-workbook-v1' },
-      ]},
-    ],
-  },
-  'grade-7': {
-    label: 'Grade 7',
-    tagline: 'Transfer, heat transfer, branching structures, and Newton’s laws — introduced through Spike Prime, a micro:bit thermodynamics box, a Choose Your Own Adventure story, and a CO2 dragster capstone.',
-    projects: [
-      { unit: 1, label: 'Spike Prime: Foundations & Computational Thinking', items: [
-        { label: 'Notes', doc: 'steam7-spikeprime-notes-v1' },
-        { label: 'Design Journal', doc: 'steam7-spikeprime-workbook-v1' },
-      ]},
-      { unit: 2, label: 'micro:bit Thermodynamics Box', items: [
-        { label: 'Notes', doc: 'steam7-thermobox-notes-v1' },
-        { label: 'Design Journal', doc: 'steam7-thermobox-workbook-v1' },
-      ]},
-      { unit: 3, label: 'Choose Your Own Adventure', items: [
-        { label: 'Notes', doc: 'steam7-cyoa-notes-v1' },
-        { label: 'Design Journal', doc: 'steam7-cyoa-workbook-v1' },
-      ]},
-      { unit: 4, label: 'Capstone: CO2 Dragster', items: [
-        { label: 'Notes', doc: 'steam7-dragster-notes-v1' },
-        { label: 'Design Journal', doc: 'steam7-dragster-workbook-v1' },
-      ]},
-    ],
-  },
-  'grade-8': {
-    label: 'Grade 8',
-    tagline: 'Simple machines, collision detection, mechanical advantage, and multi-sensor programming — introduced through a class-wide Rube Goldberg chain, a Scratch platform game, a soldered motor circuit, and a Spike Prime maze capstone.',
-    projects: [
-      { unit: 1, label: 'Rube Goldberg: Class Chain Reaction', items: [
-        { label: 'Notes', doc: 'steam8-rubegoldberg-notes-v1' },
-        { label: 'Design Journal', doc: 'steam8-rubegoldberg-workbook-v1' },
-      ]},
-      { unit: 2, label: 'Platform Game (Scratch)', items: [
-        { label: 'Notes', doc: 'steam8-platformgame-notes-v1' },
-        { label: 'Design Journal', doc: 'steam8-platformgame-workbook-v1' },
-      ]},
-      { unit: 3, label: 'Mechanical Advantage & Powered Motor', items: [
-        { label: 'Notes', doc: 'steam8-motor-notes-v1' },
-        { label: 'Design Journal', doc: 'steam8-motor-workbook-v1' },
-      ]},
-      { unit: 4, label: 'Capstone: Spike Prime Challenge Maze', items: [
-        { label: 'Notes', doc: 'steam8-maze-notes-v1' },
-        { label: 'Design Journal', doc: 'steam8-maze-workbook-v1' },
-      ]},
-    ],
-  },
-  'grade-9': {
-    label: 'Grade 9',
-    tagline: 'Program structure, mechanical advantage at scale, and full design-cycle capstones — introduced through Java or Python foundations, REV Robotics, electrified miniature scenes, and a trebuchet capstone.',
-    projects: [
-      { unit: 1, label: 'Programming Foundations (choose a language)', items: [
-        { label: 'Java — Notes', doc: 'steam9-java-notes-v1', badge: 'Java', badgeStyle: 'bg-orange-100 text-orange-700' },
-        { label: 'Java — Design Journal', doc: 'steam9-java-workbook-v1', badge: 'Java', badgeStyle: 'bg-orange-100 text-orange-700' },
-        { label: 'Python — Notes', doc: 'steam9-python-notes-v1', badge: 'Python', badgeStyle: 'bg-sky-100 text-sky-700' },
-        { label: 'Python — Design Journal', doc: 'steam9-python-workbook-v1', badge: 'Python', badgeStyle: 'bg-sky-100 text-sky-700' },
-        { label: 'Python — Trainer (write and run code)', doc: 'steam9-python-trainer-v1', badge: 'Interactive', badgeStyle: 'bg-violet-100 text-violet-800' },
-      ]},
-      { unit: 2, label: 'REV Robotics (Intro)', items: [
-        { label: 'Notes (Java path)', doc: 'steam9-rev-notes-v1', badge: 'Java path', badgeStyle: 'bg-orange-100 text-orange-700' },
-        { label: 'Design Journal (Java path)', doc: 'steam9-rev-workbook-v1', badge: 'Java path', badgeStyle: 'bg-orange-100 text-orange-700' },
-        { label: 'Notes (Python path)', doc: 'steam9-rev-notes-python-path-v1', badge: 'Python path', badgeStyle: 'bg-sky-100 text-sky-700' },
-        { label: 'Design Journal (Python path)', doc: 'steam9-rev-workbook-python-path-v1', badge: 'Python path', badgeStyle: 'bg-sky-100 text-sky-700' },
-      ]},
-      { unit: 3, label: 'Electrified Miniatures', items: [
-        { label: 'Notes', doc: 'steam9-miniatures-notes-v1' },
-        { label: 'Design Journal', doc: 'steam9-miniatures-workbook-v1' },
-      ]},
-      { unit: 4, label: 'Capstone: Trebuchet', items: [
-        { label: 'Notes', doc: 'steam9-trebuchet-notes-v1' },
-        { label: 'Design Journal', doc: 'steam9-trebuchet-workbook-v1' },
-      ]},
-    ],
-  },
-};
-
-const data = grades[grade!];
+const { i } = Astro.props as { i: number };
+const u = m.units[i];
+const entry = await getEntry('steam-grades', u.slug);
+if (!entry) throw new Error(`steam-grades/${u.slug}.md is missing`);
+const { Content } = await entry.render();
+const base = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title={`${data.label} — STEAM Materials`} course="steam">
-  <CourseHero
-    back={{ href: `${base}steam`, label: 'STEAM' }}
-    eyebrow={`STEAM · ${data.label}`}
-    title={data.label}
-    description={data.tagline}
-  />
-
-  {data.projects.map(project => (
-    <MaterialList
-      heading={`Unit ${project.unit} · ${project.label}`}
-      items={project.items.map(item => ({ label: item.label, badge: item.badge, href: `${base}steam/view/${grade}/${item.doc}` }))}
-    />
-  ))}
-</BaseLayout>
+<StudentUnit
+  manifest={m}
+  unit={u}
+  title={`${u.label} — STEAM Materials`}
+  eyebrow={`STEAM · ${u.label}`}
+  back={{ href: `${base}steam`, label: 'STEAM' }}
+  intro={entry.data}
+  Content={Content}
+  prev={m.units[i - 1]}
+  next={m.units[i + 1]}
+/>

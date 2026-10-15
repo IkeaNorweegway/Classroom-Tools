@@ -2,7 +2,10 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CourseHero from '../../components/CourseHero.astro';
 import TopicList from '../../components/TopicList.astro';
+import { getCollection } from 'astro:content';
 const base = import.meta.env.BASE_URL;
+// Cards lead with the student hook; the topic list stays as small print.
+const hooks: Record<string, string> = Object.fromEntries((await getCollection('social9-units')).map((e) => [e.slug, e.data.hook]));
 
 const units = [
   {
@@ -73,6 +76,6 @@ const units = [
 
   <TopicList
     heading="Units"
-    items={units.map(u => ({ art: u.slug, href: `${base}social9/materials/${u.slug}`, title: u.label, kicker: u.organizingIdea, description: u.description }))}
+    items={units.map(u => ({ art: u.slug, href: `${base}social9/materials/${u.slug}`, title: u.label, kicker: u.organizingIdea, description: hooks[u.slug] ?? u.description, meta: hooks[u.slug] ? u.description : undefined }))}
   />
 </BaseLayout>

@@ -2,7 +2,10 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CourseHero from '../../components/CourseHero.astro';
 import TopicList from '../../components/TopicList.astro';
+import { getCollection } from 'astro:content';
 const base = import.meta.env.BASE_URL;
+// Cards lead with the student hook; the topic list stays as small print.
+const hooks: Record<string, string> = Object.fromEntries((await getCollection('steam-grades')).map((e) => [e.slug, e.data.hook]));
 
 const grades = [
   {
@@ -55,6 +58,6 @@ const grades = [
   <TopicList
     heading="Grades"
     numbered={false}
-    items={grades.map(g => ({ art: g.slug, href: `${base}steam/materials/${g.slug}`, title: g.label, kicker: `${g.units} units`, description: g.description }))}
+    items={grades.map(g => ({ art: g.slug, href: `${base}steam/materials/${g.slug}`, title: g.label, kicker: `${g.units} units`, description: hooks[g.slug] ?? g.description, meta: hooks[g.slug] ? g.description : undefined }))}
   />
 </BaseLayout>

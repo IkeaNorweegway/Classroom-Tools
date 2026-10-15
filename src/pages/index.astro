@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import LazySusan from '../components/LazySusan.astro';
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout
@@ -16,6 +17,24 @@ import LazySusan from '../components/LazySusan.astro';
       <p class="rise mt-6 max-w-[46ch] text-lg leading-relaxed text-slate-600" style="--i: 2">
         Notes, workbooks, practice and answer keys for Mr. Bremness's classes. Pick a course on the table to begin.
       </p>
+
+      <div class="rise mt-8" style="--i: 3">
+        <p class="mb-3 text-sm font-semibold text-slate-500" id="who-label">I'm a…</p>
+        <div class="who grid grid-cols-3 gap-2 sm:max-w-md" role="group" aria-labelledby="who-label">
+          <button type="button" class="who-opt" data-who="student" aria-pressed="false">
+            <span class="who-title">Student</span>
+            <span class="who-sub">Notes &amp; practice</span>
+          </button>
+          <a class="who-opt" data-who="parent" href={`${base}parents`}>
+            <span class="who-title">Parent</span>
+            <span class="who-sub">Help at home</span>
+          </a>
+          <a class="who-opt" data-who="teacher" href={`${base}teachers`}>
+            <span class="who-title">Teacher</span>
+            <span class="who-sub">Guides &amp; keys</span>
+          </a>
+        </div>
+      </div>
     </div>
 
     <LazySusan />
@@ -42,7 +61,58 @@ import LazySusan from '../components/LazySusan.astro';
   </a>
 </BaseLayout>
 
+<script>
+  // "I'm a…" chooser. The choice is remembered, and course links on the
+  // turntable then open that audience's view when the course has one.
+  const opts = document.querySelectorAll<HTMLElement>('[data-who]');
+  const apply = (who: string) => {
+    opts.forEach((o) => {
+      if (o instanceof HTMLButtonElement) o.setAttribute('aria-pressed', String(o.dataset.who === who));
+      o.classList.toggle('is-chosen', o.dataset.who === who);
+    });
+    document.querySelectorAll<HTMLAnchorElement>('[data-href-student]').forEach((a) => {
+      a.href = a.dataset[`href${who[0].toUpperCase()}${who.slice(1)}`] || a.dataset.hrefStudent!;
+    });
+  };
+  const save = (who: string) => {
+    try { localStorage.setItem('audience', who); } catch (e) {}
+  };
+  let saved: string | null = null;
+  try { saved = localStorage.getItem('audience'); } catch (e) {}
+  if (saved === 'student' || saved === 'parent' || saved === 'teacher') apply(saved);
+
+  opts.forEach((o) => {
+    o.addEventListener('click', () => {
+      const who = o.dataset.who!;
+      save(who);
+      apply(who);
+      if (who === 'student') {
+        document.querySelector('[data-susan-stage]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  });
+</script>
+
 <style>
+  .who-opt {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    border-radius: 1rem;
+    padding: 0.75rem 0.875rem;
+    text-align: left;
+    background: white;
+    box-shadow: 0 1px 2px rgb(31 29 26 / 0.08), inset 0 0 0 1px rgb(31 29 26 / 0.08);
+    transition: box-shadow 200ms, transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .who-opt:hover { transform: translateY(-2px); box-shadow: 0 6px 16px -6px rgb(31 29 26 / 0.18), inset 0 0 0 1px rgb(31 29 26 / 0.1); }
+  .who-opt.is-chosen { box-shadow: 0 1px 2px rgb(31 29 26 / 0.08), inset 0 0 0 2px rgb(31 29 26 / 0.7); }
+  .who-title { font-size: 0.9375rem; font-weight: 700; color: rgb(31 29 26); }
+  .who-sub { font-size: 0.75rem; line-height: 1.3; color: rgb(107 102 93); }
+  @media (prefers-reduced-motion: reduce) {
+    .who-opt, .who-opt:hover { transition: none; transform: none; }
+  }
+
   .home-hero {
     grid-template-areas: 'intro' 'stage' 'panel';
   }

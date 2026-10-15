@@ -11,20 +11,22 @@ misconceptions:
   - Animals are independent of plants beyond food
   - Decomposers are not part of the ecosystem
 csConnection: Scratch simulation of a food web uses conditional structures — if no sunlight, then no photosynthesis, then organisms cannot survive. Students code the logic of the ecosystem.
+hook: "When wolves came back to Yellowstone, the rivers changed shape. In nature, everything is connected."
+realWorld:
+  - title: "Yellowstone wolves"
+    blurb: "Wolves changed where elk grazed, so riverbank plants grew back and the banks stopped washing away."
+  - title: "Your lunch"
+    blurb: "Every bite of food you eat started with a plant using sunlight."
+  - title: "Compost"
+    blurb: "Worms and fungi turn old food and leaves into soil for new plants."
+iCan:
+  - "I can sort the living (biotic) and non-living (abiotic) parts of an ecosystem."
+  - "I can explain how plants make food by photosynthesis."
+  - "I can build a food web and follow the energy."
+  - "I can explain what happens when one part of an ecosystem changes."
+teacherSummary: "Biotic and abiotic factors, photosynthesis, producers, consumers and decomposers, food webs and trophic cascades, and Indigenous ecological knowledge. Watch for \"plants get food from soil\" and decomposers left out of the ecosystem."
 ---
 
-When wolves were reintroduced to Yellowstone National Park, the rivers changed shape. The wolves hunted deer. The deer stopped grazing along riverbanks. Grass grew back. The banks stabilized. The rivers stopped eroding. One species, returning to a place it had been missing, altered an entire landscape.
+## What's the big idea?
 
-That is what this unit is about: how everything in an ecosystem is connected, and what happens when one part of that connection changes.
-
-## What you will explore
-
-You will start with the foundational idea that most people get wrong: **plants do not eat from the soil**. They make their own food using sunlight, water, and air. This process — photosynthesis — is the base of almost every food chain on Earth, and understanding it changes how you see the living world.
-
-From there, you will map out how energy moves through ecosystems: from plants to herbivores to predators, and back into the soil through decomposers. You will look at what happens when one part of that chain is removed or added — sometimes with dramatic results, like the Yellowstone wolves.
-
-You will also explore how Indigenous peoples have observed and maintained these relationships for thousands of years, and what traditional ecological knowledge adds to how we understand and protect ecosystems today.
-
-## By the end of this unit
-
-You will be able to explain how energy flows through a food web, predict what happens when an ecosystem is disrupted, and understand why protecting biodiversity is not just about individual species — it is about keeping the whole system working. 
+An **ecosystem** is all the living things in a place, plus the non-living things they need, like sunlight, water and soil. Plants are **producers**: they make their own food from sunlight by **photosynthesis**. Animals are **consumers** that eat plants or other animals, and **decomposers** like worms and fungi break down dead things. A **food web** shows how it all connects, so a change to one living thing can ripple through everything else.

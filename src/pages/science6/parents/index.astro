@@ -1,0 +1,34 @@
+---
+// Parent overview for Grade 6 Science (shared ParentOverview layout).
+import ParentOverview from '../../../components/ParentOverview.astro';
+import { getCollection } from 'astro:content';
+import { science6 as m } from '../../../data/science6';
+
+const base = import.meta.env.BASE_URL;
+const written = new Set((await getCollection('parent-guides')).map((e) => e.slug));
+const groups = [{
+  items: m.units.filter((u) => u.home.length > 0).map((u) => ({
+    label: u.label,
+    href: written.has(`science6/${u.slug}`) ? `${base}${m.parentHref(u.slug)}` : undefined,
+  })),
+}];
+
+const stages = [{"label": "Grades 4 and 5", "idea": "Describing materials, pushes and pulls, plants and animals and their habitats, and weather."}, {"label": "Grade 6", "idea": "Matter, forces, living systems, climate, energy resources and space.", "now": true}, {"label": "Grade 7", "idea": "Ecosystems, plants, heat and temperature, structures and forces, and planet Earth."}, {"label": "Grades 8 and 9", "idea": "Cells and body systems, fluids, light, machines, chemistry, electricity and space exploration."}, {"label": "High school", "idea": "Science 10, then Biology, Chemistry and Physics, or Science 20 and 30."}];
+const tips: [string, string][] = [["Ask “How do you know?”", "Science answers need evidence. Ask your child what they saw or measured that backs up their answer."], ["Notice science around you", "Cooking, weather, sports and gardening are full of science. Ask “What do you think is happening here?”"], ["Draw it", "Diagrams are a big part of science. Ask your child to sketch what’s happening, like arrows for forces or a food web."], ["Use their notes", "The notes show how ideas were taught in class. Reading a section together before practice helps."], ["Words matter", "Science words have exact meanings. Have your child explain a word in their own words, then give an example."], ["Short and often", "Fifteen focused minutes a few times a week beats a long session the night before a test."]];
+---
+
+<ParentOverview
+  course="science"
+  title="Grade 6 science at home"
+  pageTitle="Grade 6 Science — Parent guide"
+  eyebrow="Parent guide · Grade 6 Science"
+  numeral="6"
+  description={"What your child is learning in science this year, how it connects to earlier and later grades, and simple ways to help, with worked examples and short practice sheets for each unit."}
+  aboutHeading={"What Grade 6 science is about"}
+  about={["Grade 6 science has six units: matter, forces, living systems, climate, energy resources and space. Each one starts from something your child can see or feel and builds a model that explains it, like tiny moving particles that explain why ice melts.", "Students practise thinking like scientists: observing carefully, explaining with evidence, and using diagrams and models. These skills matter as much as the facts, and they carry into every science course that follows."]}
+  stages={stages}
+  groups={groups}
+  listHeading="Units this year"
+  listIntro="Six units. Pick one to see the parent guide."
+  tips={tips}
+/>

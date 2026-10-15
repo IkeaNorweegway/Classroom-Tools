@@ -9,20 +9,22 @@ misconceptions:
   - Simple machines reduce the work done
   - Heavier or larger objects are always more stable
   - Compression and tension are the same
+hook: "Why does a bridge stay up while a stack of blocks falls over? The shape matters as much as the material."
+realWorld:
+  - title: "Bridges and towers"
+    blurb: "Triangles show up in bridges, cranes and power-line towers because they spread forces out and don't bend easily."
+  - title: "Hockey helmets"
+    blurb: "A helmet is a shell structure: a thin, curved surface that spreads the force of a hit."
+  - title: "Ramps and levers"
+    blurb: "A wheelchair ramp, a bottle opener and a crowbar are simple machines that make a push or pull easier."
+iCan:
+  - "I can sort structures into solid, frame and shell types."
+  - "I can name the loads and forces acting on a structure."
+  - "I can explain compression, tension, shear and torsion."
+  - "I can explain how simple machines trade force for distance."
+teacherSummary: "Solid, frame and shell structures, dead/live/dynamic loads, internal forces (compression, tension, shear, torsion), stability and centre of gravity, simple machines and mechanical advantage; no vector or torque calculations. Watch for \"stronger material always means stronger structure\" and \"machines create energy.\""
 ---
 
-A grain elevator on the prairie has stood for a hundred years without moving an inch, while a poorly designed shelf collapses under a stack of books. The difference is not luck — it is how well the structure's design accounts for the forces acting on it, both from the outside and deep inside its own materials.
+## What's the big idea?
 
-This unit is about reading structures the way an engineer does: as a system of forces in balance, or out of it.
-
-## What you will explore
-
-You will start with **external forces** — the loads a structure has to support, whether from gravity, wind, or the weight of what it is carrying — and then move inside the material to look at **internal forces**: **tension** (pulling apart), **compression** (pushing together), **shear** (sliding past), and **torsion** (twisting). A suspension bridge cable is in tension. The pillars holding it up are in compression. Most real structures experience several of these forces in different parts at once.
-
-You will investigate why some materials return to their original shape after a force is removed (**elastic** behaviour, like a diving board) while others stay bent or deformed (**plastic** behaviour, like a crumpled car fender) — and why engineers deliberately choose one or the other depending on what the structure needs to do. You will also study how shape affects strength: why a triangle is far more rigid than a square, and why a tube resists bending better than a flat beam of the same amount of material.
-
-The unit builds toward **Newton's Third Law**: every force has an equal and opposite reaction force acting on a different object. A structure standing still is not free of forces — it is a system where every force is perfectly balanced by another.
-
-## By the end of this unit
-
-You will be able to look at a real structure and identify the external loads acting on it and the internal forces running through its members, explain why its shape and materials were chosen, and predict what would happen if a load, a material, or a joint were changed.
+Every structure has forces pushing and pulling on it: its own weight, whatever it holds up, and things like wind. Inside, those forces squeeze (**compression**), stretch (**tension**), slide (**shear**) or twist (**torsion**) the materials. Good designs use shapes like triangles and arches to spread forces out. **Simple machines** like levers and ramps don't create energy, but they let a small force move something big.
