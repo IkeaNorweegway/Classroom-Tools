@@ -14,6 +14,7 @@ export function socialUnit(prefix: string, slug: string, label: string, sheets: 
       { label: 'Notes Answer Key', doc: `${prefix}-${slug}-notes-answers-v1` },
       { label: 'Workbook Answer Key', doc: `${prefix}-${slug}-workbook-answers-v1` },
     ],
+    teacherGuide: `${prefix}-${slug}-teacherguide-v1`,
     home: homeSheets(prefix, slug, sheets),
   };
 }

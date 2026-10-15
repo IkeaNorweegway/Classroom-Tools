@@ -36,6 +36,8 @@ export interface CourseUnit {
   path: PathStep[];
   extras: { heading: string; items: Doc[] }[];
   keys: Doc[];
+  /** The teacher guide's viewer document, when the course has one. */
+  teacherGuide?: string;
   /** Two short at-home sheets per unit for the parent page. */
   home: HomeSheet[];
 }
