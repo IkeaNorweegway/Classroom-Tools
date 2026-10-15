@@ -5,10 +5,14 @@ import { homeSheets, type CourseManifest, type CourseUnit, type Doc } from './ma
 const accessible = { badge: 'Accessible' };
 const nonReader = { badge: 'Non-reader' };
 
+// Teacher guide version per unit; every guide is v2 except heat, which is v3.
+const guideVersion: Record<string, number> = { 'heat-temperature': 3 };
+
 function unit(slug: string, label: string, sheets: [string, string][], more: { heading: string; items: Doc[] }[] = [], moreKeys: Doc[] = []): CourseUnit {
   return {
     slug,
     label,
+    teacherGuide: `sci7-${slug}-teacherguide-v${guideVersion[slug] ?? 2}`,
     path: [
       { hint: 'Start here. You fill these in during class.', items: [{ label: 'Guided Notes', doc: `sci7-${slug}-notes-v1`, type: 'notes' }] },
       { hint: 'Practice that mixes up everything in the unit.', items: [{ label: 'Workbook', doc: `sci7-${slug}-workbook-v1`, type: 'workbook' }] },
