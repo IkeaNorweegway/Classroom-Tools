@@ -210,6 +210,7 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 /steam/materials/[grade]        Grade page
 /steam/view/[grade]/[doc]       Material viewer
 /resources/                     More resources — site-level page for extras not tied to a course
+/resources/morning-routine      Morning routine — CNN 10 newest episode (uploads playlist) + three reasoning questions; a photo writing prompt (`src/data/morning-routine.ts` `writingPrompts`, images in `public/morning-routine/`); an open-middle math question (`mathQuestions`). Shows one set per school day from a fixed start date (2026-09-01); Previous/Random/Next browse the banks
 ```
 
 `/resources/` is not a course: no tab in the top nav, no turntable icon, no `CourseKey`. It is linked from the home page, directly below the teacher Google Drive link. Its list is the `resources` array at the top of `src/pages/resources/index.astro`; it shows a "coming soon" card while that array is empty.
