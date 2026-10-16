@@ -257,8 +257,7 @@ Every notes package should exist in three formats:
 **.md file** — the source and the editable version. Used for version control and future revision. Markdown renders cleanly on the classroom website.
 
 **.html file** — the screen/web version. Self-contained (no dependencies). Design standards:
-- Georgian serif body font (12pt in print, 15px on screen)
-- System-ui sans-serif for labels, tables, and UI elements
+- Site fonts, loaded from `public/fonts/`: Atkinson Hyperlegible Next for body text, labels and tables; Fraunces (weight 600) for the title and large section headings. Warm-neutral greys, with write-on lines dark enough to survive a photocopier. Render first, then run `python3 scripts/apply_site_fonts.py <file>` to add both
 - Section headers: solid color bar matching unit color (Living Systems = emerald, Matter = cyan, Forces = violet, Climate = amber, Energy = orange, Space = indigo)
 - Fill-in blanks: CSS `border-bottom` underlines, sized to context (sm/md/lg/xl)
 - Misconception callouts: red left border, "MISCONCEPTION" label

@@ -5,59 +5,72 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sciences 6 — Les systèmes vivants : Cahier d'exercices</title>
 <style>
-  :root { --unit: #059669; --unit-dark: #047857; --unit-light: #ecfdf5; --unit-border: #a7f3d0; }
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+  :root { --unit: #047857; --unit-dark: #047857; --unit-light: #ecfdf5; --unit-border: #a7f3d0; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: Georgia, 'Times New Roman', serif; font-size: 15px; line-height: 1.75; color: #1e293b; max-width: 860px; margin: 0 auto; padding: 2.5rem 2rem; background: #fff; }
-  h1 { font-family: system-ui, sans-serif; font-size: 1.6rem; font-weight: 700; color: #0f172a; }
-  h2 { font-family: system-ui, sans-serif; font-size: 1rem; font-weight: 700; color: white; background: var(--unit); padding: 0.5rem 1rem; border-radius: 0.35rem; margin: 2.5rem 0 1rem; }
+  body { font-family: var(--font-body); font-size: 15px; line-height: 1.75; color: #1f1d1a; max-width: 860px; margin: 0 auto; padding: 2.5rem 2rem; background: #fff; }
+  h1 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; color: #1f1d1a; }
+  h2 { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: white; background: var(--unit); padding: 0.5rem 1rem; border-radius: 0.35rem; margin: 2.5rem 0 1rem; }
   h2.stretch { background: #6d28d9; }
-  h2.reflect { background: #475569; }
-  h3 { font-family: system-ui, sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--unit-dark); text-transform: uppercase; letter-spacing: 0.06em; margin: 1.25rem 0 0.35rem; }
+  h2.reflect { background: #3f3b35; }
+  h3 { font-family: var(--font-body); font-size: 0.85rem; font-weight: 700; color: var(--unit-dark); text-transform: uppercase; letter-spacing: 0.06em; margin: 1.25rem 0 0.35rem; }
   p { margin-bottom: 0.6rem; }
-  strong { color: #0f172a; }
+  strong { color: #1f1d1a; }
   .cover { border-left: 6px solid var(--unit); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; background: var(--unit-light); border-radius: 0 0.5rem 0.5rem 0; }
-  .cover p { font-family: system-ui, sans-serif; font-size: 0.82rem; color: #475569; margin: 0.2rem 0 0; }
-  .name-line { font-family: system-ui, sans-serif; font-size: 0.85rem; color: #64748b; margin-top: 0.85rem; display: flex; gap: 2rem; }
-  .name-line span { border-bottom: 1.5px solid #94a3b8; padding-bottom: 2px; flex: 1; max-width: 22rem; }
-  .instructions { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 0.5rem; padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 0.88rem; color: #475569; }
-  .q-card { border: 1.5px solid #e2e8f0; border-radius: 0.5rem; padding: 1.1rem 1.25rem; margin-bottom: 1.1rem; }
-  .q-header { font-family: system-ui, sans-serif; font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem; }
-  .q-num { font-size: 0.9rem; font-weight: 800; color: #0f172a; }
+  .cover p { font-family: var(--font-body); font-size: 0.82rem; color: #3f3b35; margin: 0.2rem 0 0; }
+  .name-line { font-family: var(--font-body); font-size: 0.85rem; color: #544f47; margin-top: 0.85rem; display: flex; gap: 2rem; }
+  .name-line span { border-bottom: 1.5px solid #6b665d; padding-bottom: 2px; flex: 1; max-width: 22rem; }
+  .instructions { background: #faf9f6; border: 1.5px solid #c9c4b9; border-radius: 0.5rem; padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 0.88rem; color: #3f3b35; }
+  .q-card { border: 1.5px solid #c9c4b9; border-radius: 0.5rem; padding: 1.1rem 1.25rem; margin-bottom: 1.1rem; }
+  .q-header { font-family: var(--font-body); font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem; }
+  .q-num { font-size: 0.9rem; font-weight: 800; color: #1f1d1a; }
   .s-num { color: #6d28d9; font-size: 0.9rem; font-weight: 800; }
   .badge-core { background: #d1fae5; color: #065f46; font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; letter-spacing: 0.05em; }
   .badge-ext { background: #ede9fe; color: #6d28d9; font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; letter-spacing: 0.05em; }
-  .t-note { font-family: system-ui, sans-serif; font-size: 0.72rem; color: #94a3b8; font-style: italic; margin-left: auto; }
+  .t-note { font-family: var(--font-body); font-size: 0.72rem; color: #6b665d; font-style: italic; margin-left: auto; }
   .q-body { font-size: 0.92rem; }
   .q-body p { margin-bottom: 0.5rem; }
   .q-body ul, .q-body ol { padding-left: 1.3rem; margin-bottom: 0.5rem; }
   .q-card.stretch { border-color: #ddd6fe; background: #faf5ff; }
-  .al { display: block; border-bottom: 1.5px solid #94a3b8; height: 1.8rem; margin: 0.35rem 0; width: 100%; }
-  .al-sm { width: 30%; display: inline-block; border-bottom: 1.5px solid #94a3b8; height: 1.4rem; vertical-align: bottom; }
-  .b { display: inline-block; border-bottom: 2px solid #334155; vertical-align: bottom; }
+  .al { display: block; border-bottom: 1.5px solid #6b665d; height: 1.8rem; margin: 0.35rem 0; width: 100%; }
+  .al-sm { width: 30%; display: inline-block; border-bottom: 1.5px solid #6b665d; height: 1.4rem; vertical-align: bottom; }
+  .b { display: inline-block; border-bottom: 2px solid #3f3b35; vertical-align: bottom; }
   .b-sm { width: 3.5rem; } .b-md { width: 6.5rem; } .b-lg { width: 11rem; } .b-xl { width: 16rem; }
   table { width: 100%; border-collapse: collapse; font-size: 0.87rem; margin: 0.6rem 0; }
-  th { font-family: system-ui, sans-serif; font-size: 0.73rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: var(--unit-light); color: var(--unit-dark); padding: 0.45rem 0.65rem; border: 1px solid var(--unit-border); text-align: left; }
-  td { padding: 0.5rem 0.65rem; border: 1px solid #e2e8f0; vertical-align: top; min-height: 2rem; }
-  tr:nth-child(even) td { background: #f8fafc; }
-  .rubric th { background: #1e293b; color: white; }
+  th { font-family: var(--font-body); font-size: 0.73rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: var(--unit-light); color: var(--unit-dark); padding: 0.45rem 0.65rem; border: 1px solid var(--unit-border); text-align: left; }
+  td { padding: 0.5rem 0.65rem; border: 1px solid #c9c4b9; vertical-align: top; min-height: 2rem; }
+  tr:nth-child(even) td { background: #faf9f6; }
+  .rubric th { background: #1f1d1a; color: white; }
   .rubric td:first-child { font-weight: 400; }
-  pre { font-family: 'Courier New', Courier, monospace; font-size: 0.8rem; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 0.35rem; padding: 0.75rem 0.9rem; overflow-x: auto; white-space: pre; margin: 0.6rem 0; line-height: 1.45; }
-  .hint { font-family: system-ui, sans-serif; font-size: 0.78rem; color: #c2410c; font-style: italic; margin-top: 0.3rem; }
-  blockquote { border-left: 4px solid #e2e8f0; padding: 0.5rem 0.85rem; margin: 0.5rem 0; font-style: italic; font-size: 0.9rem; color: #475569; background: #f8fafc; border-radius: 0 0.25rem 0.25rem 0; }
-  .word-bank { font-family: system-ui, sans-serif; font-size: 0.82rem; font-weight: 600; background: #fefce8; border: 1px solid #fde68a; border-radius: 0.35rem; padding: 0.4rem 0.75rem; display: inline-block; margin: 0.35rem 0; }
+  pre { font-family: var(--font-mono); font-size: 0.8rem; background: #f4f2ed; border: 1px solid #c9c4b9; border-radius: 0.35rem; padding: 0.75rem 0.9rem; overflow-x: auto; white-space: pre; margin: 0.6rem 0; line-height: 1.45; }
+  .hint { font-family: var(--font-body); font-size: 0.78rem; color: #c2410c; font-style: italic; margin-top: 0.3rem; }
+  blockquote { border-left: 4px solid #c9c4b9; padding: 0.5rem 0.85rem; margin: 0.5rem 0; font-style: italic; font-size: 0.9rem; color: #3f3b35; background: #faf9f6; border-radius: 0 0.25rem 0.25rem 0; }
+  .word-bank { font-family: var(--font-body); font-size: 0.82rem; font-weight: 600; background: #fefce8; border: 1px solid #fde68a; border-radius: 0.35rem; padding: 0.4rem 0.75rem; display: inline-block; margin: 0.35rem 0; }
   .check-box { background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 0.5rem; padding: 1.1rem 1.25rem; margin: 1.5rem 0; }
   .check-box h3 { color: #166534; margin-top: 0; }
-  .reflect-box { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 0.5rem; padding: 1.1rem 1.25rem; margin: 1.5rem 0; }
-  .reflect-box h3 { color: #475569; margin-top: 0; }
-  .cb-row { font-family: system-ui, sans-serif; font-size: 0.85rem; display: flex; gap: 1.25rem; margin: 0.35rem 0; flex-wrap: wrap; }
+  .reflect-box { background: #faf9f6; border: 1.5px solid #c9c4b9; border-radius: 0.5rem; padding: 1.1rem 1.25rem; margin: 1.5rem 0; }
+  .reflect-box h3 { color: #3f3b35; margin-top: 0; }
+  .cb-row { font-family: var(--font-body); font-size: 0.85rem; display: flex; gap: 1.25rem; margin: 0.35rem 0; flex-wrap: wrap; }
   .cb-item { display: flex; align-items: center; gap: 0.3rem; }
   .cb-item input { width: 1rem; height: 1rem; }
-  .rating-row { font-family: system-ui, sans-serif; font-size: 0.9rem; font-weight: 700; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin: 0.5rem 0; }
-  .rating-item { width: 2rem; height: 2rem; border: 2px solid #e2e8f0; border-radius: 0.35rem; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 800; }
-  hr { border: none; border-top: 2px solid #e2e8f0; margin: 1.75rem 0; }
+  .rating-row { font-family: var(--font-body); font-size: 0.9rem; font-weight: 700; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin: 0.5rem 0; }
+  .rating-item { width: 2rem; height: 2rem; border: 2px solid #c9c4b9; border-radius: 0.35rem; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 800; }
+  hr { border: none; border-top: 2px solid #c9c4b9; margin: 1.75rem 0; }
   .section-break { border: none; border-top: 3px solid var(--unit); margin: 2.5rem 0; }
-  .forethought { border: 2px dashed #94a3b8; border-radius: 0.5rem; padding: 1rem 1.25rem; margin-bottom: 1.5rem; background: #f8fafc; font-size: 0.9rem; }
-  .forethought .label { font-family: system-ui, sans-serif; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-bottom: 0.4rem; }
+  .forethought { border: 2px dashed #6b665d; border-radius: 0.5rem; padding: 1rem 1.25rem; margin-bottom: 1.5rem; background: #faf9f6; font-size: 0.9rem; }
+  .forethought .label { font-family: var(--font-body); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #544f47; margin-bottom: 0.4rem; }
   @media print { body { font-size: 10.5pt; padding: 1.5cm; max-width: 100%; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .q-card { break-inside: avoid; } h2 { break-after: avoid; } }
 </style>
 </head>
@@ -377,7 +390,7 @@
 <!-- Point de mi-parcours -->
 <div class="check-box">
   <h3>Point de mi-parcours</h3>
-  <p style="font-family:system-ui,sans-serif; font-size:0.8rem; color:#475569;"><em>Non noté. Lu par l'enseignant·e lors du prochain cours.</em></p>
+  <p style="font-family: var(--font-body); font-size:0.8rem; color:#3f3b35;"><em>Non noté. Lu par l'enseignant·e lors du prochain cours.</em></p>
   <p>Quelle question a été la plus difficile jusqu'ici? <span class="al-sm">&nbsp;</span></p>
   <div class="cb-row">
     <label class="cb-item"><input type="checkbox"> Je ne connaissais pas le concept</label>
@@ -388,7 +401,7 @@
   <p>Évalue ta confiance avec la photosynthèse maintenant :</p>
   <div class="rating-row">
     <div class="rating-item">1</div><div class="rating-item">2</div><div class="rating-item">3</div><div class="rating-item">4</div>
-    <span style="font-family:system-ui,sans-serif; font-size:0.78rem; color:#64748b;">&nbsp;(1 = perdu·e · 2 = partiel · 3 = je comprends · 4 = je pourrais l'enseigner)</span>
+    <span style="font-family: var(--font-body); font-size:0.78rem; color:#544f47;">&nbsp;(1 = perdu·e · 2 = partiel · 3 = je comprends · 4 = je pourrais l'enseigner)</span>
   </div>
   <p>Une preuve qui justifie ta cote : <div class="al"></div></p>
 </div>
@@ -538,11 +551,11 @@
   <div class="q-body">
     <p>Complète la cascade conditionnelle. Chaque SI mène au ALORS suivant.</p>
     <p><strong>Condition de départ :</strong> Une longue sécheresse réduit l'eau disponible dans une prairie.</p>
-    <div style="border:1.5px solid #e2e8f0; border-radius:0.5rem; padding:1rem 1.25rem; margin:0.6rem 0; background:#f8fafc; font-family:'Segoe UI',system-ui,sans-serif; font-size:0.88rem; line-height:2.2; color:#1e293b;">
-      <strong style="color:#059669;">SI</strong> le niveau d'eau baisse <strong style="color:#059669;">ALORS</strong> <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:60%; min-width:12rem; vertical-align:bottom;">&nbsp;</span><br>
-      <strong style="color:#059669;">SI</strong> <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:28%; min-width:8rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#059669;">ALORS</strong> les producteurs (herbe) ne peuvent pas <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:28%; min-width:8rem; vertical-align:bottom;">&nbsp;</span><br>
-      <strong style="color:#059669;">SI</strong> l'herbe ne peut pas <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:18%; min-width:5rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#059669;">ALORS</strong> les consommateurs primaires (campagnols) vont <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:24%; min-width:7rem; vertical-align:bottom;">&nbsp;</span><br>
-      <strong style="color:#059669;">SI</strong> la population de campagnols <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:14%; min-width:4rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#059669;">ALORS</strong> les consommateurs secondaires (coyotes) vont <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:20%; min-width:6rem; vertical-align:bottom;">&nbsp;</span>
+    <div style="border:1.5px solid #c9c4b9; border-radius:0.5rem; padding:1rem 1.25rem; margin:0.6rem 0; background:#faf9f6; font-family: var(--font-body); font-size:0.88rem; line-height:2.2; color:#1f1d1a;">
+      <strong style="color:#047857;">SI</strong> le niveau d'eau baisse <strong style="color:#047857;">ALORS</strong> <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:60%; min-width:12rem; vertical-align:bottom;">&nbsp;</span><br>
+      <strong style="color:#047857;">SI</strong> <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:28%; min-width:8rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#047857;">ALORS</strong> les producteurs (herbe) ne peuvent pas <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:28%; min-width:8rem; vertical-align:bottom;">&nbsp;</span><br>
+      <strong style="color:#047857;">SI</strong> l'herbe ne peut pas <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:18%; min-width:5rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#047857;">ALORS</strong> les consommateurs primaires (campagnols) vont <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:24%; min-width:7rem; vertical-align:bottom;">&nbsp;</span><br>
+      <strong style="color:#047857;">SI</strong> la population de campagnols <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:14%; min-width:4rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#047857;">ALORS</strong> les consommateurs secondaires (coyotes) vont <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:20%; min-width:6rem; vertical-align:bottom;">&nbsp;</span>
     </div>
     <p>Quel type de raisonnement cette cascade démontre-t-elle? Fais le lien avec ce que tu sais de la programmation informatique.</p>
     <div class="al"></div>
@@ -620,7 +633,7 @@
 
 <div class="reflect-box">
   <h3>Bloc de réflexion</h3>
-  <p style="font-family:system-ui,sans-serif; font-size:0.8rem; color:#64748b;"><em>À la fin de chaque séance du cahier. Non noté.</em></p>
+  <p style="font-family: var(--font-body); font-size:0.8rem; color:#544f47;"><em>À la fin de chaque séance du cahier. Non noté.</em></p>
   <p>1. Quelles questions étaient les plus difficiles aujourd'hui? <span class="al-sm">&nbsp;</span></p>
   <p>2. C'était difficile parce que tu ne connaissais pas le concept, ou parce que la question était posée d'une façon inhabituelle?</p>
   <div class="al"></div>
@@ -629,7 +642,7 @@
   <p>4. Évalue ta compréhension du concept le plus difficile aujourd'hui :</p>
   <div class="rating-row">
     <div class="rating-item">1</div><div class="rating-item">2</div><div class="rating-item">3</div><div class="rating-item">4</div>
-    <span style="font-family:system-ui,sans-serif; font-size:0.78rem; color:#64748b;">&nbsp;(1 = perdu·e · 2 = partiel · 3 = je comprends · 4 = je pourrais l'enseigner)</span>
+    <span style="font-family: var(--font-body); font-size:0.78rem; color:#544f47;">&nbsp;(1 = perdu·e · 2 = partiel · 3 = je comprends · 4 = je pourrais l'enseigner)</span>
   </div>
   <p>Concept le plus difficile : <span class="al-sm">&nbsp;</span> &nbsp;&nbsp; Ma cote : <span class="al-sm">&nbsp;</span></p>
   <p>Une preuve : <div class="al"></div></p>
@@ -637,7 +650,7 @@
 
 <hr class="section-break">
 <h2 class="stretch">Zone de dépassement</h2>
-<p style="font-family:system-ui,sans-serif; font-size:0.85rem; color:#6d28d9; margin-bottom:1rem;"><em>Tente ces questions après avoir complété toutes les précédentes. Pas d'aide.</em></p>
+<p style="font-family: var(--font-body); font-size:0.85rem; color:#6d28d9; margin-bottom:1rem;"><em>Tente ces questions après avoir complété toutes les précédentes. Pas d'aide.</em></p>
 
 <div class="q-card stretch">
   <div class="q-header"><span class="s-num">S1</span><span class="badge-ext">★★ Approfondi</span><span class="t-note">multi-concepts : photosynthèse + système fermé + réseau alimentaire</span></div>
@@ -683,12 +696,12 @@
   <div class="q-header"><span class="s-num">S4</span><span class="badge-ext">★★ Approfondi</span><span class="t-note">multi-concepts : logique conditionnelle + photosynthèse + réseau alimentaire</span></div>
   <div class="q-body">
     <p>Une énorme éruption volcanique envoie des cendres dans l'atmosphère, bloquant environ 70 % de la lumière du soleil en Amérique du Nord pendant deux ans. Écris une cascade conditionnelle d'<strong>au moins cinq étapes</strong>, reliant cet événement à ses effets sur les producteurs, les consommateurs, les décomposeurs et les conditions abiotiques.</p>
-    <div style="border:1.5px solid #ddd6fe; border-radius:0.5rem; padding:1rem 1.25rem; margin:0.6rem 0; background:#faf5ff; font-family:'Segoe UI',system-ui,sans-serif; font-size:0.88rem; line-height:2.2; color:#1e293b;">
-      <strong style="color:#6d28d9;">SI</strong> la lumière du soleil est réduite de 70 % <strong style="color:#6d28d9;">ALORS</strong> <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:55%; min-width:10rem; vertical-align:bottom;">&nbsp;</span><br>
-      <strong style="color:#6d28d9;">SI</strong> <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:30%; min-width:8rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#6d28d9;">ALORS</strong> <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:50%; min-width:10rem; vertical-align:bottom;">&nbsp;</span><br>
-      <strong style="color:#6d28d9;">SI</strong> <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:30%; min-width:8rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#6d28d9;">ALORS</strong> <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:50%; min-width:10rem; vertical-align:bottom;">&nbsp;</span><br>
-      <strong style="color:#6d28d9;">SI</strong> <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:30%; min-width:8rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#6d28d9;">ALORS</strong> <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:50%; min-width:10rem; vertical-align:bottom;">&nbsp;</span><br>
-      <strong style="color:#6d28d9;">SI</strong> <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:30%; min-width:8rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#6d28d9;">ALORS</strong> <span style="display:inline-block; border-bottom:1.5px solid #94a3b8; width:50%; min-width:10rem; vertical-align:bottom;">&nbsp;</span>
+    <div style="border:1.5px solid #ddd6fe; border-radius:0.5rem; padding:1rem 1.25rem; margin:0.6rem 0; background:#faf5ff; font-family: var(--font-body); font-size:0.88rem; line-height:2.2; color:#1f1d1a;">
+      <strong style="color:#6d28d9;">SI</strong> la lumière du soleil est réduite de 70 % <strong style="color:#6d28d9;">ALORS</strong> <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:55%; min-width:10rem; vertical-align:bottom;">&nbsp;</span><br>
+      <strong style="color:#6d28d9;">SI</strong> <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:30%; min-width:8rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#6d28d9;">ALORS</strong> <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:50%; min-width:10rem; vertical-align:bottom;">&nbsp;</span><br>
+      <strong style="color:#6d28d9;">SI</strong> <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:30%; min-width:8rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#6d28d9;">ALORS</strong> <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:50%; min-width:10rem; vertical-align:bottom;">&nbsp;</span><br>
+      <strong style="color:#6d28d9;">SI</strong> <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:30%; min-width:8rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#6d28d9;">ALORS</strong> <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:50%; min-width:10rem; vertical-align:bottom;">&nbsp;</span><br>
+      <strong style="color:#6d28d9;">SI</strong> <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:30%; min-width:8rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#6d28d9;">ALORS</strong> <span style="display:inline-block; border-bottom:1.5px solid #6b665d; width:50%; min-width:10rem; vertical-align:bottom;">&nbsp;</span>
     </div>
     <p>Après la disparition des cendres et le retour du soleil, décris une raison pour laquelle l'écosystème pourrait se rétablir et une raison pour laquelle il pourrait ne pas revenir à son état d'origine.</p>
     <p>Raison pour laquelle il pourrait se rétablir : <div class="al"></div></p>
@@ -709,21 +722,21 @@
 
 <hr class="section-break">
 <h2 class="reflect">Grille d'auto-évaluation</h2>
-<p style="font-family:system-ui,sans-serif; font-size:0.85rem; color:#475569; margin-bottom:0.85rem;"><em>Complète à la fin de l'unité, avant le test. Notes autorisées.</em></p>
+<p style="font-family: var(--font-body); font-size:0.85rem; color:#3f3b35; margin-bottom:0.85rem;"><em>Complète à la fin de l'unité, avant le test. Notes autorisées.</em></p>
 <table class="rubric">
   <thead><tr><th style="width:50%">Groupe de connaissances</th><th style="width:25%">Je peux expliquer sans mes notes</th><th style="width:25%">Une question que j'ai encore</th></tr></thead>
   <tbody>
-    <tr><td>Composantes biotiques et abiotiques</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / En progrès / Pas encore</td><td>&nbsp;</td></tr>
-    <tr><td>Photosynthèse — équation et sources des ingrédients</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / En progrès / Pas encore</td><td>&nbsp;</td></tr>
-    <tr><td>Photosynthèse — les trois expériences</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / En progrès / Pas encore</td><td>&nbsp;</td></tr>
-    <tr><td>Interdépendance plante-animal</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / En progrès / Pas encore</td><td>&nbsp;</td></tr>
-    <tr><td>Réseaux alimentaires et cascades trophiques</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / En progrès / Pas encore</td><td>&nbsp;</td></tr>
-    <tr><td>Plantes sacrées des Premières Nations et savoirs traditionnels</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / En progrès / Pas encore</td><td>&nbsp;</td></tr>
-    <tr><td>SC — logique conditionnelle dans les écosystèmes</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / En progrès / Pas encore</td><td>&nbsp;</td></tr>
+    <tr><td>Composantes biotiques et abiotiques</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / En progrès / Pas encore</td><td>&nbsp;</td></tr>
+    <tr><td>Photosynthèse — équation et sources des ingrédients</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / En progrès / Pas encore</td><td>&nbsp;</td></tr>
+    <tr><td>Photosynthèse — les trois expériences</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / En progrès / Pas encore</td><td>&nbsp;</td></tr>
+    <tr><td>Interdépendance plante-animal</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / En progrès / Pas encore</td><td>&nbsp;</td></tr>
+    <tr><td>Réseaux alimentaires et cascades trophiques</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / En progrès / Pas encore</td><td>&nbsp;</td></tr>
+    <tr><td>Plantes sacrées des Premières Nations et savoirs traditionnels</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / En progrès / Pas encore</td><td>&nbsp;</td></tr>
+    <tr><td>SC — logique conditionnelle dans les écosystèmes</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / En progrès / Pas encore</td><td>&nbsp;</td></tr>
   </tbody>
 </table>
-<p style="font-family:system-ui,sans-serif; font-size:0.85rem; margin-top:0.75rem;">Avant le projet d'enquête, je dois revoir : <div class="al"></div></p>
-<p style="font-family:system-ui,sans-serif; font-size:0.75rem; color:#94a3b8; margin-top:2rem; text-align:center;">sci6-living-systems-workbook-fr-v1 &nbsp;·&nbsp; Sciences 6 &nbsp;·&nbsp; Programme d'études de l'Alberta 2023</p>
+<p style="font-family: var(--font-body); font-size:0.85rem; margin-top:0.75rem;">Avant le projet d'enquête, je dois revoir : <div class="al"></div></p>
+<p style="font-family: var(--font-body); font-size:0.75rem; color:#6b665d; margin-top:2rem; text-align:center;">sci6-living-systems-workbook-fr-v1 &nbsp;·&nbsp; Sciences 6 &nbsp;·&nbsp; Programme d'études de l'Alberta 2023</p>
 
 </body>
 </html>

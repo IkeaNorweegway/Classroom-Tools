@@ -5,66 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dash Bot: Algorithms &amp; Sensors — Notes | STEAM Grade 5</title>
 <style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 11pt;
     line-height: 1.55;
-    color: #1e293b;
+    color: #1f1d1a;
     background: #fff;
     max-width: 780px;
     margin: 0 auto;
     padding: 28px 32px 48px;
   }
   :root {
-    --accent: #2563eb;
+    --accent: #1d4ed8;
     --accent-light: #dbeafe;
-    --accent-mid: #3b82f6;
+    --accent-mid: #2563eb;
   }
-  h1 { font-size: 22pt; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
-  h2 { font-size: 14pt; font-weight: 700; color: var(--accent); margin: 28px 0 10px; border-bottom: 2px solid var(--accent-light); padding-bottom: 4px; }
-  h3 { font-size: 11pt; font-weight: 700; color: #334155; margin: 18px 0 6px; text-transform: uppercase; letter-spacing: .04em; }
+  h1 { font-family: var(--font-display); font-size: 22pt; font-weight: 600; color: #1f1d1a; margin-bottom: 4px; }
+  h2 { font-family: var(--font-display); font-size: 14pt; font-weight: 600; color: var(--accent); margin: 28px 0 10px; border-bottom: 2px solid var(--accent-light); padding-bottom: 4px; }
+  h3 { font-size: 11pt; font-weight: 700; color: #3f3b35; margin: 18px 0 6px; text-transform: uppercase; letter-spacing: .04em; }
   p { margin-bottom: 8px; }
   ul, ol { margin: 6px 0 10px 20px; }
   li { margin-bottom: 4px; }
   strong { font-weight: 700; }
-  em { font-style: italic; color: #475569; }
+  em { font-style: italic; color: #3f3b35; }
 
-  .b { display: inline-block; border-bottom: 1.5px solid #334155; vertical-align: bottom; }
+  .b { display: inline-block; border-bottom: 1.5px solid #3f3b35; vertical-align: bottom; }
   .b-sm { width: 60px; } .b-md { width: 110px; } .b-lg { width: 170px; } .b-xl { width: 240px; }
 
-  .al { display: block; border-bottom: 1px solid #94a3b8; height: 1.8rem; margin: 6px 0; }
+  .al { display: block; border-bottom: 1.25px solid #6b665d; height: 1.8rem; margin: 6px 0; }
 
   table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10.5pt; }
   th { background: var(--accent-light); color: var(--accent); font-weight: 700; text-align: left; padding: 7px 10px; border: 1px solid var(--accent-light); }
-  td { padding: 8px 10px; border: 1px solid #e2e8f0; vertical-align: top; }
-  tr:nth-child(even) td { background: #f8fafc; }
+  td { padding: 8px 10px; border: 1px solid #c9c4b9; vertical-align: top; }
+  tr:nth-child(even) td { background: #faf9f6; }
 
   .misconception { border-left: 4px solid #dc2626; background: #fef2f2; padding: 10px 14px; margin: 14px 0; border-radius: 0 6px 6px 0; }
-  .misconception .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #dc2626; margin-bottom: 4px; }
+  .misconception .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #b91c1c; margin-bottom: 4px; }
 
   .connection { border-left: 4px solid #f97316; background: #fff7ed; padding: 10px 14px; margin: 14px 0; border-radius: 0 6px 6px 0; }
-  .connection .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #ea580c; margin-bottom: 4px; }
+  .connection .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #c2410c; margin-bottom: 4px; }
 
   .newword { border-left: 4px solid #059669; background: #ecfdf5; padding: 10px 14px; margin: 14px 0; border-radius: 0 6px 6px 0; }
-  .newword .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #059669; margin-bottom: 4px; }
+  .newword .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #047857; margin-bottom: 4px; }
 
-  .howto-box { background: var(--accent-light); border-radius: 8px; padding: 10px 16px; margin: 0 0 20px; font-size: 10pt; font-style: italic; color: #475569; }
+  .howto-box { background: var(--accent-light); border-radius: 8px; padding: 10px 16px; margin: 0 0 20px; font-size: 10pt; font-style: italic; color: #3f3b35; }
 
   .retrieval { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin: 18px 0; }
   .retrieval-header { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #1d4ed8; margin-bottom: 10px; }
   .retrieval ol { margin-left: 18px; }
   .retrieval li { margin-bottom: 14px; }
 
-  .learning-target { font-size: 10pt; font-style: italic; color: #475569; margin-bottom: 12px; padding: 6px 12px; border-left: 3px solid var(--accent-mid); background: var(--accent-light); }
+  .learning-target { font-size: 10pt; font-style: italic; color: #3f3b35; margin-bottom: 12px; padding: 6px 12px; border-left: 3px solid var(--accent-mid); background: var(--accent-light); }
 
-  .section-break { border: none; border-top: 2px dashed #e2e8f0; margin: 28px 0; }
+  .section-break { border: none; border-top: 2px dashed #c9c4b9; margin: 28px 0; }
 
   .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 24px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
   .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent-mid); margin-bottom: 4px; }
 
   .name-row { display: flex; gap: 24px; margin: 16px 0 24px; font-size: 10.5pt; }
-  .name-row span { color: #64748b; }
+  .name-row span { color: #544f47; }
   .name-row .b { flex: 1; }
 
   .pre-knowledge { border: 1px solid var(--accent-light); border-radius: 8px; padding: 16px 20px; margin: 16px 0 24px; background: var(--accent-light); }
@@ -77,11 +90,11 @@
   .signoff { border: 2px solid #d97706; background: #fffbeb; border-radius: 8px; padding: 12px 16px; margin: 16px 0; }
   .signoff .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #b45309; margin-bottom: 6px; }
 
-  .example-block { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; margin: 14px 0; }
-  .example-block .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #475569; margin-bottom: 6px; }
-  .example-block pre { font-family: 'Consolas', 'Courier New', monospace; font-size: 9.5pt; white-space: pre-wrap; word-wrap: break-word; background: #fff; border-radius: 4px; padding: 8px 10px; margin-top: 4px; border: 1px solid #e2e8f0; }
+  .example-block { background: #f4f2ed; border: 1px solid #b8b2a7; border-radius: 8px; padding: 10px 14px; margin: 14px 0; }
+  .example-block .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #3f3b35; margin-bottom: 6px; }
+  .example-block pre { font-family: var(--font-mono); font-size: 9.5pt; white-space: pre-wrap; word-wrap: break-word; background: #fff; border-radius: 4px; padding: 8px 10px; margin-top: 4px; border: 1px solid #c9c4b9; }
 
-  .example-note { font-size: 9.5pt; font-style: italic; color: #64748b; margin-bottom: 6px; }
+  .example-note { font-size: 9.5pt; font-style: italic; color: #544f47; margin-bottom: 6px; }
   tr.example-row td { background: #fefce8 !important; }
   tr.example-row td:first-child { font-weight: 700; color: #a16207; }
 
@@ -138,7 +151,7 @@
     <tr><td>Debug</td><td><span class="b b-xl">&nbsp;</span></td><td><span class="b b-lg">&nbsp;</span></td></tr>
   </tbody>
 </table>
-<p style="font-size:10pt; color:#64748b; font-style:italic;">Fill this in as you meet each word. Use your own words.</p>
+<p style="font-size:10pt; color:#544f47; font-style:italic;">Fill this in as you meet each word. Use your own words.</p>
 </div>
 
 <hr class="section-break">
@@ -266,7 +279,7 @@ else:
 
 <div class="section">
 <h2>Unit Wrap-Up</h2>
-<p style="font-size:10pt; color:#64748b; font-style:italic; margin-bottom:14px;">Close this page. Answer from memory.</p>
+<p style="font-size:10pt; color:#544f47; font-style:italic; margin-bottom:14px;">Close this page. Answer from memory.</p>
 
 <div class="synthesis">
   <div class="synthesis-item"><strong>Sequence and loop:</strong><div class="al"></div></div>

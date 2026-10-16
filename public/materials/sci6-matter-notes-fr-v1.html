@@ -5,8 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sciences 6e année — La matière : notes guidées</title>
 <style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
   :root {
-    --unit: #0891b2;
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+  :root {
+    --unit: #0e7490;
     --unit-dark: #0e7490;
     --unit-light: #ecfeff;
     --unit-border: #a5f3fc;
@@ -15,21 +28,21 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: var(--font-body);
     font-size: 15px;
     line-height: 1.75;
-    color: #1e293b;
+    color: #1f1d1a;
     max-width: 920px;
     margin: 0 auto;
     padding: 2.5rem 2rem;
     background: #fff;
   }
 
-  h1 { font-family: system-ui, sans-serif; font-size: 1.6rem; font-weight: 700; color: #0f172a; }
+  h1 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; color: #1f1d1a; }
   h2.section-title {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-display);
     font-size: 1.05rem;
-    font-weight: 700;
+    font-weight: 600;
     color: white;
     background: var(--unit);
     padding: 0.55rem 1rem;
@@ -37,7 +50,7 @@
     margin: 2.5rem 0 1rem;
   }
   h3 {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.95rem;
     font-weight: 700;
     color: var(--unit-dark);
@@ -46,14 +59,14 @@
     letter-spacing: 0.05em;
   }
   h4 {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.9rem;
     font-weight: 600;
-    color: #0f172a;
+    color: #1f1d1a;
     margin: 1.25rem 0 0.25rem;
   }
   p { margin-bottom: 0.75rem; }
-  strong { color: #0f172a; }
+  strong { color: #1f1d1a; }
 
   .cover {
     border-left: 6px solid var(--unit);
@@ -62,46 +75,46 @@
     background: var(--unit-light);
     border-radius: 0 0.5rem 0.5rem 0;
   }
-  .cover p { font-family: system-ui, sans-serif; font-size: 0.82rem; color: #475569; margin: 0.25rem 0 0; }
+  .cover p { font-family: var(--font-body); font-size: 0.82rem; color: #3f3b35; margin: 0.25rem 0 0; }
   .name-line {
-    font-family: system-ui, sans-serif; font-size: 0.85rem; color: #64748b;
+    font-family: var(--font-body); font-size: 0.85rem; color: #544f47;
     margin-top: 1rem; display: flex; gap: 2rem;
   }
-  .name-line span { border-bottom: 1.5px solid #94a3b8; padding-bottom: 2px; flex: 1; max-width: 22rem; }
+  .name-line span { border-bottom: 1.5px solid #6b665d; padding-bottom: 2px; flex: 1; max-width: 22rem; }
 
   .pre-knowledge {
-    border: 2px dashed #94a3b8; border-radius: 0.5rem;
-    padding: 1.25rem 1.5rem; margin: 1.5rem 0; background: #f8fafc;
+    border: 2px dashed #6b665d; border-radius: 0.5rem;
+    padding: 1.25rem 1.5rem; margin: 1.5rem 0; background: #faf9f6;
   }
   .pre-knowledge .label {
-    font-family: system-ui, sans-serif; font-size: 0.72rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-bottom: 0.5rem;
+    font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em; color: #544f47; margin-bottom: 0.5rem;
   }
 
   .vocab-wrap { margin: 1rem 0 1.5rem; overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
   table th {
-    font-family: system-ui, sans-serif; font-size: 0.75rem; font-weight: 700;
+    font-family: var(--font-body); font-size: 0.75rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.06em;
     background: var(--unit-light); color: var(--unit-dark);
     padding: 0.5rem 0.75rem; border: 1px solid var(--unit-border); text-align: left;
   }
-  table td { padding: 0.55rem 0.75rem; border: 1px solid #e2e8f0; vertical-align: top; min-height: 2.2rem; }
-  table tr:nth-child(even) td { background: #f8fafc; }
-  table td:first-child { font-weight: 500; color: #0f172a; }
+  table td { padding: 0.55rem 0.75rem; border: 1px solid #c9c4b9; vertical-align: top; min-height: 2.2rem; }
+  table tr:nth-child(even) td { background: #faf9f6; }
+  table td:first-child { font-weight: 500; color: #1f1d1a; }
 
-  .b { display: inline-block; border-bottom: 2px solid #334155; vertical-align: bottom; }
+  .b { display: inline-block; border-bottom: 2px solid #3f3b35; vertical-align: bottom; }
   .b-sm { width: 4rem; }
   .b-md { width: 7rem; }
   .b-lg { width: 11rem; }
   .b-xl { width: 16rem; }
 
-  .al { display: block; border-bottom: 1.5px solid #94a3b8; height: 1.8rem; margin: 0.4rem 0; width: 100%; }
-  .al-sm { display: inline-block; border-bottom: 1.5px solid #94a3b8; height: 1.4rem; width: 8rem; vertical-align: bottom; }
+  .al { display: block; border-bottom: 1.5px solid #6b665d; height: 1.8rem; margin: 0.4rem 0; width: 100%; }
+  .al-sm { display: inline-block; border-bottom: 1.5px solid #6b665d; height: 1.4rem; width: 8rem; vertical-align: bottom; }
 
   pre {
-    font-family: 'Courier New', Courier, monospace; font-size: 0.82rem;
-    background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 0.35rem;
+    font-family: var(--font-mono); font-size: 0.82rem;
+    background: #f4f2ed; border: 1px solid #c9c4b9; border-radius: 0.35rem;
     padding: 0.85rem 1rem; overflow-x: auto; white-space: pre; margin: 0.75rem 0; line-height: 1.5;
   }
 
@@ -110,8 +123,8 @@
     padding: 0.85rem 1.1rem; margin: 1.25rem 0; border-radius: 0 0.35rem 0.35rem 0;
   }
   .misconception .m-label {
-    font-family: system-ui, sans-serif; font-size: 0.7rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.1em; color: #dc2626; margin-bottom: 0.4rem;
+    font-family: var(--font-body); font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em; color: #b91c1c; margin-bottom: 0.4rem;
   }
   .misconception .m-wrong { font-style: italic; font-weight: 700; margin-bottom: 0.4rem; }
   .misconception p { margin-bottom: 0.25rem; font-size: 0.9rem; }
@@ -121,7 +134,7 @@
     padding: 0.85rem 1.1rem; margin: 1.25rem 0; border-radius: 0 0.35rem 0.35rem 0;
   }
   .connection .c-label {
-    font-family: system-ui, sans-serif; font-size: 0.7rem; font-weight: 700;
+    font-family: var(--font-body); font-size: 0.7rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.1em; color: #c2410c; margin-bottom: 0.4rem;
   }
   .connection p { font-size: 0.9rem; margin-bottom: 0.4rem; }
@@ -136,32 +149,32 @@
     border-radius: 0.5rem; padding: 1.25rem 1.5rem; margin: 1.5rem 0;
   }
   .retrieval .r-label {
-    font-family: system-ui, sans-serif; font-size: 0.75rem; font-weight: 700;
+    font-family: var(--font-body); font-size: 0.75rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.08em; color: #1d4ed8; margin-bottom: 1rem;
   }
   .retrieval ol { padding-left: 1.25rem; }
   .retrieval li { margin-bottom: 1.1rem; font-size: 0.9rem; }
   .retrieval .stretch-label {
-    font-family: system-ui, sans-serif; font-size: 0.7rem; font-weight: 700;
+    font-family: var(--font-body); font-size: 0.7rem; font-weight: 700;
     text-transform: uppercase; color: #6d28d9; margin-right: 0.3rem;
   }
 
   .self-check {
     background: #f0fdf4; border: 1.5px solid #bbf7d0;
     border-radius: 0.35rem; padding: 0.6rem 1.1rem; margin: 1rem 0;
-    font-family: system-ui, sans-serif; font-size: 0.85rem; color: #166534;
+    font-family: var(--font-body); font-size: 0.85rem; color: #166534;
   }
 
   .workbook-prompt {
-    font-family: system-ui, sans-serif; font-size: 0.82rem; color: #475569;
-    background: #f1f5f9; border-radius: 0.35rem; padding: 0.5rem 1rem;
-    margin: 0.5rem 0 0.25rem; border-left: 4px solid #94a3b8;
+    font-family: var(--font-body); font-size: 0.82rem; color: #3f3b35;
+    background: #f4f2ed; border-radius: 0.35rem; padding: 0.5rem 1rem;
+    margin: 0.5rem 0 0.25rem; border-left: 4px solid #6b665d;
   }
 
-  hr { border: none; border-top: 2px solid #e2e8f0; margin: 2rem 0; }
+  hr { border: none; border-top: 2px solid #c9c4b9; margin: 2rem 0; }
   .section-break { border: none; border-top: 3px solid var(--unit); margin: 2.5rem 0; }
 
-  .rubric th { background: #1e293b; color: white; }
+  .rubric th { background: #1f1d1a; color: white; }
 
   @media print {
     body { font-size: 11pt; padding: 1.5cm; max-width: 100%; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -193,15 +206,15 @@
   <div class="al"></div>
   <div class="al"></div>
   <div class="al"></div>
-  <p style="margin-top:0.75rem; font-size:0.85rem; color:#64748b;"><em>Tu reviendras à cette page à la fin de l'unité. Sois honnête — voir comment ta pensée a changé, c'est une partie de l'apprentissage.</em></p>
+  <p style="margin-top:0.75rem; font-size:0.85rem; color:#544f47;"><em>Tu reviendras à cette page à la fin de l'unité. Sois honnête — voir comment ta pensée a changé, c'est une partie de l'apprentissage.</em></p>
 </div>
 
 <hr class="section-break">
 
 <h2 class="section-title">Section 1 &nbsp;·&nbsp; Le modèle particulaire</h2>
 
-<p style="font-family:system-ui,sans-serif; font-size:0.85rem; color:#475569; margin-bottom:1.25rem;">
-  <strong style="color:#0f172a;">Objectif :</strong> Je peux expliquer le modèle particulaire. Je peux décrire comment les particules bougent. Je peux dire ce qui arrive aux particules quand on chauffe ou refroidit la matière.
+<p style="font-family: var(--font-body); font-size:0.85rem; color:#3f3b35; margin-bottom:1.25rem;">
+  <strong style="color:#1f1d1a;">Objectif :</strong> Je peux expliquer le modèle particulaire. Je peux décrire comment les particules bougent. Je peux dire ce qui arrive aux particules quand on chauffe ou refroidit la matière.
 </p>
 
 <h3>Vocabulaire</h3>
@@ -352,8 +365,8 @@
 
 <h2 class="section-title">Section 2 &nbsp;·&nbsp; Les états de la matière et les changements d'état</h2>
 
-<p style="font-family:system-ui,sans-serif; font-size:0.85rem; color:#475569; margin-bottom:1.25rem;">
-  <strong style="color:#0f172a;">Objectif :</strong> Je peux décrire comment les particules sont arrangées dans un solide, un liquide et un gaz. Je peux nommer les six changements d'état. Je peux expliquer pourquoi la masse ne change pas lors d'un changement d'état.
+<p style="font-family: var(--font-body); font-size:0.85rem; color:#3f3b35; margin-bottom:1.25rem;">
+  <strong style="color:#1f1d1a;">Objectif :</strong> Je peux décrire comment les particules sont arrangées dans un solide, un liquide et un gaz. Je peux nommer les six changements d'état. Je peux expliquer pourquoi la masse ne change pas lors d'un changement d'état.
 </p>
 
 <h3>Vocabulaire</h3>
@@ -558,8 +571,8 @@
 
 <h2 class="section-title">Section 3 &nbsp;·&nbsp; Les thermomètres et la température</h2>
 
-<p style="font-family:system-ui,sans-serif; font-size:0.85rem; color:#475569; margin-bottom:1.25rem;">
-  <strong style="color:#0f172a;">Objectif :</strong> Je peux expliquer comment fonctionne un thermomètre. Je peux lire l'échelle Celsius. Je peux nommer les points de référence importants et les règles de sécurité.
+<p style="font-family: var(--font-body); font-size:0.85rem; color:#3f3b35; margin-bottom:1.25rem;">
+  <strong style="color:#1f1d1a;">Objectif :</strong> Je peux expliquer comment fonctionne un thermomètre. Je peux lire l'échelle Celsius. Je peux nommer les points de référence importants et les règles de sécurité.
 </p>
 
 <h3>Vocabulaire</h3>
@@ -673,8 +686,8 @@
 
 <h2 class="section-title">Section 4 &nbsp;·&nbsp; La dilatation, la contraction et l'anomalie de l'eau</h2>
 
-<p style="font-family:system-ui,sans-serif; font-size:0.85rem; color:#475569; margin-bottom:1.25rem;">
-  <strong style="color:#0f172a;">Objectif :</strong> Je peux expliquer pourquoi la plupart des matériaux se dilatent quand ils chauffent et se contractent quand ils refroidissent. Je peux expliquer pourquoi l'eau est différente. Je peux expliquer pourquoi la glace flotte.
+<p style="font-family: var(--font-body); font-size:0.85rem; color:#3f3b35; margin-bottom:1.25rem;">
+  <strong style="color:#1f1d1a;">Objectif :</strong> Je peux expliquer pourquoi la plupart des matériaux se dilatent quand ils chauffent et se contractent quand ils refroidissent. Je peux expliquer pourquoi l'eau est différente. Je peux expliquer pourquoi la glace flotte.
 </p>
 
 <h3>Vocabulaire</h3>
@@ -884,7 +897,7 @@ Les communautés cries, dénées et métisses du nord de l'Alberta observent les
 
 <h2 class="section-title">Synthèse de l'unité — De mémoire</h2>
 
-<p style="font-family:system-ui,sans-serif; font-size:0.9rem; color:#475569; margin-bottom:1rem;"><em>Ferme tes notes. Reconstruit.</em></p>
+<p style="font-family: var(--font-body); font-size:0.9rem; color:#3f3b35; margin-bottom:1rem;"><em>Ferme tes notes. Reconstruit.</em></p>
 <p>Pour chaque section, écris l'idée la plus importante en une phrase. De mémoire, sans regarder en arrière.</p>
 
 <p><strong>Section 1 — Le modèle particulaire</strong></p>
@@ -921,23 +934,23 @@ Les communautés cries, dénées et métisses du nord de l'Alberta observent les
 
 <h2 class="section-title">Grille d'auto-évaluation</h2>
 
-<p style="font-family:system-ui,sans-serif; font-size:0.85rem; color:#475569; margin-bottom:1rem;"><em>Évalue-toi honnêtement après la dernière séance. Ceci t'aide à savoir ce qu'il faut revoir avant l'examen.</em></p>
+<p style="font-family: var(--font-body); font-size:0.85rem; color:#3f3b35; margin-bottom:1rem;"><em>Évalue-toi honnêtement après la dernière séance. Ceci t'aide à savoir ce qu'il faut revoir avant l'examen.</em></p>
 
 <div class="vocab-wrap">
   <table class="rubric">
     <thead><tr><th style="width:55%">Groupe de connaissances</th><th style="width:25%">Je peux l'expliquer sans mes notes</th><th style="width:20%">Une question que j'ai encore</th></tr></thead>
     <tbody>
-      <tr><td>Modèle particulaire : espace, mouvement, vitesse selon la température</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td>&nbsp;</td></tr>
-      <tr><td>Les trois états : arrangement et mouvement des particules</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td>&nbsp;</td></tr>
-      <tr><td>Changements d'état : noms, directions, conservation de la masse</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td>&nbsp;</td></tr>
-      <tr><td>Thermomètres : fonctionnement, échelle Celsius, points de référence, sécurité</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td>&nbsp;</td></tr>
-      <tr><td>Dilatation et contraction : règle générale, applications réelles</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td>&nbsp;</td></tr>
-      <tr><td>Anomalie de l'eau : glace moins dense, flotte, importance pour la vie aquatique</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td>&nbsp;</td></tr>
+      <tr><td>Modèle particulaire : espace, mouvement, vitesse selon la température</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td>&nbsp;</td></tr>
+      <tr><td>Les trois états : arrangement et mouvement des particules</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td>&nbsp;</td></tr>
+      <tr><td>Changements d'état : noms, directions, conservation de la masse</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td>&nbsp;</td></tr>
+      <tr><td>Thermomètres : fonctionnement, échelle Celsius, points de référence, sécurité</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td>&nbsp;</td></tr>
+      <tr><td>Dilatation et contraction : règle générale, applications réelles</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td>&nbsp;</td></tr>
+      <tr><td>Anomalie de l'eau : glace moins dense, flotte, importance pour la vie aquatique</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td>&nbsp;</td></tr>
     </tbody>
   </table>
 </div>
 
-<p style="font-family:system-ui,sans-serif; font-size:0.82rem; color:#475569; margin-top:0.75rem;"><em>Apporte tes questions sans réponse en classe. Elles apparaîtront dans le projet d'investigation et dans l'examen de l'unité.</em></p>
+<p style="font-family: var(--font-body); font-size:0.82rem; color:#3f3b35; margin-top:0.75rem;"><em>Apporte tes questions sans réponse en classe. Elles apparaîtront dans le projet d'investigation et dans l'examen de l'unité.</em></p>
 
 </body>
 </html>

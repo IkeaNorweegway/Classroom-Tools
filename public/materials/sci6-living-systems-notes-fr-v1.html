@@ -5,8 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sciences 6e année — Les systèmes vivants : notes guidées</title>
 <style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
   :root {
-    --unit: #059669;
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+  :root {
+    --unit: #047857;
     --unit-dark: #047857;
     --unit-light: #ecfdf5;
     --unit-border: #a7f3d0;
@@ -15,21 +28,21 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: var(--font-body);
     font-size: 15px;
     line-height: 1.75;
-    color: #1e293b;
+    color: #1f1d1a;
     max-width: 920px;
     margin: 0 auto;
     padding: 2.5rem 2rem;
     background: #fff;
   }
 
-  h1 { font-family: system-ui, sans-serif; font-size: 1.6rem; font-weight: 700; color: #0f172a; }
+  h1 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; color: #1f1d1a; }
   h2.section-title {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-display);
     font-size: 1.05rem;
-    font-weight: 700;
+    font-weight: 600;
     color: white;
     background: var(--unit);
     padding: 0.55rem 1rem;
@@ -37,7 +50,7 @@
     margin: 2.5rem 0 1rem;
   }
   h3 {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.95rem;
     font-weight: 700;
     color: var(--unit-dark);
@@ -46,14 +59,14 @@
     letter-spacing: 0.05em;
   }
   h4 {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.9rem;
     font-weight: 600;
-    color: #0f172a;
+    color: #1f1d1a;
     margin: 1.25rem 0 0.25rem;
   }
   p { margin-bottom: 0.75rem; }
-  strong { color: #0f172a; }
+  strong { color: #1f1d1a; }
 
   .cover {
     border-left: 6px solid var(--unit);
@@ -62,52 +75,52 @@
     background: var(--unit-light);
     border-radius: 0 0.5rem 0.5rem 0;
   }
-  .cover p { font-family: system-ui, sans-serif; font-size: 0.82rem; color: #475569; margin: 0.25rem 0 0; }
+  .cover p { font-family: var(--font-body); font-size: 0.82rem; color: #3f3b35; margin: 0.25rem 0 0; }
   .name-line {
-    font-family: system-ui, sans-serif; font-size: 0.85rem; color: #64748b;
+    font-family: var(--font-body); font-size: 0.85rem; color: #544f47;
     margin-top: 1rem; display: flex; gap: 2rem;
   }
-  .name-line span { border-bottom: 1.5px solid #94a3b8; padding-bottom: 2px; flex: 1; max-width: 22rem; }
+  .name-line span { border-bottom: 1.5px solid #6b665d; padding-bottom: 2px; flex: 1; max-width: 22rem; }
 
   .instructions {
-    background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 0.5rem;
-    padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 0.88rem; color: #475569;
+    background: #faf9f6; border: 1.5px solid #c9c4b9; border-radius: 0.5rem;
+    padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 0.88rem; color: #3f3b35;
   }
 
   .pre-knowledge {
-    border: 2px dashed #94a3b8; border-radius: 0.5rem;
-    padding: 1.25rem 1.5rem; margin: 1.5rem 0; background: #f8fafc;
+    border: 2px dashed #6b665d; border-radius: 0.5rem;
+    padding: 1.25rem 1.5rem; margin: 1.5rem 0; background: #faf9f6;
   }
   .pre-knowledge .label {
-    font-family: system-ui, sans-serif; font-size: 0.72rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-bottom: 0.5rem;
+    font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em; color: #544f47; margin-bottom: 0.5rem;
   }
 
   .vocab-wrap { margin: 1rem 0 1.5rem; overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
   table th {
-    font-family: system-ui, sans-serif; font-size: 0.75rem; font-weight: 700;
+    font-family: var(--font-body); font-size: 0.75rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.06em;
     background: var(--unit-light); color: var(--unit-dark);
     padding: 0.5rem 0.75rem; border: 1px solid var(--unit-border); text-align: left;
   }
-  table td { padding: 0.55rem 0.75rem; border: 1px solid #e2e8f0; vertical-align: top; min-height: 2.2rem; }
-  table tr:nth-child(even) td { background: #f8fafc; }
-  table td:first-child { font-weight: 500; color: #0f172a; }
+  table td { padding: 0.55rem 0.75rem; border: 1px solid #c9c4b9; vertical-align: top; min-height: 2.2rem; }
+  table tr:nth-child(even) td { background: #faf9f6; }
+  table td:first-child { font-weight: 500; color: #1f1d1a; }
 
-  .b { display: inline-block; border-bottom: 2px solid #334155; vertical-align: bottom; }
+  .b { display: inline-block; border-bottom: 2px solid #3f3b35; vertical-align: bottom; }
   .b-sm { width: 4rem; }
   .b-md { width: 7rem; }
   .b-lg { width: 11rem; }
   .b-xl { width: 16rem; }
 
-  .al { display: block; border-bottom: 1.5px solid #94a3b8; height: 1.8rem; margin: 0.4rem 0; width: 100%; }
+  .al { display: block; border-bottom: 1.5px solid #6b665d; height: 1.8rem; margin: 0.4rem 0; width: 100%; }
   .al-short { width: 60%; }
-  .al-sm { display: inline-block; border-bottom: 1.5px solid #94a3b8; height: 1.4rem; width: 8rem; vertical-align: bottom; }
+  .al-sm { display: inline-block; border-bottom: 1.5px solid #6b665d; height: 1.4rem; width: 8rem; vertical-align: bottom; }
 
   pre {
-    font-family: 'Courier New', Courier, monospace; font-size: 0.82rem;
-    background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 0.35rem;
+    font-family: var(--font-mono); font-size: 0.82rem;
+    background: #f4f2ed; border: 1px solid #c9c4b9; border-radius: 0.35rem;
     padding: 0.85rem 1rem; overflow-x: auto; white-space: pre; margin: 0.75rem 0; line-height: 1.5;
   }
 
@@ -116,8 +129,8 @@
     padding: 0.85rem 1.1rem; margin: 1.25rem 0; border-radius: 0 0.35rem 0.35rem 0;
   }
   .misconception .m-label {
-    font-family: system-ui, sans-serif; font-size: 0.7rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.1em; color: #dc2626; margin-bottom: 0.4rem;
+    font-family: var(--font-body); font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em; color: #b91c1c; margin-bottom: 0.4rem;
   }
   .misconception .m-wrong { font-style: italic; font-weight: 700; margin-bottom: 0.4rem; }
   .misconception p { margin-bottom: 0.25rem; font-size: 0.9rem; }
@@ -127,7 +140,7 @@
     padding: 0.85rem 1.1rem; margin: 1.25rem 0; border-radius: 0 0.35rem 0.35rem 0;
   }
   .connection .c-label {
-    font-family: system-ui, sans-serif; font-size: 0.7rem; font-weight: 700;
+    font-family: var(--font-body); font-size: 0.7rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.1em; color: #c2410c; margin-bottom: 0.4rem;
   }
   .connection p { font-size: 0.9rem; margin-bottom: 0.4rem; }
@@ -142,33 +155,33 @@
     border-radius: 0.5rem; padding: 1.25rem 1.5rem; margin: 1.5rem 0;
   }
   .retrieval .r-label {
-    font-family: system-ui, sans-serif; font-size: 0.75rem; font-weight: 700;
+    font-family: var(--font-body); font-size: 0.75rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.08em; color: #1d4ed8; margin-bottom: 1rem;
   }
   .retrieval ol { padding-left: 1.25rem; }
   .retrieval li { margin-bottom: 1.1rem; font-size: 0.9rem; }
   .retrieval .stretch-label {
-    font-family: system-ui, sans-serif; font-size: 0.7rem; font-weight: 700;
+    font-family: var(--font-body); font-size: 0.7rem; font-weight: 700;
     text-transform: uppercase; color: #6d28d9; margin-right: 0.3rem;
   }
 
   .self-check {
     background: #f0fdf4; border: 1.5px solid #bbf7d0;
     border-radius: 0.35rem; padding: 0.6rem 1.1rem; margin: 1rem 0;
-    font-family: system-ui, sans-serif; font-size: 0.85rem; color: #166534;
+    font-family: var(--font-body); font-size: 0.85rem; color: #166534;
   }
 
   .code-block {
-    font-family: 'Courier New', Courier, monospace; font-size: 0.82rem;
-    background: #1e293b; color: #e2e8f0;
+    font-family: var(--font-mono); font-size: 0.82rem;
+    background: #1f1d1a; color: #c9c4b9;
     border-radius: 0.35rem; padding: 0.85rem 1rem; margin: 0.75rem 0;
     white-space: pre; overflow-x: auto; line-height: 1.55;
   }
 
-  hr { border: none; border-top: 2px solid #e2e8f0; margin: 2rem 0; }
+  hr { border: none; border-top: 2px solid #c9c4b9; margin: 2rem 0; }
   .section-break { border: none; border-top: 3px solid var(--unit); margin: 2.5rem 0; }
 
-  .synthesis-table th { background: #1e293b; color: white; }
+  .synthesis-table th { background: #1f1d1a; color: white; }
 
   @media print {
     body { font-size: 11pt; padding: 1.5cm; max-width: 100%; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -205,15 +218,15 @@
   <p>Je pense que les plantes obtiennent leur nourriture de : <div class="al"></div></p>
   <p>3. Que se passerait-il selon toi si toutes les plantes d'une zone disparaissaient ?</p>
   <div class="al"></div>
-  <p style="margin-top:0.75rem; font-size:0.85rem; color:#64748b;"><em>Garde ces réponses. Tu les reliras à la fin de l'unité.</em></p>
+  <p style="margin-top:0.75rem; font-size:0.85rem; color:#544f47;"><em>Garde ces réponses. Tu les reliras à la fin de l'unité.</em></p>
 </div>
 
 <hr class="section-break">
 
 <h2 class="section-title">Section 1 &nbsp;·&nbsp; Biotique et abiotique — De quoi est fait un écosystème ?</h2>
 
-<p style="font-family:system-ui,sans-serif; font-size:0.85rem; color:#475569; margin-bottom:1.25rem;">
-  <strong style="color:#0f172a;">Objectif :</strong> Je peux nommer les parties biotiques et abiotiques d'un écosystème. Je peux expliquer le rôle de chacune.
+<p style="font-family: var(--font-body); font-size:0.85rem; color:#3f3b35; margin-bottom:1.25rem;">
+  <strong style="color:#1f1d1a;">Objectif :</strong> Je peux nommer les parties biotiques et abiotiques d'un écosystème. Je peux expliquer le rôle de chacune.
 </p>
 
 <h3>Vocabulaire</h3>
@@ -317,8 +330,8 @@
 
 <h2 class="section-title">Section 2 &nbsp;·&nbsp; La photosynthèse — D'où vient la nourriture des plantes ?</h2>
 
-<p style="font-family:system-ui,sans-serif; font-size:0.85rem; color:#475569; margin-bottom:1.25rem;">
-  <strong style="color:#0f172a;">Objectif :</strong> Je peux expliquer où se produit la photosynthèse, ce qui entre et ce qui sort. Je peux corriger l'idée que les plantes tirent leur nourriture du sol.
+<p style="font-family: var(--font-body); font-size:0.85rem; color:#3f3b35; margin-bottom:1.25rem;">
+  <strong style="color:#1f1d1a;">Objectif :</strong> Je peux expliquer où se produit la photosynthèse, ce qui entre et ce qui sort. Je peux corriger l'idée que les plantes tirent leur nourriture du sol.
 </p>
 <div class="note-box">C'est le concept le plus important de cette unité. L'idée fausse ici est l'une des plus répandues de toute la biologie.</div>
 
@@ -346,7 +359,7 @@
 
 <p><strong>La preuve :</strong> Un arbre de 1 000 kg pousse dans un pot avec peu de sol. Après 20 ans, le sol a à peine changé de masse. D'où viennent les 1 000 kg de l'arbre ?</p>
 <p>Réponse : <div class="al"></div></p>
-<p style="font-size:0.85rem; color:#475569;"><em>(Indice : ça venait de l'air — du CO₂)</em></p>
+<p style="font-size:0.85rem; color:#3f3b35;"><em>(Indice : ça venait de l'air — du CO₂)</em></p>
 
 <h4>L'équation de la photosynthèse</h4>
 <p>La photosynthèse utilise <span class="b b-md">&nbsp;</span>, <span class="b b-md">&nbsp;</span> et <span class="b b-md">&nbsp;</span> pour faire <span class="b b-md">&nbsp;</span> et <span class="b b-md">&nbsp;</span>.</p>
@@ -491,8 +504,8 @@
 
 <h2 class="section-title">Section 3 &nbsp;·&nbsp; Les relations plantes-animaux — L'interdépendance</h2>
 
-<p style="font-family:system-ui,sans-serif; font-size:0.85rem; color:#475569; margin-bottom:1.25rem;">
-  <strong style="color:#0f172a;">Objectif :</strong> Je peux expliquer comment les plantes et les animaux dépendent les uns des autres. Je peux décrire ce qui arrive quand on enlève une partie d'un écosystème.
+<p style="font-family: var(--font-body); font-size:0.85rem; color:#3f3b35; margin-bottom:1.25rem;">
+  <strong style="color:#1f1d1a;">Objectif :</strong> Je peux expliquer comment les plantes et les animaux dépendent les uns des autres. Je peux décrire ce qui arrive quand on enlève une partie d'un écosystème.
 </p>
 
 <h3>Vocabulaire</h3>
@@ -683,8 +696,8 @@ Les loups ont été retirés du parc en 1920. Dans les années 1990 :</p>
 
 <h2 class="section-title">Section 4 &nbsp;·&nbsp; Lien avec l'informatique — La logique conditionnelle dans les écosystèmes</h2>
 
-<p style="font-family:system-ui,sans-serif; font-size:0.85rem; color:#475569; margin-bottom:1.25rem;">
-  <strong style="color:#0f172a;">Objectif :</strong> Je peux trouver des structures si/alors dans les relations des écosystèmes. Je peux les relier à la façon dont les programmes informatiques fonctionnent.
+<p style="font-family: var(--font-body); font-size:0.85rem; color:#3f3b35; margin-bottom:1.25rem;">
+  <strong style="color:#1f1d1a;">Objectif :</strong> Je peux trouver des structures si/alors dans les relations des écosystèmes. Je peux les relier à la façon dont les programmes informatiques fonctionnent.
 </p>
 
 <h4>La logique si/alors dans un réseau alimentaire</h4>
@@ -703,10 +716,10 @@ Les loups ont été retirés du parc en 1920. Dans les années 1990 :</p>
 </div>
 
 <p><strong>Écris ta propre chaîne conditionnelle :</strong> Commence avec « une sécheresse réduit l'eau... »</p>
-<div style="font-family:'Courier New', Courier, monospace; font-size:0.82rem; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:0.5rem; padding:1rem 1.25rem; margin:0.75rem 0; line-height:2.4;">
-  <div><strong style="color:#059669;">SI</strong> eau = faible <strong style="color:#059669;">ALORS</strong> <span style="display:inline-block; border-bottom:2px solid #334155; width:20rem; vertical-align:bottom;">&nbsp;</span></div>
-  <div><strong style="color:#059669;">SI</strong> <span style="display:inline-block; border-bottom:2px solid #334155; width:10rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#059669;">ALORS</strong> <span style="display:inline-block; border-bottom:2px solid #334155; width:20rem; vertical-align:bottom;">&nbsp;</span></div>
-  <div><strong style="color:#059669;">SI</strong> <span style="display:inline-block; border-bottom:2px solid #334155; width:10rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#059669;">ALORS</strong> <span style="display:inline-block; border-bottom:2px solid #334155; width:20rem; vertical-align:bottom;">&nbsp;</span></div>
+<div style="font-family: var(--font-mono); font-size:0.82rem; background:#faf9f6; border:1.5px solid #c9c4b9; border-radius:0.5rem; padding:1rem 1.25rem; margin:0.75rem 0; line-height:2.4;">
+  <div><strong style="color:#047857;">SI</strong> eau = faible <strong style="color:#047857;">ALORS</strong> <span style="display:inline-block; border-bottom:2px solid #3f3b35; width:20rem; vertical-align:bottom;">&nbsp;</span></div>
+  <div><strong style="color:#047857;">SI</strong> <span style="display:inline-block; border-bottom:2px solid #3f3b35; width:10rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#047857;">ALORS</strong> <span style="display:inline-block; border-bottom:2px solid #3f3b35; width:20rem; vertical-align:bottom;">&nbsp;</span></div>
+  <div><strong style="color:#047857;">SI</strong> <span style="display:inline-block; border-bottom:2px solid #3f3b35; width:10rem; vertical-align:bottom;">&nbsp;</span> <strong style="color:#047857;">ALORS</strong> <span style="display:inline-block; border-bottom:2px solid #3f3b35; width:20rem; vertical-align:bottom;">&nbsp;</span></div>
 </div>
 
 <h4>Simulation Scratch (aperçu)</h4>
@@ -739,7 +752,7 @@ Les loups ont été retirés du parc en 1920. Dans les années 1990 :</p>
 
 <h2 class="section-title">Synthèse de l'unité — Remplis de mémoire</h2>
 
-<p style="font-family:system-ui,sans-serif; font-size:0.9rem; color:#475569; margin-bottom:1rem;"><em>Complète cette section sans regarder tes notes. Puis vérifie.</em></p>
+<p style="font-family: var(--font-body); font-size:0.9rem; color:#3f3b35; margin-bottom:1rem;"><em>Complète cette section sans regarder tes notes. Puis vérifie.</em></p>
 
 <p><strong>Groupe 1 — Biotique et abiotique</strong></p>
 <ul style="padding-left:1.4rem; margin-bottom:0.75rem;">
@@ -774,12 +787,12 @@ Les loups ont été retirés du parc en 1920. Dans les années 1990 :</p>
   <table class="synthesis-table">
     <thead><tr><th>Groupe de connaissances</th><th>Je peux l'expliquer sans notes</th><th>Confiance (1–4)</th></tr></thead>
     <tbody>
-      <tr><td>Composantes biotiques et abiotiques</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">1 — 2 — 3 — 4</td></tr>
-      <tr><td>Photosynthèse (équation + processus)</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">1 — 2 — 3 — 4</td></tr>
-      <tr><td>Photosynthèse (expériences)</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">1 — 2 — 3 — 4</td></tr>
-      <tr><td>Interdépendance plantes-animaux</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">1 — 2 — 3 — 4</td></tr>
-      <tr><td>Plantes sacrées autochtones + savoir traditionnel</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">1 — 2 — 3 — 4</td></tr>
-      <tr><td>Informatique — logique conditionnelle</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td style="font-family:system-ui,sans-serif; font-size:0.82rem;">1 — 2 — 3 — 4</td></tr>
+      <tr><td>Composantes biotiques et abiotiques</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td style="font-family: var(--font-body); font-size:0.82rem;">1 — 2 — 3 — 4</td></tr>
+      <tr><td>Photosynthèse (équation + processus)</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td style="font-family: var(--font-body); font-size:0.82rem;">1 — 2 — 3 — 4</td></tr>
+      <tr><td>Photosynthèse (expériences)</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td style="font-family: var(--font-body); font-size:0.82rem;">1 — 2 — 3 — 4</td></tr>
+      <tr><td>Interdépendance plantes-animaux</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td style="font-family: var(--font-body); font-size:0.82rem;">1 — 2 — 3 — 4</td></tr>
+      <tr><td>Plantes sacrées autochtones + savoir traditionnel</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td style="font-family: var(--font-body); font-size:0.82rem;">1 — 2 — 3 — 4</td></tr>
+      <tr><td>Informatique — logique conditionnelle</td><td style="font-family: var(--font-body); font-size:0.82rem;">Oui / J'y arrive / Pas encore</td><td style="font-family: var(--font-body); font-size:0.82rem;">1 — 2 — 3 — 4</td></tr>
     </tbody>
   </table>
 </div>
