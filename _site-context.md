@@ -209,7 +209,10 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 /steam/                         STEAM index
 /steam/materials/[grade]        Grade page
 /steam/view/[grade]/[doc]       Material viewer
+/resources/                     More resources — site-level page for extras not tied to a course
 ```
+
+`/resources/` is not a course: no tab in the top nav, no turntable icon, no `CourseKey`. It is linked from the home page, directly below the teacher Google Drive link. Its list is the `resources` array at the top of `src/pages/resources/index.astro`; it shows a "coming soon" card while that array is empty.
 
 ---
 
