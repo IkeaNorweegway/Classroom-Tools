@@ -8,8 +8,9 @@ export function socialUnit(prefix: string, slug: string, label: string, sheets: 
     path: [
       { hint: 'Start here. You fill these in during class.', items: [{ label: 'Guided Notes', doc: `${prefix}-${slug}-notes-v1`, type: 'notes' }] },
       { hint: 'Practice and thinking questions from the whole unit.', items: [{ label: 'Workbook', doc: `${prefix}-${slug}-workbook-v1`, type: 'workbook' }] },
+      { hint: 'Quick checks on the unit so far.', items: [{ label: 'Exit Tickets', doc: `${prefix}-${slug}-exits-v1`, badge: 'Formative', type: 'exit' }] },
     ],
-    extras: [],
+    extras: [{ heading: 'Quizzes', items: [{ label: 'Mid-Unit Quiz', doc: `${prefix}-${slug}-quiz-v1`, type: 'assessment' }] }],
     keys: [
       { label: 'Notes Answer Key', doc: `${prefix}-${slug}-notes-answers-v1` },
       { label: 'Workbook Answer Key', doc: `${prefix}-${slug}-workbook-answers-v1` },

@@ -77,7 +77,7 @@ function standard(slug: string, label: string, strand: StrandSlug, stem: string)
       challenge: `${ws}-worksheet-challenge-v1`,
       exits: `exits/${slug}/${stem}-exits-v1`,
     },
-    extras: [],
+    extras: [{ label: 'Mid-Unit Quiz', path: `quizzes/${slug}/${stem}-quiz-v1`, type: 'assessment' }],
     keys: [
       { label: 'Notes Answer Key', path: `notes/${slug}/${stem}-notes-answers-v1` },
       { label: 'Core Worksheet Answer Key', path: `${ws}-worksheet-core-answers-v1` },
