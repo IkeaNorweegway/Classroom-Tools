@@ -5,15 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sciences 6 — Les forces : Cahier d'exercices</title>
 <style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
   :root {
     --violet:       #6D28D9;
-    --violet-mid:   #7C3AED;
+    --violet-mid:   #6d28d9;
     --violet-light: #EDE9FE;
     --violet-bg:    #F5F3FF;
     --violet-pale:  #FAF8FF;
 
     --star-core:    #6D28D9;
-    --star-ext:     #DC2626;
+    --star-ext:     #b91c1c;
     --ext-bg:       #FEF2F2;
     --ext-border:   #FCA5A5;
 
@@ -29,10 +42,10 @@
     --stretch-border: #BAE6FD;
     --stretch-hdr:  #0369A1;
 
-    --line-color:   #9CA3AF;
-    --border:       #E5E7EB;
-    --text:         #111827;
-    --muted:        #6B7280;
+    --line-color:   #6b665d;
+    --border:       #c9c4b9;
+    --text:         #1f1d1a;
+    --muted:        #544f47;
     --surface:      #FFFFFF;
     --page-bg:      #F8F8F6;
   }
@@ -40,7 +53,7 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { font-size: 15px; }
   body {
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: var(--font-body);
     color: var(--text);
     background: var(--page-bg);
     line-height: 1.65;
@@ -56,12 +69,12 @@
     margin-bottom: 2rem;
   }
   .cover-grid { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; }
-  .cover h1 { font-family: system-ui, sans-serif; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.8; margin-bottom: 0.2rem; }
-  .cover h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.2rem; }
-  .cover .sub { font-family: system-ui, sans-serif; font-size: 0.82rem; opacity: 0.75; font-style: italic; }
+  .cover h1 { font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.8; margin-bottom: 0.2rem; }
+  .cover h2 { font-family: var(--font-display); font-size: 1.75rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .cover .sub { font-family: var(--font-body); font-size: 0.82rem; opacity: 0.75; font-style: italic; }
   .cover-fields { display: flex; flex-direction: column; gap: 0.6rem; min-width: 14rem; }
   .cover-field { display: flex; flex-direction: column; }
-  .cover-field label { font-family: system-ui, sans-serif; font-size: 0.7rem; opacity: 0.75; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.15rem; }
+  .cover-field label { font-family: var(--font-body); font-size: 0.7rem; opacity: 0.75; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.15rem; }
   .cover-field .field-line { border-bottom: 1px solid rgba(255,255,255,0.5); height: 1.5rem; min-width: 10rem; }
 
   .instr-box {
@@ -72,17 +85,17 @@
     margin-bottom: 1.75rem;
     font-size: 0.88rem;
   }
-  .instr-box h3 { font-family: system-ui, sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--violet); margin-bottom: 0.5rem; }
+  .instr-box h3 { font-family: var(--font-body); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--violet); margin-bottom: 0.5rem; }
   .instr-box p { margin-bottom: 0.45rem; }
   .instr-box p:last-child { margin-bottom: 0; }
   .star-legend { display: flex; gap: 1.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
-  .sl-item { display: flex; align-items: center; gap: 0.4rem; font-family: system-ui, sans-serif; font-size: 0.82rem; }
-  .badge { display: inline-block; font-family: system-ui, sans-serif; font-weight: 800; font-size: 0.72rem; letter-spacing: 0.04em; padding: 0.15em 0.5em; border-radius: 3px; text-transform: uppercase; }
+  .sl-item { display: flex; align-items: center; gap: 0.4rem; font-family: var(--font-body); font-size: 0.82rem; }
+  .badge { display: inline-block; font-family: var(--font-body); font-weight: 800; font-size: 0.72rem; letter-spacing: 0.04em; padding: 0.15em 0.5em; border-radius: 3px; text-transform: uppercase; }
   .badge-core { background: var(--violet-light); color: var(--violet); }
   .badge-ext  { background: var(--ext-bg);       color: var(--star-ext); }
 
   h3.section-label {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -102,7 +115,7 @@
     page-break-inside: avoid;
   }
   .meta-block h4 {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.72rem;
     font-weight: 800;
     letter-spacing: 0.08em;
@@ -136,7 +149,7 @@
   .question.ext .q-header { background: var(--ext-bg); border-color: var(--ext-border); }
 
   .q-num {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-weight: 800;
     font-size: 0.82rem;
     color: var(--violet);
@@ -168,7 +181,7 @@
   .draw-area-md  { height: 150px; }
   .draw-area-lg  { height: 200px; }
   .draw-label {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.72rem;
     color: var(--muted);
     text-transform: uppercase;
@@ -186,7 +199,7 @@
     color: var(--hint-text);
   }
   .hint-label {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-weight: 700;
     font-size: 0.7rem;
     letter-spacing: 0.05em;
@@ -196,15 +209,15 @@
 
   .diagram { margin: 0.75rem 0; }
   .diagram svg { display: block; max-width: 100%; }
-  .diagram-caption { font-family: system-ui, sans-serif; font-size: 0.75rem; color: var(--muted); margin-top: 0.35rem; font-style: italic; }
+  .diagram-caption { font-family: var(--font-body); font-size: 0.75rem; color: var(--muted); margin-top: 0.35rem; font-style: italic; }
 
   .word-bank {
-    background: #F9FAFB;
+    background: #faf9f6;
     border: 1px solid var(--border);
     border-radius: 4px;
     padding: 0.45rem 0.75rem;
     margin: 0.5rem 0 0.6rem;
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.82rem;
   }
   .word-bank-label { font-weight: 700; font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin-right: 0.4em; }
@@ -213,8 +226,8 @@
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 0.6rem 0; }
   .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin: 0.6rem 0; }
   .diagram-cell { display: flex; flex-direction: column; align-items: center; }
-  .diagram-cell .cell-label { font-family: system-ui, sans-serif; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 0.3rem; }
-  .diagram-cell .cell-id { font-family: system-ui, sans-serif; font-size: 0.78rem; color: var(--violet); font-weight: 700; margin-bottom: 0.25rem; }
+  .diagram-cell .cell-label { font-family: var(--font-body); font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 0.3rem; }
+  .diagram-cell .cell-id { font-family: var(--font-body); font-size: 0.78rem; color: var(--violet); font-weight: 700; margin-bottom: 0.25rem; }
   .diagram-cell .cell-resp { border-bottom: 1px solid var(--line-color); min-height: 1.6rem; width: 100%; margin-top: 0.4rem; }
 
   .stretch-header {
@@ -226,14 +239,14 @@
     page-break-before: always;
   }
   .stretch-header h3 {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.95rem;
     font-weight: 800;
     color: var(--stretch-hdr);
     margin-bottom: 0.3rem;
   }
   .stretch-header p {
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.82rem;
     color: var(--muted);
   }
@@ -251,14 +264,14 @@
     padding: 0.75rem 1.25rem;
     border-radius: 4px 4px 0 0;
   }
-  .rubric-header h3 { font-family: system-ui, sans-serif; font-size: 0.95rem; font-weight: 700; }
-  .rubric-header p { font-family: system-ui, sans-serif; font-size: 0.78rem; opacity: 0.8; margin-top: 0.2rem; }
+  .rubric-header h3 { font-family: var(--font-body); font-size: 0.95rem; font-weight: 700; }
+  .rubric-header p { font-family: var(--font-body); font-size: 0.78rem; opacity: 0.8; margin-top: 0.2rem; }
   .rubric table { border-radius: 0 0 4px 4px; overflow: hidden; width: 100%; border-collapse: collapse; }
-  .rubric th { background: #374151; color: white; font-family: system-ui, sans-serif; font-size: 0.78rem; padding: 0.5rem 0.75rem; text-align: left; }
+  .rubric th { background: #3f3b35; color: white; font-family: var(--font-body); font-size: 0.78rem; padding: 0.5rem 0.75rem; text-align: left; }
   .rubric td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); font-size: 0.88rem; vertical-align: top; }
   .rubric tr:last-child td { border-bottom: none; }
   .rubric tr:nth-child(even) td { background: #FAFAFA; }
-  .rubric .rating { font-family: system-ui, sans-serif; font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+  .rubric .rating { font-family: var(--font-body); font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
 
   @media print {
     html { font-size: 11pt; }
@@ -630,7 +643,7 @@
         <div class="cell-resp"></div>
       </div>
     </div>
-    <p style="font-family:system-ui,sans-serif;font-size:0.8rem;color:var(--muted);margin-top:0.25rem">Écris le type de force interne sous chaque diagramme.</p>
+    <p style="font-family: var(--font-body);font-size:0.8rem;color:var(--muted);margin-top:0.25rem">Écris le type de force interne sous chaque diagramme.</p>
   </div>
 </div>
 
@@ -663,19 +676,19 @@
   <div class="q-body">
     <p>Quatre paires de forces sont listées. Pour chaque paire, décide si c'est une paire action-réaction valide. Encercle <strong>Valide</strong> ou <strong>Non valide</strong>, et explique ta décision en une phrase.</p>
     <div style="margin-top:0.5rem;display:flex;flex-direction:column;gap:0.75rem">
-      <div style="background:#F9FAFB;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
+      <div style="background:#faf9f6;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
         <p><strong>(a)</strong> &nbsp; La pesanteur tire un livre vers le bas. &nbsp;/&nbsp; La table pousse le livre vers le haut.</p>
         <p style="margin-top:0.3rem">Valide &nbsp; / &nbsp; Non valide &nbsp;&nbsp; <span style="font-size:0.82rem;color:var(--muted)">Raison :</span> <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:55%">&nbsp;</span></p>
       </div>
-      <div style="background:#F9FAFB;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
+      <div style="background:#faf9f6;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
         <p><strong>(b)</strong> &nbsp; Tu pousses un mur vers l'avant. &nbsp;/&nbsp; Le mur te pousse vers l'arrière.</p>
         <p style="margin-top:0.3rem">Valide &nbsp; / &nbsp; Non valide &nbsp;&nbsp; <span style="font-size:0.82rem;color:var(--muted)">Raison :</span> <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:55%">&nbsp;</span></p>
       </div>
-      <div style="background:#F9FAFB;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
+      <div style="background:#faf9f6;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
         <p><strong>(c)</strong> &nbsp; La force appliquée pousse la boîte vers la droite. &nbsp;/&nbsp; La friction pousse la boîte vers la gauche.</p>
         <p style="margin-top:0.3rem">Valide &nbsp; / &nbsp; Non valide &nbsp;&nbsp; <span style="font-size:0.82rem;color:var(--muted)">Raison :</span> <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:55%">&nbsp;</span></p>
       </div>
-      <div style="background:#F9FAFB;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
+      <div style="background:#faf9f6;border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.85rem;font-size:0.9rem">
         <p><strong>(d)</strong> &nbsp; La Terre tire le livre vers le bas. &nbsp;/&nbsp; Le livre tire la Terre vers le haut.</p>
         <p style="margin-top:0.3rem">Valide &nbsp; / &nbsp; Non valide &nbsp;&nbsp; <span style="font-size:0.82rem;color:var(--muted)">Raison :</span> <span style="border-bottom:1px solid var(--line-color);display:inline-block;width:55%">&nbsp;</span></p>
       </div>
@@ -1105,7 +1118,7 @@
   </table>
 </div>
 
-<p style="font-family:system-ui,sans-serif;font-size:0.72rem;color:var(--muted);text-align:center;margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--border)">sci6-forces-workbook-fr-v1 &middot; Sciences 6 &middot; Programme d'études de l'Alberta 2023</p>
+<p style="font-family: var(--font-body);font-size:0.72rem;color:var(--muted);text-align:center;margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--border)">sci6-forces-workbook-fr-v1 &middot; Sciences 6 &middot; Programme d'études de l'Alberta 2023</p>
 
 </div><!-- fin .page -->
 </body>

@@ -29,6 +29,7 @@ Current state only. Keep this file short: update the tables and the open list, a
 - **Materials suite:** `_meta-context.md` lists a PPTX deck per unit. None have been built. Decide whether to keep it in the suite.
 
 ### Not yet checked or finished
+- **Site fonts:** every student notes package and workbook, and their answer keys (201 files), now use Atkinson Hyperlegible Next and Fraunces with warm-neutral contrast, as in the Forces pilot. Not yet converted: teacher notes and guides, tests, quizzes, exit tickets, and home practice sheets (`scripts/apply_site_fonts.py` handles them). Not yet printed on a school photocopier.
 - **HTML never opened in a browser:** photosynthesis sim, Science 7 notes answer keys v2, Math 9 Rational Numbers test and question bank, slow reveal projector page and worksheet.
 - **Plant Hunt PDFs** in `public/materials/` may be stale against their HTML (the icon-flowchart revision). Re-render and compare.
 - **Photosynthesis sim:** no recording sheet or teacher notes. Grade 6 would need a cut-down version.
