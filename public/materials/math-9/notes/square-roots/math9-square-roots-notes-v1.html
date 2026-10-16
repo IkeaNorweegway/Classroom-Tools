@@ -122,6 +122,73 @@ code { font-family: var(--font-mono); font-size: 10pt; background: #f4f2ed; bord
   .frac .den { padding: 1px 3px 0; }
 
   .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+
+
+/* ── viz-kit: teaching visuals (scripts/add_notes_visuals.py) ── */
+:root { --dg-accent: var(--accent, var(--unit, #1d4ed8)); --viz-hot: #c2410c; --viz-cold: #1d4ed8;
+        --viz-plant: #15803d; --viz-water: #0369a1; --viz-earth: #92400e; --viz-sun: #ca8a04; --viz-key: #15803d; }
+.viz { margin: 1rem auto 1.25rem; text-align: center; break-inside: avoid; page-break-inside: avoid; }
+.viz svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.viz figcaption { font-size: 0.8rem; line-height: 1.4; color: #544f47; margin: 0.4rem auto 0; max-width: 40rem; font-style: italic; }
+svg .dg-boundary, svg .dg-line, svg .dg-accent, svg .dg-dashed, svg .dg-right-angle, svg .dg-construction { vector-effect: non-scaling-stroke; }
+svg .dg-boundary    { stroke: var(--dg-stroke, #3f3b35); fill: var(--dg-fill, #faf9f6); stroke-width: var(--dg-sw, 1.5px); }
+svg .dg-line        { stroke: var(--dg-stroke, #3f3b35); fill: none; stroke-width: var(--dg-sw, 1.5px); }
+svg .dg-accent      { stroke: var(--dg-accent); fill: none; stroke-width: var(--dg-sw-bold, 2.5px); }
+svg .dg-dashed      { stroke: var(--dg-secondary, #544f47); fill: none; stroke-width: var(--dg-sw, 1.5px); stroke-dasharray: 5 3; }
+svg .dg-right-angle { stroke: var(--dg-stroke, #3f3b35); fill: none; stroke-width: var(--dg-sw-thin, 1px); }
+svg .dg-construction{ stroke: var(--dg-muted, #6b665d); fill: none; stroke-width: var(--dg-sw-thin, 1px); stroke-dasharray: 2 3; }
+svg .dg-point       { fill: var(--dg-stroke, #3f3b35); stroke: none; }
+svg .dg-point-accent{ fill: var(--dg-accent); stroke: none; }
+svg .dg-label       { font: 12px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-stroke, #3f3b35); stroke: none; }
+svg .dg-label-sm    { font: 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-secondary, #544f47); stroke: none; }
+svg .dg-label-accent{ font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-accent); stroke: none; }
+.viz-ak-note { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #544f47; margin: 1rem 0 0.25rem; }
+svg .dg-grid, svg .dg-tag, svg .dg-arrow, svg .dg-fill-accent, svg .dg-fill-hot, svg .dg-fill-cold,
+svg .dg-fill-plant, svg .dg-fill-water, svg .dg-fill-earth, svg .dg-fill-sun, svg .dg-fill-soft, svg .dg-outline { vector-effect: non-scaling-stroke; }
+svg .dg-grid        { stroke: var(--dg-muted, #6b665d); stroke-opacity: .45; fill: none; stroke-width: 1px; }
+svg .dg-outline     { stroke: var(--dg-stroke, #3f3b35); fill: none; stroke-width: 1.5px; }
+svg .dg-fill-accent { fill: var(--dg-accent); fill-opacity: .14; stroke: var(--dg-accent); stroke-width: 1.5px; }
+svg .dg-fill-hot    { fill: var(--viz-hot);   fill-opacity: .16; stroke: var(--viz-hot);   stroke-width: 1.5px; }
+svg .dg-fill-cold   { fill: var(--viz-cold);  fill-opacity: .12; stroke: var(--viz-cold);  stroke-width: 1.5px; }
+svg .dg-fill-plant  { fill: var(--viz-plant); fill-opacity: .16; stroke: var(--viz-plant); stroke-width: 1.5px; }
+svg .dg-fill-water  { fill: var(--viz-water); fill-opacity: .14; stroke: var(--viz-water); stroke-width: 1.5px; }
+svg .dg-fill-earth  { fill: var(--viz-earth); fill-opacity: .16; stroke: var(--viz-earth); stroke-width: 1.5px; }
+svg .dg-fill-sun    { fill: var(--viz-sun);   fill-opacity: .22; stroke: var(--viz-sun);   stroke-width: 1.5px; }
+svg .dg-fill-soft   { fill: #efece6; stroke: #c9c4b9; stroke-width: 1px; }
+svg .dg-solid-accent{ fill: var(--dg-accent); stroke: none; }
+svg .dg-solid-hot   { fill: var(--viz-hot); stroke: none; }
+svg .dg-solid-cold  { fill: var(--viz-cold); stroke: none; }
+svg .dg-solid-plant { fill: var(--viz-plant); stroke: none; }
+svg .dg-solid-water { fill: var(--viz-water); stroke: none; }
+svg .dg-solid-earth { fill: var(--viz-earth); stroke: none; }
+svg .dg-solid-sun   { fill: var(--viz-sun); stroke: none; }
+svg .dg-solid-muted { fill: var(--dg-muted, #6b665d); stroke: none; }
+svg .dg-arrow       { fill: none; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-arrow.plain { stroke: var(--dg-stroke, #3f3b35); }  svg .dg-head.plain  { fill: var(--dg-stroke, #3f3b35); }
+svg .dg-arrow.accent{ stroke: var(--dg-accent); }           svg .dg-head.accent { fill: var(--dg-accent); }
+svg .dg-arrow.hot   { stroke: var(--viz-hot); }             svg .dg-head.hot    { fill: var(--viz-hot); }
+svg .dg-arrow.cold  { stroke: var(--viz-cold); }            svg .dg-head.cold   { fill: var(--viz-cold); }
+svg .dg-arrow.plant { stroke: var(--viz-plant); }           svg .dg-head.plant  { fill: var(--viz-plant); }
+svg .dg-arrow.water { stroke: var(--viz-water); }           svg .dg-head.water  { fill: var(--viz-water); }
+svg .dg-arrow.earth { stroke: var(--viz-earth); }           svg .dg-head.earth  { fill: var(--viz-earth); }
+svg .dg-arrow.sun   { stroke: var(--viz-sun); }             svg .dg-head.sun    { fill: var(--viz-sun); }
+svg .dg-arrow.muted { stroke: var(--dg-muted, #6b665d); }   svg .dg-head.muted  { fill: var(--dg-muted, #6b665d); }
+svg .dg-arrow.thin  { stroke-width: 1.4px; }
+svg .dg-head        { stroke: none; }
+svg .dg-tag         { fill: #fff; stroke: var(--dg-accent); stroke-width: 1.25px; stroke-dasharray: 4 2; }
+svg .dg-tag-answer  { font: 600 12px/1 var(--font-body, system-ui, sans-serif); fill: var(--viz-key); }
+svg .dg-title       { font: 700 13px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-stroke, #3f3b35); }
+svg .dg-math        { font: 15px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-stroke, #3f3b35); }
+svg .dg-math-lg     { font: 600 20px/1.2 var(--font-body, system-ui, sans-serif); fill: var(--dg-stroke, #3f3b35); }
+svg .dg-math-accent { font: 700 15px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-accent); }
+svg .dg-label-hot   { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-hot); }
+svg .dg-label-cold  { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-cold); }
+svg .dg-label-plant { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-plant); }
+svg .dg-label-water { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-water); }
+svg .dg-label-earth { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-earth); }
+svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif); fill: #fff; }
+/* ── /viz-kit ── */
 </style>
 </head>
 <body>
@@ -169,6 +236,24 @@ code { font-family: var(--font-mono); font-size: 10pt; background: #f4f2ed; bord
     <p><strong>Squaring and taking the square root are inverse operations.</strong></p>
     <p>If 5<sup>2</sup> = 25, then √25 = <span class="b b-sm"></span></p>
     <p>If 9<sup>2</sup> = 81, then √81 = <span class="b b-sm"></span></p>
+<!-- viz:area-and-side -->
+<figure class="viz">
+<!-- tikz: square-area-side | area=25 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 440 170" aria-label="A square made of 25 unit squares. Its side is 5 units. Squaring: 5 squared is 25, from side to area. Square root: the square root of 25 is a blank, 5, from area back to side." width="440" height="170">
+<rect x="40" y="20" width="26" height="26" class="dg-fill-accent"/><rect x="40" y="46" width="26" height="26" class="dg-fill-accent"/><rect x="40" y="72" width="26" height="26" class="dg-fill-accent"/><rect x="40" y="98" width="26" height="26" class="dg-fill-accent"/><rect x="40" y="124" width="26" height="26" class="dg-fill-accent"/><rect x="66" y="20" width="26" height="26" class="dg-fill-accent"/><rect x="66" y="46" width="26" height="26" class="dg-fill-accent"/><rect x="66" y="72" width="26" height="26" class="dg-fill-accent"/><rect x="66" y="98" width="26" height="26" class="dg-fill-accent"/><rect x="66" y="124" width="26" height="26" class="dg-fill-accent"/><rect x="92" y="20" width="26" height="26" class="dg-fill-accent"/><rect x="92" y="46" width="26" height="26" class="dg-fill-accent"/><rect x="92" y="72" width="26" height="26" class="dg-fill-accent"/><rect x="92" y="98" width="26" height="26" class="dg-fill-accent"/><rect x="92" y="124" width="26" height="26" class="dg-fill-accent"/><rect x="118" y="20" width="26" height="26" class="dg-fill-accent"/><rect x="118" y="46" width="26" height="26" class="dg-fill-accent"/><rect x="118" y="72" width="26" height="26" class="dg-fill-accent"/><rect x="118" y="98" width="26" height="26" class="dg-fill-accent"/><rect x="118" y="124" width="26" height="26" class="dg-fill-accent"/><rect x="144" y="20" width="26" height="26" class="dg-fill-accent"/><rect x="144" y="46" width="26" height="26" class="dg-fill-accent"/><rect x="144" y="72" width="26" height="26" class="dg-fill-accent"/><rect x="144" y="98" width="26" height="26" class="dg-fill-accent"/><rect x="144" y="124" width="26" height="26" class="dg-fill-accent"/>
+<text x="105" y="166" text-anchor="middle" class="dg-label">side = 5</text>
+<text x="105" y="90" text-anchor="middle" class="dg-math-lg">25</text>
+<line x1="200" y1="60" x2="293.7" y2="60.0" class="dg-arrow accent"/><polygon points="300.0,60.0 292.3,64.6 292.3,55.4" class="dg-head accent"/>
+<text x="250" y="50" text-anchor="middle" class="dg-label-accent">square it: 5² = 25</text>
+<line x1="300" y1="110" x2="206.3" y2="110.0" class="dg-arrow hot"/><polygon points="200.0,110.0 207.7,105.4 207.7,114.6" class="dg-head hot"/>
+<text x="250" y="100" text-anchor="middle" class="dg-label-hot">square root: √25 =</text>
+<rect x="230" y="116" width="40" height="20" rx="3" class="dg-tag"/>
+<text x="320" y="64" class="dg-label">side → area</text>
+<text x="320" y="114" class="dg-label">area → side</text>
+</svg>
+<figcaption>Squaring goes from side to area; square-rooting goes back from area to side. A square of area 25 has side √25.</figcaption>
+</figure>
+<!-- /viz:area-and-side -->
 
     <p><strong>A perfect square</strong> is any number that is the square of a <span class="b b-lg"></span> integer.</p>
 
@@ -188,9 +273,40 @@ code { font-family: var(--font-mono); font-size: 10pt; background: #f4f2ed; bord
       <tr><td>11</td><td></td><td></td></tr>
       <tr><td>12</td><td></td><td></td></tr>
     </table>
+<!-- viz:perfect-squares -->
+<figure class="viz">
+<!-- tikz: square-staircase | n=1..5 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 420 172" aria-label="Squares made of 1, 4, 9, 16 and 25 unit squares: 1 squared, 2 squared, 3 squared, 4 squared and 5 squared." width="420" height="172">
+<rect x="20" y="118" width="12" height="12" class="dg-fill-accent"/><text x="26.0" y="148" text-anchor="middle" class="dg-label">1</text><text x="26.0" y="164" text-anchor="middle" class="dg-label-sm">1²</text><rect x="58" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="58" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="70" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="70" y="118" width="12" height="12" class="dg-fill-accent"/><text x="70.0" y="148" text-anchor="middle" class="dg-label">4</text><text x="70.0" y="164" text-anchor="middle" class="dg-label-sm">2²</text><rect x="108" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="108" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="108" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="120" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="120" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="120" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="132" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="132" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="132" y="118" width="12" height="12" class="dg-fill-accent"/><text x="126.0" y="148" text-anchor="middle" class="dg-label">9</text><text x="126.0" y="164" text-anchor="middle" class="dg-label-sm">3²</text><rect x="170" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="170" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="170" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="170" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="182" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="182" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="182" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="182" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="194" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="194" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="194" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="194" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="206" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="206" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="206" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="206" y="118" width="12" height="12" class="dg-fill-accent"/><text x="194.0" y="148" text-anchor="middle" class="dg-label">16</text><text x="194.0" y="164" text-anchor="middle" class="dg-label-sm">4²</text><rect x="244" y="70" width="12" height="12" class="dg-fill-accent"/><rect x="244" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="244" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="244" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="244" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="256" y="70" width="12" height="12" class="dg-fill-accent"/><rect x="256" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="256" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="256" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="256" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="268" y="70" width="12" height="12" class="dg-fill-accent"/><rect x="268" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="268" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="268" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="268" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="280" y="70" width="12" height="12" class="dg-fill-accent"/><rect x="280" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="280" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="280" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="280" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="292" y="70" width="12" height="12" class="dg-fill-accent"/><rect x="292" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="292" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="292" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="292" y="118" width="12" height="12" class="dg-fill-accent"/><text x="274.0" y="148" text-anchor="middle" class="dg-label">25</text><text x="274.0" y="164" text-anchor="middle" class="dg-label-sm">5²</text>
+<text x="330" y="80" class="dg-label">10 is not a</text>
+<text x="330" y="96" class="dg-label">perfect square:</text>
+<text x="330" y="112" class="dg-label-sm">10 squares can't</text>
+<text x="330" y="126" class="dg-label-sm">make a full square</text>
+</svg>
+<figcaption>Perfect squares are the numbers of unit squares you can arrange into a full square: 1, 4, 9, 16, 25 and so on.</figcaption>
+</figure>
+<!-- /viz:perfect-squares -->
 
     <p><strong>The principal square root is the <em>positive</em> root.</strong></p>
     <p>Both 5 and −5, when squared, equal 25. But √25 = <span class="b b-sm"></span> only, because the radical symbol √ means the <span class="b b-lg"></span> root.</p>
+<!-- viz:principal-root -->
+<figure class="viz">
+<!-- tikz: number-line | roots=-5,5 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 165" aria-label="Number line from −6 to 6. Both −5 and 5 square to 25. The radical sign, the square root of 25, points only to 5, the blank, positive, root." width="480" height="165">
+<line x1="30.9" y1="110.0" x2="449.1" y2="110.0" class="dg-arrow plain"/><polygon points="26.0,110.0 32.0,106.4 32.0,113.6" class="dg-head plain"/><polygon points="454.0,110.0 448.0,113.6 448.0,106.4" class="dg-head plain"/><line x1="40.0" y1="104" x2="40.0" y2="116" class="dg-line"/><text x="40.0" y="132" text-anchor="middle" class="dg-label-sm">-6</text><line x1="73.3" y1="104" x2="73.3" y2="116" class="dg-line"/><text x="73.3" y="132" text-anchor="middle" class="dg-label-sm">-5</text><line x1="106.7" y1="104" x2="106.7" y2="116" class="dg-line"/><text x="106.7" y="132" text-anchor="middle" class="dg-label-sm">-4</text><line x1="140.0" y1="104" x2="140.0" y2="116" class="dg-line"/><text x="140.0" y="132" text-anchor="middle" class="dg-label-sm">-3</text><line x1="173.3" y1="104" x2="173.3" y2="116" class="dg-line"/><text x="173.3" y="132" text-anchor="middle" class="dg-label-sm">-2</text><line x1="206.7" y1="104" x2="206.7" y2="116" class="dg-line"/><text x="206.7" y="132" text-anchor="middle" class="dg-label-sm">-1</text><line x1="240.0" y1="104" x2="240.0" y2="116" class="dg-line"/><text x="240.0" y="132" text-anchor="middle" class="dg-label-sm">0</text><line x1="273.3" y1="104" x2="273.3" y2="116" class="dg-line"/><text x="273.3" y="132" text-anchor="middle" class="dg-label-sm">1</text><line x1="306.7" y1="104" x2="306.7" y2="116" class="dg-line"/><text x="306.7" y="132" text-anchor="middle" class="dg-label-sm">2</text><line x1="340.0" y1="104" x2="340.0" y2="116" class="dg-line"/><text x="340.0" y="132" text-anchor="middle" class="dg-label-sm">3</text><line x1="373.3" y1="104" x2="373.3" y2="116" class="dg-line"/><text x="373.3" y="132" text-anchor="middle" class="dg-label-sm">4</text><line x1="406.7" y1="104" x2="406.7" y2="116" class="dg-line"/><text x="406.7" y="132" text-anchor="middle" class="dg-label-sm">5</text><line x1="440.0" y1="104" x2="440.0" y2="116" class="dg-line"/><text x="440.0" y="132" text-anchor="middle" class="dg-label-sm">6</text>
+<circle cx="73.3" cy="110" r="6" class="dg-solid-hot"/><circle cx="406.7" cy="110" r="6" class="dg-point-accent"/>
+<text x="73.3" y="90" text-anchor="middle" class="dg-label-hot">(−5)² = 25</text>
+<text x="406.7" y="156" text-anchor="middle" class="dg-label-accent">5² = 25</text>
+<text x="240.0" y="28" text-anchor="middle" class="dg-math-lg">√25</text>
+<path d="M266.0 22 Q 373.3 20 406.7 98" class="dg-arrow accent"/>
+<line x1="405.7" y1="88" x2="406.2" y2="94.4" class="dg-arrow accent"/><polygon points="406.7,100.0 402.0,93.5 410.2,92.8" class="dg-head accent"/>
+<text x="236.0" y="66" text-anchor="end" class="dg-label">means only the</text>
+<rect x="242" y="52" width="70" height="20" rx="3" class="dg-tag"/>
+<text x="318" y="66" class="dg-label">root</text>
+</svg>
+<figcaption>Two numbers square to 25, but the √ symbol always means the one that is not negative.</figcaption>
+</figure>
+<!-- /viz:principal-root -->
 
     <div class="misconception">
       <div class="label">Misconception</div>
@@ -302,6 +418,23 @@ code { font-family: var(--font-mono); font-size: 10pt; background: #f4f2ed; bord
       <p>Step 2: Is 47 closer to 36 or 49? <span class="b b-sm"></span></p>
       <p>Step 3: Better estimate: √47 ≈ <span class="b b-sm"></span></p>
     </div>
+<!-- viz:squeeze -->
+<figure class="viz">
+<!-- tikz: number-line-squeeze | sqrt47 | 6..7 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 150" aria-label="Number line from 5 to 8. Above 6 is the square root of 36; above 7 is the square root of 49. The square root of 47 sits between them, close to 7, at about a blank, 6.9." width="480" height="150">
+<line x1="50.9" y1="90.0" x2="429.1" y2="90.0" class="dg-arrow plain"/><polygon points="46.0,90.0 52.0,86.4 52.0,93.6" class="dg-head plain"/><polygon points="434.0,90.0 428.0,93.6 428.0,86.4" class="dg-head plain"/><line x1="60.0" y1="84" x2="60.0" y2="96" class="dg-line"/><text x="60.0" y="112" text-anchor="middle" class="dg-label-sm">5</text><line x1="180.0" y1="84" x2="180.0" y2="96" class="dg-line"/><text x="180.0" y="112" text-anchor="middle" class="dg-label-sm">6</text><line x1="300.0" y1="84" x2="300.0" y2="96" class="dg-line"/><text x="300.0" y="112" text-anchor="middle" class="dg-label-sm">7</text><line x1="420.0" y1="84" x2="420.0" y2="96" class="dg-line"/><text x="420.0" y="112" text-anchor="middle" class="dg-label-sm">8</text><line x1="60.0" y1="86" x2="60.0" y2="94" class="dg-line"/><line x1="72.0" y1="86" x2="72.0" y2="94" class="dg-line"/><line x1="84.0" y1="86" x2="84.0" y2="94" class="dg-line"/><line x1="96.0" y1="86" x2="96.0" y2="94" class="dg-line"/><line x1="108.0" y1="86" x2="108.0" y2="94" class="dg-line"/><line x1="120.0" y1="86" x2="120.0" y2="94" class="dg-line"/><line x1="132.0" y1="86" x2="132.0" y2="94" class="dg-line"/><line x1="144.0" y1="86" x2="144.0" y2="94" class="dg-line"/><line x1="156.0" y1="86" x2="156.0" y2="94" class="dg-line"/><line x1="168.0" y1="86" x2="168.0" y2="94" class="dg-line"/><line x1="180.0" y1="86" x2="180.0" y2="94" class="dg-line"/><line x1="192.0" y1="86" x2="192.0" y2="94" class="dg-line"/><line x1="204.0" y1="86" x2="204.0" y2="94" class="dg-line"/><line x1="216.0" y1="86" x2="216.0" y2="94" class="dg-line"/><line x1="228.0" y1="86" x2="228.0" y2="94" class="dg-line"/><line x1="240.0" y1="86" x2="240.0" y2="94" class="dg-line"/><line x1="252.0" y1="86" x2="252.0" y2="94" class="dg-line"/><line x1="264.0" y1="86" x2="264.0" y2="94" class="dg-line"/><line x1="276.0" y1="86" x2="276.0" y2="94" class="dg-line"/><line x1="288.0" y1="86" x2="288.0" y2="94" class="dg-line"/><line x1="300.0" y1="86" x2="300.0" y2="94" class="dg-line"/><line x1="312.0" y1="86" x2="312.0" y2="94" class="dg-line"/><line x1="324.0" y1="86" x2="324.0" y2="94" class="dg-line"/><line x1="336.0" y1="86" x2="336.0" y2="94" class="dg-line"/><line x1="348.0" y1="86" x2="348.0" y2="94" class="dg-line"/><line x1="360.0" y1="86" x2="360.0" y2="94" class="dg-line"/><line x1="372.0" y1="86" x2="372.0" y2="94" class="dg-line"/><line x1="384.0" y1="86" x2="384.0" y2="94" class="dg-line"/><line x1="396.0" y1="86" x2="396.0" y2="94" class="dg-line"/><line x1="408.0" y1="86" x2="408.0" y2="94" class="dg-line"/><line x1="420.0" y1="86" x2="420.0" y2="94" class="dg-line"/>
+<rect x="180.0" y="82" width="120.0" height="16" class="dg-fill-accent"/>
+<text x="180.0" y="60" text-anchor="middle" class="dg-label">√36</text>
+<text x="300.0" y="60" text-anchor="middle" class="dg-label">√49</text>
+<circle cx="282.7" cy="90" r="6" class="dg-solid-hot"/>
+<text x="282.7" y="40" text-anchor="middle" class="dg-label-hot">√47</text>
+<line x1="282.7" y1="44" x2="282.7" y2="82" class="dg-dashed"/>
+<text x="240" y="138" text-anchor="end" class="dg-label">36 &lt; 47 &lt; 49, so √47 ≈</text>
+<rect x="246" y="124" width="44" height="20" rx="3" class="dg-tag"/>
+</svg>
+<figcaption>√47 is squeezed between √36 = 6 and √49 = 7. Since 47 is much closer to 49, √47 sits close to 7.</figcaption>
+</figure>
+<!-- /viz:squeeze -->
 
     <p><strong>Estimate each square root to one decimal place:</strong></p>
     <table>
@@ -418,6 +551,23 @@ code { font-family: var(--font-mono); font-size: 10pt; background: #f4f2ed; bord
     <p><strong>The Pythagorean theorem:</strong></p>
     <p>In any right triangle, the square of the <span class="b b-lg"></span> (c) equals the sum of the squares of the two <span class="b b-lg"></span> (a and b).</p>
     <p style="font-size:13pt;text-align:center;margin:10px 0;"><strong>a<sup>2</sup> + b<sup>2</sup> = c<sup>2</sup></strong></p>
+<!-- viz:pythagoras-squares -->
+<figure class="viz">
+<!-- tikz: pythagoras-squares | 3-4-5 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 440 270" aria-label="A right triangle with legs 3 and 4 and hypotenuse 5. A square on the leg of 3 has area 9; a square on the leg of 4 has area 16; the square on the hypotenuse has area a blank, 25. 9 plus 16 equals 25." width="440" height="270">
+<polygon points="80,170 80,104 14,104 14,170" class="dg-fill-plant"/><polygon points="80,170 168,170 168,258 80,258" class="dg-fill-sun"/><polygon points="80,104 168,170 234,82 146,16" class="dg-fill-accent"/><polygon points="80,170 168,170 80,104" class="dg-boundary"/>
+<polyline points="88,170 88,162 80,162" class="dg-right-angle"/>
+<text x="47.0" y="142.0" text-anchor="middle" class="dg-math">9</text>
+<text x="124" y="219" text-anchor="middle" class="dg-math">16</text>
+<rect x="135" y="81" width="44" height="24" rx="3" class="dg-tag"/>
+<text x="74" y="157.0" text-anchor="end" class="dg-label-sm">a = 3</text>
+<text x="124" y="164" text-anchor="middle" class="dg-label-sm">b = 4</text>
+<text x="300" y="230" class="dg-math">9 + 16 = 25</text>
+<text x="300" y="254" class="dg-math-accent">a² + b² = c²</text>
+</svg>
+<figcaption>Build a square on each side of a 3-4-5 right triangle. The two smaller squares (9 + 16) have exactly the same total area as the big square on the hypotenuse (25).</figcaption>
+</figure>
+<!-- /viz:pythagoras-squares -->
 
     <p>Label the parts of this triangle:</p>
     <figure style="margin:12px 0;overflow-x:auto;">
@@ -482,6 +632,23 @@ code { font-family: var(--font-mono); font-size: 10pt; background: #f4f2ed; bord
     <p><strong>Alberta context — Pipeline diagonal:</strong><br>
     A rectangular section of land near Leduc is 9 km × 40 km. How long is the diagonal pipeline crossing the rectangle?</p>
     <p>c = √(9<sup>2</sup> + 40<sup>2</sup>) = √(<span class="b b-sm"></span> + <span class="b b-sm"></span>) = √<span class="b b-sm"></span> = <span class="b b-sm"></span> km</p>
+<!-- viz:pipeline-diagonal -->
+<figure class="viz">
+<!-- tikz: rectangle-diagonal | 9x40 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 150" aria-label="A rectangle 40 kilometres long and 9 kilometres wide with a diagonal pipeline across it. The pipeline is the hypotenuse of a right triangle with legs 9 and 40, so it is a blank, 41, kilometres long." width="480" height="150">
+<rect x="40" y="30" width="360" height="81" class="dg-fill-plant"/>
+<line x1="40" y1="111" x2="400" y2="30" class="dg-arrow hot"/>
+<polyline points="392,111 392,103 400,103" class="dg-right-angle"/>
+<text x="220" y="130" text-anchor="middle" class="dg-label">40 km</text>
+<text x="408" y="76" class="dg-label">9 km</text>
+<text x="200" y="64" text-anchor="middle" class="dg-label-hot">pipeline</text>
+<text x="300" y="146" text-anchor="end" class="dg-label">√(81 + 1600) = √1681 =</text>
+<rect x="306" y="132" width="40" height="20" rx="3" class="dg-tag"/>
+<text x="352" y="146" class="dg-label">km</text>
+</svg>
+<figcaption>The diagonal pipeline splits the 9 km × 40 km rectangle into two right triangles. The pipeline is the hypotenuse.</figcaption>
+</figure>
+<!-- /viz:pipeline-diagonal -->
 
     <div class="retrieval">
       <div class="retrieval-header">Retrieval Check — Close Your Notes</div>
@@ -517,6 +684,20 @@ code { font-family: var(--font-mono); font-size: 10pt; background: #f4f2ed; bord
     <div class="worked-example">
       <p>√(<span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">16</span></span>) = <span class="frac"><span class="num">√9</span><span class="frac-slash">/</span><span class="den">√16</span></span> = <span class="b b-sm"></span>/<span class="b b-sm"></span></p>
     </div>
+<!-- viz:sqrt-fraction -->
+<figure class="viz">
+<!-- tikz: unit-square-fraction | 9/16 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 440 180" aria-label="A unit square divided into a 4 by 4 grid. A 3 by 3 block is shaded: area 9 over 16. The shaded square's side is 3 quarters of the unit side, so the square root of 9 over 16 is a blank, 3 over 4." width="440" height="180">
+<rect x="60" y="20" width="34" height="34" class="dg-fill-accent"/><rect x="60" y="54" width="34" height="34" class="dg-fill-accent"/><rect x="60" y="88" width="34" height="34" class="dg-fill-accent"/><rect x="60" y="122" width="34" height="34" class="dg-boundary"/><rect x="94" y="20" width="34" height="34" class="dg-fill-accent"/><rect x="94" y="54" width="34" height="34" class="dg-fill-accent"/><rect x="94" y="88" width="34" height="34" class="dg-fill-accent"/><rect x="94" y="122" width="34" height="34" class="dg-boundary"/><rect x="128" y="20" width="34" height="34" class="dg-fill-accent"/><rect x="128" y="54" width="34" height="34" class="dg-fill-accent"/><rect x="128" y="88" width="34" height="34" class="dg-fill-accent"/><rect x="128" y="122" width="34" height="34" class="dg-boundary"/><rect x="162" y="20" width="34" height="34" class="dg-boundary"/><rect x="162" y="54" width="34" height="34" class="dg-boundary"/><rect x="162" y="88" width="34" height="34" class="dg-boundary"/><rect x="162" y="122" width="34" height="34" class="dg-boundary"/>
+<text x="111" y="14" text-anchor="middle" class="dg-label-accent">3/4</text>
+<text x="196" y="174" text-anchor="middle" class="dg-label-sm">whole side = 1</text>
+<text x="240" y="70" class="dg-math">shaded area = 9/16</text>
+<text x="240" y="110" class="dg-math">√(9/16) =</text>
+<rect x="330" y="92" width="44" height="24" rx="3" class="dg-tag"/>
+</svg>
+<figcaption>Shade 9 of 16 small squares in a unit square: a 3-by-4ths-by-3-by-4ths square. Its area is 9/16, so its side is √(9/16) = 3/4.</figcaption>
+</figure>
+<!-- /viz:sqrt-fraction -->
 
     <p><strong>Square roots of decimals — two approaches:</strong></p>
     <p><strong>Method 1:</strong> Convert to fraction, then take root.<br>
@@ -550,6 +731,26 @@ code { font-family: var(--font-mono); font-size: 10pt; background: #f4f2ed; bord
       Let a = 16, b = 9: Left side = <span class="b b-sm"></span> &nbsp; Right side = <span class="b b-sm"></span>. Equal? <span class="b b-sm"></span></p>
       <p>What DOES work: √(a × b) = √a × √b (roots distribute over multiplication, not addition).</p>
     </div>
+<!-- viz:sqrt-sum-walk -->
+<figure class="viz">
+<!-- tikz: path-vs-diagonal | 3,4,5 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 170" aria-label="Walking 3 units then 4 units along the legs of a right triangle covers 3 plus 4, which is 7, the same as root 9 plus root 16. The straight diagonal is the square root of 9 plus 16, the square root of 25, which is a blank, 5." width="480" height="170">
+<line x1="60" y1="150" x2="180" y2="150" class="dg-arrow plant"/>
+<line x1="180" y1="150" x2="180" y2="30" class="dg-arrow plant"/>
+<line x1="60" y1="150" x2="180" y2="30" class="dg-arrow hot"/>
+<polyline points="172,150 172,142 180,142" class="dg-right-angle"/>
+<text x="120" y="166" text-anchor="middle" class="dg-label-plant">3</text>
+<text x="188" y="94" class="dg-label-plant">4</text>
+<text x="108" y="84" text-anchor="end" class="dg-label-hot">5</text>
+<text x="230" y="70" class="dg-math">√9 + √16 = 3 + 4 = 7</text>
+<text x="230" y="90" class="dg-label-plant">walk along the two legs</text>
+<text x="230" y="130" class="dg-math">√(9 + 16) = √25 =</text>
+<rect x="380" y="112" width="36" height="24" rx="3" class="dg-tag"/>
+<text x="230" y="150" class="dg-label-hot">the straight shortcut</text>
+</svg>
+<figcaption>√9 + √16 is like walking 3 east then 4 north: 7 in total. √(9 + 16) is the straight-line shortcut: only 5. The radical of a sum is not the sum of the radicals.</figcaption>
+</figure>
+<!-- /viz:sqrt-sum-walk -->
 
     <p><strong>Table — what distributes under a radical?</strong></p>
     <table>

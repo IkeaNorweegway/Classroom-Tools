@@ -29,6 +29,7 @@ Current state only. Keep this file short: update the tables and the open list, a
 - **Materials suite:** `_meta-context.md` lists a PPTX deck per unit. None have been built. Decide whether to keep it in the suite.
 
 ### Not yet checked or finished
+- **Teaching visuals in notes (2026-10-15):** 171 new diagrams across all five Science 7 notes packages (78) and all eleven Math 9 notes packages (93), mirrored into each notes answer key with the blank labels filled in. Sources are in `notes-packages/_visuals/`; `scripts/add_notes_visuals.py` inserts them. Checked in headless Chrome and with the SVG audit (no new violations). Not done: the markdown sources have no `[SVG: …]` placeholders yet, the old HTML copies beside the Math 9 markdown in `notes-packages/math-9/` were not updated, and nothing has been printed on the school copier.
 - **Site fonts:** every student notes package and workbook, and their answer keys (201 files), now use Atkinson Hyperlegible Next and Fraunces with warm-neutral contrast, as in the Forces pilot. Not yet converted: teacher notes and guides, tests, quizzes, exit tickets, and home practice sheets (`scripts/apply_site_fonts.py` handles them). Not yet printed on a school photocopier.
 - **HTML never opened in a browser:** photosynthesis sim, Science 7 notes answer keys v2, Math 9 Rational Numbers test and question bank, slow reveal projector page and worksheet.
 - **Plant Hunt PDFs** in `public/materials/` may be stale against their HTML (the icon-flowchart revision). Re-render and compare.
