@@ -2,7 +2,7 @@
 
 Render scripts for this workspace. Run them from the repo root (`D:\Classroom tools`).
 
-**What runs on this machine:** Perl runs inside Git Bash (`perl scripts/name.pl`). Python, Node, and LaTeX are not installed, so the `.py` scripts below cannot run here until Python is added.
+**What runs on this machine:** Perl runs inside Git Bash (`perl scripts/name.pl`). Python 3.15 is installed through `uv`, at `C:\Users\Ejan.Bremness\AppData\Roaming\uv\python\cpython-3.15-windows-x86_64-none\python.exe`. The `python` on PATH is a Windows Store stub, so call that path directly. Node and LaTeX are not installed. The `.py` scripts marked "No (Python)" below may run now, but check each one's header before relying on it.
 
 **Where output goes:** published renders belong in `public/materials/`. A script that writes its HTML next to the markdown source needs its output moved to `public/materials/` afterwards. Posters are the exception: they are print-only and stay beside their source in `worksheets/math-9/`.
 
@@ -15,6 +15,8 @@ Render scripts for this workspace. Run them from the repo root (`D:\Classroom to
 | `render_math9_posters.pl` | Yes | Math 9 concept sheets → six-page tiled wall posters (17×33 in) | `worksheets/math-9/[strand]/[topic]/math9-[topic]-poster-v1.html` |
 | `render_math9_rational_numbers_memory_poster.pl` | Yes | Rational Numbers quick-recall poster, four-page tile (17×22 in) | `worksheets/math-9/number/rational-numbers/` |
 | `render_math9_posters.py` | No (Python) | Earlier Python version of the poster script. The `.pl` version is the one in use. | same as the `.pl` |
+| `render_assessments.pl` | Yes | Exit tickets and quizzes (markdown) → printable HTML. Perl port of `render_assessments.py`. Unit tests and answer keys are skipped unless `--out` names a folder outside the repo. See `scripts/render-queue.md`. | `public/materials/<same name>.html` |
+| `render_assessments.py` | No (Python) | The Python original of the Perl port above. Kept until the port is confirmed to match. | same as the `.pl` |
 | `render_sci7_workbooks.py` | No (Python, old paths) | `worksheets/grade-7-science/[unit]/sci7-[unit]-workbook-v2.md` (5 files) | `public/materials/sci7-[unit]-workbook-v1.html` |
 | `render_math9_workbooks.py` | No (Python, old paths) | `worksheets/math-9/[strand]/math9-[strand]-workbook-v1.md` (4 files) | `public/materials/math-9/worksheets/[strand]/math9-[strand]-workbook-v1.html` |
 | `render_home_practice.py` | Linux only (Python) | Home practice sheets for the parent pages, every course (format in `templates/home-practice-template.md`; front matter `course:` picks the colours and output folder). Repo-relative paths; no arguments renders every sheet. Run `stack_fractions.py` on the output afterwards. | Math 9: `public/materials/math-9/home/[topic]/`; other courses: flat in `public/materials/` |
