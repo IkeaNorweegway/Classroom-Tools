@@ -14,6 +14,7 @@ Each visual is one fragment file in notes-packages/_visuals/<unit>/NN-name.html:
       ... dg-* classed elements ...
       <tag x="10" y="20" w="70">answer</tag>      blank label box; answer shows only in the key
       <arrow x1="0" y1="0" x2="50" y2="0" kind="hot"/>   line + arrowhead (kind: plain|accent|hot|cold|muted)
+      <mapbase name="europe-canada" x="0" y="0"/>   land layer from notes-packages/_visuals/_maps/ (scripts/build_social_maps.py)
     </svg>
 
 Student notes get empty dashed tag boxes; the answer key gets the same box with the answer in green.
@@ -54,6 +55,13 @@ for _topic, _stem in [
 ]:
     UNITS[f"math9-{_topic}"] = (M9 / _topic / f"math9-{_stem}-notes-v1.html",
                                 M9 / _topic / f"math9-{_stem}-notes-answers-v1.html")
+for _g, _units in [
+    (8, ["civic-engagement", "economic-systems", "ideologies", "political-systems"]),
+    (9, ["canada-in-wwii", "evolving-citizenship", "independence-democratic-rights", "modern-economy",
+         "postwar-canada", "system-of-government", "urbanization-industry"]),
+]:
+    for _u in _units:
+        UNITS[f"soc{_g}-{_u}"] = (PM / f"soc{_g}-{_u}-notes-v1.html", PM / f"soc{_g}-{_u}-notes-answers-v1.html")
 
 CSS_START = "/* ── viz-kit: teaching visuals (scripts/add_notes_visuals.py) ── */"
 CSS_END = "/* ── /viz-kit ── */"
@@ -120,6 +128,14 @@ svg .dg-label-plant { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif)
 svg .dg-label-water { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-water); }
 svg .dg-label-earth { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-earth); }
 svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif); fill: #fff; }
+svg .dg-land, svg .dg-land-hi, svg .dg-border { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-land        { fill: #ebe7df; stroke: #a8a294; stroke-width: .75px; }
+svg .dg-land-hi     { fill: var(--dg-accent); fill-opacity: .22; stroke: var(--dg-accent); stroke-width: 1px; }
+svg .dg-border      { fill: none; stroke: #a8a294; stroke-width: .5px; }
+svg .dg-sea         { fill: #f4f7f9; stroke: none; }
+svg .dg-route       { fill: none; stroke: var(--dg-accent); stroke-width: 2px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-route.muted { stroke: var(--dg-muted, #6b665d); stroke-dasharray: 5 3; }
+svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
 """ + CSS_END
 
 VIZ_RE = re.compile(r"[ \t]*<!-- viz:[\w-]+ -->.*?<!-- /viz:[\w-]+ -->\n?", re.S)
@@ -182,6 +198,15 @@ def expand(svg, answer_key):
                     f'<polygon points="{" ".join(f"{px:.1f},{py:.1f}" for px, py in pts2)}" class="dg-head {kind}"/>')
         return line + f'<polygon points="{p}" class="dg-head {kind}"/>'
 
+    def mapbase(m):
+        a = attrs(m.group(1))
+        layer = (VIS / "_maps" / f"{a['name']}.svg").read_text(encoding="utf-8")
+        layer = re.sub(r"<!--.*?-->\n?", "", layer, flags=re.S).strip()
+        if "x" in a or "y" in a:
+            layer = f'<g transform="translate({a.get("x", 0)},{a.get("y", 0)})">{layer}</g>'
+        return layer
+
+    svg = re.sub(r"<mapbase\s+([^>]*?)/>", mapbase, svg)
     svg = re.sub(r"<tag\s+([^>]*)>(.*?)</tag>", tag, svg, flags=re.S)
     svg = re.sub(r"<arrow\s+([^>]*?)/>", arrow, svg)
     head = re.match(r"<svg\b([^>]*)>", svg)
@@ -241,7 +266,7 @@ def apply(unit, frags, notes_path, ak_path, remove=False):
     for path, answer_key in ((notes_path, False), (ak_path, True)):
         doc = path.read_text(encoding="utf-8")
         doc = VIZ_RE.sub("", doc)
-        doc = CSS_RE.sub("\n", doc)
+        doc = CSS_RE.sub("", doc)  # the block is inserted with its own newlines; put nothing back
         if not remove and frags:
             doc = doc.replace("</style>", "\n" + CSS + "\n</style>", 1)
             # insert bottom-up so earlier offsets stay valid; ties keep fragment order

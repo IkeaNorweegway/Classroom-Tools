@@ -161,6 +161,79 @@
     h1, h2, h3, .section-title { break-after: avoid; page-break-after: avoid; }
     p { orphans: 3; widows: 3; }
   }
+
+/* ── viz-kit: teaching visuals (scripts/add_notes_visuals.py) ── */
+:root { --dg-accent: var(--accent, var(--unit, #1d4ed8)); --viz-hot: #c2410c; --viz-cold: #1d4ed8;
+        --viz-plant: #15803d; --viz-water: #0369a1; --viz-earth: #92400e; --viz-sun: #ca8a04; --viz-key: #15803d; }
+.viz { margin: 1rem auto 1.25rem; text-align: center; break-inside: avoid; page-break-inside: avoid; }
+.viz svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.viz figcaption { font-size: 0.8rem; line-height: 1.4; color: #544f47; margin: 0.4rem auto 0; max-width: 40rem; font-style: italic; }
+svg .dg-boundary, svg .dg-line, svg .dg-accent, svg .dg-dashed, svg .dg-right-angle, svg .dg-construction { vector-effect: non-scaling-stroke; }
+svg .dg-boundary    { stroke: var(--dg-stroke, #3f3b35); fill: var(--dg-fill, #faf9f6); stroke-width: var(--dg-sw, 1.5px); }
+svg .dg-line        { stroke: var(--dg-stroke, #3f3b35); fill: none; stroke-width: var(--dg-sw, 1.5px); }
+svg .dg-accent      { stroke: var(--dg-accent); fill: none; stroke-width: var(--dg-sw-bold, 2.5px); }
+svg .dg-dashed      { stroke: var(--dg-secondary, #544f47); fill: none; stroke-width: var(--dg-sw, 1.5px); stroke-dasharray: 5 3; }
+svg .dg-right-angle { stroke: var(--dg-stroke, #3f3b35); fill: none; stroke-width: var(--dg-sw-thin, 1px); }
+svg .dg-construction{ stroke: var(--dg-muted, #6b665d); fill: none; stroke-width: var(--dg-sw-thin, 1px); stroke-dasharray: 2 3; }
+svg .dg-point       { fill: var(--dg-stroke, #3f3b35); stroke: none; }
+svg .dg-point-accent{ fill: var(--dg-accent); stroke: none; }
+svg .dg-label       { font: 12px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-stroke, #3f3b35); stroke: none; }
+svg .dg-label-sm    { font: 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-secondary, #544f47); stroke: none; }
+svg .dg-label-accent{ font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-accent); stroke: none; }
+.viz-ak-note { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #544f47; margin: 1rem 0 0.25rem; }
+svg .dg-grid, svg .dg-tag, svg .dg-arrow, svg .dg-fill-accent, svg .dg-fill-hot, svg .dg-fill-cold,
+svg .dg-fill-plant, svg .dg-fill-water, svg .dg-fill-earth, svg .dg-fill-sun, svg .dg-fill-soft, svg .dg-outline { vector-effect: non-scaling-stroke; }
+svg .dg-grid        { stroke: var(--dg-muted, #6b665d); stroke-opacity: .45; fill: none; stroke-width: 1px; }
+svg .dg-outline     { stroke: var(--dg-stroke, #3f3b35); fill: none; stroke-width: 1.5px; }
+svg .dg-fill-accent { fill: var(--dg-accent); fill-opacity: .14; stroke: var(--dg-accent); stroke-width: 1.5px; }
+svg .dg-fill-hot    { fill: var(--viz-hot);   fill-opacity: .16; stroke: var(--viz-hot);   stroke-width: 1.5px; }
+svg .dg-fill-cold   { fill: var(--viz-cold);  fill-opacity: .12; stroke: var(--viz-cold);  stroke-width: 1.5px; }
+svg .dg-fill-plant  { fill: var(--viz-plant); fill-opacity: .16; stroke: var(--viz-plant); stroke-width: 1.5px; }
+svg .dg-fill-water  { fill: var(--viz-water); fill-opacity: .14; stroke: var(--viz-water); stroke-width: 1.5px; }
+svg .dg-fill-earth  { fill: var(--viz-earth); fill-opacity: .16; stroke: var(--viz-earth); stroke-width: 1.5px; }
+svg .dg-fill-sun    { fill: var(--viz-sun);   fill-opacity: .22; stroke: var(--viz-sun);   stroke-width: 1.5px; }
+svg .dg-fill-soft   { fill: #efece6; stroke: #c9c4b9; stroke-width: 1px; }
+svg .dg-solid-accent{ fill: var(--dg-accent); stroke: none; }
+svg .dg-solid-hot   { fill: var(--viz-hot); stroke: none; }
+svg .dg-solid-cold  { fill: var(--viz-cold); stroke: none; }
+svg .dg-solid-plant { fill: var(--viz-plant); stroke: none; }
+svg .dg-solid-water { fill: var(--viz-water); stroke: none; }
+svg .dg-solid-earth { fill: var(--viz-earth); stroke: none; }
+svg .dg-solid-sun   { fill: var(--viz-sun); stroke: none; }
+svg .dg-solid-muted { fill: var(--dg-muted, #6b665d); stroke: none; }
+svg .dg-arrow       { fill: none; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-arrow.plain { stroke: var(--dg-stroke, #3f3b35); }  svg .dg-head.plain  { fill: var(--dg-stroke, #3f3b35); }
+svg .dg-arrow.accent{ stroke: var(--dg-accent); }           svg .dg-head.accent { fill: var(--dg-accent); }
+svg .dg-arrow.hot   { stroke: var(--viz-hot); }             svg .dg-head.hot    { fill: var(--viz-hot); }
+svg .dg-arrow.cold  { stroke: var(--viz-cold); }            svg .dg-head.cold   { fill: var(--viz-cold); }
+svg .dg-arrow.plant { stroke: var(--viz-plant); }           svg .dg-head.plant  { fill: var(--viz-plant); }
+svg .dg-arrow.water { stroke: var(--viz-water); }           svg .dg-head.water  { fill: var(--viz-water); }
+svg .dg-arrow.earth { stroke: var(--viz-earth); }           svg .dg-head.earth  { fill: var(--viz-earth); }
+svg .dg-arrow.sun   { stroke: var(--viz-sun); }             svg .dg-head.sun    { fill: var(--viz-sun); }
+svg .dg-arrow.muted { stroke: var(--dg-muted, #6b665d); }   svg .dg-head.muted  { fill: var(--dg-muted, #6b665d); }
+svg .dg-arrow.thin  { stroke-width: 1.4px; }
+svg .dg-head        { stroke: none; }
+svg .dg-tag         { fill: #fff; stroke: var(--dg-accent); stroke-width: 1.25px; stroke-dasharray: 4 2; }
+svg .dg-tag-answer  { font: 600 12px/1 var(--font-body, system-ui, sans-serif); fill: var(--viz-key); }
+svg .dg-title       { font: 700 13px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-stroke, #3f3b35); }
+svg .dg-math        { font: 15px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-stroke, #3f3b35); }
+svg .dg-math-lg     { font: 600 20px/1.2 var(--font-body, system-ui, sans-serif); fill: var(--dg-stroke, #3f3b35); }
+svg .dg-math-accent { font: 700 15px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-accent); }
+svg .dg-label-hot   { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-hot); }
+svg .dg-label-cold  { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-cold); }
+svg .dg-label-plant { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-plant); }
+svg .dg-label-water { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-water); }
+svg .dg-label-earth { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-earth); }
+svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif); fill: #fff; }
+svg .dg-land, svg .dg-land-hi, svg .dg-border { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-land        { fill: #ebe7df; stroke: #a8a294; stroke-width: .75px; }
+svg .dg-land-hi     { fill: var(--dg-accent); fill-opacity: .22; stroke: var(--dg-accent); stroke-width: 1px; }
+svg .dg-border      { fill: none; stroke: #a8a294; stroke-width: .5px; }
+svg .dg-sea         { fill: #f4f7f9; stroke: none; }
+svg .dg-route       { fill: none; stroke: var(--dg-accent); stroke-width: 2px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-route.muted { stroke: var(--dg-muted, #6b665d); stroke-dasharray: 5 3; }
+svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+/* ── /viz-kit ── */
 </style>
 </head>
 <body>
@@ -180,6 +253,42 @@
 
 <hr class="section-break">
 <h2 class="section-title">Section 1: What Is an Ideology? Individualism vs. Collectivism</h2>
+<!-- viz:individual-group -->
+<figure class="viz">
+<p class="viz-ak-note">Diagram — answers</p>
+<!-- tikz: two-panel | individualism (outward arrows) | collectivism (inward arrows) -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 570 196" aria-label="Individualism: four people each heading in their own direction; people mostly take care of blank, themselves. Collectivism: four people all pointing toward one shared goal; the needs of the blank, group, come first." width="570" height="196">
+<text x="140" y="18" text-anchor="middle" class="dg-title">Individualism</text>
+<text x="140" y="32" text-anchor="middle" class="dg-label-sm">my choices, my freedom</text>
+<circle cx="95" cy="66" r="7" class="dg-solid-accent"/><path d="M86,96 Q86,76 95,76 Q104,76 104,96 Z" class="dg-solid-accent"/>
+<circle cx="185" cy="66" r="7" class="dg-solid-accent"/><path d="M176,96 Q176,76 185,76 Q194,76 194,96 Z" class="dg-solid-accent"/>
+<circle cx="95" cy="116" r="7" class="dg-solid-accent"/><path d="M86,146 Q86,126 95,126 Q104,126 104,146 Z" class="dg-solid-accent"/>
+<circle cx="185" cy="116" r="7" class="dg-solid-accent"/><path d="M176,146 Q176,126 185,126 Q194,126 194,146 Z" class="dg-solid-accent"/>
+<line x1="82" y1="70" x2="57.2" y2="53.5" class="dg-arrow accent thin"/><polygon points="52.0,50.0 61.0,50.4 55.8,58.1" class="dg-head accent"/>
+<line x1="198" y1="70" x2="222.8" y2="53.5" class="dg-arrow accent thin"/><polygon points="228.0,50.0 224.2,58.1 219.0,50.4" class="dg-head accent"/>
+<line x1="82" y1="136" x2="57.1" y2="154.3" class="dg-arrow accent thin"/><polygon points="52.0,158.0 55.5,149.7 61.0,157.2" class="dg-head accent"/>
+<line x1="198" y1="136" x2="222.9" y2="154.3" class="dg-arrow accent thin"/><polygon points="228.0,158.0 219.0,157.2 224.5,149.7" class="dg-head accent"/>
+<text x="150" y="186" text-anchor="end" class="dg-label">people mostly take care of</text>
+<rect x="156" y="172" width="100" height="20" rx="3" class="dg-tag"/><text x="206" y="186" text-anchor="middle" class="dg-tag-answer">themselves</text>
+<line x1="285" y1="10" x2="285" y2="166" class="dg-construction"/>
+<text x="420" y="18" text-anchor="middle" class="dg-title">Collectivism</text>
+<text x="420" y="32" text-anchor="middle" class="dg-label-sm">our shared needs</text>
+<circle cx="420" cy="102" r="18" class="dg-fill-sun"/><text x="420" y="106" text-anchor="middle" class="dg-label-sm">goal</text>
+<circle cx="360" cy="58" r="7" class="dg-solid-accent"/><path d="M351,88 Q351,68 360,68 Q369,68 369,88 Z" class="dg-solid-accent"/>
+<circle cx="480" cy="58" r="7" class="dg-solid-accent"/><path d="M471,88 Q471,68 480,68 Q489,68 489,88 Z" class="dg-solid-accent"/>
+<circle cx="360" cy="122" r="7" class="dg-solid-accent"/><path d="M351,152 Q351,132 360,132 Q369,132 369,152 Z" class="dg-solid-accent"/>
+<circle cx="480" cy="122" r="7" class="dg-solid-accent"/><path d="M471,152 Q471,132 480,132 Q489,132 489,152 Z" class="dg-solid-accent"/>
+<line x1="374" y1="80" x2="395.4" y2="91.1" class="dg-arrow accent thin"/><polygon points="401.0,94.0 392.0,94.6 396.3,86.3" class="dg-head accent"/>
+<line x1="466" y1="80" x2="444.6" y2="91.1" class="dg-arrow accent thin"/><polygon points="439.0,94.0 443.7,86.3 448.0,94.6" class="dg-head accent"/>
+<line x1="374" y1="128" x2="395.6" y2="115.2" class="dg-arrow accent thin"/><polygon points="401.0,112.0 396.7,119.9 392.0,111.9" class="dg-head accent"/>
+<line x1="466" y1="128" x2="444.4" y2="115.2" class="dg-arrow accent thin"/><polygon points="439.0,112.0 448.0,111.9 443.3,119.9" class="dg-head accent"/>
+<text x="420" y="186" text-anchor="end" class="dg-label">the needs of the</text>
+<rect x="426" y="172" width="64" height="20" rx="3" class="dg-tag"/><text x="458" y="186" text-anchor="middle" class="dg-tag-answer">group</text>
+<text x="496" y="186" class="dg-label">come first</text>
+</svg>
+<figcaption>Left, each person heads in their own direction. Right, everyone works toward one shared goal. Most real societies mix the two.</figcaption>
+</figure>
+<!-- /viz:individual-group -->
 <div class="vocab-wrap"><table>
 <thead><tr><th>Blank / Prompt</th><th>Expected Answer</th></tr></thead>
 <tbody>
@@ -206,6 +315,30 @@
 <ol>
   <li>An ideology is an idea.</li>
   <li>A political party's main goal is to get its members elected so it can turn its ideas into law.</li>
+<!-- viz:ideology-vs-party -->
+<figure class="viz">
+<!-- tikz: one-to-many | ideology -> parties -> elected -> law -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 580 170" aria-label="An ideology, a set of ideas with no members or membership card, feeds three different parties, two in Canada and one in another country. Parties try to get their members blank, elected, so they can turn ideas into blank, law." width="580" height="170">
+<ellipse cx="85" cy="88" rx="75" ry="48" class="dg-fill-accent"/>
+<text x="85" y="80" text-anchor="middle" class="dg-title">IDEOLOGY</text>
+<text x="85" y="96" text-anchor="middle" class="dg-label-sm">a set of ideas</text>
+<text x="85" y="110" text-anchor="middle" class="dg-label-sm">no members, no card</text>
+<text x="285" y="14" text-anchor="middle" class="dg-label-sm">PARTIES: organizations people join</text>
+<rect x="220" y="22" width="130" height="34" rx="5" class="dg-fill-soft"/><text x="285" y="43" text-anchor="middle" class="dg-label">Party 1 · Canada</text>
+<rect x="220" y="71" width="130" height="34" rx="5" class="dg-fill-soft"/><text x="285" y="92" text-anchor="middle" class="dg-label">Party 2 · Canada</text>
+<rect x="220" y="120" width="130" height="34" rx="5" class="dg-fill-soft"/><text x="285" y="141" text-anchor="middle" class="dg-label">Party 3 · elsewhere</text>
+<line x1="158" y1="76" x2="210.6" y2="45.2" class="dg-arrow accent thin"/><polygon points="216.0,42.0 211.7,49.9 207.0,41.9" class="dg-head accent"/>
+<line x1="160" y1="88" x2="209.7" y2="88.0" class="dg-arrow accent thin"/><polygon points="216.0,88.0 208.3,92.6 208.3,83.4" class="dg-head accent"/>
+<line x1="158" y1="100" x2="210.6" y2="132.7" class="dg-arrow accent thin"/><polygon points="216.0,136.0 207.0,135.9 211.9,128.0" class="dg-head accent"/>
+<line x1="352" y1="88" x2="398.7" y2="88.0" class="dg-arrow plain"/><polygon points="405.0,88.0 397.3,92.6 397.3,83.4" class="dg-head plain"/>
+<text x="470" y="60" text-anchor="middle" class="dg-label-sm">get members</text>
+<rect x="420" y="66" width="100" height="20" rx="3" class="dg-tag"/><text x="470" y="80" text-anchor="middle" class="dg-tag-answer">elected</text>
+<text x="470" y="112" text-anchor="middle" class="dg-label-sm">turn ideas into</text>
+<rect x="420" y="118" width="100" height="20" rx="3" class="dg-tag"/><text x="470" y="132" text-anchor="middle" class="dg-tag-answer">law</text>
+</svg>
+<figcaption>One idea, many organizations. The ideology on the left has no members; the parties on the right do, and they compete in elections to turn the idea into law.</figcaption>
+</figure>
+<!-- /viz:ideology-vs-party -->
   <li>An individualist response should mostly take care of themselves. A collectivist response holds that the needs of the group matter more.</li>
   <li>Group project — individualist response: the student who did the work should get the higher/individual grade; effort should be recognized individually. Group project — collectivist response: the whole group should share the same grade; the team succeeds or struggles together.</li>
   <li><span class="stretch-label">★ Stretch</span> (Green Party / Conservative Party): "Green Party" and "Conservative Party" are political parties, not ideologies themselves — they are organizations built around ideologies (e.g., ideas connected to environmentalism/collectivist tools, or conservatism). The parties can change their platforms over time; the underlying ideology is the idea, not the organization.</li>
@@ -301,6 +434,37 @@
 
 <hr class="section-break">
 <h2 class="section-title">Section 5: Ideology Taken to Extremes</h2>
+<!-- viz:totalitarian-control -->
+<figure class="viz">
+<p class="viz-ak-note">Diagram — answers</p>
+<!-- tikz: hub-spoke | 1 centre | 4 areas of life -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 565 190" aria-label="In the centre, one leader or party holds blank, total, power. Arrows reach out to four areas: opposition parties, banned or controlled; free press and media, shut down or controlled; schools, media and families, brought under state influence; what citizens believe, controlled with blank, propaganda." width="565" height="190">
+<circle cx="282" cy="95" r="60" class="dg-fill-hot"/>
+<text x="282" y="76" text-anchor="middle" class="dg-label">One leader</text>
+<text x="282" y="90" text-anchor="middle" class="dg-label">or party holds</text>
+<rect x="247" y="96" width="70" height="20" rx="3" class="dg-tag"/><text x="282" y="110" text-anchor="middle" class="dg-tag-answer">total</text>
+<text x="282" y="132" text-anchor="middle" class="dg-label">power</text>
+<rect x="15" y="16" width="175" height="54" rx="5" class="dg-fill-soft"/>
+<text x="102" y="38" text-anchor="middle" class="dg-title">Opposition parties</text>
+<text x="102" y="56" text-anchor="middle" class="dg-label-sm">banned or controlled</text>
+<rect x="375" y="16" width="175" height="54" rx="5" class="dg-fill-soft"/>
+<text x="462" y="38" text-anchor="middle" class="dg-title">Free press &amp; media</text>
+<text x="462" y="56" text-anchor="middle" class="dg-label-sm">shut down or controlled</text>
+<rect x="15" y="122" width="175" height="54" rx="5" class="dg-fill-soft"/>
+<text x="102" y="144" text-anchor="middle" class="dg-title">Schools, families</text>
+<text x="102" y="162" text-anchor="middle" class="dg-label-sm">brought under state influence</text>
+<rect x="375" y="122" width="175" height="54" rx="5" class="dg-fill-soft"/>
+<text x="462" y="142" text-anchor="middle" class="dg-title">What citizens believe</text>
+<text x="385" y="166" class="dg-label-sm">controlled with</text>
+<rect x="462" y="153" width="80" height="20" rx="3" class="dg-tag"/><text x="502" y="167" text-anchor="middle" class="dg-tag-answer">propaganda</text>
+<line x1="232" y1="64" x2="199.7" y2="48.7" class="dg-arrow hot"/><polygon points="194.0,46.0 203.0,45.1 199.0,53.5" class="dg-head hot"/>
+<line x1="332" y1="64" x2="365.3" y2="48.6" class="dg-arrow hot"/><polygon points="371.0,46.0 365.9,53.4 362.1,45.0" class="dg-head hot"/>
+<line x1="232" y1="126" x2="199.6" y2="143.1" class="dg-arrow hot"/><polygon points="194.0,146.0 198.7,138.3 203.0,146.5" class="dg-head hot"/>
+<line x1="332" y1="126" x2="365.4" y2="143.1" class="dg-arrow hot"/><polygon points="371.0,146.0 362.0,146.6 366.3,138.4" class="dg-head hot"/>
+</svg>
+<figcaption>Totalitarian control reaches every part of life at once. Use this pattern as a checklist when you read the Nazi Germany case below, or any news report about a government.</figcaption>
+</figure>
+<!-- /viz:totalitarian-control -->
 <div class="vocab-wrap"><table>
 <thead><tr><th>Blank / Prompt</th><th>Expected Answer</th></tr></thead>
 <tbody>
