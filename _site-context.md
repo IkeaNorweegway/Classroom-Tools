@@ -18,7 +18,7 @@
 
 ## Courses on the Site
 
-Six courses are live. PhysEd and eSports are in the workspace but not on the site.
+Seven courses are live. PhysEd and eSports are in the workspace but not on the site.
 
 | Course | Slug | Accent token | Accent hex | Status |
 |---|---|---|---|---|
@@ -28,6 +28,7 @@ Six courses are live. PhysEd and eSports are in the workspace but not on the sit
 | Social Studies 9 | `/social9/` | inline hex | `#b91c1c` (red) | Live |
 | Social Studies 8 | `/social8/` | inline hex | `#4338ca` (indigo) | Live |
 | STEAM (Gr. 5–9) | `/steam/` | inline hex | `#7c3aed` (violet) | Live |
+| CEFL 7 (Career Education & Financial Literacy) | `/cefl/` | `[data-course='cefl']` in global.css | `#94631a` (ochre) | Live (Grade 7). Materials in `public/materials/cefl/`, so its viewer reads that folder. One overview parent page, no per-unit parent guides. |
 
 **Adding a course:** Add a row here, add the slug to the `course` prop type in `BaseLayout.astro`, add a tab and subnav to `Nav.astro`, and add a course card to the home page. Only Grade 6 Science and Math 9 have Tailwind tokens; the newer courses use an inline hex in `Nav.astro`.
 
@@ -64,13 +65,14 @@ Every page has two nav levels:
 
 **Level 1 — Site nav (top bar, always visible)**
 - Left: site name → links to home `/`
-- Centre: course tabs — `Gr. 6 Science` | `Math 9` | `Gr. 7 Science` | `Social 9` | `Social 8` | `STEAM` (active tab highlighted with course accent)
+- Centre: course tabs — `Gr. 6 Science` | `Math 9` | `Gr. 7 Science` | `Social 9` | `Social 8` | `STEAM` | `CEFL 7` (active tab highlighted with course accent)
 - Right: the audience switch, `Student · Parent · Teacher` (see below)
 
 **Level 2 — Course subnav (below top bar, visible when inside a course)**
 - Grade 6 Science subnav: `Matter | Forces | Living Systems | Climate | Energy | Space | Materials`
 - Math 9 subnav: `Number | Algebra | M&G | Stats & Prob | Practice | PAT Prep | POTD | All materials`. A strand tab is also active on that strand's topic pages. Parent pages use `parentSubnav`: `Overview | Number | Algebra | M&G | Stats & Prob`
-- Science 7, Social 8, and Social 9 subnavs list their units; the STEAM subnav lists Grades 5–9
+- Science 7, Social 8, Social 9 and CEFL 7 subnavs list their units; the STEAM subnav lists Grades 5–9
+- The home page turntable spaces its slots by the number of courses (and widens the ring past six)
 
 ### Audience views (student, parent, teacher)
 - Every page is written for one audience: `audience` on `BaseLayout` (`'student' | 'parent' | 'teacher'`). Course pages default to `student`; the home page has none.

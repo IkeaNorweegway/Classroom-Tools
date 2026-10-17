@@ -7,7 +7,8 @@ import CourseHero from './CourseHero.astro';
 import Progression from './Progression.astro';
 import type { CourseKey } from '../data/courses';
 
-interface Item { label: string; href?: string }
+/** `note` replaces "Coming soon" on an item with no guide (e.g. the unit's project). */
+interface Item { label: string; href?: string; note?: string }
 interface Props {
   course: CourseKey;
   title: string;
@@ -25,8 +26,19 @@ interface Props {
   listHeading: string;
   listIntro: string;
   tips: [string, string][];
+  /** The side box beside "about"; defaults to what each unit guide holds. */
+  sideHeading?: string;
+  sideItems?: string[];
 }
 const p = Astro.props;
+const sideHeading = p.sideHeading ?? 'On each guide';
+const sideItems = p.sideItems ?? [
+  'The topic in plain words',
+  'What your child should already know',
+  'Where it leads in later grades',
+  'Worked examples with what to say',
+  'Short practice sheets with answers',
+];
 ---
 
 <BaseLayout course={p.course} audience="parent" title={p.pageTitle ?? p.title} description={p.metaDescription ?? p.description}>
@@ -40,13 +52,9 @@ const p = Astro.props;
       </div>
     </div>
     <div class="raised self-start rounded-2xl p-6">
-      <h2 class="mb-2 text-[1.0625rem] font-bold text-slate-900">On each guide</h2>
+      <h2 class="mb-2 text-[1.0625rem] font-bold text-slate-900">{sideHeading}</h2>
       <ul class="grid gap-1.5 text-[0.9375rem] text-slate-700">
-        <li>· The topic in plain words</li>
-        <li>· What your child should already know</li>
-        <li>· Where it leads in later grades</li>
-        <li>· Worked examples with what to say</li>
-        <li>· Short practice sheets with answers</li>
+        {sideItems.map((it) => <li>· {it}</li>)}
       </ul>
     </div>
   </section>
@@ -79,7 +87,7 @@ const p = Astro.props;
                 ) : (
                   <span class="flex h-full items-center justify-between gap-3 rounded-2xl px-5 py-4 shadow-[inset_0_0_0_1px_rgb(31_29_26/0.08)]">
                     <span class="font-semibold text-slate-500">{t.label}</span>
-                    <span class="text-xs text-slate-400">Coming soon</span>
+                    <span class="text-xs text-slate-400">{t.note ?? 'Coming soon'}</span>
                   </span>
                 )}
               </li>

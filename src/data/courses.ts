@@ -1,10 +1,10 @@
-// Single source of truth for the six courses: nav tabs, subnavs, home page
+// Single source of truth for the courses: nav tabs, subnavs, home page
 // tiles, titles and footers all read from here. Accent colours live in
 // src/styles/global.css under [data-course="<key>"].
 
 import { strands as math9Strands, topicsInStrand, type StrandSlug } from './math9';
 
-export type CourseKey = 'science' | 'math9' | 'science7' | 'social9' | 'social8' | 'steam';
+export type CourseKey = 'science' | 'math9' | 'science7' | 'social9' | 'social8' | 'steam' | 'cefl';
 
 /** Who a page is written for. Each course has a student path and may add a
  *  teacher and a parent path; the nav switch offers only the ones that exist. */
@@ -86,6 +86,13 @@ const soc8Units: [string, string][] = [
   ['economic-systems', 'Economy'],
   ['political-systems', 'Politics'],
   ['civic-engagement', 'Citizenship'],
+];
+const ceflUnits: [string, string][] = [
+  ['labour-market', 'Careers'],
+  ['post-secondary', 'After High School'],
+  ['experiences', 'Experiences'],
+  ['income-tax', 'Pay & Tax'],
+  ['money-management', 'Money'],
 ];
 const steamGrades: [string, string][] = [
   ['grade-5', 'Gr. 5'],
@@ -218,6 +225,23 @@ export const courses: Course[] = [
     ],
     parentSubnav: parentItems('steam/parents', steamGrades),
   },
+  {
+    key: 'cefl',
+    tab: 'CEFL 7',
+    name: 'Career & Financial Literacy',
+    grade: 'Grade 7',
+    numeral: '7',
+    path: 'cefl',
+    teacherPath: 'cefl/teacher',
+    parentPath: 'cefl/parents',
+    blurb: 'Five project-based units on careers, school after Grade 12, experiences, pay and money. Short lessons inside every project.',
+    facts: ['5 units', '5 projects', '15 materials'],
+    subnav: [
+      ...unitItems('cefl/materials/', ceflUnits),
+      { label: 'All units', path: 'cefl', match: endsWith('/cefl') },
+    ],
+    parentSubnav: [{ label: 'Overview', path: 'cefl/parents', match: endsWith('/cefl/parents') }],
+  },
 ];
 
 export const courseByKey = (key?: CourseKey) => courses.find((c) => c.key === key);
@@ -233,4 +257,5 @@ export const footerNames: Record<CourseKey, string> = {
   social9: 'Grade 9 Social Studies',
   social8: 'Grade 8 Social Studies',
   steam: 'STEAM, Grades 5–9',
+  cefl: 'Career Education and Financial Literacy 7',
 };

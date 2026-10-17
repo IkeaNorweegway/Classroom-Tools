@@ -120,15 +120,15 @@ Notes and design journal for every unit: 4 units per grade, plus a Python path f
 
 Project-based course: 1 hour every 3 days, ~40 sessions a year, 5 units per grade. Each unit has a mini-workbook (teaching moments), a project brief, and a teacher guide. Spec in `_courses/cefl/_context.md`; evidence in `research/project-based-learning-research.md` and `research/financial-career-education-research.md`. Renderer: `scripts/render_cefl.py`; all renders in `public/materials/cefl/`.
 
-**Grade 7 is built:** all five units, rendered and checked in headless Chrome (print PDF; projects print one section per page with no spillover; no sideways scroll at 600 px). Not on the site yet and not yet tried with students. Grades 8 and 9: not started.
+**Grade 7 is built:** all five units, rendered and checked in headless Chrome (print PDF; projects print one section per page with no spillover; no sideways scroll at 600 px). On the site at `/cefl/` (student unit pages, teacher hub, parent overview, viewer). Not yet tried with students. Grades 8 and 9: not started.
 
 | Grade 7 unit | Workbook | Workbook AK | Project | Teacher guide | Site |
 |---|---|---|---|---|---|
-| Careers and the Labour Market | ✓ | ✓ | ✓ Career Pathway Map | ✓ | — |
-| Post-Secondary Pathways | ✓ | ✓ | ✓ Two Roads | ✓ | — |
-| Experiences and Employment | ✓ | ✓ | ✓ Experience Plan | ✓ | — |
-| Income and Tax (pilot) | ✓ | ✓ | ✓ First Paycheque | ✓ | — |
-| Money, Interest, and Credit | ✓ | ✓ | ✓ Saving for Something Real | ✓ | — |
+| Careers and the Labour Market | ✓ | ✓ | ✓ Career Pathway Map | ✓ | ✓ |
+| Post-Secondary Pathways | ✓ | ✓ | ✓ Two Roads | ✓ | ✓ |
+| Experiences and Employment | ✓ | ✓ | ✓ Experience Plan | ✓ | ✓ |
+| Income and Tax (pilot) | ✓ | ✓ | ✓ First Paycheque | ✓ | ✓ |
+| Money, Interest, and Credit | ✓ | ✓ | ✓ Saving for Something Real | ✓ | ✓ |
 
 ### PhysEd 5–6 and 7–9
 

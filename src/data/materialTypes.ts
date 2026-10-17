@@ -4,7 +4,7 @@
 
 export type MaterialType =
   | 'notes' | 'reference' | 'workbook' | 'challenge' | 'interactive'
-  | 'exit' | 'assessment' | 'journal' | 'key' | 'other';
+  | 'exit' | 'assessment' | 'journal' | 'project' | 'key' | 'other';
 
 interface TypeStyle {
   label: string;
@@ -46,6 +46,10 @@ export const materialTypes: Record<MaterialType, TypeStyle> = {
     label: 'Design journal', rgb: '146 82 158', soft: '246 236 247',
     icon: '<path d="M6 4.5h10.5A1.5 1.5 0 0 1 18 6v13.5H7.5A1.5 1.5 0 0 1 6 18Z"/><path d="M6 18a1.5 1.5 0 0 1 1.5-1.5H18"/><path d="M10 9.75l2-2 2 2-2 2z"/>',
   },
+  project: {
+    label: 'Project', rgb: '148 99 26', soft: '247 239 225',
+    icon: '<path d="M5 20.5V4.5"/><path d="M5 5h11.5l-2.5 3.5 2.5 3.5H5"/>',
+  },
   key: {
     label: 'Answer key', rgb: '107 102 93', soft: '240 238 233',
     icon: '<circle cx="8.5" cy="12" r="3.5"/><path d="M12 12h8M17 12v3M20 12v2"/>',
@@ -59,6 +63,7 @@ export const materialTypes: Record<MaterialType, TypeStyle> = {
 const rules: [RegExp, MaterialType][] = [
   [/answer|corrigé|\bkeys?\b/, 'key'],
   [/journal/, 'journal'],
+  [/project/, 'project'],
   [/simulat|interactive|explorer/, 'interactive'],
   [/quiz|test|assessment|évaluation|exam/, 'assessment'],
   [/exit|billet/, 'exit'],

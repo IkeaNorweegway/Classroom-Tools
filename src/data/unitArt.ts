@@ -279,4 +279,36 @@ export const unitArt: Record<string, UnitArt> = {
       <g class="u-m" style="transform-origin: 32px 35px"><path class="u-s" d="M24 29l-6 6 6 6M40 29l6 6-6 6" style="stroke-width: 2.6"/><path class="u-s" d="M35 26l-6 18"/></g>
       <path class="u-s" d="M24 50l-3 6h22l-3-6" opacity=".6"/>`,
   },
+
+  // ── CEFL 7 ───────────────────────────────────────────────────────────
+  'labour-market': {
+    m: 'slide',
+    svg: `<path class="u-s" d="M8 52c10 0 10-12 20-12s10-12 20-12 6-8 10-8" style="stroke-dasharray: 4 3"/>
+      <circle class="u-d" cx="8" cy="52" r="3.2"/><circle class="u-d" cx="28" cy="40" r="2.6"/><circle class="u-d" cx="48" cy="28" r="2.6"/>
+      <g class="u-m"><path class="u-s" d="M50 22V8"/><path class="u-s u-f" d="M50 8h10l-3 4 3 4H50"/></g>`,
+  },
+  'post-secondary': {
+    m: 'float',
+    svg: `<g class="u-m"><path class="u-s u-f" d="M32 14 6 26l26 12 26-12Z"/>
+      <path class="u-s" d="M18 32v10c0 4 6 8 14 8s14-4 14-8V32"/>
+      <path class="u-s" d="M56 27v13"/><circle class="u-d" cx="56" cy="42" r="2.4"/></g>`,
+  },
+  experiences: {
+    m: 'spin',
+    svg: `<g class="u-m" style="transform-origin: 32px 32px"><path class="u-s u-f" d="M32 8l6.2 13.6 14.8 1.6-11 10 3.1 14.6L32 40.4 18.9 47.8 22 33.2l-11-10 14.8-1.6Z"/></g>
+      <circle class="u-d" cx="32" cy="56" r="2.2"/><circle class="u-d" cx="12" cy="52" r="1.6"/><circle class="u-d" cx="52" cy="52" r="1.6"/>`,
+  },
+  'income-tax': {
+    m: 'drop',
+    svg: `<rect class="u-s u-f" x="10" y="10" width="32" height="44" rx="3"/>
+      <path class="u-s" d="M16 20h20M16 28h14M16 34h14M16 40h14" opacity=".6"/><path class="u-s" d="M16 47h20"/>
+      <g class="u-m"><circle class="u-s" cx="48" cy="22" r="8" style="fill: white"/><path class="u-s" d="M48 18v8M45.5 20.5h4a1.5 1.5 0 0 1 0 3h-3a1.5 1.5 0 0 0 0 3h4" style="stroke-width: 1.6"/></g>`,
+  },
+  'money-management': {
+    m: 'drop',
+    svg: `<path class="u-s u-f" d="M16 24h32v26a5 5 0 0 1-5 5H21a5 5 0 0 1-5-5Z"/>
+      <path class="u-s" d="M14 24h36"/><path class="u-s" d="M26 24v-5h12v5" opacity=".6"/>
+      <circle class="u-d" cx="26" cy="47" r="3.4"/><circle class="u-d" cx="36" cy="48" r="3"/><circle class="u-d" cx="31" cy="41" r="2.8"/>
+      <g class="u-m"><circle class="u-s" cx="32" cy="9" r="4.5" style="fill: white"/></g>`,
+  },
 };

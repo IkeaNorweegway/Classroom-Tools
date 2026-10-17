@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TeacherHub from '../../../components/TeacherHub.astro';
+import { getCollection } from 'astro:content';
+import { cefl } from '../../../data/cefl';
+
+// Per-unit colour and organizing-idea tag. Names and documents come from the manifest.
+const meta = [
+  { slug: 'labour-market', tag: 'Career Exploration', color: '#94631a', tagStyle: 'bg-amber-100 text-amber-800' },
+  { slug: 'post-secondary', tag: 'Career Exploration', color: '#94631a', tagStyle: 'bg-amber-100 text-amber-800' },
+  { slug: 'experiences', tag: 'Career Opportunities', color: '#0f766e', tagStyle: 'bg-teal-100 text-teal-800' },
+  { slug: 'income-tax', tag: 'Financial Literacy', color: '#1d4ed8', tagStyle: 'bg-blue-100 text-blue-800' },
+  { slug: 'money-management', tag: 'Financial Literacy', color: '#1d4ed8', tagStyle: 'bg-blue-100 text-blue-800' },
+];
+
+// One-line scope note and project name per unit, from the unit files.
+const entries = Object.fromEntries((await getCollection('cefl7-units')).map((e) => [e.slug, e.data]));
+const units = meta.map((u) => ({ ...u, meta: `Project: ${entries[u.slug]?.project ?? ''}`, summary: entries[u.slug]?.teacherSummary ?? '' }));
+---
+
+<BaseLayout title="CEFL 7 — Teacher Hub" course="cefl" audience="teacher">
+  <TeacherHub course="cefl" name="CEFL 7" accent="#94631a" manifest={cefl} units={units} guideNote="7-session script · Look-fors · Misconceptions · Sample products" />
+</BaseLayout>

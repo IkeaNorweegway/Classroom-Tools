@@ -1,0 +1,37 @@
+---
+// Parent overview for CEFL 7 (shared ParentOverview layout). The course has no
+// per-unit parent guides or home sheets: families take part through the projects
+// (the Career Café and the family feedback card), so units are listed without links.
+import ParentOverview from '../../../components/ParentOverview.astro';
+import { getCollection } from 'astro:content';
+import { cefl as m } from '../../../data/cefl';
+
+const projects = Object.fromEntries((await getCollection('cefl7-units')).map((e) => [e.slug, e.data.project]));
+const groups = [{ items: m.units.map((u) => ({ label: u.label, note: projects[u.slug] ? `Project: ${projects[u.slug]}` : undefined })) }];
+
+const stages = [{"label": "K–6", "idea": "Career and money ideas are part of Physical Education and Wellness."}, {"label": "Grade 7", "idea": "Careers, school after Grade 12, experiences, pay and tax, and budgeting.", "now": true}, {"label": "Grade 8", "idea": "A changing job market, planning high school courses, tax brackets, and interest."}, {"label": "Grade 9", "idea": "Résumés and interviews, the cost of post-secondary, tax returns, and credit."}, {"label": "High school", "idea": "Career and Life Management (CALM), work experience, and planning for graduation."}];
+const tips: [string, string][] = [["Talk about your work", "Share your first job, how you got into your work, and the skills you use. Your child may interview you for a project."], ["Look at a pay stub together", "Point out gross pay, the deductions, and net pay. It makes the Income and Tax unit real."], ["Let them budget something", "Give your child a small amount to plan with, like a grocery item or a gift. Ask what they had to give up."], ["Ask about the project", "Every unit is a project. Ask “What step are you on? What did you find out?”"], ["Keep money private", "Students never have to share family income. Projects use sample incomes."], ["Come to the share", "Some projects end with families as the audience, like the Career Café. If you can, come and ask questions."]];
+---
+
+<ParentOverview
+  course="cefl"
+  title="Career Education and Financial Literacy at home"
+  pageTitle="CEFL 7 — Parent guide"
+  eyebrow="Parent guide · CEFL 7"
+  numeral="7"
+  description={"What your child is learning in Career Education and Financial Literacy this year, how it connects to other grades, and simple ways to help at home."}
+  aboutHeading={"What CEFL 7 is about"}
+  about={["Career Education and Financial Literacy helps students explore careers, think about school and training after Grade 12, and manage money: how pay works, where taxes go, and how to budget and save.", "The course is mostly project-based. In each unit your child works on a project, like mapping a path to a career or building a budget for a real goal, with short lessons along the way. Some projects ask for a conversation with an adult or feedback from family."]}
+  stages={stages}
+  groups={groups}
+  listHeading="Units this year"
+  listIntro="Five units, each built around one project."
+  tips={tips}
+  sideHeading="Ways families take part"
+  sideItems={[
+    'Talk with your child about your work (Career Pathway Map)',
+    'Visit the Career Café and ask questions',
+    'Give feedback on your child’s budget (family feedback card)',
+    'Students never share family income; projects use sample money',
+  ]}
+/>

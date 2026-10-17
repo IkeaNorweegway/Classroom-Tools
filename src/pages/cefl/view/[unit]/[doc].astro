@@ -1,0 +1,89 @@
+---
+import Nav from '../../../../components/Nav.astro';
+import { cefl as manifest } from '../../../../data/cefl';
+import { unitDocs } from '../../../../data/manifest';
+import { existsSync } from 'node:fs';
+const base = import.meta.env.BASE_URL;
+
+// CEFL files live in public/materials/cefl/, not flat like the other courses.
+export function getStaticPaths() {
+  const paths: { params: { unit: string; doc: string } }[] = [];
+  for (const u of manifest.units) {
+    const docs = [...unitDocs(u), ...(u.teacherGuide ? [u.teacherGuide] : [])];
+    for (const doc of docs) {
+      if (!existsSync(`public/materials/cefl/${doc}.html`)) console.warn(`[cefl] missing material: ${doc}.html`);
+      paths.push({ params: { unit: u.slug, doc } });
+    }
+  }
+  return paths;
+}
+
+const { unit, doc } = Astro.params;
+const u = manifest.units.find((x) => x.slug === unit);
+const isGuide = doc === u?.teacherGuide;
+const backHref = isGuide ? `${base}cefl/teacher#${unit}` : `${base}cefl/materials/${unit}`;
+const backLabel = isGuide ? '← Teacher hub' : `← ${u?.label ?? 'CEFL 7'}`;
+const fileUrl = `${base}materials/cefl/${doc}.html`;
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{u?.label ?? unit} — {doc} | CEFL 7</title>
+  <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    .viewer-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .back-bar {
+      background: #f6f4ef;
+      border-bottom: 1px solid rgb(31 29 26 / 0.07);
+      padding: 0.6rem 1.25rem;
+      flex-shrink: 0;
+    }
+    .back-bar a {
+      font-family: 'Atkinson Hyperlegible Next Variable', system-ui, sans-serif;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #6b665d;
+      text-decoration: none;
+    }
+    .back-bar a:hover { color: #1f1d1a; }
+    .doc-frame {
+      flex: 1;
+      border: none;
+      width: 100%;
+      display: block;
+    }
+    @media print {
+      .viewer-nav, .back-bar { display: none !important; }
+      .doc-frame { height: 100vh; }
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-shell">
+    <div class="viewer-nav">
+      <Nav course="cefl" audience={isGuide ? 'teacher' : undefined} />
+    </div>
+    <div class="back-bar">
+      <a href={backHref}>{backLabel}</a>
+    </div>
+    <iframe
+      src={fileUrl}
+      class="doc-frame"
+      title={doc}
+    />
+  </div>
+</body>
+</html>

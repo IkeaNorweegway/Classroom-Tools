@@ -105,6 +105,20 @@ const social8Units = defineCollection({
   }),
 });
 
+const cefl7Units = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    organizingIdea: z.string(),
+    guidingQuestion: z.string(),
+    learningOutcome: z.string(),
+    project: z.string(),
+    order: z.number(),
+    ...studentIntro,
+    ...teacherSummary,
+  }),
+});
+
 const lessons = defineCollection({
   type: 'content',
   schema: z.object({
@@ -153,6 +167,7 @@ export const collections = {
   'parent-guides': parentGuides,
   'social9-units': social9Units,
   'social8-units': social8Units,
+  'cefl7-units': cefl7Units,
   lessons,
   'teacher-units': teacherUnits,
   'teacher-lessons': teacherLessons,
