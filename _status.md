@@ -24,7 +24,7 @@ Current state only. Keep this file short: update the tables and the open list, a
 - **Math 9 circle geometry worksheets:** Core Q6 and Challenge Q3 have angle expressions with no valid solution. Flagged in the answer keys, not fixed.
 - **Math 9 outcome codes:** the Rational Numbers test and bank use local codes RN1–RN5 because the course context has no official codes.
 - **Math 9 inquiry projects (2026-10-17):** all four strands need a teacher read-through and a classroom trial. Before printing: confirm the Calgary Transit youth fares ($2.65 / $26.50 book / $92 pass) and the Edmonton Arc youth fares ($3, $66 monthly cap; the city page didn't load) in Algebra; the garden stone ($50/m²) and edging ($5/m) prices are samples. Number Option 3 needs a week of real Calgary or Lethbridge weather data downloaded; Statistics Option 2 needs NHL standings printed (last season's final standings recommended). Rubrics use new local codes (one per notes section: PE, SR, LR, LE, PO, CG, ME, SI, ST, PR, alongside RN). Briefs print to 9 pages, journals to 9–10, teacher guides to 18–19 (each section starts a page). Sources render with `scripts/render_math9_projects.py` (pandoc).
-- **CEFL 7–9:** review the proposed units, local outcome codes, misconceptions and depth ceilings in `_courses/cefl/_context.md`. Real-world figures in CEFL materials (minimum wage, tax, CPP and EI rates, tuition) are dated and must be re-checked each January.
+- **CEFL 7–9:** review the proposed units, local outcome codes, misconceptions and depth ceilings in `_courses/cefl/_context.md`. Real-world figures in CEFL materials are dated and must be re-checked: minimum wage, tax, CPP and EI rates each January; tuition (U of A 2026–27, Portage College apprenticeship) each year; ALIS wages (2023 survey) when a new survey is published; Alberta's job market forecast (2023–2033 edition used) and youth employment rules. Book audiences early: Grade 6 class (Income and Tax, Experiences), Career Café (Labour Market), counsellor panel (Post-Secondary).
 - **Lily Lab:** written as one mounted card per group. A multi-bloom stem per group would allow one per student.
 - **STEAM:** Grade 9 Unit 1 language (Java or Python, both built). Soldering safety protocol, wood-shop access, littleBits inventory, and the Rube Goldberg cross-group protocol are open in `steam/_context.md`.
 - **Slow reveal graphs:** decide whether to build a generic recording sheet for daily warm-up use.
@@ -118,15 +118,17 @@ Notes and design journal for every unit: 4 units per grade, plus a Python path f
 
 ### CEFL 7–9 (in progress)
 
-Project-based course: 1 hour every 3 days, ~40 sessions a year, 5 units per grade. Each unit has a mini-workbook (teaching moments), a project brief, and a teacher guide. Spec in `_courses/cefl/_context.md`; evidence in `research/project-based-learning-research.md` and `research/financial-career-education-research.md`. Grade 7 is being built first. Income and Tax is the pilot: built and rendered to `public/materials/cefl/cefl7-income-tax-*.html`, checked in headless Chrome (print PDF and 600 px), not yet on the site and not yet tried with students. Renderer: `scripts/render_cefl.py`.
+Project-based course: 1 hour every 3 days, ~40 sessions a year, 5 units per grade. Each unit has a mini-workbook (teaching moments), a project brief, and a teacher guide. Spec in `_courses/cefl/_context.md`; evidence in `research/project-based-learning-research.md` and `research/financial-career-education-research.md`. Renderer: `scripts/render_cefl.py`; all renders in `public/materials/cefl/`.
+
+**Grade 7 is built:** all five units, rendered and checked in headless Chrome (print PDF; projects print one section per page with no spillover; no sideways scroll at 600 px). Not on the site yet and not yet tried with students. Grades 8 and 9: not started.
 
 | Grade 7 unit | Workbook | Workbook AK | Project | Teacher guide | Site |
 |---|---|---|---|---|---|
-| Careers and the Labour Market | — | — | — | — | — |
-| Post-Secondary Pathways | — | — | — | — | — |
-| Experiences and Employment | — | — | — | — | — |
-| Income and Tax (pilot) | ✓ | ✓ | ✓ | ✓ | — |
-| Money, Interest, and Credit | — | — | — | — | — |
+| Careers and the Labour Market | ✓ | ✓ | ✓ Career Pathway Map | ✓ | — |
+| Post-Secondary Pathways | ✓ | ✓ | ✓ Two Roads | ✓ | — |
+| Experiences and Employment | ✓ | ✓ | ✓ Experience Plan | ✓ | — |
+| Income and Tax (pilot) | ✓ | ✓ | ✓ First Paycheque | ✓ | — |
+| Money, Interest, and Credit | ✓ | ✓ | ✓ Saving for Something Real | ✓ | — |
 
 ### PhysEd 5–6 and 7–9
 
