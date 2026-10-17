@@ -90,10 +90,14 @@ const soc8Units: [string, string][] = [
   ['political-systems', 'Politics'],
   ['civic-engagement', 'Citizenship'],
 ];
-const ceflGrades: [string, string][] = [
-  ['grade-7', 'Grade 7'],
-  ['grade-8', 'Grade 8'],
-  ['grade-9', 'Grade 9'],
+// CEFL grade pages are /cefl/grade-N/; unit viewers are /cefl/view/N-<unit>/, so both count as that grade.
+const ceflGradeItems: SubnavItem[] = [
+  ...[7, 8, 9].map((g) => ({
+    label: `Grade ${g}`,
+    path: `cefl/grade-${g}`,
+    match: (p: string) => p.includes(`/cefl/grade-${g}`) || p.includes(`/cefl/view/${g}-`),
+  })),
+  { label: 'All grades', path: 'cefl', match: endsWith('/cefl') },
 ];
 const steamGrades: [string, string][] = [
   ['grade-5', 'Gr. 5'],
@@ -248,11 +252,13 @@ export const courses: Course[] = [
     parentPath: 'cefl/parents',
     blurb: 'Project-based careers and money for Grades 7–9: careers, school after Grade 12, experiences, pay and tax, and money. Short lessons inside every project.',
     facts: ['3 grades', '15 projects', '45 materials'],
-    subnav: [
-      ...unitItems('cefl/', ceflGrades),
-      { label: 'All grades', path: 'cefl', match: endsWith('/cefl') },
-    ],
+    subnav: ceflGradeItems,
     parentSubnav: [{ label: 'Overview', path: 'cefl/parents', match: endsWith('/cefl/parents') }],
+    gradeMenu: {
+      student: ceflGradeItems,
+      parent: [{ label: 'All grades', path: 'cefl/parents', match: endsWith('/cefl/parents') }],
+      teacher: [{ label: 'All grades', path: 'cefl/teacher', match: endsWith('/cefl/teacher') }],
+    },
   },
 ];
 
