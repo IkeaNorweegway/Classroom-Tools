@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Borrowing Smart — Mini-workbook | CEFL 9</title>
+  <style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+    :root { --accent: #94631a; --accent-light: #f7efe1; --accent-mid: #c39a5c; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); font-size: 11pt; line-height: 1.55; color: #1f1d1a; background: #fff; max-width: 800px; margin: 0 auto; padding: 28px 32px 48px; }
+    h1 { font-family: var(--font-display); font-size: 20pt; font-weight: 600; color: #1f1d1a; margin-bottom: 2px; }
+    h2 { font-family: var(--font-display); font-size: 14pt; font-weight: 600; color: var(--accent); margin: 22px 0 8px; border-bottom: 2px solid var(--accent-light); padding-bottom: 3px; }
+    h2.moment { font-family: var(--font-display); font-size: 15pt; border-bottom: 3px solid var(--accent); }
+    h2.beat { font-family: var(--font-display); font-size: 16pt; border-bottom: 3px solid var(--accent); margin-top: 56px; }
+    h2.beat:first-of-type { margin-top: 28px; }
+    h2 .chip, h2.moment .chip { display: inline-block; font-size: 9pt; letter-spacing: .08em; text-transform: uppercase; background: var(--accent); color: #fff; border-radius: 999px; padding: 1px 10px; margin-right: 8px; vertical-align: 3px; }
+    .writebox { border: 1.5px solid #6b665d; border-radius: 8px; margin: 8px 0 14px; }
+    /* Project briefs: roomier type, more space between parts, more room to write. */
+    body.doc-project { font-size: 12.5pt; line-height: 1.7; }
+    .doc-project p { margin-bottom: 10px; }
+    .doc-project li { margin-bottom: 6px; }
+    .doc-project .box { padding: 16px 20px; margin: 16px 0 20px; }
+    .doc-project .box-dq p { font-size: 20pt; }
+    .doc-project .al { height: 2.4rem; }
+    .doc-project .b { width: 150px; }
+    .doc-project table { font-size: 11.5pt; }
+    .doc-project th, .doc-project td { padding: 9px 12px; }
+    .doc-project td.fill { height: 4.2rem; }
+    .doc-project .visual { margin: 18px 0 22px; }
+    h3 { font-size: 11.5pt; font-weight: 700; color: #3f3b35; margin: 12px 0 4px; }
+    p { margin-bottom: 6px; }
+    ul, ol { margin: 4px 0 8px 22px; }
+    li { margin-bottom: 3px; }
+    strong { font-weight: 700; }
+    em { font-style: italic; color: #3f3b35; }
+    .b { display: inline-block; border-bottom: 1.5px solid #3f3b35; width: 90px; vertical-align: bottom; }
+    .al { display: block; border-bottom: 1.25px solid #6b665d; height: 1.7rem; }
+    .work { margin: 4px 0 2px; }
+    .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 14px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
+    .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
+    .header-strip .meta { font-size: 9.5pt; color: #544f47; }
+    .name-row { display: flex; gap: 24px; margin: 8px 0 14px; font-size: 10.5pt; align-items: baseline; }
+    .name-row span { color: #544f47; white-space: nowrap; }
+    .name-row .b { flex: 1; width: auto; }
+    .question { padding: 8px 0 4px; break-inside: avoid; }
+    .question ul { list-style: none; margin-left: 0; }
+    .box { border-radius: 8px; padding: 10px 14px; margin: 8px 0 10px; break-inside: avoid; }
+    .box .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .box-scenario { background: #fff; border: 1.5px solid var(--accent-mid); border-left: 6px solid var(--accent); }
+    .box-scenario .label, .box-example .label, .box-dq .label, .box-entry .label { color: var(--accent); }
+    .box-example { background: var(--accent-light); border: 1px solid var(--accent-mid); }
+    .box-extra { background: #faf9f6; border: 1.5px dashed #6b665d; }
+    .box-extra .label { color: #3f3b35; }
+    .box-check { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .box-check .label { color: #15803d; }
+    .box-project { background: #fff; border: 1.5px solid #3f3b35; }
+    .box-project .label { color: #3f3b35; }
+    .box-misconception { background: #fef2f2; border: 1px solid #fecaca; }
+    .box-misconception .label { color: #b91c1c; }
+    .box-forethought, .box-reflect { background: #f4f2ed; border: 1px solid #b8b2a7; }
+    .box-forethought .label, .box-reflect .label { color: #3f3b35; }
+    .box-tip { background: #fffbeb; border: 1px solid #fde68a; font-size: 10pt; }
+    .box-tip .label { color: #b45309; }
+    .box-answer { background: #faf9f6; border: 1px solid #c9c4b9; }
+    .box-answer .label { color: #15803d; }
+    .box-dq { background: var(--accent); color: #fff; padding: 14px 18px; }
+    .box-dq .label { color: #fff; opacity: .85; }
+    .box-dq p { font-size: 15pt; font-weight: 700; line-height: 1.3; }
+    .box-entry, .box-roles, .box-milestones, .box-choices, .box-critique, .box-audience, .box-rubric, .box-myplan, .box-data { background: #fff; border: 1px solid var(--accent-mid); }
+    .box-roles .label, .box-milestones .label, .box-choices .label, .box-critique .label, .box-audience .label, .box-rubric .label, .box-myplan .label, .box-data .label { color: var(--accent); }
+    .box-teacher, .box-lookfor { background: #fffbeb; border: 1px solid #fcd34d; }
+    .box-teacher .label, .box-lookfor .label { color: #b45309; }
+    .connect { display: inline-block; font-size: 9pt; color: #3f3b35; border: 1px solid #b8b2a7; border-radius: 999px; padding: 1px 10px; margin: 2px 0 8px; }
+    .connect b { color: var(--accent); font-weight: 700; }
+    .visual { margin: 8px 0 12px; text-align: center; break-inside: avoid; }
+    .visual svg { max-width: 100%; height: auto; }
+    table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 10pt; break-inside: avoid; }
+    th, td { border: 1px solid #b8b2a7; padding: 5px 8px; text-align: left; vertical-align: top; }
+    th { background: var(--accent-light); color: #1f1d1a; font-weight: 700; }
+    td.fill { height: 2.6rem; }
+    .tbl { overflow-x: auto; margin: 6px 0 10px; }
+    .tbl table { margin: 0; }
+    @page { size: letter; margin: 11mm 13mm; }
+    @media print {
+      body { padding: 0; font-size: 10pt; line-height: 1.45; }
+      .header-strip { padding: 7px 14px; margin-bottom: 8px; }
+      h1 { font-family: var(--font-display); font-size: 17pt; }
+      h2 { margin: 10px 0 5px; break-after: avoid; }
+      h2.moment.page, h2.beat.page { break-before: page; }
+      h2.beat { margin-top: 0; }
+      body.doc-project { font-size: 11.5pt; line-height: 1.6; }
+      .doc-project .al { height: 2.1rem; }
+      .doc-project td.fill { height: 3rem; }
+      .doc-project .box { padding: 12px 16px; margin: 12px 0 14px; }
+      .name-row { margin: 4px 0 8px; }
+      .box { padding: 7px 12px; margin: 5px 0 7px; }
+      .question { padding: 4px 0 2px; }
+      .al { height: 1.3rem; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body class="doc-workbook">
+  <div class="header-strip">
+    <p class="course-label">Career Education &amp; Financial Literacy 9 · Money, Interest, and Credit · Mini-workbook</p>
+    <h1>Borrowing Smart</h1>
+    <p class="meta">Four short teaching moments for the Debt Detective project · Outcome 9-MM · Alberta draft curriculum (2026)</p>
+  </div>
+  <div class="name-row"><span>Name</span><span class="b"></span><span>Team</span><span class="b" style="flex:0 0 140px"></span><span>Date</span><span class="b" style="flex:0 0 110px"></span></div>
+<div class="box box-forethought"><p class="label">Before you start</p><p>Is all debt bad? Write one example of debt you think is helpful and one you think is harmful.</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<h2 class="moment"><span class="chip">Moment 1</span>Debt and credit</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p><strong>Debt</strong> is money you borrowed and must pay back, usually with interest. <strong>Credit</strong> is the ability to borrow, or to buy now and pay later. At 18, most people start getting offers: credit cards, phone financing, "buy now, pay later," and loans.</p></div>
+<div class="visual"><svg viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Five common kinds of consumer credit with typical features" font-family="inherit">
+  <g font-size="13" fill="#1e293b">
+    <rect x="10" y="10" width="225" height="115" rx="12" fill="#f7efe1" stroke="#94631a" stroke-width="2"/><text x="26" y="38" font-weight="700" font-size="15">Credit card</text><text x="26" y="62">often ~21% a year</text><text x="26" y="82">no interest if you pay the</text><text x="26" y="100">full balance by the due date</text>
+    <rect x="248" y="10" width="225" height="115" rx="12" fill="#f7efe1" stroke="#94631a" stroke-width="2"/><text x="264" y="38" font-weight="700" font-size="15">Line of credit</text><text x="264" y="62">borrow up to a limit</text><text x="264" y="82">usually lower rate than</text><text x="264" y="100">a credit card</text>
+    <rect x="486" y="10" width="224" height="115" rx="12" fill="#f7efe1" stroke="#94631a" stroke-width="2"/><text x="502" y="38" font-weight="700" font-size="15">Personal loan</text><text x="502" y="62">a set amount, paid back</text><text x="502" y="82">in equal payments</text><text x="502" y="100">(car loan, for example)</text>
+    <rect x="130" y="138" width="225" height="115" rx="12" fill="#fff" stroke="#1e293b" stroke-width="2"/><text x="146" y="166" font-weight="700" font-size="15">Student loan</text><text x="146" y="190">for school; federal part</text><text x="146" y="210">interest-free</text>
+    <rect x="368" y="138" width="225" height="115" rx="12" fill="#fff" stroke="#1e293b" stroke-width="2"/><text x="384" y="166" font-weight="700" font-size="15">Buy now, pay later</text><text x="384" y="190">split a purchase into</text><text x="384" y="210">payments; late fees or high</text><text x="384" y="228">interest if you miss one</text>
+  </g>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>Is debt a good or bad financial tool?</strong></p><ol><li><strong>It depends on how it's used.</strong> A student loan for a pathway that leads to good jobs can <strong>speed up</strong> financial security.</li><li>A credit card used for things you can't afford, and not paid off, can <strong>undermine</strong> it, because interest piles up.</li><li><strong>Ask before borrowing:</strong> Do I need this? Can I pay it back on time? What will it cost in total?</li><li><strong>So:</strong> debt is a tool. Used deliberately and responsibly, it helps; used carelessly, it hurts.</li></ol></div>
+<div class="question">
+<p><strong>1.</strong> Match each to a kind of credit: (a) $600 phone paid over 12 months <span class="b"></span> (b) borrowing for college <span class="b"></span> (c) buying a used car with monthly payments <span class="b"></span></p>
+</div>
+<div class="question">
+<p><strong>2.</strong> Name one way credit can <strong>help</strong> someone and one way it can <strong>hurt</strong>.</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>3.</strong> Why does paying a credit card's <strong>full balance</strong> by the due date mean paying no interest?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> What questions would you ask before using "buy now, pay later"?</p><div class="work"><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> Why might a line of credit be a better emergency option than a credit card?</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can describe common kinds of credit and when debt helps or hurts. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 1: list your client's debts and what each one costs.</p></div>
+<h2 class="moment page"><span class="chip">Moment 2</span>The minimum-payment trap</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p>Sam has a <strong>$1,000</strong> credit card balance at <strong>20.99%</strong> a year. The minimum payment is <strong>2.5% of the balance or $10</strong>, whichever is more. Sam stops using the card. How long to pay it off?</p></div>
+<div class="visual"><svg viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Paying off 1,000 dollars at 20.99 percent: minimum payments take 185 months and cost 1,614 dollars in interest; 50 dollars a month takes 25 months and 241 dollars; 100 dollars a month takes 12 months and 109 dollars" font-family="inherit">
+  <text x="10" y="20" font-size="14" font-weight="700" fill="#1e293b">Paying off $1,000 at 20.99%</text>
+  <g font-size="13" fill="#1e293b">
+    <text x="10" y="62" font-weight="700">Minimum only</text>
+    <rect x="160" y="46" width="462" height="28" fill="#b91c1c"/><text x="168" y="65" fill="#fff" font-weight="700">185 months (about 15 years)</text>
+    <text x="630" y="65" font-weight="700">$1,614</text>
+    <text x="10" y="122" font-weight="700">$50 a month</text>
+    <rect x="160" y="106" width="62" height="28" fill="#ca8a04"/><text x="230" y="125">25 months</text>
+    <text x="630" y="125" font-weight="700">$241</text>
+    <text x="10" y="182" font-weight="700">$100 a month</text>
+    <rect x="160" y="166" width="30" height="28" fill="#16a34a"/><text x="198" y="185">12 months</text>
+    <text x="630" y="185" font-weight="700">$109</text>
+    <text x="630" y="36" font-size="12" fill="#334155">interest paid</text>
+  </g>
+  <text x="10" y="232" font-size="12" fill="#334155">Interest is charged each month on what's left (balance × 20.99% ÷ 12), so it compounds. Sample card terms.</text>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>Why does paying the minimum take so long?</strong></p><ol><li><strong>First month's interest:</strong> $1,000 × 0.2099 ÷ 12 ≈ <strong>$17.49</strong>.</li><li><strong>First minimum payment:</strong> 2.5% of the balance ≈ <strong>$25.44</strong>. Only about $8 actually pays down the debt.</li><li><strong>As the balance shrinks, so does the minimum,</strong> so payments stay small for years.</li><li><strong>Result:</strong> about <strong>15 years</strong> and <strong>$1,614 in interest</strong>, more than the original $1,000. Paying $100 a month instead takes <strong>1 year</strong> and costs <strong>$109</strong>.</li></ol></div>
+<p class="connect"><b>Connects to</b> Math: percent, and compound interest working against you</p>
+<div class="question">
+<p><strong>1.</strong> Find one month's interest on a <strong>$2,400</strong> balance at <strong>20.99%</strong>.</p>
+<div class="work"><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>2.</strong> Use the chart. How much interest does Sam save by paying $100 a month instead of the minimum?</p>
+<div class="work"><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-misconception"><p class="label">Watch out</p><p><strong>3.</strong> A student says: <em>"As long as I make the minimum payment, I'm keeping up with my credit card."</em> Use the chart to explain what's wrong.</p><div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> In Grade 8 you saw compound interest <strong>grow savings</strong>. How is this the same idea working against you?</p><div class="work"><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> What's the best way to avoid credit card interest altogether?</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can calculate the cost of borrowing and explain why minimum payments cost so much. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 2: work out what your client's debts cost each month, and with minimum payments only.</p></div>
+<h2 class="moment page"><span class="chip">Moment 3</span>Your credit score</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p>A <strong>credit score</strong> is a number from <strong>300 to 900</strong> that shows how you've handled borrowing. Lenders use it to decide whether to lend to you and what interest rate to charge. Landlords and some employers may check credit too.</p></div>
+<div class="visual"><svg viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Credit score scale from 300 to 900 and the five factors that affect it" font-family="inherit">
+  <defs><linearGradient id="cs" x1="0" x2="1"><stop offset="0" stop-color="#b91c1c"/><stop offset="0.5" stop-color="#ca8a04"/><stop offset="1" stop-color="#16a34a"/></linearGradient></defs>
+  <rect x="20" y="30" width="680" height="26" rx="13" fill="url(#cs)"/>
+  <text x="20" y="74" font-size="13" fill="#1e293b">300</text><text x="700" y="74" font-size="13" fill="#1e293b" text-anchor="end">900</text>
+  <text x="360" y="22" font-size="14" font-weight="700" fill="#1e293b" text-anchor="middle">Credit score (Canada)</text>
+  <text x="10" y="106" font-size="14" font-weight="700" fill="#1e293b">What affects it</text>
+  <g font-size="13" fill="#1e293b">
+    <rect x="10" y="116" width="225" height="62" rx="10" fill="#f7efe1" stroke="#94631a"/><text x="24" y="140" font-weight="700">Payment history</text><text x="24" y="160">paying on time, every time</text>
+    <rect x="248" y="116" width="225" height="62" rx="10" fill="#f7efe1" stroke="#94631a"/><text x="262" y="140" font-weight="700">Credit utilization</text><text x="262" y="160">how much of your limit you use</text>
+    <rect x="486" y="116" width="224" height="62" rx="10" fill="#f7efe1" stroke="#94631a"/><text x="500" y="140" font-weight="700">Length of history</text><text x="500" y="160">how long you've had credit</text>
+    <rect x="130" y="188" width="225" height="62" rx="10" fill="#f7efe1" stroke="#94631a"/><text x="144" y="212" font-weight="700">Types of credit</text><text x="144" y="232">a mix, used well</text>
+    <rect x="368" y="188" width="225" height="62" rx="10" fill="#f7efe1" stroke="#94631a"/><text x="382" y="212" font-weight="700">New applications</text><text x="382" y="232">many at once can lower it</text>
+  </g>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>Alex has a $1,000 credit limit and owes $900. Why could this hurt Alex's score?</strong></p><ol><li><strong>Credit utilization</strong> = balance ÷ limit = 900 ÷ 1,000 = <strong>90%</strong>.</li><li>Using most of your limit looks risky to lenders, even if you pay on time.</li><li><strong>A better habit:</strong> keep the balance low compared with the limit, and pay in full each month.</li><li><strong>Why it matters:</strong> a strong credit score can mean lower interest on a car loan or mortgage later, saving thousands.</li></ol></div>
+<div class="question">
+<p><strong>1.</strong> Morgan has a $2,000 limit and a $300 balance. What is Morgan's credit utilization?</p>
+<div class="work"><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>2.</strong> Name <strong>two</strong> habits that build a good credit score.</p>
+<div class="work"><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>3.</strong> A student says: <em>"I'll avoid credit completely, so I'll have a great credit score."</em> Is that right? Explain.</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> Why might applying for five credit cards in one month be a bad idea?</p><div class="work"><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> How could a credit score affect someone renting their first apartment?</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can explain what affects a credit score and how to build good credit. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 3: check your client's credit habits and suggest ways to improve their score.</p></div>
+<h2 class="moment page"><span class="chip">Moment 4</span>Getting out of debt, and avoiding traps</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p>Jordan owes money on three things and can pay <strong>$400 a month</strong> in total. Should Jordan pay off the <strong>highest interest first</strong> (the <strong>avalanche</strong> method) or the <strong>smallest balance first</strong> (the <strong>snowball</strong> method)?</p></div>
+<div class="visual"><svg viewBox="0 0 720 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Jordan's three debts and the cost of avalanche, snowball and minimum-only repayment" font-family="inherit">
+  <g font-size="13" fill="#1e293b">
+    <rect x="10" y="10" width="700" height="34" fill="#f7efe1" stroke="#c39a5c"/>
+    <text x="24" y="32" font-weight="700">Debt</text><text x="260" y="32" font-weight="700">Balance</text><text x="400" y="32" font-weight="700">Interest</text><text x="540" y="32" font-weight="700">Minimum</text>
+    <text x="24" y="66">Credit card</text><text x="260" y="66">$2,400</text><text x="400" y="66">20.99%</text><text x="540" y="66">$60</text>
+    <text x="24" y="92">Phone financing</text><text x="260" y="92">$600</text><text x="400" y="92">0%</text><text x="540" y="92">$50</text>
+    <text x="24" y="118">Line of credit</text><text x="260" y="118">$3,000</text><text x="400" y="118">9.5%</text><text x="540" y="118">$60</text>
+  </g>
+  <g font-size="13" fill="#1e293b">
+    <text x="10" y="160" font-weight="700">Avalanche</text><text x="10" y="176" font-size="11" fill="#334155">highest rate first</text>
+    <rect x="160" y="150" width="51" height="24" fill="#16a34a"/><text x="220" y="167">17 months · $509 interest</text>
+    <text x="10" y="206" font-weight="700">Snowball</text><text x="10" y="222" font-size="11" fill="#334155">smallest balance first</text>
+    <rect x="160" y="196" width="57" height="24" fill="#ca8a04"/><text x="226" y="213">17 months · $566 interest</text>
+    <text x="10" y="252" font-weight="700">Minimums only</text>
+    <rect x="160" y="240" width="171" height="24" fill="#b91c1c"/><text x="340" y="257">46 months · $1,712 interest</text>
+  </g>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>Avalanche or snowball for Jordan?</strong></p><ol><li><strong>Both:</strong> pay every minimum, then put all extra money on <strong>one</strong> debt until it's gone, then move to the next.</li><li><strong>Avalanche</strong> (credit card first, the highest rate): <strong>17 months, $509</strong> in interest. It costs the least.</li><li><strong>Snowball</strong> (phone first, the smallest balance): <strong>17 months, $566</strong>. A quick win can keep people motivated.</li><li><strong>Minimums only:</strong> <strong>46 months, $1,712</strong>. Either plan saves over $1,100.</li></ol></div>
+<p><strong>Two more tools:</strong></p>
+<ul><li><strong>Payday loans</strong> are small, short loans with very high costs. In Alberta they can cost up to <strong>$14 per $100</strong> borrowed for about two weeks. Borrowing $300 costs $42, about <strong>364%</strong> a year. (Most other loans in Canada can't legally charge more than <strong>35%</strong> a year.)</li><li><strong>Debt-to-income ratio</strong> = monthly debt payments ÷ monthly gross income. It shows how much of your pay goes to debt. Lenders look at it.</li></ul>
+<div class="question">
+<p><strong>1.</strong> Jordan's minimums total $170 a month. Jordan's gross income is $3,000 a month. What is Jordan's debt-to-income ratio?</p>
+<div class="work"><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>2.</strong> Jordan needs $300 for a car repair. Compare a payday loan ($42 for two weeks) with borrowing from the line of credit at 9.5% a year for two weeks (about $1.09). Which should Jordan choose, and why?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>3.</strong> Which method would <strong>you</strong> use, avalanche or snowball? Explain using cost <strong>and</strong> motivation.</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> Why do payday lenders often target people who are short on money? Why can that create a cycle of debt?</p><div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> Write one rule you'll follow to build and protect good credit from age 18.</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can compare repayment strategies, spot predatory loans and use a debt-to-income ratio. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 4: build your client's repayment plan and check their borrowing options.</p></div>
+<h2>Look back</h2>
+<div class="box box-reflect"><p class="label">Look back</p><ol><li>Look at your answer on the first page. Has your view of debt changed?</li><li>Which surprised you most: minimum payments, credit scores, or payday loans?</li><li>What is one money habit you'll start before you get your first credit card?</li></ol></div>
+<div class="box box-data"><p class="label">Data used</p><ul><li>Credit card rate 20.99% and minimum payment (2.5% of the balance or $10) are typical Canadian card terms (sample). Repayment results computed month by month.</li><li>Canadian credit scores range from 300 to 900.</li><li>Criminal interest rate: 35% APR (most loans) since January 1, 2025. Payday loans: up to $14 per $100 borrowed. $42 on $300 for two weeks ≈ 364% a year.</li><li>Jordan's debts and the 9.5% line-of-credit rate are samples. People in this workbook are made up.</li></ul></div>
+</body>
+</html>

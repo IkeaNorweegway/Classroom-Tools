@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debt Detective — Project brief | CEFL 9</title>
+  <style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+    :root { --accent: #94631a; --accent-light: #f7efe1; --accent-mid: #c39a5c; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); font-size: 11pt; line-height: 1.55; color: #1f1d1a; background: #fff; max-width: 800px; margin: 0 auto; padding: 28px 32px 48px; }
+    h1 { font-family: var(--font-display); font-size: 20pt; font-weight: 600; color: #1f1d1a; margin-bottom: 2px; }
+    h2 { font-family: var(--font-display); font-size: 14pt; font-weight: 600; color: var(--accent); margin: 22px 0 8px; border-bottom: 2px solid var(--accent-light); padding-bottom: 3px; }
+    h2.moment { font-family: var(--font-display); font-size: 15pt; border-bottom: 3px solid var(--accent); }
+    h2.beat { font-family: var(--font-display); font-size: 16pt; border-bottom: 3px solid var(--accent); margin-top: 56px; }
+    h2.beat:first-of-type { margin-top: 28px; }
+    h2 .chip, h2.moment .chip { display: inline-block; font-size: 9pt; letter-spacing: .08em; text-transform: uppercase; background: var(--accent); color: #fff; border-radius: 999px; padding: 1px 10px; margin-right: 8px; vertical-align: 3px; }
+    .writebox { border: 1.5px solid #6b665d; border-radius: 8px; margin: 8px 0 14px; }
+    /* Project briefs: roomier type, more space between parts, more room to write. */
+    body.doc-project { font-size: 12.5pt; line-height: 1.7; }
+    .doc-project p { margin-bottom: 10px; }
+    .doc-project li { margin-bottom: 6px; }
+    .doc-project .box { padding: 16px 20px; margin: 16px 0 20px; }
+    .doc-project .box-dq p { font-size: 20pt; }
+    .doc-project .al { height: 2.4rem; }
+    .doc-project .b { width: 150px; }
+    .doc-project table { font-size: 11.5pt; }
+    .doc-project th, .doc-project td { padding: 9px 12px; }
+    .doc-project td.fill { height: 4.2rem; }
+    .doc-project .visual { margin: 18px 0 22px; }
+    h3 { font-size: 11.5pt; font-weight: 700; color: #3f3b35; margin: 12px 0 4px; }
+    p { margin-bottom: 6px; }
+    ul, ol { margin: 4px 0 8px 22px; }
+    li { margin-bottom: 3px; }
+    strong { font-weight: 700; }
+    em { font-style: italic; color: #3f3b35; }
+    .b { display: inline-block; border-bottom: 1.5px solid #3f3b35; width: 90px; vertical-align: bottom; }
+    .al { display: block; border-bottom: 1.25px solid #6b665d; height: 1.7rem; }
+    .work { margin: 4px 0 2px; }
+    .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 14px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
+    .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
+    .header-strip .meta { font-size: 9.5pt; color: #544f47; }
+    .name-row { display: flex; gap: 24px; margin: 8px 0 14px; font-size: 10.5pt; align-items: baseline; }
+    .name-row span { color: #544f47; white-space: nowrap; }
+    .name-row .b { flex: 1; width: auto; }
+    .question { padding: 8px 0 4px; break-inside: avoid; }
+    .question ul { list-style: none; margin-left: 0; }
+    .box { border-radius: 8px; padding: 10px 14px; margin: 8px 0 10px; break-inside: avoid; }
+    .box .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .box-scenario { background: #fff; border: 1.5px solid var(--accent-mid); border-left: 6px solid var(--accent); }
+    .box-scenario .label, .box-example .label, .box-dq .label, .box-entry .label { color: var(--accent); }
+    .box-example { background: var(--accent-light); border: 1px solid var(--accent-mid); }
+    .box-extra { background: #faf9f6; border: 1.5px dashed #6b665d; }
+    .box-extra .label { color: #3f3b35; }
+    .box-check { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .box-check .label { color: #15803d; }
+    .box-project { background: #fff; border: 1.5px solid #3f3b35; }
+    .box-project .label { color: #3f3b35; }
+    .box-misconception { background: #fef2f2; border: 1px solid #fecaca; }
+    .box-misconception .label { color: #b91c1c; }
+    .box-forethought, .box-reflect { background: #f4f2ed; border: 1px solid #b8b2a7; }
+    .box-forethought .label, .box-reflect .label { color: #3f3b35; }
+    .box-tip { background: #fffbeb; border: 1px solid #fde68a; font-size: 10pt; }
+    .box-tip .label { color: #b45309; }
+    .box-answer { background: #faf9f6; border: 1px solid #c9c4b9; }
+    .box-answer .label { color: #15803d; }
+    .box-dq { background: var(--accent); color: #fff; padding: 14px 18px; }
+    .box-dq .label { color: #fff; opacity: .85; }
+    .box-dq p { font-size: 15pt; font-weight: 700; line-height: 1.3; }
+    .box-entry, .box-roles, .box-milestones, .box-choices, .box-critique, .box-audience, .box-rubric, .box-myplan, .box-data { background: #fff; border: 1px solid var(--accent-mid); }
+    .box-roles .label, .box-milestones .label, .box-choices .label, .box-critique .label, .box-audience .label, .box-rubric .label, .box-myplan .label, .box-data .label { color: var(--accent); }
+    .box-teacher, .box-lookfor { background: #fffbeb; border: 1px solid #fcd34d; }
+    .box-teacher .label, .box-lookfor .label { color: #b45309; }
+    .connect { display: inline-block; font-size: 9pt; color: #3f3b35; border: 1px solid #b8b2a7; border-radius: 999px; padding: 1px 10px; margin: 2px 0 8px; }
+    .connect b { color: var(--accent); font-weight: 700; }
+    .visual { margin: 8px 0 12px; text-align: center; break-inside: avoid; }
+    .visual svg { max-width: 100%; height: auto; }
+    table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 10pt; break-inside: avoid; }
+    th, td { border: 1px solid #b8b2a7; padding: 5px 8px; text-align: left; vertical-align: top; }
+    th { background: var(--accent-light); color: #1f1d1a; font-weight: 700; }
+    td.fill { height: 2.6rem; }
+    .tbl { overflow-x: auto; margin: 6px 0 10px; }
+    .tbl table { margin: 0; }
+    @page { size: letter; margin: 11mm 13mm; }
+    @media print {
+      body { padding: 0; font-size: 10pt; line-height: 1.45; }
+      .header-strip { padding: 7px 14px; margin-bottom: 8px; }
+      h1 { font-family: var(--font-display); font-size: 17pt; }
+      h2 { margin: 10px 0 5px; break-after: avoid; }
+      h2.moment.page, h2.beat.page { break-before: page; }
+      h2.beat { margin-top: 0; }
+      body.doc-project { font-size: 11.5pt; line-height: 1.6; }
+      .doc-project .al { height: 2.1rem; }
+      .doc-project td.fill { height: 3rem; }
+      .doc-project .box { padding: 12px 16px; margin: 12px 0 14px; }
+      .name-row { margin: 4px 0 8px; }
+      .box { padding: 7px 12px; margin: 5px 0 7px; }
+      .question { padding: 4px 0 2px; }
+      .al { height: 1.3rem; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body class="doc-project">
+  <div class="header-strip">
+    <p class="course-label">Career Education &amp; Financial Literacy 9 · Money, Interest, and Credit · Project brief</p>
+    <h1>Debt Detective</h1>
+    <p class="meta">Team case + personal credit plan · 7 sessions · Outcome 9-MM · Alberta draft curriculum (2026)</p>
+  </div>
+  <div class="name-row"><span>Name</span><span class="b"></span><span>Team</span><span class="b" style="flex:0 0 140px"></span><span>Date</span><span class="b" style="flex:0 0 110px"></span></div>
+<div class="box box-dq"><p class="label">Driving question</p><p>How can borrowing help or hurt my future?</p></div>
+<div class="box box-entry"><p class="label">The hook</p><p>A sign in a store window says: <strong>"Cash in 15 minutes! Borrow $300 today!"</strong></p><p>Across the street, a bank ad says: <strong>"Build your credit with a student card."</strong></p><p>Which would you trust more? What questions would you ask each one?</p></div>
+<p>Our team's questions:</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+<h2 class="beat page">What do we need to know?</h2>
+<div class="tbl"><table><thead><tr><th>What we know</th><th>What we want to find out</th></tr></thead><tbody><tr><td class="fill"></td><td class="fill"></td></tr><tr><td class="fill"></td><td class="fill"></td></tr><tr><td class="fill"></td><td class="fill"></td></tr><tr><td class="fill"></td><td class="fill"></td></tr><tr><td class="fill"></td><td class="fill"></td></tr></tbody></table></div>
+<h2 class="beat page">How the project works</h2>
+<div class="visual"><svg viewBox="0 0 720 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Project road map: seven steps, one each session" font-family="inherit">
+  <line x1="50" y1="50" x2="670" y2="50" stroke="#c39a5c" stroke-width="6" stroke-linecap="round"/>
+  <g font-size="13" fill="#1e293b" text-anchor="middle">
+    <circle cx="50" cy="50" r="24" fill="#94631a"/><text x="50" y="56" font-size="17" font-weight="700" fill="#fff">1</text><text x="50" y="98" font-weight="700">The debts</text>
+    <circle cx="153" cy="50" r="24" fill="#94631a"/><text x="153" y="56" font-size="17" font-weight="700" fill="#fff">2</text><text x="153" y="98" font-weight="700">The cost</text>
+    <circle cx="257" cy="50" r="24" fill="#94631a"/><text x="257" y="56" font-size="17" font-weight="700" fill="#fff">3</text><text x="257" y="98" font-weight="700">Credit score</text>
+    <circle cx="360" cy="50" r="24" fill="#94631a"/><text x="360" y="56" font-size="17" font-weight="700" fill="#fff">4</text><text x="360" y="98" font-weight="700">The plan</text>
+    <circle cx="463" cy="50" r="24" fill="#94631a"/><text x="463" y="56" font-size="17" font-weight="700" fill="#fff">5</text><text x="463" y="98" font-weight="700">Make it</text>
+    <circle cx="567" cy="50" r="24" fill="#94631a"/><text x="567" y="56" font-size="17" font-weight="700" fill="#fff">6</text><text x="567" y="98" font-weight="700">Feedback</text>
+    <circle cx="670" cy="50" r="28" fill="#1e293b"/><text x="670" y="57" font-size="17" font-weight="700" fill="#fff">7</text><text x="670" y="98" font-weight="700">Share it!</text>
+  </g>
+  <text x="360" y="148" font-size="14" fill="#334155" text-anchor="middle">One step each class. Every class: short lesson → team work → get feedback → fix it.</text>
+</svg></div>
+<h3>Your team</h3>
+<p>Your team of <strong>4 or 5</strong> investigates <strong>one</strong> case. Each person also writes <strong>their own</strong> credit plan.</p>
+<div class="tbl"><table><thead><tr><th>Job</th><th>What you do</th></tr></thead><tbody><tr><td><strong>Leader</strong></td><td>Keeps the team on track. Makes sure everyone talks.</td></tr><tr><td><strong>Finder</strong></td><td>Reads the case and finds the facts.</td></tr><tr><td><strong>Math person</strong></td><td>Works out interest, costs and ratios.</td></tr><tr><td><strong>Checker</strong></td><td>Redoes every calculation.</td></tr><tr><td><strong>Designer</strong></td><td>Makes the advice clear for Grade 8s.</td></tr></tbody></table></div>
+<p><em>Team of 4? The Leader is also the Designer.</em></p>
+<p>My job each class:</p>
+<div class="tbl"><table><thead><tr><th>Class 1</th><th>Class 2</th><th>Class 3</th><th>Class 4</th><th>Class 5</th><th>Class 6</th><th>Class 7</th></tr></thead><tbody><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr></tbody></table></div>
+<h2 class="beat page">The case</h2>
+<p>Use <strong>Jordan's</strong> case, or a case card from your teacher.</p>
+<div class="box box-scenario"><p class="label">The situation</p><p><strong>Jordan, 22 (sample)</strong></p><ul><li>Earns <strong>$3,000 a month</strong> before deductions.</li><li><strong>Credit card:</strong> $2,400 owing at 20.99%, minimum $60. Credit limit $2,500.</li><li><strong>Phone financing:</strong> $600 owing at 0%, minimum $50.</li><li><strong>Line of credit:</strong> $3,000 owing at 9.5%, minimum $60.</li><li>Has been <strong>late on the credit card twice</strong> this year.</li><li>Can put <strong>$400 a month</strong> toward debt.</li><li>Needs <strong>$300</strong> for a car repair next week and is thinking about a <strong>payday loan</strong>.</li></ul></div>
+<h2 class="beat page"><span class="chip">Step 1</span>The debts</h2>
+<p><em>Lesson first: Moment 1 in your workbook.</em></p>
+<div class="tbl"><table><thead><tr><th>Debt</th><th>Kind of credit</th><th>Balance</th><th>Interest rate</th><th>Minimum</th></tr></thead><tbody><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr><tr><td><strong>Total</strong></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr></tbody></table></div>
+<p>Which debt helps Jordan most? Which hurts most? Why?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+<h2 class="beat page"><span class="chip">Step 2</span>The cost</h2>
+<p><em>Lesson first: Moment 2 in your workbook.</em></p>
+<p><strong>One month's interest</strong> on each debt (balance × rate ÷ 12):</p>
+<div class="tbl"><table><thead><tr><th>Debt</th><th>Math</th><th>Interest this month</th></tr></thead><tbody><tr><td>Credit card</td><td class="fill"></td><td class="fill"></td></tr><tr><td>Phone</td><td class="fill"></td><td class="fill"></td></tr><tr><td>Line of credit</td><td class="fill"></td><td class="fill"></td></tr><tr><td><strong>Total</strong></td><td class="fill"></td><td class="fill"></td></tr></tbody></table></div>
+<p><strong>Minimums only:</strong> paying just the $170 in minimums would take about <strong>46 months</strong> and cost about <strong>$1,712</strong> in interest. What does that tell Jordan?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+<h2 class="beat page"><span class="chip">Step 3</span>Credit score check</h2>
+<p><em>Lesson first: Moment 3 in your workbook.</em></p>
+<div class="tbl"><table><thead><tr><th>Factor</th><th>What Jordan is doing</th><th>Helping or hurting?</th></tr></thead><tbody><tr><td>Payment history</td><td class="fill"></td><td class="fill"></td></tr><tr><td>Credit utilization (card balance ÷ limit)</td><td class="fill"></td><td class="fill"></td></tr><tr><td>Length of history</td><td class="fill"></td><td class="fill"></td></tr><tr><td>Types of credit</td><td class="fill"></td><td class="fill"></td></tr><tr><td>New applications</td><td class="fill"></td><td class="fill"></td></tr></tbody></table></div>
+<p>Credit card utilization: <span class="b"></span> ÷ <span class="b"></span> = <span class="b"></span> %</p>
+<p><strong>Two changes that would improve Jordan's score:</strong></p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+<h2 class="beat page"><span class="chip">Step 4</span>The plan</h2>
+<p><em>Lesson first: Moment 4 in your workbook.</em></p>
+<p><strong>Debt-to-income ratio</strong> (minimums ÷ gross monthly income): <span class="b"></span> ÷ <span class="b"></span> = <span class="b"></span> %</p>
+<p><strong>Repayment plan</strong> with $400 a month:</p>
+<div class="tbl"><table><thead><tr><th></th><th>Avalanche (highest rate first)</th><th>Snowball (smallest balance first)</th></tr></thead><tbody><tr><td>Order of debts</td><td class="fill"></td><td class="fill"></td></tr><tr><td>Months to pay off</td><td>17</td><td>17</td></tr><tr><td>Total interest</td><td>$509</td><td>$566</td></tr></tbody></table></div>
+<p><strong>We recommend:</strong> ☐ Avalanche ☐ Snowball&emsp;Why?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+<p><strong>The $300 car repair.</strong> Compare the options:</p>
+<div class="tbl"><table><thead><tr><th>Option</th><th>Cost for 2 weeks</th><th>Risks</th></tr></thead><tbody><tr><td>Payday loan ($14 per $100)</td><td class="fill"></td><td class="fill"></td></tr><tr><td>Line of credit (9.5% a year)</td><td class="fill"></td><td class="fill"></td></tr><tr><td>Another option we thought of:</td><td class="fill"></td><td class="fill"></td></tr></tbody></table></div>
+<p><strong>Our advice on the car repair:</strong></p>
+<div class="work"><span class="al"></span><span class="al"></span></div>
+<h2 class="beat page"><span class="chip">Step 5</span>Make it</h2>
+<p><em>Workshop first: explaining debt so a Grade 8 student gets it.</em></p>
+<p><strong>Team product:</strong> ☐ Poster "Jordan's way out"&emsp;☐ Slideshow&emsp;☐ Short video&emsp;☐ Comic&emsp;☐ Podcast episode</p>
+<p>It must show: Jordan's debts and their cost, the credit score check, the repayment plan, the car-repair advice, and one big lesson for Grade 8s.</p>
+<p><strong>My personal credit plan</strong> (everyone writes their own, half a page): three rules I'll follow from age 18, and why.</p>
+<p>Sketch the team product.</p>
+<div class="writebox" style="height:24rem"></div>
+<h2 class="beat page"><span class="chip">Step 6</span>Feedback</h2>
+<p>Trade with another team. Be <strong>kind</strong>, <strong>specific</strong>, and <strong>helpful</strong>.</p>
+<div class="box box-critique"><p class="label">Critique protocol</p><ul><li><strong>Kind:</strong> "One thing that makes sense is <span class="b"></span>."</li><li><strong>Specific:</strong> "A Grade 8 student might not understand <span class="b"></span>."</li><li><strong>Helpful:</strong> "Could you show <span class="b"></span> with a picture?"</li></ul></div>
+<div class="tbl"><table><thead><tr><th>Feedback we got</th><th>Change we made</th></tr></thead><tbody><tr><td class="fill"></td><td class="fill"></td></tr><tr><td class="fill"></td><td class="fill"></td></tr></tbody></table></div>
+<h2 class="beat page"><span class="chip">Step 7</span>Share it</h2>
+<div class="box box-audience"><p class="label">Your audience</p><p>Share with a <strong>Grade 8 class</strong>: "What we wish we knew about debt." Grade 8s rotate between teams and write one thing they'll remember and one question.</p></div>
+<p>Who presents what:</p>
+<div class="tbl"><table><thead><tr><th>Team member</th><th>Part they present</th></tr></thead><tbody><tr><td class="fill"></td><td class="fill"></td></tr><tr><td class="fill"></td><td class="fill"></td></tr><tr><td class="fill"></td><td class="fill"></td></tr><tr><td class="fill"></td><td class="fill"></td></tr><tr><td class="fill"></td><td class="fill"></td></tr></tbody></table></div>
+<h2 class="beat page">Look back</h2>
+<div class="question">
+<p><strong>1.</strong> What surprised you most about Jordan's case?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>2.</strong> What's the most important rule in your personal credit plan? Why?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>3.</strong> What did the Grade 8s ask?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>4.</strong> Did this project feel like something real people do?&emsp;☐ Yes&emsp;☐ Sort of&emsp;☐ No<br>What would make it feel more real?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<h2 class="beat page">My Plan</h2>
+<p><em>This page goes in your My Plan folder.</em></p>
+<p><strong>My three credit rules from age 18:</strong></p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+<p><strong>What I'll do if I ever need money fast:</strong></p>
+<div class="work"><span class="al"></span><span class="al"></span></div>
+<h2 class="beat page">How you will be marked</h2>
+<p><strong>Outcome 9-MM:</strong> I can analyze how debt and credit work and plan to borrow responsibly.</p>
+<p>Your teacher gives each row a level: <strong>4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet.</strong> Meets means you met the outcome.</p>
+<div class="tbl"><table><thead><tr><th>✗ Has yet to meet: what's missing</th><th>✓ Meets (the outcome)</th><th>★ Beyond: Proficient or Excellent</th></tr></thead><tbody><tr><td class="fill"></td><td><strong>Knowledge (K):</strong> Describes the kinds of credit, the credit score factors, and what makes a loan predatory, accurately.</td><td class="fill"></td></tr><tr><td class="fill"></td><td><strong>Understanding (U):</strong> Explains how compound interest and minimum payments make debt grow, and how responsible borrowing protects financial security.</td><td class="fill"></td></tr><tr><td class="fill"></td><td><strong>Skills &amp; Procedures (S&amp;P):</strong> Calculates interest, credit utilization and debt-to-income ratio accurately, and compares repayment strategies and borrowing options to build a plan.</td><td class="fill"></td></tr><tr><td class="fill"></td><td><strong>Communication (S&amp;P):</strong> Presents the case and advice so a Grade 8 student can follow the cost of debt and the plan.</td><td class="fill"></td></tr></tbody></table></div>
+<p><strong>Hand-in checklist</strong> (not marked): ☐ My personal credit plan is finished ☐ I did my team job each class ☐ We made at least 2 changes after feedback</p>
+<h2 class="beat page">Word cards</h2>
+<div class="tbl"><table><thead><tr><th>Word</th><th>What it means</th><th>Example</th><th>Not an example</th></tr></thead><tbody><tr><td><strong>Debt</strong></td><td>Money borrowed that must be repaid, usually with interest</td><td>$2,400 on a credit card</td><td>Money in savings</td></tr><tr><td><strong>Credit</strong></td><td>The ability to borrow or buy now and pay later</td><td>A $2,500 credit limit</td><td>Cash</td></tr><tr><td><strong>Minimum payment</strong></td><td>The smallest payment allowed each month</td><td>2.5% of the balance or $10</td><td>Paying in full</td></tr><tr><td><strong>Credit score</strong></td><td>A 300–900 number showing how you've handled credit</td><td>760</td><td>Your bank balance</td></tr><tr><td><strong>Credit utilization</strong></td><td>Balance ÷ limit</td><td>$900 of $1,000 = 90%</td><td>Your interest rate</td></tr><tr><td><strong>Avalanche method</strong></td><td>Pay extra on the highest-interest debt first</td><td>Credit card first</td><td>Smallest balance first</td></tr><tr><td><strong>Snowball method</strong></td><td>Pay extra on the smallest balance first</td><td>Phone first</td><td>Highest rate first</td></tr><tr><td><strong>Predatory lending</strong></td><td>Very costly loans aimed at people short on money</td><td>$42 to borrow $300 for 2 weeks</td><td>A 9.5% line of credit</td></tr><tr><td><strong>Debt-to-income ratio</strong></td><td>Monthly debt payments ÷ monthly gross income</td><td>$170 ÷ $3,000 ≈ 5.7%</td><td>Your credit score</td></tr></tbody></table></div>
+</body>
+</html>

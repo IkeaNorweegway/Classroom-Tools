@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tax Time — Mini-workbook | CEFL 9</title>
+  <style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+    :root { --accent: #94631a; --accent-light: #f7efe1; --accent-mid: #c39a5c; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); font-size: 11pt; line-height: 1.55; color: #1f1d1a; background: #fff; max-width: 800px; margin: 0 auto; padding: 28px 32px 48px; }
+    h1 { font-family: var(--font-display); font-size: 20pt; font-weight: 600; color: #1f1d1a; margin-bottom: 2px; }
+    h2 { font-family: var(--font-display); font-size: 14pt; font-weight: 600; color: var(--accent); margin: 22px 0 8px; border-bottom: 2px solid var(--accent-light); padding-bottom: 3px; }
+    h2.moment { font-family: var(--font-display); font-size: 15pt; border-bottom: 3px solid var(--accent); }
+    h2.beat { font-family: var(--font-display); font-size: 16pt; border-bottom: 3px solid var(--accent); margin-top: 56px; }
+    h2.beat:first-of-type { margin-top: 28px; }
+    h2 .chip, h2.moment .chip { display: inline-block; font-size: 9pt; letter-spacing: .08em; text-transform: uppercase; background: var(--accent); color: #fff; border-radius: 999px; padding: 1px 10px; margin-right: 8px; vertical-align: 3px; }
+    .writebox { border: 1.5px solid #6b665d; border-radius: 8px; margin: 8px 0 14px; }
+    /* Project briefs: roomier type, more space between parts, more room to write. */
+    body.doc-project { font-size: 12.5pt; line-height: 1.7; }
+    .doc-project p { margin-bottom: 10px; }
+    .doc-project li { margin-bottom: 6px; }
+    .doc-project .box { padding: 16px 20px; margin: 16px 0 20px; }
+    .doc-project .box-dq p { font-size: 20pt; }
+    .doc-project .al { height: 2.4rem; }
+    .doc-project .b { width: 150px; }
+    .doc-project table { font-size: 11.5pt; }
+    .doc-project th, .doc-project td { padding: 9px 12px; }
+    .doc-project td.fill { height: 4.2rem; }
+    .doc-project .visual { margin: 18px 0 22px; }
+    h3 { font-size: 11.5pt; font-weight: 700; color: #3f3b35; margin: 12px 0 4px; }
+    p { margin-bottom: 6px; }
+    ul, ol { margin: 4px 0 8px 22px; }
+    li { margin-bottom: 3px; }
+    strong { font-weight: 700; }
+    em { font-style: italic; color: #3f3b35; }
+    .b { display: inline-block; border-bottom: 1.5px solid #3f3b35; width: 90px; vertical-align: bottom; }
+    .al { display: block; border-bottom: 1.25px solid #6b665d; height: 1.7rem; }
+    .work { margin: 4px 0 2px; }
+    .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 14px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
+    .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
+    .header-strip .meta { font-size: 9.5pt; color: #544f47; }
+    .name-row { display: flex; gap: 24px; margin: 8px 0 14px; font-size: 10.5pt; align-items: baseline; }
+    .name-row span { color: #544f47; white-space: nowrap; }
+    .name-row .b { flex: 1; width: auto; }
+    .question { padding: 8px 0 4px; break-inside: avoid; }
+    .question ul { list-style: none; margin-left: 0; }
+    .box { border-radius: 8px; padding: 10px 14px; margin: 8px 0 10px; break-inside: avoid; }
+    .box .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .box-scenario { background: #fff; border: 1.5px solid var(--accent-mid); border-left: 6px solid var(--accent); }
+    .box-scenario .label, .box-example .label, .box-dq .label, .box-entry .label { color: var(--accent); }
+    .box-example { background: var(--accent-light); border: 1px solid var(--accent-mid); }
+    .box-extra { background: #faf9f6; border: 1.5px dashed #6b665d; }
+    .box-extra .label { color: #3f3b35; }
+    .box-check { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .box-check .label { color: #15803d; }
+    .box-project { background: #fff; border: 1.5px solid #3f3b35; }
+    .box-project .label { color: #3f3b35; }
+    .box-misconception { background: #fef2f2; border: 1px solid #fecaca; }
+    .box-misconception .label { color: #b91c1c; }
+    .box-forethought, .box-reflect { background: #f4f2ed; border: 1px solid #b8b2a7; }
+    .box-forethought .label, .box-reflect .label { color: #3f3b35; }
+    .box-tip { background: #fffbeb; border: 1px solid #fde68a; font-size: 10pt; }
+    .box-tip .label { color: #b45309; }
+    .box-answer { background: #faf9f6; border: 1px solid #c9c4b9; }
+    .box-answer .label { color: #15803d; }
+    .box-dq { background: var(--accent); color: #fff; padding: 14px 18px; }
+    .box-dq .label { color: #fff; opacity: .85; }
+    .box-dq p { font-size: 15pt; font-weight: 700; line-height: 1.3; }
+    .box-entry, .box-roles, .box-milestones, .box-choices, .box-critique, .box-audience, .box-rubric, .box-myplan, .box-data { background: #fff; border: 1px solid var(--accent-mid); }
+    .box-roles .label, .box-milestones .label, .box-choices .label, .box-critique .label, .box-audience .label, .box-rubric .label, .box-myplan .label, .box-data .label { color: var(--accent); }
+    .box-teacher, .box-lookfor { background: #fffbeb; border: 1px solid #fcd34d; }
+    .box-teacher .label, .box-lookfor .label { color: #b45309; }
+    .connect { display: inline-block; font-size: 9pt; color: #3f3b35; border: 1px solid #b8b2a7; border-radius: 999px; padding: 1px 10px; margin: 2px 0 8px; }
+    .connect b { color: var(--accent); font-weight: 700; }
+    .visual { margin: 8px 0 12px; text-align: center; break-inside: avoid; }
+    .visual svg { max-width: 100%; height: auto; }
+    table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 10pt; break-inside: avoid; }
+    th, td { border: 1px solid #b8b2a7; padding: 5px 8px; text-align: left; vertical-align: top; }
+    th { background: var(--accent-light); color: #1f1d1a; font-weight: 700; }
+    td.fill { height: 2.6rem; }
+    .tbl { overflow-x: auto; margin: 6px 0 10px; }
+    .tbl table { margin: 0; }
+    @page { size: letter; margin: 11mm 13mm; }
+    @media print {
+      body { padding: 0; font-size: 10pt; line-height: 1.45; }
+      .header-strip { padding: 7px 14px; margin-bottom: 8px; }
+      h1 { font-family: var(--font-display); font-size: 17pt; }
+      h2 { margin: 10px 0 5px; break-after: avoid; }
+      h2.moment.page, h2.beat.page { break-before: page; }
+      h2.beat { margin-top: 0; }
+      body.doc-project { font-size: 11.5pt; line-height: 1.6; }
+      .doc-project .al { height: 2.1rem; }
+      .doc-project td.fill { height: 3rem; }
+      .doc-project .box { padding: 12px 16px; margin: 12px 0 14px; }
+      .name-row { margin: 4px 0 8px; }
+      .box { padding: 7px 12px; margin: 5px 0 7px; }
+      .question { padding: 4px 0 2px; }
+      .al { height: 1.3rem; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body class="doc-workbook">
+  <div class="header-strip">
+    <p class="course-label">Career Education &amp; Financial Literacy 9 · Income and Tax · Mini-workbook</p>
+    <h1>Tax Time</h1>
+    <p class="meta">Four short teaching moments for the Tax Clinic project · Outcome 9-IT · Alberta draft curriculum (2026)</p>
+  </div>
+  <div class="name-row"><span>Name</span><span class="b"></span><span>Team</span><span class="b" style="flex:0 0 140px"></span><span>Date</span><span class="b" style="flex:0 0 110px"></span></div>
+<div class="box box-forethought"><p class="label">Before you start</p><p>Have you ever heard someone say "I got a tax refund"? Where do you think that money comes from?</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<h2 class="moment"><span class="chip">Moment 1</span>The T4 and the tax return</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p>Jamie is 19 and worked at a sporting-goods store all last year. In February, the store gave Jamie a <strong>T4 slip</strong>: a summary of a year's pay and deductions. Jamie uses it to file a <strong>tax return</strong> with the <strong>Canada Revenue Agency (CRA)</strong>. The return works out the tax Jamie really owed, compared with what was already taken off each paycheque.</p></div>
+<div class="visual"><svg viewBox="0 0 720 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Simplified T4 slip with boxes 14, 16, 18 and 22 labelled" font-family="inherit">
+  <rect x="10" y="10" width="440" height="250" fill="#fff" stroke="#1e293b" stroke-width="2"/>
+  <rect x="10" y="10" width="440" height="40" fill="#f7efe1"/>
+  <text x="26" y="36" font-size="16" font-weight="700" fill="#1e293b">T4 · Statement of Remuneration Paid · 2025</text>
+  <text x="26" y="72" font-size="12" fill="#334155">Employer: Summit Sports · Employee: Jamie (sample)</text>
+  <g font-size="12" fill="#1e293b">
+    <rect x="26" y="88" width="200" height="56" fill="#fff" stroke="#94631a" stroke-width="2"/><text x="36" y="106" fill="#94631a" font-weight="700">14 Employment income</text><text x="36" y="132" font-size="16" font-weight="700">$24,000.00</text>
+    <rect x="236" y="88" width="200" height="56" fill="#fff" stroke="#cbd5e1"/><text x="246" y="106" fill="#334155" font-weight="700">22 Income tax deducted</text><text x="246" y="132" font-size="16" font-weight="700">$1,400.00</text>
+    <rect x="26" y="156" width="200" height="56" fill="#fff" stroke="#cbd5e1"/><text x="36" y="174" fill="#334155" font-weight="700">16 Employee's CPP</text><text x="36" y="200" font-size="16" font-weight="700">$1,219.75</text>
+    <rect x="236" y="156" width="200" height="56" fill="#fff" stroke="#cbd5e1"/><text x="246" y="174" fill="#334155" font-weight="700">18 Employee's EI</text><text x="246" y="200" font-size="16" font-weight="700">$391.20</text>
+  </g>
+  <text x="26" y="244" font-size="11" fill="#334155">Simplified sample. A real T4 has more boxes.</text>
+  <g font-size="13" fill="#1e293b">
+    <line x1="226" y1="116" x2="470" y2="60" stroke="#94631a" stroke-width="1.5"/><text x="476" y="56" font-weight="700" fill="#94631a">Box 14: total pay</text><text x="476" y="74" font-size="12">the starting point</text>
+    <line x1="436" y1="116" x2="470" y2="120" stroke="#94631a" stroke-width="1.5"/><text x="476" y="118" font-weight="700" fill="#94631a">Box 22: tax already paid</text><text x="476" y="136" font-size="12">taken off each paycheque</text>
+    <line x1="436" y1="184" x2="470" y2="190" stroke="#94631a" stroke-width="1.5"/><text x="476" y="188" font-weight="700" fill="#94631a">Boxes 16 and 18:</text><text x="476" y="206" font-size="12">CPP and EI already paid</text>
+  </g>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>Does Jamie get a refund or owe money?</strong></p><ol><li><strong>Federal tax:</strong> 0.14 × 24,000 = $3,360. Minus basic personal credit $2,303.28 = <strong>$1,056.72</strong>.</li><li><strong>Alberta tax:</strong> 0.08 × 24,000 = $1,920. Minus Alberta credit $1,821.52 = <strong>$98.48</strong>.</li><li><strong>Tax owed:</strong> $1,056.72 + $98.48 = <strong>$1,155.20</strong>.</li><li><strong>Compare with box 22:</strong> $1,400 was already paid. $1,400 − $1,155.20 = <strong>$244.80 refund</strong>. A refund is <strong>Jamie's own money</strong> coming back, because too much was taken off during the year.</li></ol></div>
+<div class="question">
+<p><strong>1.</strong> Use Jamie's T4. Which box shows total pay? Which shows the income tax already taken off?</p>
+<div class="work"><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>2.</strong> Riley's T4 shows <strong>$15,000</strong> in box 14 and <strong>$300</strong> in box 22. Find Riley's tax owed and the refund or balance owing.</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-misconception"><p class="label">Watch out</p><p><strong>3.</strong> A student says: <em>"A tax refund is a bonus the government gives you."</em> Explain what a refund really is.</p><div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> Why does the CRA need a tax return if tax was already taken off each paycheque?</p><div class="work"><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> Check box 18: is 1.63% of $24,000 equal to $391.20?</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can read a T4 and work out a simple refund or balance owing. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 1: read your client's T4 and list all their income.</p></div>
+<h2 class="moment page"><span class="chip">Moment 2</span>Credits and deductions</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p>Jamie starts college and pays <strong>$3,000</strong> in tuition. Jamie also puts <strong>$1,000</strong> into an RRSP. Both lower Jamie's tax, but in different ways. A <strong>deduction</strong> lowers the income that gets taxed. A <strong>credit</strong> lowers the tax itself.</p></div>
+<div class="visual"><svg viewBox="0 0 720 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A deduction lowers taxable income; a credit lowers the tax owed" font-family="inherit">
+  <g text-anchor="middle" font-size="13" fill="#1e293b">
+    <rect x="10" y="10" width="340" height="210" rx="12" fill="#f7efe1" stroke="#94631a" stroke-width="2"/>
+    <text x="180" y="40" font-size="17" font-weight="700">DEDUCTION</text>
+    <text x="180" y="62">lowers your taxable income</text>
+    <rect x="60" y="80" width="240" height="34" fill="#c39a5c"/><text x="180" y="102" font-weight="700">Income $24,000</text>
+    <text x="180" y="136" font-size="20" fill="#94631a">↓ − $1,000 RRSP</text>
+    <rect x="70" y="150" width="220" height="34" fill="#94631a"/><text x="180" y="172" font-weight="700" fill="#fff">Taxed on $23,000</text>
+    <text x="180" y="206" font-size="12">examples: RRSP, union dues</text>
+    <rect x="370" y="10" width="340" height="210" rx="12" fill="#fff" stroke="#1e293b" stroke-width="2"/>
+    <text x="540" y="40" font-size="17" font-weight="700">CREDIT</text>
+    <text x="540" y="62">lowers the tax you owe</text>
+    <rect x="420" y="80" width="240" height="34" fill="#c39a5c"/><text x="540" y="102" font-weight="700">Tax $1,056.72</text>
+    <text x="540" y="136" font-size="20" fill="#94631a">↓ − 14% × $3,000 tuition</text>
+    <rect x="450" y="150" width="180" height="34" fill="#94631a"/><text x="540" y="172" font-weight="700" fill="#fff">Tax $636.72</text>
+    <text x="540" y="206" font-size="12">examples: tuition, donations, disability</text>
+  </g>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>How much does each one save Jamie (federal and Alberta)?</strong></p><ol><li><strong>RRSP deduction ($1,000):</strong> taxable income drops to $23,000. Federal: 0.14 × 23,000 − 2,303.28 = $916.72. Alberta: 0.08 × 23,000 − 1,821.52 = $18.48. New total <strong>$935.20</strong>, down from $1,155.20: a saving of <strong>$220</strong> (14% + 8% of $1,000).</li><li><strong>Tuition credit ($3,000):</strong> the federal credit is 14% × 3,000 = <strong>$420</strong> off federal tax. (Alberta ended its tuition credit in 2020.)</li><li><strong>The difference:</strong> a deduction saves your tax <strong>rate</strong> times the amount; a credit takes a set amount straight off your tax.</li><li><strong>Note:</strong> these credits can bring tax down to $0, but not below.</li></ol></div>
+<div class="question">
+<p><strong>1.</strong> Write <strong>deduction</strong> or <strong>credit</strong>. (a) Tuition <span class="b"></span> (b) RRSP contribution <span class="b"></span> (c) Basic personal amount <span class="b"></span></p>
+</div>
+<div class="question">
+<p><strong>2.</strong> Morgan earns <strong>$30,000</strong> and puts <strong>$500</strong> into an RRSP. How much federal and Alberta tax does it save? Then explain why Riley ($15,000 income, from Moment 1) would save nothing from an RRSP this year.</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>3.</strong> Why is understanding credits and deductions part of making a good financial plan?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> Jamie's federal tax is $1,056.72 and the tuition credit is $420. Jamie's friend has tuition credits worth $1,500 but federal tax of only $900. How much tax does the friend pay?</p><div class="work"><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> Why might someone keep their receipts for donations and tuition?</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can explain and calculate the effect of credits and deductions. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 2: apply your client's credits and deductions.</p></div>
+<h2 class="moment page"><span class="chip">Moment 3</span>RRSP or TFSA?</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p>Jamie wants to save <strong>$1,000</strong> for the future. Two kinds of <strong>registered</strong> accounts get special tax treatment: the <strong>RRSP</strong> (Registered Retirement Savings Plan) and the <strong>TFSA</strong> (Tax-Free Savings Account). In 2026, you can add up to <strong>$7,000</strong> to a TFSA (plus unused room), and up to <strong>18%</strong> of last year's earned income to an RRSP (to a maximum of <strong>$33,810</strong>).</p></div>
+<div class="visual"><svg viewBox="0 0 720 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RRSP: tax break now, taxed later. TFSA: no break now, tax-free later" font-family="inherit">
+  <rect x="10" y="10" width="340" height="230" rx="12" fill="#f7efe1" stroke="#94631a" stroke-width="2"/>
+  <text x="180" y="40" font-size="17" font-weight="700" fill="#1e293b" text-anchor="middle">RRSP</text>
+  <g font-size="13" fill="#1e293b">
+    <text x="28" y="74" font-weight="700">Putting money in:</text><text x="28" y="94">a deduction → lower tax now</text>
+    <text x="28" y="128" font-weight="700">While it grows:</text><text x="28" y="148">no tax (tax-deferred)</text>
+    <text x="28" y="182" font-weight="700">Taking it out:</text><text x="28" y="202">taxed as income then</text>
+    <text x="28" y="228" font-size="12" fill="#94631a" font-weight="700">Best when your tax rate is HIGH now</text>
+  </g>
+  <rect x="370" y="10" width="340" height="230" rx="12" fill="#fff" stroke="#1e293b" stroke-width="2"/>
+  <text x="540" y="40" font-size="17" font-weight="700" fill="#1e293b" text-anchor="middle">TFSA</text>
+  <g font-size="13" fill="#1e293b">
+    <text x="388" y="74" font-weight="700">Putting money in:</text><text x="388" y="94">after-tax money → no break now</text>
+    <text x="388" y="128" font-weight="700">While it grows:</text><text x="388" y="148">no tax</text>
+    <text x="388" y="182" font-weight="700">Taking it out:</text><text x="388" y="202">tax-free, any time</text>
+    <text x="388" y="228" font-size="12" fill="#94631a" font-weight="700">Great when your tax rate is LOW now</text>
+  </g>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>Jamie earns $24,000. Should the $1,000 go in an RRSP or a TFSA?</strong></p><ol><li><strong>RRSP now:</strong> saves about $220 in tax this year (14% federal + 8% Alberta). But when Jamie takes it out in retirement, it's taxed then, possibly at a higher rate.</li><li><strong>TFSA now:</strong> no tax saving this year. But all growth and withdrawals are <strong>tax-free</strong>, and Jamie can take it out any time, for example for school.</li><li><strong>Jamie's situation:</strong> a low income now, likely higher later, and might need the money soon.</li><li><strong>So:</strong> a <strong>TFSA</strong> probably fits Jamie better now. An RRSP gets more useful when Jamie earns more and is in a higher bracket.</li></ol></div>
+<div class="question">
+<p><strong>1.</strong> Write <strong>RRSP</strong> or <strong>TFSA</strong>. (a) Withdrawals are tax-free. <span class="b"></span> (b) Contributions lower your taxable income. <span class="b"></span> (c) The 2026 yearly limit is $7,000. <span class="b"></span></p>
+</div>
+<div class="question">
+<p><strong>2.</strong> Sam earned $50,000 last year. What is Sam's RRSP contribution limit this year (18%)?</p>
+<div class="work"><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>3.</strong> Dana earns $110,000 and is saving for retirement. Would you suggest an RRSP or a TFSA? Explain using tax rates.</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> Why might a TFSA be better for a goal 3 years away, like a car?</p><div class="work"><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> Can someone have both an RRSP and a TFSA? Why might they?</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can compare RRSPs and TFSAs for different people. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 3: recommend an RRSP or TFSA for your client, with reasons.</p></div>
+<h2 class="moment page"><span class="chip">Moment 4</span>Gigs, tips and self-employment</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p>Kai edits videos for local businesses and earns <strong>$10,000</strong> in a year. Kai is <strong>self-employed</strong>: no employer, no T4, no tax taken off. Kai's friend works at a restaurant and gets <strong>cash tips</strong>. Both kinds of income must be reported on a tax return.</p></div>
+<div class="visual"><svg viewBox="0 0 720 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Employment income versus self-employment income: who pays CPP and tax" font-family="inherit">
+  <rect x="10" y="10" width="340" height="210" rx="12" fill="#fff" stroke="#1e293b" stroke-width="2"/>
+  <text x="180" y="40" font-size="16" font-weight="700" fill="#1e293b" text-anchor="middle">Employee</text>
+  <g font-size="13" fill="#1e293b"><text x="28" y="74">✓ gets a T4</text><text x="28" y="100">✓ employer takes off tax, CPP, EI</text><text x="28" y="126">✓ employer pays the other half</text><text x="44" y="144">of CPP (5.95% each)</text><text x="28" y="172">✓ tips must still be reported</text></g>
+  <rect x="370" y="10" width="340" height="210" rx="12" fill="#f7efe1" stroke="#94631a" stroke-width="2"/>
+  <text x="540" y="40" font-size="16" font-weight="700" fill="#1e293b" text-anchor="middle">Self-employed</text>
+  <g font-size="13" fill="#1e293b"><text x="388" y="74">✗ no T4: keep your own records</text><text x="388" y="100">✗ nothing taken off: save for tax</text><text x="388" y="126">✓ pays BOTH halves of CPP:</text><text x="404" y="144">11.9% of earnings above $3,500</text><text x="388" y="172">✓ EI only if you sign up</text><text x="388" y="198">✓ gig and freelance income is taxable</text></g>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>How much CPP does Kai owe on $10,000 of self-employment income?</strong></p><ol><li><strong>Exemption:</strong> CPP isn't charged on the first $3,500. 10,000 − 3,500 = $6,500.</li><li><strong>Both halves:</strong> a self-employed person pays the employee <strong>and</strong> employer share: 5.95% + 5.95% = <strong>11.9%</strong>.</li><li><strong>CPP:</strong> 0.119 × 6,500 = <strong>$773.50</strong>.</li><li><strong>Plus income tax:</strong> with no tax taken off during the year, Kai should <strong>set money aside</strong> for tax and CPP before tax time.</li></ol></div>
+<div class="question">
+<p><strong>1.</strong> Which of these must be reported on a tax return? Circle all: cash tips · gig delivery earnings · babysitting money · freelance design work</p>
+</div>
+<div class="question">
+<p><strong>2.</strong> A self-employed tutor earns <strong>$8,000</strong>. How much CPP does the tutor owe?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>3.</strong> Government benefits like the <strong>GST/HST credit</strong> and the <strong>Canada Child Benefit</strong> are paid through the tax system and depend on income. Why does that give people a reason to file a tax return, even with low income?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> Why should a self-employed person keep receipts and records all year?</p><div class="work"><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> What could happen to someone who doesn't report their tips or gig income?</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can explain how self-employment, gig and tip income are taxed. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 4: add your client's self-employment and tip income, and finish their return.</p></div>
+<h2>Look back</h2>
+<div class="box box-reflect"><p class="label">Look back</p><ol><li>Look at your answer on the first page. Where does a refund really come from?</li><li>Which idea will matter most to you when you start working: T4s, credits, RRSP/TFSA, or self-employment?</li><li>What is one question about taxes you still have?</li></ol></div>
+<div class="box box-data"><p class="label">Data used</p><ul><li>2026 federal: 14% on the first $58,523; basic personal amount $16,452 (credit $2,303.28); tuition credit 14%. 2026 Alberta: 8% on the first $61,200; basic personal amount $22,769 (credit $1,821.52); no tuition credit since 2020.</li><li>CPP 2026: 5.95% employee and employer each, on earnings above $3,500; self-employed pay 11.9%. EI 2026: 1.63%.</li><li>TFSA 2026 limit $7,000. RRSP: 18% of the previous year's earned income, up to $33,810 (2026).</li><li>Simplified: CPP/EI credits and other details are left out. The T4, names and amounts are samples.</li></ul></div>
+</body>
+</html>

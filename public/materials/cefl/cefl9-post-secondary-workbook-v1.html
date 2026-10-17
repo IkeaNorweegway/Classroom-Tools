@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Is It Worth It? — Mini-workbook | CEFL 9</title>
+  <style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+    :root { --accent: #94631a; --accent-light: #f7efe1; --accent-mid: #c39a5c; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); font-size: 11pt; line-height: 1.55; color: #1f1d1a; background: #fff; max-width: 800px; margin: 0 auto; padding: 28px 32px 48px; }
+    h1 { font-family: var(--font-display); font-size: 20pt; font-weight: 600; color: #1f1d1a; margin-bottom: 2px; }
+    h2 { font-family: var(--font-display); font-size: 14pt; font-weight: 600; color: var(--accent); margin: 22px 0 8px; border-bottom: 2px solid var(--accent-light); padding-bottom: 3px; }
+    h2.moment { font-family: var(--font-display); font-size: 15pt; border-bottom: 3px solid var(--accent); }
+    h2.beat { font-family: var(--font-display); font-size: 16pt; border-bottom: 3px solid var(--accent); margin-top: 56px; }
+    h2.beat:first-of-type { margin-top: 28px; }
+    h2 .chip, h2.moment .chip { display: inline-block; font-size: 9pt; letter-spacing: .08em; text-transform: uppercase; background: var(--accent); color: #fff; border-radius: 999px; padding: 1px 10px; margin-right: 8px; vertical-align: 3px; }
+    .writebox { border: 1.5px solid #6b665d; border-radius: 8px; margin: 8px 0 14px; }
+    /* Project briefs: roomier type, more space between parts, more room to write. */
+    body.doc-project { font-size: 12.5pt; line-height: 1.7; }
+    .doc-project p { margin-bottom: 10px; }
+    .doc-project li { margin-bottom: 6px; }
+    .doc-project .box { padding: 16px 20px; margin: 16px 0 20px; }
+    .doc-project .box-dq p { font-size: 20pt; }
+    .doc-project .al { height: 2.4rem; }
+    .doc-project .b { width: 150px; }
+    .doc-project table { font-size: 11.5pt; }
+    .doc-project th, .doc-project td { padding: 9px 12px; }
+    .doc-project td.fill { height: 4.2rem; }
+    .doc-project .visual { margin: 18px 0 22px; }
+    h3 { font-size: 11.5pt; font-weight: 700; color: #3f3b35; margin: 12px 0 4px; }
+    p { margin-bottom: 6px; }
+    ul, ol { margin: 4px 0 8px 22px; }
+    li { margin-bottom: 3px; }
+    strong { font-weight: 700; }
+    em { font-style: italic; color: #3f3b35; }
+    .b { display: inline-block; border-bottom: 1.5px solid #3f3b35; width: 90px; vertical-align: bottom; }
+    .al { display: block; border-bottom: 1.25px solid #6b665d; height: 1.7rem; }
+    .work { margin: 4px 0 2px; }
+    .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 14px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
+    .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
+    .header-strip .meta { font-size: 9.5pt; color: #544f47; }
+    .name-row { display: flex; gap: 24px; margin: 8px 0 14px; font-size: 10.5pt; align-items: baseline; }
+    .name-row span { color: #544f47; white-space: nowrap; }
+    .name-row .b { flex: 1; width: auto; }
+    .question { padding: 8px 0 4px; break-inside: avoid; }
+    .question ul { list-style: none; margin-left: 0; }
+    .box { border-radius: 8px; padding: 10px 14px; margin: 8px 0 10px; break-inside: avoid; }
+    .box .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .box-scenario { background: #fff; border: 1.5px solid var(--accent-mid); border-left: 6px solid var(--accent); }
+    .box-scenario .label, .box-example .label, .box-dq .label, .box-entry .label { color: var(--accent); }
+    .box-example { background: var(--accent-light); border: 1px solid var(--accent-mid); }
+    .box-extra { background: #faf9f6; border: 1.5px dashed #6b665d; }
+    .box-extra .label { color: #3f3b35; }
+    .box-check { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .box-check .label { color: #15803d; }
+    .box-project { background: #fff; border: 1.5px solid #3f3b35; }
+    .box-project .label { color: #3f3b35; }
+    .box-misconception { background: #fef2f2; border: 1px solid #fecaca; }
+    .box-misconception .label { color: #b91c1c; }
+    .box-forethought, .box-reflect { background: #f4f2ed; border: 1px solid #b8b2a7; }
+    .box-forethought .label, .box-reflect .label { color: #3f3b35; }
+    .box-tip { background: #fffbeb; border: 1px solid #fde68a; font-size: 10pt; }
+    .box-tip .label { color: #b45309; }
+    .box-answer { background: #faf9f6; border: 1px solid #c9c4b9; }
+    .box-answer .label { color: #15803d; }
+    .box-dq { background: var(--accent); color: #fff; padding: 14px 18px; }
+    .box-dq .label { color: #fff; opacity: .85; }
+    .box-dq p { font-size: 15pt; font-weight: 700; line-height: 1.3; }
+    .box-entry, .box-roles, .box-milestones, .box-choices, .box-critique, .box-audience, .box-rubric, .box-myplan, .box-data { background: #fff; border: 1px solid var(--accent-mid); }
+    .box-roles .label, .box-milestones .label, .box-choices .label, .box-critique .label, .box-audience .label, .box-rubric .label, .box-myplan .label, .box-data .label { color: var(--accent); }
+    .box-teacher, .box-lookfor { background: #fffbeb; border: 1px solid #fcd34d; }
+    .box-teacher .label, .box-lookfor .label { color: #b45309; }
+    .connect { display: inline-block; font-size: 9pt; color: #3f3b35; border: 1px solid #b8b2a7; border-radius: 999px; padding: 1px 10px; margin: 2px 0 8px; }
+    .connect b { color: var(--accent); font-weight: 700; }
+    .visual { margin: 8px 0 12px; text-align: center; break-inside: avoid; }
+    .visual svg { max-width: 100%; height: auto; }
+    table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 10pt; break-inside: avoid; }
+    th, td { border: 1px solid #b8b2a7; padding: 5px 8px; text-align: left; vertical-align: top; }
+    th { background: var(--accent-light); color: #1f1d1a; font-weight: 700; }
+    td.fill { height: 2.6rem; }
+    .tbl { overflow-x: auto; margin: 6px 0 10px; }
+    .tbl table { margin: 0; }
+    @page { size: letter; margin: 11mm 13mm; }
+    @media print {
+      body { padding: 0; font-size: 10pt; line-height: 1.45; }
+      .header-strip { padding: 7px 14px; margin-bottom: 8px; }
+      h1 { font-family: var(--font-display); font-size: 17pt; }
+      h2 { margin: 10px 0 5px; break-after: avoid; }
+      h2.moment.page, h2.beat.page { break-before: page; }
+      h2.beat { margin-top: 0; }
+      body.doc-project { font-size: 11.5pt; line-height: 1.6; }
+      .doc-project .al { height: 2.1rem; }
+      .doc-project td.fill { height: 3rem; }
+      .doc-project .box { padding: 12px 16px; margin: 12px 0 14px; }
+      .name-row { margin: 4px 0 8px; }
+      .box { padding: 7px 12px; margin: 5px 0 7px; }
+      .question { padding: 4px 0 2px; }
+      .al { height: 1.3rem; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body class="doc-workbook">
+  <div class="header-strip">
+    <p class="course-label">Career Education &amp; Financial Literacy 9 · Post-Secondary Pathways · Mini-workbook</p>
+    <h1>Is It Worth It?</h1>
+    <p class="meta">Four short teaching moments for the Pathway Pitch project · Outcome 9-PS · Alberta draft curriculum (2026)</p>
+  </div>
+  <div class="name-row"><span>Name</span><span class="b"></span><span>Team</span><span class="b" style="flex:0 0 140px"></span><span>Date</span><span class="b" style="flex:0 0 110px"></span></div>
+<div class="box box-forethought"><p class="label">Before you start</p><p>Is going to college or university always worth the money? Write what you think now, and why.</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<h2 class="moment"><span class="chip">Moment 1</span>Student loans</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p>Maya plans a 4-year nursing degree. She'll need to borrow <strong>$20,000</strong> in total. In Alberta, a student loan comes in two parts: a <strong>federal</strong> part (from the Government of Canada) and a <strong>provincial</strong> part (from Alberta). The federal part is <strong>interest-free</strong>. The Alberta part charges interest at the <strong>prime rate</strong>.</p></div>
+<div class="visual"><svg viewBox="0 0 720 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A 20,000 dollar student loan split into a 12,000 federal interest-free part and an 8,000 Alberta part with interest" font-family="inherit">
+  <text x="10" y="22" font-size="14" font-weight="700" fill="#1e293b">Maya's $20,000 student loan (sample split)</text>
+  <rect x="10" y="40" width="420" height="64" fill="#16a34a"/>
+  <rect x="430" y="40" width="280" height="64" fill="#94631a"/>
+  <text x="220" y="68" font-size="16" font-weight="700" fill="#fff" text-anchor="middle">Federal part: $12,000</text>
+  <text x="220" y="90" font-size="13" fill="#fff" text-anchor="middle">0% interest</text>
+  <text x="570" y="68" font-size="16" font-weight="700" fill="#fff" text-anchor="middle">Alberta part: $8,000</text>
+  <text x="570" y="90" font-size="13" fill="#fff" text-anchor="middle">prime rate (sample 4.5%)</text>
+  <g font-size="13" fill="#1e293b">
+    <text x="10" y="140" font-weight="700">Paying it back over 10 years (120 payments), after a grace period:</text>
+    <text x="10" y="166">Federal: $12,000 ÷ 120 = $100.00 a month · interest $0</text>
+    <text x="10" y="190">Alberta: $82.91 a month · interest $1,949.29</text>
+    <text x="10" y="218" font-weight="700" fill="#94631a">Total: $182.91 a month · total interest $1,949.29</text>
+  </g>
+  <text x="10" y="244" font-size="12" fill="#334155">The real split and prime rate vary. Check studentaid.alberta.ca.</text>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>How much does Maya repay in total?</strong></p><ol><li><strong>Federal part:</strong> $12,000, no interest. She repays exactly <strong>$12,000</strong>.</li><li><strong>Alberta part:</strong> $8,000 at 4.5% over 10 years. Monthly payment <strong>$82.91</strong> (from a loan calculator). Total: 82.91 × 120 = <strong>$9,949.29</strong>, so <strong>$1,949.29</strong> is interest.</li><li><strong>Total repaid:</strong> $12,000 + $9,949.29 = <strong>$21,949.29</strong>.</li><li><strong>Compare:</strong> if the whole $20,000 were charged 4.5%, she'd pay <strong>$4,873.22</strong> in interest. The interest-free federal part saves her almost $3,000.</li></ol></div>
+<p class="connect"><b>Connects to</b> Math: multiplying and comparing money; percent</p>
+<div class="question">
+<p><strong>1.</strong> What is the difference between a <strong>loan</strong> and a <strong>grant</strong>?</p>
+<div class="work"><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>2.</strong> Maya's monthly payment is $182.91 for 120 months. Check the total she repays.</p>
+<div class="work"><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>3.</strong> Should a student borrow as little as possible, even if it means working more hours during school? Give a reason on each side.</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> If Maya repays her Alberta part faster, over 5 years, will she pay more or less interest? Why?</p><div class="work"><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> What is a grace period? Why do you think loans have one?</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can explain how student loans work and what they really cost. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 1: choose your career and primary pathway, and list how you'd pay for it.</p></div>
+<h2 class="moment page"><span class="chip">Moment 2</span>Return on investment</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p><strong>Return on investment (ROI)</strong> compares what a pathway costs with what it gives back over time. One simple way: how many years of higher pay does it take to "pay back" the true cost? For comparison, full-time work at Alberta's $15 minimum wage earns about <strong>$31,200</strong> a year.</p></div>
+<div class="visual"><svg viewBox="0 0 720 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Payback comparison: registered nurse about 2.5 years, vet tech about 3 years, electrician apprenticeship well under one year" font-family="inherit">
+  <text x="10" y="20" font-size="14" font-weight="700" fill="#1e293b">Years to pay back the true cost (simple estimate)</text>
+  <line x1="200" y1="36" x2="200" y2="220" stroke="#1e293b" stroke-width="2"/>
+  <g font-size="13" fill="#1e293b">
+    <text x="10" y="66" font-weight="700">Registered nurse</text><text x="10" y="82" font-size="11" fill="#334155">4-yr degree · $73,823/yr</text>
+    <rect x="200" y="52" width="250" height="28" fill="#94631a"/><text x="458" y="71" font-weight="700">about 2.5 years</text>
+    <text x="10" y="126" font-weight="700">Vet tech</text><text x="10" y="142" font-size="11" fill="#334155">2-yr diploma · $47,812/yr</text>
+    <rect x="200" y="112" width="303" height="28" fill="#c39a5c"/><text x="511" y="131" font-weight="700">about 3 years</text>
+    <text x="10" y="186" font-weight="700">Electrician</text><text x="10" y="202" font-size="11" fill="#334155">apprenticeship · $81,919/yr</text>
+    <rect x="200" y="172" width="12" height="28" fill="#16a34a"/><text x="220" y="191" font-weight="700">under 1 year (paid while learning)</text>
+  </g>
+  <text x="10" y="242" font-size="12" fill="#334155">Payback = true cost ÷ (average salary − $31,200). Salaries: ALIS 2023 averages. Tuition: U of A rate (nursing estimate), sample $6,000/yr (vet tech), Portage College (electrician).</text>
+  <text x="10" y="258" font-size="12" fill="#334155">Real results depend on graduation rates, employment rates, and where you live when you finish.</text>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>How long does a registered nursing degree take to pay back?</strong></p><ol><li><strong>True cost:</strong> tuition about 4 × $7,293.60 = $29,174.40, plus lost earnings 4 × (8 months × $2,400) = $76,800. Total: <strong>$105,974.40</strong>.</li><li><strong>Extra pay each year:</strong> average RN salary $73,823 − $31,200 = <strong>$42,623</strong> more than minimum wage.</li><li><strong>Payback:</strong> $105,974.40 ÷ $42,623 ≈ <strong>2.5 years</strong>.</li><li><strong>But:</strong> ROI also depends on <strong>graduating</strong>, <strong>finding work</strong> in the field, and <strong>regional conditions</strong> (Alberta may be short of nurses, which helps).</li></ol></div>
+<div class="question">
+<p><strong>1.</strong> A vet tech diploma costs $6,000 a year in tuition (sample) for 2 years, plus 2 years of lost earnings ($19,200 a year). What is the true cost?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>2.</strong> Use the average vet tech salary ($47,812) and the minimum-wage baseline ($31,200). About how many years does it take to pay back your answer to Question 1?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>3.</strong> Name <strong>two</strong> things that could make a pathway's real ROI worse than the estimate.</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> Why does the electrician apprenticeship pay back so quickly?</p><div class="work"><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> Is ROI the only thing that matters when choosing a pathway? Explain.</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can estimate the return on investment of a pathway using real income data. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 2: calculate the true cost and payback for your primary pathway.</p></div>
+<h2 class="moment page"><span class="chip">Moment 3</span>Learning while you earn</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p><strong>Work-integrated learning</strong> mixes school with real work: co-op programs, internships and apprenticeships. In a <strong>co-op</strong>, students take turns between school terms and paid work terms. It builds human capital and lowers the cost of school.</p></div>
+<div class="visual"><svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A co-op program alternates school terms with paid work terms" font-family="inherit">
+  <text x="10" y="22" font-size="14" font-weight="700" fill="#1e293b">A co-op degree (example)</text>
+  <g font-size="12" text-anchor="middle" fill="#1e293b">
+    <rect x="10" y="40" width="92" height="56" fill="#ead6b6"/><text x="56" y="72">School</text>
+    <rect x="104" y="40" width="92" height="56" fill="#ead6b6"/><text x="150" y="72">School</text>
+    <rect x="198" y="40" width="92" height="56" fill="#16a34a"/><text x="244" y="66" fill="#fff" font-weight="700">Paid work</text><text x="244" y="82" fill="#fff">term</text>
+    <rect x="292" y="40" width="92" height="56" fill="#ead6b6"/><text x="338" y="72">School</text>
+    <rect x="386" y="40" width="92" height="56" fill="#16a34a"/><text x="432" y="66" fill="#fff" font-weight="700">Paid work</text><text x="432" y="82" fill="#fff">term</text>
+    <rect x="480" y="40" width="92" height="56" fill="#ead6b6"/><text x="526" y="72">School</text>
+    <rect x="574" y="40" width="92" height="56" fill="#16a34a"/><text x="620" y="66" fill="#fff" font-weight="700">Paid work</text><text x="620" y="82" fill="#fff">term</text>
+  </g>
+  <g font-size="13" fill="#1e293b">
+    <text x="10" y="130">Each work term: 16 weeks × 40 hours × $20/hour (sample) = $12,800</text>
+    <text x="10" y="154" font-weight="700" fill="#166534">3 work terms = $38,400 earned, plus real work experience</text>
+    <text x="10" y="182" font-size="12" fill="#334155">It may take longer to finish, but you graduate with experience and less debt.</text>
+  </g>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>How does a co-op change the true cost of a degree?</strong></p><ol><li><strong>Without co-op:</strong> true cost includes about $76,800 in lost earnings over 4 years.</li><li><strong>With co-op:</strong> three paid terms earn about <strong>$38,400</strong> (sample wage).</li><li><strong>Effect:</strong> that money pays tuition and living costs, so Maya borrows less.</li><li><strong>Bonus:</strong> she graduates with <strong>experience</strong> and <strong>references</strong>, which helps her get hired.</li></ol></div>
+<div class="question">
+<p><strong>1.</strong> Name the three kinds of work-integrated learning from the scenario.</p>
+<div class="work"><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>2.</strong> Give <strong>two</strong> benefits of a co-op besides money.</p>
+<div class="work"><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>3.</strong> A nurse trained in Alberta moves to another province. Why might she need to check if her <strong>credential is recognized</strong> there?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> A 30-year-old wants to change careers and go back to school. How might their path be different from a recent high school graduate's?</p><div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> What is one downside of a co-op program?</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can explain how work-integrated learning lowers costs and builds experience. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 3: find work-integrated learning options for your pathway.</p></div>
+<h2 class="moment page"><span class="chip">Moment 4</span>Getting in, and having a Plan B</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p>Competitive programs often look at more than grades. Some ask for a <strong>portfolio</strong> (art, design), an <strong>interview</strong>, <strong>references</strong>, or <strong>extracurricular</strong> experience. Because seats are limited, a smart plan has a <strong>primary pathway</strong>, a <strong>contingency</strong> (backup), and a <strong>rationale</strong> (reasons).</p></div>
+<div class="visual"><svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A post-secondary plan with a primary pathway, a contingency and a rationale" font-family="inherit">
+  <rect x="270" y="10" width="180" height="50" rx="10" fill="#1e293b"/><text x="360" y="41" font-size="15" font-weight="700" fill="#fff" text-anchor="middle">Goal: work in health care</text>
+  <path d="M320 60 L180 95" stroke="#94631a" stroke-width="3"/><path d="M400 60 L540 95" stroke="#94631a" stroke-width="3"/>
+  <rect x="20" y="95" width="320" height="110" rx="12" fill="#f7efe1" stroke="#94631a" stroke-width="2"/>
+  <text x="180" y="122" font-size="15" font-weight="700" fill="#1e293b" text-anchor="middle">PRIMARY: nursing degree (RN)</text>
+  <g font-size="13" fill="#1e293b"><text x="36" y="148">Needs: Bio 30, Chem 30, Math 30-1,</text><text x="36" y="166">ELA 30-1, competitive average</text><text x="36" y="188">Strengthen: volunteer at a care home</text></g>
+  <rect x="380" y="95" width="320" height="110" rx="12" fill="#fff" stroke="#1e293b" stroke-width="2"/>
+  <text x="540" y="122" font-size="15" font-weight="700" fill="#1e293b" text-anchor="middle">CONTINGENCY: practical nurse (LPN)</text>
+  <g font-size="13" fill="#1e293b"><text x="396" y="148">2-year diploma, lower cost</text><text x="396" y="166">Can later bridge to an RN degree</text><text x="396" y="188">Still in demand in Alberta</text></g>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>Why is Maya's plan strong?</strong></p><ol><li><strong>Primary pathway:</strong> RN degree, matching her goal of working in health care.</li><li><strong>Strengthen the application:</strong> volunteering at a care home shows commitment and gives her references.</li><li><strong>Contingency:</strong> a practical nursing diploma keeps her in health care if she doesn't get a seat, and she can bridge to RN later.</li><li><strong>Rationale:</strong> both pathways fit her interests, Alberta needs nurses, and the contingency costs less.</li></ol></div>
+<div class="question">
+<p><strong>1.</strong> Name <strong>two</strong> things besides grades that competitive programs might look at.</p>
+<div class="work"><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>2.</strong> Why should a contingency usually be related to the primary pathway?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-misconception"><p class="label">Watch out</p><p><strong>3.</strong> A student says: <em>"If I don't get into my first-choice program, my plan has failed."</em> Use Maya's plan to respond.</p><div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> Name one way you could strengthen an application while still in high school.</p><div class="work"><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> Write a one-sentence rationale for a pathway you're curious about.</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can build a post-secondary plan with a contingency and a rationale. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 4: add a contingency and rationale to your plan.</p></div>
+<h2>Look back</h2>
+<div class="box box-reflect"><p class="label">Look back</p><ol><li>Look at your answer on the first page. Has your view changed?</li><li>Which idea mattered most to you: loans, ROI, work-integrated learning, or contingency plans?</li><li>What is one question you'd ask a counsellor now?</li></ol></div>
+<div class="box box-data"><p class="label">Data used</p><ul><li>Canada Student Loans: federal portion interest-free since April 1, 2023. Alberta student loans: interest at the CIBC prime rate (studentaid.alberta.ca). The 4.5% rate and the $12,000/$8,000 split are samples.</li><li>ALIS 2023 Alberta Wage and Salary Survey average salaries: registered nurses $73,823; electricians $81,919; animal health technologists and veterinary technicians $47,812.</li><li>U of A 2026–27 tuition $729.36 per 3-credit course (nursing estimate); Portage College electrician apprenticeship tuition $4,656 total; vet tech tuition $6,000/year and co-op wage $20/hour are samples.</li><li>Baseline: $15/hour × 40 hours × 52 weeks = $31,200. People in this workbook are made up.</li></ul></div>
+</body>
+</html>
