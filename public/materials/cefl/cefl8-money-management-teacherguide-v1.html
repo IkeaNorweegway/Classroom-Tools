@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grow It — Teacher guide | CEFL 8</title>
+  <style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+    :root { --accent: #94631a; --accent-light: #f7efe1; --accent-mid: #c39a5c; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); font-size: 11pt; line-height: 1.55; color: #1f1d1a; background: #fff; max-width: 800px; margin: 0 auto; padding: 28px 32px 48px; }
+    h1 { font-family: var(--font-display); font-size: 20pt; font-weight: 600; color: #1f1d1a; margin-bottom: 2px; }
+    h2 { font-family: var(--font-display); font-size: 14pt; font-weight: 600; color: var(--accent); margin: 22px 0 8px; border-bottom: 2px solid var(--accent-light); padding-bottom: 3px; }
+    h2.moment { font-family: var(--font-display); font-size: 15pt; border-bottom: 3px solid var(--accent); }
+    h2.beat { font-family: var(--font-display); font-size: 16pt; border-bottom: 3px solid var(--accent); margin-top: 56px; }
+    h2.beat:first-of-type { margin-top: 28px; }
+    h2 .chip, h2.moment .chip { display: inline-block; font-size: 9pt; letter-spacing: .08em; text-transform: uppercase; background: var(--accent); color: #fff; border-radius: 999px; padding: 1px 10px; margin-right: 8px; vertical-align: 3px; }
+    .writebox { border: 1.5px solid #6b665d; border-radius: 8px; margin: 8px 0 14px; }
+    /* Project briefs: roomier type, more space between parts, more room to write. */
+    body.doc-project { font-size: 12.5pt; line-height: 1.7; }
+    .doc-project p { margin-bottom: 10px; }
+    .doc-project li { margin-bottom: 6px; }
+    .doc-project .box { padding: 16px 20px; margin: 16px 0 20px; }
+    .doc-project .box-dq p { font-size: 20pt; }
+    .doc-project .al { height: 2.4rem; }
+    .doc-project .b { width: 150px; }
+    .doc-project table { font-size: 11.5pt; }
+    .doc-project th, .doc-project td { padding: 9px 12px; }
+    .doc-project td.fill { height: 4.2rem; }
+    .doc-project .visual { margin: 18px 0 22px; }
+    h3 { font-size: 11.5pt; font-weight: 700; color: #3f3b35; margin: 12px 0 4px; }
+    p { margin-bottom: 6px; }
+    ul, ol { margin: 4px 0 8px 22px; }
+    li { margin-bottom: 3px; }
+    strong { font-weight: 700; }
+    em { font-style: italic; color: #3f3b35; }
+    .b { display: inline-block; border-bottom: 1.5px solid #3f3b35; width: 90px; vertical-align: bottom; }
+    .al { display: block; border-bottom: 1.25px solid #6b665d; height: 1.7rem; }
+    .work { margin: 4px 0 2px; }
+    .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 14px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
+    .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
+    .header-strip .meta { font-size: 9.5pt; color: #544f47; }
+    .name-row { display: flex; gap: 24px; margin: 8px 0 14px; font-size: 10.5pt; align-items: baseline; }
+    .name-row span { color: #544f47; white-space: nowrap; }
+    .name-row .b { flex: 1; width: auto; }
+    .question { padding: 8px 0 4px; break-inside: avoid; }
+    .question ul { list-style: none; margin-left: 0; }
+    .box { border-radius: 8px; padding: 10px 14px; margin: 8px 0 10px; break-inside: avoid; }
+    .box .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .box-scenario { background: #fff; border: 1.5px solid var(--accent-mid); border-left: 6px solid var(--accent); }
+    .box-scenario .label, .box-example .label, .box-dq .label, .box-entry .label { color: var(--accent); }
+    .box-example { background: var(--accent-light); border: 1px solid var(--accent-mid); }
+    .box-extra { background: #faf9f6; border: 1.5px dashed #6b665d; }
+    .box-extra .label { color: #3f3b35; }
+    .box-check { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .box-check .label { color: #15803d; }
+    .box-project { background: #fff; border: 1.5px solid #3f3b35; }
+    .box-project .label { color: #3f3b35; }
+    .box-misconception { background: #fef2f2; border: 1px solid #fecaca; }
+    .box-misconception .label { color: #b91c1c; }
+    .box-forethought, .box-reflect { background: #f4f2ed; border: 1px solid #b8b2a7; }
+    .box-forethought .label, .box-reflect .label { color: #3f3b35; }
+    .box-tip { background: #fffbeb; border: 1px solid #fde68a; font-size: 10pt; }
+    .box-tip .label { color: #b45309; }
+    .box-answer { background: #faf9f6; border: 1px solid #c9c4b9; }
+    .box-answer .label { color: #15803d; }
+    .box-dq { background: var(--accent); color: #fff; padding: 14px 18px; }
+    .box-dq .label { color: #fff; opacity: .85; }
+    .box-dq p { font-size: 15pt; font-weight: 700; line-height: 1.3; }
+    .box-entry, .box-roles, .box-milestones, .box-choices, .box-critique, .box-audience, .box-rubric, .box-myplan, .box-data { background: #fff; border: 1px solid var(--accent-mid); }
+    .box-roles .label, .box-milestones .label, .box-choices .label, .box-critique .label, .box-audience .label, .box-rubric .label, .box-myplan .label, .box-data .label { color: var(--accent); }
+    .box-teacher, .box-lookfor { background: #fffbeb; border: 1px solid #fcd34d; }
+    .box-teacher .label, .box-lookfor .label { color: #b45309; }
+    .connect { display: inline-block; font-size: 9pt; color: #3f3b35; border: 1px solid #b8b2a7; border-radius: 999px; padding: 1px 10px; margin: 2px 0 8px; }
+    .connect b { color: var(--accent); font-weight: 700; }
+    .visual { margin: 8px 0 12px; text-align: center; break-inside: avoid; }
+    .visual svg { max-width: 100%; height: auto; }
+    table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 10pt; break-inside: avoid; }
+    th, td { border: 1px solid #b8b2a7; padding: 5px 8px; text-align: left; vertical-align: top; }
+    th { background: var(--accent-light); color: #1f1d1a; font-weight: 700; }
+    td.fill { height: 2.6rem; }
+    .tbl { overflow-x: auto; margin: 6px 0 10px; }
+    .tbl table { margin: 0; }
+    @page { size: letter; margin: 11mm 13mm; }
+    @media print {
+      body { padding: 0; font-size: 10pt; line-height: 1.45; }
+      .header-strip { padding: 7px 14px; margin-bottom: 8px; }
+      h1 { font-family: var(--font-display); font-size: 17pt; }
+      h2 { margin: 10px 0 5px; break-after: avoid; }
+      h2.moment.page, h2.beat.page { break-before: page; }
+      h2.beat { margin-top: 0; }
+      body.doc-project { font-size: 11.5pt; line-height: 1.6; }
+      .doc-project .al { height: 2.1rem; }
+      .doc-project td.fill { height: 3rem; }
+      .doc-project .box { padding: 12px 16px; margin: 12px 0 14px; }
+      .name-row { margin: 4px 0 8px; }
+      .box { padding: 7px 12px; margin: 5px 0 7px; }
+      .question { padding: 4px 0 2px; }
+      .al { height: 1.3rem; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body class="doc-teacherguide">
+  <div class="header-strip">
+    <p class="course-label">Career Education &amp; Financial Literacy 8 · Money, Interest, and Credit · Teacher guide</p>
+    <h1>Grow It</h1>
+    <p class="meta">7 sessions × 60 minutes · project-based · Outcome 8-MM · Alberta draft curriculum (2026)</p>
+  </div>
+  
+<h2>At a glance</h2>
+<div class="tbl"><table><tbody><tr><td><strong>Outcome</strong></td><td>8-MM: Students investigate strategies to achieve financial security by analyzing how costs, interest, and savings help manage personal finances.</td></tr><tr><td><strong>Understandings</strong></td><td>Financial security depends on managing fixed and variable costs so money is available for saving and investing. Interest works both for and against individuals.</td></tr><tr><td><strong>Driving question</strong></td><td>How can I make my money grow without losing control of my costs?</td></tr><tr><td><strong>Student materials</strong></td><td>Mini-workbook `cefl8-money-management-workbook-v1` · project brief `cefl8-money-management-project-v1`</td></tr><tr><td><strong>Teams</strong></td><td>4–5. Each student makes their own plan; teams check math and give feedback.</td></tr><tr><td><strong>Audience</strong></td><td>A Money Fair (families, staff, other classes), Session 7</td></tr><tr><td><strong>Assessment</strong></td><td>Single-point rubric on the report-card scale. No unit test.</td></tr></tbody></table></div>
+<div class="box box-teacher"><p class="label">Teacher note</p><p><strong>Before Session 1:</strong> book a space and invite visitors for the Money Fair (Session 7). Check that a couple of bank or credit-union rate pages load for Step 2. Calculators (or a spreadsheet) for everyone.</p><p><strong>Hook answer (reveal in Session 3):</strong> at 6% compounded yearly, Ana's $1,000 grows for 50 years to about <strong>$18,420</strong>; Ben's grows for 40 years to about <strong>$10,286</strong>. Ana has about <strong>$8,134 more</strong> from the same $1,000, just by starting 10 years earlier.</p><p><strong>Income cards:</strong> A $180 (age 14); B $511 (age 16, 10 h/week at $13, after EI); C $767 (age 17, 15 h/week at $13, after EI). 2026 figures.</p></div>
+<h2>Why it is built this way</h2>
+<ul><li><strong>Driving question first.</strong> The Ana and Ben hook creates a real need to understand compound interest.</li><li><strong>Practise the decision.</strong> Students build a budget and choose where money goes for two different timelines. Financial education changes behaviour most when it rehearses a real decision.</li><li><strong>Real rates.</strong> Students look up today's rate, so the numbers aren't pseudo-context.</li><li><strong>Privacy.</strong> Income cards mean no one shares real family money.</li></ul>
+<h2>Session plans</h2>
+<div class="tbl"><table><thead><tr><th>Session</th><th>Warm-up (no notes)</th><th>Lesson (10–15 min)</th><th>Project work</th><th>Check-in / look-for</th></tr></thead><tbody><tr><td>1</td><td>—</td><td>Hook (Ana and Ben), need-to-know chart, <strong>Moment 1</strong></td><td><strong>Step 1:</strong> budget and two goals</td><td>Fixed/variable sorted correctly; goals have real prices</td></tr><tr><td>2</td><td>(1) Fixed or variable: groceries? (2) Ty saves $511 − $390 = ? (3) 3% as a decimal?</td><td><strong>Moment 2</strong> (simple interest)</td><td><strong>Step 2:</strong> real rate; simple interest</td><td>Rate has a source; percent converted to a decimal</td></tr><tr><td>3</td><td>(1) I = P × r × t: $500, 3%, 4 years? (2) What is principal? (3) Interest: reward or cost?</td><td><strong>Moment 3</strong> (compound); <strong>reveal the hook</strong></td><td><strong>Step 3:</strong> compound table</td><td>Each year starts from the last year's value</td></tr><tr><td>4</td><td>(1) $500 at 3% compound, 2 years? (2) Why does the gap grow? (3) What did Ana and Ben show?</td><td><strong>Moment 4</strong> (saving vs. investing)</td><td><strong>Step 4:</strong> where each goal's money goes</td><td>Choice matches timeline; risk named</td></tr><tr><td>5</td><td>(1) Saving or investing: a GIC? (2) Why keep short-term money safe? (3) Your long-term goal?</td><td>Workshop: showing growth on a graph (three samples below)</td><td><strong>Step 5:</strong> make it</td><td>All four parts present</td></tr><tr><td>6</td><td>—</td><td>Model feedback frames</td><td>Feedback; at least 2 changes; practise the 2-minute talk</td><td>Math re-checked</td></tr><tr><td>7</td><td>—</td><td>—</td><td><strong>Money Fair</strong>; Look back; My Plan</td><td>Visitor notes show the main ideas came through</td></tr></tbody></table></div>
+<div class="box box-misconception"><p class="label">Watch out</p><p><strong>"Simple and compound interest are about the same."</strong> Moment 3, Question 3. True over 2–3 years, very false over 40. Use the hook reveal.</p></div>
+<div class="box box-misconception"><p class="label">Watch out</p><p><strong>"Investing is just saving with a better rate."</strong> Moment 4. Investments can lose value; the right choice depends on when you need the money.</p></div>
+<div class="box box-teacher"><p class="label">Teacher note</p><p><strong>Not financial advice.</strong> Keep the investment discussion general (savings accounts, GICs, funds). Don't recommend specific products or companies.</p></div>
+<h2>Sample products (show all three in Session 5)</h2>
+<ol><li><strong>Poster with a growth graph.</strong> Budget pie on the left; a hand-drawn graph of simple vs. compound growth on the right; two "goal jars" labelled with where each goal's money goes.</li><li><strong>Spreadsheet with a chart.</strong> A budget table, a 10-year compound column using a formula, and a line chart.</li><li><strong>"My money plan" booklet.</strong> Four small pages: budget, simple, compound, and where it goes.</li></ol>
+<h2>When a student gets stuck</h2>
+<div class="tbl"><table><thead><tr><th>What you see</th><th>What to do</th></tr></thead><tbody><tr><td>Budget doesn't add up</td><td>Checker adds each column aloud.</td></tr><tr><td>Uses 3 instead of 0.03</td><td>Ask: what is 3% of $100?</td></tr><tr><td>Compound table restarts from the principal each year</td><td>Point to the worked example: each year starts from last year's end.</td></tr><tr><td>Picks investing for a 3-month goal</td><td>Ask: what if it dropped 10% the month before you need it?</td></tr></tbody></table></div>
+<h2>Access supports (UDL)</h2>
+<ul><li>Calculators or spreadsheets; a formula card (I = P × r × t; value × (1 + r) each year).</li><li>Product choice, including a spreadsheet for students who like working digitally.</li><li>Income cards and sample costs protect privacy.</li></ul>
+<h2>Background for the teacher</h2>
+<ul><li>Rates in the workbook (2%, 3%, 3.5%, 4%, 5%, 6%) are samples. Real savings and GIC rates change with the Bank of Canada policy rate.</li><li>The Grade 9 unit covers the other side of interest: credit cards, loans and compound interest on debt.</li></ul>
+</body>
+</html>

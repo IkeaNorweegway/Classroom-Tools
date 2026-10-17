@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My High School Map — Teacher guide | CEFL 8</title>
+  <style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+    :root { --accent: #94631a; --accent-light: #f7efe1; --accent-mid: #c39a5c; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); font-size: 11pt; line-height: 1.55; color: #1f1d1a; background: #fff; max-width: 800px; margin: 0 auto; padding: 28px 32px 48px; }
+    h1 { font-family: var(--font-display); font-size: 20pt; font-weight: 600; color: #1f1d1a; margin-bottom: 2px; }
+    h2 { font-family: var(--font-display); font-size: 14pt; font-weight: 600; color: var(--accent); margin: 22px 0 8px; border-bottom: 2px solid var(--accent-light); padding-bottom: 3px; }
+    h2.moment { font-family: var(--font-display); font-size: 15pt; border-bottom: 3px solid var(--accent); }
+    h2.beat { font-family: var(--font-display); font-size: 16pt; border-bottom: 3px solid var(--accent); margin-top: 56px; }
+    h2.beat:first-of-type { margin-top: 28px; }
+    h2 .chip, h2.moment .chip { display: inline-block; font-size: 9pt; letter-spacing: .08em; text-transform: uppercase; background: var(--accent); color: #fff; border-radius: 999px; padding: 1px 10px; margin-right: 8px; vertical-align: 3px; }
+    .writebox { border: 1.5px solid #6b665d; border-radius: 8px; margin: 8px 0 14px; }
+    /* Project briefs: roomier type, more space between parts, more room to write. */
+    body.doc-project { font-size: 12.5pt; line-height: 1.7; }
+    .doc-project p { margin-bottom: 10px; }
+    .doc-project li { margin-bottom: 6px; }
+    .doc-project .box { padding: 16px 20px; margin: 16px 0 20px; }
+    .doc-project .box-dq p { font-size: 20pt; }
+    .doc-project .al { height: 2.4rem; }
+    .doc-project .b { width: 150px; }
+    .doc-project table { font-size: 11.5pt; }
+    .doc-project th, .doc-project td { padding: 9px 12px; }
+    .doc-project td.fill { height: 4.2rem; }
+    .doc-project .visual { margin: 18px 0 22px; }
+    h3 { font-size: 11.5pt; font-weight: 700; color: #3f3b35; margin: 12px 0 4px; }
+    p { margin-bottom: 6px; }
+    ul, ol { margin: 4px 0 8px 22px; }
+    li { margin-bottom: 3px; }
+    strong { font-weight: 700; }
+    em { font-style: italic; color: #3f3b35; }
+    .b { display: inline-block; border-bottom: 1.5px solid #3f3b35; width: 90px; vertical-align: bottom; }
+    .al { display: block; border-bottom: 1.25px solid #6b665d; height: 1.7rem; }
+    .work { margin: 4px 0 2px; }
+    .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 14px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
+    .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
+    .header-strip .meta { font-size: 9.5pt; color: #544f47; }
+    .name-row { display: flex; gap: 24px; margin: 8px 0 14px; font-size: 10.5pt; align-items: baseline; }
+    .name-row span { color: #544f47; white-space: nowrap; }
+    .name-row .b { flex: 1; width: auto; }
+    .question { padding: 8px 0 4px; break-inside: avoid; }
+    .question ul { list-style: none; margin-left: 0; }
+    .box { border-radius: 8px; padding: 10px 14px; margin: 8px 0 10px; break-inside: avoid; }
+    .box .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .box-scenario { background: #fff; border: 1.5px solid var(--accent-mid); border-left: 6px solid var(--accent); }
+    .box-scenario .label, .box-example .label, .box-dq .label, .box-entry .label { color: var(--accent); }
+    .box-example { background: var(--accent-light); border: 1px solid var(--accent-mid); }
+    .box-extra { background: #faf9f6; border: 1.5px dashed #6b665d; }
+    .box-extra .label { color: #3f3b35; }
+    .box-check { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .box-check .label { color: #15803d; }
+    .box-project { background: #fff; border: 1.5px solid #3f3b35; }
+    .box-project .label { color: #3f3b35; }
+    .box-misconception { background: #fef2f2; border: 1px solid #fecaca; }
+    .box-misconception .label { color: #b91c1c; }
+    .box-forethought, .box-reflect { background: #f4f2ed; border: 1px solid #b8b2a7; }
+    .box-forethought .label, .box-reflect .label { color: #3f3b35; }
+    .box-tip { background: #fffbeb; border: 1px solid #fde68a; font-size: 10pt; }
+    .box-tip .label { color: #b45309; }
+    .box-answer { background: #faf9f6; border: 1px solid #c9c4b9; }
+    .box-answer .label { color: #15803d; }
+    .box-dq { background: var(--accent); color: #fff; padding: 14px 18px; }
+    .box-dq .label { color: #fff; opacity: .85; }
+    .box-dq p { font-size: 15pt; font-weight: 700; line-height: 1.3; }
+    .box-entry, .box-roles, .box-milestones, .box-choices, .box-critique, .box-audience, .box-rubric, .box-myplan, .box-data { background: #fff; border: 1px solid var(--accent-mid); }
+    .box-roles .label, .box-milestones .label, .box-choices .label, .box-critique .label, .box-audience .label, .box-rubric .label, .box-myplan .label, .box-data .label { color: var(--accent); }
+    .box-teacher, .box-lookfor { background: #fffbeb; border: 1px solid #fcd34d; }
+    .box-teacher .label, .box-lookfor .label { color: #b45309; }
+    .connect { display: inline-block; font-size: 9pt; color: #3f3b35; border: 1px solid #b8b2a7; border-radius: 999px; padding: 1px 10px; margin: 2px 0 8px; }
+    .connect b { color: var(--accent); font-weight: 700; }
+    .visual { margin: 8px 0 12px; text-align: center; break-inside: avoid; }
+    .visual svg { max-width: 100%; height: auto; }
+    table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 10pt; break-inside: avoid; }
+    th, td { border: 1px solid #b8b2a7; padding: 5px 8px; text-align: left; vertical-align: top; }
+    th { background: var(--accent-light); color: #1f1d1a; font-weight: 700; }
+    td.fill { height: 2.6rem; }
+    .tbl { overflow-x: auto; margin: 6px 0 10px; }
+    .tbl table { margin: 0; }
+    @page { size: letter; margin: 11mm 13mm; }
+    @media print {
+      body { padding: 0; font-size: 10pt; line-height: 1.45; }
+      .header-strip { padding: 7px 14px; margin-bottom: 8px; }
+      h1 { font-family: var(--font-display); font-size: 17pt; }
+      h2 { margin: 10px 0 5px; break-after: avoid; }
+      h2.moment.page, h2.beat.page { break-before: page; }
+      h2.beat { margin-top: 0; }
+      body.doc-project { font-size: 11.5pt; line-height: 1.6; }
+      .doc-project .al { height: 2.1rem; }
+      .doc-project td.fill { height: 3rem; }
+      .doc-project .box { padding: 12px 16px; margin: 12px 0 14px; }
+      .name-row { margin: 4px 0 8px; }
+      .box { padding: 7px 12px; margin: 5px 0 7px; }
+      .question { padding: 4px 0 2px; }
+      .al { height: 1.3rem; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body class="doc-teacherguide">
+  <div class="header-strip">
+    <p class="course-label">Career Education &amp; Financial Literacy 8 · Post-Secondary Pathways · Teacher guide</p>
+    <h1>My High School Map</h1>
+    <p class="meta">7 sessions × 60 minutes · project-based · Outcome 8-PS · Alberta draft curriculum (2026)</p>
+  </div>
+  
+<h2>At a glance</h2>
+<div class="tbl"><table><tbody><tr><td><strong>Outcome</strong></td><td>8-PS: Students evaluate post-secondary pathways and labour market information to develop realistic, informed education and career goals.</td></tr><tr><td><strong>Understanding</strong></td><td>Career goals are most achievable when grounded in personal aspirations, finances, and an understanding of labour market realities.</td></tr><tr><td><strong>Driving question</strong></td><td>What do I need to do in high school to keep my options open?</td></tr><tr><td><strong>Student materials</strong></td><td>Mini-workbook `cefl8-post-secondary-workbook-v1` · project brief `cefl8-post-secondary-project-v1`</td></tr><tr><td><strong>Teams</strong></td><td>4–5. Each student makes their own course plan; teams research programs and check plans.</td></tr><tr><td><strong>Audience</strong></td><td>The school counsellor or visiting high school students, Session 7 (3-minute plan conferences)</td></tr><tr><td><strong>Assessment</strong></td><td>Single-point rubric on the report-card scale, scored on Steps 1–3 and the product. No unit test.</td></tr></tbody></table></div>
+<div class="box box-teacher"><p class="label">Teacher note</p><p><strong>Before Session 1:</strong> book the counsellor (or 3–4 high school students) for Session 7. Get your feeder high school's <strong>course guide</strong> (print or link); students need it for Step 2. Check that school admission pages (NAIT, SAIT, colleges, universities, apprenticeship entrance requirements on tradesecrets.alberta.ca) load on student devices.</p></div>
+<h2>Why it is built this way</h2>
+<ul><li><strong>Driving question first.</strong> Jordan's missing courses (the hook) make course planning feel urgent and real.</li><li><strong>Two programs, not one.</strong> Planning for a first choice and a different backup teaches students to keep options open, the core of the outcome.</li><li><strong>Real requirements and real money.</strong> Students look up actual admission pages and awards.</li><li><strong>Networking is done, not described.</strong> Step 4 is a real conversation.</li></ul>
+<h2>Session plans</h2>
+<div class="tbl"><table><thead><tr><th>Session</th><th>Warm-up (no notes)</th><th>Lesson (10–15 min)</th><th>Project work</th><th>Check-in / look-for</th></tr></thead><tbody><tr><td>1</td><td>—</td><td>Hook (Jordan), need-to-know chart, <strong>Moment 1</strong></td><td><strong>Step 1:</strong> two programs, requirements</td><td>Requirements copied from the real program page; programs are genuinely different</td></tr><tr><td>2</td><td>(1) What does "competitive" mean? (2) Minimum vs. admitted average? (3) Name one engineering requirement.</td><td><strong>Moment 2</strong> (diploma credits)</td><td><strong>Step 2:</strong> course plan with the course guide</td><td>Checker confirms diploma + both programs; -1 vs. -2 choices are deliberate</td></tr><tr><td>3</td><td>(1) How many credits for a diploma? (2) Why take the -1 course? (3) Name a CTS course.</td><td><strong>Moment 3</strong> (scholarships, bursaries, grants, loans)</td><td><strong>Step 3:</strong> tuition and two awards</td><td>Tuition has a year and source; awards are real</td></tr><tr><td>4</td><td>(1) Which of these is paid back? (2) What is the Rutherford Scholarship? (3) $4,800 − $1,700 = ?</td><td><strong>Moment 4</strong> (networking)</td><td><strong>Step 4:</strong> plan and hold the conversation (can happen before Session 5)</td><td>Every student has someone to talk to</td></tr><tr><td>5</td><td>(1) What is networking? (2) A good question to ask someone in a career? (3) What did your person say?</td><td>Workshop: a plan readable at a glance (three samples below)</td><td><strong>Step 5:</strong> build the product</td><td>Plan shows all four parts</td></tr><tr><td>6</td><td>—</td><td>Model feedback frames</td><td>Feedback, at least 2 changes, rehearse the 3-minute walk-through</td><td>Changes respond to feedback</td></tr><tr><td>7</td><td>—</td><td>—</td><td><strong>Plan conferences</strong> with counsellor or high school students; Look back; My Plan</td><td>Advice recorded and acted on</td></tr></tbody></table></div>
+<div class="box box-misconception"><p class="label">Watch out</p><p><strong>"If I meet the minimum, I'm in."</strong> Moment 1, Question 3. Contrast minimum vs. typical admitted averages for a competitive program. Return to it in the Session 2 warm-up.</p></div>
+<div class="box box-misconception"><p class="label">Watch out</p><p><strong>"Grade 10 choices don't matter yet."</strong> Jordan's story and the -1/-2 sequences answer this. Be careful not to imply -2 courses are "worse": they're the right fit for many pathways, and upgrading is possible.</p></div>
+<h2>Sample products (show all three in Session 5)</h2>
+<ol><li><strong>Course map poster.</strong> Three columns (Grade 10, 11, 12) of course "tiles", colour-coded by which program each one meets, with a cost box at the bottom.</li><li><strong>Flowchart.</strong> "If I get into Program A → … If not → Program B → …", with the shared courses at the top.</li><li><strong>Planner page.</strong> A one-page school-planner layout with milestones (deadlines, scholarship dates, conversation notes).</li></ol>
+<h2>When a student gets stuck</h2>
+<div class="tbl"><table><thead><tr><th>What you see</th><th>What to do</th></tr></thead><tbody><tr><td>Picks two nearly identical programs</td><td>Ask for a second program in a different field or school type.</td></tr><tr><td>Can't find requirements</td><td>Search "[program] admission requirements Alberta"; for trades, use the apprenticeship entrance requirements.</td></tr><tr><td>Course plan misses the diploma</td><td>Checker compares against the Moment 2 diagram.</td></tr><tr><td>No one to talk to</td><td>Arrange a high school student, counsellor, or staff member.</td></tr></tbody></table></div>
+<h2>Access supports (UDL)</h2>
+<ul><li>Read admission pages aloud; the word cards cover the key terms.</li><li>Choice of product (poster, flowchart, video, planner).</li><li>Some students plan to work right after Grade 12 or are unsure; a workplace-training program or apprenticeship counts as a full choice.</li></ul>
+<h2>Background for the teacher</h2>
+<ul><li><strong>Alberta High School Diploma:</strong> 100 credits, including ELA 30-1 or 30-2, Social 30-1 or 30-2, a 20-level math, a 20-level science, PE 10, CALM, 10 credits of CTS/fine arts/second languages/PE 20–30/K&amp;E, and 10 more 30-level credits. Check Alberta Education's current requirements.</li><li><strong>Alexander Rutherford Scholarship:</strong> up to $2,500 for Grade 10–12 marks (applications through Alberta Student Aid).</li><li><strong>U of A 2026–27 tuition:</strong> $729.36 per 3-credit course.</li></ul>
+</body>
+</html>

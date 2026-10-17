@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ready for Change — Mini-workbook | CEFL 8</title>
+  <style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+    :root { --accent: #94631a; --accent-light: #f7efe1; --accent-mid: #c39a5c; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); font-size: 11pt; line-height: 1.55; color: #1f1d1a; background: #fff; max-width: 800px; margin: 0 auto; padding: 28px 32px 48px; }
+    h1 { font-family: var(--font-display); font-size: 20pt; font-weight: 600; color: #1f1d1a; margin-bottom: 2px; }
+    h2 { font-family: var(--font-display); font-size: 14pt; font-weight: 600; color: var(--accent); margin: 22px 0 8px; border-bottom: 2px solid var(--accent-light); padding-bottom: 3px; }
+    h2.moment { font-family: var(--font-display); font-size: 15pt; border-bottom: 3px solid var(--accent); }
+    h2.beat { font-family: var(--font-display); font-size: 16pt; border-bottom: 3px solid var(--accent); margin-top: 56px; }
+    h2.beat:first-of-type { margin-top: 28px; }
+    h2 .chip, h2.moment .chip { display: inline-block; font-size: 9pt; letter-spacing: .08em; text-transform: uppercase; background: var(--accent); color: #fff; border-radius: 999px; padding: 1px 10px; margin-right: 8px; vertical-align: 3px; }
+    .writebox { border: 1.5px solid #6b665d; border-radius: 8px; margin: 8px 0 14px; }
+    /* Project briefs: roomier type, more space between parts, more room to write. */
+    body.doc-project { font-size: 12.5pt; line-height: 1.7; }
+    .doc-project p { margin-bottom: 10px; }
+    .doc-project li { margin-bottom: 6px; }
+    .doc-project .box { padding: 16px 20px; margin: 16px 0 20px; }
+    .doc-project .box-dq p { font-size: 20pt; }
+    .doc-project .al { height: 2.4rem; }
+    .doc-project .b { width: 150px; }
+    .doc-project table { font-size: 11.5pt; }
+    .doc-project th, .doc-project td { padding: 9px 12px; }
+    .doc-project td.fill { height: 4.2rem; }
+    .doc-project .visual { margin: 18px 0 22px; }
+    h3 { font-size: 11.5pt; font-weight: 700; color: #3f3b35; margin: 12px 0 4px; }
+    p { margin-bottom: 6px; }
+    ul, ol { margin: 4px 0 8px 22px; }
+    li { margin-bottom: 3px; }
+    strong { font-weight: 700; }
+    em { font-style: italic; color: #3f3b35; }
+    .b { display: inline-block; border-bottom: 1.5px solid #3f3b35; width: 90px; vertical-align: bottom; }
+    .al { display: block; border-bottom: 1.25px solid #6b665d; height: 1.7rem; }
+    .work { margin: 4px 0 2px; }
+    .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 14px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
+    .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
+    .header-strip .meta { font-size: 9.5pt; color: #544f47; }
+    .name-row { display: flex; gap: 24px; margin: 8px 0 14px; font-size: 10.5pt; align-items: baseline; }
+    .name-row span { color: #544f47; white-space: nowrap; }
+    .name-row .b { flex: 1; width: auto; }
+    .question { padding: 8px 0 4px; break-inside: avoid; }
+    .question ul { list-style: none; margin-left: 0; }
+    .box { border-radius: 8px; padding: 10px 14px; margin: 8px 0 10px; break-inside: avoid; }
+    .box .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .box-scenario { background: #fff; border: 1.5px solid var(--accent-mid); border-left: 6px solid var(--accent); }
+    .box-scenario .label, .box-example .label, .box-dq .label, .box-entry .label { color: var(--accent); }
+    .box-example { background: var(--accent-light); border: 1px solid var(--accent-mid); }
+    .box-extra { background: #faf9f6; border: 1.5px dashed #6b665d; }
+    .box-extra .label { color: #3f3b35; }
+    .box-check { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .box-check .label { color: #15803d; }
+    .box-project { background: #fff; border: 1.5px solid #3f3b35; }
+    .box-project .label { color: #3f3b35; }
+    .box-misconception { background: #fef2f2; border: 1px solid #fecaca; }
+    .box-misconception .label { color: #b91c1c; }
+    .box-forethought, .box-reflect { background: #f4f2ed; border: 1px solid #b8b2a7; }
+    .box-forethought .label, .box-reflect .label { color: #3f3b35; }
+    .box-tip { background: #fffbeb; border: 1px solid #fde68a; font-size: 10pt; }
+    .box-tip .label { color: #b45309; }
+    .box-answer { background: #faf9f6; border: 1px solid #c9c4b9; }
+    .box-answer .label { color: #15803d; }
+    .box-dq { background: var(--accent); color: #fff; padding: 14px 18px; }
+    .box-dq .label { color: #fff; opacity: .85; }
+    .box-dq p { font-size: 15pt; font-weight: 700; line-height: 1.3; }
+    .box-entry, .box-roles, .box-milestones, .box-choices, .box-critique, .box-audience, .box-rubric, .box-myplan, .box-data { background: #fff; border: 1px solid var(--accent-mid); }
+    .box-roles .label, .box-milestones .label, .box-choices .label, .box-critique .label, .box-audience .label, .box-rubric .label, .box-myplan .label, .box-data .label { color: var(--accent); }
+    .box-teacher, .box-lookfor { background: #fffbeb; border: 1px solid #fcd34d; }
+    .box-teacher .label, .box-lookfor .label { color: #b45309; }
+    .connect { display: inline-block; font-size: 9pt; color: #3f3b35; border: 1px solid #b8b2a7; border-radius: 999px; padding: 1px 10px; margin: 2px 0 8px; }
+    .connect b { color: var(--accent); font-weight: 700; }
+    .visual { margin: 8px 0 12px; text-align: center; break-inside: avoid; }
+    .visual svg { max-width: 100%; height: auto; }
+    table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 10pt; break-inside: avoid; }
+    th, td { border: 1px solid #b8b2a7; padding: 5px 8px; text-align: left; vertical-align: top; }
+    th { background: var(--accent-light); color: #1f1d1a; font-weight: 700; }
+    td.fill { height: 2.6rem; }
+    .tbl { overflow-x: auto; margin: 6px 0 10px; }
+    .tbl table { margin: 0; }
+    @page { size: letter; margin: 11mm 13mm; }
+    @media print {
+      body { padding: 0; font-size: 10pt; line-height: 1.45; }
+      .header-strip { padding: 7px 14px; margin-bottom: 8px; }
+      h1 { font-family: var(--font-display); font-size: 17pt; }
+      h2 { margin: 10px 0 5px; break-after: avoid; }
+      h2.moment.page, h2.beat.page { break-before: page; }
+      h2.beat { margin-top: 0; }
+      body.doc-project { font-size: 11.5pt; line-height: 1.6; }
+      .doc-project .al { height: 2.1rem; }
+      .doc-project td.fill { height: 3rem; }
+      .doc-project .box { padding: 12px 16px; margin: 12px 0 14px; }
+      .name-row { margin: 4px 0 8px; }
+      .box { padding: 7px 12px; margin: 5px 0 7px; }
+      .question { padding: 4px 0 2px; }
+      .al { height: 1.3rem; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body class="doc-workbook">
+  <div class="header-strip">
+    <p class="course-label">Career Education &amp; Financial Literacy 8 · Careers and the Labour Market · Mini-workbook</p>
+    <h1>Ready for Change</h1>
+    <p class="meta">Four short teaching moments for the Future-Proof Me project · Outcome 8-LM · Alberta draft curriculum (2026)</p>
+  </div>
+  <div class="name-row"><span>Name</span><span class="b"></span><span>Team</span><span class="b" style="flex:0 0 140px"></span><span>Date</span><span class="b" style="flex:0 0 110px"></span></div>
+<div class="box box-forethought"><p class="label">Before you start</p><p>Name one job that you think will not exist in 20 years, and one job that doesn't exist yet but might. Why?</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<h2 class="moment"><span class="chip">Moment 1</span>The labour market keeps moving</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p>In 2014, oil prices were high and Alberta had lots of jobs. Then oil prices fell. In <strong>November 2014</strong>, Alberta's unemployment rate was <strong>4.4%</strong>. By <strong>November 2016</strong>, it was <strong>9.0%</strong>. Thousands of people who had steady jobs had to find new work.</p></div>
+<div class="visual"><svg viewBox="0 0 720 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Alberta unemployment rose from 4.4 percent in 2014 to 9.0 percent in 2016; three forces change the labour market" font-family="inherit">
+  <text x="10" y="20" font-size="14" font-weight="700" fill="#1e293b">Alberta unemployment rate</text>
+  <line x1="40" y1="200" x2="330" y2="200" stroke="#1e293b" stroke-width="2"/>
+  <rect x="70" y="155" width="80" height="45" fill="#c39a5c"/>
+  <rect x="210" y="108" width="80" height="92" fill="#94631a"/>
+  <text x="110" y="147" font-size="16" font-weight="700" fill="#1e293b" text-anchor="middle">4.4%</text>
+  <text x="250" y="100" font-size="16" font-weight="700" fill="#1e293b" text-anchor="middle">9.0%</text>
+  <text x="110" y="220" font-size="13" fill="#334155" text-anchor="middle">Nov 2014</text>
+  <text x="250" y="220" font-size="13" fill="#334155" text-anchor="middle">Nov 2016</text>
+  <text x="180" y="244" font-size="12" fill="#334155" text-anchor="middle">Source: Statistics Canada</text>
+  <text x="400" y="30" font-size="14" font-weight="700" fill="#1e293b">What changes the labour market?</text>
+  <g font-size="14">
+    <rect x="400" y="46" width="300" height="56" rx="10" fill="#f7efe1" stroke="#94631a" stroke-width="1.5"/>
+    <text x="416" y="70" font-weight="700" fill="#1e293b">Economic cycles</text>
+    <text x="416" y="90" fill="#334155" font-size="13">booms and busts, like oil prices</text>
+    <rect x="400" y="112" width="300" height="56" rx="10" fill="#f7efe1" stroke="#94631a" stroke-width="1.5"/>
+    <text x="416" y="136" font-weight="700" fill="#1e293b">Technology</text>
+    <text x="416" y="156" fill="#334155" font-size="13">new tools replace some tasks, create others</text>
+    <rect x="400" y="178" width="300" height="56" rx="10" fill="#f7efe1" stroke="#94631a" stroke-width="1.5"/>
+    <text x="416" y="202" font-weight="700" fill="#1e293b">Social change</text>
+    <text x="416" y="222" fill="#334155" font-size="13">an aging population, new needs</text>
+  </g>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>Why did so many Albertans lose work between 2014 and 2016?</strong></p><ol><li><strong>Find the force.</strong> Oil prices dropped. That is an <strong>economic cycle</strong> (a bust after a boom).</li><li><strong>Trace the effect.</strong> Oil companies earned less, so they hired fewer people and cut projects.</li><li><strong>Follow the ripple.</strong> Fewer oil jobs meant less spending in towns, so stores, restaurants and trades lost work too.</li><li><strong>The lesson:</strong> the labour market is <strong>dynamic</strong>. It changes, and jobs that seem safe can change with it.</li></ol></div>
+<div class="question">
+<p><strong>1.</strong> Which force is it? Write <strong>economic cycle</strong>, <strong>technology</strong>, or <strong>social change</strong>.<br>(a) More seniors means more need for home-care workers. <span class="b"></span><br>(b) Self-checkout machines mean stores need fewer cashiers. <span class="b"></span><br>(c) A recession means fewer houses are built. <span class="b"></span></p>
+</div>
+<div class="question">
+<p><strong>2.</strong> The unemployment rate went from 4.4% to 9.0%. About how many times bigger is 9.0% than 4.4%? What does that tell you?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>3.</strong> Explain why being able to <strong>adapt</strong> might be a better career plan than counting on one job forever.</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> Name one industry that does well when oil prices are high, and one that might grow when they are low.</p><div class="work"><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> Name a social change happening now. What new jobs might it create?</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can explain how economic cycles, technology and social change move the labour market. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 1: choose a career. Find one way the labour market could change it.</p></div>
+<h2 class="moment page"><span class="chip">Moment 2</span>Technology: jobs lost, jobs gained</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p>Farms now use GPS-guided tractors and drones. Fewer people drive tractors all day, but farms need people who can fix, program and fly the machines. Technology takes away some tasks and creates new ones.</p></div>
+<div class="visual"><svg viewBox="0 0 720 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Technology causes some tasks to shrink and new tasks to grow" font-family="inherit">
+  <rect x="270" y="80" width="180" height="70" rx="12" fill="#1e293b"/>
+  <text x="360" y="112" font-size="16" font-weight="700" fill="#fff" text-anchor="middle">New technology</text>
+  <text x="360" y="132" font-size="13" fill="#fff" text-anchor="middle">GPS tractors, drones</text>
+  <path d="M270 115 H200" stroke="#b91c1c" stroke-width="3"/><polygon points="200,109 188,115 200,121" fill="#b91c1c"/>
+  <path d="M450 115 H520" stroke="#16a34a" stroke-width="3"/><polygon points="520,109 532,115 520,121" fill="#16a34a"/>
+  <rect x="10" y="40" width="175" height="150" rx="12" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="97" y="68" font-size="15" font-weight="700" fill="#991b1b" text-anchor="middle">SHRINKS</text>
+  <g font-size="13" fill="#1e293b"><text x="26" y="98">• driving the tractor</text><text x="26" y="122">• walking fields to</text><text x="40" y="140">check crops</text><text x="26" y="164">• some farm labour</text></g>
+  <rect x="535" y="40" width="175" height="150" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="622" y="68" font-size="15" font-weight="700" fill="#166534" text-anchor="middle">GROWS</text>
+  <g font-size="13" fill="#1e293b"><text x="551" y="98">• fixing machines</text><text x="551" y="122">• flying drones</text><text x="551" y="146">• reading crop data</text><text x="551" y="170">• writing software</text></g>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>Is new technology good or bad for workers?</strong></p><ol><li><strong>Negative impact:</strong> some tasks disappear, so some workers lose jobs or hours.</li><li><strong>Positive impact:</strong> new tasks appear, often needing new skills, and work can get safer or faster.</li><li><strong>Who does well?</strong> Workers who <strong>learn the new skills</strong> can move into the growing tasks.</li><li><strong>So:</strong> technology is both. What matters is whether workers can adapt.</li></ol></div>
+<div class="question">
+<p><strong>1.</strong> Pick a job you know (cashier, bank teller, truck driver, librarian). Name one task technology could take over, and one new task it could create.</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>2.</strong> List one <strong>positive</strong> and one <strong>negative</strong> impact of technology on the labour market.</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>3.</strong> A student says: <em>"Robots will take all the jobs, so there's no point planning a career."</em> Do you agree? Use the farm example.</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> What could a cashier do now to be ready if self-checkouts take over?</p><div class="work"><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> Name a job that technology has made safer.</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can explain how technology can help and hurt the labour market. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 2: for your career, list tasks technology might shrink and tasks it might grow.</p></div>
+<h2 class="moment page"><span class="chip">Moment 3</span>Career resilience and human capital</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p>Two oil workers lost their jobs in 2016. <strong>Dev</strong> had done one job for 15 years and never took training. <strong>Rosa</strong> had taken safety and project-management courses, kept in touch with people she'd worked with, and learned new software. Rosa found new work in 2 months. Dev took over a year.</p></div>
+<div class="visual"><svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Human capital is education plus knowledge plus skills plus experience; career resilience comes from learning, transferable skills and networking" font-family="inherit">
+  <text x="10" y="22" font-size="15" font-weight="700" fill="#1e293b">HUMAN CAPITAL = what you bring to work</text>
+  <g font-size="14" font-weight="700" text-anchor="middle">
+    <rect x="10" y="36" width="150" height="50" rx="10" fill="#f7efe1" stroke="#94631a"/><text x="85" y="66" fill="#1e293b">Education</text>
+    <text x="178" y="68" fill="#94631a" font-size="22">+</text>
+    <rect x="196" y="36" width="150" height="50" rx="10" fill="#f7efe1" stroke="#94631a"/><text x="271" y="66" fill="#1e293b">Knowledge</text>
+    <text x="364" y="68" fill="#94631a" font-size="22">+</text>
+    <rect x="382" y="36" width="150" height="50" rx="10" fill="#f7efe1" stroke="#94631a"/><text x="457" y="66" fill="#1e293b">Skills</text>
+    <text x="550" y="68" fill="#94631a" font-size="22">+</text>
+    <rect x="568" y="36" width="142" height="50" rx="10" fill="#f7efe1" stroke="#94631a"/><text x="639" y="66" fill="#1e293b">Experience</text>
+  </g>
+  <text x="10" y="126" font-size="15" font-weight="700" fill="#1e293b">CAREER RESILIENCE = bouncing back from change</text>
+  <g font-size="13" fill="#1e293b">
+    <rect x="10" y="140" width="220" height="64" rx="10" fill="#fff" stroke="#1e293b"/><text x="24" y="166" font-weight="700">Keep learning</text><text x="24" y="186">courses, new tools</text>
+    <rect x="250" y="140" width="220" height="64" rx="10" fill="#fff" stroke="#1e293b"/><text x="264" y="166" font-weight="700">Transferable skills</text><text x="264" y="186">skills that fit many jobs</text>
+    <rect x="490" y="140" width="220" height="64" rx="10" fill="#fff" stroke="#1e293b"/><text x="504" y="166" font-weight="700">Networking</text><text x="504" y="186">people who know your work</text>
+  </g>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>Why did Rosa find work so much faster than Dev?</strong></p><ol><li><strong>Job security vs. career security.</strong> Dev had <strong>job security</strong>: one role for a long time. When it ended, he had nothing to fall back on. Rosa had <strong>career security</strong>: the ability to find new work quickly.</li><li><strong>Human capital.</strong> Rosa kept adding to hers: new courses (education), new software (skills).</li><li><strong>Networking.</strong> People she'd worked with knew her and told her about openings.</li><li><strong>So:</strong> Rosa built <strong>career resilience</strong> on purpose, before she needed it.</li></ol></div>
+<div class="question">
+<p><strong>1.</strong> Write <strong>job security</strong> or <strong>career security</strong>.<br>(a) "I've worked at the same plant for 20 years." <span class="b"></span><br>(b) "If I lost this job, I could find another in a few weeks." <span class="b"></span></p>
+</div>
+<div class="question">
+<p><strong>2.</strong> Name <strong>two</strong> things a Grade 8 student can do now to build human capital.</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="question">
+<p><strong>3.</strong> Explain how networking helped Rosa. Who is in <strong>your</strong> network already?</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> Is it possible to have job security and career security at the same time? Explain.</p><div class="work"><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> Rank these from most to least useful for career resilience, and give a reason for your top pick: a new certificate · a big network · good communication skills</p><div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can explain human capital, career resilience, and job vs. career security. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 3: rank the transferable skills that would make you most resilient in your career.</p></div>
+<h2 class="moment page"><span class="chip">Moment 4</span>Goals with milestones</h2>
+<div class="box box-scenario"><p class="label">The situation</p><p>Amira wants to be a software developer. She writes one big goal and some smaller steps (milestones) to get there. She also adds a backup plan, in case her goal changes.</p></div>
+<div class="visual"><svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Amira's goal timeline with short-term and long-term milestones" font-family="inherit">
+  <line x1="30" y1="90" x2="690" y2="90" stroke="#c39a5c" stroke-width="6" stroke-linecap="round"/>
+  <g font-size="13" fill="#1e293b" text-anchor="middle">
+    <circle cx="60" cy="90" r="12" fill="#94631a"/><text x="60" y="60" font-weight="700">This year</text><text x="60" y="120">join coding club</text>
+    <circle cx="210" cy="90" r="12" fill="#94631a"/><text x="210" y="60" font-weight="700">Grade 10</text><text x="210" y="120">take Math 10C</text><text x="210" y="136">+ CTS computing</text>
+    <circle cx="370" cy="90" r="12" fill="#94631a"/><text x="370" y="60" font-weight="700">Grade 12</text><text x="370" y="120">Math 30-1,</text><text x="370" y="136">apply to programs</text>
+    <circle cx="530" cy="90" r="12" fill="#fff" stroke="#94631a" stroke-width="4"/><text x="530" y="60" font-weight="700">Age 18–22</text><text x="530" y="120">degree or diploma</text>
+    <circle cx="670" cy="90" r="14" fill="#1e293b"/><text x="660" y="60" font-weight="700">GOAL</text><text x="650" y="120">software</text><text x="650" y="136">developer</text>
+  </g>
+  <text x="30" y="176" font-size="13" fill="#334155">SHORT-TERM milestones: this year to Grade 10 · LONG-TERM: Grade 12 and after · BACKUP: IT support technician</text>
+</svg></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>Why does Amira's plan have milestones and a backup?</strong></p><ol><li><strong>Milestones</strong> break a long-term goal into short-term steps she can check off.</li><li>A clear goal helps her choose courses and experiences now.</li><li>A <strong>backup</strong> keeps her flexible. If her plans change, many of the same milestones still help.</li><li>A goal that is too <strong>rigid</strong> (only one job, no backup) can add stress if the labour market changes.</li></ol></div>
+<div class="question">
+<p><strong>1.</strong> Write <strong>short-term</strong> or <strong>long-term</strong>: (a) finish a first-aid course this spring <span class="b"></span> (b) become a licensed electrician <span class="b"></span></p>
+</div>
+<div class="question">
+<p><strong>2.</strong> Write one long-term career goal and <strong>two</strong> short-term milestones for it.</p>
+<div class="work"><span class="al"></span><span class="al"></span><span class="al"></span><span class="al"></span></div>
+</div>
+<div class="box box-misconception"><p class="label">Watch out</p><p><strong>3.</strong> A student says: <em>"The safest plan is to pick one job and stay in it forever."</em> Use what you learned in this workbook to explain what is risky about this idea.</p><div class="work"><span class="al"></span><span class="al"></span><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-extra"><p class="label">Extra practice · optional</p><p><strong>E1.</strong> Add a backup career to your goal from Question 2. Which milestones would still help?</p><div class="work"><span class="al"></span><span class="al"></span><span class="al"></span></div><p><strong>E2.</strong> What would you do if you reached a milestone late? Does the plan fail?</p><div class="work"><span class="al"></span><span class="al"></span></div></div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can build a career plan with short-term and long-term milestones. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+<div class="box box-project"><p class="label">Use it in your project</p><p>Project Step 4: build your career plan with milestones and a backup.</p></div>
+<h2>Look back</h2>
+<div class="box box-reflect"><p class="label">Look back</p><ol><li>Which idea from this workbook changes how you think about your future?</li><li>Look at your answer on the first page. Would you change it?</li><li>What is one skill you'll start building this month?</li></ol></div>
+<div class="box box-data"><p class="label">Data used</p><ul><li>Alberta unemployment rate: 4.4% (November 2014) and 9.0% (November 2016), Statistics Canada Labour Force Survey, as reported by Global News.</li><li>Course names (Math 10C, Math 30-1, CTS) are Alberta high school courses; check your school's course guide.</li><li>People in this workbook are made up.</li></ul></div>
+</body>
+</html>
