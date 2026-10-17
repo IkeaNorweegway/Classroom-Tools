@@ -101,7 +101,7 @@ The literature does not converge on one named curriculum sequence, but the four 
 - **It does not support a single "engineering unit" as sufficient.** The design-based science literature is specific that dosage and recurrence across years matter; a one-off capstone project, however well-run, does not produce durable engineering habits of mind on its own.
 - **It does not support skipping the concrete/tangible stage for younger grades to "get to real coding/robotics faster."** Bers's findings are specific that the developmental value of tangible interfaces is in building the concept, not just entertaining younger students — rushing past it produces students who can operate a tool without the underlying model.
 - **It does not identify one correct platform or kit.** The evidence supports the sequencing principles (concrete-to-abstract fading, escalating constraints, open-ended tasks alongside guided ones) but is agnostic on Scratch vs. MakeCode, or which robotics kit — platform choice should be driven by budget and continuity across grades, not by claims that a specific product produces the outcomes above.
-- **This file does not cover assessment design for STEAM/project work** (rubric design for open-ended builds, peer feedback protocols) — that is a separate research question and should draw on the existing formative-assessment evidence already in this folder rather than being treated as a robotics-specific problem.
+- **This file does not cover assessment design for STEAM/project work.** General rubric design is now in `rubric-design-research.md` (including Goldberg 2014, a worked revision of an engineering design portfolio rubric). Outcome evidence for rubrics on open-ended builds specifically is still thin.
 
 ---
 
@@ -114,4 +114,4 @@ Alberta's K–9 curriculum currently addresses computational thinking and coding
 ## Open questions for this workspace
 
 - Whether to build a full `_courses/steam/_context.md` (LOs, misconceptions, knowledge clusters) once the grade-band table above is validated against available equipment/budget — flagged in the original request as a possible next step, not committed to yet.
-- Rubric/assessment design for open-ended build tasks is not yet covered in this research folder and would need its own summary before any STEAM assessment materials are built.
+- Rubric design rules and wording now exist (`rubric-design-research.md`, `templates/rubric-phrase-bank.md`). Still open: criteria specific to build-test-redesign work (iteration evidence, testing against constraints) before STEAM assessment materials are built.

@@ -80,7 +80,7 @@ All 11 topics have notes, notes answer key, teacher notes, concept one-pager, Co
 | Material | Status |
 |---|---|
 | Quizzes | — |
-| Unit tests | Rational Numbers only. v1 is public as the practice test, **v3 is the real test**, v2 is superseded. |
+| Unit tests | Rational Numbers only. v1 is public as the practice test, **v4 is the real test** (v3's questions, with Parts C and D scored on a five-row rubric using the report-card scale; /52), v2 and v3 are superseded. |
 | Question banks | Rational Numbers only (60 items) |
 | Slow reveal graph (Statistics) | Trial built, not on site |
 | Inquiry projects | **All four strands (site, 2026-10-17)**: brief (3 options + rubric), project journal and teacher guide per strand. None tried with students yet |

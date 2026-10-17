@@ -12,7 +12,7 @@
 | 1 | **Outcome map first** — list every LO being assessed, then write items; never reverse-engineer | Items written first, LO assigned after; an LO from the unit not covered by any item |
 | 2 | **Every item maps to exactly one specific LO** — if you can't state which LO an item assesses, cut the item | A "general knowledge" item; a trick question; a question testing something not in the LOs |
 | 3 | **No surprises** — students who studied the learning outcomes know what the test covers | Novel scenarios that require knowledge outside the LOs; trick wording; items on out-of-scope content |
-| 4 | **Rubric or mark scheme for every extended response item** — included in the answer key before finalising | Extended response item with no rubric; rubric written after the fact |
+| 4 | **Rubric or mark scheme for every extended response item** — included in the answer key before finalising. Wording and descriptor rules: `templates/rubric-phrase-bank.md`. Student version on the site; teacher version in the Drive tests folder only | Extended response item with no rubric; rubric written after the fact |
 
 State this before writing: *"Outcome map complete. LOs covered: [list LO codes]. Every item maps to a specific LO. Extended response rubric included."*
 

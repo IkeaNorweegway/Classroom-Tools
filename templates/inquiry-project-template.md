@@ -41,7 +41,7 @@ Then add `project: { brief, journal, guide }` to the strand in `src/data/math9.t
    - **What to hand in:** bullets that match the journal pages
    - `.stretch-card` ★★ Extended task
    - *Math you will use:* local outcome codes
-5. **Rubric (shared):** 4 criteria × 3 levels = 12. Criteria: 1 Model (S&P), 2 Solve and predict (S&P), 3 Explain the meaning (Understanding, **marked individually**), 4 Communicate (Understanding). Each criterion names its codes.
+5. **Rubric (shared):** 4 criteria × 3 levels = 12. Criteria: 1 Model (S&P), 2 Solve and predict (S&P), 3 Explain the meaning (Understanding, **marked individually**), 4 Communicate (Understanding). Each criterion names its codes. Descriptor wording: `templates/rubric-phrase-bank.md`.
 6. `.reflection-block` pre-hand-in checklist (task list)
 7. `.word-bank` "What the codes mean"
 

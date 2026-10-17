@@ -99,6 +99,7 @@ rational.extras = [
   { label: 'Fraction Simulator (equivalent fractions, simplifying, cross-cancelling)', path: 'practice/math9-fraction-sim-v2' },
   { label: 'Extra Practice', path: 'worksheets/number/rational-numbers/math9-rational-numbers-worksheet-extra-v1', badge: '★' },
   { label: 'Practice Test', path: 'tests/rational-numbers/math9-rational-numbers-practice-test-v1', badge: 'Test prep' },
+  { label: 'How Written Answers Are Scored (Rubric)', path: 'tests/rational-numbers/math9-rational-numbers-rubric-v1', badge: 'Test prep' },
 ];
 rational.keys.splice(2, 0, { label: 'Extra Practice Answer Key', path: 'worksheets/number/rational-numbers/math9-rational-numbers-worksheet-extra-answers-v1' });
 rational.keys.push({ label: 'Practice Test Answer Key', path: 'tests/rational-numbers/math9-rational-numbers-practice-test-answers-v1' });

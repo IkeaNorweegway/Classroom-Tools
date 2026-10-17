@@ -21,7 +21,7 @@ Example: `quiz-template.md`
 - `test-template.md` — same as quiz with extended response section and rubric block
 - `exit-ticket-template.md` — one ticket per knowledge cluster, 3 questions each, 3–5 minutes, every question mapped to an LO
 
-Also here: `evidence-design-principles.md` (build-time checklist) and `teacher-notes-format-context.md` (teacher notes format spec).
+Also here: `rubric-phrase-bank.md` (level labels, descriptor rules, student and feedback wording for any rubric), `evidence-design-principles.md` (build-time checklist) and `teacher-notes-format-context.md` (teacher notes format spec).
 
 Not templated: worksheets and thinking prompts have no template. Build them from `worksheets/_context.md` and `prompts/_context.md`.
 
