@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PBL Evidence One-Pager</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface: #fcfcfb;
+    --panel: #f3f2ef;
+    --border: #dddcd7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #77766f;
+    --accent: #2a78d6;        /* series-1: PBL estimates */
+    --accent-soft: #cde2fb;
+    --compare: #a9a8a1;       /* neutral: comparison approaches */
+    --warn: #b45309;
+    --warn-soft: #fdf1e3;
+    --good: #0f7a3d;
+    --good-soft: #e3f4e9;
+    --bad: #b42318;
+    --bad-soft: #fbe9e7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface: #1a1a19;
+      --panel: #242422;
+      --border: #3a3a37;
+      --text-primary: #f0efec;
+      --text-secondary: #c3c2b7;
+      --text-muted: #9a998f;
+      --accent: #3987e5;
+      --accent-soft: #1c3a5e;
+      --compare: #6f6e68;
+      --warn: #f0a24b;
+      --warn-soft: #3a2a17;
+      --good: #4cc27c;
+      --good-soft: #17301f;
+      --bad: #f07a6e;
+      --bad-soft: #3a1c19;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface: #1a1a19; --panel: #242422; --border: #3a3a37;
+    --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f;
+    --accent: #3987e5; --accent-soft: #1c3a5e; --compare: #6f6e68;
+    --warn: #f0a24b; --warn-soft: #3a2a17; --good: #4cc27c; --good-soft: #17301f;
+    --bad: #f07a6e; --bad-soft: #3a1c19;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--surface);
+    color: var(--text-primary);
+    font: 13px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  .page { max-width: 1040px; margin: 0 auto; padding: 24px 16px 32px; }
+
+  header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px;
+           border-bottom: 2px solid var(--text-primary); padding-bottom: 6px; margin-bottom: 10px; }
+  h1 { font-size: 22px; margin: 0; letter-spacing: -0.01em; }
+  header .sub { color: var(--text-secondary); font-size: 12px; }
+  h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary);
+       margin: 0 0 6px; }
+
+  .core { background: var(--accent-soft); border-left: 4px solid var(--accent); padding: 8px 12px; margin-bottom: 12px;
+          font-size: 14px; }
+  .core strong { font-weight: 700; }
+
+  .grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 12px; }
+  .card { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; background: var(--surface); }
+  .span2 { grid-column: 1 / -1; }
+
+  /* RCT hero stats */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  .stat .num { font-size: 26px; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; }
+  .stat .num small { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+  .stat .what { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .stat .who { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+  /* Effect size chart */
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 11px; color: var(--text-secondary); margin-bottom: 6px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: -1px; margin-right: 5px; }
+  .chart { position: relative; padding-top: 14px; }
+  .row { display: grid; grid-template-columns: 168px 1fr; align-items: center; gap: 8px; min-height: 21px; }
+  .row .lab { font-size: 11.5px; color: var(--text-primary); text-align: right; line-height: 1.15; }
+  .row .lab span { display: block; color: var(--text-muted); font-size: 10px; }
+  .track { position: relative; height: 21px; }
+  .bar { position: absolute; left: 0; top: 4px; height: 13px; border-radius: 0 4px 4px 0; background: var(--accent); }
+  .bar.cmp { background: var(--compare); }
+  .bar .v { position: absolute; left: calc(100% + 5px); top: -2px; font-size: 11.5px; font-weight: 600;
+            color: var(--text-primary); white-space: nowrap; }
+  .row:hover .bar { filter: brightness(1.12); }
+  .hinge { position: absolute; top: 2px; bottom: 16px; left: calc(168px + 8px + (100% - 176px) * 0.4);
+           border-left: 2px dashed var(--warn); pointer-events: none; }
+  .hinge b { position: absolute; top: -14px; left: 4px; font-size: 10px; color: var(--warn); white-space: nowrap; font-weight: 600; }
+  .axis { display: grid; grid-template-columns: 168px 1fr; gap: 8px; margin-top: 2px; }
+  .axis .ticks { position: relative; height: 14px; border-top: 1px solid var(--border); font-size: 10px; color: var(--text-muted); }
+  .axis .ticks span { position: absolute; top: 1px; transform: translateX(-50%); }
+  .note { font-size: 11px; color: var(--text-secondary); margin: 6px 0 0; }
+
+  /* Flow: project cycle */
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; margin-top: 2px; }
+  .step { position: relative; flex: 1 1 0; min-width: 96px; background: var(--panel); padding: 7px 8px 7px 16px;
+          clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 10px 50%);
+          margin-right: -4px; }
+  .step:first-child { clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%); padding-left: 9px; }
+  .step .n { font-size: 10px; font-weight: 700; color: var(--accent); }
+  .step .t { font-size: 12px; font-weight: 650; line-height: 1.15; }
+  .step .d { font-size: 10.5px; color: var(--text-secondary); line-height: 1.2; margin-top: 2px; }
+  .step.loop { background: var(--accent-soft); }
+  .loopnote { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 11px; color: var(--text-secondary); }
+  .loopnote svg { flex: none; }
+
+  /* Unit fit */
+  .unit { display: grid; grid-template-columns: 0.6fr 1.5fr 1.3fr 0.9fr; gap: 4px; margin-top: 4px; }
+  .phase { border-radius: 6px; padding: 6px 8px; background: var(--panel); }
+  .phase .p { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
+  .phase .t { font-size: 12px; font-weight: 650; }
+  .phase .d { font-size: 10.5px; color: var(--text-secondary); line-height: 1.25; margin-top: 2px; }
+  .phase.new { box-shadow: inset 0 0 0 2px var(--accent); }
+  .thread { position: relative; height: 18px; margin: 4px 0 0; }
+  .thread::before { content: ""; position: absolute; left: 4px; right: 4px; top: 8px; border-top: 2px solid var(--accent); }
+  .thread span { position: absolute; left: 50%; top: 0; transform: translateX(-50%); background: var(--surface);
+                 padding: 0 6px; font-size: 10.5px; color: var(--text-secondary); white-space: nowrap; }
+  .tag { display: inline-block; font-size: 9.5px; font-weight: 700; color: var(--accent); border: 1px solid var(--accent);
+         border-radius: 3px; padding: 0 4px; margin-left: 4px; vertical-align: 1px; }
+
+  /* Do / Don't */
+  .dd { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .dd ul { margin: 0; padding: 0; list-style: none; }
+  .dd li { font-size: 11.5px; padding: 3px 0 3px 18px; position: relative; line-height: 1.3; }
+  .dd li::before { position: absolute; left: 0; top: 3px; font-weight: 700; }
+  .do { background: var(--good-soft); border-radius: 6px; padding: 7px 9px; }
+  .do li::before { content: "✓"; color: var(--good); }
+  .dont { background: var(--bad-soft); border-radius: 6px; padding: 7px 9px; }
+  .dont li::before { content: "✕"; color: var(--bad); }
+  .dd h3 { font-size: 11px; margin: 0 0 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .do h3 { color: var(--good); } .dont h3 { color: var(--bad); }
+
+  /* Sweet spots */
+  .spots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
+  .spot { border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; }
+  .spot .k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
+  .spot .v { font-size: 15px; font-weight: 700; }
+  .spot .s { font-size: 10.5px; color: var(--text-secondary); }
+
+  /* Gold standard chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .chip { font-size: 11px; background: var(--panel); border-radius: 999px; padding: 2px 9px; }
+  .chip b { color: var(--accent); margin-right: 3px; }
+
+  .caveat { background: var(--warn-soft); border-left: 3px solid var(--warn); padding: 6px 10px; font-size: 11.5px; border-radius: 0 6px 6px 0; }
+  .caveat strong { color: var(--warn); }
+
+  footer { margin-top: 10px; font-size: 10.5px; color: var(--text-muted); line-height: 1.35; }
+  footer b { color: var(--text-secondary); }
+
+  @media screen and (max-width: 760px) {
+    .grid, .dd, .unit { grid-template-columns: 1fr; }
+    .stats, .spots { grid-template-columns: 1fr; }
+    .row, .axis { grid-template-columns: 116px 1fr; }
+    .hinge { left: calc(116px + 8px + (100% - 124px) * 0.4); }
+    .step { flex-basis: 45%; clip-path: none !important; margin: 0 4px 4px 0; padding-left: 9px; border-radius: 6px; }
+  }
+
+  @page { size: letter; margin: 0.35in; }
+  @media print {
+    :root { color-scheme: light; }
+    body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { width: 1040px; max-width: none; padding: 0; zoom: 0.705; }
+    .card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>Project-Based Learning: What the Evidence Says</h1>
+    <div class="sub">Research one-pager · Oct 2026 · full summary: <code>research/project-based-learning-research.md</code></div>
+  </header>
+
+  <div class="core">
+    <strong>Core finding:</strong> PBL lifts achievement and engagement when the <strong>project is the main vehicle for learning</strong>
+    <em>and</em> the teacher builds <strong>explicit instruction, scaffolds, and critique-and-revision cycles</strong> into it.
+    Unstructured "go research it" projects drift into minimal-guidance discovery, which underperforms.
+  </div>
+
+  <div class="grid">
+
+    <!-- RCT results -->
+    <section class="card span2" aria-labelledby="rct-h">
+      <h2 id="rct-h">The strongest evidence: randomized controlled trials (US, 2016–2022)</h2>
+      <div class="stats">
+        <div class="stat">
+          <div class="num">+8 → +10 <small>pts</small></div>
+          <div class="what">Share of students passing the AP exam (3+): 37% → 45% in year 1. The gain grew in teachers' 2nd year</div>
+          <div class="who">Knowledge in Action, AP Gov &amp; Env Sci · Saavedra et al. 2022 · ES 0.46 / 0.53 · held for low-income students</div>
+        </div>
+        <div class="stat">
+          <div class="num">~8% <small>higher</small></div>
+          <div class="what">Grade 3 state science test scores. Gains held across reading levels, SES, race, and special education</div>
+          <div class="who">ML-PBL · Krajcik et al. · 2,371 students, 91 teachers</div>
+        </div>
+        <div class="stat">
+          <div class="num">+5–6 <small>months</small></div>
+          <div class="what">Extra learning in Grade 2 social studies, plus ~2 months in informational reading</div>
+          <div class="who">Project PLACE · Duke, Halvorsen et al. · 20 high-poverty schools</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Effect size chart -->
+    <section class="card" aria-labelledby="es-h">
+      <h2 id="es-h">Effect sizes vs. traditional instruction</h2>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>Project-based learning (meta-analyses &amp; moderators)</span>
+        <span><i style="background:var(--compare)"></i>Comparison approaches (Hattie)</span>
+      </div>
+      <div class="chart" role="img" aria-label="Horizontal bar chart of effect sizes. Values listed in each row.">
+        <div class="hinge"><b>Hattie hinge 0.40</b></div>
+
+        <div class="row" title="Zhang & Ma 2023 moderator: groups of 4–5 students, 23 effects">
+          <div class="lab">PBL, groups of 4–5<span>Zhang &amp; Ma 2023</span></div>
+          <div class="track"><div class="bar" style="width:91%"><span class="v">0.91</span></div></div>
+        </div>
+        <div class="row" title="Three-level meta-analysis, 22 controlled studies 2023–2026; small, short studies">
+          <div class="lab">AI-supported PBL<span>Meta-analysis 2026</span></div>
+          <div class="track"><div class="bar" style="width:82%"><span class="v">0.82</span></div></div>
+        </div>
+        <div class="row" title="30 studies, 12,585 students, 9 countries">
+          <div class="lab">PBL, achievement<span>Chen &amp; Yang 2019</span></div>
+          <div class="track"><div class="bar" style="width:71%"><span class="v">0.71</span></div></div>
+        </div>
+        <div class="row" title="66 studies, 40 achievement effects">
+          <div class="lab">PBL, achievement<span>Zhang &amp; Ma 2023</span></div>
+          <div class="track"><div class="bar" style="width:65%"><span class="v">0.65</span></div></div>
+        </div>
+        <div class="row" title="66 studies, 190 effects: achievement, attitudes, thinking skills">
+          <div class="lab">PBL, all outcomes<span>Zhang &amp; Ma 2023</span></div>
+          <div class="track"><div class="bar" style="width:44%"><span class="v">0.44</span></div></div>
+        </div>
+        <div class="row" title="18 studies">
+          <div class="lab">PBL, achievement<span>Stojadinović 2021</span></div>
+          <div class="track"><div class="bar" style="width:39%"><span class="v">0.39</span></div></div>
+        </div>
+        <div class="row" title="Hattie, Visible Learning">
+          <div class="lab">Inquiry-based teaching<span>Hattie</span></div>
+          <div class="track"><div class="bar cmp" style="width:31%"><span class="v">0.31</span></div></div>
+        </div>
+        <div class="row" title="Hattie, Visible Learning; mostly medical-school problem-based learning (Dochy et al. 2003)">
+          <div class="lab">Problem-based learning<span>Hattie</span></div>
+          <div class="track"><div class="bar cmp" style="width:15%"><span class="v">0.15</span></div></div>
+        </div>
+        <div class="row" title="Zhang & Ma 2023 regional moderator: North American studies only">
+          <div class="lab">PBL, North America only<span>Zhang &amp; Ma 2023</span></div>
+          <div class="track"><div class="bar" style="width:6%"><span class="v">0.06</span></div></div>
+        </div>
+
+        <div class="axis">
+          <div></div>
+          <div class="ticks">
+            <span style="left:0%">0</span><span style="left:20%">0.2</span><span style="left:40%">0.4</span>
+            <span style="left:60%">0.6</span><span style="left:80%">0.8</span><span style="left:100%">1.0</span>
+          </div>
+        </div>
+      </div>
+      <p class="note"><strong>Project-based ≠ problem-based.</strong> Hattie's 0.15 is mostly medical-school <em>problem</em>-based learning.
+        Pooled PBL estimates clear the 0.40 hinge, but the spread is wide. The near-zero North American subgroup is why the US trials above are the better guide.</p>
+    </section>
+
+    <!-- Right column: sweet spots + caveat -->
+    <section class="card" aria-labelledby="bp-h">
+      <h2 id="bp-h">Best practice: do / don't</h2>
+      <div class="dd">
+        <div class="do">
+          <h3>Do</h3>
+          <ul>
+            <li>Make the project the <b>vehicle</b> for the content</li>
+            <li>Open with a <b>driving question</b> that creates a "need to know"</li>
+            <li>Schedule <b>mini-lessons + worked examples</b> inside the project</li>
+            <li>Build in <b>critique → revise</b> cycles (multiple drafts)</li>
+            <li>Teams of <b>4–5 with roles</b></li>
+            <li><b>Checkpoint</b> milestones with feedback students act on</li>
+            <li>Present to a <b>real audience</b>, then reflect</li>
+          </ul>
+        </div>
+        <div class="dont">
+          <h3>Don't</h3>
+          <ul>
+            <li>"Go research it" with minimal guidance</li>
+            <li>Use projects to <b>replace</b> knowledge-building</li>
+            <li>Run "dessert" projects after the unit test</li>
+            <li>Make groups larger than 5</li>
+            <li>Grade only the final product</li>
+            <li>Assume students see it as authentic. Ask them</li>
+            <li>Stretch one project past ~18 weeks</li>
+          </ul>
+        </div>
+      </div>
+      <div class="spots">
+        <div class="spot"><div class="k">Group size</div><div class="v">4–5</div><div class="s">0.91 vs 0.44 for 6–7</div></div>
+        <div class="spot"><div class="k">Duration</div><div class="v">9–18 wk</div><div class="s">0.67 vs 0.36 one-off</div></div>
+        <div class="spot"><div class="k">Teacher experience</div><div class="v">Yr 2 &gt; Yr 1</div><div class="s">AP gain rose +8 → +10 pts</div></div>
+      </div>
+    </section>
+
+    <!-- Project cycle flow -->
+    <section class="card span2" aria-labelledby="cyc-h">
+      <h2 id="cyc-h">The project cycle used in the successful trials</h2>
+      <div class="flow">
+        <div class="step"><div class="n">1</div><div class="t">Entry event + driving question</div><div class="d">Perplexing, open, tied to outcomes</div></div>
+        <div class="step"><div class="n">2</div><div class="t">"Need to know" list</div><div class="d">Students generate the questions</div></div>
+        <div class="step loop"><div class="n">3</div><div class="t">Mini-lessons + worked examples</div><div class="d">Explicit teaching, just in time</div></div>
+        <div class="step loop"><div class="n">4</div><div class="t">Inquiry / build</div><div class="d">Teams of 4–5, assigned roles</div></div>
+        <div class="step loop"><div class="n">5</div><div class="t">Checkpoint: critique → revise</div><div class="d">Peer protocol + teacher feedback</div></div>
+        <div class="step"><div class="n">6</div><div class="t">Public product</div><div class="d">Real audience beyond the class</div></div>
+        <div class="step"><div class="n">7</div><div class="t">Reflection</div><div class="d">Process, content, next time</div></div>
+      </div>
+      <div class="loopnote">
+        <svg width="34" height="14" viewBox="0 0 34 14" aria-hidden="true"><path d="M30 3 H6 a4 4 0 0 0 0 8 H30" fill="none" stroke="var(--accent)" stroke-width="2"/><path d="M26 0 L31 3 L26 6" fill="none" stroke="var(--accent)" stroke-width="2"/></svg>
+        <span>Steps 3–5 (shaded) <b>repeat at each milestone</b>. This loop is the scaffolding that answers the cognitive-load critique (Kirschner, Sweller &amp; Clark 2006 vs. Hmelo-Silver et al. 2007).</span>
+      </div>
+    </section>
+
+    <!-- Unit architecture fit -->
+    <section class="card span2" aria-labelledby="unit-h">
+      <h2 id="unit-h">How it fits our unit architecture (Explain before Explore stays)</h2>
+      <div class="unit">
+        <div class="phase new"><div class="p">Engage · L1</div><div class="t">Launch the driving question <span class="tag">NEW</span></div><div class="d">Entry event + brain dump + need-to-know list</div></div>
+        <div class="phase"><div class="p">Explain · ~60%</div><div class="t">Direct instruction answers the need-to-know</div><div class="d">Notes, worked examples, retrieval warm-ups. Students see why each lesson matters</div></div>
+        <div class="phase new"><div class="p">Elaborate · ~40%</div><div class="t">Project with mini-lessons inside <span class="tag">NEW</span></div><div class="d">1–2 skill workshops + one critique/revise cycle per milestone</div></div>
+        <div class="phase"><div class="p">Evaluate</div><div class="t">Public product + rubric</div><div class="d">K / U / S&amp;P columns map onto milestones, justification, and product</div></div>
+      </div>
+      <div class="thread"><span>The driving question runs through the whole unit</span></div>
+    </section>
+
+    <!-- Gold standard + caveat -->
+    <section class="card" aria-labelledby="gs-h">
+      <h2 id="gs-h">PBLWorks Gold Standard: 7 design elements</h2>
+      <div class="chips">
+        <span class="chip"><b>1</b>Challenging problem or question</span>
+        <span class="chip"><b>2</b>Sustained inquiry</span>
+        <span class="chip"><b>3</b>Authenticity</span>
+        <span class="chip"><b>4</b>Student voice &amp; choice</span>
+        <span class="chip"><b>5</b>Reflection</span>
+        <span class="chip"><b>6</b>Critique &amp; revision</span>
+        <span class="chip"><b>7</b>Public product</span>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="cv-h">
+      <h2 id="cv-h">Read the evidence honestly</h2>
+      <div class="caveat"><strong>Implementation is everything.</strong> MDRC (2017): "promising but not yet proven." Gains depend on strong curriculum and sustained teacher support.
+        No Alberta RCT exists, though Galileo's <em>Focus on Inquiry</em> (36 Alberta schools) found widespread misunderstanding of what inquiry actually is.
+        AI-supported PBL looks promising, but the studies are small and short.</div>
+    </section>
+
+  </div>
+
+  <footer>
+    <b>Key thinkers:</b> Krajcik &amp; Blumenfeld · Duke &amp; Halvorsen · Larmer, Mergendoller &amp; Boss (PBLWorks) · Ron Berger (EL Education) · Larry Rosenstock (High Tech High) · Darling-Hammond &amp; Barron · Hmelo-Silver · Saavedra · <i>critics:</i> Kirschner, Sweller &amp; Clark.
+    <b>Sources:</b> Saavedra et al. 2022 (EEPA 44:4); Krajcik et al. ML-PBL (AERJ); Duke et al. 2021 (AERJ 58:1); Chen &amp; Yang 2019 (Ed Res Review); Zhang &amp; Ma 2023 (Front. Psychol. 14:1202728); Stojadinović et al. 2021; GenAI-PBL meta-analysis 2026 (Acta Psychologica); Hattie, Visible Learning; Condliffe et al. 2017 (MDRC); Kirschner, Sweller &amp; Clark 2006; Hmelo-Silver, Duncan &amp; Chinn 2007; PBLWorks Gold Standard; Galileo Educational Network.
+    KIA effect sizes are on pass probability, so they aren't directly comparable to d. ML-PBL, PLACE, and Chen &amp; Yang figures are from abstracts and summaries.
+  </footer>
+</div>
+</body>
+</html>

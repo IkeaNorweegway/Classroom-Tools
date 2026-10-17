@@ -33,6 +33,7 @@ Before writing the first line of any artifact: (1) copy the relevant template fr
 | Home practice sheet (parent pages) | `templates/home-practice-template.md` | "One skill: [skill]. Worked example first, then fading support. Maps to: [prerequisite or core skill]. Fits one printed page." |
 | Thinking prompt | *(no template)* | "Prompt requires showing reasoning, not recalling a fact." |
 | Math 9 inquiry project (brief + journal + teacher guide) | `templates/inquiry-project-template.md` | "Options: [3, equal difficulty]. Driving questions launched in strand Lesson 1. Mini-lessons: [A, B]. Critique cycle: Period 4. Teams 4–5, roles: [ ]. Audience per option: [ ]. Rubric K/U/S → [local codes]. Depth ceilings respected: [ ]. Real data with source and date: [ ]." — rules in `_courses/math-9/_context.md` (Inquiry Projects) |
+| CEFL mini-workbook / project brief | *(no template — format in `_courses/cefl/_context.md`)* | "Moments: [list], each with visual, worked example, 2–3 practice, extra practice. Data + dates: [list]. Cross-curricular tags: [≤1 per moment]. DQ: [ ]. Teams 4–5, roles: [ ]. Milestones → sessions: [ ]. Audience: [ ]. Rubric K/U/S → [LO code]." — full spec in `_courses/cefl/_context.md` |
 | Game | *(no template)* | "Outcomes: [codes]. Model: [one line]. Real-time or turn-based. Test hook included." — full rules in `_games-context.md` |
 
 ### Trust mode
@@ -89,6 +90,7 @@ Materials are organized inside type folders by subject and unit:
 | `_courses/grade-7-science/[unit]/_context.md` | Unit-level contexts: interactions-ecosystems, plants-food-fibre, heat-temperature, structures-forces, planet-earth |
 | `_courses/math-9/_context.md` | Math 9: 11 topics, depth ceilings, misconception inventory, recommended sequence |
 | `_courses/grade-8-social/_context.md` | Social 8 (draft 7–9 curriculum): 4 units, outcomes, misconceptions |
+| `_courses/cefl/_context.md` | CEFL 7–9 (draft 2026 curriculum): project-based; 5 units × 3 grades, unit rhythm, mini-workbook and project specs, local outcome codes |
 | `_courses/esports/_context.md` | eSports club course design: domains, 9-week season, source PDFs |
 | `_courses/phys-ed-56/_context.md` | PEW Grades 5–6: organizing ideas, KUSP framework, activity categories, misconceptions |
 | `_courses/phys-ed-56/[unit]/_context.md` | Unit-level contexts: invasion-games, net-wall, target, striking-fielding, dance, gymnastics, fitness |
@@ -115,6 +117,7 @@ Materials are organized inside type folders by subject and unit:
 | "Write a parent page / home practice sheet" | `_site-context.md` (Course data and the three views) → `templates/home-practice-template.md` → unit `_context.md` in `_courses/` (and `_courses/math-9/math9-prereqs.md` for Math 9) | `research/`, `tests-quizzes/` |
 | "Render / re-render" | `scripts/_context.md` | everything else |
 | "Build / revise a game" | `_games-context.md` → unit `_context.md` in `_courses/` | type-folder contexts, `templates/` |
+| "Build a CEFL workbook / project / teacher guide" | `_courses/cefl/_context.md` → `research/project-based-learning-research.md` → `research/financial-career-education-research.md` | `templates/`, `tests-quizzes/` — CEFL uses its own mini-workbook and project formats |
 | "Start a [type] build" | Copy relevant template from `templates/` first, then read artifact context | everything else |
 | "Build/revise a STEAM [unit/grade] [notes/design journal/plan]" | `steam/_context.md` → `steam/grade-[N]/_context.md` | `templates/`, `worksheets/`, `notes-packages/`, `_courses/` — STEAM doesn't use the standard templates (see `steam/grade-5/` for the established simplified-notes + design-journal format) |
 
@@ -128,6 +131,7 @@ Materials are organized inside type folders by subject and unit:
 | A test or quiz or exits | `[subject]-[unit]-[type]-v[N].md` | `sci6-forces-exits-v1.md` |
 | A notes package | `[subject]-[unit]-notes-[grade]-v[N].md` | `sci6-living-systems-notes-gr6-v1.md` |
 | A teacher notes / sub plan | `[subject]-[unit]-[type]-v[N].md` | `sci6-forces-teachernotes-v1.md` |
+| A CEFL 7–9 material | `cefl[G]-[unit]-[type]-v[N].md` | `cefl7-income-tax-workbook-v1.md` |
 | A PhysEd 5–6 material | `pew56-[unit]-[type]-v[N].md` | `pew56-invasion-games-exits-v1.md` |
 | A PhysEd 7–9 material | `pew79-[unit]-[type]-v[N].md` | `pew79-fitness-program-template-v1.md` |
 | A thinking prompt | `[topic]-prompt-v[N].md` | `metacognition-prompt-v2.md` |
