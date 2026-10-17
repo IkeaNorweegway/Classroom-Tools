@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payday — First Paycheque Game | CEFL Grade 7</title>
+<style>
+/* ─────────────────────────────────────────
+   PAYDAY — WHERE DOES THE PAYCHEQUE GO?
+   CEFL Grade 7 | Income and Tax | LO 7-IT | Companion game to the project "First Paycheque"
+   Turn-based. Pick a worker and a job, then plan 8 paycheques (4 chapters × 2, one chapter after each
+   project Step 1–4). Each payday: plan the goal-jar transfer, work two weeks, fill in the pay stub, deposit.
+   Model: pay = the 2026 Pay Card exactly (EI 1.63 % of gross; CPP 5.95 % of gross − $135 from age 18;
+   income tax = the Pay Card row nearest the gross). Win = the goal jar is full after paycheque 8 and the bank is not overdrawn.
+   Simplifications (also in _status.md): income tax is the Pay Card's estimate (no CPP/EI credits); CPP starts the
+   paycheque after the 18th birthday (really the month after); bills are counted per two weeks; no overtime (no
+   day over 8 h, no week over 44 h); cash tips are not on the stub and nothing is taken off them at work; EI and CPP
+   benefits appear as stories, not as money paid to the worker; the bounce fee is $45 (a typical bank NSF fee);
+   a family member covers a Chapter 1 overdraft once; businesses and people are made up.
+   Shell: patterns from sci7-flower-field-game-v2.html (tutorial pointer, "What would help?", report, ?debug=1).
+   ───────────────────────────────────────── */
+@font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+
+:root {
+  --accent: #94631a;
+  --accent-dark: #6b4510;
+  --accent-light: #fbf3e6;
+  --accent-mid: #d9a55a;
+  --ink: #1f1d1a;
+  --body: #2c2925;
+  --muted: #6b665d;
+  --line: #e6e0d4;
+  --good: #2c7a4b;
+  --good-light: #e8f5ec;
+  --bad: #b42318;
+  --bad-light: #fdecea;
+  --warn: #b45309;
+  --warn-light: #fff7e6;
+  --money: #2c7a4b;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
+html { font-size: 16px; }
+body { font-family: 'Atkinson Hyperlegible Next', system-ui, 'Segoe UI', Arial, sans-serif; background: #f6f4ef; color: var(--body); line-height: 1.5; }
+button, input, textarea { font: inherit; color: inherit; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 14px 16px 28px; }
+
+.top { border-bottom: 4px solid var(--accent); padding-bottom: 10px; margin-bottom: 12px; }
+.unit-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.top h1 { font-size: 1.5rem; font-weight: 800; color: var(--ink); line-height: 1.2; }
+.i-can { background: var(--accent-light); border-left: 4px solid var(--accent); border-radius: 0 6px 6px 0; padding: 7px 12px; font-weight: 700; color: var(--accent-dark); font-size: 0.92rem; margin-top: 8px; }
+
+.btn { border: 1.5px solid #a8a196; background: #fff; border-radius: 8px; padding: 6px 13px; font-weight: 700; font-size: 0.9rem; cursor: pointer; color: var(--body); min-height: 44px; }
+.btn:hover { border-color: var(--accent); }
+.btn[aria-pressed="true"], .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { background: var(--accent-dark); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn.big { font-size: 1.02rem; padding: 8px 20px; }
+.btn.sm { min-height: 44px; padding: 4px 11px; font-size: 0.86rem; }
+.btn:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid #0ea5e9; outline-offset: 2px; }
+.seg { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.spacer { flex: 1; }
+
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-bottom: 12px; }
+.chapters { display: flex; flex-wrap: wrap; gap: 6px; }
+.chap { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.15; text-align: left; padding: 5px 11px; }
+.chap small { font-weight: 600; font-size: 0.7rem; opacity: 0.8; }
+.chap.done::after { content: ' ✓ done'; font-size: 0.7rem; }
+
+.grid { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 12px; align-items: start; }
+@media (max-width: 760px) { .grid { grid-template-columns: 1fr; } #side { order: 2; } }
+h2[tabindex="-1"]:focus { outline: none; }
+.panel { background: #fff; border: 1.5px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.panel h2, .lbl { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+
+/* ── Side panel ── */
+.who { display: flex; gap: 10px; align-items: center; }
+.who .name { font-weight: 800; font-size: 1.1rem; color: var(--ink); }
+.who .job { font-size: 0.84rem; color: var(--muted); }
+.side-sec { border-top: 1.5px dashed var(--line); margin-top: 10px; padding-top: 9px; }
+.jarbox { display: flex; gap: 10px; align-items: center; }
+.jarbox svg { flex-shrink: 0; }
+.big-num { font-weight: 800; font-size: 1.15rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+.small { font-size: 0.82rem; color: var(--muted); }
+.bank.neg .big-num { color: var(--bad); }
+.tag { display: inline-block; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; border-radius: 999px; padding: 0 7px; vertical-align: 2px; }
+.tag.bad { background: var(--bad-light); color: var(--bad); }
+.tag.good { background: var(--good-light); color: var(--good); }
+.bills { list-style: none; font-size: 0.86rem; }
+.bills li { display: flex; align-items: center; gap: 7px; padding: 2px 0; }
+.bills li span:last-child { margin-left: auto; font-variant-numeric: tabular-nums; }
+.bills li.total { border-top: 1px solid var(--line); margin-top: 3px; padding-top: 4px; font-weight: 800; }
+.dots { display: flex; gap: 5px; margin-top: 4px; }
+.dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--accent-mid); font-size: 0.6rem; font-weight: 800; display: grid; place-items: center; color: var(--accent-dark); }
+.dot.paid { background: var(--accent); border-color: var(--accent); color: #fff; }
+.dot.bounced { background: var(--bad); border-color: var(--bad); color: #fff; }
+.dot.now { box-shadow: 0 0 0 3px var(--accent-light), 0 0 0 5px var(--accent-mid); }
+
+/* ── Stage ── */
+.stage-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 8px; }
+.stage-h h2 { font-size: 1.2rem; font-weight: 800; color: var(--ink); letter-spacing: 0; text-transform: none; }
+.stage-h .step { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.lead { font-size: 1rem; margin-bottom: 10px; }
+.lead b { color: var(--ink); }
+p + p { margin-top: 6px; }
+.card { border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; background: #fff; }
+.card h3 { font-size: 1rem; font-weight: 800; color: var(--ink); }
+.card .biz { font-size: 0.74rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.card.sel { background: var(--accent-light); }
+.cards3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 1000px) { .cards3 { grid-template-columns: 1fr; } }
+.cards3 .card { margin-bottom: 0; display: flex; flex-direction: column; gap: 6px; }
+.cards3 .card .push { margin-top: auto; }
+.pay { font-weight: 800; color: var(--accent-dark); }
+.chip { display: inline-block; font-size: 0.8rem; font-weight: 700; background: #f1ede5; border-radius: 999px; padding: 2px 10px; margin: 2px 4px 2px 0; color: #4a453d; }
+.chip.warn { background: var(--warn-light); color: var(--warn); }
+.chip.good { background: var(--good-light); color: var(--good); }
+.money-in { display: flex; align-items: center; gap: 8px; }
+#jarCtl { display: inline-flex; }
+.inp { width: 9.5em; border: 1.5px solid #a8a196; border-radius: 8px; padding: 8px 10px; min-height: 44px; font-variant-numeric: tabular-nums; background: #fff; }
+.inp.ok { border-color: var(--good); background: var(--good-light); }
+.inp.no { border-color: var(--bad); background: var(--bad-light); }
+.fb { font-weight: 700; font-size: 0.9rem; min-height: 1.4em; margin-top: 6px; }
+.fb.no { color: var(--bad); } .fb.yes { color: var(--good); } .fb.warn { color: var(--warn); }
+.eq { font-size: 0.92rem; margin-top: 8px; font-variant-numeric: tabular-nums; }
+.next-row { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.note { background: #fefce8; border-left: 4px solid #ca8a04; border-radius: 0 6px 6px 0; padding: 8px 12px; font-size: 0.9rem; margin: 10px 0; }
+.note b { color: #854d0e; }
+.pulse { position: relative; border-radius: 8px; }
+/* The glow is a ring that fades in and out (opacity only, per _games-context.md rule 9) */
+.pulse::after { content: ''; position: absolute; inset: -4px; border-radius: 10px; box-shadow: 0 0 0 4px rgba(217, 165, 90, 0.8); opacity: 0; pointer-events: none; animation: pulse 0.8s ease-in-out 5; }
+@keyframes pulse { 50% { opacity: 1; } }
+
+/* worker picker */
+.wcard { align-items: flex-start; }
+.wcard .who { margin-bottom: 4px; }
+
+/* questions */
+.opts { display: grid; gap: 7px; margin-top: 10px; }
+.opt { display: block; text-align: left; font-weight: 700; font-size: 0.94rem; padding: 8px 12px; }
+.opt.no { border-color: var(--bad); background: var(--bad-light); color: #7a1a12; opacity: 1; }
+.opt.yes { border-color: var(--good); background: var(--good-light); color: #1d5434; opacity: 1; }
+.q { font-size: 1.02rem; font-weight: 800; color: var(--ink); }
+.ask { border: 2px solid #f59e0b; background: #fffbeb; border-radius: 10px; padding: 10px 12px; }
+textarea.ans { display: block; width: 100%; border: 1.5px solid #a8a196; border-radius: 8px; padding: 8px 10px; margin-top: 8px; resize: vertical; min-height: 4.5em; background: #fff; }
+label.lab { display: block; font-weight: 700; margin-top: 10px; color: var(--ink); }
+
+/* calendar */
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin: 8px 0 4px; }
+.day { border: 1.5px solid var(--line); border-radius: 6px; min-height: 52px; padding: 3px 4px; font-size: 0.7rem; color: var(--muted); background: #fff; display: flex; flex-direction: column; }
+.day .h { margin-top: auto; font-weight: 800; font-size: 0.82rem; color: #fff; background: var(--accent); border-radius: 4px; text-align: center; padding: 1px 0; }
+.day.cut .h { background: #fff; color: var(--bad); border: 1.5px dashed var(--bad); text-decoration: line-through; }
+.day.extra .h { background: var(--good); }
+.day.fill { animation: dayin 0.35s both; }
+@keyframes dayin { from { opacity: 0.15; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.events { list-style: none; margin-top: 8px; }
+.events li { display: flex; gap: 8px; align-items: flex-start; padding: 6px 8px; border-radius: 8px; background: #f8f6f1; margin-bottom: 5px; font-size: 0.92rem; }
+.events li.bad { background: var(--bad-light); }
+.events li.good { background: var(--good-light); }
+
+/* pay stub */
+.stub { border: 2px solid #c9bfae; border-radius: 10px; background: #fffdf8; padding: 10px 14px; max-width: 560px; }
+.stub-h { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; border-bottom: 2px solid #c9bfae; padding-bottom: 6px; margin-bottom: 6px; }
+.stub-h b { color: var(--ink); }
+.stub-row { display: grid; grid-template-columns: minmax(0, 1fr) auto 1.4em; gap: 4px 10px; align-items: center; padding: 4px 0; border-bottom: 1px dashed #e2d9c8; }
+.stub-row .what { font-weight: 700; color: var(--ink); }
+.stub-row .what small { display: block; font-weight: 400; color: var(--muted); font-size: 0.78rem; }
+.stub-row .amt { font-weight: 800; font-variant-numeric: tabular-nums; text-align: right; }
+.stub-row.ded .amt { color: var(--bad); }
+.stub-row.net { border-bottom: 0; border-top: 2px solid #c9bfae; margin-top: 3px; padding-top: 7px; }
+.stub-row.net .amt { color: var(--money); font-size: 1.1rem; }
+.stub-row .mark { font-weight: 800; }
+.stub-row .hint { grid-column: 1 / -1; font-size: 0.84rem; font-weight: 700; color: var(--warn); }
+.stub-row.anim { animation: dayin 0.4s both; }
+.given { font-size: 0.88rem; color: #4a453d; margin-bottom: 4px; }
+
+/* flow bars */
+.flow { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) 6.5em; gap: 5px 8px; align-items: center; font-size: 0.9rem; margin: 6px 0 4px; }
+.flow .bar-t { height: 16px; background: #f1ede5; border-radius: 999px; overflow: hidden; }
+.flow .bar-f { display: block; height: 100%; border-radius: 999px; transform-origin: left; animation: grow 0.7s both; }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.flow .v { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
+.banner { border-radius: 10px; padding: 9px 12px; font-weight: 700; margin: 8px 0; }
+.banner.bad { background: var(--bad-light); color: #7a1a12; border: 2px solid var(--bad); }
+.banner.good { background: var(--good-light); color: #1d5434; border: 2px solid var(--good); }
+
+/* dial */
+.dial { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0; }
+.dial .btn { min-width: 4.5em; }
+.split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 8px 0; }
+.split div { background: #f8f6f1; border-radius: 8px; padding: 8px; text-align: center; font-size: 0.84rem; }
+.split b { display: block; font-size: 1.05rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+@media (max-width: 640px) { .two, .split { grid-template-columns: 1fr; } }
+.two .card { margin: 0; font-size: 0.9rem; }
+.two ul { margin-left: 1.1rem; }
+
+.foot { font-size: 0.78rem; color: var(--muted); margin-top: 12px; }
+
+/* ── Modal ── */
+#modal { position: fixed; inset: 0; background: rgba(31, 29, 26, 0.55); display: flex; align-items: flex-start; justify-content: center; padding: 16px; overflow-y: auto; z-index: 10; }
+.box { background: #fff; border-radius: 12px; border-top: 6px solid var(--accent); padding: 18px 20px 20px; width: 100%; max-width: 780px; margin: auto; }
+.box h2 { font-size: 1.3rem; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+.box h3 { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 14px 0 4px; }
+.box .actions { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+.tablewrap { overflow-x: auto; }
+table.rep { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+table.rep th, table.rep td { text-align: left; vertical-align: top; padding: 5px 7px; border-bottom: 1px solid var(--line); }
+table.rep th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+table.rep td.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.chk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px 14px; }
+.chk-grid label { font-weight: 700; font-size: 0.88rem; display: block; }
+.chk-grid .inp { width: 100%; margin-top: 2px; }
+
+/* ── Tutorial ── */
+.spot { position: relative; z-index: 20; border-radius: 8px; box-shadow: 0 0 0 4px #f59e0b, 0 0 0 9999px rgba(31, 29, 26, 0.55); background: #fff; }
+#coachBlock { position: fixed; inset: 0; z-index: 15; }
+#coach { position: absolute; z-index: 30; width: min(310px, calc(100vw - 16px)); background: #fff; border-radius: 10px; border-top: 5px solid #f59e0b; padding: 10px 12px; box-shadow: 0 6px 24px rgba(31, 29, 26, 0.35); }
+#coach p { font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+#coach .actions { display: flex; gap: 8px; justify-content: space-between; align-items: center; }
+#coach .n { font-size: 0.78rem; font-weight: 700; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse::after, .day.fill, .stub-row.anim, .flow .bar-f { animation: none; }
+  .pulse::after { opacity: 1; }
+}
+@media print {
+  body { background: #fff; }
+  .wrap, #coach, #coachBlock { display: none !important; }
+  #modal { position: static; background: none; padding: 0; display: block; }
+  .box { border: 0; max-width: none; padding: 0; }
+  .box .actions { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="unit-label">CEFL Grade 7 · Income and Tax · Project: First Paycheque</div>
+    <h1>Payday: Where Does the Paycheque Go?</h1>
+    <div class="i-can">I can work out where a paycheque goes, from gross pay to take-home pay, and explain why.</div>
+  </header>
+
+  <div class="bar">
+    <div class="chapters" id="chapters" aria-label="Chapters"></div>
+    <span class="spacer"></span>
+    <div class="seg" id="tools">
+      <button class="btn" type="button" data-mode="gentle" title="Hints, a plan check, and bounces never end the game">Gentle</button>
+      <button class="btn" type="button" data-mode="real" title="No hints. Two bounced payments end the game">Real</button>
+      <button class="btn" type="button" id="bHow">How to play</button>
+      <button class="btn" type="button" id="bCard">Pay Card</button>
+      <button class="btn" type="button" id="bCheck">Check my project</button>
+      <button class="btn" type="button" id="bReport">Report</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <aside class="panel" id="side" aria-label="Your worker"></aside>
+    <section class="panel" id="stage" aria-live="polite"></section>
+  </div>
+
+  <p class="foot">This is a model. The pay rules are the real 2026 rates from your Pay Card. The workers, jobs and businesses are made up. Bills are counted every two weeks to keep the math simple.</p>
+</div>
+
+<div id="coachBlock" hidden></div>
+<div id="coach" role="dialog" aria-label="Tutorial" hidden>
+  <p id="coachTxt" aria-live="polite"></p>
+  <div class="actions"><span class="n" id="coachN"></span><span><button class="btn sm" id="coachSkip" type="button">Skip</button> <button class="btn sm primary" id="coachNext" type="button">Next</button></span></div>
+</div>
+<div id="modal" hidden><div class="box" id="box" role="dialog" aria-modal="true" aria-labelledby="boxTitle"></div></div>
+
+<script>
+(function () {
+'use strict';
+
+/* MODEL START ── Pay model (no DOM in this part). All money is in cents. ── */
+var PAY_CARD = [ // gross every 2 weeks → income tax. Copied from the Pay Card (2026) in cefl7-income-tax-project-v1.md
+  [600, 0], [700, 941], [800, 2341], [900, 3935], [1000, 6135], [1100, 8335], [1200, 10535], [1300, 12735],
+  [1400, 14935], [1500, 17135], [1600, 19335], [1700, 21535], [1800, 23735], [1900, 25935], [2000, 28135],
+  [2100, 30335], [2200, 32535]
+];
+var FEE = 4500, PERIODS = 8, STRIKE_FROM = 3, STRIKES_TO_LOSE = 2;
+var FED_FREE = 16452, AB_FREE = 22769, AB_RATE = 0.08, AB_HEALTH = 0.41, AB_EDU = 0.13; // 2026 figures from the workbook
+function eiOf(g) { return Math.round(g * 0.0163); }
+function cppOf(g, age) { return age >= 18 ? Math.max(0, Math.round((g - 13500) * 0.0595)) : 0; }
+function rowOf(g) { // nearest Pay Card row in dollars ($50 rounds up); $600 stands for the "$300 to $600" row
+  return Math.max(600, Math.min(2200, Math.floor((g + 5000) / 10000) * 100));
+}
+function taxAtRow(r) { var i; for (i = 0; i < PAY_CARD.length; i++) if (PAY_CARD[i][0] === r) return PAY_CARD[i][1]; return 0; }
+function taxOf(g) { return taxAtRow(rowOf(g)); }
+function taxFormula(row) { // how the Pay Card was made (teacher guide): 14 % above $16,452 + 8 % above $22,769, per pay
+  var y = row * 26;
+  return Math.round((Math.max(0, y - FED_FREE) * 0.14 + Math.max(0, y - AB_FREE) * AB_RATE) / 26 * 100);
+}
+function stubOf(g, age) {
+  var s = { gross: g, ei: eiOf(g), cpp: cppOf(g, age), tax: taxOf(g) };
+  s.total = s.ei + s.cpp + s.tax; s.net = g - s.total;
+  return s;
+}
+function abTaxYear(g) { return Math.round(Math.max(0, g / 100 * 26 - AB_FREE) * AB_RATE * 100); } // Alberta income tax for a year of this pay
+
+var WORKERS = {
+  avery: { name: 'Avery', age: 17, turns18: 6, goal: 110000, goalLabel: 'a used laptop for school', home: 'Lives at home and goes to high school.', colour: '#2563eb',
+    bills: [['phone', 'Phone', 3000], ['bus', 'Bus pass', 2500], ['food', 'Lunches and fun', 7000]],
+    jobs: ['grocer', 'busser', 'sports'] },
+  dev: { name: 'Dev', age: 19, goal: 220000, goalLabel: 'a damage deposit and first month’s rent', home: 'Shares an apartment with a friend.', colour: '#7c3aed',
+    bills: [['rent', 'Rent (shared)', 45000], ['phone', 'Phone', 3500], ['bus', 'Transit pass', 5000], ['food', 'Groceries', 20000], ['fun', 'Fun', 9000]],
+    jobs: ['warehouse', 'bikeshop', 'phones'] },
+  rosa: { name: 'Rosa', age: 24, goal: 200000, goalLabel: 'an emergency fund', home: 'Shares a house and pays off a student loan.', colour: '#0f766e',
+    bills: [['rent', 'Rent (shared)', 55000], ['phone', 'Phone', 4500], ['car', 'Car: insurance and gas', 15000], ['food', 'Groceries', 22000], ['loan', 'Student loan', 8000], ['fun', 'Fun', 8000]],
+    jobs: ['office', 'apprentice', 'furniture'] }
+};
+var JOBS = {
+  grocer:    { type: 'wage', title: 'Grocery clerk', biz: 'Valley Market', what: 'Stock shelves and help customers.', rate: 1300, rate18: 1500,
+               hours: [24, 24, 20, 24, 24, 24, 16, 28], notes: { 3: 'Fewer shifts this pay.', 7: 'Exam week: fewer shifts.' } },
+  busser:    { type: 'tips', title: 'Restaurant busser', biz: 'The Lantern Diner', what: 'Clear and set tables.', rate: 1300, rate18: 1500,
+               hours: [20, 20, 20, 20, 20, 20, 16, 24], tips: [5500, 4000, 6000, 4500, 6500, 5000, 4000, 9000], notes: { 7: 'Exam week: fewer shifts.', 8: 'Holiday parties: busy!' } },
+  sports:    { type: 'commission', title: 'Sales helper', biz: 'Northside Sports', what: 'Help customers find gear.', rate: 1300, rate18: 1500, pct: 0.02,
+               hours: [16, 16, 16, 16, 16, 16, 12, 20], sales: [400000, 450000, 250000, 400000, 450000, 400000, 500000, 700000], notes: { 3: 'January is slow for sales.', 7: 'Exam week: fewer shifts.', 8: 'Holiday shopping: busy!' } },
+  warehouse: { type: 'wage', title: 'Warehouse associate', biz: 'Prairie Parcel', what: 'Pack and ship orders.', rate: 1800,
+               hours: [80, 80, 72, 80, 80, 72, 80, 80], notes: { 3: 'Statutory holiday: the warehouse is closed one day.', 6: 'One day closed for repairs.' } },
+  bikeshop:  { type: 'salary', title: 'Service writer', biz: 'Spoke & Chain Bikes', what: 'Book repairs and talk with customers.', yearly: 3770000,
+               hours: [80, 80, 80, 80, 80, 80, 80, 80], notes: {} },
+  phones:    { type: 'commission', title: 'Sales associate', biz: 'CellPoint', what: 'Sell phones and phone plans.', rate: 1500, pct: 0.04,
+               hours: [80, 80, 80, 80, 80, 80, 80, 80], sales: [500000, 600000, 300000, 550000, 650000, 450000, 900000, 800000], notes: { 3: 'January is slow for sales.', 7: 'Holiday shopping: busy!' } },
+  office:    { type: 'salary', title: 'Office coordinator', biz: 'Riverbend Clinic', what: 'Run the front desk and the schedule.', yearly: 4680000,
+               hours: [75, 75, 75, 75, 75, 75, 75, 75], notes: {} },
+  apprentice:{ type: 'wage', title: 'Apprentice electrician', biz: 'Bright Spark Electric', what: 'Learn the trade on job sites.', rate: 2400,
+               hours: [80, 80, 64, 80, 80, 80, 72, 80], notes: { 3: 'Cold snap: two days off the job site.', 7: 'One day off for a holiday.' } },
+  furniture: { type: 'commission', title: 'Furniture sales', biz: 'Home & Hearth', what: 'Help people choose furniture.', rate: 1500, pct: 0.06,
+               hours: [80, 80, 80, 80, 80, 80, 80, 80], sales: [1000000, 1100000, 600000, 1000000, 1100000, 900000, 1400000, 1300000], notes: { 3: 'January is slow for sales.', 7: 'Holiday shopping: busy!' } }
+};
+
+function RNG(seed) { var s = seed >>> 0 || 1; return function () { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+/* The world for one run, fixed by the seed: which of paycheques 5 and 6 has a shift cut, and real sales and tips around the expected amounts */
+function makeWorld(jk, seed) {
+  var rng = RNG(seed), j = JOBS[jk], w = { cutAt: 5 + Math.floor(rng() * 2), sales: [], tips: [] }, i;
+  for (i = 0; i < PERIODS; i++) {
+    w.sales.push(j.sales ? Math.round(j.sales[i] * (0.85 + 0.3 * rng()) / 1000) * 1000 : 0);
+    w.tips.push(j.tips ? Math.round(j.tips[i] * (0.8 + 0.4 * rng()) / 100) * 100 : 0);
+  }
+  return w;
+}
+function ageAt(wk, p) { var W = WORKERS[wk]; return W.turns18 && p >= W.turns18 ? 18 : W.age; }
+function rateAt(j, wk, p) { return j.rate18 && ageAt(wk, p) >= 18 ? j.rate18 : j.rate; }
+function cutHours(wk) { return wk === 'avery' ? 4 : 8; }
+function extraHours(wk) { return wk === 'avery' ? 4 : 8; }
+/* What the worker knows when planning paycheque p */
+function scheduleOf(s, p) {
+  var j = JOBS[s.job];
+  return { hours: j.hours[p - 1] + (p === 5 && s.extra ? extraHours(s.worker) : 0), rate: j.type === 'salary' ? 0 : rateAt(j, s.worker, p), age: ageAt(s.worker, p),
+           sales: j.sales ? j.sales[p - 1] : 0, tips: j.tips ? j.tips[p - 1] : 0,
+           cutRisk: j.type !== 'salary' && (p === 5 || p === 6) ? cutHours(s.worker) : 0, note: j.notes[p] || '' };
+}
+function grossFrom(j, hours, rate, sales) {
+  if (j.type === 'salary') return Math.round(j.yearly / 26);
+  return hours * rate + (j.type === 'commission' ? Math.round(sales * j.pct) : 0);
+}
+/* What really happens in paycheque p */
+function actualOf(s, p) {
+  var j = JOBS[s.job], sc = scheduleOf(s, p), cut = j.type !== 'salary' && p === s.world.cutAt ? cutHours(s.worker) : 0,
+      hours = sc.hours - cut, sales = s.world.sales[p - 1], g = grossFrom(j, hours, sc.rate, sales);
+  return { hours: hours, cut: cut, extra: p === 5 && s.extra ? extraHours(s.worker) : 0, rate: sc.rate, age: sc.age, sales: sales, tips: s.world.tips[p - 1],
+           stub: stubOf(g, sc.age) };
+}
+/* A careful estimate of take-home pay before the two weeks happen: planned hours minus any warned cut, 85 % of expected sales,
+   80 % of expected tips. When the pay can come in higher, it may land on the next Pay Card row, so that row's extra tax is kept back too.
+   (Because tax is read from the nearest row, a raise of a few dollars can cost up to $22; a raise of $50 or more always leaves more take-home pay.) */
+function safeTakeHome(s, p) {
+  var j = JOBS[s.job], sc = scheduleOf(s, p), g = grossFrom(j, sc.hours - sc.cutRisk, sc.rate, sc.sales * 0.85), r = rowOf(g),
+      step = j.type === 'salary' || r >= 2200 ? 0 : taxAtRow(r + 100) - taxAtRow(r);
+  return stubOf(g, sc.age).net - step + Math.round(sc.tips * 0.8);
+}
+function billsOf(wk) { return WORKERS[wk].bills.reduce(function (t, b) { return t + b[2]; }, 0); }
+function newRun(wk, jk, seed) {
+  return { worker: wk, job: jk, seed: seed, world: jk ? makeWorld(jk, seed) : null, p: 0, bank: 0, jar: 0, bounces: 0, strikes: 0, extra: false, covered: 0, log: [] };
+}
+function setJob(s, jk) { s.job = jk; s.world = makeWorld(jk, s.seed); }
+/* Payday: take-home pay and tips come in; bills and the jar transfer go out. Under $0 means a payment bounced. */
+function payday(s, jar, real) { // real: Real mode, where a bounce from paycheque 3 on counts toward losing
+  var p = s.p + 1, a = actualOf(s, p), bills = billsOf(s.worker), bank = s.bank + a.stub.net + a.tips - bills - jar, bounced = bank < 0;
+  if (bounced) { bank -= FEE; s.bounces++; if (real && p >= STRIKE_FROM) s.strikes++; }
+  s.p = p; s.bank = bank; s.jar += jar;
+  s.log.push({ p: p, hours: a.hours, cut: a.cut, extra: a.extra, sales: a.sales, tips: a.tips, age: a.age, stub: a.stub, bills: bills, jarIn: jar, bank: bank, bounced: bounced });
+  return s.log[s.log.length - 1];
+}
+/* Chapter 2 starts clean: a family member covers a Chapter 1 overdraft, once, because deductions had not been taught yet */
+function startChapter(s, ch) { if (ch === 2 && s.bank < 0) { s.covered = -s.bank; s.bank = 0; } }
+function outcome(s) {
+  if (s.strikes >= STRIKES_TO_LOSE) return { done: true, win: false, why: 'strikes' };
+  if (s.p < PERIODS) return { done: false };
+  if (s.jar < WORKERS[s.worker].goal) return { done: true, win: false, why: 'short' };
+  if (s.bank < 0) return { done: true, win: false, why: 'overdrawn' };
+  return { done: true, win: true };
+}
+/* "What would help?" after a payday. Choices are the real actions: move less, move more, or keep the jar transfer the same. */
+function helpTopic(s) {
+  var last = s.log[s.log.length - 1], W = WORKERS[s.worker], left = PERIODS - s.p, need = left ? (W.goal - s.jar) / left : 0;
+  if (!last || s.p < STRIKE_FROM || s.p >= PERIODS) return null;
+  if (last.bounced) return 'bounce';
+  if (s.jar < W.goal && need > last.jarIn && s.bank >= Math.max(4000, need * 0.5)) return 'slow';
+  return null;
+}
+/* MODEL END */
+
+/* ── Content: questions. Wrong choices come from the unit's misconception list. ── */
+function W() { return WORKERS[st.run.worker]; }
+function J() { return JOBS[st.run.job]; }
+function nm() { return W().name; }
+function payText(j) {
+  if (j.type === 'salary') return fmtW(j.yearly) + ' a year (salary)';
+  var s = fmt(j.rate) + ' an hour' + (j.rate18 ? ' (student rate)' : '');
+  if (j.type === 'commission') s += ' + ' + Math.round(j.pct * 100) + '% of your sales';
+  if (j.type === 'tips') s += ' + cash tips';
+  return s;
+}
+function offerQ(j) { // the "normal two weeks" used for the gross-pay question in Chapter 1
+  if (j.type === 'salary') return { text: 'Gross pay every two weeks (26 pays a year):', ans: Math.round(j.yearly / 26) };
+  if (j.type === 'commission') return { text: 'Gross pay for ' + j.hours[0] + ' hours with ' + fmtW(j.sales[0]) + ' in sales:', ans: j.hours[0] * j.rate + Math.round(j.sales[0] * j.pct) };
+  if (j.type === 'tips') return { text: 'Pay from the diner for ' + j.hours[0] + ' hours (tips not counted):', ans: j.hours[0] * j.rate };
+  return { text: 'Gross pay for ' + j.hours[0] + ' hours:', ans: j.hours[0] * j.rate };
+}
+function question(id) {
+  var n = st.run ? nm() : '', j = st.run && st.run.job ? J() : null, x = st.run ? extraHours(st.run.worker) : 0, yr;
+  switch (id) {
+    case 'paytype': return { label: 'Pay type: what is true', ch: 1, text: 'Which is true about how ' + n + '’s job pays?', opts: ({
+      wage: [['My pay goes up and down with my hours. A short week means a smaller paycheque.', 1, 'Right. Wage pay is hours × the hourly wage.'],
+             ['A wage pays the same every two weeks, no matter how many hours I work.', 0, 'That is a salary. A wage pays for each hour.'],
+             ['A wage job always pays more than a salary job.', 0, 'Not always. It depends on the rate and the hours.']],
+      salary: [['I get the same pay every two weeks, even when I work extra hours.', 1, 'Right. A salary is set for the year and split into 26 pays.'],
+               ['A salary pays more when I work extra hours.', 0, 'A salary stays the same. Extra hours do not add pay.'],
+               ['With a salary, nothing is taken off my pay.', 0, 'Deductions come off every kind of pay.']],
+      commission: [['Part of my pay depends on what I sell, so a slow month means a smaller paycheque.', 1, 'Right. Commission is a percent of sales, and sales go up and down.'],
+                   ['Commission always pays more than a wage.', 0, 'Only when sales are good. A slow month pays less.'],
+                   ['Commission pay is the same every two weeks.', 0, 'Commission changes with sales.']],
+      tips: [['Tips change with how busy it is and how much customers give, so they are hard to plan on.', 1, 'Right. Plan on the wage and treat tips as extra.'],
+             ['Tips are the same every shift.', 0, 'Tips change every shift.'],
+             ['Tips are part of my hourly wage, so the boss decides them.', 0, 'Tips come from customers, not from the wage.']]
+    })[j.type] };
+    case 'whyLess': return { label: 'Why less than the job promised', ch: 1, text: 'Why did less money land in the bank than the pay the job promised?', opts: [
+      ['Deductions came off first, like EI, CPP and income tax. What is left is the take-home pay.', 1, 'Right. The pay before deductions is gross pay. What lands in the bank is net pay.'],
+      ['The employer kept part of the pay as profit.', 0, 'Look at the pay stub. Each missing dollar has a name, and none of them is profit.'],
+      ['The bank charged a fee for putting the pay in the account.', 0, 'The stub shows the money was gone before it reached the bank.']] };
+    case 'extra':
+      if (j.type === 'salary') return { label: 'Extra hours on a salary', ch: 3, text: 'The boss asks ' + n + ' to work ' + x + ' extra hours this pay. What happens to ' + n + '’s take-home pay?', opts: [
+        ['It stays the same. A salary pays the same however many hours ' + n + ' works.', 1, 'Right. Extra hours on a salary do not add pay here.'],
+        ['It goes up by ' + x + ' hours × an hourly rate.', 0, 'A salary has no hourly rate. The pay is set for the year.'],
+        ['It goes down, because more hours means more tax.', 0, 'Tax depends on pay, not hours. The pay stays the same.']] };
+      return { label: 'Extra hours: more or less take-home?', ch: 3, text: 'The boss offers ' + n + ' ' + x + ' extra hours this pay. If ' + n + ' takes them, what happens to the take-home pay?', opts: [
+        ['It goes up. Income tax may go up a little, but ' + n + ' keeps most of each extra dollar.', 1, 'Right. Earning more never leaves you with less take-home pay.'],
+        ['It goes down, because more pay means a higher tax and you lose money.', 0, 'Only part of each extra dollar is taken off. Take-home pay still goes up.'],
+        ['It stays the same, because deductions take all the extra pay.', 0, 'Deductions take a part, not all of it.']] };
+    case 'newline': return { label: 'Turning 18: what changes', ch: 3, text: 'Avery turns 18 this week. What changes on the next pay stub?', opts: [
+      ['CPP starts coming off, and the wage goes up to $15.00 because the student rate ends at 18.', 1, 'Right. CPP starts after a worker turns 18, and Alberta’s $13.00 student rate is only for students under 18.'],
+      ['Income tax starts, because adults always pay income tax.', 0, 'Income tax depends on yearly pay, not age. Avery is still under the tax-free amount.'],
+      ['Nothing changes until Avery finishes school.', 0, 'Turning 18 changes two lines: CPP and the wage.']] };
+    case 'card-ei': return { label: 'Who EI helps', ch: 3, text: 'Jas worked with ' + n + '. Jas was laid off when the business closed a location. Jas now gets some pay every two weeks while looking for a new job. Which deduction paid into that?', opts: [
+      ['EI. Workers pay EI so that people who lose their job get some pay while they look for work.', 1, 'Right. EI is Employment Insurance.'],
+      ['CPP. CPP pays people who lose their job.', 0, 'CPP is a pension for when you retire.'],
+      ['Income tax. Income tax goes straight to workers who lose their job.', 0, 'Income tax pays for services like schools and hospitals. Job-loss pay comes from EI.']] };
+    case 'card-cpp': return { label: 'Who CPP helps', ch: 3, text: n + '’s grandpa just retired. Now he gets a payment every month from the Canada Pension Plan. Where did that money come from?', opts: [
+      ['CPP that he and his employers paid in while he worked.', 1, 'Right. The CPP on ' + n + '’s stub works the same way: it pays ' + n + ' later.'],
+      ['EI, because retiring means losing your job.', 0, 'EI is for people who lose a job and look for another one. Retirement pay is CPP.'],
+      ['A gift from his bank for retiring.', 0, 'It comes from the Canada Pension Plan, paid in from every paycheque.']] };
+    case 'card-tax': return { label: 'What income tax pays for', ch: 3, text: n + ' broke a wrist and went to the hospital. ' + n + ' did not get a bill. Who paid?', opts: [
+      ['Income tax and other taxes. They pay for health care for everyone in Alberta.', 1, 'Right. Health is about 41% of what Alberta spends (2026).'],
+      ['EI. It pays for hospital visits.', 0, 'EI pays people who lose a job.'],
+      ['CPP. It pays for hospital visits.', 0, 'CPP is a pension for retirement.']] };
+    case 'taxfree':
+      if (st.run.worker === 'avery') return { label: 'Why $0 income tax', ch: 3, text: 'Avery’s pay stubs show $0 income tax. Why?', opts: [
+        ['Avery’s yearly pay is under the tax-free amounts ($16,452 for Canada and $22,769 for Alberta in 2026), so no income tax comes off.', 1, 'Right. About 26 × $300 is around $8,000 a year: under both lines.'],
+        ['Students don’t have to pay income tax.', 0, 'Students pay income tax if they earn more than the tax-free amount.'],
+        ['Workers under 18 don’t pay income tax.', 0, 'Age does not matter for income tax. Yearly pay does.']] };
+      yr = Math.round(st.run.log[st.run.log.length - 1].stub.gross * 26 / 10000) * 100;
+      return { label: 'Why tax is less than 22%', ch: 3, text: n + ' earns about ' + fmtW(yr) + ' a year. The tax rates are 14% (Canada) and 8% (Alberta). So why is ' + n + '’s income tax much less than 22% of the pay?', opts: [
+        ['The first $16,452 (Canada) and $22,769 (Alberta) of yearly pay are tax-free. Only the part above is taxed.', 1, 'Right. That is why the Pay Card starts at $0 and climbs slowly.'],
+        ['Young workers pay a lower tax rate.', 0, 'The rate is the same at any age. The tax-free amount makes the difference.'],
+        ['Income tax only comes off some paycheques.', 0, 'It comes off every paycheque above the tax-free amount.']] };
+  }
+  return null;
+}
+var ASKS = {
+  bounce: { text: 'A payment bounced. What would help on the next paycheque?', opts: [
+    ['Move less to the jar. Plan from take-home pay (after deductions), not from gross pay.', 1, 'Right. Plan with net pay, minus bills, and leave a little cushion.'],
+    ['Move more to the jar, so the jar can pay the bills.', 0, 'The jar is locked until goal day. Moving more leaves even less for the bills.'],
+    ['Keep the same plan.', 0, 'With the same pay, the same plan would bounce again.']] },
+  slow: { text: 'The jar is falling behind, but money was left in the bank after the bills. What would help?', opts: [
+    ['Move more to the jar. The money left after bills can go to the goal.', 1, 'Right. Work out take-home pay minus bills, and move most of what is left.'],
+    ['Move less to the jar.', 0, 'That makes the jar fall further behind.'],
+    ['Keep the same plan.', 0, 'The same plan leaves the jar behind again.']] }
+};
+var CHAPTERS = [
+  null,
+  { name: 'Pick a job', step: 'Step 1', moment: 'Moment 1: four ways to get paid' },
+  { name: 'The pay stub', step: 'Step 2', moment: 'Moment 2: gross pay and net pay' },
+  { name: 'Where it goes', step: 'Step 3', moment: 'Moment 3: where deductions go' },
+  { name: 'Your call', step: 'Step 4', moment: 'Moment 4: what taxes pay for' }
+];
+function chapterSteps(ch) {
+  var a = [{ t: 'intro', ch: ch }];
+  function period(p) { a.push({ t: 'plan', p: p }, { t: 'work', p: p }, { t: 'stub', p: p }, { t: 'result', p: p }); }
+  if (ch === 1) { a.push({ t: 'offers' }, { t: 'mcq', id: 'paytype' }, { t: 'typed', id: 'downside' }); period(1); a.push({ t: 'mcq', id: 'whyLess' }); period(2); }
+  if (ch === 2) { period(3); period(4); a.push({ t: 'typed', id: 'why' }); }
+  if (ch === 3) {
+    a.push({ t: 'mcq', id: 'extra' }); period(5);
+    if (st.run.worker === 'avery') a.push({ t: 'mcq', id: 'newline' });
+    a.push({ t: 'mcq', id: 'card-ei' }, { t: 'mcq', id: 'card-cpp' }); period(6); a.push({ t: 'mcq', id: 'taxfree' }, { t: 'mcq', id: 'card-tax' });
+  }
+  if (ch === 4) { a.push({ t: 'dial' }); period(7); period(8); a.push({ t: 'final' }); return a; }
+  a.push({ t: 'end', ch: ch });
+  return a;
+}
+var TYPED = {
+  downside: { ch: 1, label: 'One downside of this pay type', prompt: function () { return 'Write one downside of this pay type for ' + nm() + '. (Your project asks for this too.)'; } },
+  why: { ch: 2, label: 'Why wage × hours is not what lands in the bank', prompt: function () { return 'In your own words: why didn’t the gross pay land in ' + nm() + '’s bank account? Name the deductions.'; } }
+};
+
+/* ── Shell helpers ── */
+function $(id) { return document.getElementById(id); }
+function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function fmt(c) {
+  var n = Math.abs(Math.round(c)), d = Math.floor(n / 100), r = n % 100;
+  return (c < 0 ? '−' : '') + '$' + String(d).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + (r < 10 ? '0' : '') + r;
+}
+function fmtW(c) { return Math.round(c) % 100 === 0 ? fmt(c).replace(/\.00$/, '') : fmt(c); }
+function parseMoney(t) {
+  var s = String(t || '').replace(/[$,\s]/g, '').replace(/−/g, '-');
+  if (!/^-?\d*\.?\d*$/.test(s) || s === '' || s === '.' || s === '-') return NaN;
+  return Math.round(parseFloat(s) * 100);
+}
+function close(a, b) { return Math.abs(a - b) <= 2; }
+function copy(o) { return JSON.parse(JSON.stringify(o)); }
+function shuffle(a) { var i, j, t; for (i = a.length - 1; i > 0; i--) { j = Math.floor(Math.random() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+var reduceMotion = !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var debug = /[?&]debug=1/.test(location.search);
+
+/* ── Icons ── */
+var ICONS = {
+  phone: '<rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/>',
+  bus: '<rect x="4" y="4" width="16" height="13" rx="2"/><path d="M4 11h16M8 20v-3M16 20v-3"/>',
+  food: '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M16 3c-2 2-2 6 0 8v10"/>',
+  rent: '<path d="M3 11l9-7 9 7M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/>',
+  car: '<path d="M4 15l1.5-5h13L20 15v3H4z"/><circle cx="8" cy="18" r="1.5"/><circle cx="16" cy="18" r="1.5"/>',
+  loan: '<path d="M4 7h16v10H4z"/><circle cx="12" cy="12" r="2.5"/>',
+  fun: '<path d="M12 4l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 16.4l-4.8 2.5.9-5.4-3.9-3.8 5.4-.8Z"/>',
+  cal: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+  cut: '<path d="M6 6l12 12M18 6L6 18"/>',
+  cake: '<path d="M4 20h16v-8H4zM4 15c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 4 0M12 12V8M12 5v.5"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  cash: '<rect x="3" y="7" width="18" height="10" rx="1.5"/><circle cx="12" cy="12" r="2.5"/>',
+  sales: '<path d="M4 18l5-6 4 3 7-9"/><path d="M15 6h5v5"/>'
+};
+function ic(k, col, sz) { return '<svg viewBox="0 0 24 24" width="' + (sz || 20) + '" height="' + (sz || 20) + '" aria-hidden="true" fill="none" stroke="' + (col || 'currentColor') + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + ICONS[k] + '</svg>'; }
+function avatar(wk, sz) {
+  var c = WORKERS[wk].colour, s = sz || 44;
+  return '<svg viewBox="0 0 44 44" width="' + s + '" height="' + s + '" aria-hidden="true"><circle cx="22" cy="22" r="21" fill="' + c + '" opacity="0.14"/><circle cx="22" cy="17" r="7" fill="' + c + '"/><path d="M9 37c2-8 7-11 13-11s11 3 13 11" fill="' + c + '"/></svg>';
+}
+function jarSVG(frac) {
+  var h = Math.round(56 * Math.max(0, Math.min(1, frac)));
+  return '<svg viewBox="0 0 48 72" width="48" height="72" aria-hidden="true"><rect x="12" y="2" width="24" height="7" rx="2" fill="#c9bfae"/>' +
+    '<path d="M10 10h28v4c4 2 6 6 6 10v40a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6V24c0-4 2-8 6-10z" fill="#fff" stroke="#a8a196" stroke-width="2"/>' +
+    '<clipPath id="jc"><path d="M10 10h28v4c4 2 6 6 6 10v40a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6V24c0-4 2-8 6-10z"/></clipPath>' +
+    '<rect class="jar-fill" clip-path="url(#jc)" x="0" y="' + (70 - h) + '" width="48" height="' + h + '" fill="#d9a55a"/>' +
+    '<line x1="4" y1="14" x2="44" y2="14" stroke="#1f1d1a" stroke-width="2" stroke-dasharray="3 2"/></svg>';
+}
+
+/* ── Saved state ── */
+var SAVE_KEY = 'cefl7-payday-v1';
+function validRun(r) {
+  if (!r || !WORKERS[r.worker] || typeof r.p !== 'number' || typeof r.bank !== 'number' || typeof r.jar !== 'number' || !Array.isArray(r.log)) return false;
+  if (r.job && (!JOBS[r.job] || !r.world || !Array.isArray(r.world.sales))) return false;
+  return true;
+}
+function fresh(mode) {
+  return { v: 1, mode: mode || 'gentle', tourDone: false, run: null, ch: 1, done: {}, modeAt: {}, queue: chapterStepsStart(), i: 0, ui: {},
+           ans: {}, typed: {}, asks: {}, lastAsk: -9, checks: [], snap: null, plan: 0, pulse: '' };
+}
+function chapterStepsStart() { return [{ t: 'pick' }]; }
+function loadSave() {
+  var o = null;
+  if (!debug) { try { o = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (e) { o = null; } }
+  if (!o || o.v !== 1 || (o.mode !== 'gentle' && o.mode !== 'real') || !Array.isArray(o.queue) || typeof o.i !== 'number' || !o.queue[o.i] ||
+      !o.ans || !o.typed || !o.asks || !Array.isArray(o.checks) || (o.run !== null && !validRun(o.run)) ||
+      (o.queue[o.i].t !== 'pick' && (!o.run || (!o.run.job && o.queue[o.i].t !== 'intro' && o.queue[o.i].t !== 'offers')))) o = fresh(o && o.mode);
+  if (!o.ui) o.ui = {};
+  return o;
+}
+var st = loadSave();
+function save() { if (debug) return; try { localStorage.setItem(SAVE_KEY, JSON.stringify(st)); } catch (e) {} }
+
+/* ── Flow: each chapter is a queue of steps ── */
+function cur() { return st.queue[st.i]; }
+function go(nextQueue) {
+  if (nextQueue) { st.queue = nextQueue; st.i = 0; } else st.i++;
+  st.ui = {};
+  if (cur().t === 'final') { st.done[4] = true; st.modeAt[4] = st.mode; }
+  render(); save();
+  var f = document.querySelector('#stage [data-first]') || document.querySelector('#stage h2');
+  if (f) { if (f.tagName === 'H2') f.setAttribute('tabindex', '-1'); f.focus({ preventScroll: true }); }
+  $('stage').scrollIntoView({ block: 'nearest' });
+  maybeTour();
+}
+function startChapter2(ch) {
+  st.ch = ch;
+  startChapter(st.run, ch);
+  st.snap = { ch: ch, run: copy(st.run), ans: copy(st.ans), typed: copy(st.typed), asks: copy(st.asks), lastAsk: st.lastAsk, plan: st.plan };
+  go(chapterSteps(ch));
+}
+function replayChapter() {
+  var s = st.snap;
+  if (!s) return;
+  st.run = copy(s.run); st.ans = copy(s.ans); st.typed = copy(s.typed); st.asks = copy(s.asks); st.lastAsk = s.lastAsk; st.plan = s.plan; st.ch = s.ch;
+  delete st.done[s.ch];
+  go(chapterSteps(s.ch));
+}
+function record(key, label, ch, right) {
+  var a = st.ans[key];
+  if (!a) a = st.ans[key] = { label: label, ch: ch, first: right ? 1 : 0, tries: 0 };
+  a.tries++;
+  return a;
+}
+
+/* ── Rendering ── */
+function render() { renderChapters(); renderSide(); renderStage(); syncTools(); }
+function syncTools() {
+  Array.prototype.forEach.call(document.querySelectorAll('[data-mode]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-mode') === st.mode)); });
+}
+function renderChapters() {
+  var h = '', c;
+  for (c = 1; c <= 4; c++) {
+    h += '<button class="btn chap' + (st.done[c] ? ' done' : '') + '" type="button" data-chap="' + c + '" aria-pressed="' + (st.ch === c && st.run ? 'true' : 'false') + '"' +
+      (st.run && (st.ch === c || (st.run.job && (st.done[c] || st.done[c - 1]))) ? '' : ' disabled') + '>' + c + '. ' + CHAPTERS[c].name + '<small>play after ' + CHAPTERS[c].step + '’s lesson</small></button>';
+  }
+  $('chapters').innerHTML = h;
+}
+function renderSide() {
+  var r = st.run, w, h, left, need, i, d, l;
+  if (!r) { $('side').innerHTML = '<h2>Your worker</h2><p class="small">Pick a worker to start.</p>'; return; }
+  w = WORKERS[r.worker];
+  h = '<h2>Your worker</h2><div class="who">' + avatar(r.worker) + '<div><div class="name">' + w.name + ', ' + ageAt(r.worker, r.p + 1) + '</div><div class="job">' +
+    (r.job ? esc(JOBS[r.job].title) + ' · ' + esc(JOBS[r.job].biz) : 'No job yet') + '</div></div></div>';
+  left = PERIODS - r.p; need = left ? Math.max(0, w.goal - r.jar) / left : 0;
+  h += '<div class="side-sec" id="sideJar"><div class="lbl">Goal jar</div><div class="jarbox">' + jarSVG(r.jar / w.goal) + '<div><div class="big-num">' + fmt(r.jar) + '</div>' +
+    '<div class="small">of ' + fmtW(w.goal) + ' for ' + esc(w.goalLabel) + '</div>' +
+    (r.jar >= w.goal ? '<span class="tag good">goal reached</span>' : left ? '<div class="small">Need about <b>' + fmtW(Math.ceil(need / 100) * 100) + '</b> each paycheque</div>' : '') + '</div></div></div>';
+  h += '<div class="side-sec bank' + (r.bank < 0 ? ' neg' : '') + '" id="sideBank"><div class="lbl">In the bank</div><div class="big-num">' + fmt(r.bank) + '</div>' +
+    (r.bank < 0 ? '<span class="tag bad">overdrawn</span>' : '<div class="small">Money left after bills. A cushion for next time.</div>') + '</div>';
+  h += '<div class="side-sec" id="sideBills"><div class="lbl">Bills every two weeks</div><ul class="bills">' + w.bills.map(function (b) {
+    return '<li>' + ic(b[0], '#6b665d', 18) + '<span>' + esc(b[1]) + '</span><span>' + fmtW(b[2]) + '</span></li>';
+  }).join('') + '<li class="total"><span>Total</span><span>' + fmtW(billsOf(r.worker)) + '</span></li></ul></div>';
+  h += '<div class="side-sec"><div class="lbl">Paycheques</div><div class="dots" aria-label="Paycheque ' + Math.min(PERIODS, r.p + 1) + ' of ' + PERIODS + '">';
+  for (i = 1; i <= PERIODS; i++) {
+    l = r.log[i - 1]; d = l ? (l.bounced ? 'bounced' : 'paid') : (i === r.p + 1 ? 'now' : '');
+    h += '<span class="dot ' + d + '" title="Paycheque ' + i + (l ? (l.bounced ? ': a payment bounced' : ': paid') : '') + '">' + (l && l.bounced ? '!' : i) + '</span>';
+  }
+  h += '</div><div class="small" style="margin-top:4px">Bounced payments: <b>' + r.bounces + '</b>' + (st.mode === 'real' ? ' (from Chapter 2, ' + STRIKES_TO_LOSE + ' end the game; ' + r.strikes + ' so far)' : '') + '</div></div>';
+  $('side').innerHTML = h;
+}
+function head(step, title) { return '<div class="stage-h"><span class="step">' + step + '</span><h2>' + title + '</h2></div>'; }
+function nextBtn(label, act, disabled) { return '<div class="next-row"><button class="btn primary big" type="button" data-act="' + (act || 'next') + '"' + (disabled ? ' disabled' : '') + ' data-first>' + (label || 'Next') + ' →</button></div>'; }
+
+function renderStage() {
+  var s = cur(), f = RENDER[s.t];
+  $('stage').innerHTML = f ? f(s) : '';
+}
+var RENDER = {
+  pick: function () {
+    var h = head('Start', 'Pick a worker') + '<p class="lead">You will plan 8 paycheques for one worker, one chapter after each project step. Each worker has a goal and bills.</p><div class="cards3">';
+    Object.keys(WORKERS).forEach(function (k) {
+      var w = WORKERS[k];
+      h += '<div class="card wcard"><div class="who">' + avatar(k) + '<div><div class="name">' + w.name + ', ' + w.age + '</div></div></div><p class="small">' + esc(w.home) + '</p>' +
+        '<p><b>Goal:</b> ' + fmtW(w.goal) + ' for ' + esc(w.goalLabel) + '</p><p><b>Bills:</b> ' + fmtW(billsOf(k)) + ' every two weeks</p>' +
+        '<div class="push"><button class="btn primary" type="button" data-act="pick" data-v="' + k + '">Play as ' + w.name + '</button></div></div>';
+    });
+    return h + '</div>';
+  },
+  intro: function (s) {
+    var c = CHAPTERS[s.ch], h = head('Chapter ' + s.ch + ' of 4', c.name) + '<p class="small">Play this after <b>' + c.step + '</b>’s lesson (' + c.moment + ').</p>', n = nm();
+    if (s.ch === 1) h += '<p class="lead"><b>' + n + '</b> is ' + W().age + ' and wants to save <b>' + fmtW(W().goal) + '</b> for ' + esc(W().goalLabel) + ' in 8 paycheques (about 4 months). First, pick a job.</p>';
+    if (s.ch === 2) {
+      h += '<p class="lead">Now you can read a pay stub. This chapter, you fill in every line of ' + n + '’s stub with the <b>Pay Card</b>. Plan the jar from <b>take-home pay</b>.</p>';
+      if (st.run.covered) h += '<div class="note"><b>Fresh start.</b> Chapter 1 left the bank overdrawn by ' + fmt(st.run.covered) + '. ' + n + '’s family covered it this one time.</div>';
+      h += '<p>' + (st.mode === 'real' ? 'From now on, a bounced payment counts. <b>Two bounces end the game.</b>' : 'From now on, a bounced payment costs a ' + fmtW(FEE) + ' fee.') + '</p>';
+    }
+    if (s.ch === 3) h += '<p class="lead">Where do ' + n + '’s deductions go, and who do they help? Watch for news this chapter.</p>';
+    if (s.ch === 4) h += '<p class="lead">Your call: should more tax come off pay, or less? Then finish the last two paycheques and see if ' + n + ' reaches the goal.</p>';
+    return h + nextBtn(s.ch === 1 ? 'See the job offers' : 'Start Chapter ' + s.ch);
+  },
+  offers: function () {
+    var u = st.ui, h = head('Chapter 1', 'Three job offers') + '<p class="lead">Work out the <b>gross pay</b> for each offer: the pay before anything is taken off. Then pick one.</p><div class="cards3">',
+        all = W().jobs.every(function (k) { return u[k] && (u[k].ok || u[k].shown); });
+    W().jobs.forEach(function (k) {
+      var j = JOBS[k], q = offerQ(j), a = u[k] || {}, done = a.ok || a.shown;
+      h += '<div class="card"><div class="biz">' + esc(j.biz) + '</div><h3>' + esc(j.title) + '</h3><p class="small">' + esc(j.what) + '</p><p class="pay">' + payText(j) + '</p>' +
+        '<label class="small" for="of-' + k + '"><b>' + esc(q.text) + '</b></label><div class="money-in"><input class="inp' + (a.ok ? ' ok' : a.no ? ' no' : '') + '" id="of-' + k + '" inputmode="decimal" autocomplete="off" value="' + esc(a.v || '') + '"' + (done ? ' disabled' : '') + (k === W().jobs[0] ? ' data-first' : '') + '>' +
+        (done ? '' : '<button class="btn sm" type="button" data-act="offer" data-v="' + k + '">Check</button>') + '</div>' +
+        '<div class="fb ' + (a.ok ? 'yes' : a.no ? 'no' : '') + '" aria-live="polite">' + esc(a.fb || '') + '</div>' +
+        '<div class="push"><button class="btn primary" type="button" data-act="take" data-v="' + k + '"' + (all ? '' : ' disabled') + '>Take this job</button></div></div>';
+    });
+    h += '</div>';
+    if (!all) h += '<p class="small" style="margin-top:8px">Check all three offers to unlock the choice.</p>';
+    return h;
+  },
+  mcq: function (s) {
+    var q = question(s.id), u = st.ui, h;
+    if (!u.order) u.order = shuffle(q.opts.map(function (o, i) { return i; }));
+    h = head('Chapter ' + st.ch, 'Think it through') + '<div class="ask" style="border-color:var(--accent-mid);background:var(--accent-light)"><p class="q">' + esc(q.text) + '</p><div class="opts">' +
+      u.order.map(function (i, n) {
+        var o = q.opts[i], cls = u.picked && u.picked.indexOf(i) >= 0 ? (o[1] ? ' yes' : ' no') : '';
+        return '<button class="btn opt' + cls + '" type="button" data-act="opt" data-v="' + i + '"' + (u.done || cls ? ' disabled' : '') + (n === 0 ? ' data-first' : '') + '>' + esc(o[0]) + '</button>';
+      }).join('') + '</div><div class="fb ' + (u.fbOk ? 'yes' : 'no') + '">' + esc(u.fb || '') + '</div></div>';
+    return h + (u.done ? nextBtn() : '');
+  },
+  typed: function (s) {
+    var t = TYPED[s.id], v = st.ui.v != null ? st.ui.v : (st.typed[s.id] || '');
+    return head('Chapter ' + st.ch, 'In your own words') + '<label class="lab" for="typed">' + esc(t.prompt()) + '</label>' +
+      '<textarea class="ans" id="typed" rows="3" data-first>' + esc(v) + '</textarea><p class="small">Your teacher sees this in the report.</p>' + nextBtn('Save and continue', 'typed', v.trim().length < 8);
+  },
+  plan: function (s) {
+    var r = st.run, j = J(), sc = scheduleOf(r, s.p), bills = billsOf(r.worker), jar = st.plan, h, chips = '', out, safe;
+    h = head('Paycheque ' + s.p + ' of 8 · Plan', 'Plan payday');
+    h += '<div class="card"><div class="row">' + ic('cal', '#94631a') + '<b>The next two weeks</b></div>';
+    if (j.type === 'salary') h += '<p>Salary: <b>' + fmtW(j.yearly) + '</b> a year, paid in 26 equal pays. About ' + sc.hours + ' hours of work.</p>';
+    else h += '<p>Hours on the schedule: <b>' + sc.hours + ' h</b> × <b>' + fmt(sc.rate) + '</b> an hour' + (sc.rate !== j.rate ? ' <span class="chip good">new wage: Avery is 18</span>' : '') + '</p>';
+    if (j.type === 'commission') h += '<p>' + ic('sales', '#94631a', 18) + ' Expected sales: about <b>' + fmtW(sc.sales) + '</b>. You earn ' + Math.round(j.pct * 100) + '% of what you really sell.</p>';
+    if (j.type === 'tips') h += '<p>' + ic('cash', '#94631a', 18) + ' Expected cash tips: about <b>' + fmtW(sc.tips) + '</b>. Tips go straight to you, not on the pay stub.</p>';
+    if (sc.note) chips += '<span class="chip">' + esc(sc.note) + '</span>';
+    if (sc.cutRisk) chips += '<span class="chip warn">⚠ Slow season: hours might be cut by up to ' + sc.cutRisk + ' this pay.</span>';
+    if (s.p === 5 && j.type !== 'salary' && r.extra) chips += '<span class="chip good">+' + extraHours(r.worker) + ' extra hours you said yes to</span>';
+    if (chips) h += '<p>' + chips + '</p>';
+    if (s.p === 5) h += '<div class="row" style="margin-top:6px"><b>Extra hours offer (' + extraHours(r.worker) + ' h):</b><span class="seg"><button class="btn sm" type="button" data-act="extra" data-v="1" aria-pressed="' + r.extra + '">Take them</button><button class="btn sm" type="button" data-act="extra" data-v="0" aria-pressed="' + !r.extra + '">No thanks</button></span></div>';
+    h += '</div>';
+    if (s.p === 1) h += '<div class="note"><b>No pay stub yet.</b> Plan with what you know about the job.</div>';
+    h += '<div class="card" id="planBox"><label class="lab" for="jarIn" style="margin-top:0">How much moves to the goal jar on payday?</label>' +
+      '<div class="money-in' + (st.pulse === 'jar' ? ' pulse' : '') + '" id="jarCtl"><button class="btn sm" type="button" data-act="jar" data-v="-2500" aria-label="25 dollars less">−25</button>' +
+      '<input class="inp" id="jarIn" inputmode="decimal" autocomplete="off" value="' + (jar / 100).toFixed(2) + '" data-first>' +
+      '<button class="btn sm" type="button" data-act="jar" data-v="2500" aria-label="25 dollars more">+25</button></div>';
+    out = bills + jar;
+    h += '<p class="eq" id="planEq">Out on payday: bills ' + fmtW(bills) + ' + jar ' + fmt(jar) + ' = <b>' + fmt(out) + '</b>. In the bank now: ' + fmt(r.bank) + '.</p>';
+    if (st.mode === 'gentle' && st.ch >= 2) {
+      safe = r.bank + safeTakeHome(r, s.p) - out >= 0;
+      h += '<p class="fb ' + (safe ? 'yes' : 'warn') + '" id="planChk">' + (safe ? '✓ Looks safe if the pay comes in as planned.' : '⚠ Careful: after deductions, this plan may not leave enough for the bills.') + '</p>';
+    }
+    h += '<p class="small">Tip: open the <b>Pay Card</b> to work out take-home pay.</p></div>';
+    return h + '<div class="next-row"><button class="btn primary big" type="button" data-act="work" id="bWork">Work the two weeks →</button></div>';
+  },
+  work: function (s) {
+    var r = st.run, a = actualOf(r, s.p), sc = scheduleOf(r, s.p), j = J(), h = head('Paycheque ' + s.p + ' of 8 · Work', 'Two weeks of work'), ev = [];
+    h += calendar(sc.hours - a.extra, a.cut, a.extra);
+    if (a.cut) ev.push(['bad', 'cut', 'Slow week: the manager cut <b>' + a.cut + ' hours</b>. ' + nm() + ' worked ' + a.hours + ' hours.']);
+    if (a.extra && j.type !== 'salary') ev.push(['good', 'plus', nm() + ' worked <b>' + a.extra + ' extra hours</b>.']);
+    if (a.extra && j.type === 'salary') ev.push(['', 'plus', nm() + ' worked <b>' + a.extra + ' extra hours</b>. A salary stays the same.']);
+    if (j.type === 'commission') ev.push([a.sales >= sc.sales ? 'good' : '', 'sales', nm() + ' sold <b>' + fmtW(a.sales) + '</b> (expected about ' + fmtW(sc.sales) + ').']);
+    if (j.type === 'tips') ev.push(['', 'cash', 'Cash tips: <b>' + fmtW(a.tips) + '</b>.']);
+    if (r.worker === 'avery' && s.p === 5) ev.push(['good', 'cake', 'Happy birthday! <b>Avery turned 18.</b>']);
+    if (j.type === 'salary' && !a.extra) ev.push(['', 'cal', 'A normal two weeks.']);
+    h += '<ul class="events">' + ev.map(function (e) { return '<li class="' + e[0] + '">' + ic(e[1], e[0] === 'bad' ? '#b42318' : e[0] === 'good' ? '#2c7a4b' : '#6b665d') + '<span>' + e[2] + '</span></li>'; }).join('') + '</ul>';
+    return h + nextBtn('Payday');
+  },
+  stub: function (s) {
+    var r = st.run, a = actualOf(r, s.p), j = J(), auto = st.ch === 1, u = st.ui, h, rows, allDone = true;
+    h = head('Paycheque ' + s.p + ' of 8 · Payday', auto ? 'The first pay stub' : 'Fill in the pay stub');
+    h += '<div class="stub"><div class="stub-h"><span><b>' + esc(j.biz) + '</b></span><span>' + nm() + ', age ' + a.age + ' · paycheque ' + s.p + '</span></div><div class="given">' + givenText(a) + '</div>';
+    rows = STUB_LINES.map(function (L) {
+      var v = a.stub[L.k], x = u[L.k] || {}, cls = L.k === 'net' ? ' net' : L.k === 'gross' ? '' : ' ded', amt;
+      if (auto) return '<div class="stub-row anim' + cls + '" style="animation-delay:' + (reduceMotion ? 0 : STUB_LINES.indexOf(L) * 0.35) + 's"><span class="what">' + L.name + '<small>' + L.sub(a) + '</small></span><span class="amt">' + (cls === ' ded' ? '−' : '') + fmt(v) + '</span><span></span></div>';
+      if (!(x.ok || x.shown)) allDone = false;
+      amt = x.ok || x.shown ? '<span class="amt">' + (cls === ' ded' ? '−' : '') + fmt(v) + '</span>' :
+        '<input class="inp' + (x.no ? ' no' : '') + '" id="st-' + L.k + '" inputmode="decimal" autocomplete="off" aria-label="' + L.name + '" value="' + esc(x.v || '') + '"' + (L.k === 'gross' ? ' data-first' : '') + '>';
+      return '<div class="stub-row' + cls + '"><span class="what">' + L.name + '<small>' + L.sub(a) + '</small></span>' + amt +
+        '<span class="mark" aria-label="' + (x.ok ? 'right' : x.shown ? 'shown' : x.no ? 'not yet' : '') + '">' + (x.ok ? '<span style="color:var(--good)">✓</span>' : x.shown ? '<span style="color:var(--muted)">•</span>' : x.no ? '<span style="color:var(--bad)">✗</span>' : '') + '</span>' +
+        (x.hint && !(x.ok || x.shown) ? '<span class="hint">' + esc(x.hint) + '</span>' : '') + '</div>';
+    });
+    h += rows.join('') + '</div>';
+    if (auto) {
+      h += '<div class="note" style="margin-top:12px">' + nm() + ' planned with <b>' + fmt(a.stub.gross + a.tips) + '</b>' + (a.tips ? ' (pay + tips)' : '') + '. Only <b>' + fmt(a.stub.net + a.tips) + '</b> reached the bank. Where did <b>' + fmt(a.stub.total) + '</b> go?</div>';
+      return h + nextBtn('Deposit the pay', 'deposit');
+    }
+    h += '<div class="next-row"><button class="btn" type="button" data-act="card">Open the Pay Card</button>' + (allDone ? '' : '<button class="btn primary big" type="button" data-act="checkstub">Check my stub</button>') + '</div>';
+    if (a.tips) h += '<p class="small">Cash tips of ' + fmtW(a.tips) + ' go to the bank too. They are not on the stub.</p>';
+    return h + (allDone ? nextBtn('Deposit the pay', 'deposit') : '');
+  },
+  result: function (s) {
+    var r = st.run, l = r.log[s.p - 1], inn = l.stub.net + l.tips, max = Math.max(inn, l.bills + l.jarIn, 1), h;
+    h = head('Paycheque ' + s.p + ' of 8 · Result', l.bounced ? 'A payment bounced' : 'Payday done');
+    h += '<div class="flow">' + flowRow('Take-home in', inn, max, '#2c7a4b') + flowRow('Bills out', l.bills, max, '#b42318') + flowRow('To the jar', l.jarIn, max, '#d9a55a') + '</div>';
+    if (l.bounced) h += '<div class="banner bad">' + ic('cut', '#b42318') + ' Not enough money for everything. A payment bounced and the bank charged a <b>' + fmtW(FEE) + '</b> fee. The bank is at ' + fmt(l.bank) + '.' +
+      (s.p < STRIKE_FROM ? ' This one does not count against you yet.' : st.mode === 'real' ? ' Bounces this game: ' + r.strikes + ' of ' + STRIKES_TO_LOSE + '.' : '') + '</div>';
+    else h += '<div class="banner good">Every bill was paid. ' + fmt(l.bank) + ' is left in the bank.</div>';
+    if (st.ch === 1 && s.p === 1) h += '<p>' + nm() + ' expected ' + fmt(l.stub.gross + l.tips) + ', but ' + fmt(l.stub.total) + ' came off first. Keep that in mind for the next plan.</p>';
+    return h + nextBtn();
+  },
+  ask: function (s) {
+    var A = ASKS[s.topic], u = st.ui, h;
+    if (!u.order) u.order = shuffle([0, 1, 2]);
+    h = head('Paycheque ' + st.run.p + ' · Stop and think', 'What would help?') + '<div class="ask"><p class="q">' + esc(A.text) + '</p><div class="opts">' +
+      u.order.map(function (i, n) {
+        var o = A.opts[i], cls = u.picked && u.picked.indexOf(i) >= 0 ? (o[1] ? ' yes' : ' no') : '';
+        return '<button class="btn opt' + cls + '" type="button" data-act="askopt" data-v="' + i + '"' + (u.done || cls ? ' disabled' : '') + (n === 0 ? ' data-first' : '') + '>' + esc(o[0]) + '</button>';
+      }).join('') + '</div><div class="fb ' + (u.fbOk ? 'yes' : 'no') + '">' + esc(u.fb || '') + '</div></div>';
+    return h + (u.done ? nextBtn() : '');
+  },
+  dial: function () {
+    var r = st.run, u = st.ui, k = u.k == null ? 0 : u.k, g = avgGross(), base = abTaxYear(g), now = Math.round(base * (1 + k)), h, perPay = Math.round((now - base) / 26), t = st.typed;
+    h = head('Chapter 4', 'The tax dial') + '<p class="lead">Alberta takes <b>8%</b> income tax on yearly pay above <b>$22,769</b> (2026). What if the rate went up or down?</p>';
+    h += '<div class="dial" role="group" aria-label="Alberta income tax rate">' + [-0.5, -0.25, 0, 0.25, 0.5].map(function (x) {
+      return '<button class="btn" type="button" data-act="dial" data-v="' + x + '" aria-pressed="' + (x === k) + '"' + (x === 0 ? ' data-first' : '') + '>' + (8 * (1 + x)) + '%' + (x === 0 ? ' (now)' : '') + '</button>';
+    }).join('') + '</div>';
+    if (!base) h += '<div class="note"><b>' + nm() + ' pays no Alberta income tax.</b> The yearly pay (about ' + fmtW(Math.round(g * 26 / 10000) * 10000) + ') is under $22,769, so the dial does not change ' + nm() + '’s pay. ' + nm() + ' still uses schools, roads and hospitals that taxes pay for.</div>';
+    else {
+      h += '<p>' + nm() + '’s Alberta income tax: about <b>' + fmtW(Math.round(now / 100) * 100) + '</b> a year' + (k ? ' (now ' + fmtW(Math.round(base / 100) * 100) + ')' : '') + '. ' +
+        (k ? 'Take-home pay would go <b>' + (perPay < 0 ? 'up by ' + fmt(-perPay) : 'down by ' + fmt(perPay)) + '</b> every two weeks.' : '') + '</p>';
+      h += '<div class="split"><div>Health (41%)<b>' + fmtW(Math.round(now * AB_HEALTH / 100) * 100) + '</b></div><div>Education (13%)<b>' + fmtW(Math.round(now * AB_EDU / 100) * 100) + '</b></div><div>Everything else (46%)<b>' + fmtW(Math.round(now * (1 - AB_HEALTH - AB_EDU) / 100) * 100) + '</b></div></div>' +
+        '<p class="small">If ' + nm() + '’s tax were split the way Alberta spends (Budget 2026–27). Tax really goes into one big pot.</p>';
+    }
+    h += '<div class="two"><div class="card"><b>Less tax</b><ul><li>More take-home pay for every worker.</li><li>Less money for hospitals, schools and roads, or the province borrows.</li></ul></div>' +
+      '<div class="card"><b>More tax</b><ul><li>More money for services, like shorter hospital waits or smaller classes.</li><li>Less take-home pay for every worker.</li></ul></div></div>';
+    h += '<p class="lab">Your claim: should more or less tax come off pay?</p><div class="seg" role="group" aria-label="Your claim">' + ['Less tax', 'Keep it the same', 'More tax'].map(function (c) {
+      return '<button class="btn sm" type="button" data-act="claim" data-v="' + c + '" aria-pressed="' + (t.claim === c) + '">' + c + '</button>'; }).join('') + '</div>' +
+      '<label class="lab" for="reason">One reason:</label><textarea class="ans" id="reason" rows="2">' + esc(t.reason || '') + '</textarea>' +
+      '<label class="lab" for="tradeoff">One trade-off (what would be lost):</label><textarea class="ans" id="tradeoff" rows="2">' + esc(t.tradeoff || '') + '</textarea>' +
+      '<p class="small">This is your opinion. There is no wrong side, but you need a reason and a trade-off. Use it as a first draft for Path B of your project.</p>';
+    return h + nextBtn('Save and play paycheque 7', 'dialdone', !dialReady());
+  },
+  end: function (s) {
+    var c = CHAPTERS[s.ch], n = CHAPTERS[s.ch + 1], h = head('Chapter ' + s.ch + ' done', c.name + ': done');
+    h += '<p class="lead">' + nm() + '’s jar has <b>' + fmt(st.run.jar) + '</b> of ' + fmtW(W().goal) + '.</p>';
+    h += '<div class="note"><b>Now, your project.</b> Do ' + c.step + ' with your team' + (s.ch === 1 ? ': pick a real job ad and work out its gross pay.' : s.ch === 2 ? ': build your pay stub. Use <b>Check my project</b> to check your lines.' : ': write where each deduction goes and who it helps.') + '</div>';
+    h += '<p>Play <b>Chapter ' + (s.ch + 1) + ': ' + n.name + '</b> after ' + n.step + '’s lesson (' + n.moment + ').</p>';
+    return h + nextBtn('Go to Chapter ' + (s.ch + 1), 'nextch');
+  },
+  final: function () {
+    var r = st.run, o = outcome(r), w = W(), h;
+    h = head('The end', o.win ? nm() + ' reached the goal!' : 'Goal not reached');
+    if (o.win) h += '<div class="banner good">The jar has <b>' + fmt(r.jar) + '</b>, enough for ' + esc(w.goalLabel) + '. Every bill is paid, with ' + fmt(r.bank) + ' left in the bank.</div>';
+    else if (o.why === 'overdrawn') h += '<div class="banner bad">The jar has ' + fmt(r.jar) + ', but the bank is overdrawn (' + fmt(r.bank) + '). Some bills are unpaid, so the goal does not count.</div>';
+    else {
+      h += '<div class="banner bad">The jar has ' + fmt(r.jar) + ' of ' + fmtW(w.goal) + '. ' + fmt(w.goal - r.jar) + ' short.</div>';
+      if (r.jar + r.bank >= w.goal) h += '<p>So close: ' + fmt(r.bank) + ' was sitting in the bank. Moving more of the take-home pay left after bills would have filled the jar.</p>';
+    }
+    h += '<p>Bounced payments: ' + r.bounces + '. Mode: ' + (st.mode === 'real' ? 'Real' : 'Gentle') + '.</p>';
+    h += '<div class="note"><b>Show your teacher:</b> open the Report. It lists every paycheque, your first-try answers and what you wrote.</div>';
+    return h + '<div class="next-row"><button class="btn primary big" type="button" data-act="report" data-first>Open the report</button>' +
+      (o.win ? '' : '<button class="btn" type="button" data-act="replay">Replay Chapter 4</button>') + '<button class="btn" type="button" data-act="restart">Play again with a new worker</button></div>';
+  },
+  lost: function () {
+    return head('Game over', 'Two payments bounced') + '<div class="banner bad">In Real mode, two bounced payments end the game.</div>' +
+      '<p>Plan the jar from <b>take-home pay minus bills</b>, and keep a small cushion when hours or sales might drop.</p>' +
+      '<div class="next-row"><button class="btn primary big" type="button" data-act="replay" data-first>Replay Chapter ' + st.ch + '</button><button class="btn" type="button" data-act="mode-gentle">Switch to Gentle and replay</button><button class="btn" type="button" data-act="report">Report</button></div>';
+  }
+};
+var STUB_LINES = [
+  { k: 'gross', name: 'Gross pay', sub: function (a) { return 'pay before deductions'; } },
+  { k: 'ei', name: 'EI', sub: function () { return 'Employment Insurance'; } },
+  { k: 'cpp', name: 'CPP', sub: function () { return 'Canada Pension Plan'; } },
+  { k: 'tax', name: 'Income tax', sub: function () { return 'Canada and Alberta'; } },
+  { k: 'net', name: 'Net pay', sub: function () { return 'take-home pay, into the bank'; } }
+];
+function givenText(a) {
+  var j = J();
+  if (j.type === 'salary') return 'Salary ' + fmtW(j.yearly) + ' a year ÷ 26 pays' + (a.extra ? ' (worked ' + a.extra + ' extra hours)' : '');
+  return a.hours + ' hours × ' + fmt(a.rate) + (j.type === 'commission' ? ' + ' + Math.round(j.pct * 100) + '% of ' + fmtW(a.sales) + ' in sales' : '');
+}
+function stubHint(k, a) {
+  var j = J();
+  if (k === 'gross') return j.type === 'salary' ? 'Yearly salary ÷ 26.' : j.type === 'commission' ? 'Hours × wage, plus ' + Math.round(j.pct * 100) + '% of sales (× ' + j.pct + ').' : 'Hours × wage: ' + a.hours + ' × ' + fmt(a.rate) + '.';
+  if (k === 'ei') return 'EI is 1.63% of gross pay: 0.0163 × gross.';
+  if (k === 'cpp') return a.age < 18 ? 'Under 18: no CPP. Type 0.' : 'CPP is 5.95% of (gross pay − $135).';
+  if (k === 'tax') return 'Find the Pay Card row nearest the gross pay: the $' + rowOf(a.stub.gross).toLocaleString('en-CA') + ' row' + (rowOf(a.stub.gross) === 600 ? ' ($300 to $600)' : '') + '.';
+  return 'Gross pay − (EI + CPP + income tax).';
+}
+function calendar(hours, cut, extra) {
+  var full = hours >= 60, per = full ? 8 : 4, days = [], i, n, wk = [0, 1, 2, 3, 4, 7, 8, 9, 10, 11, 5, 12], names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], h = '<div class="cal" aria-label="Shifts in the two weeks">', left = hours, cutLeft = cut;
+  for (i = 0; i < 14; i++) days.push(0);
+  for (i = 0; i < wk.length && left > 0; i++) { n = Math.min(per, left); days[wk[i]] = n; left -= n; }
+  if (extra) { days[5] = extra / 2; days[12] = extra / 2; } // extra shifts on the two Saturdays, which a 10-day schedule leaves empty
+  for (i = 13; i >= 0 && cutLeft > 0; i--) if (days[i] && !(extra && (i === 5 || i === 12))) { cutLeft -= days[i]; days[i] = -days[i]; }
+  for (i = 0; i < 14; i++) {
+    h += '<div class="day' + (days[i] < 0 ? ' cut' : '') + (extra && (i === 5 || i === 12) ? ' extra' : '') + (reduceMotion ? '' : ' fill') + '" style="animation-delay:' + (i * 0.06) + 's"><span>' + names[i % 7] + '</span>' +
+      (days[i] ? '<span class="h">' + Math.abs(days[i]) + ' h</span>' : '') + '</div>';
+  }
+  return h + '</div>';
+}
+function flowRow(label, v, max, col) {
+  return '<span>' + label + '</span><span class="bar-t"><span class="bar-f" style="width:' + Math.max(1, Math.round(v / max * 100)) + '%;background:' + col + '"></span></span><span class="v">' + fmt(v) + '</span>';
+}
+function avgGross() { var l = st.run.log, t = 0, i; if (!l.length) return 0; for (i = 0; i < l.length; i++) t += l[i].stub.gross; return Math.round(t / l.length); }
+function dialReady() { var t = st.typed; return !!t.claim && (t.reason || '').trim().length >= 8 && (t.tradeoff || '').trim().length >= 8; }
+
+/* ── Actions ── */
+function act(name, v, el) {
+  var s = cur(), r = st.run;
+  switch (name) {
+    case 'pick':
+      st.run = newRun(v, null, debug && window.__seed ? window.__seed : 1 + Math.floor(Math.random() * 1e6));
+      st.ch = 1; st.snap = { ch: 1, run: copy(st.run), ans: {}, typed: {}, asks: {}, lastAsk: -9, plan: 0 };
+      go(chapterSteps(1)); return;
+    case 'next':
+      if (s.t === 'result') { afterResult(); return; }
+      go(); return;
+    case 'offer': checkOffer(v); return;
+    case 'take': setJob(r, v); go(); return;
+    case 'opt': pickOpt(Number(v)); return;
+    case 'askopt': pickAsk(Number(v)); return;
+    case 'typed': st.typed[s.id] = $('typed').value.trim(); go(); return;
+    case 'jar': setPlan(st.plan + Number(v)); return;
+    case 'extra': r.extra = v === '1' || v === true; render(); save(); return;
+    case 'work': readPlan(); st.pulse = ''; if (tour) endTour(); go(); return;
+    case 'checkstub': checkStub(); return;
+    case 'deposit': payday(r, st.plan, st.mode === 'real'); go(); return;
+    case 'card': openCard(); return;
+    case 'dial': st.ui.k = Number(v); render(); return;
+    case 'claim': st.typed.claim = v; render(); return;
+    case 'dialdone': go(); return;
+    case 'nextch': st.done[s.ch] = true; st.modeAt[s.ch] = st.mode; startChapter2(s.ch + 1); return;
+    case 'report': openReport(); return;
+    case 'replay': replayChapter(); return;
+    case 'mode-gentle': st.mode = 'gentle'; replayChapter(); return;
+    case 'restart': if (debug || window.confirm('Start over with a new worker? The report will be cleared.')) { var m = st.mode, t = st.tourDone; st = fresh(m); st.tourDone = t; go(st.queue); } return;
+  }
+}
+function setPlan(c) { st.plan = Math.max(0, Math.min(500000, c)); render(); var i = $('jarIn'); if (i) i.focus(); save(); }
+function readPlan() { var i = $('jarIn'), v; if (!i) return; v = parseMoney(i.value); if (!isNaN(v)) st.plan = Math.max(0, Math.min(500000, v)); }
+function checkOffer(k) {
+  var a = st.ui[k] || (st.ui[k] = {}), inp = $('of-' + k), v = parseMoney(inp.value), q = offerQ(JOBS[k]), right = !isNaN(v) && close(v, q.ans);
+  a.v = inp.value;
+  if (isNaN(v)) { a.fb = 'Type an amount, like 312.00.'; a.no = 1; render(); $('of-' + k).focus(); return; }
+  record('offer-' + k, 'Gross pay: ' + JOBS[k].title, 1, right);
+  a.tries = (a.tries || 0) + 1;
+  if (right) { a.ok = 1; a.no = 0; a.fb = 'Right: ' + fmt(q.ans) + '.'; }
+  else if (a.tries >= (st.mode === 'real' ? 2 : 3)) { a.shown = 1; a.no = 0; a.v = (q.ans / 100).toFixed(2); a.fb = 'It is ' + fmt(q.ans) + '. ' + offerHow(JOBS[k]); }
+  else { a.no = 1; a.fb = st.mode === 'gentle' ? 'Not yet. ' + offerHow(JOBS[k]) : 'Not yet. Try again.'; }
+  render(); save();
+  var n = document.querySelector('#stage .inp:not([disabled])'); if (n) n.focus(); else { n = document.querySelector('[data-act="take"]:not([disabled])'); if (n) n.focus(); }
+}
+function offerHow(j) {
+  if (j.type === 'salary') return 'Yearly salary ÷ 26 = ' + fmtW(j.yearly) + ' ÷ 26.';
+  if (j.type === 'commission') return j.hours[0] + ' × ' + fmt(j.rate) + ' + ' + Math.round(j.pct * 100) + '% of ' + fmtW(j.sales[0]) + '.';
+  return j.hours[0] + ' hours × ' + fmt(j.rate) + '.';
+}
+function pickOpt(i) {
+  var s = cur(), q = question(s.id), u = st.ui, o = q.opts[i];
+  if (u.done || !o) return;
+  u.picked = (u.picked || []).concat([i]);
+  if (!u.tried) record('q-' + s.id, q.label, q.ch, !!o[1]); else st.ans['q-' + s.id].tries++;
+  u.tried = 1; u.fb = o[2]; u.fbOk = !!o[1];
+  if (o[1]) u.done = 1;
+  render(); save();
+  var f = u.done ? document.querySelector('[data-act="next"]') : document.querySelector('#stage .opt:not(:disabled)'); if (f) f.focus();
+}
+function pickAsk(i) {
+  var s = cur(), u = st.ui, o = ASKS[s.topic].opts[i], a = st.asks[s.topic];
+  if (u.done || !o) return;
+  u.picked = (u.picked || []).concat([i]);
+  if (!u.tried && o[1]) a.first++;
+  if (!u.tried) record('ask-' + s.topic + '-p' + st.run.p, 'What would help? (' + (s.topic === 'bounce' ? 'a payment bounced' : 'jar behind') + ')', st.ch, !!o[1]);
+  u.tried = 1; u.fb = o[2]; u.fbOk = !!o[1];
+  if (o[1]) { u.done = 1; st.pulse = 'jar'; }
+  render(); save();
+  var f = u.done ? document.querySelector('[data-act="next"]') : document.querySelector('#stage .opt:not(:disabled)'); if (f) f.focus();
+}
+function checkStub() {
+  var s = cur(), a = actualOf(st.run, s.p), u = st.ui, maxTries = st.mode === 'real' ? 2 : 3, first = null;
+  STUB_LINES.forEach(function (L) {
+    var x = u[L.k] || (u[L.k] = {}), inp = $('st-' + L.k), v, right;
+    if (!inp || x.ok || x.shown) return;
+    x.v = inp.value; v = parseMoney(inp.value);
+    if (isNaN(v)) { x.no = 0; if (!first) first = L.k; return; }
+    right = close(v, a.stub[L.k]);
+    if (L.k === 'tax' && !right && (a.stub.gross % 10000) === 5000) right = close(v, taxAtRow(rowOf(a.stub.gross) - 100)); // exactly half way: either row is fine
+    record('stub-p' + s.p + '-' + L.k, 'Paycheque ' + s.p + ': ' + L.name, st.ch, right);
+    x.tries = (x.tries || 0) + 1;
+    if (right) { x.ok = 1; x.no = 0; x.hint = ''; }
+    else if (x.tries >= maxTries) { x.shown = 1; x.no = 0; x.hint = ''; }
+    else { x.no = 1; x.hint = st.mode === 'gentle' ? stubHint(L.k, a) : 'Not yet.'; if (!first) first = L.k; }
+  });
+  render(); save();
+  var f = first && $('st-' + first); if (f) f.focus(); else { f = document.querySelector('[data-act="deposit"]'); if (f) f.focus(); }
+}
+function afterResult() {
+  var r = st.run, o = outcome(r), t, extra = [];
+  if (o.done && o.why === 'strikes' && st.mode === 'real') { st.queue.splice(st.i + 1, st.queue.length, { t: 'lost' }); go(); return; }
+  t = helpTopic(r);
+  if (t && shouldAsk(t)) {
+    if (!st.asks[t]) st.asks[t] = { seen: 0, first: 0 };
+    st.asks[t].seen++; st.lastAsk = r.p;
+    extra.push({ t: 'ask', topic: t });
+  }
+  if (extra.length) st.queue.splice.apply(st.queue, [st.i + 1, 0].concat(extra));
+  go();
+}
+/* Ask only in Chapters 2–4, never two paycheques in a row, and stop asking about a topic after two first-try answers or four showings */
+function shouldAsk(t) {
+  var a = st.asks[t];
+  if (a && (a.first >= 2 || a.seen >= 4)) return false;
+  return st.run.p - st.lastAsk >= 2;
+}
+
+/* ── Pay Card, Check my project, Report ── */
+function openModal(h, focusId) {
+  $('box').innerHTML = h; $('modal').hidden = false; $('modal').scrollTop = 0; lastFocus = document.activeElement;
+  var f = $(focusId || 'boxTitle'); if (f) { if (!focusId) f.setAttribute('tabindex', '-1'); f.focus({ preventScroll: true }); }
+}
+var lastFocus = null;
+function closeModal() { $('modal').hidden = true; if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus(); }
+function openCard() {
+  var h = '<h2 id="boxTitle">Pay Card (2026)</h2><div class="tablewrap"><table class="rep"><thead><tr><th>Deduction</th><th>Who pays it</th><th>How much</th></tr></thead><tbody>' +
+    '<tr><td><b>EI</b></td><td>Every worker, any age</td><td>1.63% of gross pay</td></tr>' +
+    '<tr><td><b>CPP</b></td><td>Workers 18 and older</td><td>5.95% of (gross pay − $135)</td></tr>' +
+    '<tr><td><b>Income tax</b></td><td>Workers who earn more than the tax-free amount</td><td>Find the row nearest your gross pay</td></tr></tbody></table></div>' +
+    '<h3>Income tax every two weeks</h3><div class="tablewrap"><table class="rep"><thead><tr><th>Gross pay</th><th>Income tax</th><th>Gross pay</th><th>Income tax</th></tr></thead><tbody>', i, a, b;
+  for (i = 0; i < 9; i++) {
+    a = PAY_CARD[i]; b = PAY_CARD[i + 9];
+    h += '<tr><td class="n">' + (i === 0 ? '$300 to $600' : fmtW(a[0] * 100)) + '</td><td class="n">' + fmt(a[1]) + '</td><td class="n">' + (b ? fmtW(b[0] * 100) : '–') + '</td><td class="n">' + (b ? fmt(b[1]) : '–') + '</td></tr>';
+  }
+  h += '</tbody></table></div><p class="small" style="margin-top:6px">These are estimates using 2026 tax rates. A real pay stub can be off by a few dollars. Tax-free amounts: Canada $16,452, Alberta $22,769 a year.</p>' +
+    '<div class="actions"><button class="btn primary" id="boxClose" type="button">Close</button></div>';
+  openModal(h);
+}
+function openCheck(prev) {
+  var p = prev || { type: 'wage' }, f = function (id, label, v) { return '<label>' + label + '<input class="inp" id="' + id + '" inputmode="decimal" autocomplete="off" value="' + esc(v == null ? '' : v) + '"></label>'; };
+  var h = '<h2 id="boxTitle">Check my project</h2><p>Type the facts from <b>your project’s</b> job, then <b>your own</b> pay stub lines. This marks each line ✓ or ✗. It does not give the answers.</p>' +
+    '<h3>Your job</h3><div class="seg" role="group" aria-label="Pay type"><button class="btn sm" type="button" data-ck="wage" aria-pressed="' + (p.type === 'wage') + '">Wage (by the hour)</button><button class="btn sm" type="button" data-ck="salary" aria-pressed="' + (p.type === 'salary') + '">Salary (by the year)</button></div>' +
+    '<div class="chk-grid" style="margin-top:8px">' + (p.type === 'wage' ? f('ckRate', 'Wage per hour ($)', p.rate) + f('ckHours', 'Hours in two weeks', p.hours) : f('ckYear', 'Salary per year ($)', p.year)) + f('ckAge', 'Worker’s age', p.age) + '</div>' +
+    '<h3>Your pay stub</h3><div class="chk-grid">' + STUB_LINES.map(function (L) { return f('ck-' + L.k, L.name + ' ($)', p[L.k]); }).join('') + '</div>' +
+    '<div id="ckOut" aria-live="polite" style="margin-top:10px"></div><p class="small">Commission or tips? Ask your team’s Checker or your teacher.</p>' +
+    '<div class="actions"><button class="btn primary" type="button" id="ckGo">Check</button><button class="btn" id="boxClose" type="button">Close</button></div>';
+  openModal(h, 'ckGo');
+}
+function readCheck() {
+  var t = document.querySelector('[data-ck][aria-pressed="true"]').getAttribute('data-ck'), o = { type: t }, g = function (id) { var e = $(id); return e ? e.value : ''; };
+  o.rate = g('ckRate'); o.hours = g('ckHours'); o.year = g('ckYear'); o.age = g('ckAge');
+  STUB_LINES.forEach(function (L) { o[L.k] = g('ck-' + L.k); });
+  return o;
+}
+function runCheck() {
+  var o = readCheck(), age = parseInt(o.age, 10), g, s, out = [], marks = {}, rec;
+  g = o.type === 'wage' ? (function () { var r = parseMoney(o.rate), h = parseFloat(o.hours); return isNaN(r) || isNaN(h) ? NaN : Math.round(r * h); })() : (function () { var y = parseMoney(o.year); return isNaN(y) ? NaN : Math.round(y / 26); })();
+  if (isNaN(g) || isNaN(age)) { $('ckOut').innerHTML = '<p class="fb no">Fill in the job facts and the age first.</p>'; return; }
+  s = stubOf(g, age);
+  STUB_LINES.forEach(function (L) {
+    var v = parseMoney(o[L.k]), ok = !isNaN(v) && (close(v, s[L.k]) || (L.k === 'tax' && g % 10000 === 5000 && close(v, taxAtRow(rowOf(g) - 100))));
+    if (L.k === 'net' && !ok && !isNaN(v)) { // a net pay that follows from the student's own lines is marked as following on
+      var own = parseMoney(o.gross) - (parseMoney(o.ei) || 0) - (parseMoney(o.cpp) || 0) - (parseMoney(o.tax) || 0);
+      if (!isNaN(own) && close(v, own)) { marks[L.k] = 'follows'; out.push('<li>→ ' + L.name + ': your subtraction is right. Fix the lines above and it will be right too.</li>'); return; }
+    }
+    marks[L.k] = isNaN(v) ? 'blank' : ok ? 'ok' : 'no';
+    out.push('<li>' + (isNaN(v) ? '— ' + L.name + ': blank' : ok ? '<span style="color:var(--good)">✓</span> ' + L.name : '<span style="color:var(--bad)">✗</span> ' + L.name + ': not yet') + '</li>');
+  });
+  $('ckOut').innerHTML = '<ul style="list-style:none">' + out.join('') + '</ul>';
+  rec = { t: new Date().toISOString().slice(0, 16).replace('T', ' '), job: o.type === 'wage' ? o.rate + '/h × ' + o.hours + ' h' : o.year + '/yr', age: age, marks: marks, input: o };
+  st.checks.push(rec); if (st.checks.length > 10) st.checks.shift(); save();
+}
+function openReport() {
+  var r = st.run, h = '<h2 id="boxTitle">Report: Payday</h2>', k, a, rows, byCh = {}, firstOK = 0, firstN = 0, o;
+  if (!r) h += '<p>No game yet.</p>';
+  else {
+    o = outcome(r);
+    h += '<p><b>' + W().name + '</b>' + (r.job ? ' · ' + esc(J().title) + ' (' + J().type + ')' : '') + ' · Mode now: ' + (st.mode === 'real' ? 'Real' : 'Gentle') + ' · Chapters done: ' + (Object.keys(st.done).join(', ') || 'none') +
+      ' · ' + (o.done ? (o.win ? '<b>Goal reached</b>' : '<b>Goal not reached</b>') : 'In progress, chapter ' + st.ch) + '</p>';
+    h += '<h3>Paycheques</h3>';
+    if (!r.log.length) h += '<p>None yet.</p>';
+    else h += '<div class="tablewrap"><table class="rep"><thead><tr><th>#</th><th>Hours</th><th>Gross</th><th>Deductions</th><th>Take-home</th><th>Bills</th><th>To jar</th><th>Bank</th></tr></thead><tbody>' +
+      r.log.map(function (l) { return '<tr><td>' + l.p + (l.bounced ? ' <span class="tag bad">bounced</span>' : '') + '</td><td class="n">' + l.hours + '</td><td class="n">' + fmt(l.stub.gross) + '</td><td class="n">' + fmt(l.stub.total) + '</td><td class="n">' + fmt(l.stub.net + l.tips) + '</td><td class="n">' + fmtW(l.bills) + '</td><td class="n">' + fmt(l.jarIn) + '</td><td class="n">' + fmt(l.bank) + '</td></tr>'; }).join('') +
+      '</tbody></table></div><p class="small">Jar: ' + fmt(r.jar) + ' of ' + fmtW(W().goal) + '. Bounced payments: ' + r.bounces + '.</p>';
+  }
+  var stubs = {}, sOK = 0, sN = 0, m;
+  for (k in st.ans) {
+    a = st.ans[k]; m = /^stub-p(\d)-\w+$/.exec(k);
+    if (m) { // pay stub lines: one row per paycheque
+      sN++; sOK += a.first;
+      if (!stubs[m[1]]) { stubs[m[1]] = { label: 'Paycheque ' + m[1] + ' pay stub', ch: a.ch, ok: 0, n: 0, missed: [], tries: 0 }; (byCh[a.ch] = byCh[a.ch] || []).push(stubs[m[1]]); }
+      stubs[m[1]].n++; stubs[m[1]].ok += a.first; stubs[m[1]].tries += a.tries;
+      if (!a.first) stubs[m[1]].missed.push(a.label.replace(/^Paycheque \d: /, ''));
+    } else { (byCh[a.ch] = byCh[a.ch] || []).push(a); firstN++; firstOK += a.first; }
+  }
+  h += '<h3>First-try answers</h3>' + (firstN || sN ? '<p>Questions: ' + firstOK + ' of ' + firstN + ' right on the first try. Pay stub lines: ' + sOK + ' of ' + sN + '.</p><div class="tablewrap"><table class="rep"><thead><tr><th>Ch.</th><th>Question</th><th>First try</th><th>Tries</th></tr></thead><tbody>' +
+    Object.keys(byCh).sort().map(function (c) { return byCh[c].map(function (a) {
+      var ft = a.n != null ? a.ok + ' of ' + a.n + ' lines' + (a.missed.length ? ' (missed: ' + esc(a.missed.join(', ')) + ')' : ' ✓') : (a.first ? '✓ right' : '✗ not yet');
+      return '<tr><td>' + c + '</td><td>' + esc(a.label) + '</td><td>' + ft + '</td><td class="n">' + a.tries + '</td></tr>'; }).join(''); }).join('') + '</tbody></table></div>' : '<p>None yet.</p>');
+  h += '<h3>What I wrote</h3>';
+  rows = [];
+  Object.keys(TYPED).forEach(function (id) { if (st.typed[id]) rows.push('<tr><td>' + esc(TYPED[id].label) + '</td><td>' + esc(st.typed[id]) + '</td></tr>'); });
+  if (st.typed.claim) rows.push('<tr><td>Tax claim</td><td>' + esc(st.typed.claim) + '</td></tr><tr><td>Reason</td><td>' + esc(st.typed.reason || '') + '</td></tr><tr><td>Trade-off</td><td>' + esc(st.typed.tradeoff || '') + '</td></tr>');
+  h += rows.length ? '<div class="tablewrap"><table class="rep"><tbody>' + rows.join('') + '</tbody></table></div>' : '<p>Nothing yet.</p>';
+  h += '<h3>Check my project</h3>' + (st.checks.length ? '<div class="tablewrap"><table class="rep"><thead><tr><th>When</th><th>Job</th><th>Age</th>' + STUB_LINES.map(function (L) { return '<th>' + L.name + '</th>'; }).join('') + '</tr></thead><tbody>' +
+    st.checks.map(function (c) { return '<tr><td>' + esc(c.t) + '</td><td>' + esc(c.job) + '</td><td>' + c.age + '</td>' + STUB_LINES.map(function (L) { var m = c.marks[L.k]; return '<td>' + (m === 'ok' ? '✓' : m === 'no' ? '✗' : m === 'follows' ? '→' : '—') + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div>' : '<p>Not used yet.</p>');
+  h += '<div class="actions"><button class="btn primary" id="boxClose" type="button">Close</button><button class="btn" type="button" id="bPrint">Print</button>' + (r ? '<button class="btn" type="button" id="bRestart">Start over</button>' : '') + '</div>';
+  openModal(h);
+}
+
+/* ── Tutorial: pointers at the real controls ── */
+var tour = null;
+function tourSteps() {
+  var s = cur(), a = [];
+  if (s.t === 'plan') {
+    a.push({ sel: '#sideJar', t: 'This is ' + nm() + '’s goal jar. Fill it by paycheque 8.' });
+    a.push({ sel: '#sideBills', t: 'These bills come out on every payday.' });
+    a.push({ sel: '#jarCtl', t: 'Choose how much moves to the jar on payday. Type an amount or use −25 and +25.', wait: 'jar' });
+    a.push({ sel: '#bWork', t: 'When your plan is ready, press this. Bills and the jar come out on payday. If there is not enough, a payment bounces.' });
+    a.push({ sel: '#tools', t: 'Pay Card has the deduction rates. Check my project checks your own pay stub. Report is for your teacher.' });
+  } else {
+    a.push({ sel: '#chapters', t: 'One chapter after each project step. Play a chapter, then do the step for real with your team.' });
+    if (st.run) a.push({ sel: '#side', t: 'Your worker: the goal jar, the bank, and the bills.' });
+    a.push({ sel: '#tools', t: 'Gentle gives hints. Real does not. Pay Card, Check my project and Report are here.' });
+  }
+  return a;
+}
+function maybeTour() { var s = cur(); if (!st.tourDone && !debug && s && s.t === 'plan' && s.p === 1) startTour(); }
+function unspot() { Array.prototype.forEach.call(document.querySelectorAll('.spot'), function (o) { o.classList.remove('spot'); }); }
+function placeCoach() {
+  var n = document.querySelector('.spot'), co = $('coach'), r, w, hh, x, y;
+  if (!n) return;
+  r = n.getBoundingClientRect(); w = co.offsetWidth; hh = co.offsetHeight;
+  x = Math.max(8, Math.min(document.documentElement.clientWidth - w - 8, r.left + r.width / 2 - w / 2));
+  if (r.bottom + 12 + hh <= window.innerHeight) y = r.bottom + 12;
+  else if (r.top - 12 - hh >= 0) y = r.top - 12 - hh;
+  else y = Math.max(8, window.innerHeight - hh - 8);
+  co.style.left = Math.round(x + window.pageXOffset) + 'px'; co.style.top = Math.round(y + window.pageYOffset) + 'px';
+}
+function startTour() {
+  if (tour || !$('modal').hidden) return;
+  tour = { steps: tourSteps(), i: -1 };
+  $('coachBlock').hidden = false; $('coach').hidden = false;
+  tourNext();
+}
+function tourNext() {
+  var stp, n;
+  unspot();
+  if (!tour) return;
+  tour.i++;
+  stp = tour.steps[tour.i];
+  if (!stp) { endTour(); return; }
+  n = document.querySelector(stp.sel);
+  if (!n) { tourNext(); return; }
+  n.classList.add('spot');
+  $('coachTxt').textContent = stp.t;
+  $('coachN').textContent = (tour.i + 1) + ' of ' + tour.steps.length;
+  $('coachNext').hidden = !!stp.wait;
+  $('coachNext').textContent = tour.i === tour.steps.length - 1 ? 'Start playing' : 'Next';
+  n.scrollIntoView({ block: 'nearest' });
+  placeCoach();
+  (stp.wait ? n.querySelector('input') || n : $('coachNext')).focus({ preventScroll: true });
+}
+function tourDid(what) { var stp = tour && tour.steps[tour.i]; if (stp && stp.wait === what) { stp.wait = null; setTimeout(tourNext, 600); } }
+function endTour() { unspot(); tour = null; $('coach').hidden = true; $('coachBlock').hidden = true; st.tourDone = true; save(); }
+
+/* ── Events ── */
+$('stage').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-act]');
+  if (b && !b.disabled) act(b.getAttribute('data-act'), b.getAttribute('data-v'), b);
+});
+$('stage').addEventListener('input', function (e) {
+  var s = cur(), id = e.target.id, v, eq, chk, safe, out;
+  if (id === 'typed') { st.ui.v = e.target.value; document.querySelector('[data-act="typed"]').disabled = e.target.value.trim().length < 8; }
+  if (id === 'reason' || id === 'tradeoff') { st.typed[id] = e.target.value; document.querySelector('[data-act="dialdone"]').disabled = !dialReady(); save(); }
+  if (id === 'jarIn') {
+    v = parseMoney(e.target.value);
+    if (!isNaN(v)) {
+      st.plan = Math.max(0, Math.min(500000, v)); out = billsOf(st.run.worker) + st.plan;
+      eq = $('planEq'); if (eq) eq.innerHTML = 'Out on payday: bills ' + fmtW(billsOf(st.run.worker)) + ' + jar ' + fmt(st.plan) + ' = <b>' + fmt(out) + '</b>. In the bank now: ' + fmt(st.run.bank) + '.';
+      chk = $('planChk');
+      if (chk) { safe = st.run.bank + safeTakeHome(st.run, s.p) - out >= 0; chk.className = 'fb ' + (safe ? 'yes' : 'warn'); chk.textContent = safe ? '✓ Looks safe if the pay comes in as planned.' : '⚠ Careful: after deductions, this plan may not leave enough for the bills.'; }
+      tourDid('jar');
+    }
+  }
+  if (/^of-|^st-/.test(id)) { var k = id.slice(3), u = st.ui[k] || (st.ui[k] = {}); u.v = e.target.value; }
+});
+$('stage').addEventListener('keydown', function (e) {
+  if (e.key !== 'Enter' || e.target.tagName !== 'INPUT') return;
+  var id = e.target.id;
+  if (/^of-/.test(id)) act('offer', id.slice(3));
+  else if (/^st-/.test(id)) act('checkstub');
+  else if (id === 'jarIn') { readPlan(); render(); var i = $('jarIn'); if (i) i.focus(); }
+});
+$('stage').addEventListener('change', function (e) { if (e.target.id === 'jarIn') { readPlan(); save(); } });
+$('stage').addEventListener('click', function (e) { if (e.target.closest('[data-act="jar"]')) tourDid('jar'); });
+$('tools').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-mode]');
+  if (b) { st.mode = b.getAttribute('data-mode'); render(); save(); }
+});
+$('chapters').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-chap]'), c;
+  if (!b || b.disabled) return;
+  c = Number(b.getAttribute('data-chap'));
+  if (c === st.ch) return;
+  if (st.done[c]) { openModal('<h2 id="boxTitle">Chapter ' + c + ' is done</h2><p>To play it again, use <b>Start over</b> in the Report. Your game continues in Chapter ' + st.ch + '.</p><div class="actions"><button class="btn primary" id="boxClose" type="button">OK</button></div>'); return; }
+  var s = cur(); if (s.t === 'end' && c === s.ch + 1) act('nextch');
+});
+$('bHow').addEventListener('click', startTour);
+$('bCard').addEventListener('click', openCard);
+$('bCheck').addEventListener('click', function () { openCheck(st.checks.length ? st.checks[st.checks.length - 1].input : null); });
+$('bReport').addEventListener('click', openReport);
+$('modal').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-ck]');
+  if (e.target.id === 'boxClose' || e.target.id === 'modal') closeModal();
+  else if (e.target.id === 'bPrint') window.print();
+  else if (e.target.id === 'bRestart') { closeModal(); act('restart'); }
+  else if (e.target.id === 'ckGo') runCheck();
+  else if (b) { var o = readCheck(); o.type = b.getAttribute('data-ck'); openCheck(o); }
+});
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('modal').hidden) closeModal(); });
+$('coachNext').addEventListener('click', tourNext);
+$('coachSkip').addEventListener('click', endTour);
+window.addEventListener('resize', placeCoach);
+window.addEventListener('pagehide', save);
+
+render(); maybeTour();
+if (debug) {
+  // Test hook: open the page with ?debug=1. Nothing is saved and the tutorial does not open by itself. Set window.__seed before picking a worker to fix the run.
+  window.paydayGame = {
+    PAY_CARD: PAY_CARD, eiOf: eiOf, cppOf: cppOf, rowOf: rowOf, taxOf: taxOf, taxFormula: taxFormula, stubOf: stubOf, WORKERS: WORKERS, JOBS: JOBS,
+    newRun: newRun, setJob: setJob, scheduleOf: scheduleOf, actualOf: actualOf, safeTakeHome: safeTakeHome, payday: payday, startChapter: startChapter, outcome: outcome, helpTopic: helpTopic, billsOf: billsOf,
+    question: question, ASKS: ASKS, offerQ: offerQ,
+    state: function () { return st; }, step: function () { return cur(); }, act: act, setPlan: function (c) { st.plan = c; render(); },
+    startTour: startTour, tourNext: tourNext, endTour: endTour, tour: function () { return tour; }, openReport: openReport, openCard: openCard, openCheck: openCheck, runCheck: runCheck, closeModal: closeModal
+  };
+}
+
+})();
+</script>
+</body>
+</html>

@@ -23,6 +23,7 @@ The research is clear that implementation quality decides whether PBL works
 | **Student materials** | Mini-workbook `cefl7-income-tax-workbook-v1` (4 moments) · project brief `cefl7-income-tax-project-v1` |
 | **Teams** | 4–5 students, mixed, set by you. Keep teams for the whole unit. |
 | **Audience** | A Grade 6 class, Session 7 (about 30 minutes) |
+| **Game** | *Payday*, on the unit page, optional: one 10–15 minute chapter after each of Sessions 1–4. See "The Payday game" below. |
 | **Assessment** | Single-point rubric ("How you will be marked") on the report-card scale (4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet), scored on Steps 1–3 and on the final product. No unit test. |
 
 ::: teacher
@@ -139,6 +140,22 @@ Can every team member say, in their own words, **where CPP goes and how it comes
 ::: teacher
 Read the authenticity answers. If many students say "Sort of" or "No," note what they suggest; it is the best guide to improving this project next year.
 :::
+
+## The Payday game
+
+A companion game on the unit page. Each student plays a made-up worker (Avery 17, Dev 19 or Rosa 24) through 8 paycheques: plan how much goes to a savings goal, work two weeks, fill in the pay stub with the same Pay Card, deposit. It uses the project's 2026 rates exactly.
+
+| Chapter | Play after | What it practises | Then, in the project |
+|---|---|---|---|
+| 1 · Pick a job | Session 1 (Moment 1) | Gross pay for wage, salary, commission, tips. The first paycheque is filled in for them, and most students bounce a payment because they planned on gross pay. | Step 1 |
+| 2 · The pay stub | Session 2 (Moment 2) | Students fill in every stub line. A bounced payment now counts. | Step 2. **Check my project** marks their own stub ✓/✗ without giving answers. |
+| 3 · Where it goes | Session 3 (Moment 3) | Who EI, CPP and income tax help; the tax-free amounts; extra hours never lower take-home pay. | Step 3 |
+| 4 · Your call | Session 4 (Moment 4) | A tax dial and a claim, reason and trade-off. It is not marked right or wrong. | Step 4, Path B draft |
+
+- **When:** sessions are full, so set each chapter as homework, early-finisher work, or a device day before the next session. Students must play the chapters in order; the game saves in the browser on that device.
+- **Gentle and Real:** Gentle gives hints and a plan check, and bounces only cost a fee. Real has no hints, and two bounces from Chapter 2 on end the game (the student replays the chapter).
+- **Report:** the student's **Report** button lists every paycheque, first-try answers (stub lines grouped per paycheque), what they typed, and Check-my-project attempts. It prints. Use first-try stub lines as a Knowledge look-for before Step 2's checkpoint.
+- **Simplifications** to tell students if asked: bills are counted every two weeks; CPP starts the paycheque after the 18th birthday; cash tips are not on the stub.
 
 ## Sample products (show all three in Session 4)
 
