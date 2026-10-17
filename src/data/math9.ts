@@ -54,11 +54,14 @@ export interface Strand {
   blurb: string;
   workbook: string;
   workbookKey: string;
+  /** Strand inquiry project, once built: student brief, project journal, teacher guide. */
+  project?: { brief: string; journal: string; guide: string };
 }
 
 export const strands: Strand[] = [
   { slug: 'number', label: 'Number', short: 'Number', blurb: 'Fractions, negatives, square roots and powers: the number skills every other topic leans on.', workbook: 'worksheets/number/math9-number-workbook-v1', workbookKey: 'worksheets/number/math9-number-workbook-answers-v1' },
-  { slug: 'algebra', label: 'Algebra', short: 'Algebra', blurb: 'Using letters to stand for numbers so you can describe patterns, solve problems and predict what comes next.', workbook: 'worksheets/algebra/math9-algebra-workbook-v1', workbookKey: 'worksheets/algebra/math9-algebra-workbook-answers-v1' },
+  { slug: 'algebra', label: 'Algebra', short: 'Algebra', blurb: 'Using letters to stand for numbers so you can describe patterns, solve problems and predict what comes next.', workbook: 'worksheets/algebra/math9-algebra-workbook-v1', workbookKey: 'worksheets/algebra/math9-algebra-workbook-answers-v1',
+    project: { brief: 'worksheets/algebra/math9-algebra-project-v1', journal: 'worksheets/algebra/math9-algebra-project-journal-v1', guide: 'worksheets/algebra/math9-algebra-project-teacherguide-v1' } },
   { slug: 'measurement-geometry', label: 'Measurement & Geometry', short: 'M&G', blurb: "Circles, 3-D shapes and scale copies. Measuring the things you can see, and some you can't reach.", workbook: 'worksheets/measurement-geometry/math9-measurement-geometry-workbook-v1', workbookKey: 'worksheets/measurement-geometry/math9-measurement-geometry-workbook-answers-v1' },
   { slug: 'statistics-probability', label: 'Statistics & Probability', short: 'Stats & Prob', blurb: 'Reading data like a detective and working out the chances of things happening.', workbook: 'worksheets/statistics-probability/math9-statistics-probability-workbook-v1', workbookKey: 'worksheets/statistics-probability/math9-statistics-probability-workbook-answers-v1' },
 ];
@@ -154,7 +157,7 @@ export function studentSteps(t: Topic): Material[] {
 
 /** Every path the viewer pre-renders. */
 export function allViewPaths(): string[] {
-  const paths = strands.flatMap((s) => [s.workbook, s.workbookKey]);
+  const paths = strands.flatMap((s) => [s.workbook, s.workbookKey, ...(s.project ? Object.values(s.project) : [])]);
   for (const t of topics) {
     paths.push(
       ...Object.values(t.steps),
@@ -171,6 +174,10 @@ export function allViewPaths(): string[] {
 export function backPathFor(path: string): string {
   const parts = path.split('/');
   if (parts[0] === 'home') return `math9/parents/${parts[1]}`;
+  for (const s of strands) {
+    if (s.project?.guide === path) return `math9/teacher#${s.slug}-project`;
+    if (s.project?.brief === path || s.project?.journal === path) return `math9/materials/${s.slug}`;
+  }
   for (const t of topics) {
     if (t.teacherNotes === path) return `math9/teacher#${t.slug}`;
     const listed = [...Object.values(t.steps), ...t.extras.map((m) => m.path), ...t.keys.map((m) => m.path)];

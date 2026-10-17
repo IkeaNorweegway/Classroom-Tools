@@ -12,7 +12,7 @@ Math 9 builds the algebraic and geometric reasoning students need for senior mat
 | Strand | Topics | Tier |
 |---|---|---|
 | Number | Rational numbers, Powers & exponents, Square roots | Tier 1 |
-| Patterns & Relations | Linear relations, Linear equations, Linear inequalities | Tier 1 |
+| Patterns & Relations (Algebra on the site) | Linear relations, Linear equations & inequalities, Polynomials | Tier 1 |
 | Shape & Space | Circle geometry, Surface area & volume, Similarity & scale | Tier 2 |
 | Statistics & Probability | Scatter plots & correlation, Probability (independent/dependent) | Tier 2 |
 
@@ -28,7 +28,8 @@ Math 9 builds the algebraic and geometric reasoning students need for senior mat
 **Patterns & Relations:**
 - Linear relations: y = mx + b form; graphing; slope as rise/run and as a rate of change; direct and partial variation; NOT systems of equations (Grade 10)
 - Equations: multi-step linear equations with rational coefficients; NOT quadratic equations
-- Inequalities: one-variable linear inequalities; graphing on number line; NOT compound inequalities
+- Inequalities (taught inside Linear equations, Section 4): one-variable linear inequalities; graphing on number line; NOT compound inequalities
+- Polynomials: degree ≤ 2; add, subtract, monomial × polynomial, binomial × binomial (area model); NOT factoring trinomials
 
 **Shape & Space:**
 - Circle geometry: chord properties, central and inscribed angle theorem, tangent-radius property; NO formal proof of theorems (descriptive/investigative)
@@ -94,7 +95,7 @@ Build in this order within each strand to respect conceptual dependencies:
 **Number:** Rational numbers → Powers & exponents → Square roots
 *(Rational numbers first because exponent laws involve rational operations; square roots connect to both)*
 
-**Patterns & Relations:** Linear relations → Linear equations → Linear inequalities
+**Patterns & Relations:** Linear relations → Linear equations & inequalities → Polynomials
 *(Relations provide the graphical/conceptual foundation; equations are algebraic tools; inequalities extend equations)*
 
 **Shape & Space:** Circle geometry → Surface area & volume → Similarity & scale
@@ -118,3 +119,25 @@ After every worked example, include a self-explanation prompt: "Explain what hap
 
 **Alberta contexts:**
 Anchor problems use recognizable Alberta settings: Fort McMurray, Banff, Edmonton, Calgary, canola fields, pipeline, hockey rinks, oil sands. These are not cosmetic — contexts should be genuine (removing the context makes the math problem incoherent) rather than pseudo-context (the scenario is decorative and students ignore it).
+
+---
+
+## Inquiry Projects
+
+One project per strand, each with **3 options** of equal difficulty on one shared rubric. Budget: **5 class periods plus 1 buffer**, run in the last part of the strand. Template and build rules: `templates/inquiry-project-template.md`. Evidence: `research/project-based-learning-research.md`.
+
+| Strand | Status | Options |
+|---|---|---|
+| Algebra | **Pilot built** (2026-10-17): brief, journal, teacher guide, on the site | Stacking Cups · Which Plan Wins? (Calgary/Edmonton transit) · Garden Path Design (polynomials) |
+| Number | Not started | Idea: "how big is a billion?" estimation with powers and scientific notation |
+| Measurement & Geometry | Not started | Idea: scale model / indirect measurement of a school landmark |
+| Statistics & Probability | Not started | Idea: "does it really correlate?" with Alberta data |
+
+**Math-specific rules:**
+- The driving questions are launched in **strand Lesson 1** (10 min) to create the need to know. The project periods come later.
+- Each project has two 10-minute mini-lessons with worked examples that are *not* taken from any option, one gallery-walk critique with a revision log, and a real audience.
+- Each option's model uses the **Rule of Four** (table, graph, equation, words), and the journal has a Checker's table-vs-equation test.
+- Rubric: Model (S&P) · Solve and predict (S&P) · Explain the meaning (Understanding, **individual**) · Communicate (Understanding). 4 × 3 = 12.
+- **Local outcome codes** (no official codes yet): one per notes-package section. LR1–LR4 (Linear Relations S1–S4), LE1–LE5 (Linear Equations S1–S5), PO1–PO6 (Polynomials S1–S6). Same pattern as RN1–RN5.
+- Real prices and data carry a source and a "checked" date; transit fares change every January.
+

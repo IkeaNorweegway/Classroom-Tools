@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math 9 — Algebra Inquiry Project — Teacher Guide</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 11pt;
+  line-height: 1.55;
+  color: #1e293b;
+  background: #fff;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 28px 32px 56px;
+}
+:root {
+  --accent: #4f46e5;
+  --accent-light: #eef2ff;
+  --accent-mid: #4338ca;
+}
+h1 { font-size: 22pt; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+h2 { font-size: 14pt; font-weight: 700; color: var(--accent); margin: 32px 0 10px; border-bottom: 2px solid var(--accent-light); padding-bottom: 4px; }
+h3 { font-size: 11.5pt; font-weight: 700; color: #334155; margin: 0; text-transform: uppercase; letter-spacing: .04em; padding: 8px 12px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; }
+h4 { font-size: 11pt; font-weight: 700; color: var(--accent); margin: 16px 0 4px; }
+p { margin-bottom: 8px; }
+ul, ol { margin: 6px 0 10px 22px; }
+li { margin-bottom: 4px; }
+strong { font-weight: 700; }
+em { font-style: italic; color: #475569; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10.5pt; }
+th { background: var(--accent-light); color: var(--accent); font-weight: 700; text-align: left; padding: 7px 10px; border: 1px solid var(--accent-light); }
+td { padding: 8px 10px; border: 1px solid #e2e8f0; vertical-align: top; }
+tr:nth-child(even) td { background: #f8fafc; }
+hr { border: none; border-top: 2px solid #e2e8f0; margin: 24px 0; }
+.teacher-banner { background: var(--accent); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 9pt; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; display: inline-block; margin-bottom: 10px; }
+.show { border-left: 4px solid #64748b; background: #f8fafc; padding: 10px 14px; margin: 0; }
+.say  { border-left: 4px solid #0284c7; background: #f0f9ff; padding: 10px 14px; margin: 0; border-top: 1px solid #e8f4fb; }
+.cue  { border-left: 4px solid #6366f1; background: #eef2ff; padding: 10px 14px; margin: 0; border-top: 1px solid #e8eeff; }
+.beat-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; }
+.show .beat-label { color: #475569; }
+.say  .beat-label { color: #0284c7; }
+.cue  .beat-label { color: #4f46e5; }
+.say-label { color: #0284c7; }
+.cue-label { color: #4f46e5; }
+.beat { border: 1px solid #e2e8f0; border-radius: 8px; margin: 44px 0 0; overflow: hidden; }
+.flag { border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 14px 0; font-size: 10.5pt; }
+.flag .flag-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; display: block; }
+.flag-misconception { border-left: 4px solid #dc2626; background: #fef2f2; }
+.flag-misconception .flag-label { color: #dc2626; }
+.flag-pacing { border-left: 4px solid #d97706; background: #fffbeb; }
+.flag-pacing .flag-label { color: #b45309; }
+.answer-guide { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px 18px; margin: 14px 0; }
+.answer-guide .ag-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #16a34a; margin-bottom: 8px; display: block; }
+.answer-guide ol { margin-left: 18px; }
+.answer-guide li { margin-bottom: 10px; }
+.section-meta { font-size: 9.5pt; color: #64748b; margin: 3px 0 14px; }
+.section-meta span { background: #f1f5f9; border: 1px solid #e2e8f0; padding: 1px 8px; border-radius: 10px; font-weight: 600; margin-right: 5px; white-space: nowrap; }
+.flags-summary th { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+@media print { body { padding: 12px 18px; } h2 { page-break-before: always; } .beat { break-inside: avoid; } }
+
+  /* ── Stacked fractions (scripts/stack_fractions.py) ── */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.15;
+    margin: 0 1px;
+  }
+  .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+  .frac .den { padding: 1px 3px 0; }
+
+  .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ── Inquiry project additions (scripts/render_math9_projects.py) ── */
+  .beat h3 + div, .beat > div { margin: 0; }
+  .beat-label { display: block; }
+  .beat p:last-child { margin-bottom: 0; }
+  .flag p:last-child, .answer-guide p:last-child { margin-bottom: 0; }
+  .answer-guide table { background: #fff; }
+  .teacher-banner p { margin: 0; }
+  code { font-size: 0.9em; background: #f1f5f9; padding: 0 3px; border-radius: 3px; }
+  @media print { h1 + h2 { page-break-before: avoid; break-before: avoid; } }
+</style>
+</head>
+<body>
+<!-- Render: python3 scripts/render_math9_projects.py → public/materials/math-9/worksheets/algebra/math9-algebra-project-teacherguide-v1.html -->
+<div class="teacher-banner">
+<p>Teacher Copy — Not for Students</p>
+</div>
+<h1>Math 9 — Algebra Inquiry Project</h1>
+<h2>Teacher Guide</h2>
+<p><em>Companion to the student brief (<code>math9-algebra-project-v1</code>) and the Project Journal (<code>math9-algebra-project-journal-v1</code>). Teaching reference, not a script.</em></p>
+<hr />
+<h2>How to use this document</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Label</th>
+<th>What it contains</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SHOW</strong></td>
+<td>What students see: board, projector or handout.</td>
+</tr>
+<tr>
+<td><strong>SAY</strong></td>
+<td>Key phrases and questions. Answers in <strong>[brackets]</strong>.</td>
+</tr>
+<tr>
+<td><strong>CUE</strong></td>
+<td>The student signal: ★ Write / ✎ Draw / ⊡ Think / ↩︎ Check</td>
+</tr>
+<tr>
+<td>Red flag</td>
+<td>A misconception that will cost marks if it isn’t addressed.</td>
+</tr>
+<tr>
+<td>Amber flag</td>
+<td>A place where projects stall, with a time target.</td>
+</tr>
+<tr>
+<td>Green box</td>
+<td>Expected answers for the option.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why this project is built the way it is.</strong> <code>research/project-based-learning-research.md</code>: projects raise achievement only when they are structured. That means the driving question comes early, short explicit lessons happen <em>inside</em> the project, there’s a critique-and-revise cycle, teams are 4–5 with roles, and the work goes to a real audience. Unstructured “go figure it out” projects do worse than direct teaching. Every period below has a mini-lesson or a protocol for that reason.</p>
+<hr />
+<h2>Project at a Glance</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>When</th>
+<th>What</th>
+<th>Must be taught first</th>
+<th>Journal page</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Strand Lesson 1</strong> (10 min)</td>
+<td>Launch: show the three driving questions, vote, start the need-to-know wall</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Period 1</strong></td>
+<td>Teams, roles, gut guess, plan; Option 1 measures</td>
+<td>Linear Relations S1–S4</td>
+<td>M1</td>
+</tr>
+<tr>
+<td><strong>Period 2</strong></td>
+<td>Mini-lesson A (equation from a table) → build the model</td>
+<td>Linear Relations S1–S4; Option 3: Polynomials S6</td>
+<td>M2</td>
+</tr>
+<tr>
+<td><strong>Period 3</strong></td>
+<td>Mini-lesson B (solve for a target / break-even / budget) → draft</td>
+<td>Linear Equations S2, S3; Option 2: S4</td>
+<td>M3</td>
+</tr>
+<tr>
+<td><strong>Period 4</strong></td>
+<td>Gallery-walk critique → revise</td>
+<td>—</td>
+<td>M4</td>
+</tr>
+<tr>
+<td><strong>Period 5</strong></td>
+<td>Showdown / recommendation / pitch → individual reflection</td>
+<td>—</td>
+<td>M5</td>
+</tr>
+<tr>
+<td><strong>Period 6</strong> <em>(buffer)</em></td>
+<td>Finish, or return marked work for the 10-minute written response</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where it sits in the strand.</strong> Linear Relations → Linear Equations → Polynomials. Run Periods 1–5 after Polynomials Section 6. If no team picks Option 3, you can start after Linear Equations Section 5 and teach Polynomials afterward. If you need the project earlier, Option 3 teams can start Period 2 with a 10-minute area-model preview of binomial multiplication. That is explicit instruction inside the project, which the research supports.</p>
+<div class="flag flag-pacing">
+<p><span class="flag-label">Flag — Pacing</span> Five periods is tight. The two points that run over are <strong>Period 1</strong> (Option 1 teams measuring too carefully) and <strong>Period 4</strong> (revision that turns into starting over). Time targets are on each beat. If a team misses a milestone, they finish it at the start of the next period. Don’t let them skip ahead to the next one.</p>
+</div>
+<hr />
+<h2>Prep and Materials</h2>
+<p><strong>All options:</strong> printed brief (one per student), Project Journal (one per student), sticky notes in two colours, chart paper or whiteboards for the gallery walk, rubric copies.</p>
+<p><strong>Option 1 — Stacking Cups:</strong> per team, about 12 each of two different cup types (for example, a tall plastic cup and a short paper or foam cup) and a metre stick or tape measure. Measure the classroom door yourself beforehand, and pick a <strong>mystery height</strong> for the showdown that a team can build with their cups (60–90 cm works).</p>
+<p><strong>Option 2 — Which Plan Wins?:</strong> the rider profile cards below, cut out (one per team). <strong>Check the prices on the data card</strong> against calgarytransit.com and edmonton.ca/ets before you print. Fares change every January.</p>
+<p><strong>Option 3 — Garden Path Design:</strong> grid paper for sketches. The stone and edging prices are samples, so you can swap in a local flyer price. If you do, re-solve the answer guide (the budget width changes). Arrange the audience early: an admin, a parent volunteer, or the school’s garden club.</p>
+<h3>Rider profile cards (Option 2)</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Card</th>
+<th>Rider</th>
+<th>Rides in a typical month</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td><strong>Ava</strong> takes the bus to school and back every school day, plus about 6 weekend trips.</td>
+<td>2 × 20 + 6 = <strong>46</strong></td>
+</tr>
+<tr>
+<td>B</td>
+<td><strong>Jordan</strong> rides to school and back only on the 3 days a week they don’t get a ride, about 4 weeks a month.</td>
+<td>2 × 3 × 4 = <strong>24</strong></td>
+</tr>
+<tr>
+<td>C</td>
+<td><strong>Sam</strong> rides to school and back every school day, nothing else.</td>
+<td>2 × 20 = <strong>40</strong>, but only <strong>30</strong> in a month with a week off</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Launch — Strand Lesson 1 (10 min)</h2>
+<section class="beat">
+<h3>Beat 1 — Three questions, no answers yet</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> Three photos side by side: a tall stack of cups beside a door; a Calgary Transit pass next to a pile of single tickets; a raised garden bed with a stone path. Under each, its driving question.</p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> “By the end of this strand you’ll be able to answer one of these <em>before</em> you find out the hard way. Right now, nobody can. Which one bugs you most?”<br />
+“What would you need to know to answer it?” <em>(Take 2–3 answers for each one: [how much one cup adds], [how many rides], [how big the path is].)</em></p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ⊡ Think → vote by hand. ★ Write: each student adds one sticky note to a <strong>need-to-know wall</strong> under their question. Leave the wall up all strand.</p>
+</div>
+</section>
+<p><strong>Why this is in Lesson 1:</strong> it creates the “need to know.” When Linear Relations Section 3 introduces <em>b</em>, point at the wall: “This is the cup question.” This is the same information-gap mechanism as a Three Act task (see <code>research/three-act-math-research.md</code>).</p>
+<hr />
+<h2>Period 1 — Teams, Roles, Plan</h2>
+<section class="beat">
+<h3>Beat 2 — Teams and roles (8 min)</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> The role table from the brief.</p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> “Everyone does the math. Your role is what you’re responsible for <em>checking</em>.”<br />
+“Checker: your job is the question ‘how do we know?’ You test the equation against the table at M2.”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ★ Write: tick your option and role on the journal cover.</p>
+</div>
+</section>
+<p><strong>Team size:</strong> 4–5. The research effect drops sharply above 5. Assign teams yourself. Mix strong and developing students, and don’t put two students who struggle with fractions and decimals on the same Option 2 or 3 team.</p>
+<section class="beat">
+<h3>Beat 3 — Gut guess, then plan (rest of period)</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> Journal page M1.</p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> “Guess first. No math. You’ll compare it at the end, and the gap is the point of the project.”<br />
+“What would you have to <em>measure</em> or <em>look up</em> to stop guessing?”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ★ Write: each member’s guess and reason. ★ Write: at least 3 rows of the need-to-know table. ↩︎ Check: teacher initials M1 before the team moves on.</p>
+</div>
+</section>
+<div class="flag flag-pacing">
+<p><span class="flag-label">Flag — Pacing</span> Option 1 teams should measure stacks of 1–8 cups for <strong>both</strong> cup types this period (about 20 min). Measure from the table to the top rim, with the metre stick held upright. Teams that measure each cup five times won’t finish. One careful measurement per stack is enough.</p>
+</div>
+<hr />
+<h2>Period 2 — Build the Model</h2>
+<section class="beat">
+<h3>Beat 4 — Mini-lesson A: equation from a table (10 min)</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> <strong>Example 1.</strong> Ski rental at a Calgary hill. Table <em>h</em> (hours) 0, 1, 2, 3, 4 → <em>C</em> ($) 15, 24, 33, 42, 51.<br />
+<strong>Example 2.</strong> Rows of seats at an Edmonton arena. <em>r</em> (row) 1, 2, 3, 4 → <em>s</em> (seats) 18, 20, 22, 24.</p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> Example 1: “How much does <em>C</em> change when <em>h</em> goes up by 1? [9] That’s <em>m</em>. What is <em>C</em> when <em>h</em> = 0? [15] That’s <em>b</em>. So <em>C</em> = 9<em>h</em> + 15.”<br />
+Example 2: “Change per row? [2] Is 18 the intercept?” Wait. “[No: 18 is row 1. Step back one row: 18 − 2 = 16.] <em>s</em> = 2<em>r</em> + 16.”<br />
+“Your cups work like Example 2. Nobody measures zero cups.”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ★ Write both examples in the M2 mini-lesson box. ↩︎ Check: substitute <em>r</em> = 3 → 2(3) + 16 = [22] ✓.</p>
+</div>
+</section>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>“b is the first number in the table.”</strong> It’s only true when the table starts at 0. Ask: “What input does this row have? What would the output be one step <em>before</em> it?” This comes back in Option 1, where <em>b</em> is the cup height <strong>minus</strong> one lip, and in Option 3, where the edging intercept is the bed’s own perimeter.</p>
+</div>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>“Slope is the y-intercept”</strong> / mixing up <em>m</em> and <em>b</em>. Make teams say the meaning with units: “<em>m</em> = 1.2 cm <strong>per cup</strong>,” “<em>b</em> = 10.3 cm, the part of a cup that isn’t lip.” If they can’t give a unit, they don’t know which one it is.</p>
+</div>
+<section class="beat">
+<h3>Beat 5 — Build the four forms (rest of period)</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> Journal page M2.</p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> “Table, graph, equation, words: they’re four views of <strong>one</strong> thing. If any two disagree, one of them is wrong.”<br />
+Option 1: “Your real data won’t be perfectly even. Use the <em>typical</em> change per cup.” (Lines of best fit come in Statistics. Here, the average change is enough.)<br />
+Option 3: “Is the area graph a straight line? [No] Should it be? Look at the <em>x</em>² term.”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ✎ Draw the graph. ★ Write the equation and the words. ↩︎ Check: the Checker fills the two-row agreement table. ★ Write: each student fills the blue <em>On your own</em> box (marked for Criterion 3).</p>
+</div>
+</section>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>Option 3: (3 + 2<em>x</em>)(1.2 + 2<em>x</em>) = 3.6 + 4<em>x</em>²</strong>, which drops the middle terms. This is the most common binomial error (Polynomials notes, Section 6). Don’t correct it directly: the Checker’s numeric test at <em>x</em> = 0.5 catches it (the wrong rule gives 1.0 m² instead of 5.2). Also watch for teams who add <em>x</em> instead of 2<em>x</em> to each side, because they forget the path is on <em>both</em> ends.</p>
+</div>
+<hr />
+<h2>Period 3 — Use the Model</h2>
+<section class="beat">
+<h3>Beat 6 — Mini-lesson B: three kinds of question (10 min)</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> Using the Period 2 examples:<br />
+<strong>Target:</strong> Which row has 40 seats? 2<em>r</em> + 16 = 40<br />
+<strong>Break-even:</strong> Another hill rents for $12 an hour, no fee. When do the two cost the same? 9<em>h</em> + 15 = 12<em>h</em><br />
+<strong>When is it cheaper?</strong> 9<em>h</em> + 15 &lt; 12<em>h</em></p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> Target: “[2<em>r</em> = 24, <em>r</em> = 12]. Check: 2(12) + 16 = 40 ✓.”<br />
+Break-even: “Variables on both sides: move them to one side. [15 = 3<em>h</em>, <em>h</em> = 5 hours].”<br />
+Inequality: “[15 &lt; 3<em>h</em> → <em>h</em> &gt; 5]. Did we flip the sign? [No: we divided by a <strong>positive</strong> 3.] Longer than 5 hours, the first hill is cheaper.”<br />
+“Then ask: does the answer make sense? Can you rent for 4.7 hours? Can you buy 34.7 rides?”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ★ Write the three in the M3 mini-lesson box. ⊡ Think: which of the three is your team’s question?</p>
+</div>
+</section>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>“With an inequality you always flip the sign.”</strong> You only flip when you multiply or divide both sides by a <strong>negative</strong>. In Option 2 every coefficient is positive, so nothing flips. Ask: “What did you divide by? Was it negative?”</p>
+</div>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>Rounding without thinking about the situation.</strong> 34.7 rides → the pass wins from <strong>35</strong> rides (round up). 160.6 cups → <strong>161</strong> to reach the top (round up). Budget path width 0.563 m → <strong>0.56 m</strong> to stay under budget (round <em>down</em>). Ask: “If you round the other way, what goes wrong in real life?”</p>
+</div>
+<hr />
+<h2>Period 4 — Critique and Revise</h2>
+<section class="beat">
+<h3>Beat 7 — Gallery walk (25 min)</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> Each team’s M2–M3 work posted on chart paper. Focus question for round 1: <strong>“Test one row: do the table and equation agree?”</strong> Round 2: <strong>“Does the answer make sense in real life?”</strong></p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> “Kind, specific, helpful. ‘Looks good’ gets handed back.”<br />
+“Round 1: pick a row, substitute it into their equation, and write what you got.”<br />
+“Round 2: read their answer. Would you act on it? What would you ask them?”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> Two rounds × 8 min, each team visiting a different poster. Yellow sticky = round 1, pink = round 2. ★ Write: one sticky per round, plus a copy in your journal’s “Feedback I gave” table.</p>
+</div>
+</section>
+<section class="beat">
+<h3>Beat 8 — Revise (rest of period)</h3>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> “Sort your stickies: what do we fix, what do we answer, what do we politely ignore, and why?”<br />
+“Log each change: what changed, which sticky caused it, before → after.”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ★ Write: at least two revision-log rows. ↩︎ Check: teacher initials M4.</p>
+</div>
+</section>
+<div class="flag flag-pacing">
+<p><span class="flag-label">Flag — Pacing</span> If a team wants to start over, don’t let them. Revision means fixing the weakest part. By 15 minutes before the bell, every team should know what goes in its final product.</p>
+</div>
+<hr />
+<h2>Period 5 — Show It</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Option</th>
+<th>Format</th>
+<th>Audience</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Showdown.</strong> Announce the mystery height. Teams have 3 min to calculate and write the number on a whiteboard, then build. Measure. Closest wins. Each team gets 1 minute to explain the gap.</td>
+<td>Another class, or the other Option 1 teams</td>
+<td>~25 min</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Recommendation letter</strong> (one page) handed to the “family.” Have it read by a staff member or parent, or sent home. Teams read the best two lines aloud.</td>
+<td>Family / staff reader</td>
+<td>~20 min</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>3-minute pitch</strong> to the garden committee, with 2 questions from the committee.</td>
+<td>Admin, parent volunteer, or garden club</td>
+<td>~25 min</td>
+</tr>
+</tbody>
+</table>
+<p>Last 10–15 min: the individual reflection on journal page M5. This is not homework. It’s done in class, and it feeds Criterion 3.</p>
+<hr />
+<h2>Answer Guides</h2>
+<div class="answer-guide">
+<p><span class="ag-label">Option 1 — Stacking Cups (sample data; real cups will differ)</span></p>
+<p><strong>Model.</strong> Cup A: cup 11.5 cm tall, each added cup adds about 1.2 cm (the lip). Table: <em>n</em> = 1 → 11.5, 2 → 12.7, 3 → 13.9, 4 → 15.1 … → <strong>h = 1.2n + 10.3</strong>. <em>m</em> = 1.2 cm per cup = the lip that sticks up above the cup below. <em>b</em> = 10.3 cm = cup height − one lip (the part of the bottom cup that isn’t a lip). Cup B: cup 9.0 cm, lip 1.6 cm → <strong>h = 1.6n + 7.4</strong>.</p>
+<p><strong>Door (203 cm, standard interior door; measure yours).</strong> 1.2<em>n</em> + 10.3 = 203 → 1.2<em>n</em> = 192.7 → <em>n</em> = 160.6 → <strong>161 cups</strong> of A. Cup B: 1.6<em>n</em> + 7.4 = 203 → <em>n</em> = 122.25 → <strong>123 cups</strong>.</p>
+<p><strong>Same height?</strong> 1.2<em>n</em> + 10.3 = 1.6<em>n</em> + 7.4 → 2.9 = 0.4<em>n</em> → <em>n</em> = 7.25. Never exactly equal with whole cups. At 7 cups A is taller (18.7 vs 18.6); at 8 cups B is taller (19.9 vs 20.2). B’s bigger lip lets it overtake. Full marks need the meaning, not just 7.25.</p>
+<p><strong>Showdown (mystery height 75 cm, Cup A):</strong> 1.2<em>n</em> + 10.3 = 75 → <em>n</em> = 53.9 → 54 cups. Errors of 1–3 cups are normal: lips aren’t exactly equal, and stacks squash. A good explanation names a source of error.</p>
+<p><strong>★★ Extended:</strong> 10 + 49<em>L</em> = 100 → <em>L</em> = <span class="frac"><span class="num">90</span><span class="frac-slash">/</span><span class="den">49</span></span> ≈ <strong>1.84 cm</strong> lip.</p>
+</div>
+<div class="answer-guide">
+<p><span class="ag-label">Option 2 — Which Plan Wins? (prices checked October 2026)</span></p>
+<p><strong>Deal A — Calgary.</strong> Pay per ride: <strong>C = 2.65n</strong> (direct variation: 0 rides cost $0). Monthly pass: <strong>C = 92</strong> (slope 0, because the cost doesn’t change with rides). Ticket book: $26.50 ÷ 10 = $2.65, the <strong>same</strong> rate as a single ride, so there’s no bulk discount. Strong teams notice this.</p>
+<p>Table: <em>n</em> = 0, 10, 20, 30, 40, 50 → 0, 26.50, 53.00, 79.50, 106.00, 132.50 vs 92 every time.</p>
+<p><strong>Break-even:</strong> 2.65<em>n</em> = 92 → <em>n</em> = 34.7. <strong>Inequality:</strong> 2.65<em>n</em> &gt; 92 → <em>n</em> &gt; 34.7 → the pass wins at <strong>35 or more rides</strong>.</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Rider</th>
+<th>Rides</th>
+<th>Pay per ride</th>
+<th>Pass</th>
+<th>Winner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ava</td>
+<td>46</td>
+<td>$121.90</td>
+<td>$92</td>
+<td>Pass, saves $29.90</td>
+</tr>
+<tr>
+<td>Jordan</td>
+<td>24</td>
+<td>$63.60</td>
+<td>$92</td>
+<td>Pay, saves $28.40</td>
+</tr>
+<tr>
+<td>Sam</td>
+<td>40 (30 in a short month)</td>
+<td>$106.00 ($79.50)</td>
+<td>$92</td>
+<td>Pass in a full month, saves $14; <strong>pay</strong> in a month with a week off (saves $12.50). This is the “it depends.”</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Deal B — Edmonton.</strong> <strong>C = 3n</strong> until the cap; cap reached at 66 ÷ 3 = <strong>22 trips</strong>; after that <strong>C = 66</strong>. Ava, Jordan and Sam all pay $66. The daily cap ($10.50, so 3.5 trips) doesn’t matter for 2 trips a day.</p>
+<p><strong>★★ Extended:</strong> the graph is a line with slope 3 up to <em>n</em> = 22, then flat at 66. The card charges whichever of the two choices is cheaper at every <em>n</em>, so with a cap the rider doesn’t have to choose in advance.</p>
+</div>
+<div class="answer-guide">
+<p><span class="ag-label">Option 3 — Garden Path Design (sample prices $50/m² stone, $5/m edging)</span></p>
+<p><strong>Area expression.</strong> Outer rectangle (3 + 2<em>x</em>) by (1.2 + 2<em>x</em>). (3 + 2<em>x</em>)(1.2 + 2<em>x</em>) = 3.6 + 6<em>x</em> + 2.4<em>x</em> + 4<em>x</em>² = 4<em>x</em>² + 8.4<em>x</em> + 3.6. Path area <strong>A = 4x² + 8.4x</strong> (the bed’s 3.6 m² is subtracted). <strong>Edging E = 2(3 + 2x) + 2(1.2 + 2x) = 8x + 8.4</strong> (partial variation; slope 8 m of edging per metre of width; intercept 8.4 m = the bed’s own perimeter). Check at <em>x</em> = 0.5: outer 4.0 × 2.2 = 8.8 − 3.6 = <strong>5.2 m²</strong> ✓, and 4(0.25) + 8.4(0.5) = 1 + 4.2 = 5.2 ✓. Edging 2(4.0) + 2(2.2) = <strong>12.4 m</strong> ✓.</p>
+<table>
+<thead>
+<tr>
+<th><em>x</em> (m)</th>
+<th>Path area (m²)</th>
+<th>Stone cost</th>
+<th>Edging (m)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.3</td>
+<td>2.88</td>
+<td>$144.00</td>
+<td>10.8</td>
+</tr>
+<tr>
+<td>0.5</td>
+<td>5.20</td>
+<td>$260.00</td>
+<td>12.4</td>
+</tr>
+<tr>
+<td>0.6</td>
+<td>6.48</td>
+<td>$324.00</td>
+<td>13.2</td>
+</tr>
+<tr>
+<td>0.8</td>
+<td>9.28</td>
+<td>$464.00</td>
+<td>14.8</td>
+</tr>
+<tr>
+<td>1.0</td>
+<td>12.40</td>
+<td>$620.00</td>
+<td>16.4</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Edging limit:</strong> 8<em>x</em> + 8.4 = 16 → 8<em>x</em> = 7.6 → <em>x</em> = <strong>0.95 m</strong>. <strong>Budget:</strong> $300 ÷ 50 = 6 m². <em>x</em> = 0.56 → 5.96 m² ($297.92) ✓; <em>x</em> = 0.57 → 6.09 m² ($304.38) ✗. Widest on budget: <strong>0.56 m</strong>. <strong>The trade-off:</strong> a wheelbarrow needs about 0.65 m. At 0.65 m the path is 7.15 m² and costs $357.50 a bed, which is $57.50 over budget. Accept either recommendation if it’s justified:</p>
+<table>
+<thead>
+<tr>
+<th>Width</th>
+<th>Stone, 12 beds</th>
+<th>Edging, 12 beds</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.56 m</td>
+<td>$3575.04</td>
+<td>12.88 m × $5 × 12 = $772.80</td>
+<td><strong>$4347.84</strong></td>
+</tr>
+<tr>
+<td>0.65 m</td>
+<td>$4290.00</td>
+<td>13.6 m × $5 × 12 = $816.00</td>
+<td><strong>$5106.00</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Doubling?</strong> <em>x</em> = 0.5 → 5.2 m²; <em>x</em> = 1.0 → 12.4 m². That’s <strong>more than double</strong>, because of the four corner squares (the 4<em>x</em>² term). Only the edging line grows at a steady rate.</p>
+<p><strong>★★ Extended:</strong> square bed (2 + 2<em>x</em>)² − 4 = <strong>4x² + 8x</strong>. Total for one of each: (4<em>x</em>² + 8.4<em>x</em>) + (4<em>x</em>² + 8<em>x</em>) = <strong>8x² + 16.4x</strong>.</p>
+</div>
+<hr />
+<h2>Assessment</h2>
+<ul>
+<li><strong>Rubric</strong> (in the brief): 4 criteria × 3 = 12. Criteria 1, 2 and 4 are marked from the Recorder’s journal and the final product, and every team member gets the same mark. Criterion 3 is marked from <strong>each student’s</strong> blue <em>On your own</em> box (M2) and reflection question 2 (M5). That’s the individual mark, and it stops students coasting on the team.</li>
+<li><strong>Outcome codes</strong> are local: Math 9 has no official codes in the course context. They follow the notes package sections. LR1–LR4 are Linear Relations Sections 1–4, LE1–LE5 are Linear Equations Sections 1–5, and PO1–PO6 are Polynomials Sections 1–6. Same pattern as RN1–RN5 on the Rational Numbers test.</li>
+<li><strong>The project doesn’t replace the strand test.</strong> The test checks individual knowledge. The project checks application and explanation.</li>
+<li><strong>Returning work:</strong> hand it back with a comment on each criterion. Students write one paragraph in class (10 min, not homework): (1) What did I misunderstand or leave incomplete? (2) What would I change if I could redo it?</li>
+</ul>
+<h2>Supports and Extension</h2>
+<ul>
+<li><strong>Most concrete entry point:</strong> Option 1. Steer students who need it there. The data comes from their own hands.</li>
+<li><strong>Scaffolds already in the journal:</strong> labelled table columns, the “In words” sentence starter, the Checker’s two-row test, the “Let ___ = ___” prompt.</li>
+<li><strong>IPP / significant gaps:</strong> pre-fill the input column of the M2 table, and give a calculator. Keep the explanation in Criterion 3; that’s what’s being assessed. (See <code>research/significant-learning-gaps-research.md</code>.)</li>
+<li><strong>Extension:</strong> each option has a ★★ task. Early finishers on Option 2 can model Deal B. On Option 3 they can model two beds that share one path.</li>
+</ul>
+<hr />
+<h2>Sources</h2>
+<ul>
+<li>Calgary Transit 2026 fares: calgarytransit.com, “Calgary Transit fares changing for 2026” (youth single $2.65, book of 10 $26.50, monthly pass $92.00 from September 2026). Checked October 2026. <strong>Confirm each January.</strong></li>
+<li>Edmonton Transit youth fares: edmonton.ca/ets/youth-fares ($3.00 per trip, $10.50 daily cap, $66 monthly cap). Checked through secondary listings in October 2026 because the city page didn’t load. <strong>Confirm before printing.</strong></li>
+<li>Paving stone and edging prices are samples (concrete pavers run about $3–8 per ft², or $35–85 per m², for materials only; HomeStars 2026). Replace them with a local flyer price if you like, and re-solve the Option 3 answer guide.</li>
+<li>Design: <code>research/project-based-learning-research.md</code>, <code>research/three-act-math-research.md</code>, <code>templates/evidence-design-principles.md</code>.</li>
+</ul>
+<hr />
+<h2>Key Flags Summary</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Where</th>
+<th>Flag</th>
+<th>Move</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1</td>
+<td>Option 1 over-measuring</td>
+<td>One measurement per stack; 20-min target</td>
+</tr>
+<tr>
+<td>P2</td>
+<td><em>b</em> = first number in the table</td>
+<td>“What would the output be one step before?”</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Mixing up <em>m</em> and <em>b</em></td>
+<td>Say each with units</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Missing middle terms (Option 3)</td>
+<td>Checker’s numeric test at <em>x</em> = 0.5</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>Always flipping inequality signs</td>
+<td>“What did you divide by? Was it negative?”</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>Rounding without thinking about the situation</td>
+<td>“If you round the other way, what goes wrong?”</td>
+</tr>
+<tr>
+<td>P4</td>
+<td>Starting over instead of revising</td>
+<td>Fix the weakest part; plan locked 15 min before the bell</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>
