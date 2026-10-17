@@ -59,11 +59,14 @@ export interface Strand {
 }
 
 export const strands: Strand[] = [
-  { slug: 'number', label: 'Number', short: 'Number', blurb: 'Fractions, negatives, square roots and powers: the number skills every other topic leans on.', workbook: 'worksheets/number/math9-number-workbook-v1', workbookKey: 'worksheets/number/math9-number-workbook-answers-v1' },
+  { slug: 'number', label: 'Number', short: 'Number', blurb: 'Fractions, negatives, square roots and powers: the number skills every other topic leans on.', workbook: 'worksheets/number/math9-number-workbook-v1', workbookKey: 'worksheets/number/math9-number-workbook-answers-v1',
+    project: { brief: 'worksheets/number/math9-number-project-v1', journal: 'worksheets/number/math9-number-project-journal-v1', guide: 'worksheets/number/math9-number-project-teacherguide-v1' } },
   { slug: 'algebra', label: 'Algebra', short: 'Algebra', blurb: 'Using letters to stand for numbers so you can describe patterns, solve problems and predict what comes next.', workbook: 'worksheets/algebra/math9-algebra-workbook-v1', workbookKey: 'worksheets/algebra/math9-algebra-workbook-answers-v1',
     project: { brief: 'worksheets/algebra/math9-algebra-project-v1', journal: 'worksheets/algebra/math9-algebra-project-journal-v1', guide: 'worksheets/algebra/math9-algebra-project-teacherguide-v1' } },
-  { slug: 'measurement-geometry', label: 'Measurement & Geometry', short: 'M&G', blurb: "Circles, 3-D shapes and scale copies. Measuring the things you can see, and some you can't reach.", workbook: 'worksheets/measurement-geometry/math9-measurement-geometry-workbook-v1', workbookKey: 'worksheets/measurement-geometry/math9-measurement-geometry-workbook-answers-v1' },
-  { slug: 'statistics-probability', label: 'Statistics & Probability', short: 'Stats & Prob', blurb: 'Reading data like a detective and working out the chances of things happening.', workbook: 'worksheets/statistics-probability/math9-statistics-probability-workbook-v1', workbookKey: 'worksheets/statistics-probability/math9-statistics-probability-workbook-answers-v1' },
+  { slug: 'measurement-geometry', label: 'Measurement & Geometry', short: 'M&G', blurb: "Circles, 3-D shapes and scale copies. Measuring the things you can see, and some you can't reach.", workbook: 'worksheets/measurement-geometry/math9-measurement-geometry-workbook-v1', workbookKey: 'worksheets/measurement-geometry/math9-measurement-geometry-workbook-answers-v1',
+    project: { brief: 'worksheets/measurement-geometry/math9-measurement-geometry-project-v1', journal: 'worksheets/measurement-geometry/math9-measurement-geometry-project-journal-v1', guide: 'worksheets/measurement-geometry/math9-measurement-geometry-project-teacherguide-v1' } },
+  { slug: 'statistics-probability', label: 'Statistics & Probability', short: 'Stats & Prob', blurb: 'Reading data like a detective and working out the chances of things happening.', workbook: 'worksheets/statistics-probability/math9-statistics-probability-workbook-v1', workbookKey: 'worksheets/statistics-probability/math9-statistics-probability-workbook-answers-v1',
+    project: { brief: 'worksheets/statistics-probability/math9-statistics-probability-project-v1', journal: 'worksheets/statistics-probability/math9-statistics-probability-project-journal-v1', guide: 'worksheets/statistics-probability/math9-statistics-probability-project-teacherguide-v1' } },
 ];
 
 /** The common shape: notes, concepts, core, challenge, exits and their keys. */

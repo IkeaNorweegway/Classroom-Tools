@@ -1,5 +1,5 @@
 # Inquiry Project Template (Math 9 strand projects)
-*Built from the Algebra pilot (2026-10-17). Copy this structure for Number, Measurement & Geometry, and Statistics & Probability.*
+*Built from the Algebra pilot and used for all four Math 9 strands (2026-10-17). Use it for any new or revised strand project.*
 
 Reference build: `worksheets/math-9/algebra/math9-algebra-project-v1.md` (brief), `…-project-journal-v1.md` (journal), `notes-packages/math-9/algebra/math9-algebra-project-teacherguide-v1.md` (teacher guide). Render all three with `python3 scripts/render_math9_projects.py`, then run `scripts/stack_fractions.py` on the output.
 

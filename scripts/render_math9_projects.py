@@ -4,7 +4,7 @@
 Sources use pandoc markdown: fenced divs (::: {.class}) and bracketed spans
 ([text]{.class}) become the classes styled below. Front matter `style:` picks
 the look:
-  student  ->  CSS copied from the Algebra strand workbook (site fonts, q-card style)
+  student  ->  CSS copied from the strand's own workbook (site fonts, strand colour)
   teacher  ->  CSS copied from the Linear Relations teacher notes v2 (SHOW/SAY/CUE)
 Both get the PROJECT_CSS block on top.
 
@@ -26,10 +26,13 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / 'public' / 'materials' / 'math-9' / 'worksheets'
 SOURCES = ['worksheets/math-9/*/math9-*-project*-v*.md',
            'notes-packages/math-9/*/math9-*-project-teacherguide-v*.md']
-CSS_FROM = {
-    'student': OUT / 'algebra' / 'math9-algebra-workbook-v1.html',
-    'teacher': ROOT / 'public/materials/math-9/notes/linear-relations/math9-linear-relations-teachernotes-v2.html',
-}
+TEACHER_CSS_FROM = ROOT / 'public/materials/math-9/notes/linear-relations/math9-linear-relations-teachernotes-v2.html'
+
+
+def css_source(kind, strand):
+    if kind == 'teacher':
+        return TEACHER_CSS_FROM
+    return OUT / strand / f'math9-{strand}-workbook-v1.html'
 
 PROJECT_CSS = """
   /* ── Inquiry project additions (scripts/render_math9_projects.py) ── */
@@ -72,11 +75,11 @@ TEACHER_CSS = """
 """
 
 
-def style_block(kind):
-    src = CSS_FROM[kind].read_text(encoding='utf-8')
-    m = re.search(r'<style>(.*?)</style>', src, re.S)
+def style_block(kind, strand):
+    path = css_source(kind, strand)
+    m = re.search(r'<style>(.*?)</style>', path.read_text(encoding='utf-8'), re.S)
     if not m:
-        sys.exit(f'No <style> block in {CSS_FROM[kind]}')
+        sys.exit(f'No <style> block in {path}')
     return m.group(1) + (PROJECT_CSS if kind == 'student' else TEACHER_CSS)
 
 
@@ -108,7 +111,7 @@ def render(md_path):
         header = f'<div class="header-strip">\n  <div class="course-label">{meta.get("course_label", "Grade 9 Mathematics")}</div>\n</div>\n'
     page = (f'<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n'
             f'<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
-            f'<title>{meta.get("title", md_path.stem)}</title>\n<style>{style_block(kind)}</style>\n</head>\n'
+            f'<title>{meta.get("title", md_path.stem)}</title>\n<style>{style_block(kind, strand)}</style>\n</head>\n'
             f'<body>\n{header}{body}</body>\n</html>\n')
     out = OUT / strand / (md_path.stem + '.html')
     out.parent.mkdir(parents=True, exist_ok=True)

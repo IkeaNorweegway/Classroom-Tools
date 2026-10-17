@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math 9 — Measurement & Geometry Inquiry Project — Teacher Guide</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 11pt;
+  line-height: 1.55;
+  color: #1e293b;
+  background: #fff;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 28px 32px 56px;
+}
+:root {
+  --accent: #4f46e5;
+  --accent-light: #eef2ff;
+  --accent-mid: #4338ca;
+}
+h1 { font-size: 22pt; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+h2 { font-size: 14pt; font-weight: 700; color: var(--accent); margin: 32px 0 10px; border-bottom: 2px solid var(--accent-light); padding-bottom: 4px; }
+h3 { font-size: 11.5pt; font-weight: 700; color: #334155; margin: 0; text-transform: uppercase; letter-spacing: .04em; padding: 8px 12px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; }
+h4 { font-size: 11pt; font-weight: 700; color: var(--accent); margin: 16px 0 4px; }
+p { margin-bottom: 8px; }
+ul, ol { margin: 6px 0 10px 22px; }
+li { margin-bottom: 4px; }
+strong { font-weight: 700; }
+em { font-style: italic; color: #475569; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10.5pt; }
+th { background: var(--accent-light); color: var(--accent); font-weight: 700; text-align: left; padding: 7px 10px; border: 1px solid var(--accent-light); }
+td { padding: 8px 10px; border: 1px solid #e2e8f0; vertical-align: top; }
+tr:nth-child(even) td { background: #f8fafc; }
+hr { border: none; border-top: 2px solid #e2e8f0; margin: 24px 0; }
+.teacher-banner { background: var(--accent); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 9pt; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; display: inline-block; margin-bottom: 10px; }
+.show { border-left: 4px solid #64748b; background: #f8fafc; padding: 10px 14px; margin: 0; }
+.say  { border-left: 4px solid #0284c7; background: #f0f9ff; padding: 10px 14px; margin: 0; border-top: 1px solid #e8f4fb; }
+.cue  { border-left: 4px solid #6366f1; background: #eef2ff; padding: 10px 14px; margin: 0; border-top: 1px solid #e8eeff; }
+.beat-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; }
+.show .beat-label { color: #475569; }
+.say  .beat-label { color: #0284c7; }
+.cue  .beat-label { color: #4f46e5; }
+.say-label { color: #0284c7; }
+.cue-label { color: #4f46e5; }
+.beat { border: 1px solid #e2e8f0; border-radius: 8px; margin: 44px 0 0; overflow: hidden; }
+.flag { border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 14px 0; font-size: 10.5pt; }
+.flag .flag-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; display: block; }
+.flag-misconception { border-left: 4px solid #dc2626; background: #fef2f2; }
+.flag-misconception .flag-label { color: #dc2626; }
+.flag-pacing { border-left: 4px solid #d97706; background: #fffbeb; }
+.flag-pacing .flag-label { color: #b45309; }
+.answer-guide { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px 18px; margin: 14px 0; }
+.answer-guide .ag-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #16a34a; margin-bottom: 8px; display: block; }
+.answer-guide ol { margin-left: 18px; }
+.answer-guide li { margin-bottom: 10px; }
+.section-meta { font-size: 9.5pt; color: #64748b; margin: 3px 0 14px; }
+.section-meta span { background: #f1f5f9; border: 1px solid #e2e8f0; padding: 1px 8px; border-radius: 10px; font-weight: 600; margin-right: 5px; white-space: nowrap; }
+.flags-summary th { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+@media print { body { padding: 12px 18px; } h2 { page-break-before: always; } .beat { break-inside: avoid; } }
+
+  /* ── Stacked fractions (scripts/stack_fractions.py) ── */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.15;
+    margin: 0 1px;
+  }
+  .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+  .frac .den { padding: 1px 3px 0; }
+
+  .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ── Inquiry project additions (scripts/render_math9_projects.py) ── */
+  .beat h3 + div, .beat > div { margin: 0; }
+  .beat-label { display: block; }
+  .beat p:last-child { margin-bottom: 0; }
+  .flag p:last-child, .answer-guide p:last-child { margin-bottom: 0; }
+  .answer-guide table { background: #fff; }
+  .teacher-banner p { margin: 0; }
+  code { font-size: 0.9em; background: #f1f5f9; padding: 0 3px; border-radius: 3px; }
+  @media print { h1 + h2 { page-break-before: avoid; break-before: avoid; } }
+</style>
+</head>
+<body>
+<!-- Render: python3 scripts/render_math9_projects.py → public/materials/math-9/worksheets/measurement-geometry/math9-measurement-geometry-project-teacherguide-v1.html -->
+<div class="teacher-banner">
+<p>Teacher Copy — Not for Students</p>
+</div>
+<h1>Math 9 — Measurement &amp; Geometry Inquiry Project</h1>
+<h2>Teacher Guide</h2>
+<p><em>Companion to the student brief (<code>math9-measurement-geometry-project-v1</code>) and the Project Journal (<code>math9-measurement-geometry-project-journal-v1</code>). Teaching reference, not a script.</em></p>
+<hr />
+<h2>How to use this document</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Label</th>
+<th>What it contains</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SHOW</strong></td>
+<td>What students see: board, projector or handout.</td>
+</tr>
+<tr>
+<td><strong>SAY</strong></td>
+<td>Key phrases and questions. Answers in <strong>[brackets]</strong>.</td>
+</tr>
+<tr>
+<td><strong>CUE</strong></td>
+<td>The student signal: ★ Write / ✎ Draw / ⊡ Think / ↩︎ Check</td>
+</tr>
+<tr>
+<td>Red flag</td>
+<td>A misconception that will cost marks if it isn’t addressed.</td>
+</tr>
+<tr>
+<td>Amber flag</td>
+<td>A place where projects stall, with a time target.</td>
+</tr>
+<tr>
+<td>Green box</td>
+<td>Expected answers for the option.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why this project is built the way it is.</strong> <code>research/project-based-learning-research.md</code>: projects raise achievement only when they are structured. That means the driving question comes early, short explicit lessons happen <em>inside</em> the project, there’s a critique-and-revise cycle, teams are 4–5 with roles, and the work goes to a real audience. Every period below has a mini-lesson or a protocol for that reason.</p>
+<p><strong>The strand thread.</strong> Each option measures something students can’t reach or that doesn’t exist yet. Both mini-lessons teach one habit across all three options: <strong>draw and label it first, then pick the formula, then solve for the missing measurement.</strong></p>
+<hr />
+<h2>Project at a Glance</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>When</th>
+<th>What</th>
+<th>Must be taught first</th>
+<th>Journal page</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Strand Lesson 1</strong> (10 min)</td>
+<td>Launch: show the three driving questions, vote, start the need-to-know wall</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Period 1</strong></td>
+<td>Teams, roles, gut guess, plan; Option 1 measures outside</td>
+<td>Option 1: Similarity S1–S3</td>
+<td>M1</td>
+</tr>
+<tr>
+<td><strong>Period 2</strong></td>
+<td>Mini-lesson A (draw it first, then choose the formula) → build the model</td>
+<td>Option 1: Similarity S4; Option 2: Measurement S1–S3; Option 3: Circle Geometry S1–S3</td>
+<td>M2</td>
+</tr>
+<tr>
+<td><strong>Period 3</strong></td>
+<td>Mini-lesson B (solve for the missing measurement) → solve, check, draft</td>
+<td>Option 2: Measurement S4–S5 (for ★★); Option 3: Circle Geometry S4 + Pythagorean theorem</td>
+<td>M3</td>
+</tr>
+<tr>
+<td><strong>Period 4</strong></td>
+<td>Gallery-walk critique → revise</td>
+<td>—</td>
+<td>M4</td>
+</tr>
+<tr>
+<td><strong>Period 5</strong></td>
+<td>Height report / pitch / case file → individual reflection</td>
+<td>—</td>
+<td>M5</td>
+</tr>
+<tr>
+<td><strong>Period 6</strong> <em>(buffer)</em></td>
+<td>Finish, or return marked work for the 10-minute written response</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where it sits in the strand.</strong> Circle Geometry → Surface Area &amp; Volume → Similarity &amp; Scale. Run Periods 1–5 after Similarity Section 4. A class that picks only Options 2 and 3 can start after Measurement Section 5.</p>
+<div class="flag flag-pacing">
+<p><span class="flag-label">Flag — Pacing</span> Option 1 needs <strong>sun</strong> for the shadow method. Check the forecast and swap Periods 1 and 2 if you need to: the mirror method works indoors (a gym wall or the ceiling height). Also watch <strong>Period 4</strong>, where revision turns into starting over. If a team misses a milestone, they finish it at the start of the next period.</p>
+</div>
+<hr />
+<h2>Prep and Materials</h2>
+<p><strong>All options:</strong> printed brief (one per student), Project Journal (one per student), sticky notes in two colours, chart paper for the gallery walk, rubric copies, calculators, rulers, protractors.</p>
+<p><strong>Option 1 — Measure the Unmeasurable:</strong> tape measures, small flat mirrors (a makeup mirror works), chalk. Pick the object and find its real height (from the caretaker or the building plans) <strong>before</strong> the project. Keep it secret until the reports are in.</p>
+<p><strong>Option 2 — Package Design:</strong> a real pop can and a juice box per team if possible, rulers, string (for measuring around a can).</p>
+<p><strong>Option 3 — Circle Detectives:</strong> cut a “plate fragment” for each team: an arc of a circle about a third of the way round, from card stock. Use a radius of 8–12 cm, and write each radius on your key. Round objects (clocks, lids, a round table), set squares or index cards.</p>
+<hr />
+<h2>Launch — Strand Lesson 1 (10 min)</h2>
+<section class="beat">
+<h3>Beat 1 — Three questions, no answers yet</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> Three photos side by side: the school flagpole; a row of drink containers of different shapes; the view from the Calgary Tower. Under each, its driving question.</p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> “Nobody’s climbing the flagpole, building a factory or flying to the horizon. By the end of this strand you’ll get all three numbers anyway.” “What would you need to know?” <em>([something we can measure that’s the same shape], [how much the container holds], [how big the Earth is].)</em></p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ⊡ Think → vote by hand. ★ Write: each student adds one sticky note to a <strong>need-to-know wall</strong> under their question.</p>
+</div>
+</section>
+<p><strong>Why this is in Lesson 1:</strong> it creates the “need to know.” Point back at the wall during Circle Geometry Section 4 (tangent–radius), Measurement Section 2 (surface area) and Similarity Section 4 (indirect measurement).</p>
+<hr />
+<h2>Period 1 — Teams, Roles, Plan</h2>
+<section class="beat">
+<h3>Beat 2 — Teams and roles (8 min)</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> The role table from the brief.</p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> “Everyone does the math. Your role is what you’re responsible for <em>checking</em>.” “Checker: every length in your formula has to point to a label on your diagram.”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ★ Write: tick your option and role, the gut guesses and the need-to-know table. ↩︎ Check: teacher initials M1.</p>
+</div>
+</section>
+<div class="flag flag-pacing">
+<p><span class="flag-label">Flag — Pacing</span> Option 1 shadow method: both shadows must be measured <strong>within a minute or two of each other</strong>, because shadows grow fast. Assign two measurers to work at the same time. Target: outdoor measuring done in 25 minutes.</p>
+</div>
+<hr />
+<h2>Period 2 — Build the Model</h2>
+<section class="beat">
+<h3>Beat 3 — Mini-lesson A: draw it first, then choose the formula (10 min)</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> <strong>Example 1.</strong> A grain bin near Lethbridge is a cylinder 6 m across and 5 m tall. How much grain does it hold?<br />
+<strong>Example 2.</strong> A 10 cm × 15 cm photo is enlarged so the short side is 25 cm. How long is the long side?</p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> Example 1: “Draw it. Label it. 6 m across is the [diameter], so <em>r</em> = [3 m]. Holds = [volume] → V = π<em>r</em>²<em>h</em> = π(3²)(5) ≈ [141 m³].” Example 2: “Same shape, different size: [similar]. Match short to short and long to long: <span class="frac"><span class="num">10</span><span class="frac-slash">/</span><span class="den">15</span></span> = 25/<em>x</em> → <em>x</em> = [37.5 cm].” “Every number in the formula came from a label on the drawing. That’s the check.”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ✎ Draw and label both. ★ Write the formula and solve. ↩︎ Check: point to where each number came from.</p>
+</div>
+</section>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>Diameter used as radius.</strong> Option 2 and Option 3 both trip on this. Ask: “Is that measurement all the way across, or from the centre?” A can “6.6 cm across” has <em>r</em> = 3.3 cm.</p>
+</div>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>“Volume and surface area measure the same thing.”</strong> Option 2 holds the volume fixed at 500 cm³ and changes the surface area. Ask: “Which one is the juice? [volume] Which one is the cardboard or aluminum? [surface area]” Make teams write the units: cm³ vs cm².</p>
+</div>
+<section class="beat">
+<h3>Beat 4 — Build the model (rest of period)</h3>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> Option 1: “Where does each equal angle come from? [Both objects stand at 90° to the ground; the sun’s rays hit both at the same angle (shadow); the mirror reflects at equal angles (mirror).]” Option 2: “If the volume stays 500, and the radius gets bigger, what happens to the height? [it shrinks]” Option 3: “Where do the two bisectors cross? Why there? [The centre. Every point on a chord’s perpendicular bisector is the same distance from both ends of the chord, so the centre has to be on it.]”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ✎ Draw the labelled diagram. ★ Write the formula or proportion. ↩︎ Check: the Checker’s units and believable-size test. ★ Write: the blue <em>On your own</em> box (Criterion 3).</p>
+</div>
+</section>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>Mismatched sides in a proportion (Option 1).</strong> Teams put the person’s height over the <em>object’s</em> shadow. Have them write the two triangles side by side, with the same order of letters, and check that each ratio compares “person” to “object” (or “height” to “shadow”) in the same way. <strong>“Similar means identical”</strong> shows up here too: the triangles have the same angles but different sizes.</p>
+</div>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>“All inscribed angles are 90°” / “a chord is a diameter” (Option 3).</strong> The set-square trick works <em>only because</em> the 90° corner sits on the circle, so the chord it cuts off is a diameter (inscribed angle in a semicircle). Ask: “Would a 60° corner give a diameter? [No]”</p>
+</div>
+<hr />
+<h2>Period 3 — Solve and Check</h2>
+<section class="beat">
+<h3>Beat 5 — Mini-lesson B: solve for the missing measurement (10 min)</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> <strong>Example 1.</strong> A cylinder holds 1000 cm³ and has a radius of 5 cm. How tall is it?<br />
+<strong>Example 2.</strong> <em>x</em> / 4.5 = 3.2 / 1.8<br />
+<strong>Example 3.</strong> Paint covers 9.5 m² per can. A wall is 41 m². How many cans?</p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> Example 1: “1000 = π(5²)<em>h</em> → <em>h</em> = 1000 ÷ (25π) ≈ [12.7 cm]. Estimate first: 25π is about 80, and 1000 ÷ 80 is about [12.5].” Example 2: “Multiply both sides by 4.5: <em>x</em> = 4.5 × 3.2 ÷ 1.8 = [8.0].” Example 3: “41 ÷ 9.5 ≈ [4.3]. You can’t buy 4.3 cans, so [5]. Round <em>up</em> when you’re buying. Round to the precision you can measure when you’re reporting a length.”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ★ Write all three in the M3 mini-lesson box. ⊡ Think: which way should <em>your</em> answer round?</p>
+</div>
+</section>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>Mixed units in the horizon triangle (Option 3).</strong> Teams add 6371 km + 158 m = 6529. Make them convert first: 158 m = [0.158 km]. The Checker’s believable-size test catches it: a horizon over 1000 km away is not believable.</p>
+</div>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>“A cone has half the volume of the matching cylinder”</strong> (Option 2 ★★). It’s one-third. Pour test if you have a cone and a cylinder: it takes [3] cones to fill the cylinder.</p>
+</div>
+<hr />
+<h2>Period 4 — Critique and Revise</h2>
+<section class="beat">
+<h3>Beat 6 — Gallery walk (25 min)</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> Each team’s M2–M3 work posted on chart paper. Focus question for round 1: <strong>“Pick one number in their formula. Can you find it on their diagram?”</strong> Round 2: <strong>“Is the answer a believable size, with a unit?”</strong></p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> “Kind, specific, helpful. ‘Looks good’ gets handed back.”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> Two rounds × 8 min. Yellow sticky = round 1, pink = round 2. ★ Write: one sticky per round, plus a copy in your journal.</p>
+</div>
+</section>
+<section class="beat">
+<h3>Beat 7 — Revise (rest of period)</h3>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> “Sort your stickies: what do we fix, what do we answer, what do we politely ignore, and why? Log each change.”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ★ Write: at least two revision-log rows. ↩︎ Check: teacher initials M4.</p>
+</div>
+</section>
+<hr />
+<h2>Period 5 — Show It</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Option</th>
+<th>Format</th>
+<th>Audience</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Height report</strong> (one page) handed to the caretaker or principal. Then reveal the real height, and each team says how close they came.</td>
+<td>Caretaker / principal</td>
+<td>~20 min</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>2-minute pitch</strong> to the “juice company,” with the labelled drawing and the material saved.</td>
+<td>Admin, another teacher, or the class as a panel</td>
+<td>~25 min</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Case file</strong> presented to another class: each case, the property that cracked it, the answer.</td>
+<td>Another class</td>
+<td>~25 min</td>
+</tr>
+</tbody>
+</table>
+<p>Last 10–15 min: the individual reflection on journal page M5. This is not homework. It’s done in class, and it feeds Criterion 3.</p>
+<hr />
+<h2>Answer Guides</h2>
+<div class="answer-guide">
+<p><span class="ag-label">Option 1 — Measure the Unmeasurable (sample measurements; use yours)</span></p>
+<p><strong>Shadow method.</strong> Student 1.60 m tall, shadow 2.00 m; flagpole shadow 11.25 m, measured at the same time. <em>h</em> / 11.25 = 1.60 / 2.00 → <em>h</em> = 11.25 × 0.8 = <strong>9.0 m</strong>. <strong>Similar by AA:</strong> both make a 90° angle with the ground, and the sun’s rays are parallel, so the angle at the tip of each shadow is equal.</p>
+<p><strong>Mirror method.</strong> Eye height 1.50 m; student to mirror 1.20 m; mirror to flagpole base 7.20 m. <em>h</em> / 7.20 = 1.50 / 1.20 → <em>h</em> = 7.20 × 1.25 = <strong>9.0 m</strong>. <strong>Similar by AA:</strong> both have a right angle at the ground, and light reflects off the mirror at equal angles.</p>
+<p><strong>Scale diagram</strong> at 1 cm : 1 m: a base of 11.25 cm and a height of 9 cm. The measured height should read 9 cm.</p>
+<p><strong>Comparing methods:</strong> real results usually differ by 0.3–1 m. Shadow errors come from shadows measured at different times, sloped ground, or a fuzzy shadow tip. Mirror errors come from where exactly the eye sees the top, and from eye height. A strong answer names a specific error and says which method it affects.</p>
+</div>
+<div class="answer-guide">
+<p><span class="ag-label">Option 2 — Package Design (500 cm³)</span></p>
+<p><strong>Cylinder</strong> (<em>h</em> = 500 ÷ π<em>r</em>², SA = 2π<em>r</em>² + 2π<em>rh</em>):</p>
+<table>
+<thead>
+<tr>
+<th><em>r</em> (cm)</th>
+<th><em>h</em> (cm)</th>
+<th>SA (cm²)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>17.68</td>
+<td>389.9</td>
+</tr>
+<tr>
+<td>4</td>
+<td>9.95</td>
+<td>350.5</td>
+</tr>
+<tr>
+<td>5</td>
+<td>6.37</td>
+<td>357.1</td>
+</tr>
+<tr>
+<td>6</td>
+<td>4.42</td>
+<td>392.9</td>
+</tr>
+<tr>
+<td>4.2</td>
+<td>9.02</td>
+<td>348.9</td>
+</tr>
+<tr>
+<td><strong>4.3</strong></td>
+<td><strong>8.61</strong></td>
+<td><strong>348.7</strong></td>
+</tr>
+<tr>
+<td>4.4</td>
+<td>8.22</td>
+<td>348.9</td>
+</tr>
+</tbody>
+</table>
+<p>Best ≈ <strong>r = 4.3 cm, h = 8.6 cm</strong>: the height equals the diameter. SA ≈ <strong>348.7 cm²</strong>.</p>
+<p><strong>Square prism</strong> (<em>h</em> = 500 ÷ <em>s</em>², SA = 2<em>s</em>² + 4<em>sh</em>): <em>s</em> = 5 → 20.00 cm, 450.0; 6 → 13.89, 405.3; 7 → 10.20, 383.7; <strong>8 → 7.81, 378.0</strong>; 9 → 6.17, 384.2. The best is close to a cube (<em>s</em> ≈ 7.9 cm, SA ≈ 378 cm²). <strong>The cylinder wins by about 29 cm² (about 8%).</strong></p>
+<p><strong>Real can</strong> (<em>r</em> = 3.3, <em>h</em> = 12.2): V = π(3.3²)(12.2) ≈ <strong>417 cm³</strong>. That’s more than 355 mL because of the headspace and the tapered ends. SA ≈ <strong>321 cm²</strong>. Per cm³ held: 321 ÷ 417 ≈ 0.77 cm² for the can vs 348.7 ÷ 500 ≈ 0.70 cm² for the best cylinder, so the real can uses about 10% more material per mL. Why: easier to hold, fits cup holders and vending machines, and the ends are thicker metal than the sides (so a narrower can saves the expensive part).</p>
+<p><strong>Too tall and skinny</strong> → a long side wraps a small volume. <strong>Too short and wide</strong> → two huge circles for the top and bottom.</p>
+<p><strong>★★ Cone cup:</strong> <em>h</em> = 3 × 100 ÷ (π × 4²) ≈ <strong>5.97 cm</strong>; cylinder <em>h</em> = 100 ÷ (π × 4²) ≈ <strong>1.99 cm</strong>. The cone needs 3 times the height because its volume is <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span> of the matching cylinder’s.</p>
+</div>
+<div class="answer-guide">
+<p><span class="ag-label">Option 3 — Circle Detectives</span></p>
+<p><strong>Case 1 (sample fragment, radius 10 cm):</strong> a 16 cm chord whose midpoint is 6 cm from the centre: <em>r</em> = √(8² + 6²) = √100 = <strong>10 cm</strong>. Use <strong>half</strong> the chord. The measured radius from the bisectors should be within a few millimetres of the calculated one. Check each team’s fragment against your key. <strong>Why the bisectors meet at the centre:</strong> the centre is the same distance from both ends of any chord, and the points that are the same distance from both ends of a chord all lie on its perpendicular bisector. Two bisectors → one point where they cross.</p>
+<p><strong>Case 2:</strong> a 90° corner on the circle cuts off a <strong>diameter</strong> (an inscribed angle that subtends a diameter is 90°). Two diameters cross at the centre.</p>
+<p><strong>Case 3 — Calgary Tower horizon:</strong> the line of sight is tangent to the Earth, and a tangent is perpendicular to the radius at the point where it touches, so there’s a right angle there. <em>d</em>² + 6371² = (6371 + 0.158)² → <em>d</em> = √(6371.158² − 6371²) = √2013.3 ≈ <strong>44.9 km</strong>, about 45 km.</p>
+<p><strong>★★ Mountain peak</strong> 1.855 km above Calgary: √(6372.855² − 6371²) ≈ 153.8 km. Total: 44.9 + 153.8 ≈ <strong>199 km</strong>. That’s why peaks 100–150 km away are visible from downtown on a clear day.</p>
+</div>
+<hr />
+<h2>Assessment</h2>
+<ul>
+<li><strong>Rubric</strong> (in the brief): 4 criteria × 3 = 12. Criteria 1, 2 and 4 are marked from the Recorder’s journal and the final product, and every team member gets the same mark. Criterion 3 is marked from <strong>each student’s</strong> blue <em>On your own</em> box (M2) and reflection question 2 (M5).</li>
+<li><strong>Outcome codes</strong> are local, one per notes-package section: CG1–CG4 (Circle Geometry S1–S4), ME1–ME5 (Measurement S1–S5), SI1–SI4 (Similarity S1–S4), plus SR3 (Pythagorean theorem) and RN4–RN5.</li>
+<li><strong>The project doesn’t replace the strand test.</strong> The test checks individual knowledge. The project checks application and explanation.</li>
+<li><strong>Returning work:</strong> hand it back with a comment on each criterion. Students write one paragraph in class (10 min, not homework): (1) What did I misunderstand or leave incomplete? (2) What would I change if I could redo it?</li>
+</ul>
+<h2>Supports and Extension</h2>
+<ul>
+<li><strong>Most concrete entry point:</strong> Option 1. Students hold the tape measure and see both triangles.</li>
+<li><strong>Scaffolds already in the journal:</strong> two-try measurement table, “labelled diagram” box before the formula box, the Checker’s units and believable-size test.</li>
+<li><strong>IPP / significant gaps:</strong> give a pre-drawn triangle pair to label (Option 1), a table with <em>r</em> already filled in (Option 2), or a pre-folded fragment (Option 3). Keep the explanation in Criterion 3; that’s what’s being assessed.</li>
+<li><strong>Extension:</strong> each option has a ★★ task.</li>
+</ul>
+<hr />
+<h2>Sources</h2>
+<ul>
+<li>Earth’s mean radius about 6371 km: NASA.</li>
+<li>Calgary Tower: 190.8 m to the top of the spire; the observation deck is at about 158 m (Wikipedia and the Council on Tall Buildings list 157.6 m; the tower rounds it to 160 m). Students can use either value if they say which.</li>
+<li>355 mL can dimensions are approximate (standard North American can, about 66 mm wide and 122 mm tall). Measure a real one.</li>
+<li>Design: <code>research/project-based-learning-research.md</code>, <code>templates/evidence-design-principles.md</code>.</li>
+</ul>
+<hr />
+<h2>Key Flags Summary</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Where</th>
+<th>Flag</th>
+<th>Move</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1</td>
+<td>Shadows measured at different times</td>
+<td>Two measurers at once; 25-min target</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Diameter used as radius</td>
+<td>“All the way across, or from the centre?”</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Volume vs surface area</td>
+<td>Juice vs cardboard; cm³ vs cm²</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Mismatched sides in a proportion</td>
+<td>Same letter order; person-to-object in both ratios</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>All inscribed angles are 90°</td>
+<td>Only on a diameter; try a 60° corner</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>km and m mixed in the horizon triangle</td>
+<td>Convert 158 m to 0.158 km; believable-size test</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>Cone = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> cylinder</td>
+<td>It’s <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>; pour test</td>
+</tr>
+<tr>
+<td>P4</td>
+<td>Starting over instead of revising</td>
+<td>Fix the weakest part</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>
