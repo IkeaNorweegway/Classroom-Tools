@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { courses, courseByKey, audiences, audiencePath, type Audience, type CourseKey } from '../data/courses';
+import { navSubjects, courseByKey, audiences, audiencePath, type Audience, type Course, type CourseKey } from '../data/courses';
 
 interface Props {
   course?: CourseKey;
@@ -30,16 +30,30 @@ const switchItems = audiences
   .filter((a): a is NonNullable<typeof a> => a !== null);
 const showSwitch = switchItems.length > 1;
 
-// Course tabs stay in the reader's view when the other course has one.
-const tabPath = (c: (typeof courses)[number]) => (audience && audiencePath(c, audience)) || c.path;
+// Grade links stay in the reader's view when the other course has one.
+const tabPath = (c: Course) => (audience && audiencePath(c, audience)) || c.path;
 const subnav = (audience === 'parent' && active?.parentSubnav) || active?.subnav || [];
 
+// Subject menus: each lists its courses' grades. A course that spans grades
+// (STEAM) lists its own grade pages instead of one entry.
+const shortGrade = (label: string) => label.replace(/^Grades? /, 'Gr. ');
+const menus = navSubjects.map((s) => {
+  const items = s.courses.map((k) => courseByKey(k)!).flatMap((c) => {
+    const menu = c.gradeMenu && ((audience && c.gradeMenu[audience]) || c.gradeMenu.student);
+    if (menu) {
+      return menu.map((i) => ({ label: i.label, course: c.key, href: `${base}${i.path}`, current: c.key === course && i.match(currentPath) }));
+    }
+    return [{ label: c.grade, course: c.key, href: `${base}${tabPath(c)}`, current: c.key === course }];
+  });
+  const isActive = s.courses.includes(course as CourseKey);
+  const currentItem = items.find((i) => i.current && /^Grade /.test(i.label));
+  const badge = isActive && active ? shortGrade(currentItem?.label ?? active.grade) : undefined;
+  return { ...s, id: `nav-menu-${s.courses[0]}`, items, isActive, badge };
+});
+
 const dark = audience === 'teacher';
-const tabIdle = dark
-  ? 'text-slate-300 hover:text-white hover:bg-white/10'
-  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-900/[0.04]';
-// Desktop lists: the gliding hover pill replaces per-tab hover backgrounds.
-const tabIdleDesktop = dark ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900';
+// The gliding hover pill replaces per-tab hover backgrounds.
+const tabIdle = dark ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900';
 let n = 0; // entry stagger index
 ---
 
@@ -58,47 +72,64 @@ let n = 0; // entry stagger index
 >
   <div class="max-w-5xl mx-auto px-4 sm:px-6">
 
-    <div class="vt-nav-top flex h-16 items-center gap-3 sm:gap-6">
+    <div class="vt-nav-top relative z-10 flex flex-wrap items-center gap-x-3 sm:gap-x-6">
       <a
         href={base}
-        class={`nav-intro group flex items-center gap-2.5 shrink-0 font-display text-[1.15rem] font-semibold tracking-tight ${dark ? 'text-white' : 'text-slate-900'}`}
+        class={`nav-intro group flex h-16 items-center gap-2.5 shrink-0 font-display text-[1.15rem] font-semibold tracking-tight ${dark ? 'text-white' : 'text-slate-900'}`}
       >
         <span class="brand-dot block h-2.5 w-2.5 rounded-full bg-accent transition-transform duration-300 ease-out group-hover:scale-125" aria-hidden="true"></span>
         Mr. Bremness
       </a>
 
-      <nav aria-label="Courses" class="hidden lg:block flex-1">
-        <div class="relative w-max" data-hover-track>
+      <!-- Subjects: inline on wide screens, a second row on small ones -->
+      <nav aria-label="Courses" class="order-last w-full pb-2 lg:order-none lg:w-auto lg:flex-1 lg:pb-0">
+        <div class="relative w-max max-w-full" data-hover-track>
         <span class={`hover-pill ${dark ? 'hover-pill--dark' : ''}`} aria-hidden="true"></span>
-        <ul class="flex items-center gap-0.5">
-          {courses.map((c) => {
-            const isActive = c.key === course;
-            return (
-              <li>
-                <a
-                  href={`${base}${tabPath(c)}`}
-                  data-course={c.key}
-                  aria-current={isActive ? 'true' : undefined}
-                  class={`nav-intro relative block rounded-full px-3.5 py-1.5 text-[0.8125rem] font-semibold transition-colors duration-200
-                    ${isActive ? (dark ? 'text-white' : 'text-accent-ink') : tabIdleDesktop}`}
-                  style={`--n: ${++n}`}
-                >
-                  {isActive && (
-                    <span
-                      class={`absolute inset-0 rounded-full ${dark ? 'bg-accent/40' : 'pill-3d vt-nav-pill'}`}
-                      aria-hidden="true"
-                    ></span>
-                  )}
-                  <span class="relative">{c.tab}</span>
-                </a>
-              </li>
-            );
-          })}
+        <ul class="flex flex-wrap items-center gap-0.5">
+          {menus.map((m) => (
+            <li class="relative" data-menu>
+              <button
+                type="button"
+                aria-expanded="false"
+                aria-controls={m.id}
+                class={`nav-intro relative flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-[0.8125rem] font-semibold transition-colors duration-200 lg:px-3.5
+                  ${m.isActive ? (dark ? 'text-white' : 'text-accent-ink') : tabIdle}`}
+                style={`--n: ${++n}`}
+              >
+                {m.isActive && (
+                  <span
+                    class={`absolute inset-0 rounded-full ${dark ? 'bg-accent/40' : 'pill-3d vt-nav-pill'}`}
+                    aria-hidden="true"
+                  ></span>
+                )}
+                <span class="relative">{m.label}</span>
+                {m.badge && <span class="relative hidden font-medium opacity-70 sm:inline">{m.badge}</span>}
+                <svg class="menu-chevron relative h-3 w-3 opacity-60" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+              <div
+                id={m.id}
+                class={`nav-menu ${dark ? 'nav-menu--dark' : ''}`}
+              >
+                <ul>
+                  {m.items.map((item) => (
+                    <li>
+                      <a href={item.href} data-course={item.course} aria-current={item.current ? 'page' : undefined} class="nav-menu-link">
+                        <span class="h-2 w-2 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
+                        {item.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))}
         </ul>
         </div>
       </nav>
 
-      <div class="nav-intro ml-auto flex items-center" style="--n: 8">
+      <div class="nav-intro ml-auto flex h-16 items-center" style="--n: 8">
         {showSwitch && (
           <nav aria-label="View for" class={`aud-switch ${dark ? 'aud-switch--dark' : ''}`}>
             {switchItems.map((a) => (
@@ -113,34 +144,6 @@ let n = 0; // entry stagger index
         )}
       </div>
     </div>
-
-    <!-- Course tabs on small screens: one scrollable row -->
-    <nav aria-label="Courses" class="lg:hidden -mx-4 px-4 sm:-mx-6 sm:px-6 pb-2 overflow-x-auto [scrollbar-width:none]">
-      <ul class="flex items-center gap-1 w-max">
-        {courses.map((c) => {
-          const isActive = c.key === course;
-          return (
-            <li>
-              <a
-                href={`${base}${tabPath(c)}`}
-                data-course={c.key}
-                aria-current={isActive ? 'true' : undefined}
-                class={`relative block whitespace-nowrap rounded-full px-3 py-1.5 text-[0.8125rem] font-semibold transition-colors duration-200
-                  ${isActive ? (dark ? 'text-white' : 'text-accent-ink') : tabIdle}`}
-              >
-                {isActive && (
-                  <span
-                    class={`absolute inset-0 rounded-full ${dark ? 'bg-accent/40' : 'pill-3d vt-nav-pill'}`}
-                    aria-hidden="true"
-                  ></span>
-                )}
-                <span class="relative">{c.tab}</span>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
 
     {active && (
       <nav
@@ -201,14 +204,21 @@ let n = 0; // entry stagger index
       const fresh = !track.classList.contains('is-hovering');
       if (fresh) pill.classList.add('no-slide');
       pill.style.width = `${r.width}px`;
-      pill.style.transform = `translateX(${r.left - t.left}px)`;
+      // The subject row can wrap on narrow screens, so follow the item's row too.
+      const wraps = track.querySelector(':scope > ul.flex-wrap');
+      if (wraps) {
+        pill.style.bottom = 'auto';
+        pill.style.height = `${r.height}px`;
+      }
+      pill.style.transform = `translate(${r.left - t.left}px, ${wraps ? r.top - t.top : 0}px)`;
       if (fresh) {
         void pill.offsetWidth; // place the pill without sliding in from the edge
         pill.classList.remove('no-slide');
       }
       track.classList.add('is-hovering');
     };
-    track.querySelectorAll<HTMLElement>('a').forEach((link) => {
+    // Only the track's own row, not links inside a dropdown.
+    track.querySelectorAll<HTMLElement>(':scope > ul > li > :is(a, button)').forEach((link) => {
       link.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') moveTo(link); });
       link.addEventListener('focus', () => { if (link.matches(':focus-visible')) moveTo(link); });
     });
@@ -216,6 +226,62 @@ let n = 0; // entry stagger index
     track.addEventListener('focusout', (e) => {
       if (!track.contains(e.relatedTarget as Node | null)) track.classList.remove('is-hovering');
     });
+  });
+
+  // Subject dropdowns. Click toggles; a mouse also opens one on hover and
+  // closes it shortly after leaving. Escape, an outside click or focus moving
+  // elsewhere closes it.
+  const menus = [...document.querySelectorAll<HTMLElement>('[data-menu]')];
+  const setOpen = (menu: HTMLElement, open: boolean) => {
+    if (open) {
+      // Open under the button's left edge, or its right edge if that would
+      // run off the screen.
+      const panel = menu.querySelector<HTMLElement>('.nav-menu')!;
+      panel.classList.remove('nav-menu--end');
+      if (panel.getBoundingClientRect().right > document.documentElement.clientWidth - 8) {
+        panel.classList.add('nav-menu--end');
+      }
+    }
+    menu.toggleAttribute('data-open', open);
+    menu.querySelector('button')!.setAttribute('aria-expanded', String(open));
+  };
+  const closeAll = (except?: HTMLElement) => menus.forEach((m) => m !== except && setOpen(m, false));
+  menus.forEach((menu) => {
+    const button = menu.querySelector<HTMLButtonElement>('button')!;
+    let hoverOpened = false;
+    let closeTimer: number | undefined;
+    button.addEventListener('click', () => {
+      // A click right after a hover-open keeps the menu open.
+      const open = hoverOpened || !menu.hasAttribute('data-open');
+      hoverOpened = false;
+      closeAll(menu);
+      setOpen(menu, open);
+    });
+    menu.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      clearTimeout(closeTimer);
+      if (!menu.hasAttribute('data-open')) {
+        closeAll(menu);
+        setOpen(menu, true);
+        hoverOpened = true;
+      }
+    });
+    menu.addEventListener('pointerleave', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      closeTimer = window.setTimeout(() => { hoverOpened = false; setOpen(menu, false); }, 180);
+    });
+    menu.addEventListener('focusout', (e) => {
+      if (!menu.contains(e.relatedTarget as Node | null)) setOpen(menu, false);
+    });
+    menu.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.hasAttribute('data-open')) {
+        setOpen(menu, false);
+        button.focus();
+      }
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!(e.target as Element).closest('[data-menu]')) closeAll();
   });
 
   // Scroll: a soft shadow once the page moves; the bar tucks away while
@@ -232,7 +298,9 @@ let n = 0; // entry stagger index
         header.classList.remove('is-hidden');
         lastY = y;
       } else if (y > lastY + 6) {
-        if (!reduce.matches && !header.contains(document.activeElement)) header.classList.add('is-hidden');
+        if (!reduce.matches && !header.contains(document.activeElement) && !header.querySelector('[data-open]')) {
+          header.classList.add('is-hidden');
+        }
         lastY = y;
       }
     };
@@ -248,6 +316,56 @@ let n = 0; // entry stagger index
   /* The pill is a soft tint; multiply keeps tab text readable through it
      while it slides between tabs during a page transition. */
   :global(::view-transition-group(nav-pill)) { mix-blend-mode: multiply; }
+
+  /* Subject dropdown: a small raised card under the subject button. Each
+     grade link carries its course's data-course, so its dot shows that
+     course's accent. */
+  .nav-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    z-index: 10;
+    min-width: 11rem;
+    padding: 0.375rem;
+    border-radius: 0.875rem;
+    background: rgb(var(--surface));
+    box-shadow: 0 0 0 1px rgb(var(--ink) / 0.08), 0 12px 28px -10px rgb(var(--ink) / 0.28);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px) scale(0.98);
+    transform-origin: top;
+    transition: opacity 160ms var(--ease-out), transform 200ms var(--ease-out), visibility 0s linear 200ms;
+  }
+  .nav-menu--end { left: auto; right: 0; }
+  [data-open] > .nav-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 160ms var(--ease-out), transform 200ms var(--ease-out);
+  }
+  [data-open] .menu-chevron { transform: rotate(180deg); }
+  .menu-chevron { transition: transform 200ms var(--ease-out); }
+  .nav-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    color: rgb(84 79 71);
+    transition: color 150ms, background-color 150ms;
+  }
+  .nav-menu-link:hover, .nav-menu-link:focus-visible { color: rgb(31 29 26); background: rgb(var(--ink) / 0.05); }
+  .nav-menu-link[aria-current='page'] { color: rgb(var(--accent-ink)); background: rgb(var(--accent-soft)); font-weight: 600; }
+  .nav-menu--dark { background: rgb(30 41 59); box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1), 0 12px 28px -10px rgb(0 0 0 / 0.6); }
+  .nav-menu--dark .nav-menu-link { color: rgb(203 213 225); }
+  .nav-menu--dark .nav-menu-link:hover, .nav-menu--dark .nav-menu-link:focus-visible { color: white; background: rgb(255 255 255 / 0.08); }
+  .nav-menu--dark .nav-menu-link[aria-current='page'] { color: white; background: rgb(var(--accent) / 0.4); }
+  @media (prefers-reduced-motion: reduce) {
+    .nav-menu, [data-open] > .nav-menu, .menu-chevron { transition: none; transform: none; }
+  }
 
   /* Audience switch: a small segmented control. The current view is a raised
      pill; the others are plain text. */

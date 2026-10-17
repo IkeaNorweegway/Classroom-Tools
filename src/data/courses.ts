@@ -38,6 +38,9 @@ export interface Course {
   subnav: SubnavItem[];
   /** Subnav shown on the course's parent pages; falls back to `subnav`. */
   parentSubnav?: SubnavItem[];
+  /** Top-nav dropdown entries for a course that spans several grades, per
+   *  audience (falls back to `student`). Other courses list one entry, `grade`. */
+  gradeMenu?: { student: SubnavItem[] } & Partial<Record<Audience, SubnavItem[]>>;
 }
 
 const endsWith = (suffix: string) => (p: string) => p.endsWith(suffix) || p.endsWith(`${suffix}/`);
@@ -101,6 +104,7 @@ const steamGrades: [string, string][] = [
   ['grade-8', 'Gr. 8'],
   ['grade-9', 'Gr. 9'],
 ];
+const steamGradeNames = steamGrades.map(([slug, label]): [string, string] => [slug, label.replace('Gr.', 'Grade')]);
 
 export const courses: Course[] = [
   {
@@ -224,6 +228,16 @@ export const courses: Course[] = [
       { label: 'All grades', path: 'steam', match: endsWith('/steam') },
     ],
     parentSubnav: parentItems('steam/parents', steamGrades),
+    gradeMenu: {
+      student: [
+        ...unitItems('steam/materials/', steamGradeNames),
+        { label: 'All grades', path: 'steam', match: endsWith('/steam') },
+      ],
+      parent: [
+        ...parentItems('steam/parents', steamGradeNames).slice(1),
+        { label: 'All grades', path: 'steam/parents', match: endsWith('/steam/parents') },
+      ],
+    },
   },
   {
     key: 'cefl',
@@ -242,6 +256,15 @@ export const courses: Course[] = [
     ],
     parentSubnav: [{ label: 'Overview', path: 'cefl/parents', match: endsWith('/cefl/parents') }],
   },
+];
+
+/** Top-nav subjects. Each opens a dropdown of its courses' grades. */
+export const navSubjects: { label: string; courses: CourseKey[] }[] = [
+  { label: 'Science', courses: ['science', 'science7'] },
+  { label: 'Math', courses: ['math9'] },
+  { label: 'Social', courses: ['social8', 'social9'] },
+  { label: 'STEAM', courses: ['steam'] },
+  { label: 'CEFL', courses: ['cefl'] },
 ];
 
 export const courseByKey = (key?: CourseKey) => courses.find((c) => c.key === key);

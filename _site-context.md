@@ -30,7 +30,7 @@ Seven courses are live. PhysEd and eSports are in the workspace but not on the s
 | STEAM (Gr. 5–9) | `/steam/` | inline hex | `#7c3aed` (violet) | Live |
 | CEFL 7 (Career Education & Financial Literacy) | `/cefl/` | `[data-course='cefl']` in global.css | `#94631a` (ochre) | Live (Grade 7). Materials in `public/materials/cefl/`, so its viewer reads that folder. One overview parent page, no per-unit parent guides. |
 
-**Adding a course:** Add a row here, add the slug to the `course` prop type in `BaseLayout.astro`, add a tab and subnav to `Nav.astro`, and add a course card to the home page. Only Grade 6 Science and Math 9 have Tailwind tokens; the newer courses use an inline hex in `Nav.astro`.
+**Adding a course:** Add a row here, add the slug to the `course` prop type in `BaseLayout.astro`, add it to `courses` and to a subject in `navSubjects` in `src/data/courses.ts`, and add a course card to the home page. Only Grade 6 Science and Math 9 have Tailwind tokens; the newer courses use an inline hex in `Nav.astro`.
 
 ---
 
@@ -65,7 +65,7 @@ Every page has two nav levels:
 
 **Level 1 — Site nav (top bar, always visible)**
 - Left: site name → links to home `/`
-- Centre: course tabs — `Gr. 6 Science` | `Math 9` | `Gr. 7 Science` | `Social 9` | `Social 8` | `STEAM` | `CEFL 7` (active tab highlighted with course accent)
+- Centre: subject menus — `Science` | `Math` | `Social` | `STEAM` | `CEFL` (`navSubjects` in `courses.ts`). Each opens a dropdown of grades: Science → Grade 6, Grade 7; Math → Grade 9; Social → Grade 8, Grade 9; STEAM → Grades 5–9 + All grades (from the course's `gradeMenu`); CEFL → Grade 7. The active subject is highlighted with the course accent and shows the current grade (e.g. `Science Gr. 7`). On small screens the menus wrap to a second row.
 - Right: the audience switch, `Student · Parent · Teacher` (see below)
 
 **Level 2 — Course subnav (below top bar, visible when inside a course)**
@@ -78,7 +78,7 @@ Every page has two nav levels:
 - Every page is written for one audience: `audience` on `BaseLayout` (`'student' | 'parent' | 'teacher'`). Course pages default to `student`; the home page has none.
 - Each course in `courses.ts` has a student `path` and may have a `teacherPath` and a `parentPath`. Every course has a `parentPath` and a `parentSubnav`; STEAM has no teacher path.
 - The nav switch offers the views the course has. A page can pass `audienceLinks` so the switch lands on the same topic (for example, `/math9/linear-equations` ↔ `/math9/parents/linear-equations` ↔ `/math9/teacher#linear-equations`); otherwise it goes to that view's course landing. Outside a course it goes to the hubs: `/`, `/parents`, `/teachers`.
-- In a parent or teacher view, the course tabs go to each course's matching view when it has one.
+- In a parent or teacher view, the grade links in the subject menus go to each course's matching view when it has one.
 - The chosen view is saved in `localStorage` (`audience`). The home page's "I'm a…" chooser uses it to point turntable links at the matching view.
 - Views are separate routes, not a lock. Nothing is hidden from students: every answer key in `public/materials/` is reachable by URL, and student pages keep answer keys in a collapsed section.
 
