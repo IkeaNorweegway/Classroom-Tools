@@ -32,6 +32,7 @@ Before writing the first line of any artifact: (1) copy the relevant template fr
 | Exit tickets | `templates/exit-ticket-template.md` | "One ticket per cluster. Every question maps to a specific LO." |
 | Home practice sheet (parent pages) | `templates/home-practice-template.md` | "One skill: [skill]. Worked example first, then fading support. Maps to: [prerequisite or core skill]. Fits one printed page." |
 | Thinking prompt | *(no template)* | "Prompt requires showing reasoning, not recalling a fact." |
+| Math 9 inquiry project (brief + journal + teacher guide) | `templates/inquiry-project-template.md` | "Options: [3, equal difficulty]. Driving questions launched in strand Lesson 1. Mini-lessons: [A, B]. Critique cycle: Period 4. Teams 4–5, roles: [ ]. Audience per option: [ ]. Rubric K/U/S → [local codes]. Depth ceilings respected: [ ]. Real data with source and date: [ ]." — rules in `_courses/math-9/_context.md` (Inquiry Projects) |
 | Game | *(no template)* | "Outcomes: [codes]. Model: [one line]. Real-time or turn-based. Test hook included." — full rules in `_games-context.md` |
 
 ### Trust mode

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 9 Mathematics — Measurement & Geometry — Inquiry Project</title>
+<style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../../../../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+  :root {
+    --unit:        #047857;
+    --unit-mid:    #059669;
+    --unit-dark:   #047857;
+    --unit-light:  #d1fae5;
+    --unit-border: #a7f3d0;
+    --line:   #c9c4b9;
+    --muted:  #544f47;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); font-size: 15px; line-height: 1.75;
+          color: #1f1d1a; max-width: 860px; margin: 0 auto; padding: 2.5rem 2rem; background: #fff; }
+  h1 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; color: #1f1d1a; margin-bottom: 0.25rem; }
+  h2 { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: #1f1d1a; margin: 1.5rem 0 0.5rem; }
+  h3 { font-family: var(--font-body); font-size: 0.9rem; font-weight: 700; color: var(--unit-dark);
+        text-transform: uppercase; letter-spacing: 0.06em; margin: 1.25rem 0 0.35rem; }
+  p { margin-bottom: 0.6rem; }
+  strong { color: #1f1d1a; }
+  ol,ul { padding-left: 1.4rem; margin-bottom: 0.75rem; }
+  li { margin-bottom: 0.35rem; }
+  sup { font-size: 0.75em; }
+
+  .about-callout {
+    border: 1.5px solid var(--unit-border); border-radius: 0.5rem;
+    padding: 1rem 1.25rem; margin-bottom: 2rem; background: var(--unit-light);
+    font-family: var(--font-body); font-size: 0.88rem;
+  }
+  .about-callout p { margin-bottom: 0.4rem; }
+  .about-callout p:last-child { margin-bottom: 0; }
+
+  .badge {
+    display: inline-flex; align-items: center;
+    font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
+    border-radius: 99px; padding: 0.2rem 0.6rem; letter-spacing: 0.03em;
+  }
+  .badge-core   { background: #e0f2fe; color: #0369a1; }
+  .badge-ext    { background: #ede9fe; color: #5b21b6; }
+  .badge-num    { background: var(--unit); color: white; }
+  .badge-vis    { background: #fef3c7; color: #92400e; }
+  .badge-err    { background: #fce7f3; color: #9d174d; }
+  .badge-stretch{ background: #1f1d1a; color: white; }
+
+  .section-heading {
+    font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em; color: var(--unit-dark);
+    border-bottom: 2px solid var(--unit-border); padding-bottom: 0.35rem; margin: 2rem 0 1.25rem;
+  }
+
+  .q-card {
+    border: 1px solid var(--line); border-radius: 0.6rem;
+    padding: 1.1rem 1.25rem; margin-bottom: 1.25rem; background: #fff;
+  }
+  .q-card.extended { border-left: 4px solid #7c3aed; }
+  .q-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  .q-context {
+    background: #faf9f6; border-left: 3px solid var(--unit-border);
+    padding: 0.6rem 0.9rem; border-radius: 0 0.35rem 0.35rem 0;
+    font-size: 0.93rem; margin-bottom: 0.75rem; font-style: italic; color: #3f3b35;
+  }
+  .q-part { margin-bottom: 0.6rem; padding-left: 1rem; font-size: 0.95rem; }
+
+  .al { border-bottom: 1.25px solid #6b665d; min-height: 1.8rem; margin: 0.4rem 0; }
+
+  .header-strip {
+    border-left: 5px solid var(--unit);
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    background: var(--unit-light);
+    border-radius: 0 8px 8px 0;
+    font-family: var(--font-body);
+  }
+  .header-strip .course-label {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--unit-dark);
+  }
+  .name-row { display: flex; gap: 1.5rem; margin: 0 0 1.25rem; font-size: 0.9rem; font-family: var(--font-body); align-items: baseline; }
+  .name-row span:not(.b) { color: var(--muted); }
+  .name-row .b { flex: 1; }
+  .b { display: inline-block; border-bottom: 2px solid #3f3b35; vertical-align: bottom; }
+  .b-sm { min-width: 4rem; }
+  .b-md { min-width: 7rem; }
+  .b-lg { min-width: 11rem; }
+  .b-xl { min-width: 15rem; }
+  .al-short { width: 60%; }
+  .work-box {
+    border: 1px solid #c9c4b9; border-radius: 0.35rem; min-height: 80px;
+    margin: 0.5rem 0; background: #fafafa; padding: 0.5rem;
+    font-size: 0.85rem; color: #6b665d; font-family: var(--font-body);
+  }
+
+  .word-bank {
+    background: #f4f2ed; border: 1px solid var(--line); border-radius: 0.35rem;
+    padding: 0.5rem 0.75rem; margin: 0.5rem 0 0.75rem; font-family: var(--font-body); font-size: 0.85rem;
+  }
+  .word-bank .label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+                       letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.25rem; }
+  .word-bank .terms { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .word-bank .term { background: white; border: 1px solid #b8b2a7; border-radius: 0.25rem;
+                      padding: 0.15rem 0.5rem; font-size: 0.85rem; }
+
+  .hint {
+    border: 1px dashed var(--unit-border); border-radius: 0.35rem;
+    padding: 0.45rem 0.75rem; margin: 0.5rem 0;
+    font-family: var(--font-body); font-size: 0.83rem; color: var(--unit-dark); background: var(--unit-light);
+  }
+  .hint-label { font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; margin-right: 0.4rem; }
+
+  .starter {
+    font-style: italic; color: var(--unit-dark);
+    border-left: 3px solid var(--unit-mid); padding: 0.35rem 0.75rem; margin: 0.4rem 0;
+    font-size: 0.92rem; background: var(--unit-light); border-radius: 0 0.25rem 0.25rem 0;
+  }
+
+  .misconception {
+    background: #fff1f2; border: 1px solid #fecdd3; border-left: 4px solid #f43f5e;
+    border-radius: 0 0.4rem 0.4rem 0; padding: 0.75rem 1rem; margin-bottom: 0.75rem;
+    font-family: var(--font-body); font-size: 0.9rem;
+  }
+  .student-claim { font-style: italic; font-size: 0.95rem; color: #881337; margin-bottom: 0.25rem; }
+  .err-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+                letter-spacing: 0.06em; color: #9f1239; margin-bottom: 0.35rem; }
+
+  pre {
+    font-family: var(--font-mono); font-size: 0.82rem;
+    background: #f4f2ed; border: 1px solid #c9c4b9; border-radius: 0.35rem;
+    padding: 0.75rem 1rem; overflow-x: auto; white-space: pre; margin: 0.75rem 0; line-height: 1.5;
+  }
+
+  .draw-box { border: 1px dashed #6b665d; min-height: 140px; border-radius: 4px; margin: 0.75rem 0; background: #faf9f6; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 0.75rem 0 1rem; }
+  table th {
+    font-family: var(--font-body); font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em; background: var(--unit-light);
+    color: var(--unit-dark); padding: 0.5rem 0.75rem; border: 1px solid var(--unit-border); text-align: left;
+  }
+  table td { padding: 0.55rem 0.75rem; border: 1px solid #c9c4b9; vertical-align: top; }
+  table tr:nth-child(even) td { background: #faf9f6; }
+
+  .forethought-block { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 0.6rem;
+                        padding: 1.1rem 1.25rem; margin: 2rem 0; font-family: var(--font-body); font-size: 0.9rem; }
+  .midpoint-block    { background: #fefce8; border: 1.5px solid #fde047; border-radius: 0.6rem;
+                        padding: 1.1rem 1.25rem; margin: 2rem 0; font-family: var(--font-body); font-size: 0.9rem; }
+  .reflection-block  { background: #fdf4ff; border: 1.5px solid #e9d5ff; border-radius: 0.6rem;
+                        padding: 1.1rem 1.25rem; margin: 2rem 0; font-family: var(--font-body); font-size: 0.9rem; }
+  .meta-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem; }
+  .forethought-block .meta-title { color: #0369a1; }
+  .midpoint-block    .meta-title { color: #854d0e; }
+  .reflection-block  .meta-title { color: #6b21a8; }
+  .meta-prompt { margin-bottom: 0.5rem; }
+
+  .stretch-header {
+    background: #1f1d1a; color: white; border-radius: 0.5rem 0.5rem 0 0;
+    padding: 0.75rem 1.25rem; font-family: var(--font-body); margin-top: 2.5rem;
+  }
+  .stretch-header h2 { font-family: var(--font-display); color: white; font-size: 1rem; margin: 0; }
+  .stretch-header p { font-size: 0.83rem; color: #6b665d; margin-top: 0.25rem; margin-bottom: 0; }
+  .stretch-card {
+    border: 1px solid #1f1d1a; border-top: none; padding: 1.1rem 1.25rem; background: #fff;
+  }
+  .stretch-card + .stretch-card { border-top: 1px solid #c9c4b9; }
+  .stretch-card:last-of-type { border-radius: 0 0 0.5rem 0.5rem; margin-bottom: 1.25rem; }
+
+  .self-assess { margin-top: 2.5rem; border: 1.5px solid var(--unit-border); border-radius: 0.5rem;
+                  overflow: hidden; font-family: var(--font-body); font-size: 0.88rem; }
+  .self-assess-header { background: var(--unit); color: white; padding: 0.7rem 1.1rem;
+                         font-weight: 700; font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .self-assess-body { padding: 1rem 1.1rem; }
+  .sa-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.5rem;
+             align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--line); font-size: 0.85rem; }
+  .sa-row:last-of-type { border-bottom: none; }
+  .sa-header { font-weight: 700; font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .sa-check { border: 1px solid #b8b2a7; border-radius: 0.25rem; padding: 0.2rem 0.5rem;
+               text-align: center; color: var(--muted); font-size: 0.78rem; }
+
+  hr { border: none; border-top: 2px solid #c9c4b9; margin: 2rem 0; }
+
+  @media print {
+    body { font-size: 11pt; padding: 1.5cm; max-width: 100%;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .q-card, .header-strip, .name-row, .stretch-card, .draw-box, .work-box, .about-callout,
+    .forethought-block, .midpoint-block, .reflection-block, .self-assess, table, pre {
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    h1, h2, h3, .section-heading, .stretch-header { break-after: avoid; page-break-after: avoid; }
+    p { orphans: 3; widows: 3; }
+  }
+
+  /* ── Stacked fractions (scripts/stack_fractions.py) ── */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.15;
+    margin: 0 1px;
+  }
+  .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+  .frac .den { padding: 1px 3px 0; }
+
+  .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ── Inquiry project additions (scripts/render_math9_projects.py) ── */
+  .subtitle { display: block; font-size: 0.82rem; color: #3f3b35; margin: 0.2rem 0 0.5rem; }
+  .option-card { border: 1.5px solid var(--unit-border); border-radius: 0.6rem; padding: 1.1rem 1.25rem 0.6rem; margin: 1.75rem 0; }
+  .option-header { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+  .option-header h2 { flex-basis: 100%; margin: 0.35rem 0 0; font-size: 1.25rem; }
+  .badge-ab { background: #dcfce7; color: #166534; }
+  .data-card { background: #faf9f6; border: 1px dashed #b8b2a7; border-radius: 0.4rem; padding: 0.7rem 1rem; margin: 0.75rem 0; font-size: 0.9rem; }
+  .data-card p { margin-bottom: 0.45rem; }
+  .data-card p:last-child { margin-bottom: 0; }
+  .stretch-card { border: 1px solid #1f1d1a; border-radius: 0.5rem; margin: 0.75rem 0; }
+  .milestone { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-display); font-size: 1.15rem;
+               border-bottom: 2px solid var(--unit-border); padding-bottom: 0.35rem; margin: 0.5rem 0 1rem; }
+  .milestone p { margin: 0; display: flex; align-items: center; gap: 0.6rem; }
+  .graph-grid { height: 300px; border: 1.5px solid #6b665d; margin: 0.5rem 0 1rem;
+                background-image: linear-gradient(#d6d1c7 1px, transparent 1px), linear-gradient(90deg, #d6d1c7 1px, transparent 1px);
+                background-size: 20px 20px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .work-box.tall { min-height: 150px; }
+  .own-box { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 0.6rem; padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: 0.9rem; }
+  .own-box .meta-title { color: #0369a1; }
+  .check-row { border-top: 1px dashed var(--line); padding-top: 0.5rem; margin-top: 1rem; font-size: 0.85rem; color: var(--muted); }
+  .check-label { font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; color: var(--unit-dark); margin-right: 0.5rem; }
+  ul.task-list { list-style: none; padding-left: 0.25rem; }
+  table td:empty { height: 2.2rem; }
+  @media print { .page-break { break-after: page; page-break-after: always; }
+                 .option-card { break-inside: auto; } .graph-grid, .own-box, .data-card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="header-strip">
+  <div class="course-label">Grade 9 Mathematics — Measurement & Geometry</div>
+</div>
+<!-- Render: python3 scripts/render_math9_projects.py → public/materials/math-9/worksheets/measurement-geometry/math9-measurement-geometry-project-v1.html -->
+<div class="name-row"><span>Name:</span><span class="b b-xl">&nbsp;</span><span>Team:</span><span class="b b-lg">&nbsp;</span></div>
+<section class="about-callout">
+<h1>Measurement &amp; Geometry — Inquiry Project</h1>
+<p><span class="subtitle">Circle Geometry · Surface Area &amp; Volume · Similarity &amp; Scale</span></p>
+<p><strong>The big question:</strong> <em>How can you measure something you can’t reach, or something that doesn’t exist yet?</em></p>
+<p>Your team picks <strong>one of three options</strong>. In each one, the thing you need to measure is too tall, too far, broken or not built yet. You measure what you <em>can</em> reach, draw it, choose the right geometry, and calculate the rest. Then you show your answer to a real audience.</p>
+<p><strong>5 class periods</strong> · <strong>Teams of 4–5</strong> · Keep everything in your <strong>Project Journal</strong>.</p>
+</section>
+<div class="section-heading">
+<p>How the project works</p>
+</div>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Period</th>
+<th>What your team does</th>
+<th>Milestone (teacher checks)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pick roles. Make a gut-feeling guess. Plan what you need to know and how you will find it. Start measuring.</td>
+<td><strong>M1 — Plan:</strong> guess, need-to-know list, plan</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Short lesson, then build your model: measurements, a labelled diagram, a scale drawing or table, and the formula.</td>
+<td><strong>M2 — Model:</strong> diagram and formula checked</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Short lesson, then solve for what you can’t measure. Write a first draft.</td>
+<td><strong>M3 — Draft:</strong> answer, with the work shown</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Gallery walk: give and get feedback. Revise.</td>
+<td><strong>M4 — Revised:</strong> revision log filled in</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Show your answer to your audience. Write your own reflection.</td>
+<td><strong>M5 — Final:</strong> product + individual reflection</td>
+</tr>
+</tbody>
+</table>
+<div class="hint">
+<p><span class="hint-label">Rule</span> Draw it before you calculate. Every length in your formula should point to a labelled part of your diagram. If it doesn’t, you don’t know what you’re calculating yet.</p>
+</div>
+<h3>Team roles</h3>
+<p>Everyone does math. Roles decide who is responsible for <em>checking</em> each part.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Role</th>
+<th>You are responsible for…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Facilitator</strong></td>
+<td>Keeping the team on the milestone. Making sure everyone has a turn to explain.</td>
+</tr>
+<tr>
+<td><strong>Recorder</strong></td>
+<td>The team’s copy of the measurements, diagrams and calculations. Neat, labelled, with units.</td>
+</tr>
+<tr>
+<td><strong>Checker</strong></td>
+<td>Asking “how do we know?” Checking units and whether each answer is a believable size.</td>
+</tr>
+<tr>
+<td><strong>Data / Materials</strong></td>
+<td>Measurements and sources. Getting and returning materials.</td>
+</tr>
+<tr>
+<td><strong>Skeptic</strong> <em>(team of 5)</em></td>
+<td>Finding the weakest part of the work before the gallery walk does.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div class="option-card">
+<div class="option-header">
+<p><span class="badge badge-num">Option 1</span> <span class="badge badge-vis">Outdoors</span></p>
+<h2>Measure the Unmeasurable</h2>
+</div>
+<p><strong>Guiding question:</strong> <em>How tall is the flagpole (or the school, or the tallest tree on the grounds), and how sure can you be without climbing it?</em></p>
+<p><strong>Context.</strong> Surveyors, foresters and builders measure tall things from the ground every day. Similar triangles let you scale up from something small you <em>can</em> measure, like your own height and shadow, to something you can’t.</p>
+<div class="data-card">
+<p><strong>Materials:</strong> tape measure or metre stick, a small flat mirror, chalk or a marker<br />
+<strong>Shadow method</strong> needs a sunny day. <strong>Mirror method</strong> works anywhere, even in the gym.<br />
+<strong>Check value:</strong> your teacher will get the real height from the caretaker or the building plans <em>after</em> you’ve handed in your answer.</p>
+</div>
+<p><strong>What you will do</strong></p>
+<ol type="1">
+<li><p><strong>Guess (M1).</strong> Pick the object. Each person guesses its height. Plan both methods: what will you measure for each one?</p></li>
+<li><p><strong>Model (M2).</strong> <strong>Shadow method:</strong> at the same moment, measure a team member’s height and shadow, and the object’s shadow. <strong>Mirror method:</strong> put the mirror on the ground and step back until you see the top of the object in it. Measure eye height, your distance to the mirror, and the mirror’s distance to the object. Draw both pairs of triangles, mark the equal angles, and write a proportion for each.</p>
+<p>Then answer: <em>Why are the triangles similar? Name the criterion (AA, SSS or SAS) and say where each equal angle comes from.</em></p></li>
+<li><p><strong>Solve (M3).</strong> Solve both proportions. Draw a scale diagram of one method on the grid (for example, 1 cm : 1 m) and check your answer by measuring it. How far apart are your two answers? Which method do you trust more, and why?</p></li>
+<li><p><strong>Critique and revise (M4).</strong> Gallery walk. Fix anything the feedback finds.</p></li>
+<li><p><strong>Height report (M5).</strong> Present a one-page report to the caretaker or principal: both methods, the diagrams, your best answer, and how close it came to the real height.</p></li>
+</ol>
+<p><strong>What to hand in</strong> (in the Project Journal)</p>
+<ul>
+<li>Measurements for both methods, with units</li>
+<li>Both pairs of triangles, with equal angles marked and the similarity criterion named</li>
+<li>Both proportions, solved</li>
+<li>Scale diagram with its scale written on it</li>
+<li>Comparison of the methods, and the report</li>
+</ul>
+<div class="stretch-card">
+<p><strong>★★ Extended.</strong> Use similar triangles to find a width you can’t cross, like a road or a creek. Draw your plan, take the measurements (or make up sensible ones), and solve for the width.</p>
+</div>
+<p><em>Math you will use: SI1, SI2, SI3, SI4, RN4</em></p>
+</div>
+<div class="option-card">
+<div class="option-header">
+<p><span class="badge badge-num">Option 2</span> <span class="badge badge-vis">Design</span> <span class="badge badge-ab">Alberta</span></p>
+<h2>Package Design</h2>
+</div>
+<p><strong>Guiding question:</strong> <em>What shape and size of container holds 500 mL using the least material?</em></p>
+<p><strong>Context.</strong> A small Alberta juice company wants a new 500 mL container. Every square centimetre of material costs money and ends up as waste. Tall and skinny, short and wide, or a box: which shape uses the least?</p>
+<div class="data-card">
+<p><strong>Volume needed:</strong> 500 mL = <strong>500 cm³</strong> (1 mL = 1 cm³)<br />
+<strong>Real can to compare:</strong> a 355 mL pop can is about <strong>6.6 cm across</strong> and <strong>12.2 cm tall</strong>. Measure a real one if you can.<br />
+<strong>Shapes to test:</strong> a cylinder and a square-based prism. Add a third shape if you like.</p>
+</div>
+<p><strong>What you will do</strong></p>
+<ol type="1">
+<li><p><strong>Guess (M1).</strong> Sketch the container you think will use the least material. Plan: if the volume must stay 500 cm³, what happens to the height when you change the radius?</p></li>
+<li><p><strong>Model (M2).</strong> <strong>Cylinder:</strong> for a radius <em>r</em> of 3, 4, 5 and 6 cm, solve 500 = π<em>r</em>²<em>h</em> for the height. Then find the surface area with SA = 2π<em>r</em>² + 2π<em>rh</em>. <strong>Square prism:</strong> for a base side <em>s</em> of 5, 6, 7, 8 and 9 cm, solve 500 = <em>s</em>²<em>h</em>, then find SA = 2<em>s</em>² + 4<em>sh</em>. Put both in a table, with a labelled diagram of each shape.</p>
+<p>Then answer: <em>Why does a very tall, skinny cylinder use lots of material? Why does a very short, wide one?</em></p></li>
+<li><p><strong>Narrow it down (M3).</strong> Use the table to zoom in on the best cylinder radius, to 0.1 cm. Compare the best cylinder with the best prism. Then find the volume and surface area of the real 355 mL can. Why don’t companies use the “best” shape?</p></li>
+<li><p><strong>Critique and revise (M4).</strong> Gallery walk. Fix anything the feedback finds.</p></li>
+<li><p><strong>Pitch (M5).</strong> Pitch your container to the “company”: a labelled drawing, the dimensions, how much material it saves, and one practical reason it would or wouldn’t work on a store shelf.</p></li>
+</ol>
+<p><strong>What to hand in</strong> (in the Project Journal)</p>
+<ul>
+<li>Labelled diagram of each shape</li>
+<li>Table: radius or side → height → surface area, for both shapes</li>
+<li>The best size to 0.1 cm, with the work that narrowed it down</li>
+<li>Volume and surface area of the real can, and the comparison</li>
+<li>Pitch</li>
+</ul>
+<div class="stretch-card">
+<p><strong>★★ Extended.</strong> Water-cooler cups are often cones. A cone cup with a radius of 4 cm has to hold 100 mL. How tall must it be? How tall would a cylinder cup with the same radius be? Explain the difference.</p>
+</div>
+<p><em>Math you will use: ME1, ME2, ME3, ME4, ME5, RN4, RN5</em></p>
+</div>
+<div class="option-card">
+<div class="option-header">
+<p><span class="badge badge-num">Option 3</span> <span class="badge badge-vis">Puzzles</span> <span class="badge badge-ab">Alberta</span></p>
+<h2>Circle Detectives</h2>
+</div>
+<p><strong>Guiding question:</strong> <em>How can you find the centre and size of a circle when you only have part of it, and how far can you see from the top of the Calgary Tower?</em></p>
+<p><strong>Context.</strong> Archaeologists rebuild a whole plate from one broken piece. Carpenters find the centre of a round tabletop with a square. And the curve of the Earth limits how far anyone can see. All three are circle-geometry cases.</p>
+<div class="data-card">
+<p><strong>Case 1:</strong> a paper “plate fragment” from your teacher (part of a circle’s edge)<br />
+<strong>Case 2:</strong> a round object (a clock, a lid, a tabletop) and a set square or the corner of a sheet of paper<br />
+<strong>Case 3:</strong> Earth’s radius is about <strong>6371 km</strong>. The Calgary Tower’s observation deck is about <strong>158 m</strong> above the street.<br />
+<em>Sources: NASA (Earth’s radius); Calgary Tower.</em></p>
+</div>
+<p><strong>What you will do</strong></p>
+<ol type="1">
+<li><p><strong>Guess (M1).</strong> Guess the radius of the full plate, and how far you could see from the tower deck (5 km? 50 km? 500 km?). Plan each case.</p></li>
+<li><p><strong>Model (M2).</strong> <strong>Case 1:</strong> draw two chords on the fragment. Construct each chord’s perpendicular bisector (find the midpoint, then draw a 90° line). Where the bisectors cross is the centre. Measure the radius. <strong>Case 2:</strong> put the corner of the set square on the edge of the circle and mark where its two sides cross the circle. Join those marks. Repeat from another spot. Where the two lines cross is the centre.</p>
+<p>Then answer: <em>Why does the line you drew in Case 2 have to be a diameter?</em></p></li>
+<li><p><strong>Calculate (M3).</strong> <strong>Case 1 check:</strong> measure one chord and its distance from the centre. Use the Pythagorean theorem to calculate the radius, and compare it with your measurement. <strong>Case 3:</strong> your line of sight just touches the Earth, so it’s a tangent. Draw the right triangle: Earth’s radius, the line of sight, and Earth’s radius + the deck height. Solve for the distance you can see, in km.</p></li>
+<li><p><strong>Critique and revise (M4).</strong> Gallery walk. Fix anything the feedback finds.</p></li>
+<li><p><strong>Case file (M5).</strong> Present a “Circle Detectives” case file to another class: each case, the property that cracked it, and the answers.</p></li>
+</ol>
+<p><strong>What to hand in</strong> (in the Project Journal)</p>
+<ul>
+<li>Case 1: fragment with both chords and bisectors, the measured radius, and the Pythagorean check</li>
+<li>Case 2: construction, with the centre marked, and the reason it works</li>
+<li>Case 3: labelled tangent–radius diagram and the solved distance</li>
+<li>Case file</li>
+</ul>
+<div class="stretch-card">
+<p><strong>★★ Extended.</strong> On a clear day you can see Rocky Mountain peaks more than 100 km away from the tower. A peak that rises about 1.9 km above Calgary can be seen from much further away than flat ground. How far away could you see its top from the deck? (Hint: add two horizon distances.)</p>
+</div>
+<p><em>Math you will use: CG1, CG2, CG3, CG4, SR3</em></p>
+</div>
+<hr />
+<div class="section-heading">
+<p>How it is assessed — all options</p>
+</div>
+<p>Every option uses the same rubric: 4 criteria, 3 marks each, 12 marks. You get no extra marks for picking a harder option, because all three are built to be the same difficulty. <strong>Criteria 1, 2 and 4</strong> are marked on your team’s work. <strong>Criterion 3</strong> is marked on <em>your own</em> explanation in your journal.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Full (3)</th>
+<th>Partial (2)</th>
+<th>Beginning (1)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Model</strong> — measurements and labelled diagram <em>(Skills &amp; Procedures · SI2, ME1, CG1)</em></td>
+<td>Measurements have units; the diagram labels every length the formula uses</td>
+<td>Diagram or measurements have one error or a missing label</td>
+<td>The diagram is missing, or doesn’t match the measurements</td>
+</tr>
+<tr>
+<td><strong>2. Solve</strong> — formula or proportion, solved and checked <em>(Skills &amp; Procedures · SI4, ME2–ME5, CG2–CG4)</em></td>
+<td>Correct formula or proportion, solved with every step shown, checked a second way (scale diagram, second method, or measurement), rounded sensibly</td>
+<td>Correct set-up with a calculation error, or no check</td>
+<td>Answer with no method, or the wrong formula</td>
+</tr>
+<tr>
+<td><strong>3. Explain the geometry</strong> — why the method works <em>(Understanding · SI3, ME4, CG2–CG4)</em></td>
+<td>Explains <em>why</em> (the similarity criterion, why the cone is <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>, why the bisector or tangent works), linked to the diagram</td>
+<td>Names the property but doesn’t explain it</td>
+<td>Restates the answer without a reason</td>
+</tr>
+<tr>
+<td><strong>4. Communicate</strong> — product for the audience <em>(Understanding · all)</em></td>
+<td>Audience could act on it without asking a question. Diagrams and numbers support the claim. Revisions from feedback are visible</td>
+<td>Clear answer, but support is thin, or feedback wasn’t used</td>
+<td>Answer is unclear or unsupported</td>
+</tr>
+</tbody>
+</table>
+<div class="reflection-block">
+<div class="meta-title">
+<p>Before you hand in — check</p>
+</div>
+<ul class="task-list">
+<li><label><input type="checkbox" />Does every length in our formula point to a label on our diagram? (Checker signs: <span class="b b-md">&nbsp;</span>)</label></li>
+<li><label><input type="checkbox" />Is every answer a believable size, with a unit?</label></li>
+<li><label><input type="checkbox" />Did we answer the guiding question in one clear sentence?</label></li>
+<li><label><input type="checkbox" />Can every team member explain <em>why</em> our method works?</label></li>
+<li><label><input type="checkbox" />Is the revision log filled in?</label></li>
+</ul>
+</div>
+<div class="word-bank">
+<div class="label">
+<p>What the codes mean</p>
+</div>
+<p><strong>SI1</strong> ratio, rate and proportion · <strong>SI2</strong> similar polygons · <strong>SI3</strong> AA, SSS and SAS similarity · <strong>SI4</strong> scale diagrams and indirect measurement · <strong>ME1</strong> 2-D area formulas · <strong>ME2</strong> surface area of prisms and cylinders · <strong>ME3</strong> volume of prisms and cylinders · <strong>ME4</strong> pyramids, cones and spheres · <strong>ME5</strong> composite objects · <strong>CG1</strong> circle vocabulary · <strong>CG2</strong> chord properties · <strong>CG3</strong> inscribed and central angles · <strong>CG4</strong> tangent–radius property · <strong>SR3</strong> Pythagorean theorem · <strong>RN4</strong> dividing rational numbers · <strong>RN5</strong> order of operations</p>
+</div>
+</body>
+</html>

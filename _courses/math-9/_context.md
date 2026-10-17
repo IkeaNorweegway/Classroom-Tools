@@ -12,7 +12,7 @@ Math 9 builds the algebraic and geometric reasoning students need for senior mat
 | Strand | Topics | Tier |
 |---|---|---|
 | Number | Rational numbers, Powers & exponents, Square roots | Tier 1 |
-| Patterns & Relations | Linear relations, Linear equations, Linear inequalities | Tier 1 |
+| Patterns & Relations (Algebra on the site) | Linear relations, Linear equations & inequalities, Polynomials | Tier 1 |
 | Shape & Space | Circle geometry, Surface area & volume, Similarity & scale | Tier 2 |
 | Statistics & Probability | Scatter plots & correlation, Probability (independent/dependent) | Tier 2 |
 
@@ -28,7 +28,8 @@ Math 9 builds the algebraic and geometric reasoning students need for senior mat
 **Patterns & Relations:**
 - Linear relations: y = mx + b form; graphing; slope as rise/run and as a rate of change; direct and partial variation; NOT systems of equations (Grade 10)
 - Equations: multi-step linear equations with rational coefficients; NOT quadratic equations
-- Inequalities: one-variable linear inequalities; graphing on number line; NOT compound inequalities
+- Inequalities (taught inside Linear equations, Section 4): one-variable linear inequalities; graphing on number line; NOT compound inequalities
+- Polynomials: degree ≤ 2; add, subtract, monomial × polynomial, binomial × binomial (area model); NOT factoring trinomials
 
 **Shape & Space:**
 - Circle geometry: chord properties, central and inscribed angle theorem, tangent-radius property; NO formal proof of theorems (descriptive/investigative)
@@ -94,7 +95,7 @@ Build in this order within each strand to respect conceptual dependencies:
 **Number:** Rational numbers → Powers & exponents → Square roots
 *(Rational numbers first because exponent laws involve rational operations; square roots connect to both)*
 
-**Patterns & Relations:** Linear relations → Linear equations → Linear inequalities
+**Patterns & Relations:** Linear relations → Linear equations & inequalities → Polynomials
 *(Relations provide the graphical/conceptual foundation; equations are algebraic tools; inequalities extend equations)*
 
 **Shape & Space:** Circle geometry → Surface area & volume → Similarity & scale
@@ -118,3 +119,25 @@ After every worked example, include a self-explanation prompt: "Explain what hap
 
 **Alberta contexts:**
 Anchor problems use recognizable Alberta settings: Fort McMurray, Banff, Edmonton, Calgary, canola fields, pipeline, hockey rinks, oil sands. These are not cosmetic — contexts should be genuine (removing the context makes the math problem incoherent) rather than pseudo-context (the scenario is decorative and students ignore it).
+
+---
+
+## Inquiry Projects
+
+One project per strand, each with **3 options** of equal difficulty on one shared rubric. Budget: **5 class periods plus 1 buffer**, run in the last part of the strand. Template and build rules: `templates/inquiry-project-template.md`. Evidence: `research/project-based-learning-research.md`.
+
+| Strand | Status | Options |
+|---|---|---|
+| Algebra | Built 2026-10-17 (pilot) | Stacking Cups · Which Plan Wins? (Calgary/Edmonton transit) · Garden Path Design (polynomials) |
+| Number | Built 2026-10-17 | Fold to the Moon (powers) · Will It Fit? (Pythagorean theorem in 3-D) · Chinook! (negative rational numbers) |
+| Measurement & Geometry | Built 2026-10-17 | Measure the Unmeasurable (similar triangles) · Package Design (500 mL, least surface area) · Circle Detectives (chords, inscribed angles, Calgary Tower horizon) |
+| Statistics & Probability | Built 2026-10-17 | Does It Really Correlate? (class body data) · Score More, Win More? (NHL standings) · Carnival Game Designer (independent vs dependent) |
+
+**Math-specific rules:**
+- The driving questions are launched in **strand Lesson 1** (10 min) to create the need to know. The project periods come later.
+- Each project has two 10-minute mini-lessons with worked examples that are *not* taken from any option, one gallery-walk critique with a revision log, and a real audience.
+- Each option's model uses the **Rule of Four** (table, graph, equation, words), and the journal has a Checker's table-vs-equation test.
+- Rubric: Model (S&P) · Solve and predict (S&P) · Explain the meaning (Understanding, **individual**) · Communicate (Understanding). 4 × 3 = 12.
+- **Local outcome codes** (no official codes yet): one per notes-package section. RN1–RN5, PE1–PE7, SR1–SR4 (Number); LR1–LR4, LE1–LE5, PO1–PO6 (Algebra); CG1–CG4, ME1–ME5, SI1–SI4 (Measurement & Geometry); ST1–ST4, PR1–PR4 (Statistics & Probability).
+- Real prices and data carry a source and a "checked" date; transit fares change every January.
+

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 9 Mathematics — Statistics & Probability — Inquiry Project</title>
+<style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../../../../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+  :root {
+    --unit:        #0f766e;
+    --unit-mid:    #0d9488;
+    --unit-dark:   #0f766e;
+    --unit-light:  #ccfbf1;
+    --unit-border: #99f6e4;
+    --line:   #c9c4b9;
+    --muted:  #544f47;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); font-size: 15px; line-height: 1.75;
+          color: #1f1d1a; max-width: 860px; margin: 0 auto; padding: 2.5rem 2rem; background: #fff; }
+  h1 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; color: #1f1d1a; margin-bottom: 0.25rem; }
+  h2 { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: #1f1d1a; margin: 1.5rem 0 0.5rem; }
+  h3 { font-family: var(--font-body); font-size: 0.9rem; font-weight: 700; color: var(--unit-dark);
+        text-transform: uppercase; letter-spacing: 0.06em; margin: 1.25rem 0 0.35rem; }
+  p { margin-bottom: 0.6rem; }
+  strong { color: #1f1d1a; }
+  ol,ul { padding-left: 1.4rem; margin-bottom: 0.75rem; }
+  li { margin-bottom: 0.35rem; }
+  sup { font-size: 0.75em; }
+
+  .about-callout {
+    border: 1.5px solid var(--unit-border); border-radius: 0.5rem;
+    padding: 1rem 1.25rem; margin-bottom: 2rem; background: var(--unit-light);
+    font-family: var(--font-body); font-size: 0.88rem;
+  }
+  .about-callout p { margin-bottom: 0.4rem; }
+  .about-callout p:last-child { margin-bottom: 0; }
+
+  .badge {
+    display: inline-flex; align-items: center;
+    font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
+    border-radius: 99px; padding: 0.2rem 0.6rem; letter-spacing: 0.03em;
+  }
+  .badge-core   { background: #e0f2fe; color: #0369a1; }
+  .badge-ext    { background: #ede9fe; color: #5b21b6; }
+  .badge-num    { background: var(--unit); color: white; }
+  .badge-vis    { background: #fef3c7; color: #92400e; }
+  .badge-err    { background: #fce7f3; color: #9d174d; }
+  .badge-stretch{ background: #1f1d1a; color: white; }
+
+  .section-heading {
+    font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em; color: var(--unit-dark);
+    border-bottom: 2px solid var(--unit-border); padding-bottom: 0.35rem; margin: 2rem 0 1.25rem;
+  }
+
+  .q-card {
+    border: 1px solid var(--line); border-radius: 0.6rem;
+    padding: 1.1rem 1.25rem; margin-bottom: 1.25rem; background: #fff;
+  }
+  .q-card.extended { border-left: 4px solid #7c3aed; }
+  .q-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  .q-context {
+    background: #faf9f6; border-left: 3px solid var(--unit-border);
+    padding: 0.6rem 0.9rem; border-radius: 0 0.35rem 0.35rem 0;
+    font-size: 0.93rem; margin-bottom: 0.75rem; font-style: italic; color: #3f3b35;
+  }
+  .q-part { margin-bottom: 0.6rem; padding-left: 1rem; font-size: 0.95rem; }
+
+  .al { border-bottom: 1.25px solid #6b665d; min-height: 1.8rem; margin: 0.4rem 0; }
+
+  .header-strip {
+    border-left: 5px solid var(--unit);
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    background: var(--unit-light);
+    border-radius: 0 8px 8px 0;
+    font-family: var(--font-body);
+  }
+  .header-strip .course-label {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--unit-dark);
+  }
+  .name-row { display: flex; gap: 1.5rem; margin: 0 0 1.25rem; font-size: 0.9rem; font-family: var(--font-body); align-items: baseline; }
+  .name-row span:not(.b) { color: var(--muted); }
+  .name-row .b { flex: 1; }
+  .b { display: inline-block; border-bottom: 2px solid #3f3b35; vertical-align: bottom; }
+  .b-sm { min-width: 4rem; }
+  .b-md { min-width: 7rem; }
+  .b-lg { min-width: 11rem; }
+  .b-xl { min-width: 15rem; }
+  .al-short { width: 60%; }
+  .work-box {
+    border: 1px solid #c9c4b9; border-radius: 0.35rem; min-height: 80px;
+    margin: 0.5rem 0; background: #fafafa; padding: 0.5rem;
+    font-size: 0.85rem; color: #6b665d; font-family: var(--font-body);
+  }
+
+  .word-bank {
+    background: #f4f2ed; border: 1px solid var(--line); border-radius: 0.35rem;
+    padding: 0.5rem 0.75rem; margin: 0.5rem 0 0.75rem; font-family: var(--font-body); font-size: 0.85rem;
+  }
+  .word-bank .label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+                       letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.25rem; }
+  .word-bank .terms { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .word-bank .term { background: white; border: 1px solid #b8b2a7; border-radius: 0.25rem;
+                      padding: 0.15rem 0.5rem; font-size: 0.85rem; }
+
+  .hint {
+    border: 1px dashed var(--unit-border); border-radius: 0.35rem;
+    padding: 0.45rem 0.75rem; margin: 0.5rem 0;
+    font-family: var(--font-body); font-size: 0.83rem; color: var(--unit-dark); background: var(--unit-light);
+  }
+  .hint-label { font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; margin-right: 0.4rem; }
+
+  .starter {
+    font-style: italic; color: var(--unit-dark);
+    border-left: 3px solid var(--unit-mid); padding: 0.35rem 0.75rem; margin: 0.4rem 0;
+    font-size: 0.92rem; background: var(--unit-light); border-radius: 0 0.25rem 0.25rem 0;
+  }
+
+  .misconception {
+    background: #fff1f2; border: 1px solid #fecdd3; border-left: 4px solid #f43f5e;
+    border-radius: 0 0.4rem 0.4rem 0; padding: 0.75rem 1rem; margin-bottom: 0.75rem;
+    font-family: var(--font-body); font-size: 0.9rem;
+  }
+  .student-claim { font-style: italic; font-size: 0.95rem; color: #881337; margin-bottom: 0.25rem; }
+  .err-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+                letter-spacing: 0.06em; color: #9f1239; margin-bottom: 0.35rem; }
+
+  pre {
+    font-family: var(--font-mono); font-size: 0.82rem;
+    background: #f4f2ed; border: 1px solid #c9c4b9; border-radius: 0.35rem;
+    padding: 0.75rem 1rem; overflow-x: auto; white-space: pre; margin: 0.75rem 0; line-height: 1.5;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 0.75rem 0 1rem; }
+  table th {
+    font-family: var(--font-body); font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em; background: var(--unit-light);
+    color: var(--unit-dark); padding: 0.5rem 0.75rem; border: 1px solid var(--unit-border); text-align: left;
+  }
+  table td { padding: 0.55rem 0.75rem; border: 1px solid #c9c4b9; vertical-align: top; }
+  table tr:nth-child(even) td { background: #faf9f6; }
+
+  .forethought-block { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 0.6rem;
+                        padding: 1.1rem 1.25rem; margin: 2rem 0; font-family: var(--font-body); font-size: 0.9rem; }
+  .midpoint-block    { background: #fefce8; border: 1.5px solid #fde047; border-radius: 0.6rem;
+                        padding: 1.1rem 1.25rem; margin: 2rem 0; font-family: var(--font-body); font-size: 0.9rem; }
+  .reflection-block  { background: #fdf4ff; border: 1.5px solid #e9d5ff; border-radius: 0.6rem;
+                        padding: 1.1rem 1.25rem; margin: 2rem 0; font-family: var(--font-body); font-size: 0.9rem; }
+  .meta-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem; }
+  .forethought-block .meta-title { color: #0369a1; }
+  .midpoint-block    .meta-title { color: #854d0e; }
+  .reflection-block  .meta-title { color: #6b21a8; }
+  .meta-prompt { margin-bottom: 0.5rem; }
+
+  .stretch-header {
+    background: #1f1d1a; color: white; border-radius: 0.5rem 0.5rem 0 0;
+    padding: 0.75rem 1.25rem; font-family: var(--font-body); margin-top: 2.5rem;
+  }
+  .stretch-header h2 { font-family: var(--font-display); color: white; font-size: 1rem; margin: 0; }
+  .stretch-header p { font-size: 0.83rem; color: #6b665d; margin-top: 0.25rem; margin-bottom: 0; }
+  .stretch-card {
+    border: 1px solid #1f1d1a; border-top: none; padding: 1.1rem 1.25rem; background: #fff;
+  }
+  .stretch-card + .stretch-card { border-top: 1px solid #c9c4b9; }
+  .stretch-card:last-of-type { border-radius: 0 0 0.5rem 0.5rem; margin-bottom: 1.25rem; }
+
+  .self-assess { margin-top: 2.5rem; border: 1.5px solid var(--unit-border); border-radius: 0.5rem;
+                  overflow: hidden; font-family: var(--font-body); font-size: 0.88rem; }
+  .self-assess-header { background: var(--unit); color: white; padding: 0.7rem 1.1rem;
+                         font-weight: 700; font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .self-assess-body { padding: 1rem 1.1rem; }
+  .sa-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.5rem;
+             align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--line); font-size: 0.85rem; }
+  .sa-row:last-of-type { border-bottom: none; }
+  .sa-header { font-weight: 700; font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .sa-check { border: 1px solid #b8b2a7; border-radius: 0.25rem; padding: 0.2rem 0.5rem;
+               text-align: center; color: var(--muted); font-size: 0.78rem; }
+
+  hr { border: none; border-top: 2px solid #c9c4b9; margin: 2rem 0; }
+
+  @media print {
+    body { font-size: 11pt; padding: 1.5cm; max-width: 100%;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .q-card, .header-strip, .name-row, .stretch-card, .misconception, .forethought-block, .self-assess, table {
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    h1, h2, h3, .section-heading, .stretch-header { break-after: avoid; page-break-after: avoid; }
+    p { orphans: 3; widows: 3; }
+  }
+
+  /* ── Stacked fractions (scripts/stack_fractions.py) ── */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.15;
+    margin: 0 1px;
+  }
+  .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+  .frac .den { padding: 1px 3px 0; }
+
+  .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ── Inquiry project additions (scripts/render_math9_projects.py) ── */
+  .subtitle { display: block; font-size: 0.82rem; color: #3f3b35; margin: 0.2rem 0 0.5rem; }
+  .option-card { border: 1.5px solid var(--unit-border); border-radius: 0.6rem; padding: 1.1rem 1.25rem 0.6rem; margin: 1.75rem 0; }
+  .option-header { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+  .option-header h2 { flex-basis: 100%; margin: 0.35rem 0 0; font-size: 1.25rem; }
+  .badge-ab { background: #dcfce7; color: #166534; }
+  .data-card { background: #faf9f6; border: 1px dashed #b8b2a7; border-radius: 0.4rem; padding: 0.7rem 1rem; margin: 0.75rem 0; font-size: 0.9rem; }
+  .data-card p { margin-bottom: 0.45rem; }
+  .data-card p:last-child { margin-bottom: 0; }
+  .stretch-card { border: 1px solid #1f1d1a; border-radius: 0.5rem; margin: 0.75rem 0; }
+  .milestone { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-display); font-size: 1.15rem;
+               border-bottom: 2px solid var(--unit-border); padding-bottom: 0.35rem; margin: 0.5rem 0 1rem; }
+  .milestone p { margin: 0; display: flex; align-items: center; gap: 0.6rem; }
+  .graph-grid { height: 300px; border: 1.5px solid #6b665d; margin: 0.5rem 0 1rem;
+                background-image: linear-gradient(#d6d1c7 1px, transparent 1px), linear-gradient(90deg, #d6d1c7 1px, transparent 1px);
+                background-size: 20px 20px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .work-box.tall { min-height: 150px; }
+  .own-box { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 0.6rem; padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: 0.9rem; }
+  .own-box .meta-title { color: #0369a1; }
+  .check-row { border-top: 1px dashed var(--line); padding-top: 0.5rem; margin-top: 1rem; font-size: 0.85rem; color: var(--muted); }
+  .check-label { font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; color: var(--unit-dark); margin-right: 0.5rem; }
+  ul.task-list { list-style: none; padding-left: 0.25rem; }
+  table td:empty { height: 2.2rem; }
+  @media print { .page-break { break-after: page; page-break-after: always; }
+                 .option-card { break-inside: auto; } .graph-grid, .own-box, .data-card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="header-strip">
+  <div class="course-label">Grade 9 Mathematics — Statistics & Probability</div>
+</div>
+<!-- Render: python3 scripts/render_math9_projects.py → public/materials/math-9/worksheets/statistics-probability/math9-statistics-probability-project-v1.html -->
+<div class="name-row"><span>Name:</span><span class="b b-xl">&nbsp;</span><span>Team:</span><span class="b b-lg">&nbsp;</span></div>
+<section class="about-callout">
+<h1>Statistics &amp; Probability — Inquiry Project</h1>
+<p><span class="subtitle">Scatter Plots &amp; Correlation · Probability</span></p>
+<p><strong>The big question:</strong> <em>When should you trust what data and chance seem to say, and when should you be suspicious?</em></p>
+<p>Your team picks <strong>one of three options</strong>. Each one starts with a claim people make all the time. You test it with real data or real trials, build a model, use it to predict, and then say honestly where the model stops working. Then you show your answer to a real audience.</p>
+<p><strong>5 class periods</strong> · <strong>Teams of 4–5</strong> · Keep everything in your <strong>Project Journal</strong>.</p>
+</section>
+<div class="section-heading">
+<p>How the project works</p>
+</div>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Period</th>
+<th>What your team does</th>
+<th>Milestone (teacher checks)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pick roles. Make a gut-feeling guess. Plan what you need to know and how you will find it. Start collecting data.</td>
+<td><strong>M1 — Plan:</strong> guess, need-to-know list, plan</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Short lesson, then build your model: data table → display → line of best fit or probability.</td>
+<td><strong>M2 — Model:</strong> display and model checked</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Short lesson, then use the model to predict, and test it. Write a first draft.</td>
+<td><strong>M3 — Draft:</strong> claim, evidence and limits</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Gallery walk: give and get feedback. Revise.</td>
+<td><strong>M4 — Revised:</strong> revision log filled in</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Show your answer to your audience. Write your own reflection.</td>
+<td><strong>M5 — Final:</strong> product + individual reflection</td>
+</tr>
+</tbody>
+</table>
+<div class="hint">
+<p><span class="hint-label">Rule</span> Every claim needs three parts: the claim, the evidence, and the limits. A model with no limits is a model you don’t understand yet.</p>
+</div>
+<h3>Team roles</h3>
+<p>Everyone does math. Roles decide who is responsible for <em>checking</em> each part.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Role</th>
+<th>You are responsible for…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Facilitator</strong></td>
+<td>Keeping the team on the milestone. Making sure everyone has a turn to explain.</td>
+</tr>
+<tr>
+<td><strong>Recorder</strong></td>
+<td>The team’s copy of the data, display and model. Neat, labelled, with units.</td>
+</tr>
+<tr>
+<td><strong>Checker</strong></td>
+<td>Asking “how do we know?” Checking the model against data the team already has.</td>
+</tr>
+<tr>
+<td><strong>Data / Materials</strong></td>
+<td>Collecting data fairly. Sources and dates. Getting and returning materials.</td>
+</tr>
+<tr>
+<td><strong>Skeptic</strong> <em>(team of 5)</em></td>
+<td>Finding the weakest part of the work before the gallery walk does.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div class="option-card">
+<div class="option-header">
+<p><span class="badge badge-num">Option 1</span> <span class="badge badge-vis">Hands-on</span></p>
+<h2>Does It Really Correlate?</h2>
+</div>
+<p><strong>Guiding question:</strong> <em>Is your arm span really about the same as your height, and what else can one body measurement predict?</em></p>
+<p><strong>Context.</strong> People repeat claims like “your arm span equals your height” or “more sleep makes you faster” without checking them. You’ll test one with real measurements from your class, and find out how strong the pattern is and how far you can trust it.</p>
+<div class="data-card">
+<p><strong>Pick one claim</strong> (or get your teacher to approve your own):<br />
+(a) Arm span is about the same as height. (b) People with longer feet are taller. (c) More sleep last night means a faster reaction time (ruler-drop test).<br />
+<strong>Data:</strong> at least <strong>15 people</strong> from your class. Teams can pool their data.<br />
+<strong>Materials:</strong> tape measure, metre stick (for the ruler drop)</p>
+</div>
+<p><strong>What you will do</strong></p>
+<ol type="1">
+<li><p><strong>Predict (M1).</strong> Will the correlation be positive, negative or none? Strong or weak? Plan: how will you measure everyone the same way?</p></li>
+<li><p><strong>Model (M2).</strong> Record your data in a table and make a scatter plot. Describe the correlation (type and strength). Draw a line of best fit by eye, pick two points <em>on the line</em>, and write its equation.</p>
+<p>Then answer: <em>What does the slope mean, in units? (For example: “for every 1 cm taller, arm span goes up about ___ cm.”)</em></p></li>
+<li><p><strong>Predict and test (M3).</strong> Use your line to predict a value <strong>inside</strong> your data (interpolate) and one <strong>far outside</strong> it (extrapolate). Try a 2.20 m basketball player and a 75 cm toddler. Which prediction do you trust, and why? Then the hard question: does one variable <em>cause</em> the other, or could something else explain the pattern?</p></li>
+<li><p><strong>Critique and revise (M4).</strong> Gallery walk. Fix anything the feedback finds.</p></li>
+<li><p><strong>Myth busted or confirmed? (M5).</strong> Make a hallway poster: the claim, the scatter plot, the verdict, and one warning about how far the line can be trusted.</p></li>
+</ol>
+<p><strong>What to hand in</strong> (in the Project Journal)</p>
+<ul>
+<li>Prediction and measuring plan</li>
+<li>Data table (15+ people) and labelled scatter plot</li>
+<li>Correlation description, line of best fit, its equation, and the slope’s meaning</li>
+<li>One interpolation and one extrapolation, with how much you trust each</li>
+<li>Causation discussion, and the poster</li>
+</ul>
+<div class="stretch-card">
+<p><strong>★★ Extended.</strong> Find the point furthest from your line (an <em>outlier</em>). Redraw the line without it. How much does the equation change? Should you remove it? Defend your choice.</p>
+</div>
+<p><em>Math you will use: ST1, ST2, ST3, ST4, LR3</em></p>
+</div>
+<div class="option-card">
+<div class="option-header">
+<p><span class="badge badge-num">Option 2</span> <span class="badge badge-vis">Sports</span> <span class="badge badge-ab">Alberta</span></p>
+<h2>Score More, Win More?</h2>
+</div>
+<p><strong>Guiding question:</strong> <em>Do NHL teams that score more goals always earn more points in the standings, and are the Oilers and Flames doing better or worse than their goals predict?</em></p>
+<p><strong>Context.</strong> Fans argue about whether a team is “lucky” or “good.” A scatter plot of every team in the league shows the overall pattern. Then you can see which teams sit above it (doing better than their goals predict) and which sit below.</p>
+<div class="data-card">
+<p><strong>Data:</strong> your teacher gives you the NHL standings for all <strong>32 teams</strong> from NHL.com, with the date: goals for (GF), goals against (GA) and points (PTS).<br />
+<strong>One dot per team.</strong> Label the Oilers and the Flames on your scatter plot.</p>
+</div>
+<p><strong>What you will do</strong></p>
+<ol type="1">
+<li><p><strong>Guess (M1).</strong> How strong will the link between goals and points be? Will the Oilers and Flames sit above or below the line? Plan: which variable goes on which axis, and what scales fit the data?</p></li>
+<li><p><strong>Model (M2).</strong> Scatter plot of GF (<em>x</em>) against PTS (<em>y</em>). Describe the correlation. Draw a line of best fit by eye, and write its equation from two points on the line.</p>
+<p>Then answer: <em>What does the slope mean, in “points per goal”? What would the y-intercept mean, and does it make sense?</em></p></li>
+<li><p><strong>Use the model (M3).</strong> Predict the Oilers’ and Flames’ points from their GF. Find <em>actual − predicted</em> for each. Which team in the league is furthest above the line, and which is furthest below? Suggest a reason that <em>isn’t</em> goals scored. Then plot GA against PTS. What kind of correlation do you expect, and what do you get?</p></li>
+<li><p><strong>Critique and revise (M4).</strong> Gallery walk. Fix anything the feedback finds.</p></li>
+<li><p><strong>Sports segment (M5).</strong> Write and deliver a 60-second sports segment for the morning announcements, or a letter to a fan who claims “goals are all that matter.” Use your graph as evidence.</p></li>
+</ol>
+<p><strong>What to hand in</strong> (in the Project Journal)</p>
+<ul>
+<li>Data table with the source and date</li>
+<li>GF vs PTS scatter plot, with the line of best fit, its equation and the slope’s meaning</li>
+<li>Predicted vs actual for the Oilers and Flames, and the furthest-above and furthest-below teams</li>
+<li>GA vs PTS plot and the comparison</li>
+<li>Segment script or letter</li>
+</ul>
+<div class="stretch-card">
+<p><strong>★★ Extended.</strong> Work out each team’s <em>goal difference</em> (GF − GA). Some will be negative. Plot goal difference against PTS. Is it a better predictor than GF alone? How can you tell from the graph?</p>
+</div>
+<p><em>Math you will use: ST1, ST2, ST3, ST4, RN2, LR3</em></p>
+</div>
+<div class="option-card">
+<div class="option-header">
+<p><span class="badge badge-num">Option 3</span> <span class="badge badge-vis">Design</span></p>
+<h2>Carnival Game Designer</h2>
+</div>
+<p><strong>Guiding question:</strong> <em>Can you design a two-step carnival game that’s fun to play but that most players won’t win, and prove the odds with math?</em></p>
+<p><strong>Context.</strong> Every carnival booth is built on probability. If a game is too easy, the booth runs out of prizes. If it’s too hard, nobody plays. You’ll design a game for a younger class’s fun fair, prove its odds, and then test them.</p>
+<div class="data-card">
+<p><strong>Game rules:</strong> two steps (spinner, die, coin, cards or a bag of coloured cubes). The chance of winning must be between <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">5</span></span> and <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span></strong>.<br />
+<strong>Make two versions:</strong> one where the steps are <strong>independent</strong>, and one where they’re <strong>dependent</strong> (for example, drawing twice from a bag <em>without</em> putting the first one back).<br />
+<strong>Materials:</strong> dice, coins, spinners, coloured cubes and bags, from your teacher</p>
+</div>
+<p><strong>What you will do</strong></p>
+<ol type="1">
+<li><p><strong>Design (M1).</strong> Sketch your game. Guess the chance of winning. Plan: what are the two steps, and which version is dependent?</p></li>
+<li><p><strong>Model (M2).</strong> Draw a tree diagram or an outcome table for each version. Find the theoretical probability of winning as a fraction and a decimal. If it isn’t between <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">5</span></span> and <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>, change the game and recalculate.</p>
+<p>Then answer: <em>Why are the steps in one version independent and in the other dependent? What changes after the first step?</em></p></li>
+<li><p><strong>Test (M3).</strong> Play each version at least <strong>30 times</strong> and record the results. Find the experimental probability. Pool your results with another team’s. Does the pooled result get closer to the theoretical one? A player loses 5 times in a row and says “I’m due to win.” Is that true?</p></li>
+<li><p><strong>Critique and revise (M4).</strong> Gallery walk. Another team plays your game and checks your math.</p></li>
+<li><p><strong>Run the booth (M5).</strong> Run your booth for a younger class. Post an honest sign with the odds of winning. Keep a tally, and compare it with your theoretical probability at the end.</p></li>
+</ol>
+<p><strong>What to hand in</strong> (in the Project Journal)</p>
+<ul>
+<li>Game design and rules</li>
+<li>Tree diagram or table for both versions, with the theoretical probabilities</li>
+<li>Trial results, experimental probabilities and the pooled results</li>
+<li>The “I’m due to win” answer</li>
+<li>Booth tally and comparison</li>
+</ul>
+<div class="stretch-card">
+<p><strong>★★ Extended.</strong> Change exactly one thing about your game so the chance of winning is <em>exactly</em> <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span>. Prove it with a tree diagram.</p>
+</div>
+<p><em>Math you will use: PR1, PR2, PR3, PR4, RN3</em></p>
+</div>
+<hr />
+<div class="section-heading">
+<p>How it is assessed — all options</p>
+</div>
+<p>Every option uses the same rubric: 4 criteria, 3 marks each, 12 marks. You get no extra marks for picking a harder option, because all three are built to be the same difficulty. <strong>Criteria 1, 2 and 4</strong> are marked on your team’s work. <strong>Criterion 3</strong> is marked on <em>your own</em> explanation in your journal.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Full (3)</th>
+<th>Partial (2)</th>
+<th>Beginning (1)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Model</strong> — data and display <em>(Skills &amp; Procedures · ST1, ST2, PR2)</em></td>
+<td>Data collected fairly and recorded; the display fits the data, with a title, labels and even scales</td>
+<td>Display present, with one error or a missing label</td>
+<td>Data or display missing, or the wrong type of display</td>
+</tr>
+<tr>
+<td><strong>2. Use the model</strong> — line of best fit or probability, used to predict <em>(Skills &amp; Procedures · ST3, ST4, PR1, PR3, PR4)</em></td>
+<td>Model correct (equation from two points on the line, or a correct tree diagram); predictions made and tested</td>
+<td>Model built with one error, or not used to predict</td>
+<td>No model, or predictions are guesses</td>
+</tr>
+<tr>
+<td><strong>3. Explain the limits</strong> — what the model means and where it breaks down <em>(Understanding · ST2, ST4, PR1, PR4)</em></td>
+<td>Explains the slope or probability in words and units, <em>and</em> a real limit (causation, extrapolation, sample size, independence)</td>
+<td>Explains one but not the other</td>
+<td>Restates the numbers without meaning or limits</td>
+</tr>
+<tr>
+<td><strong>4. Communicate</strong> — product for the audience <em>(Understanding · all)</em></td>
+<td>Audience could act on it without asking a question. The display supports the claim. Revisions from feedback are visible</td>
+<td>Clear claim, but evidence is thin, or feedback wasn’t used</td>
+<td>Claim is unclear or unsupported</td>
+</tr>
+</tbody>
+</table>
+<div class="reflection-block">
+<div class="meta-title">
+<p>Before you hand in — check</p>
+</div>
+<ul class="task-list">
+<li><label><input type="checkbox" />Does our model give a believable value for one case we already know? (Checker signs: <span class="b b-md">&nbsp;</span>)</label></li>
+<li><label><input type="checkbox" />Does our display have a title, labelled axes or branches, and even scales?</label></li>
+<li><label><input type="checkbox" />Did we state the claim, the evidence <em>and</em> the limits?</label></li>
+<li><label><input type="checkbox" />Can every team member explain what our model means in words?</label></li>
+<li><label><input type="checkbox" />Is the revision log filled in?</label></li>
+</ul>
+</div>
+<div class="word-bank">
+<div class="label">
+<p>What the codes mean</p>
+</div>
+<p><strong>ST1</strong> choosing a scatter plot · <strong>ST2</strong> correlation type and strength · <strong>ST3</strong> line of best fit, its equation, predictions · <strong>ST4</strong> interpolation and extrapolation · <strong>PR1</strong> theoretical and experimental probability · <strong>PR2</strong> sample spaces and tree diagrams · <strong>PR3</strong> independent events · <strong>PR4</strong> dependent events · <strong>LR3</strong> y = mx + b · <strong>RN2</strong> adding and subtracting negatives · <strong>RN3</strong> multiplying fractions</p>
+</div>
+</body>
+</html>

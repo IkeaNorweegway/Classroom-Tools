@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math 9 — Statistics & Probability Inquiry Project — Teacher Guide</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 11pt;
+  line-height: 1.55;
+  color: #1e293b;
+  background: #fff;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 28px 32px 56px;
+}
+:root {
+  --accent: #4f46e5;
+  --accent-light: #eef2ff;
+  --accent-mid: #4338ca;
+}
+h1 { font-size: 22pt; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+h2 { font-size: 14pt; font-weight: 700; color: var(--accent); margin: 32px 0 10px; border-bottom: 2px solid var(--accent-light); padding-bottom: 4px; }
+h3 { font-size: 11.5pt; font-weight: 700; color: #334155; margin: 0; text-transform: uppercase; letter-spacing: .04em; padding: 8px 12px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; }
+h4 { font-size: 11pt; font-weight: 700; color: var(--accent); margin: 16px 0 4px; }
+p { margin-bottom: 8px; }
+ul, ol { margin: 6px 0 10px 22px; }
+li { margin-bottom: 4px; }
+strong { font-weight: 700; }
+em { font-style: italic; color: #475569; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10.5pt; }
+th { background: var(--accent-light); color: var(--accent); font-weight: 700; text-align: left; padding: 7px 10px; border: 1px solid var(--accent-light); }
+td { padding: 8px 10px; border: 1px solid #e2e8f0; vertical-align: top; }
+tr:nth-child(even) td { background: #f8fafc; }
+hr { border: none; border-top: 2px solid #e2e8f0; margin: 24px 0; }
+.teacher-banner { background: var(--accent); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 9pt; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; display: inline-block; margin-bottom: 10px; }
+.show { border-left: 4px solid #64748b; background: #f8fafc; padding: 10px 14px; margin: 0; }
+.say  { border-left: 4px solid #0284c7; background: #f0f9ff; padding: 10px 14px; margin: 0; border-top: 1px solid #e8f4fb; }
+.cue  { border-left: 4px solid #6366f1; background: #eef2ff; padding: 10px 14px; margin: 0; border-top: 1px solid #e8eeff; }
+.beat-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; }
+.show .beat-label { color: #475569; }
+.say  .beat-label { color: #0284c7; }
+.cue  .beat-label { color: #4f46e5; }
+.say-label { color: #0284c7; }
+.cue-label { color: #4f46e5; }
+.beat { border: 1px solid #e2e8f0; border-radius: 8px; margin: 44px 0 0; overflow: hidden; }
+.flag { border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 14px 0; font-size: 10.5pt; }
+.flag .flag-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; display: block; }
+.flag-misconception { border-left: 4px solid #dc2626; background: #fef2f2; }
+.flag-misconception .flag-label { color: #dc2626; }
+.flag-pacing { border-left: 4px solid #d97706; background: #fffbeb; }
+.flag-pacing .flag-label { color: #b45309; }
+.answer-guide { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px 18px; margin: 14px 0; }
+.answer-guide .ag-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #16a34a; margin-bottom: 8px; display: block; }
+.answer-guide ol { margin-left: 18px; }
+.answer-guide li { margin-bottom: 10px; }
+.section-meta { font-size: 9.5pt; color: #64748b; margin: 3px 0 14px; }
+.section-meta span { background: #f1f5f9; border: 1px solid #e2e8f0; padding: 1px 8px; border-radius: 10px; font-weight: 600; margin-right: 5px; white-space: nowrap; }
+.flags-summary th { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+@media print { body { padding: 12px 18px; } h2 { page-break-before: always; } .beat { break-inside: avoid; } }
+
+  /* ── Stacked fractions (scripts/stack_fractions.py) ── */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.15;
+    margin: 0 1px;
+  }
+  .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+  .frac .den { padding: 1px 3px 0; }
+
+  .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ── Inquiry project additions (scripts/render_math9_projects.py) ── */
+  .beat h3 + div, .beat > div { margin: 0; }
+  .beat-label { display: block; }
+  .beat p:last-child { margin-bottom: 0; }
+  .flag p:last-child, .answer-guide p:last-child { margin-bottom: 0; }
+  .answer-guide table { background: #fff; }
+  .teacher-banner p { margin: 0; }
+  code { font-size: 0.9em; background: #f1f5f9; padding: 0 3px; border-radius: 3px; }
+  @media print { h1 + h2 { page-break-before: avoid; break-before: avoid; } }
+</style>
+</head>
+<body>
+<!-- Render: python3 scripts/render_math9_projects.py → public/materials/math-9/worksheets/statistics-probability/math9-statistics-probability-project-teacherguide-v1.html -->
+<div class="teacher-banner">
+<p>Teacher Copy — Not for Students</p>
+</div>
+<h1>Math 9 — Statistics &amp; Probability Inquiry Project</h1>
+<h2>Teacher Guide</h2>
+<p><em>Companion to the student brief (<code>math9-statistics-probability-project-v1</code>) and the Project Journal (<code>math9-statistics-probability-project-journal-v1</code>). Teaching reference, not a script.</em></p>
+<hr />
+<h2>How to use this document</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Label</th>
+<th>What it contains</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SHOW</strong></td>
+<td>What students see: board, projector or handout.</td>
+</tr>
+<tr>
+<td><strong>SAY</strong></td>
+<td>Key phrases and questions. Answers in <strong>[brackets]</strong>.</td>
+</tr>
+<tr>
+<td><strong>CUE</strong></td>
+<td>The student signal: ★ Write / ✎ Draw / ⊡ Think / ↩︎ Check</td>
+</tr>
+<tr>
+<td>Red flag</td>
+<td>A misconception that will cost marks if it isn’t addressed.</td>
+</tr>
+<tr>
+<td>Amber flag</td>
+<td>A place where projects stall, with a time target.</td>
+</tr>
+<tr>
+<td>Green box</td>
+<td>Expected answers for the option.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why this project is built the way it is.</strong> <code>research/project-based-learning-research.md</code>: projects raise achievement only when they are structured. That means the driving question comes early, short explicit lessons happen <em>inside</em> the project, there’s a critique-and-revise cycle, teams are 4–5 with roles, and the work goes to a real audience. Every period below has a mini-lesson or a protocol for that reason.</p>
+<p><strong>The strand thread.</strong> Each option tests a claim people repeat without checking. Both mini-lessons teach one habit across all three options: <strong>every claim needs evidence <em>and</em> its limits.</strong> For Criterion 3, a student who can say where the model breaks down understands it better than one who can only use it.</p>
+<hr />
+<h2>Project at a Glance</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>When</th>
+<th>What</th>
+<th>Must be taught first</th>
+<th>Journal page</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Strand Lesson 1</strong> (10 min)</td>
+<td>Launch: show the three driving questions, vote, start the need-to-know wall</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Period 1</strong></td>
+<td>Teams, roles, gut guess, plan; Option 1 collects class data</td>
+<td>Options 1–2: Statistics S1–S2; Option 3: Probability S1</td>
+<td>M1</td>
+</tr>
+<tr>
+<td><strong>Period 2</strong></td>
+<td>Mini-lesson A (from data to a display) → build the model</td>
+<td>Options 1–2: Statistics S3; Option 3: Probability S2–S3</td>
+<td>M2</td>
+</tr>
+<tr>
+<td><strong>Period 3</strong></td>
+<td>Mini-lesson B (claim, evidence, limits) → predict and test, draft</td>
+<td>Options 1–2: Statistics S4; Option 3: Probability S4</td>
+<td>M3</td>
+</tr>
+<tr>
+<td><strong>Period 4</strong></td>
+<td>Gallery-walk critique (Option 3 teams play each other’s games) → revise</td>
+<td>—</td>
+<td>M4</td>
+</tr>
+<tr>
+<td><strong>Period 5</strong></td>
+<td>Poster / sports segment / booth → individual reflection</td>
+<td>—</td>
+<td>M5</td>
+</tr>
+<tr>
+<td><strong>Period 6</strong> <em>(buffer)</em></td>
+<td>Finish, or return marked work for the 10-minute written response</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where it sits in the strand.</strong> Scatter Plots &amp; Correlation → Probability. Run Periods 1–5 after Probability Section 4. A class that picks only Options 1 and 2 can run the project at the end of Statistics instead.</p>
+<div class="flag flag-pacing">
+<p><span class="flag-label">Flag — Pacing</span> Option 1 needs <strong>the whole class’s data</strong> by the end of Period 1. Run a 10-minute class-wide measuring station at the start of Period 1 (everyone measures everything: height, arm span, foot length, a ruler-drop time, hours of sleep), so every Option 1 team can choose its claim from the shared data. Option 3 booth day (Period 5) needs a younger class booked in advance.</p>
+</div>
+<hr />
+<h2>Prep and Materials</h2>
+<p><strong>All options:</strong> printed brief (one per student), Project Journal (one per student), sticky notes in two colours, chart paper for the gallery walk, rubric copies, grid paper.</p>
+<p><strong>Option 1 — Does It Really Correlate?:</strong> tape measures (2–3), metre sticks for the ruler drop, a shared class data sheet (one row per student, no names, just a number).</p>
+<p><strong>Option 2 — Score More, Win More?:</strong> print the NHL standings for all 32 teams (GF, GA, PTS) from NHL.com, with the date. <strong>Use last season’s final standings</strong> unless you want the extra discussion that mid-season data brings (see the flag in Period 3).</p>
+<p><strong>Option 3 — Carnival Game Designer:</strong> dice, coins, spinners (or paper-clip spinners), coloured cubes or counters, paper bags. Book a younger class for the booth on Period 5.</p>
+<hr />
+<h2>Launch — Strand Lesson 1 (10 min)</h2>
+<section class="beat">
+<h3>Beat 1 — Three claims, no answers yet</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> Three images: Leonardo da Vinci’s <em>Vitruvian Man</em> (arms out, in a square); an Oilers goal celebration; a carnival ring-toss booth. Under each, its driving question.</p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> “Each of these is a claim people repeat without checking: arm span equals height, more goals means more wins, the carnival game is winnable. By the end of this strand you’ll be able to test them.” “What would you need to know?” <em>([measurements from lots of people], [every team’s stats], [how many ways there are to win].)</em></p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ⊡ Think → vote by hand. ★ Write: each student adds one sticky note to a <strong>need-to-know wall</strong> under their question.</p>
+</div>
+</section>
+<p><strong>Why this is in Lesson 1:</strong> it creates the “need to know.” Point back at the wall during Statistics Section 3 (line of best fit) and Probability Section 4 (dependent events).</p>
+<hr />
+<h2>Period 1 — Teams, Roles, Plan</h2>
+<section class="beat">
+<h3>Beat 2 — Teams and roles (8 min)</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> The role table from the brief.</p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> “Everyone does the math. Your role is what you’re responsible for <em>checking</em>.” “Data person: ‘fair’ means everyone is measured the same way. Shoes on or off? Arms straight? Decide before you start.”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ★ Write: tick your option and role, the gut guesses and the need-to-know table. ↩︎ Check: teacher initials M1.</p>
+</div>
+</section>
+<hr />
+<h2>Period 2 — Build the Model</h2>
+<section class="beat">
+<h3>Beat 3 — Mini-lesson A: from data to a display (10 min)</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> <strong>Example 1.</strong> <em>(Made-up data)</em> Hours of practice → free throws made out of 20: (0, 6), (1, 8), (2, 11), (3, 12), (4, 15), (5, 16).<br />
+<strong>Example 2.</strong> Flip a coin, then spin a 3-colour spinner (red, blue, green). List every outcome.</p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> Example 1: “Which variable goes on the <em>x</em>-axis? [practice: it’s the one we think explains the other.] Scale: <em>x</em> goes 0–5, <em>y</em> goes 0–20. Even steps. Title. Units.” “Line of best fit: about as many points above as below. It does <strong>not</strong> have to go through the first point or the origin. Pick two points <em>on your line</em>, not data points, to find the slope: for example (0, 6.5) and (5, 16.5) → <em>m</em> = [2] free throws per hour.” Example 2: “Tree: 2 branches, then 3 on each → [6 outcomes], each with probability [<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span>]. The branches from one point add to [1].”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ✎ Draw both in the M2 mini-lesson box. ↩︎ Check: points above vs below the line; branches add to 1.</p>
+</div>
+</section>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>“The line of best fit connects the dots” / “it must go through the first and last points.”</strong> Ask: “Is your line a <em>trend</em> or a <em>path</em>?” A good line has about half the points on each side, spread along its length.</p>
+</div>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>“Removing a cube doesn’t change the probability” (Option 3).</strong> Without replacement, the bag changes: 3 red out of 5 becomes 2 red out of 4 after a red is drawn. Have students <em>physically</em> draw a cube, leave it out, and count what’s left before they write the second-step fractions.</p>
+</div>
+<hr />
+<h2>Period 3 — Predict and Test</h2>
+<section class="beat">
+<h3>Beat 4 — Mini-lesson B: claim, evidence, limits (10 min)</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> <strong>Example 1.</strong> In summer, ice cream sales and drownings both go up. Claim: “Ice cream causes drowning.”<br />
+<strong>Example 2.</strong> From Example 1 in Period 2, the line is <em>y</em> = 2<em>x</em> + 6.5. Predict for 3.5 hours, then for 40 hours.<br />
+<strong>Example 3.</strong> A game has a theoretical chance of <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span>. A team played 20 times and won 7. Is the game broken?</p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> Example 1: “Evidence: [they rise together]. Limit: [hot weather drives both]. Correlation doesn’t show causation.” Example 2: “3.5 h → [13.5 free throws]: inside the data, so we can trust it. 40 h → [86.5 out of 20]: impossible. That’s extrapolation going wrong.” Example 3: “Expected [5]. Got 7. With only 20 trials, that’s normal. Theoretical probability tells you the <em>long-run</em> result, not the next 20 games.”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ★ Write: claim / evidence / limit for each one in the M3 mini-lesson box.</p>
+</div>
+</section>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>“Correlation means causation.”</strong> Every Option 1 and Option 2 team must answer: “Could something else explain this pattern?” Option 1: height doesn’t <em>cause</em> arm span; both come from overall body growth. Option 2: goals do help win games directly, but goals <em>against</em> matter too, so GF alone isn’t the whole story.</p>
+</div>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>“A strong correlation is an exact relationship.”</strong> The line predicts a <em>typical</em> value. Ask: “Are any of your real points exactly on the line? [Few or none.] So how exact is your prediction?”</p>
+</div>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>Gambler’s fallacy: “I lost 5 times, so I’m due.”</strong> Each new game starts fresh: the dice and the spinner have no memory, and the bag is refilled. In the dependent version, the two draws <em>within</em> one game are linked, but one game doesn’t affect the next. That’s a subtle point worth a full-class discussion.</p>
+</div>
+<div class="flag flag-misconception">
+<p><span class="flag-label">Flag — Misconception</span> <strong>Mid-season NHL data (Option 2).</strong> If you use current standings, teams have played different numbers of games, so points and goals aren’t comparable. Either use last season’s final standings, or have teams divide by games played. This is a strong ★★ discussion.</p>
+</div>
+<hr />
+<h2>Period 4 — Critique and Revise</h2>
+<section class="beat">
+<h3>Beat 5 — Gallery walk (25 min)</h3>
+<div class="show">
+<p><span class="beat-label">Show</span> Each team’s display and model posted on chart paper. Round 1: <strong>“Check one prediction: put the <em>x</em>-value into their equation (or follow their tree). Do you get their answer?”</strong> Round 2: <strong>“What is their limit? Is it a real one?”</strong> <em>Option 3 teams leave their game at their poster. Visitors play it 5 times and check the tree diagram.</em></p>
+</div>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> “Kind, specific, helpful. ‘Looks good’ gets handed back.”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> Two rounds × 8 min. Yellow sticky = round 1, pink = round 2. ★ Write: one sticky per round, plus a copy in your journal.</p>
+</div>
+</section>
+<section class="beat">
+<h3>Beat 6 — Revise (rest of period)</h3>
+<div class="say">
+<p><span class="say-label beat-label">Say</span> “Sort your stickies: what do we fix, what do we answer, what do we politely ignore, and why? Log each change.”</p>
+</div>
+<div class="cue">
+<p><span class="cue-label beat-label">Cue</span> ★ Write: at least two revision-log rows. ↩︎ Check: teacher initials M4.</p>
+</div>
+</section>
+<hr />
+<h2>Period 5 — Show It</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Option</th>
+<th>Format</th>
+<th>Audience</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>“Myth busted or confirmed?” poster</strong> for the hallway, with the scatter plot and a warning about the line’s limits.</td>
+<td>Hallway / another class</td>
+<td>~20 min</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>60-second sports segment</strong> on the morning announcements, or a letter to a fan who says “goals are all that matter.”</td>
+<td>School</td>
+<td>~20 min</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Run the booth</strong> for a younger class, with an honest odds sign. Keep a tally, and compare it with the theoretical probability at the end.</td>
+<td>A younger class</td>
+<td>~30 min</td>
+</tr>
+</tbody>
+</table>
+<p>Last 10–15 min: the individual reflection on journal page M5. This is not homework. It’s done in class, and it feeds Criterion 3.</p>
+<hr />
+<h2>Answer Guides</h2>
+<div class="answer-guide">
+<p><span class="ag-label">Option 1 — Does It Really Correlate?</span></p>
+<p><strong>(a) Arm span vs height:</strong> expect a <strong>strong positive</strong> correlation. The line is close to <em>span</em> = <em>height</em>: slope about <strong>1 cm of arm span per cm of height</strong>, intercept near 0. Don’t over-interpret the intercept, because nobody is 0 cm tall. Class heights will mostly fall between 150 and 185 cm. <strong>Interpolation</strong> (someone 170 cm tall) is trustworthy. <strong>Extrapolation:</strong> a 2.20 m player is outside the data. The line predicts about 220 cm, and many elite basketball players actually have spans longer than their height, so the prediction is only rough. A 75 cm toddler: young children’s body proportions differ from teenagers’, so a line built on Grade 9 students doesn’t apply. That’s the best example of an extrapolation limit. <strong>Causation:</strong> height doesn’t <em>cause</em> arm span. Both come from the same overall growth.</p>
+<p><strong>(b) Foot length vs height:</strong> usually a <strong>moderate-to-strong positive</strong> correlation, more scattered than (a).</p>
+<p><strong>(c) Sleep vs reaction time:</strong> usually <strong>weak or no</strong> correlation in a class sample. That’s a correct and interesting finding. Limits: one night’s sleep is self-reported, reaction time varies trial to trial, and practice, focus and caffeine all matter. A team that reports “no correlation” with good evidence earns full marks.</p>
+<p><strong>Slope from two points <em>on the line</em>:</strong> check that the team didn’t pick two data points that are off the line.</p>
+</div>
+<div class="answer-guide">
+<p><span class="ag-label">Option 2 — Score More, Win More? (check against your printed standings)</span></p>
+<p><strong>GF vs PTS:</strong> expect a <strong>positive</strong> correlation, usually moderate to strong, with visible scatter. The slope means <em>points per extra goal scored</em>, over a season. The <em>y</em>-intercept (points for a team that scores 0 goals) is meaningless: it’s an extrapolation far outside the data.</p>
+<p><strong>Oilers and Flames:</strong> actual − predicted is positive (above the line: doing <em>better</em> than their goals predict) or negative (below). Good reasons that aren’t goals scored: goals <em>against</em> (goaltending and defence), overtime and shootout points, many close games, and games played (mid-season).</p>
+<p><strong>GA vs PTS:</strong> expect a <strong>negative</strong> correlation. Teams that allow more goals earn fewer points.</p>
+<p><strong>★★ Goal difference (GF − GA) vs PTS:</strong> usually the <strong>strongest</strong> correlation of the three, with points clustered more tightly around the line, because it counts both ends of the ice. Some goal differences are negative, so the <em>x</em>-axis has to include negative numbers.</p>
+</div>
+<div class="answer-guide">
+<p><span class="ag-label">Option 3 — Carnival Game Designer (sample games)</span></p>
+<p><strong>Bag game:</strong> 3 red and 2 blue cubes; draw two; win if both are red. - <em>Independent</em> (with replacement): <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">5</span></span> × <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">5</span></span> = <strong><span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">25</span></span> = 0.36</strong>. Too high, so it’s outside <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">5</span></span>–<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span>. The team must adjust it (for example 2 red and 3 blue → <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">5</span></span> × <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">5</span></span> = <span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">25</span></span> = 0.16, now too low; or 3 red and 3 blue → <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> × <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span> ✓). - <em>Dependent</em> (without replacement): <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">5</span></span> × <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">4</span></span> = <span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">20</span></span> = <strong><span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">10</span></span> = 0.30</strong> ✓.</p>
+<p><strong>Spinner + die:</strong> a spinner that’s half gold, and a die roll of 4 or more: <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> × <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">6</span></span> = <strong><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span> = 0.25</strong> ✓ (independent).</p>
+<p><strong>30 trials at p = 0.30:</strong> expect about 9 wins. Anything from about <strong>4 to 14 wins</strong> is normal at 30 trials. Pooled results (60, 90, 120 trials) should drift closer to 0.30. That’s the long-run meaning of theoretical probability.</p>
+<p><strong>“I’m due to win”:</strong> false. Every game starts fresh, so past losses don’t change the next game’s probability.</p>
+<p><strong>★★ Exactly <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span>:</strong> many answers. For example, change the bag to 3 red and 3 blue <em>with</em> replacement (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> × <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>), or 2 red and 2 blue <em>without</em> replacement → <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">4</span></span> × <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">3</span></span> = <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">12</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span> ✗ (doesn’t work: check it!). The tree diagram must prove whichever they choose.</p>
+</div>
+<hr />
+<h2>Assessment</h2>
+<ul>
+<li><strong>Rubric</strong> (in the brief): 4 criteria × 3 = 12. Criteria 1, 2 and 4 are marked from the Recorder’s journal and the final product, and every team member gets the same mark. Criterion 3 (meaning <em>and</em> limits) is marked from <strong>each student’s</strong> blue <em>On your own</em> box (M2) and reflection question 2 (M5).</li>
+<li><strong>Outcome codes</strong> are local, one per notes-package section: ST1–ST4 (Statistics S1–S4), PR1–PR4 (Probability S1–S4), plus LR3 (y = mx + b) and RN2–RN3.</li>
+<li><strong>The project doesn’t replace the strand test.</strong> The test checks individual knowledge. The project checks application and explanation.</li>
+<li><strong>Returning work:</strong> hand it back with a comment on each criterion. Students write one paragraph in class (10 min, not homework): (1) What did I misunderstand or leave incomplete? (2) What would I change if I could redo it?</li>
+</ul>
+<h2>Supports and Extension</h2>
+<ul>
+<li><strong>Most concrete entry point:</strong> Option 3. Students play the game before they calculate it.</li>
+<li><strong>Scaffolds already in the journal:</strong> a 16-row data table, a grid for the display, the Checker’s “points above vs below” and “branches add to 1” tests.</li>
+<li><strong>IPP / significant gaps:</strong> give a pre-scaled grid (Options 1–2) or a pre-drawn tree with blank fractions (Option 3). Keep the explanation in Criterion 3; that’s what’s being assessed.</li>
+<li><strong>Extension:</strong> each option has a ★★ task.</li>
+</ul>
+<hr />
+<h2>Sources</h2>
+<ul>
+<li>NHL standings: NHL.com. Print them with the date, and use last season’s final standings for a clean comparison.</li>
+<li>Arm span ≈ height: the Vitruvian proportion (Vitruvius, drawn by Leonardo da Vinci). It’s a rough rule, which is exactly why it’s worth testing.</li>
+<li>Design: <code>research/project-based-learning-research.md</code>, <code>research/slow-reveal-graphs-research.md</code> (reading graphs), <code>templates/evidence-design-principles.md</code>.</li>
+</ul>
+<hr />
+<h2>Key Flags Summary</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Where</th>
+<th>Flag</th>
+<th>Move</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1</td>
+<td>Option 1 class data not ready</td>
+<td>10-min class measuring station at the start of P1</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Line of best fit connects the dots</td>
+<td>“Trend or path?” Half the points on each side</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Removing a cube doesn’t change the odds</td>
+<td>Draw it, leave it out, count again</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>Correlation means causation</td>
+<td>“Could something else explain it?”</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>Strong correlation = exact</td>
+<td>“How many points are exactly on the line?”</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>Gambler’s fallacy</td>
+<td>Each game starts fresh</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>Mid-season NHL data</td>
+<td>Last season’s final standings, or divide by games played</td>
+</tr>
+<tr>
+<td>P4</td>
+<td>Starting over instead of revising</td>
+<td>Fix the weakest part</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

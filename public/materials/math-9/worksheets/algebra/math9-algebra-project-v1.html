@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 9 Mathematics — Algebra — Inquiry Project</title>
+<style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../../../../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+  :root {
+    --unit:        #6d28d9;
+    --unit-mid:    #7c3aed;
+    --unit-dark:   #6d28d9;
+    --unit-light:  #ede9fe;
+    --unit-border: #ddd6fe;
+    --line:   #c9c4b9;
+    --muted:  #544f47;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); font-size: 15px; line-height: 1.75;
+          color: #1f1d1a; max-width: 860px; margin: 0 auto; padding: 2.5rem 2rem; background: #fff; }
+  h1 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; color: #1f1d1a; margin-bottom: 0.25rem; }
+  h2 { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: #1f1d1a; margin: 1.5rem 0 0.5rem; }
+  h3 { font-family: var(--font-body); font-size: 0.9rem; font-weight: 700; color: var(--unit-dark);
+        text-transform: uppercase; letter-spacing: 0.06em; margin: 1.25rem 0 0.35rem; }
+  p { margin-bottom: 0.6rem; }
+  strong { color: #1f1d1a; }
+  ol,ul { padding-left: 1.4rem; margin-bottom: 0.75rem; }
+  li { margin-bottom: 0.35rem; }
+  sup { font-size: 0.75em; }
+
+  .about-callout {
+    border: 1.5px solid var(--unit-border); border-radius: 0.5rem;
+    padding: 1rem 1.25rem; margin-bottom: 2rem; background: var(--unit-light);
+    font-family: var(--font-body); font-size: 0.88rem;
+  }
+  .about-callout p { margin-bottom: 0.4rem; }
+  .about-callout p:last-child { margin-bottom: 0; }
+
+  .badge {
+    display: inline-flex; align-items: center;
+    font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
+    border-radius: 99px; padding: 0.2rem 0.6rem; letter-spacing: 0.03em;
+  }
+  .badge-core   { background: #e0f2fe; color: #0369a1; }
+  .badge-ext    { background: #ede9fe; color: #5b21b6; }
+  .badge-num    { background: var(--unit); color: white; }
+  .badge-vis    { background: #fef3c7; color: #92400e; }
+  .badge-err    { background: #fce7f3; color: #9d174d; }
+  .badge-stretch{ background: #1f1d1a; color: white; }
+
+  .section-heading {
+    font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em; color: var(--unit-dark);
+    border-bottom: 2px solid var(--unit-border); padding-bottom: 0.35rem; margin: 2rem 0 1.25rem;
+  }
+
+  .q-card {
+    border: 1px solid var(--line); border-radius: 0.6rem;
+    padding: 1.1rem 1.25rem; margin-bottom: 1.25rem; background: #fff;
+  }
+  .q-card.extended { border-left: 4px solid #7c3aed; }
+  .q-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  .q-context {
+    background: #faf9f6; border-left: 3px solid var(--unit-border);
+    padding: 0.6rem 0.9rem; border-radius: 0 0.35rem 0.35rem 0;
+    font-size: 0.93rem; margin-bottom: 0.75rem; font-style: italic; color: #3f3b35;
+  }
+  .q-part { margin-bottom: 0.6rem; padding-left: 1rem; font-size: 0.95rem; }
+
+  .al { border-bottom: 1.25px solid #6b665d; min-height: 1.8rem; margin: 0.4rem 0; }
+
+  .header-strip {
+    border-left: 5px solid var(--unit);
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    background: var(--unit-light);
+    border-radius: 0 8px 8px 0;
+    font-family: var(--font-body);
+  }
+  .header-strip .course-label {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--unit-dark);
+  }
+  .name-row { display: flex; gap: 1.5rem; margin: 0 0 1.25rem; font-size: 0.9rem; font-family: var(--font-body); align-items: baseline; }
+  .name-row span:not(.b) { color: var(--muted); }
+  .name-row .b { flex: 1; }
+  .b { display: inline-block; border-bottom: 2px solid #3f3b35; vertical-align: bottom; }
+  .b-sm { min-width: 4rem; }
+  .b-md { min-width: 7rem; }
+  .b-lg { min-width: 11rem; }
+  .b-xl { min-width: 15rem; }
+  .al-short { width: 60%; }
+  .work-box {
+    border: 1px solid #c9c4b9; border-radius: 0.35rem; min-height: 80px;
+    margin: 0.5rem 0; background: #fafafa; padding: 0.5rem;
+    font-size: 0.85rem; color: #6b665d; font-family: var(--font-body);
+  }
+
+  .word-bank {
+    background: #f4f2ed; border: 1px solid var(--line); border-radius: 0.35rem;
+    padding: 0.5rem 0.75rem; margin: 0.5rem 0 0.75rem; font-family: var(--font-body); font-size: 0.85rem;
+  }
+  .word-bank .label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+                       letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.25rem; }
+  .word-bank .terms { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .word-bank .term { background: white; border: 1px solid #b8b2a7; border-radius: 0.25rem;
+                      padding: 0.15rem 0.5rem; font-size: 0.85rem; }
+
+  .hint {
+    border: 1px dashed var(--unit-border); border-radius: 0.35rem;
+    padding: 0.45rem 0.75rem; margin: 0.5rem 0;
+    font-family: var(--font-body); font-size: 0.83rem; color: var(--unit-dark); background: var(--unit-light);
+  }
+  .hint-label { font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; margin-right: 0.4rem; }
+
+  .starter {
+    font-style: italic; color: var(--unit-dark);
+    border-left: 3px solid var(--unit-mid); padding: 0.35rem 0.75rem; margin: 0.4rem 0;
+    font-size: 0.92rem; background: var(--unit-light); border-radius: 0 0.25rem 0.25rem 0;
+  }
+
+  .misconception {
+    background: #fff1f2; border: 1px solid #fecdd3; border-left: 4px solid #f43f5e;
+    border-radius: 0 0.4rem 0.4rem 0; padding: 0.75rem 1rem; margin-bottom: 0.75rem;
+    font-family: var(--font-body); font-size: 0.9rem;
+  }
+  .student-claim { font-style: italic; font-size: 0.95rem; color: #881337; margin-bottom: 0.25rem; }
+  .err-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+                letter-spacing: 0.06em; color: #9f1239; margin-bottom: 0.35rem; }
+
+  pre {
+    font-family: var(--font-mono); font-size: 0.82rem;
+    background: #f4f2ed; border: 1px solid #c9c4b9; border-radius: 0.35rem;
+    padding: 0.75rem 1rem; overflow-x: auto; white-space: pre; margin: 0.75rem 0; line-height: 1.5;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 0.75rem 0 1rem; }
+  table th {
+    font-family: var(--font-body); font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em; background: var(--unit-light);
+    color: var(--unit-dark); padding: 0.5rem 0.75rem; border: 1px solid var(--unit-border); text-align: left;
+  }
+  table td { padding: 0.55rem 0.75rem; border: 1px solid #c9c4b9; vertical-align: top; }
+  table tr:nth-child(even) td { background: #faf9f6; }
+
+  .forethought-block { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 0.6rem;
+                        padding: 1.1rem 1.25rem; margin: 2rem 0; font-family: var(--font-body); font-size: 0.9rem; }
+  .midpoint-block    { background: #fefce8; border: 1.5px solid #fde047; border-radius: 0.6rem;
+                        padding: 1.1rem 1.25rem; margin: 2rem 0; font-family: var(--font-body); font-size: 0.9rem; }
+  .reflection-block  { background: #fdf4ff; border: 1.5px solid #e9d5ff; border-radius: 0.6rem;
+                        padding: 1.1rem 1.25rem; margin: 2rem 0; font-family: var(--font-body); font-size: 0.9rem; }
+  .meta-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem; }
+  .forethought-block .meta-title { color: #0369a1; }
+  .midpoint-block    .meta-title { color: #854d0e; }
+  .reflection-block  .meta-title { color: #6b21a8; }
+  .meta-prompt { margin-bottom: 0.5rem; }
+
+  .stretch-header {
+    background: #1f1d1a; color: white; border-radius: 0.5rem 0.5rem 0 0;
+    padding: 0.75rem 1.25rem; font-family: var(--font-body); margin-top: 2.5rem;
+  }
+  .stretch-header h2 { font-family: var(--font-display); color: white; font-size: 1rem; margin: 0; }
+  .stretch-header p { font-size: 0.83rem; color: #6b665d; margin-top: 0.25rem; margin-bottom: 0; }
+  .stretch-card {
+    border: 1px solid #1f1d1a; border-top: none; padding: 1.1rem 1.25rem; background: #fff;
+  }
+  .stretch-card + .stretch-card { border-top: 1px solid #c9c4b9; }
+  .stretch-card:last-of-type { border-radius: 0 0 0.5rem 0.5rem; margin-bottom: 1.25rem; }
+
+  .self-assess { margin-top: 2.5rem; border: 1.5px solid var(--unit-border); border-radius: 0.5rem;
+                  overflow: hidden; font-family: var(--font-body); font-size: 0.88rem; }
+  .self-assess-header { background: var(--unit); color: white; padding: 0.7rem 1.1rem;
+                         font-weight: 700; font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .self-assess-body { padding: 1rem 1.1rem; }
+  .sa-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.5rem;
+             align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--line); font-size: 0.85rem; }
+  .sa-row:last-of-type { border-bottom: none; }
+  .sa-header { font-weight: 700; font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .sa-check { border: 1px solid #b8b2a7; border-radius: 0.25rem; padding: 0.2rem 0.5rem;
+               text-align: center; color: var(--muted); font-size: 0.78rem; }
+
+  hr { border: none; border-top: 2px solid #c9c4b9; margin: 2rem 0; }
+
+  @media print {
+    body { font-size: 11pt; padding: 1.5cm; max-width: 100%;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .q-card, .header-strip, .name-row, .stretch-card, .misconception, .forethought-block, .self-assess, table {
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    h1, h2, h3, .section-heading, .stretch-header { break-after: avoid; page-break-after: avoid; }
+    p { orphans: 3; widows: 3; }
+  }
+
+  /* ── Stacked fractions (scripts/stack_fractions.py) ── */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.15;
+    margin: 0 1px;
+  }
+  .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+  .frac .den { padding: 1px 3px 0; }
+
+  .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ── Inquiry project additions (scripts/render_math9_projects.py) ── */
+  .subtitle { display: block; font-size: 0.82rem; color: #3f3b35; margin: 0.2rem 0 0.5rem; }
+  .option-card { border: 1.5px solid var(--unit-border); border-radius: 0.6rem; padding: 1.1rem 1.25rem 0.6rem; margin: 1.75rem 0; }
+  .option-header { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+  .option-header h2 { flex-basis: 100%; margin: 0.35rem 0 0; font-size: 1.25rem; }
+  .badge-ab { background: #dcfce7; color: #166534; }
+  .data-card { background: #faf9f6; border: 1px dashed #b8b2a7; border-radius: 0.4rem; padding: 0.7rem 1rem; margin: 0.75rem 0; font-size: 0.9rem; }
+  .data-card p { margin-bottom: 0.45rem; }
+  .data-card p:last-child { margin-bottom: 0; }
+  .stretch-card { border: 1px solid #1f1d1a; border-radius: 0.5rem; margin: 0.75rem 0; }
+  .milestone { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-display); font-size: 1.15rem;
+               border-bottom: 2px solid var(--unit-border); padding-bottom: 0.35rem; margin: 0.5rem 0 1rem; }
+  .milestone p { margin: 0; display: flex; align-items: center; gap: 0.6rem; }
+  .graph-grid { height: 300px; border: 1.5px solid #6b665d; margin: 0.5rem 0 1rem;
+                background-image: linear-gradient(#d6d1c7 1px, transparent 1px), linear-gradient(90deg, #d6d1c7 1px, transparent 1px);
+                background-size: 20px 20px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .work-box.tall { min-height: 150px; }
+  .own-box { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 0.6rem; padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: 0.9rem; }
+  .own-box .meta-title { color: #0369a1; }
+  .check-row { border-top: 1px dashed var(--line); padding-top: 0.5rem; margin-top: 1rem; font-size: 0.85rem; color: var(--muted); }
+  .check-label { font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; color: var(--unit-dark); margin-right: 0.5rem; }
+  ul.task-list { list-style: none; padding-left: 0.25rem; }
+  table td:empty { height: 2.2rem; }
+  @media print { .page-break { break-after: page; page-break-after: always; }
+                 .option-card { break-inside: auto; } .graph-grid, .own-box, .data-card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="header-strip">
+  <div class="course-label">Grade 9 Mathematics — Algebra</div>
+</div>
+<!-- Render: python3 scripts/render_math9_projects.py → public/materials/math-9/worksheets/algebra/math9-algebra-project-v1.html -->
+<div class="name-row"><span>Name:</span><span class="b b-xl">&nbsp;</span><span>Team:</span><span class="b b-lg">&nbsp;</span></div>
+<section class="about-callout">
+<h1>Algebra — Inquiry Project</h1>
+<p><span class="subtitle">Linear Relations · Equations &amp; Inequalities · Polynomials</span></p>
+<p><strong>The big question:</strong> <em>Can an equation tell you the answer before you find it out the hard way?</em></p>
+<p>Your team picks <strong>one of three options</strong>. Each one asks a real question. You answer it by building one model four ways (a table, a graph, an equation, and words), using the model to make a prediction, getting feedback, and improving your work before you show it to a real audience.</p>
+<p><strong>5 class periods</strong> · <strong>Teams of 4–5</strong> · Keep everything in your <strong>Project Journal</strong>.</p>
+</section>
+<div class="section-heading">
+<p>How the project works</p>
+</div>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Period</th>
+<th>What your team does</th>
+<th>Milestone (teacher checks)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pick roles. Make a gut-feeling guess. Plan what you need to know and how you will find it. Collect data or set up the problem.</td>
+<td><strong>M1 — Plan:</strong> guess, need-to-know list, plan</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Short lesson, then build your model: table → graph → equation → words.</td>
+<td><strong>M2 — Model:</strong> all four forms agree</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Short lesson, then use your equation to answer the question. Write a first draft.</td>
+<td><strong>M3 — Draft:</strong> prediction or answer, with the equation work shown</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Gallery walk: give and get feedback. Revise.</td>
+<td><strong>M4 — Revised:</strong> revision log filled in</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Show your answer to your audience. Write your own reflection.</td>
+<td><strong>M5 — Final:</strong> product + individual reflection</td>
+</tr>
+</tbody>
+</table>
+<div class="hint">
+<p><span class="hint-label">Rule</span> Every milestone gets checked before you move on. If your table, graph and equation don’t agree at M2, fix that first. Everything after it depends on the model being right.</p>
+</div>
+<h3>Team roles</h3>
+<p>Everyone does math. Roles decide who is responsible for <em>checking</em> each part.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Role</th>
+<th>You are responsible for…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Facilitator</strong></td>
+<td>Keeping the team on the milestone. Making sure everyone has a turn to explain.</td>
+</tr>
+<tr>
+<td><strong>Recorder</strong></td>
+<td>The team’s copy of the table, graph and equation. Neat, labelled, with units.</td>
+</tr>
+<tr>
+<td><strong>Checker</strong></td>
+<td>Asking “how do we know?” Checking that the equation gives the same numbers as the table.</td>
+</tr>
+<tr>
+<td><strong>Data / Materials</strong></td>
+<td>Measurements, prices and sources. Getting and returning materials.</td>
+</tr>
+<tr>
+<td><strong>Skeptic</strong> <em>(team of 5)</em></td>
+<td>Finding the weakest part of the work before the gallery walk does.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div class="option-card">
+<div class="option-header">
+<p><span class="badge badge-num">Option 1</span> <span class="badge badge-vis">Hands-on</span></p>
+<h2>Stacking Cups</h2>
+</div>
+<p><strong>Guiding question:</strong> <em>How many cups tall would a stack need to be to reach the top of the classroom door, and how can you know before you build it?</em></p>
+<p><strong>Context.</strong> Engineers rarely get to build something ten times to see if it works. They measure a small version, find the pattern, and trust the math to scale it up. You will do the same with a stack of cups. You have enough cups to build a short stack, but not one as tall as the door.</p>
+<p><strong>Materials:</strong> two different kinds of cups (about 12 of each), a metre stick or tape measure.</p>
+<p><strong>What you will do</strong></p>
+<ol type="1">
+<li><p><strong>Guess (M1).</strong> Before measuring anything, each person writes how many cups they think it would take to reach the top of the door. Then plan: what will you measure, and how will you measure it the same way every time?</p></li>
+<li><p><strong>Measure and model (M2).</strong> Measure the height of stacks of 1 to 8 cups of <em>Cup A</em>. Record it in a table. Graph it. Write an equation in the form <strong>h = mn + b</strong>, where <em>h</em> is the height in cm and <em>n</em> is the number of cups.</p>
+<p>Then answer: <em>What part of a cup does m measure? What does b measure?</em> Check your answer with a ruler on a real cup.</p></li>
+<li><p><strong>Predict (M3).</strong> Measure the door. Use your equation to find the number of cups that would reach the top. Show the equation you solved.</p>
+<p>Repeat steps 2 and 3 for <em>Cup B</em>.</p>
+<p><strong>Then:</strong> Will a stack of Cup A and a stack of Cup B ever be exactly the same height? Set the two equations equal and solve to decide. Explain what your answer means, even if it isn’t a whole number or it’s negative.</p></li>
+<li><p><strong>Critique and revise (M4).</strong> Gallery walk. Fix anything the feedback finds.</p></li>
+<li><p><strong>Showdown (M5).</strong> On showdown day your teacher announces a <em>mystery height</em>. Your team has 3 minutes to use your equation to work out how many cups you need. Then you build it. The closest team wins. Afterward, explain why your prediction was close, or why it wasn’t.</p></li>
+</ol>
+<p><strong>What to hand in</strong> (in the Project Journal)</p>
+<ul>
+<li>Measurement table for both cups, with units</li>
+<li>One graph showing both cups</li>
+<li>Both equations, with what <em>m</em> and <em>b</em> mean for a real cup</li>
+<li>Door prediction with the equation work shown</li>
+<li>The “same height?” answer with an explanation</li>
+<li>Showdown result and explanation</li>
+</ul>
+<div class="stretch-card">
+<p><strong>★★ Extended.</strong> Design a cup. You want a stack of 50 of your cups to be exactly 1 m tall, and a single cup to be 10 cm tall. How deep does the lip need to be? Write and solve the equation.</p>
+</div>
+<p><em>Math you will use: LR1, LR2, LR3, LR4, LE2, LE3</em></p>
+</div>
+<div class="option-card">
+<div class="option-header">
+<p><span class="badge badge-num">Option 2</span> <span class="badge badge-vis">Money</span> <span class="badge badge-ab">Alberta</span></p>
+<h2>Which Plan Wins?</h2>
+</div>
+<p><strong>Guiding question:</strong> <em>When does a monthly pass beat paying each time, and how would you explain that to a family?</em></p>
+<p><strong>Context.</strong> Families make this choice all the time: a bus pass or single tickets, a membership or drop-in visits. Most people guess. You will use real Alberta prices to find the exact point where the deal changes. Then you will write a recommendation a family could act on.</p>
+<div class="data-card">
+<p><strong>Deal A — Calgary Transit, youth (13–17)</strong><br />
+Single ride: <strong>$2.65</strong> (good for 90 minutes) · Book of 10 tickets: <strong>$26.50</strong> · Monthly pass: <strong>$92.00</strong> (from September 2026)<br />
+<em>Source: calgarytransit.com, 2026 fares. Checked October 2026.</em></p>
+<p><strong>Deal B — Edmonton Transit (ETS), youth, Arc card</strong><br />
+Pay as you go: <strong>$3.00</strong> a trip · The card stops charging you after <strong>$66</strong> in a month (the <em>fare cap</em>).<br />
+<em>Source: edmonton.ca/ets, youth fares. Checked October 2026.</em></p>
+<p><strong>Deal C — Your own deal.</strong> A phone plan, gym, rec centre, ski hill or streaming service. You need real prices, a source and the date you checked. Your teacher approves it at M1.</p>
+</div>
+<p><strong>What you will do</strong></p>
+<ol type="1">
+<li><p><strong>Plan (M1).</strong> Pick a deal and a <strong>rider profile card</strong> from your teacher. Guess: which choice is cheaper for your rider? Write down what you need to know.</p></li>
+<li><p><strong>Model (M2).</strong> Write an equation for each choice. Use <em>C</em> for cost in dollars and <em>n</em> for the number of rides (or visits) in a month. Make a table for <em>n</em> = 0, 10, 20, 30, 40, 50 and graph both choices on one grid.</p>
+<p>Then answer: <em>Which choice is direct variation? What is the slope of the monthly pass line, and why?</em></p></li>
+<li><p><strong>Find the switch point (M3).</strong> Set the two costs equal and solve: this is the <strong>break-even</strong> number of rides. Then write and solve an <strong>inequality</strong> for when the pass is cheaper. Use your answer for your rider: which choice wins, and by how much?</p></li>
+<li><p><strong>Critique and revise (M4).</strong> Gallery walk. Fix anything the feedback finds.</p></li>
+<li><p><strong>Recommend (M5).</strong> Write a <strong>one-page recommendation</strong> to your rider’s family. Include your answer, your graph, the break-even number in plain words, and one “it depends” (for example: a month with a week off school).</p></li>
+</ol>
+<p><strong>What to hand in</strong> (in the Project Journal)</p>
+<ul>
+<li>Both equations, with what the slope and <em>C</em>-intercept mean</li>
+<li>Table and graph (both choices on one grid, labelled)</li>
+<li>Break-even equation and inequality, solved, with the answer rounded sensibly</li>
+<li>One-page recommendation to the family</li>
+</ul>
+<div class="stretch-card">
+<p><strong>★★ Extended.</strong> The Edmonton card has a cap. Sketch its cost graph for 0 to 40 trips. Why does it bend? Write a rule for each piece of the graph. Then explain: does a fare cap make the “pass or pay?” question disappear?</p>
+</div>
+<p><em>Math you will use: LR1, LR2, LR3, LR4, LE1, LE3, LE4, LE5</em></p>
+</div>
+<div class="option-card">
+<div class="option-header">
+<p><span class="badge badge-num">Option 3</span> <span class="badge badge-vis">Design</span> <span class="badge badge-ab">Alberta</span></p>
+<h2>Garden Path Design</h2>
+</div>
+<p><strong>Guiding question:</strong> <em>A community garden in Calgary wants a paving-stone path of the same width all the way around each garden bed. How wide should the path be, and what will it cost?</em></p>
+<p><strong>Context.</strong> A garden committee has to buy stone and edging before the path is built, so they need the amounts ahead of time. They also want one rule that works for <em>any</em> width, so they can change their minds without starting over. That rule is a polynomial.</p>
+<div class="data-card">
+<p><strong>Garden bed:</strong> 3.0 m long, 1.2 m wide. The garden has 12 beds like this.<br />
+<strong>Paving stone:</strong> <strong>$50 per m²</strong> · <strong>Edging strip</strong> (goes around the <em>outside</em> of the path): <strong>$5 per m</strong><br />
+<strong>Budget:</strong> about <strong>$300</strong> of stone per bed. A wheelbarrow is about <strong>0.65 m</strong> wide.<br />
+<em>Prices are sample prices. Your teacher may give you local prices from a store flyer.</em></p>
+</div>
+<p><strong>What you will do</strong></p>
+<ol type="1">
+<li><p><strong>Plan (M1).</strong> Sketch one bed with a path of width <em>x</em> around it, and label every length. Guess: <em>if the path gets twice as wide, does it need twice as much stone?</em></p></li>
+<li><p><strong>Model (M2).</strong> Write an expression for the area of the path: (area of the outside rectangle) − (area of the bed). Multiply and simplify. Write a second expression for the length of edging around the outside.</p>
+<p>Then check both expressions by working out <em>x</em> = 0.5 m the long way, from your sketch.</p></li>
+<li><p><strong>Use the model (M3).</strong> Make a table for <em>x</em> = 0.3, 0.5, 0.6, 0.8 and 1.0 m: path area, stone cost and edging length. Graph <strong>edging length</strong> and <strong>path area</strong> against <em>x</em>.</p>
+<ul>
+<li>Which graph is a straight line? What does its slope mean?</li>
+<li>The committee has 16 m of edging per bed. Solve an equation for the widest path that edging allows.</li>
+<li>Use your table to find the widest path the $300 stone budget allows. Narrow it down to 0.01 m.</li>
+</ul></li>
+<li><p><strong>Critique and revise (M4).</strong> Gallery walk. Fix anything the feedback finds.</p></li>
+<li><p><strong>Pitch (M5).</strong> Present a recommended width to the garden committee. Include the cost for all 12 beds and why you chose that width. Answer your M1 guess: did doubling the width double the stone?</p></li>
+</ol>
+<p><strong>What to hand in</strong> (in the Project Journal)</p>
+<ul>
+<li>Labelled sketch with <em>x</em></li>
+<li>Path area expression (expanded and simplified) and edging expression, both checked at <em>x</em> = 0.5</li>
+<li>Table and both graphs</li>
+<li>Edging equation solved, and the budget width found from the table</li>
+<li>Pitch: width, total cost for 12 beds, reasons</li>
+</ul>
+<div class="stretch-card">
+<p><strong>★★ Extended.</strong> The garden adds square beds, 2 m by 2 m. Write the path-area expression for a square bed. Then write one simplified expression for the total path area of one long bed and one square bed.</p>
+</div>
+<p><em>Math you will use: PO1, PO2, PO3, PO5, PO6, LR1, LR2, LR3, LE2, LE3</em></p>
+</div>
+<hr />
+<div class="section-heading">
+<p>How it is assessed — all options</p>
+</div>
+<p>Every option uses the same rubric: 4 criteria, 3 marks each, 12 marks. You get no extra marks for picking a harder option, because all three are built to be the same difficulty. <strong>Criteria 1, 2 and 4</strong> are marked on your team’s work. <strong>Criterion 3</strong> is marked on <em>your own</em> explanation in your journal.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Full (3)</th>
+<th>Partial (2)</th>
+<th>Beginning (1)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Model</strong> — table, graph and equation agree <em>(Skills &amp; Procedures · LR1, LR3, PO6)</em></td>
+<td>All forms present, labelled with units, and give the same values</td>
+<td>All forms present, but one has an error or a missing label</td>
+<td>One or more forms missing, or they disagree</td>
+</tr>
+<tr>
+<td><strong>2. Solve and predict</strong> — use the equation to answer the question <em>(Skills &amp; Procedures · LE2, LE3, LE4)</em></td>
+<td>Correct equation or inequality, solved and checked, answer rounded sensibly for the situation</td>
+<td>Correct set-up with a solving error, or the answer isn’t interpreted</td>
+<td>Answer found by guessing or counting, with no equation</td>
+</tr>
+<tr>
+<td><strong>3. Explain the meaning</strong> — what the slope, intercept or expression means in the real situation <em>(Understanding · LR2, LR4)</em></td>
+<td>Explains both the slope and the intercept (or each term) in context, with units, and uses that meaning to justify the answer</td>
+<td>Explains one correctly, or explains without units</td>
+<td>Restates the numbers without meaning</td>
+</tr>
+<tr>
+<td><strong>4. Communicate</strong> — product for the audience <em>(Understanding · LE5)</em></td>
+<td>Audience could act on it without asking a question. Graph and numbers support the claim. Revisions from feedback are visible</td>
+<td>Clear answer, but support is thin, or feedback wasn’t used</td>
+<td>Answer is unclear or unsupported</td>
+</tr>
+</tbody>
+</table>
+<div class="reflection-block">
+<div class="meta-title">
+<p>Before you hand in — check</p>
+</div>
+<ul class="task-list">
+<li><label><input type="checkbox" />Does the equation give the same number as the table for at least two rows? (Checker signs: <span class="b b-md">&nbsp;</span>)</label></li>
+<li><label><input type="checkbox" />Is every axis labelled with a quantity <em>and</em> a unit?</label></li>
+<li><label><input type="checkbox" />Did we answer the guiding question in one clear sentence?</label></li>
+<li><label><input type="checkbox" />Can every team member explain what the slope means in our situation?</label></li>
+<li><label><input type="checkbox" />Is the revision log filled in?</label></li>
+</ul>
+</div>
+<div class="word-bank">
+<div class="label">
+<p>What the codes mean</p>
+</div>
+<p><strong>LR1</strong> four forms of a linear relation · <strong>LR2</strong> slope as a rate of change · <strong>LR3</strong> y = mx + b, slope and intercept in context · <strong>LR4</strong> direct and partial variation · <strong>LE1</strong> one- and two-step equations · <strong>LE2</strong> multi-step equations, variables on both sides · <strong>LE3</strong> equations with decimals and fractions · <strong>LE4</strong> inequalities · <strong>LE5</strong> turning a real problem into an equation · <strong>PO1</strong> naming polynomials · <strong>PO2</strong> like terms · <strong>PO3</strong> adding polynomials · <strong>PO5</strong> monomial × polynomial · <strong>PO6</strong> binomial × binomial</p>
+</div>
+</body>
+</html>

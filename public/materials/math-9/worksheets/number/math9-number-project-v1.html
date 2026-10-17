@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 9 Mathematics — Number — Inquiry Project</title>
+<style>
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../../../../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+  :root {
+    --unit:        #1d4ed8;
+    --unit-mid:    #2563eb;
+    --unit-dark:   #1d4ed8;
+    --unit-light:  #dbeafe;
+    --unit-border: #bfdbfe;
+    --line:   #c9c4b9;
+    --muted:  #544f47;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); font-size: 15px; line-height: 1.75;
+          color: #1f1d1a; max-width: 860px; margin: 0 auto; padding: 2.5rem 2rem; background: #fff; }
+  h1 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; color: #1f1d1a; margin-bottom: 0.25rem; }
+  h2 { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: #1f1d1a; margin: 1.5rem 0 0.5rem; }
+  h3 { font-family: var(--font-body); font-size: 0.9rem; font-weight: 700; color: var(--unit-dark);
+        text-transform: uppercase; letter-spacing: 0.06em; margin: 1.25rem 0 0.35rem; }
+  p { margin-bottom: 0.6rem; }
+  strong { color: #1f1d1a; }
+  ol,ul { padding-left: 1.4rem; margin-bottom: 0.75rem; }
+  li { margin-bottom: 0.35rem; }
+  sup { font-size: 0.75em; }
+
+  .about-callout {
+    border: 1.5px solid var(--unit-border); border-radius: 0.5rem;
+    padding: 1rem 1.25rem; margin-bottom: 2rem; background: var(--unit-light);
+    font-family: var(--font-body); font-size: 0.88rem;
+  }
+  .about-callout p { margin-bottom: 0.4rem; }
+  .about-callout p:last-child { margin-bottom: 0; }
+
+  .badge {
+    display: inline-flex; align-items: center;
+    font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
+    border-radius: 99px; padding: 0.2rem 0.6rem; letter-spacing: 0.03em;
+  }
+  .badge-core   { background: #e0f2fe; color: #0369a1; }
+  .badge-ext    { background: #ede9fe; color: #5b21b6; }
+  .badge-num    { background: var(--unit); color: white; }
+  .badge-vis    { background: #fef3c7; color: #92400e; }
+  .badge-err    { background: #fce7f3; color: #9d174d; }
+  .badge-stretch{ background: #1f1d1a; color: white; }
+
+  .section-heading {
+    font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em; color: var(--unit-dark);
+    border-bottom: 2px solid var(--unit-border); padding-bottom: 0.35rem; margin: 2rem 0 1.25rem;
+  }
+
+  .q-card {
+    border: 1px solid var(--line); border-radius: 0.6rem;
+    padding: 1.1rem 1.25rem; margin-bottom: 1.25rem; background: #fff;
+  }
+  .q-card.extended { border-left: 4px solid #7c3aed; }
+  .q-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  .q-context {
+    background: #faf9f6; border-left: 3px solid var(--unit-border);
+    padding: 0.6rem 0.9rem; border-radius: 0 0.35rem 0.35rem 0;
+    font-size: 0.93rem; margin-bottom: 0.75rem; font-style: italic; color: #3f3b35;
+  }
+  .q-part { margin-bottom: 0.6rem; padding-left: 1rem; font-size: 0.95rem; }
+
+  .al { border-bottom: 1.25px solid #6b665d; min-height: 1.8rem; margin: 0.4rem 0; }
+
+  .header-strip {
+    border-left: 5px solid var(--unit);
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    background: var(--unit-light);
+    border-radius: 0 8px 8px 0;
+    font-family: var(--font-body);
+  }
+  .header-strip .course-label {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--unit-dark);
+  }
+  .name-row { display: flex; gap: 1.5rem; margin: 0 0 1.25rem; font-size: 0.9rem; font-family: var(--font-body); align-items: baseline; }
+  .name-row span:not(.b) { color: var(--muted); }
+  .name-row .b { flex: 1; }
+  .b { display: inline-block; border-bottom: 2px solid #3f3b35; vertical-align: bottom; }
+  .b-sm { min-width: 4rem; }
+  .b-md { min-width: 7rem; }
+  .b-lg { min-width: 11rem; }
+  .b-xl { min-width: 15rem; }
+  .al-short { width: 60%; }
+  .work-box {
+    border: 1px solid #c9c4b9; border-radius: 0.35rem; min-height: 80px;
+    margin: 0.5rem 0; background: #fafafa; padding: 0.5rem;
+    font-size: 0.85rem; color: #6b665d; font-family: var(--font-body);
+  }
+
+  .word-bank {
+    background: #f4f2ed; border: 1px solid var(--line); border-radius: 0.35rem;
+    padding: 0.5rem 0.75rem; margin: 0.5rem 0 0.75rem; font-family: var(--font-body); font-size: 0.85rem;
+  }
+  .word-bank .label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+                       letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.25rem; }
+  .word-bank .terms { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .word-bank .term { background: white; border: 1px solid #b8b2a7; border-radius: 0.25rem;
+                      padding: 0.15rem 0.5rem; font-size: 0.85rem; }
+
+  .hint {
+    border: 1px dashed var(--unit-border); border-radius: 0.35rem;
+    padding: 0.45rem 0.75rem; margin: 0.5rem 0;
+    font-family: var(--font-body); font-size: 0.83rem; color: var(--unit-dark); background: var(--unit-light);
+  }
+  .hint-label { font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; margin-right: 0.4rem; }
+
+  .starter {
+    font-style: italic; color: var(--unit-dark);
+    border-left: 3px solid var(--unit-mid); padding: 0.35rem 0.75rem; margin: 0.4rem 0;
+    font-size: 0.92rem; background: var(--unit-light); border-radius: 0 0.25rem 0.25rem 0;
+  }
+
+  .misconception {
+    background: #fff1f2; border: 1px solid #fecdd3; border-left: 4px solid #f43f5e;
+    border-radius: 0 0.4rem 0.4rem 0; padding: 0.75rem 1rem; margin-bottom: 0.75rem;
+    font-family: var(--font-body); font-size: 0.9rem;
+  }
+  .student-claim { font-style: italic; font-size: 0.95rem; color: #881337; margin-bottom: 0.25rem; }
+  .err-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+                letter-spacing: 0.06em; color: #9f1239; margin-bottom: 0.35rem; }
+
+  pre {
+    font-family: var(--font-mono); font-size: 0.82rem;
+    background: #f4f2ed; border: 1px solid #c9c4b9; border-radius: 0.35rem;
+    padding: 0.75rem 1rem; overflow-x: auto; white-space: pre; margin: 0.75rem 0; line-height: 1.5;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 0.75rem 0 1rem; }
+  table th {
+    font-family: var(--font-body); font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em; background: var(--unit-light);
+    color: var(--unit-dark); padding: 0.5rem 0.75rem; border: 1px solid var(--unit-border); text-align: left;
+  }
+  table td { padding: 0.55rem 0.75rem; border: 1px solid #c9c4b9; vertical-align: top; }
+  table tr:nth-child(even) td { background: #faf9f6; }
+
+  .forethought-block { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 0.6rem;
+                        padding: 1.1rem 1.25rem; margin: 2rem 0; font-family: var(--font-body); font-size: 0.9rem; }
+  .midpoint-block    { background: #fefce8; border: 1.5px solid #fde047; border-radius: 0.6rem;
+                        padding: 1.1rem 1.25rem; margin: 2rem 0; font-family: var(--font-body); font-size: 0.9rem; }
+  .reflection-block  { background: #fdf4ff; border: 1.5px solid #e9d5ff; border-radius: 0.6rem;
+                        padding: 1.1rem 1.25rem; margin: 2rem 0; font-family: var(--font-body); font-size: 0.9rem; }
+  .meta-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem; }
+  .forethought-block .meta-title { color: #0369a1; }
+  .midpoint-block    .meta-title { color: #854d0e; }
+  .reflection-block  .meta-title { color: #6b21a8; }
+  .meta-prompt { margin-bottom: 0.5rem; }
+
+  .stretch-header {
+    background: #1f1d1a; color: white; border-radius: 0.5rem 0.5rem 0 0;
+    padding: 0.75rem 1.25rem; font-family: var(--font-body); margin-top: 2.5rem;
+  }
+  .stretch-header h2 { font-family: var(--font-display); color: white; font-size: 1rem; margin: 0; }
+  .stretch-header p { font-size: 0.83rem; color: #6b665d; margin-top: 0.25rem; margin-bottom: 0; }
+  .stretch-card {
+    border: 1px solid #1f1d1a; border-top: none; padding: 1.1rem 1.25rem; background: #fff;
+  }
+  .stretch-card + .stretch-card { border-top: 1px solid #c9c4b9; }
+  .stretch-card:last-of-type { border-radius: 0 0 0.5rem 0.5rem; margin-bottom: 1.25rem; }
+
+  .self-assess { margin-top: 2.5rem; border: 1.5px solid var(--unit-border); border-radius: 0.5rem;
+                  overflow: hidden; font-family: var(--font-body); font-size: 0.88rem; }
+  .self-assess-header { background: var(--unit); color: white; padding: 0.7rem 1.1rem;
+                         font-weight: 700; font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .self-assess-body { padding: 1rem 1.1rem; }
+  .sa-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.5rem;
+             align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--line); font-size: 0.85rem; }
+  .sa-row:last-of-type { border-bottom: none; }
+  .sa-header { font-weight: 700; font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .sa-check { border: 1px solid #b8b2a7; border-radius: 0.25rem; padding: 0.2rem 0.5rem;
+               text-align: center; color: var(--muted); font-size: 0.78rem; }
+
+  hr { border: none; border-top: 2px solid #c9c4b9; margin: 2rem 0; }
+
+  @media print {
+    body { font-size: 11pt; padding: 1.5cm; max-width: 100%;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .q-card, .header-strip, .name-row, .stretch-card, .work-box, .misconception, .forethought-block, .self-assess, table, pre {
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    h1, h2, h3, .section-heading, .stretch-header { break-after: avoid; page-break-after: avoid; }
+    p { orphans: 3; widows: 3; }
+  }
+
+  /* ── Stacked fractions (scripts/stack_fractions.py) ── */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.15;
+    margin: 0 1px;
+  }
+  .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+  .frac .den { padding: 1px 3px 0; }
+
+  .frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ── Inquiry project additions (scripts/render_math9_projects.py) ── */
+  .subtitle { display: block; font-size: 0.82rem; color: #3f3b35; margin: 0.2rem 0 0.5rem; }
+  .option-card { border: 1.5px solid var(--unit-border); border-radius: 0.6rem; padding: 1.1rem 1.25rem 0.6rem; margin: 1.75rem 0; }
+  .option-header { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+  .option-header h2 { flex-basis: 100%; margin: 0.35rem 0 0; font-size: 1.25rem; }
+  .badge-ab { background: #dcfce7; color: #166534; }
+  .data-card { background: #faf9f6; border: 1px dashed #b8b2a7; border-radius: 0.4rem; padding: 0.7rem 1rem; margin: 0.75rem 0; font-size: 0.9rem; }
+  .data-card p { margin-bottom: 0.45rem; }
+  .data-card p:last-child { margin-bottom: 0; }
+  .stretch-card { border: 1px solid #1f1d1a; border-radius: 0.5rem; margin: 0.75rem 0; }
+  .milestone { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-display); font-size: 1.15rem;
+               border-bottom: 2px solid var(--unit-border); padding-bottom: 0.35rem; margin: 0.5rem 0 1rem; }
+  .milestone p { margin: 0; display: flex; align-items: center; gap: 0.6rem; }
+  .graph-grid { height: 300px; border: 1.5px solid #6b665d; margin: 0.5rem 0 1rem;
+                background-image: linear-gradient(#d6d1c7 1px, transparent 1px), linear-gradient(90deg, #d6d1c7 1px, transparent 1px);
+                background-size: 20px 20px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .work-box.tall { min-height: 150px; }
+  .own-box { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 0.6rem; padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: 0.9rem; }
+  .own-box .meta-title { color: #0369a1; }
+  .check-row { border-top: 1px dashed var(--line); padding-top: 0.5rem; margin-top: 1rem; font-size: 0.85rem; color: var(--muted); }
+  .check-label { font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; color: var(--unit-dark); margin-right: 0.5rem; }
+  ul.task-list { list-style: none; padding-left: 0.25rem; }
+  table td:empty { height: 2.2rem; }
+  @media print { .page-break { break-after: page; page-break-after: always; }
+                 .option-card { break-inside: auto; } .graph-grid, .own-box, .data-card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="header-strip">
+  <div class="course-label">Grade 9 Mathematics — Number</div>
+</div>
+<!-- Render: python3 scripts/render_math9_projects.py → public/materials/math-9/worksheets/number/math9-number-project-v1.html -->
+<div class="name-row"><span>Name:</span><span class="b b-xl">&nbsp;</span><span>Team:</span><span class="b b-lg">&nbsp;</span></div>
+<section class="about-callout">
+<h1>Number — Inquiry Project</h1>
+<p><span class="subtitle">Rational Numbers · Powers &amp; Exponents · Square Roots</span></p>
+<p><strong>The big question:</strong> <em>How can you trust a number you can’t count or measure directly?</em></p>
+<p>Your team picks <strong>one of three options</strong>. Each one asks for a number that’s too big, too awkward or too far away to measure. You get there by measuring what you <em>can</em>, estimating first, calculating carefully, and checking. Then you show your answer to a real audience.</p>
+<p><strong>5 class periods</strong> · <strong>Teams of 4–5</strong> · Keep everything in your <strong>Project Journal</strong>.</p>
+</section>
+<div class="section-heading">
+<p>How the project works</p>
+</div>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Period</th>
+<th>What your team does</th>
+<th>Milestone (teacher checks)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pick roles. Make a gut-feeling guess. Plan what you need to know and how you will find it. Start measuring.</td>
+<td><strong>M1 — Plan:</strong> guess, need-to-know list, plan</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Short lesson, then build your model: measurements, a table or diagram, and the calculation rule.</td>
+<td><strong>M2 — Model:</strong> model built and checked</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Short lesson, then estimate, calculate and check the answer. Write a first draft.</td>
+<td><strong>M3 — Draft:</strong> answer, with the estimate and the calculation shown</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Gallery walk: give and get feedback. Revise.</td>
+<td><strong>M4 — Revised:</strong> revision log filled in</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Show your answer to your audience. Write your own reflection.</td>
+<td><strong>M5 — Final:</strong> product + individual reflection</td>
+</tr>
+</tbody>
+</table>
+<div class="hint">
+<p><span class="hint-label">Rule</span> Estimate before you calculate, every time. If your calculator answer is nowhere near your estimate, one of them is wrong. Find out which before you move on.</p>
+</div>
+<h3>Team roles</h3>
+<p>Everyone does math. Roles decide who is responsible for <em>checking</em> each part.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Role</th>
+<th>You are responsible for…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Facilitator</strong></td>
+<td>Keeping the team on the milestone. Making sure everyone has a turn to explain.</td>
+</tr>
+<tr>
+<td><strong>Recorder</strong></td>
+<td>The team’s copy of the measurements, table and calculations. Neat, labelled, with units.</td>
+</tr>
+<tr>
+<td><strong>Checker</strong></td>
+<td>Asking “how do we know?” Comparing every calculation with its estimate.</td>
+</tr>
+<tr>
+<td><strong>Data / Materials</strong></td>
+<td>Measurements and sources. Getting and returning materials.</td>
+</tr>
+<tr>
+<td><strong>Skeptic</strong> <em>(team of 5)</em></td>
+<td>Finding the weakest part of the work before the gallery walk does.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div class="option-card">
+<div class="option-header">
+<p><span class="badge badge-num">Option 1</span> <span class="badge badge-vis">Hands-on</span></p>
+<h2>Fold to the Moon</h2>
+</div>
+<p><strong>Guiding question:</strong> <em>How many times would you have to fold a sheet of paper in half for it to reach the Moon?</em></p>
+<p><strong>Context.</strong> Each fold doubles the thickness, so the paper grows faster than most people expect. Nobody can actually fold paper that many times: in 2002, a high school student named Britney Gallivan set a record by folding paper in half 12 times. But powers let you find the answer without folding at all.</p>
+<div class="data-card">
+<p><strong>Average distance from Earth to the Moon:</strong> about <strong>384 400 km</strong><br />
+<strong>Materials:</strong> a full ream of copy paper (500 sheets), a ruler, a few loose sheets to fold<br />
+<em>Distance: NASA, average Earth–Moon distance.</em></p>
+</div>
+<p><strong>What you will do</strong></p>
+<ol type="1">
+<li><p><strong>Guess (M1).</strong> Each person guesses the number of folds: 50? 1000? a million? Plan: how will you find the thickness of <strong>one</strong> sheet when it’s too thin to measure?</p></li>
+<li><p><strong>Model (M2).</strong> Measure the ream and divide to find the thickness of one sheet. Fold a sheet 0, 1, 2, 3, 4 and 5 times and count the layers. Make a table of folds → layers → thickness, and write a rule: <strong>thickness = (one sheet) × 2<sup>n</sup></strong>.</p>
+<p>Then answer: <em>Why does 0 folds give 2<sup>0</sup> layers, and what does 2<sup>0</sup> equal?</em></p></li>
+<li><p><strong>Calculate (M3).</strong> Write the Moon’s distance in millimetres as a number × a power of 10. Work out how many layers you need. Then find the number of folds <em>n</em> that gives at least that many layers. <strong>Estimate first:</strong> 2<sup>10</sup> ≈ 1000, so what is 2<sup>20</sup> roughly? 2<sup>40</sup>?</p>
+<p><strong>Then:</strong> after 32 folds, what fraction as thick is the stack as the one that reaches the Moon? Write it as a power of 2 and as a fraction. How many kilometres thick is it? (The International Space Station orbits about 400 km up.)</p></li>
+<li><p><strong>Critique and revise (M4).</strong> Gallery walk. Fix anything the feedback finds.</p></li>
+<li><p><strong>Myth-buster (M5).</strong> Make a 1-page “Fold to the Moon” explainer or a 60-second video script for another class: the answer, the rule, and why doubling gets so big so fast.</p></li>
+</ol>
+<p><strong>What to hand in</strong> (in the Project Journal)</p>
+<ul>
+<li>Ream measurement and one-sheet thickness, with the division shown</li>
+<li>Folds → layers → thickness table (0–5 folds measured, the rest calculated)</li>
+<li>The rule, and an explanation of 2<sup>0</sup></li>
+<li>The Moon calculation: estimate, powers-of-10 work, number of folds</li>
+<li>The 32-fold fraction as a power of 2 and as a fraction, and its thickness in km</li>
+</ul>
+<div class="stretch-card">
+<p><strong>★★ Extended.</strong> How many folds would it take to reach the top of Mount Everest (8849 m)? Your answer to the Moon question is <em>n</em>. Explain how you could get the Everest answer from it using the quotient of powers, without starting over.</p>
+</div>
+<p><em>Math you will use: PE1, PE2, PE3, PE4, PE5, PE7, RN1, RN4</em></p>
+</div>
+<div class="option-card">
+<div class="option-header">
+<p><span class="badge badge-num">Option 2</span> <span class="badge badge-vis">Hands-on</span></p>
+<h2>Will It Fit?</h2>
+</div>
+<p><strong>Guiding question:</strong> <em>What is the longest thing that will fit in your locker, and will a hockey stick make it?</em></p>
+<p><strong>Context.</strong> Movers, carpenters and anyone packing a car face this problem: the longest thing that fits in a box doesn’t run along an edge. It runs corner to corner, through the middle. Finding that length takes the Pythagorean theorem twice, and the answer is almost never a whole number.</p>
+<div class="data-card">
+<p><strong>Measure:</strong> the inside of a school locker (or a cupboard your teacher chooses): width, depth and height<br />
+<strong>Test objects:</strong> a hockey stick (an adult stick is about 150 cm), a broom, a metre stick, something of your choice<br />
+<strong>Materials:</strong> tape measure, string</p>
+</div>
+<p><strong>What you will do</strong></p>
+<ol type="1">
+<li><p><strong>Guess (M1).</strong> Which test objects will fit? Guess the longest length that fits. Plan: what do you need to measure?</p></li>
+<li><p><strong>Model (M2).</strong> Measure the inside of the locker. Draw two right triangles: one across the <strong>floor</strong> (width, depth, floor diagonal), and one standing <strong>inside</strong> the locker (floor diagonal, height, long diagonal). Label every side.</p>
+<p>Then answer: <em>Why does the longest object go corner to corner and not along an edge?</em></p></li>
+<li><p><strong>Calculate (M3).</strong> Use the Pythagorean theorem to find the floor diagonal, then the long diagonal. Write each one exactly as √(<em>number</em>) first. <strong>Estimate it between two perfect squares</strong> before you use a calculator. Then calculate to 0.1 cm.</p>
+<p><strong>Then:</strong> is your long diagonal a rational or an irrational number? How do you know? Decide which test objects fit, then check with a piece of string cut to your answer.</p></li>
+<li><p><strong>Critique and revise (M4).</strong> Gallery walk. Fix anything the feedback finds.</p></li>
+<li><p><strong>Locker guide (M5).</strong> Make a “Will it fit?” poster for the hallway: the locker diagram, the longest length, which objects fit, and one “it depends” (shelves, hooks, the object’s thickness).</p></li>
+</ol>
+<p><strong>What to hand in</strong> (in the Project Journal)</p>
+<ul>
+<li>Locker measurements with units</li>
+<li>Both labelled right triangles</li>
+<li>Both Pythagorean calculations: exact √, estimate between perfect squares, decimal answer</li>
+<li>Rational or irrational, with a reason</li>
+<li>Fit results for every test object, and the string test</li>
+</ul>
+<div class="stretch-card">
+<p><strong>★★ Extended.</strong> TVs are sold by their diagonal. A “65-inch” TV has a 16 : 9 screen. Find its width and height to 0.1 inch. (Hint: call the width 16<em>k</em> and the height 9<em>k</em>.)</p>
+</div>
+<p><em>Math you will use: SR1, SR2, SR3, RN1, RN2</em></p>
+</div>
+<div class="option-card">
+<div class="option-header">
+<p><span class="badge badge-num">Option 3</span> <span class="badge badge-vis">Data</span> <span class="badge badge-ab">Alberta</span></p>
+<h2>Chinook!</h2>
+</div>
+<p><strong>Guiding question:</strong> <em>How wild can Alberta weather get in one day, and how would you explain a chinook to someone who has never lived through one?</em></p>
+<p><strong>Context.</strong> A chinook is a warm, dry wind that comes down the Rocky Mountains. It can turn a −20 °C morning into a melting afternoon. Measuring how big a swing is means subtracting negatives, averaging negatives and working out rates. Those are exactly the calculations people get wrong.</p>
+<div class="data-card">
+<p><strong>Record swing:</strong> In January 1962, the temperature in <strong>Pincher Creek</strong> went from <strong>−19 °C to 22 °C</strong>. Most sources say it took about one hour, but some say a few hours. The record was kept in °F: from <strong>−2 °F to 72 °F</strong>.<br />
+<strong>Your week:</strong> your teacher gives you real daily highs and lows for one winter week in Calgary or Lethbridge, from Environment and Climate Change Canada’s historical weather data.<br />
+<strong>Conversion:</strong> °C = <span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">9</span></span> × (°F − 32)</p>
+</div>
+<p><strong>What you will do</strong></p>
+<ol type="1">
+<li><p><strong>Guess (M1).</strong> Guess the biggest temperature change ever recorded in Alberta in one day. Plan: what calculations will tell you how “wild” a week was?</p></li>
+<li><p><strong>Model (M2).</strong> Make a table for your week: high, low and daily swing (high − low). Plot the lows on a number line. Find the mean high and the mean low.</p>
+<p>Then answer: <em>Why is a swing from −15 °C to 4 °C a change of 19 degrees, not 11?</em></p></li>
+<li><p><strong>Calculate (M3).</strong> Find the Pincher Creek change in °C. Find the rate in °C per hour if it took 1 hour, and if it took 4 hours (as a mixed number). Convert −2 °F and 72 °F to °C using the formula, showing every step of the order of operations. Do you get the same change?</p>
+<p><strong>Then:</strong> which day in your week had the biggest swing? How does it compare with Pincher Creek?</p></li>
+<li><p><strong>Critique and revise (M4).</strong> Gallery walk. Fix anything the feedback finds.</p></li>
+<li><p><strong>Weather report (M5).</strong> Write and deliver a 60-second “wild weather” segment for the morning announcements, or make a one-page infographic. Include the record, your week, and what a chinook is.</p></li>
+</ol>
+<p><strong>What to hand in</strong> (in the Project Journal)</p>
+<ul>
+<li>Week table with highs, lows and swings, and the number line</li>
+<li>Mean high and mean low, with the calculation shown</li>
+<li>Pincher Creek change, both rates, and both °F → °C conversions</li>
+<li>Comparison of your week with the record</li>
+<li>Script or infographic</li>
+</ul>
+<div class="stretch-card">
+<p><strong>★★ Extended.</strong> The reverse formula is °F = <span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">5</span></span> × °C + 32. Is there a temperature where the °C number and the °F number are the same? Find it with an equation.</p>
+</div>
+<p><em>Math you will use: RN1, RN2, RN3, RN4, RN5</em></p>
+</div>
+<hr />
+<div class="section-heading">
+<p>How it is assessed — all options</p>
+</div>
+<p>Every option uses the same rubric: 4 criteria, 3 marks each, 12 marks. You get no extra marks for picking a harder option, because all three are built to be the same difficulty. <strong>Criteria 1, 2 and 4</strong> are marked on your team’s work. <strong>Criterion 3</strong> is marked on <em>your own</em> explanation in your journal.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Full (3)</th>
+<th>Partial (2)</th>
+<th>Beginning (1)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Model</strong> — measurements, table or diagram, and the rule <em>(Skills &amp; Procedures · RN1, PE1, SR3)</em></td>
+<td>Complete, labelled with units, and the rule matches the measured values</td>
+<td>Present, with one error or missing label</td>
+<td>Missing pieces, or the rule doesn’t match the measurements</td>
+</tr>
+<tr>
+<td><strong>2. Calculate and check</strong> — estimate, calculate, check <em>(Skills &amp; Procedures · RN2–RN5, PE3–PE7, SR1–SR2)</em></td>
+<td>Estimate shown first, calculation correct with every step shown, answer checked against the estimate and rounded sensibly</td>
+<td>Correct method with a calculation error, or no estimate</td>
+<td>Answer with no method, or the method doesn’t fit the question</td>
+</tr>
+<tr>
+<td><strong>3. Explain the meaning</strong> — why the math works in this situation <em>(Understanding · PE2, SR2, RN2)</em></td>
+<td>Explains <em>why</em> (2<sup>0</sup> = 1 layer, why the diagonal is irrational, why subtracting a negative adds), using the situation and units</td>
+<td>Explains what was done but not why, or leaves out units</td>
+<td>Restates the answer without explaining</td>
+</tr>
+<tr>
+<td><strong>4. Communicate</strong> — product for the audience <em>(Understanding · all)</em></td>
+<td>Audience could understand it without asking a question. Numbers support the claim. Revisions from feedback are visible</td>
+<td>Clear answer, but support is thin, or feedback wasn’t used</td>
+<td>Answer is unclear or unsupported</td>
+</tr>
+</tbody>
+</table>
+<div class="reflection-block">
+<div class="meta-title">
+<p>Before you hand in — check</p>
+</div>
+<ul class="task-list">
+<li><label><input type="checkbox" />Is every calculation next to an estimate, and are they close? (Checker signs: <span class="b b-md">&nbsp;</span>)</label></li>
+<li><label><input type="checkbox" />Does every measurement and answer have a unit?</label></li>
+<li><label><input type="checkbox" />Did we answer the guiding question in one clear sentence?</label></li>
+<li><label><input type="checkbox" />Can every team member explain <em>why</em> our key step works?</label></li>
+<li><label><input type="checkbox" />Is the revision log filled in?</label></li>
+</ul>
+</div>
+<div class="word-bank">
+<div class="label">
+<p>What the codes mean</p>
+</div>
+<p><strong>RN1</strong> rational numbers in different forms, compare and order · <strong>RN2</strong> add and subtract · <strong>RN3</strong> multiply · <strong>RN4</strong> divide · <strong>RN5</strong> order of operations · <strong>PE1</strong> powers: base and exponent · <strong>PE2</strong> zero exponent · <strong>PE3</strong> product of powers · <strong>PE4</strong> quotient of powers · <strong>PE5</strong> power of a power · <strong>PE7</strong> negative exponents · <strong>SR1</strong> perfect squares and principal square roots · <strong>SR2</strong> estimating non-perfect squares, irrational numbers · <strong>SR3</strong> Pythagorean theorem</p>
+</div>
+</body>
+</html>

@@ -15,7 +15,9 @@ const style: Record<string, { color: string; tagStyle: string }> = {
 
 const strands = await Promise.all(
   manifestStrands.map(async (s) => ({
+    slug: s.slug,
     label: s.label,
+    project: s.project,
     ...style[s.slug],
     topics: await Promise.all(
       topicsInStrand(s.slug).map(async (t) => ({ ...t, unit: (await getEntry('math9-units', t.slug))?.data })),
@@ -37,6 +39,31 @@ const strands = await Promise.all(
       <h2 class={`text-xs font-bold uppercase tracking-widest mb-4 pb-2 border-b border-slate-100 text-slate-500`}>
         {strand.label}
       </h2>
+
+      {strand.project && (
+        <div id={`${strand.slug}-project`} class={`scroll-mt-32 mb-3 bg-white rounded-xl border border-slate-200 border-l-4 ${strand.color} px-5 py-4`}>
+          <div class="flex items-center gap-2 mb-2">
+            <span class={`text-xs font-semibold px-2 py-0.5 rounded-full ${strand.tagStyle}`}>{strand.label}</span>
+            <span class="text-sm font-bold text-slate-800">Inquiry Project</span>
+          </div>
+          <p class="mb-3 max-w-[78ch] text-sm leading-relaxed text-slate-600">Three options, one shared rubric, 5 periods plus a buffer. Teams of 4–5 with roles; two mini-lessons and a gallery-walk critique inside the project. Launch the driving questions in the strand's first lesson.</p>
+          <div class="space-y-2">
+            {[
+              { tag: 'Teacher Guide', label: 'Calendar, mini-lessons, answer guides', path: strand.project.guide, guide: true },
+              { tag: 'Student', label: 'Project brief (3 options + rubric)', path: strand.project.brief, guide: false },
+              { tag: 'Student', label: 'Project journal (milestones M1–M5)', path: strand.project.journal, guide: false },
+            ].map(d => (
+              <div class={`flex items-center justify-between gap-4 rounded-lg border px-4 py-2.5 ${d.guide ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-200'}`}>
+                <div class="flex items-center gap-2">
+                  <span class={`text-xs font-bold px-2 py-0.5 rounded-full ${d.guide ? 'bg-teacher-600 text-white' : 'bg-slate-200 text-slate-600'}`}>{d.tag}</span>
+                  <span class="text-sm font-medium text-slate-700">{d.label}</span>
+                </div>
+                <a href={viewHref(d.path)} target="_blank" rel="noopener" class="flex-shrink-0 text-sm font-semibold text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-400 px-4 py-1.5 rounded-lg transition-colors">Open ↗</a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div class="space-y-3">
         {strand.topics.map(t => (
