@@ -90,12 +90,10 @@ const soc8Units: [string, string][] = [
   ['political-systems', 'Politics'],
   ['civic-engagement', 'Citizenship'],
 ];
-const ceflUnits: [string, string][] = [
-  ['labour-market', 'Careers'],
-  ['post-secondary', 'After High School'],
-  ['experiences', 'Experiences'],
-  ['income-tax', 'Pay & Tax'],
-  ['money-management', 'Money'],
+const ceflGrades: [string, string][] = [
+  ['grade-7', 'Grade 7'],
+  ['grade-8', 'Grade 8'],
+  ['grade-9', 'Grade 9'],
 ];
 const steamGrades: [string, string][] = [
   ['grade-5', 'Gr. 5'],
@@ -241,18 +239,18 @@ export const courses: Course[] = [
   },
   {
     key: 'cefl',
-    tab: 'CEFL 7',
+    tab: 'CEFL',
     name: 'Career & Financial Literacy',
-    grade: 'Grade 7',
-    numeral: '7',
+    grade: 'Grades 7–9',
+    numeral: '7–9',
     path: 'cefl',
     teacherPath: 'cefl/teacher',
     parentPath: 'cefl/parents',
-    blurb: 'Five project-based units on careers, school after Grade 12, experiences, pay and money. Short lessons inside every project.',
-    facts: ['5 units', '5 projects', '15 materials'],
+    blurb: 'Project-based careers and money for Grades 7–9: careers, school after Grade 12, experiences, pay and tax, and money. Short lessons inside every project.',
+    facts: ['3 grades', '15 projects', '45 materials'],
     subnav: [
-      ...unitItems('cefl/materials/', ceflUnits),
-      { label: 'All units', path: 'cefl', match: endsWith('/cefl') },
+      ...unitItems('cefl/', ceflGrades),
+      { label: 'All grades', path: 'cefl', match: endsWith('/cefl') },
     ],
     parentSubnav: [{ label: 'Overview', path: 'cefl/parents', match: endsWith('/cefl/parents') }],
   },
@@ -280,5 +278,5 @@ export const footerNames: Record<CourseKey, string> = {
   social9: 'Grade 9 Social Studies',
   social8: 'Grade 8 Social Studies',
   steam: 'STEAM, Grades 5–9',
-  cefl: 'Career Education and Financial Literacy 7',
+  cefl: 'Career Education and Financial Literacy 7–9',
 };

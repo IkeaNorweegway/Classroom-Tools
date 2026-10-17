@@ -1,0 +1,36 @@
+---
+// One CEFL grade: its five units, each built around a project.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CourseHero from '../../../components/CourseHero.astro';
+import TopicList from '../../../components/TopicList.astro';
+import { getCollection } from 'astro:content';
+import { ceflGrades, unitsInGrade, splitSlug, ceflProject } from '../../../data/cefl';
+
+export function getStaticPaths() {
+  return ceflGrades.map((g) => ({ params: { grade: `grade-${g}` }, props: { g } }));
+}
+
+const { g } = Astro.props as { g: number };
+const base = import.meta.env.BASE_URL;
+const entries = Object.fromEntries((await getCollection('cefl-units')).map((e) => [e.slug, e.data]));
+const units = unitsInGrade(g);
+---
+
+<BaseLayout course="cefl" title={`CEFL Grade ${g}`}>
+  <CourseHero
+    back={{ href: `${base}cefl`, label: 'CEFL 7–9' }}
+    eyebrow="Career Education & Financial Literacy"
+    title={`Grade ${g}`}
+    numeral={`${g}`}
+    description="Five units. Each one is a project, with short lessons along the way."
+  />
+
+  <TopicList
+    heading="Units"
+    items={units.map((u) => {
+      const { unit } = splitSlug(u.slug);
+      const e = entries[`grade-${g}/${unit}`];
+      return { art: unit, href: `${base}cefl/grade-${g}/${unit}`, title: u.label, kicker: `${e?.organizingIdea ?? ''} · Project: ${ceflProject(u.slug)}`, description: e?.hook };
+    })}
+  />
+</BaseLayout>

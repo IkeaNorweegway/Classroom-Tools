@@ -1,6 +1,7 @@
 ---
 title: Income and Tax
 organizingIdea: "Financial Literacy"
+grade: 7
 order: 4
 project: First Paycheque
 guidingQuestion: How is employment income earned, taxed, and used?

@@ -1,6 +1,7 @@
 ---
 title: Careers and the Labour Market
 organizingIdea: "Career Exploration"
+grade: 7
 order: 1
 project: Career Pathway Map
 guidingQuestion: What factors influence career development?

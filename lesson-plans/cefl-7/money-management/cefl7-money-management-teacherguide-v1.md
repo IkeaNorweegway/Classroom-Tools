@@ -19,7 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl7-money-management-workbook-v1` · project brief `cefl7-money-management-project-v1` |
 | **Teams** | 4–5 students. Each student makes their own budget; the team checks math and gives feedback. |
 | **Audience** | A family member or trusted adult at home (family feedback card), then a short class share in Session 7 |
-| **Assessment** | Single-point rubric ("How you will be marked"), scored on Steps 1–4 and the final product. No unit test. |
+| **Assessment** | Single-point rubric ("How you will be marked") on the report-card scale (4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet), scored on Steps 1–4 and the final product. No unit test. |
 
 ::: teacher
 **Do this before Session 1**

@@ -275,12 +275,15 @@ What would make it feel more real?
 
 **Outcome 7-PS:** I can weigh goals, costs, and jobs when choosing a pathway after high school.
 
-| Not yet | What we look for | Went further |
+Your teacher gives each row a level: **4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet.** Meets means you met the outcome.
+
+| ✗ Has yet to meet: what's missing | ✓ Meets (the outcome) | ★ Beyond: Proficient or Excellent |
 |---|---|---|
-| | **Know it:** You describe both pathways correctly (type, length, how you learn). Your tuition and outlook facts are correct. | |
-| | **Understand it:** You explain that different pathways can all lead to good careers, and that choosing means balancing cost, time, interests, and jobs. | |
-| | **Do it:** You work out the true cost of both roads. You use the jobs outlook. You recommend a road and explain the trade-off. | |
-| | **Teamwork** (not part of the outcome mark): You did your job. You made at least 2 changes after feedback. | |
+| | **Know it (K):** You describe both pathways correctly (type, length, how you learn). Your tuition and outlook facts are correct. | |
+| | **Understand it (U):** You explain that different pathways can all lead to good careers, and that choosing means balancing cost, time, interests, and jobs. | |
+| | **Do it (S&P):** You work out the true cost of both roads. You use the jobs outlook. You recommend a road and explain the trade-off. | |
+
+**Hand-in checklist** (not marked): ☐ I did my team job each class ☐ I made at least 2 changes after feedback
 
 ## Word cards
 

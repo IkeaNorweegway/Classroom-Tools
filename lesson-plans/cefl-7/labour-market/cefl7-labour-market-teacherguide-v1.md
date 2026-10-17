@@ -19,7 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl7-labour-market-workbook-v1` (4 moments) · project brief `cefl7-labour-market-project-v1` |
 | **Teams** | 4–5 students. Each student makes their own map; the team researches together and gives feedback. |
 | **Audience** | A Career Café in Session 7: families, another class, or school staff visit and ask questions |
-| **Assessment** | Single-point rubric ("How you will be marked"), scored on Steps 1–4 and the finished map. No unit test. |
+| **Assessment** | Single-point rubric ("How you will be marked") on the report-card scale (4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet), scored on Steps 1–4 and the finished map. No unit test. |
 
 ::: teacher
 **Do this before Session 1**

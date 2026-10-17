@@ -28,7 +28,7 @@ Seven courses are live. PhysEd and eSports are in the workspace but not on the s
 | Social Studies 9 | `/social9/` | inline hex | `#b91c1c` (red) | Live |
 | Social Studies 8 | `/social8/` | inline hex | `#4338ca` (indigo) | Live |
 | STEAM (Gr. 5–9) | `/steam/` | inline hex | `#7c3aed` (violet) | Live |
-| CEFL 7 (Career Education & Financial Literacy) | `/cefl/` | `[data-course='cefl']` in global.css | `#94631a` (ochre) | Live (Grade 7). Materials in `public/materials/cefl/`, so its viewer reads that folder. One overview parent page, no per-unit parent guides. |
+| CEFL 7–9 (Career Education & Financial Literacy) | `/cefl/` | `[data-course='cefl']` in global.css | `#94631a` (ochre) | Live (Grades 7–9). One course with grade pages (`/cefl/grade-N/`) and unit pages (`/cefl/grade-N/<unit>/`); manifest unit slugs carry the grade (`7-income-tax`). Materials in `public/materials/cefl/`, so its viewer reads that folder. Old `/cefl/materials/<unit>` URLs redirect to Grade 7. One parent overview, no per-unit parent guides. |
 
 **Adding a course:** Add a row here, add the slug to the `course` prop type in `BaseLayout.astro`, add it to `courses` and to a subject in `navSubjects` in `src/data/courses.ts`, and add a course card to the home page. Only Grade 6 Science and Math 9 have Tailwind tokens; the newer courses use an inline hex in `Nav.astro`.
 
@@ -65,13 +65,13 @@ Every page has two nav levels:
 
 **Level 1 — Site nav (top bar, always visible)**
 - Left: site name → links to home `/`
-- Centre: subject menus — `Science` | `Math` | `Social` | `STEAM` | `CEFL` (`navSubjects` in `courses.ts`). Each opens a dropdown of grades: Science → Grade 6, Grade 7; Math → Grade 9; Social → Grade 8, Grade 9; STEAM → Grades 5–9 + All grades (from the course's `gradeMenu`); CEFL → Grade 7. The active subject is highlighted with the course accent and shows the current grade (e.g. `Science Gr. 7`). On small screens the menus wrap to a second row.
+- Centre: subject menus — `Science` | `Math` | `Social` | `STEAM` | `CEFL` (`navSubjects` in `courses.ts`). Each opens a dropdown of grades: Science → Grade 6, Grade 7; Math → Grade 9; Social → Grade 8, Grade 9; STEAM → Grades 5–9 + All grades (from the course's `gradeMenu`); CEFL → Grades 7–9 + All grades (its `gradeMenu`). The active subject is highlighted with the course accent and shows the current grade (e.g. `Science Gr. 7`). On small screens the menus wrap to a second row.
 - Right: the audience switch, `Student · Parent · Teacher` (see below)
 
 **Level 2 — Course subnav (below top bar, visible when inside a course)**
 - Grade 6 Science subnav: `Matter | Forces | Living Systems | Climate | Energy | Space | Materials`
 - Math 9 subnav: `Number | Algebra | M&G | Stats & Prob | Practice | PAT Prep | POTD | All materials`. A strand tab is also active on that strand's topic pages. Parent pages use `parentSubnav`: `Overview | Number | Algebra | M&G | Stats & Prob`
-- Science 7, Social 8, Social 9 and CEFL 7 subnavs list their units; the STEAM subnav lists Grades 5–9
+- Science 7, Social 8 and Social 9 subnavs list their units; the STEAM subnav lists Grades 5–9 and the CEFL subnav lists Grades 7–9
 - The home page turntable spaces its slots by the number of courses (and widens the ring past six)
 
 ### Audience views (student, parent, teacher)

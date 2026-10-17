@@ -273,12 +273,15 @@ What would make it feel more real?
 
 **Outcome 7-MM:** I can explain how spending, saving, and budgets affect financial security.
 
-| Not yet | What we look for | Went further |
+Your teacher gives each row a level: **4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet.** Meets means you met the outcome.
+
+| ✗ Has yet to meet: what's missing | ✓ Meets (the outcome) | ★ Beyond: Proficient or Excellent |
 |---|---|---|
-| | **Know it:** You use the words budget, trade-off, need, want, goal, and emergency fund correctly. | |
-| | **Understand it:** You explain how your choices (trade-offs, saving, an emergency fund) affect your financial security. | |
-| | **Do it:** Your budget adds up and reaches a real goal. You work out how long it will take. You test it with a surprise and compare two spending plans. | |
-| | **Teamwork** (not part of the outcome mark): You did your job. You made at least 2 changes after feedback. | |
+| | **Know it (K):** You use the words budget, trade-off, need, want, goal, and emergency fund correctly. | |
+| | **Understand it (U):** You explain how your choices (trade-offs, saving, an emergency fund) affect your financial security. | |
+| | **Do it (S&P):** Your budget adds up and reaches a real goal. You work out how long it will take. You test it with a surprise and compare two spending plans. | |
+
+**Hand-in checklist** (not marked): ☐ I did my team job each class ☐ I made at least 2 changes after feedback
 
 ## Word cards
 

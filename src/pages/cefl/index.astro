@@ -2,32 +2,35 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CourseHero from '../../components/CourseHero.astro';
 import TopicList from '../../components/TopicList.astro';
-import { getCollection } from 'astro:content';
-import { cefl } from '../../data/cefl';
+import { cefl, ceflGrades } from '../../data/cefl';
 import { materialCount } from '../../data/manifest';
 const base = import.meta.env.BASE_URL;
 
-// Cards lead with the student hook; the unit's project is the kicker.
-const entries = (await getCollection('cefl7-units')).sort((a, b) => a.data.order - b.data.order);
 const materials = materialCount(cefl.units);
+const blurbs: Record<number, { hook: string; projects: string }> = {
+  7: { hook: 'Where careers start: jobs vs. careers, school after Grade 12, your first paycheque, and your first budget.', projects: 'Career Pathway Map · Two Roads · Experience Plan · First Paycheque · Saving for Something Real' },
+  8: { hook: 'Getting ready for change: a shifting job market, planning high school, tax brackets, and making money grow.', projects: 'Future-Proof Me · My High School Map · Open Doors · Job Offer Showdown · Grow It' },
+  9: { hook: 'Getting hired and borrowing smart: résumés and interviews, the real cost of school, tax returns, and credit.', projects: 'Get Hired · Pathway Pitch · Pitch It · Tax Clinic · Debt Detective' },
+};
 ---
 
-<BaseLayout course="cefl" title="Career Education and Financial Literacy 7">
+<BaseLayout course="cefl" title="Career Education and Financial Literacy 7–9">
   <CourseHero
     eyebrow="Alberta draft curriculum · 2026"
-    title="Career Education & Financial Literacy 7"
-    numeral="7"
+    title="Career Education & Financial Literacy"
+    numeral="7–9"
     vtName="course-num-cefl"
-    description="A project-based course. Every unit is a project, with short lessons inside it right when you need them."
+    description="A project-based course. Every unit is a project, with short lessons inside it right when you need them. Pick your grade."
     facts={[
-      { n: `${cefl.units.length}`, label: 'units' },
+      { n: `${ceflGrades.length}`, label: 'grades' },
       { n: `${cefl.units.length}`, label: 'projects' },
       { n: `${materials}`, label: 'materials' },
     ]}
   />
 
   <TopicList
-    heading="Units"
-    items={entries.map((e) => ({ art: e.slug, href: `${base}cefl/materials/${e.slug}`, title: e.data.title, kicker: `${e.data.organizingIdea} · Project: ${e.data.project}`, description: e.data.hook }))}
+    heading="Grades"
+    numbered={false}
+    items={ceflGrades.map((g) => ({ art: `cefl-grade-${g}`, href: `${base}cefl/grade-${g}`, title: `Grade ${g}`, kicker: '5 units · 5 projects', description: blurbs[g].hook, meta: blurbs[g].projects }))}
   />
 </BaseLayout>

@@ -272,12 +272,15 @@ What would make it feel more real?
 
 **Outcome 7-EX:** I can explain how experiences shape what work I like.
 
-| Not yet | What we look for | Went further |
+Your teacher gives each row a level: **4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet.** Meets means you met the outcome.
+
+| ✗ Has yet to meet: what's missing | ✓ Meets (the outcome) | ★ Beyond: Proficient or Excellent |
 |---|---|---|
-| | **Know it:** You sort experiences correctly. You describe types of work and work environments. You name the three safety rights. | |
-| | **Understand it:** You explain what your experiences show about work you might like, and why balance, belonging, and safety matter. | |
-| | **Do it:** Your plan names a real, specific experience that fits a balanced week and the rules. Your team checklist helps a young worker feel welcome and stay safe. | |
-| | **Teamwork** (not part of the outcome mark): You did your job. You made at least 2 changes after feedback. | |
+| | **Know it (K):** You sort experiences correctly. You describe types of work and work environments. You name the three safety rights. | |
+| | **Understand it (U):** You explain what your experiences show about work you might like, and why balance, belonging, and safety matter. | |
+| | **Do it (S&P):** Your plan names a real, specific experience that fits a balanced week and the rules. Your team checklist helps a young worker feel welcome and stay safe. | |
+
+**Hand-in checklist** (not marked): ☐ I did my team job each class ☐ I made at least 2 changes after feedback
 
 ## Word cards
 

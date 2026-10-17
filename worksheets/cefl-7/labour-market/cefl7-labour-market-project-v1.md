@@ -277,12 +277,15 @@ What would make it feel more real?
 
 **Outcome 7-LM:** I can explore how careers start and grow.
 
-| Not yet | What we look for | Went further |
+Your teacher gives each row a level: **4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet.** Meets means you met the outcome.
+
+| ✗ Has yet to meet: what's missing | ✓ Meets (the outcome) | ★ Beyond: Proficient or Excellent |
 |---|---|---|
-| | **Know it:** You explain the difference between a job and a career. You name transferable skills. Your career facts (education, wage) are correct. | |
-| | **Understand it:** You explain how interests, values, experiences, and education shape a career, and that careers can change. | |
-| | **Do it:** Your map has a path of several jobs and learning steps. You check how the career fits your interests and values. You make a plan to build two skills. You talked with someone about careers. | |
-| | **Teamwork** (not part of the outcome mark): You did your job. You made at least 2 changes after feedback. | |
+| | **Know it (K):** You explain the difference between a job and a career. You name transferable skills. Your career facts (education, wage) are correct. | |
+| | **Understand it (U):** You explain how interests, values, experiences, and education shape a career, and that careers can change. | |
+| | **Do it (S&P):** Your map has a path of several jobs and learning steps. You check how the career fits your interests and values. You make a plan to build transferable skills. You talked with someone about careers. | |
+
+**Hand-in checklist** (not marked): ☐ I did my team job each class ☐ I made at least 2 changes after feedback
 
 ## Word cards
 

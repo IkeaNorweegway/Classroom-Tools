@@ -162,7 +162,7 @@ Every project brief contains, in this order:
 6. **Organizers** students fill in themselves, a **visual task card**, **vocabulary cards**, and **2–3 deliberately different sample products** described in the teacher guide (never a single model; it narrows what students make)
 7. **Critique protocol:** kind / specific / helpful, with sentence frames
 8. **Real audience** named
-9. **Single-point rubric:** Knowledge / Understanding / Skills & Procedures rows mapped to the LO code, scored at milestones and on the final product
+9. **Single-point rubric on the report-card scale** (`templates/rubric-phrase-bank.md`): columns ✗ Has yet to meet · ✓ Meets (the outcome) · ★ Beyond (Proficient or Excellent); each row tagged K, U or S&P and scored 4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet. Write Meets from the outcome; describe, don't count. Teamwork and "made 2 changes" go on a hand-in checklist, not in the rubric. Scored at milestones and on the final product
 10. **Reflection** + **authenticity check** ("Did this feel like something real people do? What would make it more real?")
 11. **My Plan** portfolio page
 
@@ -423,32 +423,32 @@ Every project brief contains, in this order:
 
 ## Project Ideas *(this workspace's addition)*
 
-Grade 7 projects are built out in `worksheets/cefl-7/`; the Grade 7 lines below are their one-line summaries. Grade 8 and 9 lines are starting ideas for later builds.
+All three grades are built: Grade 7 in `worksheets/cefl-7/`, Grade 8 in `worksheets/cefl-8/`, Grade 9 in `worksheets/cefl-9/` (teacher guides in `lesson-plans/cefl-[G]/`).
 
 ### Careers and the Labour Market
 - Gr 7: **Career Pathway Map** — "What path could take me from here to a career I'd want?" Personal pathway map (roles, education, experience) for a career chosen with CAREERinsite, a growth plan for 2 transferable skills, and one real conversation with an adult in that field. Audience: families / career fair table
-- Gr 8: Disruption case study — pick an industry changed by technology; who lost work, who gained it, which transferable skills carried over
-- Gr 9: Application package — resumé, brand statement, and mock interview for a real local job posting
+- Gr 8: **Future-Proof Me** — "How can I build a career that can survive change?" Personal career plan: how economic cycles, technology and social change could affect the career; human capital and resilience; milestones and a backup. Audience: a Grade 7 class
+- Gr 9: **Get Hired** — "How do I show an employer what I can do?" Industry trend analysis, a résumé and brand statement tailored to a real posting, and a mock interview. Audience: volunteer interviewers
 
 ### Post-Secondary Pathways
 - Gr 7: **Two Roads** — "Is there more than one good way to reach the same career?" Team compares two real pathways to one career on true cost, time, type of learning and demand, then recommends one and names the trade-offs. Audience: school counsellor or a guest panel
-- Gr 8: My course plan — a high school course plan that keeps two post-secondary options open, checked against real admission requirements
-- Gr 9: ROI showdown — full cost vs. expected income for two pathways using labour market data, with a contingency plan
+- Gr 8: **My High School Map** — "What do I need to do in high school to keep my options open?" Grade 10–12 course plan for two programs, tuition and awards, a networking conversation. Audience: counsellor or high school students
+- Gr 9: **Pathway Pitch** — "How do I know if a post-secondary pathway is worth the cost?" True cost, student loans and payback with ALIS income data; work-integrated learning; a contingency and rationale. Audience: a panel playing a family
 
 ### Experiences and Employment
 - Gr 7: **Experience Plan** — "What do my experiences tell me about the work I'd like?" Personal experience audit plus one planned (ideally done) volunteer or micro-venture experience; team builds a workplace belonging and safety checklist. Audience: a Grade 6 class or school leadership group
-- Gr 8: Representation investigation — research representation in one career and present what could change it
-- Gr 9: Mini-venture — a business plan for a small student venture (risks, costs, roles), or a real volunteer placement with a skills reflection
+- Gr 8: **Open Doors** — "Why do some people think a career is 'not for them,' and how can we open the door?" Team campaign on representation in one career using data and a real story; personal growth-mindset skill plan. Audience: Grade 6–7 classes
+- Gr 9: **Pitch It** — "How can an experience I create move me toward my career?" Team venture with costs, break-even and risks; each member applies for a role (cover letter) and checks their digital identity. Audience: a pitch panel
 
 ### Income and Tax
 - Gr 7: **First Paycheque** — "Where does my paycheque go?" Team picks a real local entry-level job posting, builds a pay stub from gross to net, and explains it to Grade 6 students OR argues for more or less deduction. Audience: a Grade 6 class
-- Gr 8: Job offer face-off — compare two offers on total compensation after tax
-- Gr 9: Tax-season simulation — interpret a sample T4, apply credits, and decide between RRSP and TFSA for a scenario
+- Gr 8: **Job Offer Showdown** — "Which job offer is really worth more?" After-tax pay using 2026 brackets, total compensation, non-money factors, and a view on tax fairness. Audience: a panel playing the job seeker
+- Gr 9: **Tax Clinic** — "How can understanding taxes put more money in my pocket?" A client case (T4, tips, gig income, tuition): tax owed, credits, RRSP vs. TFSA, self-employed CPP, refund. Audience: volunteers playing clients
 
 ### Money, Interest, and Credit
 - Gr 7: **Saving for Something Real** — "How can I reach a money goal without losing control of my spending?" Personal monthly budget toward a chosen goal (default income supplied), a surprise-expense card, two spending scenarios compared. Audience: families
-- Gr 8: The cost of waiting — compare starting to save at 15 vs. 25 with compound interest
-- Gr 9: Debt escape plan — given a debt scenario, compare minimum, avalanche, and snowball repayment and recommend one
+- Gr 8: **Grow It** — "How can I make my money grow without losing control of my costs?" Budget with fixed and variable costs, simple vs. compound interest, saving vs. investing for two goals. Audience: a Money Fair
+- Gr 9: **Debt Detective** — "How can borrowing help or hurt my future?" A debt case: interest, credit score factors, debt-to-income, avalanche vs. snowball, a payday loan vs. alternatives; personal credit plan. Audience: a Grade 8 class
 
 ---
 

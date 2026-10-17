@@ -313,14 +313,15 @@ One thing I will check on my first real pay stub:
 
 **Outcome 7-IT:** I understand jobs and the money people earn from them.
 
-Your teacher checks each row. They write what is missing on the left and what went further on the right.
+Your teacher gives each row a level: **4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet.** Meets means you met the outcome.
 
-| Not yet | What we look for | Went further |
+| ✗ Has yet to meet: what's missing | ✓ Meets (the outcome) | ★ Beyond: Proficient or Excellent |
 |---|---|---|
-| | **Know it** (Steps 1–3): Your numbers are right: gross pay, each deduction, and net pay. You can say what each deduction is for. | |
-| | **Understand it** (your product): **Path A:** you explain why net pay is less than gross pay, and why some workers pay no income tax. **Path B:** you give your opinion with a reason and a trade-off. | |
-| | **Do it** (your product): You used the 2026 rates to find net pay. You name the pay type, one good thing, and one downside. A Grade 6 student can understand it. | |
-| | **Teamwork** (not part of the outcome mark): You did your job. You made at least 2 changes after feedback. | |
+| | **Know it** (K, Steps 1–3): Your numbers are right: gross pay, each deduction, and net pay. You can say what each deduction is for. | |
+| | **Understand it** (U, your product): **Path A:** you explain why net pay is less than gross pay, and why some workers pay no income tax. **Path B:** you give your opinion with a reason and a trade-off. | |
+| | **Do it** (S&P, your product): You used the 2026 rates to find net pay. You name the pay type, one good thing, and one downside. A Grade 6 student can understand it. | |
+
+**Hand-in checklist** (not marked): ☐ I did my team job each class ☐ I made at least 2 changes after feedback
 
 ## Pay Card (2026)
 

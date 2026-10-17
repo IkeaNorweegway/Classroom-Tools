@@ -1,6 +1,7 @@
 ---
 title: Experiences and Employment
 organizingIdea: "Career Opportunities"
+grade: 7
 order: 3
 project: Experience Plan
 guidingQuestion: How can experiences guide future choices?

@@ -19,7 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl7-experiences-workbook-v1` · project brief `cefl7-experiences-project-v1` |
 | **Teams** | 4–5 students. Each student makes their own Experience Plan; each team makes one Welcome and Safety checklist. |
 | **Audience** | A Grade 6 class or the school's leadership group, Session 7 |
-| **Assessment** | Single-point rubric ("How you will be marked"), scored on Steps 1–4 and the final products. No unit test. |
+| **Assessment** | Single-point rubric ("How you will be marked") on the report-card scale (4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet), scored on Steps 1–4 and the final products. No unit test. |
 
 ::: teacher
 **Do this before Session 1**

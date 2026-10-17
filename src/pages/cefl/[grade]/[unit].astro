@@ -1,0 +1,35 @@
+---
+// Student unit page (shared StudentUnit layout). Materials come from
+// src/data/cefl.ts; the intro from src/content/cefl-units/grade-N/.
+import StudentUnit from '../../../components/StudentUnit.astro';
+import { getEntry } from 'astro:content';
+import { cefl as m, ceflGrades, unitsInGrade, splitSlug, ceflProject } from '../../../data/cefl';
+
+export function getStaticPaths() {
+  return ceflGrades.flatMap((g) =>
+    unitsInGrade(g).map((u, i) => ({ params: { grade: `grade-${g}`, unit: splitSlug(u.slug).unit }, props: { g, i } })),
+  );
+}
+
+const { g, i } = Astro.props as { g: number; i: number };
+const units = unitsInGrade(g);
+const u = units[i];
+const { unit } = splitSlug(u.slug);
+const entry = await getEntry('cefl-units', `grade-${g}/${unit}`);
+if (!entry) throw new Error(`cefl-units/grade-${g}/${unit}.md is missing`);
+const { Content } = await entry.render();
+const base = import.meta.env.BASE_URL;
+---
+
+<StudentUnit
+  manifest={m}
+  unit={u}
+  title={`Grade ${g} ${u.label} — Materials`}
+  eyebrow={`CEFL Grade ${g} · Unit ${i + 1} · Project: ${ceflProject(u.slug)}`}
+  back={{ href: `${base}cefl/grade-${g}`, label: `CEFL Grade ${g}` }}
+  intro={entry.data}
+  Content={Content}
+  hasParentGuide={false}
+  prev={units[i - 1]}
+  next={units[i + 1]}
+/>

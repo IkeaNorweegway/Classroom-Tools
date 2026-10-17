@@ -19,7 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl7-post-secondary-workbook-v1` · project brief `cefl7-post-secondary-project-v1` |
 | **Teams** | 4–5 students; one recommendation per team |
 | **Audience** | A panel in Session 7 (school counsellor, a teacher, and if possible someone from one of the careers) playing a family deciding with their teen |
-| **Assessment** | Single-point rubric ("How you will be marked"), scored on Steps 1–4 and the presentation. No unit test. |
+| **Assessment** | Single-point rubric ("How you will be marked") on the report-card scale (4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet), scored on Steps 1–4 and the presentation. No unit test. |
 
 ::: teacher
 **Do this before Session 1**

@@ -1,6 +1,7 @@
 ---
 title: Money, Interest, and Credit
 organizingIdea: "Financial Literacy"
+grade: 7
 order: 5
 project: Saving for Something Real
 guidingQuestion: How does managing money affect financial security?

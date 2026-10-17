@@ -23,7 +23,7 @@ The research is clear that implementation quality decides whether PBL works
 | **Student materials** | Mini-workbook `cefl7-income-tax-workbook-v1` (4 moments) · project brief `cefl7-income-tax-project-v1` |
 | **Teams** | 4–5 students, mixed, set by you. Keep teams for the whole unit. |
 | **Audience** | A Grade 6 class, Session 7 (about 30 minutes) |
-| **Assessment** | Single-point rubric in the brief ("How you will be marked"), scored on Steps 1–3 and on the final product. No unit test. |
+| **Assessment** | Single-point rubric ("How you will be marked") on the report-card scale (4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet), scored on Steps 1–3 and on the final product. No unit test. |
 
 ::: teacher
 **Do this before Session 1**

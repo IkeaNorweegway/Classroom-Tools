@@ -1,6 +1,6 @@
 ---
 import Nav from '../../../../components/Nav.astro';
-import { cefl as manifest } from '../../../../data/cefl';
+import { cefl as manifest, splitSlug } from '../../../../data/cefl';
 import { unitDocs } from '../../../../data/manifest';
 import { existsSync } from 'node:fs';
 const base = import.meta.env.BASE_URL;
@@ -21,8 +21,9 @@ export function getStaticPaths() {
 const { unit, doc } = Astro.params;
 const u = manifest.units.find((x) => x.slug === unit);
 const isGuide = doc === u?.teacherGuide;
-const backHref = isGuide ? `${base}cefl/teacher#${unit}` : `${base}cefl/materials/${unit}`;
-const backLabel = isGuide ? '← Teacher hub' : `← ${u?.label ?? 'CEFL 7'}`;
+const grade = splitSlug(unit!).grade;
+const backHref = isGuide ? `${base}cefl/teacher#${unit}` : `${base}${manifest.studentHref(unit!)}`;
+const backLabel = isGuide ? '← Teacher hub' : `← Grade ${grade} ${u?.label ?? ''}`;
 const fileUrl = `${base}materials/cefl/${doc}.html`;
 ---
 
@@ -31,7 +32,7 @@ const fileUrl = `${base}materials/cefl/${doc}.html`;
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{u?.label ?? unit} — {doc} | CEFL 7</title>
+  <title>Grade {grade} {u?.label ?? unit} — {doc} | CEFL</title>
   <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
   <style>
     html, body {

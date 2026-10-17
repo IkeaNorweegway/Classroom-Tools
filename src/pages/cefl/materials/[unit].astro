@@ -1,31 +1,23 @@
 ---
-// Student unit page (shared StudentUnit layout). Materials come from
-// src/data/cefl.ts; the intro from src/content/cefl7-units/.
-import StudentUnit from '../../../components/StudentUnit.astro';
-import { getEntry } from 'astro:content';
-import { cefl as m } from '../../../data/cefl';
+// Old Grade 7 unit URLs (/cefl/materials/<unit>) now live at /cefl/grade-7/<unit>.
+// Kept as redirects so shared links keep working.
+import { ceflUnitSlugs } from '../../../data/cefl';
 
 export function getStaticPaths() {
-  return m.units.map((u, i) => ({ params: { unit: u.slug }, props: { i } }));
+  return ceflUnitSlugs.map((unit) => ({ params: { unit } }));
 }
 
-const { i } = Astro.props as { i: number };
-const u = m.units[i];
-const entry = await getEntry('cefl7-units', u.slug);
-if (!entry) throw new Error(`cefl7-units/${u.slug}.md is missing`);
-const { Content } = await entry.render();
-const base = import.meta.env.BASE_URL;
+const { unit } = Astro.params;
+const to = `${import.meta.env.BASE_URL}cefl/grade-7/${unit}`;
 ---
 
-<StudentUnit
-  manifest={m}
-  unit={u}
-  title={`${u.label} — Materials`}
-  eyebrow={`CEFL 7 · Unit ${i + 1} · Project: ${entry.data.project}`}
-  back={{ href: `${base}cefl`, label: 'CEFL 7' }}
-  intro={entry.data}
-  Content={Content}
-  hasParentGuide={false}
-  prev={m.units[i - 1]}
-  next={m.units[i + 1]}
-/>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="refresh" content={`0; url=${to}`} />
+  <link rel="canonical" href={to} />
+  <title>Moved · CEFL</title>
+</head>
+<body><p>This page moved to <a href={to}>{to}</a>.</p></body>
+</html>

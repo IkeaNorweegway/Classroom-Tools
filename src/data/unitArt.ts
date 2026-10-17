@@ -311,4 +311,23 @@ export const unitArt: Record<string, UnitArt> = {
       <circle class="u-d" cx="26" cy="47" r="3.4"/><circle class="u-d" cx="36" cy="48" r="3"/><circle class="u-d" cx="31" cy="41" r="2.8"/>
       <g class="u-m"><circle class="u-s" cx="32" cy="9" r="4.5" style="fill: white"/></g>`,
   },
+  // CEFL grade cards
+  'cefl-grade-7': {
+    m: 'float',
+    svg: `<rect class="u-s u-f" x="12" y="10" width="40" height="44" rx="6"/>
+      <g class="u-m"><text x="32" y="44" text-anchor="middle" font-size="30" font-weight="700" style="fill: rgb(var(--accent)); font-family: var(--font-display, Georgia, serif)">7</text></g>
+      <circle class="u-d" cx="20" cy="18" r="2"/>`,
+  },
+  'cefl-grade-8': {
+    m: 'float',
+    svg: `<rect class="u-s u-f" x="12" y="10" width="40" height="44" rx="6"/>
+      <g class="u-m"><text x="32" y="44" text-anchor="middle" font-size="30" font-weight="700" style="fill: rgb(var(--accent)); font-family: var(--font-display, Georgia, serif)">8</text></g>
+      <circle class="u-d" cx="20" cy="18" r="2"/>`,
+  },
+  'cefl-grade-9': {
+    m: 'float',
+    svg: `<rect class="u-s u-f" x="12" y="10" width="40" height="44" rx="6"/>
+      <g class="u-m"><text x="32" y="44" text-anchor="middle" font-size="30" font-weight="700" style="fill: rgb(var(--accent)); font-family: var(--font-display, Georgia, serif)">9</text></g>
+      <circle class="u-d" cx="20" cy="18" r="2"/>`,
+  },
 };

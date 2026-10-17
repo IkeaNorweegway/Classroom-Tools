@@ -1,6 +1,7 @@
 ---
 title: Post-Secondary Pathways
 organizingIdea: "Career Exploration"
+grade: 7
 order: 2
 project: Two Roads
 guidingQuestion: How can decisions be made about post-secondary programming?
