@@ -16,8 +16,10 @@ function unit(slug: string, label: string, notes: string, workbook: string, efWo
     path: [
       { hint: 'Start here. You fill these in during class.', items: [{ label: 'Guided Notes', doc: notes, type: 'notes' }] },
       { hint: 'Practice that mixes up everything in the unit.', items: [{ label: 'Workbook', doc: workbook, type: 'workbook' }] },
+      { hint: 'Quick checks on the unit so far.', items: [{ label: 'Exit Tickets', doc: `sci6-${slug}-exits-v1`, badge: 'Formative', type: 'exit' }] },
     ],
     extras: [
+      { heading: 'Quizzes', items: [{ label: 'Mid-Unit Quiz', doc: `sci6-${slug}-quiz-v1`, type: 'assessment' }] },
       {
         heading: 'Other versions',
         items: [

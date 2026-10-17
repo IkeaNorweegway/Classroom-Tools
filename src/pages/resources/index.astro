@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CourseHero from '../../components/CourseHero.astro';
+import TopicList from '../../components/TopicList.astro';
+const base = import.meta.env.BASE_URL;
+
+// Resources that don't belong to one course. Add an entry to show it here.
+const resources: { href: string; kicker: string; title: string; description: string }[] = [
+  {
+    href: 'resources/morning-routine',
+    kicker: 'Daily',
+    title: 'Morning routine',
+    description: 'Watch, write, and solve something new every day.',
+  },
+];
+---
+
+<BaseLayout
+  title="More resources"
+  description="Extra resources that aren't tied to a single course."
+>
+  <CourseHero
+    eyebrow="Extra resources"
+    title="More resources"
+    description="Extras that aren't tied to one course."
+  />
+
+  {resources.length > 0 ? (
+    <TopicList
+      heading="Resources"
+      numbered={false}
+      items={resources.map((r) => ({ ...r, href: `${base}${r.href}` }))}
+    />
+  ) : (
+    <section class="raised rounded-2xl p-6">
+      <h2 class="mb-2 text-[1.0625rem] font-bold text-slate-900">Resources coming soon</h2>
+      <p class="max-w-[62ch] text-[0.9375rem] leading-relaxed text-slate-600">
+        We're still planning what goes here. Check back soon.
+      </p>
+    </section>
+  )}
+</BaseLayout>
