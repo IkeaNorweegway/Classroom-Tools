@@ -131,6 +131,12 @@ Project-based course: 1 hour every 3 days, ~40 sessions a year, 5 units per grad
 | Income and Tax | First Paycheque | Job Offer Showdown | Tax Clinic |
 | Money, Interest, and Credit | Saving for Something Real | Grow It | Debt Detective |
 
+**Project games (pilot):** one companion game per project is planned, one chapter after each of Steps 1–4. Built so far: **Payday** for Grade 7 First Paycheque (`public/materials/cefl/cefl7-income-tax-game-v1.html`, on the unit page as a Game, in the teacher guide). The other 14 wait on feedback from the pilot. Design notes are in `_games-context.md`.
+- *Payday* model: the project's 2026 Pay Card exactly. Three workers (Avery 17 turns 18 in Chapter 3, Dev 19, Rosa 24), three jobs each (wage, salary, commission, tips). Goals: $1,100, $2,200, $2,000. Win = the jar is full after paycheque 8 and the bank is not overdrawn.
+- Simplifications: income tax is the Pay Card's estimate; CPP starts the paycheque after the 18th birthday; bills are counted every two weeks; no overtime (no day over 8 h, no week over 44 h); cash tips are not on the stub; EI and CPP benefits are stories; the bounce fee is $45; a family member covers a Chapter 1 overdraft once.
+- Tested (Node + headless Chrome): the Pay Card matches the teacher-guide formula and the workbook's Jordan stub. Over 200 seeds × 9 jobs, a careful player always wins and gross-pay, do-nothing and 70%-cautious players never do. In about 4,000 "What would help?" stops, no wrong choice beat the right one. Extra hours always raise take-home pay (salary: no change) in all 4,500 runs. Every flow was click-tested (all 9 jobs, both modes, wrong answers and hints, a Real-mode loss and replay, the jar-behind stop, Check my project, Pay Card, report, tutorial). Save, resume and corrupt-save fallback were tested. Screens checked at 1340, 1000 and 600 px: no sideways scroll, all buttons 44 px.
+- Not tested: real pacing (are the chapters really 10–15 minutes?), touch, school Chromebooks, students, whether the Chapter 1 bounce feels fair, and the wording at F&P P–Q.
+
 ### PhysEd 5–6 and 7–9
 
 Course and unit contexts only (7 units each). No lesson plans, rubrics, exits, or worksheets built.

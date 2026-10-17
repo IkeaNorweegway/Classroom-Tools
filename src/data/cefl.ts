@@ -23,6 +23,11 @@ const projects: Record<number, Record<string, string>> = {
 
 export const ceflGrades = [7, 8, 9] as const;
 
+// Companion games: one chapter after each project step (rules in _games-context.md). Keyed by unit slug.
+const games: Record<string, { label: string; doc: string }> = {
+  '7-income-tax': { label: 'Payday (First Paycheque Game): one chapter after each step', doc: 'cefl7-income-tax-game-v1' },
+};
+
 function ceflUnit(grade: number, unit: string): CourseUnit {
   const p = `cefl${grade}-${unit}`;
   return {
@@ -32,7 +37,9 @@ function ceflUnit(grade: number, unit: string): CourseUnit {
       { hint: 'Short lessons with practice. Your teacher opens one each class, just before you need it.', items: [{ label: 'Mini-Workbook', doc: `${p}-workbook-v1`, type: 'workbook' }] },
       { hint: 'Your project, step by step. One step each class.', items: [{ label: `Project: ${projects[grade][unit]}`, doc: `${p}-project-v1`, type: 'project' }] },
     ],
-    extras: [],
+    extras: games[`${grade}-${unit}`]
+      ? [{ heading: 'Game', items: [{ ...games[`${grade}-${unit}`], badge: 'Game', type: 'interactive' }] }]
+      : [],
     keys: [{ label: 'Workbook Answer Key', doc: `${p}-workbook-answers-v1` }],
     teacherGuide: `${p}-teacherguide-v1`,
     home: [],

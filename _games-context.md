@@ -17,8 +17,11 @@ All are in `public/materials/`. They have no markdown source: the HTML file is t
 | `sci7-seed-to-seed-game-v2.html` | 7-2-02 to 7-2-05 | Real time. Grow one strawberry on glucose, then choose an offspring. 5 generations, about 12 minutes each. | `sci7-seed-to-seed-v2` (whole game) | `?debug=1` |
 | `sci7-flower-field-game-v2.html` | 7-2-04 | Turn-based. Set flower parts and surroundings, grow a season, read where offspring were lost. Four levels with stars, 7 to 10 seasons each. | `flowerfield-v2` (stars, answers, level in progress) | `?debug=1` |
 | `sci7-clone-field-game-v2.html` | 7-2-04 | Same shell as Flower Field, with runners, tubers, and cuttings. | `clonefield-v2` (same) | `?debug=1` |
+| `cefl/cefl7-income-tax-game-v1.html` (*Payday*) | 7-IT | Turn-based. Plan 8 paycheques for one worker: set the goal-jar transfer, work two weeks, fill in the pay stub, deposit. 4 chapters of 2 paycheques, 10–15 minutes each. | `cefl7-payday-v1` (whole game) | `?debug=1`; model between `MODEL START`/`MODEL END` runs in Node |
 
 The v1 file of each game is kept so old links work. Nothing links to them.
+
+**CEFL project games** (pilot: *Payday*, built 2026-10-17; the other 14 projects wait on the pilot's feedback). One game per project, a **companion**: a made-up worker meets the same decisions as the project, one chapter after each of Steps 1–4, and each chapter ends by sending the student to do that step for real. Solo play. The game uses the project's own data card (Payday copies the Pay Card exactly) and adds a **Check my project** panel that marks the student's own project numbers ✓/✗ without showing answers. Never let the game do the project's work for the student. Chapters run in order and the run carries over; each chapter start is a snapshot the student can replay. Calibrate goals with scripted players in Node (careful player always wins, gross-pay / do-nothing / too-cautious players never do), as in Payday.
 
 **Seed to Seed v2 is the reference build.** Copy its patterns before inventing new ones.
 
