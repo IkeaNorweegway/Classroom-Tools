@@ -122,6 +122,7 @@ export const courses: Course[] = [
     facts: ['6 units', '~28 weeks', 'EN · EF · FR'],
     subnav: [
       ...unitItems('units/', sci6Units),
+      { label: 'Practice', path: 'science6/practice', match: includes('/science6/practice') },
       {
         label: 'All materials',
         path: 'materials',
@@ -194,6 +195,7 @@ export const courses: Course[] = [
     facts: ['7 units', '3 organizing ideas', '35 materials'],
     subnav: [
       ...unitItems('social9/materials/', soc9Units),
+      { label: 'Practice', path: 'social9/practice', match: includes('/social9/practice') },
       { label: 'All units', path: 'social9', match: endsWith('/social9') },
     ],
     parentSubnav: parentItems('social9/parents', soc9Units),
@@ -211,6 +213,7 @@ export const courses: Course[] = [
     facts: ['4 units', '3 organizing ideas', '20 materials'],
     subnav: [
       ...unitItems('social8/materials/', soc8Units),
+      { label: 'Practice', path: 'social8/practice', match: includes('/social8/practice') },
       { label: 'All units', path: 'social8', match: endsWith('/social8') },
     ],
     parentSubnav: parentItems('social8/parents', soc8Units),

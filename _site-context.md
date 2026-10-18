@@ -71,7 +71,7 @@ Every page has two nav levels:
 **Level 2 — Course subnav (below top bar, visible when inside a course)**
 - Grade 6 Science subnav: `Matter | Forces | Living Systems | Climate | Energy | Space | Materials`
 - Math 9 subnav: `Number | Algebra | M&G | Stats & Prob | Practice | PAT Prep | POTD | All materials`. A strand tab is also active on that strand's topic pages. Parent pages use `parentSubnav`: `Overview | Number | Algebra | M&G | Stats & Prob`
-- Science 7, Social 8 and Social 9 subnavs list their units; the STEAM subnav lists Grades 5–9 and the CEFL subnav lists Grades 7–9
+- Science 7, Social 8 and Social 9 subnavs list their units, then `Practice` (Grade 6 Science has `Practice` after its units too); the STEAM subnav lists Grades 5–9 and the CEFL subnav lists Grades 7–9
 - The home page turntable spaces its slots by the number of courses (and widens the ring past six)
 
 ### Audience views (student, parent, teacher)
@@ -175,6 +175,7 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 | Component | File | Purpose |
 |---|---|---|
 | `Nav` | `Nav.astro` | Top nav bar (site name, course tabs, audience switch) and the per-course subnav |
+| `PrereqPractice` | `PrereqPractice.astro` | Prereq practice app (unit picker, one question per skill, hints, explanations, skill tracker, printable sheet with key). Takes a question bank from `src/data/practice/<course>.ts`; used by Grade 6 Science, Social 8 and Social 9. Math 9 and Science 7 still have their own older pages |
 | `Progression` | `Progression.astro` | "The big picture" strip on parent pages: earlier grades → this year → later courses |
 | `UnitCard` | `UnitCard.astro` | Card on course index pages |
 | `LessonSection` | `LessonSection.astro` | Section within a lesson page |
@@ -207,7 +208,8 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 /science7/                      Science 7 index (+ practice/, teacher/)
 /science7/materials/[unit]      Unit materials page
 /science7/view/[unit]/[doc]     Material viewer
-/social8/, /social9/            Same shape as Science 7: index, materials/[unit], teacher/, view/[unit]/[doc]
+/social8/, /social9/            Same shape as Science 7: index, materials/[unit], practice/, teacher/, view/[unit]/[doc]
+/science6/practice              Grade 6 Science prereq practice (the only Grade 6 student page under /science6/)
 /steam/                         STEAM index
 /steam/materials/[grade]        Grade page
 /steam/view/[grade]/[doc]       Material viewer
