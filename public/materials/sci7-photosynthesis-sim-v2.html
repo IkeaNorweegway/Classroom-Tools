@@ -148,6 +148,8 @@ svg .part   { cursor: pointer; }
 svg .part:hover .hit, svg .part.sel .hit { stroke: #0ea5e9; stroke-width: 2; stroke-dasharray: 4 3; }
 svg .hit    { fill: transparent; stroke: transparent; }
 @keyframes dash { to { stroke-dashoffset: -24; } }
+/* While the lab is paused the light stops moving too, so the drawing is not repainted for nothing. */
+svg #rays.stopped .ray { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { svg .ray { animation: none; } }
 
 /* Tabs */
@@ -166,7 +168,9 @@ svg .hit    { fill: transparent; stroke: transparent; }
 .meter { display: grid; grid-template-columns: 7.6em 1fr 2.6em; align-items: center; gap: 6px; font-size: 0.82rem; margin: 3px 0; }
 .meter .name { font-weight: 700; color: var(--ink); }
 .meter .track { height: 10px; background: #f1f5f9; border-radius: 999px; overflow: hidden; }
-.meter .fill { height: 100%; border-radius: 999px; width: 0; transition: width 0.25s; }
+/* The fill is a block (an inline span ignores width, so the bar never showed), full width, and slides in from the left
+   inside the clipped track: a transform, not a new layout. */
+.meter .fill { display: block; height: 100%; border-radius: 999px; transform: translateX(-100%); transition: transform 0.25s; }
 .meter .num { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
 .meter.limit .name::after {
   content: 'limiting'; margin-left: 5px; font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
@@ -745,28 +749,32 @@ function leafColour() {
   var t = plant.dead ? 0.85 : (1 - plant.health / 100) * 0.75;
   return 'rgb(' + mix(base, [161, 110, 40], t).join(',') + ')';
 }
+// Write a style or attribute only when it changes. Writing the same value again every frame still makes
+// the browser restyle, lay out, and repaint the drawing, even while the lab is paused.
+function setS(e, k, v) { var c = e._css || (e._css = {}); v = String(v); if (c[k] !== v) { c[k] = v; e.style[k] = v; } }
+function setA(e, k, v) { v = String(v); if (e.getAttribute(k) !== v) e.setAttribute(k, v); }
 function renderDiagram(c) {
   var droop = plant.dead ? 48 : clamp((40 - c.waterL) / 40, 0, 1) * 36;
   var col = leafColour();
   LEAVES.forEach(function (l, i) {
     var on = i < parts.leaves;
-    leafEls[i].style.display = on ? '' : 'none';
-    rayEls[i].style.display = on && env.light > 0 ? '' : 'none';
-    rayEls[i].style.opacity = (env.light / 100 * 0.9).toFixed(2);
-    leafEls[i].setAttribute('transform', 'translate(' + l.ax + ',' + l.y + ')' + (l.s > 0 ? ' scale(-1,1)' : '') + ' rotate(' + (-droop).toFixed(1) + ')');
-    leafEls[i].firstChild.style.fill = col;
+    setS(leafEls[i], 'display', on ? '' : 'none');
+    setS(rayEls[i], 'display', on && env.light > 0 ? '' : 'none');
+    setS(rayEls[i], 'opacity', (env.light / 100 * 0.9).toFixed(2));
+    setA(leafEls[i], 'transform', 'translate(' + l.ax + ',' + l.y + ')' + (l.s > 0 ? ' scale(-1,1)' : '') + ' rotate(' + (-droop).toFixed(1) + ')');
+    setS(leafEls[i].firstChild, 'fill', col);
   });
-  [100, 50, 10].forEach(function (k) { rootGroups[k].style.display = parts.roots === k ? '' : 'none'; });
+  [100, 50, 10].forEach(function (k) { setS(rootGroups[k], 'display', parts.roots === k ? '' : 'none'); });
   var rc = 'rgb(' + mix([120, 113, 108], [146, 64, 14], plant.rootEnergy / 100).join(',') + ')';
-  rootGroups[parts.roots].style.stroke = rc;
-  Array.prototype.forEach.call(rootGroups[parts.roots].children, function (p) { p.style.stroke = rc; });
-  $('sunG').style.opacity = (0.2 + 0.8 * env.light / 100).toFixed(2);
-  $('cloudG').style.opacity = (0.2 + 0.8 * env.co2 / 100).toFixed(2);
+  setS(rootGroups[parts.roots], 'stroke', rc);
+  Array.prototype.forEach.call(rootGroups[parts.roots].children, function (p) { setS(p, 'stroke', rc); });
+  setS($('sunG'), 'opacity', (0.2 + 0.8 * env.light / 100).toFixed(2));
+  setS($('cloudG'), 'opacity', (0.2 + 0.8 * env.co2 / 100).toFixed(2));
   var nd = Math.round(env.water / 100 * DROPS.length), nm = Math.round(env.minerals / 100 * MINS.length);
-  dropEls.forEach(function (e, i) { e.style.display = i < nd ? '' : 'none'; });
-  minEls.forEach(function (e, i) { e.style.display = i < nm ? '' : 'none'; });
-  $('xBlock').style.display = parts.xylem ? 'none' : '';
-  $('pBlock').style.display = parts.phloem ? 'none' : '';
+  dropEls.forEach(function (e, i) { setS(e, 'display', i < nd ? '' : 'none'); });
+  minEls.forEach(function (e, i) { setS(e, 'display', i < nm ? '' : 'none'); });
+  setS($('xBlock'), 'display', parts.xylem ? 'none' : '');
+  setS($('pBlock'), 'display', parts.phloem ? 'none' : '');
 }
 
 /* ── Particles ── */
@@ -869,7 +877,7 @@ var cache = {};
 function setHTML(id, html) { if (cache[id] !== html) { cache[id] = html; $(id).innerHTML = html; } }
 function setMeter(key, v, limBar) {
   var m = meterEls[key], r = R(v);
-  if (m.last !== r) { m.last = r; m.fill.style.width = clamp(r, 0, 100) + '%'; m.num.textContent = r; }
+  if (m.last !== r) { m.last = r; m.fill.style.transform = 'translateX(' + (clamp(r, 0, 100) - 100) + '%)'; m.num.textContent = r; }
   if (m.bar) m.row.classList.toggle('limit', m.bar === limBar);
 }
 function statusOf(c) {
@@ -1322,6 +1330,7 @@ function frame(now) {
   var dt = last == null ? 0 : Math.min(0.1, (now - last) / 1000);
   last = now;
   var go = running && !stopped();
+  if (cache.go !== go) { cache.go = go; $('rays').classList.toggle('stopped', !go); }
   if (go && !plant.dead) {
     var dayLen = ff ? 0.45 : speed === 2 ? 0.6 : 2.4, dd = dt / dayLen;
     if (ff && plant.day + dd >= ff.until) { step(Math.max(0, ff.until - plant.day)); finishFF(); }

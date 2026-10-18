@@ -1,7 +1,10 @@
 // Grade 7 Science prereq practice questions, used by sci7-<unit>-prereq-practice-v1.html.
-// Each skill's gen() makes a new question: { question, answer, solution, hint, accept(input) }.
-// Moved from the old site page src/pages/science7/practice (2026-10-18); the generators are unchanged.
+// Each skill's gen() makes a new question: { question, answer, solution, hint, accept(input), visual }.
+// Moved from the old site page src/pages/science7/practice (2026-10-18). Each question also returns
+// a diagram from sci-visuals.js that fits the variant it picked.
 (function () {
+
+const V = window.SciVisuals;
 
 // ─── UTILITIES ───
 function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
@@ -27,18 +30,18 @@ function genBioticAbiotic() {
   const biotic = ['tree', 'mushroom', 'grass', 'bacteria', 'deer', 'eagle', 'worm', 'moss', 'algae', 'fish'];
   const abiotic = ['sunlight', 'water', 'temperature', 'soil minerals', 'wind', 'rocks', 'oxygen gas', 'rainfall'];
   const mode = randInt(0, 1);
-  if (mode === 0) { const item = pick(biotic); return { question: `Is "${item}" biotic or abiotic?`, answer: 'biotic', solution: `"${item}" is biotic (living or once-living).\nBiotic = anything that is alive or was once alive.\nAbiotic = non-living physical or chemical factors.`, hint: 'Biotic means living or once-living. Abiotic means never alive.', accept: acceptAny('biotic') }; }
+  if (mode === 0) { const item = pick(biotic); return { visual: V.sortBins(item, ['Biotic', 'living or once living'], ['Abiotic', 'never alive']), question: `Is "${item}" biotic or abiotic?`, answer: 'biotic', solution: `"${item}" is biotic (living or once-living).\nBiotic = anything that is alive or was once alive.\nAbiotic = non-living physical or chemical factors.`, hint: 'Biotic means living or once-living. Abiotic means never alive.', accept: acceptAny('biotic') }; }
   const item = pick(abiotic);
-  return { question: `Is "${item}" biotic or abiotic?`, answer: 'abiotic', solution: `"${item}" is abiotic (non-living).\nAbiotic factors are physical or chemical parts of the environment.\nExamples: sunlight, water, temperature, wind.`, hint: 'Biotic means living or once-living. Abiotic means never alive.', accept: acceptAny('abiotic') };
+  return { visual: V.sortBins(item, ['Biotic', 'living or once living'], ['Abiotic', 'never alive']), question: `Is "${item}" biotic or abiotic?`, answer: 'abiotic', solution: `"${item}" is abiotic (non-living).\nAbiotic factors are physical or chemical parts of the environment.\nExamples: sunlight, water, temperature, wind.`, hint: 'Biotic means living or once-living. Abiotic means never alive.', accept: acceptAny('abiotic') };
 }
 
 function genProducerConsumer() {
   const producers = [['grass', 'It makes its own food via photosynthesis.'], ['oak tree', 'Trees are producers — they photosynthesize.'], ['algae', 'Algae are photosynthetic organisms.'], ['cactus', 'Plants are producers.'], ['phytoplankton', 'Phytoplankton photosynthesize in water.']];
   const consumers = [['rabbit', 'Rabbits eat plants — they are consumers (herbivores).'], ['wolf', 'Wolves eat other animals — they are consumers (carnivores).'], ['hawk', 'Hawks hunt prey — they are consumers.'], ['frog', 'Frogs eat insects — they are consumers.'], ['bear', 'Bears eat both plants and animals — they are consumers (omnivores).']];
   const mode = randInt(0, 1);
-  if (mode === 0) { const [org, why] = pick(producers); return { question: `Is a ${org} a producer or a consumer?`, answer: 'producer', solution: `A ${org} is a producer.\n${why}\nProducers make their own food using sunlight (photosynthesis).`, hint: 'Producers make their own food. Consumers eat other organisms.', accept: acceptAny('producer') }; }
+  if (mode === 0) { const [org, why] = pick(producers); return { visual: V.sortBins(org, ['Producer', 'makes its own food'], ['Consumer', 'eats other living things']), question: `Is a ${org} a producer or a consumer?`, answer: 'producer', solution: `A ${org} is a producer.\n${why}\nProducers make their own food using sunlight (photosynthesis).`, hint: 'Producers make their own food. Consumers eat other organisms.', accept: acceptAny('producer') }; }
   const [org, why] = pick(consumers);
-  return { question: `Is a ${org} a producer or a consumer?`, answer: 'consumer', solution: `A ${org} is a consumer.\n${why}\nConsumers must eat other organisms for energy.`, hint: 'Producers make their own food. Consumers eat other organisms.', accept: acceptAny('consumer') };
+  return { visual: V.sortBins(org, ['Producer', 'makes its own food'], ['Consumer', 'eats other living things']), question: `Is a ${org} a producer or a consumer?`, answer: 'consumer', solution: `A ${org} is a consumer.\n${why}\nConsumers must eat other organisms for energy.`, hint: 'Producers make their own food. Consumers eat other organisms.', accept: acceptAny('consumer') };
 }
 
 function genFoodChainOrder() {
@@ -49,7 +52,7 @@ function genFoodChainOrder() {
     { chain: ['phytoplankton', 'zooplankton', 'herring', 'seal', 'orca'], q: 'In the food chain phytoplankton → zooplankton → herring → seal → orca, what is the secondary consumer?', a: 'herring', sol: 'Producer: phytoplankton\nPrimary consumer: zooplankton\nSecondary consumer: herring\nTertiary consumer: seal\nQuaternary consumer: orca' },
   ];
   const c = pick(chains);
-  return { question: c.q, answer: c.a, solution: c.sol, hint: 'Count from the producer: 1st eater = primary consumer, 2nd = secondary, 3rd = tertiary.', accept: acceptAny(c.a) };
+  return { visual: V.chain(c.chain), question: c.q, answer: c.a, solution: c.sol, hint: 'Count from the producer: 1st eater = primary consumer, 2nd = secondary, 3rd = tertiary.', accept: acceptAny(c.a) };
 }
 
 function genEcosystemVocab() {
@@ -62,18 +65,18 @@ function genEcosystemVocab() {
     { def: 'An organism that breaks down dead organisms and returns nutrients to the soil', term: 'decomposer', hint: 'Think fungi and bacteria breaking down dead material.' },
   ];
   const t = pick(terms);
-  return { question: `What term matches this definition?\n"${t.def}"`, answer: t.term, solution: `Answer: ${t.term}\n${t.def}`, hint: t.hint, accept: acceptAny(t.term) };
+  return { visual: V.ecoVocab(t.term), question: `What term matches this definition?\n"${t.def}"`, answer: t.term, solution: `Answer: ${t.term}\n${t.def}`, hint: t.hint, accept: acceptAny(t.term) };
 }
 
 function genEnergyFlow() {
   const questions = [
-    { q: 'Where does the energy in most ecosystems originally come from?', a: 'the sun', sol: 'The sun provides energy to producers (plants) through photosynthesis.\nThis energy flows through the food chain to consumers.', accept: acceptAny('sun', 'sunlight', 'the sun', 'solar') },
-    { q: 'As energy moves from one level of a food chain to the next, does the amount of available energy increase or decrease?', a: 'decrease', sol: 'Energy decreases at each level.\nAbout 90% of energy is lost as heat at each step.\nOnly about 10% is passed to the next consumer.', accept: acceptAny('decrease', 'decreases', 'less', 'goes down') },
-    { q: 'What process do producers use to convert sunlight into food energy?', a: 'photosynthesis', sol: 'Photosynthesis: sunlight + CO₂ + water → glucose + oxygen\nThis is how producers make their own food.', accept: acceptAny('photosynthesis') },
-    { q: 'In an energy pyramid, which level has the most energy — the bottom (producers) or the top (top predators)?', a: 'bottom', sol: 'The bottom level (producers) has the most energy.\nEnergy is lost at each level, so the top has the least.\nThis is why there are fewer top predators than producers.', accept: acceptAny('bottom', 'producers', 'base') },
+    { visual: V.energyFlowVis(0), q: 'Where does the energy in most ecosystems originally come from?', a: 'the sun', sol: 'The sun provides energy to producers (plants) through photosynthesis.\nThis energy flows through the food chain to consumers.', accept: acceptAny('sun', 'sunlight', 'the sun', 'solar') },
+    { visual: V.energyFlowVis(1), q: 'As energy moves from one level of a food chain to the next, does the amount of available energy increase or decrease?', a: 'decrease', sol: 'Energy decreases at each level.\nAbout 90% of energy is lost as heat at each step.\nOnly about 10% is passed to the next consumer.', accept: acceptAny('decrease', 'decreases', 'less', 'goes down') },
+    { visual: V.energyFlowVis(2), q: 'What process do producers use to convert sunlight into food energy?', a: 'photosynthesis', sol: 'Photosynthesis: sunlight + CO₂ + water → glucose + oxygen\nThis is how producers make their own food.', accept: acceptAny('photosynthesis') },
+    { visual: V.energyFlowVis(3), q: 'In an energy pyramid, which level has the most energy — the bottom (producers) or the top (top predators)?', a: 'bottom', sol: 'The bottom level (producers) has the most energy.\nEnergy is lost at each level, so the top has the least.\nThis is why there are fewer top predators than producers.', accept: acceptAny('bottom', 'producers', 'base') },
   ];
   const q = pick(questions);
-  return { question: q.q, answer: q.a, solution: q.sol, hint: 'Think about how energy flows through a food chain.', accept: q.accept };
+  return { visual: q.visual, question: q.q, answer: q.a, solution: q.sol, hint: 'Think about how energy flows through a food chain.', accept: q.accept };
 }
 
 // ══════════════════════════════════════════════════
@@ -92,15 +95,15 @@ function genPlantParts() {
   ];
   const p = pick(parts);
   const mode = randInt(0, 1);
-  if (mode === 0) return { question: `What is the main function of the ${p.part} of a plant?`, answer: p.fn, solution: `${p.part}: ${p.fn}`, hint: 'Think about what this part does for the plant\'s survival.', accept: i => { const n = normalize(i); const keywords = p.fn.split(' ').filter(w=>w.length>4).map(normalize); return keywords.filter(k=>n.includes(k)).length >= 2; }};
-  return { question: `Which plant part does this describe?\n"${p.fn}"`, answer: p.part, solution: `Answer: ${p.part}\n${p.fn}`, hint: 'Think about the main parts: roots, stem, leaves, flower, seeds.', accept: acceptAny(p.part) };
+  if (mode === 0) return { visual: V.plantParts(p.part, p.part), question: `What is the main function of the ${p.part} of a plant?`, answer: p.fn, solution: `${p.part}: ${p.fn}`, hint: 'Think about what this part does for the plant\'s survival.', accept: i => { const n = normalize(i); const keywords = p.fn.split(' ').filter(w=>w.length>4).map(normalize); return keywords.filter(k=>n.includes(k)).length >= 2; }};
+  return { visual: V.plantParts(), question: `Which plant part does this describe?\n"${p.fn}"`, answer: p.part, solution: `Answer: ${p.part}\n${p.fn}`, hint: 'Think about the main parts: roots, stem, leaves, flower, seeds.', accept: acceptAny(p.part) };
 }
 
 function genPlantNeeds() {
   const needs = ['water', 'sunlight', 'carbon dioxide', 'nutrients from soil', 'appropriate temperature'];
   const idx = randInt(0, needs.length - 1);
   const without = needs.filter((_, i) => i !== idx);
-  return { question: `Name one thing that plants need to grow and survive (besides ${pick(without)} and ${pick(without.filter(x => x !== pick(without)))}).`, answer: needs[idx],
+  return { visual: V.plantNeeds(), question: `Name one thing that plants need to grow and survive (besides ${pick(without)} and ${pick(without.filter(x => x !== pick(without)))}).`, answer: needs[idx],
     solution: `Plants need: ${needs.join(', ')}\nAny of these would be correct.`,
     hint: 'Think about what goes into photosynthesis, plus basic survival needs.',
     accept: i => needs.some(n => normalize(i).includes(normalize(n))) };
@@ -116,18 +119,18 @@ function genCellBasics() {
     { def: 'The control center of the cell that contains genetic information', term: 'nucleus', hint: 'Think of it as the "brain" of the cell.' },
   ];
   const t = pick(terms);
-  return { question: `What term matches this definition?\n"${t.def}"`, answer: t.term, solution: `Answer: ${t.term}\n${t.def}`, hint: t.hint, accept: acceptAny(t.term) };
+  return { visual: V.cell(t.term), question: `What term matches this definition?\n"${t.def}"`, answer: t.term, solution: `Answer: ${t.term}\n${t.def}`, hint: t.hint, accept: acceptAny(t.term) };
 }
 
 function genPhotosynthesisBasics() {
   const questions = [
-    { q: 'What are the three inputs (reactants) needed for photosynthesis?', a: 'sunlight, water, carbon dioxide', sol: 'Photosynthesis: sunlight + water + CO₂ → glucose + oxygen\nInputs: sunlight, water, carbon dioxide', accept: i => { const n = normalize(i); return (n.includes('sun') || n.includes('light')) && n.includes('water') && (n.includes('carbon') || n.includes('co2')); }},
-    { q: 'What are the two outputs (products) of photosynthesis?', a: 'glucose and oxygen', sol: 'Photosynthesis: sunlight + water + CO₂ → glucose + oxygen\nProducts: glucose (sugar/food) and oxygen', accept: i => { const n = normalize(i); return (n.includes('glucose') || n.includes('sugar') || n.includes('food')) && n.includes('oxygen'); }},
-    { q: 'In which organelle does photosynthesis occur?', a: 'chloroplast', sol: 'Photosynthesis happens in the chloroplast.\nChloroplasts contain chlorophyll, the green pigment that absorbs sunlight.', accept: acceptAny('chloroplast', 'chloroplasts') },
-    { q: 'What is the word equation for photosynthesis?\n(Format: ___ + ___ + ___ → ___ + ___)', a: 'sunlight + water + carbon dioxide → glucose + oxygen', sol: 'sunlight + water + carbon dioxide → glucose + oxygen\n(light energy + H₂O + CO₂ → C₆H₁₂O₆ + O₂)', accept: i => { const n = normalize(i); return (n.includes('sun') || n.includes('light')) && n.includes('water') && n.includes('oxygen') && (n.includes('glucose') || n.includes('sugar')); }},
+    { visual: V.leafIO('in'), q: 'What are the three inputs (reactants) needed for photosynthesis?', a: 'sunlight, water, carbon dioxide', sol: 'Photosynthesis: sunlight + water + CO₂ → glucose + oxygen\nInputs: sunlight, water, carbon dioxide', accept: i => { const n = normalize(i); return (n.includes('sun') || n.includes('light')) && n.includes('water') && (n.includes('carbon') || n.includes('co2')); }},
+    { visual: V.leafIO('out'), q: 'What are the two outputs (products) of photosynthesis?', a: 'glucose and oxygen', sol: 'Photosynthesis: sunlight + water + CO₂ → glucose + oxygen\nProducts: glucose (sugar/food) and oxygen', accept: i => { const n = normalize(i); return (n.includes('glucose') || n.includes('sugar') || n.includes('food')) && n.includes('oxygen'); }},
+    { visual: V.cell('chloroplast'), q: 'In which organelle does photosynthesis occur?', a: 'chloroplast', sol: 'Photosynthesis happens in the chloroplast.\nChloroplasts contain chlorophyll, the green pigment that absorbs sunlight.', accept: acceptAny('chloroplast', 'chloroplasts') },
+    { visual: V.leafIO('all'), q: 'What is the word equation for photosynthesis?\n(Format: ___ + ___ + ___ → ___ + ___)', a: 'sunlight + water + carbon dioxide → glucose + oxygen', sol: 'sunlight + water + carbon dioxide → glucose + oxygen\n(light energy + H₂O + CO₂ → C₆H₁₂O₆ + O₂)', accept: i => { const n = normalize(i); return (n.includes('sun') || n.includes('light')) && n.includes('water') && n.includes('oxygen') && (n.includes('glucose') || n.includes('sugar')); }},
   ];
   const q = pick(questions);
-  return { question: q.q, answer: q.a, solution: q.sol, hint: 'Remember the photosynthesis equation: light + water + CO₂ → sugar + O₂.', accept: q.accept };
+  return { visual: q.visual, question: q.q, answer: q.a, solution: q.sol, hint: 'Remember the photosynthesis equation: light + water + CO₂ → sugar + O₂.', accept: q.accept };
 }
 
 function genPollinationSeed() {
@@ -139,7 +142,7 @@ function genPollinationSeed() {
     { def: 'The female reproductive part of a flower that contains the ovary', term: 'pistil' },
   ];
   const t = pick(terms);
-  return { question: `What term matches this definition?\n"${t.def}"`, answer: t.term, solution: `Answer: ${t.term}\n${t.def}`, hint: 'Think about the steps of plant reproduction.', accept: acceptAny(t.term) };
+  return { visual: t.term === 'germination' ? V.germinating() : V.flowerFig(t.term), question: `What term matches this definition?\n"${t.def}"`, answer: t.term, solution: `Answer: ${t.term}\n${t.def}`, hint: 'Think about the steps of plant reproduction.', accept: acceptAny(t.term) };
 }
 
 // ══════════════════════════════════════════════════
@@ -156,31 +159,31 @@ function genStatesOfMatter() {
   ];
   const s = pick(states);
   const mode = randInt(0, 1);
-  if (mode === 0) return { question: `What state of matter is described?\n"${s.desc}"`, answer: s.state, solution: `Answer: ${s.state}\n${s.desc}\nExamples: ${s.ex}`, hint: 'Think about how tightly the particles are packed and how they move.', accept: acceptAny(s.state) };
+  if (mode === 0) return { visual: V.particles(s.state), question: `What state of matter is described?\n"${s.desc}"`, answer: s.state, solution: `Answer: ${s.state}\n${s.desc}\nExamples: ${s.ex}`, hint: 'Think about how tightly the particles are packed and how they move.', accept: acceptAny(s.state) };
   const ex = pick(s.ex.split(', '));
-  return { question: `What state of matter is ${ex} at room temperature?`, answer: s.state, solution: `${ex} is a ${s.state}.\n${s.desc}`, hint: 'Solid, liquid, or gas?', accept: acceptAny(s.state) };
+  return { visual: V.particles(), question: `What state of matter is ${ex} at room temperature?`, answer: s.state, solution: `${ex} is a ${s.state}.\n${s.desc}`, hint: 'Solid, liquid, or gas?', accept: acceptAny(s.state) };
 }
 
 function genParticleModel() {
   const questions = [
-    { q: 'According to the particle model of matter, what happens to particles when they are heated?', a: 'They speed up and move faster', sol: 'When heated, particles gain kinetic energy.\nThey vibrate/move faster and spread farther apart.\nThis is why materials expand when heated.', accept: i => { const n=normalize(i); return (n.includes('fast') || n.includes('speed') || n.includes('move') || n.includes('energy')) && !n.includes('slow'); }},
-    { q: 'According to the particle model, what happens to particles when they are cooled?', a: 'They slow down and move less', sol: 'When cooled, particles lose kinetic energy.\nThey vibrate/move slower and pack closer together.\nThis is why materials contract when cooled.', accept: i => { const n=normalize(i); return n.includes('slow') || n.includes('less') || n.includes('closer'); }},
-    { q: 'Are there spaces between particles in a gas, liquid, or both?', a: 'both', sol: 'Both gases and liquids have spaces between particles.\nGases have large spaces (particles far apart).\nLiquids have small spaces (particles close but not fixed).\nSolids have the least space.', accept: acceptAny('both') },
-    { q: 'In which state of matter do particles have the MOST kinetic energy?', a: 'gas', sol: 'Gas particles have the most kinetic energy.\nThey move the fastest and are the farthest apart.\nSolid < Liquid < Gas (in terms of particle energy)', accept: acceptAny('gas') },
+    { visual: V.particleHeat('heat'), q: 'According to the particle model of matter, what happens to particles when they are heated?', a: 'They speed up and move faster', sol: 'When heated, particles gain kinetic energy.\nThey vibrate/move faster and spread farther apart.\nThis is why materials expand when heated.', accept: i => { const n=normalize(i); return (n.includes('fast') || n.includes('speed') || n.includes('move') || n.includes('energy')) && !n.includes('slow'); }},
+    { visual: V.particleHeat('cool'), q: 'According to the particle model, what happens to particles when they are cooled?', a: 'They slow down and move less', sol: 'When cooled, particles lose kinetic energy.\nThey vibrate/move slower and pack closer together.\nThis is why materials contract when cooled.', accept: i => { const n=normalize(i); return n.includes('slow') || n.includes('less') || n.includes('closer'); }},
+    { visual: V.particleHeat('spaces'), q: 'Are there spaces between particles in a gas, liquid, or both?', a: 'both', sol: 'Both gases and liquids have spaces between particles.\nGases have large spaces (particles far apart).\nLiquids have small spaces (particles close but not fixed).\nSolids have the least space.', accept: acceptAny('both') },
+    { visual: V.particles(), q: 'In which state of matter do particles have the MOST kinetic energy?', a: 'gas', sol: 'Gas particles have the most kinetic energy.\nThey move the fastest and are the farthest apart.\nSolid < Liquid < Gas (in terms of particle energy)', accept: acceptAny('gas') },
   ];
   const q = pick(questions);
-  return { question: q.q, answer: q.a, solution: q.sol, hint: 'The particle model says all matter is made of tiny particles that are always moving.', accept: q.accept };
+  return { visual: q.visual, question: q.q, answer: q.a, solution: q.sol, hint: 'The particle model says all matter is made of tiny particles that are always moving.', accept: q.accept };
 }
 
 function genHeatVsTemp() {
   const questions = [
-    { q: 'What is the difference between heat and temperature?\nWhich one measures the AVERAGE kinetic energy of particles?', a: 'temperature', sol: 'Temperature: measures the average kinetic energy of particles.\nHeat: the total energy transferred from a warmer to a cooler object.\nTemperature is measured with a thermometer.\nHeat is measured in joules (J).', accept: acceptAny('temperature', 'temp') },
-    { q: 'Heat always flows from a ______ object to a ______ object. (warmer/cooler or cooler/warmer?)', a: 'warmer to cooler', sol: 'Heat always flows from warmer → cooler.\nThis continues until both objects reach the same temperature (thermal equilibrium).', accept: i => { const n=normalize(i); return n.includes('warm') && n.indexOf('warm') < n.indexOf('cool'); }},
-    { q: 'What unit is temperature measured in (in science)?', a: 'degrees Celsius', sol: 'In science, temperature is measured in degrees Celsius (°C).\nThe Kelvin scale (K) is also used in advanced science.\nFahrenheit (°F) is used in everyday life in the US.', accept: acceptAny('celsius', 'degrees celsius', 'kelvin', 'C') },
-    { q: 'At what temperature does water freeze (in °C)?', a: '0°C', sol: 'Water freezes at 0°C (32°F).\nWater boils at 100°C (212°F).\nThese are key reference points on the Celsius scale.', accept: i => normalize(i).includes('0') },
+    { visual: V.cupTub(), q: 'What is the difference between heat and temperature?\nWhich one measures the AVERAGE kinetic energy of particles?', a: 'temperature', sol: 'Temperature: measures the average kinetic energy of particles.\nHeat: the total energy transferred from a warmer to a cooler object.\nTemperature is measured with a thermometer.\nHeat is measured in joules (J).', accept: acceptAny('temperature', 'temp') },
+    { visual: V.hotCold(), q: 'Heat always flows from a ______ object to a ______ object. (warmer/cooler or cooler/warmer?)', a: 'warmer to cooler', sol: 'Heat always flows from warmer → cooler.\nThis continues until both objects reach the same temperature (thermal equilibrium).', accept: i => { const n=normalize(i); return n.includes('warm') && n.indexOf('warm') < n.indexOf('cool'); }},
+    { visual: V.thermometer({ min: 0, max: 50, step: 5, every: 10, value: 22, unit: '?' }), q: 'What unit is temperature measured in (in science)?', a: 'degrees Celsius', sol: 'In science, temperature is measured in degrees Celsius (°C).\nThe Kelvin scale (K) is also used in advanced science.\nFahrenheit (°F) is used in everyday life in the US.', accept: acceptAny('celsius', 'degrees celsius', 'kelvin', 'C') },
+    { visual: V.waterStrip(), q: 'At what temperature does water freeze (in °C)?', a: '0°C', sol: 'Water freezes at 0°C (32°F).\nWater boils at 100°C (212°F).\nThese are key reference points on the Celsius scale.', accept: i => normalize(i).includes('0') },
   ];
   const q = pick(questions);
-  return { question: q.q, answer: q.a, solution: q.sol, hint: 'Think about what a thermometer measures vs. what flows between objects.', accept: q.accept };
+  return { visual: q.visual, question: q.q, answer: q.a, solution: q.sol, hint: 'Think about what a thermometer measures vs. what flows between objects.', accept: q.accept };
 }
 
 function genEnergyForms() {
@@ -193,7 +196,7 @@ function genEnergyForms() {
     { form: 'sound', desc: 'energy that travels as vibrations through matter', ex: 'music, thunder, clapping' },
   ];
   const f = pick(forms);
-  return { question: `What form of energy is described?\n"${f.desc}"\n(Examples: ${f.ex})`, answer: `${f.form} energy`, solution: `Answer: ${f.form} energy\n${f.desc}\nExamples: ${f.ex}`, hint: 'Main forms: thermal, chemical, electrical, mechanical, light, sound.', accept: acceptAny(f.form) };
+  return { visual: V.energyIcon(f.form), question: `What form of energy is described?\n"${f.desc}"\n(Examples: ${f.ex})`, answer: `${f.form} energy`, solution: `Answer: ${f.form} energy\n${f.desc}\nExamples: ${f.ex}`, hint: 'Main forms: thermal, chemical, electrical, mechanical, light, sound.', accept: acceptAny(f.form) };
 }
 
 function genStateChanges() {
@@ -206,8 +209,8 @@ function genStateChanges() {
   ];
   const c = pick(changes);
   const mode = randInt(0, 1);
-  if (mode === 0) return { question: `What is the change of state called when a ${c.from} turns into a ${c.to}?`, answer: c.name, solution: `${c.from} → ${c.to} = ${c.name}\nExample: ${c.ex}`, hint: `Think: solid ↔ liquid ↔ gas. What's the name for each arrow?`, accept: acceptAny(c.name) };
-  return { question: `What change of state is this an example of?\n"${c.ex}"`, answer: c.name, solution: `${c.ex} = ${c.name}\n(${c.from} → ${c.to})`, hint: 'Is the material going from solid to liquid, liquid to gas, etc.?', accept: acceptAny(c.name) };
+  if (mode === 0) return { visual: V.stateCycle(c.from, c.to), question: `What is the change of state called when a ${c.from} turns into a ${c.to}?`, answer: c.name, solution: `${c.from} → ${c.to} = ${c.name}\nExample: ${c.ex}`, hint: `Think: solid ↔ liquid ↔ gas. What's the name for each arrow?`, accept: acceptAny(c.name) };
+  return { visual: V.stateCycle(c.from, c.to), question: `What change of state is this an example of?\n"${c.ex}"`, answer: c.name, solution: `${c.ex} = ${c.name}\n(${c.from} → ${c.to})`, hint: 'Is the material going from solid to liquid, liquid to gas, etc.?', accept: acceptAny(c.name) };
 }
 
 // ══════════════════════════════════════════════════
@@ -218,13 +221,13 @@ function genStateChanges() {
 
 function genForceBasics() {
   const questions = [
-    { q: 'What is a force?', a: 'a push or pull on an object', sol: 'A force is a push or a pull that can change an object\'s motion, shape, or direction.\nForces are measured in Newtons (N).', accept: i => { const n=normalize(i); return n.includes('push') || n.includes('pull'); }},
-    { q: 'What is the force that pulls objects toward Earth called?', a: 'gravity', sol: 'Gravity is the force that pulls all objects toward the center of the Earth.\nIt gives objects their weight.', accept: acceptAny('gravity') },
-    { q: 'What unit is force measured in?', a: 'Newtons (N)', sol: 'Force is measured in Newtons (N).\nNamed after Sir Isaac Newton.\n1 N ≈ the force of gravity on a 100 g mass.', accept: acceptAny('newton', 'newtons', 'N') },
-    { q: 'What is friction?', a: 'a force that opposes motion between surfaces', sol: 'Friction is a force that resists or opposes the motion of two surfaces sliding against each other.\nIt produces heat and slows things down.', accept: i => { const n=normalize(i); return n.includes('oppos') || n.includes('resist') || (n.includes('force') && n.includes('motion')); }},
+    { visual: V.forceBasic(0), q: 'What is a force?', a: 'a push or pull on an object', sol: 'A force is a push or a pull that can change an object\'s motion, shape, or direction.\nForces are measured in Newtons (N).', accept: i => { const n=normalize(i); return n.includes('push') || n.includes('pull'); }},
+    { visual: V.forceBasic(1), q: 'What is the force that pulls objects toward Earth called?', a: 'gravity', sol: 'Gravity is the force that pulls all objects toward the center of the Earth.\nIt gives objects their weight.', accept: acceptAny('gravity') },
+    { visual: V.forceBasic(2), q: 'What unit is force measured in?', a: 'Newtons (N)', sol: 'Force is measured in Newtons (N).\nNamed after Sir Isaac Newton.\n1 N ≈ the force of gravity on a 100 g mass.', accept: acceptAny('newton', 'newtons', 'N') },
+    { visual: V.forceBasic(3), q: 'What is friction?', a: 'a force that opposes motion between surfaces', sol: 'Friction is a force that resists or opposes the motion of two surfaces sliding against each other.\nIt produces heat and slows things down.', accept: i => { const n=normalize(i); return n.includes('oppos') || n.includes('resist') || (n.includes('force') && n.includes('motion')); }},
   ];
   const q = pick(questions);
-  return { question: q.q, answer: q.a, solution: q.sol, hint: 'Forces cause changes in motion. They are pushes and pulls.', accept: q.accept };
+  return { visual: q.visual, question: q.q, answer: q.a, solution: q.sol, hint: 'Forces cause changes in motion. They are pushes and pulls.', accept: q.accept };
 }
 
 function genStructureTypes() {
@@ -235,9 +238,9 @@ function genStructureTypes() {
   ];
   const t = pick(types);
   const mode = randInt(0, 1);
-  if (mode === 0) return { question: `What type of structure is described?\n"${t.desc}"\n(Examples: ${t.ex})`, answer: t.type, solution: `Answer: ${t.type}\n${t.desc}\nExamples: ${t.ex}`, hint: t.hint, accept: i => { const n=normalize(i); return normalize(t.type).split('structure')[0].trim().split(/\s+/).some(w => n.includes(w)); }};
+  if (mode === 0) return { visual: V.structureVis(t.type), question: `What type of structure is described?\n"${t.desc}"\n(Examples: ${t.ex})`, answer: t.type, solution: `Answer: ${t.type}\n${t.desc}\nExamples: ${t.ex}`, hint: t.hint, accept: i => { const n=normalize(i); return normalize(t.type).split('structure')[0].trim().split(/\s+/).some(w => n.includes(w)); }};
   const ex = pick(t.ex.split(', '));
-  return { question: `What type of structure is ${ex}? (solid/mass, frame, or shell)`, answer: t.type, solution: `${ex} is a ${t.type}.\n${t.desc}`, hint: t.hint, accept: i => { const n=normalize(i); return normalize(t.type).split('structure')[0].trim().split(/\s+/).some(w => n.includes(w)); }};
+  return { visual: V.structureVis(t.type), question: `What type of structure is ${ex}? (solid/mass, frame, or shell)`, answer: t.type, solution: `${ex} is a ${t.type}.\n${t.desc}`, hint: t.hint, accept: i => { const n=normalize(i); return normalize(t.type).split('structure')[0].trim().split(/\s+/).some(w => n.includes(w)); }};
 }
 
 function genLoadTypes() {
@@ -247,7 +250,7 @@ function genLoadTypes() {
     { type: 'dynamic load', desc: 'Forces that change or move, like wind, earthquakes, or vibrations', ex: 'wind pushing on a building, an earthquake shaking a bridge' },
   ];
   const l = pick(loads);
-  return { question: `What type of load is described?\n"${l.desc}"\n(Example: ${l.ex})`, answer: l.type, solution: `Answer: ${l.type}\n${l.desc}\nExample: ${l.ex}`, hint: 'Three types: dead load (structure\'s own weight), live load (things on it), dynamic load (changing forces).', accept: i => normalize(i).includes(normalize(l.type.split(' ')[0])) };
+  return { visual: V.bridgeLoad(l.type.split(' ')[0]), question: `What type of load is described?\n"${l.desc}"\n(Example: ${l.ex})`, answer: l.type, solution: `Answer: ${l.type}\n${l.desc}\nExample: ${l.ex}`, hint: 'Three types: dead load (structure\'s own weight), live load (things on it), dynamic load (changing forces).', accept: i => normalize(i).includes(normalize(l.type.split(' ')[0])) };
 }
 
 function genInternalForces() {
@@ -258,7 +261,7 @@ function genInternalForces() {
     { force: 'torsion', desc: 'A twisting force', ex: 'wringing out a towel, turning a doorknob' },
   ];
   const f = pick(forces);
-  return { question: `What internal force is described?\n"${f.desc}"`, answer: f.force, solution: `Answer: ${f.force}\n${f.desc}\nExample: ${f.ex}`, hint: 'Internal forces: tension (pull), compression (push), shear (opposite), torsion (twist).', accept: acceptAny(f.force) };
+  return { visual: V.internalForce(f.force), question: `What internal force is described?\n"${f.desc}"`, answer: f.force, solution: `Answer: ${f.force}\n${f.desc}\nExample: ${f.ex}`, hint: 'Internal forces: tension (pull), compression (push), shear (opposite), torsion (twist).', accept: acceptAny(f.force) };
 }
 
 function genSimpleMachines() {
@@ -271,7 +274,7 @@ function genSimpleMachines() {
   ];
   const m = pick(machines);
   const ex = pick(m.ex.split(', '));
-  return { question: `What simple machine is ${ex} an example of?`, answer: m.machine, solution: `${ex} is a ${m.machine}.\n${m.desc}\nOther examples: ${m.ex}`, hint: 'Six simple machines: lever, inclined plane, pulley, wheel & axle, screw, wedge.', accept: acceptAny(m.machine) };
+  return { visual: V.machineVis(m.machine), question: `What simple machine is ${ex} an example of?`, answer: m.machine, solution: `${ex} is a ${m.machine}.\n${m.desc}\nOther examples: ${m.ex}`, hint: 'Six simple machines: lever, inclined plane, pulley, wheel & axle, screw, wedge.', accept: acceptAny(m.machine) };
 }
 
 // ══════════════════════════════════════════════════
@@ -288,7 +291,7 @@ function genEarthLayers() {
     { layer: 'inner core', desc: 'The solid center of the Earth made of iron and nickel under extreme pressure', props: 'Solid due to pressure, hottest layer (~5000°C)' },
   ];
   const l = pick(layers);
-  return { question: `Which layer of the Earth is described?\n"${l.desc}"`, answer: l.layer, solution: `Answer: ${l.layer}\n${l.desc}\n${l.props}`, hint: 'From outside in: crust → mantle → outer core → inner core.', accept: acceptAny(l.layer) };
+  return { visual: V.earthLayers(l.layer), question: `Which layer of the Earth is described?\n"${l.desc}"`, answer: l.layer, solution: `Answer: ${l.layer}\n${l.desc}\n${l.props}`, hint: 'From outside in: crust → mantle → outer core → inner core.', accept: acceptAny(l.layer) };
 }
 
 function genRockTypes() {
@@ -299,9 +302,9 @@ function genRockTypes() {
   ];
   const t = pick(types);
   const mode = randInt(0, 1);
-  if (mode === 0) return { question: `What type of rock is described?\n"${t.desc}"`, answer: t.type, solution: `Answer: ${t.type}\n${t.desc}\nExamples: ${t.ex}\n${t.process}`, hint: 'Three rock types: igneous (fire/cooling), sedimentary (layers), metamorphic (changed by heat/pressure).', accept: acceptAny(t.type) };
+  if (mode === 0) return { visual: V.rockTypeVis(t.type), question: `What type of rock is described?\n"${t.desc}"`, answer: t.type, solution: `Answer: ${t.type}\n${t.desc}\nExamples: ${t.ex}\n${t.process}`, hint: 'Three rock types: igneous (fire/cooling), sedimentary (layers), metamorphic (changed by heat/pressure).', accept: acceptAny(t.type) };
   const ex = pick(t.ex.split(', '));
-  return { question: `What type of rock is ${ex}? (igneous, sedimentary, or metamorphic)`, answer: t.type, solution: `${ex} is ${t.type}.\n${t.desc}\n${t.process}`, hint: 'Igneous = cooled magma/lava. Sedimentary = compacted layers. Metamorphic = changed by heat + pressure.', accept: acceptAny(t.type) };
+  return { visual: V.rockTypeVis(), question: `What type of rock is ${ex}? (igneous, sedimentary, or metamorphic)`, answer: t.type, solution: `${ex} is ${t.type}.\n${t.desc}\n${t.process}`, hint: 'Igneous = cooled magma/lava. Sedimentary = compacted layers. Metamorphic = changed by heat + pressure.', accept: acceptAny(t.type) };
 }
 
 function genWeatheringErosion() {
@@ -312,29 +315,29 @@ function genWeatheringErosion() {
     { def: 'The slow, continuous wearing away of rock by water, wind, or chemical reactions over time', term: 'weathering', hint: 'Think about what wind and rain do to mountains over millions of years.' },
   ];
   const t = pick(terms);
-  return { question: `What geological process is described?\n"${t.def}"`, answer: t.term, solution: `Answer: ${t.term}\n${t.def}`, hint: t.hint, accept: acceptAny(t.term) };
+  return { visual: V.weatheringVis(t.term), question: `What geological process is described?\n"${t.def}"`, answer: t.term, solution: `Answer: ${t.term}\n${t.def}`, hint: t.hint, accept: acceptAny(t.term) };
 }
 
 function genMinerals() {
   const questions = [
-    { q: 'What is a mineral?', a: 'a naturally occurring, inorganic solid with a crystal structure', sol: 'A mineral is:\n- Naturally occurring (not human-made)\n- Inorganic (not from living things)\n- Solid\n- Has a definite crystal structure\n- Has a specific chemical composition', accept: i => { const n=normalize(i); return (n.includes('natural') || n.includes('inorganic')) && n.includes('solid'); }},
-    { q: 'What property of a mineral describes how it reflects light (metallic, glassy, dull, etc.)?', a: 'lustre', sol: 'Lustre describes how a mineral\'s surface reflects light.\nTypes: metallic, glassy (vitreous), dull (earthy), waxy, pearly, silky', accept: acceptAny('lustre', 'luster') },
-    { q: 'What scale is used to rank the hardness of minerals from 1 (softest) to 10 (hardest)?', a: "Mohs scale", sol: "Mohs Hardness Scale:\n1 = Talc (softest)\n10 = Diamond (hardest)\nA mineral can scratch anything softer than it.", accept: acceptAny('mohs', "mohs scale") },
-    { q: 'What is the colour of the powder a mineral leaves when rubbed on a porcelain plate called?', a: 'streak', sol: 'Streak is the colour of a mineral\'s powder.\nIt is found by rubbing the mineral on a streak plate (unglazed porcelain).\nStreak is more reliable than colour for identification.', accept: acceptAny('streak') },
+    { visual: V.mineralVis(0), q: 'What is a mineral?', a: 'a naturally occurring, inorganic solid with a crystal structure', sol: 'A mineral is:\n- Naturally occurring (not human-made)\n- Inorganic (not from living things)\n- Solid\n- Has a definite crystal structure\n- Has a specific chemical composition', accept: i => { const n=normalize(i); return (n.includes('natural') || n.includes('inorganic')) && n.includes('solid'); }},
+    { visual: V.mineralVis(1), q: 'What property of a mineral describes how it reflects light (metallic, glassy, dull, etc.)?', a: 'lustre', sol: 'Lustre describes how a mineral\'s surface reflects light.\nTypes: metallic, glassy (vitreous), dull (earthy), waxy, pearly, silky', accept: acceptAny('lustre', 'luster') },
+    { visual: V.mineralVis(2), q: 'What scale is used to rank the hardness of minerals from 1 (softest) to 10 (hardest)?', a: "Mohs scale", sol: "Mohs Hardness Scale:\n1 = Talc (softest)\n10 = Diamond (hardest)\nA mineral can scratch anything softer than it.", accept: acceptAny('mohs', "mohs scale") },
+    { visual: V.mineralVis(3), q: 'What is the colour of the powder a mineral leaves when rubbed on a porcelain plate called?', a: 'streak', sol: 'Streak is the colour of a mineral\'s powder.\nIt is found by rubbing the mineral on a streak plate (unglazed porcelain).\nStreak is more reliable than colour for identification.', accept: acceptAny('streak') },
   ];
   const q = pick(questions);
-  return { question: q.q, answer: q.a, solution: q.sol, hint: 'Think about how we identify and classify minerals.', accept: q.accept };
+  return { visual: q.visual, question: q.q, answer: q.a, solution: q.sol, hint: 'Think about how we identify and classify minerals.', accept: q.accept };
 }
 
 function genRockCycle() {
   const questions = [
-    { q: 'What is the rock cycle?', a: 'the continuous process of rocks changing from one type to another', sol: 'The rock cycle describes how rocks change between igneous, sedimentary, and metamorphic types.\nIt is driven by heat, pressure, weathering, erosion, and cooling.', accept: i => { const n=normalize(i); return n.includes('chang') && (n.includes('rock') || n.includes('type')); }},
-    { q: 'What must happen to sedimentary or metamorphic rock for it to become igneous?', a: 'it must melt into magma and then cool', sol: 'To become igneous rock:\n1. Rock must melt into magma (deep underground)\n2. Magma must cool and solidify\nThis can happen on the surface (lava → volcanic rock) or underground.', accept: i => { const n=normalize(i); return n.includes('melt') || n.includes('magma') || n.includes('cool'); }},
-    { q: 'What two forces change existing rock into metamorphic rock?', a: 'heat and pressure', sol: 'Metamorphic rock forms when existing rock is subjected to:\n- Heat (but not enough to melt it)\n- Pressure (from weight of overlying rock or tectonic forces)\nThe rock\'s minerals rearrange without melting.', accept: i => { const n=normalize(i); return n.includes('heat') && n.includes('pressure'); }},
-    { q: 'What process turns loose sediments into sedimentary rock?', a: 'compaction and cementation', sol: 'Sedimentary rock formation:\n1. Compaction: layers of sediment are squeezed by weight above\n2. Cementation: minerals dissolved in water "glue" particles together\nThis process takes millions of years.', accept: i => { const n=normalize(i); return n.includes('compact') || n.includes('cement'); }},
+    { visual: V.rockCycleVis(0), q: 'What is the rock cycle?', a: 'the continuous process of rocks changing from one type to another', sol: 'The rock cycle describes how rocks change between igneous, sedimentary, and metamorphic types.\nIt is driven by heat, pressure, weathering, erosion, and cooling.', accept: i => { const n=normalize(i); return n.includes('chang') && (n.includes('rock') || n.includes('type')); }},
+    { visual: V.rockCycleVis(1), q: 'What must happen to sedimentary or metamorphic rock for it to become igneous?', a: 'it must melt into magma and then cool', sol: 'To become igneous rock:\n1. Rock must melt into magma (deep underground)\n2. Magma must cool and solidify\nThis can happen on the surface (lava → volcanic rock) or underground.', accept: i => { const n=normalize(i); return n.includes('melt') || n.includes('magma') || n.includes('cool'); }},
+    { visual: V.rockCycleVis(2), q: 'What two forces change existing rock into metamorphic rock?', a: 'heat and pressure', sol: 'Metamorphic rock forms when existing rock is subjected to:\n- Heat (but not enough to melt it)\n- Pressure (from weight of overlying rock or tectonic forces)\nThe rock\'s minerals rearrange without melting.', accept: i => { const n=normalize(i); return n.includes('heat') && n.includes('pressure'); }},
+    { visual: V.rockCycleVis(3), q: 'What process turns loose sediments into sedimentary rock?', a: 'compaction and cementation', sol: 'Sedimentary rock formation:\n1. Compaction: layers of sediment are squeezed by weight above\n2. Cementation: minerals dissolved in water "glue" particles together\nThis process takes millions of years.', accept: i => { const n=normalize(i); return n.includes('compact') || n.includes('cement'); }},
   ];
   const q = pick(questions);
-  return { question: q.q, answer: q.a, solution: q.sol, hint: 'The rock cycle connects igneous, sedimentary, and metamorphic rocks.', accept: q.accept };
+  return { visual: q.visual, question: q.q, answer: q.a, solution: q.sol, hint: 'The rock cycle connects igneous, sedimentary, and metamorphic rocks.', accept: q.accept };
 }
 
 // ─── TOPIC REGISTRY ───

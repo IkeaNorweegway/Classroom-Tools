@@ -63,6 +63,7 @@ When active:
 | `scripts/` | Render scripts (markdown → HTML, posters) | Re-render a workbook or poster. Read `scripts/_context.md` first |
 | `src/`, `public/` | The Astro site and its published files | Change a page, the nav, or what the site links to. Read `_site-context.md` first |
 | `public/materials/*-game-*.html` | Browser games. HTML only, no markdown source | Build or revise a game. Read `_games-context.md` first |
+| `public/materials/*-sim-*.html`, `*-trainer-*.html` | Simulations and trainers. HTML only, no markdown source | Build or revise a sim or trainer. `_games-context.md` is a guide, not a checklist |
 | `public/materials/*-prereq-practice-v1.html`, `prereq-practice/` | Prereq practice, one page per unit. HTML only; questions in `prereq-practice/<prefix>-bank.js` | Add or fix a practice question: edit the course's bank. Format: top of `prereq-practice/practice.js` |
 
 Each folder has its own `_context.md` — read it before working in that area.
@@ -71,6 +72,10 @@ Materials are organized inside type folders by subject and unit:
 `[type]/grade-6-science/[unit]/filename.md`
 
 **Sources vs. renders:** the type folders hold markdown sources. HTML and PDF renders live only in `public/materials/`. Do not keep a second copy of a render beside its source (print-only posters are the exception).
+
+**HTML-first materials** have no markdown source on purpose: games, sims and trainers; prereq practice pages and their question banks; the Science 7 Plants organizers, Lily Lab and Plant Hunt (layout-first printables); and the Grade 6 EF and FR versions (the English markdown is their source). Edit the HTML directly.
+
+**Reconstructed sources (local only):** 56 markdown files dated 2026-10-16 were rebuilt from published HTML that had none (Social 9, Social 8 teacher guides, Grade 6 teacher notes and workbook keys, Science 7 teacher guides v2/v3, and others). They exist only on the Linux machine and are never committed: `.git/info/exclude` lists them. Each opens with a comment naming its HTML. No render script reads them, so the HTML is still the file to edit.
 
 **This repo is public.** Students can read anything committed. `.gitignore` keeps `legislation/`, school admin files, third-party reference PDFs, and unreleased tests out. Before committing a new test or anything with names in it, check it is covered.
 

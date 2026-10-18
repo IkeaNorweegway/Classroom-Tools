@@ -6,11 +6,13 @@
 // starts on DOMContentLoaded.
 //
 // A bank is { units: [{ id, name, num, skills: [...] }], toggle? }.
-// Each skill is { name, hint?, items } (written questions) or { name, gen }
+// Each skill is { name, hint?, visual?, items } (written questions) or { name, gen }
 // (a function that makes a new question each call).
-//   Item:  { q, a, why, choices?, accept?, n?, hint? }   q and why are text
-//   gen(): { question, answer, solution, hint?, accept?(input), image? }
+//   Item:  { q, a, why, choices?, accept?, n?, hint?, visual? }   q and why are text
+//   gen(): { question, answer, solution, hint?, accept?(input), image?, visual? }
 //          question may hold HTML (diagrams); solution is text
+// visual is an SVG string shown under the question (the science banks draw them with
+// sci-visuals.js). An item's own visual wins over its skill's.
 // A toggle, e.g. Math 9's visual mode, is { label, get(), set(on) }.
 // A bank with plain: true has generated questions in plain text, not HTML.
 //
@@ -54,7 +56,7 @@
     var shown = item.choices && (item.choices.length > 2 ? shuffle(item.choices) : item.choices.slice());
     return {
       skill: skill.name, html: false, q: item.q, a: item.a, why: item.why,
-      hint: item.hint || skill.hint, choices: shown,
+      hint: item.hint || skill.hint, choices: shown, visual: item.visual || skill.visual,
       check: function (given) {
         if (shown) return given === item.a;
         if (item.n !== undefined) return firstNumber(given) === item.n;
@@ -70,7 +72,7 @@
     if (!p) p = skill.gen();
     return {
       skill: skill.name, html: !plainGen, q: p.question, a: String(p.answer), why: p.solution || '',
-      hint: p.hint || skill.hint, image: p.image,
+      hint: p.hint || skill.hint, image: p.image, visual: p.visual || skill.visual,
       check: p.accept || function (given) { return loose(given) === loose(String(p.answer)); },
     };
   }
@@ -91,6 +93,7 @@
     return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
   }
   function textHtml(s) { return esc(s).replace(/\n/g, '<br>'); }
+  function visualHtml(p) { return p.visual ? '<figure class="pp-visual">' + p.visual + '</figure>' : ''; }
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; }
 
   function start() {
@@ -206,7 +209,8 @@
       progressText();
       $('pp-skill').textContent = current.skill;
       $('pp-question').innerHTML = (current.html ? current.q.replace(/\n/g, '<br>') : textHtml(current.q)) +
-        (current.image ? '<img class="pp-image" src="' + esc(current.image) + '" alt="Diagram for this question">' : '');
+        (current.image ? '<img class="pp-image" src="' + esc(current.image) + '" alt="Diagram for this question">' : '') +
+        visualHtml(current);
       $('pp-feedback').hidden = true;
       $('pp-next').hidden = true;
       $('pp-hint').hidden = true;
@@ -292,7 +296,7 @@
         '<div class="pp-name"><span>Name: ______________________________</span><span>Date: ______________</span></div></div>' +
         '<ol class="pp-sheet-qs">' + sheet.map(function (p) {
           return '<li><div>' + (p.html ? p.q.replace(/\n/g, '<br>') : textHtml(p.q)) + '</div>' +
-            (p.image ? '<img class="pp-image" src="' + esc(p.image) + '" alt="">' : '') +
+            (p.image ? '<img class="pp-image" src="' + esc(p.image) + '" alt="">' : '') + visualHtml(p) +
             (p.choices ? '<p class="pp-sheet-choices">' + p.choices.map(function (c, j) { return letter(j) + ') ' + esc(c); }).join('<br>') + '</p>' : '<div class="pp-box"></div>') +
             '</li>';
         }).join('') + '</ol>' +

@@ -23,9 +23,10 @@ const projects: Record<number, Record<string, string>> = {
 
 export const ceflGrades = [7, 8, 9] as const;
 
-// Companion games: one chapter after each project step (rules in _games-context.md). Keyed by unit slug.
+// CEFL Town missions: one shared town game, one mission per unit, one chapter after each project step
+// (_games-context.md → CEFL Town). Keyed by unit slug; doc is the mission's thin entry page.
 const games: Record<string, { label: string; doc: string }> = {
-  '7-income-tax': { label: 'Payday (First Paycheque Game): one chapter after each step', doc: 'cefl7-income-tax-game-v1' },
+  '7-income-tax': { label: 'CEFL Town: Payday (one chapter after each step)', doc: 'cefl7-income-tax-game-v2' },
 };
 
 function ceflUnit(grade: number, unit: string): CourseUnit {
