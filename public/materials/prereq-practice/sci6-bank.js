@@ -1,16 +1,19 @@
-import { sortQ, type PracticeUnit } from './types';
+// Grade 6 Science prereq practice questions, used by sci6-<unit>-prereq-practice-v1.html.
+// Question fields are described at the top of practice.js. Every skill needs at least two questions.
+(function () {
+'use strict';
 
 // Prereqs for Grade 6 Science come from earlier grades and Grade 5:
 // see "comesFrom" and "assumed" in src/content/parent-guides/science6/.
 
-const state = (thing: string, a: string, why: string) =>
+const state = (thing, a, why) =>
   ({ q: `Is ${thing} a solid, a liquid or a gas?`, a, choices: ['solid', 'liquid', 'gas'], why });
 
-const pushPull = (action: string, a: 'push' | 'pull', why: string) => sortQ(action, ['a push', 'a pull'], `a ${a}`, why);
+const pushPull = (action, a, why) => PrereqPractice.sortQ(action, ['a push', 'a pull'], `a ${a}`, why);
 
-const living = (thing: string, a: 'living' | 'non-living', why: string) => sortQ(thing, ['living', 'non-living'], a, why);
+const living = (thing, a, why) => PrereqPractice.sortQ(thing, ['living', 'non-living'], a, why);
 
-export const science6Practice: PracticeUnit[] = [
+window.PracticeBank = { units: [
   {
     id: 'matter', name: 'Matter', num: 1,
     summary: 'States of matter, reading a thermometer, water at 0 °C and 100 °C, measuring mass',
@@ -321,4 +324,5 @@ export const science6Practice: PracticeUnit[] = [
       },
     ],
   },
-];
+] };
+})();

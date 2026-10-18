@@ -1,16 +1,19 @@
-import { sortQ, type PracticeUnit } from './types';
+// Social Studies 9 prereq practice questions, used by soc9-<unit>-prereq-practice-v1.html.
+// Question fields are described at the top of practice.js. Every skill needs at least two questions.
+(function () {
+'use strict';
 
 // Prereqs for Social Studies 9 come from Grades 6–8 and from earlier Grade 9
 // units: see "comesFrom" and "assumed" in src/content/parent-guides/social9/.
 
-const ruleOrLaw = (thing: string, a: 'a rule' | 'a law', why: string) => sortQ(thing, ['a rule', 'a law'], a, why);
-const rightResp = (thing: string, a: 'a right' | 'a responsibility', why: string) => sortQ(thing, ['a right', 'a responsibility'], a, why);
-const importExport = (trade: string, a: 'an import' | 'an export', why: string) =>
+const ruleOrLaw = (thing, a, why) => PrereqPractice.sortQ(thing, ['a rule', 'a law'], a, why);
+const rightResp = (thing, a, why) => PrereqPractice.sortQ(thing, ['a right', 'a responsibility'], a, why);
+const importExport = (trade, a, why) =>
   ({ q: `${trade} For Canada, is this an import or an export?`, a, choices: ['an import', 'an export'], why });
 
 const timelineHint = 'To find the years between two dates, subtract the earlier year from the later one.';
 
-export const social9Practice: PracticeUnit[] = [
+window.PracticeBank = { units: [
   {
     id: 'urbanization-industry', name: 'Urbanization and Industry', num: 1,
     summary: 'Why people move, cities and rural areas, reading data, opinions with reasons',
@@ -344,4 +347,5 @@ export const social9Practice: PracticeUnit[] = [
       },
     ],
   },
-];
+] };
+})();

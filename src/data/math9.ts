@@ -8,7 +8,7 @@
 // math9-powers-*), so every path is written out rather than derived.
 
 import type { MaterialType } from './materialTypes';
-import type { CourseManifest } from './manifest';
+import { getReady, type CourseManifest } from './manifest';
 
 export type StrandSlug = 'number' | 'algebra' | 'measurement-geometry' | 'statistics-probability';
 
@@ -38,6 +38,8 @@ export interface Topic {
     challenge: string;
     exits: string;
   };
+  /** Prereq practice: the skills to check before the topic starts. */
+  prereq: string;
   /** Optional extra help shown after the steps. */
   extras: Material[];
   keys: Material[];
@@ -83,6 +85,7 @@ function standard(slug: string, label: string, strand: StrandSlug, stem: string)
       challenge: `${ws}-worksheet-challenge-v1`,
       exits: `exits/${slug}/${stem}-exits-v1`,
     },
+    prereq: `practice/math9-${slug}-prereq-practice-v1`,
     extras: [{ label: 'Mid-Unit Quiz', path: `quizzes/${slug}/${stem}-quiz-v1`, type: 'assessment' }],
     keys: [
       { label: 'Notes Answer Key', path: `notes/${slug}/${stem}-notes-answers-v1` },
@@ -165,6 +168,7 @@ export function allViewPaths(): string[] {
   for (const t of topics) {
     paths.push(
       ...Object.values(t.steps),
+      t.prereq,
       ...t.extras.map((m) => m.path),
       ...t.keys.map((m) => m.path),
       t.teacherNotes,
@@ -184,7 +188,7 @@ export function backPathFor(path: string): string {
   }
   for (const t of topics) {
     if (t.teacherNotes === path) return `math9/teacher#${t.slug}`;
-    const listed = [...Object.values(t.steps), ...t.extras.map((m) => m.path), ...t.keys.map((m) => m.path)];
+    const listed = [...Object.values(t.steps), t.prereq, ...t.extras.map((m) => m.path), ...t.keys.map((m) => m.path)];
     if (listed.includes(path) || path.includes(`/${t.slug}/`)) return `math9/${t.slug}`;
   }
   const strand = strands.find((s) => s.workbook === path || s.workbookKey === path);
@@ -207,7 +211,10 @@ export const math9Course: CourseManifest = {
     slug: t.slug,
     label: t.label,
     path: studentSteps(t).map((m, i) => ({ hint: stepHints[i], items: [{ label: m.label, doc: m.path, badge: m.badge, type: m.type }] })),
-    extras: t.extras.length ? [{ heading: 'Extra help', items: t.extras.map((m) => ({ label: m.label, doc: m.path, badge: m.badge, type: m.type })) }] : [],
+    extras: [
+      getReady(t.prereq),
+      ...(t.extras.length ? [{ heading: 'Extra help', items: t.extras.map((m) => ({ label: m.label, doc: m.path, badge: m.badge, type: m.type })) }] : []),
+    ],
     keys: t.keys.map((k) => ({ label: k.label, doc: k.path })),
     home: t.home.map((h) => ({ skill: h.skill, doc: h.path, keyDoc: h.keyPath })),
   })),

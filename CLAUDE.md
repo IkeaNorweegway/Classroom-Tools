@@ -63,6 +63,7 @@ When active:
 | `scripts/` | Render scripts (markdown → HTML, posters) | Re-render a workbook or poster. Read `scripts/_context.md` first |
 | `src/`, `public/` | The Astro site and its published files | Change a page, the nav, or what the site links to. Read `_site-context.md` first |
 | `public/materials/*-game-*.html` | Browser games. HTML only, no markdown source | Build or revise a game. Read `_games-context.md` first |
+| `public/materials/*-prereq-practice-v1.html`, `prereq-practice/` | Prereq practice, one page per unit. HTML only; questions in `prereq-practice/<prefix>-bank.js` | Add or fix a practice question: edit the course's bank. Format: top of `prereq-practice/practice.js` |
 
 Each folder has its own `_context.md` — read it before working in that area.
 

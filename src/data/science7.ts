@@ -1,6 +1,6 @@
 // Grade 7 Science materials manifest. Student unit pages, parent guides and
 // the viewer read it. Files are flat in public/materials/.
-import { homeSheets, type CourseManifest, type CourseUnit, type Doc } from './manifest';
+import { getReady, homeSheets, type CourseManifest, type CourseUnit, type Doc } from './manifest';
 
 const accessible = { badge: 'Accessible' };
 const nonReader = { badge: 'Non-reader' };
@@ -19,6 +19,7 @@ function unit(slug: string, label: string, sheets: [string, string][], more: { h
       { hint: 'Quick checks to see if you’ve got it.', items: [{ label: 'Exit Tickets', doc: `sci7-${slug}-exits-v1`, badge: 'Formative', type: 'exit' }] },
     ],
     extras: [
+      getReady(`sci7-${slug}-prereq-practice-v1`),
       ...more,
       {
         heading: 'Quizzes and tests',

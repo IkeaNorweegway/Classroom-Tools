@@ -1,17 +1,20 @@
-import { sortQ, type PracticeUnit } from './types';
+// Social Studies 8 prereq practice questions, used by soc8-<unit>-prereq-practice-v1.html.
+// Question fields are described at the top of practice.js. Every skill needs at least two questions.
+(function () {
+'use strict';
 
 // Prereqs for Social Studies 8 come from Grades 6 and 7:
 // see "comesFrom" and "assumed" in src/content/parent-guides/social8/.
 
-const ruleOrLaw = (thing: string, a: 'a rule' | 'a law', why: string) => sortQ(thing, ['a rule', 'a law'], a, why);
-const needWant = (thing: string, a: 'a need' | 'a want', why: string) => sortQ(thing, ['a need', 'a want'], a, why);
-const goodService = (thing: string, a: 'a good' | 'a service', why: string) => sortQ(thing, ['a good', 'a service'], a, why);
-const rightResp = (thing: string, a: 'a right' | 'a responsibility', why: string) => sortQ(thing, ['a right', 'a responsibility'], a, why);
+const ruleOrLaw = (thing, a, why) => PrereqPractice.sortQ(thing, ['a rule', 'a law'], a, why);
+const needWant = (thing, a, why) => PrereqPractice.sortQ(thing, ['a need', 'a want'], a, why);
+const goodService = (thing, a, why) => PrereqPractice.sortQ(thing, ['a good', 'a service'], a, why);
+const rightResp = (thing, a, why) => PrereqPractice.sortQ(thing, ['a right', 'a responsibility'], a, why);
 
-const mainIdea = (text: string, a: string, others: string[], why: string) =>
+const mainIdea = (text, a, others, why) =>
   ({ q: `Read the text. What is the main idea?\n\n"${text}"`, a, choices: [a, ...others], why });
 
-export const social8Practice: PracticeUnit[] = [
+window.PracticeBank = { units: [
   {
     id: 'ideologies', name: 'Ideologies', num: 1,
     summary: 'Democracy, rights, rules and laws, finding the main idea',
@@ -190,4 +193,5 @@ export const social8Practice: PracticeUnit[] = [
       },
     ],
   },
-];
+] };
+})();

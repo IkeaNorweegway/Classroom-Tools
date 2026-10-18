@@ -8,7 +8,7 @@ import MaterialRow from './MaterialRow.astro';
 import Progression from './Progression.astro';
 import { courseByKey } from '../data/courses';
 import type { CollectionEntry } from 'astro:content';
-import type { CourseManifest, CourseUnit, Doc } from '../data/manifest';
+import { prereqPractice, type CourseManifest, type CourseUnit, type Doc } from '../data/manifest';
 
 interface Props {
   manifest: CourseManifest;
@@ -19,13 +19,11 @@ interface Props {
   thisYear: string;
   /** What this year's stage says; defaults to the unit name. */
   thisYearIdea?: string;
-  /** Link for "practise these skills", when the course has one. */
-  practice?: { href: string; label: string };
   prev?: CourseUnit;
   next?: CourseUnit;
 }
 
-const { manifest: m, unit: u, entry, eyebrow, thisYear, thisYearIdea, practice, prev, next } = Astro.props;
+const { manifest: m, unit: u, entry, eyebrow, thisYear, thisYearIdea, prev, next } = Astro.props;
 const d = entry.data;
 const { Content } = await entry.render();
 
@@ -33,6 +31,8 @@ const base = import.meta.env.BASE_URL;
 const course = courseByKey(m.course)!;
 const href = (doc: Doc) => `${base}${doc.href ?? m.viewHref(u.slug, doc.doc)}`;
 const view = (doc: string) => `${base}${m.viewHref(u.slug, doc)}`;
+// Online practice of the skills listed under "What your child should already know".
+const practice = prereqPractice(u);
 const noun = m.noun;
 
 const stages = [
@@ -81,8 +81,8 @@ const inClass = u.path.flatMap((s) => s.items.map((i) => ({ ...i, label: s.title
         ))}
       </ul>
       {practice && (
-        <a href={practice.href} class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-ink hover:underline">
-          {practice.label} <span aria-hidden="true">→</span>
+        <a href={view(practice.doc)} class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-ink hover:underline">
+          Practise these skills online <span aria-hidden="true">→</span>
         </a>
       )}
     </div>
