@@ -1,0 +1,118 @@
+/* Prereq practice pages (*-prereq-practice-v1.html). The page sets
+   data-course on <body> to pick the course accent, as on the site. */
+
+@font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+@font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+
+:root {
+  --accent: 29 116 134; --accent-ink: 23 93 108; --accent-soft: 232 242 244;
+  --ink: #1f1d1a; --muted: #5f5a52; --line: #e3ded4; --paper: #fff; --page: #f6f4ef;
+  --good: #1f7a4d; --good-soft: #e6f4ec; --bad: #b42323; --bad-soft: #fbeaea;
+}
+body[data-course='sci6']  { --accent: 29 116 134;  --accent-ink: 23 93 108;  --accent-soft: 232 242 244; }
+body[data-course='sci7']  { --accent: 46 125 85;   --accent-ink: 35 99 63;   --accent-soft: 233 243 237; }
+body[data-course='math9'] { --accent: 63 91 176;   --accent-ink: 51 73 143;  --accent-soft: 236 239 249; }
+body[data-course='soc8']  { --accent: 138 74 120;  --accent-ink: 111 58 96;  --accent-soft: 244 234 241; }
+body[data-course='soc9']  { --accent: 166 69 47;   --accent-ink: 134 54 31;  --accent-soft: 247 235 231; }
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--page); color: var(--ink);
+  font-family: 'Atkinson Hyperlegible Next', system-ui, sans-serif; font-size: 17px; line-height: 1.55;
+}
+#practice { max-width: 680px; margin: 0 auto; padding: 32px 16px 64px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:disabled { cursor: default; }
+:focus-visible { outline: 3px solid rgb(var(--accent) / 0.45); outline-offset: 2px; }
+
+/* ─── Header ─── */
+.pp-head { margin-bottom: 24px; }
+.pp-eyebrow { margin: 0 0 6px; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgb(var(--accent-ink)); }
+.pp-head h1 { margin: 0 0 8px; font-family: 'Fraunces', Georgia, serif; font-weight: 600; font-size: clamp(28px, 6vw, 36px); line-height: 1.15; letter-spacing: -0.01em; }
+.pp-lead { margin: 0; color: var(--muted); }
+.pp-chip { margin-top: 14px; padding: 4px 14px; border: 1px solid rgb(var(--accent) / 0.35); border-radius: 999px; background: rgb(var(--accent-soft)); color: rgb(var(--accent-ink)); font-size: 14px; font-weight: 600; }
+.pp-chip[aria-pressed='false'] { background: var(--paper); color: var(--muted); border-color: var(--line); }
+
+/* ─── Cards and buttons ─── */
+.pp-card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin-bottom: 16px; }
+.pp-card h2 { margin: 0 0 12px; font-size: 15px; font-weight: 700; color: var(--muted); }
+.pp-center { text-align: center; }
+.pp-btn { min-height: 44px; padding: 10px 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); font-weight: 600; transition: background-color 0.15s, border-color 0.15s; }
+.pp-btn:hover:not(:disabled) { border-color: rgb(var(--accent) / 0.5); }
+.pp-primary { background: rgb(var(--accent)); border-color: rgb(var(--accent)); color: #fff; }
+.pp-primary:hover:not(:disabled) { background: rgb(var(--accent-ink)); }
+.pp-primary:disabled { opacity: 0.5; }
+.pp-link { padding: 4px 0; border: 0; background: none; color: rgb(var(--accent-ink)); font-size: 15px; font-weight: 600; }
+.pp-link:hover { text-decoration: underline; }
+.pp-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.pp-actions-center { justify-content: center; }
+
+/* ─── Skill list ─── */
+.pp-skills { list-style: none; margin: 0; padding: 0; }
+.pp-skills li { display: flex; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); }
+.pp-skills li:first-child { border-top: 0; }
+.pp-dot { flex: none; font-size: 13px; }
+.pp-skill-name { flex: 1; font-weight: 600; }
+.pp-skill-status { flex: none; font-size: 14px; color: var(--muted); }
+.pp-best { margin: 10px 0 0; font-size: 14px; color: var(--muted); }
+.pp-best:empty { display: none; }
+
+/* ─── A question ─── */
+.pp-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; }
+.pp-progress { font-size: 14px; color: var(--muted); }
+.pp-skill { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: rgb(var(--accent-ink)); }
+.pp-question { margin-bottom: 12px; font-size: 18px; font-weight: 600; line-height: 1.5; }
+.pp-question svg { max-width: 100%; height: auto; }
+.pp-image { display: block; max-width: 100%; margin-top: 12px; border: 1px solid var(--line); border-radius: 8px; }
+.pp-hint-toggle { margin-bottom: 10px; }
+.pp-hint { margin: 0 0 14px; padding: 10px 14px; border-radius: 8px; background: var(--page); color: var(--muted); font-size: 15px; }
+.pp-choices { display: grid; gap: 8px; }
+.pp-choice { min-height: 44px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); text-align: left; transition: background-color 0.15s, border-color 0.15s; }
+.pp-choice:hover:not(:disabled) { border-color: rgb(var(--accent)); background: rgb(var(--accent-soft)); }
+.pp-choice.is-right { border-color: var(--good); background: var(--good-soft); font-weight: 700; }
+.pp-choice.is-wrong { border-color: var(--bad); background: var(--bad-soft); }
+.pp-choice.is-dim { opacity: 0.55; }
+.pp-typed { display: flex; gap: 8px; }
+.pp-typed input { flex: 1; min-width: 0; min-height: 44px; padding: 10px 14px; border: 1px solid #c9c3b7; border-radius: 10px; font: inherit; }
+.pp-typed input:focus { outline: none; border-color: rgb(var(--accent)); box-shadow: 0 0 0 3px rgb(var(--accent) / 0.2); }
+.pp-feedback { margin-bottom: 14px; padding: 14px 16px; border: 1px solid; border-radius: 12px; }
+.pp-feedback.is-right { border-color: #b7dcc6; background: var(--good-soft); }
+.pp-feedback.is-wrong { border-color: #ecc0c0; background: var(--bad-soft); }
+.pp-verdict { margin: 0 0 4px; font-weight: 700; }
+.pp-feedback.is-right .pp-verdict { color: var(--good); }
+.pp-feedback.is-wrong .pp-verdict { color: var(--bad); }
+.pp-why { margin: 0; font-size: 15px; white-space: pre-line; }
+.pp-next { width: 100%; background: rgb(var(--accent-soft)); border-color: transparent; color: rgb(var(--accent-ink)); }
+
+/* ─── Summary ─── */
+.pp-score { margin: 0 0 4px; font-family: 'Fraunces', Georgia, serif; font-size: 52px; font-weight: 600; color: rgb(var(--accent-ink)); }
+.pp-score-label { margin: 0 0 16px; color: var(--muted); }
+.pp-bar { height: 10px; border-radius: 999px; background: var(--page); overflow: hidden; }
+.pp-bar div { height: 100%; border-radius: 999px; }
+.pp-bar .is-high { background: #2f9e64; }
+.pp-bar .is-mid { background: #e0a526; }
+.pp-bar .is-low { background: #d45a5a; }
+
+/* ─── Printed sheet: hidden on screen ─── */
+.pp-sheet { display: none; }
+@media print {
+  @page { margin: 16mm; }
+  body { background: #fff; font-size: 11pt; }
+  #practice { max-width: none; padding: 0; }
+  .pp-head, #pp-home, #pp-problem, #pp-summary { display: none !important; }
+  .pp-sheet { display: block; }
+  .pp-sheet-head { text-align: center; margin-bottom: 18px; }
+  .pp-sheet-head h1 { margin: 0; font-family: 'Fraunces', Georgia, serif; font-size: 20pt; font-weight: 600; }
+  .pp-sheet-head p { margin: 2px 0 12px; color: var(--muted); }
+  .pp-name { display: flex; justify-content: space-between; padding-bottom: 6px; border-bottom: 1px solid #999; text-align: left; }
+  .pp-sheet-qs, .pp-key ol { columns: 2; column-gap: 24px; margin: 0; padding-left: 22px; }
+  .pp-sheet-qs li, .pp-key li { break-inside: avoid; margin-bottom: 14px; }
+  .pp-sheet-qs svg { max-width: 100%; max-height: 120px; }
+  .pp-sheet-choices { margin: 4px 0 0; }
+  .pp-box { height: 44px; margin-top: 6px; border: 1px solid #bbb; border-radius: 6px; }
+  .pp-key { break-before: page; }
+  .pp-key h2 { margin: 0 0 12px; font-size: 14pt; }
+  .pp-key li span { font-size: 9.5pt; color: #444; }
+}

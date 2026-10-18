@@ -122,7 +122,6 @@ export const courses: Course[] = [
     facts: ['6 units', '~28 weeks', 'EN · EF · FR'],
     subnav: [
       ...unitItems('units/', sci6Units),
-      { label: 'Practice', path: 'science6/practice', match: includes('/science6/practice') },
       {
         label: 'All materials',
         path: 'materials',
@@ -150,7 +149,6 @@ export const courses: Course[] = [
         path: `math9/materials/${s.slug}`,
         match: (p: string) => p.includes(`/materials/${s.slug}`) || inTopicOf(s.slug, 'math9/')(p),
       })),
-      { label: 'Practice', path: 'math9/practice', match: includes('practice') },
       { label: 'PAT Prep', path: 'math9/pat-prep', match: includes('pat-prep') },
       { label: 'POTD', path: 'math9/potd', match: includes('potd') },
       { label: 'All materials', path: 'math9/materials', match: endsWith('/math9/materials') },
@@ -177,7 +175,6 @@ export const courses: Course[] = [
     facts: ['5 units', '~26 weeks', '40 materials'],
     subnav: [
       ...unitItems('science7/materials/', sci7Units),
-      { label: 'Practice', path: 'science7/practice', match: includes('practice') },
       { label: 'All units', path: 'science7', match: endsWith('/science7') },
     ],
     parentSubnav: parentItems('science7/parents', sci7Units),
@@ -195,7 +192,6 @@ export const courses: Course[] = [
     facts: ['7 units', '3 organizing ideas', '35 materials'],
     subnav: [
       ...unitItems('social9/materials/', soc9Units),
-      { label: 'Practice', path: 'social9/practice', match: includes('/social9/practice') },
       { label: 'All units', path: 'social9', match: endsWith('/social9') },
     ],
     parentSubnav: parentItems('social9/parents', soc9Units),
@@ -213,7 +209,6 @@ export const courses: Course[] = [
     facts: ['4 units', '3 organizing ideas', '20 materials'],
     subnav: [
       ...unitItems('social8/materials/', soc8Units),
-      { label: 'Practice', path: 'social8/practice', match: includes('/social8/practice') },
       { label: 'All units', path: 'social8', match: endsWith('/social8') },
     ],
     parentSubnav: parentItems('social8/parents', soc8Units),
