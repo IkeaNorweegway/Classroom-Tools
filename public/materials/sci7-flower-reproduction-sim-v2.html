@@ -167,7 +167,9 @@ svg .hit    { fill: transparent; stroke: transparent; }
 .meter { display: grid; grid-template-columns: 9.4em 1fr 2.6em; align-items: center; gap: 6px; font-size: 0.82rem; margin: 3px 0; }
 .meter .name { font-weight: 700; color: var(--ink); }
 .meter .track { height: 10px; background: #f1f5f9; border-radius: 999px; overflow: hidden; }
-.meter .fill { height: 100%; border-radius: 999px; width: 0; transition: width 0.25s; }
+/* The fill is a block (an inline span ignores width, so the bar never showed), full width, and slides in from the left
+   inside the clipped track: a transform, not a new layout. */
+.meter .fill { display: block; height: 100%; border-radius: 999px; transform: translateX(-100%); transition: transform 0.25s; }
 .meter .num { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
 .meter.limit .name::after {
   content: 'broken link'; display: inline-block; margin-left: 5px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
@@ -827,30 +829,34 @@ function buildDiagram() {
   });
   petalEls = $('petalsG').children;
 }
+// Write a style or attribute only when it changes. Writing the same value again every frame still makes
+// the browser restyle, lay out, and repaint the drawing, even while the lab is paused.
+function setS(e, k, v) { var c = e._css || (e._css = {}); v = String(v); if (c[k] !== v) { c[k] = v; e.style[k] = v; } }
+function setA(e, k, v) { v = String(v); if (e.getAttribute(k) !== v) e.setAttribute(k, v); }
 function renderDiagram(c) {
   var sg = stage(), i;
   var bloom = clamp((fl.day - (OPEN_DAY - 1)) / 1, 0, 1), fall = clamp((fl.day - FALL_DAY) / 1.5, 0, 1);
   var s = 0.35 + 0.65 * bloom;
-  $('petalsG').setAttribute('transform', 'translate(280,' + (400 + fall * 60).toFixed(1) + ') scale(' + s.toFixed(3) + ') translate(-280,-400)');
-  $('petalsG').style.opacity = (1 - fall).toFixed(2);
-  $('petalsG').style.display = st.petals === 0.1 || fall >= 1 ? 'none' : '';
-  for (i = 0; i < petalEls.length; i++) petalEls[i].setAttribute('class', st.petals === 0.5 ? 'petal dull' : 'petal');
-  $('sepalsG').style.display = st.sepals ? '' : 'none';
-  $('anthersG').style.display = st.anthers ? '' : 'none';
-  $('anthersG').style.opacity = sg === 'open' || sg === 'bud' ? 1 : 0.4;
-  $('stigmaE').setAttribute('class', st.stigma === 1 ? 'stigma' : 'stigma dry');
-  $('sBlock').style.display = st.style ? 'none' : '';
+  setA($('petalsG'), 'transform', 'translate(280,' + (400 + fall * 60).toFixed(1) + ') scale(' + s.toFixed(3) + ') translate(-280,-400)');
+  setS($('petalsG'), 'opacity', (1 - fall).toFixed(2));
+  setS($('petalsG'), 'display', st.petals === 0.1 || fall >= 1 ? 'none' : '');
+  for (i = 0; i < petalEls.length; i++) setA(petalEls[i], 'class', st.petals === 0.5 ? 'petal dull' : 'petal');
+  setS($('sepalsG'), 'display', st.sepals ? '' : 'none');
+  setS($('anthersG'), 'display', st.anthers ? '' : 'none');
+  setS($('anthersG'), 'opacity', sg === 'open' || sg === 'bud' ? 1 : 0.4);
+  setA($('stigmaE'), 'class', st.stigma === 1 ? 'stigma' : 'stigma dry');
+  setS($('sBlock'), 'display', st.style ? 'none' : '');
   var swell = 1 + 0.22 * clamp(fl.ripe / 6, 0, 1) * clamp((fl.day - FALL_DAY) / 4, 0, 1);
-  $('ovaryE').setAttribute('rx', (38 * swell).toFixed(1)); $('ovaryE').setAttribute('ry', (46 * swell).toFixed(1));
+  setA($('ovaryE'), 'rx', (38 * swell).toFixed(1)); setA($('ovaryE'), 'ry', (46 * swell).toFixed(1));
   var nf = F(fl.fert), nr = F(fl.ripe);
   ovuleEls.forEach(function (e, k) {
-    e.style.display = k < st.ovules ? '' : 'none';
-    e.setAttribute('class', k < nr ? 'ovule ripe' : k < nf ? 'ovule fert' : 'ovule');
+    setS(e, 'display', k < st.ovules ? '' : 'none');
+    setA(e, 'class', k < nr ? 'ovule ripe' : k < nf ? 'ovule fert' : 'ovule');
   });
   var nc = F(fl.clones);
-  plantletEls.forEach(function (g, k) { g.style.display = k < nc ? '' : 'none'; });
-  $('windG').style.opacity = (0.15 + 0.85 * st.wind / 100).toFixed(2);
-  $('neighG').style.opacity = st.neigh === 0 ? 0.12 : (0.35 + 0.65 * st.neigh / 100).toFixed(2);
+  plantletEls.forEach(function (g, k) { setS(g, 'display', k < nc ? '' : 'none'); });
+  setS($('windG'), 'opacity', (0.15 + 0.85 * st.wind / 100).toFixed(2));
+  setS($('neighG'), 'opacity', st.neigh === 0 ? 0.12 : (0.35 + 0.65 * st.neigh / 100).toFixed(2));
   var note = sg === 'bud' ? 'Bud: not open yet' : sg === 'open' ? '' : sg === 'ripen' ? 'Petals fallen: seeds ripening' : 'Season over';
   if ($('stageNote').textContent !== note) $('stageNote').textContent = note;
 }
@@ -948,7 +954,7 @@ var cache = {};
 function setHTML(id, html) { if (cache[id] !== html) { cache[id] = html; $(id).innerHTML = html; } }
 function setMeter(key, v, limBar) {
   var m = meterEls[key], r = R(v);
-  if (m.last !== r) { m.last = r; m.fill.style.width = clamp(r, 0, 100) + '%'; m.num.textContent = r; }
+  if (m.last !== r) { m.last = r; m.fill.style.transform = 'translateX(' + (clamp(r, 0, 100) - 100) + '%)'; m.num.textContent = r; }
   m.row.classList.toggle('limit', key === limBar);
 }
 function statusOf(c) {

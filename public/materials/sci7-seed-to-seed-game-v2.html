@@ -129,7 +129,7 @@ button, input { font: inherit; color: inherit; }
 .gauge { border: 2px solid var(--line); border-radius: 8px; padding: 6px 4px 5px; text-align: center; font-weight: 800; font-size: 0.8rem; color: var(--ink); }
 .gauge svg { display: block; margin: 0 auto 4px; }
 .gauge .gt { position: relative; height: 78px; width: 20px; margin: 0 auto 4px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
-.gauge .gt span { position: absolute; left: 0; right: 0; bottom: 0; height: 0; border-radius: 999px; transition: height 0.3s; }
+.gauge .gt span { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; border-radius: 999px; transform: translateY(100%); transition: transform 0.3s; }
 .gauge.light .gt span { background: var(--light); }
 .gauge.water .gt span { background: var(--water); }
 .gauge.co2 .gt span { background: var(--gas); }
@@ -163,11 +163,13 @@ button, input { font: inherit; color: inherit; }
 @keyframes pop { 40% { transform: scale(1.07); } }
 .ray { stroke: #fde047; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 2 9; animation: rays 0.9s linear infinite; }
 @keyframes rays { to { stroke-dashoffset: -11; } }
+/* While the clock is stopped (paused, a box open, the tutorial) the rays and the sway stop too, so the scene is not repainted for nothing. */
+#scene.stopped .ray, #scene.stopped .shoot { animation-play-state: paused; }
 .grass.shading .blade { stroke: #3f6212; opacity: 0.95; }
 .ring { fill: none; stroke: #dc2626; stroke-width: 3; animation: ring 1.2s ease-in-out infinite; }
 @keyframes ring { 50% { opacity: 0.25; } }
 @media (prefers-reduced-motion: reduce) {
-  .shoot, .pop, .ray, .ring, .spent, .item.pulse, .diary p { animation: none; }
+  .shoot, .pop, .ray, .ring, .spent, .item.pulse::after, .diary p { animation: none; }
   .gauge .gt span { transition: none; }
 }
 
@@ -187,8 +189,10 @@ button, input { font: inherit; color: inherit; }
 .item .helps { display: none; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; background: #dcfce7; color: #166534; border-radius: 999px; padding: 0 7px; margin-left: 6px; }
 .item.hint { border-color: var(--accent-mid); }
 .item.hint .helps { display: inline-block; }
-.item.pulse { animation: pulse 0.8s ease-in-out 5; }
-@keyframes pulse { 50% { box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.55); border-color: #f59e0b; } }
+/* The glow is a ring on top of the item that fades in and out: opacity costs no repaint, an animated box-shadow repaints every frame. */
+.item { position: relative; }
+.item.pulse::after { content: ''; position: absolute; inset: -1.5px; border: 1.5px solid #f59e0b; border-radius: 8px; box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.55); opacity: 0; pointer-events: none; animation: pulse 0.8s ease-in-out 5; }
+@keyframes pulse { 50% { opacity: 1; } }
 .tally { font-size: 0.84rem; font-weight: 700; color: var(--ink); margin-top: 4px; }
 
 /* ── Plant alerts ── */
@@ -1324,7 +1328,7 @@ function renderScene(c) {
     else { p = (sceneT * 0.16 + (i - 8) / 6) % 1; a = anchors.leaves[(i * 3) % anchors.leaves.length]; b = anchors.roots[(i * 2) % anchors.roots.length]; }
     if (p < 0.5) { x = a[0] + (CX - a[0]) * p * 2; y = a[1] + (GY - a[1]) * p * 2; }
     else { x = CX + (b[0] - CX) * (p - 0.5) * 2; y = GY + (b[1] - GY) * (p - 0.5) * 2; }
-    d.setAttribute('cx', R1(x + (i < 8 ? -2 : 2))); d.setAttribute('cy', R1(y));
+    setAttr('dot' + i, d, 'cx', R1(x + (i < 8 ? -2 : 2))); setAttr('dot' + i, d, 'cy', R1(y));
   }
 
   // Bees visit open flowers. Fewer fly in poor weather, in a poor year, and to plain flowers.
@@ -1334,7 +1338,7 @@ function renderScene(c) {
   for (i = 0; i < 3; i++) {
     if (i >= nB) { setAttr('bee' + i, sc.bees[i], 'opacity', 0); continue; }
     setAttr('bee' + i, sc.bees[i], 'opacity', 1);
-    sc.bees[i].setAttribute('transform', 'translate(' + R1(open[i][0] + 13 * Math.cos(sceneT * 2.3 + i * 2)) + ' ' + R1(open[i][1] - 4 + 7 * Math.sin(sceneT * 3.1 + i)) + ')');
+    setAttr('bee' + i, sc.bees[i], 'transform', 'translate(' + R1(open[i][0] + 13 * Math.cos(sceneT * 2.3 + i * 2)) + ' ' + R1(open[i][1] - 4 + 7 * Math.sin(sceneT * 3.1 + i)) + ')');
   }
 }
 
@@ -1397,7 +1401,8 @@ function renderDiary() {
   if (e) h('p', e.c, e.t, d);
 }
 function soilWord(v) { return v < 30 ? 'dry' : v < 55 ? 'damp' : v < 80 ? 'moist' : 'wet'; }
-function setH(id, pct) { var t = clamp(R(pct), 0, 100) + '%'; if (cache[id] !== t) { cache[id] = t; $(id).style.height = t; } }
+// The bar is full height and slides up from below, so the change is a transform, not a new layout.
+function setH(id, pct) { var t = 'translateY(' + (100 - clamp(R(pct), 0, 100)) + '%)'; if (cache[id] !== t) { cache[id] = t; $(id).style.transform = t; } }
 function renderHUD(c) {
   var cap = storeCap(), use = upkeep(), d = Math.min(Math.floor(S.day) + 1, S.season), i, left = S.season - d;
   var wk = weatherAt(S.day), night = c.kind === 'night', fd, fk;
@@ -1549,7 +1554,9 @@ function frame(now) {
   if (!S) return;
   var dtReal = last ? Math.min(0.25, (now - last) / 1000) : 0, n = 0;
   last = now;
-  if (!paused && !modalOpen && !tour && !S.dead && !S.over) {
+  var run = !paused && !modalOpen && !tour && !S.dead && !S.over;
+  if (cache.run !== run) { cache.run = run; $('scene').classList.toggle('stopped', !run); }
+  if (run) {
     sceneT += dtReal;
     acc += dtReal * speed / SEC_PER_DAY;
     while (acc >= STEP && n < 40) {
