@@ -17,7 +17,7 @@ All are in `public/materials/`. They have no markdown source: the HTML file is t
 | `sci7-seed-to-seed-game-v2.html` | 7-2-02 to 7-2-05 | Real time. Grow one strawberry on glucose, then choose an offspring. 5 generations, about 12 minutes each. | `sci7-seed-to-seed-v2` (whole game) | `?debug=1` |
 | `sci7-flower-field-game-v2.html` | 7-2-04 | Turn-based. Set flower parts and surroundings, grow a season, read where offspring were lost. Four levels with stars, 7 to 10 seasons each. | `flowerfield-v2` (stars, answers, level in progress) | `?debug=1` |
 | `sci7-clone-field-game-v2.html` | 7-2-04 | Same shell as Flower Field, with runners, tubers, and cuttings. | `clonefield-v2` (same) | `?debug=1` |
-| `cefl/cefl7-income-tax-game-v2.html` (*Payday*, CEFL Town mission) | 7-IT | Walk a top-down town. 4 chapters, 2 paycheques each: plan the jar at home, work a shift, build the stub at the bank or check the boss's stub and sign or dispute it, deposit. 10–15 minutes a chapter. | `cefl-town-7-income-tax-v1` + shared `cefl-town-profile-v1` | `?debug=1` (`window.CEFLTownDebug`); model block runs in Node |
+| `cefl/cefl7-income-tax-game-v2.html` (*Payday*, CEFL Town mission) | 7-IT | Walk a top-down town. 4 chapters, 2 paycheques each: plan the jar at home, work a shift, build the stub at the bank or check the boss's stub and sign or dispute it, deposit. 10–15 minutes a chapter. Between lessons: 10 paid help requests from townspeople, Town Mail, Pat's stall. | `cefl-town-7-income-tax-v1` + shared `cefl-town-profile-v1` | `?debug=1` (`window.CEFLTownDebug`); model block runs in Node |
 | `cefl/cefl7-income-tax-game-v1.html` | 7-IT | The first, panel-based Payday. Kept for old links; the site links v2. | `cefl7-payday-v1` | `?debug=1` |
 
 The v1 file of each game is kept so old links work. Nothing links to them.
@@ -35,7 +35,7 @@ The v1 file of each game is kept so old links work. Nothing links to them.
 | `public/vendor/kenney-rpg-urban/` | Kenney *RPG Urban Pack* 1.0 (CC0): `tilemap_packed.png` (27 × 18 tiles of 16 px) and `License.txt`. All town, character and furniture art. |
 | `public/materials/cefl/town/art.js` | Draws tiles; builds characters by recolouring the pack's 6 bases (skin, hair, shirt, trousers) and adding job outfits (apron, hi-vis, hard hat and more) |
 | `town/world.js` | The town map (78 × 58): 11 named districts (College Hill, Main Street, Town Square, Market Lane, Riverside and others), the river with three bridges, paths to every door, landmarks (fountain, sports field, community garden, Riverside Park), 6 street signs, 26 buildings in six styles and many sizes; small rooms (9 × 7) whose key person or thing stands on a rug; the base townspeople. No DOM. |
-| `town/engine.js` | Movement, camera (rooms zoom in to fill the view), doors, dialogue, quests, panels, HUD, Bag, Menu, the **Town Map** (M key: districts, buildings, you, your goal), district-name banners, saves, avatar editor, tutorial, report, the test hook |
+| `town/engine.js` | Movement, camera (rooms zoom in to fill the view), doors, dialogue, quests, panels, HUD, Bag, Menu, the **Town Map** (M key: districts, buildings, you, your goal), district-name banners, saves, avatar editor, tutorial, report, the test hook; **between lessons**: the soft gate, help requests and news, Town Mail, the wallet, Pat's stall, the closet, home decorations, the calculate verb (`api.calc`), the save code |
 | `town/town.css` | Shared styles (CEFL ochre) |
 | `town/missions/<grade>-<unit>.js` | One mission: its model (no DOM), chapters, panels, items, report |
 | `cefl[G]-[unit]-game-v[N].html` | A thin entry page the site links: `<div id="town" data-mission="…">` and the script tags |
@@ -49,18 +49,37 @@ The v1 file of each game is kept so old links work. Nothing links to them.
 4. **Interview:** visit townspeople to fill an item (Payday's Deduction Map).
 5. **Run it:** time passes on a calendar strip while the model runs.
 
+**Between lessons** (added 2026-10-18). CEFL meets every third day, so the town stays open between chapters:
+- **The soft gate.** After a chapter the break panel offers **Start Chapter N** or **Not yet: help around town**. "Not yet" saves `G.gate`; the quest line says which Step the next chapter waits for and walks to someone who needs help. The chapter starts from the Menu or by talking to the mission's `guide`. A reload while gated stays in free roam. It is an honour system, not a lock.
+- **Help requests** (`helpers`). Once a chapter is done, townspeople have the same problem in their own lives and pay a little to have it solved. A gold round **$** bubble marks them (the quest marker is square). Each request can be done once a day and gets new numbers each time (seed = id + count). The student may say "Not right now", or **Leave it for now** before checking; leaving after checking is not offered, so shown answers cannot be farmed.
+- **News** (`gossip`). Short story lines that open by chapter, one per talk, before a request. A white round **…** bubble marks them. They tell the mission's side story; they never give away the next chapter.
+- **Town Mail** (`mail`). At most one letter a day (local date), from a chapter already done. An unread letter waits; letters never pile up, and there are no streaks. The **📬 Mail** button in the HUD opens it.
+- **The pay rule.** Right on the first try: full pay. By the second try: half. After that, or when the answer was shown, or a wrong document was signed: thanks only. Pay is $5–$12 a task.
+- **The wallet** is in the profile (`P.wallet`), shared by every mission, and **never touches a mission's model**, so helping cannot change who wins. It buys things at **Pat's market stall** (Town Square): six home decorations, drawn in the home room in every mission, and four outfits for the **closet** (at home; it also holds mission outfits). Home cells are fixed (see `placeDecor`): the side columns and top row of the home room are its only walkways, so a mission must not put solid things there.
+- **Take your town home** (Menu). The profile and every `cefl-town-*-v1` save become one code (gzip + base64 + checksum, about 1,600 characters) to copy into a doc or email, or a `.txt` file. Loading checks each part's shape, shows what the code holds, and asks before it replaces this browser's game.
+- **Report.** The engine adds a **Between lessons** table: each task, who it was for, first try or not, and pay.
+
+**A side story told by the townspeople** (added 2026-10-18, Payday first). The user asked for townspeople to bring the mission's problem in slowly, through clues, so the student ends up the hero. The pattern:
+- **A hunch before the skill.** In Chapter 1 someone says something is off (Payday: Mo, "I feel like my boss gave me the wrong amount of money on my cheque"). The student cannot check it yet, so the hunch goes into a **Case notes** item in the Bag.
+- **Proof once the skill is taught.** Each later chapter brings a clue the student checks with that chapter's skill: Mo's stub after the first typed stub (Ch 2), a friend's stub with a *different* mistake (Ch 3), and short clues dropped by the people the chapter already visits (Jas, Grandpa, Nurse Kaur). The source (Milo, who made Pay-O-Matic) appears once the pattern is visible.
+- **The hero beat is work.** At Town Hall the student names the mistake on every stub in their notes (`case` panel), then fixes the cause (`fix` panel: Pay-O-Matic's six settings are the six mistake kinds). A last scene thanks them by name (the "{name} Rule") and gives a medal for the Bag.
+- **Rules:** the story beats are chapter steps, so every student meets them; news lines fill in around them and never get ahead. The story never touches the model, so it cannot change who wins, and the hero beat happens whether or not the goal is reached. Story tasks use `api.calc({ noPay: true })` (no pay wording, no "Leave it for now") and record their answers like any question. Townspeople's idle lines follow the story's stage. A scene that moves people (Mo in the bank, the Town Hall crowd) is a flag in the mission state that `people(S)` reads; the step sets it at its start, so it is safe to run again.
+- **Every future mission** gets a side story of the same shape: a hunch in Chapter 1, one clue per chapter checked with that chapter's skill, a source, and a hero beat that is the unit's skill applied in public.
+
 **Adding a mission:**
 - Write `town/missions/<slug>.js`, calling `CEFLTown.mission({ id, title, iCan, chapters, init, validate, chapterSteps, people, doorOpen, talk, hud, items, report, … })`.
 - Each chapter is a list of steps. The save holds (chapter, step), so a step must be safe to run again from its start. Guard model changes, as Payday's bank step does with "never pay twice".
 - A step awaits `api.quest(text, id)` (resolves when the student talks to that person or object, or enters `door:<building>`), then `api.say` / `api.ask` / `api.choose` / `api.panel`.
 - Add the thin entry page and one line to the `games` map in `src/data/cefl.ts`.
+- **Between lessons:** give `guide` (the person who starts a chapter during the gate), `helpers(S, api)` → `[{ id, who, after, pay, label, ask, run(api, seed) → 'first' | 'second' | 'later' | null }]` (3–4 per chapter, the person's own version of what the chapter taught), `gossip(S, api)` → `[{ id, who, after, lines }]` (2–3 lines a chapter for the mission's side story), and `mail(S, seed, lastDone, api)` → `{ label, from, pay, run(api) }`. `after` is the chapter index that must be done (−1 = from the start). Put their generators in a `HELP START … HELP END` model block (no DOM) on fresh seeds, never on the run. Use `api.calc` for typed amounts.
 - Use the existing buildings. New ones go into `world.js` for every mission, with a path from the door to a walk. Keep every doorstep clear (the map builder skips decor on paths and doorsteps) and rerun the navigation test.
 
 **Testing a mission** (scripts from the Payday build are described in `_status.md`):
 - **Node:** run the model block (careful player always wins; gross-pay, do-nothing and too-cautious players never do; answer tables clean).
 - **Scripted player in headless Chrome:** drives `CEFLTownDebug` through every situation, job and mode, and a wrong-first run.
 - **Navigation test:** BFS from the spawn point to every door and every person in every room; door in and out; tap-walk; quest auto-walk; idle frames = 0.
-- **Resume and profile:** `?debug=1&save=1` keeps saving on for reload and profile carry-over tests.
+- **Resume and profile:** `?debug=1&save=1` keeps saving on for reload and profile carry-over tests. Plain `?debug=1` keeps saves in memory only, so the save code can be tested without touching the browser.
+- **Between lessons:** `CEFLTownDebug.setDayShift(n)` moves the calendar; `openHelps()`, `runHelp(id)`, `checkMail()`, `readMail()`, `buy(id)`, `encodeSave()` / `decodeSave()` / `applyImport()` drive the rest. Check the pay rule for right, wrong-then-right and wrong answers on every request, and home-room reachability with everything bought, family home and the goal placed.
 - **Serve over HTTP:** `python3 -m http.server` in `public/`. Under `file://` the recolouring cannot read the sheet's pixels.
 - **Headless walking:** in headless Chrome, animation frames barely advance with virtual time. Use `CEFLTownDebug.tickNow()` to finish a walk, rather than waiting on frames.
 
@@ -84,6 +103,7 @@ What was and was not tested for each game is in `_status.md`.
 6. **Test hook.** `?debug=1` puts the model's functions on `window` and turns saving off.
 7. **Save** to `localStorage` under a versioned key, check the shape on load, and fall back to a new game if it does not fit. A new version file gets a new key.
 8. **Site fit.** Use the course accent from `_site-context.md`. The game runs inside the site's iframe viewer, so it must not depend on the page height or on being the top window.
+9. **Cheap motion.** Animate `transform` and `opacity`, not `width`, `height`, or `box-shadow`: a bar is full size and slides inside a clipped track, and a glow is a ring that fades. In a frame loop, write a style or attribute only when its value changes (Seed to Seed's `setAttr`), since rewriting the same value still makes the browser lay out and repaint. Decorative loops (rays, sway) stop while the clock is stopped. School Chromebooks are slow, so a fast laptop proves nothing.
 
 ---
 

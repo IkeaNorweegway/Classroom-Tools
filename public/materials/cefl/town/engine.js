@@ -15,29 +15,39 @@
   function copy(o) { return JSON.parse(JSON.stringify(o)); }
   function shuffle(a) { var i, j, t; for (i = a.length - 1; i > 0; i--) { j = Math.floor(Math.random() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   var debug = /[?&]debug=1/.test(location.search), debugSave = /[?&]save=1/.test(location.search); // save=1: tests keep saving on
+  function money(c) { var n = Math.abs(Math.round(c)), d = Math.floor(n / 100), r = n % 100; return (c < 0 ? '−' : '') + '$' + String(d).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + (r < 10 ? '0' : '') + r; }
+  function parseMoney(t) { var s = String(t || '').replace(/[$,\s]/g, '').replace(/−/g, '-'); if (!/^-?\d*\.?\d*$/.test(s) || s === '' || s === '.' || s === '-') return NaN; return Math.round(parseFloat(s) * 100); }
+  function hashStr(s) { var h = 2166136261, i; for (i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; } // FNV-1a
+  var dayShift = 0;                // the test hook moves the calendar
+  function today() { var d = new Date(Date.now() + dayShift * 864e5); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
   var reduceMotion = !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var DIRS = { left: [-1, 0], right: [1, 0], up: [0, -1], down: [0, 1] }, DIRCOL = { left: 0, down: 1, up: 2, right: 3 };
   T.esc = esc;
 
   /* ── State ── */
   var M = null;                    // mission def
-  var G = null;                    // saved game: { v, mode, map, x, y, dir, ch, si, S, done, tut, snap }
-  var P = null;                    // profile: { v, name, look, closet, met, finished, plan }
+  var G = null;                    // saved game: { v, mode, map, x, y, dir, ch, si, S, done, tut, snap, gate, town }
+  var P = null;                    // profile: { v, name, look, closet, met, finished, plan, wallet, owned, wear }
   var app, cv, ctx, stage, scale = 3, maps = {}, map = null, cache = null, frames = 0;
   var me = { x: 0, y: 0, dir: 'down', px: 0, py: 0, moving: null, frame: 0 };
   var held = null, path = [], busy = 0, fade = 0, questT = null, bobUntil = 0, onArrive = null;
   var objects = {};                // mission-placed things you can interact with: id → { map, x, y, tile, label }
   var waiters = [];                // quest promises: { id, resolve }
   var ui = null;                   // the open prompt, for the test hook
+  var bubbles = null;              // person id → 'help' | 'news', rebuilt after a save or a map change
 
   /* ── Saves ── */
   var PROFILE_KEY = 'cefl-town-profile-v1';
   function saveKey() { return 'cefl-town-' + M.id + '-v1'; }
-  function loadJSON(k) { if (debug && !debugSave) return null; try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
-  function storeJSON(k, v) { if (debug && !debugSave) return; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var mem = {};                    // ?debug=1 without save=1: saves live in memory only, so nothing reaches the browser
+  function loadJSON(k) { if (debug && !debugSave) return mem[k] ? JSON.parse(mem[k]) : null; try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
+  function storeJSON(k, v) { if (debug && !debugSave) { mem[k] = JSON.stringify(v); return; } try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   function validProfile(p) { return p && p.v === 1 && typeof p.name === 'string' && p.look && typeof p.look.base === 'number' && Array.isArray(p.closet) && Array.isArray(p.plan) && p.met && Array.isArray(p.finished); }
-  function validGame(g) { return g && g.v === 1 && (g.mode === 'gentle' || g.mode === 'real') && typeof g.ch === 'number' && typeof g.si === 'number' && typeof g.x === 'number' && g.S && (!M.validate || M.validate(g.S)); }
-  function save() { if (G) { G.map = map ? map.id : 'town'; G.x = me.x; G.y = me.y; G.dir = me.dir; storeJSON(saveKey(), G); } if (P) storeJSON(PROFILE_KEY, P); }
+  function validGame(g) { return validGameShape(g) && (!M.validate || M.validate(g.S)); }
+  function validGameShape(g) { return g && g.v === 1 && (g.mode === 'gentle' || g.mode === 'real') && typeof g.ch === 'number' && typeof g.si === 'number' && typeof g.x === 'number' && !!g.S; }
+  function fillProfile(p) { if (typeof p.wallet !== 'number') p.wallet = 0; if (!Array.isArray(p.owned)) p.owned = []; if (typeof p.wear !== 'string') p.wear = 'work'; return p; } // fields added after v1, filled in
+  function town() { return G.town || (G.town = { heard: {}, helps: {}, log: [], mailDay: '', mail: null }); }
+  function save() { bubbles = null; if (G) { G.map = map ? map.id : 'town'; G.x = me.x; G.y = me.y; G.dir = me.dir; storeJSON(saveKey(), G); } if (P) storeJSON(PROFILE_KEY, P); }
   T.save = save;
 
   /* ── DOM ── */
@@ -49,6 +59,7 @@
     h('div', 'ct-widgets', null, hud).id = 'ctWidgets';
     h('span', 'ct-spacer', null, hud);
     var chap = h('span', 'ct-chap', null, hud); chap.id = 'ctChap';
+    var mail = h('button', 'ct-btn ct-mailbtn', '📬 Mail', hud); mail.id = 'ctMailBtn'; mail.type = 'button'; mail.hidden = true; mail.title = 'A letter came for you';
     var mapb = h('button', 'ct-btn', 'Map', hud); mapb.id = 'ctMapBtn'; mapb.type = 'button'; mapb.title = 'Town map (M)';
     var bag = h('button', 'ct-btn', 'Bag', hud); bag.id = 'ctBag'; bag.type = 'button';
     var menu = h('button', 'ct-btn', 'Menu', hud); menu.id = 'ctMenu'; menu.type = 'button';
@@ -66,6 +77,7 @@
     coach.id = 'ctCoach'; coach.hidden = true; coach.setAttribute('role', 'dialog');
     h('p', 'ct-foot', esc(M.foot || 'This is a model. The people and businesses are made up.'), app);
     ctx = cv.getContext('2d');
+    mail.addEventListener('click', readMail);
     mapb.addEventListener('click', openTownMap); bag.addEventListener('click', openBag); menu.addEventListener('click', openMenu); q.addEventListener('click', autoWalkQuest);
     $('#ctCoachNext').addEventListener('click', coachNext); $('#ctCoachSkip').addEventListener('click', coachEnd);
     modal.addEventListener('click', function (e) { if (e.target === modal && modal.dataset.closable) closeModal(); });
@@ -105,6 +117,7 @@
     }
     if (m.mat) { x.fillStyle = '#7a5a3a'; x.fillRect(m.mat.x * 16 + 2, m.mat.y * 16 + 3, 12, 10); x.fillStyle = '#9c7a52'; x.fillRect(m.mat.x * 16 + 3, m.mat.y * 16 + 4, 10, 8); }
     if (m.board) drawBoard(x, m.board.x * 16, m.board.y * 16);
+    if (m.id === 'home' && P && P.owned.indexOf('rug') >= 0) drawObject(x, 'rug', 4 * 16, 5 * 16); // a floor rug by the door: drawn, not a thing you bump into
     (m.draws || []).forEach(function (d) { drawLandmark(x, d); });
     Object.keys(objects).forEach(function (k) { var o = objects[k]; if (o.map !== m.id) return; if (m.rugs && o.label && !o.noRug) rug(x, o.x * 16, o.y * 16); if (o.tile != null) A.drawTile(x, o.tile, o.x * 16, o.y * 16); if (o.draw) drawObject(x, o.draw, o.x * 16, o.y * 16); });
     return c;
@@ -117,6 +130,12 @@
     if (kind === 'laptop') { r('#2f2f38', 3, 4, 10, 7); r('#7fd0e8', 4, 5, 8, 5); r('#8d8ca6', 2, 11, 12, 2); }
     if (kind === 'key') { r('#e2b13c', 3, 6, 5, 5); r('#fffdf8', 4, 7, 3, 3); r('#e2b13c', 8, 8, 6, 1); r('#e2b13c', 12, 9, 1, 2); r('#e2b13c', 10, 9, 1, 2); }
     if (kind === 'cert') { r('#8d5243', 2, 3, 12, 10); r('#fffdf8', 3, 4, 10, 8); r('#94631a', 5, 6, 6, 1); r('#94631a', 5, 8, 4, 1); r('#e2b13c', 10, 9, 3, 3); }
+    // things for your home from the market stall, and your closet
+    if (kind === 'wardrobe') { r('#5c3d24', 1, 0, 14, 16); r('#8a5a34', 2, 1, 5, 14); r('#8a5a34', 9, 1, 5, 14); r('#e2b13c', 6, 7, 1, 2); r('#e2b13c', 9, 7, 1, 2); }
+    if (kind === 'poster') { r('#2f2f38', 3, 1, 10, 13); r('#8a5cc2', 4, 2, 8, 11); r('#f5b82e', 6, 4, 4, 4); r('#fffdf8', 5, 10, 6, 1); r('#fffdf8', 6, 12, 4, 1); }
+    if (kind === 'lamp') { r('#e2b13c', 4, 1, 8, 5); r('#fff3c4', 5, 2, 6, 3); r('#5c6278', 7, 6, 2, 8); r('#5c6278', 4, 14, 8, 2); }
+    if (kind === 'fish') { r('#5c6278', 1, 4, 14, 11); r('#7fd0e8', 2, 5, 12, 8); r('#4fa3c7', 2, 11, 12, 2); r('#e07b39', 5, 7, 3, 2); r('#e07b39', 4, 8, 1, 1); r('#f5b82e', 10, 9, 2, 1); r('#42a379', 12, 8, 1, 3); r('#2f2f38', 1, 14, 14, 2); }
+    if (kind === 'rug') { x.fillStyle = '#c2504d'; x.beginPath(); x.ellipse(px + 8, py + 9, 22, 7, 0, 0, Math.PI * 2); x.fill(); x.fillStyle = '#e2b13c'; x.beginPath(); x.ellipse(px + 8, py + 9, 15, 4, 0, 0, Math.PI * 2); x.fill(); x.fillStyle = '#c2504d'; x.beginPath(); x.ellipse(px + 8, py + 9, 8, 2, 0, 0, Math.PI * 2); x.fill(); }
   }
   /* Landmarks drawn over the tiles: field lines, the fountain, bridge rails, roof emblems */
   function drawLandmark(x, d) {
@@ -152,7 +171,7 @@
     for (i = 0; i < Math.min(n, 6); i++) { x.fillStyle = ['#94631a', '#4f78c9', '#42a379', '#c2504d', '#8a5cc2', '#2e9c9c'][i]; x.fillRect(px - 3 + (i % 3) * 8, py + 3 + Math.floor(i / 3) * 5, 6, 4); }
   }
   function enter(id, x, y, dir) {
-    map = getMap(id); cache = prerender(map); fitScale();
+    map = getMap(id); cache = prerender(map); fitScale(); bubbles = null;
     me.x = x; me.y = y; me.dir = dir || me.dir; me.px = x * 16; me.py = y * 16; me.moving = null; path = [];
     where(); questMarker(); kick();
   }
@@ -257,15 +276,32 @@
     var list = ps.map(function (p) { return { y: p.y * 16, draw: function () { drawPerson(p.look, p.dir || 'down', 0, p.x * 16, p.y * 16, cam); } }; });
     list.push({ y: me.py, draw: function () { drawPerson(myLook(), me.dir, me.moving ? 1 + me.frame : 0, me.px, me.py, cam); } });
     list.sort(function (a, b) { return a.y - b.y; }).forEach(function (o) { o.draw(); });
-    // quest marker and "!" bubbles
+    // quest marker and "!" bubbles; a "$" when someone needs your help, "…" when someone has news
     var tgt = questTarget();
+    if (!bubbles) bubbles = townBubbles();
+    ps.forEach(function (p) {
+      var b = bubbles[p.id];
+      if (b && !(tgt && tgt.map === map.id && tgt.x === p.x && tgt.y === p.y)) bubble((p.x * 16 + 8 - cam.x) * s, (p.y * 16 - 6 - cam.y) * s, b);
+    });
     if (tgt && tgt.map === map.id) {
       var bob = t < bobUntil && !reduceMotion ? Math.round(Math.sin(t / 120) * 2) : 0;
       marker((tgt.x * 16 + 8 - cam.x) * s, (tgt.y * 16 - 6 + bob - cam.y) * s, tgt.person);
     }
     if (fade > 0) { ctx.fillStyle = 'rgba(0,0,0,' + fade.toFixed(2) + ')'; ctx.fillRect(0, 0, cv.width, cv.height); }
   }
-  function myLook() { var l = Object.assign({}, P ? P.look : { base: 0, skin: 's3', hair: 'black', shirt: 'teal', pants: '#3d4a6b' }); if (G && G.S && M.outfit) l.outfit = M.outfit(G.S) || 'none'; return l; }
+  /* Round bubbles (the quest marker is square): gold "$" = paid help, white "…" = news. Shape and symbol, never colour alone. */
+  function bubble(x, y, kind) {
+    var s = scale, help = kind === 'help';
+    ctx.fillStyle = help ? '#f5b82e' : '#fff'; ctx.strokeStyle = '#1f1d1a'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(x, y - 7 * s, 5 * s, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#1f1d1a'; ctx.font = '800 ' + (help ? 7 * s : 6 * s) + 'px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(help ? '$' : '…', x, y - 7 * s + (help ? 0.5 : -1) * s);
+  }
+  function myLook() {
+    var l = Object.assign({}, P ? P.look : { base: 0, skin: 's3', hair: 'black', shirt: 'teal', pants: '#3d4a6b' });
+    if (P && P.wear && P.wear !== 'work') l.outfit = P.wear; else if (G && G.S && M.outfit) l.outfit = M.outfit(G.S) || 'none';
+    return l;
+  }
   function drawPerson(look, dir, fr, px, py, cam) {
     var sp = A.sprite(look);
     ctx.fillStyle = 'rgba(31,29,26,0.22)'; ctx.beginPath(); ctx.ellipse(Math.round((px + 8 - cam.x) * scale), Math.round((py + 15 - cam.y) * scale), 5 * scale, 1.6 * scale, 0, 0, Math.PI * 2); ctx.fill();
@@ -410,6 +446,7 @@
   var facing = {};
   function talk(id) {
     if (fire(id)) return;
+    if (townTalk(id)) return;
     var lines = M.talk ? M.talk(id, G.S, api) : null;
     if (lines === true) return; // the mission handled it
     if (!lines) { var p = Wd.PEOPLE[id] || (M.people && M.people(G.S)[id]) || objects[id]; lines = p ? (p.name ? p.name + ' waves.' : (p.label || '...')) : null; }
@@ -499,10 +536,10 @@
     });
   }
   /* ask(who, q, key, label, ch): q = { text, opts: [[text, right, feedback], …] }. A wrong pick explains and lets you try again.
-     The first pick is recorded once under key. */
+     The first pick is recorded once under key (no key: not recorded). Resolves { first: right on the first pick, picks }. */
   function ask(who, q, key, label, ch) {
     return new Promise(function (res) {
-      var d = $('#ctDialog'), order = shuffle(q.opts.map(function (o, i) { return i; })), tried = false, picked = [];
+      var d = $('#ctDialog'), order = shuffle(q.opts.map(function (o, i) { return i; })), tried = false, picked = [], firstRight = false;
       busy++;
       function render(fb, ok) {
         d.innerHTML = (who ? portrait(who) : '') + '<div class="ct-dbody">' + (who ? '<div class="ct-dname">' + esc(nameOf(who)) + '</div>' : '') + '<p class="ct-dtext">' + esc(q.text) + '</p><div class="ct-opts">' +
@@ -518,11 +555,12 @@
       function pick(i) {
         var o = q.opts[i]; if (!o || picked.indexOf(i) >= 0) return;
         picked.push(i);
+        if (!tried) firstRight = !!o[1];
         if (!tried && key) record(key, label, ch, !!o[1]); else if (key && G.S.ans[key]) G.S.ans[key].tries++;
         tried = true; sfx(o[1] ? 'good' : 'bad');
         render(o[2], !!o[1]);
       }
-      function close() { d.hidden = true; d.innerHTML = ''; busy--; ui = null; save(); cv.focus({ preventScroll: true }); res(); }
+      function close() { d.hidden = true; d.innerHTML = ''; busy--; ui = null; save(); cv.focus({ preventScroll: true }); res({ first: firstRight, picks: picked.length }); }
       render('', false);
     });
   }
@@ -575,7 +613,10 @@
 
   /* ── HUD, Bag, Menu, toast ── */
   function hud() {
-    var w = M.hud ? M.hud(G.S) : [];
+    var w = (M.hud ? M.hud(G.S) : []).slice();
+    if (P && (M.helpers || M.mail || P.wallet)) w.push({ label: 'Wallet', value: money(P.wallet), title: 'Your wallet: pay for helping people around town. Spend it at Pat’s market stall in Town Square.' });
+    var mb = $('#ctMailBtn'); if (mb) mb.hidden = !(G.town && G.town.mail);
+    bubbles = null;
     $('#ctWidgets').innerHTML = w.map(function (x) { return '<span class="ct-w' + (x.warn ? ' warn' : '') + '" title="' + esc(x.title || x.label) + '"><span class="ct-wl">' + esc(x.label) + '</span><b>' + esc(x.value) + '</b>' + (x.tag ? '<span class="ct-tag">' + esc(x.tag) + '</span>' : '') + '</span>'; }).join('');
     $('#ctChap').textContent = M.chapters[G.ch] ? 'Chapter ' + (G.ch + 1) + ' of ' + M.chapters.length + ': ' + M.chapters[G.ch].name : 'Mission complete';
   }
@@ -595,11 +636,15 @@
   function openMenu() {
     var html = '<h3>Mode</h3><div class="ct-row"><button class="ct-btn" type="button" data-mode="gentle" aria-pressed="' + (G.mode === 'gentle') + '">Gentle</button><button class="ct-btn" type="button" data-mode="real" aria-pressed="' + (G.mode === 'real') + '">Real</button></div>' +
       '<p class="ct-small">Gentle gives hints. Real gives none' + (M.realRule ? ', and ' + esc(M.realRule) : '') + '.</p>' +
-      '<h3>Chapters</h3><ol class="ct-chapters">' + M.chapters.map(function (c, i) { return '<li' + (i === G.ch ? ' class="now"' : '') + '><b>' + esc(c.name) + '</b> <span class="ct-small">play after ' + esc(c.step) + '’s lesson' + (G.done[i] ? ' · done ✓' : i === G.ch ? ' · now' : '') + '</span></li>'; }).join('') + '</ol>' +
-      '<div class="ct-row ct-wrap"><button class="ct-btn" type="button" id="ctHow">How to play</button><button class="ct-btn" type="button" id="ctReport">Report for my teacher</button><button class="ct-btn" type="button" id="ctLook">Change my look</button>' +
+      '<h3>Chapters</h3><ol class="ct-chapters">' + M.chapters.map(function (c, i) { return '<li' + (i === G.ch ? ' class="now"' : '') + '><b>' + esc(c.name) + '</b> <span class="ct-small">play after ' + esc(c.step) + '’s lesson' + (G.done[i] ? ' · done ✓' : i === G.ch ? (G.gate ? ' · waiting' : ' · now') : '') + '</span></li>'; }).join('') + '</ol>' +
+      (G.gate ? '<div class="ct-row ct-wrap"><button class="ct-btn primary" type="button" id="ctGateGo">Start Chapter ' + (G.ch + 1) + ' now</button><span class="ct-small">Had ' + esc(M.chapters[G.ch].step) + '’s lesson in class? Then go ahead.</span></div>' : '') +
+      '<h3>Between lessons</h3><div class="ct-row ct-wrap"><button class="ct-btn" type="button" id="ctHome">Take your town home</button><span class="ct-small">Play on another computer: copy your save, then load it there.</span></div>' +
+      '<h3>More</h3><div class="ct-row ct-wrap"><button class="ct-btn" type="button" id="ctHow">How to play</button><button class="ct-btn" type="button" id="ctReport">Report for my teacher</button><button class="ct-btn" type="button" id="ctLook">Change my look</button>' +
       '<button class="ct-btn" type="button" id="ctSound" aria-pressed="' + !!P.sound + '">Sound: ' + (P.sound ? 'on' : 'off') + '</button>' + (G.snap ? '<button class="ct-btn" type="button" id="ctReplay">Replay this chapter</button>' : '') + '<button class="ct-btn" type="button" id="ctRestart">Start the mission over</button></div>';
     openModal('Menu', html, function (box) {
       Array.prototype.forEach.call(box.querySelectorAll('[data-mode]'), function (b) { b.addEventListener('click', function () { G.mode = b.dataset.mode; save(); openMenu(); }); });
+      if ($('#ctGateGo')) $('#ctGateGo').addEventListener('click', function () { closeModal(); fire('gate:start'); });
+      $('#ctHome').addEventListener('click', openTakeHome);
       $('#ctHow').addEventListener('click', function () { closeModal(); coachStart(); });
       $('#ctReport').addEventListener('click', openReport);
       $('#ctLook').addEventListener('click', function () { closeModal(); avatarEditor(false); });
@@ -611,7 +656,7 @@
   function openReport() {
     var body = M.report ? M.report(G.S, api) : '';
     var html = '<p><b>' + esc(P.name) + '</b> · ' + esc(M.title) + ' · Mode: ' + (G.mode === 'real' ? 'Real' : 'Gentle') + ' · ' +
-      (G.ch >= M.chapters.length ? '<b>Mission complete</b>' : 'Chapter ' + (G.ch + 1) + ' of ' + M.chapters.length) + '</p>' + body + reportAnswers() +
+      (G.ch >= M.chapters.length ? '<b>Mission complete</b>' : 'Chapter ' + (G.ch + 1) + ' of ' + M.chapters.length) + '</p>' + body + reportAnswers() + reportTown() +
       '<div class="ct-row"><button class="ct-btn" type="button" id="ctPrint">Print</button></div>';
     openModal('Report', html, function () { $('#ctPrint').addEventListener('click', function () { window.print(); }); });
     document.body.classList.add('ct-printing-report');
@@ -658,7 +703,7 @@
           Array.prototype.forEach.call(body.querySelectorAll('.ct-swatch'), function (b) { b.addEventListener('click', function () { var g = b.dataset.g; look[g] = g === 'base' ? +b.dataset.v : b.dataset.v; draw(); body.querySelector('[data-g="' + g + '"][aria-pressed="true"]').focus(); }); });
           $('#ctName', body).addEventListener('input', function (e) { name = e.target.value; $('#ctLookDone', body).disabled = !name.trim(); });
           $('#ctLookDone', body).addEventListener('click', function () {
-            P = P || { v: 1, closet: [], plan: [], met: {}, finished: [], sound: false };
+            P = P || fillProfile({ v: 1, closet: [], plan: [], met: {}, finished: [], sound: false });
             P.name = name.trim().slice(0, 14); P.look = look; save(); hud(); kick(); done(); res();
           });
         }
@@ -710,6 +755,7 @@
   function chapterSteps(ch) { return M.chapterSteps(ch, G.S, api); }
   async function run() {
     while (G.ch < M.chapters.length) {
+      if (G.gate && G.si === 0) await gateWait();
       var steps = chapterSteps(G.ch);
       while (G.si < steps.length) {
         var st = steps[G.si];
@@ -718,17 +764,35 @@
         G.si++; hud(); save();
       }
       G.done[G.ch] = true; G.ch++; G.si = 0;
-      if (G.ch < M.chapters.length) { G.snap = { S: copy(G.S), map: map.id, x: me.x, y: me.y }; hud(); save(); await chapterBreak(); }
+      if (G.ch < M.chapters.length) { G.snap = { S: copy(G.S), map: map.id, x: me.x, y: me.y }; hud(); save(); if (await chapterBreak() === 'later') { G.gate = true; save(); } }
     }
-    hud(); setQuest(M.afterLine || 'Mission complete. Open Menu → Report to show your teacher.', null); save();
+    hud(); freeQuest(); save();
   }
+  /* The soft gate: the next chapter waits for its lesson, and the town stays open in the meantime */
   function chapterBreak() {
-    var c = M.chapters[G.ch];
+    var c = M.chapters[G.ch], side = !!(M.helpers || M.mail);
     return panel({ title: 'Chapter ' + (G.ch + 1) + ': ' + c.name, name: 'chapter', render: function (body, done) {
-      body.innerHTML = '<p>Play this after <b>' + esc(c.step) + '</b>’s lesson in class' + (c.moment ? ' (' + esc(c.moment) + ')' : '') + '.</p><p class="ct-small">Your game is saved. You can stop here and come back next class.</p>' +
-        '<div class="ct-row ct-actions"><button class="ct-btn primary" type="button" id="ctGo">Start Chapter ' + (G.ch + 1) + '</button></div>';
-      $('#ctGo', body).addEventListener('click', function () { done(); });
+      body.innerHTML = '<p>Play this after <b>' + esc(c.step) + '</b>’s lesson in class' + (c.moment ? ' (' + esc(c.moment) + ')' : '') + '.</p><p class="ct-small">Your game is saved. You can stop here and come back next class.' + (side ? ' Not there yet? People around town need help with what you just learned, and they pay a little.' : '') + '</p>' +
+        '<div class="ct-row ct-actions"><button class="ct-btn primary" type="button" id="ctGo">Start Chapter ' + (G.ch + 1) + '</button>' + (side ? '<button class="ct-btn" type="button" id="ctLater">Not yet: help around town</button>' : '') + '</div>';
+      $('#ctGo', body).addEventListener('click', function () { done('go'); });
+      if (side) $('#ctLater', body).addEventListener('click', function () { done('later'); });
     } });
+  }
+  function gateWait() {
+    freeQuest();
+    return new Promise(function (res) {
+      waiters = waiters.filter(function (w) { return w.id !== 'gate:start'; });
+      waiters.push({ id: 'gate:start', resolve: function () { G.gate = false; save(); setQuest(null, null); hud(); res(); } });
+    });
+  }
+  /* The quest line while you wait for a lesson, or after the mission: it walks you to someone who needs help */
+  function freeQuest() {
+    var done = G.ch >= M.chapters.length;
+    if (!G.gate && !done) return;
+    var hs = openHelps(), who = hs.length ? hs[hs.length - 1].who : null, n = {}, k;
+    hs.forEach(function (h2) { n[h2.who] = 1; }); k = Object.keys(n).length;
+    var help = k ? ' ' + k + (k === 1 ? ' person needs' : ' people need') + ' your help ($).' : (M.helpers ? ' Everyone is helped for today. Come back tomorrow.' : '');
+    setQuest(done ? (M.afterLine || 'Mission complete. Open Menu → Report to show your teacher.') + help : 'Chapter ' + (G.ch + 1) + ' opens after ' + M.chapters[G.ch].step + ' in class.' + help, who);
   }
   async function lost() {
     await panel({ title: 'Game over', name: 'lost', render: function (body, done) {
@@ -746,10 +810,302 @@
   function replayChapter() { restoreSnap(); location.reload(); }
   function restartMission() { G = null; storeJSON(saveKey(), null); if (!debug) location.reload(); else T.start(M.id, true); }
 
+  /* ── Between lessons (_games-context.md → CEFL Town): townspeople who need help, their news, Town Mail, the wallet.
+     A mission gives helpers(S, api), gossip(S, api) and mail(S, seed, lastDone, api). Each opens once its chapter is done.
+     Pay: right on the first try = full pay, on the second try = half, after that or when shown = thanks only.
+     The wallet lives in the profile and never touches a mission's model, so it cannot change who wins. ── */
+  function chDone(k) { return k < 0 || !!G.done[k]; }
+  function lastDone() { var k = -1, i; for (i = 0; i < M.chapters.length; i++) if (G.done[i]) k = i; return k; }
+  function openHelps() { // requests open now: chapter done, not already done today, and the person is out
+    if (!M.helpers || !P) return [];
+    var tw = town(), d = today();
+    return M.helpers(G.S, api).filter(function (q) { var r = tw.helps[q.id]; return chDone(q.after) && !(r && r.last === d) && !!locate(q.who); });
+  }
+  function helpFor(id) { var a = openHelps(), i; for (i = a.length - 1; i >= 0; i--) if (a[i].who === id) return a[i]; return null; } // the newest topic first
+  function gossipFor(id) {
+    if (!M.gossip) return null;
+    var tw = town(), g = M.gossip(G.S, api), i;
+    for (i = 0; i < g.length; i++) if (g[i].who === id && chDone(g[i].after) && !tw.heard[g[i].id]) return g[i];
+    return null;
+  }
+  function townBubbles() {
+    var out = {};
+    if (!G || !P) return out;
+    var tw = town();
+    if (M.gossip) M.gossip(G.S, api).forEach(function (g) { if (chDone(g.after) && !tw.heard[g.id]) out[g.who] = 'news'; });
+    openHelps().forEach(function (q) { out[q.who] = 'help'; });
+    return out;
+  }
+  /* Talk: the engine's own people and things first, then news, then a request for help */
+  function townTalk(id) {
+    if (id === 'vendor') { openShop(); return true; }
+    if (id === 'wardrobe') { openCloset(); return true; }
+    var dec = /^decor_(.+)$/.exec(id); if (dec) { var it = shopItem(dec[1]); if (it) say(null, it.line); return true; }
+    if (G.gate && id === M.guide) { gatePrompt(); return true; }
+    var gs = gossipFor(id), hp = helpFor(id);
+    if (!gs && !hp) return false;
+    (async function () {
+      if (gs) { await say(id, gs.lines); town().heard[gs.id] = 1; save(); }
+      if (hp) { var i = await choose(id, hp.ask + ' (' + money(hp.pay) + ' for helping)', ['Sure, I’ll help', 'Not right now']); if (i === 0) await runHelp(hp); }
+      bubbles = null; freeQuest(); kick();
+    })();
+    return true;
+  }
+  async function gatePrompt() {
+    var c = M.chapters[G.ch];
+    var i = await choose(M.guide, 'Chapter ' + (G.ch + 1) + ', ' + c.name + ', is next. Play it after ' + c.step + '’s lesson in class. Ready?', ['Yes, start Chapter ' + (G.ch + 1), 'Not yet']);
+    if (i === 0) fire('gate:start');
+  }
+  /* The same request gets new numbers each time it is done (seed = id + count) */
+  async function runHelp(hp) {
+    var tw = town(), rec = tw.helps[hp.id] || { n: 0, last: '' }, grade = await hp.run(api, hashStr(hp.id + ':' + rec.n + ':' + (G.S.seed || 0)));
+    if (grade !== 'first' && grade !== 'second' && grade !== 'later') return null; // left for now
+    rec.n++; rec.last = today(); tw.helps[hp.id] = rec;
+    paid(grade, hp.pay, 'help', hp.label, nameOf(hp.who));
+    return grade;
+  }
+  function paid(grade, pay, kind, label, from) {
+    var amt = grade === 'first' ? pay : grade === 'second' ? Math.round(pay / 2) : 0, tw = town();
+    P.wallet += amt;
+    tw.log.push({ d: today(), kind: kind, label: label, from: from, grade: grade, amt: amt }); if (tw.log.length > 100) tw.log.shift();
+    sfx(amt ? 'item' : 'blip');
+    var tip = amt && !P.shopHint ? ' Spend it at Pat’s stall in Town Square.' : '';
+    if (tip) P.shopHint = true;
+    toast(amt ? '+' + money(amt) + ' in your wallet' + (grade === 'second' ? ' (half pay: right on the second try)' : '') + '.' + tip : from + ' says thanks! (No pay once the answer is shown.)');
+    hud(); save(); freeQuest();
+  }
+  /* Town Mail: one letter a day at most, from a chapter you have done. An unread letter waits; letters never pile up. */
+  function checkMail() {
+    if (!M.mail || !P || !G) return;
+    var tw = town(), d = today();
+    if (lastDone() < 0 || tw.mail || tw.mailDay === d) return;
+    tw.mail = { day: d, seed: hashStr('mail:' + d + ':' + (G.S.seed || 0)) }; tw.mailDay = d; hud(); save();
+    toast('📬 A letter came for you. Tap Mail to read it.');
+  }
+  async function readMail() {
+    var tw = town();
+    if (!tw.mail || busy || !M.mail) return;
+    var task = M.mail(G.S, tw.mail.seed, lastDone(), api);
+    if (!task) { tw.mail = null; hud(); save(); return; }
+    var grade = await task.run(api);
+    if (!grade) return;
+    tw.mail = null; paid(grade, task.pay, 'mail', task.label, task.from);
+  }
+
+  /* calc(opts): the "calculate" work verb. Typed amounts, checked to ±2¢; a wrong try gets a hint in Gentle, and the answer shows after
+     2 tries in Real or 3 in Gentle. opts: { title, intro, head, ref, refLabel, fields: [{ k, name, sub, ans, alts, hint, ded, net }], doneText, noPay }.
+     noPay: a story task in a chapter (no pay wording, and no "Leave it for now").
+     Resolves 'first' | 'second' | 'later' (every field right on its first try / by its second / otherwise), or null if left before checking. */
+  function calc(opts) {
+    var u = {}, max = G.mode === 'real' ? 2 : 3, F = opts.fields, checked = false;
+    return panel({ title: opts.title, name: opts.name || 'calc', wide: !!opts.wide, data: { fields: F }, render: function (body, done) {
+      function all() { return F.every(function (f) { return u[f.k] && (u[f.k].ok || u[f.k].shown); }); }
+      function grade() { var worst = 1; F.forEach(function (f) { var x = u[f.k]; worst = Math.max(worst, x.shown ? 9 : x.tries); }); return worst === 1 ? 'first' : worst === 2 ? 'second' : 'later'; }
+      function draw() {
+        var fin = all(), g = fin ? grade() : null;
+        body.innerHTML = (opts.intro || '') + (opts.ref ? '<details class="ct-ref"><summary>' + esc(opts.refLabel || 'Show the Pay Card') + '</summary>' + opts.ref + '</details>' : '') +
+          '<div class="ct-doc">' + (opts.head || '') + F.map(function (f) {
+            var x = u[f.k] || {}, cls = f.ded ? ' ded' : f.net ? ' net' : '';
+            var amt = x.ok || x.shown ? '<span class="amt">' + (f.ded ? '−' : '') + money(f.ans) + '</span>' : '<input class="ct-inp' + (x.no ? ' no' : '') + '" id="cf-' + f.k + '" inputmode="decimal" autocomplete="off" aria-label="' + esc(f.name) + '" value="' + esc(x.v || '') + '">';
+            return '<div class="ct-line' + cls + '"><span class="what">' + esc(f.name) + (f.sub ? '<small>' + esc(f.sub) + '</small>' : '') + '</span>' + amt +
+              '<span aria-label="' + (x.ok ? 'right' : x.shown ? 'shown' : x.no ? 'not yet' : '') + '">' + (x.ok ? '<b style="color:#2c7a4b">✓</b>' : x.shown ? '•' : x.no ? '<b style="color:#b42318">✗</b>' : '') + '</span>' +
+              (x.hint && !(x.ok || x.shown) ? '<span class="hint">' + esc(x.hint) + '</span>' : '') + '</div>';
+          }).join('') + '</div>' +
+          (fin ? '<div class="ct-banner ' + (g === 'later' ? 'bad' : 'good') + '">' + (opts.noPay ? (g === 'first' ? 'All right on the first try!' : g === 'second' ? 'All right by the second try.' : 'Done. Some answers were shown.')
+            : g === 'first' ? 'All right on the first try! Full pay.' : g === 'second' ? 'Right by the second try. Half pay.' : 'Done. Some answers were shown, so no pay this time. Try again tomorrow.') + '</div>' : '') +
+          '<div class="ct-row ct-actions">' + (fin ? '<button class="ct-btn primary" type="button" id="cfDone">' + esc(opts.doneText || 'Done') + '</button>'
+            : '<button class="ct-btn primary" type="button" id="cfCheck">Check</button>' + (checked || opts.noPay ? '' : '<button class="ct-btn" type="button" id="cfLeave">Leave it for now</button>')) + '</div>';
+        Array.prototype.forEach.call(body.querySelectorAll('input'), function (i) { i.addEventListener('input', function () { (u[i.id.slice(3)] = u[i.id.slice(3)] || {}).v = i.value; }); i.addEventListener('keydown', function (e) { if (e.key === 'Enter') check(); }); });
+        if (fin) $('#cfDone', body).addEventListener('click', function () { done(g); });
+        else { $('#cfCheck', body).addEventListener('click', check); if ($('#cfLeave', body)) $('#cfLeave', body).addEventListener('click', function () { done(null); }); }
+      }
+      function check() {
+        var first = null;
+        F.forEach(function (f) {
+          var x = u[f.k] || (u[f.k] = {}), inp = $('#cf-' + f.k, body), v, right;
+          if (!inp || x.ok || x.shown) return;
+          x.v = inp.value; v = parseMoney(inp.value);
+          if (isNaN(v)) { if (!first) first = f.k; return; }
+          checked = true; x.tries = (x.tries || 0) + 1;
+          right = Math.abs(v - f.ans) <= 2 || (f.alts || []).some(function (a) { return Math.abs(v - a) <= 2; });
+          if (right) { x.ok = 1; x.no = 0; x.hint = ''; } else if (x.tries >= max) { x.shown = 1; x.no = 0; x.hint = ''; } else { x.no = 1; x.hint = G.mode === 'gentle' && f.hint ? f.hint : 'Not yet.'; if (!first) first = f.k; }
+        });
+        sfx(F.every(function (f) { return !u[f.k] || !u[f.k].no; }) ? 'good' : 'bad');
+        draw();
+        var el = first && $('#cf-' + first, body); if (el) el.focus(); else { el = $('#cfDone', body); if (el) el.focus(); }
+      }
+      draw();
+    } });
+  }
+
+  /* ── Pat's market stall (Town Square): things for your home and clothes for your closet ── */
+  var SHOP = [
+    { id: 'plant', kind: 'decor', name: 'Potted plant', price: 1000, icon: '🪴', at: [3, 4], tile: 'plant', line: 'Your plant. You water it every Sunday. Mostly.' },
+    { id: 'poster', kind: 'decor', name: 'Band poster', price: 1500, icon: '🖼️', at: [3, 1], draw: 'poster', line: 'A poster of your favourite band. Signed! (By you.)' },
+    { id: 'shop_cap', kind: 'outfit', name: 'Red ball cap', price: 1500, icon: '🧢' },
+    { id: 'rug', kind: 'decor', name: 'Round rug', price: 2000, icon: '⭕' },
+    { id: 'shop_hoodie', kind: 'outfit', name: 'Grey hoodie', price: 2000, icon: '🧥' },
+    { id: 'lamp', kind: 'decor', name: 'Floor lamp', price: 2500, icon: '💡', at: [5, 4], draw: 'lamp', line: 'A warm lamp. Good light for checking pay stubs.' },
+    { id: 'shop_jersey', kind: 'outfit', name: 'Team jersey', price: 2500, icon: '🎽' },
+    { id: 'shop_denim', kind: 'outfit', name: 'Denim jacket', price: 3000, icon: '👕' },
+    { id: 'books', kind: 'decor', name: 'Bookshelf', price: 3500, icon: '📚', at: [5, 1], tile: 'shelf', line: 'Your books. One is called “Money Math Is Fun”. It is.' },
+    { id: 'fish', kind: 'decor', name: 'Fish tank', price: 5000, icon: '🐟', at: [7, 5], draw: 'fish', line: 'Your fish. You named it Net Pay.' }
+  ];
+  function shopItem(id) { for (var i = 0; i < SHOP.length; i++) if (SHOP[i].id === id) return SHOP[i]; return null; }
+  /* Home (9 × 7) cells: the closet, poster and bookshelf hang on the back wall; the plant and lamp flank the table; the fish tank fills
+     the bottom-right corner. The two side columns and the top row are the only ways around the room, so nothing else may stand there
+     (the navigation test checks it with family at (2,4) and the goal at (6,4)). */
+  function placeDecor() { // your closet, and what you bought, in your home (in every mission)
+    objects.wardrobe = { map: 'home', x: 4, y: 1, draw: 'wardrobe', label: 'Your closet', noRug: true };
+    SHOP.forEach(function (it) {
+      if (!it.at || !P || P.owned.indexOf(it.id) < 0) return;
+      objects['decor_' + it.id] = { map: 'home', x: it.at[0], y: it.at[1], tile: it.tile === 'plant' ? Wd.K.plant : it.tile === 'shelf' ? Wd.K.shelf[0] : null, draw: it.draw, label: it.name, noRug: true };
+    });
+    if (map && map.id === 'home') T.refreshMap();
+  }
+  function openShop() {
+    return panel({ title: 'Pat’s market stall', name: 'shop', wide: true, sub: 'Things for your home, and clothes for your closet. You earn money by helping people around town.', render: function (body, done) {
+      function draw(msg) {
+        body.innerHTML = '<p>Your wallet: <b>' + money(P.wallet) + '</b></p><div class="ct-items">' + SHOP.map(function (it) {
+          var own = P.owned.indexOf(it.id) >= 0, can = P.wallet >= it.price;
+          return '<div class="ct-item ct-shopitem"><span class="ct-iic" aria-hidden="true">' + it.icon + '</span><span><b>' + esc(it.name) + '</b><span class="ct-small">' + (it.kind === 'decor' ? 'For your home' : 'For your closet') + ' · ' + money(it.price) + '</span></span>' +
+            (own ? '<span class="ct-owned">Yours ✓</span>' : '<button class="ct-btn" type="button" data-buy="' + it.id + '"' + (can ? '' : ' disabled') + ' aria-label="Buy ' + esc(it.name) + ' for ' + money(it.price) + '">Buy</button>') + '</div>';
+        }).join('') + '</div>' + (msg ? '<p class="ct-fb yes" role="status">' + esc(msg) + '</p>' : '') +
+          '<div class="ct-row ct-actions"><button class="ct-btn primary" type="button" id="shDone">Done</button></div>';
+        Array.prototype.forEach.call(body.querySelectorAll('[data-buy]'), function (b) { b.addEventListener('click', function () { var it = shopItem(b.dataset.buy); if (buy(it.id)) draw(it.kind === 'decor' ? it.name + ': it is in your home now.' : it.name + ': it is in your closet at home.'); }); });
+        $('#shDone', body).addEventListener('click', function () { done(); });
+      }
+      draw('');
+    } });
+  }
+  function buy(id) {
+    var it = shopItem(id);
+    if (!it || P.owned.indexOf(id) >= 0 || P.wallet < it.price) return false;
+    P.wallet -= it.price; P.owned.push(id); sfx('item'); placeDecor(); hud(); save();
+    return true;
+  }
+  function openCloset() {
+    var keys = ['work', 'none'].concat(P.closet, P.owned.filter(function (k) { var it = shopItem(k); return it && it.kind === 'outfit'; })).filter(function (k, i, a) { return a.indexOf(k) === i && (k === 'work' || A.OUTFITS[k]); });
+    return panel({ title: 'Your closet', name: 'closet', render: function (body, done) {
+      function draw() {
+        var c = document.createElement('canvas'); c.width = 192; c.height = 48; var x = c.getContext('2d'); x.imageSmoothingEnabled = false; x.drawImage(A.sprite(myLook()), 0, 0, 64, 16, 0, 0, 192, 48);
+        var job = M.outfit ? A.OUTFITS[M.outfit(G.S) || 'none'] : null;
+        body.innerHTML = '<div class="ct-avatar"><img alt="You, in what you are wearing" src="' + c.toDataURL() + '"></div><div class="ct-row ct-wrap" role="group" aria-label="What to wear" style="margin-top:8px">' + keys.map(function (k) {
+          var label = k === 'work' ? 'Work clothes' + (job && job !== A.OUTFITS.none ? ' (' + job.label + ')' : '') : k === 'none' ? 'My own clothes' : A.OUTFITS[k].label;
+          return '<button class="ct-btn" type="button" data-wear="' + k + '" aria-pressed="' + ((P.wear || 'work') === k) + '">' + esc(label) + '</button>'; }).join('') + '</div>' +
+          (keys.length <= 2 ? '<p class="ct-small">Earn money by helping people, then buy clothes at Pat’s stall in Town Square. Finishing a mission adds its outfit too.</p>' : '') +
+          '<div class="ct-row ct-actions"><button class="ct-btn primary" type="button" id="clDone">Done</button></div>';
+        Array.prototype.forEach.call(body.querySelectorAll('[data-wear]'), function (b) { b.addEventListener('click', function () { P.wear = b.dataset.wear; save(); kick(); draw(); $('[data-wear="' + P.wear + '"]', body).focus(); }); });
+        $('#clDone', body).addEventListener('click', function () { done(); });
+      }
+      draw();
+    } });
+  }
+
+  /* ── Take your town home: the profile and every CEFL Town save in this browser, as a code to copy or a file ── */
+  var CODE_RE = /^CEFLTOWN1([RZ])\.([A-Za-z0-9+/=]+)\.([0-9a-z]+)$/;
+  function b64(bytes) { var s = '', i; for (i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(s); }
+  function unb64(t) { var s = atob(t), a = new Uint8Array(s.length), i; for (i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; }
+  async function pipe(bytes, stream) { return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer()); }
+  function allSaves() {
+    var out = {}, i, k;
+    if (debug && !debugSave) { for (k in mem) out[k] = JSON.parse(mem[k]); }
+    else try { for (i = 0; i < localStorage.length; i++) { k = localStorage.key(i); if (/^cefl-town-/.test(k)) out[k] = JSON.parse(localStorage.getItem(k)); } } catch (e) {}
+    return out;
+  }
+  async function encodeSave() {
+    save();
+    var data = allSaves(); data[PROFILE_KEY] = P; data[saveKey()] = G;
+    var json = JSON.stringify({ v: 1, t: new Date().toISOString(), name: P.name, data: data }), bytes = new TextEncoder().encode(json), tag = 'R';
+    if (window.CompressionStream) { try { bytes = await pipe(bytes, new CompressionStream('gzip')); tag = 'Z'; } catch (e) { bytes = new TextEncoder().encode(json); } }
+    var body = b64(bytes);
+    return 'CEFLTOWN1' + tag + '.' + body + '.' + hashStr(body).toString(36);
+  }
+  async function decodeSave(code) {
+    var m = CODE_RE.exec(String(code || '').replace(/\s+/g, '')), o;
+    if (!m) throw new Error('That does not look like a CEFL Town save code. It starts with CEFLTOWN1.');
+    if (hashStr(m[2]).toString(36) !== m[3]) throw new Error('Part of the code is missing or changed. Copy the whole code again.');
+    var bytes = unb64(m[2]);
+    if (m[1] === 'Z') { if (!window.DecompressionStream) throw new Error('This browser cannot open that code. Try Chrome.'); bytes = await pipe(bytes, new DecompressionStream('gzip')); }
+    try { o = JSON.parse(new TextDecoder().decode(bytes)); } catch (e) { throw new Error('That code could not be read. Copy the whole code again.'); }
+    if (!o || o.v !== 1 || !o.data) throw new Error('That code could not be read.');
+    var keep = {}, k, g, id;
+    for (k in o.data) {
+      g = o.data[k];
+      if (k === PROFILE_KEY) { if (validProfile(g)) keep[k] = g; continue; }
+      id = /^cefl-town-(.+)-v1$/.exec(k);
+      if (id && (k === saveKey() ? validGame(g) : validGameShape(g))) keep[k] = g;
+    }
+    if (!keep[PROFILE_KEY]) throw new Error('That code has no character in it.');
+    o.data = keep;
+    return o;
+  }
+  function describeSave(o) {
+    var p = o.data[PROFILE_KEY], rows = [], k, id, g, mm;
+    for (k in o.data) {
+      id = /^cefl-town-(.+)-v1$/.exec(k); if (!id || k === PROFILE_KEY) continue;
+      g = o.data[k]; mm = missions[id[1]];
+      rows.push('<li>' + esc(mm ? mm.title : id[1]) + ': ' + (mm && g.ch >= mm.chapters.length ? 'mission complete' : 'Chapter ' + (g.ch + 1)) + '</li>');
+    }
+    return '<p><b>' + esc(p.name) + '</b>, saved ' + esc(new Date(o.t).toLocaleString()) + '. Wallet: ' + money(p.wallet || 0) + '.</p><ul>' + (rows.join('') || '<li>No missions started yet.</li>') + '</ul>';
+  }
+  function applyImport(o) {
+    for (var k in o.data) storeJSON(k, o.data[k]);
+    if (!debug) location.reload(); else T.start(M.id);
+  }
+  function openTakeHome() {
+    openModal('Take your town home', '<p>Your game is saved in this browser only. To keep playing on another computer:</p>' +
+      '<ol class="ct-steps"><li>Here: <b>Make my save code</b>, then copy it (or download it as a file).</li><li>Paste it where you can find it later, like a Google Doc or an email to yourself.</li><li>On the other computer, open this game, then Menu → Take your town home → <b>Load this code</b>.</li></ol>' +
+      '<h3>Save</h3><div class="ct-row ct-wrap"><button class="ct-btn primary" type="button" id="thMake">Make my save code</button><button class="ct-btn" type="button" id="thFile">Download it as a file</button></div><div id="thOut"></div>' +
+      '<h3>Load</h3><label class="ct-lab" for="thIn">Paste a save code</label><textarea class="ct-inp ct-code" id="thIn" rows="3" spellcheck="false" autocomplete="off"></textarea>' +
+      '<div class="ct-row ct-wrap"><button class="ct-btn" type="button" id="thLoad">Load this code</button><button class="ct-btn" type="button" id="thPickBtn">Load a save file</button><input type="file" id="thPick" accept=".txt,text/plain" hidden></div><div id="thMsg" aria-live="polite"></div>',
+      function (box) {
+        box.classList.add('wide');
+        $('#thMake', box).addEventListener('click', async function () {
+          var code = await encodeSave(), out = $('#thOut', box);
+          out.innerHTML = '<label class="ct-lab" for="thCode">Your save code (' + code.length.toLocaleString('en-CA') + ' characters: copy all of it)</label><textarea class="ct-inp ct-code" id="thCode" rows="4" readonly spellcheck="false"></textarea><div class="ct-row"><button class="ct-btn" type="button" id="thCopy">Copy</button><span class="ct-small" id="thCopied" role="status"></span></div>';
+          var ta = $('#thCode', out); ta.value = code; ta.focus(); ta.select();
+          $('#thCopy', out).addEventListener('click', function () {
+            function ok() { $('#thCopied', out).textContent = 'Copied! Now paste it into a doc or an email.'; }
+            function fallback() { ta.select(); try { document.execCommand('copy'); ok(); } catch (e) { $('#thCopied', out).textContent = 'Select the code and copy it (Ctrl + C).'; } }
+            if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(ok, fallback); else fallback();
+          });
+        });
+        $('#thFile', box).addEventListener('click', async function () {
+          var code = await encodeSave(), a = document.createElement('a'), url = URL.createObjectURL(new Blob([code], { type: 'text/plain' }));
+          a.href = url; a.download = 'cefl-town-save-' + (P.name || 'me').replace(/[^A-Za-z0-9]+/g, '') + '-' + today() + '.txt'; document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+        });
+        async function load(text) {
+          var msg = $('#thMsg', box);
+          try {
+            var o = await decodeSave(text);
+            msg.innerHTML = '<div class="ct-note"><p><b>This save code has:</b></p>' + describeSave(o) + '<p>Loading it replaces the CEFL Town game on this browser.</p><div class="ct-row ct-wrap"><button class="ct-btn primary" type="button" id="thYes">Replace my game with this one</button></div></div>';
+            $('#thYes', msg).addEventListener('click', function () { applyImport(o); });
+            $('#thYes', msg).focus();
+          } catch (e) { msg.innerHTML = '<p class="ct-fb no">' + esc(e.message) + '</p>'; }
+        }
+        $('#thLoad', box).addEventListener('click', function () { load($('#thIn', box).value); });
+        $('#thPickBtn', box).addEventListener('click', function () { $('#thPick', box).click(); });
+        $('#thPick', box).addEventListener('change', function (e) { var f = e.target.files[0]; if (!f) return; var r = new FileReader(); r.onload = function () { load(r.result); }; r.readAsText(f); });
+      });
+  }
+  function reportTown() {
+    if (!M.helpers && !M.mail) return '';
+    var lg = (G.town && G.town.log) || [], nh = 0, nm = 0, first = 0, earned = 0;
+    if (!lg.length) return '<h3>Between lessons</h3><p>Nothing yet. People around town ask for help once a chapter is done, and Town Mail comes once a day.</p>';
+    lg.forEach(function (l) { if (l.kind === 'help') nh++; else nm++; if (l.grade === 'first') first++; earned += l.amt; });
+    return '<h3>Between lessons</h3><p class="ct-small">People helped: ' + nh + '. Letters answered: ' + nm + '. Right on the first try: ' + first + ' of ' + lg.length + '. Earned: ' + money(earned) + '.</p>' +
+      '<div class="ct-tablewrap"><table class="ct-rep"><thead><tr><th>Day</th><th>Task</th><th>For</th><th>Result</th><th>Pay</th></tr></thead><tbody>' +
+      lg.slice().reverse().map(function (l) { return '<tr><td>' + esc(l.d) + '</td><td>' + esc(l.label) + '</td><td>' + esc(l.from) + '</td><td>' + (l.grade === 'first' ? '✓ first try' : l.grade === 'second' ? 'second try' : 'shown or 3+ tries') + '</td><td class="ct-n">' + money(l.amt) + '</td></tr>'; }).join('') +
+      '</tbody></table></div>';
+  }
+
   /* ── The API a mission script uses ── */
   var api = {
     get S() { return G.S; }, get mode() { return G.mode; }, get ch() { return G.ch; }, get profile() { return P; },
     say: say, ask: ask, choose: choose, panel: panel, toast: toast, record: record, esc: esc,
+    calc: calc, money: money, parseMoney: parseMoney, today: today, chDone: chDone,
     quest: function (text, id) { setQuest(text, id); return new Promise(function (res) { waiters = waiters.filter(function (w) { return w.id !== id; }); waiters.push({ id: id, resolve: function () { res(); } }); }); },
     clearQuest: function () { setQuest(null, null); },
     questText: function (text) { if (quest) { quest.text = text; var q = $('#ctQuest .ct-qt'); if (q) q.textContent = text; } },
@@ -757,7 +1113,7 @@
     unplace: function (id) { var o = objects[id]; delete objects[id]; if (o && map && map.id === o.map) T.refreshMap(); },
     hud: function () { hud(); kick(); },
     give: function (name, icon) { sfx('item'); toast('Added to your Bag: ' + name); hud(); },
-    outfit: function () { kick(); hud(); },
+    outfit: function () { if (P) P.wear = 'work'; kick(); hud(); }, // a new work outfit: put it on
     teleport: function (mapId, x, y, dir) { enter(mapId, x, y, dir); },
     where: function () { return { map: map.id, x: me.x, y: me.y }; },
     profileAdd: function (kind, value) { if (kind === 'closet' && P.closet.indexOf(value) < 0) P.closet.push(value); if (kind === 'plan') P.plan.push(value); if (kind === 'met') P.met[value] = (P.met[value] || 0) + 1; if (kind === 'finished' && P.finished.indexOf(value) < 0) P.finished.push(value); save(); },
@@ -775,7 +1131,8 @@
     try { await A.load(root.dataset.art || '../../vendor/kenney-rpg-urban/tilemap_packed.png'); }
     catch (e) { stage.innerHTML = '<p class="ct-err">' + esc(e.message) + '</p>'; return; }
     resize();
-    P = loadJSON(PROFILE_KEY); if (!validProfile(P)) P = null;
+    P = loadJSON(PROFILE_KEY); if (!validProfile(P)) P = null; else fillProfile(P);
+    waiters = []; objects = {}; maps = {}; bubbles = null;
     G = fresh ? null : loadJSON(saveKey()); if (!validGame(G)) G = null;
     if (!G) G = { v: 1, mode: 'gentle', map: 'town', x: 0, y: 0, dir: 'down', ch: 0, si: 0, S: M.init(api), done: {}, tut: false, snap: null };
     G.S.ans = G.S.ans || {};
@@ -787,9 +1144,11 @@
     hud(); setQuest(null, null);
     if (debug) exposeDebug();
     if (!P) await avatarEditor(true);
+    placeDecor(); hud();
     if (!G.tut && !debug) coachStart();
     cv.focus({ preventScroll: true });
     runner = run();
+    checkMail();
   };
 
   /* ── Test hook: ?debug=1 ── */
@@ -801,7 +1160,12 @@
       fire: fire, interact: function (id) { if (!fire(id)) talk(id); }, teleport: function (m, x, y) { enter(m, x, y); },
       walkTo: walkPath, bfs: bfs, map: function () { return map; }, getMap: getMap, people: people, locate: locate, questTarget: questTarget,
       tap: tapTile, step: function (d) { tryMove(d); kick(); }, tickNow: function (ms) { var n = 0; do { step(ms || 1000); n++; } while ((me.moving || path.length) && n < 500); draw(performance.now()); }, autoWalk: autoWalkQuest, openBag: openBag, openMenu: openMenu, openReport: openReport, closeModal: closeModal,
-      setProfile: function (p) { P = p; save(); }, coachStart: coachStart, coach: function () { return coach; }, coachNext: coachNext, coachEnd: coachEnd
+      setProfile: function (p) { P = fillProfile(p); save(); }, coachStart: coachStart, coach: function () { return coach; }, coachNext: coachNext, coachEnd: coachEnd,
+      // between lessons
+      town: function () { return town(); }, today: today, setDayShift: function (n) { dayShift = n; }, openHelps: openHelps, helpFor: helpFor, gossipFor: gossipFor, bubbles: townBubbles,
+      runHelp: function (id) { var hs = openHelps().filter(function (q) { return q.id === id; }); return hs.length ? runHelp(hs[0]) : Promise.resolve('closed'); },
+      checkMail: checkMail, readMail: readMail, openShop: openShop, buy: buy, openCloset: openCloset, placeDecor: placeDecor, objects: function () { return objects; },
+      gateStart: function () { return fire('gate:start'); }, encodeSave: encodeSave, decodeSave: decodeSave, applyImport: applyImport, openTakeHome: openTakeHome, mem: function () { return mem; }, SHOP: SHOP
     };
   }
 })();

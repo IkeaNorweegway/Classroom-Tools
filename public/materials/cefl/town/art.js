@@ -58,7 +58,12 @@
     lanyard:   { label: 'Phone store lanyard', shirt: '#2e9c9c', layer: 'lanyard', layerCol: '#e2b13c' },
     blazer:    { label: 'Office blazer', shirt: '#2f3a5c', layer: 'blazer', layerCol: '#f2f0e8' },
     hardhat:   { label: 'Hard hat and vest', shirt: '#f08a2c', layer: 'hardhat', layerCol: '#c9c9cf' },
-    nametag:   { label: 'Store name tag', shirt: '#8a2f45', layer: 'nametag', layerCol: '#f2f0e8' }
+    nametag:   { label: 'Store name tag', shirt: '#8a2f45', layer: 'nametag', layerCol: '#f2f0e8' },
+    // bought at Pat's market stall (engine.js SHOP); a cap keeps your own shirt
+    shop_cap:    { label: 'Red ball cap', layer: 'cap', layerCol: '#b42318' },
+    shop_hoodie: { label: 'Grey hoodie', shirt: '#8d8ca6', layer: 'collar', layerCol: '#5c5b70' },
+    shop_jersey: { label: 'Team jersey', shirt: '#e2b13c', layer: 'stripe', layerCol: '#2f3a5c' },
+    shop_denim:  { label: 'Denim jacket', shirt: '#4a6a9a', layer: 'blazer', layerCol: '#e9e4d8' }
   };
 
   var cache = {};

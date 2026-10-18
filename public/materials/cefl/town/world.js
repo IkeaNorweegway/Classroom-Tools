@@ -230,7 +230,8 @@
     avery:   { name: 'Avery', role: 'Neighbour', map: 'town', x: 20, y: 12, dir: 'down', look: { base: 1, skin: 's1', hair: 'ginger', shirt: 'red', pants: '#3d4a6b' } },
     dev:     { name: 'Dev', role: 'Neighbour', map: 'town', x: 33, y: 30, dir: 'down', look: { base: 0, skin: 's4', hair: 'black', shirt: 'green', pants: '#3d4a6b' } },
     rosa:    { name: 'Rosa', role: 'Neighbour', map: 'town', x: 52, y: 39, dir: 'down', look: { base: 3, skin: 's3', hair: 'brown', shirt: 'orange', pants: '#3d4a6b' } },
-    worker:  { name: 'Mo', role: 'Builder', map: 'town', x: 15, y: 45, dir: 'left', look: { base: 5 } }
+    worker:  { name: 'Mo', role: 'Builder', map: 'town', x: 15, y: 45, dir: 'left', look: { base: 5 } },
+    vendor:  { name: 'Pat', role: 'Market stall', map: 'town', x: 43, y: 30, dir: 'down', look: { base: 1, skin: 's4', hair: 'auburn', shirt: 'yellow', pants: '#3d4a6b' } } // the engine runs Pat's shop
   };
 
   T.world = {
