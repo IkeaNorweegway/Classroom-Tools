@@ -23,7 +23,7 @@ The research is clear that implementation quality decides whether PBL works
 | **Student materials** | Mini-workbook `cefl7-income-tax-workbook-v1` (4 moments) · project brief `cefl7-income-tax-project-v1` |
 | **Teams** | 4–5 students, mixed, set by you. Keep teams for the whole unit. |
 | **Audience** | A Grade 6 class, Session 7 (about 30 minutes) |
-| **Game** | *Payday*, on the unit page, optional: one 10–15 minute chapter after each of Sessions 1–4. See "The Payday game" below. |
+| **Game** | *Payday* (CEFL Town), on the unit page, optional: one 10–15 minute chapter after each of Sessions 1–4. See "The Payday game" below. |
 | **Assessment** | Single-point rubric ("How you will be marked") on the report-card scale (4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet), scored on Steps 1–3 and on the final product. No unit test. |
 
 ::: teacher
@@ -141,21 +141,23 @@ Can every team member say, in their own words, **where CPP goes and how it comes
 Read the authenticity answers. If many students say "Sort of" or "No," note what they suggest; it is the best guide to improving this project next year.
 :::
 
-## The Payday game
+## The Payday game (CEFL Town)
 
-A companion game on the unit page. Each student plays a made-up worker (Avery 17, Dev 19 or Rosa 24) through 8 paycheques: plan how much goes to a savings goal, work two weeks, fill in the pay stub with the same Pay Card, deposit. It uses the project's 2026 rates exactly.
+A companion game on the unit page. It is the first mission in **CEFL Town**, one top-down town that every CEFL unit will share. Each student makes a character once (style, skin tone, hair, shirt, first name). Ms. Okafor at the Job Centre then asks them to play "future you": 17 living at home, 19 sharing an apartment, or 24 paying off a student loan. They walk between buildings to do each task. The game uses the project's 2026 Pay Card exactly.
 
-| Chapter | Play after | What it practises | Then, in the project |
+| Chapter | Play after | What happens in town | Then, in the project |
 |---|---|---|---|
-| 1 · Pick a job | Session 1 (Moment 1) | Gross pay for wage, salary, commission, tips. The first paycheque is filled in for them, and most students bounce a payment because they planned on gross pay. | Step 1 |
-| 2 · The pay stub | Session 2 (Moment 2) | Students fill in every stub line. A bounced payment now counts. | Step 2. **Check my project** marks their own stub ✓/✗ without giving answers. |
-| 3 · Where it goes | Session 3 (Moment 3) | Who EI, CPP and income tax help; the tax-free amounts; extra hours never lower take-home pay. | Step 3 |
-| 4 · Your call | Session 4 (Moment 4) | A tax dial and a claim, reason and trade-off. It is not marked right or wrong. | Step 4, Path B draft |
+| 1 · Pick a job | Session 1 (Moment 1) | Work out gross pay for three postings on the Job Centre board and take one; the outfit changes. Plan the first payday at the kitchen table. At the bank, the stub fills itself in. Most students bounce a payment because they planned on gross pay. | Step 1 |
+| 2 · The pay stub | Session 2 (Moment 2) | Type every stub line at the bank counter. Bounces arrive as letters at home, and from now on they count. | Step 2. The **Project Checker** in the Bag marks their own stub ✓/✗ without giving answers. |
+| 3 · Where it goes | Session 3 (Moment 3) | The boss now prepares the stubs: students **check and sign, or dispute** (one stub has a payroll mistake). Visits to Jas (EI), Grandpa (CPP) and the hospital (income tax) fill the Deduction Map. Extra-hours and tax-free-amount questions. | Step 3. The Deduction Map is a ready organizer. |
+| 4 · Your call | Session 4 (Moment 4) | A Town Hall meeting: a tax dial, then a claim, reason and trade-off. It is not marked right or wrong. Two more paycheques, then the goal (or a near miss) at home. | Step 4, Path B draft |
 
-- **When:** sessions are full, so set each chapter as homework, early-finisher work, or a device day before the next session. Students must play the chapters in order; the game saves in the browser on that device.
-- **Gentle and Real:** Gentle gives hints and a plan check, and bounces only cost a fee. Real has no hints, and two bounces from Chapter 2 on end the game (the student replays the chapter).
-- **Report:** the student's **Report** button lists every paycheque, first-try answers (stub lines grouped per paycheque), what they typed, and Check-my-project attempts. It prints. Use first-try stub lines as a Knowledge look-for before Step 2's checkpoint.
-- **Simplifications** to tell students if asked: bills are counted every two weeks; CPP starts the paycheque after the 18th birthday; cash tips are not on the stub.
+- **When:** sessions are full, so set each chapter as homework, early-finisher work, or a device day before the next session. Chapters play in order. The game and the character save in that browser. Students who switch devices start over.
+- **Controls:** arrow keys or tap to walk, Enter or tap to talk. The gold goal line at the top walks the student there if tapped, which suits students who find moving around hard.
+- **Gentle and Real (Menu):** Gentle gives hints, a plan check, and one warning before signing a stub with a mistake; bounces only cost a fee. Real has none of these, and two bounces from Chapter 2 on end the chapter (it replays).
+- **Signing a wrong stub** costs the student that money ($5 to about $110). In Real mode it can tip a tight plan into a bounce. That is the point: check before you sign.
+- **Report (Menu → Report for my teacher):** every paycheque with how each stub was handled (shown, typed, mistake caught, signed a mistake), first-try answers (stub lines grouped by paycheque), what they typed, the Deduction Map, and Project Checker attempts. It prints. Use first-try stub lines as a Knowledge look-for before Step 2's checkpoint.
+- **Simplifications** to tell students if asked: bills are counted every two weeks; CPP starts the paycheque after the 18th birthday; cash tips are not on the stub; a boss's mistake is one wrong line.
 
 ## Sample products (show all three in Session 4)
 

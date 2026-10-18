@@ -17,11 +17,52 @@ All are in `public/materials/`. They have no markdown source: the HTML file is t
 | `sci7-seed-to-seed-game-v2.html` | 7-2-02 to 7-2-05 | Real time. Grow one strawberry on glucose, then choose an offspring. 5 generations, about 12 minutes each. | `sci7-seed-to-seed-v2` (whole game) | `?debug=1` |
 | `sci7-flower-field-game-v2.html` | 7-2-04 | Turn-based. Set flower parts and surroundings, grow a season, read where offspring were lost. Four levels with stars, 7 to 10 seasons each. | `flowerfield-v2` (stars, answers, level in progress) | `?debug=1` |
 | `sci7-clone-field-game-v2.html` | 7-2-04 | Same shell as Flower Field, with runners, tubers, and cuttings. | `clonefield-v2` (same) | `?debug=1` |
-| `cefl/cefl7-income-tax-game-v1.html` (*Payday*) | 7-IT | Turn-based. Plan 8 paycheques for one worker: set the goal-jar transfer, work two weeks, fill in the pay stub, deposit. 4 chapters of 2 paycheques, 10–15 minutes each. | `cefl7-payday-v1` (whole game) | `?debug=1`; model between `MODEL START`/`MODEL END` runs in Node |
+| `cefl/cefl7-income-tax-game-v2.html` (*Payday*, CEFL Town mission) | 7-IT | Walk a top-down town. 4 chapters, 2 paycheques each: plan the jar at home, work a shift, build the stub at the bank or check the boss's stub and sign or dispute it, deposit. 10–15 minutes a chapter. | `cefl-town-7-income-tax-v1` + shared `cefl-town-profile-v1` | `?debug=1` (`window.CEFLTownDebug`); model block runs in Node |
+| `cefl/cefl7-income-tax-game-v1.html` | 7-IT | The first, panel-based Payday. Kept for old links; the site links v2. | `cefl7-payday-v1` | `?debug=1` |
 
 The v1 file of each game is kept so old links work. Nothing links to them.
 
-**CEFL project games** (pilot: *Payday*, built 2026-10-17; the other 14 projects wait on the pilot's feedback). One game per project, a **companion**: a made-up worker meets the same decisions as the project, one chapter after each of Steps 1–4, and each chapter ends by sending the student to do that step for real. Solo play. The game uses the project's own data card (Payday copies the Pay Card exactly) and adds a **Check my project** panel that marks the student's own project numbers ✓/✗ without showing answers. Never let the game do the project's work for the student. Chapters run in order and the run carries over; each chapter start is a snapshot the student can replay. Calibrate goals with scripted players in Node (careful player always wins, gross-pay / do-nothing / too-cautious players never do), as in Payday.
+---
+
+## CEFL Town (all CEFL missions)
+
+**One shared town for every CEFL unit in Grades 7–9** (decided 2026-10-17). Each unit is a **mission** in the same top-down town, in the style of early Pokémon or the original Zelda. The student walks between buildings, townspeople give the tasks, and the student does or checks real work. Every mission is a **companion** to its project: one chapter after each of Steps 1–4, and each chapter ends by sending the student to do that step for real. Never let the game do the project's work for the student. Built so far: Grade 7 Income and Tax (*Payday*). Planned missions for the other 14 units are in `_status.md`.
+
+**Exception to build rule 1.** A CEFL mission is not one HTML file. Fifteen copies of an engine and a map could not be kept in sync, so CEFL Town shares its files:
+
+| File | What it holds |
+|---|---|
+| `public/vendor/kenney-rpg-urban/` | Kenney *RPG Urban Pack* 1.0 (CC0): `tilemap_packed.png` (27 × 18 tiles of 16 px) and `License.txt`. All town, character and furniture art. |
+| `public/materials/cefl/town/art.js` | Draws tiles; builds characters by recolouring the pack's 6 bases (skin, hair, shirt, trousers) and adding job outfits (apron, hi-vis, hard hat and more) |
+| `town/world.js` | The town map (56 × 40), the 26 buildings with their doors, room templates, and the base townspeople. No DOM. |
+| `town/engine.js` | Movement, camera, doors, dialogue, quests, panels, HUD, Bag, Menu, saves, avatar editor, tutorial, report, the test hook |
+| `town/town.css` | Shared styles (CEFL ochre) |
+| `town/missions/<grade>-<unit>.js` | One mission: its model (no DOM), chapters, panels, items, report |
+| `cefl[G]-[unit]-game-v[N].html` | A thin entry page the site links: `<div id="town" data-mission="…">` and the script tags |
+
+**The character** is the student's own avatar (style, skin tone, hair, shirt and first name only), saved in `cefl-town-profile-v1` and shared by every mission on that browser. Money missions use "future you" situations. Avery, Dev and Rosa are townspeople. The town remembers you: finishing a mission adds its outfit to the closet and a page to the **My Plan wall** at home. This mirrors the course's My Plan portfolio.
+
+**The work verbs** a mission mixes:
+1. **Calculate at a counter:** typed amounts, checked to ±2¢. A wrong try gets a hint in Gentle; the answer shows after 2 tries in Real or 3 in Gentle.
+2. **Sign or dispute:** a townsperson's document with one possible root mistake. The student taps the wrong line and disputes it, or signs. Signing a wrong document costs something in the model. Flagging a line that only follows from the mistake gets "look earlier". Gentle warns once before a wrong signature.
+3. **Inspect a scene:** tap the hotspots (planned for 7 Experiences safety and 9 Labour Market résumés).
+4. **Interview:** visit townspeople to fill an item (Payday's Deduction Map).
+5. **Run it:** time passes on a calendar strip while the model runs.
+
+**Adding a mission:**
+- Write `town/missions/<slug>.js`, calling `CEFLTown.mission({ id, title, iCan, chapters, init, validate, chapterSteps, people, doorOpen, talk, hud, items, report, … })`.
+- Each chapter is a list of steps. The save holds (chapter, step), so a step must be safe to run again from its start. Guard model changes, as Payday's bank step does with "never pay twice".
+- A step awaits `api.quest(text, id)` (resolves when the student talks to that person or object, or enters `door:<building>`), then `api.say` / `api.ask` / `api.choose` / `api.panel`.
+- Add the thin entry page and one line to the `games` map in `src/data/cefl.ts`.
+- Use the existing buildings. New ones go into `world.js` for every mission.
+
+**Testing a mission** (scripts from the Payday build are described in `_status.md`):
+- **Node:** run the model block (careful player always wins; gross-pay, do-nothing and too-cautious players never do; answer tables clean).
+- **Scripted player in headless Chrome:** drives `CEFLTownDebug` through every situation, job and mode, and a wrong-first run.
+- **Navigation test:** BFS from the spawn point to every door and every person in every room; door in and out; tap-walk; quest auto-walk; idle frames = 0.
+- **Resume and profile:** `?debug=1&save=1` keeps saving on for reload and profile carry-over tests.
+- **Serve over HTTP:** `python3 -m http.server` in `public/`. Under `file://` the recolouring cannot read the sheet's pixels.
+- **Headless walking:** in headless Chrome, animation frames barely advance with virtual time. Use `CEFLTownDebug.tickNow()` to finish a walk, rather than waiting on frames.
 
 **Seed to Seed v2 is the reference build.** Copy its patterns before inventing new ones.
 
