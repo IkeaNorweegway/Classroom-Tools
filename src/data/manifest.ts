@@ -64,6 +64,17 @@ export function homeSheets(prefix: string, unit: string, sheets: [string, string
   }));
 }
 
+/** The "Get ready" group, listed first in a unit's extras: its prereq
+ *  practice page (public/materials/…-prereq-practice-v1.html). */
+export const getReady = (doc: string) => ({
+  heading: 'Get ready',
+  items: [{ label: 'Prereq Practice (the skills you need first)', doc, type: 'interactive' as MaterialType }],
+});
+
+/** A unit's prereq practice document, when it has one. */
+export const prereqPractice = (u: CourseUnit) =>
+  u.extras.flatMap((g) => g.items).find((d) => d.doc.includes('-prereq-practice-'));
+
 /** Every document a unit's pages link to, for the viewers' route lists. */
 export function unitDocs(u: CourseUnit): string[] {
   const docs = [

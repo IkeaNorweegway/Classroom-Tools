@@ -1,0 +1,284 @@
+/* Prereq practice pages (*-prereq-practice-v1.html). The page sets
+   data-course on <body> to pick the course accent, as on the site. */
+
+@font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+@font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+
+:root {
+  --accent: 29 116 134; --accent-ink: 23 93 108; --accent-soft: 232 242 244;
+  --ink: #1f1d1a; --muted: #5f5a52; --line: #e3ded4; --paper: #fff; --page: #f6f4ef;
+  --good: #1f7a4d; --good-soft: #e6f4ec; --bad: #b42323; --bad-soft: #fbeaea;
+}
+body[data-course='sci6']  { --accent: 29 116 134;  --accent-ink: 23 93 108;  --accent-soft: 232 242 244; }
+body[data-course='sci7']  { --accent: 46 125 85;   --accent-ink: 35 99 63;   --accent-soft: 233 243 237; }
+body[data-course='math9'] { --accent: 63 91 176;   --accent-ink: 51 73 143;  --accent-soft: 236 239 249; }
+body[data-course='soc8']  { --accent: 138 74 120;  --accent-ink: 111 58 96;  --accent-soft: 244 234 241; }
+body[data-course='soc9']  { --accent: 166 69 47;   --accent-ink: 134 54 31;  --accent-soft: 247 235 231; }
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--page); color: var(--ink);
+  font-family: 'Atkinson Hyperlegible Next', system-ui, sans-serif; font-size: 17px; line-height: 1.55;
+}
+#practice { max-width: 680px; margin: 0 auto; padding: 32px 16px 64px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:disabled { cursor: default; }
+:focus-visible { outline: 3px solid rgb(var(--accent) / 0.45); outline-offset: 2px; }
+
+/* ─── Header ─── */
+.pp-head { margin-bottom: 24px; }
+.pp-eyebrow { margin: 0 0 6px; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgb(var(--accent-ink)); }
+.pp-head h1 { margin: 0 0 8px; font-family: 'Fraunces', Georgia, serif; font-weight: 600; font-size: clamp(28px, 6vw, 36px); line-height: 1.15; letter-spacing: -0.01em; }
+.pp-lead { margin: 0; color: var(--muted); }
+.pp-chip { margin-top: 14px; padding: 4px 14px; border: 1px solid rgb(var(--accent) / 0.35); border-radius: 999px; background: rgb(var(--accent-soft)); color: rgb(var(--accent-ink)); font-size: 14px; font-weight: 600; }
+.pp-chip[aria-pressed='false'] { background: var(--paper); color: var(--muted); border-color: var(--line); }
+
+/* ─── Cards and buttons ─── */
+.pp-card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin-bottom: 16px; }
+.pp-card h2 { margin: 0 0 12px; font-size: 15px; font-weight: 700; color: var(--muted); }
+.pp-center { text-align: center; }
+.pp-btn { min-height: 44px; padding: 10px 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); font-weight: 600; transition: background-color 0.15s, border-color 0.15s; }
+.pp-btn:hover:not(:disabled) { border-color: rgb(var(--accent) / 0.5); }
+.pp-primary { background: rgb(var(--accent)); border-color: rgb(var(--accent)); color: #fff; }
+.pp-primary:hover:not(:disabled) { background: rgb(var(--accent-ink)); }
+.pp-primary:disabled { opacity: 0.5; }
+.pp-link { padding: 4px 0; border: 0; background: none; color: rgb(var(--accent-ink)); font-size: 15px; font-weight: 600; }
+.pp-link:hover { text-decoration: underline; }
+.pp-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.pp-actions-center { justify-content: center; }
+
+/* ─── Skill list ─── */
+.pp-skills { list-style: none; margin: 0; padding: 0; }
+.pp-skills li { display: flex; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); }
+.pp-skills li:first-child { border-top: 0; }
+.pp-dot { flex: none; font-size: 13px; }
+.pp-skill-name { flex: 1; font-weight: 600; }
+.pp-skill-status { flex: none; font-size: 14px; color: var(--muted); }
+.pp-best { margin: 10px 0 0; font-size: 14px; color: var(--muted); }
+.pp-best:empty { display: none; }
+
+/* ─── A question ─── */
+.pp-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; }
+.pp-progress { font-size: 14px; color: var(--muted); }
+.pp-skill { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: rgb(var(--accent-ink)); }
+.pp-question { margin-bottom: 12px; font-size: 18px; font-weight: 600; line-height: 1.5; }
+.pp-question svg { max-width: 100%; height: auto; }
+.pp-image { display: block; max-width: 100%; margin-top: 12px; border: 1px solid var(--line); border-radius: 8px; }
+.pp-hint-toggle { margin-bottom: 10px; }
+.pp-hint { margin: 0 0 14px; padding: 10px 14px; border-radius: 8px; background: var(--page); color: var(--muted); font-size: 15px; }
+.pp-choices { display: grid; gap: 8px; }
+.pp-choice { min-height: 44px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); text-align: left; transition: background-color 0.15s, border-color 0.15s; }
+.pp-choice:hover:not(:disabled) { border-color: rgb(var(--accent)); background: rgb(var(--accent-soft)); }
+.pp-choice.is-right { border-color: var(--good); background: var(--good-soft); font-weight: 700; }
+.pp-choice.is-wrong { border-color: var(--bad); background: var(--bad-soft); }
+.pp-choice.is-dim { opacity: 0.55; }
+.pp-typed { display: flex; gap: 8px; }
+.pp-typed input { flex: 1; min-width: 0; min-height: 44px; padding: 10px 14px; border: 1px solid #c9c3b7; border-radius: 10px; font: inherit; }
+.pp-typed input:focus { outline: none; border-color: rgb(var(--accent)); box-shadow: 0 0 0 3px rgb(var(--accent) / 0.2); }
+.pp-feedback { margin-bottom: 14px; padding: 14px 16px; border: 1px solid; border-radius: 12px; }
+.pp-feedback.is-right { border-color: #b7dcc6; background: var(--good-soft); }
+.pp-feedback.is-wrong { border-color: #ecc0c0; background: var(--bad-soft); }
+.pp-verdict { margin: 0 0 4px; font-weight: 700; }
+.pp-feedback.is-right .pp-verdict { color: var(--good); }
+.pp-feedback.is-wrong .pp-verdict { color: var(--bad); }
+.pp-why { margin: 0; font-size: 15px; white-space: pre-line; }
+.pp-next { width: 100%; background: rgb(var(--accent-soft)); border-color: transparent; color: rgb(var(--accent-ink)); }
+
+/* ─── Science diagrams (sci-visuals.js): one under each question ─── */
+.pp-visual { margin: 0 0 14px; }
+.pp-visual svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+.pp-visual text { font-family: 'Atkinson Hyperlegible Next', system-ui, sans-serif; }
+.pp-visual line, .pp-visual path, .pp-visual rect, .pp-visual circle, .pp-visual ellipse, .pp-visual polygon, .pp-visual polyline { vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+/* text */
+.v-t  { font-size: 13px; fill: #2f2c28; }
+.v-ts { font-size: 12px; fill: #5f5a52; }
+.v-tb { font-size: 13px; font-weight: 700; fill: #2f2c28; }
+.v-ta { font-size: 12.5px; font-weight: 700; fill: rgb(var(--accent-ink)); }
+.v-tq { font-size: 17px; font-weight: 800; fill: rgb(var(--accent-ink)); }
+.v-tq-w { font-size: 17px; font-weight: 800; fill: #fff; }
+.v-tw { font-size: 12px; font-weight: 700; fill: #fff; }
+/* lines and plain shapes */
+.v-ln   { fill: none; stroke: #3b3833; stroke-width: 1.5; }
+.v-lnb  { fill: none; stroke: #3b3833; stroke-width: 2.5; }
+.v-tick { fill: none; stroke: #8a847a; stroke-width: 1; }
+.v-grid { fill: none; stroke: #e3ded4; stroke-width: 1; }
+.v-mut  { fill: none; stroke: #9a948a; stroke-width: 1.5; }
+.v-dash { fill: none; stroke: #9a948a; stroke-width: 1.5; stroke-dasharray: 5 4; }
+.v-ac   { fill: none; stroke: rgb(var(--accent)); stroke-width: 2.5; }
+.v-sh   { fill: #faf8f4; stroke: #3b3833; stroke-width: 1.5; }
+.v-ink  { fill: #3b3833; stroke: none; }
+.v-acf  { fill: rgb(var(--accent)); stroke: none; }
+.v-mutf { fill: #9a948a; stroke: none; }
+.v-dotac { fill: rgb(var(--accent)); stroke: #fff; stroke-width: 1.5; }
+.v-hi   { stroke: rgb(var(--accent)) !important; stroke-width: 3.5 !important; }
+.v-qc   { fill: rgb(var(--accent-soft)); stroke: rgb(var(--accent)); stroke-width: 2; stroke-dasharray: 4 3; }
+/* boxes and labels */
+.v-pill   { fill: #fff; stroke: #3b3833; stroke-width: 1.3; }
+.v-pill-ac { fill: rgb(var(--accent-soft)); stroke: rgb(var(--accent)); stroke-width: 2; }
+.v-pill-plant { fill: #e3f1dc; stroke: #4f8a43; stroke-width: 1.3; }
+.v-pill-animal { fill: #f4e6d4; stroke: #9a6a3a; stroke-width: 1.3; }
+.v-pill-thing { fill: #eceae6; stroke: #8a847a; stroke-width: 1.3; }
+.v-pill-rock { fill: #ebe6dd; stroke: #7d7568; stroke-width: 1.3; }
+.v-bin  { fill: #fff; stroke: #9a948a; stroke-width: 1.5; stroke-dasharray: 5 4; }
+.v-area { fill: #f4f8f0; stroke: #9ab88f; stroke-width: 1.5; stroke-dasharray: 5 4; }
+.v-cell { fill: #fff; stroke: #b8b2a7; stroke-width: 1; }
+.v-tag, .v-screen { fill: #fff; stroke: #3b3833; stroke-width: 1.5; }
+.v-bar  { fill: rgb(var(--accent-soft)); stroke: rgb(var(--accent)); stroke-width: 1.5; }
+.v-bar-ac { fill: rgb(var(--accent)); stroke: none; }
+/* materials */
+.v-glass { fill: #f3f7fa; stroke: #3b3833; stroke-width: 1.5; }
+.v-jar   { fill: #f3f7fa; stroke: #3b3833; stroke-width: 2; }
+.v-red   { fill: #d64b3c; stroke: #a8352a; stroke-width: 1.5; }
+.v-redf  { fill: #d64b3c; stroke: none; }
+.v-water { fill: #bfdcf0; stroke: #3b7fb3; stroke-width: 1.5; }
+.v-waterf { fill: #bfdcf0; stroke: none; }
+.v-ice   { fill: #e6f3fb; stroke: #7fb2d6; stroke-width: 1.5; }
+.v-shine { fill: none; stroke: #fff; stroke-width: 2.5; }
+.v-steam { fill: none; stroke: #9fb4c4; stroke-width: 2.5; }
+.v-gas, .v-dot { fill: #7d8fa3; stroke: #56677a; stroke-width: 1; }
+.v-block { fill: #e3cfaa; stroke: #8a6a3e; stroke-width: 1.5; }
+.v-paper { fill: #fff; stroke: #8a847a; stroke-width: 1.5; }
+.v-wood, .v-plank { fill: #d8b483; stroke: #8a6440; stroke-width: 1.5; }
+.v-plank { stroke-width: 6; }
+.v-book  { fill: #c96a4a; stroke: #8f4429; stroke-width: 1.5; }
+.v-brick { fill: #d38d6a; stroke: #fff; stroke-width: 1.5; }
+.v-concrete { fill: #d4d2cd; stroke: #7c7870; stroke-width: 1.5; }
+.v-metal { fill: #d9dde2; stroke: #6b7380; stroke-width: 1.5; }
+.v-metallic { fill: #b9c0c8; stroke: #5d6570; stroke-width: 1.5; }
+.v-frame { fill: none; stroke: #5d6570; stroke-width: 4; }
+.v-shell { fill: #eef1f4; stroke: #5d6570; stroke-width: 3; }
+.v-rope, .v-string, .v-cord { fill: none; stroke: #8a6440; stroke-width: 2; }
+.v-cord { stroke: #3b3833; stroke-width: 3; }
+.v-wire { fill: none; stroke: #3b3833; stroke-width: 2.5; }
+.v-gapfill { fill: #fff; stroke: none; }
+.v-battery { fill: #3b3833; stroke: #1f1d1a; stroke-width: 1.5; }
+.v-bulb    { fill: #fff6cf; stroke: #b8901a; stroke-width: 1.5; }
+.v-bulb-on { fill: #ffe27a; stroke: #b8901a; stroke-width: 1.5; }
+.v-bolt  { fill: #f4c242; stroke: #b8861a; stroke-width: 1.5; }
+.v-flame { fill: #f08a3c; stroke: #c25a1a; stroke-width: 1.5; }
+.v-heat  { fill: none; stroke: #e07a4a; stroke-width: 2; }
+.v-hot   { fill: #f3c7a6; stroke: #b8642a; stroke-width: 1.5; }
+.v-apple { fill: #d9534a; stroke: #a8352a; stroke-width: 1.5; }
+.v-glassb { fill: #d6ece4; stroke: #4f8a6e; stroke-width: 1.5; }
+.v-bag   { fill: #d8c4a2; stroke: #8a6a3e; stroke-width: 1.5; }
+.v-bag-soft { fill: #f4efe6; stroke: #8a6a3e; stroke-width: 1.5; }
+.v-ball  { fill: #f0a35e; stroke: #b8642a; stroke-width: 1.5; }
+.v-balloon { fill: #e87a7a; stroke: #b34a4a; stroke-width: 1.5; }
+.v-puck  { fill: #2f2c28; stroke: none; }
+.v-puck-ghost { fill: none; stroke: #9a948a; stroke-width: 1; stroke-dasharray: 3 3; }
+.v-boot  { fill: #8a6440; stroke: #5a3f24; stroke-width: 1.5; }
+.v-car-dark { fill: #2f2c28; stroke: #1f1d1a; stroke-width: 1.5; }
+.v-car-light { fill: #fff; stroke: #3b3833; stroke-width: 1.5; }
+.v-tire  { fill: #4a4640; stroke: #1f1d1a; stroke-width: 1.5; }
+.v-cup   { fill: #fff; stroke: #3b3833; stroke-width: 1.5; }
+.v-axle  { fill: none; stroke: #6b7380; stroke-width: 5; }
+.v-pipe  { fill: none; stroke: #6b7380; stroke-width: 4; }
+.v-dark  { fill: #3a3631; stroke: #1f1d1a; stroke-width: 1.5; }
+.v-door  { fill: none; stroke: #6a645b; stroke-width: 1.5; }
+.v-knob  { fill: #b8b2a7; stroke: none; }
+/* nature */
+.v-sun   { fill: #f6c945; stroke: #c8901a; stroke-width: 1.5; }
+.v-ray   { fill: none; stroke: #e0a020; stroke-width: 2; }
+.v-rayf  { fill: #e0a020; stroke: none; }
+.v-sunpath { fill: none; stroke: #e0a020; stroke-width: 1.5; stroke-dasharray: 4 4; }
+.v-bluel { fill: none; stroke: #3b7fb3; stroke-width: 2.5; }
+.v-bluef { fill: #3b7fb3; stroke: none; }
+.v-earth { fill: #6aa9d8; stroke: #2f6f9e; stroke-width: 1.5; }
+.v-land  { fill: none; stroke: #4f8a43; stroke-width: 3; }
+.v-night { fill: #2c3550; fill-opacity: 0.82; stroke: none; }
+.v-moon  { fill: #e9e6df; stroke: #8a847a; stroke-width: 1.5; }
+.v-moon-dark { fill: #6a655c; stroke: #4a4640; stroke-width: 1.5; }
+.v-leaf  { fill: #8cc47a; stroke: #3f7d3a; stroke-width: 1.5; }
+.v-leaf-ac, .v-petal-ac, .v-seed-ac { stroke: rgb(var(--accent)); stroke-width: 3; }
+.v-leaf-ac { fill: #8cc47a; }
+.v-vein  { fill: none; stroke: #3f7d3a; stroke-width: 1.2; }
+.v-twig  { fill: none; stroke: #6d4c2e; stroke-width: 2.5; }
+.v-stemp { fill: none; stroke: #4f8a43; stroke-width: 3.5; }
+.v-stem-ac { fill: none; stroke: rgb(var(--accent)); stroke-width: 5; }
+.v-roots { fill: none; stroke: #8a6a3e; stroke-width: 2; }
+.v-roots-ac { fill: none; stroke: rgb(var(--accent)); stroke-width: 3; }
+.v-petal { fill: #f2a7c0; stroke: #b5577a; stroke-width: 1.2; }
+.v-petal-ac { fill: #f2a7c0; }
+.v-yellow { fill: #f6c945; stroke: #c8901a; stroke-width: 1; }
+.v-seed  { fill: #b98b5e; stroke: #6d4c2e; stroke-width: 1.2; }
+.v-seed-ac { fill: #b98b5e; }
+.v-soil  { fill: #c9a27a; stroke: none; }
+.v-soilline { fill: none; stroke: #8a6440; stroke-width: 2; }
+.v-sand  { fill: #ecd9a8; stroke: #b89a55; stroke-width: 1.2; }
+.v-sandline { fill: none; stroke: #b89a55; stroke-width: 2; }
+.v-rock  { fill: #cfc8bb; stroke: #7d7568; stroke-width: 1.5; }
+.v-rock-dark { fill: #8f877a; stroke: none; }
+.v-oil   { fill: #2f2c28; stroke: none; }
+.v-crack { fill: none; stroke: #3b3833; stroke-width: 2; }
+.v-magma { fill: #e0683a; stroke: #a8401a; stroke-width: 1.5; }
+.v-magmal { fill: none; stroke: #e0683a; stroke-width: 6; }
+.v-crust  { fill: #a77b52; stroke: #6d4c2e; stroke-width: 1.5; }
+.v-mantle { fill: #e8955a; stroke: #b8642a; stroke-width: 1.5; }
+.v-ocore  { fill: #f4bd4f; stroke: #c8901a; stroke-width: 1.5; }
+.v-icore  { fill: #fbe39a; stroke: #c8901a; stroke-width: 1.5; }
+.v-crystal { fill: #c9dff0; stroke: #4a7fa8; stroke-width: 1.5; }
+.v-crystal-top { fill: #e6f1f9; stroke: #4a7fa8; stroke-width: 1.5; }
+.v-crystal-side { fill: #a9c8e0; stroke: #4a7fa8; stroke-width: 1.5; }
+.v-plate { fill: #fff; stroke: #8a847a; stroke-width: 1.5; }
+.v-streak { fill: none; stroke: #8f3a2a; stroke-width: 6; }
+.v-cactus { fill: #7fb56e; stroke: #3f7d3a; stroke-width: 1.5; }
+.v-cactus-arm { fill: none; stroke: #7fb56e; stroke-width: 16; }
+.v-fur  { fill: #f4f1ea; stroke: #8a847a; stroke-width: 1.2; }
+.v-furline { fill: none; stroke: #c9c3b7; stroke-width: 1.2; }
+.v-fat  { fill: #f6e3a8; stroke: #c8a84a; stroke-width: 1.2; }
+.v-body { fill: #f0c4b4; stroke: #b07a68; stroke-width: 1.2; }
+.v-hare-brown { fill: #a77b52; stroke: #6d4c2e; stroke-width: 1.5; }
+.v-hare-white { fill: #fff; stroke: #8a847a; stroke-width: 1.5; }
+/* cells and flowers */
+.v-wall     { fill: #e3f1dc; stroke: #4f8a43; stroke-width: 4; }
+.v-membrane { fill: #f6fbf3; stroke: #8fb87f; stroke-width: 1.5; }
+.v-vacuole  { fill: #dcecf7; stroke: #7fb2d6; stroke-width: 1.2; }
+.v-nucleus  { fill: #c9b6e0; stroke: #6f559a; stroke-width: 1.5; }
+.v-chloro   { fill: #5fa84e; stroke: #3f7d3a; stroke-width: 1.2; }
+.v-chloro-ac { fill: #5fa84e; stroke: rgb(var(--accent)); stroke-width: 3; }
+.v-wall-ac, .v-membrane-ac, .v-nucleus-ac, .v-pistil-ac, .v-anther-ac { stroke: rgb(var(--accent)); stroke-width: 3.5; }
+.v-wall-ac { fill: #e3f1dc; }
+.v-membrane-ac { fill: #f6fbf3; }
+.v-nucleus-ac { fill: #c9b6e0; }
+.v-pistil   { fill: #b9dca8; stroke: #4f8a43; stroke-width: 1.5; }
+.v-pistil-ac { fill: #b9dca8; }
+.v-filament { fill: none; stroke: #c8901a; stroke-width: 2.5; }
+.v-filament-ac { fill: none; stroke: rgb(var(--accent)); stroke-width: 3.5; }
+.v-anther   { fill: #f6c945; stroke: #c8901a; stroke-width: 1.2; }
+.v-anther-ac { fill: #f6c945; }
+.v-ovule    { fill: #fff; stroke: #4f8a43; stroke-width: 1.2; }
+
+/* ─── Summary ─── */
+.pp-score { margin: 0 0 4px; font-family: 'Fraunces', Georgia, serif; font-size: 52px; font-weight: 600; color: rgb(var(--accent-ink)); }
+.pp-score-label { margin: 0 0 16px; color: var(--muted); }
+.pp-bar { height: 10px; border-radius: 999px; background: var(--page); overflow: hidden; }
+.pp-bar div { height: 100%; border-radius: 999px; }
+.pp-bar .is-high { background: #2f9e64; }
+.pp-bar .is-mid { background: #e0a526; }
+.pp-bar .is-low { background: #d45a5a; }
+
+/* ─── Printed sheet: hidden on screen ─── */
+.pp-sheet { display: none; }
+@media print {
+  @page { margin: 16mm; }
+  body { background: #fff; font-size: 11pt; }
+  #practice { max-width: none; padding: 0; }
+  .pp-head, #pp-home, #pp-problem, #pp-summary { display: none !important; }
+  .pp-sheet { display: block; }
+  .pp-sheet-head { text-align: center; margin-bottom: 18px; }
+  .pp-sheet-head h1 { margin: 0; font-family: 'Fraunces', Georgia, serif; font-size: 20pt; font-weight: 600; }
+  .pp-sheet-head p { margin: 2px 0 12px; color: var(--muted); }
+  .pp-name { display: flex; justify-content: space-between; padding-bottom: 6px; border-bottom: 1px solid #999; text-align: left; }
+  .pp-sheet-qs, .pp-key ol { columns: 2; column-gap: 24px; margin: 0; padding-left: 22px; }
+  .pp-sheet-qs li, .pp-key li { break-inside: avoid; margin-bottom: 14px; }
+  .pp-sheet-qs svg { max-width: 100%; max-height: 120px; }
+  .pp-sheet-qs .pp-visual { margin: 6px 0 4px; }
+  .pp-sheet-qs .pp-visual svg { width: auto; max-width: 100%; height: auto; max-height: 105px; margin: 0; }
+  .pp-sheet-choices { margin: 4px 0 0; }
+  .pp-box { height: 44px; margin-top: 6px; border: 1px solid #bbb; border-radius: 6px; }
+  .pp-key { break-before: page; }
+  .pp-key h2 { margin: 0 0 12px; font-size: 14pt; }
+  .pp-key li span { font-size: 9.5pt; color: #444; }
+}

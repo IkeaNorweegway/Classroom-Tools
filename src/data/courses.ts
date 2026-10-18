@@ -149,7 +149,6 @@ export const courses: Course[] = [
         path: `math9/materials/${s.slug}`,
         match: (p: string) => p.includes(`/materials/${s.slug}`) || inTopicOf(s.slug, 'math9/')(p),
       })),
-      { label: 'Practice', path: 'math9/practice', match: includes('practice') },
       { label: 'PAT Prep', path: 'math9/pat-prep', match: includes('pat-prep') },
       { label: 'POTD', path: 'math9/potd', match: includes('potd') },
       { label: 'All materials', path: 'math9/materials', match: endsWith('/math9/materials') },
@@ -176,7 +175,6 @@ export const courses: Course[] = [
     facts: ['5 units', '~26 weeks', '40 materials'],
     subnav: [
       ...unitItems('science7/materials/', sci7Units),
-      { label: 'Practice', path: 'science7/practice', match: includes('practice') },
       { label: 'All units', path: 'science7', match: endsWith('/science7') },
     ],
     parentSubnav: parentItems('science7/parents', sci7Units),

@@ -1,6 +1,6 @@
 // Grade 6 Science materials manifest. Student unit pages (units/[unit]),
 // parent guides and the viewer read it. Files are flat in public/materials/.
-import { homeSheets, type CourseManifest, type CourseUnit } from './manifest';
+import { getReady, homeSheets, type CourseManifest, type CourseUnit } from './manifest';
 
 const ef = { badge: 'Easy Read' };
 const fr = { badge: 'Français' };
@@ -19,6 +19,7 @@ function unit(slug: string, label: string, notes: string, workbook: string, efWo
       { hint: 'Quick checks on the unit so far.', items: [{ label: 'Exit Tickets', doc: `sci6-${slug}-exits-v1`, badge: 'Formative', type: 'exit' }] },
     ],
     extras: [
+      getReady(`sci6-${slug}-prereq-practice-v1`),
       { heading: 'Quizzes', items: [{ label: 'Mid-Unit Quiz', doc: `sci6-${slug}-quiz-v1`, type: 'assessment' }] },
       {
         heading: 'Other versions',
@@ -78,8 +79,8 @@ const units: CourseUnit[] = [
   },
 ];
 
-// Matter has the first lesson page built.
-units[0].extras.unshift({ heading: 'Lessons', items: [{ label: 'Lesson 1', doc: '', href: 'units/matter/lesson-01', type: 'notes' }] });
+// Matter has the first lesson page built, listed after Get ready.
+units[0].extras.splice(1, 0, { heading: 'Lessons', items: [{ label: 'Lesson 1', doc: '', href: 'units/matter/lesson-01', type: 'notes' }] });
 
 export const science6: CourseManifest = {
   course: 'science',

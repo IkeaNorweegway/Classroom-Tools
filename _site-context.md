@@ -70,7 +70,7 @@ Every page has two nav levels:
 
 **Level 2 — Course subnav (below top bar, visible when inside a course)**
 - Grade 6 Science subnav: `Matter | Forces | Living Systems | Climate | Energy | Space | Materials`
-- Math 9 subnav: `Number | Algebra | M&G | Stats & Prob | Practice | PAT Prep | POTD | All materials`. A strand tab is also active on that strand's topic pages. Parent pages use `parentSubnav`: `Overview | Number | Algebra | M&G | Stats & Prob`
+- Math 9 subnav: `Number | Algebra | M&G | Stats & Prob | PAT Prep | POTD | All materials`. A strand tab is also active on that strand's topic pages. Parent pages use `parentSubnav`: `Overview | Number | Algebra | M&G | Stats & Prob`
 - Science 7, Social 8 and Social 9 subnavs list their units; the STEAM subnav lists Grades 5–9 and the CEFL subnav lists Grades 7–9
 - The home page turntable spaces its slots by the number of courses (and widens the ring past six)
 
@@ -199,15 +199,16 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 /math9/[topic]                  Student topic page — hook, real-world cards, "Your path" steps, answer keys
 /math9/materials/               All Math 9 materials (strand list)
 /math9/materials/[strand]       Strand page — topic picker + strand workbook
-/math9/practice/, potd/, pat-prep/   Practice, problem of the day, PAT prep
+/math9/potd/, pat-prep/          Problem of the day, PAT prep
 /math9/parents/                 Parent overview — course in plain words, progression, topic list
 /math9/parents/[topic]          Parent topic page (one per file in src/content/parent-guides/math9/)
 /math9/teacher/                 Math 9 teacher index (each topic has an #anchor)
 /math9/view/[...slug]           Math 9 material viewer (paths from src/data/math9.ts)
-/science7/                      Science 7 index (+ practice/, teacher/)
+/science7/                      Science 7 index (+ teacher/)
 /science7/materials/[unit]      Unit materials page
 /science7/view/[unit]/[doc]     Material viewer
 /social8/, /social9/            Same shape as Science 7: index, materials/[unit], teacher/, view/[unit]/[doc]
+/<course>/practice              Old prereq practice pages (Science 6 and 7, Math 9, Social 8 and 9), now redirects to the course index
 /steam/                         STEAM index
 /steam/materials/[grade]        Grade page
 /steam/view/[grade]/[doc]       Material viewer
@@ -244,13 +245,16 @@ public/materials/
     notes/[unit]/               Notes HTML + teacher notes HTML
     worksheets/[strand]/[topic]/
     tests/[topic]/
-    practice/
+    practice/                   Sims and the prereq practice pages (math9-<topic>-prereq-practice-v1.html)
     home/[topic]/               Parent home practice sheets + answers
+  prereq-practice/              Shared prereq practice engine, styles and one question bank per course
 ```
 
 Renders live only here. The type folders hold the markdown sources.
 
 Games are the exception: a game is written directly as HTML and has no markdown source. Design, build, and test rules for games are in `_games-context.md`.
+
+**Prereq practice** is HTML-first too. Each unit has `<prefix>-<unit>-prereq-practice-v1.html` (Math 9: `math-9/practice/math9-<topic>-prereq-practice-v1.html`), listed first in the unit's extras under "Get ready" (`getReady()` in `manifest.ts`) and linked from the parent guide's "What your child should already know". The page only names its unit; the questions live in `prereq-practice/<prefix>-bank.js` and the engine in `prereq-practice/practice.js` (its header describes the question format). Science 6 and Social 8/9 banks are written-out questions; Science 7 and Math 9 banks generate questions in code (Math 9's draw SVG diagrams). Every science question shows a small diagram under it: `prereq-practice/sci-visuals.js` draws them (loaded by the 11 science pages before the bank), a skill's `visual` covers all its questions unless a question has its own, and a diagram shows the situation, never the answer. Students answer one question per skill with a hint and an explanation; the skill tracker is saved in the browser; printing (the page's button or the viewer's Print) gives a 10-question sheet with an answer key.
 
 ### Naming
 - Student notes: `math9-[unit]-notes-v1.html`
