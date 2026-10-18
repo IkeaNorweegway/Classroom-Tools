@@ -34,8 +34,8 @@ The v1 file of each game is kept so old links work. Nothing links to them.
 |---|---|
 | `public/vendor/kenney-rpg-urban/` | Kenney *RPG Urban Pack* 1.0 (CC0): `tilemap_packed.png` (27 × 18 tiles of 16 px) and `License.txt`. All town, character and furniture art. |
 | `public/materials/cefl/town/art.js` | Draws tiles; builds characters by recolouring the pack's 6 bases (skin, hair, shirt, trousers) and adding job outfits (apron, hi-vis, hard hat and more) |
-| `town/world.js` | The town map (56 × 40), the 26 buildings with their doors, room templates, and the base townspeople. No DOM. |
-| `town/engine.js` | Movement, camera, doors, dialogue, quests, panels, HUD, Bag, Menu, saves, avatar editor, tutorial, report, the test hook |
+| `town/world.js` | The town map (78 × 58): 11 named districts (College Hill, Main Street, Town Square, Market Lane, Riverside and others), the river with three bridges, paths to every door, landmarks (fountain, sports field, community garden, Riverside Park), 6 street signs, 26 buildings in six styles and many sizes; small rooms (9 × 7) whose key person or thing stands on a rug; the base townspeople. No DOM. |
+| `town/engine.js` | Movement, camera (rooms zoom in to fill the view), doors, dialogue, quests, panels, HUD, Bag, Menu, the **Town Map** (M key: districts, buildings, you, your goal), district-name banners, saves, avatar editor, tutorial, report, the test hook |
 | `town/town.css` | Shared styles (CEFL ochre) |
 | `town/missions/<grade>-<unit>.js` | One mission: its model (no DOM), chapters, panels, items, report |
 | `cefl[G]-[unit]-game-v[N].html` | A thin entry page the site links: `<div id="town" data-mission="…">` and the script tags |
@@ -54,7 +54,7 @@ The v1 file of each game is kept so old links work. Nothing links to them.
 - Each chapter is a list of steps. The save holds (chapter, step), so a step must be safe to run again from its start. Guard model changes, as Payday's bank step does with "never pay twice".
 - A step awaits `api.quest(text, id)` (resolves when the student talks to that person or object, or enters `door:<building>`), then `api.say` / `api.ask` / `api.choose` / `api.panel`.
 - Add the thin entry page and one line to the `games` map in `src/data/cefl.ts`.
-- Use the existing buildings. New ones go into `world.js` for every mission.
+- Use the existing buildings. New ones go into `world.js` for every mission, with a path from the door to a walk. Keep every doorstep clear (the map builder skips decor on paths and doorsteps) and rerun the navigation test.
 
 **Testing a mission** (scripts from the Payday build are described in `_status.md`):
 - **Node:** run the model block (careful player always wins; gross-pay, do-nothing and too-cautious players never do; answer tables clean).

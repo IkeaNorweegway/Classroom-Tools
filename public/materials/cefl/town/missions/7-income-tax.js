@@ -203,16 +203,25 @@ function paydaySigned(s, jar, real, short) {
     dev:   { label: '19, sharing an apartment', short: 'You are 19. You share an apartment with your friend Dev.', family: 'dev', goalIcon: 'key' },
     rosa:  { label: '24, paying off a student loan', short: 'You are 24. You share a house with Rosa and pay off a student loan.', family: 'rosa', goalIcon: 'cert' }
   };
-  var WORK = {
-    grocer: { b: 'grocer', boss: 'Mr. Huang', outfit: 'apron', look: { base: 2, skin: 's2', hair: 'black', shirt: 'green', pants: '#3b3f5c' } },
-    busser: { b: 'diner', boss: 'Ms. Pereira', outfit: 'busser', look: { base: 1, skin: 's3', hair: 'brown', shirt: 'red', pants: '#2f2f38' } },
-    sports: { b: 'sports', boss: 'Coach Tam', outfit: 'polo', look: { base: 0, skin: 's2', hair: 'black', shirt: 'red', pants: '#2f3a5c' } },
-    warehouse: { b: 'warehouse', boss: 'Mr. Kowalski', outfit: 'hivis', look: { base: 4 } },
-    bikeshop: { b: 'bikeshop', boss: 'Bea', outfit: 'cap', look: { base: 3, skin: 's1', hair: 'blond', shirt: 'blue', pants: '#3b3f5c' } },
-    phones: { b: 'phones', boss: 'Mr. Singh', outfit: 'lanyard', look: { base: 2, skin: 's3', hair: 'black', shirt: 'teal', pants: '#2f2f38' } },
-    office: { b: 'clinic', boss: 'Ms. Ahmed', outfit: 'blazer', look: { base: 3, skin: 's3', hair: 'black', shirt: 'purple', pants: '#2f2f38' } },
-    apprentice: { b: 'electric', boss: 'Joe', outfit: 'hardhat', look: { base: 5 } },
-    furniture: { b: 'furniture', boss: 'Mrs. Novak', outfit: 'nametag', look: { base: 1, skin: 's1', hair: 'grey', shirt: 'purple', pants: '#3b3f5c' } }
+  var WORK = { // each boss has a voice: hi (first shift), pay (payday), app (when Pay-O-Matic arrives), idle (small talk)
+    grocer: { b: 'grocer', boss: 'Mr. Huang', outfit: 'apron', look: { base: 2, skin: 's2', hair: 'black', shirt: 'green', pants: '#3b3f5c' },
+      hi: 'Welcome to Valley Market! Stack the apples nicely. People notice.', pay: 'Payday! Nice work this week.', app: 'We use a new app for pay now. Pay-O-Matic 3000. I am... not a computer person.', idle: 'The bananas came in green again. Patience.' },
+    busser: { b: 'diner', boss: 'Ms. Pereira', outfit: 'busser', look: { base: 1, skin: 's3', hair: 'brown', shirt: 'red', pants: '#2f2f38' },
+      hi: 'Welcome to the Lantern! Grab a tray. Table six needs you.', pay: 'Payday! You earned it. Table six left a mess.', app: 'Head office says we use Pay-O-Matic 3000 now. Fancy, right?', idle: 'Try the pie. Everyone says it’s the best in town.' },
+    sports: { b: 'sports', boss: 'Coach Tam', outfit: 'polo', look: { base: 0, skin: 's2', hair: 'black', shirt: 'red', pants: '#2f3a5c' },
+      hi: 'Welcome to the team! Big smile. Know your shoes.', pay: 'Payday! Great hustle out there.', app: 'Huddle up. Payroll is on Pay-O-Matic 3000 now. New playbook!', idle: 'Hydrate! That goes for everyone.' },
+    warehouse: { b: 'warehouse', boss: 'Mr. Kowalski', outfit: 'hivis', look: { base: 4 },
+      hi: 'Vest on. Lift with your legs. We ship by four.', pay: 'Payday. Good work. Don’t spend it all on snacks.', app: 'Head office bought Pay-O-Matic 3000. I don’t trust it. Check your stub.', idle: 'Forty boxes an hour. That’s the goal.' },
+    bikeshop: { b: 'bikeshop', boss: 'Bea', outfit: 'cap', look: { base: 3, skin: 's1', hair: 'blond', shirt: 'blue', pants: '#3b3f5c' },
+      hi: 'Welcome to Spoke & Chain! Do you know a derailleur from a doorknob? You will.', pay: 'Payday! Ride safe.', app: 'We switched to Pay-O-Matic 3000. It has more settings than my bike.', idle: 'A clean chain is a happy chain.' },
+    phones: { b: 'phones', boss: 'Mr. Singh', outfit: 'lanyard', look: { base: 2, skin: 's3', hair: 'black', shirt: 'teal', pants: '#2f2f38' },
+      hi: 'Welcome to CellPoint! Smile. Every customer is a sale waiting to happen.', pay: 'Payday! Great numbers this week.', app: 'Great news! Pay-O-Matic 3000! Fully automatic! What could go wrong?', idle: 'Have you seen the new phone? It folds. Twice.' },
+    office: { b: 'clinic', boss: 'Ms. Ahmed', outfit: 'blazer', look: { base: 3, skin: 's3', hair: 'black', shirt: 'purple', pants: '#2f2f38' },
+      hi: 'Welcome to Riverbend Clinic. Here is your desk. And your very full calendar.', pay: 'Your pay is ready. Thank you for keeping us organized.', app: 'The clinic moved payroll to Pay-O-Matic 3000. Please review your stub carefully.', idle: 'If it isn’t in the calendar, it didn’t happen.' },
+    apprentice: { b: 'electric', boss: 'Joe', outfit: 'hardhat', look: { base: 5 },
+      hi: 'Welcome aboard! Rule one: hard hat on. Rule two: see rule one.', pay: 'Payday! Safe work, good work.', app: 'Office switched pay to some app. Pay-O-Matic 3000. I just do wires, kid.', idle: 'Measure twice, cut once.' },
+    furniture: { b: 'furniture', boss: 'Mrs. Novak', outfit: 'nametag', look: { base: 1, skin: 's1', hair: 'grey', shirt: 'purple', pants: '#3b3f5c' },
+      hi: 'Welcome, dear! Help people find the comfiest couch in town.', pay: 'Payday, dear! Treat yourself to something small.', app: 'My nephew set up Pay-O-Matic 3000 for us. He says it’s very clever.', idle: 'Sit on that recliner. Isn’t it lovely?' }
   };
   function bossId(jk) { return 'boss_' + jk; }
   function payText(j) {
@@ -234,66 +243,68 @@ function paydaySigned(s, jar, real, short) {
     return j.hours[0] + ' hours × ' + fmt(j.rate) + '.';
   }
 
-  /* ── Questions (second person). Wrong choices come from the unit's misconception list. ── */
+  /* ── Questions, asked by the townspeople in their own words. The facts and the misconception-based wrong choices
+     are the same as v1; only the voice changed. Reading level: short sentences, everyday words, curriculum terms kept. ── */
   function Q(id, S) {
     var j = S.run && S.run.job ? JOBS[S.run.job] : null, x = S.run ? extraHours(S.run.worker) : 0, yr;
     switch (id) {
-      case 'paytype': return { label: 'Pay type: what is true', ch: 0, text: 'Which is true about how your new job pays?', opts: ({
-        wage: [['My pay goes up and down with my hours. A short week means a smaller paycheque.', 1, 'Right. Wage pay is hours × the hourly wage.'], ['A wage pays the same every two weeks, no matter how many hours I work.', 0, 'That is a salary. A wage pays for each hour.'], ['A wage job always pays more than a salary job.', 0, 'Not always. It depends on the rate and the hours.']],
-        salary: [['I get the same pay every two weeks, even when I work extra hours.', 1, 'Right. A salary is set for the year and split into 26 pays.'], ['A salary pays more when I work extra hours.', 0, 'A salary stays the same. Extra hours do not add pay.'], ['With a salary, nothing is taken off my pay.', 0, 'Deductions come off every kind of pay.']],
-        commission: [['Part of my pay depends on what I sell, so a slow month means a smaller paycheque.', 1, 'Right. Commission is a percent of sales, and sales go up and down.'], ['Commission always pays more than a wage.', 0, 'Only when sales are good. A slow month pays less.'], ['Commission pay is the same every two weeks.', 0, 'Commission changes with sales.']],
-        tips: [['Tips change with how busy it is and how much customers give, so they are hard to plan on.', 1, 'Right. Plan on the wage and treat tips as extra.'], ['Tips are the same every shift.', 0, 'Tips change every shift.'], ['Tips are part of my hourly wage, so the boss decides them.', 0, 'Tips come from customers, not from the wage.']]
+      case 'paytype': return { label: 'Pay type: what is true', ch: 0, text: 'Okay, quick check before you start. What’s true about how this job pays?', opts: ({
+        wage: [['My pay goes up and down with my hours. Fewer hours means a smaller paycheque.', 1, 'Yes! Hours times your wage. Every hour counts.'], ['I get the same pay every two weeks, even if I work less.', 0, 'That’s a salary. With a wage, every hour counts.'], ['Hourly jobs always pay more than salary jobs.', 0, 'Not always. It depends on the rate and the hours.']],
+        salary: [['I get the same pay every two weeks, even if I stay late.', 1, 'Yes! Your salary is split into 26 equal pays.'], ['If I stay late, I get paid more.', 0, 'Not with a salary. Your pay is set for the whole year.'], ['Nothing comes off a salary.', 0, 'Oh, things come off. You’ll see on payday.']],
+        commission: [['Part of my pay depends on my sales. A slow month means less money.', 1, 'Yes! Sell more, earn more. Sell less, earn less.'], ['Commission always pays more than an hourly job.', 0, 'Only when sales are good.'], ['My commission is the same every payday.', 0, 'Nope. It goes up and down with your sales.']],
+        tips: [['Tips change every shift, so I can’t count on them.', 1, 'Yes! Plan with your wage. Tips are a bonus.'], ['I get the same tips every night.', 0, 'Some nights are busy. Some nights are dead.'], ['My boss decides my tips.', 0, 'Customers decide your tips, not your boss.']]
       })[j.type] };
-      case 'whyLess': return { label: 'Why less than the job promised', ch: 0, text: 'Why did less money land in your account than the pay the job promised?', opts: [
-        ['Deductions came off first, like EI, CPP and income tax. What is left is the take-home pay.', 1, 'Right. The pay before deductions is gross pay. What lands in the bank is net pay.'],
-        ['Your boss kept part of the pay as profit.', 0, 'Look at the stub. Each missing dollar has a name, and none of them is profit.'],
-        ['The bank charged a fee for putting the pay in your account.', 0, 'The stub shows the money was gone before it reached the bank.']] };
+      case 'whyLess': return { label: 'Why less than the job promised', ch: 0, text: 'So the job said you’d earn more than this. Where did the rest go?', opts: [
+        ['Some came off first, for things like EI, CPP and income tax.', 1, 'Bingo! Those are deductions. What’s left is your take-home pay. We call it net pay.'],
+        ['My boss kept some of it for the store.', 0, 'Nope. Look at the stub. Every missing dollar has a name.'],
+        ['The bank took a fee to put it in my account.', 0, 'Hey! We would never. Well, not for that. The money was gone before it got here.']] };
       case 'extra':
-        if (j.type === 'salary') return { label: 'Extra hours on a salary', ch: 2, text: 'If you work ' + x + ' extra hours this pay, what happens to your take-home pay?', opts: [
-          ['It stays the same. A salary pays the same however many hours you work.', 1, 'Right. Extra hours on a salary do not add pay here.'],
-          ['It goes up by ' + x + ' hours × an hourly rate.', 0, 'A salary has no hourly rate. The pay is set for the year.'],
-          ['It goes down, because more hours means more tax.', 0, 'Tax depends on pay, not hours. The pay stays the same.']] };
-        return { label: 'Extra hours: more or less take-home?', ch: 2, text: 'If you take ' + x + ' extra hours, what happens to your take-home pay?', opts: [
-          ['It goes up. Income tax may go up a little, but you keep most of each extra dollar.', 1, 'Right. Earning more never leaves you with less take-home pay.'],
-          ['It goes down, because more pay means a higher tax and you lose money.', 0, 'Only part of each extra dollar is taken off. Take-home pay still goes up.'],
-          ['It stays the same, because deductions take all the extra pay.', 0, 'Deductions take a part, not all of it.']] };
-      case 'newline': return { label: 'Turning 18: what changes', ch: 2, text: 'You just turned 18. What changes on your next pay stub?', opts: [
-        ['CPP starts coming off, and my wage goes up to $15.00 because the student rate ends at 18.', 1, 'Right. CPP starts after a worker turns 18, and Alberta’s $13.00 student rate is only for students under 18.'],
-        ['Income tax starts, because adults always pay income tax.', 0, 'Income tax depends on yearly pay, not age. You are still under the tax-free amount.'],
-        ['Nothing changes until I finish school.', 0, 'Turning 18 changes two lines: CPP and the wage.']] };
-      case 'card-ei': return { label: 'Who EI helps', ch: 2, text: 'Jas was laid off when a store closed. Jas now gets some pay every two weeks while looking for a new job. Which deduction paid into that?', opts: [
-        ['EI. Workers pay EI so people who lose their job get some pay while they look for work.', 1, 'Right. EI is Employment Insurance.'],
-        ['CPP. CPP pays people who lose their job.', 0, 'CPP is a pension for when you retire.'],
-        ['Income tax. Income tax goes straight to workers who lose their job.', 0, 'Income tax pays for services like schools and hospitals. Job-loss pay comes from EI.']] };
-      case 'card-cpp': return { label: 'Who CPP helps', ch: 2, text: 'Grandpa gets a payment every month from the Canada Pension Plan. Where did that money come from?', opts: [
-        ['CPP that he and his employers paid in while he worked.', 1, 'Right. The CPP on your stub works the same way: it pays you later.'],
-        ['EI, because retiring means losing your job.', 0, 'EI is for people who lose a job and look for another. Retirement pay is CPP.'],
-        ['A gift from his bank for retiring.', 0, 'It comes from the Canada Pension Plan, paid in from every paycheque.']] };
-      case 'card-tax': return { label: 'What income tax pays for', ch: 2, text: 'A patient broke a wrist and was treated here. They did not get a bill. Who paid?', opts: [
-        ['Income tax and other taxes. They pay for health care for everyone in Alberta.', 1, 'Right. Health is about 41% of what Alberta spends (2026).'],
-        ['EI. It pays for hospital visits.', 0, 'EI pays people who lose a job.'],
-        ['CPP. It pays for hospital visits.', 0, 'CPP is a pension for retirement.']] };
+        if (j.type === 'salary') return { label: 'Extra hours on a salary', ch: 2, text: 'If you work those ' + x + ' extra hours, what happens to your pay?', opts: [
+          ['Nothing. A salary stays the same, no matter how many hours.', 1, 'Yep. Salary is salary. So it’s up to you.'],
+          ['I get paid for every extra hour.', 0, 'Not on a salary. The pay is set for the year.'],
+          ['My pay goes down, because more hours means more tax.', 0, 'Tax depends on your pay, not your hours. Your pay stays the same.']] };
+        return { label: 'Extra hours: more or less take-home?', ch: 2, text: 'If you take the ' + x + ' extra hours, what happens to your take-home pay?', opts: [
+          ['It goes up. A little more tax comes off, but I keep most of it.', 1, 'That’s right. More work, more money in your pocket.'],
+          ['It goes down. More pay means more tax, so I lose money.', 0, 'Lots of people think that! But tax only takes part of each extra dollar.'],
+          ['It stays the same. Tax takes all the extra pay.', 0, 'Tax takes a bite, not the whole thing.']] };
+      case 'newline': return { label: 'Turning 18: what changes', ch: 2, text: 'Something changes on your next pay stub now that you’re 18. Do you know what?', opts: [
+        ['CPP starts coming off. And my wage goes up to $15, because the student wage is only for under 18.', 1, 'Look at you! Happy birthday, money expert.'],
+        ['Income tax starts, because I’m an adult now.', 0, 'Not yet. Income tax is about how much you earn, not your age.'],
+        ['Nothing changes until I finish school.', 0, 'Two things change: your wage, and CPP.']] };
+      case 'card-ei': return { label: 'Who EI helps', ch: 2, text: 'Money still comes in every two weeks while I look for work. Where do you think it comes from?', opts: [
+        ['From EI. A little came off every paycheque you got. Now it pays you back.', 1, 'Yep. I used to hate that line on my stub. Not anymore.'],
+        ['From CPP. CPP is for people who lose their job.', 0, 'Nope, CPP is for when you retire. Ask your grandpa!'],
+        ['From income tax. They send it to anyone who asks.', 0, 'Not tax, and not for anyone. You get EI because you worked and paid into it.']] };
+      case 'card-cpp': return { label: 'Who CPP helps', ch: 2, text: 'Now a cheque comes for me every month. Can you guess where it comes from?', opts: [
+        ['From CPP. You paid into it from every paycheque while you worked.', 1, 'Smart kid! You pay into it now too. Someday it comes back to you.'],
+        ['From EI, because you stopped working.', 0, 'Ha! EI is for people looking for a new job. I’m only looking for my glasses.'],
+        ['From your bank. It’s a gift for retiring.', 0, 'I wish! No, I paid for this one myself.']] };
+      case 'card-tax': return { label: 'What income tax pays for', ch: 2, text: 'Nobody paid us at the door today. So who pays for all this?', opts: [
+        ['Everyone does. Income tax and other taxes pay for hospitals.', 1, 'Exactly. About 41% of what Alberta spends goes to health care (2026).'],
+        ['EI pays for hospital visits.', 0, 'EI is for people who lost a job. Not for broken wrists.'],
+        ['CPP pays for hospital visits.', 0, 'CPP is for retirement. Hospitals run on taxes.']] };
       case 'taxfree':
-        if (S.run.worker === 'avery') return { label: 'Why $0 income tax', ch: 2, text: 'Your pay stubs show $0 income tax. Why?', opts: [
-          ['My yearly pay is under the tax-free amounts ($16,452 for Canada and $22,769 for Alberta in 2026), so no income tax comes off.', 1, 'Right. About 26 × $300 is around $8,000 a year: under both lines.'],
-          ['Students don’t have to pay income tax.', 0, 'Students pay income tax if they earn more than the tax-free amount.'],
-          ['Workers under 18 don’t pay income tax.', 0, 'Age does not matter for income tax. Yearly pay does.']] };
+        if (S.run.worker === 'avery') return { label: 'Why $0 income tax', ch: 2, text: 'Look at your stubs. Income tax: $0.00. Every time! Why?', opts: [
+          ['I don’t earn enough in a year. The first $16,452 (Canada) and $22,769 (Alberta) are not taxed.', 1, 'Yes! About $8,000 a year is under both lines. Big brain play!'],
+          ['Students don’t pay income tax.', 0, 'Students do pay, if they earn enough. School has nothing to do with it.'],
+          ['People under 18 don’t pay income tax.', 0, 'Age doesn’t matter. How much you earn in a year does.']] };
         yr = Math.round(S.run.log[S.run.log.length - 1].stub.gross * 26 / 10000) * 100;
-        return { label: 'Why tax is less than 22%', ch: 2, text: 'You earn about ' + fmtW(yr) + ' a year. The tax rates are 14% (Canada) and 8% (Alberta). Why is your income tax much less than 22% of your pay?', opts: [
-          ['The first $16,452 (Canada) and $22,769 (Alberta) of yearly pay are tax-free. Only the part above is taxed.', 1, 'Right. That is why the Pay Card starts at $0 and climbs slowly.'],
-          ['Young workers pay a lower tax rate.', 0, 'The rate is the same at any age. The tax-free amount makes the difference.'],
-          ['Income tax only comes off some paycheques.', 0, 'It comes off every paycheque above the tax-free amount.']] };
+        return { label: 'Why tax is less than 22%', ch: 2, text: 'You earn about ' + fmtW(yr) + ' a year. The tax rates are 14% and 8%. That’s 22%! So why is your tax so much smaller?', opts: [
+          ['Part of my pay is not taxed. Only money above $16,452 (Canada) and $22,769 (Alberta) gets taxed.', 1, 'That’s it! That’s why the Pay Card starts at zero.'],
+          ['Young workers get a lower tax rate.', 0, 'Same rate at any age. The tax-free part makes the difference.'],
+          ['Tax only comes off some paycheques.', 0, 'It comes off every one. Just less than you’d think.']] };
     }
   }
+  /* "What would help?" is asked at home by your family or roommate */
   var ASKS = {
-    bounce: { text: 'A payment bounced last payday. What would help this time?', opts: [
-      ['Move less to the jar. Plan from take-home pay (after deductions), not from gross pay.', 1, 'Right. Plan with net pay, minus bills, and leave a little cushion.'],
-      ['Move more to the jar, so the jar can pay the bills.', 0, 'The jar is locked until goal day. Moving more leaves even less for bills.'],
-      ['Keep the same plan.', 0, 'With the same pay, the same plan would bounce again.']] },
-    slow: { text: 'Your jar is falling behind, but money was left in the bank after the bills. What would help?', opts: [
-      ['Move more to the jar. The money left after bills can go to the goal.', 1, 'Right. Work out take-home pay minus bills, and move most of what is left.'],
-      ['Move less to the jar.', 0, 'That makes the jar fall further behind.'],
-      ['Keep the same plan.', 0, 'The same plan leaves the jar behind again.']] }
+    bounce: { text: 'Ouch. A payment bounced last time. What’s your plan this time?', opts: [
+      ['Put less in the jar. Plan with my take-home pay, not my gross pay.', 1, 'Good plan. Plan with what lands in the bank, and keep a little extra just in case.'],
+      ['Put more in the jar, so the jar can pay my bills.', 0, 'The jar is locked until goal day. More in the jar means less for bills.'],
+      ['Do the same thing again.', 0, 'Same plan, same pay... same bounce.']] },
+    slow: { text: 'Your jar is falling behind. But you had money left over after bills. What would help?', opts: [
+      ['Put more in the jar. Money left after bills can go to my goal.', 1, 'Yes! Take-home pay minus bills. Most of what’s left can go in the jar.'],
+      ['Put less in the jar.', 0, 'Then the jar falls even further behind.'],
+      ['Do the same thing again.', 0, 'Same plan means the jar stays behind.']] }
   };
   var LINES = [
     { k: 'gross', name: 'Gross pay', sub: 'pay before deductions' }, { k: 'ei', name: 'EI', sub: 'Employment Insurance' },
@@ -477,7 +488,7 @@ function paydaySigned(s, jar, real, short) {
     }
     return api.panel({ title: 'Paycheque ' + p + ': check it before you sign', name: 'sign', wide: true, data: { kind: kind, root: st.root }, render: function (body, done) {
       function draw() {
-        body.innerHTML = '<p>' + esc(boss) + ' prepared your stub. <b>Check every line</b> against your timesheet and the Pay Card (in your Bag). If a line is wrong, tap it and dispute it. Once you sign, the bank pays what the stub says.</p>' + timesheet(S, p) +
+        body.innerHTML = '<p>Pay-O-Matic 3000 made this stub for ' + esc(boss) + '. <b>Check every line</b> with your timesheet and the Pay Card (in your Bag). Is a line wrong? Tap it, then dispute it. Once you sign, the bank pays what the stub says.</p>' + timesheet(S, p) +
           '<div class="ct-doc"><div class="ct-doc-h"><b>' + esc(j.biz) + '</b><span>Age ' + st.age + ' · paycheque ' + p + '</span></div>' +
           rows.map(function (r) { return '<button class="ct-flag" type="button" data-k="' + r.k + '" aria-pressed="' + (flagged === r.k) + '"><span class="what" style="font-weight:700">' + r.name + '<small style="display:block;font-weight:400;color:#6b665d">' + r.sub + '</small></span><span class="amt" style="font-weight:800;' + (r.ded ? 'color:#b42318' : r.net ? 'color:#2c7a4b' : '') + '">' + r.val + '</span><span class="flagmark">flagged</span></button>'; }).join('') + '</div>' +
           (msg ? '<p class="ct-fb ' + (msgOk ? 'yes' : 'no') + '">' + esc(msg) + '</p>' : '') +
@@ -490,19 +501,19 @@ function paydaySigned(s, jar, real, short) {
       function rec(ok) { if (!recorded) { api.record('sign-p' + p, 'Paycheque ' + p + ': check the boss’s stub' + (st.root ? ' (it had a mistake)' : ' (it was right)'), api.ch, ok); recorded = true; } else if (S.ans['sign-p' + p]) S.ans['sign-p' + p].tries++; }
       function dispute() {
         tries++;
-        if (st.root && flagged === st.root) { rec(true); S.signs[p] = { kind: kind, result: 'caught', short: 0 }; msgOk = true; msg = boss + ': You’re right. I fixed it. The stub now pays ' + fmt(right.net) + '.'; finish(0, true); return; }
+        if (st.root && flagged === st.root) { rec(true); S.signs[p] = { kind: kind, result: 'caught', short: 0 }; msgOk = true; msg = boss + ': Huh. You’re right! Pay-O-Matic messed that up. I fixed it. Your stub now pays ' + fmt(right.net) + '.'; finish(0, true); return; }
         rec(false);
-        if (st.root && follows[flagged]) msg = boss + ': That line is off only because an earlier line is wrong. Which line starts the mistake?';
+        if (st.root && follows[flagged]) msg = boss + ': That line is wrong because a line above it is wrong. Where does the mistake start?';
         else msg = boss + ': ' + explain(flagged);
         msgOk = false; flagged = null; draw();
       }
       function sign() {
-        if (st.root && api.mode === 'gentle' && !gentleWarned) { gentleWarned = true; rec(false); msgOk = false; msg = 'Hold on: one line does not match your timesheet or the Pay Card. Check again, or sign anyway.'; draw(); return; }
+        if (st.root && api.mode === 'gentle' && !gentleWarned) { gentleWarned = true; rec(false); msgOk = false; msg = 'Wait! One line does not match your timesheet or the Pay Card. Check again, or sign anyway.'; draw(); return; }
         if (!st.root) { rec(true); S.signs[p] = { kind: null, result: 'ok', short: 0 }; finish(0, false); return; }
         rec(false); S.signs[p] = { kind: kind, result: 'signed', short: right.net - st.net }; finish(right.net - st.net, false);
       }
       function finish(short, fixed) {
-        body.innerHTML = (fixed ? '<div class="ct-banner good">Fixed before you signed. You will be paid the right amount.</div>' : short ? '<div class="ct-banner bad">You signed it. The bank will pay what the stub says.</div>' : '<div class="ct-banner good">Every line checks out. Signed.</div>') +
+        body.innerHTML = (fixed ? '<div class="ct-banner good">Fixed before you signed. You will be paid the right amount.</div>' : short ? '<div class="ct-banner bad">You signed it. The bank will pay what the stub says.</div>' : '<div class="ct-banner good">Every line checks out. Signed!</div>') +
           '<p>' + esc(msg || '') + '</p><div class="ct-row ct-actions"><button class="ct-btn primary" type="button" id="sgGo">Take it to the bank</button></div>';
         body.querySelector('#sgGo').addEventListener('click', function () { done(short); });
         body.querySelector('#sgGo').focus();
@@ -604,7 +615,10 @@ function paydaySigned(s, jar, real, short) {
       (l.short ? '<p class="ct-fb no">You signed a stub that paid ' + fmt(l.short) + ' less.</p>' : '') + '</div>';
   }
 
-  /* ── Steps ── */
+  /* ── Steps: the story ──
+     Chapter 1: your first job and the first-paycheque shock. Chapter 2: you learn to read a stub; then every shop in town
+     switches to the payroll app Pay-O-Matic 3000. Chapter 3: stubs start coming out wrong (yours, and a friend's); Jas is
+     laid off; you find out where deductions go. Chapter 4: Town Hall (the app, then taxes), two last paydays, the goal. */
   function step(id, run) { return { id: id, run: run }; }
   function wantAsk(S) { // "What would help?": never two paycheques running; a topic stops after 2 first-try answers or 4 showings
     var t = helpTopic(S.run), a;
@@ -614,11 +628,16 @@ function paydaySigned(s, jar, real, short) {
     return t;
   }
   function familyId(S) { return S.sit ? SIT[S.sit].family : 'mom'; }
+  function friendId(S) { return S.sit === 'avery' ? 'dev' : 'avery'; } // the friend whose stub is wrong too
+  var PUNS = ['Why did the penny go to school? To make some cents. ...Sorry.', 'I’d tell you a joke about interest. But you wouldn’t be interested.',
+    'Money talks. Mine just says goodbye.', 'I’m saving my best jokes. Compound interest, you know.', 'What do you call a sad dollar? A bummed buck. I’ll stop.',
+    'I counted to a million once. Took forever. That’s why I work at a bank.', 'This bank has great security. Even our jokes are locked up.'];
+  function pun(S) { S.pun = ((S.pun || 0) + 1) % PUNS.length; return PUNS[S.pun]; }
   function period(p) {
     return [
       step('plan' + p, async function (api, S) {
-        await api.quest('Go home and plan paycheque ' + p + ' at the kitchen table', 'table');
-        if (S.letters.length) { await api.say(familyId(S), ['A letter came for you.', S.letters.join(' ')]); S.letters = []; api.unplace('letter'); }
+        await api.quest(p === 1 ? 'Go home and plan your first payday at the kitchen table' : 'Go home and plan payday ' + p + ' at the kitchen table', 'table');
+        if (S.letters.length) { await api.say(familyId(S), ['Uh oh. You got a letter.', S.letters.join(' '), 'Maybe plan a little more carefully this time?']); S.letters = []; api.unplace('letter'); }
         if (S.pendingAsk) {
           var t = S.pendingAsk; S.asks[t] = S.asks[t] || { seen: 0, first: 0 }; S.asks[t].seen++; S.lastAsk = S.run.p;
           var before = S.ans['ask-' + t + '-p' + S.run.p];
@@ -629,97 +648,120 @@ function paydaySigned(s, jar, real, short) {
         await planPanel(api, S, p);
       }),
       step('shift' + p, async function (api, S) {
-        var b = bossId(S.run.job);
-        await api.quest('Go to work at ' + bizName(S) + ' and see ' + WORK[S.run.job].boss, b);
+        var b = bossId(S.run.job), w = WORK[S.run.job];
+        await api.quest('Go to work at ' + bizName(S) + '. ' + w.boss + ' is waiting.', b);
+        if (p === 1) await api.say(b, w.hi);
         await shiftPanel(api, S, p);
         if (p >= 5 && p <= 7) {
           if (!S.errs) S.errs = errorPlan(S.seed);
-          await api.say(b, 'Here’s your pay stub. I did the payroll myself this time, so please check it and sign before you bank it.');
+          await api.say(b, p === 5 ? ['Here’s your stub. Pay-O-Matic made it!', 'The app is new. Please check it before you sign.'] : p === 6 ? 'Stub time. Check it, then sign. You know the drill.' : ['They say Pay-O-Matic got an update.', 'Check your stub anyway, okay?']);
           var short = await signPanel(api, S, p, errorKindFor(S.run, p, S.errs));
           S.signs[p] = S.signs[p] || { result: 'ok', short: short || 0 }; S.signs[p].short = short || 0;
-        } else await api.say(b, p === 1 ? 'Payday! Here’s your first paycheque. Take it to the bank.' : 'Here’s your paycheque. See you next shift.');
+          if (S.signs[p].result === 'caught') S.clues = (S.clues || 0) + 1;
+        } else await api.say(b, p === 1 ? [w.pay, 'Here’s your first paycheque. Take it to the bank!'] : w.pay);
         api.give('Pay stub ' + p); api.hud();
       }),
       step('bank' + p, async function (api, S) {
-        await api.quest('Take paycheque ' + p + ' to Teller Sam at the bank', 'sam');
+        await api.quest('Take paycheque ' + p + ' to Sam at the bank', 'sam');
         var signed = S.signs[p];
-        if (api.ch === 0) { await api.say('sam', 'Let’s look at your pay stub together.'); await revealPanel(api, S, p); }
-        else if (!signed) await stubCalcPanel(api, S, p);
-        else await api.say('sam', signed.short ? 'Hmm. This stub pays you ' + fmt(signed.short) + ' less than your timesheet says. You signed it, so getting that back will be hard.' : 'Signed and checked. Let’s deposit it.');
+        if (p === 1) { await api.say('sam', ['Welcome to the bank! I’m Sam.', 'I’d tell you a joke about money. But it’s not worth it.', 'Okay! Let’s open your very first pay stub.']); await revealPanel(api, S, p); }
+        else if (api.ch === 0) { await api.say('sam', pun(S)); await revealPanel(api, S, p); }
+        else if (!signed) { await api.say('sam', p === 3 ? ['This time, you fill in the stub.', 'Grab your Pay Card from your Bag. You’ve got this.'] : [pun(S), 'Same as last time. You fill it in.']); await stubCalcPanel(api, S, p); }
+        else await api.say('sam', signed.short ? ['Hmm. This stub pays you ' + fmt(signed.short) + ' less than your timesheet says.', 'You signed it, so it will be hard to get that back.', 'Next time, check every line before you sign.'] : signed.result === 'caught' ? 'Nice catch on that stub! Lots of people just sign.' : 'Checked and signed. Let’s put it in.');
         var fresh = S.run.p < p, l = fresh ? paydaySigned(S.run, S.plan, api.mode === 'real', signed ? signed.short : 0) : S.run.log[p - 1]; // a reload never pays twice
         api.hud();
         await resultPanel(api, S, l);
-        if (l.bounced && fresh) { S.letters.push('From your ' + (S.run.worker === 'avery' ? 'phone company' : 'landlord') + ': "Your payment bounced. A ' + fmtW(FEE) + ' bank fee was charged. Please make sure there is enough money next time."'); api.place('letter', 'home', 3, 5, { draw: 'letter', solid: false, label: 'A letter' }); }
+        if (l.bounced && fresh) { S.letters.push('It’s from your ' + (S.run.worker === 'avery' ? 'phone company' : 'landlord') + ': “Your payment bounced. Your bank charged you a ' + fmtW(FEE) + ' fee. Please make sure there is enough money next time.”'); api.place('letter', 'home', 6, 5, { draw: 'letter', solid: false, label: 'A letter' }); }
         if (p === 1) await api.ask('sam', Q('whyLess', S), 'q-whyLess', Q('whyLess', S).label, 0);
         S.pendingAsk = wantAsk(S);
         if (api.mode === 'real' && S.run.strikes >= STRIKES_TO_LOSE) return 'lost';
       })
     ];
   }
+  var FUTURE = {
+    avery: ['You’re 17. You live with your mom and go to high school.', 'Your old laptop just died. Right before a big project! You need a new one.'],
+    dev: ['You’re 19. You share an apartment with your buddy Dev.', 'Dev snores. Loud. You want your own place someday.'],
+    rosa: ['You’re 24. You share a house with Rosa. You’re also paying back a student loan.', 'Last year your car broke down, and you had no money saved. Never again.']
+  };
   function chapterSteps(ch, S) {
     var a = [];
     if (ch === 0) {
       a.push(step('meet', async function (api, S) {
-        await api.quest('Go to the Job Centre and talk to Ms. Okafor', 'okafor');
-        await api.say('okafor', ['Hi ' + api.profile.name + '! I help people plan their work.', 'Let’s jump ahead a few years and see where a paycheque really goes. Which future you should we try?']);
-        var keys = ['avery', 'dev', 'rosa'], i = await api.choose('okafor', 'Pick your future:', keys.map(function (k) { return SIT[k].label; }));
+        await api.quest('Go to the Job Centre and say hi to Ms. Okafor', 'okafor');
+        await api.say('okafor', ['Hey, hey! You must be ' + api.profile.name + '. I’m Ms. Okafor!', 'I help people find work. It’s the best job in town. Don’t tell the mayor.', 'Want to try something fun? Let’s jump ahead a few years. You’ll get a job and a real paycheque.']);
+        var keys = ['avery', 'dev', 'rosa'], i = await api.choose('okafor', 'Which future you do you want to play?', keys.map(function (k) { return SIT[k].label; }));
         S.sit = keys[i]; S.run = newRun(S.sit, null, S.seed);
-        await api.say('okafor', [SIT[S.sit].short, 'Your goal: save ' + fmtW(W(S).goal) + ' for ' + W(S).goalLabel + ' in 8 paycheques. That’s about four months.', 'First you need a job. Check the job board by the window.']);
+        await api.say('okafor', FUTURE[S.sit].concat(['So here’s your goal: save ' + fmtW(W(S).goal) + ' for ' + W(S).goalLabel + '. You have 8 paydays. That’s about four months.', 'First, you need a job! Check the job board by the window. Let’s go!']));
         api.give('Pay Card'); api.hud(); api.refresh();
       }));
       a.push(step('board', async function (api, S) {
-        await api.quest('Read the job board at the Job Centre', 'jobboard');
+        await api.quest('Find a job on the job board at the Job Centre', 'jobboard');
         var jk = await jobBoard(api, S);
         setJob(S.run, jk); api.give('Job ad: ' + JOBS[jk].title); api.outfit(); api.refresh();
-        await api.say('you', 'New job at ' + JOBS[jk].biz + '! New ' + T.art.OUTFITS[WORK[jk].outfit].label.toLowerCase() + ', too.');
+        await api.say('you', ['I got the job at ' + JOBS[jk].biz + '!', 'And I get a ' + T.art.OUTFITS[WORK[jk].outfit].label.toLowerCase() + '. Looking good.']);
       }));
       a.push(step('paytype', async function (api, S) {
         await api.quest('Tell Ms. Okafor about your new job', 'okafor');
+        await api.say('okafor', 'You got a job? Big play! I knew it.');
         var q = Q('paytype', S); await api.ask('okafor', q, 'q-paytype', q.label, 0);
-        await typedPanel(api, S, 'downside', 'One downside', 'Write one downside of this pay type for you. (Your project asks for this too.)');
-        await api.say('okafor', 'Good. Now go home and plan your first payday.');
+        await typedPanel(api, S, 'downside', 'One downside', 'Every way to get paid has a downside. What is one downside of this pay type for you? (Your project asks this too.)');
+        await api.say('okafor', ['Nice thinking. Now go home and plan your first payday.', 'Then go get paid!']);
       }));
       a = a.concat(period(1), period(2));
       a.push(step('end1', async function (api, S) {
         await api.quest('Tell Ms. Okafor how your first month went', 'okafor');
-        await api.say('okafor', ['Your jar has ' + fmt(S.run.jar) + ' of ' + fmtW(W(S).goal) + '.', 'Now do Step 1 of your project with your team: pick a real job ad and work out its gross pay.', 'Come back after your next lesson for Chapter 2.']);
+        await api.say('okafor', ['First month done! Your jar has ' + fmt(S.run.jar) + '.', 'Did you see how much came off your pay? Wild, right?', 'Time for Step 1 of your project. Find a real job ad and work out the gross pay.', 'See you after your next lesson!']);
       }));
     }
     if (ch === 1) {
       a.push(step('start2', async function (api, S) {
         startChapter(S.run, 2); api.hud();
-        if (S.run.covered) { await api.quest('Go home. Someone wants to talk about money.', familyId(S)); await api.say(familyId(S), ['Your account was overdrawn by ' + fmt(S.run.covered) + '. I covered it, just this once.', 'From now on, plan from your take-home pay, not your gross pay.']); }
+        if (S.run.covered) {
+          var f = familyId(S), lines = f === 'mom' ? ['Hey. Your bank account went below zero.', 'I covered it this time. ' + fmt(S.run.covered) + '.', 'From now on, plan with the money that really lands in your account. Deal?']
+            : f === 'dev' ? ['Dude. Your account went below zero.', 'I covered you. ' + fmt(S.run.covered) + '. You owe me pizza.', 'Next time, plan with what lands in the bank. Not the big number.']
+            : ['So... your account dipped below zero.', 'I covered it. ' + fmt(S.run.covered) + '. Just this once!', 'Plan with your take-home pay. That’s the money you really get.'];
+          await api.quest('Go home. Someone wants to talk about money.', f); await api.say(f, lines);
+        }
       }));
       a = a.concat(period(3), period(4));
       a.push(step('why', async function (api, S) {
         await api.quest('Tell Ms. Okafor what you learned', 'okafor');
-        await typedPanel(api, S, 'why', 'In your own words', 'Why didn’t your gross pay land in your bank account? Name the deductions.');
-        await api.say('okafor', ['Now do Step 2 of your project: build your pay stub. Use the Project Checker in your Bag to check your lines.', 'Come back after your next lesson for Chapter 3.']);
+        await typedPanel(api, S, 'why', 'In your own words', 'Why didn’t all your gross pay land in your bank account? Name the deductions.');
+        await api.say('okafor', ['Love it. Now do Step 2 of your project: build a pay stub. The Project Checker in your Bag can check your lines.', 'Oh! Big news. Every shop in town is getting a new payroll app.', 'It’s called Pay-O-Matic 3000. It does all the pay math for the bosses.', 'What could go wrong? ...Right? See you next lesson!']);
       }));
     }
     if (ch === 2) {
       a.push(step('extra', async function (api, S) {
-        var b = bossId(S.run.job);
+        var b = bossId(S.run.job), w = WORK[S.run.job];
         await api.quest('Your boss at ' + bizName(S) + ' wants to see you', b);
-        await api.say(b, 'We’re busy. Can you take ' + extraHours(S.run.worker) + ' extra hours on the weekends next pay?');
+        await api.say(b, [w.app, 'Oh, and we’re busy! Can you work ' + extraHours(S.run.worker) + ' extra hours on the weekends?']);
         var q = Q('extra', S); await api.ask(b, q, 'q-extra', q.label, 2);
-        var i = await api.choose(b, 'So, will you take the extra hours?', ['Yes, I’ll take them', 'No thanks']);
+        var i = await api.choose(b, 'So, will you take the extra hours?', ['Sure, I’ll take them', 'No thanks']);
         S.run.extra = i === 0; S.extra = S.run.extra; S.hangout = S.run.extra;
-        if (S.run.extra) await api.say('you', 'That means missing the movie with my friends on Saturday. Oh well.');
+        await api.say('you', S.run.extra ? 'That means missing the movie with my friends on Saturday. Oh well.' : 'I need my weekends. Maybe next time.');
       }));
       a = a.concat(period(5));
       if (S.sit === 'avery') a.push(step('bday', async function (api, S) {
         await api.quest('Go home. Someone is waiting for you.', 'mom');
-        await api.say('mom', 'Happy 18th birthday! There’s cake.');
+        await api.say('mom', ['Surprise! Happy 18th birthday!', 'There’s cake. Chocolate, obviously.']);
         var q = Q('newline', S); await api.ask('mom', q, 'q-newline', q.label, 2);
+      }));
+      a.push(step('clue', async function (api, S) {
+        var f = friendId(S), name = T.world.PEOPLE[f].name;
+        await api.quest(name + ' needs help with something', f);
+        await api.say(f, ['Hey! Can you look at this?', 'My pay stub says I worked 36 hours. I worked 40!', 'My boss says it’s the new app. Pay-O-Matic.']);
+        await api.say('you', S.clues ? ['Mine had a mistake too! Something is wrong with that app.', 'You should talk to your boss before you sign.'] : ['Mine looked okay. So far.', 'Check every line before you sign, okay? I will too.']);
+        S.clueFriend = name; api.give('Pay-O-Matic notes'); api.save();
       }));
       a.push(step('stamps', async function (api, S) {
         var order = [['jas', 'Jas at Service Canada'], ['grandpa', 'Grandpa'], ['nurse', 'Nurse Kaur at the hospital']];
+        await api.quest('Ms. Okafor wants to show you something', 'okafor');
+        await api.say('okafor', ['You know what comes off your pay. But where does it GO?', 'Let’s find out. Here’s a Deduction Map.', 'Visit Jas, your grandpa and the hospital. Get a stamp from each!']);
         api.give('Deduction Map'); S.mapGiven = true; S.stampPhase = true;
         while (true) {
           var left = order.filter(function (o) { return !S.stamps[o[0]]; });
           if (!left.length) break;
-          await api.quest('Where do your deductions go? Visit ' + left.map(function (o) { return o[1]; }).join(', ') + ' (' + (3 - left.length) + ' of 3)', left[0][0]);
+          await api.quest('Where does it go? Visit ' + left.map(function (o) { return o[1]; }).join(', ') + ' (' + (3 - left.length) + ' of 3 stamps)', left[0][0]);
           await stampVisit(api, S, left[0][0]);
         }
         S.stampPhase = false;
@@ -727,37 +769,41 @@ function paydaySigned(s, jar, real, short) {
       a = a.concat(period(6));
       a.push(step('end3', async function (api, S) {
         await api.quest('Show Ms. Okafor your Deduction Map', 'okafor');
+        await api.say('okafor', 'Three stamps! You’re on fire. One more question.');
         var q = Q('taxfree', S); await api.ask('okafor', q, 'q-taxfree', q.label, 2);
-        await api.say('okafor', ['Now do Step 3 of your project: for each deduction, write where it goes and who it helps. Your Deduction Map can help.', 'Come back after your next lesson for Chapter 4.']);
+        await api.say('okafor', ['Now do Step 3 of your project. Where does each deduction go? Who does it help? Your Deduction Map can help.', 'And hey, Town Hall is having a big meeting. Everyone is upset about Pay-O-Matic. Bring your stubs!']);
       }));
     }
     if (ch === 3) {
       a.push(step('hall', async function (api, S) {
-        await api.quest('Go to the Town Hall meeting about taxes', 'mayor');
-        await api.say('mayor', 'Welcome! Tonight the town is talking about one question: should more tax come off pay, or less?');
+        await api.quest('Go to the big meeting at Town Hall', 'mayor');
+        var caught = Object.keys(S.signs).filter(function (k) { return S.signs[k].result === 'caught'; }).length, signedBad = Object.keys(S.signs).filter(function (k) { return S.signs[k].result === 'signed'; }).length;
+        await api.say('mayor', ['Order! Order! Thank you all for coming.', 'First: Pay-O-Matic 3000. People say their stubs are wrong. Does anyone have proof?']);
+        await api.say('you', caught ? ['I do! Pay-O-Matic made a mistake on my stub. I caught it before I signed.', (S.clueFriend || 'My friend') + '’s stub was wrong too. Here are my notes.'] : signedBad ? ['I do. I signed a stub that paid me less. The bank noticed.', (S.clueFriend || 'My friend') + '’s stub was wrong too.'] : ['My stubs were okay. But ' + (S.clueFriend || 'my friend') + '’s was wrong.']);
+        await api.say('mayor', ['Thank you! This is why we check before we sign.', 'Town council will make every shop check Pay-O-Matic. And every worker should check their stub.', 'Next: taxes. Some people want less tax. Some want more. Let’s hear from you.']);
         await dialPanel(api, S); api.give('Tax Opinion card');
-        await api.say('mayor', 'Thank you. Every opinion needs a reason and a trade-off. Yours has both.');
+        await api.say('mayor', 'A reason AND a trade-off! You’d make a great councillor. Meeting over!');
       }));
       a = a.concat(period(7), period(8));
       a.push(step('finale', async function (api, S) {
         await api.quest('Go home and count your jar', 'table');
         var o = outcome(S.run), Wk = W(S);
-        if (o.win) { api.place('goal', 'home', 8, 5, { draw: SIT[S.sit].goalIcon, label: Wk.goalLabel }); await api.say('you', ['The jar has ' + fmt(S.run.jar) + '. That’s enough for ' + Wk.goalLabel + '!', 'Every bill is paid, with ' + fmt(S.run.bank) + ' left in the bank.']); }
-        else if (o.why === 'overdrawn') await api.say('you', ['The jar has ' + fmt(S.run.jar) + ', but my account is overdrawn (' + fmt(S.run.bank) + ').', 'Some bills are unpaid, so it does not count yet.']);
-        else await api.say('you', ['The jar has ' + fmt(S.run.jar) + ' of ' + fmtW(Wk.goal) + '. ' + fmt(Wk.goal - S.run.jar) + ' short.'].concat(S.run.jar + S.run.bank >= Wk.goal ? ['So close: ' + fmt(S.run.bank) + ' was sitting in the bank. Moving more of my take-home pay would have done it.'] : []));
+        if (o.win) { api.place('goal', 'home', 6, 4, { draw: SIT[S.sit].goalIcon, label: Wk.goalLabel }); await api.say('you', ['The jar has ' + fmt(S.run.jar) + '!', 'That’s enough for ' + Wk.goalLabel + '. I did it!', 'Every bill is paid, too. I still have ' + fmt(S.run.bank) + ' in the bank.']); }
+        else if (o.why === 'overdrawn') await api.say('you', ['The jar has ' + fmt(S.run.jar) + '. But my bank account is below zero (' + fmt(S.run.bank) + ').', 'Some bills didn’t get paid. So it doesn’t count yet.']);
+        else await api.say('you', ['The jar has ' + fmt(S.run.jar) + '. I needed ' + fmtW(Wk.goal) + '.', 'I’m ' + fmt(Wk.goal - S.run.jar) + ' short.'].concat(S.run.jar + S.run.bank >= Wk.goal ? ['Wait. I had ' + fmt(S.run.bank) + ' just sitting in the bank. I could have put more in the jar!'] : []));
         var firstTime = !S.finished; S.finished = true; S.win = !!o.win;
         if (firstTime) api.profileAdd('closet', WORK[S.run.job].outfit); api.profileAdd('plan', { mission: '7-income-tax', title: 'First Paycheque', text: 'My take-home pay as a ' + J(S).title + ': ' + fmt(S.run.log[S.run.log.length - 1].stub.net) + ' from ' + fmt(S.run.log[S.run.log.length - 1].stub.gross) + ' gross.' });
         api.profileAdd('finished', '7-income-tax'); api.refresh();
-        await api.say('okafor', ['Well done, ' + api.profile.name + '. Your My Plan wall at home has a new page.', 'Now do Step 4 of your project: pick your path and plan your product.', 'Show your teacher the report: Menu → Report for my teacher.']);
+        await api.say('okafor', [o.win ? 'You did it, ' + api.profile.name + '! Goal reached!' : 'So close, ' + api.profile.name + '! You learned a ton, though.', 'Oh, and guess what? Jas got a new job! And Pay-O-Matic got fixed, thanks to people like you.', 'Your My Plan wall at home has a new page.', 'Now do Step 4 of your project: pick your path.', 'Show your teacher your report: Menu, then Report for my teacher.']);
       }));
     }
     return a;
   }
   async function stampVisit(api, S, id) {
     var key = { jas: 'card-ei', grandpa: 'card-cpp', nurse: 'card-tax' }[id], q = Q(key, S);
-    if (id === 'jas') await api.say('jas', 'The store I worked at closed. I’m looking for a new job, and money still comes in every two weeks.');
-    if (id === 'grandpa') await api.say('grandpa', 'I worked for 40 years. Now I’m retired, and a payment comes every month.');
-    if (id === 'nurse') await api.say('nurse', 'We treat everyone who comes in, and nobody gets a bill at the door.');
+    if (id === 'jas') await api.say('jas', ['Hey. So... the shoe store closed. I lost my job.', 'It was scary. But I’m okay for now.']);
+    if (id === 'grandpa') await api.say('grandpa', ['Come in, come in! Did I ever tell you about my first paycheque?', 'Two dollars an hour! I felt so rich. I bought a milkshake every day.', 'Now I’m retired. I get to nap whenever I want.']);
+    if (id === 'nurse') await api.say('nurse', ['Busy day! A kid fell off a skateboard and broke a wrist.', 'We fixed it right up. Cast and all.']);
     await api.ask(id, q, 'q-' + key, q.label, 2);
     S.stamps[id] = 1; api.toast('Stamp added to your Deduction Map (' + Object.keys(S.stamps).length + ' of 3)'); api.save();
   }
@@ -777,20 +823,22 @@ function paydaySigned(s, jar, real, short) {
     init: init, validate: validate, chapterSteps: chapterSteps,
     outfit: function (S) { return S.run && S.run.job ? WORK[S.run.job].outfit : 'none'; },
     placeObjects: function (api, S) {
-      api.place('jobboard', 'jobcentre', 8, 5, { draw: 'cork', label: 'Job board' });
-      api.place('table', 'home', 6, 4, { label: 'Kitchen table' });
-      api.place('fridge', 'home', 4, 2, { label: 'The fridge' });
-      api.place('myplan', 'home', 7, 1, { label: 'My Plan wall' });
-      if (S.letters && S.letters.length) api.place('letter', 'home', 3, 5, { draw: 'letter', solid: false, label: 'A letter' });
-      if (S.finished && S.win) api.place('goal', 'home', 8, 5, { draw: SIT[S.sit].goalIcon, label: 'Your goal' });
+      api.place('jobboard', 'jobcentre', 6, 2, { draw: 'cork', label: 'Job board' });
+      api.place('table', 'home', 4, 3, { label: 'Kitchen table' });
+      api.place('fridge', 'home', 1, 2, { label: 'The fridge' });
+      api.place('myplan', 'home', 6, 1, { label: 'My Plan wall', noRug: true });
+      if (S.letters && S.letters.length) api.place('letter', 'home', 6, 5, { draw: 'letter', solid: false, label: 'A letter' });
+      if (S.finished && S.win) api.place('goal', 'home', 6, 4, { draw: SIT[S.sit].goalIcon, label: 'Your goal' });
     },
     people: function (S) {
       var out = {}, prof = T.api.profile, skin = prof && prof.look ? prof.look.skin : 's3';
-      Object.keys(WORK).forEach(function (jk) { var w = WORK[jk]; out[bossId(jk)] = { name: w.boss, role: JOBS[jk].biz, map: w.b, x: 5, y: 4, dir: 'down', look: w.look }; });
-      out.mom = { name: 'Mom', role: 'Family', map: 'home', x: 3, y: 4, dir: 'right', look: { base: 1, skin: skin, hair: 'brown', shirt: 'purple', pants: '#3b3f5c' }, hidden: S.sit === 'dev' || S.sit === 'rosa' };
-      if (S.sit === 'dev') out.dev = { map: 'home', x: 3, y: 4, dir: 'right', role: 'Roommate' };
-      if (S.sit === 'rosa') out.rosa = { map: 'home', x: 3, y: 4, dir: 'right', role: 'Housemate' };
-      out.nurse = { x: 5, y: 3 }; out.mayor = { x: 5, y: 3 }; out.librarian = { x: 5, y: 3 };
+      Object.keys(WORK).forEach(function (jk) { var w = WORK[jk]; out[bossId(jk)] = { name: w.boss, role: JOBS[jk].biz, map: w.b, x: 4, y: 3, dir: 'down', look: w.look }; });
+      out.mom = { name: 'Mom', role: 'Family', map: 'home', x: 2, y: 4, dir: 'right', look: { base: 1, skin: skin, hair: 'brown', shirt: 'purple', pants: '#3b3f5c' }, hidden: S.sit === 'dev' || S.sit === 'rosa' };
+      if (S.sit === 'dev') out.dev = { map: 'home', x: 2, y: 4, dir: 'right', role: 'Roommate' };
+      if (S.sit === 'rosa') out.rosa = { map: 'home', x: 2, y: 4, dir: 'right', role: 'Housemate' };
+      var pp = S.run ? S.run.p : 0;
+      if (S.finished) out.jas = { map: 'town', x: 15, y: 23, dir: 'down', role: 'Just hired!' };
+      else if (pp < 4) out.jas = { map: 'town', x: 44, y: 32, dir: 'right', role: 'Shoe store' };
       return out;
     },
     doorOpen: function (id, S) {
@@ -810,18 +858,24 @@ function paydaySigned(s, jar, real, short) {
         stampVisit(api, S, id).then(function () { var left = ['jas', 'grandpa', 'nurse'].filter(function (k) { return !S.stamps[k]; }); api.questText('Where do your deductions go? ' + (3 - left.length) + ' of 3 stamps. Keep going.'); });
         return true;
       }
-      var j = S.run && S.run.job, lines = {
-        okafor: 'Keep going! Your goal is on the gold line at the top.', sam: S.run && S.run.p ? 'Your balance is ' + fmt(S.run.bank) + '. The jar has ' + fmt(S.run.jar) + '.' : 'Welcome to the bank! Bring your paycheque here on payday.',
-        jas: S.stamps.jas ? 'Thanks for listening. EI keeps me going while I look.' : 'Job hunting is hard work.', agent: 'Service Canada helps with EI, CPP and more.',
-        grandpa: S.stamps.grandpa ? 'Every paycheque you get pays a little into your own pension.' : 'Come visit more often!', nurse: 'Wash your hands!', mayor: 'Town council meets here.',
-        librarian: 'The library has free computers and books about careers.', avery: 'Hi! Have you seen the new job postings?', dev: 'Payday is the best day.', rosa: 'Budgets are not about cutting the fun. They are about choosing.',
-        worker: 'Hard hats on! This site is busy.', mom: 'Dinner’s at six.',
-        fridge: S.run ? 'The bills on the fridge: ' + W(S).bills.map(function (b) { return b[1] + ' ' + fmtW(b[2]); }).join(', ') + '.' : 'Leftovers again.',
-        table: 'The kitchen table. This is where you plan payday.', jobboard: j ? 'You already have a job at ' + JOBS[j].biz + '.' : 'Job postings.',
-        myplan: api.profile.plan.length ? 'My Plan wall: ' + api.profile.plan.map(function (x) { return x.title + ' — ' + x.text; }).join(' ') : 'My Plan wall. Finish a mission to pin a page here.',
-        letter: S.letters.length ? S.letters.join(' ') : 'An old letter.', goal: 'You did it. ' + (S.run ? W(S).goalLabel : '') + '!'
+      var j = S.run && S.run.job, p = S.run ? S.run.p : 0, app = p >= 4, done = S.finished, fr = function (yes, no) { return app ? yes : no; }, lines = {
+        okafor: !S.run ? 'Hi there! Come talk to me when you’re ready.' : !j ? 'The job board is by the window!' : done ? 'Come back anytime. There’s always more to learn!' : 'You’re doing great. Your next goal is on the gold line at the top.',
+        sam: !S.run || !p ? 'Welcome to the bank! Bring your paycheque here on payday.' : pun(S) + ' Your bank: ' + fmt(S.run.bank) + '. Your jar: ' + fmt(S.run.jar) + '.',
+        jas: done ? 'Guess what? I got a new job! I start Monday.' : S.stamps.jas ? 'Thanks for listening. I send out résumés every day.' : app ? 'Hey... rough week. I’ll tell you about it sometime.' : 'Hi! I work at the shoe store. Best discount in town!',
+        agent: 'Welcome to Service Canada. We help with EI, CPP and lots more.',
+        grandpa: S.stamps.grandpa ? 'Every paycheque you get puts a little into your own pension. Someday you’ll nap too.' : 'Come visit more often! I have stories. So many stories.',
+        nurse: 'Wear a helmet. I mean it.', mayor: done ? 'Pay-O-Matic is fixed. Democracy works! Slowly.' : 'Town Hall: where the town decides things. Slowly.',
+        librarian: 'Free computers! Free books! Free air conditioning!',
+        avery: fr('My stub was wrong AGAIN. Pay-O-Matic strikes again!', 'Hi! I’m saving up for concert tickets. Every shift counts!'),
+        dev: fr('Pay-O-Matic says I worked zero hours on Tuesday. I was THERE.', 'Payday is the best day. Pizza day is second.'),
+        rosa: fr('I check every stub now. Every. Single. Line.', 'A budget isn’t about no fun. It’s about choosing your fun.'),
+        worker: 'Hard hats on! This site is busy.', mom: S.sit === 'avery' && S.run ? 'Dinner’s at six. Don’t be late!' : 'Hi, sweetie! Say hi to your friends for me.',
+        fridge: S.run ? 'Bills on the fridge: ' + W(S).bills.map(function (b) { return b[1] + ' ' + fmtW(b[2]); }).join(', ') + '.' : 'Leftovers. Again.',
+        table: 'The kitchen table. This is where you plan payday.', jobboard: j ? 'You already work at ' + JOBS[j].biz + '.' : 'Job postings. One of these could be yours!',
+        myplan: api.profile.plan.length ? 'My Plan wall: ' + api.profile.plan.map(function (x) { return x.title + ': ' + x.text; }).join(' ') : 'My Plan wall. Finish a mission to pin a page here.',
+        letter: S.letters.length ? S.letters.join(' ') : 'An old letter.', goal: 'You did it! ' + (S.run ? W(S).goalLabel : '') + '!'
       };
-      if (/^boss_/.test(id)) return j && bossId(j) === id ? 'Good to see you. Your next shift is on the schedule.' : 'We’re a busy shop. Good luck with the job hunt!';
+      if (/^boss_/.test(id)) { var bj = id.slice(5); return j === bj ? WORK[bj].idle : 'We’re busy today. Good luck out there!'; }
       return lines[id] || null;
     },
     hud: function (S) {
@@ -841,6 +895,9 @@ function paydaySigned(s, jar, real, short) {
         it.push({ name: 'Deduction Map', icon: '🗺️', note: Object.keys(S.stamps).length + ' of 3 stamps', view: function () {
           return '<table class="ct-rep"><tbody><tr><td>EI</td><td>' + (S.stamps.jas ? '✅ Jas: pay while looking for a new job' : '— visit Jas at Service Canada') + '</td></tr><tr><td>CPP</td><td>' + (S.stamps.grandpa ? '✅ Grandpa: a pension after retiring' : '— visit Grandpa') + '</td></tr><tr><td>Income tax</td><td>' + (S.stamps.nurse ? '✅ The hospital: health care for everyone' : '— visit the hospital') + '</td></tr></tbody></table>'; } });
       }
+      if (S.clueFriend) it.push({ name: 'Pay-O-Matic notes', icon: '\ud83d\udd0d', note: 'Mistakes found', view: function () {
+        var rows = Object.keys(S.signs).map(function (k) { var g = S.signs[k]; return '<li>Paycheque ' + k + ': ' + (g.result === 'caught' ? 'mistake caught before signing \u2713' : g.result === 'signed' ? 'signed a stub that paid ' + fmt(g.short) + ' less' : 'checked, no mistake') + '</li>'; }).join('');
+        return '<ul>' + rows + '<li>' + esc(S.clueFriend) + '\u2019s stub: 36 hours instead of 40</li></ul><p class="ct-small">Every shop in town uses Pay-O-Matic 3000.</p>'; } });
       if (S.typed.claim) it.push({ name: 'Tax Opinion card', icon: '🗳️', note: S.typed.claim, view: function () { return '<p><b>Claim:</b> ' + esc(S.typed.claim) + '</p><p><b>Reason:</b> ' + esc(S.typed.reason || '') + '</p><p><b>Trade-off:</b> ' + esc(S.typed.tradeoff || '') + '</p>'; } });
       return it;
     },

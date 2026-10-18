@@ -49,6 +49,7 @@
     h('div', 'ct-widgets', null, hud).id = 'ctWidgets';
     h('span', 'ct-spacer', null, hud);
     var chap = h('span', 'ct-chap', null, hud); chap.id = 'ctChap';
+    var mapb = h('button', 'ct-btn', 'Map', hud); mapb.id = 'ctMapBtn'; mapb.type = 'button'; mapb.title = 'Town map (M)';
     var bag = h('button', 'ct-btn', 'Bag', hud); bag.id = 'ctBag'; bag.type = 'button';
     var menu = h('button', 'ct-btn', 'Menu', hud); menu.id = 'ctMenu'; menu.type = 'button';
     var q = h('button', 'ct-quest', '', app); q.id = 'ctQuest'; q.type = 'button';
@@ -58,13 +59,14 @@
     h('div', 'ct-where', '', stage).id = 'ctWhere';
     var dlg = h('div', 'ct-dialog', null, stage); dlg.id = 'ctDialog'; dlg.hidden = true; dlg.setAttribute('aria-live', 'polite');
     h('div', 'ct-toast', '', stage).id = 'ctToast';
+    var area = h('div', 'ct-area', '', stage); area.id = 'ctArea'; area.setAttribute('aria-live', 'polite');
     var modal = h('div', 'ct-modal', null, app); modal.id = 'ctModal'; modal.hidden = true;
     h('div', 'ct-box', null, modal).id = 'ctBox';
     var coach = h('div', 'ct-coach', '<p id="ctCoachTxt"></p><div class="ct-row"><span id="ctCoachN" class="ct-small"></span><span class="ct-spacer"></span><button class="ct-btn" type="button" id="ctCoachSkip">Skip</button><button class="ct-btn primary" type="button" id="ctCoachNext">Next</button></div>', app);
     coach.id = 'ctCoach'; coach.hidden = true; coach.setAttribute('role', 'dialog');
     h('p', 'ct-foot', esc(M.foot || 'This is a model. The people and businesses are made up.'), app);
     ctx = cv.getContext('2d');
-    bag.addEventListener('click', openBag); menu.addEventListener('click', openMenu); q.addEventListener('click', autoWalkQuest);
+    mapb.addEventListener('click', openTownMap); bag.addEventListener('click', openBag); menu.addEventListener('click', openMenu); q.addEventListener('click', autoWalkQuest);
     $('#ctCoachNext').addEventListener('click', coachNext); $('#ctCoachSkip').addEventListener('click', coachEnd);
     modal.addEventListener('click', function (e) { if (e.target === modal && modal.dataset.closable) closeModal(); });
     bindInput();
@@ -73,13 +75,19 @@
   }
 
   /* ── Sizing: integer scale, ×3 on wide screens, ×2 when narrow ── */
+  var baseScale = 3;
   function resize() {
     var w = Math.min(960, stage.clientWidth || 600);
-    scale = w >= 700 ? 3 : 2;
-    var rows = scale === 3 ? 11 : 12, hgt = Math.min(rows * 16 * scale, Math.round(w * (scale === 3 ? 0.62 : 0.9)));
+    baseScale = w >= 700 ? 3 : 2;
+    var rows = baseScale === 3 ? 11 : 12, hgt = Math.min(rows * 16 * baseScale, Math.round(w * (baseScale === 3 ? 0.62 : 0.9)));
     cv.width = w; cv.height = hgt; cv.style.height = hgt + 'px';
     ctx.imageSmoothingEnabled = false;
-    kick();
+    fitScale(); kick();
+  }
+  /* The town uses the base scale; a room zooms in to fill the view (up to ×5), so its few key things stand out */
+  function fitScale() {
+    scale = baseScale;
+    if (map && map.id !== 'town') scale = Math.max(baseScale, Math.min(5, Math.floor(cv.width / (map.w * 16)), Math.floor(cv.height / (map.h * 16))));
   }
 
   /* ── Maps ── */
@@ -97,7 +105,8 @@
     }
     if (m.mat) { x.fillStyle = '#7a5a3a'; x.fillRect(m.mat.x * 16 + 2, m.mat.y * 16 + 3, 12, 10); x.fillStyle = '#9c7a52'; x.fillRect(m.mat.x * 16 + 3, m.mat.y * 16 + 4, 10, 8); }
     if (m.board) drawBoard(x, m.board.x * 16, m.board.y * 16);
-    Object.keys(objects).forEach(function (k) { var o = objects[k]; if (o.map !== m.id) return; if (o.tile != null) A.drawTile(x, o.tile, o.x * 16, o.y * 16); if (o.draw) drawObject(x, o.draw, o.x * 16, o.y * 16); });
+    (m.draws || []).forEach(function (d) { drawLandmark(x, d); });
+    Object.keys(objects).forEach(function (k) { var o = objects[k]; if (o.map !== m.id) return; if (m.rugs && o.label && !o.noRug) rug(x, o.x * 16, o.y * 16); if (o.tile != null) A.drawTile(x, o.tile, o.x * 16, o.y * 16); if (o.draw) drawObject(x, o.draw, o.x * 16, o.y * 16); });
     return c;
   }
   /* Small drawn objects a mission can place: a corkboard, a letter, and goal items */
@@ -109,13 +118,41 @@
     if (kind === 'key') { r('#e2b13c', 3, 6, 5, 5); r('#fffdf8', 4, 7, 3, 3); r('#e2b13c', 8, 8, 6, 1); r('#e2b13c', 12, 9, 1, 2); r('#e2b13c', 10, 9, 1, 2); }
     if (kind === 'cert') { r('#8d5243', 2, 3, 12, 10); r('#fffdf8', 3, 4, 10, 8); r('#94631a', 5, 6, 6, 1); r('#94631a', 5, 8, 4, 1); r('#e2b13c', 10, 9, 3, 3); }
   }
+  /* Landmarks drawn over the tiles: field lines, the fountain, bridge rails, roof emblems */
+  function drawLandmark(x, d) {
+    var px = d.x * 16, py = d.y * 16, i;
+    function r(c, a, b, w, hh) { x.fillStyle = c; x.fillRect(a, b, w, hh); }
+    if (d.kind === 'field') {
+      var fx = px + 10, fy = py + 10, fw = d.w * 16 - 20, fh = d.h * 16 - 20, cx = fx + fw / 2, cy = fy + fh / 2;
+      x.strokeStyle = 'rgba(255,255,255,0.85)'; x.lineWidth = 2; x.strokeRect(fx, fy, fw, fh);
+      x.beginPath(); x.moveTo(cx, fy); x.lineTo(cx, fy + fh); x.stroke();
+      x.beginPath(); x.arc(cx, cy, 14, 0, Math.PI * 2); x.stroke();
+      x.strokeRect(fx, cy - 18, 18, 36); x.strokeRect(fx + fw - 18, cy - 18, 18, 36);
+      r('#f2f0e8', fx - 2, cy - 8, 3, 16); r('#f2f0e8', fx + fw - 1, cy - 8, 3, 16);
+    }
+    if (d.kind === 'fountain') {
+      var ox = px + 32, oy = py + 32;
+      r('#8d8ca6', ox - 7, oy - 7, 14, 14); r('#c9c9d6', ox - 5, oy - 5, 10, 10); r('#7fd0e8', ox - 3, oy - 3, 6, 6);
+      for (i = 0; i < 8; i++) { var a = i * Math.PI / 4; r('#e8f8ff', Math.round(ox + Math.cos(a) * 11) - 1, Math.round(oy + Math.sin(a) * 11) - 1, 2, 2); }
+      r('#ffffff', ox - 1, oy - 12, 2, 6);
+    }
+    if (d.kind === 'bridge') {
+      r('#8d8ca6', px - 2, py - 2, 3, d.h * 16 + 4); r('#8d8ca6', px + d.w * 16 - 1, py - 2, 3, d.h * 16 + 4);
+      for (i = 0; i <= d.h * 2; i++) { r('#5c6278', px - 3, py - 2 + i * 8, 5, 3); r('#5c6278', px + d.w * 16 - 2, py - 2 + i * 8, 5, 3); }
+    }
+    if (d.kind === 'clock') { x.fillStyle = '#5c4a32'; x.beginPath(); x.arc(px + 8, py + 13, 11, 0, Math.PI * 2); x.fill(); x.fillStyle = '#fffdf8'; x.beginPath(); x.arc(px + 8, py + 13, 9, 0, Math.PI * 2); x.fill(); r('#1f1d1a', px + 7, py + 6, 2, 8); r('#1f1d1a', px + 8, py + 12, 6, 2); }
+    if (d.kind === 'cross') { r('#fffdf8', px - 3, py + 3, 22, 22); r('#b42318', px + 5, py + 6, 6, 16); r('#b42318', px, py + 11, 16, 6); }
+    if (d.kind === 'coin') { x.fillStyle = '#b5862a'; x.beginPath(); x.arc(px + 8, py + 13, 10, 0, Math.PI * 2); x.fill(); x.fillStyle = '#e8c35c'; x.beginPath(); x.arc(px + 8, py + 13, 8, 0, Math.PI * 2); x.fill(); x.fillStyle = '#6b4510'; x.font = 'bold 11px system-ui, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('$', px + 8, py + 14); }
+  }
+  /* A rug marks the people and things that matter in a room */
+  function rug(x, px, py) { x.fillStyle = 'rgba(148,99,26,0.28)'; x.fillRect(px - 1, py + 1, 18, 15); x.strokeStyle = 'rgba(148,99,26,0.65)'; x.lineWidth = 1; x.strokeRect(px + 0.5, py + 2.5, 15, 12); }
   function drawBoard(x, px, py) { // the My Plan wall at home: one pinned card per finished mission
     x.fillStyle = '#8d5243'; x.fillRect(px - 6, py + 1, 28, 13); x.fillStyle = '#e8d9b5'; x.fillRect(px - 5, py + 2, 26, 11);
     var n = P ? P.plan.length : 0, i;
     for (i = 0; i < Math.min(n, 6); i++) { x.fillStyle = ['#94631a', '#4f78c9', '#42a379', '#c2504d', '#8a5cc2', '#2e9c9c'][i]; x.fillRect(px - 3 + (i % 3) * 8, py + 3 + Math.floor(i / 3) * 5, 6, 4); }
   }
   function enter(id, x, y, dir) {
-    map = getMap(id); cache = prerender(map);
+    map = getMap(id); cache = prerender(map); fitScale();
     me.x = x; me.y = y; me.dir = dir || me.dir; me.px = x * 16; me.py = y * 16; me.moving = null; path = [];
     where(); questMarker(); kick();
   }
@@ -215,7 +252,9 @@
       });
     }
     // people and you, back to front
-    var list = people().map(function (p) { return { y: p.y * 16, draw: function () { drawPerson(p.look, p.dir || 'down', 0, p.x * 16, p.y * 16, cam); } }; });
+    var ps = people();
+    if (map.rugs) ps.forEach(function (p) { ctx.fillStyle = 'rgba(148,99,26,0.28)'; ctx.fillRect(Math.round((p.x * 16 - 1 - cam.x) * s), Math.round((p.y * 16 + 1 - cam.y) * s), 18 * s, 15 * s); });
+    var list = ps.map(function (p) { return { y: p.y * 16, draw: function () { drawPerson(p.look, p.dir || 'down', 0, p.x * 16, p.y * 16, cam); } }; });
     list.push({ y: me.py, draw: function () { drawPerson(myLook(), me.dir, me.moving ? 1 + me.frame : 0, me.px, me.py, cam); } });
     list.sort(function (a, b) { return a.y - b.y; }).forEach(function (o) { o.draw(); });
     // quest marker and "!" bubbles
@@ -229,6 +268,7 @@
   function myLook() { var l = Object.assign({}, P ? P.look : { base: 0, skin: 's3', hair: 'black', shirt: 'teal', pants: '#3d4a6b' }); if (G && G.S && M.outfit) l.outfit = M.outfit(G.S) || 'none'; return l; }
   function drawPerson(look, dir, fr, px, py, cam) {
     var sp = A.sprite(look);
+    ctx.fillStyle = 'rgba(31,29,26,0.22)'; ctx.beginPath(); ctx.ellipse(Math.round((px + 8 - cam.x) * scale), Math.round((py + 15 - cam.y) * scale), 5 * scale, 1.6 * scale, 0, 0, Math.PI * 2); ctx.fill();
     ctx.drawImage(sp, DIRCOL[dir] * 16, fr * 16, 16, 16, Math.round((px - cam.x) * scale), Math.round((py - cam.y) * scale), 16 * scale, 16 * scale);
   }
   function marker(x, y, isPerson) {
@@ -244,6 +284,43 @@
   }
 
   /* ── Where you are (text, for everyone, and for screen readers) ── */
+  var lastArea = '';
+  function showArea(name) {
+    var el = $('#ctArea'); if (!el || !name || name === lastArea) return;
+    lastArea = name; el.textContent = name; el.classList.add('on');
+    clearTimeout(showArea.tm); showArea.tm = setTimeout(function () { el.classList.remove('on'); }, 2200);
+  }
+  /* The Town Map: the whole town, building names, districts, where you are and where your goal is */
+  var townCache = null;
+  function openTownMap() {
+    if (!$('#ctModal').hidden) { closeModal(); return; }
+    openModal('Town map', '<div class="ct-mapwrap"><canvas id="ctMapCv" role="img" aria-label="Map of the town"></canvas></div><p class="ct-small">\u25cf You are here. \u2605 Your goal. Press M or Close to go back.</p>');
+    $('#ctBox').classList.add('wide');
+    var tm = getMap('town'); townCache = townCache || prerender(tm);
+    var c = $('#ctMapCv'), wrapW = Math.min(c.parentNode.clientWidth || 600, 900), k = wrapW / townCache.width, x = c.getContext('2d');
+    c.width = Math.round(townCache.width * k); c.height = Math.round(townCache.height * k);
+    x.imageSmoothingEnabled = true; x.drawImage(townCache, 0, 0, c.width, c.height);
+    x.fillStyle = 'rgba(31,29,26,0.18)'; x.fillRect(0, 0, c.width, c.height);
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    (tm.districts || []).forEach(function (d) {
+      if (d.name === 'College Walk') return;
+      x.font = 'italic 700 ' + Math.max(10, Math.round(13 * k * 1.6)) + 'px "Atkinson Hyperlegible Next", system-ui, sans-serif';
+      x.fillStyle = 'rgba(255,248,232,0.9)'; x.strokeStyle = 'rgba(31,29,26,0.8)'; x.lineWidth = 3;
+      var dy = d.ly != null ? d.ly : d.name === 'Riverside Park' ? d.y + 6.5 : d.y + 0.9, dx = d.lx != null ? d.lx : d.x + d.w / 2; // label spot
+      x.strokeText(d.name, dx * 16 * k, dy * 16 * k); x.fillText(d.name, dx * 16 * k, dy * 16 * k);
+    });
+    x.font = '700 ' + Math.max(9, Math.round(11 * k * 1.5)) + 'px "Atkinson Hyperlegible Next", system-ui, sans-serif';
+    tm.labels.forEach(function (l) {
+      var lx = (l.x + l.w / 2) * 16 * k, ly = (l.y + 1.6) * 16 * k, tw = x.measureText(l.text).width + 8;
+      x.fillStyle = 'rgba(31,29,26,0.85)'; x.fillRect(lx - tw / 2, ly - 8, tw, 16); x.fillStyle = '#fff8e8'; x.fillText(l.text, lx, ly + 1);
+    });
+    var meX, meY;
+    if (map.id === 'town') { meX = me.x; meY = me.y; } else { var sp = tm.spots[map.id]; meX = sp.x; meY = sp.y; }
+    var goal = quest && quest.id ? locate(quest.id) : null;
+    if (goal && goal.map !== 'town') { var gs = tm.spots[goal.map]; goal = gs ? { x: gs.x, y: gs.y - 1 } : null; }
+    if (goal) { x.font = '900 ' + Math.max(18, Math.round(30 * k)) + 'px system-ui, sans-serif'; x.fillStyle = '#f5b82e'; x.strokeStyle = '#1f1d1a'; x.lineWidth = 3; x.strokeText('\u2605', (goal.x + 0.5) * 16 * k, (goal.y + 0.5) * 16 * k); x.fillText('\u2605', (goal.x + 0.5) * 16 * k, (goal.y + 0.5) * 16 * k); }
+    x.fillStyle = '#b42318'; x.strokeStyle = '#fff'; x.lineWidth = 3; x.beginPath(); x.arc((meX + 0.5) * 16 * k, (meY + 0.5) * 16 * k, Math.max(5, 9 * k), 0, Math.PI * 2); x.fill(); x.stroke();
+  }
   function where() {
     var w = $('#ctWhere'), txt = '';
     if (!map) return;
@@ -254,6 +331,7 @@
       txt = near ? 'Outside: ' + Wd.building(near).name : '';
     }
     w.textContent = txt; w.hidden = !txt;
+    showArea(map.id === 'town' ? Wd.districtAt(map, me.x, me.y) : Wd.building(map.id).name);
   }
 
   /* ── Input ── */
@@ -265,6 +343,7 @@
       if (/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '')) return;
       if (KEYS[e.key]) { e.preventDefault(); held = KEYS[e.key]; path = []; kick(); }
       else if ((e.key === 'Enter' || e.key === ' ') && document.activeElement === cv) { e.preventDefault(); interactFront(); }
+      else if ((e.key === 'm' || e.key === 'M') && !busy) { e.preventDefault(); openTownMap(); }
     });
     document.addEventListener('keyup', function (e) { if (KEYS[e.key] && held === KEYS[e.key]) held = null; });
     cv.addEventListener('click', function (e) {
@@ -700,6 +779,7 @@
     G = fresh ? null : loadJSON(saveKey()); if (!validGame(G)) G = null;
     if (!G) G = { v: 1, mode: 'gentle', map: 'town', x: 0, y: 0, dir: 'down', ch: 0, si: 0, S: M.init(api), done: {}, tut: false, snap: null };
     G.S.ans = G.S.ans || {};
+    (getMap('town').signs || []).forEach(function (sg, i) { objects['sign' + i] = { map: 'town', x: sg.x, y: sg.y, label: sg.text, noRug: true }; });
     if (M.placeObjects) M.placeObjects(api, G.S);
     var town = getMap('town'), m0 = G.x ? G.map : 'town';
     enter(m0, G.x || town.spawn.x, G.y || town.spawn.y, G.dir);

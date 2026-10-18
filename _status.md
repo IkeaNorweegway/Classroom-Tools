@@ -138,7 +138,7 @@ Project-based course: 1 hour every 3 days, ~40 sessions a year, 5 units per grad
   - **v1 model checks on the mission's copy:** a careful player always wins and gross-pay, do-nothing and too-cautious players never do; the answer tables are clean; the extra-hours answer holds in all 4,500 runs.
   - **Sign-off:** 55,464 planted mistakes checked; every one is worth at least $5 (largest $110.91). A careful planner who signs everything without checking still wins 1,799 of 1,800 runs in Gentle and loses 297 of 1,800 in Real.
   - **Scripted players through every flow:** all 9 situation × job pairs (Gentle), Real mode, gross-pay, cautious, do-nothing, sign-everything and wrong-first players. Results as designed, and no page errors.
-  - **Navigation:** all 26 doors and all 18 people in the rooms are reachable from the spawn point; doors go in and out; locked doors explain themselves; tap-walk works; the quest line auto-walks to the target and starts the talk; 0 frames while idle (rule 9).
+  - **Navigation (the 78 × 58 map, rebuilt the same day with districts, paths, landmarks and smaller rooms):** all 26 doors, all 22 people (rooms and town) and all 6 street signs are reachable from the spawn point; doors go in and out; locked doors explain themselves; tap-walk works; the quest line auto-walks to the target and starts the talk; 0 frames while idle (rule 9).
   - **Saving:** resume after reload works, and the profile carries over to a second mission.
   - **Screens:** checked at 1340, 1000 and 600 px.
 - Not tested: real walking pace (headless Chrome barely advances animation frames), whether a chapter really takes 10–15 minutes, touch on Chromebooks, students, the reading level, and sound (off by default, never tested).
