@@ -628,83 +628,21 @@ function roundingLine() {
   return numberLine({ min: 300000, max: 400000, step: 10000, every: 50000, points: [[384000, '384 000']] });
 }
 
-// ═════════════ Grade 7 ═════════════
+// ═════════════ Matter, plants, forces and land (both banks) ═════════════
 
-function people(names, cls) { // pills laid out in rows inside an area
-  let b = '', x = 24, y = 36;
-  names.forEach(([n, c]) => {
-    const w = textW(n, 13) + 18;
-    if (x + w > 336) { x = 24; y += 36; }
-    b += rc(x, y - 13, w, 26, c || cls || 'v-pill-plant', 13) + T(x + w / 2, y + 4.5, n);
-    x += w + 8;
-  });
-  return { s: b, h: y + 26 };
-}
-function area(names, label) {
-  const p = people(names);
-  return svg(360, p.h + 26, label, rc(10, 10, 340, p.h, 'v-area', 14) + p.s);
-}
-const LIVE = 'v-pill-plant', THING = 'v-pill-thing';
-function ecoVocab(term) {
-  if (term === 'population') return area([['deer'], ['deer'], ['deer'], ['deer'], ['deer'], ['deer'], ['deer']], 'Seven deer of the same species in one area.');
-  if (term === 'community') return area([['deer'], ['wolf'], ['aspen'], ['beaver'], ['moss'], ['robin'], ['deer'], ['aspen']], 'Many different species living in the same area: deer, wolves, aspen, beavers, moss, robins.');
-  if (term === 'ecosystem') return area([['deer'], ['wolf'], ['aspen'], ['moss'], ['sunlight', THING], ['water', THING], ['soil', THING], ['air', THING]], 'Living things (deer, wolf, aspen, moss) together with sunlight, water, soil and air.');
-  if (term === 'habitat') {
-    let b = el(180, 74, 166, 62, 'v-area') + pill(180, 74, 'frog', 'v-pill-ac').s;
-    b += T(98, 60, 'water: pond', 'v-ts') + T(262, 60, 'food: insects', 'v-ts') + T(180, 116, 'shelter: reeds and mud', 'v-ts');
-    return svg(360, 140, 'A frog in the place where it lives, which gives it water, food and shelter.', b);
-  }
-  if (term === 'niche') return chain(['mosquito', 'frog', 'heron'], { hi: 1, under: ['', 'its job here', ''] });
-  return flow(['dead leaves', 'fallen log'], '?', 'nutrients in soil', { fromCls: THING });
-}
-function energyFlowVis(k) {
-  if (k === 0) return chain(['?', 'grass', 'rabbit', 'fox']);
-  if (k === 1) return chain(['grass', 'rabbit', 'fox'], { under: ['1000 units', '?', '?'] });
-  if (k === 2) return flow(['sunlight', 'water', 'carbon dioxide'], '?', 'sugar + oxygen');
-  let b = '';
-  const hw = y => (y - 10) / 120 * 150;
-  ['top predators', 'carnivores', 'herbivores', 'producers'].forEach((t, i) => {
-    const y0 = 10 + i * 30, y1 = y0 + 30;
-    b += pg([[180 - hw(y0), y0], [180 + hw(y0), y0], [180 + hw(y1), y1], [180 - hw(y1), y1]], i === 3 ? 'v-pill-plant' : 'v-pill');
-    b += i === 0 ? ln(196, 30, 236, 30, 'v-mut') + TL(240, 34, t, 'v-ts') : T(180, y0 + 20, t, 'v-ts');
-  });
-  return svg(360, 140, 'An energy pyramid: producers on the bottom, then herbivores, carnivores, and top predators at the top.', b);
-}
-function cell(hi, label) {
-  const ac = p => hi === p ? '-ac' : '';
-  let b = rc(30, 14, 230, 140, 'v-wall' + ac('cell wall') + (hi === 'cell' ? ' v-hi' : ''), 18);
-  b += rc(38, 22, 214, 124, 'v-membrane' + ac('cell membrane'), 13);
-  b += el(156, 92, 70, 38, 'v-vacuole') + ci(90, 58, 20, 'v-nucleus' + ac('nucleus'));
-  const chl = hi === 'chloroplast' || hi === 'chlorophyll' ? 'v-chloro-ac' : 'v-chloro';
-  [[68, 118], [218, 46], [236, 104], [140, 36], [92, 96]].forEach(([x, y]) => { b += el(x, y, 11, 6, chl); });
-  if (hi) {
-    const at = { cell: [260, 30], 'cell membrane': [252, 136], 'cell wall': [260, 128], chlorophyll: [247, 104], chloroplast: [247, 104], nucleus: [110, 58] }[hi];
-    b += ln(at[0], at[1], 286, at[1] < 80 ? 40 : 120, 'v-ac') + TL(292, (at[1] < 80 ? 40 : 120) + 6, label || '?', label ? 'v-ta' : 'v-tq');
-  }
-  return svg(360, 168, hi ? `A plant cell with one part picked out: ${hi === 'cell' ? 'the whole cell' : 'the part described'}.` : 'A plant cell.', b);
-}
+/** A leaf making food. which: 'in', 'out' or 'all' hides that group; a list hides those names. */
 function leafIO(which) {
-  const inQ = which === 'in' || which === 'all', outQ = which === 'out' || which === 'all';
+  const ins = ['sunlight', 'water', 'carbon dioxide'];
+  const hidden = n => Array.isArray(which) ? which.includes(n) : which === 'all' || (which === 'in') === ins.includes(n);
+  const lab = (x, y, n) => TL(x, y, hidden(n) ? '?' : n, hidden(n) ? 'v-tq' : 'v-t');
   let b = leafShape(130, 80, 100, 0, 'v-leaf') + ln(130, 80, 230, 80, 'v-vein') + ln(100, 80, 130, 80, 'v-stemp');
-  b += arrow(70, 20, 128, 58, 'sun') + TL(16, 18, inQ ? '?' : 'sunlight', inQ ? 'v-tq' : 'v-t');
-  b += arrow(40, 80, 96, 80, 'blue') + TL(16, 72, inQ ? '?' : 'water', inQ ? 'v-tq' : 'v-t');
-  b += arrow(70, 140, 132, 102, 'mut') + TL(16, 150, inQ ? '?' : 'carbon dioxide', inQ ? 'v-tq' : 'v-t');
-  b += arrow(234, 64, 284, 36, 'ac') + TL(290, 34, outQ ? '?' : 'oxygen', outQ ? 'v-tq' : 'v-t');
-  b += arrow(234, 96, 284, 124, 'ac') + TL(290, 132, outQ ? '?' : 'sugar', outQ ? 'v-tq' : 'v-t');
-  return svg(360, 160, 'A leaf with three things going in and two things coming out. ' + (which === 'all' ? 'All of them are hidden.' : which === 'in' ? 'What goes in is hidden.' : 'What comes out is hidden.'), b);
-}
-function flowerFig(term) {
-  const ac = p => term === p ? '-ac' : '';
-  let b = ln(180, 170, 180, 120, 'v-stemp') + pa('M180,120 Q130,116 120,70 Q150,96 180,100Z', 'v-petal') + pa('M180,120 Q230,116 240,70 Q210,96 180,100Z', 'v-petal');
-  b += pa('M170,120 Q166,102 172,90 L176,56 L184,56 L188,90 Q194,102 190,120Z', 'v-pistil' + ac('pistil'));
-  b += el(180, 52, 9, 5, 'v-pistil' + ac('pistil'));
-  b += ln(160, 116, 150, 64, 'v-filament' + ac('stamen')) + el(150, 60, 6, 9, 'v-anther' + ac('stamen'));
-  b += ln(200, 116, 210, 64, 'v-filament' + ac('stamen')) + el(210, 60, 6, 9, 'v-anther' + ac('stamen'));
-  b += ci(180, 110, 4, 'v-ovule');
-  if (term === 'pollination') b += [[144, 44], [138, 34]].map(([x, y]) => ci(x, y, 2.5, 'v-yellow')).join('') + curve(140, 40, 160, 14, 174, 44, 'ac') + Q(160, 18);
-  if (term === 'fertilization') b += ci(178, 50, 2.5, 'v-yellow') + pa('M178,52 Q174,80 180,106', 'v-ac') + Q(262, 114) + ln(186, 110, 250, 110, 'v-mut');
-  if (term === 'stamen' || term === 'pistil') b += ln(term === 'stamen' ? 218 : 190, term === 'stamen' ? 66 : 80, 262, 70, 'v-ac') + TL(268, 76, '?', 'v-tq');
-  return svg(360, 176, 'A flower cut in half, showing the parts inside.' + (term === 'stamen' || term === 'pistil' ? ' One part is picked out.' : ''), b);
+  b += arrow(70, 20, 128, 58, 'sun') + lab(16, 18, 'sunlight');
+  b += arrow(40, 80, 96, 80, 'blue') + lab(16, 72, 'water');
+  b += arrow(70, 140, 132, 102, 'mut') + lab(16, 150, 'carbon dioxide');
+  b += arrow(234, 64, 284, 36, 'ac') + lab(290, 34, 'oxygen');
+  b += arrow(234, 96, 284, 124, 'ac') + lab(290, 132, 'sugar');
+  const shown = ins.concat(['oxygen', 'sugar']).filter(n => !hidden(n));
+  return svg(360, 160, 'A leaf making food: three things go in and two come out. Shown: ' + (shown.join(', ') || 'none') + '; the rest are hidden.', b);
 }
 function germinating() {
   let b = rc(20, 90, 320, 50, 'v-soil');
@@ -732,7 +670,7 @@ function particles(kind) {
 }
 function particleHeat(k) {
   if (k === 'heat') {
-    let b = particleBox(132, 8, 'solid');
+    let b = particleBox(132, 8, 'liquid');
     b += pa('M166,128 q-10,-14 0,-26 q4,10 10,4 q6,12 -2,22Z M190,128 q-8,-12 0,-22 q6,10 8,22Z', 'v-flame') + Q(250, 56) + TL(240, 76, 'particles?', 'v-ts');
     return svg(360, 136, 'Particles in a box being heated by a flame underneath.', b);
   }
@@ -740,31 +678,8 @@ function particleHeat(k) {
   if (k === 'spaces') return svg(360, 124, 'Particles in a liquid and in a gas.', particleBox(60, 10, 'liquid') + particleBox(204, 10, 'gas') + T(108, 116, 'liquid', 'v-ts') + T(252, 116, 'gas', 'v-ts'));
   return particles();
 }
-function cupTub() {
-  let b = pa('M50,70 L58,124 L102,124 L110,70Z', 'v-water') + pa('M110,82 q20,0 18,16 q-2,14 -22,14', 'v-ln');
-  b += pa('M170,64 L174,124 Q176,130 184,130 L322,130 Q330,130 332,124 L340,64Z', 'v-water') + ln(166, 64, 344, 64, 'v-lnb');
-  b += rc(76, 22, 8, 46, 'v-glass', 4) + ci(80, 70, 6, 'v-red') + rc(251, 16, 8, 46, 'v-glass', 4) + ci(255, 64, 6, 'v-red');
-  b += TL(90, 32, '40 °C', 'v-tb') + TL(265, 26, '40 °C', 'v-tb') + T(80, 146, 'cup', 'v-ts') + T(255, 146, 'bathtub', 'v-ts');
-  return svg(360, 154, 'A cup of water and a bathtub of water, both at 40 °C.', b);
-}
-function hotCold() {
-  let b = pa('M60,64 L68,134 L124,134 L132,64Z', 'v-hot') + pa('M132,76 q20,0 18,16 q-2,14 -22,14', 'v-ln') + steam(96, 32);
-  b += rc(220, 84, 50, 50, 'v-ice', 6) + T(96, 154, 'hot mug 80 °C', 'v-ts') + T(245, 154, 'ice 0 °C', 'v-ts');
-  b += arrow(152, 104, 212, 104, 'mut') + arrow(212, 116, 152, 116, 'mut') + T(182, 94, '?', 'v-tq');
-  return svg(360, 162, 'A hot mug at 80 °C next to an ice cube at 0 °C. Which way heat flows is hidden.', b);
-}
-function energyIcon(form) {
-  let b = '';
-  if (form === 'thermal') b = rc(110, 92, 140, 12, 'v-metal', 3) + pa('M150,92 q-10,-16 0,-30 q6,12 12,6 q8,14 -2,24Z M200,92 q-10,-14 0,-26 q8,12 6,26Z', 'v-flame') + pa('M170,50 q-6,-10 0,-20 q6,-10 0,-20 M196,48 q-6,-10 0,-20', 'v-heat');
-  if (form === 'chemical') b = rc(140, 30, 80, 70, 'v-battery', 6) + rc(166, 20, 28, 10, 'v-metal', 2) + T(180, 72, '+  −', 'v-tw');
-  if (form === 'electrical') b = pg([[196, 14], [150, 70], [178, 70], [160, 112], [214, 50], [184, 50], [204, 14]], 'v-bolt');
-  if (form === 'mechanical') b = car(130, 100, 'v-car-light') + pa('M100,60 l-30,0 M104,74 l-40,0 M100,88 l-26,0', 'v-mut') + ground(40, 320, 100);
-  if (form === 'light') { for (let a = 0; a < 360; a += 45) b += ln(180 + 32 * Math.cos(deg(a)), 58 + 32 * Math.sin(deg(a)), 180 + 46 * Math.cos(deg(a)), 58 + 46 * Math.sin(deg(a)), 'v-ray'); b += ci(180, 58, 24, 'v-bulb-on'); }
-  if (form === 'sound') { b = rc(110, 30, 50, 60, 'v-sh', 6) + ci(135, 64, 14, 'v-metal'); [20, 36, 52].forEach(d => { b += pa(`M${166 + d},${42} q12,18 0,36`, 'v-ac'); }); }
-  return svg(360, 122, `A picture of ${form} energy.`, b);
-}
 function stateCycle(from, to) {
-  const X = { solid: 54, liquid: 180, gas: 306 }, y = 92;
+  const X = { solid: 54, liquid: 180, gas: 306 }, y = 44;
   let b = '';
   Object.keys(X).forEach(k => { b += pill(X[k], y, k, (k === from || k === to) ? 'v-pill-ac' : 'v-pill').s; });
   const pairs = [['solid', 'liquid', -1], ['liquid', 'gas', -1], ['liquid', 'solid', 1], ['gas', 'liquid', 1]];
@@ -773,46 +688,7 @@ function stateCycle(from, to) {
     b += arrow(x1, yy, x2, yy, on ? 'ac' : 'mut');
     if (on) b += Q((x1 + x2) / 2, yy + (side < 0 ? -8 : 22));
   });
-  const sg = from === 'solid' && to === 'gas';
-  b += curve(54, 74, 180, 0, 306, 74, sg ? 'ac' : 'mut');
-  if (sg) b += Q(180, 32);
-  return svg(360, 128, `Solid, liquid and gas, with arrows for each change. The ${from} to ${to} arrow is picked out; its name is hidden.`, b);
-}
-function forceBasic(k) {
-  if (k === 0) return svg(360, 100, 'A box with an arrow acting on it.', ground(40, 320, 80) + rc(130, 40, 60, 40, 'v-block', 3) + arrow(80, 60, 128, 60, 'ac') + Q(100, 46));
-  if (k === 1) return svg(360, 130, 'An apple falling toward the ground. The force pulling it is hidden.', ground(60, 300, 120) + apple(180, 30, 16) + arrow(180, 54, 180, 104, 'ac') + Q(204, 86));
-  if (k === 2) {
-    let b = rc(160, 10, 40, 80, 'v-sh', 6) + ln(180, 2, 180, 10, 'v-lnb') + ln(180, 90, 180, 104, 'v-lnb') + rc(162, 104, 36, 26, 'v-block', 3);
-    for (let y = 20; y < 84; y += 12) b += ln(166, y, 176, y, 'v-tick');
-    b += ln(162, 56, 198, 56, 'v-ac') + TL(212, 60, '5 ?', 'v-tb');
-    return svg(360, 138, 'A spring scale holding a weight, reading 5 of a hidden unit.', b);
-  }
-  return svg(360, 100, 'A block sliding to the right along the floor, with a second force pointing the other way.',
-    ground(30, 330, 80) + rc(150, 44, 60, 36, 'v-block', 3) + arrow(214, 34, 284, 34, 'ln') + TL(218, 24, 'moving', 'v-ts') + arrow(150, 74, 100, 74, 'ac') + Q(90, 64));
-}
-function structureVis(type) {
-  let b = ground(30, 330, 128);
-  if (type.startsWith('solid')) for (let row = 0; row < 5; row++) {
-    const y = 104 - row * 24, edges = row % 2 ? [90, 105, 135, 165, 195, 225, 255, 270] : [90, 120, 150, 180, 210, 240, 270];
-    for (let i = 0; i < edges.length - 1; i++) b += rc(edges[i], y, edges[i + 1] - edges[i], 24, 'v-brick', 1);
-  }
-  if (type.startsWith('frame')) {
-    const nodes = [[80, 128], [120, 70], [160, 128], [200, 70], [240, 128], [280, 70], [320, 128]];
-    b += pl(nodes, 'v-frame') + ln(120, 70, 280, 70, 'v-frame') + ln(80, 128, 320, 128, 'v-frame');
-    nodes.forEach(([x, y]) => { b += ci(x, y, 3.5, 'v-ink'); });
-  }
-  if (type.startsWith('shell')) b += pa('M90,128 A90,90 0 0,1 270,128Z', 'v-shell') + pa('M100,128 A80,80 0 0,1 260,128', 'v-mut');
-  return svg(360, 136, type.startsWith('solid') ? 'A thick wall built of solid blocks.' : type.startsWith('frame') ? 'A frame of joined bars with open spaces between them.' : 'A thin, curved dome covering a hollow space.', b);
-}
-function bridgeLoad(type) {
-  let b = rc(30, 70, 300, 14, 'v-concrete', 2) + rc(70, 84, 20, 50, 'v-concrete') + rc(270, 84, 20, 50, 'v-concrete') + ground(20, 340, 134);
-  if (type === 'dead') [80, 140, 200, 260].forEach(x => { b += arrow(x, 74, x, 104, 'ac'); });
-  if (type === 'live') b += car(110, 70, 'v-car-light') + person(250, 70) + arrow(158, 76, 158, 104, 'ac') + arrow(250, 76, 250, 104, 'ac');
-  if (type === 'dynamic') {
-    [56, 72, 88].forEach(y => { b += pa(`M0,${y} q6,-6 12,0 t12,0`, 'v-mut') + head(28, y, 0, 'ac'); });
-    b += pa('M120,62 l8,-8 l8,8 l8,-8 l8,8 M220,62 l8,-8 l8,8 l8,-8 l8,8', 'v-ac') + T(180, 40, 'shaking', 'v-ts');
-  }
-  return svg(360, 142, type === 'dead' ? 'A bridge with arrows pressing down all along it, from its own steel and concrete.' : type === 'live' ? 'A bridge with a car and a person on it, pressing down.' : 'A bridge with wind pushing on its side and shaking it.', b);
+  return svg(360, 84, `Solid, liquid and gas, with arrows for each change. The ${from} to ${to} arrow is picked out; its name is hidden.`, b);
 }
 function internalForce(f) {
   let b = '';
@@ -822,38 +698,6 @@ function internalForce(f) {
   if (f === 'torsion') b = rc(110, 40, 140, 36, 'v-block', 8) + el(110, 58, 8, 18, 'v-sh') + arc(84, 58, 22, 210, 330, 'ac') + arc(276, 58, 22, 30, 150, 'ac');
   return svg(360, 112, 'A bar with forces acting on it, as described.', b);
 }
-function machineVis(m) {
-  let b = '';
-  if (m === 'lever') b = ground(30, 330, 120) + pg([[180, 92], [164, 120], [196, 120]], 'v-sh') + ln(60, 108, 300, 76, 'v-plank') + rc(64, 84, 26, 20, 'v-block', 2) + arrow(290, 40, 290, 70, 'ac');
-  if (m === 'inclined plane') b = pg([[60, 120], [300, 120], [300, 50]], 'v-wood') + `<g transform="rotate(-16.3 160 92)">` + rc(140, 70, 40, 24, 'v-block', 2) + `</g>` + ground(30, 330, 120);
-  if (m === 'pulley') b = ln(140, 10, 220, 10, 'v-lnb') + ln(180, 10, 180, 30, 'v-ln') + ci(180, 44, 16, 'v-metal') + ci(180, 44, 3, 'v-ink') + ln(164, 44, 164, 110, 'v-rope') + ln(196, 44, 196, 92, 'v-rope') + rc(180, 92, 32, 28, 'v-block', 2) + arrow(164, 90, 164, 126, 'ac');
-  if (m === 'wheel and axle') b = ci(180, 64, 50, 'v-sh') + ci(180, 64, 12, 'v-metal') + ln(180, 64, 316, 64, 'v-axle') + arc(180, 64, 62, -60, 10, 'ac');
-  if (m === 'screw') { b = rc(150, 20, 60, 90, 'v-metal', 4) + pg([[150, 110], [210, 110], [180, 132]], 'v-metal'); for (let y = 24; y < 112; y += 12) b += ln(150, y + 8, 210, y, 'v-lnb'); }
-  return svg(360, 136, `A simple machine, drawn plainly.`, b);
-}
-function earthLayers(hi) {
-  const cx = 150, cy = 150, R = [140, 132, 84, 44];
-  const names = ['crust', 'mantle', 'outer core', 'inner core'], cls = ['v-crust', 'v-mantle', 'v-ocore', 'v-icore'];
-  let b = '';
-  R.forEach((rad, i) => { b += pa(`M${cx - rad},${cy} A${rad},${rad} 0 0,1 ${cx + rad},${cy}Z`, cls[i] + (names[i] === hi ? ' v-hi' : '')); });
-  const i = names.indexOf(hi), mid = i === 0 ? 136 : i === 3 ? 22 : (R[i] + R[i + 1]) / 2;
-  const px = cx + mid * Math.cos(deg(-40)), py = cy + mid * Math.sin(deg(-40));
-  b += ci(px, py, 4, 'v-dotac') + ln(px, py, 300, 40 + i * 26, 'v-ac') + TL(306, 46 + i * 26, '?', 'v-tq');
-  return svg(360, 158, 'Half of Earth cut open to show four layers from the outside in. One layer is picked out.', b);
-}
-function rockProcess(type) {
-  let b = '';
-  if (type === 'igneous') b = pg([[40, 112], [100, 34], [124, 34], [184, 112]], 'v-rock') + rc(104, 26, 16, 10, 'v-magma') + el(112, 112, 46, 10, 'v-magma') + ln(112, 102, 112, 36, 'v-magmal') + T(112, 132, 'melted rock cools', 'v-ts');
-  if (type === 'sedimentary') { ['v-sand', 'v-soil', 'v-rock', 'v-sand', 'v-soil'].forEach((c, i) => { b += rc(40, 100 - i * 14, 144, 14, c); }); b += arrow(112, 12, 112, 34, 'ln') + T(112, 132, 'layers pile up', 'v-ts'); }
-  if (type === 'metamorphic') b = rc(70, 50, 84, 50, 'v-rock', 4) + arrow(20, 75, 64, 75, 'ac') + arrow(204, 75, 160, 75, 'ac') + arrow(112, 8, 112, 44, 'ac') + pa('M88,118 q-6,-8 0,-14 M112,118 q-6,-8 0,-14 M136,118 q-6,-8 0,-14', 'v-heat') + T(112, 136, 'squeezed and heated', 'v-ts');
-  return b;
-}
-function rockTypeVis(type) {
-  if (type) return svg(360, 140, 'How this rock forms, as described.', `<g transform="translate(68 0)">${rockProcess(type)}</g>`);
-  let b = '';
-  ['igneous', 'sedimentary', 'metamorphic'].forEach((t, i) => { b += `<g transform="translate(${r(60 + i * 120 - 112 * 0.62)} 4) scale(0.62)">${rockProcess(t).replace(/<text[^>]*>[^<]*<\/text>/g, '')}</g>` + T(60 + i * 120, 102, t, 'v-tb'); });
-  return svg(360, 110, 'Three ways rock forms: igneous from melted rock cooling, sedimentary from layers piling up, metamorphic from rock squeezed and heated.', b);
-}
 function weatheringVis(term) {
   let b = '';
   if (term === 'weathering') b = ground(30, 330, 110) + pa('M110,110 L120,50 L170,34 L230,52 L250,110Z', 'v-rock') + pa('M170,36 L176,62 L166,80 L180,108 M210,48 L206,74', 'v-crack') + pg([[260, 110], [268, 98], [280, 110]], 'v-rock') + pg([[88, 110], [96, 100], [104, 110]], 'v-rock');
@@ -861,35 +705,85 @@ function weatheringVis(term) {
   if (term === 'deposition') { b = pa('M10,60 Q100,50 180,66 L180,96 Q100,90 10,96Z', 'v-water') + rc(180, 56, 170, 50, 'v-water'); b += pa('M200,106 Q260,70 340,106Z', 'v-sand'); [[220, 100], [250, 92], [280, 88], [310, 96], [236, 76], [290, 70]].forEach(([x, y]) => { b += el(x, y, 5, 3.5, 'v-rock'); }); b += arrow(30, 40, 150, 40, 'ln') + T(90, 30, 'river slows', 'v-ts'); }
   return svg(360, 126, term === 'weathering' ? 'A rock cracking and breaking into pieces where it sits.' : term === 'erosion' ? 'A river carrying broken bits of rock downstream.' : 'Where the river slows down, bits of rock and sand settle to the bottom.', b);
 }
-function mineralVis(k) {
-  if (k === 0) {
-    const cube = (x, y, s) => pg([[x, y], [x + s, y - s * 0.5], [x + s * 2, y], [x + s, y + s * 0.5]], 'v-crystal-top') + pg([[x, y], [x + s, y + s * 0.5], [x + s, y + s * 1.5], [x, y + s]], 'v-crystal') + pg([[x + s, y + s * 0.5], [x + s * 2, y], [x + s * 2, y + s], [x + s, y + s * 1.5]], 'v-crystal-side');
-    return svg(360, 120, 'Cube-shaped crystals of a mineral, found in nature.', cube(110, 40, 30) + cube(190, 60, 22) + cube(160, 82, 14));
-  }
-  if (k === 1) {
-    let b = pg([[150, 100], [140, 60], [170, 30], [210, 50], [220, 96]], 'v-metallic') + pa('M168,40 l12,30 M190,46 l6,16', 'v-shine');
-    b += arrow(80, 20, 158, 52, 'sun') + arrow(178, 58, 270, 24, 'sun') + T(180, 124, 'how it reflects light: ?', 'v-ta');
-    return svg(360, 134, 'Light bouncing off the shiny surface of a mineral. The name for this property is hidden.', b);
-  }
-  if (k === 2) {
-    let b = '';
-    for (let i = 1; i <= 10; i++) b += rc(20 + (i - 1) * 32, 40, 30, 30, 'v-cell', 4) + T(35 + (i - 1) * 32, 60, i, 'v-tb');
-    b += TL(20, 92, 'softest (talc)', 'v-ts') + TR(338, 92, 'hardest (diamond)', 'v-ts') + T(180, 24, '? scale of hardness', 'v-ta');
-    return svg(360, 102, 'A hardness scale from 1, softest, to 10, hardest. Its name is hidden.', b);
-  }
-  let b = rc(60, 70, 240, 44, 'v-plate', 4) + pa('M110,92 q60,-6 120,2', 'v-streak');
-  b += `<g transform="rotate(-20 250 60)">` + rc(226, 34, 54, 36, 'v-metallic', 6) + `</g>` + T(180, 132, 'colour of the powder: ?', 'v-ta');
-  return svg(360, 140, 'A mineral rubbed across a white porcelain plate, leaving a line of coloured powder.', b);
+
+// ═════════════ Science 7 (Grade 6 ideas) ═════════════
+
+function animalNeeds() {
+  let b = pill(180, 70, 'deer', 'v-pill-ac').s;
+  [[56, 24], [304, 24], [56, 118], [304, 118]].forEach(([x, y]) => {
+    b += arrow(x < 180 ? x + 18 : x - 18, y < 70 ? y + 4 : y - 10, x < 180 ? 144 : 216, y < 70 ? 58 : 82, 'mut') + Q(x, y + 6);
+  });
+  return svg(360, 140, 'A deer with four arrows pointing to it, asking what it needs to survive.', b);
 }
-function rockCycleVis(k) {
-  if (k === 0) {
-    let b = pill(180, 24, 'igneous').s + pill(70, 120, 'sedimentary').s + pill(290, 120, 'metamorphic').s;
-    b += curve(130, 30, 80, 50, 70, 100, 'ac') + curve(124, 128, 180, 146, 236, 128, 'ac') + curve(290, 100, 280, 50, 230, 30, 'ac');
-    return svg(360, 150, 'Igneous, sedimentary and metamorphic rock joined in a loop of arrows.', b);
+function cellsZoom() {
+  let b = leafShape(20, 74, 130, 0) + ln(20, 74, 150, 74, 'v-vein') + rc(96, 66, 16, 16, 'v-zoombox', 2);
+  b += ln(112, 66, 244, 22, 'v-mut') + ln(112, 82, 244, 126, 'v-mut') + ci(262, 74, 58, 'v-lens');
+  for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) {
+    const x = 223 + i * 26, y = 35 + j * 26;
+    b += rc(x, y, 24, 24, 'v-plantcell', 4) + ci(x + 8, y + 9, 3, 'v-nucleus');
   }
-  if (k === 1) return flow(['sedimentary rock', 'metamorphic rock'], '?', 'igneous rock', { fromCls: 'v-pill-rock', toCls: 'v-pill-rock' });
-  if (k === 2) return flow(['existing rock'], '? + ?', 'metamorphic rock', { fromCls: 'v-pill-rock', toCls: 'v-pill-rock' });
-  return flow(['loose sand and mud'], '?', 'sedimentary rock', { fromCls: 'v-pill-rock', toCls: 'v-pill-rock' });
+  b += T(85, 128, 'leaf', 'v-ts') + T(262, 150, 'a tiny piece, under a microscope', 'v-ts');
+  return svg(360, 158, 'A leaf, and a tiny piece of it under a microscope: it is made of many small box-shaped parts.', b);
+}
+function expandBar() {
+  let b = rc(60, 24, 200, 22, 'v-metal', 3) + TL(272, 40, 'cold', 'v-ts');
+  b += rc(60, 74, 224, 22, 'v-hot', 3) + rc(60, 74, 200, 22, 'v-dashbox', 3) + TL(296, 90, 'hot', 'v-ts');
+  b += pa('M110,124 q-6,-8 0,-14 M150,124 q-6,-8 0,-14 M190,124 q-6,-8 0,-14 M230,124 q-6,-8 0,-14', 'v-heat');
+  return svg(360, 132, 'The same metal bar cold and then heated. The hot bar is a little longer than the dashed outline of the cold one.', b);
+}
+function sidewalkGaps() {
+  let b = sun(316, 28, 13) + ground(10, 290, 96);
+  [16, 106, 196].forEach(x => { b += rc(x, 72, 84, 24, 'v-concrete', 2); });
+  [103, 193].forEach(x => { b += ln(x, 66, x, 50, 'v-mut') + T(x, 44, 'gap', 'v-ts'); });
+  return svg(360, 108, 'Concrete sidewalk slabs in the hot sun, with small gaps between them.', b);
+}
+function elasticPlastic() {
+  let b = el(66, 36, 50, 9, 'v-band-dash') + arrow(124, 36, 160, 36, 'ln') + T(142, 24, 'let go', 'v-ts') + el(196, 36, 22, 12, 'v-band') + TL(252, 41, 'rubber band', 'v-ts');
+  b += ci(66, 100, 18, 'v-clay') + arrow(124, 100, 160, 100, 'ln') + T(142, 88, 'press', 'v-ts') + el(196, 108, 32, 9, 'v-clay') + TL(252, 105, 'clay', 'v-ts');
+  return svg(360, 128, 'A stretched rubber band is let go, and a ball of clay is pressed flat. What shape is each left in?', b);
+}
+function rulerVis(len) {
+  const x0 = 30, k = 29;
+  let b = rc(x0 - 10, 56, 10 * k + 20, 34, 'v-wood', 3) + rc(x0, 22, len * k, 34, 'v-block', 2);
+  for (let i = 0; i <= 20; i++) {
+    const x = x0 + i * k / 2;
+    b += ln(x, 56, x, 56 + (i % 2 ? 7 : 13), i % 2 ? 'v-tick' : 'v-ln');
+    if (i % 2 === 0) b += T(x, 84, i / 2, 'v-ts');
+  }
+  return svg(360, 100, 'A block lying on a ruler marked in centimetres, from 0 to 10. Its left end is at 0.', b + TL(x0 + 10 * k + 14, 84, 'cm', 'v-ts'));
+}
+function rockSamples() {
+  let b = el(50, 70, 32, 22, 'v-rock');
+  b += pg([[108, 82], [114, 56], [126, 62], [134, 46], [148, 58], [166, 52], [172, 74], [160, 92], [130, 94]], 'v-rock');
+  b += rc(200, 50, 64, 44, 'v-sand', 8) + ln(200, 64, 264, 62, 'v-mut') + ln(200, 78, 264, 80, 'v-mut');
+  b += pg([[290, 90], [292, 62], [312, 46], [338, 58], [340, 88]], 'v-metallic') + pa('M306,58 l6,14 M324,56 l4,10', 'v-shine');
+  return svg(360, 112, 'Four different rocks: smooth and round, rough and jagged, striped in layers, and shiny.', b);
+}
+function fossilVis() {
+  let b = rc(30, 20, 300, 100, 'v-rock', 6) + ln(30, 48, 330, 46, 'v-mut') + ln(30, 96, 330, 98, 'v-mut');
+  b += pa('M120,72 a4,4 0 1,1 8,0 a8,8 0 1,1 -16,0 a12,12 0 1,1 24,0 a16,16 0 1,1 -32,0', 'v-fossil');
+  b += ci(236, 86, 6, 'v-fossil') + ln(236, 80, 236, 56, 'v-fossil') + ln(236, 80, 220, 60, 'v-fossil') + ln(236, 80, 252, 60, 'v-fossil');
+  return svg(360, 132, 'A block of rock with a spiral shell shape and a three-toed footprint pressed into it.', b);
+}
+function mapVis(o) {
+  o = o || {};
+  let b = rc(14, 12, 222, 126, 'v-mapbg', 6) + pa('M14,82 C80,60 140,104 236,72', 'v-river');
+  [[78, 52], [98, 42], [120, 54]].forEach(([x, y]) => { b += pg([[x, y - 14], [x - 13, y + 8], [x + 13, y + 8]], 'v-mountain'); });
+  b += ci(48, 112, 5, 'v-ink') + TL(56, 116, 'A', 'v-tb') + ci(208, 112, 5, 'v-ink') + TL(214, 116, 'B', 'v-tb');
+  if (o.scale) b += ln(68, 112, 200, 112, 'v-dash') + T(128, 104, '4 cm on the map', 'v-ts') + rc(14, 148, 40, 6, 'v-ink') + TL(60, 155, '1 cm = 1 km', 'v-ts');
+  b += ci(300, 40, 24, 'v-sh') + ln(300, 20, 300, 60) + ln(280, 40, 320, 40) + pg([[300, 16], [295, 28], [305, 28]], 'v-ink');
+  b += (o.north === '?' ? Q(300, 12) : T(300, 12, 'N', 'v-tb')) + T(300, 78, 'S', 'v-ts') + TL(328, 44, 'E', 'v-ts') + TR(272, 44, 'W', 'v-ts');
+  b += rc(250, 90, 100, 70, 'v-sh', 6) + TL(258, 106, 'Key', 'v-tb') + pg([[264, 112], [258, 122], [270, 122]], 'v-mountain') + TL(278, 122, 'mountain', 'v-ts');
+  b += pa('M256,134 q6,-6 12,0', 'v-river') + TL(278, 137, 'river', 'v-ts') + ci(264, 150, 4, 'v-ink') + TL(278, 154, 'town', 'v-ts');
+  return svg(360, 166, 'A simple map with mountains, a river and two towns, A and B, plus a compass and a key.', b);
+}
+function innerPlanets() {
+  let b = ci(-50, 80, 90, 'v-sun') + T(18, 85, 'Sun', 'v-tb');
+  [[90, 4, ''], [140, 9, ''], [200, 10, 'Earth'], [260, 6, '']].forEach(([x, rad, n]) => {
+    b += ci(x, 80, rad, n ? 'v-earth v-hi' : 'v-moon') + (n ? T(x, 112, n, 'v-ta') : '');
+  });
+  b += ln(48, 80, 340, 80, 'v-dash') + arrow(290, 140, 340, 140, 'mut') + TL(150, 144, 'farther from the Sun', 'v-ts');
+  return svg(360, 152, 'The Sun and the four planets closest to it, in order. Earth is picked out.', b);
 }
 
 window.SciVisuals = {
@@ -903,8 +797,8 @@ window.SciVisuals = {
   bulb, speaker, runner, timeBars, circuit, wallPlug, sandToBottle, oilWell, tChart,
   sunEarth, orbit, moonSunlight, earthMoonPull, twoObjects, sunVsMoon, roundingLine,
   // Grade 7
-  ecoVocab, energyFlowVis, plantParts, cell, leafIO, flowerFig, germinating, particles, particleHeat, cupTub, hotCold,
-  energyIcon, stateCycle, forceBasic, structureVis, bridgeLoad, internalForce, machineVis, earthLayers, rockTypeVis,
-  weatheringVis, mineralVis, rockCycleVis,
+  plantParts, leafIO, germinating, particles, particleHeat, stateCycle, internalForce, weatheringVis,
+  // Science 7
+  animalNeeds, cellsZoom, expandBar, sidewalkGaps, elasticPlastic, rulerVis, rockSamples, fossilVis, mapVis, innerPlanets,
 };
 })();

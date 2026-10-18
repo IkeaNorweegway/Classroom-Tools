@@ -1,396 +1,329 @@
-// Grade 7 Science prereq practice questions, used by sci7-<unit>-prereq-practice-v1.html.
-// Each skill's gen() makes a new question: { question, answer, solution, hint, accept(input), visual }.
-// Moved from the old site page src/pages/science7/practice (2026-10-18). Each question also returns
-// a diagram from sci-visuals.js that fits the variant it picked.
+// Science 7 prereq practice questions, used by sci7-<unit>-prereq-practice-v1.html.
+// Question fields are described at the top of practice.js. Every skill needs at least two questions.
+// Diagrams come from sci-visuals.js: a skill's visual shows with each of its questions, unless
+// the question has its own. Every question shows one.
 (function () {
+'use strict';
+
+// Prereqs for Science 7 are Grade 6 ideas (and earlier), kept to the simpler end of Grade 6:
+// see "assumed" in src/content/parent-guides/science7/. Grade 7 content (consumer levels, cell
+// parts, rock types, Earth's layers, load types, heat vs. temperature) belongs in the units, not here.
 
 const V = window.SciVisuals;
 
-// ─── UTILITIES ───
-function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-function pick(arr) { return arr[randInt(0, arr.length - 1)]; }
-function shuffle(arr) {
-  const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = randInt(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a;
-}
-function normalize(s) { return s.toLowerCase().replace(/[^a-z0-9]/g, ''); }
-function acceptAny(...answers) {
-  return i => {
-    const n = normalize(i);
-    return answers.some(a => normalize(a) === n || n.includes(normalize(a)));
-  };
-}
+const part = (thing, a, why) => ({
+  q: `Is ${thing} a living (biotic) or non-living (abiotic) part of a pond?`, a, why,
+  choices: ['living (biotic)', 'non-living (abiotic)'],
+  visual: V.sortBins(thing, ['Living (biotic)', 'grows, eats, has young'], ['Non-living (abiotic)', 'never alive']),
+});
 
-// ══════════════════════════════════════════════════
-// UNIT 1: INTERACTIONS & ECOSYSTEMS
-// Prereqs: Gr 5-6 vocab on habitats, food chains,
-// living vs non-living, basic needs of organisms
-// ══════════════════════════════════════════════════
+const role = (thing, a, why) => ({
+  q: `Is ${thing} a producer or a consumer?`, a, why, choices: ['producer', 'consumer'],
+  visual: V.sortBins(thing, ['Producer', 'makes its own food'], ['Consumer', 'eats other living things']),
+});
 
-function genBioticAbiotic() {
-  const biotic = ['tree', 'mushroom', 'grass', 'bacteria', 'deer', 'eagle', 'worm', 'moss', 'algae', 'fish'];
-  const abiotic = ['sunlight', 'water', 'temperature', 'soil minerals', 'wind', 'rocks', 'oxygen gas', 'rainfall'];
-  const mode = randInt(0, 1);
-  if (mode === 0) { const item = pick(biotic); return { visual: V.sortBins(item, ['Biotic', 'living or once living'], ['Abiotic', 'never alive']), question: `Is "${item}" biotic or abiotic?`, answer: 'biotic', solution: `"${item}" is biotic (living or once-living).\nBiotic = anything that is alive or was once alive.\nAbiotic = non-living physical or chemical factors.`, hint: 'Biotic means living or once-living. Abiotic means never alive.', accept: acceptAny('biotic') }; }
-  const item = pick(abiotic);
-  return { visual: V.sortBins(item, ['Biotic', 'living or once living'], ['Abiotic', 'never alive']), question: `Is "${item}" biotic or abiotic?`, answer: 'abiotic', solution: `"${item}" is abiotic (non-living).\nAbiotic factors are physical or chemical parts of the environment.\nExamples: sunlight, water, temperature, wind.`, hint: 'Biotic means living or once-living. Abiotic means never alive.', accept: acceptAny('abiotic') };
-}
+const state = (thing, a, why) =>
+  ({ q: `Is ${thing} a solid, a liquid or a gas?`, a, choices: ['solid', 'liquid', 'gas'], why });
 
-function genProducerConsumer() {
-  const producers = [['grass', 'It makes its own food via photosynthesis.'], ['oak tree', 'Trees are producers — they photosynthesize.'], ['algae', 'Algae are photosynthetic organisms.'], ['cactus', 'Plants are producers.'], ['phytoplankton', 'Phytoplankton photosynthesize in water.']];
-  const consumers = [['rabbit', 'Rabbits eat plants — they are consumers (herbivores).'], ['wolf', 'Wolves eat other animals — they are consumers (carnivores).'], ['hawk', 'Hawks hunt prey — they are consumers.'], ['frog', 'Frogs eat insects — they are consumers.'], ['bear', 'Bears eat both plants and animals — they are consumers (omnivores).']];
-  const mode = randInt(0, 1);
-  if (mode === 0) { const [org, why] = pick(producers); return { visual: V.sortBins(org, ['Producer', 'makes its own food'], ['Consumer', 'eats other living things']), question: `Is a ${org} a producer or a consumer?`, answer: 'producer', solution: `A ${org} is a producer.\n${why}\nProducers make their own food using sunlight (photosynthesis).`, hint: 'Producers make their own food. Consumers eat other organisms.', accept: acceptAny('producer') }; }
-  const [org, why] = pick(consumers);
-  return { visual: V.sortBins(org, ['Producer', 'makes its own food'], ['Consumer', 'eats other living things']), question: `Is a ${org} a producer or a consumer?`, answer: 'consumer', solution: `A ${org} is a consumer.\n${why}\nConsumers must eat other organisms for energy.`, hint: 'Producers make their own food. Consumers eat other organisms.', accept: acceptAny('consumer') };
-}
+const pushPull = (action, a, why) => PrereqPractice.sortQ(action, ['a push', 'a pull'], `a ${a}`, why);
 
-function genFoodChainOrder() {
-  const chains = [
-    { chain: ['grass', 'grasshopper', 'frog', 'snake', 'hawk'], q: 'In the food chain grass → grasshopper → frog → snake → hawk, what is the tertiary consumer?', a: 'snake', sol: 'Primary consumer: grasshopper (eats producer)\nSecondary consumer: frog (eats primary)\nTertiary consumer: snake (eats secondary)\nQuaternary consumer: hawk (eats tertiary)' },
-    { chain: ['algae', 'minnow', 'trout', 'bear'], q: 'In the food chain algae → minnow → trout → bear, what is the producer?', a: 'algae', sol: 'Producer: algae (makes own food)\nPrimary consumer: minnow\nSecondary consumer: trout\nTertiary consumer: bear' },
-    { chain: ['grass', 'rabbit', 'fox'], q: 'In the food chain grass → rabbit → fox, what is the primary consumer?', a: 'rabbit', sol: 'Producer: grass\nPrimary consumer: rabbit (first to eat the producer)\nSecondary consumer: fox (eats the primary consumer)' },
-    { chain: ['phytoplankton', 'zooplankton', 'herring', 'seal', 'orca'], q: 'In the food chain phytoplankton → zooplankton → herring → seal → orca, what is the secondary consumer?', a: 'herring', sol: 'Producer: phytoplankton\nPrimary consumer: zooplankton\nSecondary consumer: herring\nTertiary consumer: seal\nQuaternary consumer: orca' },
-  ];
-  const c = pick(chains);
-  return { visual: V.chain(c.chain), question: c.q, answer: c.a, solution: c.sol, hint: 'Count from the producer: 1st eater = primary consumer, 2nd = secondary, 3rd = tertiary.', accept: acceptAny(c.a) };
-}
+const CHANGES = ['melting', 'freezing', 'evaporating', 'condensing'];
+const STRETCH = ['stretched (tension)', 'squashed (compression)'];
 
-function genEcosystemVocab() {
-  const terms = [
-    { def: 'A group of organisms of the same species living in the same area', term: 'population', hint: 'Think about one species only.' },
-    { def: 'All the populations of different species living and interacting in the same area', term: 'community', hint: 'Multiple species together.' },
-    { def: 'A community of living things interacting with their non-living environment', term: 'ecosystem', hint: 'Living + non-living together.' },
-    { def: 'The specific place where an organism lives and finds what it needs to survive', term: 'habitat', hint: 'An organism\'s "address" in nature.' },
-    { def: 'An organism\'s role or job in its ecosystem, including what it eats and who eats it', term: 'niche', hint: 'An organism\'s "job description" in the ecosystem.' },
-    { def: 'An organism that breaks down dead organisms and returns nutrients to the soil', term: 'decomposer', hint: 'Think fungi and bacteria breaking down dead material.' },
-  ];
-  const t = pick(terms);
-  return { visual: V.ecoVocab(t.term), question: `What term matches this definition?\n"${t.def}"`, answer: t.term, solution: `Answer: ${t.term}\n${t.def}`, hint: t.hint, accept: acceptAny(t.term) };
-}
-
-function genEnergyFlow() {
-  const questions = [
-    { visual: V.energyFlowVis(0), q: 'Where does the energy in most ecosystems originally come from?', a: 'the sun', sol: 'The sun provides energy to producers (plants) through photosynthesis.\nThis energy flows through the food chain to consumers.', accept: acceptAny('sun', 'sunlight', 'the sun', 'solar') },
-    { visual: V.energyFlowVis(1), q: 'As energy moves from one level of a food chain to the next, does the amount of available energy increase or decrease?', a: 'decrease', sol: 'Energy decreases at each level.\nAbout 90% of energy is lost as heat at each step.\nOnly about 10% is passed to the next consumer.', accept: acceptAny('decrease', 'decreases', 'less', 'goes down') },
-    { visual: V.energyFlowVis(2), q: 'What process do producers use to convert sunlight into food energy?', a: 'photosynthesis', sol: 'Photosynthesis: sunlight + CO₂ + water → glucose + oxygen\nThis is how producers make their own food.', accept: acceptAny('photosynthesis') },
-    { visual: V.energyFlowVis(3), q: 'In an energy pyramid, which level has the most energy — the bottom (producers) or the top (top predators)?', a: 'bottom', sol: 'The bottom level (producers) has the most energy.\nEnergy is lost at each level, so the top has the least.\nThis is why there are fewer top predators than producers.', accept: acceptAny('bottom', 'producers', 'base') },
-  ];
-  const q = pick(questions);
-  return { visual: q.visual, question: q.q, answer: q.a, solution: q.sol, hint: 'Think about how energy flows through a food chain.', accept: q.accept };
-}
-
-// ══════════════════════════════════════════════════
-// UNIT 2: PLANTS FOR FOOD AND FIBRE
-// Prereqs: basic plant parts, needs of plants,
-// cell basics, seed structure
-// ══════════════════════════════════════════════════
-
-function genPlantParts() {
-  const parts = [
-    { part: 'roots', fn: 'absorb water and minerals from the soil and anchor the plant' },
-    { part: 'stem', fn: 'transport water and nutrients between roots and leaves, and support the plant' },
-    { part: 'leaves', fn: 'capture sunlight and carry out photosynthesis to make food' },
-    { part: 'flower', fn: 'produce seeds through pollination and fertilization (reproductive organ)' },
-    { part: 'seeds', fn: 'contain the embryo of a new plant along with a food supply' },
-  ];
-  const p = pick(parts);
-  const mode = randInt(0, 1);
-  if (mode === 0) return { visual: V.plantParts(p.part, p.part), question: `What is the main function of the ${p.part} of a plant?`, answer: p.fn, solution: `${p.part}: ${p.fn}`, hint: 'Think about what this part does for the plant\'s survival.', accept: i => { const n = normalize(i); const keywords = p.fn.split(' ').filter(w=>w.length>4).map(normalize); return keywords.filter(k=>n.includes(k)).length >= 2; }};
-  return { visual: V.plantParts(), question: `Which plant part does this describe?\n"${p.fn}"`, answer: p.part, solution: `Answer: ${p.part}\n${p.fn}`, hint: 'Think about the main parts: roots, stem, leaves, flower, seeds.', accept: acceptAny(p.part) };
-}
-
-function genPlantNeeds() {
-  const needs = ['water', 'sunlight', 'carbon dioxide', 'nutrients from soil', 'appropriate temperature'];
-  const idx = randInt(0, needs.length - 1);
-  const without = needs.filter((_, i) => i !== idx);
-  return { visual: V.plantNeeds(), question: `Name one thing that plants need to grow and survive (besides ${pick(without)} and ${pick(without.filter(x => x !== pick(without)))}).`, answer: needs[idx],
-    solution: `Plants need: ${needs.join(', ')}\nAny of these would be correct.`,
-    hint: 'Think about what goes into photosynthesis, plus basic survival needs.',
-    accept: i => needs.some(n => normalize(i).includes(normalize(n))) };
-}
-
-function genCellBasics() {
-  const terms = [
-    { def: 'The basic unit of life — all living things are made of these', term: 'cell', hint: 'The smallest unit of life.' },
-    { def: 'The thin outer boundary of a cell that controls what enters and leaves', term: 'cell membrane', hint: 'It acts like a gatekeeper for the cell.' },
-    { def: 'The rigid outer layer of a plant cell that provides structure and support', term: 'cell wall', hint: 'Only plant cells have this. It\'s outside the membrane.' },
-    { def: 'The green pigment in plant cells that captures sunlight for photosynthesis', term: 'chlorophyll', hint: 'It\'s what makes plants green.' },
-    { def: 'The organelle in plant cells where photosynthesis takes place', term: 'chloroplast', hint: 'It contains the green pigment.' },
-    { def: 'The control center of the cell that contains genetic information', term: 'nucleus', hint: 'Think of it as the "brain" of the cell.' },
-  ];
-  const t = pick(terms);
-  return { visual: V.cell(t.term), question: `What term matches this definition?\n"${t.def}"`, answer: t.term, solution: `Answer: ${t.term}\n${t.def}`, hint: t.hint, accept: acceptAny(t.term) };
-}
-
-function genPhotosynthesisBasics() {
-  const questions = [
-    { visual: V.leafIO('in'), q: 'What are the three inputs (reactants) needed for photosynthesis?', a: 'sunlight, water, carbon dioxide', sol: 'Photosynthesis: sunlight + water + CO₂ → glucose + oxygen\nInputs: sunlight, water, carbon dioxide', accept: i => { const n = normalize(i); return (n.includes('sun') || n.includes('light')) && n.includes('water') && (n.includes('carbon') || n.includes('co2')); }},
-    { visual: V.leafIO('out'), q: 'What are the two outputs (products) of photosynthesis?', a: 'glucose and oxygen', sol: 'Photosynthesis: sunlight + water + CO₂ → glucose + oxygen\nProducts: glucose (sugar/food) and oxygen', accept: i => { const n = normalize(i); return (n.includes('glucose') || n.includes('sugar') || n.includes('food')) && n.includes('oxygen'); }},
-    { visual: V.cell('chloroplast'), q: 'In which organelle does photosynthesis occur?', a: 'chloroplast', sol: 'Photosynthesis happens in the chloroplast.\nChloroplasts contain chlorophyll, the green pigment that absorbs sunlight.', accept: acceptAny('chloroplast', 'chloroplasts') },
-    { visual: V.leafIO('all'), q: 'What is the word equation for photosynthesis?\n(Format: ___ + ___ + ___ → ___ + ___)', a: 'sunlight + water + carbon dioxide → glucose + oxygen', sol: 'sunlight + water + carbon dioxide → glucose + oxygen\n(light energy + H₂O + CO₂ → C₆H₁₂O₆ + O₂)', accept: i => { const n = normalize(i); return (n.includes('sun') || n.includes('light')) && n.includes('water') && n.includes('oxygen') && (n.includes('glucose') || n.includes('sugar')); }},
-  ];
-  const q = pick(questions);
-  return { visual: q.visual, question: q.q, answer: q.a, solution: q.sol, hint: 'Remember the photosynthesis equation: light + water + CO₂ → sugar + O₂.', accept: q.accept };
-}
-
-function genPollinationSeed() {
-  const terms = [
-    { def: 'The transfer of pollen from the male part (stamen) to the female part (pistil) of a flower', term: 'pollination' },
-    { def: 'The joining of a sperm cell and egg cell to form a new organism', term: 'fertilization' },
-    { def: 'The process of a seed beginning to grow into a new plant', term: 'germination' },
-    { def: 'The male reproductive part of a flower that produces pollen', term: 'stamen' },
-    { def: 'The female reproductive part of a flower that contains the ovary', term: 'pistil' },
-  ];
-  const t = pick(terms);
-  return { visual: t.term === 'germination' ? V.germinating() : V.flowerFig(t.term), question: `What term matches this definition?\n"${t.def}"`, answer: t.term, solution: `Answer: ${t.term}\n${t.def}`, hint: 'Think about the steps of plant reproduction.', accept: acceptAny(t.term) };
-}
-
-// ══════════════════════════════════════════════════
-// UNIT 3: HEAT AND TEMPERATURE
-// Prereqs: states of matter, thermometer reading,
-// particle model basics, energy forms
-// ══════════════════════════════════════════════════
-
-function genStatesOfMatter() {
-  const states = [
-    { state: 'solid', desc: 'Particles are tightly packed in a fixed arrangement. They vibrate in place but don\'t move freely.', ex: 'ice, rock, wood' },
-    { state: 'liquid', desc: 'Particles are close together but can slide past each other. They take the shape of their container.', ex: 'water, juice, oil' },
-    { state: 'gas', desc: 'Particles are far apart and move quickly in all directions. They fill any container.', ex: 'steam, oxygen, helium' },
-  ];
-  const s = pick(states);
-  const mode = randInt(0, 1);
-  if (mode === 0) return { visual: V.particles(s.state), question: `What state of matter is described?\n"${s.desc}"`, answer: s.state, solution: `Answer: ${s.state}\n${s.desc}\nExamples: ${s.ex}`, hint: 'Think about how tightly the particles are packed and how they move.', accept: acceptAny(s.state) };
-  const ex = pick(s.ex.split(', '));
-  return { visual: V.particles(), question: `What state of matter is ${ex} at room temperature?`, answer: s.state, solution: `${ex} is a ${s.state}.\n${s.desc}`, hint: 'Solid, liquid, or gas?', accept: acceptAny(s.state) };
-}
-
-function genParticleModel() {
-  const questions = [
-    { visual: V.particleHeat('heat'), q: 'According to the particle model of matter, what happens to particles when they are heated?', a: 'They speed up and move faster', sol: 'When heated, particles gain kinetic energy.\nThey vibrate/move faster and spread farther apart.\nThis is why materials expand when heated.', accept: i => { const n=normalize(i); return (n.includes('fast') || n.includes('speed') || n.includes('move') || n.includes('energy')) && !n.includes('slow'); }},
-    { visual: V.particleHeat('cool'), q: 'According to the particle model, what happens to particles when they are cooled?', a: 'They slow down and move less', sol: 'When cooled, particles lose kinetic energy.\nThey vibrate/move slower and pack closer together.\nThis is why materials contract when cooled.', accept: i => { const n=normalize(i); return n.includes('slow') || n.includes('less') || n.includes('closer'); }},
-    { visual: V.particleHeat('spaces'), q: 'Are there spaces between particles in a gas, liquid, or both?', a: 'both', sol: 'Both gases and liquids have spaces between particles.\nGases have large spaces (particles far apart).\nLiquids have small spaces (particles close but not fixed).\nSolids have the least space.', accept: acceptAny('both') },
-    { visual: V.particles(), q: 'In which state of matter do particles have the MOST kinetic energy?', a: 'gas', sol: 'Gas particles have the most kinetic energy.\nThey move the fastest and are the farthest apart.\nSolid < Liquid < Gas (in terms of particle energy)', accept: acceptAny('gas') },
-  ];
-  const q = pick(questions);
-  return { visual: q.visual, question: q.q, answer: q.a, solution: q.sol, hint: 'The particle model says all matter is made of tiny particles that are always moving.', accept: q.accept };
-}
-
-function genHeatVsTemp() {
-  const questions = [
-    { visual: V.cupTub(), q: 'What is the difference between heat and temperature?\nWhich one measures the AVERAGE kinetic energy of particles?', a: 'temperature', sol: 'Temperature: measures the average kinetic energy of particles.\nHeat: the total energy transferred from a warmer to a cooler object.\nTemperature is measured with a thermometer.\nHeat is measured in joules (J).', accept: acceptAny('temperature', 'temp') },
-    { visual: V.hotCold(), q: 'Heat always flows from a ______ object to a ______ object. (warmer/cooler or cooler/warmer?)', a: 'warmer to cooler', sol: 'Heat always flows from warmer → cooler.\nThis continues until both objects reach the same temperature (thermal equilibrium).', accept: i => { const n=normalize(i); return n.includes('warm') && n.indexOf('warm') < n.indexOf('cool'); }},
-    { visual: V.thermometer({ min: 0, max: 50, step: 5, every: 10, value: 22, unit: '?' }), q: 'What unit is temperature measured in (in science)?', a: 'degrees Celsius', sol: 'In science, temperature is measured in degrees Celsius (°C).\nThe Kelvin scale (K) is also used in advanced science.\nFahrenheit (°F) is used in everyday life in the US.', accept: acceptAny('celsius', 'degrees celsius', 'kelvin', 'C') },
-    { visual: V.waterStrip(), q: 'At what temperature does water freeze (in °C)?', a: '0°C', sol: 'Water freezes at 0°C (32°F).\nWater boils at 100°C (212°F).\nThese are key reference points on the Celsius scale.', accept: i => normalize(i).includes('0') },
-  ];
-  const q = pick(questions);
-  return { visual: q.visual, question: q.q, answer: q.a, solution: q.sol, hint: 'Think about what a thermometer measures vs. what flows between objects.', accept: q.accept };
-}
-
-function genEnergyForms() {
-  const forms = [
-    { form: 'thermal', desc: 'energy related to the temperature of an object (heat energy)', ex: 'a hot stove, warm bathwater' },
-    { form: 'chemical', desc: 'energy stored in the bonds of molecules, released by reactions', ex: 'food, gasoline, batteries' },
-    { form: 'electrical', desc: 'energy from the flow of electric charges', ex: 'lightning, wall outlet, batteries in use' },
-    { form: 'mechanical', desc: 'energy of motion or position of an object', ex: 'a moving car, a stretched spring' },
-    { form: 'light', desc: 'energy that travels as electromagnetic waves and can be seen', ex: 'sunlight, a lamp, fire' },
-    { form: 'sound', desc: 'energy that travels as vibrations through matter', ex: 'music, thunder, clapping' },
-  ];
-  const f = pick(forms);
-  return { visual: V.energyIcon(f.form), question: `What form of energy is described?\n"${f.desc}"\n(Examples: ${f.ex})`, answer: `${f.form} energy`, solution: `Answer: ${f.form} energy\n${f.desc}\nExamples: ${f.ex}`, hint: 'Main forms: thermal, chemical, electrical, mechanical, light, sound.', accept: acceptAny(f.form) };
-}
-
-function genStateChanges() {
-  const changes = [
-    { from: 'solid', to: 'liquid', name: 'melting', ex: 'ice melting into water' },
-    { from: 'liquid', to: 'gas', name: 'evaporation', ex: 'water boiling into steam' },
-    { from: 'gas', to: 'liquid', name: 'condensation', ex: 'steam forming water droplets on a mirror' },
-    { from: 'liquid', to: 'solid', name: 'freezing', ex: 'water turning to ice' },
-    { from: 'solid', to: 'gas', name: 'sublimation', ex: 'dry ice turning directly to gas' },
-  ];
-  const c = pick(changes);
-  const mode = randInt(0, 1);
-  if (mode === 0) return { visual: V.stateCycle(c.from, c.to), question: `What is the change of state called when a ${c.from} turns into a ${c.to}?`, answer: c.name, solution: `${c.from} → ${c.to} = ${c.name}\nExample: ${c.ex}`, hint: `Think: solid ↔ liquid ↔ gas. What's the name for each arrow?`, accept: acceptAny(c.name) };
-  return { visual: V.stateCycle(c.from, c.to), question: `What change of state is this an example of?\n"${c.ex}"`, answer: c.name, solution: `${c.ex} = ${c.name}\n(${c.from} → ${c.to})`, hint: 'Is the material going from solid to liquid, liquid to gas, etc.?', accept: acceptAny(c.name) };
-}
-
-// ══════════════════════════════════════════════════
-// UNIT 4: STRUCTURES AND FORCES
-// Prereqs: basic forces, gravity, types of structures,
-// materials, simple machines
-// ══════════════════════════════════════════════════
-
-function genForceBasics() {
-  const questions = [
-    { visual: V.forceBasic(0), q: 'What is a force?', a: 'a push or pull on an object', sol: 'A force is a push or a pull that can change an object\'s motion, shape, or direction.\nForces are measured in Newtons (N).', accept: i => { const n=normalize(i); return n.includes('push') || n.includes('pull'); }},
-    { visual: V.forceBasic(1), q: 'What is the force that pulls objects toward Earth called?', a: 'gravity', sol: 'Gravity is the force that pulls all objects toward the center of the Earth.\nIt gives objects their weight.', accept: acceptAny('gravity') },
-    { visual: V.forceBasic(2), q: 'What unit is force measured in?', a: 'Newtons (N)', sol: 'Force is measured in Newtons (N).\nNamed after Sir Isaac Newton.\n1 N ≈ the force of gravity on a 100 g mass.', accept: acceptAny('newton', 'newtons', 'N') },
-    { visual: V.forceBasic(3), q: 'What is friction?', a: 'a force that opposes motion between surfaces', sol: 'Friction is a force that resists or opposes the motion of two surfaces sliding against each other.\nIt produces heat and slows things down.', accept: i => { const n=normalize(i); return n.includes('oppos') || n.includes('resist') || (n.includes('force') && n.includes('motion')); }},
-  ];
-  const q = pick(questions);
-  return { visual: q.visual, question: q.q, answer: q.a, solution: q.sol, hint: 'Forces cause changes in motion. They are pushes and pulls.', accept: q.accept };
-}
-
-function genStructureTypes() {
-  const types = [
-    { type: 'solid (mass) structure', desc: 'Made of solid material with few or no hollow spaces', ex: 'a dam, a brick wall, a mountain', hint: 'Think thick and heavy — made of solid material.' },
-    { type: 'frame structure', desc: 'Made of parts (members) joined together, often with open spaces', ex: 'a bicycle frame, a skeleton, the Eiffel Tower', hint: 'Think of a skeleton — connected parts with spaces between.' },
-    { type: 'shell structure', desc: 'A hollow structure with a thin outer layer that provides strength', ex: 'an egg, a helmet, an igloo, a dome', hint: 'Think of a thin outer layer enclosing a space.' },
-  ];
-  const t = pick(types);
-  const mode = randInt(0, 1);
-  if (mode === 0) return { visual: V.structureVis(t.type), question: `What type of structure is described?\n"${t.desc}"\n(Examples: ${t.ex})`, answer: t.type, solution: `Answer: ${t.type}\n${t.desc}\nExamples: ${t.ex}`, hint: t.hint, accept: i => { const n=normalize(i); return normalize(t.type).split('structure')[0].trim().split(/\s+/).some(w => n.includes(w)); }};
-  const ex = pick(t.ex.split(', '));
-  return { visual: V.structureVis(t.type), question: `What type of structure is ${ex}? (solid/mass, frame, or shell)`, answer: t.type, solution: `${ex} is a ${t.type}.\n${t.desc}`, hint: t.hint, accept: i => { const n=normalize(i); return normalize(t.type).split('structure')[0].trim().split(/\s+/).some(w => n.includes(w)); }};
-}
-
-function genLoadTypes() {
-  const loads = [
-    { type: 'dead load', desc: 'The weight of the structure itself', ex: 'the weight of the bridge\'s steel and concrete' },
-    { type: 'live load', desc: 'The weight of things that move on or in the structure', ex: 'people walking on a bridge, furniture in a building' },
-    { type: 'dynamic load', desc: 'Forces that change or move, like wind, earthquakes, or vibrations', ex: 'wind pushing on a building, an earthquake shaking a bridge' },
-  ];
-  const l = pick(loads);
-  return { visual: V.bridgeLoad(l.type.split(' ')[0]), question: `What type of load is described?\n"${l.desc}"\n(Example: ${l.ex})`, answer: l.type, solution: `Answer: ${l.type}\n${l.desc}\nExample: ${l.ex}`, hint: 'Three types: dead load (structure\'s own weight), live load (things on it), dynamic load (changing forces).', accept: i => normalize(i).includes(normalize(l.type.split(' ')[0])) };
-}
-
-function genInternalForces() {
-  const forces = [
-    { force: 'tension', desc: 'A stretching or pulling force that tries to pull a material apart', ex: 'a rope in tug-of-war, a cable supporting a bridge' },
-    { force: 'compression', desc: 'A squeezing or pushing force that tries to crush a material', ex: 'a column supporting a roof, a person sitting on a chair' },
-    { force: 'shear', desc: 'A force that pushes parts of a material in opposite directions (like scissors)', ex: 'cutting paper with scissors, wind pushing the top of a building one way while the base stays' },
-    { force: 'torsion', desc: 'A twisting force', ex: 'wringing out a towel, turning a doorknob' },
-  ];
-  const f = pick(forces);
-  return { visual: V.internalForce(f.force), question: `What internal force is described?\n"${f.desc}"`, answer: f.force, solution: `Answer: ${f.force}\n${f.desc}\nExample: ${f.ex}`, hint: 'Internal forces: tension (pull), compression (push), shear (opposite), torsion (twist).', accept: acceptAny(f.force) };
-}
-
-function genSimpleMachines() {
-  const machines = [
-    { machine: 'lever', desc: 'A bar that pivots on a fulcrum to lift or move a load', ex: 'seesaw, crowbar, scissors' },
-    { machine: 'inclined plane', desc: 'A flat surface set at an angle, used to move objects to a higher level with less force', ex: 'ramp, slide, wedge' },
-    { machine: 'pulley', desc: 'A wheel with a rope or chain, used to change the direction of a force', ex: 'flagpole, crane, blinds' },
-    { machine: 'wheel and axle', desc: 'A wheel attached to a rod (axle) that turn together to reduce friction', ex: 'doorknob, steering wheel, screwdriver' },
-    { machine: 'screw', desc: 'An inclined plane wrapped around a cylinder', ex: 'bolt, jar lid, drill bit' },
-  ];
-  const m = pick(machines);
-  const ex = pick(m.ex.split(', '));
-  return { visual: V.machineVis(m.machine), question: `What simple machine is ${ex} an example of?`, answer: m.machine, solution: `${ex} is a ${m.machine}.\n${m.desc}\nOther examples: ${m.ex}`, hint: 'Six simple machines: lever, inclined plane, pulley, wheel & axle, screw, wedge.', accept: acceptAny(m.machine) };
-}
-
-// ══════════════════════════════════════════════════
-// UNIT 5: PLANET EARTH
-// Prereqs: layers of earth, rock types, weathering,
-// erosion, minerals, geological processes
-// ══════════════════════════════════════════════════
-
-function genEarthLayers() {
-  const layers = [
-    { layer: 'crust', desc: 'The thin, solid outermost layer of the Earth that we live on', props: 'Thinnest layer, 5-70 km thick, made of rock' },
-    { layer: 'mantle', desc: 'The thick middle layer made of hot, semi-solid rock that flows slowly', props: 'Thickest layer, ~2900 km, convection currents move tectonic plates' },
-    { layer: 'outer core', desc: 'A liquid layer made mostly of iron and nickel', props: 'Liquid metal, ~2200 km thick, creates Earth\'s magnetic field' },
-    { layer: 'inner core', desc: 'The solid center of the Earth made of iron and nickel under extreme pressure', props: 'Solid due to pressure, hottest layer (~5000°C)' },
-  ];
-  const l = pick(layers);
-  return { visual: V.earthLayers(l.layer), question: `Which layer of the Earth is described?\n"${l.desc}"`, answer: l.layer, solution: `Answer: ${l.layer}\n${l.desc}\n${l.props}`, hint: 'From outside in: crust → mantle → outer core → inner core.', accept: acceptAny(l.layer) };
-}
-
-function genRockTypes() {
-  const types = [
-    { type: 'igneous', desc: 'Formed when melted rock (magma or lava) cools and hardens', ex: 'granite, basalt, obsidian', process: 'Magma cools slowly underground → large crystals. Lava cools quickly on surface → small crystals.' },
-    { type: 'sedimentary', desc: 'Formed when layers of sediment are compacted and cemented together over time', ex: 'sandstone, limestone, shale', process: 'Erosion → deposition → compaction → cementation (over millions of years).' },
-    { type: 'metamorphic', desc: 'Formed when existing rock is changed by intense heat and pressure (without melting)', ex: 'marble (from limestone), slate (from shale), quartzite (from sandstone)', process: 'Heat + pressure deep underground changes the rock\'s structure.' },
-  ];
-  const t = pick(types);
-  const mode = randInt(0, 1);
-  if (mode === 0) return { visual: V.rockTypeVis(t.type), question: `What type of rock is described?\n"${t.desc}"`, answer: t.type, solution: `Answer: ${t.type}\n${t.desc}\nExamples: ${t.ex}\n${t.process}`, hint: 'Three rock types: igneous (fire/cooling), sedimentary (layers), metamorphic (changed by heat/pressure).', accept: acceptAny(t.type) };
-  const ex = pick(t.ex.split(', '));
-  return { visual: V.rockTypeVis(), question: `What type of rock is ${ex}? (igneous, sedimentary, or metamorphic)`, answer: t.type, solution: `${ex} is ${t.type}.\n${t.desc}\n${t.process}`, hint: 'Igneous = cooled magma/lava. Sedimentary = compacted layers. Metamorphic = changed by heat + pressure.', accept: acceptAny(t.type) };
-}
-
-function genWeatheringErosion() {
-  const terms = [
-    { def: 'The breaking down of rock into smaller pieces by natural forces (without moving it)', term: 'weathering', hint: 'Breaking down in place — not moving.' },
-    { def: 'The process of moving weathered rock and soil from one place to another by wind, water, ice, or gravity', term: 'erosion', hint: 'This is about transport — picking up and carrying.' },
-    { def: 'The process of eroded material being dropped or settled in a new location', term: 'deposition', hint: 'This is where eroded material ends up — it settles down.' },
-    { def: 'The slow, continuous wearing away of rock by water, wind, or chemical reactions over time', term: 'weathering', hint: 'Think about what wind and rain do to mountains over millions of years.' },
-  ];
-  const t = pick(terms);
-  return { visual: V.weatheringVis(t.term), question: `What geological process is described?\n"${t.def}"`, answer: t.term, solution: `Answer: ${t.term}\n${t.def}`, hint: t.hint, accept: acceptAny(t.term) };
-}
-
-function genMinerals() {
-  const questions = [
-    { visual: V.mineralVis(0), q: 'What is a mineral?', a: 'a naturally occurring, inorganic solid with a crystal structure', sol: 'A mineral is:\n- Naturally occurring (not human-made)\n- Inorganic (not from living things)\n- Solid\n- Has a definite crystal structure\n- Has a specific chemical composition', accept: i => { const n=normalize(i); return (n.includes('natural') || n.includes('inorganic')) && n.includes('solid'); }},
-    { visual: V.mineralVis(1), q: 'What property of a mineral describes how it reflects light (metallic, glassy, dull, etc.)?', a: 'lustre', sol: 'Lustre describes how a mineral\'s surface reflects light.\nTypes: metallic, glassy (vitreous), dull (earthy), waxy, pearly, silky', accept: acceptAny('lustre', 'luster') },
-    { visual: V.mineralVis(2), q: 'What scale is used to rank the hardness of minerals from 1 (softest) to 10 (hardest)?', a: "Mohs scale", sol: "Mohs Hardness Scale:\n1 = Talc (softest)\n10 = Diamond (hardest)\nA mineral can scratch anything softer than it.", accept: acceptAny('mohs', "mohs scale") },
-    { visual: V.mineralVis(3), q: 'What is the colour of the powder a mineral leaves when rubbed on a porcelain plate called?', a: 'streak', sol: 'Streak is the colour of a mineral\'s powder.\nIt is found by rubbing the mineral on a streak plate (unglazed porcelain).\nStreak is more reliable than colour for identification.', accept: acceptAny('streak') },
-  ];
-  const q = pick(questions);
-  return { visual: q.visual, question: q.q, answer: q.a, solution: q.sol, hint: 'Think about how we identify and classify minerals.', accept: q.accept };
-}
-
-function genRockCycle() {
-  const questions = [
-    { visual: V.rockCycleVis(0), q: 'What is the rock cycle?', a: 'the continuous process of rocks changing from one type to another', sol: 'The rock cycle describes how rocks change between igneous, sedimentary, and metamorphic types.\nIt is driven by heat, pressure, weathering, erosion, and cooling.', accept: i => { const n=normalize(i); return n.includes('chang') && (n.includes('rock') || n.includes('type')); }},
-    { visual: V.rockCycleVis(1), q: 'What must happen to sedimentary or metamorphic rock for it to become igneous?', a: 'it must melt into magma and then cool', sol: 'To become igneous rock:\n1. Rock must melt into magma (deep underground)\n2. Magma must cool and solidify\nThis can happen on the surface (lava → volcanic rock) or underground.', accept: i => { const n=normalize(i); return n.includes('melt') || n.includes('magma') || n.includes('cool'); }},
-    { visual: V.rockCycleVis(2), q: 'What two forces change existing rock into metamorphic rock?', a: 'heat and pressure', sol: 'Metamorphic rock forms when existing rock is subjected to:\n- Heat (but not enough to melt it)\n- Pressure (from weight of overlying rock or tectonic forces)\nThe rock\'s minerals rearrange without melting.', accept: i => { const n=normalize(i); return n.includes('heat') && n.includes('pressure'); }},
-    { visual: V.rockCycleVis(3), q: 'What process turns loose sediments into sedimentary rock?', a: 'compaction and cementation', sol: 'Sedimentary rock formation:\n1. Compaction: layers of sediment are squeezed by weight above\n2. Cementation: minerals dissolved in water "glue" particles together\nThis process takes millions of years.', accept: i => { const n=normalize(i); return n.includes('compact') || n.includes('cement'); }},
-  ];
-  const q = pick(questions);
-  return { visual: q.visual, question: q.q, answer: q.a, solution: q.sol, hint: 'The rock cycle connects igneous, sedimentary, and metamorphic rocks.', accept: q.accept };
-}
-
-// ─── TOPIC REGISTRY ───
-const TOPICS = [
-  { id: 'interactions-ecosystems', name: 'Interactions & Ecosystems', num: 1, color: '#059669',
-    summary: 'Biotic/abiotic, producers, consumers, food chains, energy flow',
+window.PracticeBank = { units: [
+  {
+    id: 'interactions-ecosystems', name: 'Interactions & Ecosystems', num: 1,
+    summary: 'Living and non-living parts, producers and consumers, food chains, needs, decomposers',
     skills: [
-      { name: 'Biotic vs abiotic', gen: genBioticAbiotic },
-      { name: 'Producers vs consumers', gen: genProducerConsumer },
-      { name: 'Food chain roles', gen: genFoodChainOrder },
-      { name: 'Ecosystem vocabulary', gen: genEcosystemVocab },
-      { name: 'Energy flow', gen: genEnergyFlow },
-    ]},
-  { id: 'plants-food-fibre', name: 'Plants for Food & Fibre', num: 2, color: '#16a34a',
-    summary: 'Plant parts, needs, cells, photosynthesis, pollination',
+      {
+        name: 'Living and non-living parts',
+        hint: 'Biotic parts are living things. Abiotic parts are non-living, like sunlight, water, rocks and air.',
+        items: [
+          part('a frog', 'living (biotic)', 'A frog grows, eats and has young. It is a living (biotic) part of the pond.'),
+          part('sunlight', 'non-living (abiotic)', 'Sunlight is energy from the Sun. It is not alive, so it is abiotic, but the pond’s plants need it.'),
+          part('the pond water', 'non-living (abiotic)', 'Water is not alive, so it is abiotic. Every living thing in the pond needs it.'),
+          part('a cattail plant', 'living (biotic)', 'A cattail is a plant. It grows and makes seeds, so it is a living (biotic) part.'),
+          part('a rock on the shore', 'non-living (abiotic)', 'A rock does not grow, eat or have young. It is abiotic.'),
+        ],
+      },
+      {
+        name: 'Producers and consumers',
+        hint: 'A producer makes its own food using sunlight. A consumer eats other living things.',
+        items: [
+          role('grass', 'producer', 'Grass uses sunlight to make its own food, so it is a producer.'),
+          role('an aspen tree', 'producer', 'Trees are plants. They make their own food from sunlight, so they are producers.'),
+          role('a deer', 'consumer', 'A deer cannot make its own food. It eats plants, so it is a consumer.'),
+          role('a hawk', 'consumer', 'A hawk eats mice and other animals, so it is a consumer.'),
+          { q: 'Where do producers get the energy to make their food?', a: 'sunlight', choices: ['sunlight', 'the soil', 'rain', 'other animals'], why: 'Plants use the energy in sunlight to make food in their leaves.', visual: V.leafIO(['sunlight']) },
+        ],
+      },
+      {
+        name: 'Reading a food chain',
+        hint: 'Each arrow points from the food to the living thing that eats it.',
+        visual: V.chain(['grass', 'rabbit', 'fox']),
+        items: [
+          { q: 'grass → rabbit → fox\nWhat eats the rabbit?', a: 'the fox', accept: ['fox', 'a fox', 'foxes'], why: 'The arrow goes from rabbit to fox, so the fox eats the rabbit.' },
+          { q: 'grass → grasshopper → frog → hawk\nWhat does the frog eat?', a: 'the grasshopper', accept: ['grasshopper', 'grasshoppers', 'a grasshopper'], why: 'The arrow goes from grasshopper to frog, so the frog eats the grasshopper.', visual: V.chain(['grass', 'grasshopper', 'frog', 'hawk']) },
+          { q: 'grass → rabbit → fox\nWhich one is the producer?', a: 'grass', choices: ['grass', 'rabbit', 'fox'], why: 'Grass makes its own food from sunlight. Food chains start with a producer.' },
+          { q: 'grass → rabbit → fox\nIf all the foxes left, what would most likely happen to the rabbits?', a: 'There would be more rabbits.', choices: ['There would be more rabbits.', 'There would be fewer rabbits.', 'Nothing would change.'], why: 'Foxes eat rabbits. With no foxes, fewer rabbits get eaten, so there would be more of them (until the grass runs short).' },
+        ],
+      },
+      {
+        name: 'What living things need',
+        hint: 'Animals need water, air, food and shelter.',
+        visual: V.animalNeeds(),
+        items: [
+          { q: 'Name one thing every animal needs to survive.', a: 'water, air, food or shelter', accept: ['water', 'air', 'oxygen', 'food', 'shelter', 'a home', 'home', 'space'], why: 'Animals need water, air, food and shelter (a safe place to live).' },
+          { q: 'Which of these is NOT something a deer needs to survive?', a: 'a fence', choices: ['water', 'food', 'shelter', 'a fence'], why: 'A deer needs water, food, air and shelter. A fence is something people build.' },
+          { q: 'In winter, a deer rests in thick spruce trees, out of the wind. Which need are the trees meeting?', a: 'shelter', choices: ['food', 'water', 'shelter', 'air'], why: 'The trees protect the deer from wind and cold. That is shelter.' },
+        ],
+      },
+      {
+        name: 'Decomposers',
+        hint: 'Decomposers, like mushrooms, worms and bacteria, break down dead plants and animals.',
+        visual: V.flow(['dead leaves', 'fallen log'], '?', 'nutrients in soil', { fromCls: 'v-pill-thing' }),
+        items: [
+          { q: 'Mushrooms and worms break down dead leaves on the forest floor. What do we call living things that do this?', a: 'decomposers', accept: ['decomposer'], why: 'Decomposers break down dead plants and animals.' },
+          { q: 'When decomposers break down a dead log, what do they give back to the soil?', a: 'nutrients', choices: ['nutrients', 'plastic', 'rocks', 'sunlight'], why: 'Decomposers return nutrients to the soil. New plants use them to grow.', visual: V.flow(['fallen log'], 'mushrooms and worms', '?', { fromCls: 'v-pill-thing' }) },
+          { q: 'Which of these is a decomposer?', a: 'a mushroom', choices: ['a mushroom', 'a deer', 'a dandelion', 'a robin'], why: 'A mushroom is a fungus that breaks down dead things. The deer and robin are consumers; the dandelion is a producer.' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'plants-food-fibre', name: 'Plants for Food & Fibre', num: 2,
+    summary: 'What plants need, plant parts, plants make food, cells, seeds',
     skills: [
-      { name: 'Plant parts & functions', gen: genPlantParts },
-      { name: 'Plant needs', gen: genPlantNeeds },
-      { name: 'Cell basics', gen: genCellBasics },
-      { name: 'Photosynthesis', gen: genPhotosynthesisBasics },
-      { name: 'Pollination & seeds', gen: genPollinationSeed },
-    ]},
-  { id: 'heat-temperature', name: 'Heat & Temperature', num: 3, color: '#ea580c',
-    summary: 'States of matter, particles, heat vs temp, energy, state changes',
+      {
+        name: 'What plants need',
+        hint: 'Plants need light, water, air and nutrients to grow.',
+        visual: V.plantNeeds(),
+        items: [
+          { q: 'A plant is left in a dark closet for two weeks. What will most likely happen?', a: 'It turns pale and weak.', choices: ['It turns pale and weak.', 'It grows faster.', 'Nothing changes.', 'It grows flowers.'], why: 'Plants need light to make food. Without it they turn pale and weak, and can die.', visual: V.darkCloset() },
+          { q: 'Name one thing a plant needs to grow.', a: 'light, water, air or nutrients', accept: ['light', 'sunlight', 'sun', 'water', 'air', 'carbon dioxide', 'co2', 'nutrients', 'soil', 'minerals', 'space'], why: 'Plants need light, water, air (carbon dioxide) and nutrients from the soil.' },
+          { q: 'Which of these does a plant NOT need to grow?', a: 'darkness', choices: ['light', 'water', 'air', 'darkness'], why: 'Plants need light, not darkness. Light gives them the energy to make food.' },
+        ],
+      },
+      {
+        name: 'Parts of a plant',
+        hint: 'Roots, stem, leaves and flowers each have a job.',
+        items: [
+          { q: 'Which part of a plant takes in water from the soil?', a: 'roots', choices: ['roots', 'stem', 'leaves', 'flower'], why: 'Roots take in water and nutrients from the soil. They also hold the plant in place.', visual: V.plantParts('roots') },
+          { q: 'Which part holds the plant up and carries water to the leaves?', a: 'stem', choices: ['roots', 'stem', 'leaves', 'flower'], why: 'The stem holds the plant up and carries water from the roots to the leaves.', visual: V.plantParts('stem') },
+          { q: 'Which part makes most of the plant’s food, using sunlight?', a: 'leaves', choices: ['roots', 'stem', 'leaves', 'flower'], why: 'Leaves catch sunlight and make the plant’s food.', visual: V.plantParts('leaves') },
+          { q: 'Which part of a plant makes seeds?', a: 'flower', choices: ['roots', 'stem', 'leaves', 'flower'], why: 'Flowers make seeds, which grow into new plants.', visual: V.plantParts('flower') },
+        ],
+      },
+      {
+        name: 'Plants make their own food',
+        hint: 'Plants use sunlight, water and air to make their own food (sugar) in their leaves.',
+        items: [
+          { q: 'Where does a plant get the energy to make its food?', a: 'sunlight', choices: ['sunlight', 'the soil', 'its roots', 'fertilizer'], why: 'The energy comes from sunlight. Leaves use it to make sugar.', visual: V.leafIO(['sunlight']) },
+          { q: 'True or false: plants get their food from the soil.', a: 'false', choices: ['true', 'false'], why: 'Plants make their own food in their leaves, using sunlight, water and carbon dioxide from the air. Soil gives water and small amounts of nutrients, not food.', visual: V.leafIO([]) },
+          { q: 'Plants give off a gas that people and animals need to breathe. Which gas is it?', a: 'oxygen', choices: ['oxygen', 'carbon dioxide', 'steam', 'smoke'], why: 'When plants make food, they give off oxygen.', visual: V.leafIO(['oxygen']) },
+          { q: 'Plants take in a gas from the air to make their food. Which gas is it?', a: 'carbon dioxide', choices: ['carbon dioxide', 'oxygen', 'helium'], why: 'Leaves take in carbon dioxide from the air and use it to make sugar.', visual: V.leafIO(['carbon dioxide']) },
+        ],
+      },
+      {
+        name: 'Living things are made of cells',
+        hint: 'Cells are the tiny building blocks of every living thing.',
+        visual: V.cellsZoom(),
+        items: [
+          { q: 'All living things are made of tiny building blocks. What are they called?', a: 'cells', accept: ['cell'], why: 'Every living thing, from a moss to a moose, is made of cells.' },
+          { q: 'Can you see a single plant cell with just your eyes?', a: 'no', choices: ['yes', 'no'], why: 'Most cells are far too small to see. You need a microscope.' },
+          { q: 'What tool do scientists use to see cells?', a: 'a microscope', choices: ['a microscope', 'a telescope', 'a thermometer', 'a ruler'], why: 'A microscope makes tiny things look much bigger. A telescope is for faraway things, like planets.' },
+        ],
+      },
+      {
+        name: 'Seeds and new plants',
+        hint: 'Flowers make seeds. A seed holds a tiny new plant and food for it.',
+        visual: V.germinating(),
+        items: [
+          { q: 'A seed is planted in damp, warm soil. What will most likely happen?', a: 'It sprouts and grows a root and a shoot.', choices: ['It sprouts and grows a root and a shoot.', 'It turns into a rock.', 'It melts.', 'Nothing ever happens.'], why: 'With water and warmth, a seed sprouts. A root grows down and a shoot grows up.' },
+          { q: 'Which comes out of a sprouting seed first?', a: 'the root', choices: ['the root', 'a flower', 'a fruit'], why: 'The root comes out first, to take in water and hold the seedling in place. Then the shoot grows up toward the light.' },
+          { q: 'Which of these foods is the seed of a plant?', a: 'a pea', choices: ['a pea', 'a carrot', 'lettuce', 'celery'], why: 'Peas are seeds. Carrots are roots, lettuce is leaves, and celery is stems.', visual: V.plantParts('seeds') },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'heat-temperature', name: 'Heat & Temperature', num: 3,
+    summary: 'Reading a thermometer, states of matter, changes of state, particles, expanding',
     skills: [
-      { name: 'States of matter', gen: genStatesOfMatter },
-      { name: 'Particle model', gen: genParticleModel },
-      { name: 'Heat vs temperature', gen: genHeatVsTemp },
-      { name: 'Forms of energy', gen: genEnergyForms },
-      { name: 'State changes', gen: genStateChanges },
-    ]},
-  { id: 'structures-forces', name: 'Structures & Forces', num: 4, color: '#7c3aed',
-    summary: 'Forces, structure types, loads, internal forces, simple machines',
+      {
+        name: 'Reading a thermometer',
+        hint: 'Find a numbered line, then count the small lines up (warmer) or down (colder). Check how many degrees each small line is worth.',
+        items: [
+          { q: 'Each small line is 2 °C. The red liquid stops 2 lines above 10 °C. What is the temperature in °C?', a: '14 °C', n: 14, why: '2 lines × 2 °C = 4 °C.\n10 + 4 = 14 °C.', visual: V.thermometer({ min: 0, max: 40, step: 2, every: 10, value: 14 }) },
+          { q: 'Each small line is 1 °C. The red liquid stops 3 lines below 0 °C. What is the temperature in °C?', a: '−3 °C', n: -3, why: 'Below zero means negative.\n3 lines × 1 °C = 3 °C below zero, so −3 °C.', visual: V.thermometer({ min: -10, max: 10, step: 1, every: 10, value: -3 }) },
+          { q: 'Each small line is 5 °C. The red liquid stops 1 line above 20 °C. What is the temperature in °C?', a: '25 °C', n: 25, why: '1 line × 5 °C = 5 °C.\n20 + 5 = 25 °C.', visual: V.thermometer({ min: 0, max: 50, step: 5, every: 10, value: 25 }) },
+          { q: 'Which is warmer: −8 °C or −2 °C?', a: '−2 °C', choices: ['−8 °C', '−2 °C'], why: '−2 °C is closer to zero, so it is warmer. −8 °C is 6 degrees colder.', visual: V.numberLine({ min: -10, max: 10, step: 1, every: 5, points: [[-8, '−8 °C'], [-2, '−2 °C']], ends: ['colder', 'warmer'] }) },
+          { q: 'At what temperature does water freeze, in °C?', a: '0 °C', n: 0, why: 'Pure water freezes at 0 °C and boils at 100 °C.', visual: V.waterStrip() },
+        ],
+      },
+      {
+        name: 'Solids, liquids and gases',
+        hint: 'A solid keeps its shape. A liquid takes the shape of its container. A gas spreads out to fill any space.',
+        visual: V.statesJars(),
+        items: [
+          state('a rock', 'solid', 'A rock keeps its own shape, so it is a solid.'),
+          state('milk', 'liquid', 'Milk pours and takes the shape of the glass, so it is a liquid.'),
+          state('the air inside a soccer ball', 'gas', 'Air spreads out to fill the whole ball, so it is a gas.'),
+          state('honey', 'liquid', 'Honey is thick, but it still pours and takes the shape of the jar. It is a liquid.'),
+          state('an ice cube', 'solid', 'An ice cube keeps its own shape, so it is a solid.'),
+        ],
+      },
+      {
+        name: 'Changes of state',
+        hint: 'Melting: solid → liquid. Freezing: liquid → solid. Evaporating: liquid → gas. Condensing: gas → liquid.',
+        items: [
+          { q: 'Ice cream left in the sun turns into a liquid. What is this change called?', a: 'melting', choices: CHANGES, why: 'Solid → liquid is melting.', visual: V.stateCycle('solid', 'liquid') },
+          { q: 'Water in an ice-cube tray turns solid in the freezer. What is this change called?', a: 'freezing', choices: CHANGES, why: 'Liquid → solid is freezing.', visual: V.stateCycle('liquid', 'solid') },
+          { q: 'A puddle slowly disappears on a sunny day. The water turns into a gas. What is this change called?', a: 'evaporating', choices: CHANGES, why: 'Liquid → gas is evaporating.', visual: V.stateCycle('liquid', 'gas') },
+          { q: 'Water drops form on the outside of a cold glass. Water vapour in the air turned into liquid. What is this change called?', a: 'condensing', choices: CHANGES, why: 'Gas → liquid is condensing.', visual: V.stateCycle('gas', 'liquid') },
+        ],
+      },
+      {
+        name: 'Particles and heat',
+        hint: 'All matter is made of tiny particles that are always moving. Heating makes them move faster; cooling makes them move slower.',
+        items: [
+          { q: 'You heat a pot of water. What happens to its particles?', a: 'They move faster.', choices: ['They move faster.', 'They move slower.', 'They stop moving.', 'They disappear.'], why: 'Heating gives particles more energy, so they move faster.', visual: V.particleHeat('heat') },
+          { q: 'You put a jug of juice in the fridge. What happens to its particles?', a: 'They move slower.', choices: ['They move faster.', 'They move slower.', 'They stop moving.', 'They disappear.'], why: 'Cooling takes energy away, so the particles slow down. They never stop completely.', visual: V.particleHeat('cool') },
+          { q: 'Are the particles in a solid ice cube still moving?', a: 'yes', choices: ['yes', 'no'], why: 'Particles never stop moving. In a solid they jiggle (vibrate) in place.', visual: V.particles('solid') },
+          { q: 'In which state are the particles farthest apart?', a: 'gas', choices: ['solid', 'liquid', 'gas'], why: 'Gas particles are far apart and zoom around. That is why a gas spreads out to fill its container.', visual: V.particles() },
+        ],
+      },
+      {
+        name: 'Expanding and shrinking',
+        hint: 'Most materials expand (get a little bigger) when heated and contract (shrink) when cooled.',
+        visual: V.expandBar(),
+        items: [
+          { q: 'Most materials get a little bigger when they are heated. What is this called?', a: 'expanding', choices: ['expanding', 'contracting', 'melting', 'freezing'], why: 'Getting bigger when heated is expanding. Shrinking when cooled is contracting.' },
+          { q: 'A metal lid is stuck on a glass jar. You run hot water over the lid and it comes off. Why?', a: 'The metal lid expanded.', choices: ['The metal lid expanded.', 'The lid melted.', 'The hot water made it slippery.', 'The jar shrank.'], why: 'The hot water heats the lid, so it expands a little and loosens.' },
+          { q: 'Why do sidewalks have small gaps between the slabs?', a: 'To leave room for the concrete to expand when it is hot.', choices: ['To leave room for the concrete to expand when it is hot.', 'To let grass grow.', 'To save concrete.', 'To make it easier to shovel.'], why: 'Concrete expands in summer heat. Without gaps, the slabs would push on each other and crack.', visual: V.sidewalkGaps() },
+          { q: 'The liquid in a thermometer goes up when it gets warmer. Why?', a: 'The liquid expands as it warms.', choices: ['The liquid expands as it warms.', 'More liquid is added.', 'The glass shrinks.', 'The liquid turns to gas.'], why: 'Warming makes the liquid expand, and the only place it can go is up the thin tube.', visual: V.thermometer({ min: 0, max: 40, step: 2, every: 10, value: 30 }) },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'structures-forces', name: 'Structures & Forces', num: 4,
+    summary: 'Pushes and pulls, gravity, friction, stretching and squashing, elastic materials, measuring',
     skills: [
-      { name: 'Force basics', gen: genForceBasics },
-      { name: 'Structure types', gen: genStructureTypes },
-      { name: 'Load types', gen: genLoadTypes },
-      { name: 'Internal forces', gen: genInternalForces },
-      { name: 'Simple machines', gen: genSimpleMachines },
-    ]},
-  { id: 'planet-earth', name: 'Planet Earth', num: 5, color: '#d97706',
-    summary: 'Earth layers, rock types, weathering, minerals, rock cycle',
+      {
+        name: 'Pushes and pulls',
+        hint: 'A force is a push or a pull. A push moves something away from you; a pull moves it toward you.',
+        visual: V.pushPull(),
+        items: [
+          pushPull('pulling a wagon', 'pull', 'You bring the wagon along toward you, so it is a pull.'),
+          pushPull('pushing a shopping cart', 'push', 'You move the cart away from you, so it is a push.'),
+          pushPull('a tug-of-war team hauling on the rope', 'pull', 'The team draws the rope toward themselves, so it is a pull.'),
+          { q: 'What is a force?', a: 'a push or a pull', choices: ['a push or a pull', 'how fast something moves', 'how heavy something is', 'a kind of material'], why: 'A force is a push or a pull. Forces can start, stop or change the shape of things.' },
+        ],
+      },
+      {
+        name: 'Gravity',
+        hint: 'Gravity pulls things toward Earth, all the time, even when they are not moving.',
+        items: [
+          { q: 'You let go of a ball. Which way does gravity pull it?', a: 'down, toward Earth', choices: ['down, toward Earth', 'up, toward the sky', 'sideways'], why: 'Gravity pulls everything down, toward the centre of Earth.', visual: V.dropBall() },
+          { q: 'A book is sitting still on a table. Is gravity still pulling on it?', a: 'yes', choices: ['yes', 'no'], why: 'Gravity never switches off. The table pushes up on the book, so the book does not fall.', visual: V.bookTable() },
+          { q: 'What force pulls you back down after you jump?', a: 'gravity', accept: ['the force of gravity', 'earths gravity', "earth's gravity"], why: 'Gravity pulls you back toward Earth.', visual: V.jumper() },
+        ],
+      },
+      {
+        name: 'Friction',
+        hint: 'Friction happens when two surfaces rub. Rough surfaces make more friction than smooth ones.',
+        visual: V.surfaces(),
+        items: [
+          { q: 'A hockey puck slides across the ice and slowly stops. Which force slows it down?', a: 'friction', choices: ['friction', 'gravity', 'magnetism'], why: 'The puck rubs on the ice. That rubbing is friction, and it slows the puck.', visual: V.puck() },
+          { q: 'Which floor would a toy car roll farther on: smooth tile or thick carpet?', a: 'smooth tile', choices: ['smooth tile', 'thick carpet'], why: 'Smooth tile makes less friction than rough carpet, so the car rolls farther.' },
+          { q: 'Why do people spread sand on icy sidewalks?', a: 'to make more friction so people don’t slip', choices: ['to make more friction so people don’t slip', 'to melt the ice', 'to make the sidewalk smooth', 'to keep the sidewalk warm'], why: 'Sand makes the surface rough. More friction means less slipping.' },
+        ],
+      },
+      {
+        name: 'Stretching and squashing',
+        hint: 'Tension stretches or pulls a material apart. Compression squashes or pushes it together.',
+        items: [
+          { q: 'Two teams pull on a rope in tug-of-war. Is the rope being stretched or squashed?', a: STRETCH[0], choices: STRETCH, why: 'Both teams pull outward, so the rope is stretched. That is tension.', visual: V.internalForce('tension') },
+          { q: 'You sit on a stool. Are its legs being stretched or squashed?', a: STRETCH[1], choices: STRETCH, why: 'Your weight pushes down on the legs, so they are squashed. That is compression.', visual: V.internalForce('compression') },
+          { q: 'A swing hangs from two chains. When you sit on it, are the chains stretched or squashed?', a: STRETCH[0], choices: STRETCH, why: 'Your weight pulls down on the chains, so they are stretched. That is tension.', visual: V.internalForce('tension') },
+          { q: 'A tall stack of books sits on a table. Is the bottom book being stretched or squashed?', a: STRETCH[1], choices: STRETCH, why: 'The books above press down on it, so it is squashed. That is compression.', visual: V.internalForce('compression') },
+        ],
+      },
+      {
+        name: 'Bouncing back or staying changed',
+        hint: 'An elastic material goes back to its shape when you let go. A plastic material stays changed. ("Plastic" here means staying changed, not the material plastic.)',
+        visual: V.elasticPlastic(),
+        items: [
+          { q: 'You stretch a rubber band and let go. It goes back to its shape. Is it elastic or plastic?', a: 'elastic', choices: ['elastic', 'plastic'], why: 'It goes back to its shape, so it is elastic.' },
+          { q: 'You squash a ball of modelling clay and it stays flat. Is it elastic or plastic?', a: 'plastic', choices: ['elastic', 'plastic'], why: 'It stays changed, so it is plastic.' },
+          { q: 'Which of these is the most elastic?', a: 'a spring', choices: ['a spring', 'a lump of clay', 'a piece of chalk', 'a cookie'], why: 'A spring bounces back after you stretch or squash it. Clay stays squashed, and chalk and cookies break.' },
+        ],
+      },
+      {
+        name: 'Measuring',
+        hint: 'Length is measured in centimetres (cm) and metres (m). Mass is measured in grams (g) and kilograms (kg).',
+        items: [
+          { q: 'How long is the block, in cm?', a: '7 cm', n: 7, why: 'The block starts at 0 and ends at 7, so it is 7 cm long.', visual: V.rulerVis(7) },
+          { q: 'What tool do we use to measure mass?', a: 'a balance or scale', choices: ['a balance or scale', 'a ruler', 'a thermometer', 'a clock'], why: 'A balance or scale measures mass. A ruler measures length.', visual: V.massApple() },
+          { q: 'Which unit would you use for the length of a pencil?', a: 'centimetres', choices: ['centimetres', 'grams', 'degrees Celsius', 'litres'], why: 'Length is measured in centimetres. A pencil is about 18 cm long.', visual: V.rulerVis(5) },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'planet-earth', name: 'Planet Earth', num: 5,
+    summary: 'Describing rocks, water, wind and ice, fossils, reading a map, Earth in space',
     skills: [
-      { name: 'Earth layers', gen: genEarthLayers },
-      { name: 'Rock types', gen: genRockTypes },
-      { name: 'Weathering & erosion', gen: genWeatheringErosion },
-      { name: 'Minerals', gen: genMinerals },
-      { name: 'Rock cycle', gen: genRockCycle },
-    ]},
-];
-
-window.PracticeBank = {
-  plain: true, // questions are text, not HTML
-  units: TOPICS.map(function (t) { return { id: t.id, name: t.name, num: t.num, skills: t.skills }; }),
-};
+      {
+        name: 'Describing rocks',
+        hint: 'You can sort rocks by what you see and feel: colour, texture (rough or smooth), shininess, layers and hardness.',
+        visual: V.rockSamples(),
+        items: [
+          { q: 'You run your finger over a rock to feel if it is rough or smooth. Which property are you checking?', a: 'texture', choices: ['texture', 'colour', 'mass', 'temperature'], why: 'How a rock feels, rough or smooth, is its texture.' },
+          { q: 'A hard rock and a soft rock are rubbed together. Which one gets scratched?', a: 'the soft rock', choices: ['the soft rock', 'the hard rock'], why: 'A harder rock scratches a softer one. That is one way to test hardness.' },
+          { q: 'One rock has bits that sparkle in the light. Which property does this describe?', a: 'shininess', choices: ['shininess', 'texture', 'hardness', 'size'], why: 'Sparkling in the light is about how shiny the rock is.' },
+        ],
+      },
+      {
+        name: 'Water, wind and ice shape the land',
+        hint: 'Moving water, wind and ice slowly break rock apart and carry the pieces away.',
+        items: [
+          { q: 'True or false: moving water, wind and ice can all wear away rock over a long time.', a: 'true', choices: ['true', 'false'], why: 'Water, wind and ice all wear away rock, slowly, over many years.', visual: V.weatheringVis('erosion') },
+          { q: 'Water seeps into a crack in a rock and freezes. Ice takes up more space than water. What happens to the crack?', a: 'It gets bigger.', choices: ['It gets bigger.', 'It gets smaller.', 'It disappears.'], why: 'Freezing water expands and pushes the crack open. Over many winters the rock breaks apart.', visual: V.weatheringVis('weathering') },
+          { q: 'A fast river carries sand and pebbles. What happens to the sand when the river slows down?', a: 'It drops and settles on the bottom.', choices: ['It drops and settles on the bottom.', 'It floats up into the air.', 'It melts.', 'It moves even faster.'], why: 'Slow water cannot carry as much, so the sand drops and settles.', visual: V.weatheringVis('deposition') },
+        ],
+      },
+      {
+        name: 'Fossils',
+        hint: 'A fossil is the remains or traces of a living thing from long ago, kept in rock.',
+        visual: V.fossilVis(),
+        items: [
+          { q: 'What is a fossil?', a: 'the remains or traces of a living thing from long ago', choices: ['the remains or traces of a living thing from long ago', 'a very old rock with no life in it', 'a shiny mineral', 'a living animal in a cave'], why: 'Fossils are bones, shells, footprints or prints of living things from long ago, kept in rock.' },
+          { q: 'Which of these is a fossil?', a: 'a dinosaur footprint in rock', choices: ['a dinosaur footprint in rock', 'a plastic toy dinosaur', 'a shell from a beach today', 'a drawing of a dinosaur'], why: 'A footprint pressed into rock long ago is a trace fossil. The others were made recently.' },
+          { q: 'The badlands near Drumheller, Alberta, are famous for fossils of which animals?', a: 'dinosaurs', accept: ['dinosaur', 'dinos', 'dino'], why: 'Alberta is one of the best places in the world to find dinosaur fossils.' },
+        ],
+      },
+      {
+        name: 'Reading a map',
+        hint: 'North is usually at the top of a map. The key explains the symbols, and the scale tells you real distances.',
+        items: [
+          { q: 'On most maps, which direction is at the top?', a: 'north', choices: ['north', 'south', 'east', 'west'], why: 'Maps usually put north at the top. A compass rose shows the directions.', visual: V.mapVis({ north: '?' }) },
+          { q: 'On a map, 1 cm stands for 1 km. Towns A and B are 4 cm apart on the map. How far apart are they really, in km?', a: '4 km', n: 4, why: 'Each 1 cm is 1 km, so 4 cm is 4 km.', visual: V.mapVis({ scale: true }) },
+          { q: 'What is a map key for?', a: 'It tells you what the symbols mean.', choices: ['It tells you what the symbols mean.', 'It shows which way is north.', 'It unlocks the map.', 'It tells you the date.'], why: 'The key explains each symbol, like a triangle for a mountain.', visual: V.mapVis() },
+        ],
+      },
+      {
+        name: 'Earth in space',
+        hint: 'Earth is a planet. It is the third planet from the Sun. The Sun is a star.',
+        visual: V.innerPlanets(),
+        items: [
+          { q: 'Is the Sun a planet or a star?', a: 'a star', choices: ['a planet', 'a star'], why: 'The Sun is a star: a huge ball of hot gas that makes its own light.' },
+          { q: 'Counting out from the Sun, which planet is Earth?', a: 'the third', choices: ['the first', 'the second', 'the third', 'the fourth'], why: 'Mercury, Venus, then Earth. Earth is the third planet from the Sun.' },
+          { q: 'What does Earth travel around once a year?', a: 'the Sun', choices: ['the Sun', 'the Moon', 'Mars'], why: 'Earth orbits the Sun. One trip around takes one year.', visual: V.orbit({ center: '?' }) },
+        ],
+      },
+    ],
+  },
+] };
 })();
