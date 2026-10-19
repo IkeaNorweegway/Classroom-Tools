@@ -4,7 +4,7 @@
 
 import { strands as math9Strands, topicsInStrand, type StrandSlug } from './math9';
 
-export type CourseKey = 'science' | 'math9' | 'science7' | 'social9' | 'social8' | 'steam' | 'cefl';
+export type CourseKey = 'science' | 'math9' | 'science7' | 'social9' | 'social8' | 'social7' | 'steam' | 'cefl';
 
 /** Who a page is written for. Each course has a student path and may add a
  *  teacher and a parent path; the nav switch offers only the ones that exist. */
@@ -89,6 +89,13 @@ const soc8Units: [string, string][] = [
   ['economic-systems', 'Economy'],
   ['political-systems', 'Politics'],
   ['civic-engagement', 'Citizenship'],
+];
+const soc7Units: [string, string][] = [
+  ['state-building', 'State Building'],
+  ['confederation-government', 'Government'],
+  ['building-economy', 'Economy'],
+  ['immigration', 'Immigration'],
+  ['armed-forces', 'Armed Forces'],
 ];
 // CEFL grade pages are /cefl/grade-N/; unit viewers are /cefl/view/N-<unit>/, so both count as that grade.
 const ceflGradeItems: SubnavItem[] = [
@@ -214,6 +221,23 @@ export const courses: Course[] = [
     parentSubnav: parentItems('social8/parents', soc8Units),
   },
   {
+    key: 'social7',
+    tab: 'Social 7',
+    name: 'Social Studies',
+    grade: 'Grade 7',
+    numeral: '7',
+    path: 'social7',
+    teacherPath: 'social7/teacher',
+    parentPath: 'social7/parents',
+    blurb: 'Five units on building Canada after Confederation, across Time and Place, Systems, and Citizenship.',
+    facts: ['5 units', '3 organizing ideas', '35 materials'],
+    subnav: [
+      ...unitItems('social7/materials/', soc7Units),
+      { label: 'All units', path: 'social7', match: endsWith('/social7') },
+    ],
+    parentSubnav: parentItems('social7/parents', soc7Units),
+  },
+  {
     key: 'steam',
     tab: 'STEAM',
     name: 'STEAM',
@@ -264,7 +288,7 @@ export const courses: Course[] = [
 export const navSubjects: { label: string; courses: CourseKey[] }[] = [
   { label: 'Science', courses: ['science', 'science7'] },
   { label: 'Math', courses: ['math9'] },
-  { label: 'Social', courses: ['social8', 'social9'] },
+  { label: 'Social', courses: ['social7', 'social8', 'social9'] },
   { label: 'STEAM', courses: ['steam'] },
   { label: 'CEFL', courses: ['cefl'] },
 ];
@@ -281,6 +305,7 @@ export const footerNames: Record<CourseKey, string> = {
   science7: 'Grade 7 Science',
   social9: 'Grade 9 Social Studies',
   social8: 'Grade 8 Social Studies',
+  social7: 'Grade 7 Social Studies',
   steam: 'STEAM, Grades 5–9',
   cefl: 'Career Education and Financial Literacy 7–9',
 };

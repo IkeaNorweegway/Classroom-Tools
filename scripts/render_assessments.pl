@@ -41,6 +41,7 @@ my @SOURCES = (
 my %ACCENT = (
     sci6  => '#1d7486',
     sci7  => '#2e7d55',
+    soc7  => '#4a6680',
     soc8  => '#8a4a78',
     soc9  => '#a6452f',
     math9 => '#4f46e5',

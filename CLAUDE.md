@@ -97,6 +97,7 @@ Materials are organized inside type folders by subject and unit:
 | `_courses/grade-7-science/_context.md` | Science 7 (Alberta 2007 PoS): 5 units, LOs, misconception inventory, depth ceilings |
 | `_courses/grade-7-science/[unit]/_context.md` | Unit-level contexts: interactions-ecosystems, plants-food-fibre, heat-temperature, structures-forces, planet-earth |
 | `_courses/math-9/_context.md` | Math 9: 11 topics, depth ceilings, misconception inventory, recommended sequence |
+| `_courses/grade-7-social/_context.md` | Social 7 (draft 7–9 curriculum): 5 units, verbatim K/U/S, local codes SB/CG/BE/IM/AF, misconceptions, sensitive-content notes. Materials render with `scripts/render_social.pl` |
 | `_courses/grade-8-social/_context.md` | Social 8 (draft 7–9 curriculum): 4 units, outcomes, misconceptions |
 | `_courses/cefl/_context.md` | CEFL 7–9 (draft 2026 curriculum): project-based; 5 units × 3 grades, unit rhythm, mini-workbook and project specs, local outcome codes |
 | `_courses/esports/_context.md` | eSports club course design: domains, 9-week season, source PDFs |

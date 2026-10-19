@@ -345,6 +345,54 @@ export const unitArt: Record<string, UnitArt> = {
       <g class="u-m"><rect class="u-s u-f" x="26" y="6" width="12" height="18" rx="1.5"/><path class="u-s" d="M29 12h6M29 16h4" opacity=".7"/></g>`,
   },
 
+  // ── Social Studies 7 ─────────────────────────────────────────────────
+  'state-building': {
+    m: 'drop',
+    svg: `<path class="u-s" d="M6 54h52"/>
+      <rect class="u-s u-f" x="8" y="30" width="16" height="24" rx="1"/>
+      <rect class="u-s u-f" x="40" y="30" width="16" height="24" rx="1"/>
+      <path class="u-s" d="M24 42h16" style="stroke-dasharray: 2.5 3.5" opacity=".5"/>
+      <g class="u-m"><rect class="u-s u-f" x="25" y="14" width="14" height="16" rx="1"/><circle class="u-d" cx="32" cy="22" r="2.4"/></g>`,
+  },
+  'confederation-government': {
+    m: 'float',
+    svg: `<path class="u-s" d="M6 54h52M10 50h44"/>
+      <path class="u-s" d="M16 26v24M32 26v24M48 26v24"/>
+      <path class="u-s u-f" d="M8 26 32 12l24 14z"/>
+      <g class="u-m"><circle class="u-d" cx="32" cy="21" r="2.6"/></g>
+      <circle class="u-d" cx="16" cy="38" r="2"/><circle class="u-d" cx="48" cy="38" r="2"/>`,
+  },
+  'building-economy': {
+    m: 'sway',
+    svg: `<path class="u-s" d="M6 54h52M10 48h44"/>
+      <path class="u-s" d="M14 48v6M24 48v6M34 48v6M44 48v6" opacity=".6"/>
+      <g class="u-m" style="transform-origin: 32px 46px">
+        <path class="u-s" d="M32 46V12"/>
+        <path class="u-s u-f" d="M32 16c-6 0-8 4-8 7 4 0 8-2 8-7zM32 16c6 0 8 4 8 7-4 0-8-2-8-7zM32 26c-6 0-8 4-8 7 4 0 8-2 8-7zM32 26c6 0 8 4 8 7-4 0-8-2-8-7z"/>
+        <circle class="u-d" cx="32" cy="11" r="2.4"/>
+      </g>`,
+  },
+  immigration: {
+    m: 'drift',
+    svg: `<path class="u-s" d="M4 52c5 0 5-3 10-3s5 3 10 3 5-3 10-3 5 3 10 3 5-3 10-3 5 3 6 3" opacity=".6"/>
+      <g class="u-m">
+        <path class="u-s u-f" d="M10 38h44l-6 10H16z"/>
+        <rect class="u-s u-f" x="22" y="28" width="20" height="10" rx="1"/>
+        <path class="u-s" d="M30 28V18"/>
+        <circle class="u-d" cx="27" cy="33" r="1.8"/><circle class="u-d" cx="32" cy="33" r="1.8"/><circle class="u-d" cx="37" cy="33" r="1.8"/>
+      </g>`,
+  },
+  'armed-forces': {
+    m: 'pulse',
+    svg: `<path class="u-s" d="M32 40v16"/>
+      <path class="u-s u-f" d="M32 56c-4-6-10-6-14-4"/>
+      <g class="u-m" style="transform-origin: 32px 26px">
+        <circle class="u-s u-f" cx="22" cy="22" r="9"/><circle class="u-s u-f" cx="42" cy="22" r="9"/>
+        <circle class="u-s u-f" cx="22" cy="34" r="9"/><circle class="u-s u-f" cx="42" cy="34" r="9"/>
+        <circle class="u-d" cx="32" cy="28" r="5"/>
+      </g>`,
+  },
+
   // ── STEAM grades ─────────────────────────────────────────────────────
   'grade-5': {
     m: 'float',

@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CourseHero from '../../components/CourseHero.astro';
+import TopicList from '../../components/TopicList.astro';
+import { getCollection } from 'astro:content';
+import { social7 } from '../../data/social7';
+import { materialCount } from '../../data/manifest';
+const base = import.meta.env.BASE_URL;
+// Cards lead with the student hook; the topic list stays as small print.
+const hooks: Record<string, string> = Object.fromEntries((await getCollection('social7-units')).map((e) => [e.slug, e.data.hook]));
+
+// The same three facts as the other courses' landing pages, all read from the data.
+const materials = materialCount(social7.units);
+
+const units = [
+  {
+    slug: 'state-building',
+    label: 'Building the Canadian State',
+    description: 'Confederation, expansion west, the Red River Conflict, the numbered treaties, the Indian Act, the CPR, and new provinces.',
+    organizingIdea: 'Time and Place',
+  },
+  {
+    slug: 'confederation-government',
+    label: "Creating Canada's Government",
+    description: 'The Quebec and London Conferences, the BNA Act, the three branches of government, and federal vs. provincial powers.',
+    organizingIdea: 'Systems',
+  },
+  {
+    slug: 'building-economy',
+    label: "Building Canada's Economy",
+    description: 'The National Policy, tariffs and free trade, regional economies, GDP, equalization, and banking.',
+    organizingIdea: 'Systems',
+  },
+  {
+    slug: 'immigration',
+    label: 'Immigration After Confederation',
+    description: 'Prairie settlement and the Dominion Lands Act, and the laws and events that kept some groups out.',
+    organizingIdea: 'Citizenship',
+  },
+  {
+    slug: 'armed-forces',
+    label: 'Armed Forces and Sovereignty',
+    description: 'The NWMP, building a military, the Boer War, the First World War, remembrance, and the Statute of Westminster.',
+    organizingIdea: 'Time and Place',
+  },
+];
+---
+
+<BaseLayout course="social7" title="Social Studies 7">
+  <CourseHero
+    eyebrow="Alberta draft curriculum · 2026"
+    title="Social Studies 7"
+    numeral="7"
+    vtName="course-num-social7"
+    description="Five units on building Canada after Confederation, across Time and Place, Systems, and Citizenship. Notes, workbooks, and answer keys."
+    facts={[
+      { n: '5', label: 'units' },
+      { n: `${new Set(units.map((u) => u.organizingIdea)).size}`, label: 'organizing ideas' },
+      { n: `${materials}`, label: 'materials' },
+    ]}
+  />
+
+  <TopicList
+    heading="Units"
+    items={units.map(u => ({ art: u.slug, href: `${base}social7/materials/${u.slug}`, title: u.label, kicker: u.organizingIdea, description: hooks[u.slug] ?? u.description, meta: hooks[u.slug] ? u.description : undefined }))}
+  />
+</BaseLayout>

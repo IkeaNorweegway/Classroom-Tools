@@ -105,6 +105,19 @@ const social8Units = defineCollection({
   }),
 });
 
+const social7Units = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    organizingIdea: z.string(),
+    guidingQuestion: z.string(),
+    learningOutcome: z.string(),
+    order: z.number(),
+    ...studentIntro,
+    ...teacherSummary,
+  }),
+});
+
 // CEFL 7–9: one folder per grade (grade-7/, grade-8/, grade-9/).
 const ceflUnits = defineCollection({
   type: 'content',
@@ -169,6 +182,7 @@ export const collections = {
   'parent-guides': parentGuides,
   'social9-units': social9Units,
   'social8-units': social8Units,
+  'social7-units': social7Units,
   'cefl-units': ceflUnits,
   lessons,
   'teacher-units': teacherUnits,

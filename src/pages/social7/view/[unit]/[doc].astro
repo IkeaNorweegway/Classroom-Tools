@@ -1,0 +1,112 @@
+---
+import Nav from '../../../../components/Nav.astro';
+import { social7 as manifest } from '../../../../data/social7';
+import { unitDocs } from '../../../../data/manifest';
+import { existsSync } from 'node:fs';
+const base = import.meta.env.BASE_URL;
+
+export function getStaticPaths() {
+  const units = [
+    'state-building',
+    'confederation-government',
+    'building-economy',
+    'immigration',
+    'armed-forces',
+  ];
+  const kinds = ['notes', 'notes-answers', 'workbook', 'workbook-answers', 'teacherguide'];
+
+  const paths: { params: { unit: string; doc: string } }[] = [];
+  for (const unit of units) {
+    for (const kind of kinds) {
+      paths.push({ params: { unit, doc: `soc7-${unit}-${kind}-v1` } });
+    }
+  }
+  // Every document the course's pages link to (from the manifest), including
+  // the parent home sheets. Routes listed above stay even if no page links them.
+  for (const u of manifest.units) {
+    for (const doc of unitDocs(u)) {
+      if (!existsSync(`public/materials/${doc}.html`)) console.warn(`[${manifest.course}] missing material: ${doc}.html`);
+      if (!paths.some((p) => p.params.unit === u.slug && p.params.doc === doc)) paths.push({ params: { unit: u.slug, doc } });
+    }
+  }
+  return paths;
+}
+
+const { unit, doc } = Astro.params;
+
+const unitLabels: Record<string, string> = {
+  'state-building': 'Building the Canadian State',
+  'confederation-government': 'Creating Canada’s Government',
+  'building-economy': 'Building Canada’s Economy',
+  'immigration': 'Immigration After Confederation',
+  'armed-forces': 'Armed Forces and Sovereignty',
+};
+
+// Home practice sheets belong to the parent guide; everything else to the unit page.
+const isHome = doc!.includes('-home-');
+const backHref = isHome ? `${base}${manifest.parentHref(unit!)}` : `${base}social7/materials/${unit}`;
+const backLabel = isHome ? '← Parent guide' : `← ${unitLabels[unit] ?? 'Social Studies 7'}`;
+const fileUrl = `${base}materials/${doc}.html`;
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{unitLabels[unit] ?? unit} — {doc} | Social Studies 7</title>
+  <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    .viewer-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .back-bar {
+      background: #f6f4ef;
+      border-bottom: 1px solid rgb(31 29 26 / 0.07);
+      padding: 0.6rem 1.25rem;
+      flex-shrink: 0;
+    }
+    .back-bar a {
+      font-family: 'Atkinson Hyperlegible Next Variable', system-ui, sans-serif;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #6b665d;
+      text-decoration: none;
+    }
+    .back-bar a:hover { color: #1f1d1a; }
+    .doc-frame {
+      flex: 1;
+      border: none;
+      width: 100%;
+      display: block;
+    }
+    @media print {
+      .viewer-nav, .back-bar { display: none !important; }
+      .doc-frame { height: 100vh; }
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-shell">
+    <div class="viewer-nav">
+      <Nav course="social7" />
+    </div>
+    <div class="back-bar">
+      <a href={backHref}>{backLabel}</a>
+    </div>
+    <iframe
+      src={fileUrl}
+      class="doc-frame"
+      title={doc}
+    />
+  </div>
+</body>
+</html>

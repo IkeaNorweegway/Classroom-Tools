@@ -31,6 +31,8 @@ Current state only. Keep this file short: update the tables and the open list, a
 - **Materials suite:** `_meta-context.md` lists a PPTX deck per unit. Class slides now exist as web decks (`slides/`, first one 2026-10-19), not PPTX. Decide whether web decks replace the PPTX line in the suite.
 - **Social 9 Urbanization notes answer key:** the notes say "Canada experienced a ___ boom" (answer: population), but the key's prompt is "a population ___" with the answer "boom". The class slides use "population". Fix the key.
 
+- **Social 7 (2026-10-19):** all five units need a teacher read-through, especially the sensitive content (the Indian Act, treaties, scrip, Red River and 1885, the head tax, Komagata Maru, the 1907 riots, P.C. 1911-1324) and the misconceptions, importance scores, week allocations, unit order, local outcome codes and inquiry options in `_courses/grade-7-social/_context.md`, which are this workspace's additions. The Grade 5–6 "comes from" lines in the parent guides are best guesses. Workbook and test quotes marked "sample" were written for the questions; the 1900s poster slogans are real. Facts worth a second look before printing: Red River population (~12,000), Komagata Maru admissions (about two dozen), Victoria Crosses (about 70), CPR land grant (25 million acres), House of Commons seats (343). The boundary "maps" are schematic blocks; real maps could be built with `scripts/build_social_maps.py`.
+
 ### Not yet checked or finished
 - **Prereq practice, one page per unit (2026-10-18):** every unit in Grade 6 Science (6), Science 7 (5), Math 9 (11), Social 8 (4) and Social 9 (7) has `*-prereq-practice-v1.html` in `public/materials/` (Math 9 in `math-9/practice/`), listed under "Get ready" on its unit page and linked from its parent guide. Shared engine and one question bank per course in `public/materials/prereq-practice/`. Science 6 and Social 8/9 have 251 new written questions, from each unit's parent-guide "comesFrom" and "assumed" lists; Math 9 keeps the generators from its old site page (moved unchanged, so saved progress carries over); Science 7's were replaced with Grade 6-level questions (below). The old `/<course>/practice` pages now redirect to the course index. Fixed while moving: three Math 9 textbook questions showed the wrong answer (−13.95 for −13.75, −0.96 for −1.2, 9.9 for 8.1). Tested in headless Chrome: all 33 pages played, print from the viewer, phone width. Needs a teacher read-through of the new Science 6 and Social questions.
 - **Science 7 prereq questions rewritten (2026-10-18):** the old bank (generators moved from the old site page) tested Grade 7 content: consumer levels, cell parts, rock types, Earth's layers, load types, heat vs. temperature. It is now 94 written questions, 26 skills, all Grade 6 ideas at the simpler end, taken from each unit's "assumed" list in `src/content/parent-guides/science7/`. Saved skill progress from the old questions no longer shows (different skill names). Needs a teacher read-through.
@@ -94,6 +96,21 @@ All 11 topics have notes, notes answer key, teacher notes, concept one-pager, Co
 - **Fraction Simulator v2 (site):** `public/materials/math-9/practice/math9-fraction-sim-v2.html`, linked from the Number page. v1 is kept and unlinked. Same three tabs and model. v2 adds a Tutorial button and a four-step tour for each tab that points at the real controls, runs once per tab on the first visit, and never blocks the controls. Tested in headless Chrome: tour steps, Next, Skip, Escape, replay, and one tour per tab. Untested: how the tour reads to students, touch, and school devices.
 
 Answer key design follows `research/answer-key-design-research.md`: full worked solutions for Core, partial solutions for Challenge, faded structure in strand workbooks.
+
+### Grade 7 Social (site ✓, 2026-10-19)
+
+Five units from the Grade 7 column of the June 2026 draft 7–9 curriculum. Course context: `_courses/grade-7-social/_context.md`. Pages at `/social7/` (student, parent and teacher views), same shape as Social 8.
+
+| Unit | Notes + AK | Workbook + AK | Exits | Quiz + key | Test (local) | Teacher guide | Home ×2 + keys | Prereq |
+|---|---|---|---|---|---|---|---|---|
+| Building the Canadian State | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Creating Canada's Government | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Building Canada's Economy | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Immigration After Confederation | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Armed Forces and Sovereignty | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+
+- Markdown sources in the type folders (`grade-7-social/`); teacher guides in `lesson-plans/grade-7-social/`. HTML made by `scripts/render_social.pl` (notes, workbooks, keys, teacher guides), `render_assessments.pl` (exits, quizzes) and `render_home_practice.pl` (home sheets). Unlike Social 8 and 9, source and HTML match, so edit the markdown and re-render.
+- Six diagrams per notes package (one per section), all `dg-*` classes, tikz tags, no inline styles. Maps are simplified block diagrams, not to scale.
 
 ### Grade 8 Social (site ✓)
 

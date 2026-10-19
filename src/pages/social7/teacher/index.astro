@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TeacherHub from '../../../components/TeacherHub.astro';
+import { getCollection } from 'astro:content';
+import { social7 } from '../../../data/social7';
+
+// Per-unit colour and organizing-idea tag. Names and documents come from the manifest.
+const meta = [
+  { slug: 'state-building', tag: 'Time and Place', color: '#92400e', tagStyle: 'bg-amber-100 text-amber-800' },
+  { slug: 'confederation-government', tag: 'Systems', color: '#4338ca', tagStyle: 'bg-indigo-100 text-indigo-800' },
+  { slug: 'building-economy', tag: 'Systems', color: '#1d4ed8', tagStyle: 'bg-blue-100 text-blue-800' },
+  { slug: 'immigration', tag: 'Citizenship', color: '#0f766e', tagStyle: 'bg-teal-100 text-teal-800' },
+  { slug: 'armed-forces', tag: 'Time and Place', color: '#9f1239', tagStyle: 'bg-rose-100 text-rose-800' },
+];
+
+// One-line scope note per unit, from the unit files.
+const summaries = Object.fromEntries((await getCollection('social7-units')).map((e) => [e.slug, e.data.teacherSummary]));
+const units = meta.map((u) => ({ ...u, summary: summaries[u.slug] ?? '' }));
+---
+
+<BaseLayout title="Social 7 — Teacher Hub" course="social7" audience="teacher">
+  <TeacherHub course="social7" name="Social Studies 7" accent="#4a6680" manifest={social7} units={units} />
+</BaseLayout>

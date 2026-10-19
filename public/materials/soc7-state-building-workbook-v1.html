@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 7 Social Studies — Building the Canadian State: Practice Workbook</title>
+<style>
+
+  /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-mono:    Consolas, 'Courier New', monospace;
+  }
+  body { font-kerning: normal; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+  :root {
+    --violet:       #92400e;
+    --violet-mid:   #92400e;
+    --violet-light: #fde68a;
+    --violet-bg:    #fffbeb;
+    --violet-pale:  #F5F6FF;
+
+    --star-core:    #92400e;
+    --star-ext:     #b91c1c;
+    --ext-bg:       #FEF2F2;
+    --ext-border:   #FCA5A5;
+
+    --hint-bg:      #FFFBEB;
+    --hint-border:  #FDE68A;
+    --hint-text:    #78350F;
+
+    --meta-bg:      #F0FDF4;
+    --meta-border:  #6EE7B7;
+    --meta-text:    #065F46;
+
+    --stretch-bg:   #F0F9FF;
+    --stretch-border: #BAE6FD;
+    --stretch-hdr:  #0369A1;
+
+    --line-color:   #6b665d;
+    --border:       #c9c4b9;
+    --text:         #1f1d1a;
+    --muted:        #544f47;
+    --surface:      #FFFFFF;
+    --page-bg:      #F8F8F6;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 15px; }
+  body {
+    font-family: var(--font-body);
+    color: var(--text);
+    background: var(--page-bg);
+    line-height: 1.65;
+    padding-bottom: 4rem;
+  }
+
+  .page { max-width: 820px; margin: 0 auto; padding: 0 2rem; }
+
+  .cover {
+    background: var(--violet);
+    color: white;
+    padding: 2rem 2rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .cover-grid { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; }
+  .cover h1 { font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.8; margin-bottom: 0.2rem; }
+  .cover h2 { font-family: var(--font-display); font-size: 1.75rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .cover .sub { font-family: var(--font-body); font-size: 0.82rem; opacity: 0.75; font-style: italic; }
+  .cover .lo { font-family: var(--font-body); font-size: 0.78rem; opacity: 0.85; margin-top: 0.4rem; }
+  .cover-fields { display: flex; flex-direction: column; gap: 0.6rem; min-width: 14rem; }
+  .cover-field { display: flex; flex-direction: column; }
+  .cover-field label { font-family: var(--font-body); font-size: 0.7rem; opacity: 0.75; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.15rem; }
+  .cover-field .field-line { border-bottom: 1px solid rgba(255,255,255,0.5); height: 1.5rem; min-width: 10rem; }
+
+  .instr-box {
+    background: var(--violet-bg);
+    border: 1px solid var(--violet-light);
+    border-radius: 6px;
+    padding: 1rem 1.4rem;
+    margin-bottom: 1.75rem;
+    font-size: 0.88rem;
+  }
+  .instr-box h3 { font-family: var(--font-body); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--violet); margin-bottom: 0.5rem; }
+  .instr-box p { margin-bottom: 0.45rem; }
+  .instr-box p:last-child { margin-bottom: 0; }
+  .star-legend { display: flex; gap: 1.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+  .sl-item { display: flex; align-items: center; gap: 0.4rem; font-family: var(--font-body); font-size: 0.82rem; }
+  .badge { display: inline-block; font-family: var(--font-body); font-weight: 800; font-size: 0.72rem; letter-spacing: 0.04em; padding: 0.15em 0.5em; border-radius: 3px; text-transform: uppercase; }
+  .badge-core { background: var(--violet-light); color: var(--violet); }
+  .badge-ext  { background: var(--ext-bg);       color: var(--star-ext); }
+
+  h3.section-label {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    margin: 2rem 0 1rem;
+  }
+
+  .meta-block {
+    background: var(--meta-bg);
+    border-left: 4px solid var(--meta-border);
+    border-radius: 0 6px 6px 0;
+    padding: 1rem 1.25rem;
+    margin: 1.75rem 0;
+    page-break-inside: avoid;
+  }
+  .meta-block h4 {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--meta-text);
+    margin-bottom: 0.6rem;
+  }
+  .meta-block p { font-size: 0.88rem; margin-bottom: 0.5rem; }
+  .meta-block p:last-child { margin-bottom: 0; }
+
+  .question {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 1.1rem;
+    overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .question.ext { border-color: var(--ext-border); }
+
+  .q-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 1rem;
+    background: var(--violet-pale);
+    border-bottom: 1px solid var(--border);
+  }
+  .question.ext .q-header { background: var(--ext-bg); border-color: var(--ext-border); }
+
+  .q-num {
+    font-family: var(--font-body);
+    font-weight: 800;
+    font-size: 0.82rem;
+    color: var(--violet);
+    min-width: 1.4rem;
+  }
+  .question.ext .q-num { color: var(--star-ext); }
+
+  .q-body { padding: 0.85rem 1.1rem 1rem; }
+  .q-body p { margin-bottom: 0.6rem; font-size: 0.92rem; }
+  .q-body p:last-of-type { margin-bottom: 0.75rem; }
+  .q-body table { width: 100%; border-collapse: collapse; margin: 0.5rem 0 0.75rem; font-size: 0.88rem; }
+  .q-body table th { font-family: var(--font-body); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; background: var(--violet-light); color: var(--violet); padding: 0.4rem 0.6rem; border: 1px solid var(--violet-light); text-align: left; }
+  .q-body table td { padding: 0.45rem 0.6rem; border: 1px solid var(--border); }
+
+  .q-parts { margin: 0.5rem 0 0.75rem; padding-left: 0; list-style: none; }
+  .q-parts li { font-size: 0.92rem; margin-bottom: 0.4rem; padding-left: 1.4rem; position: relative; }
+  .q-parts li::before { content: attr(data-label); position: absolute; left: 0; font-weight: 700; color: var(--violet); }
+
+  .resp { margin-top: 0.6rem; }
+  .resp-line { border-bottom: 1px solid var(--line-color); min-height: 1.85rem; margin-bottom: 0.35rem; }
+  .fill { border-bottom: 1px solid var(--line-color); display: inline-block; }
+  .fill-sm { width: 6rem; }
+  .fill-md { width: 10rem; }
+  .fill-lg { width: 60%; }
+
+  .diagram { margin: 0.75rem 0; }
+  .diagram svg { display: block; max-width: 100%; }
+  .diagram-caption { font-family: var(--font-body); font-size: 0.75rem; color: var(--muted); margin-top: 0.35rem; font-style: italic; }
+
+  .word-bank {
+    background: #faf9f6;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.45rem 0.75rem;
+    margin: 0.5rem 0 0.6rem;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+  }
+  .word-bank-label { font-weight: 700; font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin-right: 0.4em; }
+  .word-bank-terms { color: var(--violet); font-weight: 600; }
+
+  .hint {
+    background: var(--hint-bg);
+    border: 1px solid var(--hint-border);
+    border-radius: 4px;
+    padding: 0.45rem 0.75rem;
+    margin: 0.5rem 0 0.6rem;
+    font-size: 0.82rem;
+    color: var(--hint-text);
+  }
+  .hint-label {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-right: 0.4em;
+  }
+
+  .quote-block {
+    border-left: 3px solid var(--muted);
+    padding: 0.4rem 0.9rem;
+    margin: 0.5rem 0 0.75rem;
+    font-style: italic;
+    color: #3f3b35;
+    font-size: 0.9rem;
+    background: #FAFAFA;
+  }
+
+  .stretch-header {
+    background: var(--stretch-bg);
+    border: 1px solid var(--stretch-border);
+    border-radius: 6px;
+    padding: 0.85rem 1.25rem;
+    margin: 2.5rem 0 1.25rem;
+    page-break-before: always;
+  }
+  .stretch-header h3 {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--stretch-hdr);
+    margin-bottom: 0.3rem;
+  }
+  .stretch-header p {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .question.stretch { border-color: var(--stretch-border); }
+  .question.stretch .q-header { background: var(--stretch-bg); border-color: var(--stretch-border); }
+  .question.stretch .q-num { color: var(--stretch-hdr); }
+
+  .rubric {
+    margin-top: 2.5rem;
+    page-break-before: always;
+  }
+  .rubric-header {
+    background: var(--violet);
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: 4px 4px 0 0;
+  }
+  .rubric-header h3 { font-family: var(--font-body); font-size: 0.95rem; font-weight: 700; }
+  .rubric-header p { font-family: var(--font-body); font-size: 0.78rem; opacity: 0.8; margin-top: 0.2rem; }
+  .rubric table { width: 100%; border-collapse: collapse; border-radius: 0 0 4px 4px; overflow: hidden; }
+  .rubric th { background: #3f3b35; color: white; font-family: var(--font-body); font-size: 0.78rem; padding: 0.5rem 0.75rem; text-align: left; }
+  .rubric td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); font-size: 0.88rem; vertical-align: top; }
+  .rubric tr:last-child td { border-bottom: none; }
+  .rubric tr:nth-child(even) td { background: #FAFAFA; }
+  .rubric .rating { font-family: var(--font-body); font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+
+  /* ─── SVG Diagram Design System (dg-* classes) ─────────── */
+  :root {
+    --dg-stroke:    #3f3b35;
+    --dg-fill:      #faf9f6;
+    --dg-accent:    var(--accent, #92400e);
+    --dg-secondary: #544f47;
+    --dg-muted:     #6b665d;
+    --dg-sw:        1.5px;
+    --dg-sw-bold:   2.5px;
+    --dg-sw-thin:   1.0px;
+  }
+  svg .dg-boundary, svg .dg-line, svg .dg-accent,
+  svg .dg-dashed, svg .dg-right-angle, svg .dg-construction {
+    vector-effect: non-scaling-stroke;
+  }
+  svg .dg-boundary    { stroke: var(--dg-stroke);    fill: var(--dg-fill);  stroke-width: var(--dg-sw); }
+  svg .dg-line        { stroke: var(--dg-stroke);    fill: none;            stroke-width: var(--dg-sw); }
+  svg .dg-accent      { stroke: var(--dg-accent);    fill: none;            stroke-width: var(--dg-sw-bold); }
+  svg .dg-dashed      { stroke: var(--dg-secondary); fill: none;            stroke-width: var(--dg-sw); stroke-dasharray: 5 3; }
+  svg .dg-point       { fill: var(--dg-stroke);      stroke: none; }
+  svg .dg-point-accent{ fill: var(--dg-accent);      stroke: none; }
+  svg .dg-label       { font: 12px/1.3 var(--font-body); fill: var(--dg-stroke);    stroke: none; }
+  svg .dg-label-sm    { font: 11px/1.3 var(--font-body); fill: var(--dg-secondary); stroke: none; }
+  svg .dg-label-accent{ font: 11px/1.3 var(--font-body); fill: var(--dg-accent);    stroke: none; font-weight: 600; }
+
+  @media print {
+    html { font-size: 11pt; }
+    body { background: white; padding-bottom: 0; }
+    .page { max-width: 100%; padding: 0 1cm; }
+    .question, .meta-block, .stretch-header { page-break-inside: avoid; }
+    .rubric { page-break-before: always; }
+    * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  }
+  svg .ak { fill: #166534; font-weight: 700; }
+  .ak-fill { color: #166534; font-weight: 700; border-bottom: 2px solid #86efac; padding: 0 0.15rem; }
+  .ak-list li { margin-bottom: 0.35rem; }
+  .q-parts { margin: 0.3rem 0 0.5rem 1.4rem; }
+</style>
+</head>
+<body>
+
+<!-- ══ COVER ══ -->
+<div class="cover">
+  <div class="page">
+    <div class="cover-grid">
+      <div>
+        <h1>Grade 7 Social Studies — Building the Canadian State</h1>
+        <h2>Practice Workbook</h2>
+        <div class="sub">Questions are mixed on purpose. Figuring out what each question is asking is part of the learning.</div>
+        <div class="lo">Learning Outcome: Students examine the deliberate acts of state building.</div>
+      </div>
+      <div class="cover-fields">
+        <div class="cover-field">
+          <label>Name</label>
+          <div class="field-line"></div>
+        </div>
+        <div class="cover-field">
+          <label>Date started</label>
+          <div class="field-line"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+<div class="instr-box">
+  <h3>How this workbook works</h3>
+  <p>Questions from across the unit are mixed together on purpose. Your job is to figure out what each question is asking before you answer it. That thinking is where the learning happens.</p>
+  <div class="star-legend">
+    <div class="sl-item"><span class="badge badge-core">★ Core</span> For everyone. Try these first.</div>
+    <div class="sl-item"><span class="badge badge-ext">★★ Extended</span> More challenging. Try after Core, or as a challenge.</div>
+  </div>
+  <p style="margin-top:0.6rem">Show your thinking. A correct answer with no explanation earns part marks on Extended questions.</p>
+</div>
+
+<div class="meta-block">
+  <h4>Before you begin — forethought</h4>
+  <p>Look over the first six questions. Which one do you think will be hardest for you? Write the question number and why.</p>
+  <p>Hardest question: Q _____ &nbsp;&nbsp;&nbsp;&nbsp; Why: <span class="fill fill-lg">&nbsp;</span></p>
+</div>
+
+<!-- Q1 core — Section 1 — British North America before 1867 -->
+<div class="question">
+  <div class="q-header"><span class="q-num">1</span><span class="badge badge-core">★ Core</span></div>
+  <div class="q-body">
+<p>Label the simplified map of British North America in 1864.</p>
+<div class="word-bank"><span class="word-bank-label">Word bank</span> <span class="word-bank-terms">British Columbia &nbsp; Rupert's Land &nbsp; Province of Canada &nbsp; Nova Scotia &nbsp; Newfoundland</span></div>
+
+<div class="diagram"><svg viewBox="0 0 720 220" width="100%" role="img" aria-label="Simplified map of British North America in 1864 with five boxes to label, from west to east.">
+  <rect x="20" y="40" width="90" height="150" rx="4" class="dg-boundary"/>
+  <text x="65" y="118" text-anchor="middle" class="dg-label">A</text>
+  <rect x="120" y="40" width="250" height="150" rx="4" class="dg-boundary"/>
+  <text x="245" y="118" text-anchor="middle" class="dg-label">B</text>
+  <rect x="380" y="90" width="160" height="90" rx="4" class="dg-boundary"/>
+  <text x="460" y="140" text-anchor="middle" class="dg-label">C</text>
+  <rect x="550" y="120" width="50" height="45" rx="4" class="dg-boundary"/>
+  <text x="575" y="147" text-anchor="middle" class="dg-label-sm">N.B.</text>
+  <rect x="610" y="145" width="70" height="35" rx="4" class="dg-boundary"/>
+  <text x="645" y="167" text-anchor="middle" class="dg-label">D</text>
+  <rect x="610" y="40" width="90" height="50" rx="4" class="dg-boundary"/>
+  <text x="655" y="70" text-anchor="middle" class="dg-label">E</text>
+  <text x="20" y="212" class="dg-label-sm">West</text>
+  <text x="700" y="212" text-anchor="end" class="dg-label-sm">East</text>
+</svg></div>
+<p>A: <span class="fill fill-md">&nbsp;</span> &nbsp; B: <span class="fill fill-md">&nbsp;</span> &nbsp; C: <span class="fill fill-md">&nbsp;</span> &nbsp; D: <span class="fill fill-md">&nbsp;</span> &nbsp; E: <span class="fill fill-md">&nbsp;</span></p>
+<p>Which of these was not a colony at all? How do you know?</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<!-- Q2 core — Section 6 — Filling the West and new provinces -->
+<div class="question">
+  <div class="q-header"><span class="q-num">2</span><span class="badge badge-core">★ Core</span></div>
+  <div class="q-body">
+<p>Put these in the order they joined Canada and write the year for each: Alberta, British Columbia, Manitoba, Newfoundland, Nunavut, Prince Edward Island.</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<!-- Q3 core — Section 3 — Expanding west -->
+<div class="question">
+  <div class="q-header"><span class="q-num">3</span><span class="badge badge-core">★ Core</span></div>
+  <div class="q-body">
+<p>It is 1869. You are a Canadian government official. Give your prime minister three reasons Canada should take over Rupert's Land from the Hudson's Bay Company.</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<!-- Q4 ext — Section 6 — The National Policy and the CPR -->
+<div class="question ext">
+  <div class="q-header"><span class="q-num">4</span><span class="badge badge-ext">★★ Extended</span></div>
+  <div class="q-body">
+<p>Draw arrows to connect these four ideas into one chain, then explain the chain in two sentences: <strong>railway</strong>, <strong>settlers</strong>, <strong>wheat</strong>, <strong>eastern factories</strong>.</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<!-- Q5 core — Section 2 — Why the colonies joined -->
+<div class="question">
+  <div class="q-header"><span class="q-num">5</span><span class="badge badge-core">★ Core</span></div>
+  <div class="q-body">
+<p>A newspaper in Halifax, 1865, asks: "Why should Nova Scotia join with Canada at all?" Write a short answer that a supporter of Confederation might give. Use one event from the 1860s.</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<!-- Q6 core — Section 4 — The Red River Conflict -->
+<div class="question">
+  <div class="q-header"><span class="q-num">6</span><span class="badge badge-core">★ Core</span></div>
+  <div class="q-body">
+<p>Fill in the cause-and-effect chain.</p>
+<div class="vocab-wrap"><table><thead><tr><th>Cause</th><th>Effect</th></tr></thead><tbody><tr><td>Canada sends surveyors to Red River in 1869 without asking the people there.</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>Manitoba joins Canada as a province in 1870.</td></tr><tr><td>Scrip is slow and confusing, and many Métis sell it cheaply.</td><td>&nbsp;</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- Q7 ext — Section 6 — Settlement -->
+<div class="question ext">
+  <div class="q-header"><span class="q-num">7</span><span class="badge badge-ext">★★ Extended</span></div>
+  <div class="q-body">
+<p>The CPR is often called "the railway that built Canada." Give two pieces of evidence that support this title, and one group whose experience of the railway the title leaves out.</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<!-- Q8 ext — Section 1 — Two empires -->
+<div class="question ext">
+  <div class="q-header"><span class="q-num">8</span><span class="badge badge-ext">★★ Extended</span></div>
+  <div class="q-body">
+<p>Explain how wars between Britain and France made it possible for Britain to control almost all of British North America by the 1860s. Use two events from the notes.</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<div class="meta-block">
+  <h4>Halfway check-in</h4>
+  <p>Look back at the questions so far. Which one are you least sure about? Q <span class="fill fill-sm">&nbsp;</span></p>
+  <p>What will you do about it: re-read the notes section, ask a partner, or ask the teacher?</p>
+  <div class="resp"><div class="resp-line"></div></div>
+</div>
+
+<!-- Q9 core — Section 5 — Treaties -->
+<div class="question">
+  <div class="q-header"><span class="q-num">9</span><span class="badge badge-core">★ Core</span></div>
+  <div class="q-body">
+<p>Your school opens assemblies with a treaty land acknowledgement for Treaty 6. A classmate asks, "What even is a treaty?" Explain in your own words, using one detail from a numbered treaty.</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<!-- Q10 ext — Section 4 — Perspectives on Riel -->
+<div class="question ext">
+  <div class="q-header"><span class="q-num">10</span><span class="badge badge-ext">★★ Extended</span></div>
+  <div class="q-body">
+<p>Read the two statements.</p>
+<div class="quote-block">A: "Riel led armed men against the government of Canada. He was a traitor." &nbsp;&nbsp; B: "Riel defended the land and rights of his people when Canada would not listen."</div>
+<ol class="q-parts"><li>Who might have said statement A in 1885? Who might have said statement B?</li><li>Give one piece of evidence that supports each statement.</li><li>Which statement do you find more convincing? Explain.</li></ol>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<!-- Q11 ext — Section 2 — Was Canada independent? -->
+<div class="question ext">
+  <div class="q-header"><span class="q-num">11</span><span class="badge badge-ext">★★ Extended</span></div>
+  <div class="q-body">
+<p>A student writes: "On July 1, 1867, Canada became a fully independent country." Identify the error and correct it with a complete explanation.</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<!-- Q12 ext — Section 6 — New provinces -->
+<div class="question ext">
+  <div class="q-header"><span class="q-num">12</span><span class="badge badge-ext">★★ Extended</span></div>
+  <div class="q-body">
+<p>Why did Alberta and Saskatchewan become provinces in 1905, and not in 1870 when Canada took over the West? Use evidence about the railway and settlement.</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<!-- Q13 ext — Section 3 — Was the West empty? -->
+<div class="question ext">
+  <div class="q-header"><span class="q-num">13</span><span class="badge badge-ext">★★ Extended</span></div>
+  <div class="q-body">
+<p>A poster from 1900 advertises the Prairies as "the last, best West: empty land waiting for you." Evaluate the poster. What does it get right, what does it leave out, and why might the government have made it that way?</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<!-- Q14 ext — Section 5 — Two views of a treaty -->
+<div class="question ext">
+  <div class="q-header"><span class="q-num">14</span><span class="badge badge-ext">★★ Extended</span></div>
+  <div class="q-body">
+<p>The written Treaty 6 says First Nations would "cede, release, surrender" their land. Many Elders say the treaty was an agreement to share the land. Explain why both versions exist, and why historians use both.</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<h2 class="section-title" style="margin-top:2rem">Challenge Zone</h2>
+<p style="font-size:0.9rem">Try these after the core and extended questions. Each one asks you to pull ideas from more than one part of the unit.</p>
+
+<!-- QS1 stretch — Sections 3, 4 and 5 -->
+<div class="question stretch">
+  <div class="q-header"><span class="q-num">S1</span><span class="badge badge-ext">★★</span></div>
+  <div class="q-body">
+<p>Rank these three government decisions from most to least important for building Canada as a country: taking over Rupert's Land, creating Manitoba, signing the numbered treaties. Justify your ranking, and say who paid the biggest price for the decision you ranked first.</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<!-- QS2 stretch — Sections 2 and 6 -->
+<div class="question stretch">
+  <div class="q-header"><span class="q-num">S2</span><span class="badge badge-ext">★★</span></div>
+  <div class="q-body">
+<p>John A. Macdonald was a Father of Confederation and the prime minister behind the National Policy. Using evidence from two sections, explain how his decisions built the Canadian state, and name one group that was harmed by those same decisions.</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<!-- QS3 stretch — All sections -->
+<div class="question stretch">
+  <div class="q-header"><span class="q-num">S3</span><span class="badge badge-ext">★★</span></div>
+  <div class="q-body">
+<p>Answer the guiding question in one strong paragraph: <strong>How was the Canadian state built after Confederation?</strong> Include at least three deliberate acts and at least one First Nations or Métis perspective.</p>
+<div class="resp"><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div><div class="resp-line"></div></div>
+  </div>
+</div>
+
+<div class="meta-block">
+  <h4>After this session — self-reflection</h4>
+  <p>1. Which questions did you find hardest today? Q <span class="fill fill-md">&nbsp;</span></p>
+  <p>2. Was it hard because you <em>didn't know the idea</em> or because <em>the question asked it in a new way</em>? Circle one and explain:</p>
+  <div class="resp"><div class="resp-line"></div></div>
+  <p>3. What is one thing you will do before the next workbook session?</p>
+  <div class="resp"><div class="resp-line"></div></div>
+  <p>4. Rate your understanding of your toughest idea today: <strong>1</strong> (lost) — <strong>2</strong> (partly) — <strong>3</strong> (got it) — <strong>4</strong> (could teach it)</p>
+  <p>My rating: <span class="fill fill-sm">&nbsp;</span> &nbsp; One piece of evidence: <span class="fill fill-lg">&nbsp;</span></p>
+</div>
+
+<div class="rubric">
+  <div class="rubric-header">
+    <h3>Self-Assessment Rubric</h3>
+    <p>Complete after your last workbook session. Use it to decide what to review before the unit test.</p>
+  </div>
+  <table>
+    <tr><th style="width:55%">Big idea</th><th>I can explain this without notes</th><th>One question I still have</th></tr>
+    <tr><td>British North America before 1867: the colonies, New France, Acadia, Rupert's Land</td><td class="rating">Yes / Getting there / Not yet</td><td></td></tr>
+    <tr><td>Why the colonies joined: U.S. expansion, the three conferences, the BNA Act</td><td class="rating">Yes / Getting there / Not yet</td><td></td></tr>
+    <tr><td>Expanding west: Rupert's Land and the North-Western Territory</td><td class="rating">Yes / Getting there / Not yet</td><td></td></tr>
+    <tr><td>The Red River Conflict and the Northwest Resistance</td><td class="rating">Yes / Getting there / Not yet</td><td></td></tr>
+    <tr><td>The numbered treaties and the Indian Act</td><td class="rating">Yes / Getting there / Not yet</td><td></td></tr>
+    <tr><td>The National Policy, the CPR, settlement and new provinces</td><td class="rating">Yes / Getting there / Not yet</td><td></td></tr>
+  </table>
+</div>
+
+</div>
+
+
+</body>
+</html>
