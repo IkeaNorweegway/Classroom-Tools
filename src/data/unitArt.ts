@@ -4,7 +4,8 @@
 // The group marked .u-m (and .u-m2) carries the hover motion named by `m`;
 // motions are defined in global.css under "Unit art".
 //
-// Keys are unit slugs, which are unique across courses.
+// Keys are unit slugs (Math 9: strand and topic slugs), which are unique
+// across courses.
 
 export type ArtMotion =
   | 'float' | 'push' | 'spin' | 'slide' | 'tilt' | 'tilt-r' | 'pulse'
@@ -92,6 +93,118 @@ export const unitArt: Record<string, UnitArt> = {
       <path class="u-s" d="M14 49L38 25" style="stroke-dasharray: 3 4" opacity=".6"/>
       <circle class="u-d" cx="16" cy="45" r="2.3"/><circle class="u-d" cx="22" cy="40" r="2.3"/><circle class="u-d" cx="26" cy="43" r="2.3"/><circle class="u-d" cx="30" cy="33" r="2.3"/><circle class="u-d" cx="36" cy="29" r="2.3"/>
       <g class="u-m" style="transform-origin: 51px 43px"><rect class="u-s u-f" x="43" y="35" width="16" height="16" rx="3.5"/><circle class="u-d" cx="47.5" cy="39.5" r="1.5"/><circle class="u-d" cx="51" cy="43" r="1.5"/><circle class="u-d" cx="54.5" cy="46.5" r="1.5"/></g>`,
+  },
+
+  // ── Math 9 topics ────────────────────────────────────────────────────
+  'rational-numbers': {
+    m: 'drop',
+    svg: `<rect class="u-f" x="12" y="12" width="30" height="12"/>
+      <rect class="u-s" x="12" y="12" width="40" height="12" rx="2"/>
+      <path class="u-s" d="M22 12v12M32 12v12M42 12v12"/>
+      <path class="u-s" d="M42 27v5" style="stroke-dasharray: 2 3" opacity=".5"/>
+      <path class="u-s" d="M6 48h52M12 44v8M22 44v8M32 44v8M42 44v8M52 44v8"/>
+      <g class="u-m"><path class="u-d" d="M42 42l-4.2-6h8.4z"/></g>`,
+  },
+  'powers-exponents': {
+    m: 'grow',
+    svg: `<path class="u-s" d="M6 54h52"/>
+      <g class="u-m" style="transform-origin: 32px 54px">
+        <rect class="u-s u-f" x="8" y="49" width="8" height="5" rx="1.5"/>
+        <rect class="u-s u-f" x="20" y="44" width="8" height="10" rx="1.5"/>
+        <rect class="u-s u-f" x="32" y="34" width="8" height="20" rx="1.5"/>
+        <rect class="u-s u-f" x="44" y="14" width="8" height="40" rx="1.5"/>
+        <circle class="u-d" cx="48" cy="9" r="2.6"/>
+      </g>
+      <path class="u-s" d="M12 44c12-2 22-8 30-26" style="stroke-dasharray: 3 4" opacity=".6"/>`,
+  },
+  'square-roots': {
+    m: 'pulse',
+    svg: `<g class="u-m" style="transform-origin: 27px 29px">
+        <rect class="u-s u-f" x="12" y="14" width="30" height="30" rx="2"/>
+        <path class="u-s" d="M22 14v30M32 14v30M12 24h30M12 34h30" opacity=".5"/>
+      </g>
+      <path class="u-s" d="M12 50v3h30v-3"/>
+      <circle class="u-d" cx="27" cy="53" r="2.6"/>
+      <path class="u-s" d="M50 14v30" opacity=".55"/>
+      <circle class="u-d" cx="50" cy="14" r="2.2"/><circle class="u-d" cx="50" cy="44" r="2.2"/>`,
+  },
+  'linear-relations': {
+    m: 'tilt',
+    svg: `<rect class="u-s u-f" x="6" y="14" width="20" height="36" rx="2"/>
+      <path class="u-s" d="M16 14v36M6 23h20"/>
+      <path class="u-s" d="M9 32h4M19 32h4M9 41h4M19 41h4" opacity=".6"/>
+      <g class="u-m" style="transform-origin: 34px 50px">
+        <path class="u-s" d="M34 50h8v-8h8v-8h8v-8" style="stroke-dasharray: 2 3" opacity=".5"/>
+        <path class="u-s" d="M32 52L58 26"/>
+        <circle class="u-d" cx="34" cy="50" r="2.4"/><circle class="u-d" cx="42" cy="42" r="2.4"/><circle class="u-d" cx="50" cy="34" r="2.4"/><circle class="u-d" cx="58" cy="26" r="2.4"/>
+      </g>`,
+  },
+  'linear-equations': {
+    m: 'sway',
+    svg: `<path class="u-s" d="M32 22v30M22 54h20"/>
+      <g class="u-m" style="transform-origin: 32px 22px">
+        <path class="u-s" d="M10 22h44"/>
+        <path class="u-s" d="M12 22L5 36M12 22l7 14M52 22l-7 14M52 22l7 14" opacity=".6"/>
+        <path class="u-s u-f" d="M4 36h16a8 4 0 0 1-16 0z"/>
+        <path class="u-s u-f" d="M44 36h16a8 4 0 0 1-16 0z"/>
+        <rect class="u-d" x="9" y="30" width="6" height="6" rx="1"/>
+        <circle class="u-d" cx="49.5" cy="34" r="2"/><circle class="u-d" cx="54.5" cy="34" r="2"/>
+      </g>
+      <circle class="u-d" cx="32" cy="22" r="2.6"/>`,
+  },
+  polynomials: {
+    m: 'drop',
+    svg: `<rect class="u-s u-f" x="8" y="10" width="24" height="24" rx="2"/>
+      <rect class="u-s u-f" x="36" y="10" width="8" height="24" rx="2"/>
+      <rect class="u-s u-f" x="48" y="10" width="8" height="24" rx="2"/>
+      <g class="u-m">
+        <rect class="u-d" x="8" y="40" width="8" height="8" rx="1.5"/>
+        <rect class="u-d" x="20" y="40" width="8" height="8" rx="1.5"/>
+        <rect class="u-d" x="32" y="40" width="8" height="8" rx="1.5"/>
+      </g>`,
+  },
+  'circle-geometry': {
+    m: 'spin',
+    svg: `<circle class="u-s u-f" cx="30" cy="34" r="17"/>
+      <path class="u-s" d="M15 42h30" opacity=".55"/>
+      <g class="u-m" style="transform-origin: 30px 34px">
+        <path class="u-s" d="M30 34V17M12 17h36"/>
+        <path class="u-s" d="M30 21h4v-4" opacity=".7"/>
+        <circle class="u-d" cx="30" cy="17" r="2.6"/>
+      </g>
+      <circle class="u-d" cx="30" cy="34" r="2.2"/>`,
+  },
+  measurement: {
+    m: 'float',
+    svg: `<path class="u-s u-f" d="M10 22v26a10 4 0 0 0 20 0V22a10 4 0 0 1-20 0z"/>
+      <ellipse class="u-s" cx="20" cy="22" rx="10" ry="4"/>
+      <path class="u-s u-f" d="M36 48l10-28 10 28a10 3.5 0 0 1-20 0z"/>
+      <path class="u-s" d="M36 48a10 3.5 0 0 1 20 0" opacity=".5"/>
+      <g class="u-m"><ellipse class="u-s u-f" cx="20" cy="16" rx="10" ry="4"/><circle class="u-d" cx="20" cy="16" r="1.8"/></g>`,
+  },
+  similarity: {
+    m: 'pulse',
+    svg: `<path class="u-s" d="M8 54L56 22" style="stroke-dasharray: 3 4" opacity=".55"/>
+      <path class="u-s" d="M24 54h32V22z"/>
+      <g class="u-m" style="transform-origin: 8px 54px"><path class="u-s u-f" d="M16 54h16V38z"/></g>
+      <circle class="u-d" cx="8" cy="54" r="2.8"/>`,
+  },
+  statistics: {
+    m: 'drift',
+    svg: `<path class="u-s" d="M6 54h50"/>
+      <rect class="u-s u-f" x="10" y="38" width="7" height="16" rx="1.5"/>
+      <rect class="u-s u-f" x="20" y="28" width="7" height="26" rx="1.5"/>
+      <rect class="u-s u-f" x="30" y="34" width="7" height="20" rx="1.5"/>
+      <rect class="u-s u-f" x="40" y="44" width="7" height="10" rx="1.5"/>
+      <g class="u-m"><circle class="u-s u-f" cx="44" cy="20" r="9"/><path class="u-s" d="M50.5 26.5l6 6" style="stroke-width: 3.4"/><circle class="u-d" cx="44" cy="20" r="2.4"/></g>`,
+  },
+  probability: {
+    m: 'spin',
+    svg: `<circle class="u-s u-f" cx="32" cy="32" r="21"/>
+      <path class="u-f" d="M32 32V11a21 21 0 0 1 18.2 31.5z"/>
+      <path class="u-s" d="M32 32V11M32 32l18.2 10.5M32 32L13.8 42.5" opacity=".6"/>
+      <g class="u-m" style="transform-origin: 32px 32px"><path class="u-s" d="M32 32L23 18" style="stroke-width: 2.8"/><path class="u-d" d="M20.6 14.3L26 16.9L21 20.1z"/></g>
+      <circle class="u-d" cx="32" cy="32" r="3.2"/>`,
   },
 
   // ── Grade 7 Science ──────────────────────────────────────────────────
