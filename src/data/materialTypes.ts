@@ -3,7 +3,7 @@
 // space-separated RGB channels, read by .mcard in global.css as --t / --t-soft.
 
 export type MaterialType =
-  | 'notes' | 'reference' | 'workbook' | 'challenge' | 'interactive'
+  | 'notes' | 'slides' | 'reference' | 'workbook' | 'challenge' | 'interactive'
   | 'exit' | 'assessment' | 'journal' | 'project' | 'key' | 'other';
 
 interface TypeStyle {
@@ -17,6 +17,10 @@ export const materialTypes: Record<MaterialType, TypeStyle> = {
   notes: {
     label: 'Notes', rgb: '52 103 170', soft: '232 239 249',
     icon: '<rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M9 8.5h6M9 12h6M9 15.5h3.5"/>',
+  },
+  slides: {
+    label: 'Slides', rgb: '36 110 150', soft: '228 240 247',
+    icon: '<rect x="3.5" y="4.5" width="17" height="11.5" rx="1.5"/><path d="M12 16v3.5M8.5 19.5h7"/>',
   },
   reference: {
     label: 'Reference', rgb: '62 120 132', soft: '231 242 244',
@@ -67,6 +71,7 @@ const rules: [RegExp, MaterialType][] = [
   [/simulat|interactive|explorer/, 'interactive'],
   [/quiz|test|assessment|évaluation|exam/, 'assessment'],
   [/exit|billet/, 'exit'],
+  [/slides|diaporama/, 'slides'],
   [/challenge|défi|★★/, 'challenge'],
   [/concept|reference|référence|glossary|vocab/, 'reference'],
   [/workbook|cahier|worksheet|practice|exercice|exercise/, 'workbook'],

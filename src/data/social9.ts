@@ -19,3 +19,5 @@ export const social9: CourseManifest = {
   teacherHref: (slug) => `social9/teacher#${slug}`,
   viewHref: (slug, doc) => `social9/view/${slug}/${doc}`,
 };
+
+social9.units[0].extras.unshift({ heading: 'Class slides', items: [{ label: 'Class Slides', doc: 'soc9-urbanization-industry-slides-v1', type: 'slides' }] });

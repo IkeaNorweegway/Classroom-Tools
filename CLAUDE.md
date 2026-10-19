@@ -35,6 +35,7 @@ Before writing the first line of any artifact: (1) copy the relevant template fr
 | Math 9 inquiry project (brief + journal + teacher guide) | `templates/inquiry-project-template.md` | "Options: [3, equal difficulty]. Driving questions launched in strand Lesson 1. Mini-lessons: [A, B]. Critique cycle: Period 4. Teams 4–5, roles: [ ]. Audience per option: [ ]. Rubric K/U/S → [local codes]. Depth ceilings respected: [ ]. Real data with source and date: [ ]." — rules in `_courses/math-9/_context.md` (Inquiry Projects) |
 | CEFL mini-workbook / project brief | *(no template — format in `_courses/cefl/_context.md`)* | "Moments: [list], each with visual, worked example, 2–3 practice, extra practice. Data + dates: [list]. Cross-curricular tags: [≤1 per moment]. DQ: [ ]. Teams 4–5, roles: [ ]. Milestones → sessions: [ ]. Audience: [ ]. Rubric K/U/S → [LO code]." — full spec in `_courses/cefl/_context.md` |
 | Game | *(no template)* | "Outcomes: [codes]. Model: [one line]. Real-time or turn-based. Test hook included." — full rules in `_games-context.md` |
+| Slide deck | `templates/slides-template/` (folder) | "Follows notes order: [sections]. Blanks 2–3 per slide, answers from the key. Key words from vocab tables: [terms]. Visual on every slide: [one line per slide]." — full rules in `slides/_context.md` |
 
 ### Trust mode
 Activated when the user says **"i trust you."** Resets at the start of each new conversation.
@@ -58,6 +59,7 @@ When active:
 | `notes-packages/` | Student notes, teacher notes | Create guided notes and teacher reference packages |
 | `lesson-plans/` | Lesson-by-lesson teaching plans, sub plans | Build a full lesson plan or a substitute teacher package |
 | `prompts/` | Thinking and writing prompts | Write or refine prompts that get students to articulate their reasoning |
+| `slides/` | Class slide decks (a folder of slide files per deck) | Build or revise slides that walk a class through a notes package |
 | `research/` | Evidence on assessment and delivery | Read, summarise, or apply research on what makes assessment and delivery effective |
 | `templates/` | Reusable blank structures | Start any new artifact from the relevant template — structure is pre-built, just fill content |
 | `scripts/` | Render scripts (markdown → HTML, posters) | Re-render a workbook or poster. Read `scripts/_context.md` first |
@@ -124,6 +126,7 @@ Materials are organized inside type folders by subject and unit:
 | "Render / re-render" | `scripts/_context.md` | everything else |
 | "Build / revise a game" | `_games-context.md` → unit `_context.md` in `_courses/` | type-folder contexts, `templates/` |
 | "Build a CEFL workbook / project / teacher guide" | `_courses/cefl/_context.md` → `research/project-based-learning-research.md` → `research/financial-career-education-research.md` | `templates/`, `tests-quizzes/` — CEFL uses its own mini-workbook and project formats |
+| "Build / revise slides" | `slides/_context.md` → the unit's notes package and notes answer key → unit `_context.md` in `_courses/` | `research/`, `tests-quizzes/` |
 | "Start a [type] build" | Copy relevant template from `templates/` first, then read artifact context | everything else |
 | "Build/revise a STEAM [unit/grade] [notes/design journal/plan]" | `steam/_context.md` → `steam/grade-[N]/_context.md` | `templates/`, `worksheets/`, `notes-packages/`, `_courses/` — STEAM doesn't use the standard templates (see `steam/grade-5/` for the established simplified-notes + design-journal format) |
 
@@ -142,6 +145,7 @@ Materials are organized inside type folders by subject and unit:
 | A PhysEd 7–9 material | `pew79-[unit]-[type]-v[N].md` | `pew79-fitness-program-template-v1.md` |
 | A thinking prompt | `[topic]-prompt-v[N].md` | `metacognition-prompt-v2.md` |
 | A game | `[subject]-[topic]-game-v[N].html` (in `public/materials/`) | `sci7-seed-to-seed-game-v2.html` |
+| A slide deck | folder `[subject]-[unit]-slides-v[N]/` (in `slides/[subject]/[unit]/`) | `soc9-urbanization-industry-slides-v1/` |
 | A research summary | `[topic]-research.md` | `formative-assessment-research.md` |
 | A template | `[type]-template.md` | `worksheet-template.md` |
 

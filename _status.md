@@ -1,5 +1,5 @@
 # Project Status
-*Last updated: 2026-10-18*
+*Last updated: 2026-10-19*
 
 Current state only. Keep this file short: update the tables and the open list, and put session detail in the commit message. The session log up to 2026-10-05 is in `_status-archive.md`.
 
@@ -28,7 +28,8 @@ Current state only. Keep this file short: update the tables and the open list, a
 - **Lily Lab:** written as one mounted card per group. A multi-bloom stem per group would allow one per student.
 - **STEAM:** Grade 9 Unit 1 language (Java or Python, both built). Soldering safety protocol, wood-shop access, littleBits inventory, and the Rube Goldberg cross-group protocol are open in `steam/_context.md`.
 - **Slow reveal graphs:** decide whether to build a generic recording sheet for daily warm-up use.
-- **Materials suite:** `_meta-context.md` lists a PPTX deck per unit. None have been built. Decide whether to keep it in the suite.
+- **Materials suite:** `_meta-context.md` lists a PPTX deck per unit. Class slides now exist as web decks (`slides/`, first one 2026-10-19), not PPTX. Decide whether web decks replace the PPTX line in the suite.
+- **Social 9 Urbanization notes answer key:** the notes say "Canada experienced a ___ boom" (answer: population), but the key's prompt is "a population ___" with the answer "boom". The class slides use "population". Fix the key.
 
 ### Not yet checked or finished
 - **Prereq practice, one page per unit (2026-10-18):** every unit in Grade 6 Science (6), Science 7 (5), Math 9 (11), Social 8 (4) and Social 9 (7) has `*-prereq-practice-v1.html` in `public/materials/` (Math 9 in `math-9/practice/`), listed under "Get ready" on its unit page and linked from its parent guide. Shared engine and one question bank per course in `public/materials/prereq-practice/`. Science 6 and Social 8/9 have 251 new written questions, from each unit's parent-guide "comesFrom" and "assumed" lists; Math 9 keeps the generators from its old site page (moved unchanged, so saved progress carries over); Science 7's were replaced with Grade 6-level questions (below). The old `/<course>/practice` pages now redirect to the course index. Fixed while moving: three Math 9 textbook questions showed the wrong answer (−13.95 for −13.75, −0.96 for −1.2, 9.9 for 8.1). Tested in headless Chrome: all 33 pages played, print from the viewer, phone width. Needs a teacher read-through of the new Science 6 and Social questions.
@@ -101,6 +102,8 @@ Four units (Political Systems, Economic Systems, Ideologies, Civic Engagement): 
 ### Grade 9 Social (site ✓, HTML only in the repo)
 
 Seven units: notes, notes AK, workbook, workbook AK, teacher guide. See Open items.
+
+**Class slides (site):** Urbanization and the Growth of Industry has a 13-slide deck (`slides/grade-9-social/urbanization-industry/soc9-urbanization-industry-slides-v1/`, rendered to `public/materials/soc9-urbanization-industry-slides-v1.html`), linked on the unit page under "Class slides". It follows the notes section by section, with fill-in slides for every blank and click-to-reveal answers. Every slide was screenshotted in headless Chrome. Not yet tried on a classroom projector or with students. Rules and template for the next deck: `slides/_context.md`, `templates/slides-template/`.
 
 ### STEAM Grades 5–9 (site ✓)
 
