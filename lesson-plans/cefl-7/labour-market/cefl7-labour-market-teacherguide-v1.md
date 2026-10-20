@@ -19,6 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl7-labour-market-workbook-v1` (4 moments) · project brief `cefl7-labour-market-project-v1` |
 | **Teams** | 4–5 students. Each student makes their own map; the team researches together and gives feedback. |
 | **Audience** | A Career Café in Session 7: families, another class, or school staff visit and ask questions |
+| **Game** | *Career Day* (CEFL Town), on the unit page, optional: one chapter after each of Sessions 1–4. See "The Career Day game" below. |
 | **Assessment** | Single-point rubric ("How you will be marked") on the report-card scale (4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet), scored on Steps 1–4 and the finished map. No unit test. |
 
 ::: teacher
@@ -118,6 +119,28 @@ The reason a career fits names a real interest or value from Step 1, not only "i
 | 0–5 | Set up maps around the room. |
 | 5–40 | **Career Café.** Visitors move between maps, ask questions, and leave sticky notes. Half the class presents while the other half visits, then they switch. |
 | 40–60 | **Look back** page, authenticity check, and **My Plan** page. |
+
+## The Career Day game (CEFL Town)
+
+A companion game on the unit page, one mission in **CEFL Town**, the top-down town every CEFL unit shares. Each student makes a character once (style, skin tone, hair, shirt, first name). Ms. Okafor at the Job Centre helps them build a career path map to bring to the town's Career Café. The careers and wages are the workbook's (ALIS 2023).
+
+| Chapter | Play after | What happens in town | Then, in the project |
+|---|---|---|---|
+| 1 · Me, now | Session 1 (Moment 1) | Fill in a Me card at home, sort first jobs from careers, and say in their own words how a job differs from a career. Jas is upset about Coach Max's $5 "One True Career" quiz in Town Square. | Step 1 |
+| 2 · Skills that travel | Session 2 (Moment 2) | Find the skills in a lifeguard job ad, shadow Nurse Kaur for one minute (the job-shadow game), sort which of Jas's skills travel, and choose their own skills for a skill plan. | Step 2 |
+| 3 · Pick a career | Session 3 (Moment 3) | Dev's quiz result ignores his interests. Students inspect the quiz card, shadow Joe the electrician, rank five careers by fit, and pick one for their map. | Step 3 |
+| 4 · Research and talk | Session 4 (Moment 4) | Compare two careers at the library, answer Avery ("pay is all that matters"), ask townspeople about their paths, lay out the path map, then the Career Café. | Step 4 |
+
+- **When:** sessions are full, so set each chapter as homework, early-finisher work, or a device day before the next session. Chapters play in order. Chapter length has not been timed with students yet.
+- **Saving:** the game saves in that browser, and the character carries over to every CEFL Town mission. To move to another computer, use Menu → **Take your town home** (a save code or a file).
+- **Controls:** arrow keys or tap to walk, Enter or tap to talk. Tapping the gold goal line at the top walks the student there, which suits students who find moving around hard.
+- **The side story:** Coach Max's quiz tells people their one career, forever. Each chapter shows why that is wrong (skills travel, fit depends on interests and values, paths wind). At the Career Café, Coach Max tells his own winding path, and the café's Path Wall is named after the student. The story never changes the goal.
+- **The goal:** at least **4 of 5 stickers** at the Career Café (visitors' questions about the map, answered right on the first try). The job-shadow game earns skill stars for the growth plan; it never changes the stickers.
+- **Gentle and Real (Menu):** Gentle gives a hint after a wrong try and shows the answer after 3 tries; Real gives no hints and shows it after 2. In Real the Career Café still needs 4 stickers.
+- **Between lessons (optional):** after a chapter, students can choose "Not yet: help around town." Townspeople then ask for help with their own version of what the chapter taught, for a little play money in a wallet that never touches the mission, and one Town Mail letter arrives each day.
+- **Report (Menu → Report for my teacher):** first-try answers by chapter, what the student wrote and chose, game results, how far they got in the side story, and a Between lessons table. It prints. First-try answers make a quick look-for before each step's checkpoint.
+- **Simplifications** to tell students if asked: the wages are averages for all experience levels (ALIS 2023); training paths are typical routes; "fit" counts shared interests and values, which real career tools weigh in more ways.
+
 
 ## Sample maps (show all three in Session 5)
 

@@ -19,6 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl7-post-secondary-workbook-v1` · project brief `cefl7-post-secondary-project-v1` |
 | **Teams** | 4–5 students; one recommendation per team |
 | **Audience** | A panel in Session 7 (school counsellor, a teacher, and if possible someone from one of the careers) playing a family deciding with their teen |
+| **Game** | *Two Roads* (CEFL Town), on the unit page, optional: one chapter after each of Sessions 1–4. See "The Two Roads game" below. |
 | **Assessment** | Single-point rubric ("How you will be marked") on the report-card scale (4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet), scored on Steps 1–4 and the presentation. No unit test. |
 
 ::: teacher
@@ -122,6 +123,28 @@ Recommendations should rest on more than cost alone. "Both, for different people
 |---|---|
 | 0–40 | **Panel.** Each team presents (about 4 minutes) and takes 2–3 questions. The panel says whether they were convinced and why. |
 | 40–60 | **Look back** page, authenticity check, **My Plan** page. |
+
+## The Two Roads game (CEFL Town)
+
+A companion game on the unit page, one mission in **CEFL Town**, the top-down town every CEFL unit shares. Each student makes a character once (style, skin tone, hair, shirt, first name). Ms. Haddad, the school counsellor, asks them to advise one family whose teen has two roads after high school, and to present at Pathways Night.
+
+| Chapter | Play after | What happens in town | Then, in the project |
+|---|---|---|---|
+| 1 · Four kinds of pathways | Session 1 (Moment 1) | Tour the campuses for stamps, sort careers by their usual pathway, answer a pathway myth, and help at the Campus Fair (the one-minute game). Mo is worried about his nephew Tyler. | Step 1 |
+| 2 · The true cost | Session 2 (Moment 2) | Work out one year at the U of A (2026–27), then the true cost (tuition + lost earnings) of both roads for the family. Find Tyler and check his true cost. | Step 2 |
+| 3 · Shortages and surpluses | Session 3 (Moment 3) | Read Alberta's job forecast with Mx. Lin and sort shortages from surpluses. Another Campus Fair shift. Tyler hears what the forecast says, and Mo admits who told Tyler "university is the only real choice." | Step 3 |
+| 4 · Making the choice | Session 4 (Moment 4) | Trade-off questions, then a recommendation with a reason and a trade-off, then Pathways Night at the Community Centre. | Step 4 |
+
+- **When:** sessions are full, so set each chapter as homework, early-finisher work, or a device day before the next session. Chapters play in order. Chapter length has not been timed with students yet.
+- **Saving:** the game saves in that browser, and the character carries over to every CEFL Town mission. To move to another computer, use Menu → **Take your town home** (a save code or a file).
+- **Controls:** arrow keys or tap to walk, Enter or tap to talk. Tapping the gold goal line at the top walks the student there, which suits students who find moving around hard.
+- **The side story:** Tyler quit an electrician apprenticeship for a university program he dislikes. Students check his true cost and the electrician shortage, and find that the pressure came from Mo. At Pathways Night they show both roads fairly, Tyler goes back to his apprenticeship, and the night is named after the student. The story never changes the goal.
+- **The goal:** the family takes the student's advice: **at least 3 of 4** of their Pathways Night questions answered right on the first try. The Campus Fair game counts visitors helped; it never changes the goal.
+- **Gentle and Real (Menu):** Gentle gives a hint after a wrong try and shows the answer after 3 tries; Real gives no hints and shows it after 2. In Real the family still needs 3 convincing answers.
+- **Between lessons (optional):** after a chapter, students can choose "Not yet: help around town." Townspeople then ask for help with their own version of what the chapter taught, for a little play money in a wallet that never touches the mission, and one Town Mail letter arrives each day.
+- **Report (Menu → Report for my teacher):** first-try answers by chapter, what the student wrote and chose, game results, how far they got in the side story, and a Between lessons table. It prints. First-try answers make a quick look-for before each step's checkpoint.
+- **Simplifications** to tell students if asked: lost earnings are $2,400 a month in school full-time (the project's figure); an apprentice loses only the weeks in class (about 2 months a year, some get EI then); 8 months of school a year; no books, fees, travel or living costs unless a task says so. The polytechnic and early-learning tuitions are samples.
+
 
 ## Sample products (show all three in Session 5)
 

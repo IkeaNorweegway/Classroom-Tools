@@ -19,6 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl9-post-secondary-workbook-v1` · project brief `cefl9-post-secondary-project-v1` |
 | **Teams** | 4–5. Each student builds their own plan; teams research and check math. |
 | **Audience** | A panel (counsellor, teacher, family volunteers) playing a family deciding whether to help pay, Session 7 |
+| **Game** | *Pathway Pitch* (CEFL Town), on the unit page, optional: one chapter after each of Sessions 1–4. See "The Pathway Pitch game" below. |
 | **Assessment** | Single-point rubric on the report-card scale. No unit test. |
 
 ::: teacher
@@ -51,6 +52,28 @@ subtitle: 7 sessions × 60 minutes · project-based
 ::: misconception
 **"Student loans are like free money."** Moment 1. The federal part is interest-free but still repaid; the Alberta part charges interest.
 :::
+
+## The Pathway Pitch game (CEFL Town)
+
+A companion game on the unit page, one mission in **CEFL Town**, the top-down town every CEFL unit shares. Each student makes a character once, or keeps an earlier one. Ms. Haddad, the school counsellor, helps them build a post-secondary plan for one of the workbook's pathways (RN degree, electrician apprenticeship, vet tech diploma) and pitch it to a family panel.
+
+| Chapter | Play after | What happens in town | Then, in the project |
+|---|---|---|---|
+| 1 · Student loans | Session 1 (Moment 1) | Pick a primary pathway, work out Maya's loan, and plan how they would pay. Rosa's niece Kira signed up for the Bright Star Game Academy with an "EZ Tuition" loan. | Step 1 |
+| 2 · Return on investment | Session 2 (Moment 2) | ROI and payback for their pathway, then Kira's Bright Star numbers. A Pay for School round. | Step 2 |
+| 3 · Learning while you earn | Session 3 (Moment 3) | Three co-op terms, earn-while-you-learn, then inspect the Bright Star and EZ Tuition contract. Another Pay for School round. | Step 3 |
+| 4 · Getting in, and a Plan B | Session 4 (Moment 4) | Plan B questions, choose their plan with a reason and a trade-off, then the Pathway Pitch. | Step 4 |
+
+- **When:** sessions are full, so set each chapter as homework, early-finisher work, or a device day before the next session. Chapters play in order. Chapter length has not been timed with students yet.
+- **Saving:** the game saves in that browser, and the character carries over to every CEFL Town mission. To move to another computer, use Menu → **Take your town home** (a save code or a file).
+- **Controls:** arrow keys or tap to walk, Enter or tap to talk. Tapping the gold goal line at the top walks the student there, which suits students who find moving around hard.
+- **The side story:** Kira's academy costs far more, has no co-op, and its credential isn't recognized; the lender and the academy are partners. At the Pathway Pitch, Kira switches to a polytechnic program with co-op and a student loan, and the counsellor's check-before-you-sign list is named after the student. The story never changes the goal.
+- **The goal:** the family panel is convinced: **at least 3 of 4** questions answered right on the first try. The Pay for School game counts sorted cards; it never changes the goal.
+- **Gentle and Real (Menu):** Gentle gives a hint after a wrong try and shows the answer after 3 tries; Real gives no hints and shows it after 2. In Real the panel still needs 3 strong answers.
+- **Between lessons (optional):** after a chapter, students can choose "Not yet: help around town." Townspeople then ask for help with their own version of what the chapter taught, for a little play money in a wallet that never touches the mission, and one Town Mail letter arrives each day.
+- **Report (Menu → Report for my teacher):** first-try answers by chapter, what the student wrote and chose, game results, how far they got in the side story, and a Between lessons table. It prints. First-try answers make a quick look-for before each step's checkpoint.
+- **Simplifications** to tell students if asked: no fees, books or living costs unless named; payback ignores taxes and raises; the Alberta loan rate (4.5%) and vet tech tuition are samples; loan totals use the rounded monthly payment × the months. **Note:** workbook Moment 1 gives $82.91 × 120 = $9,949.29; it is $9,949.20 (the .29 comes from the unrounded payment). The game accepts both.
+
 
 ## Sample products (show all three in Session 5)
 

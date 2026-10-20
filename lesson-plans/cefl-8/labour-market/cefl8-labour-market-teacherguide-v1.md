@@ -19,6 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl8-labour-market-workbook-v1` · project brief `cefl8-labour-market-project-v1` |
 | **Teams** | 4–5. Each student makes their own plan; teams research and give feedback. |
 | **Audience** | A Grade 7 class, Session 7 ("advice from Grade 8s") |
+| **Game** | *Future-Proof* (CEFL Town), on the unit page, optional: one chapter after each of Sessions 1–4. See "The Future-Proof game" below. |
 | **Assessment** | Single-point rubric on the report-card scale (4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet), scored on Steps 1–4 and the product. No unit test. |
 
 ::: teacher
@@ -51,6 +52,28 @@ subtitle: 7 sessions × 60 minutes · project-based
 ::: misconception
 **"Robots will take all the jobs."** Moment 2, Question 3. Technology shifts tasks; it rarely removes a whole field at once. The farm shows both sides.
 :::
+
+## The Future-Proof game (CEFL Town)
+
+A companion game on the unit page, one mission in **CEFL Town**, the top-down town every CEFL unit shares. Each student makes a character once, or keeps the one from Grade 7. Ms. Okafor at the Job Centre helps them future-proof a career they pick, and they present at Future Day.
+
+| Chapter | Play after | What happens in town | Then, in the project |
+|---|---|---|---|
+| 1 · The market keeps moving | Session 1 (Moment 1) | Sort jobs that are new, shrinking or still strong; name the force (economic cycles, technology, social change); pick a career and apply the three forces to it. Greta from Prairie Parcel is reading the headline "ROBOTS TAKE ALL JOBS BY FRIDAY." | Step 1 |
+| 2 · Tech check | Session 2 (Moment 2) | Sort which of their career's tasks technology shrinks and grows. At the warehouse, play Robot or Human? and see the robots take some tasks and add new ones. | Step 2 |
+| 3 · Career resilience | Session 3 (Moment 3) | Two oil workers (Alberta unemployment 4.4% in 2014, 9.0% in 2016): job security or career security? Human capital, Bo's story, another warehouse shift, rank six transferable skills, map a network. | Step 3 |
+| 4 · Goals with milestones | Session 4 (Moment 4) | Sort short- and long-term goals, look at Amira's plan, build their own plan with milestones and a backup, then Future Day for a Grade 7 class. | Step 4 |
+
+- **When:** sessions are full, so set each chapter as homework, early-finisher work, or a device day before the next session. Chapters play in order. Chapter length has not been timed with students yet.
+- **Saving:** the game saves in that browser, and the character carries over to every CEFL Town mission. To move to another computer, use Menu → **Take your town home** (a save code or a file).
+- **Controls:** arrow keys or tap to walk, Enter or tap to talk. Tapping the gold goal line at the top walks the student there, which suits students who find moving around hard.
+- **The side story:** Greta fears the robots will take her job. Students see what really changes: tasks shift, and her coworker Bo has career security because his skills travel. The reporter admits the headline was for clicks, Greta signs up for robot-tech training, and the warehouse's training path is named after the student. The story never changes the goal.
+- **The goal:** the Grade 7 class is convinced at Future Day: **at least 3 of 4** of their questions answered right on the first try. The Robot or Human? game counts tasks sorted; it never changes the goal.
+- **Gentle and Real (Menu):** Gentle gives a hint after a wrong try and shows the answer after 3 tries; Real gives no hints and shows it after 2. In Real the Grade 7s still need 3 good answers.
+- **Between lessons (optional):** after a chapter, students can choose "Not yet: help around town." Townspeople then ask for help with their own version of what the chapter taught, for a little play money in a wallet that never touches the mission, and one Town Mail letter arrives each day.
+- **Report (Menu → Report for my teacher):** first-try answers by chapter, what the student wrote and chose, game results, how far they got in the side story, and a Between lessons table. It prints. First-try answers make a quick look-for before each step's checkpoint.
+- **Simplifications** to tell students if asked: the task examples are general; unemployment figures are Statistics Canada (November 2014 and 2016).
+
 
 ## Sample products (show all three in Session 5)
 

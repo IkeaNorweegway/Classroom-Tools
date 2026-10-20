@@ -19,6 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl7-experiences-workbook-v1` · project brief `cefl7-experiences-project-v1` |
 | **Teams** | 4–5 students. Each student makes their own Experience Plan; each team makes one Welcome and Safety checklist. |
 | **Audience** | A Grade 6 class or the school's leadership group, Session 7 |
+| **Game** | *The Garden Crew* (CEFL Town), on the unit page, optional: one chapter after each of Sessions 1–4. See "The The Garden Crew game" below. |
 | **Assessment** | Single-point rubric ("How you will be marked") on the report-card scale (4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet), scored on Steps 1–4 and the final products. No unit test. |
 
 ::: teacher
@@ -115,6 +116,28 @@ Plans are **specific** (what, where, when, who gives OK) and **realistic** for a
 ::: teacher
 **Follow-up:** encourage students to actually do their planned experience. A short check-in a few weeks later ("How did it go?") strengthens the link between experience and reflection.
 :::
+
+## The The Garden Crew game (CEFL Town)
+
+A companion game on the unit page, one mission in **CEFL Town**, the top-down town every CEFL unit shares. Each student makes a character once (style, skin tone, hair, shirt, first name). Mr. Osei, the volunteer coordinator at the Community Centre, helps them plan a volunteer experience and help the Community Garden.
+
+| Chapter | Play after | What happens in town | Then, in the project |
+|---|---|---|---|
+| 1 · My experiences | Session 1 (Moment 1) | Sort kinds of experiences, answer a paid-or-unpaid question, list their own experiences and name a pattern. Rosa says every new garden volunteer quits after one day. | Step 1 |
+| 2 · Work preferences | Session 2 (Moment 2) | Describe Noah's snow business in the words for types of work, choose their own work preferences, and play Safety sweep for Mr. Pruitt. Kai explains he worked alone and felt left out. | Step 2 |
+| 3 · Plan one experience | Session 3 (Moment 3) | Count Noah's 168-hour week, sort which shifts the rules for ages 13–14 allow, plan one new experience, inspect the garden's sign-up sheet, and sweep the garden again. | Step 3 |
+| 4 · Welcome and safety | Session 4 (Moment 4) | Sort the three rights, inspect the garden shed with Mr. Pruitt, build a Welcome and Safety checklist, then the Grade 6 class visits. | Step 4 |
+
+- **When:** sessions are full, so set each chapter as homework, early-finisher work, or a device day before the next session. Chapters play in order. Chapter length has not been timed with students yet.
+- **Saving:** the game saves in that browser, and the character carries over to every CEFL Town mission. To move to another computer, use Menu → **Take your town home** (a save code or a file).
+- **Controls:** arrow keys or tap to walk, Enter or tap to talk. Tapping the gold goal line at the top walks the student there, which suits students who find moving around hard.
+- **The side story:** Every new volunteer quits after one day. Clue by clue students find the reasons: Kai was left out, the sign-up sheet asks too much of a week, and the shed has hazards and no first-day plan. Their Welcome and Safety checklist becomes the garden's first-day plan, named after the student. The story never changes the goal.
+- **The goal:** the Grade 6 class signs up to volunteer: **at least 3 of 4** of their questions answered right on the first try. The Safety sweep game counts hazards found; it never changes the goal.
+- **Gentle and Real (Menu):** Gentle gives a hint after a wrong try and shows the answer after 3 tries; Real gives no hints and shows it after 2. In Real the Grade 6 class still needs 3 good answers.
+- **Between lessons (optional):** after a chapter, students can choose "Not yet: help around town." Townspeople then ask for help with their own version of what the chapter taught, for a little play money in a wallet that never touches the mission, and one Town Mail letter arrives each day.
+- **Report (Menu → Report for my teacher):** first-try answers by chapter, what the student wrote and chose, game results, how far they got in the side story, and a Between lessons table. It prints. First-try answers make a quick look-for before each step's checkpoint.
+- **Simplifications** to tell students if asked: a week is 168 hours; only the age 13–14 rules are used (with a parent's OK: up to 2 hours on a school day, up to 8 on a non-school day, never 9 pm to 6 am); the rules cover employees, not volunteers or the self-employed.
+
 
 ## Sample products (show all three in Session 5)
 
