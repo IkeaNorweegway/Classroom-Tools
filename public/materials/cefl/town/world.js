@@ -218,19 +218,20 @@
   }
 
   /* ── Base townspeople. look = art.sprite spec. A mission chooses who is out and what they say. ── */
+  /* wander: in the town, a person steps about within this many tiles of their spot (engine: town life) */
   var PEOPLE = {
     okafor:  { name: 'Ms. Okafor', role: 'Career counsellor', map: 'jobcentre', x: 4, y: 3, dir: 'down', look: { base: 3, skin: 's4', hair: 'black', shirt: 'purple', pants: '#3b3f5c' } },
     sam:     { name: 'Sam', role: 'Bank teller', map: 'bank', x: 4, y: 2, dir: 'down', look: { base: 2, skin: 's3', hair: 'black', shirt: 'blue', pants: '#2f3a5c' } },
-    jas:     { name: 'Jas', role: 'Looking for work', map: 'servicecanada', x: 6, y: 4, dir: 'left', look: { base: 0, skin: 's2', hair: 'brown', shirt: 'grey', pants: '#3b3f5c' } },
+    jas:     { name: 'Jas', role: 'Looking for work', map: 'servicecanada', x: 6, y: 4, dir: 'left', wander: 2, look: { base: 0, skin: 's2', hair: 'brown', shirt: 'grey', pants: '#3b3f5c' } },
     agent:   { name: 'Mr. Benoit', role: 'Service Canada', map: 'servicecanada', x: 2, y: 3, dir: 'down', look: { base: 2, skin: 's1', hair: 'grey', shirt: 'teal', pants: '#2f3a5c' } },
     grandpa: { name: 'Grandpa', role: 'Retired', map: 'grandpa', x: 2, y: 4, dir: 'right', look: { base: 4 } },
     nurse:   { name: 'Nurse Kaur', role: 'Nurse', map: 'hospital', x: 4, y: 3, dir: 'down', look: { base: 1, skin: 's3', hair: 'black', shirt: 'teal', pants: '#2e7d7d' } },
     mayor:   { name: 'Councillor Wright', role: 'Town council', map: 'townhall', x: 4, y: 3, dir: 'down', look: { base: 2, skin: 's5', hair: 'black', shirt: 'grey', pants: '#2f2f38' } },
     librarian: { name: 'Mx. Lin', role: 'Librarian', map: 'library', x: 4, y: 3, dir: 'down', look: { base: 3, skin: 's2', hair: 'pink', shirt: 'green', pants: '#3b3f5c' } },
-    avery:   { name: 'Avery', role: 'Neighbour', map: 'town', x: 20, y: 12, dir: 'down', look: { base: 1, skin: 's1', hair: 'ginger', shirt: 'red', pants: '#3d4a6b' } },
-    dev:     { name: 'Dev', role: 'Neighbour', map: 'town', x: 33, y: 30, dir: 'down', look: { base: 0, skin: 's4', hair: 'black', shirt: 'green', pants: '#3d4a6b' } },
-    rosa:    { name: 'Rosa', role: 'Neighbour', map: 'town', x: 52, y: 39, dir: 'down', look: { base: 3, skin: 's3', hair: 'brown', shirt: 'orange', pants: '#3d4a6b' } },
-    worker:  { name: 'Mo', role: 'Builder', map: 'town', x: 15, y: 45, dir: 'left', look: { base: 5 } },
+    avery:   { name: 'Avery', role: 'Neighbour', map: 'town', x: 20, y: 12, dir: 'down', wander: 2, look: { base: 1, skin: 's1', hair: 'ginger', shirt: 'red', pants: '#3d4a6b' } },
+    dev:     { name: 'Dev', role: 'Neighbour', map: 'town', x: 33, y: 30, dir: 'down', wander: 2, look: { base: 0, skin: 's4', hair: 'black', shirt: 'green', pants: '#3d4a6b' } },
+    rosa:    { name: 'Rosa', role: 'Neighbour', map: 'town', x: 52, y: 39, dir: 'down', wander: 2, look: { base: 3, skin: 's3', hair: 'brown', shirt: 'orange', pants: '#3d4a6b' } },
+    worker:  { name: 'Mo', role: 'Builder', map: 'town', x: 15, y: 45, dir: 'left', wander: 2, look: { base: 5 } },
     vendor:  { name: 'Pat', role: 'Market stall', map: 'town', x: 43, y: 30, dir: 'down', look: { base: 1, skin: 's4', hair: 'auburn', shirt: 'yellow', pants: '#3d4a6b' } } // the engine runs Pat's shop
   };
 

@@ -35,6 +35,9 @@
   var waiters = [];                // quest promises: { id, resolve }
   var ui = null;                   // the open prompt, for the test hook
   var bubbles = null;              // person id → 'help' | 'news', rebuilt after a save or a map change
+  var shownBubbles = {}, bubbleBorn = {}; // a bubble that appears pops in (bubbleBorn: when it appeared)
+  var facing = {};                 // person id → the way they face now (they turn to you, or glance around); cleared on a map change
+  var doorOpen = null;             // { x, y }: a door standing open for a moment before you go in
 
   /* ── Saves ── */
   var PROFILE_KEY = 'cefl-town-profile-v1';
@@ -171,7 +174,7 @@
     for (i = 0; i < Math.min(n, 6); i++) { x.fillStyle = ['#94631a', '#4f78c9', '#42a379', '#c2504d', '#8a5cc2', '#2e9c9c'][i]; x.fillRect(px - 3 + (i % 3) * 8, py + 3 + Math.floor(i / 3) * 5, 6, 4); }
   }
   function enter(id, x, y, dir) {
-    map = getMap(id); cache = prerender(map); fitScale(); bubbles = null;
+    map = getMap(id); cache = prerender(map); fitScale(); bubbles = null; shownBubbles = {}; walk = {}; facing = {}; hop = null;
     me.x = x; me.y = y; me.dir = dir || me.dir; me.px = x * 16; me.py = y * 16; me.moving = null; path = [];
     where(); questMarker(); kick();
   }
@@ -184,14 +187,78 @@
     for (k in ids) {
       var p = Object.assign({}, base[k] || {}, extra[k] || {}, { id: k });
       if (p.hidden || !p.look) continue;
-      if (p.map === (map && map.id)) out.push(p);
+      if (p.map === (map && map.id)) out.push(lifeOf(p));
     }
     return out;
   }
   function personAt(x, y) { var ps = people(), i; for (i = 0; i < ps.length; i++) if (ps[i].x === x && ps[i].y === y) return ps[i]; return null; }
-  function person(id) { var base = Wd.PEOPLE[id] || {}, extra = (M.people ? M.people(G.S) : {})[id] || {}; return Object.assign({}, base, extra, { id: id }); }
+  function person(id) { var base = Wd.PEOPLE[id] || {}, extra = (M.people ? M.people(G.S) : {})[id] || {}, p = Object.assign({}, base, extra, { id: id }); return map && p.map === map.id ? lifeOf(p) : p; }
+  function personOnMap(id) { var ps = people(), i; for (i = 0; i < ps.length; i++) if (ps[i].id === id) return ps[i]; return null; }
   function objectAt(x, y) { for (var k in objects) { var o = objects[k]; if (o.map === map.id && o.x === x && o.y === y) return Object.assign({ id: k }, o); } return null; }
   function blocked(x, y) { var o; return Wd.solidAt(map, x, y) || !!personAt(x, y) || (!!(o = objectAt(x, y)) && o.solid !== false); }
+
+  /* ── Town life (_games-context.md → CEFL Town → Motion). People turn to you when you talk, glance around now and then, and a few
+     (world.js `wander`) step about near their spot. A timer makes one small change every couple of seconds; the frame loop runs only
+     while someone is mid-step (rule 9). Nobody moves who is your goal, has asked for help ($), or is near you. Off under ?debug=1 unless &life=1
+     (and with it the door's short pause), so tests stay exact; CEFLTownDebug.life() makes one change on demand. Reduced motion keeps
+     the glances and stops the wandering. ── */
+  var walk = {};                   // person id → { ox, oy, mv: { fx, fy, tx, ty, t } | null, fr }: a wanderer's step away from their spot
+  var hop = null;                  // { id, t0 }: the speaker's small hop when a line opens
+  var lifeT = 0, lifeOn = !debug || /[?&]life=1/.test(location.search), WALK_MS = 320, HOP_MS = 240;
+  function lifeOf(p) { // where town life has put a person: a wanderer's step, and the way they face
+    var w = map && map.id === 'town' ? walk[p.id] : null;
+    p.dir0 = p.dir || 'down';
+    if (w) { p.x += w.ox; p.y += w.oy; p.mv = w.mv; p.fr = w.fr; }
+    if (facing[p.id]) p.dir = facing[p.id];
+    return p;
+  }
+  function dirTo(fx, fy, tx, ty) { var dx = tx - fx, dy = ty - fy; return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'); }
+  function faceMe(id) { var p = personOnMap(id); if (p && !p.mv) { facing[id] = dirTo(p.x, p.y, me.x, me.y); kick(); } }
+  function hopFor(who) { if (!who || who === 'you' || !personOnMap(who)) return; faceMe(who); if (!reduceMotion) { hop = { id: who, t0: performance.now() }; kick(); } }
+  function drawPos(p) { if (!p.mv) return { x: p.x * 16, y: p.y * 16 }; var f = Math.min(1, p.mv.t / WALK_MS); return { x: (p.mv.fx + (p.mv.tx - p.mv.fx) * f) * 16, y: (p.mv.fy + (p.mv.ty - p.mv.fy) * f) * 16 }; }
+  function onScreen(p) { var c = camera(); return p.x * 16 + 16 > c.x && p.x * 16 < c.x + c.vw && p.y * 16 + 16 > c.y && p.y * 16 < c.y + c.vh; }
+  function lifeSoon() { clearTimeout(lifeT); lifeT = lifeOn ? setTimeout(lifeTick, 1400 + Math.random() * 1800) : 0; }
+  function lifeTick() {
+    lifeSoon();
+    if (!map || !G || busy || coach || me.moving || path.length || document.hidden || !$('#ctModal').hidden) return;
+    lifeStep(Math.random);
+  }
+  function lifeStep(rnd) { // one small change; true if something changed
+    var ps = people().filter(function (p) { return onScreen(p) && !p.mv; });
+    if (!ps.length) return false;
+    var p = ps[Math.floor(rnd() * ps.length)];
+    if ((quest && p.id === quest.id) || Math.abs(p.x - me.x) + Math.abs(p.y - me.y) <= 2) return false;
+    if (p.wander && !reduceMotion && map.id === 'town' && rnd() < 0.6 && wanderStep(p, rnd)) return true;
+    var dirs = ['down', 'left', 'right', 'up'].filter(function (d) { return d !== p.dir; });
+    facing[p.id] = rnd() < 0.4 ? p.dir0 : dirs[Math.floor(rnd() * dirs.length)];
+    kick(); return true;
+  }
+  function wanderStep(p, rnd) {
+    if ((bubbles || townBubbles())[p.id] === 'help') return false; // someone who asked for help waits for you (news bubbles walk along)
+    var w = walk[p.id] || (walk[p.id] = { ox: 0, oy: 0, mv: null, fr: 0 }), hx = p.x - w.ox, hy = p.y - w.oy, R = p.wander, mine = pathTiles();
+    var opts = Object.keys(DIRS).filter(function (d) {
+      var nx = p.x + DIRS[d][0], ny = p.y + DIRS[d][1];
+      return Math.abs(nx - hx) <= R && Math.abs(ny - hy) <= R && !blocked(nx, ny) && !mine[nx + ',' + ny] && !doorstep(nx, ny);
+    });
+    if (!opts.length) return false;
+    var d = opts[Math.floor(rnd() * opts.length)];
+    w.mv = { fx: p.x, fy: p.y, tx: p.x + DIRS[d][0], ty: p.y + DIRS[d][1], t: 0 };
+    w.ox += DIRS[d][0]; w.oy += DIRS[d][1]; facing[p.id] = d;
+    kick(); return true;
+  }
+  function pathTiles() { // your tile, the one you are stepping to, and the rest of your path
+    var o = {}, x = me.x, y = me.y; o[x + ',' + y] = 1;
+    if (me.moving) o[me.moving.tx + ',' + me.moving.ty] = 1;
+    path.forEach(function (d) { x += DIRS[d][0]; y += DIRS[d][1]; o[x + ',' + y] = 1; });
+    return o;
+  }
+  function doorstep(x, y) { if (map.doors[x + ',' + y]) return true; for (var k in map.spots || {}) if (map.spots[k].x === x && map.spots[k].y === y) return true; return false; }
+  function stepLife(dt) { // advance wanderers mid-step and the hop; true while something still moves
+    var more = false, k, w;
+    for (k in walk) { w = walk[k]; if (!w.mv) continue; w.mv.t += dt; if (w.mv.t >= WALK_MS) { w.mv = null; w.fr = (w.fr + 1) % 2; } else more = true; }
+    if (hop && performance.now() - hop.t0 < HOP_MS) more = true; else hop = null;
+    return more;
+  }
 
   /* ── Loop ── */
   var raf = 0, last = 0;
@@ -200,9 +267,10 @@
     raf = 0; frames++;
     var dt = last ? Math.min(50, t - last) : 16; last = t;
     var animating = step(dt);
+    if (stepLife(dt)) animating = true;
     if (fade > 0) { fade = Math.max(0, fade - dt / 220); animating = true; }
     if (t < bobUntil) animating = true;
-    draw(t);
+    if (draw(t)) animating = true;
     if (animating) kick(); else last = 0;
   }
   var STEP_MS = 150;
@@ -223,7 +291,10 @@
     me.dir = d;
     var nx = me.x + DIRS[d][0], ny = me.y + DIRS[d][1];
     if (map.doors[nx + ',' + ny]) { path = []; held = null; useDoor(map.doors[nx + ',' + ny]); return; }
-    if (blocked(nx, ny)) { path = []; return; }
+    if (blocked(nx, ny)) {
+      if (pathGoal && personAt(nx, ny)) { var np = bfs(pathGoal.x, pathGoal.y); if (np && np.length) { path = np; return; } } // someone stepped in the way: go around
+      path = []; onArrive = null; pathGoal = null; return;
+    }
     me.moving = { fx: me.x, fy: me.y, tx: nx, ty: ny, t: 0 };
     sfx('step');
   }
@@ -231,6 +302,7 @@
     var k = me.x + ',' + me.y;
     if (map.exits && map.exits[k]) { var b = map.id, sp = getMap('town').spots[b]; fadeIn(); enter('town', sp.x, sp.y, 'down'); save(); fire('door:town'); return; }
     if (coach && coach.waitMove) coachNext();
+    if (!path.length) pathGoal = null;
     if (!path.length && onArrive) { var fn = onArrive; onArrive = null; fn(); }
     where();
   }
@@ -241,8 +313,11 @@
       var line = (M.lockedLine && M.lockedLine(id, G.S)) || (b.name + ' is closed right now.');
       say(null, line); return;
     }
-    var m = getMap(id); fadeIn(); enter(id, m.spawn.x, m.spawn.y, 'up'); save();
-    fire('door:' + id);
+    var m = getMap(id), sp = map.id === 'town' && map.spots[id];
+    function go() { fadeIn(); enter(id, m.spawn.x, m.spawn.y, 'up'); save(); fire('door:' + id); }
+    if (!sp || !lifeOn || reduceMotion) { go(); return; }
+    doorOpen = { x: sp.x, y: sp.y - 1 }; busy++; kick(); // the door stands open for a moment, then the fade
+    setTimeout(function () { doorOpen = null; busy--; go(); }, 140);
   }
 
   /* ── Drawing ── */
@@ -252,9 +327,9 @@
     cy = mh <= vh ? (mh - vh) / 2 : Math.max(0, Math.min(mh - vh, me.py + 8 - vh / 2));
     return { x: Math.round(cx * scale) / scale, y: Math.round(cy * scale) / scale, vw: vw, vh: vh };
   }
-  function draw(t) {
-    if (!map || !cache) return;
-    var cam = camera(), s = scale;
+  function draw(t) { // true while a bubble is still popping in
+    if (!map || !cache) return false;
+    var cam = camera(), s = scale, more = false;
     ctx.fillStyle = map.id === 'town' ? '#2f4a3a' : '#1f1d1a'; ctx.fillRect(0, 0, cv.width, cv.height);
     ctx.imageSmoothingEnabled = false;
     var sx = Math.max(0, cam.x), sy = Math.max(0, cam.y), sw = Math.min(cache.width - sx, cam.vw), sh = Math.min(cache.height - sy, cam.vh);
@@ -270,32 +345,40 @@
         ctx.fillStyle = '#fff8e8'; ctx.fillText(l.text, lx, ly + 1, tw - 8);
       });
     }
-    // people and you, back to front
+    if (doorOpen) { ctx.fillStyle = '#1f1d1a'; ctx.fillRect(Math.round((doorOpen.x * 16 + 3 - cam.x) * s), Math.round((doorOpen.y * 16 + 2 - cam.y) * s), 10 * s, 14 * s); }
+    // people and you, back to front; a wanderer between tiles is drawn part-way, and the speaker hops
     var ps = people();
     if (map.rugs) ps.forEach(function (p) { ctx.fillStyle = 'rgba(148,99,26,0.28)'; ctx.fillRect(Math.round((p.x * 16 - 1 - cam.x) * s), Math.round((p.y * 16 + 1 - cam.y) * s), 18 * s, 15 * s); });
-    var list = ps.map(function (p) { return { y: p.y * 16, draw: function () { drawPerson(p.look, p.dir || 'down', 0, p.x * 16, p.y * 16, cam); } }; });
+    var hy = hop ? Math.round(Math.sin(Math.min(1, Math.max(0, t - hop.t0) / HOP_MS) * Math.PI) * 2) : 0;
+    var list = ps.map(function (p) { var o = drawPos(p); return { y: o.y, draw: function () { drawPerson(p.look, p.dir || 'down', p.mv ? 1 + p.fr : 0, o.x, o.y - (hop && hop.id === p.id ? hy : 0), cam); } }; });
     list.push({ y: me.py, draw: function () { drawPerson(myLook(), me.dir, me.moving ? 1 + me.frame : 0, me.px, me.py, cam); } });
     list.sort(function (a, b) { return a.y - b.y; }).forEach(function (o) { o.draw(); });
-    // quest marker and "!" bubbles; a "$" when someone needs your help, "…" when someone has news
-    var tgt = questTarget();
-    if (!bubbles) bubbles = townBubbles();
+    // quest marker and "!" bubbles; a "$" when someone needs your help, "…" when someone has news. A new bubble pops in.
+    var tgt = questTarget(), k;
+    if (!bubbles) { bubbles = townBubbles(); for (k in bubbles) if (shownBubbles[k] !== bubbles[k]) bubbleBorn[k] = t; shownBubbles = bubbles; }
     ps.forEach(function (p) {
-      var b = bubbles[p.id];
-      if (b && !(tgt && tgt.map === map.id && tgt.x === p.x && tgt.y === p.y)) bubble((p.x * 16 + 8 - cam.x) * s, (p.y * 16 - 6 - cam.y) * s, b);
+      var b = bubbles[p.id], o = drawPos(p), g = reduceMotion ? 1 : Math.min(1, Math.max(0, t - (bubbleBorn[p.id] || 0)) / 200);
+      if (!b || (tgt && tgt.map === map.id && tgt.x === p.x && tgt.y === p.y)) return;
+      if (g < 1) more = true;
+      bubble((o.x + 8 - cam.x) * s, (o.y - 6 - cam.y) * s, b, g);
     });
     if (tgt && tgt.map === map.id) {
       var bob = t < bobUntil && !reduceMotion ? Math.round(Math.sin(t / 120) * 2) : 0;
       marker((tgt.x * 16 + 8 - cam.x) * s, (tgt.y * 16 - 6 + bob - cam.y) * s, tgt.person);
     }
     if (fade > 0) { ctx.fillStyle = 'rgba(0,0,0,' + fade.toFixed(2) + ')'; ctx.fillRect(0, 0, cv.width, cv.height); }
+    return more;
   }
-  /* Round bubbles (the quest marker is square): gold "$" = paid help, white "…" = news. Shape and symbol, never colour alone. */
-  function bubble(x, y, kind) {
-    var s = scale, help = kind === 'help';
+  /* Round bubbles (the quest marker is square): gold "$" = paid help, white "…" = news. Shape and symbol, never colour alone.
+     g: how far it has popped in (0 to 1), eased with a small overshoot. */
+  function bubble(x, y, kind, g) {
+    var s = scale, help = kind === 'help', cy = y - 7 * s, k = g == null || g >= 1 ? 1 : 1 + 2.70158 * Math.pow(g - 1, 3) + 1.70158 * Math.pow(g - 1, 2);
+    ctx.save(); if (k !== 1) { ctx.translate(x, cy); ctx.scale(k, k); ctx.translate(-x, -cy); }
     ctx.fillStyle = help ? '#f5b82e' : '#fff'; ctx.strokeStyle = '#1f1d1a'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.arc(x, y - 7 * s, 5 * s, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, cy, 5 * s, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     ctx.fillStyle = '#1f1d1a'; ctx.font = '800 ' + (help ? 7 * s : 6 * s) + 'px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(help ? '$' : '…', x, y - 7 * s + (help ? 0.5 : -1) * s);
+    ctx.fillText(help ? '$' : '…', x, cy + (help ? 0.5 : -1) * s);
+    ctx.restore();
   }
   function myLook() {
     var l = Object.assign({}, P ? P.look : { base: 0, skin: 's3', hair: 'black', shirt: 'teal', pants: '#3d4a6b' });
@@ -377,7 +460,7 @@
       if (!$('#ctModal').hidden) { if (e.key === 'Escape' && $('#ctModal').dataset.closable) closeModal(); return; }
       if (!$('#ctDialog').hidden) { if ((e.key === 'Enter' || e.key === ' ') && dlgAdvance && document.activeElement && !/BUTTON|INPUT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); dlgAdvance(); } return; }
       if (/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '')) return;
-      if (KEYS[e.key]) { e.preventDefault(); held = KEYS[e.key]; path = []; kick(); }
+      if (KEYS[e.key]) { e.preventDefault(); held = KEYS[e.key]; path = []; onArrive = null; pathGoal = null; kick(); }
       else if ((e.key === 'Enter' || e.key === ' ') && document.activeElement === cv) { e.preventDefault(); interactFront(); }
       else if ((e.key === 'm' || e.key === 'M') && !busy) { e.preventDefault(); openTownMap(); }
     });
@@ -426,10 +509,11 @@
     while (prev[c]) { out.unshift(prev[c][1]); c = prev[c][0]; }
     return out;
   }
+  var pathGoal = null;             // where the current path ends, so a walk can go around someone who steps into it
   function walkPath(tx, ty, then) {
     var p = bfs(tx, ty);
     if (!p) return false;
-    path = p; onArrive = then || null; held = null;
+    path = p; onArrive = then || null; held = null; pathGoal = p.length ? { x: tx, y: ty } : null;
     if (!p.length && then) { onArrive = null; then(); }
     kick();
     return true;
@@ -440,10 +524,9 @@
     var door = map.doors[x + ',' + y];
     if (door) { useDoor(door); return; }
     var p = personAt(x, y), o = objectAt(x, y);
-    if (p) { p.dir = { left: 'right', right: 'left', up: 'down', down: 'up' }[me.dir]; facing[p.id] = p.dir; talk(p.id); return; }
+    if (p) { if (!p.mv) facing[p.id] = dirTo(p.x, p.y, me.x, me.y); kick(); talk(p.id); return; }
     if (o) talk(o.id);
   }
-  var facing = {};
   function talk(id) {
     if (fire(id)) return;
     if (townTalk(id)) return;
@@ -518,7 +601,7 @@
     lines = [].concat(lines);
     return new Promise(function (res) {
       var d = $('#ctDialog'), i = 0;
-      busy++;
+      busy++; hopFor(who);
       function show() {
         var txtDone = false;
         d.innerHTML = (who ? portrait(who) : '') + '<div class="ct-dbody">' + (who ? '<div class="ct-dname">' + esc(nameOf(who)) + '</div>' : '') + '<p class="ct-dtext"></p><button class="ct-btn ct-next" type="button">' + (i < lines.length - 1 ? 'Next ▶' : 'OK ▶') + '</button></div>';
@@ -540,7 +623,7 @@
   function ask(who, q, key, label, ch) {
     return new Promise(function (res) {
       var d = $('#ctDialog'), order = shuffle(q.opts.map(function (o, i) { return i; })), tried = false, picked = [], firstRight = false;
-      busy++;
+      busy++; hopFor(who);
       function render(fb, ok) {
         d.innerHTML = (who ? portrait(who) : '') + '<div class="ct-dbody">' + (who ? '<div class="ct-dname">' + esc(nameOf(who)) + '</div>' : '') + '<p class="ct-dtext">' + esc(q.text) + '</p><div class="ct-opts">' +
           order.map(function (i) { var cls = picked.indexOf(i) >= 0 ? (q.opts[i][1] ? ' yes' : ' no') : ''; return '<button class="ct-btn ct-opt' + cls + '" type="button" data-i="' + i + '"' + (cls || ok ? ' disabled' : '') + '>' + esc(q.opts[i][0]) + '</button>'; }).join('') +
@@ -567,7 +650,7 @@
   /* choose(who, text, labels) → index. Not marked right or wrong. */
   function choose(who, text, labels) {
     return new Promise(function (res) {
-      var d = $('#ctDialog'); busy++;
+      var d = $('#ctDialog'); busy++; hopFor(who);
       d.innerHTML = (who ? portrait(who) : '') + '<div class="ct-dbody">' + (who ? '<div class="ct-dname">' + esc(nameOf(who)) + '</div>' : '') + '<p class="ct-dtext">' + esc(text) + '</p><div class="ct-opts">' +
         labels.map(function (l, i) { return '<button class="ct-btn ct-opt" type="button" data-i="' + i + '">' + esc(l) + '</button>'; }).join('') + '</div></div>';
       d.hidden = false; d.onclick = null; dlgAdvance = null;
@@ -617,12 +700,141 @@
     if (P && (M.helpers || M.mail || P.wallet)) w.push({ label: 'Wallet', value: money(P.wallet), title: 'Your wallet: pay for helping people around town. Spend it at Pat’s market stall in Town Square.' });
     var mb = $('#ctMailBtn'); if (mb) mb.hidden = !(G.town && G.town.mail);
     bubbles = null;
-    $('#ctWidgets').innerHTML = w.map(function (x) { return '<span class="ct-w' + (x.warn ? ' warn' : '') + '" title="' + esc(x.title || x.label) + '"><span class="ct-wl">' + esc(x.label) + '</span><b>' + esc(x.value) + '</b>' + (x.tag ? '<span class="ct-tag">' + esc(x.tag) + '</span>' : '') + '</span>'; }).join('');
+    $('#ctWidgets').innerHTML = w.map(function (x) { return '<span class="ct-w' + (x.warn ? ' warn' : '') + '" data-k="' + esc(x.k || x.label.toLowerCase()) + '" title="' + esc(x.title || x.label) + '"><span class="ct-wl">' + esc(x.label) + '</span><b>' + esc(x.value) + '</b>' + (x.tag ? '<span class="ct-tag">' + esc(x.tag) + '</span>' : '') + '</span>'; }).join('');
     $('#ctChap').textContent = M.chapters[G.ch] ? 'Chapter ' + (G.ch + 1) + ' of ' + M.chapters.length + ': ' + M.chapters[G.ch].name : 'Mission complete';
   }
   function toast(text) {
     var t = $('#ctToast'); t.textContent = text; t.classList.add('on');
     clearTimeout(toast.tm); toast.tm = setTimeout(function () { t.classList.remove('on'); }, 2600);
+  }
+
+  /* ── Effects (api.fx): short motion over the game, transform and opacity only (games rule 9). An effect never blocks input and never
+     carries meaning alone: the words or the number it decorates are already on the page. A click or Enter, Space or Escape finishes every
+     running effect at once, and prefers-reduced-motion shows the end state with no motion. Missions call them only after an answer is
+     checked or a choice is made, and never wait on them, so motion can neither give an answer away nor hold up a step. ── */
+  var fxLayer = null, fxRun = [], countRun = [];
+  function fxBox() { if (!fxLayer || !fxLayer.isConnected) { fxLayer = h('div', 'ct-fx', null, document.body); fxLayer.setAttribute('aria-hidden', 'true'); } return fxLayer; }
+  function fxPlay(el, frames, o) { // a Web Animation the skip can finish
+    if (!el.animate) return Promise.resolve();
+    var a = el.animate(frames, o); fxRun.push(a);
+    function off() { var i = fxRun.indexOf(a); if (i >= 0) fxRun.splice(i, 1); }
+    return a.finished.then(off, off);
+  }
+  function fxSkip() { fxRun.slice().forEach(function (a) { try { a.finish(); } catch (e) {} }); countRun.slice().forEach(function (c) { c.end(); }); }
+  document.addEventListener('pointerdown', fxSkip, true);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') fxSkip(); }, true);
+  /* Where on screen: a person or placed thing on this map ('you' = your character), an element, a selector, or { x, y }. Null if hidden. */
+  function fxPoint(src) {
+    if (!src) return null;
+    if (src.x != null && src.y != null && !src.nodeType) return src;
+    if (typeof src === 'string') { if (/^[#.]/.test(src)) src = $(src); else return spotOf(src); }
+    if (!src || !src.getBoundingClientRect) return null;
+    var r = src.getBoundingClientRect();
+    return r.width || r.height ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null;
+  }
+  function spotOf(id) {
+    var px, py, p, o;
+    if (!map || !cv) return null;
+    if (id === 'you') { px = me.px; py = me.py; }
+    else if ((p = personOnMap(id))) { var d = drawPos(p); px = d.x; py = d.y; }
+    else if ((o = objects[id]) && o.map === map.id) { px = o.x * 16; py = o.y * 16; }
+    else return null;
+    var r = cv.getBoundingClientRect(), cam = camera(), k = r.width / cv.width, x = r.left + (px + 8 - cam.x) * scale * k, y = r.top + (py + 4 - cam.y) * scale * k;
+    return x < r.left || x > r.right || y < r.top || y > r.bottom ? null : { x: x, y: y };
+  }
+  function at(x, y) { return 'translate(' + Math.round(x) + 'px,' + Math.round(y) + 'px) translate(-50%,-50%)'; }
+  /* fly(from, to, { icon, n, gap }): n small tokens arc from one place to another (a cheque to the Bag, bills into a jar) */
+  function fly(from, to, o) {
+    o = o || {};
+    var a = fxPoint(from), b = fxPoint(to);
+    if (reduceMotion || !a || !b) return Promise.resolve();
+    var n = Math.min(o.n || 1, 6), all = [], i, mx = (a.x + b.x) / 2, my = Math.min(a.y, b.y) - Math.min(90, Math.abs(b.x - a.x) * 0.25 + 30);
+    for (i = 0; i < n; i++) (function (i) {
+      var t = h('span', 'ct-fx-token' + (o.icon ? '' : ' card'), o.icon ? esc(o.icon) : '', fxBox());
+      all.push(fxPlay(t, [{ transform: at(a.x, a.y) + ' scale(0.6)', opacity: 0 }, { transform: at(mx, my) + ' scale(1.1)', opacity: 1, offset: 0.45 }, { transform: at(b.x, b.y) + ' scale(0.7)', opacity: 0.9 }],
+        { duration: 560, delay: i * (o.gap || 90), easing: 'cubic-bezier(.3,.7,.4,1)', fill: 'backwards' }).then(function () { t.remove(); }));
+    })(i);
+    return Promise.all(all);
+  }
+  /* rise(at, text, tone): words float up and fade ("+$8.00" over the person who paid) */
+  function rise(src, text, tone) {
+    var a = fxPoint(src);
+    if (reduceMotion || !a) return Promise.resolve();
+    var t = h('span', 'ct-fx-rise ' + (tone || 'good'), esc(text), fxBox());
+    return fxPlay(t, [{ transform: at(a.x, a.y), opacity: 0 }, { transform: at(a.x, a.y - 16), opacity: 1, offset: 0.25 }, { transform: at(a.x, a.y - 44), opacity: 0 }], { duration: 700, easing: 'ease-out' }).then(function () { t.remove(); });
+  }
+  /* count(el, from, to, fmt): a number ticks to its new value in 600 ms (money by default); the final value is in aria-label throughout */
+  function count(el, from, to, fmt) {
+    fmt = fmt || money;
+    if (!el) return Promise.resolve();
+    if (reduceMotion || from === to) { el.textContent = fmt(to); return Promise.resolve(); }
+    return new Promise(function (res) {
+      var t0 = performance.now(), c = { end: function () { if (c.off) return; c.off = true; el.textContent = fmt(to); el.removeAttribute('aria-label'); countRun.splice(countRun.indexOf(c), 1); res(); } };
+      el.setAttribute('aria-label', fmt(to)); countRun.push(c);
+      (function frame(t) {
+        if (c.off) return;
+        var k = Math.min(1, Math.max(0, t - t0) / 600), s = fmt(Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3))));
+        if (el.textContent !== s) el.textContent = s;
+        if (k >= 1) c.end(); else requestAnimationFrame(frame);
+      })(t0);
+    });
+  }
+  /* stamp(el, text, tone, low): a rubber stamp lands on a document and stays (tone 'bad' = red, 'good' = green; low: in the bottom
+     corner, clear of a header). Decoration: say it in words too. */
+  function stamp(el, text, tone, low) {
+    if (!el) return Promise.resolve();
+    if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+    var s = h('span', 'ct-stamp ' + (tone || 'bad') + (low ? ' low' : ''), esc(text), el); s.setAttribute('aria-hidden', 'true');
+    if (reduceMotion) return Promise.resolve();
+    return fxPlay(s, [{ transform: 'rotate(-10deg) scale(1.8)', opacity: 0 }, { transform: 'rotate(-10deg) scale(0.92)', opacity: 1, offset: 0.7 }, { transform: 'rotate(-10deg) scale(1)', opacity: 1 }], { duration: 320, easing: 'ease-in' });
+  }
+  /* pop(el, delay): a new block pops in (hidden until its delay is up) */
+  function pop(el, delay) {
+    if (!el || reduceMotion) return Promise.resolve();
+    return fxPlay(el, [{ transform: 'scale(0.6)', opacity: 0 }, { transform: 'scale(1.06)', opacity: 1, offset: 0.7 }, { transform: 'none', opacity: 1 }], { duration: 260, delay: delay || 0, easing: 'ease-out', fill: 'backwards' });
+  }
+  /* bump(el, delay): something already on screen gives a small nudge (it never hides) */
+  function bump(el, delay) {
+    if (!el || reduceMotion) return Promise.resolve();
+    return fxPlay(el, [{ transform: 'none' }, { transform: 'translateX(-5px) scale(1.04)', offset: 0.35 }, { transform: 'none' }], { duration: 300, delay: delay || 0, easing: 'ease-out' });
+  }
+  /* fill(el, from, to, axis): a full-size bar or jar fill (0 to 1) grows from one level to the next with scale ('x' or 'y'); it stays at "to" */
+  function fill(el, from, to, axis) {
+    if (!el) return Promise.resolve();
+    var sc = axis === 'y' ? 'scaleY' : 'scaleX', f = Math.max(0, Math.min(1, from)), t = Math.max(0, Math.min(1, to));
+    el.style.transform = sc + '(' + t.toFixed(3) + ')';
+    if (reduceMotion || f === t) return Promise.resolve();
+    return fxPlay(el, [{ transform: sc + '(' + f.toFixed(3) + ')' }, { transform: sc + '(' + t.toFixed(3) + ')' }], { duration: 600, easing: 'cubic-bezier(.3,.7,.4,1)' });
+  }
+  /* confetti(n): a short shower over the town, for a big moment */
+  function confetti(n) {
+    if (reduceMotion || !stage) return Promise.resolve();
+    var r = stage.getBoundingClientRect(), cols = ['#f5b82e', '#94631a', '#2c7a4b', '#4f78c9', '#c2504d', '#8a5cc2'], all = [], i;
+    for (i = 0; i < Math.min(n || 36, 60); i++) (function (i) {
+      var x = r.left + Math.random() * r.width, y1 = r.top + r.height * (0.5 + Math.random() * 0.5), c = h('span', 'ct-fx-bit', null, fxBox());
+      c.style.background = cols[i % cols.length];
+      all.push(fxPlay(c, [{ transform: 'translate(' + Math.round(x) + 'px,' + Math.round(r.top - 8) + 'px) rotate(0deg)', opacity: 1 }, { transform: 'translate(' + Math.round(x + (Math.random() - 0.5) * 90) + 'px,' + Math.round(y1) + 'px) rotate(' + Math.round((Math.random() - 0.5) * 720) + 'deg)', opacity: 0 }],
+        { duration: 1100 + Math.random() * 500, delay: Math.random() * 250, easing: 'cubic-bezier(.2,.6,.4,1)', fill: 'backwards' }).then(function () { c.remove(); }));
+    })(i);
+    return Promise.all(all);
+  }
+  /* banner(kicker, title): a title card slides down over the town, stays a moment, and goes. It is also read out (role="status"). */
+  function banner(kicker, title) {
+    if (!stage) return Promise.resolve();
+    var old = $('.ct-card', stage); if (old) old.remove();
+    var b = h('div', 'ct-card', '<span class="ct-card-k">' + esc(kicker) + '</span><span class="ct-card-t">' + esc(title) + '</span>', stage);
+    b.setAttribute('role', 'status');
+    if (reduceMotion) { setTimeout(function () { b.remove(); }, 2200); return Promise.resolve(); }
+    return fxPlay(b, [{ transform: 'translate(-50%,-24px)', opacity: 0 }, { transform: 'translate(-50%,0)', opacity: 1, offset: 0.12 }, { transform: 'translate(-50%,0)', opacity: 1, offset: 0.85 }, { transform: 'translate(-50%,-12px)', opacity: 0 }],
+      { duration: 2400, easing: 'ease-out', fill: 'forwards' }).then(function () { b.remove(); });
+  }
+  var fx = { fly: fly, rise: rise, count: count, stamp: stamp, pop: pop, bump: bump, fill: fill, confetti: confetti, banner: banner, at: fxPoint, skip: fxSkip, face: faceAll };
+  /* face(ids, toward): people on this map turn toward you ('you') or toward someone. ids: a list, or 'all'. */
+  function faceAll(ids, toward) {
+    var t = toward && toward !== 'you' ? personOnMap(toward) : { x: me.x, y: me.y };
+    if (!t) return;
+    people().forEach(function (p) { if ((ids === 'all' || ids.indexOf(p.id) >= 0) && p.id !== toward && !p.mv) facing[p.id] = dirTo(p.x, p.y, t.x, t.y); });
+    kick();
   }
   function openBag() {
     var items = M.items ? M.items(G.S) : [];
@@ -719,7 +931,7 @@
       { sel: '.ct-canvas', t: 'Walk with the arrow keys (or W A S D). On a touch screen, tap where you want to go. Try one step now.', waitMove: true },
       { sel: '.ct-canvas', t: 'Talk to people and open doors: face them and press Enter, or just tap them.' },
       { sel: '#ctQuest', t: 'Your goal is always here. Tap it and you walk there by yourself.' },
-      { sel: '#ctBag', t: 'Your Bag holds the things you collect, like your Pay Card and pay stubs.' },
+      { sel: '#ctBag', t: M.bagTip || 'Your Bag holds the things you collect, like your Pay Card and pay stubs.' },
       { sel: '#ctMenu', t: 'Menu: Gentle or Real mode, help, and the report for your teacher.' }
     ];
   }
@@ -737,7 +949,7 @@
     c.style.top = Math.max(0, (s.sel === '.ct-canvas' ? r.top + 12 : r.bottom + 8) - ar.top) + 'px';
     if (s.waitMove) cv.focus({ preventScroll: true }); else $('#ctCoachNext').focus({ preventScroll: true });
   }
-  function coachEnd() { Array.prototype.forEach.call(document.querySelectorAll('.ct-spot'), function (n) { n.classList.remove('ct-spot'); }); coach = null; $('#ctCoach').hidden = true; G.tut = true; save(); cv.focus({ preventScroll: true }); }
+  function coachEnd() { var card = coach && coach.card; Array.prototype.forEach.call(document.querySelectorAll('.ct-spot'), function (n) { n.classList.remove('ct-spot'); }); coach = null; $('#ctCoach').hidden = true; G.tut = true; save(); cv.focus({ preventScroll: true }); if (card) chapterCard(); }
 
   /* ── Sound: tiny beeps, off by default ── */
   var actx = null;
@@ -756,6 +968,7 @@
   async function run() {
     while (G.ch < M.chapters.length) {
       if (G.gate && G.si === 0) await gateWait();
+      if (G.si === 0) chapterCard();
       var steps = chapterSteps(G.ch);
       while (G.si < steps.length) {
         var st = steps[G.si];
@@ -767,6 +980,11 @@
       if (G.ch < M.chapters.length) { G.snap = { S: copy(G.S), map: map.id, x: me.x, y: me.y }; hud(); save(); if (await chapterBreak() === 'later') { G.gate = true; save(); } }
     }
     hud(); freeQuest(); save();
+  }
+  /* A title card as each chapter starts (after the tutorial, if it is open) */
+  function chapterCard() {
+    if (coach) { coach.card = true; return; }
+    if (M.chapters[G.ch]) banner('Chapter ' + (G.ch + 1) + ' of ' + M.chapters.length, M.chapters[G.ch].name);
   }
   /* The soft gate: the next chapter waits for its lesson, and the town stays open in the meantime */
   function chapterBreak() {
@@ -861,18 +1079,21 @@
     var tw = town(), rec = tw.helps[hp.id] || { n: 0, last: '' }, grade = await hp.run(api, hashStr(hp.id + ':' + rec.n + ':' + (G.S.seed || 0)));
     if (grade !== 'first' && grade !== 'second' && grade !== 'later') return null; // left for now
     rec.n++; rec.last = today(); tw.helps[hp.id] = rec;
-    paid(grade, hp.pay, 'help', hp.label, nameOf(hp.who));
+    paid(grade, hp.pay, 'help', hp.label, nameOf(hp.who), hp.game, hp.who);
     return grade;
   }
-  function paid(grade, pay, kind, label, from) {
-    var amt = grade === 'first' ? pay : grade === 'second' ? Math.round(pay / 2) : 0, tw = town();
+  /* game: a job game, where first / second / later = a great / steady / rough shift. src: who paid (the pay floats up from them). */
+  function paid(grade, pay, kind, label, from, game, src) {
+    var amt = grade === 'first' ? pay : grade === 'second' ? Math.round(pay / 2) : 0, tw = town(), was = P.wallet;
     P.wallet += amt;
-    tw.log.push({ d: today(), kind: kind, label: label, from: from, grade: grade, amt: amt }); if (tw.log.length > 100) tw.log.shift();
+    tw.log.push({ d: today(), kind: kind, label: label, from: from, grade: grade, amt: amt, game: game ? 1 : 0 }); if (tw.log.length > 100) tw.log.shift();
     sfx(amt ? 'item' : 'blip');
     var tip = amt && !P.shopHint ? ' Spend it at Pat’s stall in Town Square.' : '';
     if (tip) P.shopHint = true;
-    toast(amt ? '+' + money(amt) + ' in your wallet' + (grade === 'second' ? ' (half pay: right on the second try)' : '') + '.' + tip : from + ' says thanks! (No pay once the answer is shown.)');
+    toast(amt ? '+' + money(amt) + ' in your wallet' + (grade === 'second' ? (game ? ' (half pay: a steady shift)' : ' (half pay: right on the second try)') : '') + '.' + tip
+      : from + (game ? ' says thanks. (No pay for a rough shift.)' : ' says thanks! (No pay once the answer is shown.)'));
     hud(); save(); freeQuest();
+    if (amt) { var wb = $('#ctWidgets [data-k="wallet"] b'); rise(spotOf(src) || wb, '+' + money(amt)); count(wb, was, P.wallet); }
   }
   /* Town Mail: one letter a day at most, from a chapter you have done. An unread letter waits; letters never pile up. */
   function checkMail() {
@@ -893,20 +1114,22 @@
   }
 
   /* calc(opts): the "calculate" work verb. Typed amounts, checked to ±2¢; a wrong try gets a hint in Gentle, and the answer shows after
-     2 tries in Real or 3 in Gentle. opts: { title, intro, head, ref, refLabel, fields: [{ k, name, sub, ans, alts, hint, ded, net }], doneText, noPay }.
+     2 tries in Real or 3 in Gentle. opts: { title, intro, head, ref, refLabel, fields: [{ k, name, sub, ans, alts, hint, ded, net, fmt }], doneText, noPay }. fmt: how a right or shown answer
+     is written (default money; hours use their own), with answers in hundredths either way.
      noPay: a story task in a chapter (no pay wording, and no "Leave it for now").
      Resolves 'first' | 'second' | 'later' (every field right on its first try / by its second / otherwise), or null if left before checking. */
   function calc(opts) {
-    var u = {}, max = G.mode === 'real' ? 2 : 3, F = opts.fields, checked = false;
+    var u = {}, max = G.mode === 'real' ? 2 : 3, F = opts.fields, checked = false, wasFin = false;
     return panel({ title: opts.title, name: opts.name || 'calc', wide: !!opts.wide, data: { fields: F }, render: function (body, done) {
       function all() { return F.every(function (f) { return u[f.k] && (u[f.k].ok || u[f.k].shown); }); }
       function grade() { var worst = 1; F.forEach(function (f) { var x = u[f.k]; worst = Math.max(worst, x.shown ? 9 : x.tries); }); return worst === 1 ? 'first' : worst === 2 ? 'second' : 'later'; }
       function draw() {
-        var fin = all(), g = fin ? grade() : null;
+        var fin = all(), g = fin ? grade() : null, now = fin && !wasFin;
+        wasFin = fin;
         body.innerHTML = (opts.intro || '') + (opts.ref ? '<details class="ct-ref"><summary>' + esc(opts.refLabel || 'Show the Pay Card') + '</summary>' + opts.ref + '</details>' : '') +
           '<div class="ct-doc">' + (opts.head || '') + F.map(function (f) {
             var x = u[f.k] || {}, cls = f.ded ? ' ded' : f.net ? ' net' : '';
-            var amt = x.ok || x.shown ? '<span class="amt">' + (f.ded ? '−' : '') + money(f.ans) + '</span>' : '<input class="ct-inp' + (x.no ? ' no' : '') + '" id="cf-' + f.k + '" inputmode="decimal" autocomplete="off" aria-label="' + esc(f.name) + '" value="' + esc(x.v || '') + '">';
+            var amt = x.ok || x.shown ? '<span class="amt">' + (f.ded ? '−' : '') + (f.fmt ? f.fmt(f.ans) : money(f.ans)) + '</span>' : '<input class="ct-inp' + (x.no ? ' no' : '') + '" id="cf-' + f.k + '" inputmode="decimal" autocomplete="off" aria-label="' + esc(f.name) + '" value="' + esc(x.v || '') + '">';
             return '<div class="ct-line' + cls + '"><span class="what">' + esc(f.name) + (f.sub ? '<small>' + esc(f.sub) + '</small>' : '') + '</span>' + amt +
               '<span aria-label="' + (x.ok ? 'right' : x.shown ? 'shown' : x.no ? 'not yet' : '') + '">' + (x.ok ? '<b style="color:#2c7a4b">✓</b>' : x.shown ? '•' : x.no ? '<b style="color:#b42318">✗</b>' : '') + '</span>' +
               (x.hint && !(x.ok || x.shown) ? '<span class="hint">' + esc(x.hint) + '</span>' : '') + '</div>';
@@ -918,6 +1141,7 @@
         Array.prototype.forEach.call(body.querySelectorAll('input'), function (i) { i.addEventListener('input', function () { (u[i.id.slice(3)] = u[i.id.slice(3)] || {}).v = i.value; }); i.addEventListener('keydown', function (e) { if (e.key === 'Enter') check(); }); });
         if (fin) $('#cfDone', body).addEventListener('click', function () { done(g); });
         else { $('#cfCheck', body).addEventListener('click', check); if ($('#cfLeave', body)) $('#cfLeave', body).addEventListener('click', function () { done(null); }); }
+        if (now) pop($('.ct-banner', body)); // the result card pops in once, after the last line is checked
       }
       function check() {
         var first = null;
@@ -935,6 +1159,121 @@
         var el = first && $('#cf-' + first, body); if (el) el.focus(); else { el = $('#cfDone', body); if (el) el.focus(); }
       }
       draw();
+    } });
+  }
+
+  /* minigame(opts): the "play the shift" work verb. A one-minute job game in a panel: how to play, Start or Skip, 3-2-1, the timer, the
+     result. opts: { title, name, how, seconds (60), seed, game, tierText: { great, ok, poor }, skipLabel, skipNote, leave }.
+     leave: a help request (the skip button reads "Leave it for now" and resolves null).
+     game (the mission's): make(seed, mode) → st; update(st, dt); act(st, a) → truthy if something happened; tier(st, mode); render(st) →
+     HTML whose targets carry data-act; optional frame(arena, st) for moving things (transform only), key(e, st) → a, scoreText(st), stats(st).
+     The model bumps st.ver whenever render's output would change, so the arena is redrawn only then (games rule 9). It says what happened
+     in st.msg and queues points in st.pops ([{ pts, at: the data-act to float them over }]).
+     Resolves { tier: 'great' | 'ok' | 'poor' | 'skip', score } or null. The game's own frames run only while it plays. */
+  var TIER_WORDS = { great: 'Great shift!', ok: 'Steady shift', poor: 'Rough shift', skip: 'Shift skipped' }, TIER_STAMP = { great: 'Great', ok: 'Steady', poor: 'Rough', skip: 'Skipped' };
+  function minigame(opts) {
+    var g = opts.game, total = (opts.seconds || 60) * 1000;
+    var data = { game: g.id, stage: 'intro', st: null };
+    return panel({ title: opts.title, name: opts.name || 'minigame', wide: true, data: data, render: function (body, done) {
+      var st = null, el = 0, ver = -1, fr = 0, lastT = 0, paused = false, ended = false, said = null, arena, fill, sc, msg, pz;
+      function finish(r) { if (ended) return; ended = true; stop(); data.stage = 'done'; done(r); }
+      function intro() {
+        body.innerHTML = '<div class="ct-mg-how">' + (opts.how || g.how || '') + '</div>' + (g.keys ? '<p class="ct-small">Keyboard: ' + g.keys + '</p>' : '') +
+          '<div class="ct-row ct-actions"><button class="ct-btn primary" type="button" id="mgStart">Start the shift (' + Math.round(total / 1000) + ' seconds)</button>' +
+          '<button class="ct-btn" type="button" id="mgSkip">' + esc(opts.leave ? 'Leave it for now' : opts.skipLabel || 'Skip this shift') + '</button></div>' +
+          (opts.skipNote && !opts.leave ? '<p class="ct-small">' + esc(opts.skipNote) + '</p>' : '');
+        $('#mgStart', body).addEventListener('click', count);
+        $('#mgSkip', body).addEventListener('click', function () { finish(opts.leave ? null : { tier: 'skip', score: 0 }); });
+      }
+      function count() {
+        data.stage = 'count'; var n = 3;
+        body.innerHTML = '<div class="ct-mg-count" aria-live="assertive"><span>3</span></div>';
+        (function next() {
+          if (ended || data.stage !== 'count') return;
+          if (n === 0 || debug) { play(); return; }
+          $('.ct-mg-count span', body).textContent = n; n--; setTimeout(next, 600);
+        })();
+      }
+      function play() {
+        st = g.make(opts.seed >>> 0, G.mode); data.st = st; data.stage = 'play';
+        body.innerHTML = '<div class="ct-mg-bar"><span class="ct-mg-score" aria-live="polite"></span><span class="ct-mg-track" aria-hidden="true"><span class="ct-mg-fill"></span></span>' +
+          '<button class="ct-btn ct-mg-pause" type="button" id="mgPause" aria-label="Pause">❚❚</button></div><div class="ct-mg-arena"></div><p class="ct-mg-msg" aria-live="polite"></p>' +
+          '<div class="ct-mg-paused" hidden><p><b>Paused</b></p><button class="ct-btn primary" type="button" id="mgGo">Keep going</button></div>';
+        arena = $('.ct-mg-arena', body); fill = $('.ct-mg-fill', body); sc = $('.ct-mg-score', body); msg = $('.ct-mg-msg', body); pz = $('.ct-mg-paused', body);
+        arena.addEventListener('click', function (e) { var t = e.target.closest('[data-act]'); if (t && !t.disabled) act(t.getAttribute('data-act')); });
+        $('#mgPause', body).addEventListener('click', function () { pause(true); });
+        $('#mgGo', body).addEventListener('click', function () { pause(false); });
+        document.addEventListener('keydown', onKey); document.addEventListener('visibilitychange', onHide); window.addEventListener('blur', onBlur);
+        draw(); loop();
+      }
+      function act(a) {
+        if (paused || ended || !st || data.stage !== 'play') return;
+        var n = st.pops ? st.pops.length : 0;
+        if (!g.act(st, a)) return;
+        if (!st.pops || st.pops.length === n) sfx('blip');
+        draw();
+      }
+      function pop(pt) { // float the points over the target they belong to
+        sfx(pt.pts > 0 ? 'good' : 'bad');
+        if (reduceMotion) return;
+        var a = arena.getBoundingClientRect(), te = pt.at && arena.querySelector('[data-act="' + pt.at + '"]'), t = te ? te.getBoundingClientRect() : { left: a.left, top: a.top, width: a.width },
+          p = h('span', 'ct-mg-pop' + (pt.pts > 0 ? ' good' : ' bad'), (pt.pts > 0 ? '+' : '−') + Math.abs(pt.pts), arena);
+        p.style.left = Math.round(t.left - a.left + t.width / 2) + 'px'; p.style.top = Math.round(t.top - a.top) + 'px';
+        setTimeout(function () { if (p.parentNode) p.parentNode.removeChild(p); }, 700);
+      }
+      function draw() { // redraw the arena only when the model changed, and keep keyboard focus on the same target
+        if (st.ver !== ver) {
+          ver = st.ver;
+          var f = document.activeElement && arena.contains(document.activeElement) ? document.activeElement.dataset.act : null;
+          arena.innerHTML = g.render(st);
+          if (f) { var b = arena.querySelector('[data-act="' + f + '"]'); if (b) b.focus({ preventScroll: true }); }
+          var s = g.scoreText ? g.scoreText(st) : 'Score: ' + st.score; if (sc.textContent !== s) sc.textContent = s;
+        }
+        if (st.pops && st.pops.length) st.pops.splice(0).forEach(pop);
+        if (st.msg !== said) { said = st.msg; msg.textContent = said || ''; }
+        if (g.frame) g.frame(arena, st);
+        var k = Math.max(0, 1 - el / total).toFixed(3); if (k !== fill.dataset.k) { fill.dataset.k = k; fill.style.transform = 'scaleX(' + k + ')'; }
+      }
+      function tick(dt) { // dt in ms; also the test hook's way to move time
+        if (paused || ended || !st) return;
+        dt = Math.min(dt, total - el); el += dt; g.update(st, dt);
+        draw();
+        if (el >= total || st.over) end();
+      }
+      function loop() { fr = requestAnimationFrame(function (t) { fr = 0; if (ended || paused) return; tick(lastT ? Math.min(50, t - lastT) : 16); lastT = t; if (!ended && !paused) loop(); }); }
+      function stop() { if (fr) cancelAnimationFrame(fr); fr = 0; lastT = 0; document.removeEventListener('keydown', onKey); document.removeEventListener('visibilitychange', onHide); window.removeEventListener('blur', onBlur); }
+      function pause(on) {
+        if (ended || data.stage !== 'play' || paused === on) return;
+        paused = on; pz.hidden = !on; data.paused = on;
+        if (on) { if (fr) cancelAnimationFrame(fr); fr = 0; lastT = 0; $('#mgGo', body).focus({ preventScroll: true }); } else loop();
+      }
+      function onHide() { if (document.hidden) pause(true); }
+      function onBlur() { pause(true); }
+      function onKey(e) {
+        if (paused || !g.key || /INPUT|TEXTAREA/.test((document.activeElement || {}).tagName || '')) return;
+        var a = g.key(e, st); if (a == null) return;
+        e.preventDefault(); act(a);
+      }
+      function end(forced) {
+        if (data.stage !== 'play') return;
+        stop(); data.stage = 'result';
+        var tier = forced || g.tier(st, G.mode), r = { tier: tier, score: st.score };
+        sfx(tier === 'poor' ? 'bad' : 'item');
+        body.innerHTML = '<div class="ct-banner ' + (tier === 'poor' ? 'bad' : 'good') + ' ct-mg-result"><b>' + esc(TIER_WORDS[tier]) + '</b> ' + esc(g.scoreText ? g.scoreText(st) : 'Score: ' + st.score) + '</div>' +
+          (g.stats ? '<p>' + g.stats(st) + '</p>' : '') + (opts.tierText && opts.tierText[tier] ? '<p>' + opts.tierText[tier] + '</p>' : '') +
+          '<div class="ct-row ct-actions"><button class="ct-btn primary" type="button" id="mgDone">Continue</button></div>';
+        $('#mgDone', body).addEventListener('click', function () { finish(r); });
+        $('#mgDone', body).focus({ preventScroll: true });
+        stamp($('.ct-mg-result', body), TIER_STAMP[tier], tier === 'poor' ? 'bad' : 'good');
+      }
+      data.start = function () { if (data.stage === 'intro' || data.stage === 'count') play(); };
+      data.skip = function () { if (data.stage === 'intro') $('#mgSkip', body).click(); };
+      data.act = act;
+      data.tick = tick;
+      data.finish = function (tier) { if (data.stage === 'intro' || data.stage === 'count') play(); end(tier); };
+      data.done = function () { var b = $('#mgDone', body); if (b) b.click(); };
+      data.pause = pause;
+      intro();
     } });
   }
 
@@ -982,6 +1321,7 @@
     var it = shopItem(id);
     if (!it || P.owned.indexOf(id) >= 0 || P.wallet < it.price) return false;
     P.wallet -= it.price; P.owned.push(id); sfx('item'); placeDecor(); hud(); save();
+    count($('#ctWidgets [data-k="wallet"] b'), P.wallet + it.price, P.wallet);
     return true;
   }
   function openCloset() {
@@ -1094,10 +1434,11 @@
     if (!M.helpers && !M.mail) return '';
     var lg = (G.town && G.town.log) || [], nh = 0, nm = 0, first = 0, earned = 0;
     if (!lg.length) return '<h3>Between lessons</h3><p>Nothing yet. People around town ask for help once a chapter is done, and Town Mail comes once a day.</p>';
-    lg.forEach(function (l) { if (l.kind === 'help') nh++; else nm++; if (l.grade === 'first') first++; earned += l.amt; });
-    return '<h3>Between lessons</h3><p class="ct-small">People helped: ' + nh + '. Letters answered: ' + nm + '. Right on the first try: ' + first + ' of ' + lg.length + '. Earned: ' + money(earned) + '.</p>' +
+    var ns = 0, great = 0;
+    lg.forEach(function (l) { if (l.game) { ns++; if (l.grade === 'first') great++; } else { if (l.kind === 'help') nh++; else nm++; if (l.grade === 'first') first++; } earned += l.amt; });
+    return '<h3>Between lessons</h3><p class="ct-small">People helped: ' + nh + '. Letters answered: ' + nm + '. Right on the first try: ' + first + ' of ' + (lg.length - ns) + '.' + (ns ? ' Extra shifts: ' + ns + ' (' + great + ' great).' : '') + ' Earned: ' + money(earned) + '.</p>' +
       '<div class="ct-tablewrap"><table class="ct-rep"><thead><tr><th>Day</th><th>Task</th><th>For</th><th>Result</th><th>Pay</th></tr></thead><tbody>' +
-      lg.slice().reverse().map(function (l) { return '<tr><td>' + esc(l.d) + '</td><td>' + esc(l.label) + '</td><td>' + esc(l.from) + '</td><td>' + (l.grade === 'first' ? '✓ first try' : l.grade === 'second' ? 'second try' : 'shown or 3+ tries') + '</td><td class="ct-n">' + money(l.amt) + '</td></tr>'; }).join('') +
+      lg.slice().reverse().map(function (l) { return '<tr><td>' + esc(l.d) + '</td><td>' + esc(l.label) + '</td><td>' + esc(l.from) + '</td><td>' + (l.game ? (l.grade === 'first' ? '✓ great shift' : l.grade === 'second' ? 'steady shift' : 'rough shift') : l.grade === 'first' ? '✓ first try' : l.grade === 'second' ? 'second try' : 'shown or 3+ tries') + '</td><td class="ct-n">' + money(l.amt) + '</td></tr>'; }).join('') +
       '</tbody></table></div>';
   }
 
@@ -1105,18 +1446,20 @@
   var api = {
     get S() { return G.S; }, get mode() { return G.mode; }, get ch() { return G.ch; }, get profile() { return P; },
     say: say, ask: ask, choose: choose, panel: panel, toast: toast, record: record, esc: esc,
-    calc: calc, money: money, parseMoney: parseMoney, today: today, chDone: chDone,
+    calc: calc, minigame: minigame, money: money, parseMoney: parseMoney, today: today, chDone: chDone,
     quest: function (text, id) { setQuest(text, id); return new Promise(function (res) { waiters = waiters.filter(function (w) { return w.id !== id; }); waiters.push({ id: id, resolve: function () { res(); } }); }); },
     clearQuest: function () { setQuest(null, null); },
     questText: function (text) { if (quest) { quest.text = text; var q = $('#ctQuest .ct-qt'); if (q) q.textContent = text; } },
     place: function (id, mapId, x, y, o) { objects[id] = Object.assign({ map: mapId, x: x, y: y }, o || {}); if (map && map.id === mapId) T.refreshMap(); },
     unplace: function (id) { var o = objects[id]; delete objects[id]; if (o && map && map.id === o.map) T.refreshMap(); },
     hud: function () { hud(); kick(); },
-    give: function (name, icon) { sfx('item'); toast('Added to your Bag: ' + name); hud(); },
+    // give(name, icon, from): the item flies into the Bag from a person or thing on this map (default: you)
+    give: function (name, icon, from) { sfx('item'); toast('Added to your Bag: ' + name); hud(); fly(from || 'you', '#ctBag', { icon: icon }); bump($('#ctBag'), 480); },
+    fx: fx,
     outfit: function () { if (P) P.wear = 'work'; kick(); hud(); }, // a new work outfit: put it on
     teleport: function (mapId, x, y, dir) { enter(mapId, x, y, dir); },
     where: function () { return { map: map.id, x: me.x, y: me.y }; },
-    profileAdd: function (kind, value) { if (kind === 'closet' && P.closet.indexOf(value) < 0) P.closet.push(value); if (kind === 'plan') P.plan.push(value); if (kind === 'met') P.met[value] = (P.met[value] || 0) + 1; if (kind === 'finished' && P.finished.indexOf(value) < 0) P.finished.push(value); save(); },
+    profileAdd: function (kind, value) { if (kind === 'closet' && P.closet.indexOf(value) < 0) P.closet.push(value); if (kind === 'plan') { P.plan = P.plan.filter(function (x) { return x.mission !== value.mission; }); P.plan.push(value); } /* one page per mission: a replay replaces it */ if (kind === 'met') P.met[value] = (P.met[value] || 0) + 1; if (kind === 'finished' && P.finished.indexOf(value) < 0) P.finished.push(value); save(); },
     refresh: function () { T.refreshMap(); hud(); },
     save: save
   };
@@ -1148,7 +1491,7 @@
     if (!G.tut && !debug) coachStart();
     cv.focus({ preventScroll: true });
     runner = run();
-    checkMail();
+    checkMail(); lifeSoon();
   };
 
   /* ── Test hook: ?debug=1 ── */
@@ -1159,13 +1502,17 @@
       me: function () { return { map: map.id, x: me.x, y: me.y, dir: me.dir }; }, frames: function () { return frames; },
       fire: fire, interact: function (id) { if (!fire(id)) talk(id); }, teleport: function (m, x, y) { enter(m, x, y); },
       walkTo: walkPath, bfs: bfs, map: function () { return map; }, getMap: getMap, people: people, locate: locate, questTarget: questTarget,
-      tap: tapTile, step: function (d) { tryMove(d); kick(); }, tickNow: function (ms) { var n = 0; do { step(ms || 1000); n++; } while ((me.moving || path.length) && n < 500); draw(performance.now()); }, autoWalk: autoWalkQuest, openBag: openBag, openMenu: openMenu, openReport: openReport, closeModal: closeModal,
+      tap: tapTile, step: function (d) { tryMove(d); kick(); }, tickNow: function (ms) { var n = 0; do { step(ms || 1000); stepLife(ms || 1000); n++; } while ((me.moving || path.length) && n < 500); draw(performance.now()); }, autoWalk: autoWalkQuest, openBag: openBag, openMenu: openMenu, openReport: openReport, closeModal: closeModal,
       setProfile: function (p) { P = fillProfile(p); save(); }, coachStart: coachStart, coach: function () { return coach; }, coachNext: coachNext, coachEnd: coachEnd,
       // between lessons
       town: function () { return town(); }, today: today, setDayShift: function (n) { dayShift = n; }, openHelps: openHelps, helpFor: helpFor, gossipFor: gossipFor, bubbles: townBubbles,
       runHelp: function (id) { var hs = openHelps().filter(function (q) { return q.id === id; }); return hs.length ? runHelp(hs[0]) : Promise.resolve('closed'); },
       checkMail: checkMail, readMail: readMail, openShop: openShop, buy: buy, openCloset: openCloset, placeDecor: placeDecor, objects: function () { return objects; },
-      gateStart: function () { return fire('gate:start'); }, encodeSave: encodeSave, decodeSave: decodeSave, applyImport: applyImport, openTakeHome: openTakeHome, mem: function () { return mem; }, SHOP: SHOP
+      game: function () { return ui && ui.data && ui.data.game ? ui.data : null; }, // the open job game: { stage, st, start, act, tick, finish, done, skip }
+      gateStart: function () { return fire('gate:start'); }, encodeSave: encodeSave, decodeSave: decodeSave, applyImport: applyImport, openTakeHome: openTakeHome, mem: function () { return mem; }, SHOP: SHOP,
+      // town life and effects: life(rnd) makes one change now (rnd: a random function, for a repeatable test); fx() is the running effects
+      life: function (rnd) { return lifeStep(rnd || Math.random); }, walk: function () { return walk; }, facing: function () { return facing; }, hop: function () { return hop; },
+      fx: function () { return { anims: fxRun.length, counts: countRun.length, layer: fxLayer }; }, doorOpen: function () { return doorOpen; }
     };
   }
 })();

@@ -63,7 +63,22 @@
     shop_cap:    { label: 'Red ball cap', layer: 'cap', layerCol: '#b42318' },
     shop_hoodie: { label: 'Grey hoodie', shirt: '#8d8ca6', layer: 'collar', layerCol: '#5c5b70' },
     shop_jersey: { label: 'Team jersey', shirt: '#e2b13c', layer: 'stripe', layerCol: '#2f3a5c' },
-    shop_denim:  { label: 'Denim jacket', shirt: '#4a6a9a', layer: 'blazer', layerCol: '#e9e4d8' }
+    shop_denim:  { label: 'Denim jacket', shirt: '#4a6a9a', layer: 'blazer', layerCol: '#e9e4d8' },
+    // earned by finishing a mission after Payday (one each; the mission's finale adds it to the closet)
+    pathfinder:  { label: 'Pathfinder vest', shirt: '#7a8a4a', layer: 'vest', layerCol: '#c9a46a' },
+    campus:      { label: 'Campus hoodie', shirt: '#7a2e3a', layer: 'collar', layerCol: '#e2b13c' },
+    volunteer:   { label: 'Volunteer vest', shirt: '#42a379', layer: 'vest', layerCol: '#f5b82e' },
+    saver:       { label: 'Saver’s cardigan', shirt: '#2e9c9c', layer: 'blazer', layerCol: '#f2f0e8' },
+    techsuit:    { label: 'Robot tech coveralls', shirt: '#5c6278', layer: 'stripe', layerCol: '#f5b82e' },
+    letterman:   { label: 'Letter jacket', shirt: '#2f3a5c', layer: 'collar', layerCol: '#e2b13c' },
+    campaign:    { label: 'Campaign tee', shirt: '#8a5cc2', layer: 'nametag', layerCol: '#f2f0e8' },
+    advisor:     { label: 'Advisor’s blazer', shirt: '#3b3f5c', layer: 'blazer', layerCol: '#f2f0e8' },
+    moneyfair:   { label: 'Money Fair lanyard', shirt: '#2c7a4b', layer: 'lanyard', layerCol: '#e2b13c' },
+    interview:   { label: 'Interview blazer', shirt: '#4f4f6b', layer: 'blazer', layerCol: '#dcd6f0' },
+    coop:        { label: 'Co-op hoodie', shirt: '#4f78c9', layer: 'collar', layerCol: '#f2f0e8' },
+    stall:       { label: 'Market stall apron', shirt: '#e07b39', layer: 'apron', layerCol: '#f2f0e8' },
+    taxpro:      { label: 'Tax clinic cardigan', shirt: '#6b4428', layer: 'nametag', layerCol: '#f5b82e' },
+    detective:   { label: 'Detective coat', shirt: '#a58a5a', layer: 'blazer', layerCol: '#5c3d24' }
   };
 
   var cache = {};
