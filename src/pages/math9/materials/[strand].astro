@@ -19,18 +19,25 @@ const view = (path: string) => `${base}math9/view/${path}`;
 const items = await Promise.all(
   topicsInStrand(s.slug).map(async (t) => {
     const entry = await getEntry('math9-units', t.slug);
-    return { href: `${base}math9/${t.slug}`, title: t.label, description: entry?.data.hook };
+    return { art: t.slug, href: `${base}math9/${t.slug}`, title: t.label, description: entry?.data.hook };
   }),
 );
 ---
 
 <BaseLayout course="math9" title={`${s.label} — Math 9`} audienceLinks={{ parent: `math9/parents#${s.slug}` }}>
   <CourseHero
-    back={{ href: `${base}math9`, label: 'All topics' }}
+    back={{ href: `${base}math9`, label: 'Math 9' }}
     eyebrow={`Grade 9 Math · ${s.label} strand`}
     title={s.label}
     description={s.blurb}
-  />
+  >
+    <div class="mt-5 flex flex-wrap gap-x-5 gap-y-1">
+      {s.project && (
+        <a href={view(s.project.brief)} class="text-sm font-semibold text-accent-ink hover:underline">Inquiry project →</a>
+      )}
+      <a href={view(s.workbook)} class="text-sm font-semibold text-accent-ink hover:underline">Strand workbook →</a>
+    </div>
+  </CourseHero>
 
   <TopicList heading="Pick a topic" items={items} />
 
