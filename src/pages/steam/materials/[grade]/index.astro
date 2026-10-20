@@ -1,0 +1,36 @@
+---
+// One STEAM grade: its four units, each built around a project.
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import CourseHero from '../../../../components/CourseHero.astro';
+import TopicList from '../../../../components/TopicList.astro';
+import { getCollection, getEntry } from 'astro:content';
+import { steamGrades, steamUnitsInGrade, splitSteamSlug, steamUnits as m } from '../../../../data/steam';
+
+export function getStaticPaths() {
+  return steamGrades.map((g) => ({ params: { grade: `grade-${g}` }, props: { g } }));
+}
+
+const { g } = Astro.props as { g: number };
+const base = import.meta.env.BASE_URL;
+const grade = await getEntry('steam-grades', `grade-${g}`);
+const entries = Object.fromEntries((await getCollection('steam-units')).map((e) => [e.slug, e.data]));
+const units = steamUnitsInGrade(g);
+---
+
+<BaseLayout course="steam" title={`STEAM Grade ${g}`} description={grade?.data.hook}>
+  <CourseHero
+    back={{ href: `${base}steam`, label: 'STEAM' }}
+    eyebrow="STEAM"
+    title={`Grade ${g}`}
+    numeral={`${g}`}
+    description={grade?.data.hook ?? 'Four units. Each one is a project, with a Notes booklet and a Design Journal.'}
+  />
+
+  <TopicList
+    heading="Units"
+    items={units.map((u) => {
+      const e = entries[`grade-${g}/${splitSteamSlug(u.slug).unit}`];
+      return { art: `steam-${splitSteamSlug(u.slug).unit}`, href: `${base}${m.studentHref(u.slug)}`, title: u.label, description: e?.hook, meta: e?.topics };
+    })}
+  />
+</BaseLayout>

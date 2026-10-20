@@ -64,6 +64,19 @@ const steamGrades = defineCollection({
   }),
 });
 
+// STEAM unit pages, one per project (steam-units/grade-N/<unit>.md). `topics`
+// is the small-print scope line on the grade page's unit card.
+const steamUnits = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    grade: z.number(),
+    order: z.number(),
+    topics: z.string(),
+    ...studentIntro,
+  }),
+});
+
 // Parent guides, one folder per course (parent-guides/<course>/<unit>.md).
 // The body holds the worked examples.
 const parentGuides = defineCollection({
@@ -179,6 +192,7 @@ export const collections = {
   'science7-units': science7Units,
   'math9-units': math9Units,
   'steam-grades': steamGrades,
+  'steam-units': steamUnits,
   'parent-guides': parentGuides,
   'social9-units': social9Units,
   'social8-units': social8Units,

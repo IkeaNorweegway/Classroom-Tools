@@ -19,6 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl9-labour-market-workbook-v1` · project brief `cefl9-labour-market-project-v1` |
 | **Teams** | 4–5. Each student applies for their own posting; teams coach. |
 | **Audience** | Volunteer interviewers (staff, family, local employers), Session 7 |
+| **Game** | *Get Hired* (CEFL Town), on the unit page, optional: one chapter after each of Sessions 1–4. See "The Get Hired game" below. |
 | **Assessment** | Single-point rubric on the report-card scale. No unit test. |
 
 ::: teacher
@@ -51,6 +52,28 @@ subtitle: 7 sessions × 60 minutes · project-based
 ::: misconception
 **"I have no experience, so there's no point applying."** Moment 4. Leo's résumé is built from coaching, volunteering and a certificate. Help every student find at least three experiences.
 :::
+
+## The Get Hired game (CEFL Town)
+
+A companion game on the unit page, one mission in **CEFL Town**, the top-down town every CEFL unit shares. Each student makes a character once, or keeps an earlier one. Ms. Okafor at the Job Centre helps them apply for a posting at the town's Job Fair.
+
+| Chapter | Play after | What happens in town | Then, in the project |
+|---|---|---|---|
+| 1 · Automation and globalization | Session 1 (Moment 1) | Sort automation and globalization, pick a Job Fair posting, and write where it might be in 10 years. Jas has sent 30 applications and heard nothing. | Step 1 |
+| 2 · Where is the market moving? | Session 2 (Moment 2) | Sort growing, stable and declining industries (the workbook's 2025–2026 data), and describe their posting's industry. Mr. Huang shows a stack of applications that all use the same words. A Résumé Rush round. | Step 2 |
+| 3 · Your résumé and brand | Session 3 (Moment 3) | Leo's résumé, then inspect Jas's ResumeRocket résumé and visit the kiosk. Write a personal brand statement and match their evidence to the posting. | Step 3 |
+| 4 · Interviews | Session 4 (Moment 4) | Put Leo's STAR answer in order, sort requirements from assets, then the mock interview at the Job Fair and the résumé clinic table. | Step 4 |
+
+- **When:** sessions are full, so set each chapter as homework, early-finisher work, or a device day before the next session. Chapters play in order. Chapter length has not been timed with students yet.
+- **Saving:** the game saves in that browser, and the character carries over to every CEFL Town mission. To move to another computer, use Menu → **Take your town home** (a save code or a file).
+- **Controls:** arrow keys or tap to walk, Enter or tap to talk. Tapping the gold goal line at the top walks the student there, which suits students who find moving around hard.
+- **The side story:** Jas's résumé came from the ResumeRocket kiosk: generic, no evidence, not tailored, like everyone else's. At the Job Fair the student runs a résumé clinic; Jas gets hired, and the clinic table is named after the student. The story never changes the goal.
+- **The goal:** the employer offers the job at the mock interview: **at least 3 of 4** questions answered right on the first try. The Résumé Rush game counts weak lines caught; it never changes the goal.
+- **Gentle and Real (Menu):** Gentle gives a hint after a wrong try and shows the answer after 3 tries; Real gives no hints and shows it after 2. In Real the interview still needs 3 strong answers.
+- **Between lessons (optional):** after a chapter, students can choose "Not yet: help around town." Townspeople then ask for help with their own version of what the chapter taught, for a little play money in a wallet that never touches the mission, and one Town Mail letter arrives each day.
+- **Report (Menu → Report for my teacher):** first-try answers by chapter, what the student wrote and chose, game results, how far they got in the side story, and a Between lessons table. It prints. First-try answers make a quick look-for before each step's checkpoint.
+- **Simplifications** to tell students if asked: the four postings are made up; the industry data are dated (Job Bank, May 2026) and should be re-checked.
+
 
 ## Sample products (show all three in Session 5)
 

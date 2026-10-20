@@ -3,6 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import CourseHero from '../../components/CourseHero.astro';
 import TopicList from '../../components/TopicList.astro';
 import { getCollection } from 'astro:content';
+import { steam, steamUnits } from '../../data/steam';
+import { materialCount } from '../../data/manifest';
 const base = import.meta.env.BASE_URL;
 // Cards lead with the student hook; the topic list stays as small print.
 const hooks: Record<string, string> = Object.fromEntries((await getCollection('steam-grades')).map((e) => [e.slug, e.data.hook]));
@@ -50,8 +52,8 @@ const grades = [
     description="Pick a grade. Each unit has a Notes booklet and a Design Journal for planning, sketching, testing, and reflection."
     facts={[
       { n: '5', label: 'grades' },
-      { n: '22', label: 'projects' },
-      { n: '44', label: 'materials' },
+      { n: `${steamUnits.units.length}`, label: 'projects' },
+      { n: `${materialCount(steam.units)}`, label: 'materials' },
     ]}
   />
 

@@ -19,6 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl9-income-tax-workbook-v1` · project brief `cefl9-income-tax-project-v1` |
 | **Teams** | 4–5; one client per team; individual calculations first |
 | **Audience** | Volunteers playing clients at a mock "tax clinic night", Session 7 |
+| **Game** | *Tax Clinic* (CEFL Town), on the unit page, optional: one chapter after each of Sessions 1–4. See "The Tax Clinic game" below. |
 | **Assessment** | Single-point rubric on the report-card scale. No unit test. |
 
 ::: teacher
@@ -76,6 +77,28 @@ T4 box 14 **$46,000**, box 22 **$6,000**; union dues **$800** (deduction); consi
 ::: misconception
 **"Tips and gig money don't need reporting."** Moment 4. All income is reportable; the CRA can reassess with interest and penalties.
 :::
+
+## The Tax Clinic game (CEFL Town)
+
+A companion game on the unit page, one mission in **CEFL Town**, the top-down town every CEFL unit shares. Each student makes a character once, or keeps an earlier one. Ms. Fournier runs the town's free Tax Clinic, and students do the brief's client case (Priya) step by step as volunteers. The tax method is the workbook's simplified 2026 method.
+
+| Chapter | Play after | What happens in town | Then, in the project |
+|---|---|---|---|
+| 1 · The T4 and the return | Session 1 (Moment 1) | Read a T4 and do Jamie's return (federal, Alberta, refund); a refund is your own money coming back. Mo got a text: "CRA: pay $1,200 in gift cards today." Students check his T4: he is getting a refund, and the text is a scam. | Step 1 |
+| 2 · Credits and deductions | Session 2 (Moment 2) | Sort deductions and credits; Jamie's RRSP ($220 saved) and tuition credit ($420). Sort Priya's income (tips and gigs count, a gift doesn't) and work out her tax. Jas's QuickRefund return kept a $99 fee and skipped the tuition credit. | Step 2 |
+| 3 · RRSP or TFSA? | Session 3 (Moment 3) | Sort RRSP and TFSA features, an RRSP limit, then what a $1,500 RRSP saves Priya and their advice (RRSP or TFSA, with a reason). Inspect Mr. Lark's "Tax-Free SUPER Account." A Report It? round. | Step 3 |
+| 4 · Gigs and tips | Session 4 (Moment 4) | Self-employed CPP (Kai, $773.50), finish Priya's return with CPP on her gig, and write her a tip for next year. Then Tax Clinic Night. | Step 4 |
+
+- **When:** sessions are full, so set each chapter as homework, early-finisher work, or a device day before the next session. Chapters play in order. Chapter length has not been timed with students yet.
+- **Saving:** the game saves in that browser, and the character carries over to every CEFL Town mission. To move to another computer, use Menu → **Take your town home** (a save code or a file).
+- **Controls:** arrow keys or tap to walk, Enter or tap to talk. Tapping the gold goal line at the top walks the student there, which suits students who find moving around hard.
+- **The side story:** Instant-refund shops and scams prey on people who don't know how a return works. Students catch Mo's scam text, QuickRefund's fee and missed credit, and the fake "Super Account." At Tax Clinic Night the town files for free, Jas re-files and gets the credit, and the free-filing night is named after the student. The story never changes the goal.
+- **The goal:** every client leaves with an answer: **at least 3 of 4** questions at Tax Clinic Night answered right on the first try. The Report It? game counts slips sorted; it never changes the goal.
+- **Gentle and Real (Menu):** Gentle gives a hint after a wrong try and shows the answer after 3 tries; Real gives no hints and shows it after 2. In Real the clinic's clients still need 3 good answers.
+- **Between lessons (optional):** after a chapter, students can choose "Not yet: help around town." Townspeople then ask for help with their own version of what the chapter taught, for a little play money in a wallet that never touches the mission, and one Town Mail letter arrives each day.
+- **Report (Menu → Report for my teacher):** first-try answers by chapter, what the student wrote and chose, game results, how far they got in the side story, and a Between lessons table. It prints. First-try answers make a quick look-for before each step's checkpoint.
+- **Simplifications** to tell students if asked: the workbook's simplified 2026 method (federal 14% minus $2,303.28 and the tuition credit; Alberta 8% minus $1,821.52; neither below $0; no Alberta tuition credit since 2020); CPP and EI credits are left out; client amounts are samples. Priya's refund is $185.78 with a TFSA or $395.78 with the RRSP; the game follows the student's advice.
+
 
 ## Sample products (show all three in Session 5)
 

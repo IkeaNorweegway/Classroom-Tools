@@ -26,7 +26,21 @@ export const ceflGrades = [7, 8, 9] as const;
 // CEFL Town missions: one shared town game, one mission per unit, one chapter after each project step
 // (_games-context.md → CEFL Town). Keyed by unit slug; doc is the mission's thin entry page.
 const games: Record<string, { label: string; doc: string }> = {
+  '7-labour-market': { label: 'CEFL Town: Career Day (one chapter after each step)', doc: 'cefl7-labour-market-game-v1' },
+  '7-post-secondary': { label: 'CEFL Town: Two Roads (one chapter after each step)', doc: 'cefl7-post-secondary-game-v1' },
+  '7-experiences': { label: 'CEFL Town: The Garden Crew (one chapter after each step)', doc: 'cefl7-experiences-game-v1' },
   '7-income-tax': { label: 'CEFL Town: Payday (one chapter after each step)', doc: 'cefl7-income-tax-game-v2' },
+  '7-money-management': { label: 'CEFL Town: Saving Up (one chapter after each step)', doc: 'cefl7-money-management-game-v1' },
+  '8-labour-market': { label: 'CEFL Town: Future-Proof (one chapter after each step)', doc: 'cefl8-labour-market-game-v1' },
+  '8-post-secondary': { label: 'CEFL Town: The Course Map (one chapter after each step)', doc: 'cefl8-post-secondary-game-v1' },
+  '8-experiences': { label: 'CEFL Town: Open Doors (one chapter after each step)', doc: 'cefl8-experiences-game-v1' },
+  '8-income-tax': { label: 'CEFL Town: Job Offer Showdown (one chapter after each step)', doc: 'cefl8-income-tax-game-v1' },
+  '8-money-management': { label: 'CEFL Town: Grow It (one chapter after each step)', doc: 'cefl8-money-management-game-v1' },
+  '9-labour-market': { label: 'CEFL Town: Get Hired (one chapter after each step)', doc: 'cefl9-labour-market-game-v1' },
+  '9-post-secondary': { label: 'CEFL Town: Pathway Pitch (one chapter after each step)', doc: 'cefl9-post-secondary-game-v1' },
+  '9-experiences': { label: 'CEFL Town: Pitch It (one chapter after each step)', doc: 'cefl9-experiences-game-v1' },
+  '9-income-tax': { label: 'CEFL Town: Tax Clinic (one chapter after each step)', doc: 'cefl9-income-tax-game-v1' },
+  '9-money-management': { label: 'CEFL Town: Debt Detective (one chapter after each step)', doc: 'cefl9-money-management-game-v1' },
 };
 
 function ceflUnit(grade: number, unit: string): CourseUnit {

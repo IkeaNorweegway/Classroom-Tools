@@ -19,6 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl7-money-management-workbook-v1` · project brief `cefl7-money-management-project-v1` |
 | **Teams** | 4–5 students. Each student makes their own budget; the team checks math and gives feedback. |
 | **Audience** | A family member or trusted adult at home (family feedback card), then a short class share in Session 7 |
+| **Game** | *Saving Up* (CEFL Town), on the unit page, optional: one chapter after each of Sessions 1–4. See "The Saving Up game" below. |
 | **Assessment** | Single-point rubric ("How you will be marked") on the report-card scale (4 Excellent · 3 Proficient · 2 Meets · 1 Has yet to meet), scored on Steps 1–4 and the final product. No unit test. |
 
 ::: teacher
@@ -116,6 +117,28 @@ Budget totals equal income; savings is a line in the budget (not "whatever is le
 ::: teacher
 **Timing:** students share at home between Sessions 6 and 7. If cards don't come back, students can share with a staff member during Session 7.
 :::
+
+## The Saving Up game (CEFL Town)
+
+A companion game on the unit page, one mission in **CEFL Town**, the top-down town every CEFL unit shares. Each student makes a character once (style, skin tone, hair, shirt, first name). Sam at the bank gives them one of the project's income cards (A babysitting and allowance, B a yard and snow business, C a part-time job at 16), and they save for its goal over six months. Each month they plan the budget at home, the month runs, and Sam hands them a bank statement to check.
+
+| Chapter | Play after | What happens in town | Then, in the project |
+|---|---|---|---|
+| 1 · Every dollar is a choice | Session 1 (Moment 1) | Ava's trade-off: buy the ticket or save it all? Set a goal. Valley Market offers a SnackBox "free sample" (their choice). Avery's savings are shrinking and she can't say why. | Step 1 |
+| 2 · A plan for your money | Session 2 (Moment 2) | Leo's budget, then months 1–2: every dollar gets a job, then check each statement. A Smart Shopper round. Read Avery's statement and find the charge. | Step 2 |
+| 3 · Setting a money goal | Session 3 (Moment 3) | Ty's car, short-term or long-term goals, months 3–4. Dev's SnackBox was "upgraded" without asking; inspect the sign-up card's fine print. Another Smart Shopper round. | Step 3 |
+| 4 · Ready for surprises | Session 4 (Moment 4) | Ty's emergency fund, then months 5–6 with a surprise cost. At the bank, name each SnackBox trick on three statements. Then open the goal jar. | Step 4 |
+
+- **When:** sessions are full, so set each chapter as homework, early-finisher work, or a device day before the next session. Chapters play in order. Chapter length has not been timed with students yet.
+- **Saving:** the game saves in that browser, and the character carries over to every CEFL Town mission. To move to another computer, use Menu → **Take your town home** (a save code or a file).
+- **Controls:** arrow keys or tap to walk, Enter or tap to talk. Tapping the gold goal line at the top walks the student there, which suits students who find moving around hard.
+- **The side story:** SnackBox's "free sample" quietly charges $9.99 a month. Students find it on Avery's statement, then on Dev's, then in the sign-up card's fine print. At the bank they name each trick, SnackBox refunds the town, and the bank's new monthly reminder is named after the student. The story never changes the goal.
+- **The goal:** the goal jar reaches the goal after month 6, with no debt. The jar is locked, so a surprise is paid from the emergency fund or borrowed at 20% extra. A budget with no fun money breaks with an impulse buy. A careful plan (some fun, an emergency fund, the rest to the goal) always wins, even without disputing SnackBox. The Smart Shopper game never changes the goal.
+- **Gentle and Real (Menu):** Gentle gives a hint after a wrong try and shows the answer after 3 tries; Real gives no hints and shows it after 2. Gentle also checks the budget as students plan (for example, fun money below the floor); Real gives no hints while they plan.
+- **Between lessons (optional):** after a chapter, students can choose "Not yet: help around town." Townspeople then ask for help with their own version of what the chapter taught, for a little play money in a wallet that never touches the mission, and one Town Mail letter arrives each day.
+- **Report (Menu → Report for my teacher):** first-try answers by chapter, what the student wrote and chose, game results, how far they got in the side story, and a Between lessons table. It prints. First-try answers make a quick look-for before each step's checkpoint.
+- **Simplifications** to tell students if asked: months are equal; on Cards A and B the family pays the needs (except business gas on Card B); prices are samples (the project uses real prices); borrowing is from a cousin at a flat 20%.
+
 
 ## Sample products (show all three in Session 5)
 
