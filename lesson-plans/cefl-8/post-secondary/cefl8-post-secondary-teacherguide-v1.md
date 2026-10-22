@@ -19,6 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl8-post-secondary-workbook-v1` · project brief `cefl8-post-secondary-project-v1` |
 | **Teams** | 4–5. Each student makes their own course plan; teams research programs and check plans. |
 | **Audience** | The school counsellor or visiting high school students, Session 7 (3-minute plan conferences) |
+| **Game** | *The Course Map* (CEFL Town), on the unit page, optional: one chapter after each of Sessions 1–4. See "The The Course Map game" below. |
 | **Assessment** | Single-point rubric on the report-card scale, scored on Steps 1–3 and the product. No unit test. |
 
 ::: teacher
@@ -51,6 +52,28 @@ subtitle: 7 sessions × 60 minutes · project-based
 ::: misconception
 **"Grade 10 choices don't matter yet."** Jordan's story and the -1/-2 sequences answer this. Be careful not to imply -2 courses are "worse": they're the right fit for many pathways, and upgrading is possible.
 :::
+
+## The The Course Map game (CEFL Town)
+
+A companion game on the unit page, one mission in **CEFL Town**, the top-down town every CEFL unit shares. Each student makes a character once, or keeps the one from Grade 7. Ms. Haddad, the school counsellor, helps them build a Grade 10–12 course plan that keeps two programs open, and bring it to a plan conference.
+
+| Chapter | Play after | What happens in town | Then, in the project |
+|---|---|---|---|
+| 1 · Admission requirements | Session 1 (Moment 1) | Admission questions, then pick two programs: a first choice and a different second one. Avery's brother Marcus (Grade 12) has a letter: he is missing courses for nursing. | Step 1 |
+| 2 · Planning high school | Session 2 (Moment 2) | Credits, then build a course plan at home; the plan checker tests it against the diploma rules and both programs. Check Marcus's courses against nursing. A Prereq Quiz round. | Step 2 |
+| 3 · Paying for it | Session 3 (Moment 3) | Noor's first year; sort scholarships, bursaries, grants and loans; compare tuition for their two programs; find the old course guide in the library (it is from 2009). Another Prereq Quiz. | Step 3 |
+| 4 · Networking | Session 4 (Moment 4) | How to ask someone about their path, a conversation with a new contact, then the plan conference at the School. | Step 4 |
+
+- **When:** sessions are full, so set each chapter as homework, early-finisher work, or a device day before the next session. Chapters play in order. Chapter length has not been timed with students yet.
+- **Saving:** the game saves in that browser, and the character carries over to every CEFL Town mission. To move to another computer, use Menu → **Take your town home** (a save code or a file).
+- **Controls:** arrow keys or tap to walk, Enter or tap to talk. Tapping the gold goal line at the top walks the student there, which suits students who find moving around hard.
+- **The side story:** Marcus followed an old course guide and is missing courses for nursing, and he thinks he can't afford school either. At the plan conference he plans upgrading, and the student's course map replaces the old guide, named after the student. The story never changes the goal.
+- **The goal:** the plan conference is convinced: **at least 3 of 4** questions answered right on the first try. The Prereq Quiz game counts right answers; it never changes the goal.
+- **Gentle and Real (Menu):** Gentle gives a hint after a wrong try and shows the answer after 3 tries; Real gives no hints and shows it after 2. Gentle shows the plan checker while students build; Real hides it until they press Check.
+- **Between lessons (optional):** after a chapter, students can choose "Not yet: help around town." Townspeople then ask for help with their own version of what the chapter taught, for a little play money in a wallet that never touches the mission, and one Town Mail letter arrives each day.
+- **Report (Menu → Report for my teacher):** first-try answers by chapter, what the student wrote and chose, game results, how far they got in the side story, and a Between lessons table. It prints. First-try answers make a quick look-for before each step's checkpoint.
+- **Simplifications** to tell students if asked: the six programs' requirements are typical (each school sets its own); the diploma rules are the workbook's summary; the Rutherford Scholarship (up to $2,500) and U of A tuition are real, other tuition is a sample.
+
 
 ## Sample products (show all three in Session 5)
 

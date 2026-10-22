@@ -1,7 +1,9 @@
 /* CEFL Town mission: Grade 7 Income and Tax — "Payday" (companion to the project First Paycheque). LO 7-IT.
    Four chapters, one after each project step. You play "future you" at 17, 19 or 24 and plan 8 paycheques:
    plan the jar at home, work a shift, check or build the pay stub, deposit at the bank.
-   Model: the v1 pay model, copied unchanged (MODEL START … MODEL END; the v1 tests run on it), plus the sign-off block below.
+   Model: the v1 pay model (MODEL START … MODEL END; the v1 tests run on it), plus the sign-off block below. One change from v1: the job
+   game at each shift (7-income-tax-jobs.js) moves the next paycheque's hours and builds toward raises (perfOf). With every shift
+   played "ok", the model is v1's exactly.
    Between lessons (HELP START … HELP END): townspeople's own pay problems and Town Mail, on fresh seeds; they pay into the wallet, never a run.
    The side story, "The Pay-O-Matic mystery" (STORY START … STORY END, and the steps): townspeople bring clues a chapter at a time, Mo's
    cheque "felt light" (Ch 1) → Mo's stub, proof (Ch 2) → a friend's stub with a different mistake, three more clues, Milo (Ch 3) →
@@ -84,37 +86,55 @@ function makeWorld(jk, seed) {
 }
 function ageAt(wk, p) { var W = WORKERS[wk]; return W.turns18 && p >= W.turns18 ? 18 : W.age; }
 function rateAt(j, wk, p) { return j.rate18 && ageAt(wk, p) >= 18 ? j.rate18 : j.rate; }
+/* The job game at each shift (s.shifts[p] = 'great' | 'ok' | 'poor' | 'skip'; 7-income-tax-jobs.js). It changes the NEXT paycheque, so the
+   student sees it when planning: a great shift adds hours, and a poor or skipped one takes hours away (not on a salary). The cut is half
+   the bonus, so a careful planner still reaches the goal with every shift poor (the shift-model test checks every job and seed). Great shifts
+   build merit (a poor or skipped one takes one back); 3 merit = a raise from the next paycheque. Two warnings (poor or skipped shifts)
+   without a great one between them wipe the merit: no raise for now. Rates never go down. */
+var PERF_HOURS = { avery: 2, dev: 4, rosa: 4 }, PERF_CUT = { avery: 1, dev: 2, rosa: 2 }, RAISE_WAGE = 50, RAISE_SALARY = 100000, MERIT_FOR_RAISE = 3;
+function perfOf(s, p) { // what the shifts before paycheque p add up to
+  var sh = s.shifts || {}, m = 0, warns = 0, raises = 0, i, t, last = sh[p - 1] || null, j = JOBS[s.job];
+  for (i = 1; i < p; i++) {
+    t = sh[i];
+    if (t === 'great') { m++; warns = 0; if (m >= MERIT_FOR_RAISE) { raises++; m = 0; } }
+    else if (t === 'poor' || t === 'skip') { m = Math.max(0, m - 1); warns++; if (warns >= 2) m = 0; }
+  }
+  return { merit: m, warns: warns, raises: raises, last: last,
+           hours: !j || j.type === 'salary' ? 0 : last === 'great' ? PERF_HOURS[s.worker] : last === 'poor' || last === 'skip' ? -PERF_CUT[s.worker] : 0 };
+}
 function cutHours(wk) { return wk === 'avery' ? 4 : 8; }
 function extraHours(wk) { return wk === 'avery' ? 4 : 8; }
 /* What the worker knows when planning paycheque p */
 function scheduleOf(s, p) {
-  var j = JOBS[s.job];
-  return { hours: j.hours[p - 1] + (p === 5 && s.extra ? extraHours(s.worker) : 0), rate: j.type === 'salary' ? 0 : rateAt(j, s.worker, p), age: ageAt(s.worker, p),
+  var j = JOBS[s.job], pf = perfOf(s, p);
+  return { hours: j.hours[p - 1] + (p === 5 && s.extra ? extraHours(s.worker) : 0) + pf.hours, rate: j.type === 'salary' ? 0 : rateAt(j, s.worker, p) + pf.raises * RAISE_WAGE, age: ageAt(s.worker, p),
+           perf: pf.hours, raises: pf.raises, yearly: j.type === 'salary' ? j.yearly + pf.raises * RAISE_SALARY : 0,
            sales: j.sales ? j.sales[p - 1] : 0, tips: j.tips ? j.tips[p - 1] : 0,
            cutRisk: j.type !== 'salary' && (p === 5 || p === 6) ? cutHours(s.worker) : 0, note: j.notes[p] || '' };
 }
-function grossFrom(j, hours, rate, sales) {
-  if (j.type === 'salary') return Math.round(j.yearly / 26);
+function grossFrom(j, hours, rate, sales, yearly) {
+  if (j.type === 'salary') return Math.round((yearly || j.yearly) / 26);
   return hours * rate + (j.type === 'commission' ? Math.round(sales * j.pct) : 0);
 }
 /* What really happens in paycheque p */
 function actualOf(s, p) {
   var j = JOBS[s.job], sc = scheduleOf(s, p), cut = j.type !== 'salary' && p === s.world.cutAt ? cutHours(s.worker) : 0,
-      hours = sc.hours - cut, sales = s.world.sales[p - 1], g = grossFrom(j, hours, sc.rate, sales);
+      hours = sc.hours - cut, sales = s.world.sales[p - 1], g = grossFrom(j, hours, sc.rate, sales, sc.yearly);
   return { hours: hours, cut: cut, extra: p === 5 && s.extra ? extraHours(s.worker) : 0, rate: sc.rate, age: sc.age, sales: sales, tips: s.world.tips[p - 1],
+           perf: sc.perf, raises: sc.raises, yearly: sc.yearly,
            stub: stubOf(g, sc.age) };
 }
 /* A careful estimate of take-home pay before the two weeks happen: planned hours minus any warned cut, 85 % of expected sales,
    80 % of expected tips. When the pay can come in higher, it may land on the next Pay Card row, so that row's extra tax is kept back too.
    (Because tax is read from the nearest row, a raise of a few dollars can cost up to $22; a raise of $50 or more always leaves more take-home pay.) */
 function safeTakeHome(s, p) {
-  var j = JOBS[s.job], sc = scheduleOf(s, p), g = grossFrom(j, sc.hours - sc.cutRisk, sc.rate, sc.sales * 0.85), r = rowOf(g),
+  var j = JOBS[s.job], sc = scheduleOf(s, p), g = grossFrom(j, sc.hours - sc.cutRisk, sc.rate, sc.sales * 0.85, sc.yearly), r = rowOf(g),
       step = j.type === 'salary' || r >= 2200 ? 0 : taxAtRow(r + 100) - taxAtRow(r);
   return stubOf(g, sc.age).net - step + Math.round(sc.tips * 0.8);
 }
 function billsOf(wk) { return WORKERS[wk].bills.reduce(function (t, b) { return t + b[2]; }, 0); }
 function newRun(wk, jk, seed) {
-  return { worker: wk, job: jk, seed: seed, world: jk ? makeWorld(jk, seed) : null, p: 0, bank: 0, jar: 0, bounces: 0, strikes: 0, extra: false, covered: 0, log: [] };
+  return { worker: wk, job: jk, seed: seed, world: jk ? makeWorld(jk, seed) : null, p: 0, bank: 0, jar: 0, bounces: 0, strikes: 0, extra: false, covered: 0, log: [], shifts: {} };
 }
 function setJob(s, jk) { s.job = jk; s.world = makeWorld(jk, s.seed); }
 /* Payday: take-home pay and tips come in; bills and the jar transfer go out. Under $0 means a payment bounced. */
@@ -160,7 +180,7 @@ function stubAsPrinted(s, p, kind) {
   var a = actualOf(s, p), j = JOBS[s.job], hours = a.hours, comm = j.type === 'commission' ? Math.round(a.sales * j.pct) : 0, g, st;
   if (kind === 'hours') hours = a.hours - ERR_CUT;
   if (kind === 'commission') comm = Math.round(Math.max(0, a.sales - ERR_SALE) * j.pct);
-  g = j.type === 'salary' ? Math.round(j.yearly / 26) : hours * a.rate + comm;
+  g = j.type === 'salary' ? Math.round(a.yearly / 26) : hours * a.rate + comm;
   st = { hours: hours, rate: a.rate, sales: kind === 'commission' ? Math.max(0, a.sales - ERR_SALE) : a.sales, comm: comm, gross: g, ei: eiOf(g), cpp: cppOf(g, a.age), tax: taxOf(g), age: a.age, kind: kind || null };
   if (kind === 'cppMinor') st.cpp = Math.max(0, Math.round((g - 13500) * 0.0595));
   if (kind === 'cppExempt') st.cpp = Math.round(g * 0.0595);
@@ -350,27 +370,68 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
     dev:   { label: '19, sharing an apartment', short: 'You are 19. You share an apartment with your friend Dev.', family: 'dev', goalIcon: 'key' },
     rosa:  { label: '24, paying off a student loan', short: 'You are 24. You share a house with Rosa and pay off a student loan.', family: 'rosa', goalIcon: 'cert' }
   };
-  var WORK = { // each boss has a voice: hi (first shift), pay (payday), app (when Pay-O-Matic arrives), idle (small talk)
+  var WORK = { // each boss has a voice: hi (first shift), pay (payday), app (when Pay-O-Matic arrives), idle (small talk), great / ok / poor (the shift game)
     grocer: { b: 'grocer', boss: 'Mr. Huang', outfit: 'apron', look: { base: 2, skin: 's2', hair: 'black', shirt: 'green', pants: '#3b3f5c' },
-      hi: 'Welcome to Valley Market! Stack the apples nicely. People notice.', pay: 'Payday! Nice work this week.', app: 'We use a new app for pay now. Pay-O-Matic 3000. I am... not a computer person.', idle: 'The bananas came in green again. Patience.' },
+      hi: 'Welcome to Valley Market! Stack the apples nicely. People notice.', pay: 'Payday! Nice work this week.', app: 'We use a new app for pay now. Pay-O-Matic 3000. I am... not a computer person.', idle: 'The bananas came in green again. Patience.',
+      great: 'Look at that! Customers are smiling. Very good.', ok: 'Good, steady work. Thank you.', poor: 'Hmm. The line got long today, and some change was wrong.' },
     busser: { b: 'diner', boss: 'Ms. Pereira', outfit: 'busser', look: { base: 1, skin: 's3', hair: 'brown', shirt: 'red', pants: '#2f2f38' },
-      hi: 'Welcome to the Lantern! Grab a tray. Table six needs you.', pay: 'Payday! You earned it. Table six left a mess.', app: 'Head office says we use Pay-O-Matic 3000 now. Fancy, right?', idle: 'Try the pie. Everyone says it’s the best in town.' },
+      hi: 'Welcome to the Lantern! Grab a tray. Table six needs you.', pay: 'Payday! You earned it. Table six left a mess.', app: 'Head office says we use Pay-O-Matic 3000 now. Fancy, right?', idle: 'Try the pie. Everyone says it’s the best in town.',
+      great: 'You flew around this place! Table six never looked so clean.', ok: 'Not bad! The tables got done.', poor: 'Rough night. People were waiting at the door.' },
     sports: { b: 'sports', boss: 'Coach Tam', outfit: 'polo', look: { base: 0, skin: 's2', hair: 'black', shirt: 'red', pants: '#2f3a5c' },
-      hi: 'Welcome to the team! Big smile. Know your shoes.', pay: 'Payday! Great hustle out there.', app: 'Huddle up. Payroll is on Pay-O-Matic 3000 now. New playbook!', idle: 'Hydrate! That goes for everyone.' },
+      hi: 'Welcome to the team! Big smile. Know your shoes.', pay: 'Payday! Great hustle out there.', app: 'Huddle up. Payroll is on Pay-O-Matic 3000 now. New playbook!', idle: 'Hydrate! That goes for everyone.',
+      great: 'MVP! That was a championship shift!', ok: 'Solid game. Good effort out there.', poor: 'Tough game. Customers went home with the wrong gear.' },
     warehouse: { b: 'warehouse', boss: 'Mr. Kowalski', outfit: 'hivis', look: { base: 4 },
-      hi: 'Vest on. Lift with your legs. We ship by four.', pay: 'Payday. Good work. Don’t spend it all on snacks.', app: 'Head office bought Pay-O-Matic 3000. I don’t trust it. Check your stub.', idle: 'Forty boxes an hour. That’s the goal.' },
+      hi: 'Vest on. Lift with your legs. We ship by four.', pay: 'Payday. Good work. Don’t spend it all on snacks.', app: 'Head office bought Pay-O-Matic 3000. I don’t trust it. Check your stub.', idle: 'Forty boxes an hour. That’s the goal.',
+      great: 'Fast and right. That’s how we ship by four.', ok: 'Okay. The boxes got out.', poor: 'Parcels on the floor. Parcels in the wrong chute. Not okay.' },
     bikeshop: { b: 'bikeshop', boss: 'Bea', outfit: 'cap', look: { base: 3, skin: 's1', hair: 'blond', shirt: 'blue', pants: '#3b3f5c' },
-      hi: 'Welcome to Spoke & Chain! Do you know a derailleur from a doorknob? You will.', pay: 'Payday! Ride safe.', app: 'We switched to Pay-O-Matic 3000. It has more settings than my bike.', idle: 'A clean chain is a happy chain.' },
+      hi: 'Welcome to Spoke & Chain! Do you know a derailleur from a doorknob? You will.', pay: 'Payday! Ride safe.', app: 'We switched to Pay-O-Matic 3000. It has more settings than my bike.', idle: 'A clean chain is a happy chain.',
+      great: 'Every bike rolled out right. Nice wrenching!', ok: 'Decent day at the desk.', poor: 'Riders came back with the same problems. Not great.' },
     phones: { b: 'phones', boss: 'Mr. Singh', outfit: 'lanyard', look: { base: 2, skin: 's3', hair: 'black', shirt: 'teal', pants: '#2f2f38' },
-      hi: 'Welcome to CellPoint! Smile. Every customer is a sale waiting to happen.', pay: 'Payday! Great numbers this week.', app: 'Great news! Pay-O-Matic 3000! Fully automatic! What could go wrong?', idle: 'Have you seen the new phone? It folds. Twice.' },
+      hi: 'Welcome to CellPoint! Smile. Every customer is a sale waiting to happen.', pay: 'Payday! Great numbers this week.', app: 'Great news! Pay-O-Matic 3000! Fully automatic! What could go wrong?', idle: 'Have you seen the new phone? It folds. Twice.',
+      great: 'Happy customers! They’ll come back and bring their friends.', ok: 'Good numbers. Keep it up.', poor: 'Customers left on the wrong plans. That costs us.' },
     office: { b: 'clinic', boss: 'Ms. Ahmed', outfit: 'blazer', look: { base: 3, skin: 's3', hair: 'black', shirt: 'purple', pants: '#2f2f38' },
-      hi: 'Welcome to Riverbend Clinic. Here is your desk. And your very full calendar.', pay: 'Your pay is ready. Thank you for keeping us organized.', app: 'The clinic moved payroll to Pay-O-Matic 3000. Please review your stub carefully.', idle: 'If it isn’t in the calendar, it didn’t happen.' },
+      hi: 'Welcome to Riverbend Clinic. Here is your desk. And your very full calendar.', pay: 'Your pay is ready. Thank you for keeping us organized.', app: 'The clinic moved payroll to Pay-O-Matic 3000. Please review your stub carefully.', idle: 'If it isn’t in the calendar, it didn’t happen.',
+      great: 'Not one mistake in the calendar. Wonderful.', ok: 'The schedule held together. Thank you.', poor: 'Two patients showed up for the same time. That can’t happen.' },
     apprentice: { b: 'electric', boss: 'Joe', outfit: 'hardhat', look: { base: 5 },
-      hi: 'Welcome aboard! Rule one: hard hat on. Rule two: see rule one.', pay: 'Payday! Safe work, good work.', app: 'Office switched pay to some app. Pay-O-Matic 3000. I just do wires, kid.', idle: 'Measure twice, cut once.' },
+      hi: 'Welcome aboard! Rule one: hard hat on. Rule two: see rule one.', pay: 'Payday! Safe work, good work.', app: 'Office switched pay to some app. Pay-O-Matic 3000. I just do wires, kid.', idle: 'Measure twice, cut once.',
+      great: 'Safe and right, every circuit. You’ll make journeyman yet.', ok: 'Good. Nobody got hurt.', poor: 'Wires on the wrong screws. And the breaker! Safety first, always.' },
     furniture: { b: 'furniture', boss: 'Mrs. Novak', outfit: 'nametag', look: { base: 1, skin: 's1', hair: 'grey', shirt: 'purple', pants: '#3b3f5c' },
-      hi: 'Welcome, dear! Help people find the comfiest couch in town.', pay: 'Payday, dear! Treat yourself to something small.', app: 'My nephew set up Pay-O-Matic 3000 for us. He says it’s very clever.', idle: 'Sit on that recliner. Isn’t it lovely?' }
+      hi: 'Welcome, dear! Help people find the comfiest couch in town.', pay: 'Payday, dear! Treat yourself to something small.', app: 'My nephew set up Pay-O-Matic 3000 for us. He says it’s very clever.', idle: 'Sit on that recliner. Isn’t it lovely?',
+      great: 'Every couch fit! You have a good eye, dear.', ok: 'Nice work, dear.', poor: 'Oh dear. Couches came back today.' }
   };
   function bossId(jk) { return 'boss_' + jk; }
+  /* ── The job game at every shift (7-income-tax-jobs.js; the effect is perfOf in the model) ── */
+  function jobGame(S) { return T.jobGames && S.run && S.run.job ? T.jobGames[S.run.job] : null; }
+  function shiftGameOpts(S, seed, p, help) {
+    var jk = S.run.job, g = jobGame(S), j = JOBS[jk], sal = j.type === 'salary', last = p >= PERIODS;
+    var q = /[?!]$/.test(g.name), what = help ? 'an extra shift' : 'your shift'; // "Will it fit? Your shift at …", "Till rush: your shift at …"
+    return { title: g.name + (q ? ' ' + what.charAt(0).toUpperCase() + what.slice(1) : ': ' + what) + ' at ' + j.biz, name: 'minigame', game: g, seed: seed, seconds: 60, leave: !!help,
+      skipNote: last ? 'This is your last shift.' : sal ? 'Skipping goes in your file for your review.' : 'Skipping means fewer hours on your next paycheque.',
+      tierText: help ? { great: 'Full pay: ' + fmt(SHIFT_PAY) + '.', ok: 'Half pay: ' + fmt(SHIFT_PAY / 2) + '.', poor: 'No pay this time. Try again tomorrow.' }
+        : last ? null : sal ? { great: 'A step toward a raise at your review.', ok: 'Your boss is happy with steady work.', poor: 'Your boss will put a warning in your file.' }
+        : { great: 'Your boss will give you more hours next paycheque. It is a step toward a raise, too.', ok: 'Same hours next paycheque.', poor: 'Your boss will cut your hours next paycheque.' } };
+  }
+  async function shiftNews(api, S, p) { // the boss reacts, then says what the shift means for the next paycheque
+    var r = S.run, b = bossId(r.job), w = WORK[r.job], t = r.shifts[p], sal = J(S).type === 'salary', bf = perfOf(r, p), af = perfOf(r, p + 1), L = [];
+    L.push(t === 'skip' ? 'You were here, but you didn’t really work that shift.' : w[t]);
+    if (p >= PERIODS) L.push(t === 'great' ? 'Last shift, and a great one. I’ll write you a good reference.' : t === 'ok' ? 'Thanks for all your shifts.' : 'Not your best last shift. Thanks anyway.');
+    else {
+      if (af.hours > 0) L.push('Great work earns more hours: ' + af.hours + ' more on your next paycheque.');
+      if (af.hours < 0) L.push('So I’m giving some of your hours to someone else: ' + (-af.hours) + ' fewer on your next paycheque.');
+      if (sal && t === 'great' && af.raises === bf.raises) L.push('On a salary, your pay stays the same. But I’m noting this for your review.');
+      if (af.raises > bf.raises) L.push(sal ? 'Review time! Three great shifts. Your salary goes up ' + fmtW(RAISE_SALARY) + ' a year. That’s ' + fmt(Math.round((J(S).yearly + af.raises * RAISE_SALARY) / 26) - Math.round((J(S).yearly + bf.raises * RAISE_SALARY) / 26)) + ' more every paycheque.'
+        : 'That’s three great shifts. You’ve earned a raise! ' + fmt(RAISE_WAGE) + ' more an hour, starting next paycheque.');
+      else if (t === 'great') L.push(MERIT_FOR_RAISE - af.merit === 1 ? 'One more great shift, and you’ve earned a raise.' : (MERIT_FOR_RAISE - af.merit) + ' more great shifts, and we’ll talk about a raise.');
+      if (t === 'poor' || t === 'skip') L.push(af.warns >= 2 ? 'That’s your second warning. ' + (bf.merit ? 'Your progress toward a raise starts over. ' : '') + 'Show me steady work.' : sal ? 'This goes in your file as a warning.' : 'Consider this a warning.');
+    }
+    await api.say(b, L);
+    api.hud();
+  }
+  var SHIFT_PAY = 800;
+  function shiftHelp(S) { // between lessons: your boss needs someone to cover a shift (wallet pay only; the run never changes)
+    return { id: 'shift-extra', who: bossId(S.run.job), after: 0, pay: SHIFT_PAY, label: 'Cover an extra shift', game: true, ask: 'We’re short-staffed today. Can you cover an extra shift?',
+      run: async function (api, seed) { var r = await api.minigame(shiftGameOpts(S, seed, 0, true)); return !r ? null : r.tier === 'great' ? 'first' : r.tier === 'ok' ? 'second' : 'later'; } };
+  }
   var MILO_LOOK = { base: 0, skin: 's1', hair: 'blond', shirt: 'yellow', pants: '#2f3a5c' }; // Mrs. Novak's nephew, who made Pay-O-Matic
   function payText(j) {
     if (j.type === 'salary') return fmtW(j.yearly) + ' a year (salary)';
@@ -468,6 +529,9 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
   function validate(S) {
     if (!S || S.v !== 1 || typeof S.plan !== 'number' || !S.typed || !S.asks || !S.stamps || !Array.isArray(S.letters) || !S.signs) return false;
     if (S.run && (!WORKERS[S.run.worker] || !Array.isArray(S.run.log) || typeof S.run.bank !== 'number' || (S.run.job && (!JOBS[S.run.job] || !S.run.world)))) return false;
+    if (S.run && (!S.run.shifts || typeof S.run.shifts !== 'object')) { // a save from before the job games: every shift so far was ok
+      S.run.shifts = {}; S.run.log.forEach(function (l) { S.run.shifts[l.p] = 'ok'; });
+    }
     return true;
   }
   function W(S) { return WORKERS[S.run.worker]; }
@@ -509,9 +573,11 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
   function planPanel(api, S, p) {
     var r = S.run, j = J(S), sc = scheduleOf(r, p), bills = billsOf(r.worker), Wk = W(S);
     return api.panel({ title: 'Paycheque ' + p + ' of 8: plan payday', name: 'plan', render: function (body, done) {
-      var chips = (sc.note ? '<span class="ct-w">' + esc(sc.note) + '</span> ' : '') + (sc.cutRisk ? '<span class="ct-w warn">⚠ Slow season: hours might be cut by up to ' + sc.cutRisk + '</span> ' : '') + (p === 5 && r.extra && j.type !== 'salary' ? '<span class="ct-w">+' + extraHours(r.worker) + ' extra hours</span>' : '');
+      var pr = p > 1 ? perfOf(r, p - 1).raises : 0, chips = (sc.note ? '<span class="ct-w">' + esc(sc.note) + '</span> ' : '') +
+        (sc.perf > 0 ? '<span class="ct-w good">+' + sc.perf + ' h: great work last shift</span> ' : sc.perf < 0 ? '<span class="ct-w warn">−' + (-sc.perf) + ' h: your last shift went poorly</span> ' : '') +
+        (sc.raises > pr ? '<span class="ct-w good">Raise: ' + (j.type === 'salary' ? '+' + fmtW(RAISE_SALARY) + ' a year' : '+' + fmt(RAISE_WAGE) + ' an hour') + '</span> ' : '') + (sc.cutRisk ? '<span class="ct-w warn">⚠ Slow season: hours might be cut by up to ' + sc.cutRisk + '</span> ' : '') + (p === 5 && r.extra && j.type !== 'salary' ? '<span class="ct-w">+' + extraHours(r.worker) + ' extra hours</span>' : '');
       body.innerHTML = '<div class="ct-doc"><b>The next two weeks</b>' +
-        (j.type === 'salary' ? '<p style="margin:4px 0">Salary: <b>' + fmtW(j.yearly) + '</b> a year, in 26 equal pays.</p>' : '<p style="margin:4px 0">Hours on the schedule: <b>' + sc.hours + ' h</b> × <b>' + fmt(sc.rate) + '</b> an hour' + (j.rate18 && sc.rate !== j.rate ? ' (new: you are 18)' : '') + '</p>') +
+        (j.type === 'salary' ? '<p style="margin:4px 0">Salary: <b>' + fmtW(sc.yearly) + '</b> a year, in 26 equal pays.</p>' : '<p style="margin:4px 0">Hours on the schedule: <b>' + sc.hours + ' h</b> × <b>' + fmt(sc.rate) + '</b> an hour' + (j.rate18 && sc.age >= 18 && r.worker === 'avery' && p === WORKERS.avery.turns18 ? ' (new: you are 18)' : '') + '</p>') +
         (j.type === 'commission' ? '<p style="margin:4px 0">Expected sales: about <b>' + fmtW(sc.sales) + '</b>. You earn ' + Math.round(j.pct * 100) + '% of what you really sell.</p>' : '') +
         (j.type === 'tips' ? '<p style="margin:4px 0">Expected cash tips: about <b>' + fmtW(sc.tips) + '</b>. Tips go straight to you, not on the stub.</p>' : '') +
         (chips ? '<p style="margin:6px 0 0">' + chips + '</p>' : '') + '</div>' +
@@ -545,6 +611,9 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
   }
   function shiftPanel(api, S, p) {
     var r = S.run, a = actualOf(r, p), sc = scheduleOf(r, p), j = J(S), ev = [];
+    if (a.perf > 0) ev.push(['good', 'Your great shift last time earned you <b>' + a.perf + ' more hours</b> this paycheque.']);
+    if (a.perf < 0) ev.push(['bad', 'After your last shift, your boss gave <b>' + (-a.perf) + ' of your hours</b> to someone else.']);
+    if (a.raises && a.raises > perfOf(r, p - 1).raises && p > 1) ev.push(['good', 'Your raise starts this paycheque: ' + (j.type === 'salary' ? fmtW(a.yearly) + ' a year.' : fmt(a.rate) + ' an hour.')]);
     if (a.cut) ev.push(['bad', 'Slow week: your boss cut <b>' + a.cut + ' hours</b>. You worked ' + a.hours + ' hours.']);
     if (a.extra) ev.push([j.type === 'salary' ? '' : 'good', 'You worked <b>' + a.extra + ' extra hours</b> on the weekends' + (j.type === 'salary' ? '. A salary stays the same.' : '.')]);
     if (j.type === 'commission') ev.push([a.sales >= sc.sales ? 'good' : '', 'You sold <b>' + fmtW(a.sales) + '</b> (expected about ' + fmtW(sc.sales) + ').']);
@@ -558,12 +627,12 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
   }
   function timesheet(S, p) {
     var a = actualOf(S.run, p), j = J(S);
-    return '<div class="ct-note" style="margin:0 0 8px"><b>Your timesheet, paycheque ' + p + ':</b> ' + (j.type === 'salary' ? 'salary, ' + fmtW(j.yearly) + ' a year' : a.hours + ' hours at ' + fmt(a.rate)) +
+    return '<div class="ct-note" style="margin:0 0 8px"><b>Your timesheet, paycheque ' + p + ':</b> ' + (j.type === 'salary' ? 'salary, ' + fmtW(a.yearly) + ' a year' : a.hours + ' hours at ' + fmt(a.rate)) +
       (j.type === 'commission' ? ', sales ' + fmtW(a.sales) + ' (' + Math.round(j.pct * 100) + '% commission)' : '') + '. Age ' + a.age + '.</div>';
   }
   function givenText(S, a) {
     var j = J(S);
-    if (j.type === 'salary') return 'Salary ' + fmtW(j.yearly) + ' a year ÷ 26 pays' + (a.extra ? ' (you worked ' + a.extra + ' extra hours)' : '');
+    if (j.type === 'salary') return 'Salary ' + fmtW(a.yearly) + ' a year ÷ 26 pays' + (a.extra ? ' (you worked ' + a.extra + ' extra hours)' : '');
     return a.hours + ' hours × ' + fmt(a.rate) + (j.type === 'commission' ? ' + ' + Math.round(j.pct * 100) + '% of ' + fmtW(a.sales) + ' in sales' : '');
   }
   function stubHint(S, k, a) {
@@ -583,14 +652,17 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
         '<div class="ct-note">The job promised <b>' + fmt(a.stub.gross) + '</b>' + (a.tips ? ' (plus ' + fmtW(a.tips) + ' in cash tips)' : '') + '. Only <b>' + fmt(a.stub.net) + '</b> goes into your account. Where did <b>' + fmt(a.stub.total) + '</b> go?</div>' +
         '<div class="ct-row ct-actions"><button class="ct-btn primary" type="button" id="revGo">Deposit it</button></div>';
       body.querySelector('#revGo').addEventListener('click', function () { done(); });
+      var net = body.querySelector('.ct-line.net .amt'); // net pay appears as the gross, then the deductions come off it
+      setTimeout(function () { if (net.isConnected) api.fx.count(net, a.stub.gross, a.stub.net, fmt); }, 1200);
     } });
   }
   /* Chapters 2 and 4: type every line */
   function stubCalcPanel(api, S, p) {
-    var a = actualOf(S.run, p), j = J(S), u = {};
+    var a = actualOf(S.run, p), j = J(S), u = {}, wasAll = false;
     return api.panel({ title: 'Paycheque ' + p + ': fill in your pay stub', name: 'stubcalc', data: { stub: a.stub }, render: function (body, done) {
       function draw() {
-        var all = LINES.every(function (L) { return u[L.k] && (u[L.k].ok || u[L.k].shown); });
+        var all = LINES.every(function (L) { return u[L.k] && (u[L.k].ok || u[L.k].shown); }), now = all && !wasAll;
+        wasAll = all;
         body.innerHTML = '<p class="ct-small">Teller Sam slides the stub across. Use the Pay Card in your Bag.</p><div class="ct-doc"><div class="ct-doc-h"><b>' + esc(j.biz) + '</b><span>Age ' + a.age + ' · paycheque ' + p + '</span></div><p class="ct-small">' + givenText(S, a) + '</p>' +
           LINES.map(function (L) {
             var x = u[L.k] || {}, cls = L.k === 'net' ? ' net' : L.k === 'gross' ? '' : ' ded', amt = x.ok || x.shown ? '<span class="amt">' + (cls === ' ded' ? '−' : '') + fmt(a.stub[L.k]) + '</span>' :
@@ -600,6 +672,10 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
           '<div class="ct-row ct-actions">' + (all ? '<button class="ct-btn primary" type="button" id="stDone">Deposit it</button>' : '<button class="ct-btn primary" type="button" id="stCheck">Check my stub</button>') + '</div>';
         Array.prototype.forEach.call(body.querySelectorAll('input'), function (i) { i.addEventListener('input', function () { (u[i.id.slice(3)] = u[i.id.slice(3)] || {}).v = i.value; }); i.addEventListener('keydown', function (e) { if (e.key === 'Enter') check(); }); });
         if (all) body.querySelector('#stDone').addEventListener('click', function () { done(); }); else body.querySelector('#stCheck').addEventListener('click', check);
+        if (now) { // every line is checked: each deduction comes off in turn, and the net counts down from the gross
+          Array.prototype.forEach.call(body.querySelectorAll('.ct-line.ded'), function (el, i) { api.fx.bump(el, i * 140); });
+          api.fx.count(body.querySelector('.ct-line.net .amt'), a.stub.gross, a.stub.net, fmt);
+        }
       }
       function check() {
         var max = api.mode === 'real' ? 2 : 3, first = null;
@@ -621,16 +697,16 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
   }
   /* Chapters 3 and 4: the boss's stub. Tap a line you think is wrong, then sign or dispute. */
   function signPanel(api, S, p, kind) {
-    var st = stubAsPrinted(S.run, p, kind), right = stubAsPrinted(S.run, p, null), j = J(S), boss = WORK[S.run.job].boss, flagged = null, tries = 0, recorded = false, msg = '', msgOk = false, gentleWarned = false;
+    var st = stubAsPrinted(S.run, p, kind), right = stubAsPrinted(S.run, p, null), j = J(S), yearly = actualOf(S.run, p).yearly, boss = WORK[S.run.job].boss, flagged = null, tries = 0, recorded = false, msg = '', msgOk = false, gentleWarned = false;
     var rows = [];
-    if (j.type === 'salary') rows.push({ k: 'salary', name: 'Salary', sub: fmtW(j.yearly) + ' ÷ 26', val: fmt(st.gross) });
+    if (j.type === 'salary') rows.push({ k: 'salary', name: 'Salary', sub: fmtW(yearly) + ' ÷ 26', val: fmt(st.gross) });
     else { rows.push({ k: 'hours', name: 'Hours worked', sub: 'at ' + fmt(st.rate) + ' an hour', val: st.hours + ' h' }); if (j.type === 'commission') rows.push({ k: 'comm', name: 'Commission', sub: Math.round(j.pct * 100) + '% of ' + fmtW(st.sales) + ' in sales', val: fmt(st.comm) }); }
     rows.push({ k: 'gross', name: 'Gross pay', sub: 'pay before deductions', val: fmt(st.gross) }, { k: 'ei', name: 'EI', sub: '1.63% of gross', val: '−' + fmt(st.ei), ded: 1 },
       { k: 'cpp', name: 'CPP', sub: st.age < 18 ? 'none under 18' : '5.95% of (gross − $135)', val: '−' + fmt(st.cpp), ded: 1 }, { k: 'tax', name: 'Income tax', sub: 'Pay Card row', val: '−' + fmt(st.tax), ded: 1 },
       { k: 'net', name: 'Net pay', sub: 'take-home pay', val: fmt(st.net), net: 1 });
     var follows = { gross: 1, net: 1, ei: st.root === 'hours' || st.root === 'comm', cpp: st.root === 'hours' || st.root === 'comm', tax: st.root === 'hours' || st.root === 'comm' };
     function explain(k) { // why a line you flagged checks out
-      var m = { hours: 'Your timesheet says ' + right.hours + ' hours. That matches.', comm: 'Your timesheet says ' + fmtW(right.sales) + ' in sales, and ' + Math.round(j.pct * 100) + '% of that is ' + fmt(right.comm) + '. That matches.', salary: fmtW(j.yearly) + ' ÷ 26 = ' + fmt(right.gross) + '. That matches.',
+      var m = { hours: 'Your timesheet says ' + right.hours + ' hours. That matches.', comm: 'Your timesheet says ' + fmtW(right.sales) + ' in sales, and ' + Math.round(j.pct * 100) + '% of that is ' + fmt(right.comm) + '. That matches.', salary: fmtW(yearly) + ' ÷ 26 = ' + fmt(right.gross) + '. That matches.',
         gross: 'Gross pay adds up from the lines above it.', ei: '1.63% of ' + fmt(st.gross) + ' is ' + fmt(eiOf(st.gross)) + '. That matches.', cpp: st.age < 18 ? 'No CPP under 18, and none was taken.' : '5.95% of (' + fmt(st.gross) + ' − $135) is ' + fmt(cppOf(st.gross, st.age)) + '. That matches.',
         tax: 'The Pay Card row for ' + fmt(st.gross) + ' is ' + fmt(taxOf(st.gross)) + '. That matches.', net: 'Net pay is gross minus the deductions. That subtraction is right.' };
       return m[k];
@@ -663,23 +739,35 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
       }
       function finish(short, fixed) {
         body.innerHTML = (fixed ? '<div class="ct-banner good">Fixed before you signed. You will be paid the right amount.</div>' : short ? '<div class="ct-banner bad">You signed it. The bank will pay what the stub says.</div>' : '<div class="ct-banner good">Every line checks out. Signed!</div>') +
+          '<div class="ct-doc pd-signed"><div class="ct-doc-h"><b>' + esc(j.biz) + '</b><span>Paycheque ' + p + ' · net pay ' + fmt(fixed ? right.net : st.net) + '</span></div>' +
+          (fixed ? '<p class="ct-small" style="margin:4px 0">Disputed: ' + esc((rows.filter(function (r) { return r.k === st.root; })[0] || {}).name || 'one line') + '. ' + esc(boss) + ' fixed it.</p>'
+            : '<div class="pd-sig"><svg viewBox="0 0 160 34" aria-hidden="true"><path d="M4 24c10-16 16-18 18-8s-4 14 2 6 10-18 16-14-2 16 6 10 8-10 12-8 0 8 6 6 10-8 16-6 4 6 10 4 14-4 22-4 18 2 28 0" /></svg><span class="pd-wipe"></span><span>Signed: ' + esc(api.profile.name) + '</span></div>') + '</div>' +
           '<p>' + esc(msg || '') + '</p><div class="ct-row ct-actions"><button class="ct-btn primary" type="button" id="sgGo">Take it to the bank</button></div>';
         body.querySelector('#sgGo').addEventListener('click', function () { done(short); });
         body.querySelector('#sgGo').focus();
+        if (fixed) api.fx.stamp(body.querySelector('.pd-signed'), 'Disputed', 'bad', true); // after the choice, never before it
+        else api.fx.fill(body.querySelector('.pd-wipe'), 1, 0, 'x'); // the pen stroke: a paper strip slides off the signature
       }
       draw();
     } });
   }
   function resultPanel(api, S, l) {
-    var inn = l.stub.net - (l.short || 0) + l.tips, max = Math.max(inn, l.bills + l.jarIn, 1), Wk = W(S);
+    var inn = l.stub.net - (l.short || 0) + l.tips, max = Math.max(inn, l.bills + l.jarIn, 1), Wk = W(S), jar = S.run.jar, was = Math.max(0, jar - l.jarIn);
     function row(label, v, col) { return '<span>' + label + '</span><span class="ct-track"><span class="ct-fill" style="width:' + Math.max(1, Math.round(v / max * 100)) + '%;background:' + col + '"></span></span><span class="v">' + fmt(v) + '</span>'; }
     return api.panel({ title: 'Paycheque ' + l.p + ': deposited', name: 'result', render: function (body, done) {
       body.innerHTML = '<div class="ct-flow">' + row('Take-home in', inn, '#2c7a4b') + row('Bills out', l.bills, '#b42318') + row('To the jar', l.jarIn, '#d9a55a') + '</div>' +
+        '<div class="pd-jarrow"><span class="pd-jar" aria-hidden="true"><span class="pd-jarfill"></span></span><span>Goal jar: <b class="pd-jarv">' + fmt(jar) + '</b> of ' + fmtW(Wk.goal) + ' for ' + esc(Wk.goalLabel) + '.</span></div>' +
         (l.short ? '<div class="ct-banner bad">The stub you signed paid you ' + fmt(l.short) + ' less than you earned.</div>' : '') +
         (l.bounced ? '<div class="ct-banner bad">Not enough money for everything. A payment bounced, and the bank charged a ' + fmtW(FEE) + ' fee. Your bank is at ' + fmt(l.bank) + '.' + (l.p < STRIKE_FROM ? ' This one does not count against you yet.' : api.mode === 'real' ? ' Bounces this game: ' + S.run.strikes + ' of ' + STRIKES_TO_LOSE + '.' : '') + '</div>'
           : '<div class="ct-banner good">Every bill was paid. ' + fmt(l.bank) + ' is left in your account.</div>') +
-        '<p>Goal jar: <b>' + fmt(S.run.jar) + '</b> of ' + fmtW(Wk.goal) + '.</p><div class="ct-row ct-actions"><button class="ct-btn primary" type="button" id="resGo">OK</button></div>';
+        '<div class="ct-row ct-actions"><button class="ct-btn primary" type="button" id="resGo">OK</button></div>';
       body.querySelector('#resGo').addEventListener('click', function () { done(); });
+      // the money moves: bills fly from take-home pay into the jar, which fills toward the goal while its total counts up
+      var jf = body.querySelector('.pd-jarfill');
+      if (l.jarIn > 0) {
+        api.fx.fly(body.querySelector('.ct-flow > span'), body.querySelector('.pd-jar'), { icon: '💵', n: 3 });
+        api.fx.fill(jf, was / Wk.goal, jar / Wk.goal, 'y'); api.fx.count(body.querySelector('.pd-jarv'), was, jar, fmt);
+      } else api.fx.fill(jf, jar / Wk.goal, jar / Wk.goal, 'y');
     } });
   }
   function typedPanel(api, S, id, title, prompt) {
@@ -958,18 +1046,19 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
       { id: 'friend', title: T.world.PEOPLE[f].name + '’s stub', biz: fr.biz, type: fr.type, facts: factsText(fr.type, fr), st: fr.printed, ans: fr.kind },
       { id: 'nurse', title: 'Nurse Kaur’s stub', biz: nu.biz, type: nu.type, facts: factsText(nu.type, nu), st: nu.printed, ans: nu.kind }];
     if (mine) { var a = actualOf(S.run, mine.p); rows.push({ id: 'you', title: 'Your paycheque ' + mine.p + ' stub', biz: j.biz, type: j.type, st: mine.printed, ans: mine.kind,
-      facts: factsText(j.type, { hours: a.hours, rate: a.rate, sales: a.sales, pct: j.pct, yearly: j.yearly, age: a.age }) }); }
+      facts: factsText(j.type, { hours: a.hours, rate: a.rate, sales: a.sales, pct: j.pct, yearly: a.yearly, age: a.age }) }); }
     return rows;
   }
   var CASE_HINT = { hours: 'Compare the hours on the stub with the timesheet.', commission: 'Work out the commission from the sales on the timesheet.', cppMinor: 'Look at the age. When does CPP start?',
     cppExempt: 'Work out CPP: 5.95% of (gross pay − $135).', ei: 'Work out EI: 1.63% of the gross pay.', taxRow: 'Find the Pay Card row nearest the gross pay.' };
   /* Town Hall: name what Pay-O-Matic got wrong on each stub in your Case notes */
   function casePanel(api, S) {
-    var rows = caseRows(S), u = {}, max = api.mode === 'real' ? 2 : 3, kinds = Object.keys(RULES);
+    var rows = caseRows(S), u = {}, max = api.mode === 'real' ? 2 : 3, kinds = Object.keys(RULES), wasFin = false;
     return api.panel({ title: 'Town Hall: present your case', name: 'case', wide: true, data: { rows: rows.map(function (r) { return { id: r.id, ans: r.ans }; }) }, render: function (body, done) {
       function all() { return rows.every(function (r) { return u[r.id] && (u[r.id].ok || u[r.id].shown); }); }
       function draw() {
-        var fin = all();
+        var fin = all(), now = fin && !wasFin;
+        wasFin = fin;
         body.innerHTML = '<p>The whole town is watching. For each stub in your Case notes, show council <b>what Pay-O-Matic got wrong</b>. Check it with the facts and your Pay Card.</p>' +
           '<details class="ct-ref"><summary>Show the Pay Card</summary>' + payCardHTML() + '</details>' +
           '<div class="ct-items" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">' + rows.map(function (r) {
@@ -983,6 +1072,10 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
           '<div class="ct-row ct-actions">' + (fin ? '<button class="ct-btn primary" type="button" id="csDone">Done</button>' : '<button class="ct-btn primary" type="button" id="csGo">Show council</button>') + '</div>';
         Array.prototype.forEach.call(body.querySelectorAll('select'), function (el) { el.addEventListener('change', function () { (u[el.id.slice(3)] = u[el.id.slice(3)] || {}).v = el.value; }); });
         if (fin) body.querySelector('#csDone').addEventListener('click', function () { done(); }); else body.querySelector('#csGo').addEventListener('click', check);
+        if (now) { // a "Proved" stamp on each stub you named yourself (none on a stub whose answer was shown)
+          var cards = body.querySelectorAll('.ct-items > div');
+          rows.forEach(function (r, i) { if (u[r.id].ok) setTimeout(function () { api.fx.stamp(cards[i], 'Proved', 'good'); }, i * 150); });
+        }
       }
       function check() {
         var first = null;
@@ -1002,13 +1095,14 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
   }
   /* The library: fix Pay-O-Matic's settings with Milo, then run Mo's stub again */
   function fixPanel(api, S) {
-    var u = {}, max = api.mode === 'real' ? 2 : 3, mo = storyStub('mo');
+    var u = {}, max = api.mode === 'real' ? 2 : 3, mo = storyStub('mo'), wasFin = false;
     SETTINGS.forEach(function (st) { u[st.k] = { v: st.milo }; });
     var HINT = { hours: 'Pay is for every hour worked.', comm: 'Commission is a % of what was really sold.', ei: 'The Pay Card says how much EI is.', cppAge: 'The Pay Card says who pays CPP.', cpp: 'The Pay Card says how CPP is worked out.', tax: 'How do you read income tax on the Pay Card?' };
     return api.panel({ title: 'Fix Pay-O-Matic', name: 'fix', wide: true, data: { rows: SETTINGS.map(function (st) { return { k: st.k, ans: st.right }; }) }, render: function (body, done) {
       function all() { return SETTINGS.every(function (st) { return u[st.k].ok || u[st.k].shown; }); }
       function draw() {
-        var fin = all();
+        var fin = all(), now = fin && !wasFin;
+        wasFin = fin;
         body.innerHTML = '<p>Milo: “These are the rules I typed in. Be honest. Fix anything that’s wrong, then we’ll run a test.”</p>' +
           '<details class="ct-ref"><summary>Show the Pay Card</summary>' + payCardHTML() + '</details>' +
           '<div class="ct-doc"><div class="ct-doc-h"><b>Pay-O-Matic 3000</b><span>Settings</span></div>' + SETTINGS.map(function (st) {
@@ -1021,6 +1115,10 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
           '<div class="ct-row ct-actions">' + (fin ? '<button class="ct-btn primary" type="button" id="fxDone">Done</button>' : '<button class="ct-btn primary" type="button" id="fxGo">Run a test</button>') + '</div>';
         Array.prototype.forEach.call(body.querySelectorAll('select'), function (el) { el.addEventListener('change', function () { u[el.id.slice(3)].v = +el.value; }); });
         if (fin) body.querySelector('#fxDone').addEventListener('click', function () { done(); }); else body.querySelector('#fxGo').addEventListener('click', check);
+        if (now) { // Pay-O-Matic settles: the settings get a "Fixed" stamp, then the test run pops in
+          var docs = body.querySelectorAll('.ct-doc');
+          api.fx.stamp(docs[0], 'Fixed', 'good'); api.fx.pop(body.querySelector('.ct-banner'), 200); api.fx.pop(docs[1], 320);
+        }
       }
       function check() {
         var first = null;
@@ -1093,7 +1191,15 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
         var b = bossId(S.run.job), w = WORK[S.run.job];
         await api.quest('Go to work at ' + bizName(S) + '. ' + w.boss + ' is waiting.', b);
         if (p === 1) await api.say(b, w.hi);
+        if (!S.run.shifts) S.run.shifts = {};
+        if (!S.run.shifts[p] && jobGame(S)) {
+          if (p === 1) await api.say(b, ['Every shift, you get one busy minute. Do well, and you earn more hours. Then raises.', 'Skip it or do poorly, and the hours go to someone else. Ready?']);
+          var res = await api.minigame(shiftGameOpts(S, S.seed * 31 + p, p, false));
+          S.run.shifts[p] = res.tier; S.shiftLog = S.shiftLog || {}; S.shiftLog[p] = { tier: res.tier, score: res.score }; api.save();
+          await shiftNews(api, S, p);
+        } else if (!S.run.shifts[p]) S.run.shifts[p] = 'ok'; // no job games on this page: every shift is ok, as in v1
         await shiftPanel(api, S, p);
+        api.fx.banner('Payday', 'Paycheque ' + p + ' of 8');
         if (p >= 5 && p <= 7) {
           if (!S.errs) S.errs = errorPlan(S.seed);
           await api.say(b, p === 5 ? ['Here’s your stub. Pay-O-Matic made it!', 'The app is new. Please check it before you sign.'] : p === 6 ? 'Stub time. Check it, then sign. You know the drill.'
@@ -1101,7 +1207,7 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
           var short = await signPanel(api, S, p, errorKindFor(S.run, p, S.errs));
           S.signs[p] = S.signs[p] || { result: 'ok', short: short || 0 }; S.signs[p].short = short || 0;
         } else await api.say(b, p === 1 ? [w.pay, 'Here’s your first paycheque. Take it to the bank!'] : p === 8 && story(S).fixed ? [w.pay, 'Pay-O-Matic 3001 made this one. I hear you fixed it. Thank you!'] : w.pay);
-        api.give('Pay stub ' + p); api.hud();
+        api.give('Pay stub ' + p, '✉️', b); api.hud();
       }),
       step('bank' + p, async function (api, S) {
         await api.quest('Take paycheque ' + p + ' to Sam at the bank', 'sam');
@@ -1134,12 +1240,12 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
         var keys = ['avery', 'dev', 'rosa'], i = await api.choose('okafor', 'Which future you do you want to play?', keys.map(function (k) { return SIT[k].label; }));
         S.sit = keys[i]; S.run = newRun(S.sit, null, S.seed);
         await api.say('okafor', FUTURE[S.sit].concat(['So here’s your goal: save ' + fmtW(W(S).goal) + ' for ' + W(S).goalLabel + '. You have 8 paydays. That’s about four months.', 'First, you need a job! Check the job board by the window. Let’s go!']));
-        api.give('Pay Card'); api.hud(); api.refresh();
+        api.give('Pay Card', null, 'okafor'); api.hud(); api.refresh();
       }));
       a.push(step('board', async function (api, S) {
         await api.quest('Find a job on the job board at the Job Centre', 'jobboard');
         var jk = await jobBoard(api, S);
-        setJob(S.run, jk); api.give('Job ad: ' + JOBS[jk].title); api.outfit(); api.refresh();
+        setJob(S.run, jk); api.give('Job ad: ' + JOBS[jk].title, null, 'jobboard'); api.outfit(); api.refresh();
         await api.say('you', ['I got the job at ' + JOBS[jk].biz + '!', 'And I get a ' + T.art.OUTFITS[WORK[jk].outfit].label.toLowerCase() + '. Looking good.']);
       }));
       a.push(step('paytype', async function (api, S) {
@@ -1232,7 +1338,7 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
         var order = [['jas', 'Jas at Service Canada'], ['grandpa', 'Grandpa'], ['nurse', 'Nurse Kaur at the hospital']];
         await api.quest('Ms. Okafor wants to show you something', 'okafor');
         await api.say('okafor', ['You know what comes off your pay. But where does it GO?', 'Let’s find out. Here’s a Deduction Map.', 'Visit Jas, your grandpa and the hospital. Get a stamp from each!']);
-        api.give('Deduction Map'); S.mapGiven = true; S.stampPhase = true;
+        api.give('Deduction Map', '🗺️', 'okafor'); S.mapGiven = true; S.stampPhase = true;
         while (true) {
           var left = order.filter(function (o) { return !S.stamps[o[0]]; });
           if (!left.length) break;
@@ -1267,18 +1373,20 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
         var f = friendId(S);
         S.scene = 'hall'; api.refresh();
         await api.quest('Go to the big meeting at Town Hall', 'mayor');
+        api.fx.face('all', 'mayor');
         await api.say('mayor', ['Order! Order! Thank you all for coming.', 'First: Pay-O-Matic 3000. Fourteen complaints this week!', 'But a complaint is not proof. Does anyone know what is actually wrong?']);
         await api.say('worker', 'My cheque felt light!');
         await api.say(f, 'Mine too!');
         await api.say('milo', 'Pay-O-Matic is perfect! People just don’t understand math!');
         await api.say('mayor', 'Feelings are not proof. Anyone?');
+        api.fx.face('all'); // the whole room turns to you
         await api.say('you', ['I can show you. I’ve kept notes for months.']);
         await casePanel(api, S);
         await api.say('mayor', ['You named the mistake on every stub. And you showed your math.', 'Milo? Anything to say?']);
         await api.say('milo', ['...They’re all real. I didn’t check my math. I thought math was optional.', 'Can you help me fix it? You know the rules better than I do.']);
         await api.say('you', 'Meet me at the library.');
         await api.say('mayor', ['Until it’s fixed, every worker checks every stub before signing.', 'Next: taxes. Some people want less tax. Some want more. Let’s hear from you.']);
-        await dialPanel(api, S); api.give('Tax Opinion card');
+        await dialPanel(api, S); api.give('Tax Opinion card', null, 'mayor');
         await api.say('mayor', 'A reason AND a trade-off! You’d make a great councillor. Meeting over!');
         story(S).hall = 1; S.scene = null; api.refresh();
       }));
@@ -1295,12 +1403,16 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
         var f = friendId(S), nm = api.profile.name;
         S.scene = 'hero'; api.refresh();
         await api.quest('Councillor Wright asked everyone to come to Town Hall', 'mayor');
+        api.fx.face('all');
         await api.say('mayor', ['Everyone, a moment, please!', 'A few months ago, nobody in this town could check a pay stub. Then one person learned how.', nm + ' noticed something was wrong, kept notes, proved every mistake, and helped fix Pay-O-Matic.', 'So from today, a person checks every pay stub in town. We’re calling it the ' + nm + ' Rule.']);
         await api.say('worker', 'All 40 hours, every cheque. Thank you!');
         await api.say(f, 'I check my own stub now. You showed me how!');
         await api.say('milo', 'I wrote you a thank-you card. Then I checked the spelling. Twice.');
         await api.say('mayor', 'And this is for you.');
-        story(S).hero = 1; api.give('Town Hero medal'); S.scene = null; api.refresh();
+        story(S).hero = 1; api.give('Town Hero medal', '🏅', 'mayor');
+        api.fx.confetti(40); api.fx.banner('Town Hero', 'The ' + nm + ' Rule');
+        await api.say('you', ['Thank you, everyone!', 'Now go check your pay stubs.']); // the crowd stays for the celebration
+        S.scene = null; api.refresh();
       }));
       a.push(step('finale', async function (api, S) {
         await api.quest('Go home and count your jar', 'table');
@@ -1343,7 +1455,7 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
     ],
     init: init, validate: validate, chapterSteps: chapterSteps,
     guide: 'okafor',                     // starts the next chapter during the soft gate
-    helpers: function () { return HELPS; }, gossip: gossip, mail: function (S, seed, last) { return mailTask(seed, last); },
+    helpers: function (S) { return jobGame(S) ? HELPS.concat([shiftHelp(S)]) : HELPS; }, gossip: gossip, mail: function (S, seed, last) { return mailTask(seed, last); },
     outfit: function (S) { return S.run && S.run.job ? WORK[S.run.job].outfit : 'none'; },
     placeObjects: function (api, S) {
       api.place('jobboard', 'jobcentre', 6, 2, { draw: 'cork', label: 'Job board' });
@@ -1425,6 +1537,8 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
       var Wk = W(S), out = [{ label: 'Jar', value: fmt(S.run.jar) + ' / ' + fmtW(Wk.goal), title: 'Goal jar: ' + Wk.goalLabel }, { label: 'Bank', value: fmt(S.run.bank), warn: S.run.bank < 0, tag: S.run.bank < 0 ? 'overdrawn' : '' },
         { label: 'Paycheque', value: Math.min(PERIODS, S.run.p + (S.run.p < PERIODS ? 1 : 0)) + ' of ' + PERIODS }];
       if (S.run.bounces) out.push({ label: 'Bounced', value: String(S.run.bounces), warn: true });
+      if (S.run.job && T.jobGames) { var pf = perfOf(S.run, PERIODS + 1), dots = ''; for (var i = 0; i < MERIT_FOR_RAISE; i++) dots += i < pf.merit ? '●' : '○';
+        out.push({ label: 'Merit', value: dots + (pf.raises ? ' · ' + pf.raises + ' raise' + (pf.raises > 1 ? 's' : '') : ''), title: 'Great shifts toward a raise (' + MERIT_FOR_RAISE + ' = a raise). A poor or skipped shift takes one away.' + (pf.warns ? ' Warnings: ' + pf.warns + '.' : '') }); }
       return out;
     },
     items: function (S) {
@@ -1450,6 +1564,14 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
         S.run.log.map(function (l) { var sg = S.signs[l.p]; return '<tr><td>' + l.p + (l.bounced ? ' <b style="color:#b42318">bounced</b>' : '') + '</td><td class="ct-n">' + l.hours + '</td><td class="ct-n">' + fmt(l.stub.gross) + '</td><td class="ct-n">' + fmt(l.stub.total) + '</td><td class="ct-n">' + fmt(l.stub.net - (l.short || 0) + l.tips) + '</td><td>' +
           (sg ? (sg.result === 'caught' ? 'mistake caught ✓' : sg.result === 'signed' ? 'signed a mistake (−' + fmt(sg.short) + ')' : 'checked, correct ✓') : l.p <= 2 ? 'shown' : 'typed') + '</td><td class="ct-n">' + fmt(l.jarIn) + '</td><td class="ct-n">' + fmt(l.bank) + '</td></tr>'; }).join('') +
         '</tbody></table></div><p class="ct-small">Jar: ' + fmt(S.run.jar) + ' of ' + fmtW(W(S).goal) + '. Bounced payments: ' + S.run.bounces + '.</p>';
+      var sh = S.run.shifts || {}, played = Object.keys(sh).map(Number).sort(function (a, b) { return a - b; }), g = jobGame(S);
+      if (played.length && g) h += '<h3>Shifts (' + esc(g.name) + ')</h3><div class="ct-tablewrap"><table class="ct-rep"><thead><tr><th>Paycheque</th><th>Score</th><th>Shift</th><th>What it did</th></tr></thead><tbody>' +
+        played.map(function (p) { var t = sh[p], lg = (S.shiftLog || {})[p], bf = perfOf(S.run, p), af = perfOf(S.run, p + 1), fx = [];
+          if (af.hours) fx.push((af.hours > 0 ? '+' : '−') + Math.abs(af.hours) + ' h next paycheque');
+          if (af.raises > bf.raises) fx.push('a raise');
+          if (t === 'poor' || t === 'skip') fx.push(af.warns >= 2 ? 'second warning' : 'a warning');
+          return '<tr><td>' + p + '</td><td class="ct-n">' + (lg ? lg.score : '—') + '</td><td>' + { great: 'great ✓', ok: 'steady', poor: 'poor', skip: 'skipped' }[t] + '</td><td>' + (fx.join(', ') || (p >= PERIODS ? 'last shift' : '—')) + '</td></tr>'; }).join('') +
+        '</tbody></table></div>';
       var rows = [];
       if (S.typed.downside) rows.push(['One downside of this pay type', S.typed.downside]);
       if (S.typed.why) rows.push(['Why gross pay is not what lands in the bank', S.typed.why]);
@@ -1466,7 +1588,8 @@ var SETTINGS = [ // Pay-O-Matic's settings as Milo typed them (milo) and as they
       scheduleOf: scheduleOf, actualOf: actualOf, safeTakeHome: safeTakeHome, billsOf: billsOf, outcome: outcome, helpTopic: helpTopic, Q: Q, ASKS: ASKS, offerQ: offerQ,
       errorKinds: errorKinds, stubAsPrinted: stubAsPrinted, errorPlan: errorPlan, errorKindFor: errorKindFor, paydaySigned: paydaySigned, WORK: WORK,
       grossTask: grossTask, stubTask: stubTask, pomTask: pomTask, pomStub: pomStub, pomKinds: pomKinds, givenStubTask: givenStubTask, WHY: WHY, mailKind: mailKind, mailTask: mailTask, HELPS: HELPS, GOSSIP: GOSSIP,
-      STORY_STUBS: STORY_STUBS, storyStub: storyStub, RULES: RULES, SETTINGS: SETTINGS, gossip: gossip
+      STORY_STUBS: STORY_STUBS, storyStub: storyStub, RULES: RULES, SETTINGS: SETTINGS, gossip: gossip,
+      perfOf: perfOf, PERF_HOURS: PERF_HOURS, PERF_CUT: PERF_CUT, RAISE_WAGE: RAISE_WAGE, RAISE_SALARY: RAISE_SALARY, shiftHelp: shiftHelp
     }
   });
 })();

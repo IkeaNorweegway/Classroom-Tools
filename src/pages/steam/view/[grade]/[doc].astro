@@ -1,6 +1,6 @@
 ---
 import Nav from '../../../../components/Nav.astro';
-import { steam as manifest } from '../../../../data/steam';
+import { steam as manifest, steamUnits } from '../../../../data/steam';
 import { unitDocs } from '../../../../data/manifest';
 import { existsSync } from 'node:fs';
 const base = import.meta.env.BASE_URL;
@@ -68,10 +68,11 @@ const gradeLabels: Record<string, string> = {
   'grade-9': 'Grade 9',
 };
 
-// Home practice sheets belong to the parent guide; everything else to the unit page.
+// Home practice sheets belong to the parent guide; everything else to its unit page.
 const isHome = doc!.includes('-home-');
-const backHref = isHome ? `${base}${manifest.parentHref(grade!)}` : `${base}steam/materials/${grade}`;
-const backLabel = isHome ? '← Parent guide' : `← ${gradeLabels[grade!] ?? 'STEAM'}`;
+const unit = steamUnits.units.find((u) => unitDocs(u).includes(doc!));
+const backHref = isHome ? `${base}${manifest.parentHref(grade!)}` : `${base}${unit ? steamUnits.studentHref(unit.slug) : `steam/materials/${grade}`}`;
+const backLabel = isHome ? '← Parent guide' : `← ${unit?.label ?? gradeLabels[grade!] ?? 'STEAM'}`;
 const fileUrl = `${base}materials/${doc}.html`;
 ---
 

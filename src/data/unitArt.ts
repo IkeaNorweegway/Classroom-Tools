@@ -493,6 +493,148 @@ export const unitArt: Record<string, UnitArt> = {
       <path class="u-s" d="M24 50l-3 6h22l-3-6" opacity=".6"/>`,
   },
 
+  // ── STEAM units (keys: steam-<unit>) ─────────────────────────────────
+  'steam-slow-coaster': {
+    m: 'drop',
+    svg: `<path class="u-s" d="M6 16c8 0 10 26 20 26s10-14 17-14 8 22 15 22"/>
+      <path class="u-s" d="M16 33v21M26 42v12M38 31v23M50 44v10" opacity=".45"/>
+      <path class="u-s" d="M4 54h56"/>
+      <g class="u-m"><circle class="u-s u-f" cx="9" cy="11" r="4.5"/><circle class="u-d" cx="10.5" cy="9.5" r="1.4"/></g>`,
+  },
+  'steam-water-filter': {
+    m: 'drop',
+    svg: `<path class="u-s u-f" d="M14 8h36l-6 32H20Z"/>
+      <path class="u-s" d="M15.5 16h33M17.5 26h29" opacity=".6"/>
+      <circle class="u-d" cx="22" cy="12" r="1.8"/><circle class="u-d" cx="30" cy="12.5" r="1.5"/><circle class="u-d" cx="39" cy="12" r="1.9"/>
+      <path class="u-s" d="M24 40l3 5h10l3-5"/>
+      <g class="u-m"><path class="u-s u-f" d="M32 49c-3 4-4 6-4 8a4 4 0 0 0 8 0c0-2-1-4-4-8z"/></g>`,
+  },
+  'steam-scratch-story': {
+    m: 'float',
+    svg: `<rect class="u-s u-f" x="6" y="22" width="44" height="32" rx="4"/>
+      <circle class="u-s" cx="22" cy="38" r="5" style="fill: white"/><path class="u-s" d="M15 54c0-5 3-8 7-8s7 3 7 8"/>
+      <path class="u-s" d="M36 46h8M36 41h5" opacity=".6"/>
+      <g class="u-m"><path class="u-s" d="M34 6h22a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H44l-6 5v-5h-4a3 3 0 0 1-3-3V9a3 3 0 0 1 3-3z" style="fill: white"/><circle class="u-d" cx="39" cy="13.5" r="1.6"/><circle class="u-d" cx="45" cy="13.5" r="1.6"/><circle class="u-d" cx="51" cy="13.5" r="1.6"/></g>`,
+  },
+  'steam-bag-tag': {
+    m: 'sway',
+    svg: `<path class="u-s" d="M32 4v10" opacity=".6"/>
+      <g class="u-m" style="transform-origin: 32px 6px">
+        <path class="u-s u-f" d="M22 20l10-8 10 8v32a3 3 0 0 1-3 3H25a3 3 0 0 1-3-3Z"/>
+        <circle class="u-s" cx="32" cy="20" r="3" style="fill: white"/>
+        <path class="u-s" d="M27 32h10M27 38h7" opacity=".6"/>
+        <circle class="u-d" cx="32" cy="47" r="2.6"/>
+      </g>`,
+  },
+  'steam-bridges': {
+    m: 'drop',
+    svg: `<path class="u-s" d="M4 50h56"/>
+      <path class="u-s u-f" d="M8 50l8-14h32l8 14Z"/>
+      <path class="u-s" d="M16 36l8 14 8-14 8 14 8-14"/>
+      <path class="u-s" d="M8 50v6M56 50v6" opacity=".5"/>
+      <g class="u-m"><rect class="u-s" x="25" y="18" width="14" height="12" rx="2" style="fill: white"/><path class="u-s" d="M29 24h6" opacity=".6"/></g>`,
+  },
+  'steam-glider': {
+    m: 'slide',
+    svg: `<path class="u-s" d="M4 46c6-2 10-6 14-8M6 54c5-1 9-3 12-5" opacity=".4" style="stroke-dasharray: 3 3"/>
+      <g class="u-m"><path class="u-s u-f" d="M14 38 54 16 30 46Z"/><path class="u-s" d="M54 16 26 38l4 8"/><path class="u-s" d="M26 38l-12 0" opacity=".6"/></g>`,
+  },
+  'steam-spike-prime': {
+    m: 'pulse',
+    svg: `<rect class="u-s u-f" x="10" y="10" width="44" height="44" rx="7"/>
+      <path class="u-s" d="M10 46h44" opacity=".5"/>
+      <circle class="u-s" cx="32" cy="50" r="1.6"/>
+      <g class="u-m" style="transform-origin: 32px 28px">
+        <circle class="u-d" cx="24" cy="20" r="2"/><circle class="u-d" cx="40" cy="20" r="2"/>
+        <circle class="u-d" cx="32" cy="28" r="2"/>
+        <circle class="u-d" cx="22" cy="34" r="2"/><circle class="u-d" cx="27" cy="37" r="2"/><circle class="u-d" cx="32" cy="38" r="2"/><circle class="u-d" cx="37" cy="37" r="2"/><circle class="u-d" cx="42" cy="34" r="2"/>
+      </g>`,
+  },
+  'steam-thermo-box': {
+    m: 'grow',
+    svg: `<path class="u-s u-f" d="M6 26 22 18l22 6v28L22 58 6 50Z"/>
+      <path class="u-s" d="M22 18v40M6 26l16 6 22-8M22 32" opacity=".6"/>
+      <rect class="u-s" x="47" y="6" width="8" height="38" rx="4" style="fill: white"/>
+      <circle class="u-d" cx="51" cy="48" r="5"/>
+      <g class="u-m" style="transform-origin: 51px 46px"><rect class="u-d" x="49.5" y="22" width="3" height="24" rx="1.5"/></g>`,
+  },
+  'steam-adventure': {
+    m: 'sway',
+    svg: `<path class="u-s" d="M8 58h48" opacity=".5"/>
+      <g class="u-m" style="transform-origin: 32px 58px">
+        <path class="u-s" d="M32 58V10"/>
+        <path class="u-s u-f" d="M32 14h18l6 5-6 5H32Z"/>
+        <path class="u-s u-f" d="M32 30H14l-6 5 6 5h18Z"/>
+        <circle class="u-d" cx="32" cy="8" r="2.4"/>
+      </g>`,
+  },
+  'steam-rube-goldberg': {
+    m: 'tilt-r',
+    svg: `<path class="u-s" d="M4 56h56"/>
+      <path class="u-s u-f" d="M4 24l22 14v4H4Z"/>
+      <circle class="u-s u-f" cx="9" cy="20" r="4"/><circle class="u-d" cx="10.4" cy="18.6" r="1.2"/>
+      <g class="u-m" style="transform-origin: 38px 56px"><rect class="u-s u-f" x="34" y="34" width="6" height="22" rx="1"/></g>
+      <rect class="u-s u-f" x="44" y="34" width="6" height="22" rx="1"/>
+      <rect class="u-s u-f" x="54" y="34" width="6" height="22" rx="1"/>`,
+  },
+  'steam-platform-game': {
+    m: 'float',
+    svg: `<rect class="u-s u-f" x="4" y="50" width="22" height="8" rx="1.5"/>
+      <rect class="u-s u-f" x="36" y="36" width="24" height="8" rx="1.5"/>
+      <circle class="u-d" cx="48" cy="26" r="3"/>
+      <path class="u-s" d="M18 40c4-12 10-16 18-14" opacity=".4" style="stroke-dasharray: 3 3"/>
+      <g class="u-m"><rect class="u-s" x="9" y="34" width="11" height="13" rx="2.5" style="fill: white"/><circle class="u-d" cx="16.5" cy="39" r="1.3"/></g>`,
+  },
+  'steam-motor': {
+    m: 'spin',
+    svg: `<rect class="u-s u-f" x="6" y="36" width="22" height="18" rx="3"/>
+      <path class="u-s" d="M28 45h6M10 54v4M24 54v4" opacity=".6"/>
+      <path class="u-s" d="M12 36v-5h10v5" opacity=".6"/>
+      <g class="u-m" style="transform-origin: 44px 26px">
+        <circle cx="44" cy="26" r="14" style="fill: none; stroke: rgb(var(--accent)); stroke-width: 4.5; stroke-dasharray: 4.4 4.4"/>
+        <circle class="u-s" cx="44" cy="26" r="11.5" style="fill: white"/>
+        <circle class="u-d" cx="44" cy="26" r="3"/>
+      </g>`,
+  },
+  'steam-challenge-maze': {
+    m: 'push',
+    svg: `<rect class="u-s u-f" x="6" y="6" width="52" height="52" rx="4"/>
+      <path class="u-s" d="M6 22h20M38 6v16M22 22v18M22 40h20M42 30h16M38 40v18M6 48h8"/>
+      <circle class="u-d" cx="54" cy="52" r="2.2"/>
+      <g class="u-m"><rect class="u-s" x="9" y="28" width="9" height="9" rx="2" style="fill: white"/><circle class="u-d" cx="15.5" cy="32.5" r="1.3"/></g>`,
+  },
+  'steam-rev-robotics': {
+    m: 'tilt',
+    svg: `<path class="u-s u-f" d="M8 56v-6a4 4 0 0 1 4-4h16a4 4 0 0 1 4 4v6Z"/>
+      <path class="u-s" d="M4 56h32"/>
+      <path class="u-s" d="M20 46V32"/>
+      <circle class="u-s" cx="20" cy="30" r="4" style="fill: white"/>
+      <g class="u-m" style="transform-origin: 20px 30px">
+        <path class="u-s" d="M23 27l18-14"/>
+        <circle class="u-s" cx="43" cy="12" r="3.4" style="fill: white"/>
+        <path class="u-s" d="M45 15l7 5M46 9l8-1"/>
+      </g>`,
+  },
+  'steam-miniatures': {
+    m: 'pulse',
+    svg: `<path class="u-s u-f" d="M10 30 30 14l20 16v26H10Z"/>
+      <path class="u-s" d="M6 56h52"/>
+      <rect class="u-s" x="16" y="40" width="8" height="16" rx="1" style="fill: white"/>
+      <rect class="u-d" x="32" y="34" width="10" height="9" rx="1.5"/>
+      <g class="u-m" style="transform-origin: 37px 38px"><path class="u-s" d="M37 26v-4M46 30l3-3M50 38h4M28 30l-3-3" opacity=".8"/></g>`,
+  },
+  'steam-trebuchet': {
+    m: 'tilt',
+    svg: `<path class="u-s" d="M4 58h56"/>
+      <path class="u-s u-f" d="M14 58 30 26l16 32Z"/>
+      <g class="u-m" style="transform-origin: 30px 26px">
+        <path class="u-s" d="M30 26 56 10M30 26 18 34"/>
+        <rect class="u-d" x="11" y="32" width="10" height="10" rx="2"/>
+        <path class="u-s" d="M56 10v8" opacity=".6"/><circle class="u-s" cx="56" cy="21" r="3" style="fill: white"/>
+      </g>
+      <circle class="u-d" cx="30" cy="26" r="2"/>`,
+  },
+
   // ── CEFL 7 ───────────────────────────────────────────────────────────
   'labour-market': {
     m: 'slide',
@@ -544,3 +686,11 @@ export const unitArt: Record<string, UnitArt> = {
       <circle class="u-d" cx="20" cy="18" r="2"/>`,
   },
 };
+
+// Units whose idea a grade card already draws share its art.
+Object.assign(unitArt, {
+  'steam-dash-bot': unitArt['grade-5'],
+  'steam-littlebits': unitArt['grade-6'],
+  'steam-co2-dragster': unitArt['grade-7'],
+  'steam-programming': unitArt['grade-9'],
+});

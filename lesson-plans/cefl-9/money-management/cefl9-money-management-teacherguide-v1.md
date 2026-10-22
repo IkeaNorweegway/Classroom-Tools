@@ -19,6 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl9-money-management-workbook-v1` · project brief `cefl9-money-management-project-v1` |
 | **Teams** | 4–5; one case per team; one personal credit plan per student |
 | **Audience** | A Grade 8 class, Session 7 ("what we wish we knew about debt") |
+| **Game** | *Debt Detective* (CEFL Town), on the unit page, optional: one chapter after each of Sessions 1–4. See "The Debt Detective game" below. |
 | **Assessment** | Single-point rubric on the report-card scale. No unit test. |
 
 ::: teacher
@@ -70,6 +71,28 @@ Repayment figures were computed month by month: interest added (balance × rate 
 ::: teacher
 **Sensitivity.** Some families rely on payday loans or carry debt. Frame predatory lending as a problem with the product, not with the people who use it. Never ask about family debt.
 :::
+
+## The Debt Detective game (CEFL Town)
+
+A companion game on the unit page, one mission in **CEFL Town**, the top-down town every CEFL unit shares. Each student makes a character once, or keeps an earlier one. Ms. Delgado, the town's free credit counsellor, works through the brief's case (Jordan) with them step by step.
+
+| Chapter | Play after | What happens in town | Then, in the project |
+|---|---|---|---|
+| 1 · The debts | Session 1 (Moment 1) | Which sign would they trust: "Cash in 15 minutes!" or a student card? Sort kinds of credit, total Jordan's debts and minimums, and pick the debt that hurts most. Rosa borrows $300 at Quick Cash for a car repair without asking the cost. | Step 1 |
+| 2 · The cost | Session 2 (Moment 2) | One month's interest on each of Jordan's debts; Sam's minimum-payment trap (185 months, $1,613.90). Rosa has borrowed three paydays in a row, $67 each time; a card would cost about $5 a month. | Step 2 |
+| 3 · Credit score check | Session 3 (Moment 3) | Sort what helps and hurts Jordan's score, credit utilization (Jordan 96%, Morgan 15%), and whether avoiding credit gives a great score. Inspect Mr. Quill's "Credit Booster" flyer. A Score It round. | Step 3 |
+| 4 · The plan | Session 4 (Moment 4) | Debt-to-income and the car repair (payday $42 vs. line of credit $1.09). Try repayment orders in the planner (avalanche $509.31, snowball $566.43, minimums $1,712.29), recommend one, prove Quick Cash's overcharges at Town Hall, then the Grade 8 Debt Talk. | Step 4 |
+
+- **When:** sessions are full, so set each chapter as homework, early-finisher work, or a device day before the next session. Chapters play in order. Chapter length has not been timed with students yet.
+- **Saving:** the game saves in that browser, and the character carries over to every CEFL Town mission. To move to another computer, use Menu → **Take your town home** (a save code or a file).
+- **Controls:** arrow keys or tap to walk, Enter or tap to talk. Tapping the gold goal line at the top walks the student there, which suits students who find moving around hard.
+- **The side story:** Quick Cash adds a $25 "fast-cash fee" on top of $14 per $100, which breaks the cap (the total cost, fees included). Students dispute Rosa's receipt, prove five receipts at Town Hall, Quick Cash refunds the town, and the Know-the-Cost Rule (every lender posts the full cost in dollars) is named after the student. The story never changes the goal.
+- **The goal:** the Grade 8 class leaves with answers they can use: **at least 3 of 4** questions at the Debt Talk answered right on the first try. The Score It game counts habits sorted; it never changes the goal. At the end, students write their three credit rules from 18 for the My Plan wall.
+- **Gentle and Real (Menu):** Gentle gives a hint after a wrong try and shows the answer after 3 tries; Real gives no hints and shows it after 2. In Real the Grade 8s still need 3 good answers.
+- **Between lessons (optional):** after a chapter, students can choose "Not yet: help around town." Townspeople then ask for help with their own version of what the chapter taught, for a little play money in a wallet that never touches the mission, and one Town Mail letter arrives each day.
+- **Report (Menu → Report for my teacher):** first-try answers by chapter, what the student wrote and chose, game results, how far they got in the side story, and a Between lessons table. It prints. First-try answers make a quick look-for before each step's checkpoint.
+- **Simplifications** to tell students if asked: Jordan's debts and the 9.5% line of credit are samples; card terms (20.99%, minimum 2.5% or $10) are typical; interest is balance × rate ÷ 12 each month, and a paid-off debt's money moves to the next; the payday cap is Alberta's $14 per $100.
+
 
 ## Sample products (show all three in Session 5)
 

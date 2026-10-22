@@ -19,6 +19,7 @@ subtitle: 7 sessions × 60 minutes · project-based
 | **Student materials** | Mini-workbook `cefl8-experiences-workbook-v1` · project brief `cefl8-experiences-project-v1` |
 | **Teams** | 4–5. One campaign per team; one skill plan per student. |
 | **Audience** | Grade 6 and 7 classes, or a school display, Session 7 |
+| **Game** | *Open Doors* (CEFL Town), on the unit page, optional: one chapter after each of Sessions 1–4. See "The Open Doors game" below. |
 | **Assessment** | Single-point rubric on the report-card scale. No unit test. |
 
 ::: teacher
@@ -54,6 +55,28 @@ subtitle: 7 sessions × 60 minutes · project-based
 ::: teacher
 **Respect check.** Campaigns should show people as capable professionals, not as tokens or jokes. The Checker role includes this. Watch for campaigns that put down the majority group; the goal is opening doors, not closing others.
 :::
+
+## The Open Doors game (CEFL Town)
+
+A companion game on the unit page, one mission in **CEFL Town**, the top-down town every CEFL unit shares. Each student makes a character once, or keeps the one from Grade 7. Mr. Osei at the Community Centre helps them build a campaign that opens career doors for a Grade 6 class.
+
+| Chapter | Play after | What happens in town | Then, in the project |
+|---|---|---|---|
+| 1 · Who is in the job? | Session 1 (Moment 1) | Representation questions with the workbook's data, and Engineers Canada's 30% goal. Mia, in Grade 6, says electrician "isn't for girls" after visiting the Career Corner. | Step 1 |
+| 2 · Seeing yourself | Session 2 (Moment 2) | Run a picture-a-worker survey with the Grade 6 class and read the results, explain the gap in their own words, and hear real role models' stories. | Step 2 |
+| 3 · Growth mindset | Session 3 (Moment 3) | Sort fixed and growth mindset, make an employability skill plan, play Mindset Flip, and look at the Career Corner posters with Mr. Osei. | Step 3 |
+| 4 · Skills for entrepreneurs | Session 4 (Moment 4) | Kai's T-shirt business and risk, pick a campaign message, then the campaign launch for the Grade 6 class. | Step 4 |
+
+- **When:** sessions are full, so set each chapter as homework, early-finisher work, or a device day before the next session. Chapters play in order. Chapter length has not been timed with students yet.
+- **Saving:** the game saves in that browser, and the character carries over to every CEFL Town mission. To move to another computer, use Menu → **Take your town home** (a save code or a file).
+- **Controls:** arrow keys or tap to walk, Enter or tap to talk. Tapping the gold goal line at the top walks the student there, which suits students who find moving around hard.
+- **The side story:** The Career Corner posters are from 1985 and show one kind of person per job. The survey shows kids picture the same person too. The campaign replaces the posters with townspeople, and the job-shadow day is named after the student. The story never changes the goal.
+- **The goal:** the Grade 6 class is convinced at the launch: **at least 3 of 4** questions answered right on the first try. The Mindset Flip game counts right answers; it never changes the goal.
+- **Gentle and Real (Menu):** Gentle gives a hint after a wrong try and shows the answer after 3 tries; Real gives no hints and shows it after 2. In Real the Grade 6 class still needs 3 good answers.
+- **Between lessons (optional):** after a chapter, students can choose "Not yet: help around town." Townspeople then ask for help with their own version of what the chapter taught, for a little play money in a wallet that never touches the mission, and one Town Mail letter arrives each day.
+- **Report (Menu → Report for my teacher):** first-try answers by chapter, what the student wrote and chose, game results, how far they got in the side story, and a Between lessons table. It prints. First-try answers make a quick look-for before each step's checkpoint.
+- **Simplifications** to tell students if asked: representation is shown for one group per career, and the data are several years old (Statistics Canada 2018 via CLAC, Engineers Canada 2018, CNA 2019), so newer data may differ.
+
 
 ## Sample products (show all three in Session 5)
 
