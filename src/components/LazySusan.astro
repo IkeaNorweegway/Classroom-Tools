@@ -19,6 +19,7 @@ const base = import.meta.env.BASE_URL;
 // Stroke icons on a 24px grid, 1.75 stroke.
 const icons: Record<string, string> = {
   science:  '<path d="M9.5 3.5h5M10.5 3.5v5.5l-5 8.6a1.8 1.8 0 0 0 1.6 2.9h9.8a1.8 1.8 0 0 0 1.6-2.9l-5-8.6V3.5"/><path d="M7.6 14.5h8.8"/>',
+  math8:    '<path d="M4.5 19.5h15"/><path d="M4.5 19.5V7.5l11 12"/><path d="M4.5 15.5h4v4"/><path d="M13.5 4.5h6M16.5 4.5v6M13.5 10.5h6"/>',
   math9:    '<path d="M7 4.5v5M4.5 7h5M14.5 7h5M5.2 15.2l3.6 3.6M8.8 15.2l-3.6 3.6M14.5 15.5h5M14.5 18.5h5"/>',
   science7: '<path d="M5 19.5C5 11 10 5 19.5 4.5 19.5 14 14 19 5 19.5Z"/><path d="M5 19.5l8-8"/>',
   social9:  '<path d="M3.5 9.5 12 4l8.5 5.5"/><path d="M5.5 10v7.5M10 10v7.5M14 10v7.5M18.5 10v7.5M3.5 20h17"/>',
@@ -31,6 +32,7 @@ const icons: Record<string, string> = {
 // Short captions shown under each icon.
 const labels: Record<string, string> = {
   science: 'Gr 6 Sci',
+  math8: 'Math 8',
   math9: 'Math 9',
   science7: 'Gr 7 Sci',
   social9: 'Soc 9',
@@ -43,7 +45,9 @@ const labels: Record<string, string> = {
 // Slots sit evenly round the platter, however many courses there are.
 const STEP_DEG = 360 / courses.length;
 // More courses need a wider ring so neighbouring tiles don't overlap.
-const SLOT_R = courses.length > 6 ? 142 : 128;
+const SLOT_R = courses.length > 8 ? 150 : courses.length > 6 ? 142 : 128;
+// Past eight courses the tiles shrink a little so they still fit side by side.
+const TILE = courses.length > 8 ? 70 : 80;
 ---
 
 <div class="contents" data-susan-root>
@@ -53,7 +57,7 @@ const SLOT_R = courses.length > 6 ? 142 : 128;
       <div class="susan-platter">
         <div class="susan-edge" aria-hidden="true"></div>
         <div class="susan-disc" aria-hidden="true"></div>
-        <div class="susan-ring" data-susan-ring style={`--slot-r: ${SLOT_R}px`}>
+        <div class="susan-ring" data-susan-ring style={`--slot-r: ${SLOT_R}px; --tile: ${TILE}px`}>
           <div class="susan-groove" aria-hidden="true"></div>
           {Array.from({ length: 24 }, (_, i) => (
             <span class="susan-tick" style={`--a: ${i * 15}deg`} aria-hidden="true"></span>
@@ -291,10 +295,10 @@ const SLOT_R = courses.length > 6 ? 142 : 128;
   .susan-face {
     --lift: 0px;
     position: absolute;
-    left: -40px;
-    top: -80px;
-    width: 80px;
-    height: 80px;
+    left: calc(var(--tile, 80px) / -2);
+    top: calc(var(--tile, 80px) * -1);
+    width: var(--tile, 80px);
+    height: var(--tile, 80px);
     display: flex;
     flex-direction: column;
     align-items: center;

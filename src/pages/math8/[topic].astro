@@ -1,0 +1,38 @@
+---
+// Student topic page (shared StudentUnit layout), plus Math 8's warm-up and
+// strand-workbook cards.
+import StudentUnit from '../../components/StudentUnit.astro';
+import { getEntry } from 'astro:content';
+import { math8Course, topics, strandBySlug } from '../../data/math8';
+
+export function getStaticPaths() {
+  return math8Course.units.map((u, i) => ({
+    params: { topic: u.slug },
+    props: { i },
+  }));
+}
+
+const { i } = Astro.props as { i: number };
+const u = math8Course.units[i];
+const strand = strandBySlug(topics[i].strand)!;
+const entry = await getEntry('math8-units', u.slug);
+if (!entry) throw new Error(`math8-units/${u.slug}.md is missing`);
+const { Content } = await entry.render();
+const base = import.meta.env.BASE_URL;
+---
+
+<StudentUnit
+  manifest={math8Course}
+  unit={u}
+  title={`${u.label} — Math 8`}
+  eyebrow={`Grade 8 Math · ${strand.label}`}
+  back={{ href: `${base}math8/materials/${strand.slug}`, label: strand.label }}
+  intro={entry.data}
+  Content={Content}
+  actions={[
+    { href: `${base}math8/view/practice/math8-${u.slug}-prereq-practice-v1`, title: 'Need a warm-up?', description: 'Practise the skills you need before this topic. Every problem comes with a worked solution.', cta: 'Warm up' },
+    { href: `${base}math8/view/${strand.workbook}`, title: `${strand.label} workbook`, description: `Mixed practice across every ${strand.label} topic. Good for reviewing before a test.`, cta: 'Open workbook' },
+  ]}
+  prev={math8Course.units[i - 1]}
+  next={math8Course.units[i + 1]}
+/>

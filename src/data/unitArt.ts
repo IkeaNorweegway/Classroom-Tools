@@ -207,6 +207,58 @@ export const unitArt: Record<string, UnitArt> = {
       <circle class="u-d" cx="32" cy="32" r="3.2"/>`,
   },
 
+  // ── Math 8 (topics whose slugs Math 9 doesn't already have) ──────────
+  percents: {
+    m: 'pulse',
+    svg: `<rect class="u-s u-f" x="10" y="10" width="44" height="44" rx="3"/>
+      <path class="u-s" d="M10 21h44M10 32h44M10 43h44M21 10v44M32 10v44M43 10v44" opacity=".35"/>
+      <g class="u-m"><rect class="u-d" x="10" y="43" width="44" height="11" opacity=".55"/><rect class="u-d" x="10" y="32" width="22" height="11" opacity=".55"/></g>`,
+  },
+  'ratios-rates': {
+    m: 'slide',
+    svg: `<path class="u-s" d="M8 22h48M8 44h48"/>
+      <path class="u-s" d="M8 18v8M24 18v8M40 18v8M56 18v8M8 40v8M24 40v8M40 40v8M56 40v8"/>
+      <g class="u-m"><circle class="u-d" cx="24" cy="22" r="3.4"/><circle class="u-d" cx="24" cy="44" r="3.4"/><path class="u-s" d="M24 26v14" opacity=".6"/></g>`,
+  },
+  fractions: {
+    m: 'grow',
+    svg: `<rect class="u-s u-f" x="12" y="12" width="40" height="40" rx="2"/>
+      <path class="u-s" d="M25.3 12v40M38.7 12v40M12 32h40" opacity=".5"/>
+      <g class="u-m"><rect class="u-d" x="12" y="12" width="26.7" height="20" opacity=".55"/></g>`,
+  },
+  integers: {
+    m: 'float',
+    svg: `<path class="u-s" d="M6 46h52M14 42v8M32 40v12M50 42v8"/>
+      <g class="u-m"><circle class="u-s u-f" cx="22" cy="22" r="7"/><path class="u-s" d="M18.5 22h7M22 18.5v7"/>
+      <circle class="u-s u-f" cx="42" cy="22" r="7"/><path class="u-s" d="M38.5 22h7"/></g>`,
+  },
+  pythagorean: {
+    m: 'tilt',
+    svg: `<path class="u-s u-f" d="M16 48V24l24 24z"/>
+      <path class="u-s" d="M16 42h6v6"/>
+      <rect class="u-s" x="6" y="24" width="10" height="24" opacity=".5"/>
+      <g class="u-m"><path class="u-s u-f" d="M16 24l24 24 17-17-24-24z" opacity=".75"/></g>`,
+  },
+  'surface-area-volume': {
+    m: 'float',
+    svg: `<path class="u-s u-f" d="M12 26l18-8 22 8v22l-22 8-18-8z"/>
+      <path class="u-s" d="M12 26l22 8 18-8M34 34v22" opacity=".6"/>
+      <g class="u-m"><path class="u-s u-f" d="M12 26l18-8 22 8-18 8z"/></g>`,
+  },
+  'views-transformations': {
+    m: 'push',
+    svg: `<path class="u-s u-f" d="M10 46V24l12-6 12 6v22l-12 6z"/>
+      <path class="u-s" d="M10 24l12 6 12-6M22 30v22" opacity=".6"/>
+      <g class="u-m"><path class="u-s u-f" d="M42 22h12v12H42zM42 34h12v12H42z"/></g>`,
+  },
+  'data-displays': {
+    m: 'grow',
+    svg: `<path class="u-s" d="M10 52h46M10 52V10"/>
+      <rect class="u-s u-f" x="16" y="34" width="8" height="18"/>
+      <rect class="u-s u-f" x="40" y="28" width="8" height="24"/>
+      <g class="u-m"><rect class="u-d" x="28" y="18" width="8" height="34" opacity=".6"/></g>`,
+  },
+
   // ── Grade 7 Science ──────────────────────────────────────────────────
   'interactions-ecosystems': {
     m: 'pulse',

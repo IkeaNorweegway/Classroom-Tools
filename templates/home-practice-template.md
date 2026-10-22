@@ -1,8 +1,8 @@
 ---
 title: [Skill name, e.g. Solving Two-Step Equations]
-course: [math9 | science | science7 | social8 | social9 | steam]  (math9 if left out)
-topic: [Math 9 only: topic slug, e.g. linear-equations]
-strand: [Math 9 only: number | algebra | measurement-geometry | statistics-probability]
+course: [math9 | math8 | science | science7 | social7 | social8 | social9 | steam]  (math9 if left out)
+topic: [Math 8 and 9 only: topic slug, e.g. linear-equations]
+strand: [Math 8 and 9 only: number | algebra | measurement-geometry | statistics-probability]
 unit: [other courses: unit name for the header, e.g. Heat and Temperature]
 skill: [one skill, in a few words]
 time: [about 15 minutes]

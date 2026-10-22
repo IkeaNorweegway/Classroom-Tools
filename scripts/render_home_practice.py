@@ -3,6 +3,7 @@
 
 Sources and output, by course (front matter `course:`, default math9):
   math9:   worksheets/math-9/home/<topic>/*.md  ->  public/materials/math-9/home/<topic>/
+  math8:   worksheets/math-8/home/<topic>/*.md  ->  public/materials/math-8/home/<topic>/ (strand colours, as Math 9)
   others:  worksheets/<course folder>/<unit>/*-home-*.md and steam/grade-N/home/*.md
            ->  public/materials/ (flat, like the course's other materials)
 
@@ -21,7 +22,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 MATERIALS = ROOT / 'public' / 'materials'
-SOURCES = ['worksheets/math-9/home/*/*.md', 'worksheets/*/*/*-home-*.md', 'steam/grade-*/home/*.md']
+SOURCES = ['worksheets/math-9/home/*/*.md', 'worksheets/math-8/home/*/*.md', 'worksheets/*/*/*-home-*.md', 'steam/grade-*/home/*.md']
 
 # Same accents as the topic worksheets in public/materials/math-9/worksheets/.
 STRAND = {
@@ -208,11 +209,12 @@ def body_html(text):
 def render(md_path):
     meta, body = front_matter(md_path.read_text(encoding='utf-8'))
     course = meta.get('course', 'math9')
-    if course == 'math9':
+    if course in ('math9', 'math8'):
+        g = 8 if course == 'math8' else 9
         strand_label, accent, light, mid = STRAND[meta['strand']]
-        course_label = f'Grade 9 Math · {strand_label}'
-        doc_suffix = 'Grade 9 Mathematics'
-        out = MATERIALS / 'math-9' / 'home' / meta['topic'] / (md_path.stem + '.html')
+        course_label = f'Grade {g} Math · {strand_label}'
+        doc_suffix = f'Grade {g} Mathematics'
+        out = MATERIALS / f'math-{g}' / 'home' / meta['topic'] / (md_path.stem + '.html')
     else:
         label, accent, light, mid = COURSE[course]
         course_label = f'{label} · {meta["unit"]}'

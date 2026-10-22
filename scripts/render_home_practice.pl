@@ -6,6 +6,7 @@
 #
 # Sources and output, by course (front matter `course:`, default math9):
 #   math9:   worksheets/math-9/home/<topic>/*.md  ->  public/materials/math-9/home/<topic>/
+#   math8:   worksheets/math-8/home/<topic>/*.md  ->  public/materials/math-8/home/<topic>/ (strand colours, as Math 9)
 #   others:  worksheets/<course folder>/<unit>/*-home-*.md and steam/grade-N/home/*.md
 #            ->  public/materials/ (flat, like the course's other materials)
 #
@@ -23,6 +24,7 @@ use Cwd qw(abs_path);
 use File::Basename qw(dirname basename);
 use File::Path qw(make_path);
 use File::Spec;
+use File::Glob qw(:bsd_glob);   # glob() must not split "Classroom tools" at the space
 
 my $ROOT = dirname(dirname(abs_path($0)));
 my $MATERIALS = File::Spec->catdir($ROOT, 'public', 'materials');
@@ -171,12 +173,13 @@ sub render {
     my $course = $meta{course} // 'math9';
     my ($course_label, $accent, $light, $mid, $doc_suffix, $out);
     my $stem = basename($path, '.md');
-    if ($course eq 'math9') {
+    if ($course eq 'math9' || $course eq 'math8') {
+        my $g = $course eq 'math8' ? 8 : 9;
         my $st = $STRAND{ $meta{strand} } or die "$path: unknown strand\n";
         ($accent, $light, $mid) = @$st[1 .. 3];
-        $course_label = "Grade 9 Math · $st->[0]";
-        $doc_suffix = 'Grade 9 Mathematics';
-        $out = File::Spec->catfile($MATERIALS, 'math-9', 'home', $meta{topic}, "$stem.html");
+        $course_label = "Grade $g Math · $st->[0]";
+        $doc_suffix = "Grade $g Mathematics";
+        $out = File::Spec->catfile($MATERIALS, "math-$g", 'home', $meta{topic}, "$stem.html");
     } else {
         my $c = $COURSE{$course} or die "$path: unknown course $course\n";
         ($accent, $light, $mid) = @$c[1 .. 3];
@@ -214,5 +217,5 @@ $CSS  </style>
     return $out;
 }
 
-my @paths = @ARGV ? @ARGV : sort(glob("$ROOT/worksheets/math-9/home/*/*.md"), glob("$ROOT/worksheets/*/*/*-home-*.md"), glob("$ROOT/steam/grade-*/home/*.md"));
+my @paths = @ARGV ? @ARGV : sort(glob("$ROOT/worksheets/math-9/home/*/*.md"), glob("$ROOT/worksheets/math-8/home/*/*.md"), glob("$ROOT/worksheets/*/*/*-home-*.md"), glob("$ROOT/steam/grade-*/home/*.md"));
 print File::Spec->abs2rel(render($_), $ROOT), "\n" for @paths;

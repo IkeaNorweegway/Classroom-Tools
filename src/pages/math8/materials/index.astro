@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CourseHero from '../../../components/CourseHero.astro';
+import TopicList from '../../../components/TopicList.astro';
+import { strands, topicsInStrand } from '../../../data/math8';
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout course="math8" title="Materials — Math 8">
+  <CourseHero
+    back={{ href: `${base}math8`, label: 'Math 8' }}
+    eyebrow="Grade 8 Mathematics"
+    title="Materials"
+    description="Pick a strand to see all notes, worksheets, exit tickets and the strand workbook."
+  />
+
+  <TopicList
+    items={strands.map((s) => ({
+      art: s.slug,
+      href: `${base}math8/materials/${s.slug}`,
+      title: s.label,
+      kicker: topicsInStrand(s.slug).map((t) => t.label).join(' · '),
+      description: s.blurb,
+    }))}
+  />
+</BaseLayout>

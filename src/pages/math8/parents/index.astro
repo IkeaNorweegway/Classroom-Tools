@@ -1,0 +1,64 @@
+---
+// Parent overview for Math 8: what the course covers in plain words, where
+// it sits between Grade 7 and Grade 9, general ways to help, and a link to
+// each topic's parent guide.
+import ParentOverview from '../../../components/ParentOverview.astro';
+import { getCollection } from 'astro:content';
+import { strands, topicsInStrand } from '../../../data/math8';
+
+const base = import.meta.env.BASE_URL;
+const written = new Set((await getCollection('parent-guides')).map((e) => e.slug));
+
+const stages = [
+  { label: 'Grade 7', idea: 'Adding and subtracting integers and fractions, decimals and percents, simple equations, circles and area, and circle graphs.' },
+  { label: 'Grade 8', idea: 'Multiplying and dividing fractions and integers, square roots and the Pythagorean theorem, percents and rates, equations with brackets, surface area and volume, and the chance of two events.', now: true },
+  { label: 'Grade 9', idea: 'Algebra takes centre stage: equations, inequalities, straight-line graphs and polynomials. Plus powers, circles, similar shapes, data and probability.' },
+  { label: 'High school', idea: 'Math 10C leads on to the 20-1/30-1 and 20-2/30-2 courses. Math 10-3 leads on to 20-3 and 30-3, which focus on workplace math.' },
+];
+
+const plainStrand: Record<string, string> = {
+  number: 'Finishing the four operations with fractions and negative numbers, plus square roots, percents, ratios and rates. These skills show up in every other topic.',
+  algebra: 'Turning patterns into tables, equations and graphs, and solving equations with a balance, including ones with brackets.',
+  'measurement-geometry': 'The Pythagorean theorem for right triangles, wrapping and filling boxes and cans, views of block buildings, and moving shapes on a grid.',
+  'statistics-probability': 'Choosing the right graph, spotting graphs that mislead, and working out the chance of two things happening.',
+};
+
+const tips: [string, string][] = [
+  ['Ask them to teach you', 'Have your child explain a problem from their notes. Explaining is one of the best ways to learn, and you don’t need to know the answer to listen.'],
+  ['Ask “How do you know?”', 'Instead of “Is that right?”, ask how they know. Checking their own work is a skill they need on tests.'],
+  ['Look at the pictures', 'The Grade 8 notes use lots of pictures: number lines, fraction bars, tiles and diagrams. Ask your child to show you the picture that goes with a problem.'],
+  ['Short and often', 'Fifteen focused minutes a few times a week beats a long session the night before a test.'],
+  ['Mistakes are clues', 'When an answer is wrong, have them find the step where it went off track. That is where the learning happens.'],
+  ['Keep the basics sharp', 'Times tables, negative numbers and fractions come up all year. A few minutes of practice on these pays off in every topic.'],
+];
+
+const groups = strands.map((s) => ({
+  id: s.slug,
+  label: s.label,
+  blurb: plainStrand[s.slug],
+  items: topicsInStrand(s.slug).map((t) => ({
+    label: t.label,
+    href: written.has(`math8/${t.slug}`) ? `${base}math8/parents/${t.slug}` : undefined,
+  })),
+}));
+---
+
+<ParentOverview
+  course="math8"
+  title="Grade 8 math at home"
+  pageTitle="Grade 8 Math — Parent guide"
+  metaDescription="What your child learns in Grade 8 math, where it leads, and how to help at home."
+  eyebrow="Parent guide · Grade 8 Mathematics"
+  numeral="8"
+  description="What your child is learning this year, how it connects to Grade 7 and Grade 9, and simple ways to help, with worked examples and short practice sheets for each topic."
+  aboutHeading="What Grade 8 math is about"
+  about={[
+    'Grade 8 finishes the basic operations: students multiply and divide fractions and negative numbers. They meet square roots and the Pythagorean theorem, use percents and rates, and solve their first equations with brackets.',
+    'The notes are written in short, plain sentences with lots of pictures, so the reading never gets in the way of the math. Every topic starts with a picture (tiles, bars, number lines, balances) before the rule.',
+  ]}
+  stages={stages}
+  groups={groups}
+  listHeading="Topics this year"
+  listIntro="Four strands, twelve topics. Pick one to see the parent guide."
+  tips={tips}
+/>

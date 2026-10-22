@@ -18,11 +18,12 @@
 
 ## Courses on the Site
 
-Seven courses are live. PhysEd and eSports are in the workspace but not on the site.
+Nine courses are live. PhysEd and eSports are in the workspace but not on the site.
 
 | Course | Slug | Accent token | Accent hex | Status |
 |---|---|---|---|---|
 | Grade 6 Science | `/materials/` | `science-*` | `#0891b2` (cyan) | Live |
+| Math 8 | `/math8/` | `[data-course='math8']` in global.css | `#b65426` (burnt orange) | Live (2026-10-22). Same shape as Math 9 (strands, topic pages, parent and teacher views); data in `math8.ts`. Materials in `public/materials/math-8/` |
 | Math 9 | `/math9/` | `math9-*` | `#4f46e5` (indigo) | Live |
 | Grade 7 Science | `/science7/` | inline hex | `#059669` (emerald) | Live |
 | Social Studies 9 | `/social9/` | inline hex | `#b91c1c` (red) | Live |
@@ -66,12 +67,13 @@ Every page has two nav levels:
 
 **Level 1 — Site nav (top bar, always visible)**
 - Left: site name → links to home `/`
-- Centre: subject menus — `Science` | `Math` | `Social` | `STEAM` | `CEFL` (`navSubjects` in `courses.ts`). Each opens a dropdown of grades: Science → Grade 6, Grade 7; Math → Grade 9; Social → Grade 7, Grade 8, Grade 9; STEAM → Grades 5–9 + All grades (from the course's `gradeMenu`); CEFL → Grades 7–9 + All grades (its `gradeMenu`). The active subject is highlighted with the course accent and shows the current grade (e.g. `Science Gr. 7`). On small screens the menus wrap to a second row.
+- Centre: subject menus — `Science` | `Math` | `Social` | `STEAM` | `CEFL` (`navSubjects` in `courses.ts`). Each opens a dropdown of grades: Science → Grade 6, Grade 7; Math → Grade 8, Grade 9; Social → Grade 7, Grade 8, Grade 9; STEAM → Grades 5–9 + All grades (from the course's `gradeMenu`); CEFL → Grades 7–9 + All grades (its `gradeMenu`). The active subject is highlighted with the course accent and shows the current grade (e.g. `Science Gr. 7`). On small screens the menus wrap to a second row.
 - Right: the audience switch, `Student · Parent · Teacher` (see below)
 
 **Level 2 — Course subnav (below top bar, visible when inside a course)**
 - Grade 6 Science subnav: `Matter | Forces | Living Systems | Climate | Energy | Space | Materials`
 - Math 9 subnav: `Number | Algebra | M&G | Stats & Prob | PAT Prep | POTD | All materials`. A strand tab is also active on that strand's topic pages. Parent pages use `parentSubnav`: `Overview | Number | Algebra | M&G | Stats & Prob`
+- Math 8 subnav: `Number | Algebra | M&G | Stats & Prob | All materials` (no PAT prep or POTD). Parent pages use the same strand tabs as Math 9.
 - Science 7 and Social 7, 8 and 9 subnavs list their units; the STEAM subnav lists Grades 5–9 and the CEFL subnav lists Grades 7–9
 - The home page turntable spaces its slots by the number of courses (and widens the ring past six)
 
@@ -225,11 +227,11 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 
 Every course follows one pattern, so the student, parent and teacher pages look and work the same.
 
-- **Manifest per course** in `src/data/`: `science6.ts`, `math9.ts`, `science7.ts`, `social7.ts`, `social8.ts`, `social9.ts`, `steam.ts`. Each lists every unit's numbered student path, extra materials, answer keys and two home sheets, in the shared shape in `manifest.ts` (`CourseManifest`; `math9Course` adapts Math 9's richer data). Pages and viewers read it, so a new or renamed file is changed in one place. Each viewer adds the manifest's documents to its routes and warns at build time about files missing from `public/materials/`.
+- **Manifest per course** in `src/data/`: `science6.ts`, `math8.ts`, `math9.ts`, `science7.ts`, `social7.ts`, `social8.ts`, `social9.ts`, `steam.ts`. Each lists every unit's numbered student path, extra materials, answer keys and two home sheets, in the shared shape in `manifest.ts` (`CourseManifest`; `math9Course` and `math8Course` adapt the Math courses' strand data). Pages and viewers read it, so a new or renamed file is changed in one place. Each viewer adds the manifest's documents to its routes and warns at build time about files missing from `public/materials/`.
 - **Shared components:** `StudentUnit.astro` (student unit page: hook, real-world cards, big idea and "I can" goals, numbered path, extras, collapsed keys, previous/next), `ParentUnit.astro` (parent guide) and `ParentOverview.astro` (parent course overview).
 - **Student text:** the unit collections (`units`, `science7-units`, `math9-units`, `social7-units`, `social8-units`, `social9-units`, `steam-grades`) hold `hook`, `realWorld` (3), `iCan` (3–4) and a short "What's the big idea?" body. All but STEAM also hold `teacherSummary`, the one-line scope note on the teacher hub.
-- **Parent guides:** `src/content/parent-guides/<course>/<unit>.md` (`plainSummary`, `comesFrom`, `assumed`, `leadsTo`, `watchFor`, `tips`; the body holds 2–3 worked examples with "Say:" prompts). Course folders: `science6`, `math9`, `science7`, `social7`, `social8`, `social9`, `steam`. A guide's page is built only when its file exists.
-- **Routes:** student unit pages are `units/[unit]` (Grade 6; old `materials/[unit]` URLs redirect there), `math9/[topic]`, `science7|social7|social8|social9/materials/[unit]` and `steam/materials/[grade]`. Parent pages are `<prefix>/parents/` and `<prefix>/parents/[unit]`, with prefixes `science6`, `math9`, `science7`, `social7`, `social8`, `social9` and `steam`.
+- **Parent guides:** `src/content/parent-guides/<course>/<unit>.md` (`plainSummary`, `comesFrom`, `assumed`, `leadsTo`, `watchFor`, `tips`; the body holds 2–3 worked examples with "Say:" prompts). Course folders: `science6`, `math8`, `math9`, `science7`, `social7`, `social8`, `social9`, `steam`. A guide's page is built only when its file exists.
+- **Routes:** student unit pages are `units/[unit]` (Grade 6; old `materials/[unit]` URLs redirect there), `math8/[topic]`, `math9/[topic]`, `science7|social7|social8|social9/materials/[unit]` and `steam/materials/[grade]`. Parent pages are `<prefix>/parents/` and `<prefix>/parents/[unit]`, with prefixes `science6`, `math8`, `math9`, `science7`, `social7`, `social8`, `social9` and `steam`.
 - **Class slides:** a unit's deck is an extras group, "Class slides", with material type `slides` (screen icon). Decks are built in `slides/` and rendered by `scripts/render_slides.py`; rules in `slides/_context.md`.
 - **Home practice sheets:** sources follow the type-folder convention (`worksheets/grade-6-science/[unit]/`, `worksheets/grade-7-science/[unit]/`, `worksheets/grade-7-social/[unit]/`, `worksheets/grade-8-social/[unit]/`, `worksheets/grade-9-social/[unit]/`, `worksheets/math-9/home/[topic]/`, and `steam/grade-N/home/`). `scripts/render_home_practice.py` (or its Perl port, `render_home_practice.pl`) renders them: Math 9 to `public/materials/math-9/home/[topic]/`, the rest flat in `public/materials/` (`sci6-`, `sci7-`, `soc7-`, `soc8-`, `soc9-`, `steam-grade-N-` prefixes). Template: `templates/home-practice-template.md`.
 
@@ -249,6 +251,8 @@ public/materials/
     tests/[topic]/
     practice/                   Sims and the prereq practice pages (math9-<topic>-prereq-practice-v1.html)
     home/[topic]/               Parent home practice sheets + answers
+  math-8/                       Same layout as math-9: notes/[topic]/, worksheets/[strand]/[topic]/,
+                                exits/, quizzes/, practice/, home/[topic]/ (rendered by scripts/render_math8.pl)
   prereq-practice/              Shared prereq practice engine, styles and one question bank per course
 ```
 
@@ -256,7 +260,7 @@ Renders live only here. The type folders hold the markdown sources.
 
 Games are the exception: a game is written directly as HTML and has no markdown source. Design, build, and test rules for games are in `_games-context.md`.
 
-**Prereq practice** is HTML-first too. Each unit has `<prefix>-<unit>-prereq-practice-v1.html` (Math 9: `math-9/practice/math9-<topic>-prereq-practice-v1.html`), listed first in the unit's extras under "Get ready" (`getReady()` in `manifest.ts`) and linked from the parent guide's "What your child should already know". The page only names its unit; the questions live in `prereq-practice/<prefix>-bank.js` and the engine in `prereq-practice/practice.js` (its header describes the question format). Science 6, Science 7 and Social 7/8/9 banks are written-out questions; the Math 9 bank generates questions in code (and draws SVG diagrams). Science 7's questions check Grade 6 ideas only, kept simple (each unit's "assumed" list in its parent guide); Grade 7 content belongs in the units. Every science question shows a small diagram under it: `prereq-practice/sci-visuals.js` draws them (loaded by the 11 science pages before the bank), a skill's `visual` covers all its questions unless a question has its own, and a diagram shows the situation, never the answer. Students answer one question per skill with a hint and an explanation; the skill tracker is saved in the browser; printing (the page's button or the viewer's Print) gives a 10-question sheet with an answer key.
+**Prereq practice** is HTML-first too. Each unit has `<prefix>-<unit>-prereq-practice-v1.html` (Math 9: `math-9/practice/math9-<topic>-prereq-practice-v1.html`), listed first in the unit's extras under "Get ready" (`getReady()` in `manifest.ts`) and linked from the parent guide's "What your child should already know". The page only names its unit; the questions live in `prereq-practice/<prefix>-bank.js` and the engine in `prereq-practice/practice.js` (its header describes the question format). Science 6, Science 7 and Social 7/8/9 banks are written-out questions; the Math 9 and Math 8 banks generate questions in code (Math 9 draws its own SVG diagrams; Math 8 uses `sci-visuals.js`). Science 7's questions check Grade 6 ideas only, kept simple (each unit's "assumed" list in its parent guide); Grade 7 content belongs in the units. Every science question shows a small diagram under it: `prereq-practice/sci-visuals.js` draws them (loaded by the 11 science pages before the bank), a skill's `visual` covers all its questions unless a question has its own, and a diagram shows the situation, never the answer. Students answer one question per skill with a hint and an explanation; the skill tracker is saved in the browser; printing (the page's button or the viewer's Print) gives a 10-question sheet with an answer key.
 
 ### Naming
 - Student notes: `math9-[unit]-notes-v1.html`

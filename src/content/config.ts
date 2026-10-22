@@ -54,6 +54,19 @@ const math9Units = defineCollection({
   }),
 });
 
+// Math 8 topic page (same fields as Math 9).
+const math8Units = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    guidingQuestion: z.string(),
+    learningOutcome: z.string(),
+    order: z.number(),
+    ...studentIntro,
+    ...teacherSummary,
+  }),
+});
+
 // STEAM grade pages (student intro per grade; STEAM has no teacher hub).
 const steamGrades = defineCollection({
   type: 'content',
@@ -177,6 +190,7 @@ const materials = defineCollection({
 export const collections = {
   units,
   'science7-units': science7Units,
+  'math8-units': math8Units,
   'math9-units': math9Units,
   'steam-grades': steamGrades,
   'parent-guides': parentGuides,

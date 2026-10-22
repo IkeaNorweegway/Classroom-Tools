@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CourseHero from '../../components/CourseHero.astro';
+import TopicList from '../../components/TopicList.astro';
+import { strands, topics, topicsInStrand, math8Course } from '../../data/math8';
+import { materialCount } from '../../data/manifest';
+const base = import.meta.env.BASE_URL;
+// The same three facts as the other courses' landing pages, all read from the data.
+const materials = materialCount(math8Course.units);
+
+// One card per strand; each strand page lists its topics and workbook.
+const descriptions: Record<string, string> = {
+  number: 'Squares and square roots, percents, ratios and rates, and multiplying and dividing fractions and integers.',
+  algebra: 'Patterns, tables and graphs, and solving equations with a balance, including equations with brackets.',
+  'measurement-geometry': 'The Pythagorean theorem, nets, surface area and volume, views of block buildings, and transformations.',
+  'statistics-probability': 'Choosing the right graph, spotting misleading ones, and the probability of two independent events.',
+};
+---
+
+<BaseLayout course="math8" title="Grade 8 Mathematics">
+  <CourseHero
+    eyebrow="Alberta curriculum"
+    title="Grade 8 Mathematics"
+    numeral="8"
+    vtName="course-num-math8"
+    description="Four strands, twelve topics. Notes with lots of pictures, concept pages, worksheets, exit tickets, and answer keys."
+    facts={[
+      { n: `${strands.length}`, label: 'strands' },
+      { n: `${topics.length}`, label: 'topics' },
+      { n: `${materials}`, label: 'materials' },
+    ]}
+  />
+
+  <TopicList
+    heading="Strands"
+    items={strands.map((s) => ({
+      art: s.slug,
+      href: `${base}math8/materials/${s.slug}`,
+      title: s.label,
+      kicker: topicsInStrand(s.slug).map((t) => t.label).join(' · '),
+      description: descriptions[s.slug],
+    }))}
+  />
+</BaseLayout>

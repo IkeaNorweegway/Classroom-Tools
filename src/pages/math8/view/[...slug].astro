@@ -1,0 +1,54 @@
+---
+import Nav from '../../../components/Nav.astro';
+import { allViewPaths, backPathFor } from '../../../data/math8';
+const base = import.meta.env.BASE_URL;
+
+export async function getStaticPaths() {
+  // Every Math 8 document, from the manifest. Warn at build time about any
+  // listed file that is missing from public/materials/math-8/.
+  const { existsSync } = await import('node:fs');
+  const paths = allViewPaths();
+  for (const p of paths) {
+    if (!existsSync(`public/materials/math-8/${p}.html`)) console.warn(`[math8] missing material: ${p}.html`);
+  }
+  return paths.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const fileUrl = `${base}materials/math-8/${slug}.html`;
+const backHref = `${base}${backPathFor(slug!)}`;
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math 8 — {slug}</title>
+  <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+    .viewer-shell { display: flex; flex-direction: column; height: 100vh; }
+    .back-bar { background: #f6f4ef; border-bottom: 1px solid rgb(31 29 26 / 0.07); padding: 0.6rem 1.25rem; flex-shrink: 0; }
+    .back-bar a { font-family: 'Atkinson Hyperlegible Next Variable', system-ui, sans-serif;
+      font-weight: 600; font-size: 0.875rem; color: #6b665d; text-decoration: none; }
+    .back-bar a:hover { color: #1f1d1a; }
+    .doc-frame { flex: 1; border: none; width: 100%; display: block; }
+    @media print {
+      .viewer-nav, .back-bar { display: none !important; }
+      .doc-frame { height: 100vh; }
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-shell">
+    <div class="viewer-nav">
+      <Nav course="math8" />
+    </div>
+    <div class="back-bar">
+      <a href={backHref}>← Back</a>
+    </div>
+    <iframe src={fileUrl} class="doc-frame" title={slug} />
+  </div>
+</body>
+</html>
