@@ -107,22 +107,26 @@ rational.extras = [
 rational.keys.splice(2, 0, { label: 'Extra Practice Answer Key', path: 'worksheets/number/rational-numbers/math9-rational-numbers-worksheet-extra-answers-v1' });
 rational.keys.push({ label: 'Practice Test Answer Key', path: 'tests/rational-numbers/math9-rational-numbers-practice-test-answers-v1' });
 
-const roots = standard('square-roots', 'Square Roots', 'number', 'math9-square-roots');
-roots.extras.push({ label: 'Practice Test', path: 'tests/square-roots/math9-square-roots-practice-test-v1', badge: 'Test prep' });
-roots.keys.push({ label: 'Practice Test Answer Key', path: 'tests/square-roots/math9-square-roots-practice-test-answers-v1' });
+/** A standard topic plus its practice unit test and key (tests/<slug>/<stem>-practice-test-v1). */
+function withPracticeTest(slug: string, label: string, strand: StrandSlug, stem: string): Topic {
+  const t = standard(slug, label, strand, stem);
+  t.extras.push({ label: 'Practice Test', path: `tests/${slug}/${stem}-practice-test-v1`, badge: 'Test prep' });
+  t.keys.push({ label: 'Practice Test Answer Key', path: `tests/${slug}/${stem}-practice-test-answers-v1` });
+  return t;
+}
 
 export const topics: Topic[] = [
   rational,
-  standard('powers-exponents', 'Powers & Exponents', 'number', 'math9-powers'),
-  roots,
-  standard('linear-relations', 'Linear Relations', 'algebra', 'math9-linear-relations'),
-  standard('linear-equations', 'Linear Equations & Inequalities', 'algebra', 'math9-linear-equations'),
-  standard('polynomials', 'Polynomials', 'algebra', 'math9-polynomials'),
-  standard('circle-geometry', 'Circle Geometry', 'measurement-geometry', 'math9-circle-geometry'),
-  standard('measurement', 'Surface Area & Volume', 'measurement-geometry', 'math9-measurement'),
-  standard('similarity', 'Similarity & Scale', 'measurement-geometry', 'math9-similarity'),
-  standard('statistics', 'Statistics & Scatter Plots', 'statistics-probability', 'math9-statistics'),
-  standard('probability', 'Probability', 'statistics-probability', 'math9-probability'),
+  withPracticeTest('powers-exponents', 'Powers & Exponents', 'number', 'math9-powers'),
+  withPracticeTest('square-roots', 'Square Roots', 'number', 'math9-square-roots'),
+  withPracticeTest('linear-relations', 'Linear Relations', 'algebra', 'math9-linear-relations'),
+  withPracticeTest('linear-equations', 'Linear Equations & Inequalities', 'algebra', 'math9-linear-equations'),
+  withPracticeTest('polynomials', 'Polynomials', 'algebra', 'math9-polynomials'),
+  withPracticeTest('circle-geometry', 'Circle Geometry', 'measurement-geometry', 'math9-circle-geometry'),
+  withPracticeTest('measurement', 'Surface Area & Volume', 'measurement-geometry', 'math9-measurement'),
+  withPracticeTest('similarity', 'Similarity & Scale', 'measurement-geometry', 'math9-similarity'),
+  withPracticeTest('statistics', 'Statistics & Scatter Plots', 'statistics-probability', 'math9-statistics'),
+  withPracticeTest('probability', 'Probability', 'statistics-probability', 'math9-probability'),
 ];
 
 // Home practice sheets for the parent pages, by topic: [file name part, skill].
