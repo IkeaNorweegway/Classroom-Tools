@@ -107,10 +107,14 @@ rational.extras = [
 rational.keys.splice(2, 0, { label: 'Extra Practice Answer Key', path: 'worksheets/number/rational-numbers/math9-rational-numbers-worksheet-extra-answers-v1' });
 rational.keys.push({ label: 'Practice Test Answer Key', path: 'tests/rational-numbers/math9-rational-numbers-practice-test-answers-v1' });
 
+const roots = standard('square-roots', 'Square Roots', 'number', 'math9-square-roots');
+roots.extras.push({ label: 'Practice Test', path: 'tests/square-roots/math9-square-roots-practice-test-v1', badge: 'Test prep' });
+roots.keys.push({ label: 'Practice Test Answer Key', path: 'tests/square-roots/math9-square-roots-practice-test-answers-v1' });
+
 export const topics: Topic[] = [
   rational,
   standard('powers-exponents', 'Powers & Exponents', 'number', 'math9-powers'),
-  standard('square-roots', 'Square Roots', 'number', 'math9-square-roots'),
+  roots,
   standard('linear-relations', 'Linear Relations', 'algebra', 'math9-linear-relations'),
   standard('linear-equations', 'Linear Equations & Inequalities', 'algebra', 'math9-linear-equations'),
   standard('polynomials', 'Polynomials', 'algebra', 'math9-polynomials'),
