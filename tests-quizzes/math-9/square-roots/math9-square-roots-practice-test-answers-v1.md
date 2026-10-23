@@ -41,9 +41,9 @@ SR1–SR4 are the four learning targets from the notes package, one per section.
 
 **12.** √5 ≈ 2.2 (just past 2), √10 ≈ 3.2 (just past 3), √20 ≈ 4.5 (between 4 and 5, near 4.5). 1 mark each, placed in the right half-unit and labelled.
 
-**13.** c² = 7² + 24² = 49 + 576 = 625, so c = √625 = **25 cm**.
-- 1 mark: a² + b² = c² set up with 7 and 24
-- 1 mark: 625
+**13.** c² = 15² + 20² = 225 + 400 = 625, so c = √625 = **25 cm**. Shortcut: both legs are 5 × (3, 4), so the hypotenuse is 5 × 5 = 25 cm.
+- 1 mark: a² + b² = c² set up with 15 and 20
+- 1 mark: 625 (or spots 5 × the 3-4-5 triangle)
 - 1 mark: 25 cm
 
 **14.** b² = 12² − 6² = 144 − 36 = 108, so b = **√108 ≈ 10.4 cm** (10² = 100, 11² = 121; 10.4² = 108.16).

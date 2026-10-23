@@ -73,7 +73,7 @@ A) 4, 5, 6 &nbsp; B) 6, 8, 10 &nbsp; C) 5, 6, 7 &nbsp; D) 7, 8, 9
 
 **12.** Mark and label √5, √10 and √20 on the number line (0 to 5, ticks every 0.5). *[3]*
 
-**13.** A right triangle has legs of 7 cm and 24 cm. Find the hypotenuse. *[3]* [Diagram: right angle at bottom left; legs 7 cm (vertical) and 24 cm (horizontal); hypotenuse c.]
+**13.** A right triangle has legs of 15 cm and 20 cm. Find the hypotenuse. *[3]* [Diagram: right angle at bottom left; legs 15 cm (vertical) and 20 cm (horizontal); hypotenuse c.]
 
 **14.** A right triangle has a hypotenuse of 12 cm and one leg of 6 cm. Find the other leg. Give the exact answer and an estimate to one decimal place. *[3]* [Diagram: vertical leg 6 cm, hypotenuse 12 cm, horizontal leg b.]
 

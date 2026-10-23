@@ -34,7 +34,7 @@ _______________________________________________
 
 _______________________________________________
 
-**6.** [LO 3] A right triangle has a hypotenuse of 13 cm and one leg of 5 cm. Find the other leg. *(2 marks)*
+**6.** [LO 3] A right triangle has a hypotenuse of 15 cm and one leg of 9 cm. Find the other leg. *(2 marks)*
 
 _______________________________________________
 
