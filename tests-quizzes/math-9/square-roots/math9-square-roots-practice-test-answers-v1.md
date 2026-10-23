@@ -47,9 +47,10 @@ SR1–SR4 are the four learning targets from the notes package, one per section.
 - 1 mark: 25 cm
 
 **14.** b² = 12² − 6² = 144 − 36 = 108, so b = **√108 ≈ 10.4 cm** (10² = 100, 11² = 121; 10.4² = 108.16).
+Scaling method: 12 and 6 are 6 × 2 and 6 × 1. In the small triangle, √(2² − 1²) = √3, so b = 6 × √3 ≈ 6 × 1.7 = 10.2 cm (6 × 1.73 = 10.4).
 - 1 mark: subtracts (finding a leg)
-- 1 mark: √108
-- 1 mark: estimate 10.4 cm (accept 10.3 with working)
+- 1 mark: √108 (or 6 × √3)
+- 1 mark: estimate 10.4 cm (accept 10.2 or 10.3 with working)
 - Common error: adding gives √180 ≈ 13.4 cm, which is longer than the hypotenuse. A leg can never be longer than the hypotenuse.
 
 **15.** The student took the square root of each number separately. A square root doesn't split over addition: add inside first. √(36 + 64) = √100 = **10**. Check: 14² = 196, not 100, so 14 can't be right.
@@ -69,9 +70,9 @@ SR1–SR4 are the four learning targets from the notes package, one per section.
 
 ## Part C — Extended Response
 
-**19.** (a) d² = 80² + 60² = 6400 + 3600 = 10 000, so d = **100 m**. (1 setup, 1 answer)
+**19.** (a) d² = 80² + 60² = 6400 + 3600 = 10 000, so d = **100 m**. Shortcut: 80 and 60 are 20 × 4 and 20 × 3, so d = 20 × 5 = 100 m. (1 setup, 1 answer)
 (b) A to B to C = 80 + 60 = 140 m. 140 − 100 = **40 m shorter**. (1 for 140 m, 1 for 40 m)
-(c) AM² = 40² + 60² = 1600 + 3600 = 5200, so AM = **√5200 ≈ 72.1 m** (72² = 5184, 73² = 5329). Accept 72 m. (1 for using 40, half of 80; 1 for the answer)
+(c) Scaling method (no calculator needed): 40 and 60 are 10 × 4 and 10 × 6. In the small triangle, √(4² + 6²) = √(16 + 36) = √52. Scale back up: AM = **10 × √52 ≈ 10 × 7.2 = 72 m** (7² = 49, 8² = 64; 7.2² = 51.84). The same answer the long way: AM² = 1600 + 3600 = 5200, so AM = √5200 ≈ 72.1 m. Accept 10√52, √5200 or 20√13 as the exact answer, and 72 m or 72.1 m as the estimate. (1 for using 40, half of 80; 1 for the answer)
 (d) **No.** If the corner were a right angle, 3² + 4² = 9 + 16 = 25 = 5², so the marks would be exactly 5 m apart. 5.2² = 27.04, not 25. The corner is not a right angle (the gap is too long, so the corner is a little wider than 90°). (1 for comparing 25 with 5.2² or 5.2 with 5; 1 for the conclusion)
 
 Units: deduct 1 mark once if units are missing throughout. Follow-through applies from (a) to (b).
