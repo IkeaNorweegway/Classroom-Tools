@@ -11,8 +11,8 @@ SR1–SR4 are the four learning targets from the notes package, one per section.
 |---|---|---|
 | SR1 — Identify perfect squares and find principal square roots | Q1, Q2, Q9, Q17 | 8 |
 | SR2 — Estimate square roots of non-perfect squares; explain why they are irrational | Q3, Q4, Q11, Q12, Q18 | 11 |
-| SR3 — Use the Pythagorean theorem to find unknown sides and check for right angles | Q7, Q8, Q13, Q14, Q19 | 16 |
-| SR4 — Find square roots of fractions and decimals; roots don't split over addition | Q5, Q6, Q10, Q15, Q16, Q20 | 15 |
+| SR3 — Use the Pythagorean theorem to find unknown sides and check for right angles | Q7, Q8, Q13, Q14, Q19, Q20 | 20 |
+| SR4 — Find square roots of fractions and decimals; roots don't split over addition | Q5, Q6, Q10, Q15, Q16 | 11 |
 | | **Total** | **50** |
 
 ## Part A — Selected Response
@@ -41,16 +41,16 @@ SR1–SR4 are the four learning targets from the notes package, one per section.
 
 **12.** √5 ≈ 2.2 (just past 2), √10 ≈ 3.2 (just past 3), √20 ≈ 4.5 (between 4 and 5, near 4.5). 1 mark each, placed in the right half-unit and labelled.
 
-**13.** c² = 15² + 20² = 225 + 400 = 625, so c = √625 = **25 cm**. Shortcut: both legs are 5 × (3, 4), so the hypotenuse is 5 × 5 = 25 cm.
-- 1 mark: a² + b² = c² set up with 15 and 20
-- 1 mark: 625 (or spots 5 × the 3-4-5 triangle)
-- 1 mark: 25 cm
+**13.** c² = 5² + 12² = 25 + 144 = 169, so c = √169 = **13 cm**.
+- 1 mark: a² + b² = c² set up with 5 and 12
+- 1 mark: 169
+- 1 mark: 13 cm
+- Common error: adding the legs (5 + 12 = 17). The hypotenuse is always shorter than the two legs added together.
 
 **14.** b² = 12² − 6² = 144 − 36 = 108, so b = **√108 ≈ 10.4 cm** (10² = 100, 11² = 121; 10.4² = 108.16).
-Scaling method: 12 and 6 are 6 × 2 and 6 × 1. In the small triangle, √(2² − 1²) = √3, so b = 6 × √3 ≈ 6 × 1.7 = 10.2 cm (6 × 1.73 = 10.4).
 - 1 mark: subtracts (finding a leg)
-- 1 mark: √108 (or 6 × √3)
-- 1 mark: estimate 10.4 cm (accept 10.2 or 10.3 with working)
+- 1 mark: √108
+- 1 mark: estimate 10.4 cm (accept 10.3 with working)
 - Common error: adding gives √180 ≈ 13.4 cm, which is longer than the hypotenuse. A leg can never be longer than the hypotenuse.
 
 **15.** The student took the square root of each number separately. A square root doesn't split over addition: add inside first. √(36 + 64) = √100 = **10**. Check: 14² = 196, not 100, so 14 can't be right.
@@ -72,7 +72,7 @@ Scaling method: 12 and 6 are 6 × 2 and 6 × 1. In the small triangle, √(2² �
 
 **19.** (a) d² = 80² + 60² = 6400 + 3600 = 10 000, so d = **100 m**. Shortcut: 80 and 60 are 20 × 4 and 20 × 3, so d = 20 × 5 = 100 m. (1 setup, 1 answer)
 (b) A to B to C = 80 + 60 = 140 m. 140 − 100 = **40 m shorter**. (1 for 140 m, 1 for 40 m)
-(c) Scaling method (no calculator needed): 40 and 60 are 10 × 4 and 10 × 6. In the small triangle, √(4² + 6²) = √(16 + 36) = √52. Scale back up: AM = **10 × √52 ≈ 10 × 7.2 = 72 m** (7² = 49, 8² = 64; 7.2² = 51.84). The same answer the long way: AM² = 1600 + 3600 = 5200, so AM = √5200 ≈ 72.1 m. Accept 10√52, √5200 or 20√13 as the exact answer, and 72 m or 72.1 m as the estimate. (1 for using 40, half of 80; 1 for the answer)
+(c) M is halfway along the 80 m side, so the legs are 40 m and 60 m. AM² = 40² + 60² = 1600 + 3600 = 5200, so AM = **√5200 m**. 70² = 4900 and 80² = 6400, and 5200 is much closer to 4900, so Path 2 is **closer to 70 m** (it is about 72 m). (1 for using 40, half of 80; 1 for √5200 and "closer to 70 m" backed by 70² and 80²)
 (d) **No.** If the corner were a right angle, 3² + 4² = 9 + 16 = 25 = 5², so the marks would be exactly 5 m apart. 5.2² = 27.04, not 25. The corner is not a right angle (the gap is too long, so the corner is a little wider than 90°). (1 for comparing 25 with 5.2² or 5.2 with 5; 1 for the conclusion)
 
 Units: deduct 1 mark once if units are missing throughout. Follow-through applies from (a) to (b).
@@ -88,11 +88,11 @@ Units: deduct 1 mark once if units are missing throughout. Follow-through applie
 
 ## Part D — Thinking
 
-**20.** Model answer: Taylor is only right for numbers greater than 1. √49 = 7, and 7 is smaller than 49. But for numbers between 0 and 1 the square root is bigger: √0.25 = 0.5, and 0.5 is bigger than 0.25. As a fraction, √(1/4) = 1/2, which is bigger than 1/4. That happens because multiplying two numbers less than 1 gives a smaller answer (0.5 × 0.5 = 0.25), so the root has to be bigger than the number. For 1 and 0, the root equals the number (√1 = 1, √0 = 0). So Taylor is wrong: the square root makes a number smaller only when the number is greater than 1.
+**20.** Model answer: Jordan is correct. The long way: c² = 30² + 50² = 900 + 2500 = 3400. 3400 = 100 × 34, so c = √(100 × 34) = √100 × √34 = **10 × √34**. Riley is right that each square is 100 times bigger, but the hypotenuse is the square root of that, and √100 = 10. So the hypotenuse is only 10 times bigger. (Riley's answer can't be right: 100 × √34 is more than 500 cm, much longer than the two legs added together.) Estimate: 5² = 25 and 6² = 36, and 5.8² = 33.64, so √34 ≈ 5.8 and the hypotenuse is about **58 cm** (check: 58² = 3364, close to 3400).
 
 | Level | Marks | Descriptor |
 |---|---|---|
-| Full | 4 | Says Taylor is wrong; gives a correct whole-number example where the root is smaller; gives a correct fraction or decimal example where the root is bigger; states the rule (smaller only when the number is greater than 1) |
-| Substantial | 3 | Says Taylor is wrong with one correct counterexample (a fraction or decimal) and one whole-number example, but no general rule |
-| Partial | 1–2 | One correct example of either kind with some explanation (2); or says Taylor is wrong with no supporting mathematics (1) |
-| Not demonstrated | 0 | Agrees with Taylor, or no relevant mathematics |
+| Full | 4 | Says Jordan is correct; finds 3400 the long way and links it to 10 × √34 (3400 = 100 × 34, or √100 = 10); explains why the hypotenuse is 10 times bigger, not 100; estimates 58 cm |
+| Substantial | 3 | Says Jordan is correct with the long-way check and the estimate, but the reason it is × 10 and not × 100 is missing or unclear |
+| Partial | 1–2 | Says Jordan is correct with some correct working, such as finding √3400 (2); or says Jordan is correct with no supporting mathematics (1) |
+| Not demonstrated | 0 | Agrees with Riley, or no relevant mathematics |

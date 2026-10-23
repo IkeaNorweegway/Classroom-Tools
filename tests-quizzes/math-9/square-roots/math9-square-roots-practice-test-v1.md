@@ -22,8 +22,8 @@ Grade 9 Mathematics · Alberta Curriculum · Number · PRACTICE — posted for s
 |---|---|---|
 | SR1 — Perfect squares and principal square roots | Q1, Q2, Q9, Q17 | 8 |
 | SR2 — Estimating non-perfect squares; irrational numbers | Q3, Q4, Q11, Q12, Q18 | 11 |
-| SR3 — The Pythagorean theorem | Q7, Q8, Q13, Q14, Q19 | 16 |
-| SR4 — Square roots of fractions and decimals | Q5, Q6, Q10, Q15, Q16, Q20 | 15 |
+| SR3 — The Pythagorean theorem | Q7, Q8, Q13, Q14, Q19, Q20 | 20 |
+| SR4 — Square roots of fractions and decimals | Q5, Q6, Q10, Q15, Q16 | 11 |
 | | **Total** | **50** |
 
 ---
@@ -73,7 +73,7 @@ A) 4, 5, 6 &nbsp; B) 6, 8, 10 &nbsp; C) 5, 6, 7 &nbsp; D) 7, 8, 9
 
 **12.** Mark and label √5, √10 and √20 on the number line (0 to 5, ticks every 0.5). *[3]*
 
-**13.** A right triangle has legs of 15 cm and 20 cm. Find the hypotenuse. *[3]* [Diagram: right angle at bottom left; legs 15 cm (vertical) and 20 cm (horizontal); hypotenuse c.]
+**13.** A right triangle has legs of 5 cm and 12 cm. Find the hypotenuse. *[3]* [Diagram: right angle at bottom left; legs 5 cm (vertical) and 12 cm (horizontal); hypotenuse c.]
 
 **14.** A right triangle has a hypotenuse of 12 cm and one leg of 6 cm. Find the other leg. Give the exact answer and an estimate to one decimal place. *[3]* [Diagram: vertical leg 6 cm, hypotenuse 12 cm, horizontal leg b.]
 
@@ -101,7 +101,7 @@ What did the student do wrong? Give the correct answer, and show a check that pr
 
 (a) How long is Path 1, the diagonal from A to C? *[2]*
 (b) How much shorter is Path 1 than walking around the edge from A to B to C? *[2]*
-(c) Path 2 goes from A to M, the middle of the far long side. How long is Path 2? Give the exact answer and an estimate to one decimal place. *[2]*
+(c) Path 2 goes from A to M, the middle of the far long side. How long is Path 2? Give the exact answer. Is it closer to 70 m or 80 m? Show how you know. *[2]*
 (d) The groundskeeper checks that corner A is a right angle. She measures 3 m along one side and 4 m along the other, then measures 5.2 m between the two marks. Is corner A a right angle? Explain using the Pythagorean theorem. *[2]*
 
 ---
@@ -110,8 +110,10 @@ What did the student do wrong? Give the correct answer, and show a check that pr
 
 *One question that asks you to judge a claim. [4 marks] /4*
 
-**20.** Taylor says: "Taking the square root of a number always makes it smaller."
-Is Taylor correct? Test the claim with at least one whole number and one fraction or decimal. Explain when Taylor is right and when Taylor is wrong.
+**20.** A right triangle has legs of 30 cm and 50 cm. Two students try to find the hypotenuse without a calculator.
+Jordan says: "Shrink it by 10. A triangle with legs 3 and 5 has a hypotenuse of √34, so the big triangle's hypotenuse is 10 × √34."
+Riley says: "30² is 100 times bigger than 3², so the hypotenuse should be 100 × √34."
+Who is correct? Find the hypotenuse the long way to check, and explain why. Then estimate the hypotenuse to the nearest centimetre.
 
 ---
 
@@ -121,7 +123,7 @@ Is Taylor correct? Test the claim with at least one whole number and one fractio
 |---|---|---|---|
 | I can find perfect squares and their square roots | 1, 2, 9, 17 | /8 | |
 | I can estimate a square root that isn't a perfect square | 3, 4, 11, 12, 18 | /11 | |
-| I can use the Pythagorean theorem to find a missing side | 7, 8, 13, 14, 19 | /16 | |
-| I can find square roots of fractions and decimals | 5, 6, 10, 15, 16, 20 | /15 | |
+| I can use the Pythagorean theorem to find a missing side | 7, 8, 13, 14, 19, 20 | /20 | |
+| I can find square roots of fractions and decimals | 5, 6, 10, 15, 16 | /11 | |
 
 Pick one question where you lost marks. Was it because you didn't understand the idea, or because of a slip in your working? How can you tell?

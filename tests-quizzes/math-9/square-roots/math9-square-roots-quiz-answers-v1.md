@@ -5,8 +5,8 @@ Teacher use only · Keep off student copies
 2. **12** (12 × 12 = 144). (1 mark)
 3. **5 and 6** (√25 = 5 and √36 = 6, so √30 is between them). (2 marks: one each)
 4. **≈ 7.1** (√49 = 7 and √64 = 8, so √50 is a bit over 7; 7.1² = 50.41). Any reasonable estimate between 7.0 and 7.1 with working. (2 marks)
-5. c = √(6² + 8²) = √100 = **10 cm**. (2 marks: setup, answer)
-6. b = √(15² − 9²) = √(225 − 81) = √144 = **12 cm**. Shortcut: 15 and 9 are 3 × 5 and 3 × 3, so b = 3 × 4 = 12 cm. (2 marks: setup, answer)
+5. c = √(5² + 12²) = √(25 + 144) = √169 = **13 cm**. (2 marks: setup, answer)
+6. b = √(6² − 4²) = √(36 − 16) = **√20 ≈ 4.5 cm** (4² = 16, 5² = 25; 4.5² = 20.25). (2 marks: setup, exact answer with estimate)
 7. Height h = √(5² − 3²) = √16 = **4 m**. (3 marks: a labelled right triangle, the setup, the answer)
 8. 50 is not a perfect square: 7² = 49 and 8² = 64, so √50 falls between two whole numbers and cannot be written as a whole number. (3 marks: not a perfect square, between 7 and 8, conclusion)
 
