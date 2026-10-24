@@ -353,6 +353,61 @@
     .meta-block { page-break-inside: avoid; }
     .rubric-section { page-break-inside: avoid; }
   }
+
+  /* ─── SVG Diagram Design System (dg-* classes) ─────────── */
+:root {
+  --dg-stroke:    #3f3b35;             /* primary: shapes, lines, point labels */
+  --dg-fill:      #faf9f6;             /* shape interior fill */
+  --dg-accent:    var(--accent, #1d4ed8); /* highlighted elements — inherits unit colour */
+  --dg-secondary: #544f47;             /* secondary / annotation text */
+  --dg-muted:     #6b665d;             /* faint construction lines */
+  --dg-sw:        1.5px;               /* standard stroke width */
+  --dg-sw-bold:   2.5px;               /* bold stroke (key elements) */
+  --dg-sw-thin:   1.0px;               /* thin stroke (right-angle marks) */
+}
+
+/* Non-scaling strokes: crisp at any size — browser zoom, print, PDF export */
+svg .dg-boundary, svg .dg-line, svg .dg-accent, svg .dg-grid,
+svg .dg-dashed, svg .dg-right-angle, svg .dg-construction {
+  vector-effect: non-scaling-stroke;
+}
+
+svg .dg-boundary    { stroke: var(--dg-stroke);    fill: var(--dg-fill);  stroke-width: var(--dg-sw); }
+svg .dg-line        { stroke: var(--dg-stroke);    fill: none;            stroke-width: var(--dg-sw); }
+svg .dg-accent      { stroke: var(--dg-accent);    fill: none;            stroke-width: var(--dg-sw-bold); }
+svg .dg-dashed      { stroke: var(--dg-secondary); fill: none;            stroke-width: var(--dg-sw); stroke-dasharray: 5 3; }
+svg .dg-right-angle { stroke: var(--dg-stroke);    fill: none;            stroke-width: var(--dg-sw-thin); }
+svg .dg-construction{ stroke: var(--dg-muted);     fill: none;            stroke-width: var(--dg-sw-thin); stroke-dasharray: 2 3; }
+svg .dg-grid        { stroke: var(--dg-muted);     fill: none;            stroke-width: var(--dg-sw-thin); }
+svg .dg-point       { fill: var(--dg-stroke);      stroke: none; }
+svg .dg-point-accent{ fill: var(--dg-accent);      stroke: none; }
+svg .dg-label       { font: 12px/1.3 system-ui, sans-serif; fill: var(--dg-stroke);    stroke: none; }
+svg .dg-label-sm    { font: 11px/1.3 system-ui, sans-serif; fill: var(--dg-secondary); stroke: none; }
+svg .dg-label-accent{ font: 11px/1.3 system-ui, sans-serif; fill: var(--dg-accent);    stroke: none; font-weight: 600; }
+
+  /* ─── dg-* science extension: fills, arrowheads, write-in boxes ─── */
+svg .dg-fill-light, svg .dg-fill-mid, svg .dg-fill-dark, svg .dg-fill-accent,
+svg .dg-accent-dashed, svg .dg-blank, svg .dg-line-thin, svg .dg-line-bold {
+  vector-effect: non-scaling-stroke;
+}
+svg .dg-fill-light   { fill: #ece9e2; stroke: var(--dg-stroke); stroke-width: var(--dg-sw); }
+svg .dg-fill-mid     { fill: #b9b3a8; stroke: var(--dg-stroke); stroke-width: var(--dg-sw); }
+svg .dg-fill-dark    { fill: #5b5650; stroke: var(--dg-stroke); stroke-width: var(--dg-sw); }
+svg .dg-fill-accent  { fill: var(--accent-light, #eef2ff); stroke: var(--dg-accent); stroke-width: var(--dg-sw); }
+svg .dg-solid        { fill: var(--dg-stroke); stroke: none; }
+svg .dg-solid-accent { fill: var(--dg-accent); stroke: none; }
+svg .dg-solid-muted  { fill: var(--dg-muted); stroke: none; }
+svg .dg-line-thin    { stroke: var(--dg-stroke); fill: none; stroke-width: var(--dg-sw-thin); }
+svg .dg-line-bold    { stroke: var(--dg-stroke); fill: none; stroke-width: var(--dg-sw-bold); stroke-linecap: round; }
+svg .dg-accent-dashed{ stroke: var(--dg-accent); fill: none; stroke-width: var(--dg-sw-bold); stroke-dasharray: 7 5; }
+svg .dg-blank        { fill: #fff; stroke: var(--dg-stroke); stroke-width: var(--dg-sw); stroke-dasharray: 4 3; }
+svg .dg-label-lg     { font: 700 15px/1.3 var(--font-body, system-ui), sans-serif; fill: var(--dg-stroke); stroke: none; }
+svg .dg-label-b      { font: 700 12px/1.3 var(--font-body, system-ui), sans-serif; fill: var(--dg-stroke); stroke: none; }
+svg .dg-label-white  { font: 700 12px/1.3 var(--font-body, system-ui), sans-serif; fill: #fff; stroke: none; }
+
+  /* keep diagrams whole and headings with what follows when printed */
+  svg { break-inside: avoid; }
+  h3, h4 { break-after: avoid; }
 </style>
 </head>
 <body>
@@ -436,14 +491,97 @@
       <span class="q-tag">disponible après la leçon 2 · technologies-d'exploration</span>
     </div>
     <div class="q-body">
-      <p>Relie chaque outil à ce qu'il fait le mieux en traçant une ligne.</p>
-      <table>
-        <tr><th>Outil</th><th>Utilisé surtout pour…</th></tr>
-        <tr><td>Télescope optique</td><td>Se déplacer à la surface d'une planète et analyser des échantillons de roche</td></tr>
-        <tr><td>Sonde spatiale</td><td>S'approcher d'un objet lointain et transmettre des données sans atterrir</td></tr>
-        <tr><td>Rover</td><td>Observer des objets lointains depuis la Terre en utilisant la lumière visible</td></tr>
-        <tr><td>Modèle informatique</td><td>Simuler des conditions qu'aucun vaisseau spatial ne peut atteindre</td></tr>
-      </table>
+      <p>Trace une ligne de chaque outil (1 à 4) jusqu'à ce qu'il fait le mieux (A à D).</p>
+<!-- tikz: picture-matching | 4 tool drawings (telescope, probe, rover, computer) above 4 scrambled description boxes, dots to connect -->
+<svg viewBox="0 0 680 314" width="100%" style="max-width:680px; display:block; margin:12px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Quatre outils spatiaux dessinés en rangée, numérotés de 1 à 4 : un télescope optique sur trépied, une sonde spatiale avec une antenne parabolique, un rover à six roues et un ordinateur qui montre des orbites. En dessous, quatre cases de description, A à D, à relier par des lignes.">
+  <!-- 1 Optical telescope -->
+  <line x1="20" y1="118" x2="140" y2="118" class="dg-line"/>
+  <line x1="80" y1="84" x2="58" y2="118" class="dg-line"/>
+  <line x1="80" y1="84" x2="102" y2="118" class="dg-line"/>
+  <line x1="80" y1="84" x2="80" y2="118" class="dg-line"/>
+  <rect x="36" y="72" width="92" height="20" rx="3" transform="rotate(-32 80 82)" class="dg-fill-light"/>
+  <rect x="28" y="76" width="10" height="12" rx="2" transform="rotate(-32 80 82)" class="dg-fill-mid"/>
+  <rect x="124" y="70" width="8" height="24" rx="2" transform="rotate(-32 80 82)" class="dg-fill-mid"/>
+  <circle cx="80" cy="84" r="3.5" class="dg-solid"/>
+  <!-- 2 Space probe -->
+  <path d="M212 50 Q250 82 288 50 Z" class="dg-fill-light"/>
+  <line x1="250" y1="50" x2="250" y2="34" class="dg-line"/>
+  <circle cx="250" cy="32" r="3" class="dg-solid"/>
+  <rect x="237" y="66" width="26" height="22" rx="2" class="dg-fill-mid"/>
+  <line x1="263" y1="84" x2="300" y2="106" class="dg-line"/>
+  <rect x="297" y="102" width="12" height="8" rx="1" transform="rotate(30 303 106)" class="dg-fill-dark"/>
+  <line x1="237" y1="84" x2="204" y2="102" class="dg-line"/>
+  <rect x="194" y="98" width="14" height="9" rx="2" transform="rotate(-30 201 102)" class="dg-fill-dark"/>
+  <line x1="180" y1="62" x2="200" y2="62" class="dg-dashed"/>
+  <line x1="186" y1="74" x2="206" y2="74" class="dg-dashed"/>
+  <circle cx="300" cy="22" r="1.6" class="dg-solid-muted"/>
+  <circle cx="208" cy="28" r="1.6" class="dg-solid-muted"/>
+  <circle cx="316" cy="64" r="1.6" class="dg-solid-muted"/>
+  <!-- 3 Rover -->
+  <line x1="352" y1="118" x2="488" y2="118" class="dg-line"/>
+  <polygon points="470,118 476,111 484,118" class="dg-fill-mid"/>
+  <polygon points="358,118 362,113 368,118" class="dg-fill-mid"/>
+  <rect x="380" y="64" width="80" height="7" rx="1" class="dg-fill-mid"/>
+  <rect x="386" y="71" width="68" height="22" rx="3" class="dg-fill-light"/>
+  <line x1="394" y1="93" x2="394" y2="100" class="dg-line"/>
+  <line x1="420" y1="93" x2="420" y2="100" class="dg-line"/>
+  <line x1="446" y1="93" x2="446" y2="100" class="dg-line"/>
+  <circle cx="394" cy="108" r="9" class="dg-fill-dark"/>
+  <circle cx="420" cy="108" r="9" class="dg-fill-dark"/>
+  <circle cx="446" cy="108" r="9" class="dg-fill-dark"/>
+  <line x1="446" y1="64" x2="446" y2="36" class="dg-line"/>
+  <rect x="436" y="26" width="22" height="11" rx="2" class="dg-fill-mid"/>
+  <polyline points="386,82 372,94 368,106" class="dg-line"/>
+  <!-- 4 Computer model -->
+  <rect x="544" y="26" width="92" height="64" rx="4" class="dg-fill-mid"/>
+  <rect x="550" y="32" width="80" height="52" rx="2" class="dg-boundary"/>
+  <ellipse cx="590" cy="58" rx="34" ry="13" class="dg-line-thin"/>
+  <ellipse cx="590" cy="58" rx="20" ry="8" class="dg-line-thin"/>
+  <circle cx="590" cy="58" r="5" class="dg-fill-accent"/>
+  <circle cx="610" cy="52" r="2.5" class="dg-solid"/>
+  <circle cx="563" cy="64" r="3" class="dg-solid"/>
+  <rect x="582" y="90" width="16" height="12" class="dg-fill-mid"/>
+  <rect x="564" y="102" width="52" height="6" rx="2" class="dg-fill-mid"/>
+  <!-- tool names + dots -->
+  <text x="80" y="142" text-anchor="middle" class="dg-label-b">1. Télescope optique</text>
+  <text x="250" y="142" text-anchor="middle" class="dg-label-b">2. Sonde spatiale</text>
+  <text x="420" y="142" text-anchor="middle" class="dg-label-b">3. Rover</text>
+  <text x="590" y="142" text-anchor="middle" class="dg-label-b">4. Modèle informatique</text>
+  <circle cx="80" cy="160" r="4.5" class="dg-point"/>
+  <circle cx="250" cy="160" r="4.5" class="dg-point"/>
+  <circle cx="420" cy="160" r="4.5" class="dg-point"/>
+  <circle cx="590" cy="160" r="4.5" class="dg-point"/>
+  <!-- description boxes (scrambled) -->
+  <circle cx="80" cy="206" r="4.5" class="dg-point"/>
+  <circle cx="250" cy="206" r="4.5" class="dg-point"/>
+  <circle cx="420" cy="206" r="4.5" class="dg-point"/>
+  <circle cx="590" cy="206" r="4.5" class="dg-point"/>
+  <rect x="4" y="214" width="152" height="94" rx="6" class="dg-boundary"/>
+  <rect x="174" y="214" width="152" height="94" rx="6" class="dg-boundary"/>
+  <rect x="344" y="214" width="152" height="94" rx="6" class="dg-boundary"/>
+  <rect x="514" y="214" width="152" height="94" rx="6" class="dg-boundary"/>
+  <text x="80" y="232" text-anchor="middle" class="dg-label-b">A</text>
+  <text x="80" y="250" text-anchor="middle" class="dg-label">Simuler des</text>
+  <text x="80" y="264" text-anchor="middle" class="dg-label">conditions qu'aucun</text>
+  <text x="80" y="278" text-anchor="middle" class="dg-label">vaisseau spatial ne</text>
+  <text x="80" y="292" text-anchor="middle" class="dg-label">peut atteindre</text>
+  <text x="250" y="232" text-anchor="middle" class="dg-label-b">B</text>
+  <text x="250" y="250" text-anchor="middle" class="dg-label">Se déplacer à la</text>
+  <text x="250" y="264" text-anchor="middle" class="dg-label">surface d'une planète</text>
+  <text x="250" y="278" text-anchor="middle" class="dg-label">et analyser des</text>
+  <text x="250" y="292" text-anchor="middle" class="dg-label">échantillons de roche</text>
+  <text x="420" y="232" text-anchor="middle" class="dg-label-b">C</text>
+  <text x="420" y="250" text-anchor="middle" class="dg-label">Observer des objets</text>
+  <text x="420" y="264" text-anchor="middle" class="dg-label">lointains depuis la</text>
+  <text x="420" y="278" text-anchor="middle" class="dg-label">Terre avec la</text>
+  <text x="420" y="292" text-anchor="middle" class="dg-label">lumière visible</text>
+  <text x="590" y="232" text-anchor="middle" class="dg-label-b">D</text>
+  <text x="590" y="250" text-anchor="middle" class="dg-label">S'approcher d'un objet</text>
+  <text x="590" y="264" text-anchor="middle" class="dg-label">lointain et transmettre</text>
+  <text x="590" y="278" text-anchor="middle" class="dg-label">des données sans</text>
+  <text x="590" y="292" text-anchor="middle" class="dg-label">atterrir</text>
+</svg>
+
       <p style="margin-top:10px;">Nomme une vraie mission pour deux des outils ci-dessus.</p>
       <p>Outil 1 : <span class="b b-md"></span> &nbsp;&nbsp; Mission : <span class="b b-xl"></span></p>
       <p>Outil 2 : <span class="b b-md"></span> &nbsp;&nbsp; Mission : <span class="b b-xl"></span></p>
@@ -465,6 +603,54 @@
         <li>La Lune paraît brillante parce qu'elle <strong>émet / réfléchit</strong> la lumière du Soleil vers nous.</li>
         <li>Les étoiles que tu vois la nuit <strong>émettent / réfléchissent</strong> leur propre lumière.</li>
       </ol>
+<p>Utilise maintenant le schéma. Écris <strong>émise</strong> ou <strong>réfléchie</strong> dans chaque case numérotée pour décrire la lumière sur cette flèche.</p>
+<!-- tikz: light-paths | Sun (rays) -> Venus -> observer on Earth; distant star -> observer; 3 blank boxes on arrows -->
+<svg viewBox="0 0 680 250" width="100%" style="max-width:680px; display:block; margin:12px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Trajets de la lumière : une flèche du Soleil vers Vénus, une flèche de Vénus vers une personne sur Terre, et une flèche d'une étoile lointaine vers la même personne. Chaque flèche a une case vide où écrire émise ou réfléchie.">
+  <defs>
+    <marker id="sp-wb-q3-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" class="dg-solid-accent"/></marker>
+  </defs>
+  <!-- Sun with rays -->
+  <g>
+    <line x1="80" y1="78" x2="80" y2="62" class="dg-line"/>
+    <line x1="80" y1="198" x2="80" y2="214" class="dg-line"/>
+    <line x1="20" y1="138" x2="6" y2="138" class="dg-line"/>
+    <line x1="122" y1="96" x2="134" y2="84" class="dg-line"/>
+    <line x1="38" y1="96" x2="26" y2="84" class="dg-line"/>
+    <line x1="122" y1="180" x2="134" y2="192" class="dg-line"/>
+    <line x1="38" y1="180" x2="26" y2="192" class="dg-line"/>
+    <line x1="140" y1="138" x2="156" y2="138" class="dg-line"/>
+  </g>
+  <circle cx="80" cy="138" r="52" class="dg-fill-accent"/>
+  <text x="80" y="143" text-anchor="middle" class="dg-label-lg">Soleil</text>
+  <!-- Venus: lit on the side facing the Sun -->
+  <circle cx="360" cy="52" r="16" class="dg-fill-dark"/>
+  <path d="M360 36 A16 16 0 0 0 360 68 Z" class="dg-fill-light"/>
+  <text x="360" y="88" text-anchor="middle" class="dg-label-b">Vénus</text>
+  <!-- distant star -->
+  <polygon points="612,10 616,22 629,22 619,30 623,42 612,35 601,42 605,30 595,22 608,22" class="dg-fill-accent"/>
+  <text x="590" y="30" text-anchor="end" class="dg-label-b">une étoile lointaine</text>
+  <!-- Earth with observer -->
+  <path d="M440 250 A150 150 0 0 1 680 250 Z" class="dg-fill-light"/>
+  <text x="560" y="238" text-anchor="middle" class="dg-label-b">Terre</text>
+  <circle cx="540" cy="150" r="6" class="dg-boundary"/>
+  <line x1="540" y1="156" x2="540" y2="174" class="dg-line"/>
+  <line x1="540" y1="174" x2="533" y2="186" class="dg-line"/>
+  <line x1="540" y1="174" x2="547" y2="186" class="dg-line"/>
+  <line x1="532" y1="163" x2="548" y2="163" class="dg-line"/>
+  <text x="528" y="176" text-anchor="end" class="dg-label-sm">toi</text>
+  <!-- light paths -->
+  <line x1="134" y1="120" x2="340" y2="58" class="dg-accent" marker-end="url(#sp-wb-q3-arrow)"/>
+  <line x1="376" y1="62" x2="530" y2="146" class="dg-accent" marker-end="url(#sp-wb-q3-arrow)"/>
+  <line x1="608" y1="46" x2="550" y2="142" class="dg-accent" marker-end="url(#sp-wb-q3-arrow)"/>
+  <!-- write-in boxes -->
+  <rect x="150" y="34" width="130" height="32" rx="4" class="dg-blank"/>
+  <text x="160" y="56" class="dg-label-lg">1</text>
+  <rect x="330" y="122" width="130" height="32" rx="4" class="dg-blank"/>
+  <text x="340" y="144" class="dg-label-lg">2</text>
+  <rect x="588" y="92" width="90" height="32" rx="4" class="dg-blank"/>
+  <text x="597" y="114" class="dg-label-lg">3</text>
+</svg>
+
       <p>Explique maintenant en une phrase pourquoi on peut voir les planètes la nuit même si elles ne brûlent pas :</p>
       <div class="al"></div>
       <div class="al"></div>
@@ -501,7 +687,32 @@
       <span class="q-tag">disponible après la leçon 1 · idée-fausse-sur-l'échelle</span>
     </div>
     <div class="q-body">
-      <p><strong>Analyse d'erreur.</strong> Un(e) élève a dessiné un schéma du système solaire. Les huit planètes sont espacées de quelques centimètres. Le Soleil est un grand cercle sur le bord gauche de la feuille.</p>
+      <p><strong>Analyse d'erreur.</strong> Un(e) élève a dessiné ce schéma du système solaire. Les huit planètes sont espacées de quelques centimètres. Le Soleil est un grand cercle sur le bord gauche de la feuille.</p>
+<!-- tikz: error-diagram | student's crowded solar system: Sun edge at left, 8 similar-size planets evenly spaced, notebook-page frame -->
+<svg viewBox="0 0 680 180" width="100%" style="max-width:680px; display:block; margin:12px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Le schéma de l'élève : un grand Soleil sur le bord gauche d'une feuille, puis huit planètes presque de la même taille, espacées régulièrement de quelques centimètres, nommées de Mercure à Neptune.">
+  <rect x="2" y="2" width="676" height="176" rx="6" class="dg-dashed"/>
+  <text x="664" y="22" text-anchor="end" class="dg-label-sm">Schéma de l'élève</text>
+  <path d="M2 20 A80 80 0 0 1 2 160 Z" class="dg-fill-accent"/>
+  <text x="26" y="95" text-anchor="middle" class="dg-label-b">Soleil</text>
+  <circle cx="130" cy="90" r="13" class="dg-fill-light"/>
+  <circle cx="200" cy="90" r="15" class="dg-fill-light"/>
+  <circle cx="270" cy="90" r="15" class="dg-fill-light"/>
+  <circle cx="340" cy="90" r="14" class="dg-fill-light"/>
+  <circle cx="410" cy="90" r="19" class="dg-fill-light"/>
+  <circle cx="480" cy="90" r="18" class="dg-fill-light"/>
+  <ellipse cx="480" cy="90" rx="28" ry="6" class="dg-line"/>
+  <circle cx="550" cy="90" r="16" class="dg-fill-light"/>
+  <circle cx="620" cy="90" r="16" class="dg-fill-light"/>
+  <text x="130" y="134" text-anchor="middle" class="dg-label-sm">Mercure</text>
+  <text x="200" y="134" text-anchor="middle" class="dg-label-sm">Vénus</text>
+  <text x="270" y="134" text-anchor="middle" class="dg-label-sm">Terre</text>
+  <text x="340" y="134" text-anchor="middle" class="dg-label-sm">Mars</text>
+  <text x="410" y="134" text-anchor="middle" class="dg-label-sm">Jupiter</text>
+  <text x="480" y="134" text-anchor="middle" class="dg-label-sm">Saturne</text>
+  <text x="550" y="134" text-anchor="middle" class="dg-label-sm">Uranus</text>
+  <text x="620" y="134" text-anchor="middle" class="dg-label-sm">Neptune</text>
+</svg>
+
       <p>L'élève dit : <em>« Mon schéma est exact — le système solaire est assez rempli. Les planètes sont assez proches pour se voir dans le ciel. »</em></p>
       <p>Identifie deux erreurs dans ce que l'élève a dit.</p>
       <p>Erreur 1 :</p>
@@ -546,7 +757,30 @@
       <p>Un satellite n'a pas besoin de moteurs pour rester en orbite. Explique comment cela fonctionne.</p>
       <p>Complète les phrases ci-dessous.</p>
       <p>Un satellite se déplace <span class="b b-md"></span> vite. En tombant vers la Terre, la surface de la Terre s'<span class="b b-md"></span> sous lui au même rythme. Le résultat est que le satellite continue de tomber en <span class="b b-md"></span>.</p>
-      <p style="margin-top:8px;">Imagine que tu lances une balle horizontalement. Si tu la lances plus vite, elle parcourt <span class="b b-md"></span> avant de toucher le sol. Si tu la lances assez vite, elle ne touche jamais le sol parce que <span class="b b-xl"></span>.</p>
+      <p style="margin-top:8px;">Le schéma montre une balle lancée à l'horizontale du sommet d'une très haute montagne, à trois vitesses différentes.</p>
+<!-- tikz: newtons-cannonball | Earth circle r95, mountain, 3 horizontal throws: A lands near, B lands farther, C full orbit r125; letters only -->
+<svg viewBox="100 0 480 290" width="100%" style="max-width:500px; display:block; margin:12px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Une balle est lancée à l'horizontale du sommet d'une très haute montagne sur la Terre, à trois vitesses. Le trajet A descend en courbe et tombe près de la montagne. Le trajet B tombe plus loin autour de la Terre. Le trajet C fait tout le tour de la Terre sans tomber au sol.">
+  <defs>
+    <marker id="sp-wb-q7-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" class="dg-solid-accent"/></marker>
+  </defs>
+  <circle cx="340" cy="150" r="95" class="dg-fill-light"/>
+  <text x="340" y="156" text-anchor="middle" class="dg-label-lg">Terre</text>
+  <polygon points="320,58 340,25 360,58" class="dg-fill-mid"/>
+  <!-- C: orbit -->
+  <path d="M342 25 A125 125 0 1 1 330 25.4" class="dg-accent"/>
+  <polygon points="459,144 471,144 465,157" class="dg-solid-accent"/>
+  <!-- A and B -->
+  <path d="M342 25 Q366 25 371 58" class="dg-accent" marker-end="url(#sp-wb-q7-arrow)"/>
+  <path d="M342 25 Q424 27 428 114" class="dg-accent" marker-end="url(#sp-wb-q7-arrow)"/>
+  <circle cx="342" cy="25" r="4" class="dg-solid"/>
+  <text x="381" y="52" class="dg-label-lg">A</text>
+  <text x="436" y="104" class="dg-label-lg">B</text>
+  <text x="200" y="155" text-anchor="end" class="dg-label-lg">C</text>
+  <text x="300" y="18" text-anchor="end" class="dg-label-sm">balle lancée à l'horizontale ici</text>
+  <text x="576" y="282" text-anchor="end" class="dg-label-sm">Pas à l'échelle</text>
+</svg>
+<p>Quel trajet montre le lancer le plus lent ? <span class="b b-sm"></span> &nbsp;&nbsp; Quel trajet est une orbite ? <span class="b b-sm"></span></p>
+<p style="margin-top:8px;">Imagine que tu lances une balle horizontalement. Si tu la lances plus vite, elle parcourt <span class="b b-md"></span> avant de toucher le sol. Si tu la lances assez vite, elle ne touche jamais le sol parce que <span class="b b-xl"></span>.</p>
       <div class="hint">Indice : La courbure de la Terre a son importance ici.</div>
     </div>
   </div>
@@ -584,23 +818,72 @@
     <div class="q-body">
       <p><strong>Question visuelle.</strong> Identifie chaque objet dans le schéma ci-dessous. Choisis dans la banque de mots. Chaque étiquette est utilisée une seule fois.</p>
       <div class="word-bank"><strong>Banque de mots :</strong> étoile · planète · planète naine · astéroïde · comète · météore</div>
-      <div class="diagram">                     ☀
-                 [  A  ]
-                     |
-       ○  ○  ○  ○  ○  ○  ○  ○
-       [B][C][D][E][F][G][H][I]
-
-  [  J  ] — rocheux, plus petit qu'une planète,
-            en orbite entre Mars et Jupiter
-
-  [  K  ] — corps glacé ; développe une queue lumineuse
-            en s'approchant du Soleil
-
-  [  L  ] — traînée de lumière lorsqu'un petit rocher
-            brûle dans l'atmosphère terrestre
-
-  [  M  ] — corps rond en orbite autour du Soleil
-            qui ne dégage PAS son voisinage orbital</div>
+      <!-- tikz: solar-system-lineup-labelling | Sun edge, 8 planets (relative sizes), asteroid belt J, comet K tail away from Sun, meteor L inset, dwarf planet M in Kuiper belt; letters A-M -->
+<svg viewBox="0 0 680 290" width="100%" style="max-width:680px; display:block; margin:12px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Un schéma du système solaire avec des lettres à identifier : A est le Soleil sur le bord gauche ; B à I sont les huit planètes dans l'ordre ; J est une bande de petits corps rocheux entre Mars et Jupiter ; K est un corps glacé dont la queue pointe à l'opposé du Soleil ; L est une traînée de lumière dans le ciel terrestre ; M est un petit corps rond au-delà de Neptune, parmi beaucoup d'objets glacés.">
+  <circle cx="-40" cy="140" r="100" class="dg-fill-accent"/>
+  <text x="24" y="146" text-anchor="middle" class="dg-label-lg">A</text>
+  <!-- planets -->
+  <circle cx="92" cy="140" r="3" class="dg-fill-mid"/>
+  <circle cx="122" cy="140" r="6" class="dg-fill-light"/>
+  <circle cx="152" cy="140" r="6.5" class="dg-fill-mid"/>
+  <circle cx="180" cy="140" r="4" class="dg-fill-mid"/>
+  <circle cx="284" cy="140" r="34" class="dg-fill-light"/>
+  <ellipse cx="390" cy="140" rx="50" ry="9" class="dg-line"/>
+  <circle cx="390" cy="140" r="27" class="dg-fill-light"/>
+  <path d="M340 140 A50 9 0 0 0 440 140" class="dg-line"/>
+  <circle cx="480" cy="140" r="13" class="dg-fill-mid"/>
+  <circle cx="538" cy="140" r="12.5" class="dg-fill-mid"/>
+  <!-- asteroid belt J -->
+  <g>
+    <circle cx="200" cy="112" r="1.8" class="dg-solid"/><circle cx="214" cy="120" r="1.4" class="dg-solid"/><circle cx="206" cy="131" r="2" class="dg-solid"/>
+    <circle cx="222" cy="138" r="1.5" class="dg-solid"/><circle cx="201" cy="146" r="1.6" class="dg-solid"/><circle cx="216" cy="152" r="2.2" class="dg-solid"/>
+    <circle cx="226" cy="124" r="1.6" class="dg-solid"/><circle cx="208" cy="162" r="1.5" class="dg-solid"/><circle cx="224" cy="168" r="1.7" class="dg-solid"/>
+    <circle cx="198" cy="126" r="1.3" class="dg-solid"/><circle cx="212" cy="104" r="1.5" class="dg-solid"/><circle cx="228" cy="152" r="1.3" class="dg-solid"/>
+  </g>
+  <!-- Kuiper belt + M -->
+  <g>
+    <circle cx="582" cy="118" r="1.6" class="dg-solid-muted"/><circle cx="598" cy="160" r="1.8" class="dg-solid-muted"/><circle cx="614" cy="124" r="1.5" class="dg-solid-muted"/>
+    <circle cx="628" cy="150" r="2" class="dg-solid-muted"/><circle cx="642" cy="116" r="1.6" class="dg-solid-muted"/><circle cx="656" cy="142" r="1.8" class="dg-solid-muted"/>
+    <circle cx="588" cy="170" r="1.5" class="dg-solid-muted"/><circle cx="636" cy="172" r="1.6" class="dg-solid-muted"/><circle cx="664" cy="164" r="1.4" class="dg-solid-muted"/>
+    <circle cx="620" cy="104" r="1.5" class="dg-solid-muted"/><circle cx="660" cy="108" r="1.3" class="dg-solid-muted"/><circle cx="576" cy="146" r="1.4" class="dg-solid-muted"/>
+  </g>
+  <circle cx="604" cy="140" r="3.5" class="dg-fill-mid"/>
+  <!-- comet K -->
+  <path d="M446 47 Q486 40 532 30 L536 58 Q490 54 446 53 Z" class="dg-fill-light"/>
+  <circle cx="445" cy="50" r="4.5" class="dg-solid"/>
+  <text x="432" y="56" text-anchor="end" class="dg-label-lg">K</text>
+  <text x="490" y="78" text-anchor="middle" class="dg-label-sm">corps glacé ; sa queue grandit près du Soleil</text>
+  <!-- letters for planets -->
+  <text x="92" y="200" text-anchor="middle" class="dg-label-lg">B</text>
+  <text x="122" y="200" text-anchor="middle" class="dg-label-lg">C</text>
+  <text x="152" y="200" text-anchor="middle" class="dg-label-lg">D</text>
+  <text x="180" y="200" text-anchor="middle" class="dg-label-lg">E</text>
+  <text x="284" y="200" text-anchor="middle" class="dg-label-lg">F</text>
+  <text x="390" y="200" text-anchor="middle" class="dg-label-lg">G</text>
+  <text x="480" y="200" text-anchor="middle" class="dg-label-lg">H</text>
+  <text x="538" y="200" text-anchor="middle" class="dg-label-lg">I</text>
+  <line x1="92" y1="146" x2="92" y2="184" class="dg-construction"/>
+  <line x1="122" y1="150" x2="122" y2="184" class="dg-construction"/>
+  <line x1="152" y1="150" x2="152" y2="184" class="dg-construction"/>
+  <line x1="180" y1="147" x2="180" y2="184" class="dg-construction"/>
+  <!-- J and M -->
+  <text x="214" y="92" text-anchor="middle" class="dg-label-lg">J</text>
+  <text x="132" y="60" class="dg-label-sm">rocheux, plus petit qu'une planète</text>
+  <line x1="214" y1="64" x2="214" y2="76" class="dg-construction"/>
+  <text x="604" y="200" text-anchor="middle" class="dg-label-lg">M</text>
+  <line x1="604" y1="146" x2="604" y2="184" class="dg-construction"/>
+  <text x="604" y="216" text-anchor="middle" class="dg-label-sm">rond, mais n'a pas</text>
+  <text x="604" y="230" text-anchor="middle" class="dg-label-sm">dégagé son orbite</text>
+  <!-- meteor L inset -->
+  <rect x="380" y="226" width="150" height="60" rx="4" class="dg-boundary"/>
+  <path d="M381 272 Q455 262 529 272 L529 285 L381 285 Z" class="dg-fill-mid"/>
+  <line x1="430" y1="236" x2="482" y2="258" class="dg-line-bold"/>
+  <circle cx="484" cy="259" r="3" class="dg-solid"/>
+  <text x="396" y="250" class="dg-label-lg">L</text>
+  <text x="372" y="246" text-anchor="end" class="dg-label-sm">traînée de lumière</text>
+  <text x="372" y="260" text-anchor="end" class="dg-label-sm">dans le ciel terrestre</text>
+  <text x="6" y="284" class="dg-label-sm">Distances pas à l'échelle</text>
+</svg>
       <table>
         <tr><th>Lettre</th><th>Type d'objet</th></tr>
         <tr><td>A</td><td class="write-here"></td></tr>
@@ -668,6 +951,33 @@
         Si le Soleil était un ballon de basketball (environ 24 cm de diamètre), la Terre serait une tête d'épingle à environ 30 mètres de distance. Neptune se trouverait à environ 1 kilomètre.
       </blockquote>
       <p>Utilise cette comparaison pour répondre aux questions.</p>
+<p>Sur la droite numérique, trace un point là où serait la Terre. Écris <strong>Terre</strong> à côté.</p>
+<!-- tikz: scale-number-line | 0-1000 m axis, ticks every 100 m, Sun (basketball) at 0, Neptune at 1000 m; student marks Earth at 30 m -->
+<svg viewBox="0 0 680 130" width="100%" style="max-width:680px; display:block; margin:12px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Une droite numérique de 0 à 1000 mètres. Le Soleil (ballon de basketball) est à 0 mètre et Neptune est à 1000 mètres. Les élèves indiquent où serait la Terre.">
+  <line x1="60" y1="70" x2="640" y2="70" class="dg-line"/>
+  <g>
+    <line x1="60" y1="64" x2="60" y2="76" class="dg-line"/><line x1="118" y1="64" x2="118" y2="76" class="dg-line"/>
+    <line x1="176" y1="64" x2="176" y2="76" class="dg-line"/><line x1="234" y1="64" x2="234" y2="76" class="dg-line"/>
+    <line x1="292" y1="64" x2="292" y2="76" class="dg-line"/><line x1="350" y1="64" x2="350" y2="76" class="dg-line"/>
+    <line x1="408" y1="64" x2="408" y2="76" class="dg-line"/><line x1="466" y1="64" x2="466" y2="76" class="dg-line"/>
+    <line x1="524" y1="64" x2="524" y2="76" class="dg-line"/><line x1="582" y1="64" x2="582" y2="76" class="dg-line"/>
+    <line x1="640" y1="64" x2="640" y2="76" class="dg-line"/>
+  </g>
+  <g>
+    <text x="60" y="94" text-anchor="middle" class="dg-label-sm">0</text><text x="118" y="94" text-anchor="middle" class="dg-label-sm">100</text>
+    <text x="176" y="94" text-anchor="middle" class="dg-label-sm">200</text><text x="234" y="94" text-anchor="middle" class="dg-label-sm">300</text>
+    <text x="292" y="94" text-anchor="middle" class="dg-label-sm">400</text><text x="350" y="94" text-anchor="middle" class="dg-label-sm">500</text>
+    <text x="408" y="94" text-anchor="middle" class="dg-label-sm">600</text><text x="466" y="94" text-anchor="middle" class="dg-label-sm">700</text>
+    <text x="524" y="94" text-anchor="middle" class="dg-label-sm">800</text><text x="582" y="94" text-anchor="middle" class="dg-label-sm">900</text>
+    <text x="640" y="94" text-anchor="middle" class="dg-label-sm">1000</text>
+  </g>
+  <circle cx="60" cy="70" r="9" class="dg-fill-accent"/>
+  <text x="40" y="44" class="dg-label-b">Soleil (ballon de basketball)</text>
+  <circle cx="640" cy="70" r="3.5" class="dg-solid"/>
+  <text x="640" y="48" text-anchor="end" class="dg-label-b">Neptune</text>
+  <text x="350" y="120" text-anchor="middle" class="dg-label">Distance du Soleil à l'échelle du ballon (mètres)</text>
+</svg>
+
       <p>À cette échelle, les planètes elles-mêmes seraient plus petites qu'une <span class="b b-md"></span>.</p>
       <p>Le système solaire est presque entièrement composé d'espace <span class="b b-md"></span>.</p>
       <p style="margin-top:8px;">Nomme une chose qu'un modèle à l'échelle PEUT te montrer, et une chose qu'il NE PEUT PAS te montrer s'il n'est pas à l'échelle.</p>
@@ -714,15 +1024,58 @@
     </div>
     <div class="q-body">
       <p>Ex-Alta 1 est décrit comme un « artéfact informatique » — un système conçu pour collecter, coder et transmettre des données.</p>
-      <p>Associe chaque étape du pipeline de données d'Ex-Alta 1 à la bonne description.</p>
-      <table>
-        <tr><th>Étape</th><th>Description</th></tr>
-        <tr><td>Capteur en orbite</td><td>A. Les scientifiques sur Terre lisent les résultats et tirent des conclusions</td></tr>
-        <tr><td>Données codées</td><td>B. L'information est convertie en signal pouvant voyager dans l'espace</td></tr>
-        <tr><td>Signal radio envoyé</td><td>C. Le satellite mesure les particules chargées et les variations du champ magnétique</td></tr>
-        <tr><td>Station au sol reçoit</td><td>D. Le signal arrive et est décodé en données lisibles</td></tr>
-        <tr><td>Scientifiques analysent</td><td>E. L'onde radio voyage de l'orbite jusqu'à la Terre</td></tr>
-      </table>
+      <p>Lis les descriptions A à E. Écris la lettre de la bonne description dans chaque case du schéma.</p>
+<!-- tikz: data-pipeline | CubeSat in orbit -> radio wave -> ground station dish -> laptop + scientist; 5 blank letter boxes -->
+<svg viewBox="0 0 680 310" width="100%" style="max-width:680px; display:block; margin:12px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Le trajet des données d'Ex-Alta 1 : le CubeSat en orbite avec son capteur, un signal radio qui descend vers une antenne parabolique à une station au sol, puis un câble vers un ordinateur portable où une scientifique lit les données. Cinq cases vides marquent les cinq étapes.">
+  <path d="M0 262 Q340 236 680 262 L680 310 L0 310 Z" class="dg-fill-light"/>
+  <path d="M0 118 Q340 30 680 118" class="dg-dashed"/>
+  <text x="672" y="104" text-anchor="end" class="dg-label-sm">orbite</text>
+  <!-- CubeSat -->
+  <rect x="78" y="84" width="36" height="14" class="dg-fill-accent"/>
+  <rect x="146" y="84" width="36" height="14" class="dg-fill-accent"/>
+  <line x1="90" y1="84" x2="90" y2="98" class="dg-line-thin"/><line x1="102" y1="84" x2="102" y2="98" class="dg-line-thin"/>
+  <line x1="158" y1="84" x2="158" y2="98" class="dg-line-thin"/><line x1="170" y1="84" x2="170" y2="98" class="dg-line-thin"/>
+  <rect x="116" y="73" width="28" height="36" rx="2" class="dg-fill-mid"/>
+  <line x1="116" y1="85" x2="144" y2="85" class="dg-line-thin"/><line x1="116" y1="97" x2="144" y2="97" class="dg-line-thin"/>
+  <line x1="130" y1="73" x2="130" y2="58" class="dg-line"/>
+  <circle cx="130" cy="113" r="4" class="dg-solid"/>
+  <text x="130" y="48" text-anchor="middle" class="dg-label-b">Ex-Alta 1</text>
+  <!-- radio wave -->
+  <path d="M138.0 120.0 L138.9 123.6 L140.0 126.7 L141.5 128.8 L143.5 129.7 L146.1 129.2 L149.0 127.8 L152.2 125.9 L155.4 123.9 L158.4 122.5 L160.9 122.0 L163.0 122.8 L164.5 124.9 L165.6 128.0 L166.5 131.6 L167.4 135.3 L168.5 138.4 L170.0 140.5 L172.0 141.3 L174.5 140.9 L177.5 139.5 L180.7 137.6 L183.9 135.6 L186.8 134.2 L189.4 133.7 L191.4 134.5 L193.0 136.5 L194.1 139.6 L195.0 143.2 L195.9 146.9 L197.0 150.0 L198.5 152.1 L200.5 153.0 L203.0 152.6 L205.9 151.2 L209.1 149.3 L212.3 147.3 L215.3 145.8 L217.8 145.4 L219.9 146.2 L221.4 148.2 L222.6 151.2 L223.5 154.9 L224.3 158.5 L225.4 161.6 L226.9 163.8 L228.9 164.7 L231.5 164.3 L234.4 163.0 L237.6 161.0 L240.8 159.0 L243.7 157.5 L246.3 157.1 L248.4 157.8 L249.9 159.8 L251.1 162.9 L251.9 166.5 L252.8 170.1 L253.9 173.3 L255.4 175.4 L257.4 176.4 L259.9 176.0 L262.8 174.7 L266.0 172.7 L269.2 170.7 L272.2 169.2 L274.8 168.7 L276.8 169.5 L278.4 171.5 L279.5 174.5 L280.4 178.1 L281.3 181.8 L282.4 184.9 L283.9 187.1 L285.9 188.0 L288.4 187.7 L291.3 186.4 L294.5 184.4 L297.7 182.4 L300.6 180.9 L303.2 180.4 L305.3 181.1 L306.9 183.1 L308.0 186.1 L308.9 189.7 L309.8 193.4 L310.9 196.5 L312.3 198.7 L314.3 199.7 L316.8 199.4 L319.7 198.1 L322.9 196.1 L326.1 194.1 L329.1 192.6 L331.7 192.1 L333.8 192.8 L335.4 194.7 L336.5 197.7 L337.4 201.3 L338.3 205.0 L339.3 208.2 L340.8 210.4 L342.8 211.4 L345.3 211.1 L348.2 209.8 L351.4 207.9 L354.6 205.8 L357.5 204.3 L360.2 203.8 L362.3 204.4 L363.8 206.4 L365.0 209.4 L365.9 213.0 L366.8 216.6 L367.8 219.8 L369.3 222.1 L371.2 223.1 L373.7 222.8 L376.6 221.5 L379.8 219.6 L383.0 217.6" class="dg-accent"/>
+  <!-- dish -->
+  <line x1="405" y1="249" x2="405" y2="228" class="dg-line-bold"/>
+  <path d="M380 228 Q405 248 430 228 Z" transform="rotate(-35 405 230)" class="dg-fill-mid"/>
+  <line x1="405" y1="230" x2="393" y2="214" class="dg-line"/>
+  <!-- cable + laptop + scientist -->
+  <path d="M405 249 Q480 254 560 252" class="dg-line-thin"/>
+  <rect x="568" y="214" width="48" height="32" rx="2" class="dg-fill-mid"/>
+  <rect x="572" y="218" width="40" height="24" class="dg-boundary"/>
+  <polyline points="576,236 584,230 591,233 599,224 607,227" class="dg-line-thin"/>
+  <rect x="560" y="246" width="64" height="6" rx="2" class="dg-fill-dark"/>
+  <circle cx="646" cy="216" r="8" class="dg-fill-light"/>
+  <path d="M630 252 Q632 228 646 228 Q660 228 662 252 Z" class="dg-fill-light"/>
+  <!-- step labels -->
+  <rect x="14" y="138" width="30" height="26" rx="3" class="dg-blank"/>
+  <text x="52" y="156" class="dg-label-b">Capteur en orbite</text>
+  <line x1="104" y1="142" x2="126" y2="117" class="dg-construction"/>
+  <rect x="200" y="30" width="30" height="26" rx="3" class="dg-blank"/>
+  <text x="238" y="48" class="dg-label-b">Données codées</text>
+  <line x1="200" y1="48" x2="146" y2="78" class="dg-construction"/>
+  <rect x="300" y="130" width="30" height="26" rx="3" class="dg-blank"/>
+  <text x="338" y="148" class="dg-label-b">Signal radio envoyé</text>
+  <rect x="300" y="274" width="30" height="26" rx="3" class="dg-blank"/>
+  <text x="338" y="292" class="dg-label-b">Station au sol reçoit</text>
+  <rect x="488" y="164" width="30" height="26" rx="3" class="dg-blank"/>
+  <text x="526" y="182" class="dg-label-b">Scientifiques analysent</text>
+</svg>
+<table>
+<tr><th>Lettre</th><th>Description</th></tr>
+<tr><td>A</td><td>Les scientifiques sur Terre lisent les résultats et tirent des conclusions</td></tr>
+<tr><td>B</td><td>L'information est convertie en signal pouvant voyager dans l'espace</td></tr>
+<tr><td>C</td><td>Le satellite mesure les particules chargées et les variations du champ magnétique</td></tr>
+<tr><td>D</td><td>Le signal arrive et est décodé en données lisibles</td></tr>
+<tr><td>E</td><td>L'onde radio voyage de l'orbite jusqu'à la Terre</td></tr>
+</table>
       <p style="margin-top:10px;">En quoi Ex-Alta 1 est-il semblable à d'autres systèmes de télédétection — comme un satellite météorologique ou un capteur océanique sous-marin ? Écris une phrase.</p>
       <div class="al"></div>
     </div>
@@ -819,6 +1172,30 @@
     </div>
     <div class="q-body">
       <p>Une comète est loin du Soleil. Elle n'a pas de queue et ressemble à une faible tache floue. En s'approchant du Soleil, une queue lumineuse brillante se développe.</p>
+<p>Le schéma montre une comète à quatre endroits de son orbite, dans l'ordre P → Q → R → S. Sa queue est déjà dessinée en Q. <strong>Dessine la queue en R et en S.</strong></p>
+<!-- tikz: comet-orbit | ellipse rx280 ry110, Sun at focus; comet at P (no tail), Q (tail drawn, away from Sun), R and S (student draws tail); travel arrows -->
+<svg viewBox="0 0 680 285" width="100%" style="max-width:680px; display:block; margin:12px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="La longue orbite ovale d'une comète autour du Soleil. La comète est montrée à quatre endroits : P loin du Soleil sans queue, Q avec une courte queue qui pointe à l'opposé du Soleil, et R et S plus près du Soleil, sans queue dessinée. Des flèches montrent que la comète voyage de P à Q à R à S.">
+  <ellipse cx="360" cy="140" rx="280" ry="110" class="dg-dashed"/>
+  <polygon points="258,36.6 270,31 270,42.2" class="dg-solid"/>
+  <polygon points="462,243.4 450,238 450,249" class="dg-solid"/>
+  <circle cx="102.5" cy="140" r="15" class="dg-fill-accent"/>
+  <text x="124" y="145" class="dg-label-b">Soleil</text>
+  <!-- P -->
+  <circle cx="640" cy="140" r="4.5" class="dg-solid"/>
+  <text x="652" y="146" class="dg-label-lg">P</text>
+  <!-- Q with tail -->
+  <path d="M456 34 Q470 28 486 22 L489 36 Q472 37 457 39 Z" class="dg-fill-light"/>
+  <circle cx="455.8" cy="36.6" r="4.5" class="dg-solid"/>
+  <text x="442" y="28" text-anchor="end" class="dg-label-lg">Q</text>
+  <!-- R -->
+  <circle cx="96.9" cy="102.4" r="4.5" class="dg-solid"/>
+  <text x="82" y="100" text-anchor="end" class="dg-label-lg">R</text>
+  <!-- S -->
+  <circle cx="180" cy="224.3" r="4.5" class="dg-solid"/>
+  <text x="166" y="244" text-anchor="end" class="dg-label-lg">S</text>
+  <text x="672" y="278" text-anchor="end" class="dg-label-sm">Pas à l'échelle</text>
+</svg>
+
       <p>Explique ce qui cause l'apparition de la queue :</p>
       <div class="al"></div>
       <div class="al"></div>
@@ -907,6 +1284,30 @@
         <li>Assez massive pour prendre une forme ronde</li>
         <li>A dégagé son voisinage orbital</li>
       </ol>
+<p>Les vues agrandies ci-dessous montrent ce que veut dire la condition 3.</p>
+<!-- tikz: orbit-neighbourhood-panels | two zoomed orbit strips: Earth alone on its path vs Pluto among many Kuiper Belt objects -->
+<svg viewBox="0 0 680 170" width="100%" style="max-width:680px; display:block; margin:12px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Deux vues agrandies d'orbites. À gauche : la Terre parcourt sa trajectoire seule. À droite : Pluton partage sa trajectoire avec beaucoup d'autres objets glacés de taille semblable.">
+  <rect x="4" y="4" width="326" height="162" rx="8" class="dg-boundary"/>
+  <rect x="350" y="4" width="326" height="162" rx="8" class="dg-boundary"/>
+  <text x="167" y="26" text-anchor="middle" class="dg-label-b">Trajectoire de la Terre (zoom)</text>
+  <text x="513" y="26" text-anchor="middle" class="dg-label-b">Trajectoire de Pluton (zoom)</text>
+  <path d="M20 130 Q167 60 314 130" class="dg-dashed"/>
+  <circle cx="167" cy="95" r="11" class="dg-fill-mid"/>
+  <text x="167" y="125" text-anchor="middle" class="dg-label-sm">Terre</text>
+  <path d="M366 130 Q513 60 660 130" class="dg-dashed"/>
+  <circle cx="513" cy="95" r="6" class="dg-fill-mid"/>
+  <text x="513" y="122" text-anchor="middle" class="dg-label-sm">Pluton</text>
+  <g>
+    <circle cx="392" cy="108" r="4" class="dg-fill-light"/><circle cx="418" cy="96" r="3" class="dg-fill-light"/><circle cx="440" cy="110" r="5" class="dg-fill-light"/>
+    <circle cx="462" cy="84" r="3.5" class="dg-fill-light"/><circle cx="478" cy="104" r="4" class="dg-fill-light"/><circle cx="548" cy="82" r="4.5" class="dg-fill-light"/>
+    <circle cx="566" cy="104" r="3" class="dg-fill-light"/><circle cx="590" cy="90" r="5" class="dg-fill-light"/><circle cx="612" cy="112" r="3.5" class="dg-fill-light"/>
+    <circle cx="634" cy="100" r="4" class="dg-fill-light"/><circle cx="405" cy="80" r="2.5" class="dg-fill-light"/><circle cx="530" cy="70" r="3" class="dg-fill-light"/>
+    <circle cx="600" cy="72" r="2.5" class="dg-fill-light"/><circle cx="452" cy="128" r="3" class="dg-fill-light"/><circle cx="580" cy="128" r="3.5" class="dg-fill-light"/>
+  </g>
+  <text x="513" y="146" text-anchor="middle" class="dg-label-sm">d'autres objets glacés de la ceinture</text>
+  <text x="513" y="160" text-anchor="middle" class="dg-label-sm">de Kuiper partagent la trajectoire</text>
+</svg>
+
       <table>
         <tr><th>Objet</th><th>Orbite le Soleil ?</th><th>Forme ronde ?</th><th>Voisinage dégagé ?</th><th>Classification</th></tr>
         <tr><td>Terre</td><td>Oui</td><td>Oui</td><td>Oui</td><td class="write-here"></td></tr>

@@ -1104,6 +1104,61 @@
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .page-wrap { padding: 0 12px 24px; }
   }
+
+  /* ─── SVG Diagram Design System (dg-* classes) ─────────── */
+:root {
+  --dg-stroke:    #3f3b35;             /* primary: shapes, lines, point labels */
+  --dg-fill:      #faf9f6;             /* shape interior fill */
+  --dg-accent:    var(--accent, #1d4ed8); /* highlighted elements — inherits unit colour */
+  --dg-secondary: #544f47;             /* secondary / annotation text */
+  --dg-muted:     #6b665d;             /* faint construction lines */
+  --dg-sw:        1.5px;               /* standard stroke width */
+  --dg-sw-bold:   2.5px;               /* bold stroke (key elements) */
+  --dg-sw-thin:   1.0px;               /* thin stroke (right-angle marks) */
+}
+
+/* Non-scaling strokes: crisp at any size — browser zoom, print, PDF export */
+svg .dg-boundary, svg .dg-line, svg .dg-accent, svg .dg-grid,
+svg .dg-dashed, svg .dg-right-angle, svg .dg-construction {
+  vector-effect: non-scaling-stroke;
+}
+
+svg .dg-boundary    { stroke: var(--dg-stroke);    fill: var(--dg-fill);  stroke-width: var(--dg-sw); }
+svg .dg-line        { stroke: var(--dg-stroke);    fill: none;            stroke-width: var(--dg-sw); }
+svg .dg-accent      { stroke: var(--dg-accent);    fill: none;            stroke-width: var(--dg-sw-bold); }
+svg .dg-dashed      { stroke: var(--dg-secondary); fill: none;            stroke-width: var(--dg-sw); stroke-dasharray: 5 3; }
+svg .dg-right-angle { stroke: var(--dg-stroke);    fill: none;            stroke-width: var(--dg-sw-thin); }
+svg .dg-construction{ stroke: var(--dg-muted);     fill: none;            stroke-width: var(--dg-sw-thin); stroke-dasharray: 2 3; }
+svg .dg-grid        { stroke: var(--dg-muted);     fill: none;            stroke-width: var(--dg-sw-thin); }
+svg .dg-point       { fill: var(--dg-stroke);      stroke: none; }
+svg .dg-point-accent{ fill: var(--dg-accent);      stroke: none; }
+svg .dg-label       { font: 12px/1.3 system-ui, sans-serif; fill: var(--dg-stroke);    stroke: none; }
+svg .dg-label-sm    { font: 11px/1.3 system-ui, sans-serif; fill: var(--dg-secondary); stroke: none; }
+svg .dg-label-accent{ font: 11px/1.3 system-ui, sans-serif; fill: var(--dg-accent);    stroke: none; font-weight: 600; }
+
+  /* ─── dg-* science extension: fills, arrowheads, write-in boxes ─── */
+svg .dg-fill-light, svg .dg-fill-mid, svg .dg-fill-dark, svg .dg-fill-accent,
+svg .dg-accent-dashed, svg .dg-blank, svg .dg-line-thin, svg .dg-line-bold {
+  vector-effect: non-scaling-stroke;
+}
+svg .dg-fill-light   { fill: #ece9e2; stroke: var(--dg-stroke); stroke-width: var(--dg-sw); }
+svg .dg-fill-mid     { fill: #b9b3a8; stroke: var(--dg-stroke); stroke-width: var(--dg-sw); }
+svg .dg-fill-dark    { fill: #5b5650; stroke: var(--dg-stroke); stroke-width: var(--dg-sw); }
+svg .dg-fill-accent  { fill: var(--accent-light, #eef2ff); stroke: var(--dg-accent); stroke-width: var(--dg-sw); }
+svg .dg-solid        { fill: var(--dg-stroke); stroke: none; }
+svg .dg-solid-accent { fill: var(--dg-accent); stroke: none; }
+svg .dg-solid-muted  { fill: var(--dg-muted); stroke: none; }
+svg .dg-line-thin    { stroke: var(--dg-stroke); fill: none; stroke-width: var(--dg-sw-thin); }
+svg .dg-line-bold    { stroke: var(--dg-stroke); fill: none; stroke-width: var(--dg-sw-bold); stroke-linecap: round; }
+svg .dg-accent-dashed{ stroke: var(--dg-accent); fill: none; stroke-width: var(--dg-sw-bold); stroke-dasharray: 7 5; }
+svg .dg-blank        { fill: #fff; stroke: var(--dg-stroke); stroke-width: var(--dg-sw); stroke-dasharray: 4 3; }
+svg .dg-label-lg     { font: 700 15px/1.3 var(--font-body, system-ui), sans-serif; fill: var(--dg-stroke); stroke: none; }
+svg .dg-label-b      { font: 700 12px/1.3 var(--font-body, system-ui), sans-serif; fill: var(--dg-stroke); stroke: none; }
+svg .dg-label-white  { font: 700 12px/1.3 var(--font-body, system-ui), sans-serif; fill: #fff; stroke: none; }
+
+  /* keep diagrams whole and headings with what follows when printed */
+  svg { break-inside: avoid; }
+  h3, h4 { break-after: avoid; }
 </style>
 </head>
 <body>
@@ -1166,6 +1221,28 @@
     </div>
     <div class="context-scenario">Students at Riverside School are building a wooden bridge over a small creek. The main beam is 4 metres long.</div>
     <p>When a student walks across the middle of the beam, the top of the beam gets <strong>squeezed together</strong>. The bottom of the beam gets <strong>pulled apart</strong>.</p>
+    <!-- tikz: beam-bending | beam on two supports over creek, student at midspan, top squeezed (arrows inward), bottom pulled (arrows outward) -->
+<svg viewBox="0 0 680 250" width="100%" style="max-width:680px; display:block; margin:12px auto; --accent:var(--forces); --dg-accent:var(--forces); --accent-light:#f1ecfb;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A wooden beam spans a creek, resting on supports on each bank. A student stands in the middle and the beam bends down slightly. Arrows on the top of the beam point toward each other: squeezed together. Arrows under the beam point away from each other: pulled apart.">
+  <defs><marker id="yr-q1-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" class="dg-solid-accent"/></marker></defs>
+  <polygon points="0,150 160,150 178,236 0,236" class="dg-fill-mid"/>
+  <polygon points="520,150 680,150 680,236 502,236" class="dg-fill-mid"/>
+  <path d="M175 212 Q195 206 215 212 T255 212 T295 212 T335 212 T375 212 T415 212 T455 212 T495 212" class="dg-line-thin"/>
+  <path d="M180 226 Q200 220 220 226 T260 226 T300 226 T340 226 T380 226 T420 226 T460 226 T500 226" class="dg-line-thin"/>
+  <text x="340" y="246" text-anchor="middle" class="dg-label-sm">creek</text>
+  <rect x="120" y="140" width="40" height="10" class="dg-fill-dark"/><rect x="520" y="140" width="40" height="10" class="dg-fill-dark"/>
+  <path d="M110 120 Q340 152 570 120 L570 140 Q340 172 110 140 Z" class="dg-fill-light"/>
+  <circle cx="340" cy="85" r="8" class="dg-boundary"/>
+  <line x1="340" y1="93" x2="340" y2="115" class="dg-line"/>
+  <line x1="340" y1="115" x2="331" y2="135" class="dg-line"/><line x1="340" y1="115" x2="349" y2="135" class="dg-line"/>
+  <line x1="328" y1="105" x2="352" y2="105" class="dg-line"/>
+  <line x1="210" y1="112" x2="276" y2="118" class="dg-accent" marker-end="url(#yr-q1-arrow)"/>
+  <line x1="470" y1="112" x2="404" y2="118" class="dg-accent" marker-end="url(#yr-q1-arrow)"/>
+  <text x="120" y="98" class="dg-label-b">Top: squeezed together</text>
+  <line x1="300" y1="176" x2="230" y2="170" class="dg-accent" marker-end="url(#yr-q1-arrow)"/>
+  <line x1="380" y1="176" x2="450" y2="170" class="dg-accent" marker-end="url(#yr-q1-arrow)"/>
+  <text x="340" y="196" text-anchor="middle" class="dg-label-b">Bottom: pulled apart</text>
+  <text x="560" y="98" text-anchor="end" class="dg-label-sm">beam: 4 m long</text>
+</svg>
     <div class="q-part">
       <div class="q-part-label">(a) What is the name of the internal force acting on the <strong>top</strong> of the beam?</div>
       <div class="blank-line"></div>
@@ -1352,6 +1429,35 @@
       <li>The <strong>walking planks</strong> flex slightly when a student steps on them, then spring back to their original shape.</li>
       <li>One <strong>railing post</strong> was hit by a bicycle and is now bent out of shape for good.</li>
     </ul>
+    <!-- tikz: before-after-rows | row 1 plank: flat, bent under a step, flat again; row 2 post: straight, hit by bicycle, stays bent -->
+<svg viewBox="0 0 680 250" width="100%" style="max-width:680px; display:block; margin:12px auto; --accent:var(--forces); --dg-accent:var(--forces); --accent-light:#f1ecfb;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two rows of before-and-after pictures. Walking plank: flat, then bent while a student steps on it, then flat again. Railing post: straight, then hit sideways by a bicycle, then still bent afterwards.">
+  <defs><marker id="yr-q9-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" class="dg-solid-accent"/></marker></defs>
+  <defs><marker id="yr-q9-step" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" class="dg-solid"/></marker></defs>
+  <text x="10" y="22" class="dg-label-b">Walking plank</text>
+  <text x="10" y="148" class="dg-label-b">Railing post</text>
+  <rect x="55" y="70" width="110" height="10" class="dg-fill-light"/><rect x="50" y="80" width="12" height="12" class="dg-fill-dark"/><rect x="158" y="80" width="12" height="12" class="dg-fill-dark"/>
+  <rect x="515" y="70" width="110" height="10" class="dg-fill-light"/><rect x="510" y="80" width="12" height="12" class="dg-fill-dark"/><rect x="618" y="80" width="12" height="12" class="dg-fill-dark"/>
+  <path d="M285 70 Q340 96 395 70 L395 80 Q340 106 285 80 Z" class="dg-fill-light"/>
+  <rect x="280" y="80" width="12" height="12" class="dg-fill-dark"/><rect x="388" y="80" width="12" height="12" class="dg-fill-dark"/>
+  <line x1="340" y1="34" x2="340" y2="76" class="dg-accent" marker-end="url(#yr-q9-arrow)"/>
+  <text x="350" y="46" class="dg-label-sm">step</text>
+  <text x="110" y="116" text-anchor="middle" class="dg-label-sm">before</text>
+  <text x="340" y="116" text-anchor="middle" class="dg-label-sm">while stepped on</text>
+  <text x="570" y="116" text-anchor="middle" class="dg-label-sm">after the step</text>
+  <line x1="190" y1="76" x2="250" y2="76" class="dg-line" marker-end="url(#yr-q9-step)"/>
+  <line x1="430" y1="76" x2="490" y2="76" class="dg-line" marker-end="url(#yr-q9-step)"/>
+  <line x1="60" y1="226" x2="620" y2="226" class="dg-line"/>
+  <rect x="104" y="156" width="12" height="70" class="dg-fill-mid"/>
+  <rect x="334" y="156" width="12" height="70" class="dg-fill-mid"/>
+  <line x1="280" y1="176" x2="330" y2="176" class="dg-accent" marker-end="url(#yr-q9-arrow)"/>
+  <text x="276" y="172" text-anchor="end" class="dg-label-sm">bicycle hits</text>
+  <polygon points="564,226 576,226 576,190 600,158 590,152 564,186" class="dg-fill-mid"/>
+  <text x="110" y="244" text-anchor="middle" class="dg-label-sm">before</text>
+  <text x="340" y="244" text-anchor="middle" class="dg-label-sm">hit by a bicycle</text>
+  <text x="570" y="244" text-anchor="middle" class="dg-label-sm">after the hit</text>
+  <line x1="190" y1="196" x2="250" y2="196" class="dg-line" marker-end="url(#yr-q9-step)"/>
+  <line x1="430" y1="196" x2="490" y2="196" class="dg-line" marker-end="url(#yr-q9-step)"/>
+</svg>
     <div class="q-part">
       <div class="q-part-label">(a) What property describes the walking planks' behaviour?</div>
       <div class="blank-line"></div>
@@ -1376,39 +1482,63 @@
     </div>
     <div class="instruct-block">The diagram below shows three containers of water particles, labelled A, B, and C. Each container shows a different particle arrangement.</div>
 
-    <div class="particle-diagram">
-      <!-- Box A: Solid -->
-      <div class="particle-box-wrap">
-        <div class="particle-box-label">Box A</div>
-        <div class="particle-box solid">
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-        </div>
-        <div class="particle-box-desc">tightly packed, regular rows</div>
-      </div>
-      <!-- Box B: Liquid -->
-      <div class="particle-box-wrap">
-        <div class="particle-box-label">Box B</div>
-        <div class="particle-box liquid">
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-        </div>
-        <div class="particle-box-desc">close together, disordered</div>
-      </div>
-      <!-- Box C: Gas -->
-      <div class="particle-box-wrap">
-        <div class="particle-box-label">Box C</div>
-        <div class="particle-box gas">
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-        </div>
-        <div class="particle-box-desc">far apart, freely moving</div>
-      </div>
-    </div>
+    <!-- tikz: particle-boxes | 3 containers A (solid lattice), B (liquid, close, disordered, bottom of box), C (gas, few, far apart, motion trails) -->
+<svg viewBox="0 0 680 230" width="100%" style="max-width:680px; display:block; margin:12px auto; --accent:var(--matter); --dg-accent:var(--matter); --accent-light:#e6f4f7;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three containers of water particles. Box A: particles packed tightly in regular rows. Box B: particles close together but jumbled, filling the bottom of the box. Box C: a few particles far apart, moving freely.">
+  <text x="110" y="20" text-anchor="middle" class="dg-label-lg">Box A</text>
+  <rect x="20" y="30" width="180" height="160" rx="4" class="dg-boundary"/>
+  <text x="110" y="212" text-anchor="middle" class="dg-label-sm">tightly packed, regular rows</text>
+  <text x="340" y="20" text-anchor="middle" class="dg-label-lg">Box B</text>
+  <rect x="250" y="30" width="180" height="160" rx="4" class="dg-boundary"/>
+  <text x="340" y="212" text-anchor="middle" class="dg-label-sm">close together, disordered</text>
+  <text x="570" y="20" text-anchor="middle" class="dg-label-lg">Box C</text>
+  <rect x="480" y="30" width="180" height="160" rx="4" class="dg-boundary"/>
+  <text x="570" y="212" text-anchor="middle" class="dg-label-sm">far apart, freely moving</text>
+  <circle cx="48" cy="78" r="13" class="dg-fill-accent"/>
+  <circle cx="79" cy="78" r="13" class="dg-fill-accent"/>
+  <circle cx="110" cy="78" r="13" class="dg-fill-accent"/>
+  <circle cx="141" cy="78" r="13" class="dg-fill-accent"/>
+  <circle cx="172" cy="78" r="13" class="dg-fill-accent"/>
+  <circle cx="48" cy="109" r="13" class="dg-fill-accent"/>
+  <circle cx="79" cy="109" r="13" class="dg-fill-accent"/>
+  <circle cx="110" cy="109" r="13" class="dg-fill-accent"/>
+  <circle cx="141" cy="109" r="13" class="dg-fill-accent"/>
+  <circle cx="172" cy="109" r="13" class="dg-fill-accent"/>
+  <circle cx="48" cy="140" r="13" class="dg-fill-accent"/>
+  <circle cx="79" cy="140" r="13" class="dg-fill-accent"/>
+  <circle cx="110" cy="140" r="13" class="dg-fill-accent"/>
+  <circle cx="141" cy="140" r="13" class="dg-fill-accent"/>
+  <circle cx="172" cy="140" r="13" class="dg-fill-accent"/>
+  <circle cx="48" cy="171" r="13" class="dg-fill-accent"/>
+  <circle cx="79" cy="171" r="13" class="dg-fill-accent"/>
+  <circle cx="110" cy="171" r="13" class="dg-fill-accent"/>
+  <circle cx="141" cy="171" r="13" class="dg-fill-accent"/>
+  <circle cx="172" cy="171" r="13" class="dg-fill-accent"/>
+  <circle cx="357.9" cy="155.4" r="13" class="dg-fill-accent"/>
+  <circle cx="383.1" cy="169.1" r="13" class="dg-fill-accent"/>
+  <circle cx="271.2" cy="136.7" r="13" class="dg-fill-accent"/>
+  <circle cx="404.7" cy="149.1" r="13" class="dg-fill-accent"/>
+  <circle cx="398.5" cy="112.7" r="13" class="dg-fill-accent"/>
+  <circle cx="335.5" cy="121.8" r="13" class="dg-fill-accent"/>
+  <circle cx="307.8" cy="167.3" r="13" class="dg-fill-accent"/>
+  <circle cx="267.3" cy="164.3" r="13" class="dg-fill-accent"/>
+  <circle cx="297.6" cy="119.7" r="13" class="dg-fill-accent"/>
+  <circle cx="369.9" cy="108.9" r="13" class="dg-fill-accent"/>
+  <circle cx="268.3" cy="108.2" r="13" class="dg-fill-accent"/>
+  <circle cx="331.4" cy="149.2" r="13" class="dg-fill-accent"/>
+  <circle cx="377.5" cy="137.5" r="13" class="dg-fill-accent"/>
+  <circle cx="558.4" cy="149.4" r="13" class="dg-fill-accent"/>
+  <line x1="553.4" y1="132.1" x2="550.1" y2="120.6" class="dg-line-thin"/>
+  <circle cx="553.2" cy="68.7" r="13" class="dg-fill-accent"/>
+  <line x1="570.4" y1="73.9" x2="581.9" y2="77.4" class="dg-line-thin"/>
+  <circle cx="614.6" cy="54.5" r="13" class="dg-fill-accent"/>
+  <line x1="613.5" y1="72.4" x2="612.8" y2="84.4" class="dg-line-thin"/>
+  <circle cx="631.1" cy="121.0" r="13" class="dg-fill-accent"/>
+  <line x1="615.9" y1="130.5" x2="605.7" y2="136.8" class="dg-line-thin"/>
+  <circle cx="500.1" cy="156.7" r="13" class="dg-fill-accent"/>
+  <line x1="492.4" y1="173.0" x2="487.3" y2="183.9" class="dg-line-thin"/>
+  <circle cx="504.0" cy="100.8" r="13" class="dg-fill-accent"/>
+  <line x1="508.5" y1="118.2" x2="511.5" y2="129.8" class="dg-line-thin"/>
+</svg>
 
     <div class="q-part">
       <div class="q-part-label">(a) Label each box with the <strong>state of matter</strong> it shows.</div>
@@ -1510,6 +1640,37 @@
       <span class="badge-star badge-star-1">★ Core</span>
     </div>
     <div class="context-scenario">A railway worker uses a liquid thermometer to measure the air temperature near the steel tracks.</div>
+    <!-- tikz: thermometers-pair | two liquid thermometers: cool morning (low column), hot afternoon (high column) -->
+<svg viewBox="150 0 450 270" width="100%" style="max-width:450px; display:block; margin:12px auto; --accent:var(--matter); --dg-accent:var(--matter); --accent-light:#e6f4f7;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two liquid thermometers side by side. On a cool morning the liquid is low in the tube. On a hot afternoon the liquid has risen much higher.">
+  <rect x="230" y="30" width="20" height="186" rx="10" class="dg-boundary"/>
+  <circle cx="240" cy="226" r="20" class="dg-fill-dark"/>
+  <rect x="235" y="158" width="10" height="56" class="dg-fill-dark"/>
+  <line x1="252" y1="50" x2="264" y2="50" class="dg-line-thin"/>
+  <line x1="252" y1="68" x2="258" y2="68" class="dg-line-thin"/>
+  <line x1="252" y1="86" x2="264" y2="86" class="dg-line-thin"/>
+  <line x1="252" y1="104" x2="258" y2="104" class="dg-line-thin"/>
+  <line x1="252" y1="122" x2="264" y2="122" class="dg-line-thin"/>
+  <line x1="252" y1="140" x2="258" y2="140" class="dg-line-thin"/>
+  <line x1="252" y1="158" x2="264" y2="158" class="dg-line-thin"/>
+  <line x1="252" y1="176" x2="258" y2="176" class="dg-line-thin"/>
+  <line x1="252" y1="194" x2="264" y2="194" class="dg-line-thin"/>
+  <text x="240" y="264" text-anchor="middle" class="dg-label-b">cool morning</text>
+  <rect x="430" y="30" width="20" height="186" rx="10" class="dg-boundary"/>
+  <circle cx="440" cy="226" r="20" class="dg-fill-dark"/>
+  <rect x="435" y="66" width="10" height="148" class="dg-fill-dark"/>
+  <line x1="452" y1="50" x2="464" y2="50" class="dg-line-thin"/>
+  <line x1="452" y1="68" x2="458" y2="68" class="dg-line-thin"/>
+  <line x1="452" y1="86" x2="464" y2="86" class="dg-line-thin"/>
+  <line x1="452" y1="104" x2="458" y2="104" class="dg-line-thin"/>
+  <line x1="452" y1="122" x2="464" y2="122" class="dg-line-thin"/>
+  <line x1="452" y1="140" x2="458" y2="140" class="dg-line-thin"/>
+  <line x1="452" y1="158" x2="464" y2="158" class="dg-line-thin"/>
+  <line x1="452" y1="176" x2="458" y2="176" class="dg-line-thin"/>
+  <line x1="452" y1="194" x2="464" y2="194" class="dg-line-thin"/>
+  <text x="440" y="264" text-anchor="middle" class="dg-label-b">hot afternoon</text>
+  <text x="470" y="72" class="dg-label-sm">liquid has risen</text>
+  <line x1="468" y1="68" x2="448" y2="68" class="dg-construction"/>
+</svg>
     <div class="q-part">
       <div class="q-part-label">(a) Why does the liquid in the thermometer <strong>rise</strong> when the temperature increases? Use the particle model in your answer.</div>
       <div class="blank-line"></div>
@@ -1553,54 +1714,44 @@
     </div>
     <div class="instruct-block">The diagram below shows photosynthesis in a spruce tree. Five boxes are blank. Use the word bank to fill in each box.</div>
 
-    <div class="photosynthesis-diagram">
-      <!-- Input 1 -->
-      <div class="flow-box input-box">
-        <div class="flow-label">INPUT 1</div>
-        <span class="flow-blank"></span>
-      </div>
-      <div class="flow-arrow">↓</div>
-      <!-- Input 2 -->
-      <div class="flow-box input-box">
-        <div class="flow-label">INPUT 2</div>
-        <span class="flow-blank"></span>
-      </div>
-      <div class="flow-arrow">↓</div>
-      <!-- Input 3 + Tree + Outputs in a row -->
-      <div class="tree-outputs-wrap" style="width:100%;">
-        <!-- Input 3 above tree via arrow, then tree row with outputs -->
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%;">
-          <div class="flow-box input-box">
-            <div class="flow-label">INPUT 3</div>
-            <span class="flow-blank"></span>
-          </div>
-          <div class="flow-arrow">↓</div>
-        </div>
-        <div class="tree-row">
-          <div style="flex:1; display:flex; justify-content:flex-end;"></div>
-          <div class="flow-box tree-box">
-            SPRUCE TREE<br>
-            <span style="font-size:0.8rem; font-weight:400;">(green parts / leaves)</span>
-          </div>
-          <div style="flex:1; display:flex; flex-direction:column; gap:10px; align-items:flex-start; padding-left:12px;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-size:1rem; color:#544f47;">▶</span>
-              <div class="output-box">
-                <div class="flow-label">OUTPUT 1</div>
-                <span class="flow-blank"></span>
-              </div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-size:1rem; color:#544f47;">▶</span>
-              <div class="output-box">
-                <div class="flow-label">OUTPUT 2</div>
-                <span class="flow-blank"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- tikz: photosynthesis-tree | spruce tree with sun, air, soil; arrows for 3 inputs and 2 outputs; 5 blank labelled boxes -->
+<svg viewBox="0 0 680 336" width="100%" style="max-width:680px; display:block; margin:12px auto; --accent:var(--living); --dg-accent:var(--living); --accent-light:#e6f5ef;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A spruce tree with the Sun above it, air around it, and soil with roots below. Five arrows with empty boxes: Input 1 goes from the air into the needles, Input 2 goes from the soil into the roots, Input 3 comes from the Sun, Output 1 goes from the needles down into the trunk, and Output 2 goes from the needles out into the air.">
+  <defs><marker id="yr-q16-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" class="dg-solid-accent"/></marker></defs>
+  <line x1="94.0" y1="58.0" x2="106.0" y2="58.0" class="dg-line"/>
+  <line x1="84.0" y1="82.0" x2="92.5" y2="90.5" class="dg-line"/>
+  <line x1="60.0" y1="92.0" x2="60.0" y2="104.0" class="dg-line"/>
+  <line x1="36.0" y1="82.0" x2="27.5" y2="90.5" class="dg-line"/>
+  <line x1="26.0" y1="58.0" x2="14.0" y2="58.0" class="dg-line"/>
+  <line x1="36.0" y1="34.0" x2="27.5" y2="25.5" class="dg-line"/>
+  <line x1="60.0" y1="24.0" x2="60.0" y2="12.0" class="dg-line"/>
+  <line x1="84.0" y1="34.0" x2="92.5" y2="25.5" class="dg-line"/>
+  <circle cx="60" cy="58" r="28" class="dg-fill-light"/>
+  <text x="60" y="63" text-anchor="middle" class="dg-label-b">Sun</text>
+  <rect x="0" y="282" width="680" height="54" class="dg-fill-light"/>
+  <text x="672" y="328" text-anchor="end" class="dg-label-sm">soil</text>
+  <line x1="340" y1="282" x2="300" y2="318" class="dg-line"/><line x1="340" y1="282" x2="342" y2="326" class="dg-line"/><line x1="340" y1="282" x2="384" y2="314" class="dg-line"/><line x1="318" y1="300" x2="296" y2="300" class="dg-line-thin"/><line x1="362" y1="298" x2="388" y2="296" class="dg-line-thin"/>
+  <rect x="330" y="232" width="20" height="50" class="dg-fill-mid"/>
+  <polygon points="340,150 250,240 430,240" class="dg-fill-accent"/>
+  <polygon points="340,100 265,190 415,190" class="dg-fill-accent"/>
+  <polygon points="340,56 280,140 400,140" class="dg-fill-accent"/>
+  <text x="322" y="270" text-anchor="end" class="dg-label-b">spruce tree</text>
+  <line x1="98" y1="78" x2="282" y2="126" class="dg-accent" marker-end="url(#yr-q16-arrow)"/>
+  <line x1="160" y1="182" x2="268" y2="182" class="dg-accent" marker-end="url(#yr-q16-arrow)"/>
+  <path d="M160 306 Q240 304 322 286" class="dg-accent" marker-end="url(#yr-q16-arrow)"/>
+  <path d="M378 206 Q384 232 356 250" class="dg-accent" marker-end="url(#yr-q16-arrow)"/>
+  <line x1="404" y1="134" x2="520" y2="98" class="dg-accent" marker-end="url(#yr-q16-arrow)"/>
+  <rect x="150" y="18" width="132" height="44" rx="4" class="dg-blank"/>
+  <text x="158" y="32" class="dg-label-sm">Input 3</text>
+  <rect x="20" y="160" width="132" height="44" rx="4" class="dg-blank"/>
+  <text x="28" y="174" class="dg-label-sm">Input 1</text>
+  <rect x="20" y="284" width="132" height="44" rx="4" class="dg-blank"/>
+  <text x="28" y="298" class="dg-label-sm">Input 2</text>
+  <rect x="452" y="246" width="132" height="44" rx="4" class="dg-blank"/>
+  <text x="460" y="260" class="dg-label-sm">Output 1</text>
+  <rect x="530" y="62" width="132" height="44" rx="4" class="dg-blank"/>
+  <text x="538" y="76" class="dg-label-sm">Output 2</text>
+  <line x1="452" y1="262" x2="384" y2="236" class="dg-construction"/>
+</svg>
 
     <div class="word-bank">
       <strong>Word bank:</strong>
@@ -1653,19 +1804,26 @@
       <span class="badge-star badge-star-1">★ Core</span>
       <span class="badge-visual">Visual</span>
     </div>
-    <div class="instruct-block">The diagram below shows a student (rectangle) standing on the timber bridge deck (horizontal line). Arrow A points downward from the student — this is the student's weight pressing on the deck.</div>
+    <div class="instruct-block">The diagram below shows a student standing on the timber bridge deck. Arrow A points downward from the student's feet — this is the student's weight pressing on the deck.</div>
 
-    <div class="force-diagram">
-      <div class="force-student-box">STUDENT</div>
-      <div class="force-arrow-down">
-        <div class="force-arrow-shaft"></div>
-        <div class="force-arrow-head"></div>
-      </div>
-      <div class="force-arrow-label">Arrow A — 500 N — downward<br>Applied force (weight)</div>
-      <div class="bridge-deck"></div>
-      <div class="bridge-deck-label">Bridge deck</div>
-      <div class="draw-zone">Draw the missing reaction force arrow here</div>
-    </div>
+    <!-- tikz: force-pair-drawing | student standing on bridge deck; Arrow A 500 N down from feet into deck; dashed zone to draw reaction -->
+<svg viewBox="0 0 680 270" width="100%" style="max-width:680px; display:block; margin:12px auto; --accent:var(--forces); --dg-accent:var(--forces); --accent-light:#f1ecfb;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A student stands on a bridge deck. Arrow A points down from the student's feet into the deck, labelled 500 newtons, downward, applied force. A dashed box around the student shows where to draw the missing reaction force arrow.">
+  <defs><marker id="yr-q19-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" class="dg-solid-accent"/></marker></defs>
+  <rect x="236" y="34" width="190" height="130" rx="6" class="dg-blank"/>
+  <text x="331" y="26" text-anchor="middle" class="dg-label-sm">draw the missing reaction force arrow in this box</text>
+  <circle cx="300" cy="88" r="13" class="dg-boundary"/>
+  <line x1="300" y1="101" x2="300" y2="136" class="dg-line"/>
+  <line x1="300" y1="136" x2="286" y2="168" class="dg-line"/><line x1="300" y1="136" x2="314" y2="168" class="dg-line"/>
+  <line x1="281" y1="120" x2="319" y2="120" class="dg-line"/>
+  <rect x="60" y="168" width="560" height="16" class="dg-fill-light"/>
+  <line x1="140" y1="168" x2="140" y2="184" class="dg-line-thin"/><line x1="220" y1="168" x2="220" y2="184" class="dg-line-thin"/><line x1="380" y1="168" x2="380" y2="184" class="dg-line-thin"/><line x1="460" y1="168" x2="460" y2="184" class="dg-line-thin"/><line x1="540" y1="168" x2="540" y2="184" class="dg-line-thin"/>
+  <rect x="96" y="184" width="16" height="70" class="dg-fill-mid"/><rect x="568" y="184" width="16" height="70" class="dg-fill-mid"/>
+  <line x1="40" y1="254" x2="640" y2="254" class="dg-line"/>
+  <text x="122" y="202" class="dg-label-sm">bridge deck</text>
+  <line x1="300" y1="170" x2="300" y2="246" class="dg-accent" marker-end="url(#yr-q19-arrow)"/>
+  <text x="314" y="216" class="dg-label-b">Arrow A: 500 N, downward</text>
+  <text x="314" y="232" class="dg-label-sm">applied force (the student's weight)</text>
+</svg>
 
     <div class="q-part">
       <div class="q-part-label">(a) What is the scientific name for Arrow A — the downward force the student pushes on the bridge?</div>
@@ -1800,67 +1958,37 @@
     </div>
     <div class="instruct-block">The diagram below shows a simplified model of Earth's energy balance. Four arrows are numbered but not labelled.</div>
 
-    <div class="energy-balance-diagram">
-      <!-- Sun -->
-      <div class="eb-sun">&#9728;</div>
-      <div class="eb-sun-label">SUN</div>
-
-      <!-- Arrow 1 label above atmosphere -->
-      <div style="text-align:center; margin:4px 0 2px; font-family: var(--font-body); font-size:0.82rem; color:#3f3b35;">
-        <span class="eb-number-badge">①</span> <span class="blank-short" style="width:220px; display:inline-block; border-bottom:2px solid #6b665d; height:1.2em; vertical-align:bottom;"></span>
-      </div>
-      <!-- Arrow down to atmosphere -->
-      <div class="eb-arrow-down" style="margin:2px auto 2px;">
-        <div class="eb-arrow-shaft-down"></div>
-        <div class="eb-arrow-head-down"></div>
-      </div>
-
-      <!-- Atmosphere band with side arrows -->
-      <div class="eb-atmosphere-band">
-        <!-- Arrow 2: up/escape -->
-        <div class="eb-side-arrow">
-          <div class="eb-arrow-head-up"></div>
-          <div class="eb-arrow-up-shaft"></div>
-          <div class="eb-side-label"><span class="eb-number-badge">②</span> escapes to space</div>
-        </div>
-        <div class="eb-atm-label">ATMOSPHERE</div>
-        <!-- Arrow 4: down/redirect -->
-        <div class="eb-side-arrow" style="flex-direction:column-reverse;">
-          <div style="order:2;">
-            <div style="width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:12px solid #3f3b35;"></div>
-          </div>
-          <div style="width:3px;height:28px;background:#3f3b35; order:1;"></div>
-          <div class="eb-side-label" style="order:0;"><span class="eb-number-badge">④</span> redirected back</div>
-        </div>
-      </div>
-
-      <!-- Arrow 2 blank line -->
-      <div style="display:flex; justify-content:space-between; font-family: var(--font-body); font-size:0.8rem; color:#3f3b35; margin:6px 0 2px; gap:16px;">
-        <div style="flex:1;">
-          <span class="eb-number-badge">②</span>
-          <span class="blank-short" style="width:100%; display:inline-block; border-bottom:2px solid #6b665d; height:1.2em; vertical-align:bottom;"></span>
-        </div>
-        <div style="flex:1; text-align:right;">
-          <span class="eb-number-badge">④</span>
-          <span class="blank-short" style="width:100%; display:inline-block; border-bottom:2px solid #6b665d; height:1.2em; vertical-align:bottom;"></span>
-        </div>
-      </div>
-
-      <!-- Arrow 3 up from surface, label -->
-      <div style="text-align:center; margin:2px 0; font-family: var(--font-body); font-size:0.82rem; color:#3f3b35;">
-        <span class="eb-number-badge">③</span> <span class="blank-short" style="width:220px; display:inline-block; border-bottom:2px solid #6b665d; height:1.2em; vertical-align:bottom;"></span>
-      </div>
-      <!-- Arrow up to atmosphere -->
-      <div class="eb-arrow-up-center" style="margin:2px auto;">
-        <div class="eb-arrow-head-up-c"></div>
-        <div class="eb-arrow-shaft-up"></div>
-      </div>
-
-      <!-- Earth's Surface band -->
-      <div class="eb-surface-band">
-        <div class="eb-surface-label">EARTH'S SURFACE</div>
-      </div>
-    </div>
+    <!-- tikz: greenhouse-energy-balance | Sun, atmosphere band, surface; 1 straight sunlight in, 2 reflected up to space, 3 wavy heat up from surface, 4 wavy heat back down; numbers only -->
+<svg viewBox="0 0 680 300" width="100%" style="max-width:680px; display:block; margin:12px auto; --accent:var(--climate); --dg-accent:var(--climate); --accent-light:#fbf0e3;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Earth's energy balance. Arrow 1 goes from the Sun down to Earth's surface. Arrow 2 bounces off the atmosphere back up into space. Arrow 3 is a wavy arrow rising from Earth's surface into the atmosphere. Arrow 4 is a wavy arrow coming from the atmosphere back down to the surface. The arrows are numbered but not labelled.">
+  <defs><marker id="yr-q25-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" class="dg-solid-accent"/></marker></defs>
+  <line x1="92.0" y1="50.0" x2="104.0" y2="50.0" class="dg-line"/>
+  <line x1="82.6" y1="72.6" x2="91.1" y2="81.1" class="dg-line"/>
+  <line x1="60.0" y1="82.0" x2="60.0" y2="94.0" class="dg-line"/>
+  <line x1="37.4" y1="72.6" x2="28.9" y2="81.1" class="dg-line"/>
+  <line x1="28.0" y1="50.0" x2="16.0" y2="50.0" class="dg-line"/>
+  <line x1="37.4" y1="27.4" x2="28.9" y2="18.9" class="dg-line"/>
+  <line x1="60.0" y1="18.0" x2="60.0" y2="6.0" class="dg-line"/>
+  <line x1="82.6" y1="27.4" x2="91.1" y2="18.9" class="dg-line"/>
+  <circle cx="60" cy="50" r="26" class="dg-fill-light"/>
+  <text x="60" y="55" text-anchor="middle" class="dg-label-b">Sun</text>
+  <text x="672" y="22" text-anchor="end" class="dg-label-sm">space</text>
+  <rect x="0" y="112" width="680" height="64" class="dg-fill-accent"/>
+  <text x="672" y="168" text-anchor="end" class="dg-label-b">atmosphere</text>
+  <rect x="0" y="244" width="680" height="56" class="dg-fill-mid"/>
+  <text x="672" y="290" text-anchor="end" class="dg-label-white">Earth's surface</text>
+  <line x1="96" y1="72" x2="248" y2="240" class="dg-accent" marker-end="url(#yr-q25-arrow)"/>
+  <line x1="132" y1="112" x2="222" y2="30" class="dg-accent" marker-end="url(#yr-q25-arrow)"/>
+  <path d="M420.0 242.0 L424.6 241.2 L426.9 239.7 L425.7 237.3 L422.1 234.3 L418.5 231.2 L417.4 228.8 L419.7 227.4 L424.4 226.6 L429.0 225.8 L431.1 224.3 L429.9 221.8 L426.2 218.8 L422.7 215.7 L421.7 213.3 L424.0 211.9 L428.7 211.1 L433.3 210.3 L435.4 208.8 L434.1 206.3 L430.4 203.3 L426.9 200.2 L426.0 197.9 L428.4 196.5 L433.1 195.7 L437.6 194.9 L439.6 193.3 L438.2 190.9 L434.6 187.8 L431.1 184.7 L430.2 182.4 L432.7 181.0 L437.5 180.2 L442.0 179.4 L443.9 177.9 L442.4 175.4 L438.7 172.3 L435.3 169.3 L434.5 166.9 L437.1 165.6 L441.8 164.8 L446.3 164.0 L448.2 162.4 L446.6 159.9 L442.9 156.8 L439.5 153.8 L438.8 151.5 L441.4 150.1 L446.2 149.4 L450.6 148.5 L452.4 146.9 L450.5 144.3 L447.2 141.3 L445.1 138.7 L445.4 136.6 L447.5 135.2 L450.1 133.8 L451.8 132.2 L452.1 130.2 L451.8 128.0 L452.0 126.0" class="dg-accent" marker-end="url(#yr-q25-arrow)"/>
+  <path d="M512.0 128.0 L508.3 131.0 L507.2 133.4 L509.5 134.9 L514.2 135.8 L518.8 136.7 L520.8 138.3 L519.3 140.8 L515.5 143.8 L512.0 146.8 L511.1 149.1 L513.8 150.5 L518.6 151.4 L523.0 152.4 L524.6 154.1 L522.8 156.6 L518.9 159.7 L515.6 162.6 L515.1 164.8 L518.1 166.2 L523.0 167.0 L527.2 168.0 L528.5 169.8 L526.4 172.4 L522.4 175.5 L519.3 178.4 L519.1 180.5 L522.4 181.8 L527.4 182.6 L531.4 183.7 L532.3 185.6 L529.9 188.2 L525.9 191.3 L523.0 194.1 L523.2 196.2 L526.7 197.4 L531.7 198.2 L535.5 199.4 L536.1 201.3 L533.4 204.1 L529.4 207.2 L526.7 209.9 L527.3 211.9 L531.1 213.0 L536.1 213.8 L539.6 215.0 L539.8 217.1 L536.9 219.9 L533.0 223.0 L531.4 225.5 L532.8 227.2 L536.0 228.5 L539.1 229.8 L540.4 231.5 L540.1 233.7 L539.3 236.0 L539.2 238.1 L540.0 240.0" class="dg-accent" marker-end="url(#yr-q25-arrow)"/>
+  <circle cx="196" cy="196" r="13" class="dg-boundary"/>
+  <text x="196" y="201" text-anchor="middle" class="dg-label-b">1</text>
+  <circle cx="210" cy="84" r="13" class="dg-boundary"/>
+  <text x="210" y="89" text-anchor="middle" class="dg-label-b">2</text>
+  <circle cx="404" cy="202" r="13" class="dg-boundary"/>
+  <text x="404" y="207" text-anchor="middle" class="dg-label-b">3</text>
+  <circle cx="560" cy="202" r="13" class="dg-boundary"/>
+  <text x="560" y="207" text-anchor="middle" class="dg-label-b">4</text>
+</svg>
 
     <div class="q-part">
       <div class="q-part-label">(a) Label each arrow using the word bank.</div>
@@ -1919,6 +2047,30 @@
       <span class="badge-star badge-star-2">★★ Extended</span>
     </div>
     <p>Most people picture the solar system as planets clustered fairly close together, roughly evenly spaced, and similar in size.</p>
+    <!-- tikz: error-diagram | student's crowded solar system: Sun edge at left, 8 similar-size planets evenly spaced, notebook-page frame -->
+<svg viewBox="0 0 680 180" width="100%" style="max-width:680px; display:block; margin:12px auto; --accent:var(--space); --dg-accent:var(--space); --accent-light:#eef2ff;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The common picture of the solar system: a large Sun at the left edge of a page, then eight planets of nearly the same size spaced evenly a few centimetres apart, labelled Mercury to Neptune.">
+  <rect x="2" y="2" width="676" height="176" rx="6" class="dg-dashed"/>
+  <text x="664" y="22" text-anchor="end" class="dg-label-sm">The picture most people imagine</text>
+  <path d="M2 20 A80 80 0 0 1 2 160 Z" class="dg-fill-accent"/>
+  <text x="26" y="95" text-anchor="middle" class="dg-label-b">Sun</text>
+  <circle cx="130" cy="90" r="13" class="dg-fill-light"/>
+  <circle cx="200" cy="90" r="15" class="dg-fill-light"/>
+  <circle cx="270" cy="90" r="15" class="dg-fill-light"/>
+  <circle cx="340" cy="90" r="14" class="dg-fill-light"/>
+  <circle cx="410" cy="90" r="19" class="dg-fill-light"/>
+  <circle cx="480" cy="90" r="18" class="dg-fill-light"/>
+  <ellipse cx="480" cy="90" rx="28" ry="6" class="dg-line"/>
+  <circle cx="550" cy="90" r="16" class="dg-fill-light"/>
+  <circle cx="620" cy="90" r="16" class="dg-fill-light"/>
+  <text x="130" y="134" text-anchor="middle" class="dg-label-sm">Mercury</text>
+  <text x="200" y="134" text-anchor="middle" class="dg-label-sm">Venus</text>
+  <text x="270" y="134" text-anchor="middle" class="dg-label-sm">Earth</text>
+  <text x="340" y="134" text-anchor="middle" class="dg-label-sm">Mars</text>
+  <text x="410" y="134" text-anchor="middle" class="dg-label-sm">Jupiter</text>
+  <text x="480" y="134" text-anchor="middle" class="dg-label-sm">Saturn</text>
+  <text x="550" y="134" text-anchor="middle" class="dg-label-sm">Uranus</text>
+  <text x="620" y="134" text-anchor="middle" class="dg-label-sm">Neptune</text>
+</svg>
     <p style="margin-top:8px;">Find <strong>two specific errors</strong> in this picture. For each error, describe what an accurate picture would look like and why the misconception is so common.</p>
     <div class="feature-prompt" style="margin-top:14px;">
       <div class="feat-label">Error 1:</div>
@@ -1947,7 +2099,26 @@
       <span class="badge-star badge-star-2">★★ Extended</span>
     </div>
     <div class="context-scenario">The structural engineer designing the timber bridge must think about three different internal forces.</div>
-    <p>For each part below, <strong>name the internal force</strong> it experiences and <strong>explain how you know</strong>.</p>
+    <p>For each part below, <strong>name the internal force</strong> it experiences and <strong>explain how you know</strong>. The parts are labelled a, b and c on the diagram.</p>
+    <!-- tikz: bridge-parts-callouts | side view: deck, railing posts with tight horizontal rope (a), vertical support post under deck (b), diagonal brace (c) -->
+<svg viewBox="0 0 680 260" width="100%" style="max-width:680px; display:block; margin:12px auto; --accent:var(--forces); --dg-accent:var(--forces); --accent-light:#f1ecfb;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Side view of the timber bridge. Part a is a horizontal rope pulled tight between two posts. Part b is a vertical post under the deck holding up its weight. Part c is a diagonal brace between the support and the deck.">
+  <line x1="30" y1="244" x2="650" y2="244" class="dg-line"/>
+  <rect x="120" y="60" width="14" height="94" class="dg-fill-mid"/><rect x="546" y="60" width="14" height="94" class="dg-fill-mid"/>
+  <line x1="134" y1="78" x2="546" y2="78" class="dg-line-bold"/>
+  <rect x="40" y="154" width="600" height="16" class="dg-fill-light"/>
+  <rect x="332" y="170" width="16" height="74" class="dg-fill-mid"/>
+  <polygon points="402,244 414,244 470,172 458,170" class="dg-fill-mid"/>
+  <line x1="340" y1="40" x2="340" y2="74" class="dg-construction"/>
+  <circle cx="340" cy="40" r="13" class="dg-boundary"/>
+  <text x="340" y="45" text-anchor="middle" class="dg-label-b">a</text>
+  <line x1="290" y1="210" x2="330" y2="210" class="dg-construction"/>
+  <circle cx="290" cy="210" r="13" class="dg-boundary"/>
+  <text x="290" y="215" text-anchor="middle" class="dg-label-b">b</text>
+  <line x1="500" y1="216" x2="448" y2="206" class="dg-construction"/>
+  <circle cx="500" cy="216" r="13" class="dg-boundary"/>
+  <text x="500" y="221" text-anchor="middle" class="dg-label-b">c</text>
+  <text x="640" y="148" text-anchor="end" class="dg-label-sm">bridge deck</text>
+</svg>
     <div class="q-part">
       <div class="q-part-label">(a) A horizontal rope connecting two bridge posts is pulled tight by the weight of the bridge deck.</div>
       <div style="margin-top:8px; font-size:0.93rem;">Internal force: <span class="blank-short"></span></div>
@@ -2030,6 +2201,40 @@
       <span class="badge-star badge-star-2">★★ Extended</span>
     </div>
     <p>If you look closely at a concrete sidewalk or railway track in Alberta, you will notice small gaps built in at regular intervals. These are called <strong>expansion joints</strong>.</p>
+    <!-- tikz: expansion-gaps-two-rows | rail sections on sleepers: winter wide gaps, summer narrow gaps (exaggerated) -->
+<svg viewBox="0 0 680 230" width="100%" style="max-width:680px; display:block; margin:12px auto; --accent:var(--matter); --dg-accent:var(--matter); --accent-light:#e6f4f7;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Railway track in two seasons. In winter the steel rail sections are shorter and the gaps between them are wide. In summer the same sections are longer and the gaps are narrow. Gap sizes are exaggerated.">
+  <text x="10" y="36" class="dg-label-b">Winter (cold)</text>
+  <rect x="56" y="72" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="126" y="72" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="196" y="72" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="266" y="72" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="336" y="72" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="406" y="72" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="476" y="72" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="546" y="72" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="616" y="72" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="40" y="56" width="190" height="16" class="dg-fill-light"/>
+  <rect x="244" y="56" width="190" height="16" class="dg-fill-light"/>
+  <rect x="448" y="56" width="190" height="16" class="dg-fill-light"/>
+  <path d="M230 50 L230 44 L244 44 L244 50" class="dg-line-thin"/>
+  <text x="237.0" y="40" text-anchor="middle" class="dg-label-sm">gap</text>
+  <text x="10" y="136" class="dg-label-b">Summer (hot)</text>
+  <rect x="56" y="172" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="126" y="172" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="196" y="172" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="266" y="172" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="336" y="172" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="406" y="172" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="476" y="172" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="546" y="172" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="616" y="172" width="16" height="14" class="dg-fill-mid"/>
+  <rect x="36" y="156" width="198" height="16" class="dg-fill-light"/>
+  <rect x="240" y="156" width="198" height="16" class="dg-fill-light"/>
+  <rect x="444" y="156" width="198" height="16" class="dg-fill-light"/>
+  <path d="M234 150 L234 144 L240 144 L240 150" class="dg-line-thin"/>
+  <text x="237.0" y="140" text-anchor="middle" class="dg-label-sm">gap</text>
+  <text x="672" y="222" text-anchor="end" class="dg-label-sm">Gap sizes exaggerated</text>
+</svg>
     <div class="q-part">
       <div class="q-part-label">(a) Use your knowledge of expansion and contraction to explain why these gaps are needed.</div>
       <div class="blank-line"></div>

@@ -17,7 +17,6 @@
   body { font-kerning: normal; }
   h1, h2, h3 { text-wrap: balance; }
   p { text-wrap: pretty; }
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: var(--font-body);
@@ -262,6 +261,31 @@
     svg .dg-label-sm    { font: 11px/1.3 var(--font-body); fill: var(--dg-secondary); stroke: none; }
     svg .dg-label-accent{ font: 11px/1.3 var(--font-body); fill: var(--dg-accent);    stroke: none; font-weight: 600; }
 
+
+  /* ─── dg-* science extension: fills, arrowheads, write-in boxes ─── */
+svg .dg-fill-light, svg .dg-fill-mid, svg .dg-fill-dark, svg .dg-fill-accent,
+svg .dg-accent-dashed, svg .dg-blank, svg .dg-line-thin, svg .dg-line-bold {
+  vector-effect: non-scaling-stroke;
+}
+svg .dg-fill-light   { fill: #ece9e2; stroke: var(--dg-stroke); stroke-width: var(--dg-sw); }
+svg .dg-fill-mid     { fill: #b9b3a8; stroke: var(--dg-stroke); stroke-width: var(--dg-sw); }
+svg .dg-fill-dark    { fill: #5b5650; stroke: var(--dg-stroke); stroke-width: var(--dg-sw); }
+svg .dg-fill-accent  { fill: var(--accent-light, #eef2ff); stroke: var(--dg-accent); stroke-width: var(--dg-sw); }
+svg .dg-solid        { fill: var(--dg-stroke); stroke: none; }
+svg .dg-solid-accent { fill: var(--dg-accent); stroke: none; }
+svg .dg-solid-muted  { fill: var(--dg-muted); stroke: none; }
+svg .dg-line-thin    { stroke: var(--dg-stroke); fill: none; stroke-width: var(--dg-sw-thin); }
+svg .dg-line-bold    { stroke: var(--dg-stroke); fill: none; stroke-width: var(--dg-sw-bold); stroke-linecap: round; }
+svg .dg-accent-dashed{ stroke: var(--dg-accent); fill: none; stroke-width: var(--dg-sw-bold); stroke-dasharray: 7 5; }
+svg .dg-blank        { fill: #fff; stroke: var(--dg-stroke); stroke-width: var(--dg-sw); stroke-dasharray: 4 3; }
+svg .dg-label-lg     { font: 700 15px/1.3 var(--font-body, system-ui), sans-serif; fill: var(--dg-stroke); stroke: none; }
+svg .dg-label-b      { font: 700 12px/1.3 var(--font-body, system-ui), sans-serif; fill: var(--dg-stroke); stroke: none; }
+svg .dg-label-white  { font: 700 12px/1.3 var(--font-body, system-ui), sans-serif; fill: #fff; stroke: none; }
+
+
+  /* keep diagrams whole and headings with what follows when printed */
+  svg { break-inside: avoid; }
+  h3, h4 { break-after: avoid; }
 </style>
 </head>
 <body>
@@ -324,59 +348,63 @@ The solar system is the Sun and everything that <span class="b b-md">&nbsp;</spa
 The Sun is a <span class="b b-md">&nbsp;</span>. It sits at the <span class="b b-md">&nbsp;</span> of the solar system. Unlike planets, the Sun produces its own <span class="b b-md">&nbsp;</span> through a process called <strong>nuclear fusion</strong> — hydrogen atoms combine under enormous pressure and heat to release energy.</p>
 
 <h4>The eight planets (in order from the Sun)</h4>
-<svg viewBox="0 0 720 100" width="100%" style="max-width:720px; display:block; margin:1rem auto;" font-family="'Segoe UI', system-ui, sans-serif" role="img" aria-label="The eight planets in order from the Sun">
-  <defs>
-    <marker id="sp-arrow" viewBox="0 0 8 6" refX="8" refY="3" markerWidth="8" markerHeight="6" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6366f1"/></marker>
-  </defs>
-  <!-- Inner planets background -->
-  <rect x="5" y="8" width="340" height="84" rx="10" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
-  <text x="175" y="24" text-anchor="middle" font-size="10" fill="#854d0e" font-weight="600">INNER PLANETS (rocky)</text>
-  <!-- Outer planets background -->
-  <rect x="375" y="8" width="340" height="84" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
-  <text x="545" y="24" text-anchor="middle" font-size="10" fill="#1e40af" font-weight="600">OUTER PLANETS (gas/ice)</text>
-  <!-- Sun icon -->
-  <circle cx="25" cy="58" r="12" fill="#fbbf24" stroke="#f59e0b" stroke-width="1.5"/>
-  <text x="25" y="62" text-anchor="middle" font-size="8" font-weight="700" fill="#92400e">SUN</text>
-  <!-- Planet circles and labels -->
-  <!-- Mercury -->
-  <circle cx="72" cy="58" r="8" fill="#d6d3d1" stroke="#78716c" stroke-width="1.2"/>
-  <text x="72" y="82" text-anchor="middle" font-size="9" fill="#1e293b">Mercury</text>
-  <line x1="38" y1="58" x2="62" y2="58" stroke="#6366f1" stroke-width="1.2" marker-end="url(#sp-arrow)"/>
-  <!-- Venus -->
-  <circle cx="138" cy="58" r="10" fill="#fed7aa" stroke="#ea580c" stroke-width="1.2"/>
-  <text x="138" y="82" text-anchor="middle" font-size="9" fill="#1e293b">Venus</text>
-  <line x1="82" y1="58" x2="126" y2="58" stroke="#6366f1" stroke-width="1.2" marker-end="url(#sp-arrow)"/>
-  <!-- Earth -->
-  <circle cx="208" cy="58" r="10" fill="#86efac" stroke="#16a34a" stroke-width="1.2"/>
-  <text x="208" y="82" text-anchor="middle" font-size="9" fill="#1e293b" font-weight="600">Earth</text>
-  <line x1="150" y1="58" x2="196" y2="58" stroke="#6366f1" stroke-width="1.2" marker-end="url(#sp-arrow)"/>
-  <!-- Mars -->
-  <circle cx="278" cy="58" r="9" fill="#fca5a5" stroke="#dc2626" stroke-width="1.2"/>
-  <text x="278" y="82" text-anchor="middle" font-size="9" fill="#1e293b">Mars</text>
-  <line x1="220" y1="58" x2="267" y2="58" stroke="#6366f1" stroke-width="1.2" marker-end="url(#sp-arrow)"/>
-  <!-- Jupiter -->
-  <circle cx="420" cy="56" r="16" fill="#fde68a" stroke="#d97706" stroke-width="1.2"/>
-  <text x="420" y="82" text-anchor="middle" font-size="9" fill="#1e293b">Jupiter</text>
-  <line x1="289" y1="58" x2="402" y2="57" stroke="#6366f1" stroke-width="1.2" marker-end="url(#sp-arrow)"/>
-  <!-- Saturn -->
-  <circle cx="495" cy="56" r="14" fill="#fef08a" stroke="#ca8a04" stroke-width="1.2"/>
-  <ellipse cx="495" cy="56" rx="22" ry="5" fill="none" stroke="#ca8a04" stroke-width="1"/>
-  <text x="495" y="82" text-anchor="middle" font-size="9" fill="#1e293b">Saturn</text>
-  <line x1="438" y1="57" x2="479" y2="56" stroke="#6366f1" stroke-width="1.2" marker-end="url(#sp-arrow)"/>
-  <!-- Uranus -->
-  <circle cx="575" cy="56" r="12" fill="#a5f3fc" stroke="#0891b2" stroke-width="1.2"/>
-  <text x="575" y="82" text-anchor="middle" font-size="9" fill="#1e293b">Uranus</text>
-  <line x1="511" y1="56" x2="561" y2="56" stroke="#6366f1" stroke-width="1.2" marker-end="url(#sp-arrow)"/>
-  <!-- Neptune -->
-  <circle cx="655" cy="56" r="12" fill="#93c5fd" stroke="#2563eb" stroke-width="1.2"/>
-  <text x="655" y="82" text-anchor="middle" font-size="9" fill="#1e293b">Neptune</text>
-  <line x1="589" y1="56" x2="641" y2="56" stroke="#6366f1" stroke-width="1.2" marker-end="url(#sp-arrow)"/>
+<!-- tikz: planet-lineup-true-size | Sun edge r436, planets radii Earth=4 scale, asteroid belt, distances compressed -->
+<svg viewBox="0 0 720 190" width="100%" style="max-width:720px; display:block; margin:14px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The eight planets in order from the Sun, drawn at their true sizes compared with each other. Only the edge of the Sun fits. Mercury, Venus, Earth and Mars are tiny; Jupiter and Saturn are huge. An asteroid belt lies between Mars and Jupiter. Distances are not to scale.">
+  <circle cx="-380" cy="96" r="436" class="dg-fill-accent"/>
+  <text x="26" y="101" text-anchor="middle" class="dg-label-b">Sun</text>
+  <ellipse cx="374" cy="96" rx="80" ry="12" class="dg-line"/>
+  <circle cx="90" cy="96" r="1.5" class="dg-fill-mid"/>
+  <line x1="90" y1="100.5" x2="90" y2="110" class="dg-construction"/>
+  <text x="90" y="122" text-anchor="middle" class="dg-label-sm">Mercury</text>
+  <circle cx="110" cy="96" r="3.8" class="dg-fill-light"/>
+  <line x1="110" y1="102.8" x2="110" y2="130" class="dg-construction"/>
+  <text x="110" y="142" text-anchor="middle" class="dg-label-sm">Venus</text>
+  <circle cx="132" cy="96" r="4" class="dg-fill-mid"/>
+  <line x1="132" y1="103.0" x2="132" y2="110" class="dg-construction"/>
+  <text x="132" y="122" text-anchor="middle" class="dg-label-sm">Earth</text>
+  <circle cx="152" cy="96" r="2.1" class="dg-fill-mid"/>
+  <line x1="152" y1="101.1" x2="152" y2="130" class="dg-construction"/>
+  <text x="152" y="142" text-anchor="middle" class="dg-label-sm">Mars</text>
+  <circle cx="244" cy="96" r="44.8" class="dg-fill-light"/>
+  <text x="244" y="160" text-anchor="middle" class="dg-label-sm">Jupiter</text>
+  <circle cx="374" cy="96" r="37.8" class="dg-fill-light"/>
+  <text x="374" y="160" text-anchor="middle" class="dg-label-sm">Saturn</text>
+  <circle cx="494" cy="96" r="16" class="dg-fill-mid"/>
+  <text x="494" y="160" text-anchor="middle" class="dg-label-sm">Uranus</text>
+  <circle cx="548" cy="96" r="15.5" class="dg-fill-mid"/>
+  <text x="548" y="160" text-anchor="middle" class="dg-label-sm">Neptune</text>
+  <path d="M294 96 A80 12 0 0 0 454 96" class="dg-line"/>
+  <circle cx="170.2" cy="97.9" r="1.3" class="dg-solid"/>
+  <circle cx="179.7" cy="101.5" r="1.1" class="dg-solid"/>
+  <circle cx="164.3" cy="110.8" r="1.2" class="dg-solid"/>
+  <circle cx="170.1" cy="117.8" r="1.4" class="dg-solid"/>
+  <circle cx="185.7" cy="95.0" r="1.5" class="dg-solid"/>
+  <circle cx="167.9" cy="101.9" r="1.7" class="dg-solid"/>
+  <circle cx="177.6" cy="106.6" r="1.5" class="dg-solid"/>
+  <circle cx="165.7" cy="107.4" r="1.5" class="dg-solid"/>
+  <circle cx="171.8" cy="75.4" r="1.7" class="dg-solid"/>
+  <circle cx="176.3" cy="105.6" r="1.7" class="dg-solid"/>
+  <circle cx="182.6" cy="114.5" r="1.3" class="dg-solid"/>
+  <circle cx="184.8" cy="93.6" r="1.7" class="dg-solid"/>
+  <circle cx="186.9" cy="78.3" r="1.1" class="dg-solid"/>
+  <circle cx="169.6" cy="116.5" r="1.3" class="dg-solid"/>
+  <circle cx="180.3" cy="87.2" r="1.4" class="dg-solid"/>
+  <circle cx="174.0" cy="89.4" r="1.5" class="dg-solid"/>
+  <line x1="177" y1="122" x2="177" y2="164" class="dg-construction"/>
+  <text x="177" y="178" text-anchor="middle" class="dg-label-sm">asteroid belt</text>
+  <path d="M84 62 L84 56 L158 56 L158 62" class="dg-line-thin"/>
+  <text x="121" y="48" text-anchor="middle" class="dg-label-b">Inner planets</text>
+  <path d="M198 40 L198 34 L566 34 L566 40" class="dg-line-thin"/>
+  <text x="378" y="26" text-anchor="middle" class="dg-label-b">Outer planets</text>
+  <text x="714" y="88" text-anchor="end" class="dg-label-b">Sizes: to scale</text>
+  <text x="714" y="106" text-anchor="end" class="dg-label-b">Distances: NOT to scale</text>
 </svg>
 <p><em>A useful phrase to help remember the order: <strong>M</strong>y <strong>V</strong>ery <strong>E</strong>xcellent <strong>M</strong>other <strong>J</strong>ust <strong>S</strong>erved <strong>U</strong>s <strong>N</strong>achos</em></p>
 <p>The first four (Mercury, Venus, Earth, Mars) are called the <strong>inner planets</strong> — they are <span class="b b-md">&nbsp;</span>, rocky, and close to the Sun.</p>
 <p>The last four (Jupiter, Saturn, Uranus, Neptune) are called the <strong>outer planets</strong> — they are <span class="b b-md">&nbsp;</span> and made mostly of gas.</p>
 
 <h4>Other solar system objects</h4>
+
 <table>
   <thead><tr><th>Object type</th><th>What it is</th><th>Example</th><th>Emit or reflect?</th><th>Key feature</th></tr></thead>
   <tbody>
@@ -389,6 +417,33 @@ The Sun is a <span class="b b-md">&nbsp;</span>. It sits at the <span class="b b
     <tr><td>Meteoroid</td><td>Small rocky or metallic object in space</td><td>—</td><td><span class="b b-sm">&nbsp;</span></td><td>Becomes a <span class="b b-sm">&nbsp;</span> when it enters Earth's atmosphere; a <span class="b b-sm">&nbsp;</span> if it lands</td></tr>
   </tbody>
 </table>
+<p><strong>Comets:</strong> the tail grows as the comet nears the Sun, and it always points away from the Sun.</p>
+<!-- tikz: comet-tail-sequence | comet path toward Sun; far: no tail, closer: short tail, near: long tail; tails point away from Sun -->
+<svg viewBox="0 0 720 220" width="100%" style="max-width:720px; display:block; margin:14px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A comet travelling toward the Sun, shown three times. Far from the Sun it has no tail. Closer, a short tail appears. Near the Sun the tail is long. Every tail points away from the Sun.">
+  <line x1="102.0" y1="120.0" x2="114.0" y2="120.0" class="dg-line"/>
+  <line x1="92.6" y1="142.6" x2="101.1" y2="151.1" class="dg-line"/>
+  <line x1="70.0" y1="152.0" x2="70.0" y2="164.0" class="dg-line"/>
+  <line x1="47.4" y1="142.6" x2="38.9" y2="151.1" class="dg-line"/>
+  <line x1="38.0" y1="120.0" x2="26.0" y2="120.0" class="dg-line"/>
+  <line x1="47.4" y1="97.4" x2="38.9" y2="88.9" class="dg-line"/>
+  <line x1="70.0" y1="88.0" x2="70.0" y2="76.0" class="dg-line"/>
+  <line x1="92.6" y1="97.4" x2="101.1" y2="88.9" class="dg-line"/>
+  <circle cx="70" cy="120" r="26" class="dg-fill-accent"/>
+  <text x="70" y="125" text-anchor="middle" class="dg-label-b">Sun</text>
+  <path d="M700 44 C480 40 250 70 150 150" class="dg-dashed"/>
+  <circle cx="647.1" cy="43.7" r="4.5" class="dg-solid"/>
+  <text x="647.1" y="77.7" text-anchor="middle" class="dg-label-b">Far from the Sun</text>
+  <text x="647.1" y="92.7" text-anchor="middle" class="dg-label-sm">frozen: no tail</text>
+  <polygon points="410.1,63.2 452.3,60.4 449.9,46.6 409.3,58.3" class="dg-fill-light"/>
+  <circle cx="409.7" cy="60.7" r="4.5" class="dg-solid"/>
+  <text x="409.7" y="94.7" text-anchor="middle" class="dg-label-b">Closer</text>
+  <text x="409.7" y="109.7" text-anchor="middle" class="dg-label-sm">ice turns to gas: a tail forms</text>
+  <polygon points="199.3,121.8 319.3,134.6 319.2,102.6 199.2,116.8" class="dg-fill-light"/>
+  <circle cx="199.3" cy="119.3" r="4.5" class="dg-solid"/>
+  <text x="189.3" y="169.3" text-anchor="middle" class="dg-label-b">Near the Sun</text>
+  <text x="189.3" y="184.3" text-anchor="middle" class="dg-label-sm">long, glowing tail</text>
+  <text x="714" y="210" text-anchor="end" class="dg-label-b">The tail always points away from the Sun.</text>
+</svg>
 
 <h4>Pluto — why was it reclassified?</h4>
 <p>For most of the 20th century, Pluto was called the 9th planet. In 2006, the International Astronomical Union (IAU) officially reclassified it as a <span class="b b-md">&nbsp;</span>.</p>
@@ -399,11 +454,129 @@ The Sun is a <span class="b b-md">&nbsp;</span>. It sits at the <span class="b b
   <li>Have <span class="b b-md">&nbsp;</span> its orbital neighbourhood of other debris</li>
 </ol>
 <p>Pluto meets conditions 1 and 2, but not <span class="b b-sm">&nbsp;</span>. Astronomers discovered many other similar-sized icy objects in the region beyond Neptune called the <strong>Kuiper Belt</strong>. Pluto is one of many — not a unique planet. Reclassifying it made the definition more <span class="b b-md">&nbsp;</span> and accurate.</p>
+<!-- tikz: orbit-crossing-top-view | Sun, Neptune orbit ellipse, Pluto eccentric orbit crossing it, Kuiper belt scatter -->
+<svg viewBox="0 0 720 300" width="100%" style="max-width:720px; display:block; margin:14px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Top view: the Sun at the centre, Neptune's orbit as an oval, Pluto's longer orbit crossing inside Neptune's, and many small icy objects of the Kuiper Belt scattered around and beyond Neptune.">
+  <circle cx="129.9" cy="109.2" r="2.9" class="dg-fill-light"/>
+  <circle cx="112.0" cy="144.5" r="2.3" class="dg-fill-light"/>
+  <circle cx="134.2" cy="142.4" r="2.4" class="dg-fill-light"/>
+  <circle cx="587.3" cy="218.7" r="1.9" class="dg-fill-light"/>
+  <circle cx="440.2" cy="58.3" r="2.5" class="dg-fill-light"/>
+  <circle cx="573.9" cy="139.2" r="2.9" class="dg-fill-light"/>
+  <circle cx="163.3" cy="71.4" r="1.7" class="dg-fill-light"/>
+  <circle cx="150.2" cy="133.0" r="1.5" class="dg-fill-light"/>
+  <circle cx="371.5" cy="251.9" r="1.4" class="dg-fill-light"/>
+  <circle cx="128.9" cy="190.8" r="2.7" class="dg-fill-light"/>
+  <circle cx="199.4" cy="62.3" r="2.2" class="dg-fill-light"/>
+  <circle cx="105.7" cy="181.4" r="1.8" class="dg-fill-light"/>
+  <circle cx="649.7" cy="146.5" r="2.7" class="dg-fill-light"/>
+  <circle cx="253.5" cy="260.3" r="1.8" class="dg-fill-light"/>
+  <circle cx="572.1" cy="195.1" r="2.6" class="dg-fill-light"/>
+  <circle cx="498.7" cy="60.1" r="2.0" class="dg-fill-light"/>
+  <circle cx="524.6" cy="44.3" r="1.4" class="dg-fill-light"/>
+  <circle cx="553.0" cy="95.1" r="2.2" class="dg-fill-light"/>
+  <circle cx="129.4" cy="228.0" r="1.5" class="dg-fill-light"/>
+  <circle cx="406.5" cy="34.4" r="1.8" class="dg-fill-light"/>
+  <circle cx="251.5" cy="235.5" r="2.9" class="dg-fill-light"/>
+  <circle cx="560.0" cy="232.4" r="1.8" class="dg-fill-light"/>
+  <circle cx="564.5" cy="186.4" r="2.7" class="dg-fill-light"/>
+  <circle cx="149.6" cy="113.0" r="2.1" class="dg-fill-light"/>
+  <circle cx="334.2" cy="48.6" r="1.6" class="dg-fill-light"/>
+  <circle cx="555.0" cy="228.9" r="2.1" class="dg-fill-light"/>
+  <circle cx="331.6" cy="252.1" r="3.0" class="dg-fill-light"/>
+  <circle cx="268.3" cy="266.5" r="2.8" class="dg-fill-light"/>
+  <circle cx="180.1" cy="213.4" r="2.8" class="dg-fill-light"/>
+  <circle cx="571.7" cy="219.5" r="3.0" class="dg-fill-light"/>
+  <circle cx="348.1" cy="252.7" r="2.6" class="dg-fill-light"/>
+  <circle cx="291.8" cy="252.4" r="1.5" class="dg-fill-light"/>
+  <circle cx="169.9" cy="101.0" r="1.8" class="dg-fill-light"/>
+  <circle cx="180.8" cy="234.1" r="2.1" class="dg-fill-light"/>
+  <circle cx="74.7" cy="163.2" r="2.3" class="dg-fill-light"/>
+  <circle cx="474.5" cy="264.8" r="1.6" class="dg-fill-light"/>
+  <circle cx="476.9" cy="34.1" r="1.8" class="dg-fill-light"/>
+  <circle cx="344.9" cy="48.2" r="2.9" class="dg-fill-light"/>
+  <circle cx="576.3" cy="118.5" r="2.8" class="dg-fill-light"/>
+  <circle cx="131.8" cy="205.2" r="1.6" class="dg-fill-light"/>
+  <circle cx="569.1" cy="127.5" r="1.8" class="dg-fill-light"/>
+  <circle cx="348.3" cy="270.0" r="2.7" class="dg-fill-light"/>
+  <circle cx="290.3" cy="262.0" r="1.7" class="dg-fill-light"/>
+  <circle cx="603.5" cy="200.5" r="1.8" class="dg-fill-light"/>
+  <circle cx="513.4" cy="58.0" r="2.4" class="dg-fill-light"/>
+  <circle cx="563.0" cy="97.8" r="1.7" class="dg-fill-light"/>
+  <circle cx="334.3" cy="245.3" r="2.1" class="dg-fill-light"/>
+  <circle cx="456.9" cy="237.2" r="2.0" class="dg-fill-light"/>
+  <circle cx="533.8" cy="235.0" r="2.0" class="dg-fill-light"/>
+  <circle cx="639.4" cy="134.5" r="2.5" class="dg-fill-light"/>
+  <circle cx="130.6" cy="89.4" r="1.6" class="dg-fill-light"/>
+  <circle cx="573.4" cy="160.8" r="2.9" class="dg-fill-light"/>
+  <circle cx="619.4" cy="122.2" r="1.4" class="dg-fill-light"/>
+  <circle cx="100.0" cy="163.1" r="2.6" class="dg-fill-light"/>
+  <circle cx="596.9" cy="149.6" r="1.5" class="dg-fill-light"/>
+  <circle cx="339.2" cy="35.8" r="2.8" class="dg-fill-light"/>
+  <circle cx="282.7" cy="33.8" r="2.7" class="dg-fill-light"/>
+  <circle cx="190.8" cy="252.3" r="2.5" class="dg-fill-light"/>
+  <circle cx="554.6" cy="58.0" r="2.1" class="dg-fill-light"/>
+  <circle cx="539.0" cy="56.8" r="2.3" class="dg-fill-light"/>
+  <circle cx="167.3" cy="229.1" r="2.3" class="dg-fill-light"/>
+  <circle cx="587.2" cy="206.4" r="2.4" class="dg-fill-light"/>
+  <circle cx="570.8" cy="60.7" r="2.6" class="dg-fill-light"/>
+  <circle cx="337.3" cy="41.4" r="2.3" class="dg-fill-light"/>
+  <circle cx="489.9" cy="55.8" r="1.5" class="dg-fill-light"/>
+  <circle cx="625.8" cy="172.7" r="2.4" class="dg-fill-light"/>
+  <circle cx="390.9" cy="261.4" r="2.5" class="dg-fill-light"/>
+  <circle cx="171.4" cy="75.6" r="2.9" class="dg-fill-light"/>
+  <circle cx="591.4" cy="157.4" r="1.9" class="dg-fill-light"/>
+  <circle cx="437.8" cy="263.9" r="1.7" class="dg-fill-light"/>
+  <ellipse cx="360" cy="150" rx="200" ry="90" class="dg-line"/>
+  <ellipse cx="420" cy="150" rx="236" ry="106" transform="rotate(-8 420 150)" class="dg-accent-dashed"/>
+  <circle cx="360" cy="150" r="9" class="dg-fill-accent"/>
+  <text x="360" y="176" text-anchor="middle" class="dg-label-b">Sun</text>
+  <circle cx="227" cy="217" r="7" class="dg-fill-mid"/>
+  <text x="206" y="262" text-anchor="end" class="dg-label-b">Neptune</text>
+  <circle cx="645" cy="118" r="4.5" class="dg-fill-dark"/>
+  <text x="640" y="104" text-anchor="end" class="dg-label-b">Pluto</text>
+  <line x1="192" y1="150" x2="104" y2="62" class="dg-line-thin"/>
+  <text x="8" y="40" class="dg-label-b">Pluto's orbit (dashed)</text>
+  <text x="8" y="56" class="dg-label-sm">crosses inside Neptune's orbit</text>
+  <line x1="565" y1="236" x2="600" y2="270" class="dg-line-thin"/>
+  <text x="712" y="286" text-anchor="end" class="dg-label-b">Kuiper Belt: many icy objects like Pluto</text>
+  <text x="712" y="20" text-anchor="end" class="dg-label-sm">Not to scale</text>
+</svg>
 
 <h4>Emit vs. reflect light</h4>
 <p><span class="b b-md">&nbsp;</span> means to produce and send out light. The Sun does this — it generates its own energy.</p>
 <p><span class="b b-md">&nbsp;</span> means to bounce back light that came from somewhere else. Planets, moons, and asteroids do this — they are visible because the Sun's light hits them and bounces toward our eyes.</p>
 <p>This is why you can see planets in the night sky even though they are not on fire — they are <span class="b b-md">&nbsp;</span> sunlight, not producing it.</p>
+<p><strong>Label the diagram:</strong> write <strong>emitted</strong> or <strong>reflected</strong> in each numbered box.</p>
+<!-- tikz: light-paths | Sun (rays) -> Moon -> observer on Earth; 2 blank boxes on arrows -->
+<svg viewBox="0 0 680 240" width="100%" style="max-width:680px; display:block; margin:14px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Light travels from the Sun to the Moon, then from the Moon to a person on Earth. Each arrow has an empty box to write emitted or reflected.">
+  <defs><marker id="sp-n3-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" class="dg-solid-accent"/></marker></defs>
+  <line x1="140.0" y1="130.0" x2="156.0" y2="130.0" class="dg-line"/>
+  <line x1="122.4" y1="172.4" x2="133.7" y2="183.7" class="dg-line"/>
+  <line x1="80.0" y1="190.0" x2="80.0" y2="206.0" class="dg-line"/>
+  <line x1="37.6" y1="172.4" x2="26.3" y2="183.7" class="dg-line"/>
+  <line x1="20.0" y1="130.0" x2="4.0" y2="130.0" class="dg-line"/>
+  <line x1="37.6" y1="87.6" x2="26.3" y2="76.3" class="dg-line"/>
+  <line x1="80.0" y1="70.0" x2="80.0" y2="54.0" class="dg-line"/>
+  <line x1="122.4" y1="87.6" x2="133.7" y2="76.3" class="dg-line"/>
+  <circle cx="80" cy="130" r="52" class="dg-fill-accent"/>
+  <text x="80" y="135" text-anchor="middle" class="dg-label-lg">Sun</text>
+  <circle cx="360" cy="56" r="20" class="dg-fill-dark"/>
+  <path d="M360 36 A20 20 0 0 0 360 76 Z" class="dg-fill-light"/>
+  <text x="360" y="98" text-anchor="middle" class="dg-label-b">Moon</text>
+  <path d="M440 240 A150 150 0 0 1 680 240 Z" class="dg-fill-light"/>
+  <text x="560" y="228" text-anchor="middle" class="dg-label-b">Earth</text>
+  <circle cx="560" cy="140" r="6" class="dg-boundary"/>
+  <line x1="560" y1="146" x2="560" y2="164" class="dg-line"/>
+  <line x1="560" y1="164" x2="553" y2="176" class="dg-line"/><line x1="560" y1="164" x2="567" y2="176" class="dg-line"/>
+  <line x1="552" y1="153" x2="568" y2="153" class="dg-line"/>
+  <text x="574" y="140" class="dg-label-sm">you</text>
+  <line x1="134" y1="112" x2="334" y2="60" class="dg-accent" marker-end="url(#sp-n3-arrow)"/>
+  <line x1="382" y1="66" x2="548" y2="136" class="dg-accent" marker-end="url(#sp-n3-arrow)"/>
+  <rect x="150" y="30" width="150" height="32" rx="4" class="dg-blank"/>
+  <text x="160" y="52" class="dg-label-lg">1</text>
+  <rect x="360" y="118" width="150" height="32" rx="4" class="dg-blank"/>
+  <text x="370" y="140" class="dg-label-lg">2</text>
+</svg>
 
 <h4>Scale — why diagrams lie</h4>
 <p>Every diagram of the solar system you have ever seen is <span class="b b-md">&nbsp;</span> to scale. Textbook diagrams make the planets look large and close together. The real solar system is almost entirely <span class="b b-md">&nbsp;</span> space.</p>
@@ -412,6 +585,21 @@ The Sun is a <span class="b b-md">&nbsp;</span>. It sits at the <span class="b b
   <p>If the Sun were a <strong>basketball</strong> (about 24 cm across), the Earth would be a <strong>pinhead</strong> roughly <strong>30 metres away</strong>. Neptune — the outermost planet — would be about <strong>1 kilometre away</strong>.</p>
   <p style="margin-top:6px;">On that same scale, the planets would each be smaller than a grain of sand.</p>
 </blockquote>
+<!-- tikz: size-comparison-to-scale | Sun r109 vs Earth r1 (true ratio), magnifier circle on Earth -->
+<svg viewBox="0 0 680 240" width="100%" style="max-width:680px; display:block; margin:14px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Sun and Earth drawn to the same scale. The Sun is a large circle; Earth is a dot about the size of a pinpoint. About 109 Earths would fit across the Sun.">
+  <circle cx="125" cy="120" r="109" class="dg-fill-accent"/>
+  <text x="125" y="116" text-anchor="middle" class="dg-label-lg">Sun</text>
+  <line x1="16" y1="140" x2="234" y2="140" class="dg-line-thin"/>
+  <line x1="16" y1="134" x2="16" y2="146" class="dg-line-thin"/><line x1="234" y1="134" x2="234" y2="146" class="dg-line-thin"/>
+  <text x="125" y="158" text-anchor="middle" class="dg-label-sm">about 109 Earths across</text>
+  <circle cx="330" cy="120" r="1.2" class="dg-solid"/>
+  <circle cx="330" cy="120" r="14" class="dg-dashed"/>
+  <line x1="342" y1="112" x2="380" y2="88" class="dg-line-thin"/>
+  <text x="384" y="84" class="dg-label-b">Earth, at the same scale</text>
+  <text x="384" y="140" class="dg-label">If the Sun were a basketball (24 cm),</text>
+  <text x="384" y="158" class="dg-label">Earth would be a pinhead (2 mm)</text>
+  <text x="384" y="176" class="dg-label">about 30 m away.</text>
+</svg>
 
 <div class="science-methods">
   <div class="label">Scientific Methods — Scale models</div>
@@ -491,6 +679,52 @@ The Sun is a <span class="b b-md">&nbsp;</span>. It sits at the <span class="b b
 </table>
 
 <h4>Why use different tools for different questions?</h4>
+<!-- tikz: tool-distance-panels | 4 panels: telescope on Earth (Mars a dot), space telescope above atmosphere, probe flying past Mars, rover on Mars surface; arrow closer to target -->
+<svg viewBox="0 0 720 230" width="100%" style="max-width:720px; display:block; margin:14px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Four panels showing how close each tool gets to Mars. Telescope on Earth: Mars is a tiny dot far away. Space telescope above the air: Mars is still a tiny dot. Space probe: flies past close to Mars. Rover: drives on the surface of Mars.">
+  <defs><marker id="sp-n6-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" class="dg-solid"/></marker></defs>
+  <rect x="4" y="4" width="172" height="150" rx="8" class="dg-boundary"/>
+  <text x="90" y="176" text-anchor="middle" class="dg-label-b">Telescope on Earth</text>
+  <text x="90" y="192" text-anchor="middle" class="dg-label-sm">on the ground</text>
+  <rect x="183" y="4" width="172" height="150" rx="8" class="dg-boundary"/>
+  <text x="269" y="176" text-anchor="middle" class="dg-label-b">Space telescope</text>
+  <text x="269" y="192" text-anchor="middle" class="dg-label-sm">above the air</text>
+  <rect x="362" y="4" width="172" height="150" rx="8" class="dg-boundary"/>
+  <text x="448" y="176" text-anchor="middle" class="dg-label-b">Space probe</text>
+  <text x="448" y="192" text-anchor="middle" class="dg-label-sm">flies past</text>
+  <rect x="541" y="4" width="172" height="150" rx="8" class="dg-boundary"/>
+  <text x="627" y="176" text-anchor="middle" class="dg-label-b">Rover</text>
+  <text x="627" y="192" text-anchor="middle" class="dg-label-sm">lands and drives</text>
+  <rect x="4" y="124" width="172" height="30" class="dg-fill-light"/>
+  <text x="154" y="144" text-anchor="middle" class="dg-label-sm">Earth</text>
+  <line x1="64" y1="96" x2="50" y2="124" class="dg-line"/><line x1="64" y1="96" x2="78" y2="124" class="dg-line"/>
+  <rect x="40" y="82" width="54" height="13" rx="2" transform="rotate(-30 64 90)" class="dg-fill-mid"/>
+  <line x1="90" y1="72" x2="142" y2="36" class="dg-construction"/>
+  <circle cx="146" cy="33" r="2.5" class="dg-fill-mid"/><text x="142" y="22" text-anchor="end" class="dg-label-sm">Mars</text>
+  <path d="M183 154 Q269 112 355 154 Z" class="dg-fill-light"/>
+  <path d="M187 136 Q269 96 351 136" class="dg-dashed"/>
+  <text x="269" y="148" text-anchor="middle" class="dg-label-sm">Earth</text>
+  <g transform="rotate(-20 249 64)">
+    <rect x="231" y="57" width="38" height="15" rx="3" class="dg-fill-mid"/>
+    <rect x="239" y="38" width="10" height="17" class="dg-fill-accent"/><rect x="239" y="74" width="10" height="17" class="dg-fill-accent"/>
+    <rect x="269" y="59" width="5" height="11" class="dg-fill-dark"/>
+  </g>
+  <circle cx="331" cy="30" r="2.5" class="dg-fill-mid"/><text x="327" y="20" text-anchor="end" class="dg-label-sm">Mars</text>
+  <circle cx="484" cy="100" r="36" class="dg-fill-mid"/>
+  <text x="484" y="105" text-anchor="middle" class="dg-label-white">Mars</text>
+  <path d="M372 30 Q432 30 442 70 Q452 112 422 146" class="dg-dashed"/>
+  <rect x="400" y="34" width="18" height="15" rx="2" class="dg-fill-mid"/>
+  <path d="M392 32 Q409 46 426 32 Z" class="dg-fill-light"/>
+  <line x1="400" y1="46" x2="386" y2="54" class="dg-line"/>
+  <path d="M541 118 Q627 104 713 118 L713 154 L541 154 Z" class="dg-fill-mid"/>
+  <text x="627" y="142" text-anchor="middle" class="dg-label-white">surface of Mars</text>
+  <rect x="603" y="76" width="50" height="6" class="dg-fill-dark"/>
+  <rect x="607" y="82" width="42" height="14" rx="2" class="dg-fill-light"/>
+  <circle cx="611" cy="103" r="6" class="dg-fill-dark"/><circle cx="628" cy="103" r="6" class="dg-fill-dark"/><circle cx="645" cy="103" r="6" class="dg-fill-dark"/>
+  <line x1="645" y1="76" x2="645" y2="58" class="dg-line"/><rect x="638" y="50" width="14" height="9" class="dg-fill-mid"/>
+  <polygon points="561,113 567,106 574,112" class="dg-fill-dark"/>
+  <line x1="100" y1="214" x2="620" y2="214" class="dg-line" marker-end="url(#sp-n6-arrow)"/>
+  <text x="360" y="208" text-anchor="middle" class="dg-label-sm">closer and closer to the target</text>
+</svg>
 <ul>
   <li>A telescope shows us <span class="b b-md">&nbsp;</span> — we can observe but not interact.</li>
   <li>A space probe gets <span class="b b-md">&nbsp;</span> — it can take measurements at the source, but cannot move around.</li>
@@ -504,6 +738,50 @@ The Sun is a <span class="b b-md">&nbsp;</span>. It sits at the <span class="b b
 <p>Ex-Alta 1 is a small satellite called a <strong>CubeSat</strong>. It was designed and built by students at the University of Alberta. It was launched into orbit in <span class="b b-md">&nbsp;</span>.</p>
 <p>Ex-Alta 1 orbits <span class="b b-md">&nbsp;</span> and collects data on the <strong>upper atmosphere</strong> — specifically on space weather events that affect Earth's magnetic field.</p>
 <p>This matters because: (1) it shows that satellite technology is not only for large space agencies — students with the right knowledge and tools can build technology that serves a real scientific purpose; (2) it is an example of a <strong>computational artifact</strong> — a human-built system designed to collect data from an environment we cannot directly access, transmit it back to Earth, and contribute to scientific knowledge.</p>
+<!-- tikz: data-pipeline-labelled | CubeSat sensor -> encode -> radio wave -> ground station dish -> scientists; numbered steps 1-5 -->
+<svg viewBox="0 0 680 310" width="100%" style="max-width:680px; display:block; margin:14px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ex-Alta 1's data pipeline in five numbered steps: 1, the sensor in orbit measures charged particles; 2, the data is encoded into a signal; 3, a radio signal travels down to Earth; 4, a ground station dish receives and decodes it; 5, scientists analyze the results.">
+  <path d="M0 262 Q340 236 680 262 L680 310 L0 310 Z" class="dg-fill-light"/>
+  <path d="M0 118 Q340 30 680 118" class="dg-dashed"/>
+  <rect x="78" y="84" width="36" height="14" class="dg-fill-accent"/><rect x="146" y="84" width="36" height="14" class="dg-fill-accent"/>
+  <line x1="90" y1="84" x2="90" y2="98" class="dg-line-thin"/><line x1="102" y1="84" x2="102" y2="98" class="dg-line-thin"/>
+  <line x1="158" y1="84" x2="158" y2="98" class="dg-line-thin"/><line x1="170" y1="84" x2="170" y2="98" class="dg-line-thin"/>
+  <rect x="116" y="73" width="28" height="36" rx="2" class="dg-fill-mid"/>
+  <line x1="116" y1="85" x2="144" y2="85" class="dg-line-thin"/><line x1="116" y1="97" x2="144" y2="97" class="dg-line-thin"/>
+  <line x1="130" y1="73" x2="130" y2="58" class="dg-line"/>
+  <circle cx="130" cy="113" r="4" class="dg-solid"/>
+  <text x="130" y="48" text-anchor="middle" class="dg-label-b">Ex-Alta 1 (CubeSat)</text>
+  <path d="M138.0 120.0 L138.9 123.6 L140.0 126.7 L141.5 128.8 L143.5 129.7 L146.1 129.2 L149.0 127.8 L152.2 125.9 L155.4 123.9 L158.4 122.5 L160.9 122.0 L163.0 122.8 L164.5 124.9 L165.6 128.0 L166.5 131.6 L167.4 135.3 L168.5 138.4 L170.0 140.5 L172.0 141.3 L174.5 140.9 L177.5 139.5 L180.7 137.6 L183.9 135.6 L186.8 134.2 L189.4 133.7 L191.4 134.5 L193.0 136.5 L194.1 139.6 L195.0 143.2 L195.9 146.9 L197.0 150.0 L198.5 152.1 L200.5 153.0 L203.0 152.6 L205.9 151.2 L209.1 149.3 L212.3 147.3 L215.3 145.8 L217.8 145.4 L219.9 146.2 L221.4 148.2 L222.6 151.2 L223.5 154.9 L224.3 158.5 L225.4 161.6 L226.9 163.8 L228.9 164.7 L231.5 164.3 L234.4 163.0 L237.6 161.0 L240.8 159.0 L243.7 157.5 L246.3 157.1 L248.4 157.8 L249.9 159.8 L251.1 162.9 L251.9 166.5 L252.8 170.1 L253.9 173.3 L255.4 175.4 L257.4 176.4 L259.9 176.0 L262.8 174.7 L266.0 172.7 L269.2 170.7 L272.2 169.2 L274.8 168.7 L276.8 169.5 L278.4 171.5 L279.5 174.5 L280.4 178.1 L281.3 181.8 L282.4 184.9 L283.9 187.1 L285.9 188.0 L288.4 187.7 L291.3 186.4 L294.5 184.4 L297.7 182.4 L300.6 180.9 L303.2 180.4 L305.3 181.1 L306.9 183.1 L308.0 186.1 L308.9 189.7 L309.8 193.4 L310.9 196.5 L312.3 198.7 L314.3 199.7 L316.8 199.4 L319.7 198.1 L322.9 196.1 L326.1 194.1 L329.1 192.6 L331.7 192.1 L333.8 192.8 L335.4 194.7 L336.5 197.7 L337.4 201.3 L338.3 205.0 L339.3 208.2 L340.8 210.4 L342.8 211.4 L345.3 211.1 L348.2 209.8 L351.4 207.9 L354.6 205.8 L357.5 204.3 L360.2 203.8 L362.3 204.4 L363.8 206.4 L365.0 209.4 L365.9 213.0 L366.8 216.6 L367.8 219.8 L369.3 222.1 L371.2 223.1 L373.7 222.8 L376.6 221.5 L379.8 219.6 L383.0 217.6" class="dg-accent"/>
+  <line x1="405" y1="249" x2="405" y2="228" class="dg-line-bold"/>
+  <path d="M380 228 Q405 248 430 228 Z" transform="rotate(-35 405 230)" class="dg-fill-mid"/>
+  <line x1="405" y1="230" x2="393" y2="214" class="dg-line"/>
+  <path d="M405 249 Q480 254 560 252" class="dg-line-thin"/>
+  <rect x="568" y="214" width="48" height="32" rx="2" class="dg-fill-mid"/>
+  <rect x="572" y="218" width="40" height="24" class="dg-boundary"/>
+  <polyline points="576,236 584,230 591,233 599,224 607,227" class="dg-line-thin"/>
+  <rect x="560" y="246" width="64" height="6" rx="2" class="dg-fill-dark"/>
+  <circle cx="646" cy="216" r="8" class="dg-fill-light"/>
+  <path d="M630 252 Q632 228 646 228 Q660 228 662 252 Z" class="dg-fill-light"/>
+  <circle cx="22" cy="150" r="11" class="dg-fill-accent"/>
+  <text x="22" y="155" text-anchor="middle" class="dg-label-b">1</text>
+  <text x="40" y="149" class="dg-label-b">Sensor in orbit</text>
+  <text x="40" y="164" class="dg-label-sm">measures charged particles</text>
+  <circle cx="214" cy="30" r="11" class="dg-fill-accent"/>
+  <text x="214" y="35" text-anchor="middle" class="dg-label-b">2</text>
+  <text x="232" y="29" class="dg-label-b">Data encoded</text>
+  <text x="232" y="44" class="dg-label-sm">turned into a signal</text>
+  <circle cx="300" cy="140" r="11" class="dg-fill-accent"/>
+  <text x="300" y="145" text-anchor="middle" class="dg-label-b">3</text>
+  <text x="318" y="139" class="dg-label-b">Radio signal sent</text>
+  <text x="318" y="154" class="dg-label-sm">travels down to Earth</text>
+  <circle cx="330" cy="284" r="11" class="dg-fill-accent"/>
+  <text x="330" y="289" text-anchor="middle" class="dg-label-b">4</text>
+  <text x="348" y="283" class="dg-label-b">Ground station receives</text>
+  <text x="348" y="298" class="dg-label-sm">and decodes the signal</text>
+  <circle cx="500" cy="168" r="11" class="dg-fill-accent"/>
+  <text x="500" y="173" text-anchor="middle" class="dg-label-b">5</text>
+  <text x="518" y="167" class="dg-label-b">Scientists analyze</text>
+  <text x="518" y="182" class="dg-label-sm">read results, draw conclusions</text>
+</svg>
 
 <div class="cs-connection">
   <div class="label">Connection to Computer Science — Ex-Alta 1 as a designed system</div>
@@ -568,6 +846,27 @@ An artificial satellite is a human-built object that has been placed into <span 
   </tbody>
 </table>
 <p>Natural and artificial satellites are different in origin but similar in <span class="b b-md">&nbsp;</span> — both stay in orbit because of the same physics.</p>
+<!-- tikz: orbit-heights-broken-axis | Earth, ISS (low), GPS 20,200 km, weather 35,800 km, axis break, Moon 384,400 km -->
+<svg viewBox="0 0 700 170" width="100%" style="max-width:700px; display:block; margin:14px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="How far from Earth different satellites orbit: the ISS is in a low orbit, GPS satellites are about 20,200 km up, many weather satellites are about 35,800 km up, and the Moon is about 384,400 km away. Not to scale.">
+  <path d="M0 10 A80 80 0 0 1 0 170 Z" class="dg-fill-light"/>
+  <text x="22" y="95" text-anchor="middle" class="dg-label-b">Earth</text>
+  <line x1="82" y1="90" x2="470" y2="90" class="dg-line-thin"/>
+  <line x1="500" y1="90" x2="640" y2="90" class="dg-line-thin"/>
+  <line x1="476" y1="100" x2="486" y2="80" class="dg-line"/><line x1="486" y1="100" x2="496" y2="80" class="dg-line"/>
+  <rect x="106" y="86" width="10" height="8" class="dg-fill-accent"/><rect x="124" y="86" width="10" height="8" class="dg-fill-accent"/><rect x="116" y="84" width="8" height="12" rx="1" class="dg-fill-mid"/>
+  <text x="120" y="66" text-anchor="middle" class="dg-label-b">ISS</text>
+  <text x="120" y="118" text-anchor="middle" class="dg-label-sm">low orbit</text>
+  <rect x="256" y="86" width="10" height="8" class="dg-fill-accent"/><rect x="274" y="86" width="10" height="8" class="dg-fill-accent"/><rect x="266" y="84" width="8" height="12" rx="1" class="dg-fill-mid"/>
+  <text x="270" y="66" text-anchor="middle" class="dg-label-b">GPS satellites</text>
+  <text x="270" y="118" text-anchor="middle" class="dg-label-sm">about 20,200 km</text>
+  <rect x="396" y="86" width="10" height="8" class="dg-fill-accent"/><rect x="414" y="86" width="10" height="8" class="dg-fill-accent"/><rect x="406" y="84" width="8" height="12" rx="1" class="dg-fill-mid"/>
+  <text x="410" y="66" text-anchor="middle" class="dg-label-b">many weather satellites</text>
+  <text x="410" y="118" text-anchor="middle" class="dg-label-sm">about 35,800 km</text>
+  <circle cx="650" cy="90" r="16" class="dg-fill-mid"/>
+  <text x="650" y="66" text-anchor="middle" class="dg-label-b">Moon</text>
+  <text x="650" y="126" text-anchor="middle" class="dg-label-sm">about 384,400 km</text>
+  <text x="694" y="162" text-anchor="end" class="dg-label-sm">Distance above Earth's surface. Not to scale.</text>
+</svg>
 
 <div class="cs-connection">
   <div class="label">CS Connection — designed systems vs. natural systems</div>
@@ -578,6 +877,25 @@ An artificial satellite is a human-built object that has been placed into <span 
 <p>Satellites do not need engines running constantly to stay in orbit. A satellite moves <span class="b b-md">&nbsp;</span> so fast that as it falls toward Earth, Earth's surface <span class="b b-md">&nbsp;</span> away beneath it at the same rate. The result is that it keeps falling in a <span class="b b-md">&nbsp;</span>.</p>
 <p><em>Think of it this way: if you threw a ball perfectly horizontally, it would curve down and hit the ground. Throw it faster — it travels farther before hitting. Throw it fast enough, and the curve of Earth falls away at the same rate the ball drops. The ball never hits the ground. That is an orbit.</em></p>
 <p>Satellites do not <span class="b b-md">&nbsp;</span> in place above Earth. They are always falling — they just keep <span class="b b-md">&nbsp;</span> the curve of Earth.</p>
+<!-- tikz: newtons-cannonball-labelled | Earth r95, mountain, slow/faster/orbit paths with labels -->
+<svg viewBox="100 0 600 290" width="100%" style="max-width:600px; display:block; margin:14px auto;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A ball is thrown sideways from the top of a very tall mountain. A slow throw curves down and lands close. A faster throw lands farther away. A throw that is fast enough keeps falling all the way around Earth: that is an orbit.">
+  <defs><marker id="sp-n8-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" class="dg-solid-accent"/></marker></defs>
+  <circle cx="340" cy="150" r="95" class="dg-fill-light"/>
+  <text x="340" y="156" text-anchor="middle" class="dg-label-lg">Earth</text>
+  <polygon points="320,58 340,25 360,58" class="dg-fill-mid"/>
+  <path d="M342 25 A125 125 0 1 1 330 25.4" class="dg-accent"/>
+  <polygon points="459,144 471,144 465,157" class="dg-solid-accent"/>
+  <path d="M342 25 Q366 25 371 58" class="dg-accent" marker-end="url(#sp-n8-arrow)"/>
+  <path d="M342 25 Q424 27 428 114" class="dg-accent" marker-end="url(#sp-n8-arrow)"/>
+  <circle cx="342" cy="25" r="4" class="dg-solid"/>
+  <line x1="374" y1="56" x2="494" y2="44" class="dg-line-thin"/>
+  <text x="498" y="42" class="dg-label-b">Slow throw</text><text x="498" y="57" class="dg-label-sm">lands close</text>
+  <line x1="432" y1="108" x2="494" y2="98" class="dg-line-thin"/>
+  <text x="498" y="96" class="dg-label-b">Faster throw</text><text x="498" y="111" class="dg-label-sm">lands farther away</text>
+  <line x1="460" y1="196" x2="494" y2="196" class="dg-line-thin"/>
+  <text x="498" y="192" class="dg-label-b">Fast enough</text><text x="498" y="207" class="dg-label-sm">Earth curves away as fast</text><text x="498" y="221" class="dg-label-sm">as it falls: an orbit</text>
+  <text x="694" y="284" text-anchor="end" class="dg-label-sm">Not to scale</text>
+</svg>
 
 <h4>The International Space Station (ISS)</h4>
 <p>The ISS is a research laboratory in orbit about <span class="b b-sm">&nbsp;</span> km above Earth's surface. It has been continuously occupied by humans since the year <span class="b b-sm">&nbsp;</span>.</p>
