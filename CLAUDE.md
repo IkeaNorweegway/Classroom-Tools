@@ -35,6 +35,7 @@ Before writing the first line of any artifact: (1) copy the relevant template fr
 | Math 9 inquiry project (brief + journal + teacher guide) | `templates/inquiry-project-template.md` | "Options: [3, equal difficulty]. Driving questions launched in strand Lesson 1. Mini-lessons: [A, B]. Critique cycle: Period 4. Teams 4–5, roles: [ ]. Audience per option: [ ]. Rubric K/U/S → [local codes]. Depth ceilings respected: [ ]. Real data with source and date: [ ]." — rules in `_courses/math-9/_context.md` (Inquiry Projects) |
 | CEFL mini-workbook / project brief | *(no template — format in `_courses/cefl/_context.md`)* | "Moments: [list], each with visual, worked example, 2–3 practice, extra practice. Data + dates: [list]. Cross-curricular tags: [≤1 per moment]. DQ: [ ]. Teams 4–5, roles: [ ]. Milestones → sessions: [ ]. Audience: [ ]. Rubric K/U/S → [LO code]." — full spec in `_courses/cefl/_context.md` |
 | Game | *(no template)* | "Outcomes: [codes]. Model: [one line]. Real-time or turn-based. Test hook included." — full rules in `_games-context.md` |
+| Grade 5 ELA unit material (anchor notes, reader, notebook, word work, fluency, exits, cold reads, rubric, teacher guide) | *(no template — format at the top of `scripts/render_ela5.pl`)* | "Genre: [ ]. Anchor topic: [ ]. SRSD strategy: [ ]. Mentor text for each craft move: [ ]. Writing about reading every lesson. Editions A/B/C share texts and question numbers. Codes: [TF/OL/VO/CO/WR/CV]. Passages original or public-domain retold." — full rules in `_courses/grade-5-ela/_context.md` |
 | Slide deck | `templates/slides-template/` (folder) | "Follows notes order: [sections]. Blanks 2–3 per slide, answers from the key. Key words from vocab tables: [terms]. Visual on every slide: [one line per slide]." — full rules in `slides/_context.md` |
 
 ### Trust mode
@@ -97,6 +98,7 @@ Materials are organized inside type folders by subject and unit:
 | `_courses/grade-7-science/_context.md` | Science 7 (Alberta 2007 PoS): 5 units, LOs, misconception inventory, depth ceilings |
 | `_courses/grade-7-science/[unit]/_context.md` | Unit-level contexts: interactions-ecosystems, plants-food-fibre, heat-temperature, structures-forces, planet-earth |
 | `_courses/math-8/_context.md` | Math 8: 12 topics (2016 Grade 8 outcomes), local codes SQ/PC/RR/FR/IN/LR/LE/PY/SV/VT/DD/PB, depth ceilings, misconceptions, reading-level and picture rules, materials map. Render with `scripts/render_math8.pl` |
+| `_courses/grade-5-ela/_context.md` | Grade 5 ELA (Alberta ELAL K–6, 2023): six genre units, 60-min block, editions A/B/C, local codes TF/OL/VO/CO/WR/CV, error patterns, F&P and Words Their Way use. Does **not** use the math/science formats. Evidence: `research/literacy-reading-writing-research.md`. Render with `scripts/render_ela5.pl` |
 | `_courses/math-9/_context.md` | Math 9: 11 topics, depth ceilings, misconception inventory, recommended sequence |
 | `_courses/grade-7-social/_context.md` | Social 7 (draft 7–9 curriculum): 5 units, verbatim K/U/S, local codes SB/CG/BE/IM/AF, misconceptions, sensitive-content notes. Materials render with `scripts/render_social.pl` |
 | `_courses/grade-8-social/_context.md` | Social 8 (draft 7–9 curriculum): 4 units, outcomes, misconceptions |
@@ -129,6 +131,7 @@ Materials are organized inside type folders by subject and unit:
 | "Build / revise a game" | `_games-context.md` → unit `_context.md` in `_courses/` | type-folder contexts, `templates/` |
 | "Build a CEFL workbook / project / teacher guide" | `_courses/cefl/_context.md` → `research/project-based-learning-research.md` → `research/financial-career-education-research.md` | `templates/`, `tests-quizzes/` — CEFL uses its own mini-workbook and project formats |
 | "Build / revise a Math 8 [notes / worksheet / workbook / exits / quiz / teacher notes]" | `_courses/math-8/_context.md` → the type-folder context → the source format at the top of `scripts/render_math8.pl` (diagram types in `scripts/Math8Viz.pm`) | `research/` |
+| "Build / revise a Grade 5 ELA [unit / notebook / reader / anything]" | `_courses/grade-5-ela/_context.md` → `research/literacy-reading-writing-research.md` → the source format at the top of `scripts/render_ela5.pl` | `templates/`, `worksheets/workbooks-context.md`, `notes-packages/_context.md` — ELA uses its own formats |
 | "Build / revise slides" | `slides/_context.md` → the unit's notes package and notes answer key → unit `_context.md` in `_courses/` | `research/`, `tests-quizzes/` |
 | "Start a [type] build" | Copy relevant template from `templates/` first, then read artifact context | everything else |
 | "Build/revise a STEAM [unit/grade] [notes/design journal/plan]" | `steam/_context.md` → `steam/grade-[N]/_context.md` | `templates/`, `worksheets/`, `notes-packages/`, `_courses/` — STEAM doesn't use the standard templates (see `steam/grade-5/` for the established simplified-notes + design-journal format) |
@@ -145,6 +148,7 @@ Materials are organized inside type folders by subject and unit:
 | A teacher notes / sub plan | `[subject]-[unit]-[type]-v[N].md` | `sci6-forces-teachernotes-v1.md` |
 | A CEFL 7–9 material | `cefl[G]-[unit]-[type]-v[N].md` | `cefl7-income-tax-workbook-v1.md` |
 | A Math 8 material | `math8-[topic]-[type]-v[N].md` (practice sheets: `-practice-`, one source for Core and Challenge) | `math8-pythagorean-notes-v1.md` |
+| A Grade 5 ELA material | `ela5-[unit]-[type]-v[N].md`; editions add `-scaffolded` or `-ef` before `-v[N]` | `ela5-tall-tales-notebook-scaffolded-v1.md` |
 | A PhysEd 5–6 material | `pew56-[unit]-[type]-v[N].md` | `pew56-invasion-games-exits-v1.md` |
 | A PhysEd 7–9 material | `pew79-[unit]-[type]-v[N].md` | `pew79-fitness-program-template-v1.md` |
 | A thinking prompt | `[topic]-prompt-v[N].md` | `metacognition-prompt-v2.md` |

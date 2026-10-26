@@ -679,6 +679,16 @@ export const unitArt: Record<string, UnitArt> = {
       <g class="u-m"><text x="32" y="44" text-anchor="middle" font-size="30" font-weight="700" style="fill: rgb(var(--accent)); font-family: var(--font-display, Georgia, serif)">8</text></g>
       <circle class="u-d" cx="20" cy="18" r="2"/>`,
   },
+  // ── Grade 5 ELA ──────────────────────────────────────────────────────
+  // Tall Tales: a giant boot towering over a tiny house; the boot stamps on hover.
+  'tall-tales': {
+    m: 'drop',
+    svg: `<path class="u-s" d="M8 54h48"/>
+      <path class="u-s u-f" d="M44 54v-6h8v6M44 48l4-4 4 4"/>
+      <g class="u-m"><path class="u-s u-f" d="M18 10h14v26c0 2 1 3 3 4l9 4c3 1 4 3 4 6v4H14V36c0-3 2-5 4-6Z"/>
+      <path class="u-s" d="M18 18h14M18 25h14"/></g>
+      <circle class="u-d" cx="49" cy="51" r="1.4"/>`,
+  },
   'cefl-grade-9': {
     m: 'float',
     svg: `<rect class="u-s u-f" x="12" y="10" width="40" height="44" rx="6"/>

@@ -5,7 +5,7 @@
 import { strands as math9Strands, topicsInStrand, type StrandSlug } from './math9';
 import { strands as math8Strands, topicsInStrand as math8TopicsInStrand } from './math8';
 
-export type CourseKey = 'science' | 'math8' | 'math9' | 'science7' | 'social9' | 'social8' | 'social7' | 'steam' | 'cefl';
+export type CourseKey = 'science' | 'math8' | 'math9' | 'science7' | 'social9' | 'social8' | 'social7' | 'steam' | 'cefl' | 'ela5';
 
 /** Who a page is written for. Each course has a student path and may add a
  *  teacher and a parent path; the nav switch offers only the ones that exist. */
@@ -101,6 +101,9 @@ const soc7Units: [string, string][] = [
   ['immigration', 'Immigration'],
   ['armed-forces', 'Armed Forces'],
 ];
+const ela5Units: [string, string][] = [
+  ['tall-tales', 'Tall Tales'],
+];
 // CEFL grade pages are /cefl/grade-N/; unit viewers are /cefl/view/N-<unit>/, so both count as that grade.
 const ceflGradeItems: SubnavItem[] = [
   ...[7, 8, 9].map((g) => ({
@@ -120,6 +123,23 @@ const steamGrades: [string, string][] = [
 const steamGradeNames = steamGrades.map(([slug, label]): [string, string] => [slug, label.replace('Gr.', 'Grade')]);
 
 export const courses: Course[] = [
+  {
+    key: 'ela5',
+    tab: 'ELA 5',
+    name: 'English Language Arts',
+    grade: 'Grade 5',
+    numeral: '5',
+    path: 'ela5',
+    teacherPath: 'ela5/teacher',
+    parentPath: 'ela5/parents',
+    blurb: 'Reading, writing, word work and storytelling, one genre at a time. Unit 1: Tall Tales.',
+    facts: ['6 units planned', '1 unit ready', '3 editions'],
+    subnav: [
+      ...unitItems('ela5/materials/', ela5Units),
+      { label: 'All units', path: 'ela5', match: endsWith('/ela5') },
+    ],
+    parentSubnav: parentItems('ela5/parents', ela5Units),
+  },
   {
     key: 'science',
     tab: 'Gr. 6 Science',
@@ -319,6 +339,7 @@ export const courses: Course[] = [
 
 /** Top-nav subjects. Each opens a dropdown of its courses' grades. */
 export const navSubjects: { label: string; courses: CourseKey[] }[] = [
+  { label: 'ELA', courses: ['ela5'] },
   { label: 'Science', courses: ['science', 'science7'] },
   { label: 'Math', courses: ['math8', 'math9'] },
   { label: 'Social', courses: ['social7', 'social8', 'social9'] },
@@ -342,4 +363,5 @@ export const footerNames: Record<CourseKey, string> = {
   social7: 'Grade 7 Social Studies',
   steam: 'STEAM, Grades 5–9',
   cefl: 'Career Education and Financial Literacy 7–9',
+  ela5: 'Grade 5 English Language Arts',
 };

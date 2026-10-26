@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CourseHero from '../../components/CourseHero.astro';
+import TopicList from '../../components/TopicList.astro';
+import { getCollection } from 'astro:content';
+import { ela5, ela5Year } from '../../data/ela5';
+import { materialCount } from '../../data/manifest';
+const base = import.meta.env.BASE_URL;
+// Cards lead with the student hook; units not built yet are listed as coming later.
+const hooks: Record<string, string> = Object.fromEntries((await getCollection('ela5-units')).map((e) => [e.slug, e.data.hook]));
+const built = new Set(ela5.units.map((u) => u.slug));
+const ready = ela5Year.filter((u) => built.has(u.slug));
+const later = ela5Year.filter((u) => !built.has(u.slug));
+const materials = materialCount(ela5.units);
+---
+
+<BaseLayout course="ela5" title="English Language Arts 5">
+  <CourseHero
+    eyebrow="Alberta curriculum · 2023"
+    title="English Language Arts 5"
+    numeral="5"
+    vtName="course-num-ela5"
+    description="Reading, writing, word work and storytelling, one genre at a time. Every unit has a reader, anchor notes, a reader's and writer's notebook, and three editions so everyone works on the same story."
+    facts={[
+      { n: `${ela5Year.length}`, label: 'units planned' },
+      { n: `${ready.length}`, label: ready.length === 1 ? 'unit ready' : 'units ready' },
+      { n: `${materials}`, label: 'materials' },
+    ]}
+  />
+
+  <TopicList
+    heading="Units"
+    items={ready.map((u) => ({ art: u.slug, href: `${base}ela5/materials/${u.slug}`, title: u.label, kicker: `${u.genre} · ${u.when}`, description: hooks[u.slug] ?? u.description, meta: hooks[u.slug] ? u.description : undefined }))}
+  />
+
+  <section class="mb-10">
+    <h2 class="mb-4 text-sm font-semibold text-slate-500">Coming later this year</h2>
+    <ul class="grid gap-2">
+      {later.map((u) => (
+        <li class="rounded-xl border border-dashed border-slate-300 px-4 py-3">
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{u.genre} · {u.when}</p>
+          <p class="font-semibold text-slate-700">{u.label}</p>
+          <p class="text-sm text-slate-500">{u.description}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>

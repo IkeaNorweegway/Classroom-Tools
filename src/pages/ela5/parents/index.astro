@@ -1,0 +1,49 @@
+---
+// Parent overview for Grade 5 English Language Arts (shared ParentOverview layout).
+import ParentOverview from '../../../components/ParentOverview.astro';
+import { getCollection } from 'astro:content';
+import { ela5 as m } from '../../../data/ela5';
+
+const base = import.meta.env.BASE_URL;
+const written = new Set((await getCollection('parent-guides')).map((e) => e.slug));
+const groups = [{
+  items: m.units.filter((u) => u.home.length > 0).map((u) => ({
+    label: u.label,
+    href: written.has(`ela5/${u.slug}`) ? `${base}${m.parentHref(u.slug)}` : undefined,
+  })),
+}];
+
+const stages = [
+  { label: 'Grade 4', idea: 'Reading longer stories and information texts, story parts, paragraphs, and spelling patterns.' },
+  { label: 'Grade 5', idea: 'Six genres in a year: tall tales, information reports, opinion writing, science fiction, poetry and drama. Planning, revising and publishing for a real audience.', now: true },
+  { label: 'Grade 6', idea: 'Comparing genres, conflict and perspective, writing with suspense and dialogue, speeches.' },
+  { label: 'Junior high', idea: 'English Language Arts 7–9: analysing literature, essays, research and presentations.' },
+];
+const tips: [string, string][] = [
+  ['Read together every day', 'Ten minutes of reading aloud, taking turns, builds fluency and vocabulary. Let your child pick the book.'],
+  ['Ask about the problem', 'After a story or a movie, ask: “What was the problem? How did they fix it?” That is how stories are built.'],
+  ['Talk about words', 'When you meet a long word, look for its parts: un-break-able. Prefixes and suffixes unlock meaning.'],
+  ['Expression counts', 'Reading well aloud sounds like talking, with pauses and expression, not just speed.'],
+  ['Praise the plan', 'In writing, praise planning and revising, not just neat copying. Ask, “What did you change to make it better?”'],
+  ['Short and often', 'Fifteen focused minutes a few times a week beats a long session the night before something is due.'],
+];
+---
+
+<ParentOverview
+  course="ela5"
+  title="Grade 5 language arts at home"
+  pageTitle="English Language Arts 5 — Parent guide"
+  eyebrow="Parent guide · Grade 5 English Language Arts"
+  numeral="5"
+  description={"What your child is reading and writing this year, how it connects to earlier and later grades, and simple ways to help, with worked examples and short practice sheets for each unit."}
+  aboutHeading={"What Grade 5 language arts is about"}
+  about={[
+    "Grade 5 language arts is organized by genre. Each unit, students read several texts of one kind (tall tales, information reports, opinion pieces, science fiction, poems, scripts), learn how that kind of text works, and then write one of their own for a real audience.",
+    "Every day includes a short lesson, a long stretch of reading and writing, word work (spelling patterns, prefixes and suffixes), and writing about what was read. Students learn writing strategies with simple memory aids, like POW: Pick my idea, Organize my notes, Write and say more.",
+  ]}
+  stages={stages}
+  groups={groups}
+  listHeading="Units this year"
+  listIntro="Units are added as they are ready. Pick one to see the parent guide."
+  tips={tips}
+/>

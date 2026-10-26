@@ -44,6 +44,7 @@ my %COURSE = (
     'social8'  => ['Grade 8 Social Studies', '#8a4a78', '#f4eaf1', '#b07aa2'],
     'social9'  => ['Grade 9 Social Studies', '#a6452f', '#f7ebe7', '#c97a66'],
     'steam'    => ['STEAM',                  '#6650c2', '#efecf9', '#9483d8'],
+    'ela5'     => ['Grade 5 English Language Arts', '#b4235a', '#fbeaf0', '#d0688d'],
 );
 
 my %BOX_LABEL = (example => 'Worked example', tip => '', check => 'Check yourself', answer => '');
@@ -185,7 +186,7 @@ sub render {
         ($accent, $light, $mid) = @$c[1 .. 3];
         $course_label = "$c->[0] · $meta{unit}";
         $doc_suffix = $c->[0];
-        $out = File::Spec->catfile($MATERIALS, "$stem.html");
+        $out = File::Spec->catfile($MATERIALS, ($course eq 'ela5' ? ('grade-5-ela') : ()), "$stem.html");
     }
     my $answers = $stem =~ /-answers-/;
     my $title = $meta{title} . ($answers ? ' — Answers' : '');

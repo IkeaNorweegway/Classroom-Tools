@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TeacherHub from '../../../components/TeacherHub.astro';
+import { getCollection } from 'astro:content';
+import { ela5 } from '../../../data/ela5';
+
+// Per-unit colour and genre tag. Names and documents come from the manifest.
+const meta = [
+  { slug: 'tall-tales', tag: 'Narrative · 30 lessons', color: '#b4235a', tagStyle: 'bg-pink-100 text-pink-800' },
+];
+
+// One-line scope note per unit, from the unit files.
+const summaries = Object.fromEntries((await getCollection('ela5-units')).map((e) => [e.slug, e.data.teacherSummary]));
+const units = meta.map((u) => ({ ...u, summary: summaries[u.slug] ?? '' }));
+---
+
+<BaseLayout title="ELA 5 — Teacher Hub" course="ela5" audience="teacher">
+  <TeacherHub course="ela5" name="English Language Arts 5" accent="#b4235a" manifest={ela5} units={units} guideNote="Lesson cards · Outcome map · Groups and editions" />
+</BaseLayout>
