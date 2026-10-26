@@ -35,7 +35,7 @@ Grade 9 Mathematics · Alberta Curriculum · Number · PRACTICE — posted for s
 *Circle the best answer. [1 mark each] /8*
 
 **1.** In the power (−5)³, the base is
-A) 5 &nbsp; B) −5 &nbsp; C) 3 &nbsp; D) −125
+A) 5 &nbsp; B) −125 &nbsp; C) 3 &nbsp; D) −5
 
 **2.** −2⁴ =
 A) 16 &nbsp; B) −16 &nbsp; C) −8 &nbsp; D) 8
@@ -47,16 +47,16 @@ A) −9 &nbsp; B) 0 &nbsp; C) 1 &nbsp; D) −1
 A) 6⁸ &nbsp; B) 6¹⁵ &nbsp; C) 36⁸ &nbsp; D) 12⁸
 
 **5.** x¹⁰ ÷ x² =
-A) x⁵ &nbsp; B) x⁸ &nbsp; C) x¹² &nbsp; D) x²⁰
+A) x⁵ &nbsp; B) x²⁰ &nbsp; C) x¹² &nbsp; D) x⁸
 
 **6.** (y³)⁶ =
-A) y⁹ &nbsp; B) y¹⁸ &nbsp; C) 6y³ &nbsp; D) y³⁶
+A) y¹⁸ &nbsp; B) y⁹ &nbsp; C) 6y³ &nbsp; D) y³⁶
 
 **7.** (2m)⁴ =
 A) 2m⁴ &nbsp; B) 8m⁴ &nbsp; C) 16m⁴ &nbsp; D) 8m
 
 **8.** 4⁻² =
-A) −16 &nbsp; B) −8 &nbsp; C) 1/16 &nbsp; D) 1/8
+A) −16 &nbsp; B) 1/16 &nbsp; C) −8 &nbsp; D) 1/8
 
 ---
 

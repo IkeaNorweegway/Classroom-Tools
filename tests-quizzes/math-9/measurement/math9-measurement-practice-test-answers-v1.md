@@ -20,14 +20,14 @@ ME1–ME5 are the five learning targets from the notes package, one per section.
 
 | Q | Ans | Why | Common errors |
 |---|---|---|---|
-| 1 | B | (10 × 6) ÷ 2 = 30 | A: forgot to halve. C: added. D: perimeter idea |
-| 2 | B | π × 5² ≈ 78.5 | A: 2πr (circumference). C: πr. D: forgot π |
-| 3 | B | Material covers the outside | A: volume is the space inside |
-| 4 | C | Its length is the circumference, its width the height | |
-| 5 | A | 4 × 5 × 6 = 120 | C: surface area. D: forgot one dimension |
-| 6 | B | Base area πr² × height | A: lateral area. C: surface area. D: a cone |
-| 7 | C | A cone is one-third of the matching cylinder | B: the "half" mix-up |
-| 8 | B | 2 × 24 = 48, minus the 2 hidden faces of 4 cm² each | A: forgot the hidden faces. D: removed only one face |
+| 1 | C | (10 × 6) ÷ 2 = 30 | A: forgot to halve. B: added. D: perimeter idea |
+| 2 | D | π × 5² ≈ 78.5 | A: 2πr (circumference). C: πr. B: forgot π |
+| 3 | A | Material covers the outside | B: volume is the space inside |
+| 4 | B | Its length is the circumference, its width the height | |
+| 5 | D | 4 × 5 × 6 = 120 | C: surface area. A: forgot one dimension |
+| 6 | C | Base area πr² × height | A: lateral area. B: surface area. D: a cone |
+| 7 | B | A cone is one-third of the matching cylinder | C: the "half" mix-up |
+| 8 | A | 2 × 24 = 48, minus the 2 hidden faces of 4 cm² each | B: forgot the hidden faces. D: removed only one face |
 
 ## Part B — Short Answer
 

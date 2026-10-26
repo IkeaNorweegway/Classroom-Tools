@@ -32,13 +32,13 @@ Grade 9 Mathematics · Alberta Curriculum · Statistics & Probability · PRACTIC
 *Circle the best answer. [1 mark each] /8*
 
 **1.** A bag has 4 red marbles and 6 blue marbles. P(red) =
-A) 4/6 &nbsp; B) 2/5 &nbsp; C) 3/5 &nbsp; D) 1/4
+A) 4/6 &nbsp; B) 1/4 &nbsp; C) 3/5 &nbsp; D) 2/5
 
 **2.** P(A) = 0.35. P(not A) =
-A) 0.35 &nbsp; B) 0.65 &nbsp; C) 1.35 &nbsp; D) 0.53
+A) 0.65 &nbsp; B) 0.35 &nbsp; C) 1.35 &nbsp; D) 0.53
 
 **3.** A spinner landed on red 18 times in 60 spins. The experimental probability of red is
-A) 0.3 &nbsp; B) 0.18 &nbsp; C) 0.6 &nbsp; D) 1/18
+A) 0.6 &nbsp; B) 0.18 &nbsp; C) 0.3 &nbsp; D) 1/18
 
 **4.** A coin is flipped and a standard die is rolled. How many outcomes are in the sample space?
 A) 8 &nbsp; B) 12 &nbsp; C) 6 &nbsp; D) 36
@@ -50,10 +50,10 @@ A) 1/2 &nbsp; B) 1/3 &nbsp; C) 1/4 &nbsp; D) 3/4
 A) drawing two cards without putting the first back &nbsp; B) rolling a die twice &nbsp; C) choosing two students from one class for a team &nbsp; D) drawing two marbles without replacement
 
 **7.** A and B are independent. P(A) = 0.5 and P(B) = 0.2. P(A and B) =
-A) 0.7 &nbsp; B) 0.1 &nbsp; C) 0.25 &nbsp; D) 0.3
+A) 0.7 &nbsp; B) 0.3 &nbsp; C) 0.25 &nbsp; D) 0.1
 
 **8.** A bag has 3 red and 2 blue marbles. A red marble is drawn and **not** put back. P(red on the next draw) =
-A) 3/5 &nbsp; B) 2/4 &nbsp; C) 3/4 &nbsp; D) 2/5
+A) 2/4 &nbsp; B) 3/5 &nbsp; C) 3/4 &nbsp; D) 2/5
 
 ---
 

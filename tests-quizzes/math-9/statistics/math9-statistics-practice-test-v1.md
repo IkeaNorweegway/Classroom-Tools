@@ -33,28 +33,28 @@ Grade 9 Mathematics · Alberta Curriculum · Statistics & Probability · PRACTIC
 *Circle the best answer. [1 mark each] /8*
 
 **1.** Which of these is **bivariate** data?
-A) the heights of 30 students &nbsp; B) hours studied and test mark for 30 students &nbsp; C) favourite colours of 30 students &nbsp; D) the number of pets in 30 homes
+A) hours studied and test mark for 30 students &nbsp; B) the heights of 30 students &nbsp; C) favourite colours of 30 students &nbsp; D) the number of pets in 30 homes
 
 **2.** Which graph is best for seeing whether two numerical variables are related?
-A) bar graph &nbsp; B) circle graph &nbsp; C) scatter plot &nbsp; D) pictograph
+A) bar graph &nbsp; B) circle graph &nbsp; C) pictograph &nbsp; D) scatter plot
 
 **3.** On a scatter plot, as x increases, y tends to decrease. The correlation is
 A) positive &nbsp; B) negative &nbsp; C) none &nbsp; D) perfect
 
 **4.** The points on a scatter plot lie close to a straight line. The correlation is
-A) strong &nbsp; B) weak &nbsp; C) zero &nbsp; D) proof of cause
+A) zero &nbsp; B) weak &nbsp; C) strong &nbsp; D) proof of cause
 
 **5.** A good line of best fit
 A) goes through as many points as possible &nbsp; B) has about the same number of points above and below it &nbsp; C) always goes through the origin &nbsp; D) joins the first and last points
 
 **6.** A line of best fit has the equation y = 2x + 5. The predicted value of y when x = 10 is
-A) 25 &nbsp; B) 20 &nbsp; C) 15 &nbsp; D) 70
+A) 70 &nbsp; B) 20 &nbsp; C) 15 &nbsp; D) 25
 
 **7.** A data set has x-values from 10 to 50. Using the line of best fit to predict y when x = 65 is
-A) interpolation &nbsp; B) extrapolation &nbsp; C) correlation &nbsp; D) an outlier
+A) extrapolation &nbsp; B) interpolation &nbsp; C) correlation &nbsp; D) an outlier
 
 **8.** A strong correlation between two variables does **not** prove
-A) causation &nbsp; B) a trend &nbsp; C) a relationship in the data &nbsp; D) that a line of best fit can be drawn
+A) a relationship in the data &nbsp; B) a trend &nbsp; C) causation &nbsp; D) that a line of best fit can be drawn
 
 ---
 

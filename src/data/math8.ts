@@ -60,7 +60,7 @@ export const strands: Strand[] = [
   { slug: 'statistics-probability', label: 'Statistics & Probability', short: 'Stats & Prob', blurb: 'Choosing fair graphs, catching misleading ones, and finding the chance of two things happening.', workbook: wb('statistics-probability'), workbookKey: wbKey('statistics-probability') },
 ];
 
-/** Every topic has the same set: notes, concepts, core, challenge, exits, quiz, keys, teacher notes. */
+/** Every topic has the same set: notes, concepts, core, challenge, exits, quiz, practice test, keys, teacher notes. */
 function topic(slug: string, label: string, strand: StrandSlug): Topic {
   const stem = `math8-${slug}`;
   const ws = `worksheets/${strand}/${slug}/${stem}`;
@@ -76,11 +76,15 @@ function topic(slug: string, label: string, strand: StrandSlug): Topic {
       exits: `exits/${slug}/${stem}-exits-v1`,
     },
     prereq: `practice/${stem}-prereq-practice-v1`,
-    extras: [{ label: 'Mid-Unit Quiz', path: `quizzes/${slug}/${stem}-quiz-v1`, type: 'assessment' }],
+    extras: [
+      { label: 'Mid-Unit Quiz', path: `quizzes/${slug}/${stem}-quiz-v1`, type: 'assessment' },
+      { label: 'Practice Test', path: `tests/${slug}/${stem}-practice-test-v1`, badge: 'Test prep' },
+    ],
     keys: [
       { label: 'Notes Answer Key', path: `notes/${slug}/${stem}-notes-answers-v1` },
       { label: 'Core Practice Answer Key', path: `${ws}-worksheet-core-answers-v1` },
       { label: 'Challenge Answer Key', path: `${ws}-worksheet-challenge-answers-v1` },
+      { label: 'Practice Test Answer Key', path: `tests/${slug}/${stem}-practice-test-answers-v1` },
     ],
     teacherNotes: `notes/${slug}/${stem}-teachernotes-v1`,
     home: [],

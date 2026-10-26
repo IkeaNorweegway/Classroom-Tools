@@ -19,14 +19,14 @@ LR1–LR4 are the four learning targets from the notes package, one per section.
 
 | Q | Ans | Why | Common errors |
 |---|---|---|---|
-| 1 | B | The y-values go up by 3 every time | A: doubles each time. C: square numbers. D: the differences change (−1, −2, −3) |
-| 2 | B | You choose how many litres; the cost depends on that | A: that is the dependent variable. C: that is the rate. D: not a variable here |
-| 3 | A | Rise 9 − 1 = 8, run 6 − 2 = 4, slope 8/4 = 2 | B: run over rise. C: rise only. D: run only |
-| 4 | C | No rise, so 0 ÷ run = 0 | D: that is a vertical line |
-| 5 | C | In y = mx + b, b = 7 | A: that is the slope. D: the x-intercept idea mixed in |
-| 6 | B | m = 3 goes in front of x; b = −2 is added on | A: swapped m and b. C: wrong sign on b. D: wrong sign on m |
-| 7 | A | y = kx with nothing added; it passes through (0, 0) | B, C: have a starting value, so partial. D: a horizontal line |
-| 8 | B | Partial variation has a starting value b ≠ 0 | A: that is direct variation. C, D: partial variations are straight, slanted lines |
+| 1 | A | The y-values go up by 3 every time | B: doubles each time. C: square numbers. D: the differences change (−1, −2, −3) |
+| 2 | C | You choose how many litres; the cost depends on that | A: that is the dependent variable. B: that is the rate. D: not a variable here |
+| 3 | D | Rise 9 − 1 = 8, run 6 − 2 = 4, slope 8/4 = 2 | B: run over rise. C: rise only. A: run only |
+| 4 | B | No rise, so 0 ÷ run = 0 | D: that is a vertical line |
+| 5 | B | In y = mx + b, b = 7 | A: that is the slope. D: the x-intercept idea mixed in |
+| 6 | D | m = 3 goes in front of x; b = −2 is added on | A: swapped m and b. C: wrong sign on b. B: wrong sign on m |
+| 7 | C | y = kx with nothing added; it passes through (0, 0) | B, A: have a starting value, so partial. D: a horizontal line |
+| 8 | A | Partial variation has a starting value b ≠ 0 | B: that is direct variation. C, D: partial variations are straight, slanted lines |
 
 ## Part B — Short Answer
 

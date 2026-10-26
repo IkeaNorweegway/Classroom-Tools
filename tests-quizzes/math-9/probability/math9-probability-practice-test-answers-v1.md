@@ -19,14 +19,14 @@ PR1–PR4 are the four learning targets from the notes package, one per section.
 
 | Q | Ans | Why | Common errors |
 |---|---|---|---|
-| 1 | B | 4/10 = 2/5 | A: red ÷ blue instead of red ÷ total. C: P(blue) |
-| 2 | B | 1 − 0.35 = 0.65 | C: added 1 |
-| 3 | A | 18/60 = 0.3 | B: used the count as the probability |
+| 1 | D | 4/10 = 2/5 | A: red ÷ blue instead of red ÷ total. C: P(blue) |
+| 2 | A | 1 − 0.35 = 0.65 | C: added 1 |
+| 3 | C | 18/60 = 0.3 | B: used the count as the probability |
 | 4 | B | 2 × 6 = 12 | A: added. D: two dice |
 | 5 | C | HH is 1 of 4 outcomes | B: thinks the outcomes are HH, HT, TT only |
 | 6 | B | One roll doesn't affect the next | A, C, D: the first choice changes what's left |
-| 7 | B | 0.5 × 0.2 = 0.1 | A: added. C: averaged |
-| 8 | B | 2 red left out of 4 marbles | A: forgot that the marble was removed |
+| 7 | D | 0.5 × 0.2 = 0.1 | A: added. C: averaged |
+| 8 | A | 2 red left out of 4 marbles | B: forgot that the marble was removed |
 
 ## Part B — Short Answer
 

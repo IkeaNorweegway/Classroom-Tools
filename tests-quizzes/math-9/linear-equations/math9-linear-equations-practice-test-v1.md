@@ -33,28 +33,28 @@ Grade 9 Mathematics · Alberta Curriculum · Algebra · PRACTICE — posted for 
 *Circle the best answer. [1 mark each] /8*
 
 **1.** The solution of x/4 − 3 = 2 is
-A) x = −4 &nbsp; B) x = 20 &nbsp; C) x = 5/4 &nbsp; D) x = 2
+A) x = −4 &nbsp; B) x = 5/4 &nbsp; C) x = 20 &nbsp; D) x = 2
 
 **2.** The solution of 7 − 2x = 13 is
-A) x = 3 &nbsp; B) x = −3 &nbsp; C) x = 10 &nbsp; D) x = −10
+A) x = −3 &nbsp; B) x = 3 &nbsp; C) x = 10 &nbsp; D) x = −10
 
 **3.** −2(x − 5) =
-A) −2x − 10 &nbsp; B) −2x + 5 &nbsp; C) −2x + 10 &nbsp; D) 2x − 10
+A) −2x − 10 &nbsp; B) −2x + 5 &nbsp; C) 2x − 10 &nbsp; D) −2x + 10
 
 **4.** To solve 6x − 4 = 2x + 8, a good first step is to
-A) subtract 2x from both sides &nbsp; B) divide only the left side by 6 &nbsp; C) add 2x to both sides &nbsp; D) subtract 8 from the left side only
+A) divide only the left side by 6 &nbsp; B) subtract 2x from both sides &nbsp; C) add 2x to both sides &nbsp; D) subtract 8 from the left side only
 
 **5.** To clear the fractions in x/3 + 1/4 = 5/6, multiply every term by
-A) 3 &nbsp; B) 4 &nbsp; C) 12 &nbsp; D) 72
+A) 3 &nbsp; B) 4 &nbsp; C) 72 &nbsp; D) 12
 
 **6.** The solution of −4x > 12 is
 A) x > −3 &nbsp; B) x < −3 &nbsp; C) x > 3 &nbsp; D) x < 3
 
 **7.** Which inequality matches this number line? [Open circle at 2, shaded to the left.]
-A) x < 2 &nbsp; B) x ≤ 2 &nbsp; C) x > 2 &nbsp; D) x ≥ 2
+A) x > 2 &nbsp; B) x ≤ 2 &nbsp; C) x < 2 &nbsp; D) x ≥ 2
 
 **8.** "Five more than three times a number is 26." Which equation matches?
-A) 3(n + 5) = 26 &nbsp; B) 3n + 5 = 26 &nbsp; C) 5n + 3 = 26 &nbsp; D) 3n = 26 + 5
+A) 3n + 5 = 26 &nbsp; B) 3(n + 5) = 26 &nbsp; C) 5n + 3 = 26 &nbsp; D) 3n = 26 + 5
 
 ---
 

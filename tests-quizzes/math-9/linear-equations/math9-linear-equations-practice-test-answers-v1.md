@@ -20,14 +20,14 @@ LE1–LE5 are the five learning targets from the notes package, one per section.
 
 | Q | Ans | Why | Common errors |
 |---|---|---|---|
-| 1 | B | Add 3: x/4 = 5. Multiply by 4: x = 20 | A: subtracted 3 and divided. C: divided by 4 instead of multiplying. D: subtracted 3 from 5 |
-| 2 | B | −2x = 6, so x = −3 | A: lost the negative. C, D: added 7 and 13 |
-| 3 | C | −2 × x = −2x and −2 × (−5) = +10 | A: forgot that negative × negative is positive. B: only multiplied the first term. D: sign errors on both |
-| 4 | A | Gets the x-terms on one side: 4x − 4 = 8 | B, D: doing something to one side only breaks the balance. C: gives 8x on the left, which still leaves x on both sides |
-| 5 | C | 12 is the lowest common denominator of 3, 4 and 6 | A, B: only clear one fraction. D: works, but it isn't the lowest and makes big numbers |
+| 1 | C | Add 3: x/4 = 5. Multiply by 4: x = 20 | A: subtracted 3 and divided. B: divided by 4 instead of multiplying. D: subtracted 3 from 5 |
+| 2 | A | −2x = 6, so x = −3 | B: lost the negative. C, D: added 7 and 13 |
+| 3 | D | −2 × x = −2x and −2 × (−5) = +10 | A: forgot that negative × negative is positive. B: only multiplied the first term. C: sign errors on both |
+| 4 | B | Gets the x-terms on one side: 4x − 4 = 8 | A, D: doing something to one side only breaks the balance. C: gives 8x on the left, which still leaves x on both sides |
+| 5 | D | 12 is the lowest common denominator of 3, 4 and 6 | A, B: only clear one fraction. C: works, but it isn't the lowest and makes big numbers |
 | 6 | B | Divide by −4 and flip: x < −3 | A: forgot to flip. C, D: sign of the answer wrong |
-| 7 | A | Open circle: 2 is not included. Shaded left: less than 2 | B: a closed circle would mean ≤. C, D: wrong direction |
-| 8 | B | "Three times a number" is 3n; "five more" adds 5 | A: brackets add 5 before multiplying. C: swapped 3 and 5. D: the 5 is on the wrong side |
+| 7 | C | Open circle: 2 is not included. Shaded left: less than 2 | B: a closed circle would mean ≤. A, D: wrong direction |
+| 8 | A | "Three times a number" is 3n; "five more" adds 5 | B: brackets add 5 before multiplying. C: swapped 3 and 5. D: the 5 is on the wrong side |
 
 ## Part B — Short Answer
 

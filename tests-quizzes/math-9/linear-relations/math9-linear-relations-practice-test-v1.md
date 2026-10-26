@@ -32,28 +32,28 @@ Grade 9 Mathematics · Alberta Curriculum · Algebra · PRACTICE — posted for 
 *Circle the best answer. [1 mark each] /8*
 
 **1.** Each table has x = 0, 1, 2, 3. Which y-values show a **linear** relation?
-A) 1, 2, 4, 8 &nbsp; B) 2, 5, 8, 11 &nbsp; C) 0, 1, 4, 9 &nbsp; D) 5, 4, 2, −1
+A) 2, 5, 8, 11 &nbsp; B) 1, 2, 4, 8 &nbsp; C) 0, 1, 4, 9 &nbsp; D) 5, 4, 2, −1
 
 **2.** "The cost of gas depends on the number of litres you buy." The independent variable is
-A) the cost &nbsp; B) the number of litres &nbsp; C) the price per litre &nbsp; D) the gas station
+A) the cost &nbsp; B) the price per litre &nbsp; C) the number of litres &nbsp; D) the gas station
 
 **3.** The slope of the line through (2, 1) and (6, 9) is
-A) 2 &nbsp; B) 1/2 &nbsp; C) 8 &nbsp; D) 4
+A) 4 &nbsp; B) 1/2 &nbsp; C) 8 &nbsp; D) 2
 
 **4.** A horizontal line has a slope that is
-A) positive &nbsp; B) negative &nbsp; C) zero &nbsp; D) undefined
+A) positive &nbsp; B) zero &nbsp; C) negative &nbsp; D) undefined
 
 **5.** In y = −4x + 7, the y-intercept is
-A) −4 &nbsp; B) 4 &nbsp; C) 7 &nbsp; D) 7/4
+A) −4 &nbsp; B) 7 &nbsp; C) 4 &nbsp; D) 7/4
 
 **6.** Which equation has a slope of 3 and a y-intercept of −2?
-A) y = −2x + 3 &nbsp; B) y = 3x − 2 &nbsp; C) y = 3x + 2 &nbsp; D) y = −3x − 2
+A) y = −2x + 3 &nbsp; B) y = −3x − 2 &nbsp; C) y = 3x + 2 &nbsp; D) y = 3x − 2
 
 **7.** Which equation shows **direct** variation?
-A) y = 5x &nbsp; B) y = 5x + 1 &nbsp; C) y = x + 5 &nbsp; D) y = 5
+A) y = x + 5 &nbsp; B) y = 5x + 1 &nbsp; C) y = 5x &nbsp; D) y = 5
 
 **8.** The graph of a partial variation
-A) passes through (0, 0) &nbsp; B) crosses the y-axis somewhere other than (0, 0) &nbsp; C) is always horizontal &nbsp; D) is always a curve
+A) crosses the y-axis somewhere other than (0, 0) &nbsp; B) passes through (0, 0) &nbsp; C) is always horizontal &nbsp; D) is always a curve
 
 ---
 

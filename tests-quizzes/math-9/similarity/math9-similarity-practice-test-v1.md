@@ -32,28 +32,28 @@ Grade 9 Mathematics · Alberta Curriculum · Measurement & Geometry · PRACTICE 
 *Circle the best answer. [1 mark each] /8*
 
 **1.** The solution of x/8 = 15/24 is
-A) x = 5 &nbsp; B) x = 45 &nbsp; C) x = 3 &nbsp; D) x = 120
+A) x = 45 &nbsp; B) x = 5 &nbsp; C) x = 3 &nbsp; D) x = 120
 
 **2.** A photo 4 cm wide is enlarged to 10 cm wide. The scale factor is
-A) 0.4 &nbsp; B) 2.5 &nbsp; C) 6 &nbsp; D) 40
+A) 2.5 &nbsp; B) 0.4 &nbsp; C) 6 &nbsp; D) 40
 
 **3.** A scale factor of 0.5 makes
-A) an enlargement &nbsp; B) a reduction &nbsp; C) a congruent copy &nbsp; D) a shape that is not similar
+A) an enlargement &nbsp; B) a shape that is not similar &nbsp; C) a congruent copy &nbsp; D) a reduction
 
 **4.** Two polygons are similar when
-A) corresponding angles are equal and corresponding sides are proportional &nbsp; B) all their sides are equal &nbsp; C) they have the same perimeter &nbsp; D) they have the same number of sides
+A) they have the same perimeter &nbsp; B) all their sides are equal &nbsp; C) corresponding angles are equal and corresponding sides are proportional &nbsp; D) they have the same number of sides
 
 **5.** Which rectangle is similar to a 2 cm by 5 cm rectangle?
-A) 4 cm by 7 cm &nbsp; B) 6 cm by 15 cm &nbsp; C) 3 cm by 6 cm &nbsp; D) 5 cm by 8 cm
+A) 6 cm by 15 cm &nbsp; B) 4 cm by 7 cm &nbsp; C) 3 cm by 6 cm &nbsp; D) 5 cm by 8 cm
 
 **6.** Two triangles have two pairs of equal angles. They are similar by
-A) SSS &nbsp; B) SAS &nbsp; C) AA &nbsp; D) they may not be similar
+A) SSS &nbsp; B) SAS &nbsp; C) they may not be similar &nbsp; D) AA
 
 **7.** One triangle has sides 3, 4 and 5. Another has sides 6, 8 and 10. The triangles are
-A) similar by SSS &nbsp; B) congruent &nbsp; C) similar only if the angles are measured &nbsp; D) not similar
+A) congruent &nbsp; B) similar by SSS &nbsp; C) similar only if the angles are measured &nbsp; D) not similar
 
 **8.** On a map with a scale of 1 : 50 000, a distance of 4 cm is a real distance of
-A) 2 km &nbsp; B) 200 m &nbsp; C) 20 km &nbsp; D) 12.5 km
+A) 20 km &nbsp; B) 200 m &nbsp; C) 2 km &nbsp; D) 12.5 km
 
 ---
 

@@ -39,28 +39,28 @@ Grade 9 Mathematics · Alberta Curriculum · Measurement & Geometry · PRACTICE 
 *Circle the best answer. [1 mark each] /8*
 
 **1.** A triangle has a base of 10 cm and a perpendicular height of 6 cm. Its area is
-A) 60 cm² &nbsp; B) 30 cm² &nbsp; C) 16 cm² &nbsp; D) 32 cm²
+A) 60 cm² &nbsp; B) 16 cm² &nbsp; C) 30 cm² &nbsp; D) 32 cm²
 
 **2.** The area of a circle with a radius of 5 cm, to the nearest tenth, is
-A) 31.4 cm² &nbsp; B) 78.5 cm² &nbsp; C) 15.7 cm² &nbsp; D) 25.0 cm²
+A) 31.4 cm² &nbsp; B) 25.0 cm² &nbsp; C) 15.7 cm² &nbsp; D) 78.5 cm²
 
 **3.** Which measurement tells you how much cardboard you need to make a closed box?
-A) volume &nbsp; B) surface area &nbsp; C) perimeter &nbsp; D) capacity
+A) surface area &nbsp; B) volume &nbsp; C) perimeter &nbsp; D) capacity
 
 **4.** When you unroll the curved surface of a cylinder, it makes a
-A) circle &nbsp; B) triangle &nbsp; C) rectangle &nbsp; D) semicircle
+A) circle &nbsp; B) rectangle &nbsp; C) triangle &nbsp; D) semicircle
 
 **5.** The volume of a rectangular prism 4 cm by 5 cm by 6 cm is
-A) 120 cm³ &nbsp; B) 15 cm³ &nbsp; C) 148 cm³ &nbsp; D) 60 cm³
+A) 60 cm³ &nbsp; B) 15 cm³ &nbsp; C) 148 cm³ &nbsp; D) 120 cm³
 
 **6.** Which formula gives the volume of a cylinder?
-A) 2πrh &nbsp; B) πr²h &nbsp; C) 2πr² + 2πrh &nbsp; D) (1/3)πr²h
+A) 2πrh &nbsp; B) 2πr² + 2πrh &nbsp; C) πr²h &nbsp; D) (1/3)πr²h
 
 **7.** A cone and a cylinder have the same radius and the same height. The cone's volume is
-A) the same as the cylinder's &nbsp; B) half the cylinder's &nbsp; C) one-third of the cylinder's &nbsp; D) double the cylinder's
+A) the same as the cylinder's &nbsp; B) one-third of the cylinder's &nbsp; C) half the cylinder's &nbsp; D) double the cylinder's
 
 **8.** Two cubes with 2 cm sides are glued face to face. The surface area of the new shape is
-A) 48 cm² &nbsp; B) 40 cm² &nbsp; C) 24 cm² &nbsp; D) 44 cm²
+A) 40 cm² &nbsp; B) 48 cm² &nbsp; C) 24 cm² &nbsp; D) 44 cm²
 
 ---
 

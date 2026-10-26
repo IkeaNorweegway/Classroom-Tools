@@ -19,14 +19,14 @@ ST1–ST4 are the four learning targets from the notes package, one per section.
 
 | Q | Ans | Why | Common errors |
 |---|---|---|---|
-| 1 | B | Two variables measured on each student | A, C, D: one variable each |
-| 2 | C | A scatter plot shows pairs of numerical values | A, B, D: show one variable |
+| 1 | A | Two variables measured on each student | B, C, D: one variable each |
+| 2 | D | A scatter plot shows pairs of numerical values | A, B, C: show one variable |
 | 3 | B | Downward trend | |
-| 4 | A | Close to a line means strong | D: correlation never proves cause |
+| 4 | C | Close to a line means strong | D: correlation never proves cause |
 | 5 | B | Balanced points above and below | A: the "connect the dots" mix-up. C: only if the data says so |
-| 6 | A | 2(10) + 5 = 25 | B: forgot the + 5. C: added 10 + 5. D: 2 × 35 |
-| 7 | B | 65 is outside 10 to 50 | |
-| 8 | A | Correlation is not causation | |
+| 6 | D | 2(10) + 5 = 25 | B: forgot the + 5. C: added 10 + 5. A: 2 × 35 |
+| 7 | A | 65 is outside 10 to 50 | |
+| 8 | C | Correlation is not causation | |
 
 ## Part B — Short Answer
 

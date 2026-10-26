@@ -22,12 +22,12 @@ PO1–PO6 are the six learning targets from the notes package, one per section.
 | Q | Ans | Why | Common errors |
 |---|---|---|---|
 | 1 | B | The highest power is x³ | A: used the first term. C: used the biggest coefficient. D: counted the terms |
-| 2 | C | The term with no variable, including its sign | A, B: coefficients. D: dropped the sign |
-| 3 | C | Three terms | A: two terms (binomial). B: one term (monomial). D: four terms |
-| 4 | B | Same variable, same power | A: different powers. C: different variables. D: one has no variable |
-| 5 | A | 2x² + x² = 3x² and 3x − 5x = −2x | B: added 5x instead of −5x. C: added the exponents. D: dropped a term |
-| 6 | B | Every sign changes | A: changed only the first sign. C: kept the x² positive. D: missed the last term |
-| 7 | B | 4x × x = 4x² and 4x × (−2) = −8x | A: multiplied only the first term. C: lost the x on −8x. D: x × x is not x |
+| 2 | D | The term with no variable, including its sign | A, B: coefficients. C: dropped the sign |
+| 3 | A | Three terms | C: two terms (binomial). B: one term (monomial). D: four terms |
+| 4 | C | Same variable, same power | A: different powers. B: different variables. D: one has no variable |
+| 5 | C | 2x² + x² = 3x² and 3x − 5x = −2x | B: added 5x instead of −5x. A: added the exponents. D: dropped a term |
+| 6 | A | Every sign changes | B: changed only the first sign. C: kept the x² positive. D: missed the last term |
+| 7 | D | 4x × x = 4x² and 4x × (−2) = −8x | A: multiplied only the first term. C: lost the x on −8x. B: x × x is not x |
 | 8 | B | x² − 2x + 5x − 10 = x² + 3x − 10 | A: missed the middle terms. C: sign of the middle term. D: added 5 + 2 |
 
 ## Part B — Short Answer

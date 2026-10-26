@@ -32,28 +32,28 @@ Grade 9 Mathematics · Alberta Curriculum · Measurement & Geometry · PRACTICE 
 *Circle the best answer. [1 mark each] /8*
 
 **1.** A chord that passes through the centre of a circle is a
-A) radius &nbsp; B) diameter &nbsp; C) tangent &nbsp; D) arc
+A) radius &nbsp; B) arc &nbsp; C) tangent &nbsp; D) diameter
 
 **2.** An angle with its vertex on the circle and its arms along two chords is
-A) a central angle &nbsp; B) an inscribed angle &nbsp; C) always a right angle &nbsp; D) a tangent angle
+A) a central angle &nbsp; B) always a right angle &nbsp; C) an inscribed angle &nbsp; D) a tangent angle
 
 **3.** A circle has a diameter of 26 cm. Its radius is
-A) 13 cm &nbsp; B) 52 cm &nbsp; C) 26 cm &nbsp; D) 6.5 cm
+A) 52 cm &nbsp; B) 13 cm &nbsp; C) 26 cm &nbsp; D) 6.5 cm
 
 **4.** A line from the centre perpendicular to a chord
 A) bisects the chord &nbsp; B) is always a radius &nbsp; C) is a tangent &nbsp; D) is parallel to the chord
 
 **5.** In one circle, chords are drawn at different distances from the centre. Which chord is longest?
-A) the one 2 cm from the centre &nbsp; B) the one 5 cm from the centre &nbsp; C) the one 7 cm from the centre &nbsp; D) they are all the same length
+A) the one 5 cm from the centre &nbsp; B) the one 2 cm from the centre &nbsp; C) the one 7 cm from the centre &nbsp; D) they are all the same length
 
 **6.** A central angle is 110°. The inscribed angle on the same arc is
 A) 220° &nbsp; B) 110° &nbsp; C) 55° &nbsp; D) 70°
 
 **7.** An inscribed angle that stands on a diameter is always
-A) 45° &nbsp; B) 90° &nbsp; C) 180° &nbsp; D) different for each circle
+A) 90° &nbsp; B) 45° &nbsp; C) 180° &nbsp; D) different for each circle
 
 **8.** A tangent and the radius to the point of tangency meet at
-A) 45° &nbsp; B) 60° &nbsp; C) 90° &nbsp; D) 180°
+A) 45° &nbsp; B) 60° &nbsp; C) 180° &nbsp; D) 90°
 
 ---
 

@@ -19,14 +19,14 @@ SI1–SI4 are the four learning targets from the notes package, one per section.
 
 | Q | Ans | Why | Common errors |
 |---|---|---|---|
-| 1 | A | 24x = 120, so x = 5 | B: multiplied across the wrong way. D: forgot to divide |
-| 2 | B | New ÷ original = 10 ÷ 4 = 2.5 | A: original ÷ new. C: subtracted |
-| 3 | B | A scale factor less than 1 shrinks the shape | A: thinks any scale factor enlarges |
-| 4 | A | Both conditions are needed | B: that is congruent (for sides). C, D: not enough |
-| 5 | B | 6 ÷ 2 = 3 and 15 ÷ 5 = 3, the same scale factor | A, D: added the same amount to each side. C: ratios 1.5 and 1.2 |
-| 6 | C | Two pairs of equal angles is enough (the third must match too) | |
-| 7 | A | 6/3 = 8/4 = 10/5 = 2 | B: different sizes, so not congruent |
-| 8 | A | 4 × 50 000 = 200 000 cm = 2000 m = 2 km | B, C: unit conversion slips |
+| 1 | B | 24x = 120, so x = 5 | A: multiplied across the wrong way. D: forgot to divide |
+| 2 | A | New ÷ original = 10 ÷ 4 = 2.5 | B: original ÷ new. C: subtracted |
+| 3 | D | A scale factor less than 1 shrinks the shape | A: thinks any scale factor enlarges |
+| 4 | C | Both conditions are needed | B: that is congruent (for sides). A, D: not enough |
+| 5 | A | 6 ÷ 2 = 3 and 15 ÷ 5 = 3, the same scale factor | B, D: added the same amount to each side. C: ratios 1.5 and 1.2 |
+| 6 | D | Two pairs of equal angles is enough (the third must match too) | |
+| 7 | B | 6/3 = 8/4 = 10/5 = 2 | A: different sizes, so not congruent |
+| 8 | C | 4 × 50 000 = 200 000 cm = 2000 m = 2 km | B, A: unit conversion slips |
 
 ## Part B — Short Answer
 

@@ -19,14 +19,14 @@ CG1–CG4 are the four learning targets from the notes package, one per section.
 
 | Q | Ans | Why | Common errors |
 |---|---|---|---|
-| 1 | B | A diameter is the chord through the centre | A: a radius ends at the centre. C: a tangent only touches the circle. D: an arc is part of the circle |
-| 2 | B | Vertex on the circle | A: a central angle has its vertex at the centre. C: only on a diameter |
-| 3 | A | 26 ÷ 2 = 13 | B: doubled. D: halved twice |
+| 1 | D | A diameter is the chord through the centre | A: a radius ends at the centre. C: a tangent only touches the circle. B: an arc is part of the circle |
+| 2 | C | Vertex on the circle | A: a central angle has its vertex at the centre. B: only on a diameter |
+| 3 | B | 26 ÷ 2 = 13 | A: doubled. D: halved twice |
 | 4 | A | The perpendicular from the centre bisects the chord | B: it only reaches the circle if extended |
-| 5 | A | The closer a chord is to the centre, the longer it is | C: the "longer chords are farther away" mix-up |
+| 5 | B | The closer a chord is to the centre, the longer it is | C: the "longer chords are farther away" mix-up |
 | 6 | C | Inscribed = central ÷ 2 = 55° | A: doubled. B: thinks they are equal. D: 180 − 110 |
-| 7 | B | The central angle on a diameter is 180°, and half of 180° is 90° | A, C: halved or kept the wrong angle |
-| 8 | C | A tangent is perpendicular to the radius at the point of tangency | |
+| 7 | A | The central angle on a diameter is 180°, and half of 180° is 90° | B, C: halved or kept the wrong angle |
+| 8 | D | A tangent is perpendicular to the radius at the point of tangency | |
 
 ## Part B — Short Answer
 

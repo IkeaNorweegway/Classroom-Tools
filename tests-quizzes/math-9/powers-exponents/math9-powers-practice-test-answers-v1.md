@@ -22,14 +22,14 @@ PE1–PE7 are the seven learning targets from the notes package, one per section
 
 | Q | Ans | Why | Common errors |
 |---|---|---|---|
-| 1 | B | The brackets make −5 the base | A: ignored the brackets. C: that is the exponent. D: that is the value |
+| 1 | D | The brackets make −5 the base | A: ignored the brackets. C: that is the exponent. B: that is the value |
 | 2 | B | No brackets, so the base is 2: −(2 × 2 × 2 × 2) = −16 | A: treated it as (−2)⁴. C, D: multiplied 2 × 4 |
 | 3 | C | Any non-zero base to the power 0 is 1 | A: kept the base. B: thinks 0 as an exponent gives 0. D: thinks a negative base makes it −1 |
 | 4 | A | Same base, so add the exponents: 3 + 5 = 8 | B: multiplied the exponents. C: multiplied the bases too. D: added the bases |
-| 5 | B | Same base, so subtract the exponents: 10 − 2 = 8 | A: divided the exponents. C: added. D: multiplied |
-| 6 | B | Power of a power: multiply the exponents, 3 × 6 = 18 | A: added. C: multiplied the base by 6. D: squared 6 |
+| 5 | D | Same base, so subtract the exponents: 10 − 2 = 8 | A: divided the exponents. C: added. B: multiplied |
+| 6 | A | Power of a power: multiply the exponents, 3 × 6 = 18 | B: added. C: multiplied the base by 6. D: squared 6 |
 | 7 | C | Both factors get the exponent: 2⁴ × m⁴ = 16m⁴ | A: forgot the 2. B: 2 × 4 instead of 2⁴. D: multiplied everything by 4 |
-| 8 | C | 4⁻² = 1/4² = 1/16 | A, B: thinks a negative exponent gives a negative answer. D: 4 × 2 instead of 4² |
+| 8 | B | 4⁻² = 1/4² = 1/16 | A, C: thinks a negative exponent gives a negative answer. D: 4 × 2 instead of 4² |
 
 ## Part B — Short Answer
 

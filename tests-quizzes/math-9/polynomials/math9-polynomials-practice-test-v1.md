@@ -37,22 +37,22 @@ Grade 9 Mathematics · Alberta Curriculum · Algebra · PRACTICE — posted for 
 A) 2 &nbsp; B) 3 &nbsp; C) 6 &nbsp; D) 4
 
 **2.** In −2x² + 5x − 7, the constant term is
-A) −2 &nbsp; B) 5 &nbsp; C) −7 &nbsp; D) 7
+A) −2 &nbsp; B) 5 &nbsp; C) 7 &nbsp; D) −7
 
 **3.** Which polynomial is a trinomial?
-A) x² + 1 &nbsp; B) 4x &nbsp; C) 3x² − x + 2 &nbsp; D) x³ − x² + x − 1
+A) 3x² − x + 2 &nbsp; B) 4x &nbsp; C) x² + 1 &nbsp; D) x³ − x² + x − 1
 
 **4.** Which pair are like terms?
-A) 3x and 3x² &nbsp; B) −5x² and 2x² &nbsp; C) 4x and 4y &nbsp; D) 7 and 7x
+A) 3x and 3x² &nbsp; B) 4x and 4y &nbsp; C) −5x² and 2x² &nbsp; D) 7 and 7x
 
 **5.** (2x² + 3x) + (x² − 5x) =
-A) 3x² − 2x &nbsp; B) 3x² + 8x &nbsp; C) 3x⁴ − 2x² &nbsp; D) x² − 2x
+A) 3x⁴ − 2x² &nbsp; B) 3x² + 8x &nbsp; C) 3x² − 2x &nbsp; D) x² − 2x
 
 **6.** The opposite of (x² − 4x + 3) is
-A) −x² − 4x + 3 &nbsp; B) −x² + 4x − 3 &nbsp; C) x² + 4x − 3 &nbsp; D) −x² + 4x + 3
+A) −x² + 4x − 3 &nbsp; B) −x² − 4x + 3 &nbsp; C) x² + 4x − 3 &nbsp; D) −x² + 4x + 3
 
 **7.** 4x(x − 2) =
-A) 4x² − 2 &nbsp; B) 4x² − 8x &nbsp; C) 4x² − 8 &nbsp; D) 4x − 8
+A) 4x² − 2 &nbsp; B) 4x − 8 &nbsp; C) 4x² − 8 &nbsp; D) 4x² − 8x
 
 **8.** (x + 5)(x − 2) =
 A) x² − 10 &nbsp; B) x² + 3x − 10 &nbsp; C) x² − 3x − 10 &nbsp; D) x² + 7x − 10
