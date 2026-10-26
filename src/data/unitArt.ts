@@ -696,6 +696,12 @@ export const unitArt: Record<string, UnitArt> = {
       <g class="u-m"><path class="u-s" d="M14 30h9l3-7 5 14 4-10 2 3h13"/></g>
       <circle class="u-d" cx="50" cy="14" r="1.6"/>`,
   },
+  // Opinion: a speech bubble with an exclamation mark; the bubble tilts on hover.
+  opinion: {
+    m: 'tilt',
+    svg: `<g class="u-m"><path class="u-s u-f" d="M10 14h44a4 4 0 0 1 4 4v20a4 4 0 0 1-4 4H28l-10 9v-9h-8a4 4 0 0 1-4-4V18a4 4 0 0 1 4-4Z"/>
+      <path class="u-s" d="M32 20v10"/><circle class="u-d" cx="32" cy="35" r="1.8"/></g>`,
+  },
   'cefl-grade-9': {
     m: 'float',
     svg: `<rect class="u-s u-f" x="12" y="10" width="40" height="44" rx="6"/>

@@ -24,7 +24,7 @@
 | Sep (2 wks) | Routines and screening | — | — | Fluency screen (one-minute ORF), WTW spelling inventory, listening-comprehension check | Teacher guide note only |
 | Sep–Oct (6 wks, 30 lessons) | **Tall Tales** (`tall-tales`) | North American tall tales, including Canadian and an Alberta tale | POW + WWW, What = 2, How = 2 | Story structure, characters, exaggeration, summarizing, oral tradition | **Built (v1)** |
 | Nov–Dec | Information Report (`information-report`) | Human body systems | POW + TIDE | Topics and subtopics, text features, summarizing, source reliability | **Built (v1)** |
-| Jan–Feb | Opinion and Editorial (`opinion`) | One local issue, several sides | POW + TREE | Cause and effect, fact vs. opinion, sources | Planned |
+| Jan–Feb | Opinion and Editorial (`opinion`) | Should recess be longer? | POW + TREE | Fact vs. opinion, news vs. editorial, judging evidence, perspectives | **Built (v1)** |
 | Feb–Mar | Science Fiction (`science-fiction`) | One theme (technology and choices) | POW + WWW + flash-forward | Theme, third-person point of view, round and flat characters | Planned |
 | Apr | Lyric Poetry (`lyric-poetry`) | Stories of place and land | Short planning routine | Figurative language, stanzas, reciting from memory | Planned |
 | May–Jun | Scripted Drama (`scripted-drama`) | Script from a tale or story read this year | Script planning | Dialogue, verbal / non-verbal / paraverbal delivery, reader's theatre | Planned |

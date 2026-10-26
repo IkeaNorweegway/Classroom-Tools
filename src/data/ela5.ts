@@ -61,6 +61,7 @@ export const ela5: CourseManifest = {
   units: [
     ela5Unit('tall-tales', 'Tall Tales', [['exaggeration', 'What does it really mean?'], ['summary', 'Telling a story short']]),
     ela5Unit('information-report', 'Information Report', [['features', 'Finding facts fast'], ['notes', 'Notes in my own words']]),
+    ela5Unit('opinion', 'Opinion and Editorial', [['fact-opinion', 'Fact or opinion?'], ['reasons', 'Reasons and evidence']]),
   ],
   studentHref: (slug) => `ela5/materials/${slug}`,
   parentHref: (slug) => `ela5/parents/${slug}`,
