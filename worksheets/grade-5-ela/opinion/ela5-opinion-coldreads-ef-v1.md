@@ -36,7 +36,7 @@ Let's plant a garden!
 
 (write 1)
 
-**3.** Circle the **fact**. Kids can count leaves. · Gardens are the best!
+**3.** Circle the fact. Kids can count leaves. · Gardens are the best!
 
 **4.** Which reason do you like most? Why?
 

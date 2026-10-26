@@ -152,7 +152,7 @@ more than half
 **E** **Ending**: what I want
 :::
 
-**Check:** T = [[Topic sentence]] · R = [[Reasons]] · E = [[Explain]] · E = [[Ending]]
+Check: T = [[Topic sentence]] · R = [[Reasons]] · E = [[Explain]] · E = [[Ending]]
 
 ---page---
 

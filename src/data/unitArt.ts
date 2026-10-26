@@ -702,6 +702,14 @@ export const unitArt: Record<string, UnitArt> = {
     svg: `<g class="u-m"><path class="u-s u-f" d="M10 14h44a4 4 0 0 1 4 4v20a4 4 0 0 1-4 4H28l-10 9v-9h-8a4 4 0 0 1-4-4V18a4 4 0 0 1 4-4Z"/>
       <path class="u-s" d="M32 20v10"/><circle class="u-d" cx="32" cy="35" r="1.8"/></g>`,
   },
+  // Science Fiction: a ringed planet with a small rocket that orbits on hover.
+  'science-fiction': {
+    m: 'orbit',
+    svg: `<circle class="u-s u-f" cx="30" cy="34" r="13"/>
+      <path class="u-s" d="M10 40c6 4 34-4 40-14"/>
+      <g class="u-m"><path class="u-s u-f" d="M48 10l6 2-2 6-5 3-4-4Z"/><circle class="u-d" cx="45" cy="19" r="1.4"/></g>
+      <circle class="u-d" cx="14" cy="14" r="1.2"/><circle class="u-d" cx="54" cy="46" r="1"/>`,
+  },
   'cefl-grade-9': {
     m: 'float',
     svg: `<rect class="u-s u-f" x="12" y="10" width="40" height="44" rx="6"/>

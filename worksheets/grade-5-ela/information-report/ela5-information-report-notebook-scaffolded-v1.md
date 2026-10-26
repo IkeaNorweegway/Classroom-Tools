@@ -24,7 +24,7 @@ Charts start with a filled-in model row (✎). Word boxes and sentence starters 
 | ✎ Your heart beats about 100,000 times a day. | | T | Text 2 ¶1 |
 | An adult has more than 1,000 bones. | | [[F (206)]] | [[Text 4 ¶2]] |
 | Muscles can push and pull. | | [[F (only pull)]] | [[Text 4 ¶4]] |
-| Your small intestine is about 6 metres long. | | [[T]] | [[Text 6 ¶6]] |
+| Your small intestine is about 6 metres long. | | [[T]] | [[Text 6 ¶5]] |
 
 **Three questions I have about the human body:**
 
@@ -75,7 +75,7 @@ The author means that ___ . For example, when you kick a ball, ___ .
 
 (lines 5)
 
-=> Systems depend on each other. When you kick a ball, your brain sends a message through nerves to muscles that pull bones; you breathe faster and your heart beats faster to bring oxygen; and the energy comes from food your digestive system broke down (Text 1 ¶4).
+=> Systems depend on each other. When you kick a ball, your brain sends a message through nerves to muscles that pull bones; you breathe faster and your heart beats faster to bring oxygen; and the energy comes from food your digestive system broke down (Text 1 ¶5).
 
 ---page---
 
@@ -97,7 +97,7 @@ My pulse went ___ because ___ .
 
 (lines 3)
 
-=> It went up because my muscles needed more oxygen, so my heart pumped faster to carry it in my blood (Text 2 ¶7; Text 3 ¶5).
+=> It went up because my muscles needed more oxygen, so my heart pumped faster to carry it in my blood (Text 2 ¶5; Text 3 ¶5).
 
 ---page---
 
@@ -162,7 +162,7 @@ Bones and muscles are both ___ . But bones ___ , while muscles ___ .
 
 (lines 5)
 
-=> Bones and muscles are both living tissues that need oxygen and get stronger with use. But bones are hard and give the body its shape, while muscles are soft and contract to move the bones. They work as partners (Text 4 ¶1, ¶7).
+=> Bones and muscles are both living tissues that need oxygen and get stronger with use. But bones are hard and give the body its shape, while muscles are soft and contract to move the bones. They work as partners (Text 4 ¶1, ¶6).
 
 **Why do muscles work in pairs?** Use evidence.
 

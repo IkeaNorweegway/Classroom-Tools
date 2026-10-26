@@ -264,12 +264,12 @@ Read Text 6, Leo's letter. Use **Anchor note 8**.
 
 | TREE | In Leo's letter | ¶ |
 | --- | --- | --- |
-| Topic sentence | [[Prairie View should make lunch recess fifteen minutes longer]] | [[1]] |
-| Reason 1 + evidence | [[Exercise: the 60-minute guideline; about 2 in 5 kids]] | [[2]] |
-| Reason 2 + evidence | [[Ready to learn: Track and Field Day afternoon]] | [[3]] |
-| Reason 3 + evidence | [[More students play: survey 126 of 180]] | [[4]] |
-| Counterargument | [[Lose learning time → start five minutes earlier]] | [[5]] |
-| Ending | [[Try it for one term; thank you]] | [[6]] |
+| Topic sentence | [[Prairie View should make lunch recess fifteen minutes longer]] | [[2]] |
+| Reason 1 + evidence | [[Exercise: the 60-minute guideline; about 2 in 5 kids]] | [[3]] |
+| Reason 2 + evidence | [[Ready to learn: Track and Field Day afternoon]] | [[4]] |
+| Reason 3 + evidence | [[More students play: survey 126 of 180]] | [[5]] |
+| Counterargument | [[Lose learning time → start five minutes earlier]] | [[6]] |
+| Ending | [[Try it for one term; thank you]] | [[7]] |
 
 **Why do you think Leo put his most important reason last?**
 

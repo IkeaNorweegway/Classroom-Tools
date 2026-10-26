@@ -114,7 +114,7 @@ what happens
 | Same | alive | alive |
 | Different | hard | soft, can pull |
 
-Words: **both** (same) · **but** (different)
+Words: both (same) · but (different)
 
 **Check:** Bones and muscles are **both** ___ .
 
@@ -201,7 +201,7 @@ short words to help you remember
 **E** **Ending** sentence
 :::
 
-**Check:** T = [[Topic sentence]] · I = [[Important facts]] · D = [[Detail]] · E = [[Ending]]
+Check: T = [[Topic sentence]] · I = [[Important facts]] · D = [[Detail]] · E = [[Ending]]
 
 ---page---
 

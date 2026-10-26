@@ -32,7 +32,7 @@ When you are hot, you **sweat**. Sweat helps you cool down.
 Skin can feel. It feels hot, cold and soft things.
 :::
 
-**1.** What is the text about? Circle. **skin** · eyes · bones
+**1.** What is the text about? Circle. skin · eyes · bones
 
 **2.** What does sweat do? It helps you ___ .
 
