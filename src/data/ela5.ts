@@ -64,6 +64,7 @@ export const ela5: CourseManifest = {
     ela5Unit('opinion', 'Opinion and Editorial', [['fact-opinion', 'Fact or opinion?'], ['reasons', 'Reasons and evidence']]),
     ela5Unit('science-fiction', 'Science Fiction', [['theme', 'Theme is a sentence'], ['what-if', 'What if…?']]),
     ela5Unit('lyric-poetry', 'Lyric Poetry', [['picture-it', 'Picture it: comparisons'], ['by-heart', 'Learning a poem by heart']]),
+    ela5Unit('scripted-drama', 'Scripted Drama', [['story-to-script', 'From story to script'], ['voice', 'One line, many meanings']]),
   ],
   studentHref: (slug) => `ela5/materials/${slug}`,
   parentHref: (slug) => `ela5/parents/${slug}`,
@@ -74,9 +75,9 @@ export const ela5: CourseManifest = {
 /** The year plan: built units link; planned ones show as coming later. */
 export const ela5Year = [
   { slug: 'tall-tales', label: 'Tall Tales', when: 'Sep–Oct', genre: 'Narrative', description: 'Paul Bunyan, Sally Ann, John Henry, Big Joe Mufferaw and an Alberta tale. Plan and tell your own tall tale.' },
-  { slug: 'information-report', label: 'Information Report', when: 'Nov–Dec', genre: 'Non-fiction', description: 'Research one topic, organize it into subtopics, and write a report with text features.' },
-  { slug: 'opinion', label: 'Opinion and Editorial', when: 'Jan–Feb', genre: 'Persuasive', description: 'Read different sides of a local issue and write a clear opinion backed by reasons.' },
-  { slug: 'science-fiction', label: 'Science Fiction', when: 'Feb–Mar', genre: 'Fiction', description: 'Theme, point of view and flash-forwards in stories about technology and choices.' },
-  { slug: 'lyric-poetry', label: 'Lyric Poetry', when: 'Apr', genre: 'Poetry', description: 'Poems about places and feelings: figurative language, stanzas, and reciting from memory.' },
-  { slug: 'scripted-drama', label: 'Scripted Drama', when: 'May–Jun', genre: 'Drama', description: "Turn a story into a script and perform it with voice, gesture and expression." },
+  { slug: 'information-report', label: 'Information Report', when: 'Nov–Dec', genre: 'Non-fiction', description: 'How the human body works: research a body system, take notes in your own words, and write a report with text features.' },
+  { slug: 'opinion', label: 'Opinion and Editorial', when: 'Jan–Feb', genre: 'Persuasive', description: 'Should recess be longer? Read both sides, judge the evidence, and write a letter that makes your case.' },
+  { slug: 'science-fiction', label: 'Science Fiction', when: 'Feb–Mar', genre: 'Fiction', description: 'Robots, domes and messages from the future: theme, point of view and flash-forwards in stories about technology and choices.' },
+  { slug: 'lyric-poetry', label: 'Lyric Poetry', when: 'Apr', genre: 'Poetry', description: 'Poems of place and feeling, old and new: comparisons, stanzas, sound, and reciting from memory.' },
+  { slug: 'scripted-drama', label: 'Scripted Drama', when: 'May–Jun', genre: 'Drama', description: 'Turn a story from this year into a play, write a scene, and perform it with voice, body and expression.' },
 ];

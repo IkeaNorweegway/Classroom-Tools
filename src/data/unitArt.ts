@@ -717,6 +717,14 @@ export const unitArt: Record<string, UnitArt> = {
       <g class="u-m"><path class="u-s u-f" d="M52 8c-12 4-20 14-22 30l4-2c4-8 10-14 18-18Z"/><path class="u-s" d="M30 38l-4 8"/></g>
       <circle class="u-d" cx="48" cy="50" r="1.4"/>`,
   },
+  // Scripted Drama: comedy and tragedy masks; the front mask tilts on hover.
+  'scripted-drama': {
+    m: 'tilt-r',
+    svg: `<path class="u-s u-f" d="M30 14h22v16c0 9-5 16-11 16s-11-7-11-16Z"/>
+      <path class="u-s" d="M36 24h2M45 24h2M37 36c2-2 6-2 8 0"/>
+      <g class="u-m"><path class="u-s u-f" d="M10 22h22v16c0 9-5 16-11 16s-11-7-11-16Z"/>
+      <path class="u-s" d="M16 32h2M25 32h2M17 42c2 2 6 2 8 0"/></g>`,
+  },
   'cefl-grade-9': {
     m: 'float',
     svg: `<rect class="u-s u-f" x="12" y="10" width="40" height="44" rx="6"/>

@@ -33,6 +33,7 @@ for my $path (@ARGV) {
     # Poems are cited by stanza, not paragraph.
     local $CER = $CER;
     $CER =~ s/In paragraph ___ , the text says/In stanza ___ , the poem says/ if $body =~ /^::: poem/m;
+    $CER =~ s/In paragraph ___ , the text says/In the line where ___ speaks, the script says/ if $body =~ /^::: script/m;
     my @pages = split /\n---page---\n/, $body, -1;
     for my $pg (@pages) {
         # Word box per anchor-notes page.

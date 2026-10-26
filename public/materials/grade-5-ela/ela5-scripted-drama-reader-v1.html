@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scripts Reader · Grade 5 English Language Arts</title>
+<style>
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+  :root {
+    --acc: #b4235a; --acc-dark: #901c48; --acc-soft: #fbeaf0; --acc-mid: #e9a7bf;
+    --ink: #1f1d1a; --ink2: #3f3b35; --muted: #6b665d; --rule: #c9c4b9; --paper: #faf9f6; --line: #b8b2a7;
+    --font-body: 'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: #efece5; color: var(--ink); font-family: var(--font-body); font-size: 11.5pt; line-height: 1.55; font-kerning: normal; }
+  .page { max-width: 820px; margin: 0 auto; background: #fff; padding: 34px 44px 56px; }
+  @media (max-width: 640px) { .page { padding: 20px 16px 40px; } }
+  h1, h2, h3, h4 { font-family: var(--font-display); color: var(--ink); line-height: 1.2; text-wrap: balance; }
+  h1 { font-size: 23pt; font-weight: 650; margin: 2px 0 2px; }
+  h2 { font-size: 15pt; font-weight: 650; margin: 26px 0 8px; padding-bottom: 4px; border-bottom: 2.5px solid var(--acc-mid); color: var(--acc-dark); break-after: avoid; }
+  h3 { font-size: 12.5pt; font-weight: 650; margin: 16px 0 6px; break-after: avoid; }
+  h4 { font-family: var(--font-body); font-size: 10.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 14px 0 4px; }
+  p { margin: 0 0 8px; text-wrap: pretty; }
+  ul, ol { margin: 4px 0 10px 24px; padding: 0; }
+  li { margin-bottom: 4px; }
+  .hdr { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-left: 6px solid var(--acc); background: var(--acc-soft); padding: 12px 18px; border-radius: 0 10px 10px 0; margin-bottom: 14px; }
+  .hdr .course { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--acc-dark); }
+  .hdr .sub { color: var(--ink2); font-size: 10.5pt; }
+  .ed { font-size: 8.5pt; color: var(--muted); white-space: nowrap; border: 1px solid var(--rule); border-radius: 999px; padding: 2px 9px; background: #fff; }
+  .keyband { background: #ecfdf3; border: 1.5px solid #86c79e; color: #14532d; border-radius: 8px; padding: 7px 12px; font-weight: 700; font-size: 10pt; margin-bottom: 12px; }
+  .namerow { display: flex; gap: 22px; font-size: 10.5pt; color: var(--muted); margin: 4px 0 16px; }
+  .namerow span { display: flex; flex: 1; gap: 8px; align-items: baseline; }
+  .namerow span::after { content: ''; flex: 1; border-bottom: 1.5px solid var(--ink2); }
+  .namerow span.short { flex: 0 0 34%; }
+  .b { display: inline-block; border-bottom: 1.6px solid var(--ink2); vertical-align: -2px; height: 1.5em; }
+  .b-md { width: 92px; } .b-lg { width: 150px; } .b-xl { width: 230px; }
+  .ak { color: #166534; font-weight: 700; border-bottom: 2px solid #86c79e; padding: 0 3px; }
+  .ans { background: #f0fbf4; border-left: 4px solid #4ea56c; padding: 5px 10px; border-radius: 0 6px 6px 0; font-size: 10.5pt; }
+  .ans-l { font-size: 8pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #166534; margin-right: 4px; }
+  .tick { display: inline-block; width: .95em; height: .95em; border: 1.5px solid var(--ink2); border-radius: 3px; vertical-align: -2px; margin-right: 2px; }
+  .lines { margin: 4px 0 12px; }
+  .ln { height: 12mm; border-bottom: 1.2px solid var(--line); }
+  .wl { height: 13mm; border-bottom: 1.2px solid var(--line); }
+  .sk { border: 1.5px dashed var(--line); border-radius: 8px; margin: 6px 0 12px; }
+  .pb { break-after: page; height: 0; }
+  table.t { width: 100%; border-collapse: collapse; margin: 6px 0 14px; font-size: 10.5pt; break-inside: auto; }
+  table.t th { background: var(--acc-soft); color: var(--acc-dark); text-align: left; font-weight: 700; padding: 6px 8px; border: 1px solid var(--rule); }
+  table.t td { padding: 6px 8px; border: 1px solid var(--rule); vertical-align: top; }
+  table.t td.wcell { height: 26mm; min-width: 170px; --rule-gap: 12mm;
+    background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--rule-gap) - 1px), var(--line) calc(var(--rule-gap) - 1px), var(--line) var(--rule-gap));
+    background-position: 0 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  table.t td .b-md { width: 52px; } table.t td .b-lg { width: 96px; } table.t td .b-xl { width: 150px; }
+  table.t tr { break-inside: avoid; }
+  table.t-read td { font-family: Georgia, 'Times New Roman', serif; font-size: 12.5pt; line-height: 1.6; }
+  code { font-family: Consolas, 'Courier New', monospace; font-size: .9em; background: #f4f2ed; border-radius: 4px; padding: 0 4px; }
+  .box { border-radius: 10px; padding: 10px 14px; margin: 10px 0 14px; break-inside: avoid; border: 1.5px solid var(--rule); background: var(--paper); }
+  .box .lbl { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; color: var(--muted); }
+  .box > :last-child { margin-bottom: 0; }
+  .b-strategy { border: 2px solid var(--acc); background: var(--acc-soft); }
+  .b-strategy .lbl { color: var(--acc-dark); }
+  .mn { display: flex; gap: 12px; align-items: baseline; padding: 3px 0; }
+  .mk { font-family: var(--font-display); font-weight: 800; font-size: 15pt; color: var(--acc-dark); min-width: 2.6em; }
+  .b-example { border-color: #9cb8d9; background: #f2f6fb; } .b-example .lbl { color: #2f5d8a; }
+  .b-model { border-left: 5px solid var(--acc); border-radius: 0 10px 10px 0; background: #fff; font-family: Georgia, 'Times New Roman', serif; font-size: 11.5pt; }
+  .b-model .lbl { font-family: var(--font-body); }
+  .b-frame { border-style: dashed; border-color: #b9a46a; background: #fffbef; } .b-frame .lbl { color: #7a5f12; }
+  .b-talk { border-color: #8fbfb5; background: #f1f8f6; } .b-talk .lbl { color: #24675a; }
+  .b-note { background: #fff; }
+  .b-check { border-color: #93c5a4; background: #f3faf5; } .b-check .lbl { color: #22663a; }
+  .b-teacher { border-color: #e2b354; background: #fffaeb; } .b-teacher .lbl { color: #8a5a00; }
+  .b-graph { background: #fff; }
+  .b-myth { border-color: #e7a5a5; background: #fff6f5; }
+  .b-myth p { margin-bottom: 4px; }
+  .ml { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-right: 6px; }
+  .my-wrong .ml { color: #a12d2d; } .my-why .ml { color: #8a5a00; } .my-right .ml { color: #22663a; }
+  table.ck { width: 100%; border-collapse: collapse; font-size: 10.5pt; }
+  table.ck td { padding: 4px 4px; border-bottom: 1px dotted var(--rule); }
+  table.ck td.yn { width: 76px; white-space: nowrap; color: var(--ink2); }
+  .wb { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 8px 0 12px; padding: 8px 10px; border: 1.5px dashed var(--line); border-radius: 10px; }
+  .wb-l { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-right: 4px; }
+  .chip { background: var(--acc-soft); border: 1px solid var(--acc-mid); border-radius: 999px; padding: 1px 10px; font-size: 10.5pt; }
+  .wcards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0 14px; }
+  @media (max-width: 640px) { .wcards { grid-template-columns: 1fr; } }
+  .wcard { border: 1.5px solid var(--rule); border-radius: 10px; padding: 8px 12px; break-inside: avoid; }
+  .wt { font-family: var(--font-display); font-weight: 700; font-size: 13pt; color: var(--acc-dark); margin-bottom: 4px; }
+  .wr { display: flex; gap: 8px; font-size: 10.5pt; padding: 3px 0; align-items: baseline; }
+  .wr > span:first-child { flex: 0 0 92px; font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .wline { flex: 1; border-bottom: 1.2px solid var(--line); min-height: 11mm; }
+  .passage, .script { font-family: Georgia, 'Times New Roman', serif; font-size: 12.5pt; line-height: 1.75; margin: 10px 0 20px; }
+  .ptitle { font-family: var(--font-display); font-size: 16pt; margin: 6px 0 2px; color: var(--acc-dark); }
+  .pby { font-family: var(--font-body); font-size: 9.5pt; color: var(--muted); margin-bottom: 10px; }
+  .passage p { position: relative; padding-left: 34px; margin-bottom: 10px; }
+  .pn { position: absolute; left: 0; top: .2em; font-family: var(--font-body); font-size: 8.5pt; font-weight: 700; color: var(--acc-dark); background: var(--acc-soft); border-radius: 4px; padding: 0 5px; line-height: 1.6; }
+  .poem { font-family: Georgia, 'Times New Roman', serif; font-size: 13pt; line-height: 1.7; margin: 10px 0 22px; break-inside: avoid; }
+  .stanza { position: relative; padding-left: 34px; margin-bottom: 14px; }
+  .sn { position: absolute; left: 0; top: .25em; font-family: var(--font-body); font-size: 8.5pt; font-weight: 700; color: var(--acc-dark); background: var(--acc-soft); border-radius: 4px; padding: 0 5px; line-height: 1.6; }
+  .pl.ind { padding-left: 1.6em; }
+  body.ed-c .poem { font-size: 14.5pt; line-height: 2; }
+  .psub { font-family: var(--font-display); font-size: 13pt; font-weight: 700; color: var(--ink); margin: 14px 0 6px; text-transform: none; letter-spacing: 0; }
+  .side { font-family: var(--font-body); font-size: 10.5pt; line-height: 1.5; border: 1.5px solid var(--acc-mid); background: var(--acc-soft); border-radius: 10px; padding: 8px 12px; margin: 8px 0 12px; break-inside: avoid; }
+  .fig { margin: 10px 0 16px; break-inside: avoid; }
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .fstep { border: 1.5px solid var(--acc); border-radius: 10px; padding: 6px 10px; background: #fff; text-align: center; min-width: 86px; }
+  .flab { font-weight: 700; font-size: 10.5pt; color: var(--acc-dark); }
+  .fsub { font-size: 9pt; color: var(--ink2); }
+  .arrow { font-size: 16pt; color: var(--acc); font-weight: 700; }
+  .fig figcaption { font-size: 9.5pt; color: var(--muted); font-style: italic; margin-top: 6px; }
+  .script p { margin-bottom: 6px; }
+  .script .sl { padding-left: 120px; text-indent: -120px; }
+  .script .sp { display: inline-block; width: 120px; text-indent: 0; font-family: var(--font-body); font-weight: 700; font-size: 10pt; letter-spacing: .04em; color: var(--acc-dark); }
+  .script .sd { font-style: italic; color: var(--muted); padding-left: 120px; }
+  @media (max-width: 640px) { .script .sl { padding-left: 0; text-indent: 0; } .script .sp { display: block; width: auto; } .script .sd { padding-left: 0; } }
+  .pair { display: grid; grid-template-columns: 7fr 3fr; gap: 16px; margin: 6px 0 12px; align-items: start; }
+  @media (max-width: 640px) { .pair { grid-template-columns: 1fr; } }
+  .psup { border: 1.5px solid var(--acc-mid); background: var(--acc-soft); border-radius: 10px; padding: 10px 12px; font-size: 10.5pt; }
+  .psup.solo { margin: 8px 0 12px; }
+  .psup p { margin-bottom: 6px; }
+  .card { border: 2px dashed var(--line); border-radius: 12px; padding: 12px 16px 6px; margin: 0 0 18px; break-inside: avoid; }
+  .card-h { font-family: var(--font-display); font-weight: 700; font-size: 13pt; color: var(--acc-dark); margin-bottom: 6px; }
+  .lesson { border: 1.5px solid var(--rule); border-radius: 10px; padding: 10px 14px; margin: 10px 0 14px; break-inside: avoid; }
+  .lesson-h { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; border-bottom: 1px solid var(--rule); padding-bottom: 6px; margin-bottom: 8px; }
+  .lnum { font-family: var(--font-display); font-weight: 800; color: #fff; background: var(--acc); border-radius: 6px; padding: 0 8px; font-size: 11pt; }
+  .ltitle { font-weight: 700; font-size: 12pt; flex: 1; }
+  .lcodes { font-size: 8.5pt; color: var(--muted); font-weight: 700; letter-spacing: .04em; }
+  .ll { display: flex; gap: 10px; margin-bottom: 5px; font-size: 10.5pt; }
+  .lk { flex: 0 0 74px; font-size: 8pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--acc-dark); padding-top: 3px; }
+  table.graph { border-collapse: collapse; margin: 4px 0; font-size: 9pt; }
+  table.graph th { color: var(--muted); font-weight: 700; padding: 0 6px; text-align: right; }
+  table.graph td { width: 46px; height: 9mm; border: 1px solid var(--rule); }
+  table.graph tr.gx th { text-align: center; padding-top: 4px; }
+  .foot { margin-top: 30px; padding-top: 8px; border-top: 1px solid var(--rule); font-size: 8.5pt; color: var(--muted); display: flex; justify-content: space-between; gap: 12px; }
+  body.ed-c { font-size: 13.5pt; line-height: 2; }
+  body.ed-c p, body.ed-c li { margin-bottom: 12px; }
+  body.ed-c .passage { font-size: 14pt; line-height: 2.1; }
+  body.ed-c .ln { height: 15mm; } body.ed-c .wl { height: 16mm; } body.ed-c table.t td.wcell { height: 32mm; --rule-gap: 15mm; }
+  body.ed-c h2 { margin-top: 34px; }
+  body.ed-c table.t { font-size: 12.5pt; } body.ed-c .psup { font-size: 12pt; }
+  body.ed-c .box { padding: 12px 16px; }
+  @page { size: letter; margin: 13mm 12mm 14mm; }
+  @media print {
+    body { background: #fff; }
+    .page { max-width: none; padding: 0; }
+    a { color: inherit; text-decoration: none; }
+    .box, .card, .lesson, .wcard { break-inside: avoid; }
+  }
+</style>
+</head>
+<body class="ed-a">
+<div class="page">
+<header class="hdr"><div><div class="course">Grade 5 English Language Arts · Scripted Drama · Unit reader</div><h1>Scripts Reader</h1><div class="sub">Three short plays to read, rehearse and perform</div></div><span class="ed">Edition A</span></header>
+<h2>How to use this reader</h2>
+<p>A <strong>script</strong> is a story written to be <strong>performed</strong>. Instead of paragraphs, it has a <strong>cast list</strong>, a <strong>setting</strong>, <strong>scenes</strong>, <strong>character names</strong> before each line, and <strong>stage directions</strong> in brackets that tell actors what to do and how to say things. There are no quotation marks: the words after a character's name are what they say.</p>
+<table class="t"><thead><tr><th>Play</th><th>Kind</th><th>We use it for</th></tr></thead><tbody><tr><td>1. The Lost Lunch</td><td>A one-scene comedy</td><td>Script features and reading in roles</td></tr><tr><td>2. The Tortoise and the Hare: The Rematch</td><td>A comedy based on an old fable</td><td>Characters, events and delivery</td></tr><tr><td>3. Under the Dome: A Play in Three Scenes</td><td>Adapted from Story 2 in our Science Fiction unit</td><td>Our mentor text: turning a story into a script</td></tr></tbody></table>
+<div class="pb"></div>
+<h2>Play 1 · The Lost Lunch</h2>
+<p><strong>Cast:</strong> Priya (worried about her lunch) · Marcus (her best friend, a detective at heart) · Ms. Lam (the lunch supervisor) · Owen (a Grade 2 student) · Jada (always hungry) · Narrator</p>
+<p><strong>Setting:</strong> The school lunchroom, 11:55 a.m. A table, a lunch cart, a lost-and-found box.</p>
+<article class="script"><h3 class="ptitle">The Lost Lunch</h3><p class="sl"><span class="sp">NARRATOR</span>Every school has a mystery. At Westwood Elementary, it began at 11:55 on a Tuesday.</p><p class="sl"><span class="sp">PRIYA</span>(digging through her backpack, faster and faster) It's gone. It's GONE.</p><p class="sl"><span class="sp">MARCUS</span>(sliding into the seat beside her) What's gone?</p><p class="sl"><span class="sp">PRIYA</span>My lunch! My grandma's samosas. She made them last night. They're in a green container with a dinosaur sticker.</p><p class="sl"><span class="sp">MARCUS</span>(pulling an imaginary notebook from his pocket) Don't panic. Every mystery has clues. When did you last see it?</p><p class="sl"><span class="sp">PRIYA</span>(thinking) This morning. In my cubby. Next to Jada's.</p><p class="sl"><span class="sp">MARCUS</span>(narrowing his eyes) Jada's cubby. Interesting.</p><p class="sl"><span class="sp">JADA</span>(walking past with a full tray, chewing) Hey, guys. What's up?</p><p class="sl"><span class="sp">MARCUS</span>(slowly) Jada. What are you eating?</p><p class="sl"><span class="sp">JADA</span>(holding up a sandwich) Peanut butter and banana. Why?</p><p class="sl"><span class="sp">MARCUS</span>(leaning in) No… samosas?</p><p class="sl"><span class="sp">JADA</span>(offended) I would NEVER take someone's samosas. (pause) Unless they offered.</p><p class="sl"><span class="sp">PRIYA</span>(sighing) It's not her, Marcus.</p><p class="sl"><span class="sp">MS. LAM</span>(walking over with the lost-and-found box) Everything okay here?</p><p class="sl"><span class="sp">PRIYA</span>I lost my lunch. A green container. Dinosaur sticker.</p><p class="sl"><span class="sp">MS. LAM</span>(smiling) Hmm. Owen? Can you come here, please?</p><p class="sl"><span class="sp">OWEN</span>(shuffling over, holding a green container behind his back) …Yes?</p><p class="sl"><span class="sp">MARCUS</span>(pointing dramatically) The dinosaur sticker!</p><p class="sl"><span class="sp">OWEN</span>(holding it out, eyes wide) I thought it was mine! I have a dinosaur sticker too! (showing his own, identical container) See?</p><p class="sl"><span class="sp">NARRATOR</span>There were two green containers. Two dinosaur stickers. And one very confused Grade 2.</p><p class="sl"><span class="sp">PRIYA</span>(opening the container, laughing) Owen, did you eat any?</p><p class="sl"><span class="sp">OWEN</span>(whispering) Just one. They were really, really good.</p><p class="sl"><span class="sp">PRIYA</span>(handing him another) Then you'd better have one more. My grandma would want you to.</p><p class="sl"><span class="sp">MARCUS</span>(closing his imaginary notebook) Case closed.</p><p class="sl"><span class="sp">JADA</span>(sliding closer) So… is anyone else offering?</p><p class="sl"><span class="sp">NARRATOR</span>And that is how Westwood Elementary solved the Mystery of the Lost Lunch, and how Owen became Grandma's biggest fan.</p></article>
+<div class="pb"></div>
+<h2>Play 2 · The Tortoise and the Hare: The Rematch</h2>
+<p><em>In the old fable by Aesop, a fast hare races a slow tortoise, stops for a nap, and loses. This play imagines what happens next.</em></p>
+<p><strong>Cast:</strong> Narrator 1 · Narrator 2 · Hare (proud, fast-talking) · Tortoise (calm, slow-talking) · Fox (the race announcer) · Owl (the referee) · Squirrel and Rabbit (fans)</p>
+<p><strong>Setting:</strong> A forest racetrack. A starting line, a finish line, and an oak tree in the middle.</p>
+<article class="script"><h3 class="ptitle">The Tortoise and the Hare: The Rematch</h3><p class="sl"><span class="sp">NARRATOR 1</span>One year after the most embarrassing day of his life, Hare was back.</p><p class="sl"><span class="sp">HARE</span>(stretching, bouncing on his toes) One year! One year of training! One year of NO NAPS! Today, I win!</p><p class="sl"><span class="sp">NARRATOR 2</span>Tortoise, meanwhile, was eating a dandelion.</p><p class="sl"><span class="sp">TORTOISE</span>(slowly, chewing) Good… morning… Hare.</p><p class="sl"><span class="sp">HARE</span>(rolling his eyes) Do you even know there's a rematch today?</p><p class="sl"><span class="sp">TORTOISE</span>(nodding, very slowly) I… do.</p><p class="sl"><span class="sp">FOX</span>(into a pinecone microphone) Welcome, forest friends, to the Rematch of the Century! In this corner, the fastest feet in the forest: HARE!</p><p class="sl"><span class="sp">SQUIRREL AND RABBIT</span>(cheering) HARE! HARE! HARE!</p><p class="sl"><span class="sp">FOX</span>And in this corner, last year's surprise champion: TORTOISE!</p><p class="sl"><span class="sp">SQUIRREL AND RABBIT</span>(politely clapping) Yay.</p><p class="sl"><span class="sp">OWL</span>(stepping between them, serious) Rules. Stay on the path. No shortcuts. No naps. On your marks. Get set. (pause) GO!</p><p class="sl"><span class="sp">SOUND</span>(a whistle)</p><p class="sl"><span class="sp">NARRATOR 1</span>Hare shot off like a firework. In ten seconds, he was halfway there.</p><p class="sl"><span class="sp">HARE</span>(calling back over his shoulder) See you NEXT YEAR, Tortoise!</p><p class="sl"><span class="sp">NARRATOR 2</span>But at the oak tree in the middle of the track, Hare stopped.</p><p class="sl"><span class="sp">HARE</span>(staring, worried) Wait. Last year, this is where I fell asleep. (shaking his head hard) No naps, no naps, no naps…</p><p class="sl"><span class="sp">NARRATOR 1</span>He was so busy NOT napping that he started to worry. What if he tripped? What if he was too fast and missed the finish line? What if everyone laughed again?</p><p class="sl"><span class="sp">HARE</span>(sitting down, head in his paws) What if I lose AGAIN?</p><p class="sl"><span class="sp">NARRATOR 2</span>Twenty minutes later, Tortoise arrived at the oak tree.</p><p class="sl"><span class="sp">TORTOISE</span>(slowly) Hare. Why… are you… sitting?</p><p class="sl"><span class="sp">HARE</span>(quietly) Because if I don't finish, I can't lose.</p><p class="sl"><span class="sp">TORTOISE</span>(lowering himself down beside him) Hare. Last year… I didn't win… because I was fast. I won… because I kept going.</p><p class="sl"><span class="sp">HARE</span>(looking up) That's it? Just keep going?</p><p class="sl"><span class="sp">TORTOISE</span>(nodding) Just… keep… going.</p><p class="sl"><span class="sp">NARRATOR 1</span>And so, for the first time in forest history, Hare did something no one expected.</p><p class="sl"><span class="sp">HARE</span>(standing, offering a paw) Then let's keep going. Together.</p><p class="sl"><span class="sp">NARRATOR 2</span>They crossed the finish line side by side. Hare walking very, very slowly.</p><p class="sl"><span class="sp">FOX</span>(into the microphone, confused) It's… a tie?</p><p class="sl"><span class="sp">OWL</span>(smiling) It's a tie.</p><p class="sl"><span class="sp">SQUIRREL AND RABBIT</span>(cheering) TORTOISE AND HARE! TORTOISE AND HARE!</p><p class="sl"><span class="sp">TORTOISE</span>(to the audience, slowly) Slow… and steady…</p><p class="sl"><span class="sp">HARE</span>(to the audience, quickly) …and sometimes you need a friend to remind you!</p></article>
+<div class="pb"></div>
+<h2>Play 3 · Under the Dome: A Play in Three Scenes</h2>
+<p><em>Adapted from "Under the Dome," Story 2 in our Science Fiction Reader. Notice what changed when the story became a script.</em></p>
+<p><strong>Cast:</strong> Theo (age 11) · Mémère (his great-grandmother, 103) · Dad · The Weather Voice (heard, not seen) · Kids in the Commons (2–4) · Narrator</p>
+<p><strong>Setting:</strong> New Banff, 2091, a town under a glass dome.</p>
+<article class="script"><h3 class="ptitle">Scene 1 · Theo's apartment, morning</h3><p class="sl"><span class="sp">WEATHER VOICE</span>(calm, flat, from everywhere at once) Good morning, New Banff. Today: twenty-two degrees and sunny.</p><p class="sl"><span class="sp">DAD</span>(not looking up from his tablet) Of course it is.</p><p class="sl"><span class="sp">THEO</span>(holding an old photograph, to Mémère) What were these kids throwing?</p><p class="sl"><span class="sp">MÉMÈRE</span>(taking the photo, smiling) Snowballs. That was me, in the red hat.</p><p class="sl"><span class="sp">THEO</span>What does snow feel like?</p><p class="sl"><span class="sp">MÉMÈRE</span>(closing her eyes) Cold. And wet, and soft, and sharp. It squeaks when you walk on it at thirty below. (opening her eyes) The best days of my life were snow days.</p><p class="sl"><span class="sp">DAD</span>(looking up) And the worst storms in history came right after. That's why we built the dome, Theo.</p><p class="sl"><span class="sp">WEATHER VOICE</span>Special announcement. Today, for one hour, as an experiment, a panel in the Commons will open to outside weather. The outside forecast: snow.</p><p class="sl"><span class="sp">THEO</span>(jumping up) Snow! Dad, can we go?</p><p class="sl"><span class="sp">DAD</span>(shaking his head) Why would anyone want to be cold? We built the dome so we'd never have to be.</p></article>
+
+<article class="script"><h3 class="ptitle">Scene 2 · The Commons, one o'clock</h3><p class="sl"><span class="sp">NARRATOR</span>Most people stayed home. But a few curious kids, a few old people, and one boy pushing his great-grandmother's wheelchair gathered in the Commons.</p><p class="sl"><span class="sp">SOUND</span>(a long mechanical hiss)</p><p class="sl"><span class="sp">KIDS</span>(looking up, whispering) It's opening…</p><p class="sl"><span class="sp">NARRATOR</span>At first, nothing happened. Then, a single white flake drifted down.</p><p class="sl"><span class="sp">THEO</span>(holding out his sleeve, barely breathing) Mémère… look. It's like a tiny star.</p><p class="sl"><span class="sp">SOUND</span>(wind; a gust)</p><p class="sl"><span class="sp">KIDS</span>(shrieking, spinning) It's snowing! It's SNOWING!</p><p class="sl"><span class="sp">THEO</span>(laughing, shivering, mouth open to the sky) My fingers hurt! My nose is running! (shouting) I've never felt so alive!</p><p class="sl"><span class="sp">MÉMÈRE</span>(laughing, snow in her hair) That's it, Theo. That's a snow day.</p></article>
+
+<article class="script"><h3 class="ptitle">Scene 3 · Theo's apartment, that night</h3><p class="sl"><span class="sp">WEATHER VOICE</span>(calm) Returning to twenty-two degrees.</p><p class="sl"><span class="sp">DAD</span>(handing Theo a towel, a little smile) You're soaked.</p><p class="sl"><span class="sp">THEO</span>(sitting at the table with a pen and paper) Dad, how do you write a letter to the Weather Council?</p><p class="sl"><span class="sp">DAD</span>(pausing) What would you say?</p><p class="sl"><span class="sp">THEO</span>(writing, saying it aloud) The dome keeps us safe. But I think we need snow days too. Here is why…</p><p class="sl"><span class="sp">NARRATOR</span>Dad read over his son's shoulder for a long time. Then he pulled up a chair.</p><p class="sl"><span class="sp">DAD</span>(quietly) Start with Mémère's red hat.</p></article>
+
+<div class="box b-note"><div class="lbl">Story to script: what changed?</div><p><strong>Narration became dialogue or stage directions.</strong> In the story, the narrator tells us Theo's father thought outside weather was dangerous; in the script, Dad <em>says</em> it. <strong>Feelings became actions.</strong> "He had never felt so alive" became a line Theo shouts, plus directions: <em>(laughing, shivering, mouth open to the sky)</em>. <strong>The story was cut into scenes</strong> by place and time. <strong>Something new was added:</strong> in the script, Dad changes a little at the end; that's a choice the playwright made to give an actor something to show. A Narrator covers what can't be shown.</p></div>
+<footer class="foot"><span>Grade 5 English Language Arts · Scripted Drama</span><span>ela5-scripted-drama-reader-v1</span></footer>
+</div>
+</body>
+</html>

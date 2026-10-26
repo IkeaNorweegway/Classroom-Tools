@@ -21,9 +21,13 @@ const materials = materialCount(ela5.units);
     numeral="5"
     vtName="course-num-ela5"
     description="Reading, writing, word work and storytelling, one genre at a time. Every unit has a reader, anchor notes, a reader's and writer's notebook, and three editions so everyone works on the same story."
-    facts={[
+    facts={later.length > 0 ? [
       { n: `${ela5Year.length}`, label: 'units planned' },
       { n: `${ready.length}`, label: ready.length === 1 ? 'unit ready' : 'units ready' },
+      { n: `${materials}`, label: 'materials' },
+    ] : [
+      { n: `${ready.length}`, label: 'genre units' },
+      { n: '170', label: 'lessons' },
       { n: `${materials}`, label: 'materials' },
     ]}
   />
@@ -33,7 +37,7 @@ const materials = materialCount(ela5.units);
     items={ready.map((u) => ({ art: u.slug, href: `${base}ela5/materials/${u.slug}`, title: u.label, kicker: `${u.genre} · ${u.when}`, description: hooks[u.slug] ?? u.description, meta: hooks[u.slug] ? u.description : undefined }))}
   />
 
-  <section class="mb-10">
+  {later.length > 0 && <section class="mb-10">
     <h2 class="mb-4 text-sm font-semibold text-slate-500">Coming later this year</h2>
     <ul class="grid gap-2">
       {later.map((u) => (
@@ -44,5 +48,5 @@ const materials = materialCount(ela5.units);
         </li>
       ))}
     </ul>
-  </section>
+  </section>}
 </BaseLayout>

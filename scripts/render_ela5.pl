@@ -224,7 +224,7 @@ sub render_block {
         for (@$in) {
             next if /^\s*$/;
             if (/^\((.*)\)\s*$/) { $body .= '<p class="sd">' . inline($1, $key) . '</p>'; next; }
-            if (/^([A-Z][A-Z0-9 .'’-]*?):\s*(.*)$/) { $body .= '<p class="sl"><span class="sp">' . esc($1) . '</span>' . inline($2, $key) . '</p>'; next; }
+            if (/^([A-ZÀ-Þ][A-ZÀ-Þ0-9 .'’-]*?):\s*(.*)$/) { $body .= '<p class="sl"><span class="sp">' . esc($1) . '</span>' . inline($2, $key) . '</p>'; next; }
             $body .= '<p>' . inline($_, $key) . '</p>';
         }
         return '<article class="script"><h3 class="ptitle">' . inline($arg, $key) . '</h3>' . $body . '</article>';

@@ -107,6 +107,7 @@ const ela5Units: [string, string][] = [
   ['opinion', 'Opinion'],
   ['science-fiction', 'Sci-Fi'],
   ['lyric-poetry', 'Poetry'],
+  ['scripted-drama', 'Drama'],
 ];
 // CEFL grade pages are /cefl/grade-N/; unit viewers are /cefl/view/N-<unit>/, so both count as that grade.
 const ceflGradeItems: SubnavItem[] = [
@@ -136,8 +137,8 @@ export const courses: Course[] = [
     path: 'ela5',
     teacherPath: 'ela5/teacher',
     parentPath: 'ela5/parents',
-    blurb: 'Reading, writing, word work and storytelling, one genre at a time. Unit 1: Tall Tales.',
-    facts: ['6 units planned', '5 units ready', '3 editions'],
+    blurb: 'Reading, writing, word work and performance, one genre at a time: tall tales, information reports, opinion, science fiction, poetry and drama.',
+    facts: ['6 genre units', '170 lessons', '3 editions'],
     subnav: [
       ...unitItems('ela5/materials/', ela5Units),
       { label: 'All units', path: 'ela5', match: endsWith('/ela5') },
