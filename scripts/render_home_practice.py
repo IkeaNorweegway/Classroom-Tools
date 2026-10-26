@@ -246,6 +246,9 @@ def render(md_path):
 </body>
 </html>
 """
+    # Grade 5 handwriting is larger: wider work lines, on screen and in print.
+    if course == 'ela5':
+        doc = doc.replace('</style>', '    .al { height: 12mm !important; }\n  </style>', 1)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(doc, encoding='utf-8')
     return out

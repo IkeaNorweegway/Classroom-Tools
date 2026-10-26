@@ -213,6 +213,8 @@ $CSS  </style>
 </body>
 </html>
 };
+    # Grade 5 handwriting is larger: wider work lines, on screen and in print.
+    $doc =~ s{</style>}{    .al { height: 12mm !important; }\n  </style>} if $course eq 'ela5';
     make_path(dirname($out));
     open my $o, '>', $out or die "$out: $!"; print $o $doc; close $o;
     return $out;
