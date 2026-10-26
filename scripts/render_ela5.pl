@@ -16,7 +16,7 @@
 #   perl scripts/render_ela5.pl path/to/file.md  # just these
 #
 # ── Source format ─────────────────────────────────────────────────────────
-# Front matter (--- … ---):
+# Front matter (--- … ---):  (add compact: yes for a tight one- or two-page handout)
 #   title, subtitle, unit ("Tall Tales"), kind (notes | reader | notebook |
 #   wordwork | fluency | exits | coldread | rubric | teacherguide),
 #   edition (A | B | C; C uses the easy-read layout), key (yes | no),
@@ -447,6 +447,19 @@ my $CSS = <<'CSS';
   table.graph td { width: 46px; height: 9mm; border: 1px solid var(--rule); }
   table.graph tr.gx th { text-align: center; padding-top: 4px; }
   .foot { margin-top: 30px; padding-top: 8px; border-top: 1px solid var(--rule); font-size: 8.5pt; color: var(--muted); display: flex; justify-content: space-between; gap: 12px; }
+  /* compact: yes — a one-page handout */
+  body.compact { font-size: 10pt; line-height: 1.45; }
+  body.compact .page { padding: 18px 26px 20px; }
+  body.compact .hdr { padding: 8px 14px; margin-bottom: 8px; }
+  body.compact h1 { font-size: 17pt; }
+  body.compact h2 { font-size: 11pt; margin: 10px 0 4px; padding-bottom: 2px; }
+  body.compact p { margin-bottom: 4px; }
+  body.compact ul { margin: 2px 0 4px 18px; } body.compact li { margin-bottom: 1px; }
+  body.compact table.t { font-size: 9.2pt; margin: 4px 0 6px; }
+  body.compact table.t th, body.compact table.t td { padding: 3px 5px; }
+  body.compact .box { padding: 6px 10px; margin: 6px 0; }
+  body.compact .foot { margin-top: 8px; padding-top: 4px; }
+  @media print { body.compact { font-size: 9.5pt; line-height: 1.4; } body.compact table.t { font-size: 9pt; } }
   body.ed-c { font-size: 13.5pt; line-height: 2; }
   body.ed-c p, body.ed-c li { margin-bottom: 12px; }
   body.ed-c .passage { font-size: 14pt; line-height: 2.1; }
@@ -481,7 +494,7 @@ sub page_html {
     my $name_default = ($kind =~ /^(reader|rubric|teacherguide)$/) ? 'no' : 'yes';
     my $show_name = !$key && (($m->{name} // $name_default) eq 'yes');
     my $edtag = $kind eq 'teacherguide' ? 'For the teacher' : "Edition $ed";
-    my $html = qq{<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>} . esc($doc_title) . qq{ · $COURSE</title>\n<style>\n$css</style>\n</head>\n<body class="ed-\L$ed\E">\n<div class="page">\n};
+    my $html = qq{<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>} . esc($doc_title) . qq{ · $COURSE</title>\n<style>\n$css</style>\n</head>\n<body class="ed-\L$ed\E} . (($m->{compact} // '') eq 'yes' ? ' compact' : '') . qq{">\n<div class="page">\n};
     $html .= '<header class="hdr"><div><div class="course">' . esc("$COURSE · $unit · " . ($KIND_LABEL{$kind} // '')) . '</div><h1>' . inline($title, 1) . '</h1>'
         . (($m->{subtitle} // '') ne '' ? '<div class="sub">' . inline($m->{subtitle}, 1) . '</div>' : '')
         . '</div><span class="ed">' . esc($edtag) . "</span></header>\n";

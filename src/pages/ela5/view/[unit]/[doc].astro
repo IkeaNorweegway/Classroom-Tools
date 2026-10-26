@@ -7,7 +7,8 @@ const base = import.meta.env.BASE_URL;
 
 // Grade 5 ELA files live in public/materials/grade-5-ela/, not flat.
 export function getStaticPaths() {
-  const paths: { params: { unit: string; doc: string } }[] = [];
+  // The course-wide guide (not tied to a unit), linked from the teacher hub.
+  const paths: { params: { unit: string; doc: string } }[] = [{ params: { unit: 'course', doc: 'ela5-course-guide-v1' } }];
   for (const u of manifest.units) {
     const docs = [...unitDocs(u), ...(u.teacherGuide ? [u.teacherGuide] : [])];
     for (const doc of docs) {
@@ -23,7 +24,7 @@ const label = manifest.units.find((u) => u.slug === unit)?.label ?? 'English Lan
 
 // Home sheets go back to the parent guide, the teacher guide to the hub, everything else to the unit page.
 const isHome = doc!.includes('-home-');
-const isGuide = doc!.includes('-teacherguide-');
+const isGuide = doc!.includes('-teacherguide-') || unit === 'course';
 const backHref = isHome ? `${base}${manifest.parentHref(unit!)}` : isGuide ? `${base}ela5/teacher#${unit}` : `${base}${manifest.studentHref(unit!)}`;
 const backLabel = isHome ? '← Parent guide' : isGuide ? '← Teacher hub' : `← ${label}`;
 const fileUrl = `${base}materials/${ela5Folder}/${doc}.html`;
