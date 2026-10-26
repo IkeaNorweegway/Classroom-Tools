@@ -56,6 +56,11 @@
 #   graph                    progress grid: "x: a, b, c" and "y: 160, 140, …"
 #   fade                     teacher-facing note on how a scaffold fades
 #                            (key and teacher guide only)
+#
+# Lines starting %% are never printed. They are hints for
+# scripts/make_ela5_edition_b.pl, which writes the Edition B (scaffolded)
+# source from an Edition A source:  %% frame: <sentence starter>  and
+# %% words: a, b, c  (a word box).
 use strict;
 use warnings;
 use utf8;
@@ -187,7 +192,12 @@ sub render_block {
         for (@$in) { if (/^\s*$/) { push @paras, join(' ', @cur) if @cur; @cur = (); } else { push @cur, $_; } }
         push @paras, join(' ', @cur) if @cur;
         my $n = 0;
-        my $body = join '', map { $n++; qq{<p><span class="pn">$n</span>} . inline($_, $key) . '</p>' } @paras;
+        # ### lines are subheadings and > lines are sidebars; neither is numbered.
+        my $body = join '', map {
+            /^###\s+(.*)$/ ? '<h4 class="psub">' . inline($1, $key) . '</h4>'
+            : /^>\s*(.*)$/ ? '<aside class="side">' . inline($1, $key) . '</aside>'
+            : do { $n++; qq{<p><span class="pn">$n</span>} . inline($_, $key) . '</p>' }
+        } @paras;
         return '<article class="passage"><h3 class="ptitle">' . inline($title, $key) . '</h3>' . ($by ne '' ? '<div class="pby">' . inline($by, $key) . '</div>' : '') . $body . '</article>';
     }
     if ($kind eq 'script') {
@@ -254,6 +264,15 @@ sub render_block {
         }
         $flush->();
         return '<section class="lesson"><div class="lesson-h"><span class="lnum">' . esc($n) . '</span><span class="ltitle">' . inline($title, 1) . '</span>' . ($codes ne '' ? '<span class="lcodes">' . esc($codes) . '</span>' : '') . '</div>' . $body . '</section>';
+    }
+    if ($kind eq 'flow') {
+        # A labelled diagram as boxes and arrows: one "Label | small note" per line.
+        my @steps = grep { /\S/ } @$in;
+        my $h = '<div class="flow">' . join('<span class="arrow" aria-hidden="true">→</span>', map {
+            my ($lab, $sub) = map { my $x = $_ // ''; $x =~ s/^\s+|\s+$//g; $x } split /\|/, $_, 2;
+            '<div class="fstep"><div class="flab">' . inline($lab, $key) . '</div>' . ($sub ne '' ? '<div class="fsub">' . inline($sub, $key) . '</div>' : '') . '</div>'
+        } @steps) . '</div>';
+        return '<figure class="fig">' . $h . ($arg ne '' ? '<figcaption>' . inline($arg, $key) . '</figcaption>' : '') . '</figure>';
     }
     if ($kind eq 'graph') {
         my (@x, @y);
@@ -371,6 +390,15 @@ my $CSS = <<'CSS';
   .pby { font-family: var(--font-body); font-size: 9.5pt; color: var(--muted); margin-bottom: 10px; }
   .passage p { position: relative; padding-left: 34px; margin-bottom: 10px; }
   .pn { position: absolute; left: 0; top: .2em; font-family: var(--font-body); font-size: 8.5pt; font-weight: 700; color: var(--acc-dark); background: var(--acc-soft); border-radius: 4px; padding: 0 5px; line-height: 1.6; }
+  .psub { font-family: var(--font-display); font-size: 13pt; font-weight: 700; color: var(--ink); margin: 14px 0 6px; text-transform: none; letter-spacing: 0; }
+  .side { font-family: var(--font-body); font-size: 10.5pt; line-height: 1.5; border: 1.5px solid var(--acc-mid); background: var(--acc-soft); border-radius: 10px; padding: 8px 12px; margin: 8px 0 12px; break-inside: avoid; }
+  .fig { margin: 10px 0 16px; break-inside: avoid; }
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .fstep { border: 1.5px solid var(--acc); border-radius: 10px; padding: 6px 10px; background: #fff; text-align: center; min-width: 86px; }
+  .flab { font-weight: 700; font-size: 10.5pt; color: var(--acc-dark); }
+  .fsub { font-size: 9pt; color: var(--ink2); }
+  .arrow { font-size: 16pt; color: var(--acc); font-weight: 700; }
+  .fig figcaption { font-size: 9.5pt; color: var(--muted); font-style: italic; margin-top: 6px; }
   .script p { margin-bottom: 6px; }
   .script .sl { padding-left: 120px; text-indent: -120px; }
   .script .sp { display: inline-block; width: 120px; text-indent: 0; font-family: var(--font-body); font-weight: 700; font-size: 10pt; letter-spacing: .04em; color: var(--acc-dark); }
@@ -444,7 +472,7 @@ sub render_file {
     my ($path) = @_;
     my ($m, $text) = front(slurp($path));
     my $stem = basename($path); $stem =~ s/\.md$//;
-    my @lines = split /\n/, $text;
+    my @lines = grep { !/^%%/ } split /\n/, $text;   # %% lines are Edition B hints
     for my $key (0, ($m->{key} // 'no') eq 'yes' ? (1) : ()) {
         my $body = inner($key, $m, @lines);
         my $out_stem = $stem;

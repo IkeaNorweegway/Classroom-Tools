@@ -689,6 +689,13 @@ export const unitArt: Record<string, UnitArt> = {
       <path class="u-s" d="M18 18h14M18 25h14"/></g>
       <circle class="u-d" cx="49" cy="51" r="1.4"/>`,
   },
+  // Information Report: a heart with a pulse line; the line pulses on hover.
+  'information-report': {
+    m: 'pulse',
+    svg: `<path class="u-s u-f" d="M32 52C18 42 10 34 10 24c0-7 5-12 11-12 5 0 9 3 11 7 2-4 6-7 11-7 6 0 11 5 11 12 0 10-8 18-22 28Z"/>
+      <g class="u-m"><path class="u-s" d="M14 30h9l3-7 5 14 4-10 2 3h13"/></g>
+      <circle class="u-d" cx="50" cy="14" r="1.6"/>`,
+  },
   'cefl-grade-9': {
     m: 'float',
     svg: `<rect class="u-s u-f" x="12" y="10" width="40" height="44" rx="6"/>

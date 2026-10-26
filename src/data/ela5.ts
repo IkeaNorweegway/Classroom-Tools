@@ -60,6 +60,7 @@ export const ela5: CourseManifest = {
   noun: 'unit',
   units: [
     ela5Unit('tall-tales', 'Tall Tales', [['exaggeration', 'What does it really mean?'], ['summary', 'Telling a story short']]),
+    ela5Unit('information-report', 'Information Report', [['features', 'Finding facts fast'], ['notes', 'Notes in my own words']]),
   ],
   studentHref: (slug) => `ela5/materials/${slug}`,
   parentHref: (slug) => `ela5/parents/${slug}`,
