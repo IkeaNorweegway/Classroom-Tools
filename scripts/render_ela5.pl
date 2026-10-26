@@ -37,6 +37,8 @@
 # Blocks, fenced with `::: kind [arg]` … `:::`:
 #   passage Title | byline   reading text; blank-line paragraphs are numbered
 #   script Title             reader's theatre: NAME: line; (stage direction)
+#   poem Title | byline      a poem: line breaks kept, blank lines = numbered
+#                            stanzas, two leading spaces = an indented line
 #   strategy Title           mnemonic box: lines "**P** Pick my idea"
 #   example Title            worked example / think-aloud box
 #   model Title              mentor-text excerpt box
@@ -200,12 +202,29 @@ sub render_block {
         } @paras;
         return '<article class="passage"><h3 class="ptitle">' . inline($title, $key) . '</h3>' . ($by ne '' ? '<div class="pby">' . inline($by, $key) . '</div>' : '') . $body . '</article>';
     }
+    if ($kind eq 'poem') {
+        # Line breaks kept; blank lines separate stanzas, which are numbered.
+        # A line starting with two spaces is indented.
+        my ($title, $by) = map { my $x = $_ // ''; $x =~ s/^\s+|\s+$//g; $x } split /\|/, $arg, 2;
+        my (@st, @cur);
+        for (@$in) { if (/^\s*$/) { push @st, [@cur] if @cur; @cur = (); } else { push @cur, $_; } }
+        push @st, [@cur] if @cur;
+        my $n = 0;
+        my $body = join '', map {
+            $n++;
+            '<div class="stanza"><span class="sn">' . $n . '</span>' . join('', map {
+                my $l = $_; my $ind = $l =~ s/^\s{2,}//;
+                '<div class="pl' . ($ind ? ' ind' : '') . '">' . inline($l, $key) . '</div>'
+            } @$_) . '</div>'
+        } @st;
+        return '<article class="poem"><h3 class="ptitle">' . inline($title, $key) . '</h3>' . ($by ne '' ? '<div class="pby">' . inline($by, $key) . '</div>' : '') . $body . '</article>';
+    }
     if ($kind eq 'script') {
         my $body = '';
         for (@$in) {
             next if /^\s*$/;
             if (/^\((.*)\)\s*$/) { $body .= '<p class="sd">' . inline($1, $key) . '</p>'; next; }
-            if (/^([A-Z][A-Z0-9 .'’-]+?):\s*(.*)$/) { $body .= '<p class="sl"><span class="sp">' . esc($1) . '</span>' . inline($2, $key) . '</p>'; next; }
+            if (/^([A-Z][A-Z0-9 .'’-]*?):\s*(.*)$/) { $body .= '<p class="sl"><span class="sp">' . esc($1) . '</span>' . inline($2, $key) . '</p>'; next; }
             $body .= '<p>' . inline($_, $key) . '</p>';
         }
         return '<article class="script"><h3 class="ptitle">' . inline($arg, $key) . '</h3>' . $body . '</article>';
@@ -390,6 +409,11 @@ my $CSS = <<'CSS';
   .pby { font-family: var(--font-body); font-size: 9.5pt; color: var(--muted); margin-bottom: 10px; }
   .passage p { position: relative; padding-left: 34px; margin-bottom: 10px; }
   .pn { position: absolute; left: 0; top: .2em; font-family: var(--font-body); font-size: 8.5pt; font-weight: 700; color: var(--acc-dark); background: var(--acc-soft); border-radius: 4px; padding: 0 5px; line-height: 1.6; }
+  .poem { font-family: Georgia, 'Times New Roman', serif; font-size: 13pt; line-height: 1.7; margin: 10px 0 22px; break-inside: avoid; }
+  .stanza { position: relative; padding-left: 34px; margin-bottom: 14px; }
+  .sn { position: absolute; left: 0; top: .25em; font-family: var(--font-body); font-size: 8.5pt; font-weight: 700; color: var(--acc-dark); background: var(--acc-soft); border-radius: 4px; padding: 0 5px; line-height: 1.6; }
+  .pl.ind { padding-left: 1.6em; }
+  body.ed-c .poem { font-size: 14.5pt; line-height: 2; }
   .psub { font-family: var(--font-display); font-size: 13pt; font-weight: 700; color: var(--ink); margin: 14px 0 6px; text-transform: none; letter-spacing: 0; }
   .side { font-family: var(--font-body); font-size: 10.5pt; line-height: 1.5; border: 1.5px solid var(--acc-mid); background: var(--acc-soft); border-radius: 10px; padding: 8px 12px; margin: 8px 0 12px; break-inside: avoid; }
   .fig { margin: 10px 0 16px; break-inside: avoid; }

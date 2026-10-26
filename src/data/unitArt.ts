@@ -710,6 +710,13 @@ export const unitArt: Record<string, UnitArt> = {
       <g class="u-m"><path class="u-s u-f" d="M48 10l6 2-2 6-5 3-4-4Z"/><circle class="u-d" cx="45" cy="19" r="1.4"/></g>
       <circle class="u-d" cx="14" cy="14" r="1.2"/><circle class="u-d" cx="54" cy="46" r="1"/>`,
   },
+  // Lyric Poetry: a feather quill over three lines of verse; the quill sways on hover.
+  'lyric-poetry': {
+    m: 'sway',
+    svg: `<path class="u-s" d="M10 44h22M10 51h30M10 37h16"/>
+      <g class="u-m"><path class="u-s u-f" d="M52 8c-12 4-20 14-22 30l4-2c4-8 10-14 18-18Z"/><path class="u-s" d="M30 38l-4 8"/></g>
+      <circle class="u-d" cx="48" cy="50" r="1.4"/>`,
+  },
   'cefl-grade-9': {
     m: 'float',
     svg: `<rect class="u-s u-f" x="12" y="10" width="40" height="44" rx="6"/>

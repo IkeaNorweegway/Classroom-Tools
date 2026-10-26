@@ -63,6 +63,7 @@ export const ela5: CourseManifest = {
     ela5Unit('information-report', 'Information Report', [['features', 'Finding facts fast'], ['notes', 'Notes in my own words']]),
     ela5Unit('opinion', 'Opinion and Editorial', [['fact-opinion', 'Fact or opinion?'], ['reasons', 'Reasons and evidence']]),
     ela5Unit('science-fiction', 'Science Fiction', [['theme', 'Theme is a sentence'], ['what-if', 'What if…?']]),
+    ela5Unit('lyric-poetry', 'Lyric Poetry', [['picture-it', 'Picture it: comparisons'], ['by-heart', 'Learning a poem by heart']]),
   ],
   studentHref: (slug) => `ela5/materials/${slug}`,
   parentHref: (slug) => `ela5/parents/${slug}`,

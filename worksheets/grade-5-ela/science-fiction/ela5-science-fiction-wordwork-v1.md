@@ -20,7 +20,7 @@ transform | [[to change completely]] | [[a design that transforms dirty water in
 predict | [[to say what you think will happen, using clues]] | [[guessing the message will disappear]] | [[remembering what already happened]]
 invention | [[something new that someone made]] | [[Jamal's water filter]] | [[a rock]]
 distant | [[far away in space or time]] | [[the year 2087]] | [[tomorrow]]
-theme | [[the message of a story, as a sentence]] | [["Small choices can change the future."]] | ["technology" (a topic)]
+theme | [[the message of a story, as a sentence]] | [["Small choices can change the future."]] | [["technology" (a topic)]]
 narrator | [[the voice that tells the story]] | [[the third-person voice in Story 1]] | [[a character talking in dialogue]]
 :::
 

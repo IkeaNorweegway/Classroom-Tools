@@ -26,7 +26,7 @@
 | Nov–Dec | Information Report (`information-report`) | Human body systems | POW + TIDE | Topics and subtopics, text features, summarizing, source reliability | **Built (v1)** |
 | Jan–Feb | Opinion and Editorial (`opinion`) | Should recess be longer? | POW + TREE | Fact vs. opinion, news vs. editorial, judging evidence, perspectives | **Built (v1)** |
 | Feb–Mar | Science Fiction (`science-fiction`) | One theme (technology and choices) | POW + WWW + flash-forward | Theme, third-person point of view, round and flat characters | **Built (v1)** |
-| Apr | Lyric Poetry (`lyric-poetry`) | Stories of place and land | Short planning routine | Figurative language, stanzas, reciting from memory | Planned |
+| Apr | Lyric Poetry (`lyric-poetry`) | Stories of place and land | Short planning routine | Figurative language, stanzas, reciting from memory | **Built (v1, 20 lessons)** |
 | May–Jun | Scripted Drama (`scripted-drama`) | Script from a tale or story read this year | Script planning | Dialogue, verbal / non-verbal / paraverbal delivery, reader's theatre | Planned |
 
 **Why this order:** narrative is familiar and gives time to build routines; information report teaches text structure and summarizing, which opinion builds on; science fiction needs secure story structure; drama last means every student performs and fluency gets a final push. Reader's theatre runs as a short fluency routine in every unit, not only the drama unit.

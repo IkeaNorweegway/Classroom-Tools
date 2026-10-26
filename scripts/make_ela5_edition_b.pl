@@ -20,7 +20,7 @@ use warnings;
 use utf8;
 use open qw(:std :encoding(UTF-8));
 
-my $CER = 'I think ___ . In paragraph ___ , the text says "___ ." This shows ___ .';
+our $CER = 'I think ___ . In paragraph ___ , the text says "___ ." This shows ___ .';
 
 for my $path (@ARGV) {
     open my $fh, '<', $path or die "$path: $!"; local $/; my $s = <$fh>; close $fh;
@@ -30,6 +30,9 @@ for my $path (@ARGV) {
     $fm =~ s/^edition: A/edition: B/m;
     $fm =~ s/^key: yes/key: no/m;
 
+    # Poems are cited by stanza, not paragraph.
+    local $CER = $CER;
+    $CER =~ s/In paragraph ___ , the text says/In stanza ___ , the poem says/ if $body =~ /^::: poem/m;
     my @pages = split /\n---page---\n/, $body, -1;
     for my $pg (@pages) {
         # Word box per anchor-notes page.
