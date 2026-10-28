@@ -55,12 +55,13 @@ export interface CourseManifest {
 }
 
 /** Home sheets named <prefix>-<unit>-home-<name>-v1 (and -answers-v1), the
- *  flat naming the non-Math courses use in public/materials/. */
-export function homeSheets(prefix: string, unit: string, sheets: [string, string][]): HomeSheet[] {
+ *  flat naming the non-Math courses use in public/materials/. Pass `v` when a
+ *  unit's sheets have moved to a later version. */
+export function homeSheets(prefix: string, unit: string, sheets: [string, string][], v = 'v1'): HomeSheet[] {
   return sheets.map(([name, skill]) => ({
     skill,
-    doc: `${prefix}-${unit}-home-${name}-v1`,
-    keyDoc: `${prefix}-${unit}-home-${name}-answers-v1`,
+    doc: `${prefix}-${unit}-home-${name}-${v}`,
+    keyDoc: `${prefix}-${unit}-home-${name}-answers-${v}`,
   }));
 }
 

@@ -9,8 +9,8 @@ import { homeSheets } from './manifest';
 /** Folder under public/materials/ that holds every Grade 5 ELA file. */
 export const ela5Folder = 'grade-5-ela';
 
-function ela5Unit(slug: string, label: string, sheets: [string, string][]): CourseUnit {
-  const f = (kind: string) => `ela5-${slug}-${kind}-v1`;
+function ela5Unit(slug: string, label: string, sheets: [string, string][], v = 'v1'): CourseUnit {
+  const f = (kind: string) => `ela5-${slug}-${kind}-${v}`;
   return {
     slug,
     label,
@@ -51,7 +51,7 @@ function ela5Unit(slug: string, label: string, sheets: [string, string][]): Cour
       { label: 'Cold Reads Answer Key', doc: f('coldreads-answers') },
     ],
     teacherGuide: f('teacherguide'),
-    home: homeSheets('ela5', slug, sheets),
+    home: homeSheets('ela5', slug, sheets, v),
   };
 }
 
@@ -60,7 +60,7 @@ export const ela5: CourseManifest = {
   noun: 'unit',
   units: [
     ela5Unit('tall-tales', 'Tall Tales', [['exaggeration', 'What does it really mean?'], ['summary', 'Telling a story short']]),
-    ela5Unit('information-report', 'Information Report', [['features', 'Finding facts fast'], ['notes', 'Notes in my own words']]),
+    ela5Unit('information-report', 'Information Report', [['features', 'Finding facts fast'], ['notes', 'Notes in my own words']], 'v2'),
     ela5Unit('opinion', 'Opinion and Editorial', [['fact-opinion', 'Fact or opinion?'], ['reasons', 'Reasons and evidence']]),
     ela5Unit('science-fiction', 'Science Fiction', [['theme', 'Theme is a sentence'], ['what-if', 'What if…?']]),
     ela5Unit('lyric-poetry', 'Lyric Poetry', [['picture-it', 'Picture it: comparisons'], ['by-heart', 'Learning a poem by heart']]),
@@ -75,7 +75,7 @@ export const ela5: CourseManifest = {
 /** The year plan: built units link; planned ones show as coming later. */
 export const ela5Year = [
   { slug: 'tall-tales', label: 'Tall Tales', when: 'Sep–Oct', genre: 'Narrative', description: 'Paul Bunyan, Sally Ann, John Henry, Big Joe Mufferaw and an Alberta tale. Plan and tell your own tall tale.' },
-  { slug: 'information-report', label: 'Information Report', when: 'Nov–Dec', genre: 'Non-fiction', description: 'How the human body works: research a body system, take notes in your own words, and write a report with text features.' },
+  { slug: 'information-report', label: 'Information Report', when: 'Nov–Dec', genre: 'Non-fiction', description: 'Alberta\'s six natural regions, from prairie to peaks: research a region, take notes in your own words, and write a report with text features.' },
   { slug: 'opinion', label: 'Opinion and Editorial', when: 'Jan–Feb', genre: 'Persuasive', description: 'Should recess be longer? Read both sides, judge the evidence, and write a letter that makes your case.' },
   { slug: 'science-fiction', label: 'Science Fiction', when: 'Feb–Mar', genre: 'Fiction', description: 'Robots, domes and messages from the future: theme, point of view and flash-forwards in stories about technology and choices.' },
   { slug: 'lyric-poetry', label: 'Lyric Poetry', when: 'Apr', genre: 'Poetry', description: 'Poems of place and feeling, old and new: comparisons, stanzas, sound, and reciting from memory.' },

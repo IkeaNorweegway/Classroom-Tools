@@ -210,7 +210,7 @@ A warm wind roared down the mountains. It howled across the foothills and raced 
 
 ## Lesson 13 · Pick and plan our play
 
-**P: Pick our story.** ☐ A tall tale ☐ A science fiction story ☐ An information-based play (body systems!) ☐ Our own idea: ____________
+**P: Pick our story.** ☐ A tall tale ☐ A science fiction story ☐ An information-based play (Alberta's regions!) ☐ Our own idea: ____________
 
 **O: Organize with the script planner** (Anchor note 6).
 

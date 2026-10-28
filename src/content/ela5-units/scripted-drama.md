@@ -21,4 +21,4 @@ teacherSummary: "30 lessons. Three original plays (a lunchroom mystery, a fable 
 
 ## What's the big idea?
 
-A **script** is a story written to be **performed**. You'll read and act three short plays and discover how actors use **words** (verbal), **bodies** (non-verbal) and **voices** (paraverbal: pace, pitch, pauses, volume) to bring characters to life. Then your group will choose a story from this year, a tall tale, a sci-fi story, maybe even the human body, and turn it into a play. You'll each write a scene, rehearse, and perform for a real audience.
+A **script** is a story written to be **performed**. You'll read and act three short plays and discover how actors use **words** (verbal), **bodies** (non-verbal) and **voices** (paraverbal: pace, pitch, pauses, volume) to bring characters to life. Then your group will choose a story from this year, a tall tale, a sci-fi story, maybe even a chinook or a glacier, and turn it into a play. You'll each write a scene, rehearse, and perform for a real audience.

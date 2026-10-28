@@ -3,7 +3,7 @@
 
 **This course does not use the math/science formats.** No progressive-blanking notes packages, no interleaved ★/★★ workbooks, no 5E inquiry arc. It follows the literacy research: short explicit mini-lessons, long reading and writing time, writing about reading every day, SRSD for writing, needs-based groups, and the school's Fountas & Pinnell and Words Their Way programs used for what they do well. The workspace principles still bind (produce don't receive, retrieval, fade supports, structured peer talk, feedback with a response, every assessment item maps to an outcome).
 
-**Teacher decisions (2026-10-23, 2026-10-26):** 60 minutes a day, one block. Units by genre. Fountas & Pinnell (guided reading, Benchmark Assessment System) and Words Their Way are in use. Three editions of student materials (standard, scaffolded, easy read). Anchor topics: human body systems (information report); "should recess be longer?" (opinion). Lessons: 30 / 30 / 30 / 30 / 20 / 30 = 170.
+**Teacher decisions (2026-10-23, 2026-10-26):** 60 minutes a day, one block. Units by genre. Fountas & Pinnell (guided reading, Benchmark Assessment System) and Words Their Way are in use. Three editions of student materials (standard, scaffolded, easy read). Anchor topics: regions of Alberta (information report; changed from human body systems on 2026-10-27); "should recess be longer?" (opinion). Lessons: 30 / 30 / 30 / 30 / 20 / 30 = 170.
 
 ---
 
@@ -23,7 +23,7 @@
 |---|---|---|---|---|---|
 | Sep (2 wks) | Routines and screening | — | — | Fluency screen (one-minute ORF), WTW spelling inventory, listening-comprehension check | Teacher guide note only |
 | Sep–Oct (6 wks, 30 lessons) | **Tall Tales** (`tall-tales`) | North American tall tales, including Canadian and an Alberta tale | POW + WWW, What = 2, How = 2 | Story structure, characters, exaggeration, summarizing, oral tradition | **Built (v1)** |
-| Nov–Dec | Information Report (`information-report`) | Human body systems | POW + TIDE | Topics and subtopics, text features, summarizing, source reliability | **Built (v1)** |
+| Nov–Dec | Information Report (`information-report`) | Regions of Alberta (the six natural regions) | POW + TIDE | Topics and subtopics, text features, summarizing, source reliability | **Built (v2)** |
 | Jan–Feb | Opinion and Editorial (`opinion`) | Should recess be longer? | POW + TREE | Fact vs. opinion, news vs. editorial, judging evidence, perspectives | **Built (v1)** |
 | Feb–Mar | Science Fiction (`science-fiction`) | One theme (technology and choices) | POW + WWW + flash-forward | Theme, third-person point of view, round and flat characters | **Built (v1)** |
 | Apr | Lyric Poetry (`lyric-poetry`) | Stories of place and land | Short planning routine | Figurative language, stanzas, reciting from memory | **Built (v1, 20 lessons)** |
