@@ -171,6 +171,7 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 - Print button in the nav: `window.frames[0].print()`
 - Teacher note / answer key toggle shows/hides the teacher file link (not the student file)
 - Back link: breadcrumb `Course → Unit → [doc name]`
+- Section links: a viewer URL with a hash (`…/view/forces/sci6-forces-notes-v1#s3`) passes the hash on to the iframe, so it opens at that notes section. Ids come from `scripts/add_section_ids.py`; `src/data/notesSections.ts` reads them at build time, and `ParentUnit.astro` lists them under "Jump to a part of the notes"
 
 ---
 

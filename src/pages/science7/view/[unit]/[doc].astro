@@ -194,5 +194,14 @@ const isApp = /-(sim|trainer)-v\d+$/.test(doc!);
       if (go) go.call(f);
     });
   </script>
+  <script is:inline>
+    // Pass a section id (#s3) on to the document, so a link can open one notes section.
+    (function () {
+      var f = document.querySelector('.doc-frame');
+      function go() { if (f && location.hash) f.src = f.src.split('#')[0] + location.hash; }
+      go();
+      window.addEventListener('hashchange', go);
+    })();
+  </script>
 </body>
 </html>

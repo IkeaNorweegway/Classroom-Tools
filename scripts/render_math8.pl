@@ -76,7 +76,27 @@ my %STRAND = (
 );
 
 sub slurp { my ($p) = @_; open my $fh, '<', $p or die "$p: $!"; local $/; my $s = <$fh>; close $fh; $s =~ s/\r\n/\n/g; return $s; }
-sub spit  { my ($p, $s) = @_; make_path(dirname($p)); open my $fh, '>', $p or die "$p: $!"; print $fh $s; close $fh; }
+sub spit  { my ($p, $s) = @_; $s = section_ids($s) if basename($p) =~ /notes/; make_path(dirname($p)); open my $fh, '>', $p or die "$p: $!"; print $fh $s; close $fh; }
+# Section ids on notes headings, so other pages can link to one section
+# (file.html#s3). Same rules as scripts/add_section_ids.py; keep them in step.
+sub section_ids {
+    my ($html) = @_;
+    my %used = map { $_ => 1 } $html =~ /\sid="([^"]+)"/g;
+    $html =~ s{<h2(\s[^>]*)?>(.*?)</h2>}{
+        my ($attrs, $inner) = ($1 // '', $2);
+        my $t = $inner =~ s/<[^>]+>//gr;
+        $t =~ s/&nbsp;|\x{00a0}/ /g; $t =~ s/^\s+|\s+$//g;
+        my $id = $t =~ /^(?:Section|Concept|Part)\s+(\d+)\b/i ? "s$1"
+               : $t =~ /^Unit[ée]?\s+(\d+)\b/i ? "u$1"
+               : $t =~ /^(\d+)\s*·/ ? "s$1"
+               : $t =~ /^(?:Pre-Knowledge Check|Before we start)/i ? 'pre-check'
+               : $t =~ /^(?:Unit Synthesis|Synthèse|Unit Check|Unit Wrap-Up|Put it all together)/i ? 'synthesis'
+               : $t =~ /^(?:Vocabulary|Words to know|New Words in This Unit)\s*$/i ? 'vocab'
+               : undef;
+        ($attrs =~ /\sid=/ || !defined $id || $used{$id}++) ? "<h2$attrs>$inner</h2>" : qq{<h2 id="$id"$attrs>$inner</h2>};
+    }gse;
+    return $html;
+}
 
 sub esc {
     my ($s) = @_;

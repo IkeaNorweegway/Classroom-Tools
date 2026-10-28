@@ -259,6 +259,7 @@ Every notes package should exist in three formats:
 **.html file** — the screen/web version. Self-contained (no dependencies). Design standards:
 - Site fonts, loaded from `public/fonts/`: Atkinson Hyperlegible Next for body text, labels and tables; Fraunces (weight 600) for the title and large section headings. Warm-neutral greys, with write-on lines dark enough to survive a photocopier. Render first, then run `python3 scripts/apply_site_fonts.py <file>` to add both
 - Section headers: solid color bar matching unit color (Living Systems = emerald, Matter = cyan, Forces = violet, Climate = amber, Energy = orange, Space = indigo)
+- Section ids: each `<h2>` for "Section N" gets `id="sN"` (plus `pre-check`, `vocab`, `synthesis`), so a page can link to `…-notes-v1.html#s3`. Run `python3 scripts/add_section_ids.py <file>` after rendering; the Math 8, ELA 5 and Social renderers add them already. Keep the same section numbers across the student copy, key, EF and FR versions. The parent guide lists these sections as jump links
 - Fill-in blanks: CSS `border-bottom` underlines, sized to context (sm/md/lg/xl)
 - Misconception callouts: red left border, "MISCONCEPTION" label
 - Retrieval checks: light blue background box
