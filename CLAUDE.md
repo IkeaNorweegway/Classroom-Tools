@@ -35,6 +35,7 @@ Before writing the first line of any artifact: (1) copy the relevant template fr
 | Math 9 inquiry project (brief + journal + teacher guide) | `templates/inquiry-project-template.md` | "Options: [3, equal difficulty]. Driving questions launched in strand Lesson 1. Mini-lessons: [A, B]. Critique cycle: Period 4. Teams 4–5, roles: [ ]. Audience per option: [ ]. Rubric K/U/S → [local codes]. Depth ceilings respected: [ ]. Real data with source and date: [ ]." — rules in `_courses/math-9/_context.md` (Inquiry Projects) |
 | CEFL mini-workbook / project brief | *(no template — format in `_courses/cefl/_context.md`)* | "Moments: [list], each with visual, worked example, 2–3 practice, extra practice. Data + dates: [list]. Cross-curricular tags: [≤1 per moment]. DQ: [ ]. Teams 4–5, roles: [ ]. Milestones → sessions: [ ]. Audience: [ ]. Rubric K/U/S → [LO code]." — full spec in `_courses/cefl/_context.md` |
 | Game | *(no template)* | "Outcomes: [codes]. Model: [one line]. Real-time or turn-based. Test hook included." — full rules in `_games-context.md` |
+| Simulation / trainer | *(no template)* | "Outcomes: [codes]. Model and simplifications: [one line]. Tasks beside free play: [missions / steps]. Predict-then-test or checked steps. Back to paper: [where]. Test hook included." — full rules in `_sims-context.md` |
 | Grade 5 ELA unit material (anchor notes, reader, notebook, word work, fluency, exits, cold reads, rubric, teacher guide) | *(no template — format at the top of `scripts/render_ela5.pl`)* | "Genre: [ ]. Anchor topic: [ ]. SRSD strategy: [ ]. Mentor text for each craft move: [ ]. Writing about reading every lesson. Editions A/B/C share texts and question numbers. Codes: [TF/OL/VO/CO/WR/CV]. Passages original or public-domain retold." — full rules in `_courses/grade-5-ela/_context.md` |
 | Slide deck | `templates/slides-template/` (folder) | "Follows notes order: [sections]. Blanks 2–3 per slide, answers from the key. Key words from vocab tables: [terms]. Visual on every slide: [one line per slide]." — full rules in `slides/_context.md` |
 
@@ -66,7 +67,7 @@ When active:
 | `scripts/` | Render scripts (markdown → HTML, posters) | Re-render a workbook or poster. Read `scripts/_context.md` first |
 | `src/`, `public/` | The Astro site and its published files | Change a page, the nav, or what the site links to. Read `_site-context.md` first |
 | `public/materials/*-game-*.html` | Browser games. HTML only, no markdown source | Build or revise a game. Read `_games-context.md` first |
-| `public/materials/*-sim-*.html`, `*-trainer-*.html` | Simulations and trainers. HTML only, no markdown source | Build or revise a sim or trainer. `_games-context.md` is a guide, not a checklist |
+| `public/materials/*-sim-*.html`, `*-trainer-*.html` | Simulations and trainers. HTML only, no markdown source | Build or revise a sim or trainer. Read `_sims-context.md` first (catalogue, rules, evidence in `research/simulations-research.md`) |
 | `public/materials/*-prereq-practice-v1.html`, `prereq-practice/` | Prereq practice, one page per unit. HTML only; questions in `prereq-practice/<prefix>-bank.js` | Add or fix a practice question: edit the course's bank. Format: top of `prereq-practice/practice.js` |
 
 Each folder has its own `_context.md` — read it before working in that area.
@@ -129,6 +130,7 @@ Materials are organized inside type folders by subject and unit:
 | "Write a parent page / home practice sheet" | `_site-context.md` (Course data and the three views) → `templates/home-practice-template.md` → unit `_context.md` in `_courses/` (and `_courses/math-9/math9-prereqs.md` for Math 9) | `research/`, `tests-quizzes/` |
 | "Render / re-render" | `scripts/_context.md` | everything else |
 | "Build / revise a game" | `_games-context.md` → unit `_context.md` in `_courses/` | type-folder contexts, `templates/` |
+| "Build / revise a sim or trainer" | `_sims-context.md` → `research/simulations-research.md` → unit `_context.md` in `_courses/` (or `steam/grade-[N]/`) | type-folder contexts, `templates/` |
 | "Build a CEFL workbook / project / teacher guide" | `_courses/cefl/_context.md` → `research/project-based-learning-research.md` → `research/financial-career-education-research.md` | `templates/`, `tests-quizzes/` — CEFL uses its own mini-workbook and project formats |
 | "Build / revise a Math 8 [notes / worksheet / workbook / exits / quiz / teacher notes]" | `_courses/math-8/_context.md` → the type-folder context → the source format at the top of `scripts/render_math8.pl` (diagram types in `scripts/Math8Viz.pm`) | `research/` |
 | "Build / revise a Grade 5 ELA [unit / notebook / reader / anything]" | `_courses/grade-5-ela/_context.md` → `research/literacy-reading-writing-research.md` → the source format at the top of `scripts/render_ela5.pl` | `templates/`, `worksheets/workbooks-context.md`, `notes-packages/_context.md` — ELA uses its own formats |

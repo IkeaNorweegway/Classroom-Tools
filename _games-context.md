@@ -2,7 +2,7 @@
 ## Design and Build Context
 *Governs every browser game in this workspace: what one must do, how it is built, and how it is tested.*
 
-**Covers:** games only. A game has a goal, and the student can fail to reach it. Simulations (`*-sim-*`) and trainers (`*-trainer-*`) are not covered here yet; do not apply these rules to them.
+**Covers:** games only. A game has a goal, and the student can fail to reach it. Simulations (`*-sim-*`) and trainers (`*-trainer-*`) are covered by `_sims-context.md`, which names the rules here that it shares.
 
 **Read with:** the unit `_context.md` in `_courses/` (outcomes, misconceptions, depth ceiling) and `_site-context.md` (colours, routing).
 

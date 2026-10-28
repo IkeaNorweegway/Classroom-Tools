@@ -10,7 +10,8 @@ Current state only. Keep this file short: update the tables and the open list, a
 - **One repo.** Sources and the site live together in `D:\Classroom tools` (GitHub: `IkeaNorweegway/Classroom-Tools`, **public**).
 - **Site:** Astro + Tailwind, published at https://ikeanorweegway.github.io/Classroom-Tools/ by GitHub Actions on every push to `master`. Design rules: `_site-context.md`.
 - **Where files go:** markdown sources in the type folders (`notes-packages/`, `worksheets/`, `tests-quizzes/`, `lesson-plans/`, `steam/`). HTML and PDF renders only in `public/materials/`.
-- **Games:** design, build, and test rules are in `_games-context.md` (games only; simulations and trainers have no context file yet).
+- **Games:** design, build, and test rules are in `_games-context.md`.
+- **Simulations and trainers:** catalogue, build and design rules, and known gaps are in `_sims-context.md`. The evidence behind them is in `research/simulations-research.md` (2026-10-28).
 - **Never committed** (see `.gitignore`): `legislation/`, school admin files, third-party reference PDFs, and unreleased tests. Students can read this repo.
 - **This machine:** no Node, Python, Perl, or LaTeX on the PATH, and headless Edge hangs. The site cannot be built locally, the `.py` render scripts cannot run here, and HTML has to be checked by opening it in a browser by hand. Headless **Chrome** does work (`chrome.exe --headless=new --dump-dom` or `--screenshot`), so a page's JavaScript can be tested and screenshotted that way.
 
