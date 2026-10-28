@@ -32,10 +32,11 @@ All are HTML only, with no markdown source: the HTML is the source. The v1 file 
 |---|---|---|---|---|---|---|
 | `public/materials/sci7-photosynthesis-sim-v2.html` (*Plant Lab*) | Science 7 · Plants for Food and Fibre | 7-2-02, 7-2-03 | Changes the surroundings and the plant's parts, then reads glucose and plant health. 5 predict-then-test missions (soil, roots, phloem, sealed jar, white leaves). One wilting alert per run. | Glucose = the scarcest of (light captured, water at leaves, CO₂) × leaf share | `plantlab-v2` (finished missions, tour seen). Reads `plantlab-missions-v1` once. | `?debug=1` |
 | `public/materials/sci7-flower-reproduction-sim-v2.html` (*Flower Lab*) | Science 7 · Plants for Food and Fibre | 7-2-04 | Changes the flower's parts and surroundings, runs a season, and reads where the chain from pollen to seed broke. 5 missions (petals, anthers, style, no bees, disease). One alert when the chain breaks while the flower is open. | Pollen reaching the ovary = pollen carried × pollen source × stigma × style | `flowerlab-v2`. Reads `flowerlab-missions-v1` once. | `?debug=1` |
-| `public/materials/math-9/practice/math9-fraction-sim-v2.html` | Math 9 · Number: Rational numbers | Topic only (Math 9 has no local codes) | 3 tabs: equivalent fractions (bar model, with an "add to top and bottom" mode that shows the mistake), simplifying, and cross-cancelling (÷ needs a flip first). | Positive fractions only. The sign is handled in the notes. | `math9-fraction-tour-v2` (tour seen only) | None |
-| `public/materials/math-9/practice/math9-pythagorean-sim-v1.html` | Math 9 · Number: Square roots, Section 3 | Topic only | 3 tabs: squares on the sides (with an angle slider from 30° to 150°), why it works (rearrangement), and scale it. Scale it gives specific feedback on 7 named errors. `#why` or `#scale` opens a tab. | Legs 1–12 | `math9-pythagorean-tour-v1` (tour seen only) | None |
+| `public/materials/math-9/practice/math9-fraction-sim-v2.html` | Math 9 · Number: Rational numbers | RN1–RN4 (parts) | 3 tabs: equivalent fractions (bar model, with an "add to top and bottom" mode that shows the mistake), simplifying, and cross-cancelling (÷ needs a flip first). | Positive fractions only. The sign is handled in the notes. | `math9-fraction-tour-v2` (tour seen only) | None |
+| `public/materials/math-9/practice/math9-pythagorean-sim-v1.html` | Math 9 · Number: Square roots, Section 3 | SR3 | 3 tabs: squares on the sides (with an angle slider from 30° to 150°), why it works (rearrangement), and scale it. Scale it gives specific feedback on 7 named errors. `#why` or `#scale` opens a tab. | Legs 1–12 | `math9-pythagorean-tour-v1` (tour seen only) | None |
+| `public/materials/math-9/practice/math9-linear-relations-sim-v1.html` | Math 9 · Algebra: Linear relations | LR1–LR4 | 4 tabs:<br>**LR1 Four views:** words, a sideways table, the equation and the graph change together. Tap a column to see it worked out. "Not linear?" shows a curve. A Mystery rule mode asks for m and b from one view; solving it draws the line.<br>**LR2 Slope:** drag P and Q along a line (the slope never changes) or freely. A rise/run triangle is drawn, plus a "make each slope" list (−3, 0, undefined, 1/2, 5, −5).<br>**LR3 y = mx + b:** m and b steppers; the line slides smoothly with the intercepts marked. Graph it: place the two points, then Check.<br>**LR4 Direct or partial:** two phone plans with a texts slider, a ×2 test, and a fee stepper. Sort 8 in a row. `#slope`, `#mxb` or `#vary` opens a tab. | Exact y = mx + b on an integer grid (x −6 to 10, y −6 to 12). Context presets keep y ≥ 0. Named errors: m and b swapped, slope sign, b read at x = 1, a y-value for the slope, rise/run swapped, the x-axis for the y-intercept, "both go up" means direct. | `math9-linear-relations-sim-v1` (tabs seen) | `?debug=1` (`window.SIM`) |
 
-Both Math sims use the same task panel. Each tab runs **Worked example → Try this → Explain it in your notes**, with **Watch out** boxes where a mistake is common.
+The Fraction and Pythagorean sims use the older light layout: a side task panel where each tab runs **Worked example → Try this → Explain it in your notes**, with **Watch out** boxes. The Linear Relations sim set the current look (see design rules 14–17): the same content opens in the **Task** and **In your notes** popups, and a one-line **Try this** strip stays on screen.
 
 ### Trainers
 
@@ -45,7 +46,10 @@ Both Math sims use the same task panel. Each tab runs **Worked example → Try t
 | `public/materials/steam6-littlebits-trainer-v1.html` | STEAM 6 · Unit 1 littleBits | Notes Parts 1–4, Journal Steps 1–5 | Drags or taps bits into one chain and watches the signal travel. 12 checked steps and 1 Extra, then free play. | One straight chain. The light sensor passes the signal when the room is dark. A backwards bit stops the signal. The bit list comes from the notes, not the school's kits. | `steam6-littlebits-trainer-v1` | None |
 | `public/materials/steam9-python-trainer-v1.html` | STEAM 9 · Unit 1 Python | Notes Concepts 1–4, Journal Part D | Writes and runs Python in the browser. 18 checked steps and 1 Extended, then an unchecked workshop for the game (Journal Parts A–G) and a playground. | Skulpt runs a subset of Python. There is no Java version (the Grade 9 language decision is still open). | `steam9-python-trainer-v1` | None |
 
-Every trainer step names the page of the notes or journal it matches (its `paper` field) and gives hints after a failed check. The trainers share one layout: a step list, the task, and the workspace.
+| `public/materials/math-9/practice/math9-linear-equations-trainer-v1.html` | Math 9 · Algebra: Linear equations and inequalities (LE1–LE5) | Notes Sections 1–5, then Mixed practice | Types each line of working. Every line is checked against the first one (same solution, or same solution set). A balance stays level or tips; for inequalities, a number line where a tap tests a point in the original, and the answer is shaded once solved. 12 steps of 3 problems (Mixed: 5 random). Predict boxes on LE1, LE3 and LE4. Word problems (Lethbridge hot chocolate, plumber, Edmonton catch-up) start with "write the first line", then an interpret question. **Show me** gives the next line and says why. | Linear in one letter, with exact fractions. Named errors: first-term distribution, a negative outside the brackets, LCD on some terms, the wrong inverse operation, dividing only one term, adding the x term instead of subtracting, flip and no-flip, the "or equal" part, the sign. | `math9-linear-equations-trainer-v1` | `?debug=1` (`window.TR`) |
+| `public/materials/math-9/practice/math9-polynomials-trainer-v1.html` | Math 9 · Algebra: Polynomials (PO1–PO6) | Notes Sections 1–6, then Mixed practice | Types each answer.<br>**PO1:** names the parts (degree, leading coefficient, constant, type).<br>**PO2–PO4:** algebra tiles group like terms, cancel zero pairs, and flip colour for "Take the opposite".<br>**PO5–PO6:** an area model shows every partial product.<br>Equal but unsimplified answers are not accepted, and any order is accepted with a standard-form tip. | Exact integer arithmetic, degree up to 4 as in the notes (tiles only up to degree 2). Named errors: degree vs coefficient, the number of terms, the first-written term as leading, naming before combining like terms, adding unlike terms, the negative on the first term only, adding instead of subtracting, x·x = 2x, the first term only, the missing middle terms. | `math9-polynomials-trainer-v1` | `?debug=1` (`window.TR`) |
+
+Every trainer step names the page of the notes or journal it matches (its `paper` field) and gives hints after a failed check. The STEAM trainers share one layout: a step list, the task, and the workspace. The Math 9 trainers share a newer full-window shell: the Goal strip, a ☰ Steps popup, Task, Hint and In your notes popups, the problem, and the input with its keys. The shell is copied into each file (build rule 1), so a fix to one means fixing the others too.
 
 **What was and was not tested** for each one is in `_status.md` (search for the file name). None has been tried by students, on a touch screen, or on school devices.
 
@@ -66,7 +70,7 @@ Every trainer step names the page of the notes or journal it matches (its `paper
    
    The Science 7 sims are the model to copy.
 4. **Model apart from page.** The model goes in its own part of the script with no DOM calls (games build rule 5).
-5. **Test hook.** `?debug=1` puts the model on `window` and turns saving off (games build rule 6). Every new build needs one. The Math sims and the trainers do not have it yet.
+5. **Test hook.** `?debug=1` puts the model on `window` and turns saving off (games build rule 6). It also skips the first-visit popups and tutorial, and turns off tweens, so scripted checks are exact. Every new build needs one. The Fraction and Pythagorean sims and the STEAM trainers do not have it yet.
 6. **Save only what helps a student come back.** That means finished missions, finished steps, and whether the tour was seen. Use a versioned key, check its shape on load, and start fresh if it does not fit. When a new version should keep progress, read the old key once (Plant Lab does this).
 
 ---
@@ -74,7 +78,7 @@ Every trainer step names the page of the notes or journal it matches (its `paper
 ## Design rules
 
 ### Learning
-1. **Named outcomes.** Every sim and trainer lists its outcomes in the header comment and shows an "I can" line under the title. The Science 7 sims do this. Math 9 sims name the topic and section of the notes instead of codes.
+1. **Named outcomes.** Every sim and trainer lists its outcome codes in the header comment and labels each tab or step with its code. Math 9 uses the local codes in `_courses/math-9/_context.md` (RN1–5, PE1–7, SR1–4, LR1–4, LE1–5, PO1–6, CG1–4, ME1–5, SI1–4, ST1–4, PR1–4). The "I can" line opens at the top of the Task popup, which shows automatically on a student's first visit. The Science 7 sims show it under the title.
 2. **A true model, with its limits named.** What the sim shows must be true at the unit's depth ceiling. Name every simplification in the header comment and in the table above. If a student could carry a simplification away as a misconception, say so on screen. The littleBits Trainer's single chain is an example.
 3. **Guided, never free play alone.** Every sim gives tasks (missions, or a task panel) beside free play. Every trainer runs checked steps before its free play. Open exploration with no task teaches less than guided exploration (Alfieri et al. 2011; de Jong & van Joolingen 1998).
 4. **Predict, then test.** A mission locks in the student's prediction before the run. When the evidence does not match, it asks what the student assumed. Predicting first is what makes a demonstration teach (Crouch et al. 2004).
@@ -99,6 +103,30 @@ Every trainer step names the page of the notes or journal it matches (its `paper
 
 ### Access
 13. Games design rules 12–15 apply as written: 44 px buttons and visible focus, 600 px wide, reduced motion, and never colour alone.
+
+### Layout and look (user request, 2026-10-28)
+14. **Full window, nothing to scroll for.** The page fills the browser: a top bar, a one-line strip, and an app area (picture on the left, inputs on the right). Every toggle, input and its feedback stays on screen without scrolling at Chromebook size (1366 × 768, inside the site viewer) and at 1000 × 700. Phones (under 760 px) stack, with controls first. Ways to make it fit:
+    - one **Explore / Challenge** switch per tab, so only one set of inputs is up at a time (LR1 Explore / Mystery rule; LR3 Explore / Graph it);
+    - sideways tables;
+    - a dropdown for long option lists;
+    - icon-only top buttons under 1180 px;
+    - a compact spacing mode under 700 px of height;
+    - a prediction card that collapses to "Your prediction: …" once answered and hides after the first check.
+    
+    Test it: the scripted run reports the page and side-panel scroll sizes at both sizes, and they must match the window.
+15. **Written material is a popup.** The intro, worked example, full Try this list, Watch out, the "I can", hints and In your notes open in a `<dialog>` from buttons in the top bar. Only a one-line **Try this** (sims) or **Goal** (trainers) strip stays on screen, with ‹ ›. Short feedback stays next to the input.
+16. **3Blue1Brown look.** A near-black canvas with a bright, high-contrast palette:
+    - blue `#58c4dd`, yellow `#f7d96f`, teal `#5cd0b3`, gold `#f0ac5f`, green `#83c167`, red `#fc6255`;
+    - text `#f5f7fb` on panels `#0f1520`, and muted text `#a7b4c8` (still above 7:1);
+    - every colour has the same job in every build: blue for the main line, P and slope; yellow for the thing you move or predict; green for right, intercepts and the solution; red for wrong and negative; gold and teal for rise and run, and for the tile powers.
+    
+    Equations are set in a math serif (Cambria Math) with italic letters. Labels on the canvas carry a dark halo so they read over grid lines.
+17. **Motion that explains.** Values tween to their new place (a line slides when b changes), new lines draw themselves in, and a balance swings and settles. Rules:
+    - Animate transform, opacity, or a value redrawn by `requestAnimationFrame`.
+    - Keep the grid in its own layer, so a frame only redraws what moves.
+    - Animation never carries meaning alone.
+    - Reduced motion and `?debug=1` jump straight to the end.
+18. **The viewer.** On the site, a `-sim-` or `-trainer-` page opens in the course viewer without the site nav. It gets a slim Back bar and a **⛶ Full screen** button (Math 9, Science 7 and STEAM viewers).
 
 ---
 
@@ -137,7 +165,7 @@ Also:
 | Course | Where the link goes |
 |---|---|
 | Science 7 | `src/data/science7.ts` (`type: 'interactive'`) and the doc list in `src/pages/science7/view/[unit]/[doc].astro` |
-| Math 9 | `src/data/math9.ts` (`path: 'practice/…'`) |
+| Math 9 | `src/data/math9.ts`: `extras.unshift({ label, path: 'practice/…', type: 'interactive' })` on the topic, so it is first under Extra help |
 | STEAM | `trainer(…)` in `src/data/steam.ts` and the doc list in `src/pages/steam/view/[grade]/[doc].astro` |
 
 Then add a row to the tables above and an entry to `_status.md` (what it does, what was tested, what was not). Push to `master` and check the Actions run.
@@ -146,7 +174,14 @@ Then add a row to the tables above and an entry to `_status.md` (what it does, w
 
 ## Known gaps
 
-- The Math sims and all three trainers have no `?debug=1` hook and no "I can" line on screen. No sim or trainer has a teacher report.
+- **Math 9 plan (2026-10-28):** one sim or trainer per topic, built a strand at a time.
+  - Algebra is done (Linear Relations sim, Equations trainer, Polynomials trainer).
+  - Still to build:
+    - Number: a Powers trainer, plus the Fraction and Pythagorean sims widened into whole-topic Rational Numbers and Square Roots sims;
+    - Measurement & Geometry: Circle Geometry, Surface Area & Volume, and Similarity sims;
+    - Statistics & Probability: Statistics and Probability sims.
+- **Not on the new layout and look yet (rules 14–17):** the Science 7 sims, the STEAM trainers, and the Fraction and Pythagorean sims (the last two get it in the Number batch).
+- The Fraction and Pythagorean sims and the STEAM trainers have no `?debug=1` hook. No sim or trainer has a teacher report.
 - Plant Lab has no recording sheet or teacher notes. Grade 6 would need a cut-down version.
 - The littleBits Trainer's bit list has not been matched to the school's kits.
 - The Dash Trainer does not cover Notes Part 4 (micro:bit).

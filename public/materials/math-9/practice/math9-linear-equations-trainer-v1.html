@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Equations Trainer | Math 9</title>
+<style>
+/* =====================================================================
+   EQUATIONS TRAINER
+   Math 9 | Algebra | Linear Equations & Inequalities
+   LE1 one- and two-step · LE2 brackets and both sides · LE3 fractions and decimals · LE4 inequalities · LE5 write and solve
+   Students type their working one line at a time. Every line is checked against the first equation:
+   it must have the same solution (or the same solution set). A balance stays level while it does and tips
+   when it does not; for inequalities a number line lets students test points in the original.
+   Wrong lines are matched to the named mistakes in the notes (first-term distribution, LCD on some terms,
+   wrong inverse operation, the sign flip).
+   Model: exact fractions, linear in one variable. Steps follow the notes in order, then Mixed practice.
+   Look: full window, dark high-contrast canvas (3Blue1Brown style); written material opens in popups.
+   ===================================================================== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f;
+    --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.45; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .4; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .cB { color: var(--blue); } .cY { color: var(--yellow); } .cT { color: var(--teal); } .cG { color: var(--gold); } .cGr { color: var(--green); } .cR { color: var(--red); }
+
+  /* ---------- top bar ---------- */
+  .top { display: flex; align-items: center; gap: 8px 16px; flex-wrap: wrap; background: var(--panel); border-bottom: 1px solid var(--edge); padding: 8px 14px; flex-shrink: 0; }
+  .brand .course-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--blue); }
+  .brand h1 { font-size: 19px; font-weight: 650; line-height: 1.15; }
+  .progress { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 160px; }
+  .progress .bar { flex: 1; max-width: 260px; height: 8px; border-radius: 4px; background: var(--panel2); border: 1px solid var(--edge); overflow: hidden; }
+  .progress .bar span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--blue), var(--teal)); transition: width .4s; }
+  .progress .txt { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .topbtns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .btn { min-height: 44px; border: 1px solid var(--edge); background: var(--panel2); color: var(--text); border-radius: 12px; padding: 6px 14px; font-size: 15px; font-weight: 600; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.good { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.small { min-height: 40px; padding: 4px 12px; font-size: 14px; }
+
+  /* ---------- goal strip ---------- */
+  .strip { display: flex; align-items: center; gap: 10px; background: var(--stage); border-bottom: 1px solid var(--edge); padding: 5px 14px; flex-shrink: 0; min-height: 52px; }
+  .strip .lab { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--yellow); white-space: nowrap; }
+  .strip .txt { flex: 1; font-weight: 600; }
+  .strip .txt small { color: var(--muted); font-weight: 600; margin-right: 6px; }
+  .strip .arrow { min-width: 44px; min-height: 40px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; font-size: 20px; font-weight: 700; color: var(--yellow); }
+
+  /* ---------- app area ---------- */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(330px, 420px); }
+  .main { display: flex; flex-direction: column; min-height: 0; min-width: 0; padding: 12px 14px; gap: 10px; }
+  .side { overflow-y: auto; min-height: 0; padding: 12px 14px 16px; background: var(--panel); border-left: 1px solid var(--edge); display: flex; flex-direction: column; gap: 12px; }
+  .stage { flex: 1; min-height: 0; background: var(--stage); border: 1px solid var(--edge); border-radius: 16px; display: flex; align-items: center; justify-content: center; padding: 6px; }
+  .stage svg { width: 100%; height: 100%; display: block; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 4px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .nl-hit { cursor: pointer; }
+  .work { background: var(--panel); border: 1px solid var(--edge); border-radius: 16px; padding: 8px 14px; max-height: 34%; overflow-y: auto; flex-shrink: 0; }
+  .work h3, .card h3 { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 4px; }
+  .work ol { list-style: none; }
+  .work li { display: flex; align-items: baseline; gap: 12px; font-family: var(--math); font-size: 21px; padding: 1px 0; }
+  .work li .why { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13px; color: var(--green); }
+  .work li.first .why { color: var(--muted); }
+  .work li.new { animation: slide .35s ease-out; }
+  @keyframes slide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .card { border: 1px solid var(--edge); border-radius: 14px; padding: 10px 13px; background: var(--panel2); }
+  .problem { font-family: var(--math); font-size: 28px; text-align: center; padding: 4px 0; }
+  .story { font-size: 16px; margin-bottom: 6px; }
+  .pcount { font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+  .dots span { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--edge); margin-left: 4px; vertical-align: middle; }
+  .dots span.on { background: var(--green); border-color: var(--green); }
+  .linein { width: 100%; min-height: 50px; padding: 6px 12px; background: var(--stage); border: 1px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 24px; color: var(--text); }
+  .linein:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 2px rgba(247, 217, 111, .35); }
+  .keys { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-top: 8px; }
+  .key { min-height: 42px; border: 1px solid var(--edge); background: var(--stage); border-radius: 10px; font-family: var(--math); font-size: 20px; color: var(--text); }
+  .key:hover { border-color: var(--blue); }
+  .key.x { color: var(--yellow); font-style: italic; }
+  .acts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .fb { margin-top: 8px; font-size: 15px; min-height: 22px; }
+  .fb.good { color: var(--green); }
+  .fb.oops { color: #ff9a90; }
+  .fb .tag { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; border: 1px solid currentColor; border-radius: 999px; padding: 0 8px; margin-right: 6px; }
+  .predict .q { font-weight: 600; margin-bottom: 8px; }
+  .predict .opts { display: flex; flex-direction: column; gap: 6px; }
+  .predict .opt { text-align: left; min-height: 44px; border: 1px solid var(--edge); background: var(--stage); border-radius: 10px; padding: 8px 12px; font-size: 15px; }
+  .predict .opt.picked { border-color: var(--yellow); color: var(--yellow); }
+  .predict .opt.right { border-color: var(--green); }
+  .verdict { margin-top: 8px; font-size: 15px; }
+  .donebox { border: 1px solid var(--green); background: #10261a; border-radius: 14px; padding: 12px 14px; }
+  .donebox .label { font-weight: 700; font-size: 18px; color: var(--green); margin-bottom: 6px; }
+
+  /* ---------- popups ---------- */
+  dialog { border: 1px solid var(--edge); border-radius: 18px; padding: 0; width: min(660px, calc(100vw - 24px)); max-height: calc(100vh - 40px); background: var(--panel); color: var(--text); box-shadow: 0 24px 60px rgba(0, 0, 0, .6); }
+  dialog::backdrop { background: rgba(3, 6, 12, .7); }
+  .dlg-head { display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-bottom: 1px solid var(--edge); }
+  .dlg-head h2 { flex: 1; font-size: 20px; font-weight: 650; }
+  .dlg-body { padding: 14px 20px 20px; overflow-y: auto; max-height: calc(100vh - 112px); }
+  .dlg-body p { margin-bottom: 9px; }
+  .dlg-body ol, .dlg-body ul { margin: 4px 0 6px 22px; }
+  .dlg-body li { margin-bottom: 6px; }
+  .box { border-radius: 14px; padding: 10px 14px; margin: 12px 0; border: 1px solid; }
+  .box .label { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px; }
+  .box p:last-child { margin-bottom: 0; }
+  .box.example { border-color: var(--blue); background: #0d2029; } .box.example .label { color: var(--blue); }
+  .box.watch { border-color: var(--red); background: #2a1316; } .box.watch .label { color: var(--red); }
+  .box.paper { border-color: var(--gold); background: #2a1e0f; } .box.paper .label { color: var(--gold); }
+  .box.hint { border-color: var(--yellow); background: #2a2610; } .box.hint .label { color: var(--yellow); }
+  .ican-pop { background: var(--stage); border: 1px solid var(--edge); border-radius: 12px; padding: 8px 12px; font-weight: 600; color: var(--yellow); }
+  .steps-list .sec { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 12px 0 4px; }
+  .steps-list button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; min-height: 44px; border: 1px solid transparent; background: none; border-radius: 10px; padding: 4px 10px; font-size: 15px; }
+  .steps-list button:hover { background: var(--panel2); }
+  .steps-list button.current { border-color: var(--blue); }
+  .steps-list .dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--edge); font-size: 12px; line-height: 16px; text-align: center; flex-shrink: 0; }
+  .steps-list .done .dot { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .wl { font-family: var(--math); font-size: 19px; margin: 2px 0; }
+
+  /* ---------- tutorial card ---------- */
+  .spot { outline: 3px solid var(--yellow) !important; outline-offset: 4px; border-radius: 12px; }
+  #coach { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 30; width: min(520px, calc(100vw - 24px)); background: var(--panel2); border: 1px solid var(--yellow); border-radius: 14px; padding: 12px 16px; box-shadow: 0 12px 36px rgba(0, 0, 0, .6); }
+  #coach p { font-weight: 600; margin-bottom: 8px; }
+  #coach .cactions { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  #coach .n { font-size: 13px; font-weight: 700; color: var(--muted); }
+
+  @media (max-width: 1180px) { .btxt { display: none; } .topbtns .btn { min-width: 44px; font-size: 17px; } }
+  @media (max-width: 1020px) { .app { grid-template-columns: minmax(0, 1fr) minmax(300px, 360px); } }
+  @media (max-height: 700px) {
+    .top { padding: 4px 12px; } .brand h1 { font-size: 17px; }
+    .strip { min-height: 44px; padding: 2px 12px; } .strip .arrow { min-height: 38px; }
+    .main { padding: 8px 10px; gap: 6px; } .side { padding: 8px 10px; gap: 8px; }
+    .card { padding: 7px 10px; } .problem { font-size: 24px; } .linein { font-size: 21px; min-height: 44px; }
+    .key { min-height: 38px; } .work li { font-size: 19px; }
+  }
+  @media (max-width: 760px) {
+    body { overflow: auto; display: block; } html, body { height: auto; }
+    .app { display: flex; flex-direction: column-reverse; }
+    .stage { height: 42vh; min-height: 240px; flex: none; }
+    .side { border-left: none; overflow: visible; }
+    .work { max-height: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { #beam, .progress .bar span { transition: none; } .work li.new { animation: none; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <div class="course-label">Math 9 · Algebra · Linear Equations</div>
+    <h1>Equations Trainer</h1>
+  </div>
+  <div class="progress"><div class="bar"><span id="progFill"></span></div><span class="txt" id="progText"></span></div>
+  <div class="topbtns">
+    <button type="button" class="btn small" id="bSteps" aria-label="All steps">☰<span class="btxt"> Steps</span></button>
+    <button type="button" class="btn small" id="bTask" aria-label="Task">📖<span class="btxt"> Task</span></button>
+    <button type="button" class="btn small" id="bHint" aria-label="Hint">💡<span class="btxt"> Hint</span></button>
+    <button type="button" class="btn small" id="bPaper" aria-label="In your notes">✎<span class="btxt"> In your notes</span></button>
+    <button type="button" class="btn small" id="bTour" aria-label="Tutorial">?<span class="btxt"> Tutorial</span></button>
+  </div>
+</header>
+
+<div class="strip" aria-live="polite">
+  <span class="lab">Goal</span>
+  <button type="button" class="arrow" id="stepPrev" aria-label="Previous step">‹</button>
+  <span class="txt" id="goal"></span>
+  <button type="button" class="arrow" id="stepNext" aria-label="Next step">›</button>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <div class="dlg-head"><h2 id="dlgTitle"></h2><button type="button" class="btn small" id="dlgClose">Close ✕</button></div>
+  <div class="dlg-body" id="dlgBody"></div>
+</dialog>
+
+<div id="coach" role="dialog" aria-label="Tutorial" hidden>
+  <p id="coachTxt"></p>
+  <div class="cactions"><span class="n" id="coachN"></span>
+    <span><button type="button" class="btn small" id="coachSkip">Skip</button> <button type="button" class="btn small primary" id="coachNext">Next</button></span></div>
+</div>
+
+<div class="app">
+  <section class="main">
+    <div class="stage" id="stage"><svg id="svg" viewBox="0 0 640 360" role="img" aria-label="A balance"></svg></div>
+    <div class="work" id="work"><h3>Your working</h3><ol id="lines"></ol></div>
+  </section>
+  <aside class="side">
+    <div class="card" id="probCard">
+      <div class="pcount"><span id="pLabel"></span><span class="dots" id="pDots"></span></div>
+      <div class="story" id="story" hidden></div>
+      <div class="problem" id="problem"></div>
+    </div>
+    <div class="card predict" id="predict" hidden></div>
+    <div class="card" id="inputCard">
+      <h3 id="inLabel">Next line</h3>
+      <input id="lineIn" class="linein" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type the next line of your working">
+      <div class="keys" id="keys"></div>
+      <div class="acts"><button type="button" class="btn primary" id="bCheck">Check</button><button type="button" class="btn small" id="bShow">Show me</button></div>
+      <div class="fb" id="fb" aria-live="polite"></div>
+    </div>
+    <div class="donebox" id="doneBox" hidden></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===================== MODEL START (no DOM) ===================== */
+const MODEL = (() => {
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+
+  /* ---- exact fractions ---- */
+  const F = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const fadd = (p, q) => F(p.n * q.d + q.n * p.d, p.d * q.d);
+  const fsub = (p, q) => F(p.n * q.d - q.n * p.d, p.d * q.d);
+  const fmul = (p, q) => F(p.n * q.n, p.d * q.d);
+  const fdiv = (p, q) => F(p.n * q.d, p.d * q.n);
+  const fneg = p => F(-p.n, p.d);
+  const fzero = p => p.n === 0;
+  const feq = (p, q) => p.n === q.n && p.d === q.d;
+  const fnum = p => p.n / p.d;
+  const fstr = p => (p.n < 0 ? '−' : '') + (p.d === 1 ? Math.abs(p.n) : Math.abs(p.n) + '/' + p.d);
+  function fdec(s) { const [i, f = ''] = s.split('.'); return F(parseInt(i + f || '0', 10), Math.pow(10, f.length)); }
+
+  /* ---- linear expressions {a, b} meaning a·v + b ---- */
+  const L = (a, b) => ({ a, b });
+  const ladd = (p, q) => L(fadd(p.a, q.a), fadd(p.b, q.b));
+  const lsub = (p, q) => L(fsub(p.a, q.a), fsub(p.b, q.b));
+  const lneg = p => L(fneg(p.a), fneg(p.b));
+  function lmul(p, q) {
+    if (!fzero(p.a) && !fzero(q.a)) throw { msg: 'That makes a squared term. Equations here are linear: each term is a number or a number times the variable.' };
+    return L(fadd(fmul(p.a, q.b), fmul(q.a, p.b)), fmul(p.b, q.b));
+  }
+  function ldiv(p, q) {
+    if (!fzero(q.a)) throw { msg: 'Dividing by the variable is not used here. Divide by numbers only.' };
+    if (fzero(q.b)) throw { msg: 'You cannot divide by 0.' };
+    return L(fdiv(p.a, q.b), fdiv(p.b, q.b));
+  }
+
+  /* ---- reading a typed line ---- */
+  const REL = ['<=', '>=', '<', '>', '='];
+  function norm(s) {
+    return String(s || '').replace(/[−–—]/g, '-').replace(/[×·*]/g, '*').replace(/÷/g, '/').replace(/≤/g, '<=').replace(/≥/g, '>=').replace(/\s+/g, '').toLowerCase();
+  }
+  function tokenize(s) {
+    const t = []; let i = 0;
+    while (i < s.length) {
+      const c = s[i];
+      if (/[0-9.]/.test(c)) { let j = i; while (j < s.length && /[0-9.]/.test(s[j])) j++; const num = s.slice(i, j); if ((num.match(/\./g) || []).length > 1 || num === '.') throw { msg: 'The number “' + num + '” has too many decimal points.' }; t.push({ k: 'n', v: num }); i = j; }
+      else if (/[a-z]/.test(c)) { t.push({ k: 'v', v: c }); i++; }
+      else if ('+-*/()'.includes(c)) { t.push({ k: c }); i++; }
+      else throw { msg: 'I can’t read “' + c + '”. Use numbers, the variable, + − × ÷, brackets, and one sign like = or <.' };
+    }
+    return t;
+  }
+  // Parse an expression to {a, b}. Implicit multiplication: 3x, 2(x + 1), (3/4)x.
+  function parseExpr(str, v) {
+    const t = tokenize(str); let i = 0;
+    const peek = () => t[i];
+    function expr() {
+      let r = term();
+      while (peek() && (peek().k === '+' || peek().k === '-')) { const op = t[i++].k; const q = term(); r = op === '+' ? ladd(r, q) : lsub(r, q); }
+      return r;
+    }
+    function term() {
+      let r = factor();
+      for (;;) {
+        const p = peek();
+        if (p && (p.k === '*' || p.k === '/')) { i++; const q = factor(); r = p.k === '*' ? lmul(r, q) : ldiv(r, q); }
+        else if (p && (p.k === 'n' || p.k === 'v' || p.k === '(')) { r = lmul(r, factor()); }
+        else return r;
+      }
+    }
+    function factor() {
+      const p = peek();
+      if (!p) throw { msg: 'Something is missing at the end of a side.' };
+      if (p.k === '-') { i++; return lneg(factor()); }
+      if (p.k === '+') { i++; return factor(); }
+      if (p.k === 'n') { i++; return L(F(0), fdec(p.v)); }
+      if (p.k === 'v') { i++; if (p.v !== v) throw { msg: 'Use the letter ' + v + ' for the unknown.' }; return L(F(1), F(0)); }
+      if (p.k === '(') { i++; const r = expr(); if (!peek() || peek().k !== ')') throw { msg: 'A bracket is not closed.' }; i++; return r; }
+      throw { msg: 'Two signs in a row, or a sign with nothing after it.' };
+    }
+    if (!t.length) throw { msg: 'One side is empty.' };
+    const r = expr();
+    if (i < t.length) throw { msg: t[i].k === ')' ? 'There is an extra closing bracket.' : 'I can’t read the end of a side.' };
+    return r;
+  }
+  // A whole line: two sides and one relation.
+  function parseLine(s, v) {
+    const n = norm(s);
+    if (!n) return { err: 'Type a line first.' };
+    let found = [];
+    for (let i = 0; i < n.length; i++) { const two = n.slice(i, i + 2); if (two === '<=' || two === '>=') { found.push([i, two]); i++; } else if ('<>='.includes(n[i])) found.push([i, n[i]]); }
+    if (!found.length) return { err: 'A line needs a sign between its two sides: = (or <, >, ≤, ≥ for an inequality).' };
+    if (found.length > 1) return { err: 'Use one sign per line. Write each step on its own line.' };
+    const [at, rel] = found[0];
+    try {
+      const lhs = parseExpr(n.slice(0, at), v), rhs = parseExpr(n.slice(at + rel.length), v);
+      return { lhs, rhs, rel, raw: n, lraw: n.slice(0, at), rraw: n.slice(at + rel.length) };
+    } catch (e) { return { err: e.msg || 'I can’t read that line.' }; }
+  }
+  const FLIP = { '<': '>', '>': '<', '<=': '>=', '>=': '<=', '=': '=' };
+  // Collect to A·v rel B, then solve. Returns {kind:'none'|'all'|'one', rel, val}.
+  function solve(P) {
+    const A = fsub(P.lhs.a, P.rhs.a), B = fsub(P.rhs.b, P.lhs.b);
+    if (fzero(A)) {
+      const holds = { '=': fzero(B), '<': 0 < fnum(B), '>': 0 > fnum(B), '<=': 0 <= fnum(B), '>=': 0 >= fnum(B) }[P.rel];
+      return { kind: holds ? 'all' : 'none' };
+    }
+    return { kind: 'one', rel: fnum(A) < 0 ? FLIP[P.rel] : P.rel, val: fdiv(B, A), A };
+  }
+  const sameSol = (s, t) => s.kind === t.kind && (s.kind !== 'one' || (s.rel === t.rel && feq(s.val, t.val)));
+  // Is the line already "v = number" (or "number = v")?
+  function isFinal(P, v) {
+    const numRe = /^-?\d+(\.\d+)?(\/\d+)?$/;
+    return (P.lraw === v && numRe.test(P.rraw)) || (P.rraw === v && numRe.test(P.lraw));
+  }
+  // Evaluate a side at a value.
+  const at = (l, x) => fadd(fmul(l.a, x), l.b);
+  const holds = (rel, l, r) => ({ '=': l === r, '<': l < r, '>': l > r, '<=': l <= r, '>=': l >= r }[rel]);
+
+  /* ---- writing lines back out ---- */
+  function lstr(l, v) {
+    const a = l.a, b = l.b; let s = '';
+    if (!fzero(a)) {
+      const abs = F(Math.abs(a.n), a.d);
+      s = (a.n < 0 ? '−' : '') + (feq(abs, F(1)) ? '' : abs.d === 1 ? String(abs.n) : '(' + fstr(abs) + ')') + v;
+    }
+    if (fzero(b)) return s || '0';
+    if (!s) return fstr(b);
+    return s + (b.n < 0 ? ' − ' : ' + ') + fstr(F(Math.abs(b.n), b.d));
+  }
+  const RELS = { '<': '<', '>': '>', '<=': '≤', '>=': '≥', '=': '=' };
+  const lineStr = (l, rel, r, v) => lstr(l, v) + ' ' + RELS[rel] + ' ' + lstr(r, v);
+  const pretty = s => norm(s).replace(/\*/g, '×').replace(/-/g, '−').replace(/<=/g, ' ≤ ').replace(/>=/g, ' ≥ ').replace(/([^≤≥])([<>=])/g, '$1 $2 ').replace(/\+/g, ' + ').replace(/(\S)−/g, '$1 − ').replace(/\(\s?−\s/g, '(−').replace(/^ − /, '−').replace(/\s+/g, ' ').replace(/([=<>≤≥]) − /g, '$1 −').trim();
+
+  // One sensible next line, for "Show me".
+  function nextStep(P, v) {
+    const { lhs, rhs, rel } = P;
+    const dens = [lhs.a, lhs.b, rhs.a, rhs.b].map(f => f.d);
+    const D = dens.reduce(lcm, 1);
+    if (D > 1) {
+      const k = L(F(0), F(D));
+      return { say: 'Multiply every term on both sides by ' + D + ' to clear the ' + (/\./.test(P.raw) ? 'decimals' : 'fractions') + '.', line: lineStr(lmul(lhs, k), rel, lmul(rhs, k), v) };
+    }
+    if (/[()]/.test(P.raw)) return { say: 'Expand the brackets: multiply every term inside.', line: lineStr(lhs, rel, rhs, v) };
+    if (!fzero(lhs.a) && !fzero(rhs.a)) {
+      const t = L(rhs.a, F(0)), s = rhs.a.n > 0;
+      return { say: (s ? 'Subtract ' : 'Add ') + lstr(L(F(Math.abs(rhs.a.n), rhs.a.d), F(0)), v) + (s ? ' from' : ' to') + ' both sides.', line: lineStr(lsub(lhs, t), rel, lsub(rhs, t), v) };
+    }
+    if (fzero(lhs.a)) return { say: 'Write it the other way around so ' + v + ' is on the left.', line: lineStr(rhs, FLIP[rel], lhs, v) };
+    if (!fzero(lhs.b)) {
+      const t = L(F(0), lhs.b), s = lhs.b.n > 0;
+      return { say: (s ? 'Subtract ' : 'Add ') + fstr(F(Math.abs(lhs.b.n), lhs.b.d)) + (s ? ' from' : ' to') + ' both sides.', line: lineStr(lsub(lhs, t), rel, lsub(rhs, t), v) };
+    }
+    const k = lhs.a, neg = k.n < 0, r2 = rel === '=' ? rel : (neg ? FLIP[rel] : rel);
+    return { say: 'Divide both sides by ' + fstr(k) + (neg && rel !== '=' ? ' and flip the sign (you divided by a negative).' : '.'), line: v + ' ' + RELS[r2] + ' ' + fstr(fdiv(rhs.b, k)) };
+  }
+
+  /* ---- checking one line ---- */
+  const FIRST = 'The number outside multiplies <b>every</b> term in the brackets, not just the first: 3(x + 4) = 3x + 12.';
+  const LCDALL = 'Multiply <b>every</b> term on <b>both</b> sides, including the whole numbers. Missing one changes the balance.';
+  const MOVE = t => 'To get rid of ' + t + ' on one side, do the <b>opposite</b> to both sides.';
+  function check(prob, text) {
+    const v = prob.v || 'x';
+    const P = parseLine(text, v);
+    if (P.err) return { ok: false, code: 'parse', msg: P.err };
+    const ineq = prob.kind === 'ineq';
+    if (!ineq && P.rel !== '=') return { ok: false, code: 'kind', msg: 'This is an equation, so every line uses = .' };
+    if (ineq && P.rel === '=') return { ok: false, code: 'kind', msg: 'Keep the inequality sign. Which way should it point?' };
+    const S = prob.sol, s = solve(P);
+    if (s.kind !== 'one') return { ok: false, code: 'lost', msg: 'The ' + v + ' terms cancelled out, so this line is ' + (s.kind === 'all' ? 'true for every number' : 'never true') + '. Something went wrong on the way. Check each term.', P };
+    if (sameSol(s, S)) return { ok: true, final: isFinal(P, v), P };
+    for (const tr of prob.traps || []) { if (tr.sol && sameSol(s, tr.sol)) return { ok: false, code: tr.code || 'trap', msg: tr.msg, P }; }
+    if (ineq && feq(s.val, S.val) && s.rel !== S.rel) {
+      const loose = s.rel.replace('=', '') === S.rel.replace('=', '');
+      if (loose) return { ok: false, code: 'equalpart', msg: 'Right direction, but check the “or equal to” part: is the boundary itself a solution? Test it in the first line.', P };
+      return { ok: false, code: prob.needsFlip ? 'noflip' : 'flip', msg: prob.needsFlip ? 'Same boundary, wrong direction. When you multiply or divide both sides by a <b>negative</b>, flip the sign. Tap the number line to test a point.' : 'Same boundary, wrong direction. You only flip the sign when you multiply or divide by a <b>negative</b>. Adding, subtracting, or dividing by a positive never flips it.', P };
+    }
+    if (!fzero(S.val) && feq(s.val, fneg(S.val))) return { ok: false, code: 'sign', msg: 'Close: check the signs. Look for a term that changed sides without changing its sign.', P };
+    return { ok: false, code: 'other', msg: 'Not balanced: this line does not have the same solution as the first one. Check that you did the same thing to <b>every</b> term on <b>both</b> sides.', P };
+  }
+
+  /* ---- problems ---- */
+  function make(text, o) {
+    o = o || {};
+    const v = o.v || 'x', P = parseLine(text, v);
+    if (P.err) throw new Error('bad problem ' + text + ': ' + P.err);
+    const prob = { text, v, kind: P.rel === '=' ? 'eq' : 'ineq', P, sol: solve(P), story: o.story, interp: o.interp, write: o.write };
+    prob.needsFlip = prob.kind === 'ineq' && fnum(fsub(P.lhs.a, P.rhs.a)) < 0;
+    prob.traps = (o.traps || []).map(tr => { const T = parseLine(tr.eq, v); return { code: tr.code, msg: tr.msg, sol: T.err ? null : solve(T) }; })
+      .filter(tr => tr.sol && tr.sol.kind === 'one' && !sameSol(tr.sol, prob.sol));
+    return prob;
+  }
+
+  // Random problems for Mixed practice, each with its own traps.
+  function gen(type) {
+    const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+    const sg = k => k < 0 ? ' − ' + (-k) : ' + ' + k;
+    type = type || pick(['one', 'two', 'dist', 'both', 'frac', 'ineq', 'ineqneg']);
+    const x = nz(-9, 9);
+    if (type === 'one') { const c = nz(-12, 12); return make('x' + sg(c) + ' = ' + (x + c), { traps: [{ eq: 'x = ' + (x + c) + ' + ' + c, msg: MOVE((c > 0 ? '+ ' : '− ') + Math.abs(c)), code: 'inverse' }] }); }
+    if (type === 'two') { const a = nz(2, 6), c = nz(-12, 12); return make(a + 'x' + sg(c) + ' = ' + (a * x + c), { traps: [{ eq: 'x' + sg(c) + ' = ' + (a * x + c) + '/' + a, msg: 'You divided only the ' + a + 'x. Undo the ' + (c > 0 ? '+ ' : '− ') + Math.abs(c) + ' first, or divide <b>every</b> term.', code: 'divone' }, { eq: a + 'x = ' + (a * x + c) + ' + ' + c, msg: MOVE((c > 0 ? '+ ' : '− ') + Math.abs(c)), code: 'inverse' }] }); }
+    if (type === 'dist') { const a = nz(2, 5) * (rnd(0, 3) ? 1 : -1), c = nz(-8, 8); const rhs = a * (x + c); return make(a + '(x' + sg(c) + ') = ' + rhs, { traps: [{ eq: a + 'x' + sg(c) + ' = ' + rhs, msg: FIRST, code: 'first' }] }); }
+    if (type === 'both') { const a = rnd(3, 8), b = rnd(1, a - 1), c = nz(-9, 9), d = a * x + c - b * x; return make(a + 'x' + sg(c) + ' = ' + b + 'x' + sg(d), { traps: [{ eq: (a + b) + 'x' + sg(c) + ' = ' + d, msg: 'You added ' + b + 'x to the left. To remove +' + b + 'x from the right, <b>subtract</b> ' + b + 'x from both sides.', code: 'addx' }] }); }
+    if (type === 'frac') { const d1 = pick([2, 3, 4, 5]), c = nz(-6, 6), xx = d1 * nz(-4, 4), r = xx / d1 + c; return make('x/' + d1 + sg(c) + ' = ' + r, { traps: [{ eq: 'x' + sg(c) + ' = ' + r, msg: 'You multiplied only x/' + d1 + ' by ' + d1 + '. ' + LCDALL, code: 'lcd' }] }); }
+    const a = nz(2, 5), c = nz(-10, 10), rels = ['<', '>', '<=', '>='], rel = pick(rels), R = { '<': '<', '>': '>', '<=': '≤', '>=': '≥' }[rel];
+    if (type === 'ineqneg') return make('−' + a + 'x' + sg(c) + ' ' + R + ' ' + (-a * x + c), {});
+    return make(a + 'x' + sg(c) + ' ' + R + ' ' + (a * x + c), {});
+  }
+
+  return { seed, rnd, F, fstr, fnum, feq, parseLine, solve, sameSol, isFinal, check, make, gen, nextStep, lineStr, lstr, pretty, at, holds, FLIP, RELS, FIRST, LCDALL, MOVE };
+})();
+/* ===================== MODEL END ===================== */
+
+const M = MODEL;
+const $ = id => document.getElementById(id);
+const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const C = { stage: '#0b0f17', grid: '#1b2433', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', grey: '#5d6b80' };
+const mathHTML = s => '<span class="math">' + String(s).replace(/\b([a-z])\b/g, '<i>$1</i>').replace(/([0-9)])([a-z])\b/g, '$1<i>$2</i>') + '</span>';
+const prettyMath = s => mathHTML(M.pretty(s));
+
+/* =====================================================================
+   STEPS: one group per notes section, in notes order.
+   ===================================================================== */
+const P_ = (t, o) => M.make(t, o);
+const STEPS = [
+  { id: 'one', sec: 'LE1', title: 'One step', paper: 'Notes · Section 1', goal: 'Solve 3 one-step equations. Do the opposite operation to both sides.',
+    task: '<p>An equation is a <b>balance</b>. Whatever you do to one side, you must do to the other.</p><div class="box example"><div class="label">Worked example</div><div class="wl">x + 7 = −3</div><div class="wl">x + 7 − 7 = −3 − 7</div><div class="wl">x = −10</div><p>Verify: −10 + 7 = −3 ✓</p></div><p>Type each new line of your working, then press <b>Check</b>. You can skip lines you can do in your head.</p>',
+    hints: ['Find what is being done to x. Do the opposite to both sides.', 'The opposite of + is −. The opposite of × is ÷.'],
+    predict: { q: 'A balance is level. You take 7 off the <b>left</b> pan only. What happens?', options: ['It stays level', 'It tips', 'You can’t tell'], answer: 1, explain: 'Taking weight off one side only tips it. That is why you subtract 7 from <b>both</b> sides.' },
+    problems: () => [P_('x − 7 = 12', { traps: [{ eq: 'x = 12 − 7', msg: 'You subtracted 7 again. To undo − 7, <b>add</b> 7 to both sides.', code: 'inverse' }] }),
+      P_('x + 7 = −3', { traps: [{ eq: 'x = −3 + 7', msg: 'To undo + 7, <b>subtract</b> 7 from both sides: −3 − 7.', code: 'inverse' }] }),
+      P_('x/4 = −3', { traps: [{ eq: 'x = −3/4', msg: 'You divided by 4. To undo ÷ 4, <b>multiply</b> both sides by 4.', code: 'inverse' }] })],
+    paperTask: '<p>A student solves x − 7 = 12 and gets x = 5.</p><ol><li>What did they do wrong?</li><li>Solve it correctly and verify your answer in the first equation.</li><li>Why do we verify in the <b>first</b> equation, not a later line?</li></ol>' },
+  { id: 'two', sec: 'LE1', title: 'Two steps', paper: 'Notes · Section 1', goal: 'Solve 3 two-step equations. Undo + or − first, then × or ÷.',
+    task: '<div class="box example"><div class="label">Worked example</div><div class="wl">2x − 5 = 9</div><div class="wl">2x = 14 <span style="font-family:Segoe UI;font-size:14px;color:#a7b4c8">add 5 to both sides</span></div><div class="wl">x = 7 <span style="font-family:Segoe UI;font-size:14px;color:#a7b4c8">divide both sides by 2</span></div><p>Verify: 2(7) − 5 = 9 ✓</p></div><p>We built 2x − 5 by multiplying, then subtracting. To undo it, go in reverse: undo the subtraction first.</p>',
+    hints: ['Undo the + or − first.', 'Then divide (or multiply) both sides.'],
+    problems: () => [P_('2x − 5 = 9', { traps: [{ eq: 'x − 5 = 9/2', msg: 'You divided only the 2x by 2. Undo the − 5 first, or divide <b>every</b> term by 2.', code: 'divone' }, { eq: '2x = 9 − 5', msg: 'To undo − 5, <b>add</b> 5 to both sides.', code: 'inverse' }] }),
+      P_('3x + 4 = −11', { traps: [{ eq: '3x = −11 + 4', msg: 'To undo + 4, <b>subtract</b> 4 from both sides.', code: 'inverse' }, { eq: 'x + 4 = −11/3', msg: 'You divided only the 3x. Undo the + 4 first.', code: 'divone' }] }),
+      P_('x/3 + 4 = 1', { traps: [{ eq: 'x/3 = 1 + 4', msg: 'To undo + 4, <b>subtract</b> 4 from both sides.', code: 'inverse' }, { eq: 'x + 4 = 3', msg: 'You multiplied only x/3 by 3. Multiply <b>every</b> term, or undo the + 4 first.', code: 'divone' }] })],
+    paperTask: '<p>Solve 5x − 3 = 22. Next to each line, write what you did to both sides. Then explain why you undo the − 3 before the × 5.</p>' },
+  { id: 'dist', sec: 'LE2', title: 'Brackets first', paper: 'Notes · Section 2', goal: 'Solve 3 equations with brackets. Distribute to every term first.',
+    task: '<div class="box example"><div class="label">Worked example</div><div class="wl">3(x + 4) = 21</div><div class="wl">3x + 12 = 21</div><div class="wl">3x = 9</div><div class="wl">x = 3</div></div><div class="box watch"><div class="label">Watch out</div><p>' + 'The 3 multiplies <b>every</b> term in the brackets: 3(x + 4) = 3x + 12, not 3x + 4. With a negative: −2(x − 5) = −2x + 10.' + '</p></div>',
+    hints: ['Multiply the number outside by each term inside.', 'Watch the signs: a negative outside changes the sign of every term inside.'],
+    problems: () => [P_('3(x + 4) = 21', { traps: [{ eq: '3x + 4 = 21', msg: M.FIRST, code: 'first' }] }),
+      P_('2(3x − 1) = 16', { traps: [{ eq: '6x − 1 = 16', msg: M.FIRST, code: 'first' }] }),
+      P_('−2(x − 5) = 14', { traps: [{ eq: '−2x − 5 = 14', msg: M.FIRST, code: 'first' }, { eq: '−2x − 10 = 14', msg: '−2 × −5 = <b>+10</b>. A negative outside changes the sign of every term: −2(x − 5) = −2x + 10.', code: 'negdist' }] })],
+    paperTask: '<p>A student solves 2(x + 5) = 20 by writing x + 5 = 10 first. Explain why this works. When might this shortcut be harder than distributing?</p>' },
+  { id: 'both', sec: 'LE2', title: 'Variables on both sides', paper: 'Notes · Section 2', goal: 'Solve 3 equations with x on both sides. Move the x terms to one side.',
+    task: '<div class="box example"><div class="label">Worked example</div><div class="wl">5x − 3 = 2x + 9</div><div class="wl">3x − 3 = 9 <span style="font-family:Segoe UI;font-size:14px;color:#a7b4c8">subtract 2x from both sides</span></div><div class="wl">3x = 12</div><div class="wl">x = 4</div></div><p>It doesn’t matter which side you move the x terms to. Moving the smaller one keeps the numbers positive.</p>',
+    hints: ['Subtract the smaller x term from both sides.', 'Then it is a two-step equation.'],
+    problems: () => [P_('5x − 3 = 2x + 9', { traps: [{ eq: '7x − 3 = 9', msg: 'You added 2x to the left. To remove +2x from the right, <b>subtract</b> 2x from both sides.', code: 'addx' }, { eq: '3x = 9 − 3', msg: 'To undo − 3, <b>add</b> 3 to both sides.', code: 'inverse' }] }),
+      P_('5x + 3 = 3x − 7', { traps: [{ eq: '8x + 3 = −7', msg: 'You added 3x to the left. To remove +3x from the right, <b>subtract</b> 3x from both sides.', code: 'addx' }, { eq: '2x = −7 + 3', msg: 'To undo + 3, <b>subtract</b> 3 from both sides.', code: 'inverse' }] }),
+      P_('6x − 5 = 4x + 3', { traps: [{ eq: '10x − 5 = 3', msg: 'You added 4x to the left. <b>Subtract</b> 4x from both sides instead.', code: 'addx' }, { eq: '2x = 3 − 5', msg: 'To undo − 5, <b>add</b> 5 to both sides.', code: 'inverse' }] })],
+    paperTask: '<p>Solve 5x − 3 = 2x + 9 twice: once moving 2x to the left, once moving 5x to the right. Show both. Why do you get the same answer?</p>' },
+  { id: 'all', sec: 'LE2', title: 'Put it together', paper: 'Notes · Section 2', goal: 'Solve 3 equations with brackets and x on both sides.',
+    task: '<div class="box example"><div class="label">Worked example</div><div class="wl">4(x − 2) = 2x + 6</div><div class="wl">4x − 8 = 2x + 6</div><div class="wl">2x = 14</div><div class="wl">x = 7</div><p>Verify: 4(7 − 2) = 20 and 2(7) + 6 = 20 ✓</p></div>',
+    hints: ['Distribute first.', 'Then move the x terms to one side and the numbers to the other.', '−(x − 9) means −1 × every term: −x + 9.'],
+    problems: () => [P_('4(x − 2) = 2x + 6', { traps: [{ eq: '4x − 2 = 2x + 6', msg: M.FIRST, code: 'first' }] }),
+      P_('−4(x + 2) = 2x − 8', { traps: [{ eq: '−4x + 2 = 2x − 8', msg: M.FIRST, code: 'first' }, { eq: '−4x + 8 = 2x − 8', msg: '−4 × 2 = <b>−8</b>. A negative outside changes the sign of every term.', code: 'negdist' }] }),
+      P_('2(x + 3) = −(x − 9)', { traps: [{ eq: '2x + 3 = −x + 9', msg: M.FIRST, code: 'first' }, { eq: '2x + 6 = −x − 9', msg: '−(x − 9) means −1 times every term: −x <b>+ 9</b>.', code: 'negdist' }] })],
+    paperTask: '<p>Solve 3(x + 2) − 2(x − 1) = 5(x − 1) + 3. Verify your answer. Which step was easiest to get wrong, and why?</p>' },
+  { id: 'frac', sec: 'LE3', title: 'Clear the fractions', paper: 'Notes · Section 3', goal: 'Solve 3 equations with fractions. Multiply every term by the LCD first.',
+    task: '<div class="box example"><div class="label">Worked example</div><div class="wl">x/3 + 1/2 = 5/6</div><div class="wl">6(x/3) + 6(1/2) = 6(5/6) <span style="font-family:Segoe UI;font-size:14px;color:#a7b4c8">LCD of 3, 2, 6 is 6</span></div><div class="wl">2x + 3 = 5</div><div class="wl">x = 1</div></div><div class="box watch"><div class="label">Watch out</div><p>' + 'Multiply <b>every</b> term on <b>both</b> sides, including whole numbers.' + '</p></div>',
+    hints: ['Find the LCD of all the denominators.', 'Multiply every term on both sides by it. The fractions disappear.'],
+    predict: { q: 'Multiply every term of x/3 + 1/2 = 5/6 by 6. What happens?', options: ['The fractions disappear: 2x + 3 = 5', 'The numbers get bigger, so it is harder', 'Only x/3 changes'], answer: 0, explain: '6 is a multiple of every denominator, so each fraction becomes a whole number: 6 × x/3 = 2x, 6 × 1/2 = 3, 6 × 5/6 = 5.' },
+    problems: () => [P_('x/3 + 1/2 = 5/6', { traps: [{ eq: '2x + 3 = 5/6', msg: 'You multiplied the left side only. ' + M.LCDALL, code: 'lcd' }] }),
+      P_('x/2 − x/3 = 1/6', { traps: [{ eq: '3x − 2x = 1/6', msg: 'You multiplied the left side only. ' + M.LCDALL, code: 'lcd' }] }),
+      P_('(3/4)x + 2 = (1/2)x + 5', { traps: [{ eq: '3x + 2 = 2x + 5', msg: 'You multiplied the fractions by 4 but not the 2 and the 5. ' + M.LCDALL, code: 'lcd' }] })],
+    paperTask: '<p>Explain why multiplying every term by the LCD makes the fractions disappear. Use x/3 as your example. Then explain what goes wrong if you skip a term.</p>' },
+  { id: 'dec', sec: 'LE3', title: 'Decimals', paper: 'Notes · Section 3', goal: 'Solve 3 equations with decimals. Multiply every term by 10 first, or work with the decimals.',
+    task: '<div class="box example"><div class="label">Worked example</div><div class="wl">0.3x + 1.2 = 0.9</div><div class="wl">3x + 12 = 9 <span style="font-family:Segoe UI;font-size:14px;color:#a7b4c8">multiply every term by 10</span></div><div class="wl">3x = −3</div><div class="wl">x = −1</div></div>',
+    hints: ['Multiply every term by 10 (or 100) so the decimals become whole numbers.', 'Every term means the whole numbers too: 3 becomes 30.'],
+    problems: () => [P_('0.3x + 1.2 = 0.9', { traps: [{ eq: '3x + 12 = 0.9', msg: 'You multiplied the left side only. ' + M.LCDALL, code: 'lcd' }] }),
+      P_('0.5x − 3 = 0.2x + 0.6', { traps: [{ eq: '5x − 3 = 2x + 6', msg: 'You multiplied the decimals by 10 but not the 3. ' + M.LCDALL, code: 'lcd' }] }),
+      P_('0.4x + 1.8 = 0.6x − 0.6', { traps: [{ eq: '4x + 18 = 6x − 0.6', msg: 'You missed the − 0.6. ' + M.LCDALL, code: 'lcd' }] })],
+    paperTask: '<p>Solve 0.5x − 3 = 0.2x + 0.6 two ways: clear the decimals first, and work with them directly. Which way was easier for you? Why?</p>' },
+  { id: 'noflip', sec: 'LE4', title: 'Inequalities: no flip', paper: 'Notes · Section 4', goal: 'Solve 3 inequalities. Tap the number line to test points.',
+    task: '<p>An inequality has many solutions. Solve it like an equation, then show the answer on a number line.</p><div class="box example"><div class="label">Worked example</div><div class="wl">2x + 3 > 7</div><div class="wl">2x > 4</div><div class="wl">x > 2 <span style="font-family:Segoe UI;font-size:14px;color:#a7b4c8">divide by positive 2: no flip</span></div><p>Test x = 3: 2(3) + 3 = 9 > 7 ✓. Test x = 1: 5 > 7 ✗.</p></div><p>○ open circle for &lt; and &gt;. ● closed circle for ≤ and ≥.</p>',
+    hints: ['Solve it like an equation, but keep the inequality sign.', 'Tap a point on the number line to test it in the first inequality.'],
+    predict: { q: '3 > 1 is true. Multiply both sides by −1. Which is true?', options: ['−3 > −1', '−3 < −1'], answer: 1, explain: 'Multiplying by −1 swaps the numbers’ sides of zero: −3 is to the left of −1. That is why the sign flips when you multiply or divide by a negative.' },
+    problems: () => [P_('2x + 3 > 7'), P_('4x − 1 < 11'), P_('5x + 2 ≥ 17')],
+    paperTask: '<p>Why does the inequality sign flip when you divide by a negative, but not when you subtract a negative? Use a number line in your answer.</p>' },
+  { id: 'flip', sec: 'LE4', title: 'Inequalities: flip', paper: 'Notes · Section 4', goal: 'Solve 3 inequalities where you divide by a negative.',
+    task: '<div class="box example"><div class="label">Worked example</div><div class="wl">−3x + 6 ≤ 15</div><div class="wl">−3x ≤ 9</div><div class="wl">x ≥ −3 <span style="font-family:Segoe UI;font-size:14px;color:#a7b4c8">divide by −3: FLIP</span></div></div><div class="box watch"><div class="label">Watch out</div><p>Flip only when you multiply or divide both sides by a <b>negative</b>.</p></div>',
+    hints: ['Get the x term alone first.', 'Dividing by a negative? Flip the sign.', 'Test a point from your answer on the number line.'],
+    problems: () => [P_('−3x + 6 ≤ 15'), P_('−2x + 5 ≥ 1'), P_('−4x ≤ 20')],
+    paperTask: '<p>A student solves −3x + 9 > 0 and writes x > 3. Is it right? Test a point to check, then show the correct solution.</p>' },
+  { id: 'mixineq', sec: 'LE4', title: 'Flip or not?', paper: 'Notes · Section 4', goal: 'Solve 3 inequalities. Decide each time whether to flip.',
+    task: '<p>A negative number on the other side does <b>not</b> make you flip. Only multiplying or dividing <b>both sides</b> by a negative does.</p><div class="box example"><div class="label">Worked example</div><div class="wl">3x > −12</div><div class="wl">x > −4 <span style="font-family:Segoe UI;font-size:14px;color:#a7b4c8">divide by positive 3: no flip</span></div></div>',
+    hints: ['What number do you divide by at the end? Is it negative?', 'Test a point to be sure.'],
+    problems: () => [P_('3x > −12'), P_('3 − 2x < x + 9'), P_('3(x − 2) ≤ 2x + 1')],
+    paperTask: '<p>Write one inequality you must flip and one you must not, both with a negative number in them. Explain how you can tell.</p>' },
+  { id: 'write', sec: 'LE5', title: 'Write and solve', paper: 'Notes · Section 5', goal: 'Write the equation or inequality from the words, solve it, then interpret the answer.',
+    task: '<p>Four steps: <b>Define</b> the variable. <b>Translate</b> the words. <b>Solve</b>. <b>Interpret</b> with units.</p><div class="box example"><div class="label">Worked example</div><p>A plumber charges $75 plus $50 per hour. You can spend at most $350. Let h = hours.</p><div class="wl">75 + 50h ≤ 350</div><div class="wl">50h ≤ 275</div><div class="wl">h ≤ 5.5</div><p>At most 5 full hours of work.</p></div>',
+    hints: ['Write the first line from the words. “At most” means ≤. “More than” means >.', 'Then solve it like the others.'],
+    problems: () => [
+      P_('2.5c − 75 > 0', { v: 'c', story: 'A Lethbridge student council sells hot chocolate for $2.50 a cup. They spent $75 on supplies. How many cups must they sell to make a profit? Let c = cups sold.', write: true, interp: { q: 'c > 30. What does that mean?', options: ['They must sell 30 cups', 'They must sell at least 31 cups', 'They can sell at most 30 cups'], answer: 1, explain: 'Profit needs more than 30 cups, and you can’t sell part of a cup, so at least 31.' },
+        traps: [{ eq: '2.5c + 75 > 0', msg: 'Supplies cost money: profit is what you take in <b>minus</b> the $75.', code: 'write' }, { eq: '75c − 2.5 > 0', msg: 'Check which number goes with c: each <b>cup</b> brings in $2.50.', code: 'write' }] }),
+      P_('75 + 50h ≤ 350', { v: 'h', story: 'A plumber charges a $75 call-out fee plus $50 per hour. A homeowner can spend at most $350. How many full hours of work can they have done? Let h = hours.', write: true, interp: { q: 'h ≤ 5.5. How many full hours?', options: ['5 hours', '5.5 hours', '6 hours'], answer: 0, explain: '5.5 is the most, and only full hours count, so 5. Check: 75 + 50(5) = $325 ≤ $350, but 6 hours costs $375.' },
+        traps: [{ eq: '75 + 50h ≥ 350', msg: '“At most” means no more than: use ≤.', code: 'write' }, { eq: '50 + 75h ≤ 350', msg: 'The $50 is for each hour, so it goes with h.', code: 'write' }] }),
+      P_('80(t + 1.5) = 100t', { v: 't', story: 'A car leaves Edmonton at 80 km/h. A second car leaves 1.5 hours later at 100 km/h, going the same way. When does the second car catch up? Let t = hours the second car has driven.', write: true, interp: { q: 't = 6. What does that mean?', options: ['6 hours after the first car leaves', '6 hours after the second car leaves', 'At 6 o’clock'], answer: 1, explain: 't counts the second car’s hours. The first car has then driven 7.5 hours. Both are 600 km from Edmonton.' },
+        traps: [{ eq: '80t + 1.5 = 100t', msg: 'The first car drives for t + 1.5 hours, so <b>all</b> of that is multiplied by 80: 80(t + 1.5) = 80t + 120.', code: 'first' }, { eq: '80(t − 1.5) = 100t', msg: 'The first car left earlier, so it has driven <b>longer</b>: t + 1.5 hours.', code: 'write' }] })],
+    paperTask: '<p>Write and solve: “A student needs at least 75 marks. She has 68, and one assignment worth up to 25 marks is left. What is the least she needs on it?” Then explain why the interpret step matters.</p>' },
+  { id: 'mixed', sec: 'Mix', title: 'Mixed practice', paper: 'Workbook · mixed review', goal: 'Solve 5 problems of every kind, mixed together.', need: 5,
+    task: '<p>Equations and inequalities from every section, in random order. Decide what to do first each time: distribute, clear fractions, move terms, or flip.</p>',
+    hints: ['Brackets? Distribute. Fractions? Multiply by the LCD.', 'Inequality and dividing by a negative? Flip.'],
+    gen: () => M.gen(),
+    paperTask: '<p>Make your own equation that needs every step: brackets, x on both sides, and a fraction. Solve it and swap with a partner.</p>' }
+];
+STEPS.forEach(s => { s.need = s.need || 3; });
+const ICAN = '<p class="ican-pop">🎯 I can solve linear equations and inequalities, including brackets, fractions and decimals, and use them to solve problems.</p>';
+
+/* =====================================================================
+   SAVED STATE
+   ===================================================================== */
+const STORE_KEY = 'math9-linear-equations-trainer-v1';
+function blank() { return { current: STEPS[0].id, done: {}, solved: {}, predict: {}, seen: {} }; }
+let state = blank();
+function load() {
+  if (DEBUG) return;
+  try { const o = JSON.parse(localStorage.getItem(STORE_KEY) || 'null'); if (o && typeof o === 'object' && o.done && o.solved) state = Object.assign(blank(), o); } catch (e) {}
+  if (!STEPS.some(s => s.id === state.current)) state.current = STEPS[0].id;
+}
+function save() { if (DEBUG) return; try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+
+/* =====================================================================
+   THE PAGE
+   ===================================================================== */
+const cur = () => STEPS.find(s => s.id === state.current);
+let W = { prob: null, lines: [], phase: 'solve', tests: [], lastBad: null, solvedNow: false, interp: null, hintN: 0, extra: false };
+
+function newProblem() {
+  const s = cur(), n = state.solved[s.id] || 0;
+  if (s.gen) W.prob = s.gen();
+  else { const list = s.problems(); W.prob = list[n < list.length ? n : M.rnd(0, list.length - 1)]; }
+  W.lines = []; W.tests = []; W.lastBad = null; W.solvedNow = false; W.interp = null; W.hintN = 0; W.tried = false;
+  W.phase = W.prob.write ? 'write' : 'solve';
+  if (!W.prob.write) W.lines.push({ text: W.prob.text, why: 'start' });
+}
+function select(id) {
+  state.current = id; save();
+  W.extra = false; newProblem(); renderAll();
+  const s = cur();
+  if (!DEBUG && !state.seen[s.id]) { state.seen[s.id] = true; save(); openDlg(s.sec + ' · ' + s.title, ICAN + s.task, () => { if (!state.seen.tour) { state.seen.tour = true; save(); startTour(); } }); }
+}
+
+function renderAll() {
+  const s = cur(), idx = STEPS.indexOf(s);
+  const nDone = STEPS.filter(x => state.done[x.id]).length;
+  $('progFill').style.width = Math.round(100 * nDone / STEPS.length) + '%';
+  $('progText').textContent = nDone + ' of ' + STEPS.length + ' steps';
+  $('goal').innerHTML = '<small>' + (idx + 1) + ' · ' + s.sec + ' · ' + s.title + '</small>' + s.goal;
+  $('stepPrev').disabled = idx === 0; $('stepNext').disabled = idx === STEPS.length - 1;
+  renderSide(); renderWork(); draw();
+}
+
+function renderSide() {
+  const s = cur(), p = W.prob, n = state.solved[s.id] || 0;
+  const shownN = W.solvedNow ? n : n + 1;
+  $('pLabel').textContent = (state.done[s.id] && !W.solvedNow) || W.extra ? 'Extra practice' : 'Problem ' + Math.min(Math.max(shownN, 1), s.need) + ' of ' + s.need;
+  $('pDots').innerHTML = Array.from({ length: s.need }, (_, i) => '<span class="' + (i < n ? 'on' : '') + '"></span>').join('');
+  $('story').hidden = !p.story; $('story').textContent = p.story || '';
+  $('problem').innerHTML = W.phase === 'write' ? '<span style="font-family:Segoe UI;font-size:16px;color:#a7b4c8">Write the first line in ' + mathHTML(p.v) + '</span>' : prettyMath(p.text);
+  // predict first, if this step has one and it has not been answered
+  const pr = s.predict, picked = state.predict[s.id];
+  const needPick = pr && picked == null;
+  if (pr && (needPick || (n === 0 && !W.tried && !W.lines.slice(1).length))) {
+    let h;
+    if (picked == null) h = '<h3>Predict first</h3><div class="q">' + pr.q + '</div><div class="opts">' + pr.options.map((o, i) => '<button type="button" class="opt" data-pick="' + i + '">' + o + '</button>').join('') + '</div>';
+    else h = '<h3>Your prediction: ' + pr.options[picked] + '</h3><div class="verdict" style="margin-top:2px">' + (picked === pr.answer ? '<b class="cGr">Right.</b> ' : '<b class="cG">Not quite.</b> ') + pr.explain + '</div>';
+    $('predict').innerHTML = h; $('predict').hidden = false;
+  } else $('predict').hidden = true;
+  // input, or the interpret question, or the finished box
+  const lock = needPick;
+  $('inputCard').hidden = W.solvedNow && !W.interp;
+  $('lineIn').disabled = $('bCheck').disabled = $('bShow').disabled = lock || W.solvedNow;
+  $('inLabel').textContent = W.phase === 'write' ? 'First line (from the words)' : 'Next line';
+  if (lock) setFb('Make your prediction first.', '');
+  renderKeys();
+  renderDone();
+}
+function renderKeys() {
+  const v = W.prob.v || 'x', ineq = W.prob.kind === 'ineq';
+  const list = ineq ? [v, '(', ')', '/', '.', '+', '−', '<', '>', '≤', '≥', '⌫', 'Clear'] : [v, '(', ')', '/', '.', '+', '−', '×', '=', '⌫', 'Clear'];
+  $('keys').innerHTML = list.map(k => '<button type="button" class="key' + (k === v ? ' x' : '') + '" data-k="' + k + '"' + (k === 'Clear' ? ' style="font-family:Segoe UI;font-size:14px"' : '') + '>' + k + '</button>').join('');
+}
+function renderDone() {
+  const s = cur(), box = $('doneBox');
+  if (W.interp) {
+    const it = W.interp, pr = W.prob.interp;
+    let h = '<div class="label">Interpret</div><div style="margin-bottom:8px">' + pr.q + '</div><div class="predict"><div class="opts">' + pr.options.map((o, i) => '<button type="button" class="opt' + (it.picked === i ? ' picked' : '') + (it.picked != null && i === pr.answer ? ' right' : '') + '" data-interp="' + i + '"' + (it.picked != null ? ' disabled' : '') + '>' + o + '</button>').join('') + '</div></div>';
+    if (it.picked != null) h += '<div class="verdict">' + (it.picked === pr.answer ? '<b class="cGr">Right.</b> ' : '<b class="cG">Not quite.</b> ') + pr.explain + '</div><div class="acts"><button type="button" class="btn primary" data-act="next">Next problem →</button></div>';
+    box.innerHTML = h; box.hidden = false; $('inputCard').hidden = true; return;
+  }
+  if (!W.solvedNow) { box.hidden = true; return; }
+  const finished = state.done[s.id], idx = STEPS.indexOf(s), nxt = STEPS[idx + 1];
+  let h = '<div class="label">' + (finished && !W.extra ? '★ Step complete!' : '✓ Solved') + '</div><div>' + W.verify + '</div><div class="acts">';
+  if (finished && !W.extra && nxt) h += '<button type="button" class="btn good" data-go="' + nxt.id + '">Next step: ' + nxt.title + ' →</button><button type="button" class="btn small" data-act="more">More practice</button>';
+  else if (finished && !W.extra) h += '<button type="button" class="btn small" data-act="more">More practice</button>';
+  else h += '<button type="button" class="btn primary" data-act="next">Next problem →</button>';
+  box.innerHTML = h + '</div>'; box.hidden = false;
+}
+function renderWork() {
+  $('lines').innerHTML = W.lines.map((l, i) => '<li class="' + (i === 0 ? 'first' : '') + (l.isNew ? ' new' : '') + '">' + prettyMath(l.text) + '<span class="why">' + (i === 0 ? (W.prob.write ? 'your first line' : 'start') : '✓ ' + (l.why || 'balanced')) + '</span></li>').join('') || '<li style="font-family:Segoe UI;font-size:15px;color:#a7b4c8">Your lines will appear here.</li>';
+  W.lines.forEach(l => { l.isNew = false; });
+  const w = $('work'); w.scrollTop = w.scrollHeight;
+}
+function setFb(html, cls, tag) { const f = $('fb'); f.innerHTML = (tag ? '<span class="tag">' + tag + '</span>' : '') + html; f.className = 'fb' + (cls ? ' ' + cls : ''); }
+
+/* ---------- the picture: a balance for equations, a number line for inequalities ---------- */
+function draw() {
+  const p = W.prob, svg = $('svg');
+  if (p.kind === 'ineq') return drawLine();
+  // The balance is built once, then only its tilt and words change, so the tilt animates.
+  if (svg.dataset.mode !== 'eq') {
+    // Each pan hangs straight down from its end of the beam (hang point at 0, 0).
+    const pan = (id, tid, col) => '<g id="' + id + '"><path d="M-104 48 L0 0 L104 48" fill="none" stroke="' + C.grey + '" stroke-width="2"/>' +
+      '<path d="M-118 48 Q0 76 118 48 Z" fill="' + col + '" fill-opacity=".14" stroke="' + col + '" stroke-width="3"/>' +
+      '<text class="m" id="' + tid + '" x="0" y="38" text-anchor="middle" font-size="28" fill="' + C.text + '"></text></g>';
+    svg.innerHTML = '<rect width="640" height="360" fill="' + C.stage + '"/>' +
+      '<path d="M320 128 L282 300 H358 Z" fill="#1b2433" stroke="' + C.grey + '" stroke-width="2"/><line x1="200" y1="300" x2="440" y2="300" stroke="' + C.grey + '" stroke-width="3" stroke-linecap="round"/>' +
+      pan('panL', 'lt', C.blue) + pan('panR', 'rt', C.gold) +
+      '<g id="beam"><line id="beamLine" x1="140" y1="120" x2="500" y2="120" stroke="' + C.blue + '" stroke-width="6" stroke-linecap="round"/><circle cx="320" cy="120" r="8" fill="' + C.yellow + '"/></g>' +
+      '<text id="bstat" x="320" y="44" text-anchor="middle" font-size="18"></text>' +
+      '<text class="m" x="320" y="340" text-anchor="middle" font-size="16" fill="' + C.tick + '">left side = right side</text>';
+    svg.dataset.mode = 'eq'; W.tiltShown = 0; setTilt(0);
+  }
+  const last = W.lastBad || (W.lines.length ? M.parseLine(W.lines[W.lines.length - 1].text, p.v) : null);
+  let tilt = 0;
+  if (W.lastBad && p.sol.kind === 'one') {
+    const x = p.sol.val, l = M.fnum(M.at(W.lastBad.lhs, x)), r = M.fnum(M.at(W.lastBad.rhs, x));
+    tilt = l > r ? -7 : l < r ? 7 : 0;
+  }
+  const lt = last && !last.err ? M.pretty(last.lraw) : '?', rt = last && !last.err ? M.pretty(last.rraw) : '?';
+  const bad = !!W.lastBad;
+  $('lt').textContent = lt; $('lt').setAttribute('font-size', lt.length > 14 ? 21 : 28);
+  $('rt').textContent = rt; $('rt').setAttribute('font-size', rt.length > 14 ? 21 : 28);
+  tweenTilt(tilt);
+  $('beamLine').setAttribute('stroke', bad ? C.red : C.blue);
+  const st = $('bstat');
+  st.textContent = W.lines.length === 0 && !bad ? 'Write the first line from the story' : bad ? '✗ Not balanced: these sides are not equal for the same ' + p.v : '✓ Balanced: both sides are equal for the same ' + p.v;
+  st.setAttribute('fill', W.lines.length === 0 && !bad ? C.tick : bad ? C.red : C.green);
+  svg.setAttribute('aria-label', bad ? 'The balance tips: your line is not balanced' : 'The balance is level');
+}
+const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+// Turn the beam by t degrees about the pivot (320, 120); the pans follow its ends and stay level.
+function setTilt(t) {
+  const b = $('beam'); if (!b) return;
+  const r = t * Math.PI / 180, dx = 180 * Math.cos(r), dy = 180 * Math.sin(r);
+  b.setAttribute('transform', 'rotate(' + t + ' 320 120)');
+  $('panL').setAttribute('transform', 'translate(' + (320 - dx) + ' ' + (120 - dy) + ')');
+  $('panR').setAttribute('transform', 'translate(' + (320 + dx) + ' ' + (120 + dy) + ')');
+}
+let tiltRaf = 0;
+function tweenTilt(to) {
+  cancelAnimationFrame(tiltRaf);
+  const from = W.tiltShown || 0;
+  if (reduceMotion || DEBUG || from === to) { W.tiltShown = to; setTilt(to); return; }
+  const t0 = performance.now(), dur = 650;
+  const step = now => {
+    const u = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - u, 3) * Math.cos(u * 6) ;   // a small overshoot, like a real balance settling
+    W.tiltShown = from + (to - from) * (u < 1 ? e : 1); setTilt(W.tiltShown);
+    if (u < 1) tiltRaf = requestAnimationFrame(step);
+  };
+  tiltRaf = requestAnimationFrame(step);
+}
+// Number line: tap to test a point in the first inequality. The answer is shaded once solved.
+let NL = null;
+function drawLine() {
+  const p = W.prob, svg = $('svg'), c = p.sol.kind === 'one' ? Math.round(M.fnum(p.sol.val)) : 0;
+  const lo = c - 8, hi = c + 8, X = v => 40 + (v - lo) * (560 / (hi - lo)), Y = 200;
+  svg.dataset.mode = 'ineq';
+  if (W.phase === 'write') { NL = null; svg.innerHTML = '<rect width="640" height="360" fill="' + C.stage + '"/><text x="320" y="180" text-anchor="middle" font-size="20" fill="' + C.tick + '">Write the first line from the story. Then you can test points here.</text>'; return; }
+  NL = { lo, hi, X, inv: px => lo + (px - 40) * (hi - lo) / 560 };
+  let h = '<rect width="640" height="360" fill="' + C.stage + '"/>';
+  h += '<text x="320" y="44" text-anchor="middle" font-size="18" fill="' + C.tick + '">Tap the line to test a number in ' + esc(M.pretty(p.text)) + '</text>';
+  if (W.solvedNow && p.sol.kind === 'one') {
+    const b = M.fnum(p.sol.val), right = p.sol.rel === '>' || p.sol.rel === '>=', closed = p.sol.rel.includes('=');
+    h += '<line x1="' + X(b) + '" y1="' + Y + '" x2="' + (right ? 620 : 20) + '" y2="' + Y + '" stroke="' + C.green + '" stroke-width="10" stroke-linecap="round" opacity=".85"/>';
+    h += '<circle cx="' + X(b) + '" cy="' + Y + '" r="11" fill="' + (closed ? C.green : C.stage) + '" stroke="' + C.green + '" stroke-width="4"/>';
+    h += '<text class="m" x="' + X(b) + '" y="' + (Y - 28) + '" text-anchor="middle" font-size="24" fill="' + C.green + '">' + esc(p.v + ' ' + M.RELS[p.sol.rel] + ' ' + M.fstr(p.sol.val)) + '</text>';
+  }
+  h += '<line x1="20" y1="' + Y + '" x2="620" y2="' + Y + '" stroke="' + C.axis + '" stroke-width="3"/><path d="M620 ' + Y + ' l-12 -7 v14 Z M20 ' + Y + ' l12 -7 v14 Z" fill="' + C.axis + '"/>';
+  for (let v = lo; v <= hi; v++) h += '<line x1="' + X(v) + '" y1="' + (Y - 8) + '" x2="' + X(v) + '" y2="' + (Y + 8) + '" stroke="' + C.axis + '" stroke-width="2"/>' + (v % 2 === 0 ? '<text x="' + X(v) + '" y="' + (Y + 32) + '" text-anchor="middle" font-size="15" fill="' + C.tick + '">' + (v < 0 ? '−' + -v : v) + '</text>' : '');
+  W.tests.forEach(t => { h += '<circle cx="' + X(t.v) + '" cy="' + (Y - 46) + '" r="9" fill="' + (t.ok ? C.green : C.red) + '"/><text x="' + X(t.v) + '" y="' + (Y - 62) + '" text-anchor="middle" font-size="14" fill="' + (t.ok ? C.green : C.red) + '">' + (t.ok ? '✓' : '✗') + '</text>'; });
+  h += '<rect class="nl-hit" x="20" y="' + (Y - 70) + '" width="600" height="110" fill="transparent"/>';
+  if (W.tests.length) { const t = W.tests[W.tests.length - 1]; h += '<text class="m" x="320" y="320" text-anchor="middle" font-size="20" fill="' + (t.ok ? C.green : C.red) + '">' + esc(t.say) + '</text>'; }
+  svg.innerHTML = h;
+  svg.setAttribute('aria-label', 'Number line from ' + lo + ' to ' + hi + (W.tests.length ? '. Tested: ' + W.tests.map(t => t.v + (t.ok ? ' true' : ' false')).join(', ') : ''));
+}
+function testPoint(v) {
+  const p = W.prob, x = M.F(v), l = M.fnum(M.at(p.P.lhs, x)), r = M.fnum(M.at(p.P.rhs, x));
+  const ok = M.holds(p.P.rel, l, r);
+  W.tests = W.tests.filter(t => t.v !== v).concat({ v, ok, say: p.v + ' = ' + (v < 0 ? '−' + -v : v) + ':  ' + fmtN(l) + ' ' + M.RELS[p.P.rel] + ' ' + fmtN(r) + (ok ? '  ✓ true' : '  ✗ false') });
+  W.tests = W.tests.slice(-10);
+  draw();
+  return ok;
+}
+const fmtN = n => { const r = Math.round(n * 100) / 100; return (r < 0 ? '−' : '') + Math.abs(r); };
+$('svg').addEventListener('click', e => {
+  if (W.prob.kind !== 'ineq' || !NL) return;
+  const svg = $('svg'), pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+  const q = pt.matrixTransform(svg.getScreenCTM().inverse());
+  const v = Math.round(NL.inv(q.x)); if (v >= NL.lo && v <= NL.hi) testPoint(v);
+});
+
+/* ---------- checking a line ---------- */
+function submit() {
+  const s = cur(), p = W.prob, text = $('lineIn').value;
+  if (W.solvedNow) return null;
+  if (!W.tried) { W.tried = true; $('predict').hidden = true; }
+  if (W.phase === 'write') {
+    const P = M.parseLine(text, p.v);
+    if (P.err) { setFb(P.err, 'oops'); return { ok: false, code: 'parse' }; }
+    const r = M.check(p, text);
+    if (!r.ok) { setFb(r.code === 'other' || r.code === 'sign' ? 'That line doesn’t match the story. Read it again: what is added on once, and what goes with ' + p.v + '?' : r.msg, 'oops', r.code === 'parse' ? '' : 'check the words'); W.lastBad = r.P && !r.P.err ? r.P : null; draw(); return r; }
+    W.phase = 'solve'; W.lastBad = null;
+    W.lines.push({ text, why: 'matches the story', isNew: true });
+    $('lineIn').value = '';
+    if (r.final) return finish();
+    setFb('✓ That matches the story. Now solve it.', 'good');
+    renderSide(); renderWork(); draw(); return r;
+  }
+  const r = M.check(p, text);
+  if (!r.ok) {
+    W.lastBad = r.P && !r.P.err ? r.P : null;
+    const tag = { first: 'distribute', negdist: 'signs', lcd: 'every term', inverse: 'opposite operation', divone: 'every term', addx: 'opposite operation', noflip: 'flip', flip: 'flip', sign: 'signs', equalpart: 'boundary' }[r.code];
+    setFb(r.msg, 'oops', tag); draw(); return r;
+  }
+  W.lastBad = null;
+  const prev = W.lines[W.lines.length - 1];
+  if (prev && M.pretty(prev.text) === M.pretty(text)) { setFb('That is the same as your last line. Do one more step.', ''); return r; }
+  W.lines.push({ text, why: r.final ? 'solved' : 'balanced', isNew: true });
+  $('lineIn').value = '';
+  if (r.final) return finish();
+  setFb('✓ Balanced. Keep going.', 'good');
+  renderWork(); draw(); $('lineIn').focus();
+  return r;
+}
+function finish() {
+  const s = cur(), p = W.prob;
+  W.solvedNow = true;
+  const x = p.sol.val, xs = M.fstr(x);
+  if (p.kind === 'eq') {
+    const l = M.at(p.P.lhs, x), r = M.at(p.P.rhs, x);
+    W.verify = 'Verify in the first line: left side = ' + M.fstr(l) + ', right side = ' + M.fstr(r) + '. Equal ✓';
+  } else {
+    const right = p.sol.rel === '>' || p.sol.rel === '>=', t = Math.round(M.fnum(x)) + (right ? 2 : -2);
+    const l = M.fnum(M.at(p.P.lhs, M.F(t))), rr = M.fnum(M.at(p.P.rhs, M.F(t)));
+    W.verify = 'Test ' + p.v + ' = ' + (t < 0 ? '−' + -t : t) + ' from your answer: ' + fmtN(l) + ' ' + M.RELS[p.P.rel] + ' ' + fmtN(rr) + ' ✓. The green shows every solution.';
+  }
+  setFb('', '');
+  const n = (state.solved[s.id] || 0) + (W.extra && state.done[s.id] ? 0 : 1);
+  if (!state.done[s.id]) { state.solved[s.id] = n; if (n >= s.need) state.done[s.id] = true; }
+  save();
+  if (p.interp) W.interp = { picked: null };
+  renderAll();
+  return { ok: true, final: true };
+}
+
+/* ---------- events ---------- */
+$('bCheck').addEventListener('click', submit);
+$('lineIn').addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+$('lineIn').addEventListener('input', () => { if (W.lastBad) { W.lastBad = null; draw(); } });
+$('keys').addEventListener('click', e => {
+  const b = e.target.closest('[data-k]'); if (!b) return;
+  const inp = $('lineIn'), k = b.dataset.k;
+  const s0 = inp.selectionStart == null ? inp.value.length : inp.selectionStart, s1 = inp.selectionEnd == null ? s0 : inp.selectionEnd;
+  if (k === 'Clear') inp.value = '';
+  else if (k === '⌫') { const a = s0 === s1 ? Math.max(0, s0 - 1) : s0; inp.value = inp.value.slice(0, a) + inp.value.slice(s1); inp.setSelectionRange(a, a); }
+  else { const ins = ['=', '<', '>', '≤', '≥', '+', '−', '×'].includes(k) ? ' ' + k + ' ' : k; inp.value = inp.value.slice(0, s0) + ins + inp.value.slice(s1); const c = s0 + ins.length; inp.setSelectionRange(c, c); }
+  inp.focus(); inp.dispatchEvent(new Event('input'));
+});
+$('bShow').addEventListener('click', () => {
+  const p = W.prob;
+  if (W.phase === 'write') { $('lineIn').value = M.pretty(p.text); setFb('Here is one way to write it. Read it against the story, then press <b>Check</b>.', ''); return; }
+  const last = M.parseLine(W.lines[W.lines.length - 1].text, p.v);
+  const ns = M.nextStep(last, p.v);
+  $('lineIn').value = ns.line; setFb('<b>Next:</b> ' + ns.say + ' Press <b>Check</b>.', '');
+});
+$('predict').addEventListener('click', e => {
+  const b = e.target.closest('[data-pick]'); if (!b) return;
+  state.predict[cur().id] = +b.dataset.pick; save(); setFb('', ''); renderSide(); $('lineIn').focus();
+});
+$('doneBox').addEventListener('click', e => {
+  const g = e.target.closest('[data-go]'); if (g) return select(g.dataset.go);
+  const a = e.target.closest('[data-act]'); const ib = e.target.closest('[data-interp]');
+  if (ib) { W.interp.picked = +ib.dataset.interp; renderDone(); return; }
+  if (!a) return;
+  if (a.dataset.act === 'more') W.extra = true;
+  newProblem(); setFb('', ''); renderAll(); $('lineIn').focus();
+});
+$('stepPrev').addEventListener('click', () => { const i = STEPS.indexOf(cur()); if (i > 0) select(STEPS[i - 1].id); });
+$('stepNext').addEventListener('click', () => { const i = STEPS.indexOf(cur()); if (i < STEPS.length - 1) select(STEPS[i + 1].id); });
+
+/* ---------- popups ---------- */
+let afterDialog = null;
+function openDlg(title, html, then) {
+  $('dlgTitle').textContent = title; $('dlgBody').innerHTML = html; afterDialog = then || null;
+  const d = $('dlg'); if (d.showModal) { if (!d.open) d.showModal(); } else d.setAttribute('open', '');
+  $('dlgBody').scrollTop = 0;
+}
+function closeDlg() { const d = $('dlg'); if (d.close) d.close(); else { d.removeAttribute('open'); d.dispatchEvent(new Event('close')); } }
+$('dlg').addEventListener('close', () => { const f = afterDialog; afterDialog = null; if (f) f(); });
+$('dlgClose').addEventListener('click', closeDlg);
+$('dlg').addEventListener('click', e => {
+  if (e.target === $('dlg')) return closeDlg();
+  const g = e.target.closest('[data-go]'); if (g) { closeDlg(); select(g.dataset.go); }
+  if (e.target.closest('#bNewStudent') && confirm('Start again from step 1? All the work saved on this device will be erased.')) { state = blank(); save(); closeDlg(); select(state.current); }
+});
+$('bTask').addEventListener('click', () => { const s = cur(); openDlg(s.sec + ' · ' + s.title, ICAN + '<p style="font-size:13px;color:#a7b4c8">Goes with: ' + s.paper + '</p>' + s.task); });
+$('bPaper').addEventListener('click', () => { const s = cur(); openDlg('In your notes', '<div class="box paper"><div class="label">Explain it in your notes</div>' + s.paperTask + '</div>'); });
+$('bHint').addEventListener('click', () => {
+  const s = cur(); W.hintN = Math.min(s.hints.length, W.hintN + 1);
+  openDlg('Hint', s.hints.slice(0, W.hintN).map((h, i) => '<div class="box hint"><div class="label">Hint ' + (i + 1) + '</div><p>' + h + '</p></div>').join('') + (W.hintN < s.hints.length ? '<p style="color:#a7b4c8">Press Hint again for another.</p>' : '<p style="color:#a7b4c8">Still stuck? Close this and press <b>Show me</b> for the next line.</p>'));
+});
+$('bSteps').addEventListener('click', () => {
+  let h = '<div class="steps-list">', sec = '';
+  STEPS.forEach((s, i) => {
+    if (s.sec !== sec) { sec = s.sec; h += '<div class="sec">' + (sec === 'Mix' ? 'Mixed practice' : sec + ' · ' + s.paper.replace('Notes · ', 'Notes ')) + '</div>'; }
+    h += '<button type="button" data-go="' + s.id + '" class="' + (state.done[s.id] ? 'done' : '') + (s.id === state.current ? ' current' : '') + '"><span class="dot">' + (state.done[s.id] ? '✓' : '') + '</span>' + (i + 1) + '. ' + s.title + '<span style="margin-left:auto;font-size:13px;color:#a7b4c8">' + (state.solved[s.id] || 0) + '/' + s.need + '</span></button>';
+  });
+  openDlg('All steps', h + '</div><div class="acts" style="margin-top:14px"><button type="button" class="btn small" id="bNewStudent">⟲ New student (erase this device’s work)</button></div>');
+});
+
+/* ---------- tutorial ---------- */
+const TOUR = [['#problem', 'This is the problem to solve.'], ['#lineIn', 'Type the next line of your working here, then press Check.'], ['#keys', 'These keys type the variable, brackets and signs.'], ['#stage', 'The picture checks your line. Level means it still has the same answer as the first line.'], ['#bHint', 'Stuck? A hint opens here. Show me fills in the next line.'], ['#bSteps', 'All the steps and your progress are here.']];
+let tour = null;
+function unspot() { document.querySelectorAll('.spot').forEach(n => n.classList.remove('spot')); }
+function startTour() { endTour(); tour = { steps: TOUR.filter(s => { const n = document.querySelector(s[0]); return n && n.getClientRects().length; }), i: -1 }; $('coach').hidden = false; tourNext(); }
+function tourNext() {
+  unspot(); tour.i++; const s = tour.steps[tour.i]; if (!s) return endTour();
+  const n = document.querySelector(s[0]); n.classList.add('spot'); if (n.scrollIntoView) n.scrollIntoView({ block: 'nearest' });
+  $('coachTxt').textContent = s[1]; $('coachN').textContent = (tour.i + 1) + ' of ' + tour.steps.length;
+  $('coachNext').textContent = tour.i === tour.steps.length - 1 ? 'Done' : 'Next'; $('coachNext').focus({ preventScroll: true });
+}
+function endTour() { if (!tour) return; unspot(); $('coach').hidden = true; tour = null; }
+$('bTour').addEventListener('click', startTour);
+$('coachNext').addEventListener('click', () => { if (tour) tourNext(); });
+$('coachSkip').addEventListener('click', endTour);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && tour) endTour(); });
+
+/* ---------- start ---------- */
+load();
+if (DEBUG) window.TR = { MODEL, STEPS, W: () => W, state: () => state, select, submit, newProblem, testPoint, openDlg, closeDlg, startTour, renderAll };
+select(location.hash.slice(1) && STEPS.some(s => s.id === location.hash.slice(1)) ? location.hash.slice(1) : state.current);
+</script>
+</body>
+</html>

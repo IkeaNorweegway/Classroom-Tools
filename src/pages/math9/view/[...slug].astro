@@ -16,6 +16,8 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 const fileUrl = `${base}materials/math-9/${slug}.html`;
+// Simulations and trainers fill the window: no site nav, a slim back bar, a full-screen button.
+const isApp = /-(sim|trainer)-v\d+$/.test(slug!);
 const backHref = `${base}${backPathFor(slug!)}`;
 ---
 
@@ -38,17 +40,32 @@ const backHref = `${base}${backPathFor(slug!)}`;
       .viewer-nav, .back-bar { display: none !important; }
       .doc-frame { height: 100vh; }
     }
+    .back-bar.app { background: #0f1520; border-bottom-color: #263246; padding: 0.3rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .back-bar.app a { color: #a7b4c8; }
+    .back-bar.app a:hover { color: #f5f7fb; }
+    .fs-btn { font: 600 0.8rem system-ui, sans-serif; color: #a7b4c8; background: #151d2b; border: 1px solid #263246; border-radius: 8px; padding: 0.3rem 0.75rem; cursor: pointer; }
+    .fs-btn:hover { color: #f5f7fb; border-color: #58c4dd; }
   </style>
 </head>
 <body>
   <div class="viewer-shell">
-    <div class="viewer-nav">
-      <Nav course="math9" />
-    </div>
-    <div class="back-bar">
+    {!isApp && (
+      <div class="viewer-nav">
+        <Nav course="math9" />
+      </div>
+    )}
+    <div class:list={['back-bar', { app: isApp }]}>
       <a href={backHref}>← Back</a>
+      {isApp && <button type="button" id="fs-btn" class="fs-btn">⛶ Full screen</button>}
     </div>
-    <iframe src={fileUrl} class="doc-frame" title={slug} />
+    <iframe src={fileUrl} class="doc-frame" title={slug} allowfullscreen />
   </div>
+  <script is:inline>
+    var fsBtn = document.getElementById('fs-btn');
+    if (fsBtn) fsBtn.addEventListener('click', function () {
+      var f = document.querySelector('.doc-frame'), go = f.requestFullscreen || f.webkitRequestFullscreen;
+      if (go) go.call(f);
+    });
+  </script>
 </body>
 </html>

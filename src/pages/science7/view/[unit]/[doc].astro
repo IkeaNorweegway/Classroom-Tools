@@ -117,6 +117,8 @@ const isHome = doc!.includes('-home-');
 const backHref = isHome ? `${base}${manifest.parentHref(unit!)}` : `${base}science7/materials/${unit}`;
 const backLabel = isHome ? '← Parent guide' : `← ${unitLabels[unit] ?? 'Science 7'}`;
 const fileUrl = `${base}materials/${doc}.html`;
+// Simulations and trainers fill the window: no site nav, a slim back bar, a full-screen button.
+const isApp = /-(sim|trainer)-v\d+$/.test(doc!);
 ---
 
 <!doctype html>
@@ -162,21 +164,35 @@ const fileUrl = `${base}materials/${doc}.html`;
       .viewer-nav, .back-bar { display: none !important; }
       .doc-frame { height: 100vh; }
     }
+    .back-bar.app { padding: 0.3rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .fs-btn { font: 600 0.8rem system-ui, sans-serif; color: #6b665d; background: #fff; border: 1px solid rgb(31 29 26 / 0.15); border-radius: 8px; padding: 0.3rem 0.75rem; cursor: pointer; }
+    .fs-btn:hover { color: #1f1d1a; }
   </style>
 </head>
 <body>
   <div class="viewer-shell">
-    <div class="viewer-nav">
-      <Nav course="science7" />
-    </div>
-    <div class="back-bar">
+    {!isApp && (
+      <div class="viewer-nav">
+        <Nav course="science7" />
+      </div>
+    )}
+    <div class:list={['back-bar', { app: isApp }]}>
       <a href={backHref}>{backLabel}</a>
+      {isApp && <button type="button" id="fs-btn" class="fs-btn">⛶ Full screen</button>}
     </div>
     <iframe
       src={fileUrl}
       class="doc-frame"
       title={doc}
+      allowfullscreen
     />
   </div>
+  <script is:inline>
+    var fsBtn = document.getElementById('fs-btn');
+    if (fsBtn) fsBtn.addEventListener('click', function () {
+      var f = document.querySelector('.doc-frame'), go = f.requestFullscreen || f.webkitRequestFullscreen;
+      if (go) go.call(f);
+    });
+  </script>
 </body>
 </html>

@@ -118,13 +118,21 @@ function withPracticeTest(slug: string, label: string, strand: StrandSlug, stem:
 const squareRoots = withPracticeTest('square-roots', 'Square Roots', 'number', 'math9-square-roots');
 squareRoots.extras.unshift({ label: 'Pythagorean Simulator (squares on the sides, why it works, scaling triangles)', path: 'practice/math9-pythagorean-sim-v1' });
 
+// Simulations and trainers: one per topic, listed first under Extra help. Rules: _sims-context.md.
+const linearRelations = withPracticeTest('linear-relations', 'Linear Relations', 'algebra', 'math9-linear-relations');
+linearRelations.extras.unshift({ label: 'Linear Relations Simulator (four views, slope, y = mx + b, direct or partial)', path: 'practice/math9-linear-relations-sim-v1', type: 'interactive' });
+const linearEquations = withPracticeTest('linear-equations', 'Linear Equations & Inequalities', 'algebra', 'math9-linear-equations');
+linearEquations.extras.unshift({ label: 'Equations Trainer (solve step by step on a balance, inequalities on a number line)', path: 'practice/math9-linear-equations-trainer-v1', type: 'interactive' });
+const polynomials = withPracticeTest('polynomials', 'Polynomials', 'algebra', 'math9-polynomials');
+polynomials.extras.unshift({ label: 'Polynomials Trainer (algebra tiles and the area model)', path: 'practice/math9-polynomials-trainer-v1', type: 'interactive' });
+
 export const topics: Topic[] = [
   rational,
   withPracticeTest('powers-exponents', 'Powers & Exponents', 'number', 'math9-powers'),
   squareRoots,
-  withPracticeTest('linear-relations', 'Linear Relations', 'algebra', 'math9-linear-relations'),
-  withPracticeTest('linear-equations', 'Linear Equations & Inequalities', 'algebra', 'math9-linear-equations'),
-  withPracticeTest('polynomials', 'Polynomials', 'algebra', 'math9-polynomials'),
+  linearRelations,
+  linearEquations,
+  polynomials,
   withPracticeTest('circle-geometry', 'Circle Geometry', 'measurement-geometry', 'math9-circle-geometry'),
   withPracticeTest('measurement', 'Surface Area & Volume', 'measurement-geometry', 'math9-measurement'),
   withPracticeTest('similarity', 'Similarity & Scale', 'measurement-geometry', 'math9-similarity'),
