@@ -18,6 +18,15 @@ These texts give **facts**. They have **headings** that tell you what each part 
 
 ---page---
 
+## Map: the six regions
+
+This **map** shows where each region is. The **map key** tells you what the symbols mean. Each card shows what a region is like.
+
+::: visual alberta-regions-map
+:::
+
+---page---
+
 ::: passage Six Regions, One Province | Text 1
 
 Alberta is big. The land is not the same everywhere.

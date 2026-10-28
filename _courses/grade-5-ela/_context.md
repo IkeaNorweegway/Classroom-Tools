@@ -75,6 +75,7 @@ All student materials come in three editions with the **same texts, topic, quest
 | Cold reads | `ela5-[unit]-coldreads-v1` (+ `-answers`) | A, B, C | Unseen grade-level passages with LO-mapped questions (mid-unit and end of unit) |
 | Writing rubric + exemplars | `ela5-[unit]-rubric-v1` | A | Analytic rubric (Alberta 4-point labels), student single-point checklist, three sample pieces at different levels |
 | Teacher guide | `ela5-[unit]-teacherguide-v1` | — | Overview, outcome map, 30 lesson cards, groups plan, assessment plan, editions guide |
+| Region map (Information Report only) | `ela5-information-report-regions-map-v1` | all | One-page map of Alberta's six natural regions with icon cards (land, weather, plants, animals, people), facts from the reader only. Also a page in both readers via `::: visual alberta-regions-map`. Built by `scripts/build_ela5_alberta_map.pl` |
 | Home practice | `ela5-[unit]-home-[skill]-v1` (+ `-answers`) | — | Two one-page sheets for the parent guide (`render_home_practice.pl`, `course: ela5`) |
 
 ### Editions

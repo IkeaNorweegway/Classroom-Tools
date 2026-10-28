@@ -10,7 +10,7 @@ name: no
 
 ## How to use this reader
 
-These texts are **information texts**: they teach facts about a topic. Unlike a story, an information text is organized by **topic and subtopics**, and it uses **text features** (headings, diagrams, captions, bold words, sidebars and a glossary) to help you find what matters. Every paragraph is numbered so you can point to your evidence.
+These texts are **information texts**: they teach facts about a topic. Unlike a story, an information text is organized by **topic and subtopics**, and it uses **text features** (headings, maps, diagrams, captions, bold words, sidebars and a glossary) to help you find what matters. Every paragraph is numbered so you can point to your evidence.
 
 | Text | Region | Structure to notice |
 | --- | --- | --- |
@@ -23,6 +23,15 @@ These texts are **information texts**: they teach facts about a topic. Unlike a 
 | 7. The Foothills: The Middle Step (model report) | Foothills | Our mentor text for writing |
 
 Numbers about land and weather are **rounded**. Different sources measure and round in different ways, so you may find slightly different numbers in a book or on a website.
+
+---page---
+
+## Map: Alberta's six natural regions
+
+Use this map with every text. The **map key** tells you what each symbol means. The coloured cards show what each region is like, and which text to read to learn more.
+
+::: visual alberta-regions-map
+:::
 
 ---page---
 

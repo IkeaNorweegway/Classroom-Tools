@@ -9,13 +9,13 @@ import { homeSheets } from './manifest';
 /** Folder under public/materials/ that holds every Grade 5 ELA file. */
 export const ela5Folder = 'grade-5-ela';
 
-function ela5Unit(slug: string, label: string, sheets: [string, string][], v = 'v1'): CourseUnit {
+function ela5Unit(slug: string, label: string, sheets: [string, string][], v = 'v1', readerExtras: { label: string; doc: string }[] = []): CourseUnit {
   const f = (kind: string) => `ela5-${slug}-${kind}-${v}`;
   return {
     slug,
     label,
     path: [
-      { hint: 'The tales we read together.', items: [{ label: 'Unit Reader', doc: f('reader'), type: 'reference' }] },
+      { hint: 'The tales we read together.', items: [{ label: 'Unit Reader', doc: f('reader'), type: 'reference' }, ...readerExtras.map((x) => ({ ...x, type: 'reference' as const }))] },
       { hint: 'One page per skill. Fill it in during the mini-lesson.', items: [{ label: 'Anchor Notes', doc: f('anchor-notes'), type: 'notes' }] },
       { hint: 'One page every lesson: write about what you read, then plan and write your own tale.', items: [{ label: "Reader's & Writer's Notebook", doc: f('notebook'), type: 'workbook' }] },
       { hint: 'Quick checks after each skill.', items: [{ label: 'Exit Tickets', doc: f('exits'), badge: 'Formative', type: 'exit' }] },
@@ -60,7 +60,9 @@ export const ela5: CourseManifest = {
   noun: 'unit',
   units: [
     ela5Unit('tall-tales', 'Tall Tales', [['exaggeration', 'What does it really mean?'], ['summary', 'Telling a story short']]),
-    ela5Unit('information-report', 'Information Report', [['features', 'Finding facts fast'], ['notes', 'Notes in my own words']], 'v2'),
+    ela5Unit('information-report', 'Information Report', [['features', 'Finding facts fast'], ['notes', 'Notes in my own words']], 'v2', [
+      { label: 'Regions Map', doc: 'ela5-information-report-regions-map-v1' },
+    ]),
     ela5Unit('opinion', 'Opinion and Editorial', [['fact-opinion', 'Fact or opinion?'], ['reasons', 'Reasons and evidence']]),
     ela5Unit('science-fiction', 'Science Fiction', [['theme', 'Theme is a sentence'], ['what-if', 'What if…?']]),
     ela5Unit('lyric-poetry', 'Lyric Poetry', [['picture-it', 'Picture it: comparisons'], ['by-heart', 'Learning a poem by heart']]),

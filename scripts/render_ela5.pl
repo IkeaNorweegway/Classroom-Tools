@@ -18,7 +18,7 @@
 # ── Source format ─────────────────────────────────────────────────────────
 # Front matter (--- … ---):  (add compact: yes for a tight one- or two-page handout)
 #   title, subtitle, unit ("Tall Tales"), kind (notes | reader | notebook |
-#   wordwork | fluency | exits | coldread | rubric | teacherguide),
+#   wordwork | fluency | exits | coldread | rubric | teacherguide | map),
 #   edition (A | B | C; C uses the easy-read layout), key (yes | no),
 #   name (yes | no: the name/date line; default yes except reader,
 #   rubric, teacherguide).
@@ -56,6 +56,8 @@
 #   card Title               boxed card with a cut line (exit tickets)
 #   lesson N | Title | codes teacher-guide lesson card; LABEL: text lines
 #   graph                    progress grid: "x: a, b, c" and "y: 160, 140, …"
+#   visual name              a built visual: inlines worksheets/grade-5-ela/_visuals/<name>.html
+#                            (e.g. alberta-regions-map, from scripts/build_ela5_alberta_map.pl)
 #   fade                     teacher-facing note on how a scaffold fades
 #                            (key and teacher guide only)
 #
@@ -284,6 +286,11 @@ sub render_block {
         $flush->();
         return '<section class="lesson"><div class="lesson-h"><span class="lnum">' . esc($n) . '</span><span class="ltitle">' . inline($title, 1) . '</span>' . ($codes ne '' ? '<span class="lcodes">' . esc($codes) . '</span>' : '') . '</div>' . $body . '</section>';
     }
+    if ($kind eq 'visual') {
+        my $p = File::Spec->catfile($ROOT, 'worksheets', 'grade-5-ela', '_visuals', "$arg.html");
+        my $h = slurp($p); $h =~ s/^<!--.*?-->\n//s;
+        return $h;
+    }
     if ($kind eq 'flow') {
         # A labelled diagram as boxes and arrows: one "Label | small note" per line.
         my @steps = grep { /\S/ } @$in;
@@ -479,7 +486,7 @@ CSS
 my %KIND_LABEL = (
     notes => 'Anchor notes', reader => 'Unit reader', notebook => "Reader's & Writer's Notebook",
     wordwork => 'Word work', fluency => 'Fluency pack', exits => 'Exit tickets',
-    coldread => 'Cold read', rubric => 'Writing rubric', teacherguide => 'Teacher guide',
+    coldread => 'Cold read', rubric => 'Writing rubric', teacherguide => 'Teacher guide', map => 'Region map',
 );
 
 sub page_html {
@@ -491,9 +498,9 @@ sub page_html {
     my $unit = $m->{unit} // '';
     my $title = $m->{title} // $stem;
     my $doc_title = $title . ($key ? ' — Answer Key' : '');
-    my $name_default = ($kind =~ /^(reader|rubric|teacherguide)$/) ? 'no' : 'yes';
+    my $name_default = ($kind =~ /^(reader|rubric|teacherguide|map)$/) ? 'no' : 'yes';
     my $show_name = !$key && (($m->{name} // $name_default) eq 'yes');
-    my $edtag = $kind eq 'teacherguide' ? 'For the teacher' : "Edition $ed";
+    my $edtag = $kind eq 'teacherguide' ? 'For the teacher' : $kind eq 'map' ? 'All editions' : "Edition $ed";
     my $html = qq{<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>} . esc($doc_title) . qq{ · $COURSE</title>\n<style>\n$css</style>\n</head>\n<body class="ed-\L$ed\E} . (($m->{compact} // '') eq 'yes' ? ' compact' : '') . qq{">\n<div class="page">\n};
     $html .= '<header class="hdr"><div><div class="course">' . esc("$COURSE · $unit · " . ($KIND_LABEL{$kind} // '')) . '</div><h1>' . inline($title, 1) . '</h1>'
         . (($m->{subtitle} // '') ne '' ? '<div class="sub">' . inline($m->{subtitle}, 1) . '</div>' : '')
