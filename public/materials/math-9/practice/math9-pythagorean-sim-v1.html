@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pythagorean Simulator | Math 9</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --accent: #4f46e5;
+    --accent-light: #e0e7ff;
+    --accent-dark: #4338ca;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --good: #059669;
+    --bad: #dc2626;
+    --sa: #6366f1;  --sa-ink: #3730a3;  /* side a and its square */
+    --sb: #14b8a6;  --sb-ink: #0f766e;  /* side b */
+    --sc: #f59e0b;  --sc-ink: #b45309;  /* side c, the hypotenuse */
+  }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: #f8fafc;
+  }
+  button, input, select { font: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .45; }
+
+  /* ---------- top bar ---------- */
+  .top {
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    background: #fff; border-bottom: 1px solid var(--line);
+    border-left: 5px solid var(--accent); padding: 8px 16px;
+  }
+  .top .course-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+  .top h1 { font-size: 20px; font-weight: 700; line-height: 1.2; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tab {
+    border: 2px solid #cbd5e1; background: #fff; color: #334155;
+    border-radius: 999px; padding: 6px 16px; font-size: 16px; font-weight: 600;
+  }
+  .tab:hover { border-color: #94a3b8; }
+  .tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn {
+    border: 1px solid #cbd5e1; background: #fff; color: #334155;
+    border-radius: 10px; padding: 8px 14px; font-size: 15px; font-weight: 600;
+  }
+  .btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover:not(:disabled) { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .btn.small { padding: 5px 12px; font-size: 14px; }
+  .btn:focus-visible, .tab:focus-visible, .key:focus-visible { outline: 3px solid #0ea5e9; outline-offset: 2px; }
+
+  /* ---------- layout ---------- */
+  .layout { display: grid; grid-template-columns: minmax(280px, 360px) minmax(0, 1fr); align-items: start; }
+  #task { background: #fff; border-right: 1px solid var(--line); padding: 18px 20px 40px; min-height: calc(100vh - 60px); }
+  #work { padding: 16px 20px 48px; min-width: 0; }
+
+  /* ---------- task panel ---------- */
+  .crumb { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--accent); }
+  #task h2 { font-size: 23px; font-weight: 700; margin: 2px 0 6px; }
+  #task p { margin-bottom: 10px; }
+  #task ol, #task ul { margin: 4px 0 4px 22px; }
+  #task li { margin-bottom: 6px; }
+  .box { border-radius: 10px; padding: 10px 14px; margin: 12px 0; border: 2px solid; }
+  .box .label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+  .box p:last-child { margin-bottom: 0; }
+  .box.example { border-color: #c7d2fe; background: #eef2ff; } .box.example .label { color: var(--accent-dark); }
+  .box.todo { border-color: #bfdbfe; background: #eff6ff; } .box.todo .label { color: #1d4ed8; }
+  .box.watch { border-color: #fecaca; background: #fef2f2; } .box.watch .label { color: #b91c1c; }
+  .box.paper { border-color: #fed7aa; background: #fff7ed; } .box.paper .label { color: #c2410c; }
+  .box.ref { border-color: #fde68a; background: #fffbeb; } .box.ref .label { color: var(--sc-ink); }
+  .triples { display: flex; flex-wrap: wrap; gap: 6px; }
+  .triples span { background: #fff; border: 1px solid #fcd34d; border-radius: 8px; padding: 1px 9px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  /* ---------- shared pieces ---------- */
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; }
+  .pane-head { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 6px; }
+  .controls { display: flex; align-items: center; gap: 10px 16px; flex-wrap: wrap; }
+  .controls label { font-weight: 600; font-size: 15px; display: inline-flex; align-items: center; gap: 6px; }
+  .controls .spacer { flex: 1; }
+  .stepper { display: inline-flex; align-items: center; gap: 6px; }
+  .stepper > label { font-weight: 700; }
+  .stepper button { width: 38px; height: 38px; border-radius: 10px; border: 2px solid #cbd5e1; background: #fff; font-size: 22px; font-weight: 700; line-height: 1; color: #334155; }
+  .stepper button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .stepper output { min-width: 34px; text-align: center; font-size: 22px; font-weight: 700; }
+  .stepper.a output { color: var(--sa-ink); } .stepper.b output { color: var(--sb-ink); }
+  .seg { display: inline-flex; border: 2px solid #cbd5e1; border-radius: 10px; overflow: hidden; }
+  .seg button { border: none; background: #fff; padding: 7px 12px; font-size: 15px; font-weight: 600; color: #334155; }
+  .seg button + button { border-left: 2px solid #cbd5e1; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .angle { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .angle input[type=range] { width: 170px; accent-color: var(--accent); }
+  .angle output { min-width: 48px; font-size: 20px; font-weight: 700; }
+  .num-in { width: 76px; padding: 6px 8px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 18px; font-weight: 700; text-align: center; }
+
+  .say { border: 2px solid var(--line); background: #fff; border-radius: 10px; padding: 9px 13px; min-height: 48px; font-size: 16px; margin-bottom: 14px; }
+  .say.good { border-color: var(--good); background: #ecfdf5; }
+  .say.oops { border-color: #fca5a5; background: #fef2f2; }
+  .say.done { border-color: var(--good); background: #ecfdf5; font-weight: 600; color: #065f46; }
+
+  .stage svg { display: block; width: 100%; height: auto; max-height: 470px; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 700; paint-order: stroke; stroke: #fff; stroke-linejoin: round; }
+
+  /* ---------- 1. squares ---------- */
+  .eqlines { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .eqlines .faint { color: #94a3b8; font-size: 19px; }
+  .eqlines .bad { color: var(--bad); }
+  .eqlines .ok { color: var(--good); }
+  .ca { color: var(--sa-ink); } .cb { color: var(--sb-ink); } .cc { color: var(--sc-ink); }
+  .areabars { display: grid; grid-template-columns: auto 1fr; gap: 8px 10px; align-items: center; }
+  .areabars .lab { font-weight: 700; font-size: 15px; white-space: nowrap; }
+  .areabars .track { display: flex; height: 30px; background: #f1f5f9; border-radius: 6px; overflow: hidden; }
+  .areabars .seg-a { background: var(--sa); } .areabars .seg-b { background: var(--sb); } .areabars .seg-c { background: var(--sc); }
+  .areabars .track > i { display: flex; align-items: center; justify-content: center; color: #fff; font-style: normal; font-weight: 700; font-size: 14px; overflow: hidden; white-space: nowrap; transition: width .3s; }
+
+  /* ---------- 2. why it works ---------- */
+  .count { font-size: 17px; }
+  .count div { padding: 3px 0; border-bottom: 1px dashed var(--line); font-variant-numeric: tabular-nums; }
+  .count div:last-child { border-bottom: none; font-weight: 700; }
+  .count b { font-weight: 700; }
+
+  /* ---------- 3. scale it ---------- */
+  .ktable { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+  .ktable th, .ktable td { border-bottom: 1px solid var(--line); padding: 5px 8px; text-align: center; }
+  .ktable th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .ktable td { font-size: 21px; font-weight: 700; }
+  .ktable td:first-child, .ktable th:first-child { text-align: left; font-size: 15px; color: #475569; }
+  .ktable tr.small td { background: #fffbeb; }
+  .ktable .q { color: var(--sc-ink); }
+  .ktable .ans { color: var(--good); }
+  .pad-label { font-weight: 700; margin-bottom: 6px; }
+  .pad-keys { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .key { min-width: 58px; min-height: 44px; border: 2px solid var(--accent); background: #fff; color: var(--accent-dark); border-radius: 10px; font-size: 17px; font-weight: 700; }
+  .key:hover:not(:disabled) { background: var(--accent-light); }
+  .other { display: inline-flex; align-items: center; gap: 6px; margin-left: 6px; font-size: 15px; font-weight: 600; }
+  .other input { width: 70px; padding: 6px 8px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 18px; font-weight: 700; text-align: center; }
+  .acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .setup { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; margin: 4px 0 10px; }
+  .setup div { padding: 1px 0; }
+  .setup .faint { color: #94a3b8; font-size: 18px; }
+  .answer { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 22px; font-weight: 700; }
+  .answer input { width: 120px; padding: 6px 8px; border: 2px solid var(--sc); border-radius: 8px; font-size: 22px; font-weight: 700; text-align: center; }
+  .hint { font-size: 14px; color: var(--muted); margin-top: 6px; }
+  .own { display: flex; align-items: center; gap: 8px 12px; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+  .own .num-in { width: 70px; }
+
+  @media (max-width: 900px) {
+    .layout { display: flex; flex-direction: column; }
+    #work { order: 1; padding: 12px 12px 24px; }
+    #task { order: 2; border-right: none; border-top: 1px solid var(--line); min-height: 0; }
+    .eqlines { font-size: 20px; }
+    .ktable td { font-size: 18px; }
+  }
+  @media print {
+    .tabs, .controls, #task .todo, #bTour, .pad, .acts, .own { display: none; }
+    body { background: #fff; }
+    .areabars i, .stage svg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .areabars .track > i { transition: none; }
+  }
+  /* Tutorial card. It points at the real controls and does not block them. */
+  .spot { outline: 4px solid #f59e0b; outline-offset: 3px; border-radius: 8px; }
+  #coach {
+    position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 30;
+    width: min(520px, calc(100vw - 24px)); background: #fff; border-top: 5px solid #f59e0b;
+    border-radius: 10px; padding: 10px 14px; box-shadow: 0 6px 24px rgba(15, 23, 42, 0.3);
+  }
+  #coach p { font-weight: 600; color: var(--ink); margin-bottom: 8px; font-size: 0.95rem; }
+  #coach .cactions { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  #coach .n { font-size: 0.78rem; font-weight: 700; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="course-label">Math 9 · Number · Square Roots</div>
+    <h1>Pythagorean Simulator</h1>
+  </div>
+  <div class="tabs" role="tablist" aria-label="Simulator">
+    <button class="tab" role="tab" data-tab="sides" aria-selected="true">1 · Squares on the sides</button>
+    <button class="tab" role="tab" data-tab="why" aria-selected="false">2 · Why it works</button>
+    <button class="tab" role="tab" data-tab="scale" aria-selected="false">3 · Scale it</button>
+  </div>
+  <button type="button" class="btn small" id="bTour" title="Show the controls for this tab, one at a time">Tutorial</button>
+</header>
+
+<div id="coach" role="dialog" aria-label="Tutorial" hidden>
+  <p id="coachTxt"></p>
+  <div class="cactions">
+    <span class="n" id="coachN"></span>
+    <span><button type="button" class="btn small" id="coachSkip">Skip</button> <button type="button" class="btn small primary" id="coachNext">Next</button></span>
+  </div>
+</div>
+
+<div class="layout">
+  <section id="task"></section>
+
+  <section id="work">
+
+    <!-- ============ 1. Squares on the sides ============ -->
+    <div id="pane-sides">
+      <div class="card">
+        <div class="controls">
+          <span class="stepper a" data-key="a"><label>a</label><button type="button" data-step="-1" aria-label="Side a down">−</button><output></output><button type="button" data-step="1" aria-label="Side a up">+</button></span>
+          <span class="stepper b" data-key="b"><label>b</label><button type="button" data-step="-1" aria-label="Side b down">−</button><output></output><button type="button" data-step="1" aria-label="Side b up">+</button></span>
+          <span class="angle" id="tAngBox">
+            <label for="tAng">Angle</label>
+            <input type="range" id="tAng" min="30" max="150" step="5" value="90">
+            <output id="tAngOut">90°</output>
+            <button type="button" class="btn small" id="tSnap">Make it 90°</button>
+          </span>
+          <span class="spacer"></span>
+          <span class="seg" id="tGrid" aria-label="Unit squares">
+            <button type="button" data-grid="1" aria-pressed="true">Unit squares on</button>
+            <button type="button" data-grid="0" aria-pressed="false">Off</button>
+          </span>
+        </div>
+      </div>
+      <div class="card stage" id="tSvg"></div>
+      <div class="say" id="tSay" aria-live="polite"></div>
+      <div class="card"><div class="eqlines" id="tEq"></div></div>
+      <div class="card">
+        <div class="pane-head">Compare the areas</div>
+        <div class="areabars" id="tBars"></div>
+      </div>
+    </div>
+
+    <!-- ============ 2. Why it works ============ -->
+    <div id="pane-why" hidden>
+      <div class="card">
+        <div class="controls">
+          <span class="stepper a" data-key="a"><label>a</label><button type="button" data-step="-1" aria-label="Side a down">−</button><output></output><button type="button" data-step="1" aria-label="Side a up">+</button></span>
+          <span class="stepper b" data-key="b"><label>b</label><button type="button" data-step="-1" aria-label="Side b down">−</button><output></output><button type="button" data-step="1" aria-label="Side b up">+</button></span>
+          <span class="spacer"></span>
+          <button type="button" class="btn primary" id="wGo">Slide the triangles</button>
+        </div>
+      </div>
+      <div class="card stage" id="wSvg"></div>
+      <div class="say" id="wSay" aria-live="polite"></div>
+      <div class="card">
+        <div class="pane-head">Count the empty space</div>
+        <div class="count" id="wCount"></div>
+      </div>
+    </div>
+
+    <!-- ============ 3. Scale it ============ -->
+    <div id="pane-scale" hidden>
+      <div class="card">
+        <div class="controls">
+          <button type="button" class="btn primary" id="kNew">New problem</button>
+          <button type="button" class="btn small" id="kReset">Start over</button>
+        </div>
+        <div class="own" id="kOwn">
+          <b>Make your own:</b>
+          <label>leg a <input type="number" class="num-in" id="kA" min="1" max="300" inputmode="numeric"></label>
+          <label>leg b <input type="number" class="num-in" id="kB" min="1" max="300" inputmode="numeric"></label>
+          <label>hypotenuse c <input type="number" class="num-in" id="kC" min="1" max="300" inputmode="numeric"></label>
+          <button type="button" class="btn small" id="kUse">Use these</button>
+          <span class="hint">Whole numbers. Leave the missing side blank.</span>
+        </div>
+      </div>
+      <div class="card"><table class="ktable" id="kTable"></table></div>
+      <div class="say" id="kSay" aria-live="polite"></div>
+      <div class="card" id="kWork"></div>
+      <div class="card stage" id="kSvg"></div>
+    </div>
+
+  </section>
+</div>
+
+<script>
+/* =====================================================================
+   Pythagorean Simulator — Math 9, Square Roots (Section 3)
+   Three tabs: squares on the sides, why it works (rearrangement), and
+   scale it (shrink to a simpler similar triangle, solve, scale back up).
+   No libraries. Tabs 1 and 2 share the side lengths a and b.
+   ===================================================================== */
+
+const $ = id => document.getElementById(id);
+const gcd = (a, b) => b ? gcd(b, a % b) : a;
+const rnd = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
+const pick = arr => arr[rnd(0, arr.length - 1)];
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, Math.round(v) || lo));
+const isInt = x => Math.abs(x - Math.round(x)) < 1e-9;
+const fmt = (x, d) => isInt(x) ? String(Math.round(x)) : x.toFixed(d == null ? 2 : d);
+const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// little vector helpers, points are [x, y]
+const add = (p, q) => [p[0] + q[0], p[1] + q[1]];
+const sub = (p, q) => [p[0] - q[0], p[1] - q[1]];
+const mul = (p, k) => [p[0] * k, p[1] * k];
+const len = p => Math.hypot(p[0], p[1]);
+const r3 = x => Math.round(x * 1000) / 1000;
+const ptStr = p => r3(p[0]) + ',' + r3(p[1]);
+const poly = (pts, attrs) => '<polygon points="' + pts.map(ptStr).join(' ') + '" ' + attrs + '/>';
+const seg = (p, q, attrs) => '<line x1="' + r3(p[0]) + '" y1="' + r3(p[1]) + '" x2="' + r3(q[0]) + '" y2="' + r3(q[1]) + '" ' + attrs + '/>';
+const txt = (p, s, attrs) => '<text x="' + r3(p[0]) + '" y="' + r3(p[1]) + '" text-anchor="middle" dominant-baseline="middle" ' + (attrs || '') + '>' + s + '</text>';
+const THIN = 'vector-effect="non-scaling-stroke"';
+
+// Unit grid inside a square with corner P0, unit edge directions u and n, side L.
+function gridLines(P0, u, n, L, color) {
+  let h = '';
+  const a = 'stroke="' + color + '" stroke-opacity=".55" stroke-width="1" ' + THIN;
+  for (let t = 1; t < L - 1e-6; t++) {
+    const p = add(P0, mul(u, t)), q = add(P0, mul(n, t));
+    h += seg(p, add(p, mul(n, L)), a) + seg(q, add(q, mul(u, L)), a);
+  }
+  return h;
+}
+
+/* ---------- task panel text ---------- */
+
+const TASKS = {
+  sides:
+    '<div class="crumb">Tab 1</div><h2>Squares on the sides</h2>' +
+    '<p>In a right triangle the two shorter sides are the <b>legs</b>, <i>a</i> and <i>b</i>. The longest side, across from the right angle, is the <b>hypotenuse</b>, <i>c</i>.</p>' +
+    '<p>Build a square on each side. The two leg squares together cover exactly the same area as the hypotenuse square:</p>' +
+    '<p style="text-align:center;font-size:24px;font-weight:700"><span class="ca">a²</span> + <span class="cb">b²</span> = <span class="cc">c²</span></p>' +
+    '<div class="box example"><div class="label">Worked example</div><p>Legs 3 and 4. The leg squares hold 9 and 16 unit squares: 9 + 16 = 25.</p>' +
+    '<p>The hypotenuse square holds 25, so c = √25 = 5.</p></div>' +
+    '<div class="box todo"><div class="label">Try this</div><ol>' +
+    '<li>Set a = 6 and b = 8. <b>Predict</b> c before you look. How do 6 and 8 compare with 3 and 4?</li>' +
+    '<li>Set a = 1 and b = 1. Count the unit squares on the hypotenuse. Why is c not a whole number?</li>' +
+    '<li><b>Predict</b> first: if the angle gets wider than 90°, which is bigger, c² or a² + b²? Drag the angle to check, then try less than 90°.</li>' +
+    '<li>3, 4, 5 works. Does 5, 6, 7 work (add 2 to each)? Set a = 5 and b = 6 and see what c is.</li>' +
+    '</ol></div>' +
+    '<div class="box watch"><div class="label">Watch out</div><p>a² + b² = c² only works in a <b>right</b> triangle. Check for the right angle before you use it.</p></div>' +
+    '<div class="box paper"><div class="label">Explain it in your notes</div><p>A triangle has sides 7, 24 and 25. Without drawing it, how can you tell whether it has a right angle? Show the numbers and say what each one means.</p></div>',
+  why:
+    '<div class="crumb">Tab 2</div><h2>Why it works</h2>' +
+    '<p>Four copies of the same right triangle fit inside a big square with side <i>a</i> + <i>b</i>. Slide the triangles around and watch the space they leave empty.</p>' +
+    '<div class="box example"><div class="label">Worked example</div><p>Legs 3 and 4. The big square is 7 × 7 = 49. The four triangles cover 4 × ½ × 3 × 4 = 24.</p>' +
+    '<p>Empty space: 49 − 24 = 25. In the first picture that space is one square, c². In the second it is two squares, 9 + 16. Same space, so c² = a² + b².</p></div>' +
+    '<div class="box todo"><div class="label">Try this</div><ol>' +
+    '<li>Before you press <b>Slide the triangles</b>, <b>predict</b> what shapes the empty space will make.</li>' +
+    '<li>Follow triangle 1 as it moves. Does it turn, flip, or only slide? Why does that matter?</li>' +
+    '<li>Change a and b, then slide again. Does the argument work for every right triangle? What would have to be true for it to fail?</li>' +
+    '</ol></div>' +
+    '<div class="box paper"><div class="label">Explain it in your notes</div><p>Why must the empty space be the same size in both pictures? Use the words <i>big square</i> and <i>four triangles</i> in your answer.</p></div>',
+  scale:
+    '<div class="crumb">Tab 3</div><h2>Scale it</h2>' +
+    '<p><b>Similar</b> triangles have the same shape. Every side is multiplied by the same <b>scale factor</b>.</p>' +
+    '<p>So you can shrink a big triangle to a simple copy, solve the copy, then scale the answer back up.</p>' +
+    '<div class="box example"><div class="label">Worked example</div><p>Legs 15 and 20. Both divide by 5, so the small copy has legs 3 and 4. Its hypotenuse is 5.</p>' +
+    '<p>Scale back up: 5 × 5 = 25. Check: 15² + 20² = 225 + 400 = 625, and √625 = 25.</p></div>' +
+    '<div class="box ref"><div class="label">Triple families</div><div class="triples"><span>3, 4, 5</span><span>5, 12, 13</span><span>8, 15, 17</span><span>7, 24, 25</span></div>' +
+    '<p style="margin-top:6px">Spot a multiple of one of these and the answer is one multiplication away.</p></div>' +
+    '<div class="box todo"><div class="label">Try this</div><ol>' +
+    '<li>Solve 15, 20, ? by shrinking. Then type in legs 30 and 40. <b>Predict</b> the answer before you start.</li>' +
+    '<li>For 15 and 20, try dividing by 3. Read why it does not work.</li>' +
+    '<li>Press <b>New problem</b> until you get a missing leg. Does the trick still work?</li>' +
+    '<li>Find a problem where the small answer is not a whole number. Is it better to round before you scale up, or after? Why?</li>' +
+    '</ol></div>' +
+    '<div class="box watch"><div class="label">Watch out</div><p>Scaling means <b>multiplying</b> every side by the same number. Adding the same number to every side changes the shape: 3, 4, 5 becomes 5, 6, 7, but 5² + 6² = 61 and 7² = 49. Not a right triangle.</p></div>' +
+    '<div class="box paper"><div class="label">Explain it in your notes</div><p>Every side of a right triangle is multiplied by 3. What happens to the area of each square on the sides? Use that to explain why a² + b² = c² is still true for the bigger triangle.</p></div>',
+};
+
+/* ---------- tabs ---------- */
+
+const PANES = ['sides', 'why', 'scale'];
+let currentTab = 'sides';
+function showTab(name) {
+  currentTab = name;
+  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === name));
+  PANES.forEach(n => { $('pane-' + n).hidden = n !== name; });
+  $('task').innerHTML = TASKS[name];
+  if (name === 'sides') renderT();
+  if (name === 'why') renderW();
+  if (name === 'scale') renderKSvg();
+  if (seen[name]) endTour(false); else startTour(name);   // the tour runs once per tab, then the button replays it
+}
+
+/* ---------- tutorial: a card that points at the real controls. It does not block them. ---------- */
+
+const TOUR = {
+  sides: [
+    ['#pane-sides .stepper[data-key="a"]', 'Change sides a and b with the + and − buttons.'],
+    ['#tAngBox', 'Drag to change the angle between a and b. At 90° the triangle is a right triangle.'],
+    ['#tSvg', 'Each side has a square built on it. Count the unit squares inside each one.'],
+    ['#tBars', 'The bars compare the two leg squares together with the hypotenuse square.']
+  ],
+  why: [
+    ['#wGo', 'Press this to slide the four triangles to new places. Press it again to slide them back.'],
+    ['#wSvg', 'Watch the empty space. The big square and the four triangles never change size.'],
+    ['#wCount', 'The numbers show why the empty space is the same both times.']
+  ],
+  scale: [
+    ['#kTable', 'The table tracks the big triangle and each smaller copy you make.'],
+    ['#kWork', 'Shrink every side by a common factor, solve the small triangle, then scale the answer back up.'],
+    ['#kSvg', 'The picture shows the small copy, and how many copies fit along each side of the big one.'],
+    ['#kNew', 'New problem gives another triangle. You can also type your own below it.']
+  ]
+};
+let seen = {}, tour = null;
+try { seen = JSON.parse(localStorage.getItem('math9-pythagorean-tour-v1') || '{}') || {}; } catch (e) { seen = {}; }
+function saveSeen() { try { localStorage.setItem('math9-pythagorean-tour-v1', JSON.stringify(seen)); } catch (e) {} }
+function unspot() { document.querySelectorAll('.spot').forEach(n => n.classList.remove('spot')); }
+function startTour(name) {
+  endTour(false);
+  tour = { name, steps: TOUR[name].filter(s => { const n = document.querySelector(s[0]); return n && n.offsetParent !== null; }), i: -1 };
+  $('coach').hidden = false;
+  tourNext();
+}
+function tourNext() {
+  unspot();
+  tour.i++;
+  const s = tour.steps[tour.i];
+  if (!s) return endTour(true);
+  const n = document.querySelector(s[0]);
+  n.classList.add('spot');
+  n.scrollIntoView({ block: 'nearest' });
+  $('coachTxt').textContent = s[1];
+  $('coachN').textContent = (tour.i + 1) + ' of ' + tour.steps.length;
+  $('coachNext').textContent = tour.i === tour.steps.length - 1 ? 'Done' : 'Next';
+  $('coachNext').focus({ preventScroll: true });
+}
+function endTour(markSeen) {
+  if (!tour) return;
+  if (markSeen) { seen[tour.name] = true; saveSeen(); }
+  unspot(); $('coach').hidden = true; tour = null;
+}
+$('bTour').addEventListener('click', () => startTour(currentTab));
+$('coachNext').addEventListener('click', () => { if (tour) tourNext(); });
+$('coachSkip').addEventListener('click', () => endTour(true));
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && tour) endTour(true); });
+document.querySelector('.tabs').addEventListener('click', e => {
+  const t = e.target.closest('.tab');
+  if (t) showTab(t.dataset.tab);
+});
+
+/* ---------- side lengths shared by tabs 1 and 2 ---------- */
+
+const P = { a: 3, b: 4 };
+const P_MAX = 12;
+function syncSteppers() {
+  document.querySelectorAll('#pane-sides .stepper, #pane-why .stepper').forEach(s => {
+    const k = s.dataset.key;
+    s.querySelector('output').textContent = P[k];
+    s.querySelector('[data-step="-1"]').disabled = P[k] <= 1;
+    s.querySelector('[data-step="1"]').disabled = P[k] >= P_MAX;
+  });
+}
+function stepperClick(e) {
+  const step = e.target.closest('[data-step]');
+  if (!step) return false;
+  const k = step.closest('.stepper').dataset.key;
+  P[k] = clamp(P[k] + +step.dataset.step, 1, P_MAX);
+  return true;
+}
+
+/* =====================================================================
+   1. Squares on the sides
+   Maths coordinates (y up): the angle vertex is at the origin, side a
+   runs along the x-axis, side b leaves the origin at the chosen angle.
+   ===================================================================== */
+
+const T = { ang: 90, grid: true };
+
+// The square built outward on segment PQ, away from the third vertex R.
+function outSquare(Pt, Q, R) {
+  const L = len(sub(Q, Pt)), u = mul(sub(Q, Pt), 1 / L);
+  let n = [-u[1], u[0]];
+  if ((R[0] - Pt[0]) * n[0] + (R[1] - Pt[1]) * n[1] > 0) n = mul(n, -1);
+  return { P0: Pt, L, u, n, pts: [Pt, Q, add(Q, mul(n, L)), add(Pt, mul(n, L))], mid: add(Pt, add(mul(u, L / 2), mul(n, L / 2))) };
+}
+
+function renderT() {
+  syncSteppers();
+  const a = P.a, b = P.b, deg = T.ang, th = deg * Math.PI / 180, right = deg === 90;
+  const C = [0, 0], B = [a, 0], A = right ? [0, b] : [b * Math.cos(th), b * Math.sin(th)];
+  const sum = a * a + b * b;
+  const c2 = right ? sum : a * a + b * b - 2 * a * b * Math.cos(th);
+  const c = Math.sqrt(c2);
+  const sqA = outSquare(C, B, A), sqB = outSquare(A, C, B), sqC = outSquare(B, A, C);
+
+  // flip y for the screen
+  const F = p => [p[0], -p[1]];
+  const all = [].concat(sqA.pts, sqB.pts, sqC.pts).map(F);
+  const xs = all.map(p => p[0]), ys = all.map(p => p[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  const span = Math.max(maxX - minX, maxY - minY), pad = span * 0.05;
+  const fs = span * 0.04;
+
+  const square = (sq, col, ink, lines) => {
+    const pts = sq.pts.map(F), u = F(sq.u), n = F(sq.n);
+    const f = Math.min(fs, sq.L * 0.3);
+    return poly(pts, 'fill="' + col + '" fill-opacity=".22" stroke="' + ink + '" stroke-width="2" ' + THIN) +
+      (T.grid ? gridLines(F(sq.P0), u, n, sq.L, ink) : '') +
+      '<text text-anchor="middle" font-size="' + r3(f) + '" fill="' + ink + '">' +
+      '<tspan x="' + r3(F(sq.mid)[0]) + '" y="' + r3(F(sq.mid)[1] - f * 0.25) + '">' + lines[0] + '</tspan>' +
+      '<tspan x="' + r3(F(sq.mid)[0]) + '" y="' + r3(F(sq.mid)[1] + f * 0.95) + '">' + lines[1] + '</tspan></text>';
+  };
+
+  let corner;
+  if (right) {
+    const m = Math.min(a, b, 3) * 0.18;
+    corner = '<polyline points="' + [[m, 0], [m, m], [0, m]].map(F).map(ptStr).join(' ') + '" fill="none" stroke="#1e293b" stroke-width="2" ' + THIN + '/>';
+  } else {
+    const r = Math.min(a, b) * 0.3, e = F([r * Math.cos(th), r * Math.sin(th)]), lp = F(mul([Math.cos(th / 2), Math.sin(th / 2)], r + fs * 1.1));
+    corner = '<path d="M' + r3(r) + ',0 A' + r3(r) + ',' + r3(r) + ' 0 0 0 ' + ptStr(e) + '" fill="none" stroke="#dc2626" stroke-width="2.5" ' + THIN + '/>' +
+      txt(lp, deg + '°', 'font-size="' + r3(fs * 0.9) + '" fill="#dc2626"');
+  }
+
+  const cLine2 = 'c² ' + (right ? '= ' + sum : '≈ ' + c2.toFixed(1));
+  const cLine1 = 'c ' + (isInt(c) ? '= ' + Math.round(c) : '≈ ' + c.toFixed(2));
+  $('tSvg').innerHTML =
+    '<svg viewBox="' + [minX - pad, minY - pad, maxX - minX + 2 * pad, maxY - minY + 2 * pad].map(r3).join(' ') + '" stroke-width="' + r3(fs * 0.16) + '" role="img" aria-label="A triangle with sides ' + a + ', ' + b + ' and ' + fmt(c) + ', with a square drawn on each side">' +
+    square(sqA, '#6366f1', '#3730a3', ['a = ' + a, 'a² = ' + a * a]) +
+    square(sqB, '#14b8a6', '#0f766e', ['b = ' + b, 'b² = ' + b * b]) +
+    square(sqC, '#f59e0b', '#b45309', [cLine1, cLine2]) +
+    poly([C, B, A].map(F), 'fill="#fff" stroke="#1e293b" stroke-width="3" stroke-linejoin="round" ' + THIN) +
+    corner + '</svg>';
+
+  // the equation
+  const L = (s, cls) => '<div' + (cls ? ' class="' + cls + '"' : '') + '>' + s + '</div>';
+  let eq;
+  if (right) {
+    eq = L('<span class="ca">a²</span> + <span class="cb">b²</span> = <span class="cc">c²</span>', 'faint') +
+      L('<span class="ca">' + a + '²</span> + <span class="cb">' + b + '²</span> = <span class="cc">c²</span>') +
+      L('<span class="ca">' + a * a + '</span> + <span class="cb">' + b * b + '</span> = <span class="cc">' + sum + '</span>') +
+      L('<span class="cc">c = √' + sum + (isInt(c) ? ' = ' + Math.round(c) : ' ≈ ' + c.toFixed(2)) + '</span>', 'ok');
+  } else {
+    eq = L('<span class="ca">a²</span> + <span class="cb">b²</span> = <span class="ca">' + a * a + '</span> + <span class="cb">' + b * b + '</span> = ' + sum) +
+      L('<span class="cc">c² ≈ ' + c2.toFixed(1) + '</span>') +
+      L('c² ' + (c2 < sum ? '&lt;' : '&gt;') + ' a² + b²: no right angle', 'bad');
+  }
+  $('tEq').innerHTML = eq;
+
+  // the area bars, on one scale
+  const top = Math.max(sum, c2), w = v => (v / top * 100).toFixed(2) + '%';
+  $('tBars').innerHTML =
+    '<span class="lab"><span class="ca">a²</span> + <span class="cb">b²</span></span><div class="track"><i class="seg-a" style="width:' + w(a * a) + '">' + a * a + '</i><i class="seg-b" style="width:' + w(b * b) + '">' + b * b + '</i></div>' +
+    '<span class="lab cc">c²</span><div class="track"><i class="seg-c" style="width:' + w(c2) + '">' + (right ? sum : c2.toFixed(1)) + '</i></div>';
+
+  // what to notice
+  const say = $('tSay');
+  if (right) {
+    let s = '<b>Right angle.</b> The leg squares hold ' + a * a + ' + ' + b * b + ' = ' + sum + ' unit squares, and the hypotenuse square holds ' + sum + ' too. ';
+    if (isInt(c)) {
+      const g = gcd(a, b), ci = Math.round(c);
+      s += g > 1
+        ? a + ', ' + b + ', ' + ci + ' is ' + g + ' × (' + a / g + ', ' + b / g + ', ' + ci / g + '): a scaled-up copy of a smaller triangle. Tab 3 uses this.'
+        : a + ', ' + b + ', ' + ci + ' is a <b>Pythagorean triple</b>: all three sides are whole numbers.';
+    } else {
+      s += sum + ' is not a perfect square, so c = √' + sum + ' is irrational. It is about ' + c.toFixed(2) + '.';
+    }
+    say.className = 'say good'; say.innerHTML = s;
+  } else {
+    say.className = 'say oops';
+    say.innerHTML = deg < 90
+      ? '<b>The angle is ' + deg + '°, less than 90°.</b> Side c gets shorter, so c² ≈ ' + c2.toFixed(1) + ' is <b>less</b> than a² + b² = ' + sum + '. The theorem needs a right angle.'
+      : '<b>The angle is ' + deg + '°, more than 90°.</b> Side c gets longer, so c² ≈ ' + c2.toFixed(1) + ' is <b>more</b> than a² + b² = ' + sum + '. The theorem needs a right angle.';
+  }
+  $('tAng').value = deg;
+  $('tAngOut').textContent = deg + '°';
+  $('tSnap').disabled = right;
+  document.querySelectorAll('#tGrid button').forEach(btn => btn.setAttribute('aria-pressed', (btn.dataset.grid === '1') === T.grid));
+}
+
+$('pane-sides').addEventListener('click', e => {
+  if (stepperClick(e)) return renderT();
+  const g = e.target.closest('[data-grid]');
+  if (g) { T.grid = g.dataset.grid === '1'; return renderT(); }
+  if (e.target.closest('#tSnap')) { T.ang = 90; renderT(); }
+});
+$('tAng').addEventListener('input', () => { T.ang = +$('tAng').value; renderT(); });
+
+/* =====================================================================
+   2. Why it works
+   Screen coordinates (y down). Big square side s = a + b. Four copies of
+   the triangle slide (no turning) from the "c² in the middle" picture to
+   the "a² and b²" picture.
+   ===================================================================== */
+
+const W = { t: 0, target: 0, raf: 0 };
+const W_ORDER = [0, null, 1, 2];   // which triangles move, in order; triangle 2 stays put
+
+function wGeom() {
+  const a = P.a, b = P.b, s = a + b;
+  return { a, b, s, c: Math.hypot(a, b), tris: [
+    { pts: [[0, 0], [a, 0], [0, b]], mv: [0, a] },
+    { pts: [[s, 0], [s, a], [a, 0]], mv: [0, 0] },
+    { pts: [[s, s], [b, s], [s, a]], mv: [-b, 0] },
+    { pts: [[0, s], [0, b], [b, s]], mv: [a, -b] },
+  ] };
+}
+
+function renderW() {
+  syncSteppers();
+  W.t = W.target;
+  const G = wGeom(), a = G.a, b = G.b, s = G.s, c = G.c;
+  const pad = s * 0.12, fs = s * 0.065;
+  const lab = (p, str, col, f) => txt(p, str, 'font-size="' + r3(f || fs) + '" fill="' + col + '"');
+
+  // picture 1: the tilted square c²
+  const P0 = [a, 0], P1 = [s, a], P3 = [0, b];
+  const l1 = '<g id="wL1">' +
+    poly([P0, P1, [b, s], P3], 'fill="#f59e0b" fill-opacity=".3" stroke="#b45309" stroke-width="2" ' + THIN) +
+    gridLines(P0, mul(sub(P1, P0), 1 / c), mul(sub(P3, P0), 1 / c), c, '#b45309') +
+    lab([s / 2, s / 2], 'c² = ' + (a * a + b * b), '#b45309') + '</g>';
+  // picture 2: a² and b²
+  const l2 = '<g id="wL2">' +
+    poly([[0, 0], [a, 0], [a, a], [0, a]], 'fill="#6366f1" fill-opacity=".3" stroke="#3730a3" stroke-width="2" ' + THIN) +
+    gridLines([0, 0], [1, 0], [0, 1], a, '#3730a3') +
+    poly([[a, a], [s, a], [s, s], [a, s]], 'fill="#14b8a6" fill-opacity=".3" stroke="#0f766e" stroke-width="2" ' + THIN) +
+    gridLines([a, a], [1, 0], [0, 1], b, '#0f766e') +
+    lab([a / 2, a / 2], 'a² = ' + a * a, '#3730a3', Math.min(fs, a * 0.28)) +
+    lab([a + b / 2, a + b / 2], 'b² = ' + b * b, '#0f766e', Math.min(fs, b * 0.28)) + '</g>';
+
+  let tris = '';
+  G.tris.forEach((t, i) => {
+    const cx = (t.pts[0][0] + t.pts[1][0] + t.pts[2][0]) / 3, cy = (t.pts[0][1] + t.pts[1][1] + t.pts[2][1]) / 3;
+    tris += '<g class="wtri" data-i="' + i + '">' +
+      poly(t.pts, 'fill="#e2e8f0" stroke="#334155" stroke-width="2" stroke-linejoin="round" ' + THIN) +
+      lab([cx, cy], i + 1, '#334155', Math.min(fs, Math.min(a, b) * 0.4)) + '</g>';
+  });
+
+  // edge labels: the top and right edges read a, b in both pictures
+  const ink = '#475569', d = fs * 0.9;
+  const edges =
+    lab([a / 2, -d], 'a', '#3730a3') + lab([a + b / 2, -d], 'b', '#0f766e') +
+    lab([s + d, a / 2], 'a', '#3730a3') + lab([s + d, a + b / 2], 'b', '#0f766e') +
+    seg([a, -d * 0.5], [a, d * 0.3], 'stroke="' + ink + '" stroke-width="2" ' + THIN) +
+    seg([s - d * 0.3, a], [s + d * 0.5, a], 'stroke="' + ink + '" stroke-width="2" ' + THIN);
+
+  $('wSvg').innerHTML =
+    '<svg viewBox="' + [-pad, -pad, s + 2 * pad, s + 2 * pad].map(r3).join(' ') + '" stroke-width="' + r3(fs * 0.14) + '" role="img" aria-label="A square with side ' + a + ' plus ' + b + ', holding four copies of a right triangle">' +
+    l1 + l2 + tris +
+    '<rect x="0" y="0" width="' + s + '" height="' + s + '" fill="none" stroke="#1e293b" stroke-width="3" ' + THIN + '/>' +
+    edges + '</svg>';
+  setPose(W.t);
+  afterW();
+}
+
+const ease = p => p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+function setPose(t) {
+  const G = wGeom();
+  document.querySelectorAll('#wSvg .wtri').forEach(g => {
+    const i = +g.dataset.i, j = W_ORDER[i];
+    if (j === null) return;
+    const p = ease(Math.min(1, Math.max(0, (t - j * 0.2) / 0.6)));
+    const mv = G.tris[i].mv;
+    g.setAttribute('transform', 'translate(' + r3(mv[0] * p) + ' ' + r3(mv[1] * p) + ')');
+  });
+  const l1 = $('wL1'), l2 = $('wL2');
+  if (l1) l1.setAttribute('opacity', r3(1 - t));
+  if (l2) l2.setAttribute('opacity', r3(t));
+}
+
+function slideW() {
+  const from = W.t, to = W.target === 0 ? 1 : 0;
+  W.target = to;
+  cancelAnimationFrame(W.raf);
+  $('wGo').textContent = to ? 'Slide them back' : 'Slide the triangles';
+  $('wSay').className = 'say';
+  $('wSay').innerHTML = 'Watch the empty space. The big square and the four triangles do not change.';
+  if (reduceMotion) { W.t = to; setPose(to); return afterW(); }
+  const start = performance.now(), dur = 2200 * Math.abs(to - from);
+  const step = now => {
+    const k = dur ? Math.min(1, (now - start) / dur) : 1;
+    W.t = from + (to - from) * k;
+    setPose(W.t);
+    if (k < 1) W.raf = requestAnimationFrame(step); else afterW();
+  };
+  W.raf = requestAnimationFrame(step);
+}
+
+function afterW() {
+  const a = P.a, b = P.b, s = a + b, big = s * s, tri = 2 * a * b, left = big - tri;
+  const two = W.target === 1;
+  $('wGo').textContent = two ? 'Slide them back' : 'Slide the triangles';
+  $('wCount').innerHTML =
+    '<div>Big square: (' + a + ' + ' + b + ')² = ' + s + '² = <b>' + big + '</b></div>' +
+    '<div>Four triangles: 4 × ½ × ' + a + ' × ' + b + ' = <b>' + tri + '</b></div>' +
+    '<div>Empty space: ' + big + ' − ' + tri + ' = <b>' + left + '</b></div>' +
+    (two
+      ? '<div>The empty space is two squares: <span class="ca">a²</span> + <span class="cb">b²</span> = ' + a * a + ' + ' + b * b + ' = ' + left + '</div>'
+      : '<div>The empty space is one square on side c: <span class="cc">c²</span> = ' + left + '</div>');
+  if (W.t !== W.target) return;
+  const say = $('wSay');
+  if (two) {
+    say.className = 'say done';
+    say.innerHTML = 'Same big square, same four triangles, so the same empty space. The c² from the first picture equals the a² + b² from the second: <b>c² = a² + b²</b>.';
+  } else {
+    say.className = 'say';
+    say.innerHTML = 'Four copies of the triangle, with legs ' + a + ' and ' + b + '. The empty space in the middle is a square on the hypotenuse. Press <b>Slide the triangles</b>.';
+  }
+}
+
+$('pane-why').addEventListener('click', e => {
+  if (stepperClick(e)) return renderW();
+  if (e.target.closest('#wGo')) slideW();
+});
+
+/* =====================================================================
+   3. Scale it
+   The problem is a right triangle with legs a, b and hypotenuse c. One of
+   b or c is missing (a missing leg is always called b). The student
+   divides every known side by common factors, solves the small copy,
+   then multiplies the answer back up by the total scale factor F.
+   ===================================================================== */
+
+const K = { v: { a: 15, b: 20, c: 25 }, miss: 'c', steps: [], F: 1, stage: 'shrink', msg: null, smallAns: null, bigAns: null };
+const knownSides = () => K.miss === 'c' ? ['a', 'b'] : ['a', 'c'];
+const small = side => K.v[side] / K.F;
+const NAME = { a: 'leg a', b: 'leg b', c: 'hypotenuse c' };
+const sideCls = { a: 'ca', b: 'cb', c: 'cc' };
+
+function setK(p) {
+  const v = { a: p.a, b: p.b, c: p.c };
+  if (p.miss === 'c') v.c = Math.hypot(p.a, p.b); else v.b = Math.sqrt(p.c * p.c - p.a * p.a);
+  Object.assign(K, { v, miss: p.miss, steps: [], F: 1, stage: 'shrink', msg: null, smallAns: null, bigAns: null });
+  $('kA').value = p.a; $('kB').value = p.miss === 'b' ? '' : p.b; $('kC').value = p.miss === 'c' ? '' : p.c;
+  const g = gcd(K.v[knownSides()[0]], K.v[knownSides()[1]]);
+  if (g === 1) K.msg = { cls: '', html: 'These sides share no factor except 1, so there is nothing to shrink. Press <b>Solve this one</b> and use a² + b² = c² straight away.' };
+  renderK();
+}
+
+function newK() {
+  const triples = [[3, 4, 5], [5, 12, 13], [8, 15, 17], [7, 24, 25]];
+  const oddLegs = [[1, 1], [1, 2], [1, 3], [2, 3]];          // legs whose hypotenuse is irrational
+  const oddLegHyp = [[1, 2], [2, 3], [1, 3], [2, 5]];        // leg and hypotenuse whose other leg is irrational
+  const before = JSON.stringify([K.v.a, K.miss === 'b' ? 0 : K.v.b, K.miss === 'c' ? 0 : K.v.c]);
+  let p, guard = 0;
+  do {
+    const r = Math.random(), k = rnd(2, 9);
+    if (r < 0.7) {
+      const t = pick(triples), sw = Math.random() < 0.5;
+      const a = (sw ? t[1] : t[0]) * k, b = (sw ? t[0] : t[1]) * k, c = t[2] * k;
+      p = Math.random() < 0.6 ? { a, b, c: null, miss: 'c' } : { a, b: null, c, miss: 'b' };
+    } else if (r < 0.85) {
+      const t = pick(oddLegs); p = { a: t[0] * k, b: t[1] * k, c: null, miss: 'c' };
+    } else {
+      const t = pick(oddLegHyp); p = { a: t[0] * k, b: null, c: t[1] * k, miss: 'b' };
+    }
+  } while ((Math.max(p.a, p.b || 0, p.c || 0) > 100 || JSON.stringify([p.a, p.b || 0, p.c || 0]) === before) && ++guard < 50);
+  setK(p);
+}
+
+function ownK() {
+  const read = id => { const s = $(id).value.trim(); return s === '' ? null : +s; };
+  let a = read('kA'), b = read('kB'), c = read('kC');
+  const given = [a, b, c].filter(x => x !== null);
+  const bad = m => { K.msg = { cls: 'oops', html: m }; renderK(); };
+  if (given.length !== 2) return bad('Fill in exactly two sides and leave the missing one blank.');
+  if (given.some(x => !isInt(x) || x < 1 || x > 300)) return bad('Use whole numbers from 1 to 300.');
+  if (c === null) return setK({ a, b, c: null, miss: 'c' });
+  if (a === null) { a = b; }                                  // the sim always calls the missing leg b
+  if (c <= a) return bad('The hypotenuse is the longest side, so it has to be bigger than the leg.');
+  setK({ a, b: null, c, miss: 'b' });
+}
+
+function whyNotK(k, x, y) {
+  if (k < 2) return 'Dividing by 1 changes nothing. Choose 2 or more.';
+  const fx = x % k === 0, fy = y % k === 0;
+  const rem = n => n + ' ÷ ' + k + ' = ' + Math.floor(n / k) + ' remainder ' + (n % k);
+  if (!fx && !fy) return '<b>' + k + ' does not go into ' + x + ' or ' + y + '.</b> ' + rem(x) + ', and ' + rem(y) + '.';
+  const ok = fx ? x : y, no = fx ? y : x;
+  return '<b>' + k + ' goes into ' + ok + ' but not into ' + no + '.</b> ' + rem(no) + '. Every side has to shrink by the same factor, or the triangle changes shape.';
+}
+
+function shrinkK(k) {
+  if (K.stage !== 'shrink') return;
+  const [s1, s2] = knownSides(), x = small(s1), y = small(s2);
+  if (k < 2 || x % k || y % k) { K.msg = { cls: 'oops', html: whyNotK(k, x, y) }; return renderK(); }
+  K.steps.push(k); K.F *= k;
+  const nx = small(s1), ny = small(s2), more = gcd(nx, ny) > 1;
+  K.msg = { cls: 'good', html: '<b>Every side ÷ ' + k + '.</b> ' + x + ' → ' + nx + ' and ' + y + ' → ' + ny + '. Same shape, smaller triangle. The big one is now ' + K.F + ' times this copy. ' +
+    (more ? 'Can you shrink it more?' : 'These share no factor except 1. Press <b>Solve this one</b>.') };
+  renderK();
+}
+
+// The working for the small copy: setup lines, then the full solution.
+function workLines(full) {
+  const a = small('a');
+  if (K.miss === 'c') {
+    const b = small('b'), sum = a * a + b * b, v = Math.sqrt(sum);
+    const L = ['a² + b² = c²', a + '² + ' + b + '² = c²'];
+    if (full) L.push(a * a + ' + ' + b * b + ' = c²', 'c² = ' + sum, 'c = √' + sum + (isInt(v) ? ' = ' + Math.round(v) : ' ≈ ' + v.toFixed(2)));
+    return L;
+  }
+  const c = small('c'), diff = c * c - a * a, v = Math.sqrt(diff);
+  const L = ['a² + b² = c²', a + '² + b² = ' + c + '²'];
+  if (full) L.push(a * a + ' + b² = ' + c * c, 'b² = ' + c * c + ' − ' + a * a + ' = ' + diff, 'b = √' + diff + (isInt(v) ? ' = ' + Math.round(v) : ' ≈ ' + v.toFixed(2)));
+  return L;
+}
+
+const readNum = id => { const s = ($(id) && $(id).value || '').trim().replace(',', '.'); return s === '' ? NaN : +s; };
+const near = (x, y, tol) => Math.abs(x - y) <= (tol == null ? 1e-6 : tol);
+
+function checkSmall() {
+  const x = readNum('kAns'), v = small(K.miss), m = K.miss;
+  const oops = h => { K.msg = { cls: 'oops', html: h }; renderK(); };
+  if (isNaN(x)) return oops('Type your answer first.');
+  const exact = isInt(v);
+  if (exact ? near(x, v) : near(x, v, 0.0051)) {
+    K.smallAns = exact ? Math.round(v) : x;
+    if (K.F === 1) { K.bigAns = K.smallAns; K.stage = 'done'; K.msg = doneMsg(); return renderK(); }
+    K.stage = 'scale';
+    K.msg = { cls: 'good', html: '<b>Right: ' + m + ' = ' + fmt(K.smallAns) + '</b> for the small copy. Now scale it back up.' };
+    return renderK();
+  }
+  const a = small('a');
+  if (!exact && near(x, v, 0.06)) return oops('Close. Give two decimal places so the scaled answer stays accurate.');
+  if (near(x, v * v)) return oops('<b>That is ' + m + '², the area of the square.</b> Take the square root to get the side.');
+  if (m === 'c' && near(x, a + small('b'))) return oops('<b>You added the sides.</b> Add the <i>squares</i> of the sides, then take the square root.');
+  if (m === 'b') {
+    const c = small('c');
+    if (near(x, a * a + c * c) || near(x, Math.hypot(a, c), 0.0051)) return oops('<b>You added the squares.</b> The hypotenuse is known, so subtract: b² = c² − a².');
+    if (near(x, c - a)) return oops('<b>You subtracted the sides.</b> Subtract the <i>squares</i>: b² = c² − a², then take the square root.');
+  }
+  oops('Not yet. Follow the setup: square the sides you know, ' + (m === 'c' ? 'add' : 'subtract') + ', then take the square root.');
+}
+
+function checkBig() {
+  const x = readNum('kAns'), F = K.F, m = K.miss, s = K.smallAns, V = small(m) * F;
+  const oops = h => { K.msg = { cls: 'oops', html: h }; renderK(); };
+  if (isNaN(x)) return oops('Type your answer first.');
+  const exact = isInt(V);
+  if (exact ? near(x, V) : near(x, V, 0.0051)) { K.bigAns = x; K.stage = 'done'; K.msg = doneMsg(); return renderK(); }
+  if (!exact && near(x, s * F, 0.0051 * (F + 1))) {
+    K.bigAns = x; K.stage = 'done';
+    K.msg = doneMsg('You used the rounded ' + fmt(s) + ' and got ' + fmt(x) + '. The exact value is about ' + V.toFixed(2) + '. Rounding first means the rounding error gets multiplied by ' + F + ' too. Keep more decimals before you scale, or round at the end.');
+    return renderK();
+  }
+  if (near(x, s, 0.0051)) return oops('<b>That is the answer for the small copy.</b> The big triangle is ' + F + ' times as big, so multiply by ' + F + '.');
+  if (near(x, s / F, 0.01)) return oops('<b>You divided.</b> The big triangle is bigger, so its side must be bigger too. Multiply by ' + F + '.');
+  if (near(x, s * F * F, 0.01 * F * F)) return oops('<b>You multiplied by ' + F + '², which is ' + F * F + '.</b> Sides scale by the scale factor, ' + F + '. Only the areas of the squares scale by ' + F * F + '.');
+  if (near(x, s + F, 0.01)) return oops('<b>You added ' + F + '.</b> Scaling means multiplying every side by the same number.');
+  oops('Not yet. Multiply the small answer, ' + fmt(s) + ', by the scale factor, ' + F + '.');
+}
+
+function doneMsg(extra) {
+  const m = K.miss, a = K.v.a, V = K.v[m];
+  const rootStr = n => { const r = Math.sqrt(n); return '√' + n + (isInt(r) ? ' = ' + Math.round(r) : ' ≈ ' + r.toFixed(2)); };
+  let longWay;
+  if (m === 'c') { const b = K.v.b, sum = a * a + b * b; longWay = a + '² + ' + b + '² = ' + a * a + ' + ' + b * b + ' = ' + sum + ', and ' + rootStr(sum) + '.'; }
+  else { const c = K.v.c, diff = c * c - a * a; longWay = c + '² − ' + a + '² = ' + c * c + ' − ' + a * a + ' = ' + diff + ', and ' + rootStr(diff) + '.'; }
+  let h = '<b>Done: ' + NAME[m] + ' ' + (isInt(V) ? '= ' + Math.round(V) : '≈ ' + V.toFixed(2)) + '.</b> ';
+  if (extra) h += extra + ' ';
+  h += 'Check the long way: ' + longWay;
+  if (K.F > 1) {
+    const F = K.F, sa = small('a'), sb = small('b'), sc = small('c');
+    const sq = x => isInt(x * x) ? String(Math.round(x * x)) : (x * x).toFixed(1);
+    h += ' Same answer, with smaller numbers. Each square in the big triangle is ' + F + '² = ' + F * F + ' times the matching small square: ' +
+      sq(K.v.a) + ' = ' + F * F + ' × ' + sq(sa) + ', ' + sq(K.v.b) + ' = ' + F * F + ' × ' + sq(sb) + ', ' + sq(K.v.c) + ' = ' + F * F + ' × ' + sq(sc) + '.';
+  } else if (gcd(K.v[knownSides()[0]], K.v[knownSides()[1]]) > 1) {
+    h += ' You could have shrunk it first by dividing by ' + gcd(K.v[knownSides()[0]], K.v[knownSides()[1]]) + '. Try <b>Start over</b>.';
+  }
+  return { cls: 'done', html: h };
+}
+
+function showMe() {
+  if (K.stage === 'solve') {
+    const v = small(K.miss);
+    $('kAns').value = isInt(v) ? Math.round(v) : v.toFixed(2);
+    $('kSetup').innerHTML = workLines(true).map((l, i) => '<div' + (i ? '' : ' class="faint"') + '>' + l + '</div>').join('');
+    K.msg = { cls: '', html: 'Here is the working. Read each line, then press <b>Check</b>.' };
+    $('kSay').className = 'say'; $('kSay').innerHTML = K.msg.html;
+  } else if (K.stage === 'scale') {
+    const V = small(K.miss) * K.F;
+    $('kAns').value = isInt(V) ? Math.round(V) : V.toFixed(2);
+    $('kSay').className = 'say';
+    $('kSay').innerHTML = fmt(K.smallAns) + ' × ' + K.F + (isInt(V) ? ' = ' + Math.round(V) : ' ≈ ' + V.toFixed(2) + ' (using the unrounded small answer)') + '. Press <b>Check</b>.';
+  }
+}
+
+function padHTML(label) {
+  let h = '<div class="pad"><div class="pad-label">' + label + '</div><div class="pad-keys">';
+  for (let k = 2; k <= 12; k++) h += '<button type="button" class="key" data-k="' + k + '">÷ ' + k + '</button>';
+  return h + '<span class="other"><label>other: ÷ <input type="number" class="otherIn" min="2" max="99" inputmode="numeric" aria-label="Divide by another number"></label>' +
+    '<button type="button" class="btn small otherGo">Go</button></span></div></div>';
+}
+
+function renderK() {
+  const m = K.miss, ks = knownSides();
+  const cell = (side, val, ans) => side === m
+    ? (ans != null ? '<td class="ans">' + fmt(ans) + '</td>' : '<td class="q">?</td>')
+    : '<td>' + fmt(val) + '</td>';
+  const row = (label, F, ans, cls) => '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + label + '</td>' +
+    ['a', 'b', 'c'].map(s => cell(s, K.v[s] / F, ans)).join('') + '</tr>';
+  let rows = '<tr><th></th><th>leg a</th><th>leg b</th><th>hypotenuse c</th></tr>' +
+    row('Big triangle', 1, K.bigAns, K.steps.length ? '' : (K.stage !== 'shrink' ? 'small' : ''));
+  let F = 1;
+  K.steps.forEach((k, i) => {
+    F *= k;
+    const last = i === K.steps.length - 1;
+    rows += row('÷ ' + k + (last ? ' (small copy)' : ''), F, last ? K.smallAns : null, last ? 'small' : '');
+  });
+  $('kTable').innerHTML = rows;
+
+  // working area
+  const w = $('kWork');
+  const x = small(ks[0]), y = small(ks[1]), canShrink = gcd(x, y) > 1;
+  if (K.stage === 'shrink') {
+    w.innerHTML = padHTML('Divide every known side by:') +
+      '<div class="acts"><button type="button" class="btn primary" id="kSolve">Solve this one</button>' +
+      '<button type="button" class="btn small" id="kUndo"' + (K.steps.length ? '' : ' disabled') + '>Undo</button></div>';
+    w.querySelectorAll('.pad button, .pad input').forEach(el => { el.disabled = !canShrink; });
+  } else if (K.stage === 'solve') {
+    w.innerHTML = '<div class="pad-label">Solve the ' + (K.F > 1 ? 'small copy' : 'triangle') + '</div>' +
+      '<div class="setup" id="kSetup">' + workLines(false).map((l, i) => '<div' + (i ? '' : ' class="faint"') + '>' + l + '</div>').join('') + '</div>' +
+      '<div class="answer"><label for="kAns">' + m + ' =</label><input type="text" id="kAns" inputmode="decimal" autocomplete="off">' +
+      '<button type="button" class="btn primary" id="kCheck">Check</button><button type="button" class="btn small" id="kShow">Show me</button></div>' +
+      '<div class="hint">If the answer is not a whole number, give two decimal places.</div>';
+  } else if (K.stage === 'scale') {
+    w.innerHTML = '<div class="pad-label">Scale back up</div>' +
+      '<div class="setup"><div class="faint">big ' + m + ' = small ' + m + ' × scale factor</div><div>big ' + m + ' = ' + fmt(K.smallAns) + ' × ' + K.F + '</div></div>' +
+      '<div class="answer"><label for="kAns">' + m + ' =</label><input type="text" id="kAns" inputmode="decimal" autocomplete="off">' +
+      '<button type="button" class="btn primary" id="kCheck">Check</button><button type="button" class="btn small" id="kShow">Show me</button></div>';
+  } else {
+    w.innerHTML = '<div class="pad-label">Finished</div><div class="acts" style="margin-top:0"><button type="button" class="btn primary" id="kNext">New problem</button><button type="button" class="btn small" id="kAgain">Start over</button></div>';
+  }
+
+  const say = $('kSay');
+  if (K.msg) { say.className = 'say ' + K.msg.cls; say.innerHTML = K.msg.html; }
+  else {
+    say.className = 'say';
+    say.innerHTML = K.stage === 'shrink'
+      ? (K.F === 1 ? 'Find a number that divides <b>both</b> known sides, ' + x + ' and ' + y + '. Shrink the triangle to a simpler copy.' : 'Can you shrink it more? If not, press <b>Solve this one</b>.')
+      : K.stage === 'solve' ? 'Solve with a² + b² = c².'
+      : 'The big triangle is ' + K.F + ' times the small copy.';
+  }
+  renderKSvg();
+  const inp = $('kAns');
+  if (inp && document.activeElement !== inp && !tour) inp.focus({ preventScroll: true });
+}
+
+// The small copy on the left, the big triangle on the right, drawn to the same scale.
+// F copies of the small triangle sit along the big hypotenuse, corner to corner.
+function renderKSvg() {
+  // Narrow screens get a narrower drawing, so the labels stay readable.
+  const boxW = $('kSvg').clientWidth, narrow = boxW > 0 && boxW < 600;
+  const VW = narrow ? 480 : 760, M = 34, F = K.F, m = K.miss, a = K.v.a, b = K.v.b;
+  const two = F > 1, gap = two ? (narrow ? 70 : 100) : 0;
+  const ppu = Math.min((360 - 2 * M - 30) / b, (VW - 2 * M - 70 - gap) / (a * (two ? 1 + 1 / F : 1)));
+  const wSmall = two ? a / F * ppu : 0, wBig = a * ppu;
+  // Height fits the drawing: the big triangle, or the small one with the arrow above it.
+  const VH = Math.max(b * ppu, two ? b / F * ppu + 80 : 0) + 2 * M + 30;
+  const x0 = (VW - (wSmall + gap + wBig)) / 2 + 12, oy = VH - M - 10;
+  const bigO = [x0 + wSmall + gap, oy];
+  const fs = narrow ? 22 : 19;
+  const label = (side, val, ans) => side === m ? (ans != null ? fmt(ans) : '?') : fmt(val);
+  const tri = (O, k, fill, stroke, sw) => poly([O, [O[0] + a * ppu / k, O[1]], [O[0], O[1] - b * ppu / k]], 'fill="' + fill + '" stroke="' + stroke + '" stroke-width="' + sw + '" stroke-linejoin="round"');
+  const corner = (O, sz) => '<polyline points="' + ptStr([O[0] + sz, O[1]]) + ' ' + ptStr([O[0] + sz, O[1] - sz]) + ' ' + ptStr([O[0], O[1] - sz]) + '" fill="none" stroke="#1e293b" stroke-width="1.5"/>';
+  const sideLabels = (O, k, ans) => {
+    const A = a * ppu / k, B = b * ppu / k, hx = O[0] + A / 2, hy = O[1] - B / 2, nl = Math.hypot(A, B);
+    return txt([O[0] + A / 2, O[1] + 18], label('a', a / k, ans), 'font-size="' + fs + '" fill="#3730a3"') +
+      txt([O[0] - 8, O[1] - B / 2], label('b', b / k, ans), 'font-size="' + fs + '" fill="#0f766e" text-anchor="end"').replace('text-anchor="middle" ', '') +
+      txt([hx + B / nl * 16 + 6, hy - A / nl * 16], label('c', K.v.c / k, ans), 'font-size="' + fs + '" fill="#b45309" text-anchor="start"').replace('text-anchor="middle" ', '');
+  };
+
+  let h = '<svg viewBox="0 0 ' + VW + ' ' + r3(VH) + '" stroke-width="4" role="img" aria-label="' + (two ? 'A small right triangle and a big one ' + F + ' times as large' : 'A right triangle') + '">';
+  // big triangle
+  h += tri(bigO, 1, '#fff', '#1e293b', 3);
+  if (two && F <= 40) {
+    const A = a * ppu / F, B = b * ppu / F;
+    for (let i = 0; i < F; i++) h += tri([bigO[0] + i * A, bigO[1] - (F - 1 - i) * B], F, '#fef3c7', '#d97706', 1.2);
+    for (let i = 1; i < F; i++) {
+      h += seg([bigO[0] + i * A, bigO[1] - 5], [bigO[0] + i * A, bigO[1] + 5], 'stroke="#3730a3" stroke-width="2"');
+      h += seg([bigO[0] - 5, bigO[1] - i * B], [bigO[0] + 5, bigO[1] - i * B], 'stroke="#0f766e" stroke-width="2"');
+    }
+  }
+  h += corner(bigO, Math.min(16, a * ppu * 0.12, b * ppu * 0.12));
+  h += sideLabels(bigO, 1, K.bigAns);
+  if (two) {
+    const sO = [x0, oy];
+    h += tri(sO, F, '#fef3c7', '#d97706', 2.5) + corner(sO, Math.min(12, a * ppu / F * 0.2, b * ppu / F * 0.2));
+    h += sideLabels(sO, F, K.smallAns);
+    const ay = oy - Math.max(b * ppu / F, 40) - 30, ax1 = x0 + wSmall + 14, ax2 = bigO[0] - 14;
+    h += '<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#4338ca"/></marker></defs>';
+    h += '<path d="M' + r3(ax1) + ',' + r3(ay + 24) + ' Q' + r3((ax1 + ax2) / 2) + ',' + r3(ay - 16) + ' ' + r3(ax2) + ',' + r3(ay + 24) + '" fill="none" stroke="#4338ca" stroke-width="2.5" marker-end="url(#arr)"/>';
+    h += txt([(ax1 + ax2) / 2, ay - 18], '× ' + F, 'font-size="22" fill="#4338ca"');
+    if (F <= 40) h += txt([VW / 2, 16], F + ' small copies fit along each side', 'font-size="' + (narrow ? 19 : 16) + '" fill="#92400e"');
+  }
+  $('kSvg').innerHTML = h + '</svg>';
+}
+
+wirePadK();
+function wirePadK() {
+  const root = $('kWork');
+  const other = () => { const inp = root.querySelector('.otherIn'); const v = inp && parseInt(inp.value, 10); if (v) shrinkK(v); };
+  root.addEventListener('click', e => {
+    const key = e.target.closest('[data-k]');
+    if (key) return shrinkK(+key.dataset.k);
+    if (e.target.closest('.otherGo')) return other();
+    if (e.target.closest('#kSolve')) { K.stage = 'solve'; K.msg = null; return renderK(); }
+    if (e.target.closest('#kUndo')) { if (!K.steps.length) return; K.F /= K.steps.pop(); K.msg = null; return renderK(); }
+    if (e.target.closest('#kCheck')) return K.stage === 'solve' ? checkSmall() : checkBig();
+    if (e.target.closest('#kShow')) return showMe();
+    if (e.target.closest('#kNext')) return newK();
+    if (e.target.closest('#kAgain')) return resetK();
+  });
+  root.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    if (e.target.classList.contains('otherIn')) other();
+    if (e.target.id === 'kAns') K.stage === 'solve' ? checkSmall() : checkBig();
+  });
+}
+function resetK() {
+  const v = K.v, m = K.miss;
+  setK({ a: v.a, b: m === 'b' ? null : v.b, c: m === 'c' ? null : v.c, miss: m });
+}
+let resizeTimer = 0;
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (currentTab === 'scale') renderKSvg(); }, 150); });
+$('kNew').addEventListener('click', newK);
+$('kReset').addEventListener('click', resetK);
+$('kUse').addEventListener('click', ownK);
+$('kOwn').addEventListener('keydown', e => { if (e.key === 'Enter') ownK(); });
+
+/* ---------- start ---------- */
+setK({ a: 15, b: 20, c: null, miss: 'c' });
+// #why or #scale in the address opens that tab.
+showTab(TASKS[location.hash.slice(1)] ? location.hash.slice(1) : 'sides');
+</script>
+</body>
+</html>

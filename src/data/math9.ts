@@ -115,10 +115,13 @@ function withPracticeTest(slug: string, label: string, strand: StrandSlug, stem:
   return t;
 }
 
+const squareRoots = withPracticeTest('square-roots', 'Square Roots', 'number', 'math9-square-roots');
+squareRoots.extras.unshift({ label: 'Pythagorean Simulator (squares on the sides, why it works, scaling triangles)', path: 'practice/math9-pythagorean-sim-v1' });
+
 export const topics: Topic[] = [
   rational,
   withPracticeTest('powers-exponents', 'Powers & Exponents', 'number', 'math9-powers'),
-  withPracticeTest('square-roots', 'Square Roots', 'number', 'math9-square-roots'),
+  squareRoots,
   withPracticeTest('linear-relations', 'Linear Relations', 'algebra', 'math9-linear-relations'),
   withPracticeTest('linear-equations', 'Linear Equations & Inequalities', 'algebra', 'math9-linear-equations'),
   withPracticeTest('polynomials', 'Polynomials', 'algebra', 'math9-polynomials'),
