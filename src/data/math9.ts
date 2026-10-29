@@ -118,13 +118,13 @@ function withPracticeTest(slug: string, label: string, strand: StrandSlug, stem:
 const squareRoots = withPracticeTest('square-roots', 'Square Roots', 'number', 'math9-square-roots');
 squareRoots.extras.unshift({ label: 'Pythagorean Simulator (squares on the sides, why it works, scaling triangles)', path: 'practice/math9-pythagorean-sim-v1' });
 
-// Simulations and trainers: one per topic, listed first under Extra help. Rules: _sims-context.md.
+// Narrow trainers: one per topic, listed first under Extra help. Rules: _sims-context.md (rules 19–25).
 const linearRelations = withPracticeTest('linear-relations', 'Linear Relations', 'algebra', 'math9-linear-relations');
-linearRelations.extras.unshift({ label: 'Linear Relations Simulator (four views, slope, y = mx + b, direct or partial)', path: 'practice/math9-linear-relations-sim-v1', type: 'interactive' });
+linearRelations.extras.unshift({ label: 'Linear Relations Trainer (table, slope, graph it, equation, direct or partial)', path: 'practice/math9-linear-relations-trainer-v1', type: 'interactive' });
 const linearEquations = withPracticeTest('linear-equations', 'Linear Equations & Inequalities', 'algebra', 'math9-linear-equations');
-linearEquations.extras.unshift({ label: 'Equations Trainer (solve step by step on a balance, inequalities on a number line)', path: 'practice/math9-linear-equations-trainer-v1', type: 'interactive' });
+linearEquations.extras.unshift({ label: 'Equations Trainer (two-step, brackets, both sides, fractions, the sign flip, graphing)', path: 'practice/math9-linear-equations-trainer-v2', type: 'interactive' });
 const polynomials = withPracticeTest('polynomials', 'Polynomials', 'algebra', 'math9-polynomials');
-polynomials.extras.unshift({ label: 'Polynomials Trainer (algebra tiles and the area model)', path: 'practice/math9-polynomials-trainer-v1', type: 'interactive' });
+polynomials.extras.unshift({ label: 'Polynomials Trainer (parts, like terms, add, subtract, multiply)', path: 'practice/math9-polynomials-trainer-v2', type: 'interactive' });
 
 export const topics: Topic[] = [
   rational,

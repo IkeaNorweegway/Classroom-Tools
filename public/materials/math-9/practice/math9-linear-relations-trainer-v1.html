@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linear Relations Trainer | Math 9</title>
+<!-- =====================================================================
+   LINEAR RELATIONS TRAINER (narrow trainer format, see _sims-context.md)
+   Math 9 | Algebra | Linear Relations. Used after the lesson: it does not teach, it points back to the notes.
+   One narrow skill per tab, 10 items a round:
+     LR1 Table      read m (the change) and b (y at x = 0) from a table; columns may start past x = 0
+     LR2 Slope      slope from two grid points (rise over run)
+     LR3 Graph it   tap two grid points for y = mx + b
+     LR3 Equation   write y = mx + b for a line with two grid points marked
+     LR4 Direct?    direct or partial variation from a graph, table or equation
+   Colour code throughout: m and the rise are gold, b is teal, lines blue, given points yellow.
+   Wrong answers are matched to named mistakes (swap m and b, sign of m, run over rise, b read on the x-axis,
+   b read as the first y in a table). The first wrong try shows a picture hint; the second shows the answer.
+   Model: exact fractions. ?debug=1 puts DRILL (and MODEL) on window, turns off saving and motion.
+   ===================================================================== -->
+<style>
+/* ===== DRILL SHELL CSS START (same in every Math 9 trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+/* ===================== MODEL START (no DOM) ===================== */
+const MODEL = (() => {
+  const { q, of, add, sub, mul, div, neg, eq, val, rnd, pick, nz, chance } = Q;
+  const SLOPES = [1, 2, 3, -1, -2, -3, q(1, 2), q(-1, 2), q(2, 3), q(-2, 3), q(3, 2), q(-3, 2), q(1, 3), q(-1, 3), q(3, 4), q(-3, 4)];
+
+  /* LR1 table -> rule. Five columns, x up by 1, sometimes starting past 0. */
+  function genTable() {
+    const m = nz(-4, 5), b = rnd(-6, 9), x0 = pick([0, 0, 1, 2]);
+    const xs = [0, 1, 2, 3, 4].map(i => x0 + i);
+    return { m, b, x0, xs, ys: xs.map(x => m * x + b) };
+  }
+  // Shared by "Table -> rule" and "Graph -> equation". r = {m, b} as fractions.
+  function checkRule(it, r) {
+    const M = of(it.m), B = of(it.b);
+    if (eq(r.m, M) && eq(r.b, B)) return { ok: true };
+    if (eq(r.m, B) && eq(r.b, M)) return { code: 'swap', cue: 'm = change. b = start.' };
+    if (eq(r.m, M)) {
+      if (it.x0 > 0 && eq(r.b, it.ys[0])) return { code: 'yval', cue: 'b is y when x = 0' };
+      if (it.xint != null && eq(r.b, it.xint)) return { code: 'xaxis', cue: 'b is on the y-axis' };
+      if (!eq(B, 0) && eq(r.b, neg(B))) return { code: 'bsign', cue: 'Right m. Check the sign of b.' };
+      return { code: 'b', cue: 'Right m. Check b.' };
+    }
+    if (eq(r.m, neg(M))) return { code: 'sign', cue: val(M) < 0 ? 'Going down: m is negative' : 'Going up: m is positive' };
+    if (eq(r.m, div(1, M))) return { code: 'recip', cue: 'Rise over run, not run over rise' };
+    if (eq(r.b, B)) return { code: 'm', cue: 'Right b. Check m.' };
+    return { code: 'other', cue: 'Find the change, then the start' };
+  }
+
+  /* LR2 slope from two points. */
+  function genSlope() {
+    for (;;) {
+      const ax = rnd(-6, 3), ay = rnd(-5, 5), run = rnd(1, 6), rise = chance(.08) ? 0 : nz(-8, 8);
+      const bx = ax + run, by = ay + rise;
+      if (bx > 6 || by < -5 || by > 5) continue;
+      const L = { x: ax, y: ay }, R = { x: bx, y: by };
+      return chance(.5) ? { P: L, Q: R, rise, run } : { P: R, Q: L, rise, run };
+    }
+  }
+  function checkSlope(it, r) {
+    const S = q(it.rise, it.run);
+    if (eq(r.m, S)) return { ok: true };
+    if (it.rise !== 0 && eq(r.m, neg(S))) return { code: 'sign', cue: it.rise < 0 ? 'Down to the right: negative' : 'Up to the right: positive' };
+    if (it.rise !== 0 && eq(r.m, q(it.run, it.rise))) return { code: 'recip', cue: 'Rise over run: up first' };
+    if (it.rise !== 0 && it.run !== 1 && eq(r.m, q(it.rise))) return { code: 'rise', cue: 'Divide the rise by the run' };
+    if (it.rise === 0) return { code: 'flat', cue: 'Flat line: rise is 0' };
+    return { code: 'other', cue: 'Count the rise, then the run' };
+  }
+
+  /* LR3 equation -> graph. The student places two grid points. */
+  function genGraph() {
+    for (;;) {
+      const m = pick(SLOPES), b = rnd(-4, 4), M = of(m);
+      const p2 = { x: M.d, y: b + M.n };
+      if (Math.abs(p2.y) > 6) continue;
+      return { m: M, b };
+    }
+  }
+  function onLine(it, p) { return eq(q(p.y), add(mul(it.m, p.x), it.b)); }
+  function checkGraph(it, pts) {
+    const [A, B] = pts;
+    if (onLine(it, A) && onLine(it, B)) return { ok: true };
+    if (it.b !== 0 && pts.some(p => p.y === 0 && p.x === it.b) && !pts.some(p => p.x === 0 && p.y === it.b)) return { code: 'xaxis', cue: 'b goes on the y-axis' };
+    if (A.x === B.x) return { code: 'vert', cue: 'Start at b, then rise and run' };
+    const s = q(B.y - A.y, B.x - A.x), bb = sub(q(A.y), mul(s, A.x));
+    const hasB = eq(bb, it.b), hasM = eq(s, it.m);
+    if (hasM && it.b !== 0 && eq(bb, -it.b)) return { code: 'bsign', cue: 'Right slope. Check the sign of b.' };
+    if (hasM) return { code: 'b', cue: 'Right slope. Start at b.' };
+    if (hasB) {
+      if (eq(s, neg(it.m))) return { code: 'sign', cue: 'Right start. Up or down?' };
+      if (eq(s, div(1, it.m))) return { code: 'recip', cue: 'Right start. Rise over run.' };
+      return { code: 'slope', cue: 'Right start. Check the slope.' };
+    }
+    return { code: 'other', cue: 'Start at b, then rise and run' };
+  }
+
+  /* LR3 graph -> equation. Two grid points on the line are marked. */
+  function genRead() {
+    for (;;) {
+      const m = pick(SLOPES), M = of(m), b = rnd(-5, 5);
+      if (Math.abs(M.n) > 3 || M.d > 3) continue;
+      const lat = [];
+      for (let x = -7; x <= 7; x++) { const y = add(mul(M, x), b); if (y.d === 1 && Math.abs(y.n) <= 6) lat.push({ x, y: y.n }); }
+      if (lat.length < 3) continue;
+      let pts;
+      if (chance(.5)) { const others = lat.filter(p => p.x !== 0); pts = [{ x: 0, y: b }, pick(others)]; }
+      else { const others = lat.filter(p => p.x !== 0); if (others.length < 2) continue; const a = pick(others); const c = pick(others.filter(p => p.x !== a.x)); pts = [a, c]; }
+      pts.sort((u, v) => u.x - v.x);
+      const xi = div(-b, M);
+      return { m: M, b, pts, xint: b !== 0 && xi.d === 1 && Math.abs(xi.n) <= 7 && xi.n !== b ? xi.n : null };
+    }
+  }
+
+  /* LR4 direct or partial, from a graph, a table or an equation. */
+  function genVary() {
+    const rep = pick(['graph', 'table', 'eq']), direct = chance(.5);
+    const m = pick([1, 2, 3, 4, 5, 0.5, 1.5, 2.5, -2, -3]);
+    const b = direct ? 0 : pick([2, 3, 4, 5, 6, 8, 10, -4]);
+    const it = { rep, direct, m, b };
+    if (rep === 'table') { it.xs = pick([[0, 1, 2, 3], [1, 2, 3, 4], [2, 4, 6, 8], [1, 3, 5, 7], [2, 3, 4, 5]]); it.ys = it.xs.map(x => Math.round((m * x + b) * 100) / 100); }
+    if (rep === 'eq') it.form = b === 0 ? 'mx' : pick(['mxb', 'mxb', 'bmx']);
+    return it;
+  }
+  function checkVary(it, r) {
+    if ((r.v === 'direct') === it.direct) return { ok: true };
+    return it.direct ? { code: 'saidpartial', cue: 'It starts at 0: direct' } : { code: 'saiddirect', cue: 'It starts at b, not 0: partial' };
+  }
+
+  return { SLOPES, genTable, checkRule, genSlope, checkSlope, genGraph, onLine, checkGraph, genRead, genVary, checkVary };
+})();
+/* ===================== MODEL END ===================== */
+
+
+/* ===== DRILL SHELL START (same in every Math 9 trainer) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen()                 -> a new item (from MODEL)
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom'
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown). */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => { if (!part) return; const t = el('tspan', /^[a-z]$/.test(part) ? { 'font-style': 'italic' } : {}, e); t.textContent = part; });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (tab.kind === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (tab.kind === 'choice') {
+      const row = document.createElement('div'); row.className = 'choices';
+      tab.choices(item).forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = tab.kind === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) { for (let i = 0; i < 25; i++) { it = tab.gen(); key = JSON.stringify(it); if (key !== lastKey) break; } }
+    lastKey = key || JSON.stringify(it);
+    item = it; resp = {}; att = 0; resolved = false;
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (tab.kind === 'choice' && resp.v == null) return;
+    if (tab.kind === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (tab.kind === 'choice' ? 1 : 2);
+    if (res.ok) {
+      resolved = true; marks.push(att === 1 ? 'g' : 'y');
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r');
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (tab.kind === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); inp.classList.add(ok || Q.eq(v, ans[inp.dataset.k]) ? 'ok' : 'bad'); });
+    } else if (tab.kind === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (tab.kind === 'slots') fillSlots(ans, 'shown');
+    else if (tab.kind === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(tab) + '" target="_blank" rel="noopener">📖 Notes §' + tab.sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => PAGE.notes + '#:~:text=' + encodeURIComponent('Section ' + t.sec + ' —');
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    const n = $('notes'); n.href = notesHref(tab); $('notesTxt').textContent = '§' + tab.sec;
+    n.title = 'Notes, Section ' + tab.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + tab.sec);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }) };
+  }
+  return { boot, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+
+/* ===================== PAGE: pictures and tabs ===================== */
+const { C, qHTML } = DRILL;
+const SQ = { x0: 110, y0: 30, w: 420, h: 360, xmin: -7, xmax: 7, ymin: -6, ymax: 6, lab: 2 };
+const NUM = v => Q.val(v);
+
+// y = mx + b, cut to the grid.
+function lineD(P, m, b, x1, x2) {
+  m = NUM(m); b = NUM(b); const o = P.o;
+  let lo = x1 == null ? o.xmin : x1, hi = x2 == null ? o.xmax : x2;
+  if (m !== 0) { const xa = (o.ymin - b) / m, xb = (o.ymax - b) / m; lo = Math.max(lo, Math.min(xa, xb)); hi = Math.min(hi, Math.max(xa, xb)); }
+  return 'M' + P.X(lo) + ' ' + P.Y(m * lo + b) + 'L' + P.X(hi) + ' ' + P.Y(m * hi + b);
+}
+function line(A, P, m, b, a) { return A.el('path', Object.assign({ d: lineD(P, m, b), stroke: C.blue, 'stroke-width': 4, 'stroke-linecap': 'round', fill: 'none', pathLength: 1 }, a), A.svg); }
+function dot(A, x, y, col, r, cls) { return A.el('circle', { cx: x, cy: y, r: r || 7, fill: col, stroke: C.stage, 'stroke-width': 2.5, class: cls || null }, A.svg); }
+function yGlow(A, P) { A.el('line', { x1: P.X(0), x2: P.X(0), y1: P.Y(P.o.ymax), y2: P.Y(P.o.ymin), stroke: C.teal, 'stroke-width': 12, opacity: .35, class: 'pulse' }, A.svg); }
+// Slope triangle from L to R: run across (white), rise up or down (gold).
+function tri(A, P, L, R, o) {
+  o = o || {}; const g = A.el('g', { class: o.anim ? 'fade' : null }, A.svg), cx = P.X(R.x), cy = P.Y(L.y), dash = o.dash ? '7 6' : null;
+  const runC = o.red ? C.red : C.text, riseC = o.red ? C.red : C.gold;
+  A.el('path', { d: 'M' + P.X(L.x) + ' ' + cy + 'H' + cx, stroke: runC, 'stroke-width': 3, fill: 'none', 'stroke-dasharray': dash, 'marker-end': o.red ? 'url(#aR)' : 'url(#aW)' }, g);
+  if (R.y !== L.y) A.el('path', { d: 'M' + cx + ' ' + cy + 'V' + P.Y(R.y), stroke: riseC, 'stroke-width': 3, fill: 'none', 'stroke-dasharray': dash, 'marker-end': o.red ? 'url(#aR)' : 'url(#aG)' }, g);
+  if (o.nums) {
+    A.tx(g, (P.X(L.x) + cx) / 2, cy + (R.y > L.y ? 17 : -17), String(R.x - L.x), { fill: runC, 'font-size': 19 });
+    if (R.y !== L.y) A.tx(g, cx + 10, (cy + P.Y(R.y)) / 2, (R.y > L.y ? '+' : '−') + Math.abs(R.y - L.y), { fill: riseC, 'font-size': 19, 'text-anchor': 'start' });
+  }
+  return g;
+}
+// m = rise/run in the right margin.
+function slopeNote(A, rise, run, x) {
+  const g = A.el('g', { class: 'fade' }, A.svg); x = x || 588;
+  A.mtx(g, x, 120, 'm =', { 'font-size': 24, fill: C.gold });
+  A.frac(g, x, 172, (rise < 0 ? '−' : '') + Math.abs(rise), String(run), { fill: C.gold, 'font-size': 24 });
+  const s = Q.q(rise, run);
+  if (s.d !== run || s.n !== rise) { A.mtx(g, x, 222, '=', { 'font-size': 24, fill: C.gold }); if (s.d === 1) A.mtx(g, x, 262, Q.str(s), { 'font-size': 26, fill: C.gold }); else A.frac(g, x, 268, (s.n < 0 ? '−' : '') + Math.abs(s.n), String(s.d), { fill: C.gold, 'font-size': 24 }); }
+}
+function eqHTML(m, b) {
+  m = Q.of(m); const one = m.d === 1 && Math.abs(m.n) === 1;
+  let s = '<i>y</i> = <span class="cM">' + (m.n === 0 ? '0' : one ? (m.n < 0 ? '−' : '') : qHTML(m)) + '</span><i>x</i>';
+  if (b) s += ' <span class="cB">' + (b < 0 ? '− ' : '+ ') + Math.abs(b) + '</span>';
+  return s;
+}
+const ruleSlots = () => ['y =', { k: 'm', tint: 'M', label: 'm, the slope' }, 'x +', { k: 'b', tint: 'B', label: 'b, the y-intercept' }];
+function cell(A, x, y, w, s, o) {
+  o = o || {}; const g = A.el('g', { class: o.cls || null }, A.svg);
+  A.el('rect', { x: x - w / 2, y: y - 20, width: w, height: 40, rx: 8, fill: o.head ? C.panel : C.stage, stroke: o.stroke || C.edge, 'stroke-width': o.stroke ? 2.5 : 1.5, 'stroke-dasharray': o.dash ? '5 4' : null }, g);
+  A.mtx(g, x, y + 1, s, { 'font-size': 22, fill: o.fill || C.text, 'font-style': o.head ? 'italic' : null });
+  return g;
+}
+function arc(A, x1, x2, y, up, label, col) {
+  const g = A.el('g', { class: 'fade' }, A.svg), h = up ? -10 : 10;
+  A.el('path', { d: 'M' + (x1 + 8) + ' ' + y + 'Q' + (x1 + x2) / 2 + ' ' + (y + h * 2) + ' ' + (x2 - 8) + ' ' + y, stroke: col, 'stroke-width': 2.5, fill: 'none', 'marker-end': col === C.gold ? 'url(#aG)' : col === C.teal ? 'url(#aB)' : 'url(#aM)' }, g);
+  A.tx(g, (x1 + x2) / 2, y + h * 2 + (up ? -9 : 9), label, { fill: col, 'font-size': 16 });
+}
+const sgn = n => (n < 0 ? '−' : '+') + Math.abs(n);
+
+/* LR1 Table -> rule */
+const T_TABLE = {
+  id: 'table', code: 'LR1', name: 'Table', sec: 1, q: 'Write the rule', kind: 'slots',
+  gen: MODEL.genTable, slots: ruleSlots, check: MODEL.checkRule,
+  answer: it => ({ m: Q.q(it.m), b: Q.q(it.b) }),
+  draw(A, it, V) {
+    const cw = 70, X = i => 260 + i * cw, r1 = 64, r2 = 110, done = V.phase === 'right' || V.phase === 'show', code = V.res && V.res.code;
+    it.xs.forEach((x, i) => { cell(A, X(i), r1, 62, A.fmt(x)); cell(A, X(i), r2, 62, A.fmt(it.ys[i]), { fill: C.yellow, stroke: done && it.x0 === 0 && i === 0 ? C.teal : null }); });
+    const showChange = done || (V.phase === 'wrong' && ['m', 'sign', 'recip', 'other', 'swap'].includes(code));
+    const showStart = done || (V.phase === 'wrong' && ['yval', 'b', 'bsign', 'swap', 'other'].includes(code));
+    const hx = X(-(showStart && it.x0 > 0 ? it.x0 : 0) - 1);
+    cell(A, hx, r1, 56, 'x', { head: true }); cell(A, hx, r2, 56, 'y', { head: true });
+    if (showChange) for (let i = 0; i < 4; i++) { arc(A, X(i), X(i + 1), r1 - 21, true, '+1', C.muted); arc(A, X(i), X(i + 1), r2 + 21, false, sgn(it.m), C.gold); }
+    if (showStart && it.x0 > 0) {
+      for (let k = 1; k <= it.x0; k++) {
+        const i = -k; cell(A, X(i), r1, 62, A.fmt(it.xs[0] - k), { dash: true, fill: C.muted, cls: 'fade' });
+        const last = k === it.x0;
+        cell(A, X(i), r2, 62, last ? (done ? A.fmt(it.b) : '?') : (done ? A.fmt(it.ys[0] - k * it.m) : '?'), { dash: true, fill: last ? C.teal : C.muted, stroke: last ? C.teal : null, cls: 'fade' });
+        if (done) arc(A, X(i + 1), X(i), r2 + 21, false, sgn(-it.m), C.teal);
+      }
+    } else if (showStart && it.x0 === 0 && V.phase === 'wrong') cell(A, X(0), r2, 62, A.fmt(it.ys[0]), { fill: C.yellow, stroke: C.teal, cls: 'pulse' });
+    // the same points on a grid
+    const vals = it.ys.concat([it.b, 0]); let lo = Math.min(...vals) - 1, hi = Math.max(...vals) + 1;
+    const ys = hi - lo > 30 ? 5 : hi - lo > 14 ? 2 : 1; lo = Math.floor(lo / ys) * ys; hi = Math.ceil(hi / ys) * ys;
+    const P = A.plane(A.svg, { x0: 150, y0: 180, w: 420, h: 214, xmin: -1, xmax: 7, ymin: lo, ymax: hi, ystep: ys, lab: 2, labx: 1 });
+    if (done) {
+      line(A, P, it.m, it.b, { class: V.anim ? 'draw' : null });
+      dot(A, P.X(0), P.Y(it.b), C.teal, 8, V.anim ? 'pop' : null);
+      A.tx(A.svg, P.X(0) + (it.m < 0 ? 14 : -14), P.Y(it.b) - 14, 'b', { fill: C.teal, 'font-size': 18, 'font-style': 'italic', class: 'm' });
+    }
+    it.xs.forEach((x, i) => dot(A, P.X(x), P.Y(it.ys[i]), C.yellow, 6));
+  }
+};
+
+/* LR2 Slope from two points */
+const T_SLOPE = {
+  id: 'slope', code: 'LR2', name: 'Slope', sec: 2, q: 'Find the slope', kind: 'slots',
+  gen: MODEL.genSlope, slots: () => ['m =', { k: 'm', tint: 'M', wide: true, label: 'slope' }], check: MODEL.checkSlope,
+  answer: it => ({ m: Q.q(it.rise, it.run) }),
+  draw(A, it, V) {
+    const P = A.plane(A.svg, SQ), L = it.P.x < it.Q.x ? it.P : it.Q, R = L === it.P ? it.Q : it.P, done = V.phase === 'right' || V.phase === 'show';
+    if (V.phase === 'wrong') tri(A, P, L, R, { dash: true, anim: true });
+    if (done) { tri(A, P, L, R, { nums: true, anim: V.anim }); slopeNote(A, it.rise, it.run); }
+    [it.P, it.Q].forEach(p => {
+      dot(A, P.X(p.x), P.Y(p.y), C.yellow, 8);
+      A.tx(A.svg, P.X(p.x) + (p === L ? -10 : 10), P.Y(p.y) + (p.y >= (p === L ? R : L).y ? -18 : 18), '(' + A.fmt(p.x) + ', ' + A.fmt(p.y) + ')', { 'font-size': 15, fill: C.muted, 'text-anchor': p === L ? 'end' : 'start' });
+    });
+  }
+};
+
+/* LR3 Equation -> graph: tap two grid points */
+const T_GRAPH = {
+  id: 'graph', code: 'LR3', name: 'Graph it', sec: 3, q: 'Tap two points on the line', kind: 'custom',
+  gen: MODEL.genGraph, prompt: it => eqHTML(it.m, it.b),
+  panel(box, it, A) {
+    const s = document.createElement('div'); s.className = 'seg';
+    s.innerHTML = '<button type="button" aria-label="Clear points" title="Clear">⟲</button>';
+    s.firstChild.addEventListener('click', () => { if (!A.locked) A.set('pts', []); });
+    box.appendChild(s);
+  },
+  ready: r => (r.pts || []).length < 2 ? 'Tap 2 points' : '',
+  check: (it, r) => MODEL.checkGraph(it, r.pts),
+  answer: it => ({ pts: [{ x: 0, y: it.b }, { x: it.m.d, y: it.b + it.m.n }] }),
+  draw(A, it, V) {
+    const P = A.plane(A.svg, SQ), pts = V.resp.pts || [], code = V.res && V.res.code, done = V.phase === 'right' || V.phase === 'show';
+    if (V.phase === 'wrong' && ['xaxis', 'b', 'bsign', 'other', 'vert'].includes(code)) yGlow(A, P);
+    if (pts.length === 2 && pts[0].x !== pts[1].x && !(V.phase === 'right')) {
+      const s = Q.q(pts[1].y - pts[0].y, pts[1].x - pts[0].x), b = Q.sub(Q.q(pts[0].y), Q.mul(s, pts[0].x));
+      line(A, P, s, b, { stroke: V.phase === 'ask' ? C.muted : C.red, 'stroke-width': 3, 'stroke-dasharray': '8 7', pathLength: null });
+      if (V.phase === 'wrong' && ['sign', 'recip', 'slope'].includes(code)) { const L = pts[0].x < pts[1].x ? pts[0] : pts[1], R = L === pts[0] ? pts[1] : pts[0]; tri(A, P, L, R, { red: true, nums: true, dash: true, anim: true }); }
+    }
+    if (done) {
+      line(A, P, it.m, it.b, { class: V.anim ? 'draw' : null });
+      tri(A, P, { x: 0, y: it.b }, { x: it.m.d, y: it.b + it.m.n }, { nums: true, anim: V.anim });
+      dot(A, P.X(0), P.Y(it.b), C.teal, 8, V.anim ? 'pop' : null);
+    }
+    pts.forEach(p => dot(A, P.X(p.x), P.Y(p.y), C.yellow, 8));
+    if (!A.locked) {
+      const hit = A.el('rect', { x: SQ.x0 - 10, y: SQ.y0 - 10, width: SQ.w + 20, height: SQ.h + 20, fill: 'transparent', class: 'hit' }, A.svg);
+      hit.addEventListener('click', e => {
+        const c = A.pt(e), g = P.inv(c.x, c.y), p = { x: Math.max(-7, Math.min(7, Math.round(g.x))), y: Math.max(-6, Math.min(6, Math.round(g.y))) };
+        const list = (A.resp.pts || []).slice(), i = list.findIndex(u => u.x === p.x && u.y === p.y);
+        if (i >= 0) list.splice(i, 1); else if (list.length < 2) list.push(p); else list[1] = p;
+        A.set('pts', list);
+      });
+    }
+  }
+};
+
+/* LR3 Graph -> equation */
+const T_READ = {
+  id: 'read', code: 'LR3', name: 'Equation', sec: 3, q: 'Write the equation', kind: 'slots',
+  gen: MODEL.genRead, slots: ruleSlots, check: MODEL.checkRule,
+  answer: it => ({ m: it.m, b: Q.q(it.b) }),
+  draw(A, it, V) {
+    const P = A.plane(A.svg, SQ), code = V.res && V.res.code, done = V.phase === 'right' || V.phase === 'show';
+    const [L, R] = it.pts;
+    if (V.phase === 'wrong' && ['xaxis', 'b', 'bsign', 'swap', 'other', 'yval'].includes(code)) yGlow(A, P);
+    line(A, P, it.m, it.b);
+    if (V.phase === 'wrong' && ['sign', 'recip', 'm', 'other', 'swap'].includes(code)) tri(A, P, L, R, { dash: true, anim: true });
+    if (done) {
+      tri(A, P, L, R, { nums: true, anim: V.anim }); slopeNote(A, R.y - L.y, R.x - L.x);
+      dot(A, P.X(0), P.Y(it.b), C.teal, 9, V.anim ? 'pop' : null);
+      A.tx(A.svg, P.X(0) + (Q.val(it.m) < 0 ? 14 : -14), P.Y(it.b) - 16, 'b = ' + A.fmt(it.b), { fill: C.teal, 'font-size': 17, 'text-anchor': Q.val(it.m) < 0 ? 'start' : 'end' });
+    }
+    it.pts.forEach(p => dot(A, P.X(p.x), P.Y(p.y), C.text, 6));
+  }
+};
+
+/* LR4 Direct or partial */
+const T_VARY = {
+  id: 'vary', code: 'LR4', name: 'Direct?', sec: 4, q: 'Direct or partial?', kind: 'choice',
+  gen: MODEL.genVary,
+  choices: () => [{ v: 'direct', label: 'Direct' }, { v: 'partial', label: 'Partial' }],
+  check: MODEL.checkVary,
+  answer: it => ({ v: it.direct ? 'direct' : 'partial' }),
+  draw(A, it, V) {
+    const done = V.phase !== 'ask';
+    if (it.rep === 'graph') {
+      const ys = [0, 10].map(x => it.m * x + it.b).concat([0, it.b]);
+      let lo = Math.min(...ys), hi = Math.max(...ys); const st = hi - lo > 40 ? 10 : hi - lo > 20 ? 5 : 2;
+      lo = Math.floor(lo / st) * st; hi = Math.ceil(hi / st) * st + (hi % st === 0 ? st : 0);
+      const P = A.plane(A.svg, { x0: 120, y0: 26, w: 420, h: 360, xmin: -1, xmax: 10, ymin: Math.min(lo, -st), ymax: hi, ystep: st, lab: 1, labx: 2 });
+      A.el('path', { d: lineD(P, it.m, it.b, 0, 10), stroke: C.blue, 'stroke-width': 4, fill: 'none', 'stroke-linecap': 'round' }, A.svg);
+      dot(A, P.X(0), P.Y(it.b), C.blue, 6);
+      if (done) {
+        A.el('circle', { cx: P.X(0), cy: P.Y(it.b), r: 16, fill: 'none', stroke: C.teal, 'stroke-width': 3, class: V.anim ? 'pop' : null }, A.svg);
+        A.tx(A.svg, P.X(0) + 22, P.Y(it.b) + (it.m > 0 ? 18 : -18), '(0, ' + A.fmt(it.b) + ')', { fill: C.teal, 'font-size': 18, 'text-anchor': 'start' });
+      }
+    } else if (it.rep === 'table') {
+      const cw = 76, X = i => 260 + i * cw;
+      cell(A, 110, 170, 60, 'x', { head: true }); cell(A, 110, 222, 60, 'y', { head: true });
+      it.xs.forEach((x, i) => { cell(A, X(i), 170, 68, A.fmt(x)); cell(A, X(i), 222, 68, A.fmt(it.ys[i]), { fill: C.yellow }); });
+      if (done) {
+        if (it.xs[0] === 0) cell(A, X(0), 222, 68, A.fmt(it.ys[0]), { fill: C.teal, stroke: C.teal, cls: 'pop' });
+        else { cell(A, 184, 170, 60, '0', { dash: true, fill: C.muted, cls: 'fade' }); cell(A, 184, 222, 60, A.fmt(it.b), { dash: true, fill: C.teal, stroke: C.teal, cls: 'pop' }); }
+        A.tx(A.svg, 320, 300, '(0, ' + A.fmt(it.b) + ')', { fill: C.teal, 'font-size': 22, class: 'fade' });
+      }
+    } else {
+      const t = A.el('text', { x: 320, y: 190, 'text-anchor': 'middle', 'dominant-baseline': 'central', class: 'm', 'font-size': 54, fill: C.text }, A.svg);
+      const span = (s, a) => { const e = A.el('tspan', a || {}, t); e.textContent = s; };
+      const mx = (it.m === 1 ? '' : String(it.m)), bcol = done ? { fill: C.teal } : {};
+      span('y', { 'font-style': 'italic' }); span(' = ');
+      if (it.form === 'bmx') { span(A.fmt(it.b), bcol); span((it.m < 0 ? ' − ' : ' + ') + (Math.abs(it.m) === 1 ? '' : Math.abs(it.m))); span('x', { 'font-style': 'italic' }); }
+      else { span(it.m < 0 ? '−' + (it.m === -1 ? '' : Math.abs(it.m)) : mx); span('x', { 'font-style': 'italic' }); if (it.b) span((it.b < 0 ? ' − ' : ' + ') + Math.abs(it.b), bcol); }
+      if (done) A.mtx(A.svg, 320, 280, 'b = ' + A.fmt(it.b), { fill: C.teal, 'font-size': 30, class: 'm fade' });
+    }
+  }
+};
+
+const PAGE = {
+  key: 'math9-linear-relations-trainer-v1', course: 'Math 9 · Algebra', title: 'Linear Relations',
+  notes: '../notes/linear-relations/math9-linear-relations-notes-v1.html',
+  tabs: [T_TABLE, T_SLOPE, T_GRAPH, T_READ, T_VARY]
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>

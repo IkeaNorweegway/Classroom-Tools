@@ -117,6 +117,18 @@ This is the same mechanism as predict–observe–explain (White & Gunstone, 199
   - Students read and predict working code before they write their own. That mirrors the trainers' checked steps followed by free play.
 - **Limit:** other classroom reports found the final "Make" step hard for multi-step programs.
 
+### 9. Narrow practice after instruction (the Math 9 narrow trainers, 2026-10-29)
+
+The Math 9 trainers are used after a skill has been taught. That changes what helps.
+
+- **Expertise reversal.** Guidance that novices need becomes redundant once learners hold the schema, and can then hurt learning. Detailed text explanations are the usual example. (Kalyuga, Ayres, Chandler & Sweller, 2003.) **Design move:** no intro, tour or worked-example popups; the notes link is there for anyone who needs to relearn.
+- **Perceptual learning modules.** Short, varied classification trials with feedback built pattern recognition and fluency in middle and high school mathematics, including an Algebraic Transformations module for Grades 8–9. (Kellman, Massey & Son, 2010.) **Design move:** one narrow skill per tab, many quick items, tap choices where the skill is a decision (Flip?, Direct?).
+- **Elaborated feedback.** In computer-based learning, feedback that explains beat giving the correct answer, which beat right/wrong alone: average effects 0.49, 0.32 and 0.05 across 40 studies, with larger effects in mathematics. (Van der Kleij, Feskens & Eggen, 2015; figures from the abstract.) **Design move:** a wrong answer gets a named-error cue and a picture that shows the error, not just ✗.
+- **Multiple representations cost effort.** Several linked views only help when the learner can connect them; otherwise they add load (Ainsworth, 2006). **Design move:** one picture per tab, chosen to make that one skill visible.
+- **What this format gives up.** Narrow tabs are blocked practice. Interleaved practice is better for choosing a method (Rohrer & Taylor, 2007), so mixing stays in the workbooks and practice tests. Word problems (LE5) stay on paper because they need reading.
+
+**Confidence:** moderate. Each finding is well replicated, but none tested a page like ours directly, and the PLM studies used longer modules than a 10-item round.
+
 ---
 
 ## Effect Sizes at a Glance
@@ -188,3 +200,8 @@ These are the design rules in `_sims-context.md`, with the evidence for each:
 - Carbonneau, K. J., Marley, S. C., & Selig, J. P. (2013). A meta-analysis of the efficacy of teaching mathematics with concrete manipulatives. *Journal of Educational Psychology*, 105(2), 380–400.
 - Sentance, S., Waite, J., & Kallia, M. (2019). Teaching computer programming with PRIMM: a sociocultural perspective. *Computer Science Education*, 29(2–3), 136–176.
 - White, R., & Gunstone, R. (1992). *Probing understanding.* Falmer Press. (Predict–observe–explain.)
+- Kalyuga, S., Ayres, P., Chandler, P., & Sweller, J. (2003). The expertise reversal effect. *Educational Psychologist*, 38(1), 23–31.
+- Kellman, P. J., Massey, C. M., & Son, J. Y. (2010). Perceptual learning modules in mathematics: Enhancing students' pattern recognition, structure extraction, and fluency. *Topics in Cognitive Science*, 2(2), 285–305. https://pmc.ncbi.nlm.nih.gov/articles/PMC6124488
+- Van der Kleij, F. M., Feskens, R. C. W., & Eggen, T. J. H. M. (2015). Effects of feedback in a computer-based learning environment on students' learning outcomes: A meta-analysis. *Review of Educational Research*, 85(4), 475–511. https://doi.org/10.3102/0034654314564881
+- Ainsworth, S. (2006). DeFT: A conceptual framework for considering learning with multiple representations. *Learning and Instruction*, 16(3), 183–198.
+- Rohrer, D., & Taylor, K. (2007). The shuffling of mathematics problems improves learning. *Instructional Science*, 35(6), 481–498.

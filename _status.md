@@ -133,7 +133,15 @@ All 11 topics have notes, notes answer key, teacher notes, concept one-pager, Co
     - every page fits with no page or panel scroll at 1366 × 734 and 1000 × 700, with screenshots checked.
   - **The Math 9, Science 7 and STEAM viewers** now open any `-sim-`/`-trainer-` page without the site nav, with a slim Back bar and a Full screen button.
   - **Untested:** students, touch and drag on tablets, school Chromebooks (animation speed), phone layout beyond the CSS, the site build (no Node here; check the Actions run), and the Full screen button on the live site.
-  - **Next batches:** Number (Powers trainer; the Fraction and Pythagorean sims widened into Rational Numbers and Square Roots sims), then Measurement & Geometry, then Statistics & Probability.
+  - **Narrow trainers replace the Algebra batch (site, 2026-10-29, user request).** The three builds above were too broad and too wordy for practice after a lesson, so each topic now has one page of narrow skill tabs: one picture, one answer area, ✓/✗ with a short cue, 10-item rounds, and a 📖 link to the notes section. No intro, tour or task popups. Rules: `_sims-context.md` design rules 19–25; evidence: `research/simulations-research.md` §9. The v1 builds are kept, unlinked.
+    - **Linear Relations Trainer** (`math9-linear-relations-trainer-v1`): Table, Slope, Graph it, Equation, Direct?
+    - **Equations Trainer v2** (`math9-linear-equations-trainer-v2`): Two-step, Brackets, Both sides, Fractions, Flip?, Graph it. No word-problem tab (LE5 stays on paper).
+    - **Polynomials Trainer v2** (`math9-polynomials-trainer-v2`): Parts, Like terms, Add, Subtract, Monomial ×, Binomial ×.
+    - **Source:** stitched by `scripts/drill/build.sh` from one shared shell plus a model and view per page; edit the parts, not the HTML.
+    - **Tested in headless Chrome** (`sh scripts/drill/test.sh`): 35, 38 and 37 checks pass. Every tab's right answer passes for 400 generated items; every tab plays a full round through the UI (right first time, wrong then right, wrong twice, Show me); each named mistake gets its own cue; the balance steps end at the answer for 1000 problems; the flip test point is true in both lines for 600 items. No page or panel scroll on any tab at 1348 × 638, 982 × 604 and 1262 × 504; phone checked at 390 px in a frame. Screenshots of every tab checked.
+    - **Known limits:** the graph taps have no keyboard route; the Monomial × answer row wraps to two lines (no scrolling).
+    - **Untested:** students, touch, school Chromebooks, the notes jump (`#:~:text=`) on the live site, and the site build (check the Actions run).
+  - **Next batches (narrow format):** Number (Powers & Exponents, Rational Numbers, Square Roots), then Measurement & Geometry, then Statistics & Probability.
 
 Answer key design follows `research/answer-key-design-research.md`: full worked solutions for Core, partial solutions for Challenge, faded structure in strand workbooks.
 

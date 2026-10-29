@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Equations Trainer | Math 9</title>
+<!-- =====================================================================
+   EQUATIONS & INEQUALITIES TRAINER v2 (narrow trainer format, see _sims-context.md)
+   Math 9 | Algebra | Linear Equations & Inequalities. Used after the lesson: it does not teach, it points back to the notes.
+   One narrow skill per tab, 10 items a round:
+     LE1 Two-step    solve ax + c = d; a balance shows the same move on both sides, the steps are written beside it
+     LE2 Brackets    expand a(px + c); arrows from the outside number to each term, and an area model
+     LE2 Both sides  solve ax + c = bx + d on the balance (take away the smaller x term first)
+     LE3 Fractions   multiply every term by the LCD; type the whole-number equation (any common multiple is accepted)
+     LE4 Flip?       one step on an inequality: pick < or >; a test point is checked in both lines
+     LE4 Graph it    tap the boundary, pick open or closed and the side; includes the "3 < x" form
+   Named mistakes: wrong inverse, dividing one term, first-term-only distribution, sign errors, adding the x term,
+   an LCD term left out, flipping when not dividing by a negative, not flipping when you do, the boundary dot, the side.
+   LE5 (word problems) is left to the workbook: it needs reading, and this page keeps text to a minimum.
+   Model: exact fractions. ?debug=1 puts DRILL (and MODEL) on window, turns off saving and motion.
+   ===================================================================== -->
+<style>
+/* ===== DRILL SHELL CSS START (same in every Math 9 trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+/* ===================== MODEL START (no DOM) ===================== */
+const MODEL = (() => {
+  const { q, of, add, sub, mul, div, neg, eq, val, isInt, rnd, pick, nz, chance, lcm, gcd } = Q;
+  const sg = n => (n < 0 ? '−' : '+') + Math.abs(n);
+  const SYM = { '<': '<', '>': '>', '<=': '≤', '>=': '≥' }, FLIP = { '<': '>', '>': '<', '<=': '>=', '>=': '<=' };
+
+  // Balance steps for a·x + c = b·x + d: take away the smaller x term, then the number, then divide.
+  function steps(a, c, b, d) {
+    const out = [{ L: { x: a, k: c }, R: { x: b, k: d } }];
+    let L = { x: a, k: c }, R = { x: b, k: d };
+    if (b !== 0) {
+      const take = b > a && a > 0 ? a : b;   // take away the smaller x term
+      L = { x: L.x - take, k: L.k }; R = { x: R.x - take, k: R.k };
+      out.push({ op: (take > 0 ? '−' : '+') + (Math.abs(take) === 1 ? '' : Math.abs(take)) + 'x', L, R });
+    }
+    const xLeft = L.x !== 0, kOff = xLeft ? L.k : R.k;
+    if (kOff !== 0) {
+      L = { x: L.x, k: L.k - kOff }; R = { x: R.x, k: R.k - kOff };
+      out.push({ op: kOff > 0 ? '−' + kOff : '+' + (-kOff), L, R });
+    }
+    const coef = xLeft ? L.x : R.x;
+    if (coef !== 1) {
+      const v = div(xLeft ? R.k : L.k, coef);
+      L = xLeft ? { x: 1, k: 0 } : { x: 0, k: v }; R = xLeft ? { x: 0, k: v } : { x: 1, k: 0 };
+      out.push({ op: '÷' + (coef < 0 ? '(' + sg(coef) + ')' : coef), L, R });
+    }
+    return out;
+  }
+
+  /* LE1 two-step: a·x + c = d */
+  function genTwo() { const a = chance(.25) ? -rnd(2, 6) : rnd(2, 6), x = nz(-9, 9), c = nz(-12, 12); return { a, c, d: a * x + c, x }; }
+  function checkTwo(it, r) {
+    const X = r.x;
+    if (eq(X, it.x)) return { ok: true };
+    if (eq(X, div(it.d + it.c, it.a))) return { code: 'inverse', cue: 'Undo ' + sg(it.c) + ' with ' + sg(-it.c) };
+    if (eq(X, sub(div(it.d, it.a), it.c))) return { code: 'divone', cue: 'Undo ' + sg(it.c) + ' first' };
+    if (eq(X, it.d - it.c)) return { code: 'nodiv', cue: 'Then divide by ' + (it.a < 0 ? '(' + sg(it.a) + ')' : it.a) };
+    if (eq(X, -it.x)) return { code: 'sign', cue: 'Check the sign' };
+    return { code: 'other', cue: 'Undo ' + sg(it.c) + ', then ÷ ' + (it.a < 0 ? '(' + sg(it.a) + ')' : it.a) };
+  }
+
+  /* LE2 expand a(p·x + c) */
+  function genBr() { return { a: pick([2, 3, 4, 5, 6, -2, -3, -4, -5, -1]), p: pick([1, 1, 1, 2, 3]), c: nz(-9, 9) }; }
+  function checkBr(it, r) {
+    const K = it.a * it.p, C0 = it.a * it.c;
+    if (eq(r.k, K) && eq(r.c0, C0)) return { ok: true };
+    if (eq(r.k, K) && eq(r.c0, it.c)) return { code: 'first', cue: 'Multiply every term inside' };
+    if ((eq(r.k, K) && eq(r.c0, -C0)) || (eq(r.k, -K) && eq(r.c0, C0)) || (eq(r.k, -K) && eq(r.c0, -C0))) return { code: 'sign', cue: it.a < 0 ? 'Negative × negative = positive' : 'Check the signs' };
+    if (eq(r.c0, C0) && eq(r.k, it.p)) return { code: 'xterm', cue: 'Multiply the x term too' };
+    return { code: 'other', cue: (it.a < 0 ? '(' + sg(it.a) + ')' : it.a) + ' × each term inside' };
+  }
+
+  /* LE2 x on both sides: a·x + c = b·x + d */
+  function genBoth() {
+    for (;;) {
+      const a = rnd(2, 9), b = rnd(1, 8); if (a === b) continue;
+      const x = nz(-8, 8), c = nz(-10, 10), d = a * x + c - b * x;
+      if (Math.abs(d) > 40 || d === 0) continue;
+      return { a, b, c, d, x };
+    }
+  }
+  function checkBoth(it, r) {
+    const X = r.x;
+    if (eq(X, it.x)) return { ok: true };
+    const small = Math.min(it.a, it.b);
+    if (eq(X, div(it.d - it.c, it.a + it.b))) return { code: 'addx', cue: 'Subtract ' + (small === 1 ? '' : small) + 'x from both sides' };
+    if (eq(X, -it.x)) return { code: 'sign', cue: 'Check the sign' };
+    if (eq(X, div(it.d + it.c, it.a - it.b))) return { code: 'inverse', cue: 'Undo ' + sg(it.c) + ' with ' + sg(-it.c) };
+    return { code: 'other', cue: 'x terms to one side first' };
+  }
+
+  /* LE3 clear fractions: A·x + K = R, at least one a fraction. Answer: the whole-number equation. */
+  function genFrac() {
+    for (;;) {
+      const p = pick([2, 3, 4, 5, 6]), qq = pick([2, 3, 4, 6, 8]), a = pick([1, 1, 2, 3, 5]);
+      if (gcd(a, p) !== 1) continue;
+      const mode = pick(['kfrac', 'kfrac', 'rfrac']);
+      let K, R;
+      if (mode === 'kfrac') { const c = nz(-7, 7); if (gcd(c, qq) !== 1) continue; K = q(c, qq); R = q(nz(-6, 6)); }
+      else { const c = nz(-7, 7); if (gcd(c, qq) !== 1) continue; K = q(nz(-6, 6)); R = q(c, qq); }
+      const A = q(a, p), L = [A, K, R].reduce((m, f) => lcm(m, f.d), 1);
+      if (L > 24 || L === p && chance(.5)) continue;
+      return { A, K, R, L, mode };
+    }
+  }
+  function checkFrac(it, r) {
+    const got = [r.A, r.K, r.R], orig = [it.A, it.K, it.R];
+    const k = div(got[0], orig[0]);
+    const same = got.every((g, i) => eq(g, mul(orig[i], k)));
+    if (same && got.every(isInt) && val(k) !== 0) return { ok: true, cue: eq(k, it.L) ? null : 'Works. Smallest is × ' + it.L };
+    for (let i = 0; i < 3; i++) {
+      const [j, m] = [0, 1, 2].filter(n => n !== i), kj = div(got[j], orig[j]);
+      if (eq(got[i], orig[i]) && eq(got[m], mul(orig[m], kj)) && !eq(kj, 1)) return { code: 'lcd', miss: i, cue: 'Every term × ' + it.L };
+    }
+    if (same) return { code: 'notint', cue: 'Use × ' + it.L + ' to clear them' };
+    return { code: 'other', cue: 'Multiply every term by ' + it.L };
+  }
+
+  /* LE4 does the sign flip? One step, pick < or >. */
+  function genFlip() {
+    const kind = pick(['divneg', 'divneg', 'mulneg', 'negone', 'divpos', 'add', 'sub']);
+    const rel = pick(['<', '>', '<=', '>=']);
+    let start, op, v, flip;
+    if (kind === 'divneg') { const a = -rnd(2, 6); v = nz(-6, 6); start = { lhs: sg(a).replace('+', '') + 'x', rhs: a * v }; op = '÷ (' + sg(a) + ')'; flip = true; }
+    else if (kind === 'mulneg') { const a = rnd(2, 5), w = nz(-5, 5); start = { lhs: '−x/' + a, rhs: w }; op = '× (−' + a + ')'; v = -a * w; flip = true; }
+    else if (kind === 'negone') { const w = nz(-9, 9); start = { lhs: '−x', rhs: w }; op = pick(['× (−1)', '÷ (−1)']); v = -w; flip = true; }
+    else if (kind === 'divpos') { const a = rnd(2, 6); v = -rnd(1, 6) * (chance(.8) ? 1 : -1); start = { lhs: a + 'x', rhs: a * v }; op = '÷ ' + a; flip = false; }
+    else { const n = nz(-9, 9), k = nz(-9, 9); start = { lhs: 'x ' + (n < 0 ? '− ' : '+ ') + Math.abs(n), rhs: k }; op = n < 0 ? '+ ' + (-n) : '− ' + n; v = k - n; flip = false; }
+    const ans = flip ? FLIP[rel] : rel;
+    const dir = ans[0] === '>' ? 1 : -1, t = v + dir * rnd(1, 3);
+    return { kind, rel, start, op, v, flip, ans, t };
+  }
+  function checkFlip(it, r) {
+    if (r.v === it.ans) return { ok: true };
+    if (it.flip) return { code: 'noflip', cue: (it.kind === 'mulneg' || /×/.test(it.op) ? '× by a negative: flip it' : '÷ by a negative: flip it') };
+    return { code: 'flipped', cue: it.kind === 'divpos' ? '÷ by a positive: no flip' : 'Adding or subtracting never flips' };
+  }
+  // The value of the left side of the start line at x = t (for the test-point picture).
+  function startAt(it, t) {
+    const s = it.start.lhs;
+    if (it.kind === 'divneg' || it.kind === 'divpos') return q(parseInt(s.replace('−', '-'), 10) * t);
+    if (it.kind === 'mulneg') return q(-t, parseInt(s.split('/')[1], 10));
+    if (it.kind === 'negone') return q(-t);
+    const n = parseInt(s.slice(2).replace('− ', '-').replace('+ ', ''), 10); return q(t + n);
+  }
+  const holds = (rel, l, r) => ({ '<': l < r, '>': l > r, '<=': l <= r, '>=': l >= r }[rel]);
+
+  /* LE4 graph an inequality: boundary, open or closed, which side. */
+  function genIneq() { const b = rnd(-6, 6), rel = pick(['<', '>', '<=', '>=']), back = chance(.35); return { b, rel, back }; }
+  function ineqAnswer(it) { return { at: it.b, closed: it.rel.length === 2, dir: it.rel[0] === '>' ? 'R' : 'L' }; }
+  function checkIneq(it, r) {
+    const A = ineqAnswer(it), atOk = r.at === A.at, dotOk = r.closed === A.closed, dirOk = r.dir === A.dir;
+    if (atOk && dotOk && dirOk) return { ok: true };
+    if (!atOk) return { code: 'bnd', cue: 'The dot goes on ' + (it.b < 0 ? '−' + (-it.b) : it.b) };
+    if (!dirOk && dotOk) return it.back ? { code: 'readback', cue: 'Read it from x: x ' + SYM[it.rel] + ' ' + (it.b < 0 ? '−' + (-it.b) : it.b) } : { code: 'dir', cue: 'Test a point: which side works?' };
+    if (!dotOk && dirOk) return { code: 'dot', cue: A.closed ? '≤ or ≥: closed dot ●' : '< or >: open dot ○' };
+    return { code: 'both', cue: 'Check the dot and the side' };
+  }
+
+  return { SYM, FLIP, sg, steps, genTwo, checkTwo, genBr, checkBr, genBoth, checkBoth, genFrac, checkFrac, genFlip, checkFlip, startAt, holds, genIneq, ineqAnswer, checkIneq };
+})();
+/* ===================== MODEL END ===================== */
+
+
+/* ===== DRILL SHELL START (same in every Math 9 trainer) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen()                 -> a new item (from MODEL)
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom'
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown). */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => { if (!part) return; const t = el('tspan', /^[a-z]$/.test(part) ? { 'font-style': 'italic' } : {}, e); t.textContent = part; });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (tab.kind === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (tab.kind === 'choice') {
+      const row = document.createElement('div'); row.className = 'choices';
+      tab.choices(item).forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = tab.kind === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) { for (let i = 0; i < 25; i++) { it = tab.gen(); key = JSON.stringify(it); if (key !== lastKey) break; } }
+    lastKey = key || JSON.stringify(it);
+    item = it; resp = {}; att = 0; resolved = false;
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (tab.kind === 'choice' && resp.v == null) return;
+    if (tab.kind === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (tab.kind === 'choice' ? 1 : 2);
+    if (res.ok) {
+      resolved = true; marks.push(att === 1 ? 'g' : 'y');
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r');
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (tab.kind === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); inp.classList.add(ok || Q.eq(v, ans[inp.dataset.k]) ? 'ok' : 'bad'); });
+    } else if (tab.kind === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (tab.kind === 'slots') fillSlots(ans, 'shown');
+    else if (tab.kind === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(tab) + '" target="_blank" rel="noopener">📖 Notes §' + tab.sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => PAGE.notes + '#:~:text=' + encodeURIComponent('Section ' + t.sec + ' —');
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    const n = $('notes'); n.href = notesHref(tab); $('notesTxt').textContent = '§' + tab.sec;
+    n.title = 'Notes, Section ' + tab.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + tab.sec);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }) };
+  }
+  return { boot, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+
+/* ===================== PAGE: pictures and tabs ===================== */
+const { C, qHTML, fracHTML, mathHTML } = DRILL;
+const { sg, SYM } = MODEL;
+const fm = v => Q.str(v);
+const coef = a => a === 1 ? 'x' : a === -1 ? '−x' : fm(a) + 'x';
+function side(s) {
+  const k = Q.of(s.k || 0), kv = Q.val(k);
+  if (!s.x) return fm(k);
+  return coef(s.x) + (kv === 0 ? '' : (kv < 0 ? ' − ' : ' + ') + fm(Q.q(Math.abs(k.n), k.d)));
+}
+const eqStr = (L, R) => side(L) + ' = ' + side(R);
+const cHTML = a => a === 1 ? '' : a === -1 ? '−' : (a < 0 ? '−' : '') + Math.abs(a);
+const kHTML = (k, first) => { k = Q.of(k); const v = Q.val(k); if (v === 0 && !first) return ''; const abs = Q.q(Math.abs(k.n), k.d); return (first ? (v < 0 ? '−' : '') : (v < 0 ? ' − ' : ' + ')) + qHTML(abs); };
+function pill(A, p, x, y, s, col) {
+  const g = A.el('g', { class: 'pop' }, p), w = 18 + String(s).length * 12;
+  A.el('rect', { x: x - w / 2, y: y - 16, width: w, height: 32, rx: 16, fill: '#2a2110', stroke: col || C.gold, 'stroke-width': 2 }, g);
+  A.mtx(g, x, y + 1, s, { 'font-size': 21, fill: col || C.gold });
+  return g;
+}
+
+/* ---------- the balance, with the written steps beside it ---------- */
+function blocks(A, p, cx, baseY, s) {
+  const list = [], xn = s.x || 0, k = Q.of(s.k || 0), kv = Q.val(k);
+  if (xn) { if (Math.abs(xn) <= 4) for (let i = 0; i < Math.abs(xn); i++) list.push({ w: 40, t: xn > 0 ? 'x' : '−x', c: xn > 0 ? C.blue : C.red }); else list.push({ w: 64, t: coef(xn), c: xn > 0 ? C.blue : C.red }); }
+  if (kv !== 0 || !xn) { const t = fm(k); list.push({ w: 26 + t.length * 15, t, c: kv > 0 ? C.yellow : kv < 0 ? C.red : C.muted }); }
+  const rows = [[]]; let w = 0;
+  list.forEach(b => { if (w + b.w > 160 && rows[rows.length - 1].length) { rows.push([]); w = 0; } rows[rows.length - 1].push(b); w += b.w + 5; });
+  rows.forEach((row, r) => {
+    const tw = row.reduce((s2, b) => s2 + b.w + 5, -5); let x = cx - tw / 2; const y = baseY - 46 * (r + 1);
+    row.forEach(b => {
+      A.el('rect', { x, y, width: b.w, height: 40, rx: 7, fill: b.c, 'fill-opacity': .18, stroke: b.c, 'stroke-width': 2.5 }, p);
+      A.mtx(p, x + b.w / 2, y + 20, b.t, { 'font-size': 24, fill: b.c });
+      x += b.w + 5;
+    });
+  });
+}
+function balance(A, p, L, R, op) {
+  const cx = 210, by = 118, py = 296;
+  A.el('path', { d: 'M' + cx + ' ' + by + 'l-22 34h44z', fill: C.edge, stroke: C.muted, 'stroke-width': 2 }, p);
+  A.el('line', { x1: cx, x2: cx, y1: by + 34, y2: 352, stroke: C.muted, 'stroke-width': 4 }, p);
+  A.el('rect', { x: cx - 70, y: 352, width: 140, height: 9, rx: 4.5, fill: C.muted }, p);
+  A.el('line', { x1: 48, x2: 372, y1: by, y2: by, stroke: C.text, 'stroke-width': 5, 'stroke-linecap': 'round' }, p);
+  A.el('circle', { cx, cy: by, r: 6, fill: C.text }, p);
+  [[92, L], [328, R]].forEach(([px, s]) => {
+    A.el('path', { d: 'M' + px + ' ' + by + 'L' + (px - 78) + ' ' + py + 'M' + px + ' ' + by + 'L' + (px + 78) + ' ' + py, stroke: C.muted, 'stroke-width': 1.5, opacity: .5, fill: 'none' }, p);
+    A.el('path', { d: 'M' + (px - 86) + ' ' + py + 'Q' + px + ' ' + (py + 30) + ' ' + (px + 86) + ' ' + py + 'Z', fill: C.panel, stroke: C.muted, 'stroke-width': 2 }, p);
+    blocks(A, p, px, py - 2, s);
+    if (op) pill(A, p, px, by - 40, op);
+  });
+}
+// Play the steps: balance on the left, each line written on the right.
+function playSteps(A, S, upto, anim) {
+  const bal = A.el('g', {}, A.svg), tr = A.el('g', {}, A.svg), gap = Math.min(64, 300 / Math.max(1, S.length - 1));
+  A.el('line', { x1: 425, x2: 425, y1: 30, y2: 390, stroke: C.edge, 'stroke-width': 1.5 }, A.svg);
+  const frame = i => {
+    bal.innerHTML = ''; balance(A, bal, S[i].L, S[i].R, S[i].op);
+    const y = 60 + i * gap;
+    if (S[i].op) pill(A, tr, 478, y - gap / 2, S[i].op);
+    const t = A.mtx(tr, 532, y, eqStr(S[i].L, S[i].R), { 'font-size': 26, fill: i === S.length - 1 && upto === S.length - 1 ? C.green : C.text, class: anim && i ? 'fade' : null });
+    if (t.getComputedTextLength && t.getComputedTextLength() > 190) t.setAttribute('font-size', 21);
+  };
+  for (let i = 0; i <= upto; i++) { if (i === 0 || !anim) frame(i); else A.later(i * 1100, () => frame(i)); }
+}
+
+/* LE1 two-step */
+const T_TWO = {
+  id: 'two', code: 'LE1', name: 'Two-step', sec: 1, q: 'Solve', kind: 'slots',
+  gen: MODEL.genTwo, prompt: it => mathHTML(cHTML(it.a) + 'x') + kHTML(it.c) + ' = ' + kHTML(it.d, true),
+  slots: () => ['x =', { k: 'x', label: 'x' }], check: MODEL.checkTwo, answer: it => ({ x: Q.q(it.x) }),
+  draw(A, it, V) { const S = MODEL.steps(it.a, it.c, 0, it.d); playSteps(A, S, V.phase === 'ask' ? 0 : V.phase === 'wrong' ? 1 : S.length - 1, V.anim); }
+};
+
+/* LE2 expand a(px + c) */
+const T_BR = {
+  id: 'br', code: 'LE2', name: 'Brackets', sec: 2, q: 'Expand', kind: 'slots',
+  gen: MODEL.genBr, prompt: it => cHTML(it.a) + '(' + mathHTML(cHTML(it.p) + 'x') + kHTML(it.c) + ')',
+  slots: () => [{ k: 'k', label: 'x coefficient' }, 'x +', { k: 'c0', label: 'number' }], check: MODEL.checkBr,
+  answer: it => ({ k: Q.q(it.a * it.p), c0: Q.q(it.a * it.c) }),
+  draw(A, it, V) {
+    const done = V.phase === 'right' || V.phase === 'show', code = V.res && V.res.code, aS = it.a === -1 ? '−' : fm(it.a);
+    const t1 = coef(it.p), t2 = (it.c < 0 ? '− ' : '+ ') + Math.abs(it.c);
+    // the bracket, with arrows from the outside number to each term
+    const ex = A.el('text', { x: 320, y: 96, 'text-anchor': 'middle', 'dominant-baseline': 'central', class: 'm', 'font-size': 50, fill: C.text }, A.svg);
+    const sp = (s, a) => { const e = A.el('tspan', a || {}, ex); e.textContent = s; return e; };
+    sp(aS, { fill: C.gold }); sp('(');
+    if (it.p !== 1) sp(String(it.p), { fill: C.teal }); sp('x', { fill: C.teal, 'font-style': 'italic' });
+    sp(' ' + t2, { fill: C.yellow }); sp(')');
+    // centres of the outside number and each term, measured from the text
+    const pos = i => ex.getStartPositionOfChar(i).x, end = i => ex.getEndPositionOfChar(i).x, la = aS.length, l1 = t1.length;
+    let cA = 260, c1 = 320, c2 = 390;
+    try { cA = (pos(0) + end(la - 1)) / 2; c1 = (pos(la + 1) + end(la + l1)) / 2; c2 = (pos(la + l1 + 2) + end(la + l1 + 1 + t2.length)) / 2; } catch (e) { /* not laid out */ }
+    if (V.phase !== 'ask') [c1, c2].forEach((x2, i) => A.el('path', { d: 'M' + cA + ' 62Q' + (cA + x2) / 2 + ' ' + (i ? 0 : 18) + ' ' + x2 + ' 60', stroke: code === 'first' && i ? C.red : C.gold, 'stroke-width': 2.5, fill: 'none', 'marker-end': code === 'first' && i ? 'url(#aR)' : 'url(#aG)', class: 'fade' }, A.svg));
+    // area model: height a, width (px | c)
+    const x0 = 190, y0 = 160, h = 120, w1 = 190, w2 = 130;
+    A.mtx(A.svg, x0 - 26, y0 + h / 2, aS, { 'font-size': 32, fill: C.gold });
+    A.mtx(A.svg, x0 + w1 / 2, y0 - 22, t1, { 'font-size': 28, fill: C.teal });
+    A.mtx(A.svg, x0 + w1 + w2 / 2, y0 - 22, fm(it.c), { 'font-size': 28, fill: C.yellow });
+    const cells = [[x0, w1, C.teal, coef(it.a * it.p)], [x0 + w1, w2, C.yellow, fm(it.a * it.c)]];
+    cells.forEach(([x, w, col, prod], i) => {
+      const bad = V.phase === 'wrong' && ((code === 'first' && i === 1) || (code === 'xterm' && i === 0));
+      A.el('rect', { x, y: y0, width: w, height: h, fill: col, 'fill-opacity': .12, stroke: bad ? C.red : col, 'stroke-width': bad ? 4 : 2, class: bad ? 'pulse' : null }, A.svg);
+      if (done) A.mtx(A.svg, x + w / 2, y0 + h / 2, prod, { 'font-size': 34, fill: col, class: V.anim ? 'pop' : null, style: 'animation-delay:' + i * 250 + 'ms' });
+      else if (V.phase === 'wrong') A.mtx(A.svg, x + w / 2, y0 + h / 2, '?', { 'font-size': 34, fill: C.muted });
+    });
+    if (done) A.mtx(A.svg, 320, 350, coef(it.a * it.p) + (it.a * it.c < 0 ? ' − ' : ' + ') + Math.abs(it.a * it.c), { 'font-size': 36, fill: C.green, class: V.anim ? 'fade' : null, style: 'animation-delay:600ms' });
+  }
+};
+
+/* LE2 x on both sides */
+const T_BOTH = {
+  id: 'both', code: 'LE2', name: 'Both sides', sec: 2, q: 'Solve', kind: 'slots',
+  gen: MODEL.genBoth, prompt: it => mathHTML(cHTML(it.a) + 'x') + kHTML(it.c) + ' = ' + mathHTML(cHTML(it.b) + 'x') + kHTML(it.d),
+  slots: () => ['x =', { k: 'x', label: 'x' }], check: MODEL.checkBoth, answer: it => ({ x: Q.q(it.x) }),
+  draw(A, it, V) { const S = MODEL.steps(it.a, it.c, it.b, it.d); playSteps(A, S, V.phase === 'ask' ? 0 : V.phase === 'wrong' ? 1 : S.length - 1, V.anim); }
+};
+
+/* LE3 clear the fractions */
+function termTile(A, x, y, v, isX, signed, o) {
+  o = o || {}; const g = A.el('g', { class: o.cls || null, style: o.delay ? 'animation-delay:' + o.delay + 'ms' : null }, A.svg);
+  A.el('rect', { x: x - 58, y: y - 44, width: 116, height: 88, rx: 12, fill: C.stage, stroke: o.stroke || C.edge, 'stroke-width': o.stroke ? 3 : 1.5, class: o.pulse ? 'pulse' : null }, g);
+  v = Q.of(v); const neg = Q.val(v) < 0, abs = Q.q(Math.abs(v.n), v.d), col = o.fill || (isX ? C.teal : C.yellow);
+  const sign = neg ? '−' : signed ? '+' : '', sx = x - (abs.d === 1 ? 14 + String(abs.n).length * 6 : 28);
+  if (sign) A.mtx(g, sx - (isX ? 6 : 0), y, sign, { 'font-size': 28, fill: col });
+  const off = sign ? 8 : 0;
+  if (abs.d === 1) A.mtx(g, x + off, y, isX ? (abs.n === 1 ? 'x' : abs.n + 'x') : String(abs.n), { 'font-size': 30, fill: col });
+  else A.frac(g, x + off, y, isX ? (abs.n === 1 ? 'x' : abs.n + 'x') : String(abs.n), String(abs.d), { 'font-size': 26, fill: col });
+  return g;
+}
+const T_FRAC = {
+  id: 'frac', code: 'LE3', name: 'Fractions', sec: 3, q: 'Clear the fractions', kind: 'slots',
+  gen: MODEL.genFrac,
+  prompt: it => { const A_ = it.A; return (A_.n === 1 ? fracHTML('<i>x</i>', A_.d) : fracHTML(A_.n + '<i>x</i>', A_.d)) + kHTML(it.K) + ' = ' + kHTML(it.R, true); },
+  slots: () => [{ k: 'A', label: 'x coefficient', narrow: true }, 'x +', { k: 'K', label: 'number on the left', narrow: true }, '=', { k: 'R', label: 'number on the right', narrow: true }],
+  check: MODEL.checkFrac,
+  answer: it => ({ A: Q.mul(it.A, it.L), K: Q.mul(it.K, it.L), R: Q.mul(it.R, it.L) }),
+  draw(A, it, V) {
+    const xs = [130, 290, 470], code = V.res && V.res.code, done = V.phase === 'right' || V.phase === 'show', ans = this.answer(it);
+    const vals = [it.A, it.K, it.R];
+    vals.forEach((v, i) => termTile(A, xs[i], 92, v, i === 0, i === 1, { stroke: V.phase === 'wrong' && code === 'lcd' && V.res.miss === i ? C.red : null, pulse: V.phase === 'wrong' && code === 'lcd' && V.res.miss === i }));
+    A.mtx(A.svg, 380, 92, '=', { 'font-size': 34 });
+    if (V.phase !== 'ask') {
+      A.tx(A.svg, 70, 26, 'LCD = ' + it.L, { fill: C.gold, 'font-size': 18, 'text-anchor': 'start', class: 'fade' });
+      xs.forEach((x, i) => {
+        const miss = V.phase === 'wrong' && code === 'lcd' && V.res.miss === i, col = miss ? C.red : C.gold;
+        A.el('path', { d: 'M' + x + ' 142V218', stroke: col, 'stroke-width': 2.5, 'marker-end': miss ? 'url(#aR)' : 'url(#aG)', class: 'fade' }, A.svg);
+        pill(A, A.svg, x + 44, 180, '×' + it.L, col);
+      });
+    }
+    if (done) {
+      [ans.A, ans.K, ans.R].forEach((v, i) => termTile(A, xs[i], 272, v, i === 0, i === 1, { fill: C.green, cls: V.anim ? 'pop' : null, delay: i * 200 }));
+      A.mtx(A.svg, 380, 272, '=', { 'font-size': 34, fill: C.green });
+    } else if (V.phase === 'wrong') xs.forEach(x => A.mtx(A.svg, x, 272, '?', { 'font-size': 34, fill: C.muted }));
+  }
+};
+
+/* LE4 does the sign flip? */
+const T_FLIP = {
+  id: 'flip', code: 'LE4', name: 'Flip?', sec: 4, q: 'Which sign?', kind: 'choice',
+  gen: MODEL.genFlip,
+  choices: it => it.rel.length === 2 ? [{ v: '<=', label: '≤', math: true, aria: 'less than or equal' }, { v: '>=', label: '≥', math: true, aria: 'greater than or equal' }] : [{ v: '<', label: '<', math: true, aria: 'less than' }, { v: '>', label: '>', math: true, aria: 'greater than' }],
+  check: MODEL.checkFlip, answer: it => ({ v: it.ans }),
+  draw(A, it, V) {
+    const done = V.phase !== 'ask', pickd = V.resp.v, wrongPick = V.phase === 'show' && pickd && pickd !== it.ans;
+    A.mtx(A.svg, 250, 62, it.start.lhs + ' ' + SYM[it.rel] + ' ' + fm(it.start.rhs), { 'font-size': 44 });
+    A.el('path', { d: 'M250 98V150', stroke: C.gold, 'stroke-width': 3, 'marker-end': 'url(#aG)' }, A.svg);
+    pill(A, A.svg, 330, 124, it.op);
+    A.mtx(A.svg, 200, 190, 'x', { 'font-size': 44 });
+    if (!done) A.el('rect', { x: 228, y: 166, width: 44, height: 48, rx: 8, fill: 'none', stroke: C.yellow, 'stroke-width': 2.5, 'stroke-dasharray': '6 5' }, A.svg);
+    else A.mtx(A.svg, 250, 190, SYM[it.ans], { 'font-size': 44, fill: C.green, class: V.anim ? 'pop' : null });
+    A.mtx(A.svg, 290, 190, fm(it.v), { 'font-size': 44, 'text-anchor': 'start' });
+    const lo = it.v - 10, N = A.numLine(A.svg, { x0: 60, x1: 580, y: 320, min: lo, max: it.v + 10, every: 2 });
+    if (done) {
+      // the answer on the number line
+      const right = it.ans[0] === '>', X = N.X(it.v);
+      A.el('path', { d: 'M' + X + ' 320H' + (right ? 598 : 42), stroke: C.blue, 'stroke-width': 7, 'stroke-linecap': 'round', 'marker-end': 'url(#aL)', class: V.anim ? 'draw' : null, pathLength: 1 }, A.svg);
+      A.el('circle', { cx: X, cy: 320, r: 9, fill: it.ans.length === 2 ? C.blue : C.stage, stroke: C.blue, 'stroke-width': 3 }, A.svg);
+      // test a point in both lines
+      const t = it.t, lhs = MODEL.startAt(it, t), l1 = MODEL.holds(it.rel, Q.val(lhs), it.start.rhs);
+      A.el('circle', { cx: N.X(t), cy: 320, r: 8, fill: C.yellow, stroke: C.stage, 'stroke-width': 2, class: 'pop' }, A.svg);
+      A.mtx(A.svg, N.X(t), 288, 'x = ' + fm(t), { 'font-size': 18, fill: C.yellow, class: 'fade' });
+      A.mtx(A.svg, 455, 62, fm(lhs) + ' ' + SYM[it.rel] + ' ' + fm(it.start.rhs) + (l1 ? ' ✓' : ' ✗'), { 'font-size': 22, fill: l1 ? C.green : C.red, class: 'fade', 'text-anchor': 'start' });
+      A.mtx(A.svg, 455, 178, fm(t) + ' ' + SYM[it.ans] + ' ' + fm(it.v) + ' ✓', { 'font-size': 22, fill: C.green, class: 'fade', 'text-anchor': 'start' });
+      if (wrongPick) A.mtx(A.svg, 455, 210, fm(t) + ' ' + SYM[pickd] + ' ' + fm(it.v) + ' ✗', { 'font-size': 22, fill: C.red, class: 'fade', 'text-anchor': 'start' });
+    }
+  }
+};
+
+/* LE4 graph an inequality */
+const T_INEQ = {
+  id: 'ineq', code: 'LE4', name: 'Graph it', sec: 4, q: 'Graph it', kind: 'custom',
+  gen: MODEL.genIneq,
+  prompt: it => it.back ? fm(it.b) + ' ' + SYM[MODEL.FLIP[it.rel]] + ' <i>x</i>' : '<i>x</i> ' + SYM[it.rel] + ' ' + fm(it.b),
+  panel(box, it, A) {
+    const mk = (k, opts) => {
+      const s = document.createElement('div'); s.className = 'seg';
+      opts.forEach(([v, lab, aria]) => {
+        const b = document.createElement('button'); b.type = 'button'; b.textContent = lab; b.setAttribute('aria-label', aria); b.setAttribute('aria-pressed', 'false');
+        b.addEventListener('click', () => { if (A.locked) return; s.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); A.set(k, v); });
+        s.appendChild(b);
+      });
+      box.appendChild(s);
+    };
+    mk('closed', [[true, '●', 'closed dot'], [false, '○', 'open dot']]);
+    mk('dir', [['L', '←', 'shade left'], ['R', '→', 'shade right']]);
+  },
+  ready: r => r.at == null ? 'Tap the number line' : r.closed == null ? 'Pick ● or ○' : r.dir == null ? 'Pick ← or →' : '',
+  check: MODEL.checkIneq, answer: it => MODEL.ineqAnswer(it),
+  draw(A, it, V) {
+    const N = A.numLine(A.svg, { x0: 70, x1: 570, y: 230, min: -8, max: 8, every: 1 }), r = V.resp, done = V.phase === 'right' || V.phase === 'show', code = V.res && V.res.code;
+    const graph = (g, y, col, dash, anim) => {
+      if (g.at == null) return;
+      const X = N.X(g.at);
+      if (g.dir) A.el('path', { d: 'M' + X + ' ' + y + 'H' + (g.dir === 'R' ? 588 : 52), stroke: col, 'stroke-width': 7, 'stroke-linecap': 'round', 'stroke-dasharray': dash || null, 'marker-end': col === C.red ? 'url(#aR)' : col === C.blue ? 'url(#aL)' : 'url(#aY)', class: anim ? 'draw' : null, pathLength: dash ? null : 1 }, A.svg);
+      A.el('circle', { cx: X, cy: y, r: 10, fill: g.closed ? col : C.stage, stroke: col, 'stroke-width': 3.5, 'stroke-dasharray': g.closed == null ? '4 3' : null }, A.svg);
+    };
+    if (V.phase === 'show') { if (r.at != null) graph(r, 170, C.red, '9 7'); graph(this.answer(it), 230, C.blue, null, V.anim); }
+    else graph(r, 230, V.phase === 'right' ? C.blue : C.yellow, null, V.phase === 'right' && V.anim);
+    const test = dir => {
+      const t = Math.max(-8, Math.min(8, it.b + (dir === 'R' ? 3 : -3))), holds = MODEL.holds(it.rel, t, it.b);
+      A.el('circle', { cx: N.X(t), cy: 230, r: 7, fill: C.text, stroke: C.stage, 'stroke-width': 2, class: 'pop' }, A.svg);
+      A.mtx(A.svg, N.X(t), 110, (it.back ? fm(it.b) + ' ' + SYM[MODEL.FLIP[it.rel]] + ' ' + fm(t) : fm(t) + ' ' + SYM[it.rel] + ' ' + fm(it.b)) + (holds ? ' ✓' : ' ✗'), { 'font-size': 24, fill: holds ? C.green : C.red, class: 'fade' });
+      A.el('path', { d: 'M' + N.X(t) + ' 128V214', stroke: holds ? C.green : C.red, 'stroke-width': 1.5, 'stroke-dasharray': '4 4' }, A.svg);
+    };
+    if (done) test(this.answer(it).dir);
+    else if (V.phase === 'wrong' && (code === 'dir' || code === 'readback')) test(r.dir);
+    if (!A.locked) for (let v = -8; v <= 8; v++) {
+      const h = A.el('circle', { cx: N.X(v), cy: 230, r: 15, fill: 'transparent', class: 'hit' }, A.svg);
+      h.addEventListener('click', () => A.set('at', v));
+    }
+  }
+};
+
+const PAGE = {
+  key: 'math9-linear-equations-trainer-v2', course: 'Math 9 · Algebra', title: 'Equations & Inequalities',
+  notes: '../notes/linear-equations/math9-linear-equations-notes-v1.html',
+  tabs: [T_TWO, T_BR, T_BOTH, T_FRAC, T_FLIP, T_INEQ]
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>
