@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Grade 7 Science — Plants for Food and Fibre: Notes Answer Key</title>
 <style>
   /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
@@ -69,6 +69,8 @@
   }
   p { margin-bottom: 0.75rem; }
   strong { color: #1f1d1a; }
+  ul, ol { padding-left: 1.25rem; margin-bottom: 0.75rem; }
+  li { margin-bottom: 0.25rem; }
 
   /* ── Cover block ── */
   .cover {
@@ -332,8 +334,12 @@
     }
     .section-break { page-break-before: always; }
     h2.section-title { page-break-after: avoid; }
-      .vocab-wrap, tr { break-inside: avoid; page-break-inside: avoid; }
-    h1, h2, .section-title { break-after: avoid; page-break-after: avoid; }
+      .connection, .vocab-wrap, svg, tr, .retrieval { break-inside: avoid; page-break-inside: avoid; }
+    h1, h2, h3, .section-title { break-after: avoid; page-break-after: avoid; }
+    p:has(+ .vocab-wrap), p:has(+ .connection), p:has(+ .retrieval),
+    p:has(+ .svg-wrap), p:has(+ ul), p:has(+ .synthesis-box) {
+      break-after: avoid; page-break-after: avoid;
+    }
     p { orphans: 3; widows: 3; }
 }
 
@@ -364,10 +370,6 @@
   svg .dg-label-sm    { font: 11px/1.3 var(--font-body); fill: var(--dg-secondary); stroke: none; }
   svg .dg-label-accent{ font: 11px/1.3 var(--font-body); fill: var(--dg-accent);    stroke: none; font-weight: 600; }
 
-  /* Answer key lists */
-  ol, ul { padding-left: 1.5rem; margin-bottom: 0.75rem; }
-  li { margin-bottom: 0.45rem; font-size: 0.92rem; }
-  li ul { margin-top: 0.35rem; }
 
 
 
@@ -435,24 +437,123 @@ svg .dg-label-plant { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif)
 svg .dg-label-water { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-water); }
 svg .dg-label-earth { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-earth); }
 svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif); fill: #fff; }
+svg .dg-land, svg .dg-land-hi, svg .dg-border { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-land        { fill: #ebe7df; stroke: #a8a294; stroke-width: .75px; }
+svg .dg-land-hi     { fill: var(--dg-accent); fill-opacity: .22; stroke: var(--dg-accent); stroke-width: 1px; }
+svg .dg-border      { fill: none; stroke: #a8a294; stroke-width: .5px; }
+svg .dg-sea         { fill: #f4f7f9; stroke: none; }
+svg .dg-route       { fill: none; stroke: var(--dg-accent); stroke-width: 2px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-route.muted { stroke: var(--dg-muted, #6b665d); stroke-dasharray: 5 3; }
+svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
 /* ── /viz-kit ── */
 </style>
-</head>
+<style id="key-link-css">
+  .key-link { margin: 6px 0 14px; font-size: 0.9rem; font-weight: 600; }
+  .key-link a { color: inherit; text-decoration: underline; text-underline-offset: 2px; opacity: 0.85; }
+  .key-link a:hover { opacity: 1; }
+  .key-check { text-align: right; margin: 14px 0 6px; }
+  @media print { .key-link { display: none !important; } }
+</style>
+<style>
+/* ── Answer key overlay (scripts/match_keys.py) ── */
+.answer-key-header { background: #1f1d1a; color: #fff; padding: 8px 14px; border-radius: 6px; margin: 0 0 16px; font-size: 9.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.ak-fill { display: inline; color: #166534; font-weight: 700; border-bottom: 2px solid #86efac; padding: 0 2px; min-width: 0; }
+td .ak-fill, li .ak-fill { white-space: normal; }
+.ak-answer { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 12px; margin: 8px 0; color: #1f1d1a; font-style: normal; break-inside: avoid; }
+.ak-answer p, .ak-answer ul, .ak-answer ol { margin: 0 0 5px; }
+.ak-answer p:last-child, .ak-answer ul:last-child, .ak-answer ol:last-child { margin-bottom: 0; }
+.ak-answer ul, .ak-answer ol { padding-left: 20px; }
+.ak-answer table { margin: 6px 0; }
+.ak-text { color: #166534; font-weight: 600; }
+.ak-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #15803d; margin-right: 6px; }
+.ak-teacher { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 8px 12px; margin: 8px 0; font-size: 10pt; break-inside: avoid; }
+.ak-teacher .ak-text { color: #166534; font-weight: 600; }
+.ak-label { color: #b45309; }
+.ak-teacher p { margin: 0 0 4px; } .ak-teacher p:last-child { margin-bottom: 0; }
+svg .ak-svg-fill { fill: #166534; font-weight: 700; }
+@media print { .ak-answer, .ak-teacher { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style></head>
 <body>
-
 <!-- Cover -->
 <div class="cover">
-  <h1>Plants for Food and Fibre</h1>
-  <p>Grade 7 Science &nbsp;&middot;&nbsp; Notes Answer Key &nbsp;&middot;&nbsp; Teacher Reference &nbsp;&middot;&nbsp; Alberta Curriculum 2007</p>
-</div>
+<h1>Plants for Food and Fibre — Answer Key</h1>
+<p>Grade 7 Science  ·  Guided Notes Package  ·  Alberta Curriculum 2007</p>
 
-<p><em>Every blank in the notes package, in the order it appears. Vocabulary definitions and open responses are model answers — accept equivalent wording in the student's own words.</em></p>
-<p><em>Pre-Knowledge Check: no answer key. Students record honest first thinking; do not correct it. They return to it in the Unit Synthesis.</em></p>
-<hr class="section-break">
-<h2 id="s1" class="section-title">Section 1: Cell Theory and Plant Cells</h2>
+<div class="name-line">
+<span>Name:                               </span>
+<span>Date:                 </span>
+<span>Block:      </span>
+</div>
+</div><div class="answer-key-header">Answer key · Teacher copy</div>
+<hr class="section-break"/>
+<h2 class="section-title" id="pre-check">Pre-Knowledge Check</h2>
+<p><em>Before you start this unit — no notes, no right or wrong answers. Write what you honestly think right now.</em></p>
+<ol>
+<li>Where do plants get their food? Be as specific as you can.
+    <div class="al"></div>
+</li>
+<li>What happens inside a leaf? What does a plant do with sunlight?
+    <div class="al"></div>
+</li>
+<li>Name three ways plants reproduce. (Guess if you're not sure.)
+    <div class="al"></div>
+</li>
+<li>What do you think the difference is between a food crop and a fibre crop?
+    <div class="al"></div>
+</li>
+</ol>
+<p><em>Keep this page. At the end of the unit, you will come back and read what you wrote here.</em></p>
+<hr class="section-break"/>
+<h2 class="section-title" id="s1">Section 1: Cell Theory and Plant Cells</h2>
+<p><strong>Learning target:</strong> I can state the three tenets of cell theory and identify plant cell structures visible under a light microscope.</p>
+<h3>Vocabulary</h3>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Term</th>
+<th>Definition in your own words</th>
+<th>One example</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Cell theory</td>
+<td><span class="ak-text">The idea that all living things are made of cells, cells are the basic unit of life, and all cells come from other cells</span></td>
+<td><span class="ak-fill">An onion and a person are both made of cells</span></td>
+</tr>
+<tr>
+<td>Cell wall</td>
+<td><span class="ak-text">The rigid outer layer of a plant cell that gives support and shape</span></td>
+<td><span class="ak-fill">The stiff outline seen in onion skin cells</span></td>
+</tr>
+<tr>
+<td>Cell membrane</td>
+<td><span class="ak-text">The thin layer just inside the cell wall that controls what enters and leaves the cell</span></td>
+<td><span class="ak-fill">Lets water in, keeps the cell contents in</span></td>
+</tr>
+<tr>
+<td>Vacuole</td>
+<td><span class="ak-text">A large storage space in a plant cell that holds water and keeps the cell firm</span></td>
+<td><span class="ak-fill">A wilted plant has vacuoles low on water</span></td>
+</tr>
+<tr>
+<td>Chloroplast</td>
+<td><span class="ak-fill">The green structure where photosynthesis happens</span></td>
+<td><span class="ak-fill">Green ovals in a leaf cell</span></td>
+</tr>
+<tr>
+<td>Nucleus</td>
+<td><span class="ak-fill">The control centre of the cell; holds the DNA</span></td>
+<td><span class="ak-fill">Dark round body in an onion cell</span></td>
+</tr>
+</tbody></table></div>
+<h3>Guided Notes</h3>
+<p><strong>Cell Theory</strong> — three core ideas that all biology is built on:</p>
+<ol>
+<li>All living things are made of <span class="ak-fill">cells</span>.</li>
+<li>Cells are the basic <span class="ak-fill">unit</span> of life.</li>
+<li>All cells come from <span class="ak-fill">pre-existing (other living)</span> cells.</li>
+</ol>
 <!-- viz:cell-theory -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: zoom-and-divide | leaf | cells | division -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 540 180" aria-label="Left: a leaf. Middle: a magnified circle of the leaf showing brick-shaped cells, each with a nucleus. Right: one cell dividing into two. Labels: made of cells; the basic unit of life; every cell comes from a blank, pre-existing, cell." width="540" height="180">
 <text x="65" y="18" text-anchor="middle" class="dg-title">1. Made of cells</text>
@@ -496,9 +597,86 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Zoom into a leaf and it is made of cells, packed like bricks. Each cell is alive on its own, and every new cell comes from one that already existed.</figcaption>
 </figure>
 <!-- /viz:cell-theory -->
+<div class="connection">
+<div class="c-label">Why cell theory matters:</div>
+<p>Before 1839, most biologists thought complex organisms were built from a mix of specialized tissues and simple materials. Schleiden (plants) and Schwann (animals) unified all of biology under one principle: everything living is cellular.</p>
+</div>
+<p><strong>Plant cells under a microscope — key structures:</strong></p>
+<div class="svg-wrap" style="margin:1rem 0;text-align:center;">
+<img alt="Plant cell diagram showing cell wall, cell membrane, central vacuole, nucleus with nucleolus and nuclear pores, four chloroplasts with grana, three mitochondria, rough and smooth endoplasmic reticulum, Golgi apparatus, peroxisome, ribosomes, and plasmodesmata" src="../images/sci7/plant-cell-diagram.svg" style="max-width:100%;height:auto;border:1px solid #c9c4b9;border-radius:0.5rem;"/>
+<p style="font-family: var(--font-body);font-size:0.72rem;color:#6b665d;margin-top:0.35rem;">
+    Plant cell — all major organelles shown without labels. Use the table below to identify each structure by colour and position.
+  </p>
+</div>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Structure</th>
+<th>What it looks like</th>
+<th>What it does</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Cell wall</td>
+<td><span class="ak-fill">thick outer (outermost)</span> border; rigid</td>
+<td>Provides <span class="ak-fill">support (strength, protection)</span> and shape; made of cellulose</td>
+</tr>
+<tr>
+<td>Cell membrane</td>
+<td>Inside the cell wall</td>
+<td>Controls what <span class="ak-fill">moves (passes)</span> in and out of the cell</td>
+</tr>
+<tr>
+<td>Central vacuole</td>
+<td>Large central space (takes up ~90% of plant cell)</td>
+<td>Stores <span class="ak-fill">water (cell sap)</span>, maintains cell pressure (turgor), stores waste</td>
+</tr>
+<tr>
+<td>Chloroplasts</td>
+<td>Green, oval bodies</td>
+<td>Site of <span class="ak-fill">photosynthesis</span>; contain chlorophyll</td>
+</tr>
+<tr>
+<td>Nucleus</td>
+<td>Dark, round body</td>
+<td>Controls cell activities; contains <span class="ak-fill">DNA (genetic information)</span></td>
+</tr>
+</tbody></table></div>
+<p><strong>Plant cell vs. animal cell:</strong></p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Feature</th>
+<th>Plant cell</th>
+<th>Animal cell</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Cell wall</td>
+<td>✓ present</td>
+<td>✗ absent</td>
+</tr>
+<tr>
+<td>Large central vacuole</td>
+<td>✓</td>
+<td>✗ (small vacuoles only)</td>
+</tr>
+<tr>
+<td>Chloroplasts</td>
+<td>✓ (in green cells)</td>
+<td>✗</td>
+</tr>
+<tr>
+<td>Cell membrane</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Nucleus</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+</tbody></table></div>
 <!-- viz:plant-vs-animal -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: cell-compare | plant | animal -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 225" aria-label="A boxy plant cell beside a rounded animal cell. The plant cell has a cell wall, a blank, outside its membrane, a large central vacuole, chloroplasts and a nucleus. The animal cell has only a cell membrane, a nucleus and small vacuoles." width="520" height="225">
 <rect x="40" y="40" width="180" height="130" rx="4" class="dg-fill-plant"/>
@@ -529,112 +707,87 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Both cells have a membrane and a nucleus. Only the plant cell has the rigid wall, the big water-filled vacuole and the green chloroplasts.</figcaption>
 </figure>
 <!-- /viz:plant-vs-animal -->
+<p><strong>Microscopy note:</strong> At light microscopy, you can see cell wall, cell membrane outline, central vacuole, nucleus, and chloroplasts (in green tissues). You cannot see individual molecules or most organelle structures.</p>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>State the three tenets of cell theory.<div class="ak-answer"><span class="ak-label">Answer</span> (1) All living things are made of cells. (2) Cells are the basic unit of life. (3) All cells come from pre-existing cells.</div></li>
+
+
+<li>Name the structure that: (a) controls what enters the cell <span class="b b-md"> </span> (b) contains the cell's DNA <span class="b b-md"> </span> (c) is only found in plant cells and is bright green <span class="b b-md"> </span><div class="ak-answer"><span class="ak-label">Answer</span> (a) cell membrane (b) nucleus (c) chloroplast</div></li>
+<li>What does the central vacuole do? (Two functions)<div class="ak-answer"><span class="ak-label">Answer</span> Any two: stores water; keeps the cell firm (turgor pressure); stores waste.</div></li>
+
+<li>A student observes a cell under a microscope. It has a rigid outer wall, a large central space, and green oval bodies. Is this a plant cell or an animal cell? How do you know?<div class="ak-answer"><span class="ak-label">Answer</span> Plant cell — the rigid outer wall is a cell wall, the large central space is the central vacuole, and the green oval bodies are chloroplasts. Animal cells have none of these.</div></li>
+
+<li><strong>Stretch:</strong> Why do you think animal cells don't have a cell wall? Consider what animal cells need to do that plant cells typically don't.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> Animal cells need to move, change shape, and squeeze past each other (muscle cells contract, blood cells travel); a rigid wall would prevent this. Animals get support from skeletons instead. Plants stay in one place and use cell walls for support.</div></li>
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="s2">Section 2: Plant Systems and Vascular Tissue</h2>
+<p><strong>Learning target:</strong> I can describe the functions of the root and shoot systems and explain how vascular tissue moves materials through a plant.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Cell theory</td>
-<td>The idea that all living things are made of cells, cells are the basic unit of life, and all cells come from other cells</td>
-<td>An onion and a person are both made of cells</td>
+<td>Root system</td>
+<td><span class="ak-text">The underground part of the plant that absorbs water and minerals, anchors the plant, and stores food</span></td>
+<td><span class="ak-fill">Carrot taproot; grass fibrous roots</span></td>
 </tr>
 <tr>
-<td>Cell wall</td>
-<td>The rigid outer layer of a plant cell that gives support and shape</td>
-<td>The stiff outline seen in onion skin cells</td>
+<td>Shoot system</td>
+<td><span class="ak-text">The above-ground part of the plant: stem, leaves, flowers, fruit</span></td>
+<td><span class="ak-fill">The stalk, leaves, and head of a wheat plant</span></td>
 </tr>
 <tr>
-<td>Cell membrane</td>
-<td>The thin layer just inside the cell wall that controls what enters and leaves the cell</td>
-<td>Lets water in, keeps the cell contents in</td>
+<td>Vascular tissue</td>
+<td><span class="ak-fill">The tubes that carry water and food through a plant</span></td>
+<td><span class="ak-fill">Veins in a leaf; strings in celery</span></td>
 </tr>
 <tr>
-<td>Vacuole</td>
-<td>A large storage space in a plant cell that holds water and keeps the cell firm</td>
-<td>A wilted plant has vacuoles low on water</td>
+<td>Xylem</td>
+<td><span class="ak-fill">Tubes that carry water and minerals up from the roots</span></td>
+<td><span class="ak-fill">Dyed water rising in a celery stalk</span></td>
 </tr>
 <tr>
-<td>Chloroplast</td>
-<td>The green structure where photosynthesis happens</td>
-<td>Green ovals in a leaf cell</td>
-</tr>
-<tr>
-<td>Nucleus</td>
-<td>The control centre of the cell; holds the DNA</td>
-<td>Dark round body in an onion cell</td>
+<td>Phloem</td>
+<td><span class="ak-text">Tubes that carry sugars from the leaves to the rest of the plant</span></td>
+<td><span class="ak-fill">Maple sap carrying sugar</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
+<p><strong>Two systems, one plant:</strong></p>
 <div class="vocab-wrap"><table>
 <thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
+<th>System</th>
+<th>What it includes</th>
+<th>Main functions</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>All living things are made of ___</td>
-<td>cells</td>
-<td>&nbsp;</td>
+<td>Root system</td>
+<td>roots, root hairs</td>
+<td><span class="ak-fill">absorb water and minerals</span>, <span class="ak-fill">anchor the plant</span>, <span class="ak-fill">store food</span></td>
 </tr>
 <tr>
-<td>Cells are the basic ___ of life</td>
-<td>unit</td>
-<td>"unit of structure and function" is the full phrase</td>
-</tr>
-<tr>
-<td>All cells come from ___ cells</td>
-<td>pre-existing (other living)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Cell wall — ___ border; rigid</td>
-<td>thick outer (outermost)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Cell wall — provides ___ and shape</td>
-<td>support (strength, protection)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Cell membrane — controls what ___ in and out</td>
-<td>moves (passes)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Central vacuole — stores ___</td>
-<td>water (cell sap)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Chloroplasts — site of ___</td>
-<td>photosynthesis</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Nucleus — contains ___</td>
-<td>DNA (genetic information)</td>
-<td>&nbsp;</td>
+<td>Shoot system</td>
+<td>stem, leaves, flowers, fruit</td>
+<td><span class="ak-fill">support (hold leaves up to the light)</span>, <span class="ak-fill">photosynthesis</span>, <span class="ak-fill">reproduction</span></td>
 </tr>
 </tbody></table></div>
-<h3>Retrieval Check — Section 1</h3>
-<ol start="1">
-  <li>(1) All living things are made of cells. (2) Cells are the basic unit of life. (3) All cells come from pre-existing cells.</li>
-  <li>(a) cell membrane (b) nucleus (c) chloroplast</li>
-  <li>Any two: stores water; keeps the cell firm (turgor pressure); stores waste.</li>
-  <li>Plant cell — the rigid outer wall is a cell wall, the large central space is the central vacuole, and the green oval bodies are chloroplasts. Animal cells have none of these.</li>
-  <li><strong>Stretch:</strong> Animal cells need to move, change shape, and squeeze past each other (muscle cells contract, blood cells travel); a rigid wall would prevent this. Animals get support from skeletons instead. Plants stay in one place and use cell walls for support.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s2" class="section-title">Section 2: Plant Systems and Vascular Tissue</h2>
+<p><strong>Root system details:</strong></p>
+<ul>
+<li>Root hairs: tiny extensions that massively increase <span class="ak-fill">surface area</span> for water absorption</li>
+<li>Taproot vs. fibrous roots: taproots (carrot, dandelion) go deep; fibrous roots (grasses) spread wide</li>
+<li>Roots also store food: <span class="ak-fill">carrot</span>, <span class="ak-fill">beet</span> (name two crops where we eat the root)</li>
+</ul>
 <!-- viz:roots -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: root-types-zoom | taproot | fibrous | root-hairs -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 215" aria-label="Underground view. A carrot taproot goes deep. Grass has many thin fibrous roots spreading wide and shallow. A zoomed circle shows a root covered in root hairs, which add a blank, surface area." width="520" height="215">
 <rect x="0" y="40" width="520" height="140" class="dg-fill-earth"/>
@@ -683,9 +836,41 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>A carrot pushes one thick root deep; grass spreads many thin roots wide and shallow. Zoom in on any root and you see root hairs, which give it far more surface for soaking up water.</figcaption>
 </figure>
 <!-- /viz:roots -->
+<p><strong>Shoot system details:</strong></p>
+<ul>
+<li>Stems: provide <span class="ak-fill">support</span>; transport materials; some store food (potato stem tubers)</li>
+<li>Leaves: primary site of <span class="ak-fill">photosynthesis</span>; blade captures light; petiole connects blade to stem</li>
+<li>Flowers: <span class="ak-fill">reproductive</span> structures (covered in Section 4)</li>
+</ul>
+<p><strong>Vascular tissue — the plant's transport system:</strong></p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Tissue</th>
+<th>Carries</th>
+<th>Direction</th>
+<th>Think of it as</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Xylem</td>
+<td>water and dissolved <span class="ak-fill">minerals</span></td>
+<td>from <span class="ak-fill">roots</span> to <span class="ak-fill">leaves (shoots)</span></td>
+<td>supply pipes going up</td>
+</tr>
+<tr>
+<td>Phloem</td>
+<td><span class="ak-fill">food</span> (sugars) made by photosynthesis</td>
+<td>from <span class="ak-fill">leaves</span> to <span class="ak-fill">the rest of the plant (roots, fruit, growing tips)</span></td>
+<td>distribution pipes going down</td>
+</tr>
+</tbody></table></div>
+<div class="connection">
+<div class="c-label">Connection:</div>
+<p>Xylem and phloem together form the vascular system. "Vascular" comes from the Latin for vessel — the same root word used in cardiovascular (heart and blood vessels). A plant's vascular system is analogous to the circulatory system in animals, but it uses passive forces (capillary action, osmosis, pressure) rather than a pump.</p>
+</div>
+<p><strong>Why vascular tissue is important in plant evolution:</strong> Early plants (mosses, liverworts) have no vascular tissue — they must remain <span class="ak-fill">close (low, small)</span> to ground water. Vascular plants can grow <span class="ak-fill">taller</span> because they can transport water up from the ground regardless of how far above the soil they are.</p>
 <!-- viz:moss-vs-tree -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: moss-vs-tree | xylem=trunk -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 222" aria-label="Moss grows as a low mat on the ground; with no xylem it must stay close, a blank, to water. A tall tree has xylem in its trunk carrying water up from the soil, so it can grow taller, a blank." width="480" height="222">
 <rect x="0" y="190" width="480" height="32" class="dg-fill-earth"/>
@@ -711,132 +896,119 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Moss has no pipes, so it soaks up water directly and has to stay low and damp. Xylem lets a tree lift water from its roots to leaves many metres up.</figcaption>
 </figure>
 <!-- /viz:moss-vs-tree -->
+<p><strong>Diagram: label the parts below</strong></p>
+<div class="svg-wrap" style="margin:1rem 0;">
+<svg aria-label="Plant anatomy diagram showing flower, leaves, stem, and roots with xylem and phloem labels" height="320" role="img" viewbox="0 0 340 320" width="340" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="pl-up" markerheight="8" markerwidth="8" orient="auto" refx="4" refy="6">
+<path d="M4,0 L8,8 L0,8 Z" fill="var(--unit)"></path>
+</marker>
+<marker id="pl-dn" markerheight="8" markerwidth="8" orient="auto" refx="4" refy="2">
+<path d="M4,8 L8,0 L0,0 Z" fill="#f59e0b"></path>
+</marker>
+</defs>
+<!-- Soil rectangle -->
+<rect height="90" rx="4" style="fill:#d6b896;stroke:#a16207;stroke-width:1.5;" width="240" x="50" y="220"></rect>
+<text class="dg-label-sm" style="fill:#78350f;" text-anchor="middle" x="170" y="280">soil</text>
+<!-- Roots -->
+<line style="stroke:#92400e;stroke-width:3;" x1="170" x2="170" y1="220" y2="270"></line>
+<line style="stroke:#92400e;stroke-width:2;" x1="170" x2="130" y1="255" y2="295"></line>
+<line style="stroke:#92400e;stroke-width:2;" x1="170" x2="210" y1="255" y2="295"></line>
+<line style="stroke:#92400e;stroke-width:1.5;" x1="170" x2="140" y1="265" y2="305"></line>
+<line style="stroke:#92400e;stroke-width:1.5;" x1="170" x2="200" y1="265" y2="305"></line>
+<!-- Roots label box -->
+<rect height="20" rx="3" style="fill:#f1f5f9;stroke:#cbd5e1;stroke-width:1;" width="70" x="195" y="258"></rect>
+<text class="dg-label" style="fill:#94a3b8;" text-anchor="middle" x="230" y="272">__________</text>
+<!-- Stem -->
+<rect height="92" rx="3" style="fill:#84cc16;stroke:#4d7c0f;stroke-width:1.5;" width="20" x="160" y="130"></rect>
+<!-- Stem label box -->
+<rect height="20" rx="3" style="fill:#f1f5f9;stroke:#cbd5e1;stroke-width:1;" width="70" x="202" y="162"></rect>
+<text class="dg-label" style="fill:#94a3b8;" text-anchor="middle" x="237" y="176">__________</text>
+<line style="stroke:#94a3b8;stroke-width:1;" x1="202" x2="182" y1="172" y2="172"></line>
+<!-- Leaves -->
+<ellipse cx="130" cy="155" rx="28" ry="14" style="fill:#4ade80;stroke:#15803d;stroke-width:1.5;" transform="rotate(-20,130,155)"></ellipse>
+<ellipse cx="210" cy="155" rx="28" ry="14" style="fill:#4ade80;stroke:#15803d;stroke-width:1.5;" transform="rotate(20,210,155)"></ellipse>
+<line style="stroke:#4d7c0f;stroke-width:1.5;" x1="160" x2="130" y1="162" y2="155"></line>
+<line style="stroke:#4d7c0f;stroke-width:1.5;" x1="180" x2="210" y1="162" y2="155"></line>
+<!-- Leaf label box -->
+<rect height="20" rx="3" style="fill:#f1f5f9;stroke:#cbd5e1;stroke-width:1;" width="70" x="35" y="138"></rect>
+<text class="dg-label" style="fill:#94a3b8;" text-anchor="middle" x="70" y="152">__________</text>
+<line style="stroke:#94a3b8;stroke-width:1;" x1="105" x2="128" y1="148" y2="153"></line>
+<!-- Flower -->
+<circle cx="170" cy="105" r="10" style="fill:#fde047;stroke:#ca8a04;stroke-width:1.5;"></circle>
+<circle cx="170" cy="90" r="7" style="fill:#fbbf24;stroke:#ca8a04;stroke-width:1;"></circle>
+<circle cx="158" cy="99" r="7" style="fill:#fbbf24;stroke:#ca8a04;stroke-width:1;"></circle>
+<circle cx="182" cy="99" r="7" style="fill:#fbbf24;stroke:#ca8a04;stroke-width:1;"></circle>
+<circle cx="163" cy="115" r="7" style="fill:#fbbf24;stroke:#ca8a04;stroke-width:1;"></circle>
+<circle cx="177" cy="115" r="7" style="fill:#fbbf24;stroke:#ca8a04;stroke-width:1;"></circle>
+<line style="stroke:#4d7c0f;stroke-width:1.5;" x1="170" x2="170" y1="130" y2="118"></line>
+<!-- Flower label box -->
+<rect height="20" rx="3" style="fill:#f1f5f9;stroke:#cbd5e1;stroke-width:1;" width="70" x="202" y="88"></rect>
+<text class="dg-label" style="fill:#94a3b8;" text-anchor="middle" x="237" y="102">__________</text>
+<line style="stroke:#94a3b8;stroke-width:1;" x1="202" x2="185" y1="98" y2="103"></line>
+<!-- Xylem arrow (up, green) -->
+<line marker-end="url(#pl-up)" style="stroke:var(--unit);stroke-width:2;" x1="148" x2="148" y1="210" y2="145"></line>
+<text class="dg-label-accent" style="font-size:10px;writing-mode:vertical-rl;text-anchor:middle;" x="120" y="182">Xylem ↑</text>
+<!-- Phloem arrow (down, amber) -->
+<line marker-end="url(#pl-dn)" style="stroke:#f59e0b;stroke-width:2;" x1="192" x2="192" y1="145" y2="210"></line>
+<text class="dg-label-sm" style="font-size:10px;fill:#b45309;writing-mode:vertical-rl;text-anchor:middle;" x="215" y="182">Phloem ↓</text>
+</svg>
+<p style="font-family: var(--font-body);font-size:0.78rem;color:#544f47;text-align:center;margin-top:0.2rem;">Fig. — Plant anatomy. Label each blank box with the correct plant part. Xylem (green ↑) carries water up; phloem (amber ↓) carries glucose down.</p>
+</div>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>Name two functions of the root system and two functions of the shoot system.<div class="ak-answer"><span class="ak-label">Answer</span> Root (any two): absorbs water and minerals, anchors the plant, stores food. Shoot (any two): support, photosynthesis, reproduction.</div></li>
+
+<li>Complete the table: Xylem carries <span class="b b-md"> </span> from <span class="b b-md"> </span> to <span class="b b-md"> </span>. Phloem carries <span class="b b-md"> </span> from <span class="b b-md"> </span> to <span class="b b-md"> </span>.<div class="ak-answer"><span class="ak-label">Answer</span> Xylem carries water (and minerals) from roots to leaves. Phloem carries food (sugars) from leaves to the rest of the plant.</div></li>
+<li>A plant is placed in water dyed with blue food colouring. After 24 hours, the stem is cut and the inside shows blue dye. Which tissue carried the dye — xylem or phloem? Why?<div class="ak-answer"><span class="ak-label">Answer</span> Xylem — it carries water upward from the roots, and the dye is dissolved in the water.</div></li>
+
+<li>Why can vascular plants grow taller than non-vascular plants like mosses?<div class="ak-answer"><span class="ak-label">Answer</span> Vascular plants have xylem to carry water up to any height. Mosses have no transport tubes, so every part must stay close to the water source.</div></li>
+
+<li><strong>Stretch:</strong> A fungus attacks the phloem of a tree. Predict what will happen to (a) the leaves and (b) the roots over the following weeks. Explain why.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> (a) The leaves keep making sugar at first but cannot send it away. (b) The roots receive no sugar; they have no chloroplasts and cannot make their own, so they starve and die. Once the roots fail, they stop supplying water, and the leaves then wilt and die too.</div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/><div class="ak-answer"><span class="ak-label">More answers for this section</span> <ul><li>flower, leaves, stem, roots labelled; xylem arrow (↑) from roots up the stem to the leaves; phloem arrow (↓) from leaves down the stem to the roots</li></ul></div>
+<h2 class="section-title" id="s3">Section 3: Photosynthesis</h2>
+<p><strong>Learning target:</strong> I can describe the process of photosynthesis including inputs, outputs, and its importance to ecosystems.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Root system</td>
-<td>The underground part of the plant that absorbs water and minerals, anchors the plant, and stores food</td>
-<td>Carrot taproot; grass fibrous roots</td>
+<td>Photosynthesis</td>
+<td><span class="ak-text">The process plants use to make food (glucose) from carbon dioxide and water using light energy</span></td>
+<td><span class="ak-fill">A leaf making sugar in sunlight</span></td>
 </tr>
 <tr>
-<td>Shoot system</td>
-<td>The above-ground part of the plant: stem, leaves, flowers, fruit</td>
-<td>The stalk, leaves, and head of a wheat plant</td>
+<td>Chlorophyll</td>
+<td><span class="ak-fill">The green pigment in chloroplasts that captures light energy</span></td>
+<td><span class="ak-fill">Why leaves are green</span></td>
 </tr>
 <tr>
-<td>Vascular tissue</td>
-<td>The tubes that carry water and food through a plant</td>
-<td>Veins in a leaf; strings in celery</td>
+<td>Glucose</td>
+<td><span class="ak-text">The sugar plants make as food; their energy source and building material</span></td>
+<td><span class="ak-fill">Stored as starch in a potato</span></td>
 </tr>
 <tr>
-<td>Xylem</td>
-<td>Tubes that carry water and minerals up from the roots</td>
-<td>Dyed water rising in a celery stalk</td>
-</tr>
-<tr>
-<td>Phloem</td>
-<td>Tubes that carry sugars from the leaves to the rest of the plant</td>
-<td>Maple sap carrying sugar</td>
+<td>Carbon dioxide (CO₂)</td>
+<td><span class="ak-fill">A gas in the air that plants take in through their leaves</span></td>
+<td><span class="ak-fill">The gas we breathe out</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Root system — main functions (3 blanks)</td>
-<td>absorb water and minerals; anchor the plant; store food</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Shoot system — main functions (3 blanks)</td>
-<td>support (hold leaves up to the light); photosynthesis; reproduction</td>
-<td>Also accept transport</td>
-</tr>
-<tr>
-<td>Root hairs increase ___</td>
-<td>surface area</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Roots store food: ___, ___ (two crops where we eat the root)</td>
-<td>carrot, beet</td>
-<td>Also turnip, radish, parsnip, sugar beet. Not potato — a potato is a stem tuber</td>
-</tr>
-<tr>
-<td>Stems provide ___</td>
-<td>support</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Leaves: primary site of ___</td>
-<td>photosynthesis</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Flowers: ___ structures</td>
-<td>reproductive</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Xylem — water and dissolved ___</td>
-<td>minerals</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Xylem — from ___ to ___</td>
-<td>roots; leaves (shoots)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Phloem — ___ (sugars)</td>
-<td>food</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Phloem — from ___ to ___</td>
-<td>leaves; the rest of the plant (roots, fruit, growing tips)</td>
-<td>Phloem moves sugar to wherever it is needed; "down" is a simplification</td>
-</tr>
-<tr>
-<td>Mosses must remain ___ to ground water</td>
-<td>close (low, small)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Vascular plants can grow ___</td>
-<td>taller</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Diagram labels</td>
-<td>flower, leaves, stem, roots labelled; xylem arrow (↑) from roots up the stem to the leaves; phloem arrow (↓) from leaves down the stem to the roots</td>
-<td>&nbsp;</td>
-</tr>
-</tbody></table></div>
-<h3>Retrieval Check — Section 2</h3>
-<ol start="1">
-  <li>Root (any two): absorbs water and minerals, anchors the plant, stores food. Shoot (any two): support, photosynthesis, reproduction.</li>
-  <li>Xylem carries water (and minerals) from roots to leaves. Phloem carries food (sugars) from leaves to the rest of the plant.</li>
-  <li>Xylem — it carries water upward from the roots, and the dye is dissolved in the water.</li>
-  <li>Vascular plants have xylem to carry water up to any height. Mosses have no transport tubes, so every part must stay close to the water source.</li>
-  <li><strong>Stretch:</strong> (a) The leaves keep making sugar at first but cannot send it away. (b) The roots receive no sugar; they have no chloroplasts and cannot make their own, so they starve and die. Once the roots fail, they stop supplying water, and the leaves then wilt and die too.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s3" class="section-title">Section 3: Photosynthesis</h2>
+<div class="connection">
+<div class="c-label">MISCONCEPTION — BEFORE WE START</div>
+<p><em>"Plants get their food from the soil through their roots."</em> <strong>Why this fails:</strong> In 1648, Jan Baptist van Helmont planted a willow seedling in 90 kg of dry soil. After 5 years, the willow gained 74 kg of mass. The soil lost only 57 grams. Where did the 74 kg come from? Not the soil — mostly from <span class="ak-fill">water</span> and <span class="ak-fill">carbon dioxide</span> in the air. This experiment showed that plants build their mass from air, not soil. Soil provides minerals dissolved in water, but the <em>food</em> (energy) a plant runs on comes from photosynthesis.</p>
+</div>
 <!-- viz:van-helmont -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: before-after-pot | soil=90kg | gain=74kg | soil-loss=57g -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 205" aria-label="Before: a willow seedling in a pot of 90 kilograms of dry soil. After 5 years with only water added: a willow that gained 74 kilograms, while the soil lost only 57 grams. Arrows show where the mass came from: a blank, carbon dioxide, from the air, and a blank, water." width="520" height="205">
 <polygon points="40,110 140,110 130,180 50,180" class="dg-fill-earth"/>
@@ -860,9 +1032,60 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Van Helmont's willow, 1648. The tree gained 74 kg while the soil lost only 57 g. The extra mass had to come from somewhere other than the soil.</figcaption>
 </figure>
 <!-- /viz:van-helmont -->
+<p><strong>The photosynthesis equation:</strong></p>
+<div class="svg-wrap" style="margin:1rem 0;">
+<svg aria-label="Photosynthesis equation diagram showing inputs and outputs with fill-in blanks" height="160" role="img" viewbox="0 0 520 160" width="520" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="ps-arrow" markerheight="8" markerwidth="10" orient="auto" refx="8" refy="4">
+<path d="M0,0 L10,4 L0,8 Z" fill="#059669"></path>
+</marker>
+<marker id="ps-down" markerheight="10" markerwidth="8" orient="auto" refx="4" refy="8">
+<path d="M0,0 L8,0 L4,10 Z" fill="#ca8a04"></path>
+</marker>
+</defs>
+<!-- Light energy label + down arrow -->
+<text class="dg-label" style="fill:#ca8a04;font-weight:600;" text-anchor="middle" x="260" y="22">light energy</text>
+<line marker-end="url(#ps-down)" style="stroke:#ca8a04;stroke-width:2;" x1="260" x2="260" y1="28" y2="58"></line>
+<!-- Reactant boxes (left) -->
+<rect height="35" rx="5" style="fill:#dbeafe;stroke:#60a5fa;stroke-width:1.5;" width="110" x="30" y="65"></rect>
+<text class="dg-label" text-anchor="middle" x="85" y="80">carbon dioxide</text>
+<text class="dg-label-sm" text-anchor="middle" x="85" y="93">(CO₂)</text>
+<text class="dg-label-sm" style="fill:#94a3b8;" text-anchor="middle" x="85" y="120">(from ____________)</text>
+<rect height="35" rx="5" style="fill:#dbeafe;stroke:#60a5fa;stroke-width:1.5;" width="90" x="160" y="65"></rect>
+<text class="dg-label" text-anchor="middle" x="205" y="80">water</text>
+<text class="dg-label-sm" text-anchor="middle" x="205" y="93">(H₂O)</text>
+<text class="dg-label-sm" style="fill:#94a3b8;" text-anchor="middle" x="205" y="120">(from ____________)</text>
+<!-- Plus sign -->
+<text class="dg-label" style="font-size:16px;font-weight:700;fill:#64748b;" text-anchor="middle" x="147" y="88">+</text>
+<!-- Arrow -->
+<line marker-end="url(#ps-arrow)" style="stroke:#059669;stroke-width:2.5;" x1="255" x2="305" y1="82" y2="82"></line>
+<!-- Product boxes (right) -->
+<rect height="35" rx="5" style="fill:#d1fae5;stroke:#34d399;stroke-width:1.5;" width="90" x="310" y="65"></rect>
+<text class="dg-label" text-anchor="middle" x="355" y="80">glucose</text>
+<text class="dg-label-sm" text-anchor="middle" x="355" y="93">(C₆H₁₂O₆)</text>
+<rect height="35" rx="5" style="fill:#d1fae5;stroke:#34d399;stroke-width:1.5;" width="90" x="415" y="65"></rect>
+<text class="dg-label" text-anchor="middle" x="460" y="80">oxygen</text>
+<text class="dg-label-sm" text-anchor="middle" x="460" y="93">(O₂)</text>
+<text class="dg-label-sm" style="fill:#94a3b8;" text-anchor="middle" x="460" y="120">(released into ________)</text>
+<!-- Plus sign between products -->
+<text class="dg-label" style="font-size:16px;font-weight:700;fill:#64748b;" text-anchor="middle" x="404" y="88">+</text>
+<!-- REACTANTS / PRODUCTS labels -->
+<text class="dg-label-sm" style="fill:#1d4ed8;font-weight:600;" text-anchor="middle" x="140" y="150">REACTANTS (inputs)</text>
+<text class="dg-label-sm" style="fill:#059669;font-weight:600;" text-anchor="middle" x="415" y="150">PRODUCTS (outputs)</text>
+</svg>
+<p style="font-family: var(--font-body);font-size:0.78rem;color:#544f47;text-align:center;margin-top:0.2rem;">Fig. — Photosynthesis equation. Fill in the three blanks: where does CO₂ come from? Where does H₂O come from? Where is O₂ released?</p>
+</div>
+<p>Fill in the blanks:</p>
+<ul>
+<li>CO₂ comes from: <span class="ak-fill">the air</span> via tiny pores in leaves</li>
+<li>Water comes from: <span class="ak-fill">the soil</span> via roots and xylem</li>
+<li>Light energy is captured by: <span class="ak-fill">chlorophyll</span>, the green pigment in <span class="ak-fill">chloroplasts</span></li>
+<li>Glucose is: the <span class="ak-fill">food (sugar)</span> the plant uses for energy and growth; stored as <span class="ak-fill">starch</span></li>
+<li>Oxygen is: a <span class="ak-fill">by-product (waste product)</span> released into the atmosphere — vital for all aerobic life</li>
+</ul>
+<p><strong>Where does photosynthesis happen?</strong> In the <span class="ak-fill">chloroplasts</span> of the <span class="ak-fill">green</span> parts of plants — primarily in <span class="ak-fill">leaves</span>.</p>
 <!-- viz:leaf-section -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: leaf-cross-section | palisade | spongy | stoma -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 215" aria-label="Cross-section of a leaf. Sunlight enters from above. Tall cells near the top are packed with green chloroplasts, a blank. Below are rounder cells with air spaces. A pore on the underside, a stoma, lets carbon dioxide in and oxygen and water vapour out." width="520" height="215">
 <line x1="80" y1="2" x2="89.7" y2="19.7" class="dg-arrow sun"/><polygon points="92.0,24.0 86.0,20.5 92.3,17.0" class="dg-head sun"/>
@@ -889,162 +1112,211 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>A slice through a leaf. Light comes in the top; carbon dioxide comes in through tiny pores underneath; the tightly packed cells near the top are full of chloroplasts.</figcaption>
 </figure>
 <!-- /viz:leaf-section -->
+<p><strong>Why photosynthesis matters to ecosystems:</strong></p>
+<p>Photosynthesis is the entry point of <span class="ak-fill">energy</span> into almost every food chain on Earth. Producers convert <span class="ak-fill">light (solar)</span> energy into <span class="ak-fill">chemical</span> energy that all consumers depend on. Without photosynthesis, almost no life on Earth could survive.</p>
+<p><strong>Photosynthesis as a flowchart — fill in the missing labels:</strong></p>
+<div class="svg-wrap" style="margin:1rem 0;">
+<svg aria-label="Icon flowchart of photosynthesis. Light energy from the sun, water, and carbon dioxide point into a green leaf containing chloroplasts. Glucose and a missing output gas leave the leaf. Blanks: where water comes from, where carbon dioxide comes from, the green pigment in chloroplasts, and the name of the output gas." role="img" style="max-width:760px;height:auto;font-family:system-ui,sans-serif;" viewbox="0 0 760 290" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="nf-blue" markerheight="7" markerwidth="7" orient="auto" refx="8" refy="5" viewbox="0 0 10 10"><path d="M0,0 L10,5 L0,10 Z" fill="#0284c7"></path></marker>
+<marker id="nf-brown" markerheight="7" markerwidth="7" orient="auto" refx="8" refy="5" viewbox="0 0 10 10"><path d="M0,0 L10,5 L0,10 Z" fill="#b45309"></path></marker>
+</defs>
+<text style="font-size:12px;font-weight:700;letter-spacing:0.08em;fill:#64748b" x="20" y="18">INPUTS</text>
+<!-- light -->
+<g style="stroke:#ca8a04;stroke-width:2;stroke-linecap:round" transform="translate(48,58)">
+<line x1="0" x2="0" y1="-26" y2="-19"></line><line x1="0" x2="0" y1="19" y2="26"></line>
+<line x1="-26" x2="-19" y1="0" y2="0"></line><line x1="19" x2="26" y1="0" y2="0"></line>
+<line x1="-18" x2="-13" y1="-18" y2="-13"></line><line x1="13" x2="18" y1="13" y2="18"></line>
+<line x1="-18" x2="-13" y1="18" y2="13"></line><line x1="13" x2="18" y1="-13" y2="-18"></line>
+<circle r="14" style="fill:#facc15;stroke-width:1.5"></circle>
+</g>
+<text style="font-size:15px;font-weight:700;fill:#0f172a" x="84" y="54">Light energy</text>
+<text style="font-size:12px;fill:#64748b" x="84" y="72">from the sun</text>
+<!-- water -->
+<path d="M48,116 C48,116 33,136 33,146 A15,15 0 0 0 63,146 C63,136 48,116 48,116 Z" style="fill:#bae6fd;stroke:#0284c7;stroke-width:1.8"></path>
+<text style="font-size:15px;font-weight:700;fill:#0f172a" x="84" y="138">Water (H₂O)</text>
+<text style="font-size:12px;fill:#64748b" x="84" y="158">from</text>
+<line style="stroke:#94a3b8;stroke-width:1.3" x1="114" x2="214" y1="160" y2="160"></line>
+<!-- CO2 -->
+<g transform="translate(48,222)">
+<path d="M-24,8 A10,10 0 0 1 -18,-8 A12,12 0 0 1 2,-14 A11,11 0 0 1 20,-6 A9,9 0 0 1 24,8 Z" style="fill:#e2e8f0;stroke:#64748b;stroke-width:1.5"></path>
+<text style="font-size:11px;font-weight:700;fill:#334155" text-anchor="middle" x="0" y="5">CO₂</text>
+</g>
+<text style="font-size:15px;font-weight:700;fill:#0f172a" x="84" y="220">Carbon dioxide</text>
+<text style="font-size:12px;fill:#64748b" x="84" y="240">from</text>
+<line style="stroke:#94a3b8;stroke-width:1.3" x1="114" x2="214" y1="242" y2="242"></line>
+<!-- input arrows -->
+<path d="M218,62 C250,62 272,95 296,118" marker-end="url(#nf-blue)" style="stroke:#0284c7;stroke-width:2.5;fill:none"></path>
+<path d="M228,145 L294,145" marker-end="url(#nf-blue)" style="stroke:#0284c7;stroke-width:2.5;fill:none"></path>
+<path d="M228,226 C258,226 274,195 296,172" marker-end="url(#nf-blue)" style="stroke:#0284c7;stroke-width:2.5;fill:none"></path>
+<!-- leaf -->
+<text style="font-size:13px;font-weight:700;letter-spacing:0.06em;fill:#15803d" text-anchor="middle" x="390" y="52">PHOTOSYNTHESIS</text>
+<text style="font-size:12px;fill:#64748b" text-anchor="middle" x="390" y="68">in the chloroplasts of green leaves</text>
+<path d="M302,145 C335,82 440,78 478,145 C440,208 335,208 302,145 Z" style="fill:#dcfce7;stroke:#15803d;stroke-width:2.5"></path>
+<path d="M302,145 L478,145 M350,145 L372,118 M400,145 L422,118 M350,145 L372,172 M400,145 L422,172" style="stroke:#15803d;stroke-width:1.2;fill:none"></path>
+<g style="fill:#22c55e;stroke:#15803d;stroke-width:1">
+<ellipse cx="344" cy="126" rx="8" ry="5"></ellipse><ellipse cx="438" cy="128" rx="8" ry="5"></ellipse>
+<ellipse cx="366" cy="166" rx="8" ry="5"></ellipse><ellipse cx="420" cy="165" rx="8" ry="5"></ellipse>
+</g>
+<text style="font-size:13px;font-weight:600;fill:#334155" text-anchor="middle" x="390" y="228">green dots = chloroplasts</text>
+<text style="font-size:12px;fill:#64748b" x="318" y="252">green pigment:</text>
+<line style="stroke:#94a3b8;stroke-width:1.3" x1="404" x2="490" y1="254" y2="254"></line>
+<!-- output arrows -->
+<path d="M476,124 C500,100 516,80 540,76" marker-end="url(#nf-brown)" style="stroke:#b45309;stroke-width:2.5;fill:none"></path>
+<path d="M476,166 C500,190 516,208 540,212" marker-end="url(#nf-brown)" style="stroke:#b45309;stroke-width:2.5;fill:none"></path>
+<text style="font-size:12px;font-weight:700;letter-spacing:0.08em;fill:#64748b" x="560" y="18">OUTPUTS</text>
+<!-- glucose -->
+<polygon points="572,62 586,54 600,62 600,78 586,86 572,78" style="fill:#fde68a;stroke:#b45309;stroke-width:1.8"></polygon>
+<text style="font-size:8px;font-weight:700;fill:#92400e" text-anchor="middle" x="586" y="74">sugar</text>
+<text style="font-size:15px;font-weight:700;fill:#0f172a" x="612" y="68">Glucose</text>
+<text style="font-size:12px;fill:#64748b" x="612" y="86">food for the plant;</text>
+<text style="font-size:12px;fill:#64748b" x="612" y="101">moved by phloem</text>
+<!-- missing gas -->
+<circle cx="584" cy="212" r="15" style="fill:#fff;stroke:#0ea5e9;stroke-width:1.8"></circle>
+<text style="font-size:11px;font-weight:700;fill:#0369a1" text-anchor="middle" x="584" y="217">?</text>
+<circle cx="600" cy="190" r="5" style="fill:#fff;stroke:#0ea5e9;stroke-width:1.8"></circle>
+<circle cx="570" cy="192" r="3.5" style="fill:#fff;stroke:#0ea5e9;stroke-width:1.8"></circle>
+<line style="stroke:#94a3b8;stroke-width:1.3" x1="612" x2="720" y1="214" y2="214"></line>
+<text style="font-size:12px;fill:#64748b" x="612" y="234">released into the air</text>
+</svg>
+<p style="font-family: var(--font-body);font-size:0.78rem;color:#544f47;text-align:center;margin-top:0.2rem;">Fig. — Photosynthesis flowchart. Fill in: (1) where water and CO₂ come from, (2) the green pigment in chloroplasts, (3) the missing output gas.</p>
+</div>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>Complete: Photosynthesis uses <span class="b b-md"> </span>, <span class="b b-md"> </span>, and <span class="b b-md"> </span> to produce <span class="b b-md"> </span> and <span class="b b-md"> </span>.<div class="ak-answer"><span class="ak-label">Answer</span> Photosynthesis uses carbon dioxide, water, and light energy to produce glucose and oxygen.</div></li>
+<li>Where exactly in the cell does photosynthesis take place? <span class="b b-md"> </span><div class="ak-answer"><span class="ak-label">Answer</span> In the chloroplasts.</div></li>
+<li>Why do plants appear green? <span class="b b-md"> </span><div class="ak-answer"><span class="ak-label">Answer</span> Chlorophyll absorbs most colours of light but reflects green, so leaves look green.</div></li>
+<li>A student says "photosynthesis makes plants breathe." Correct this misunderstanding precisely — what does photosynthesis actually do?<div class="ak-answer"><span class="ak-label">Answer</span> Photosynthesis is not breathing. It is how a plant makes its food: it uses light energy to turn carbon dioxide and water into glucose, releasing oxygen as a by-product.</div></li>
+
+<li><strong>Stretch:</strong> A plant is placed in a sealed container. Over time, CO₂ levels drop and O₂ levels rise. The plant is healthy. Then the plant is kept in total darkness for two weeks. Predict what happens to CO₂ and O₂ levels. Explain using what you know about photosynthesis.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> In darkness photosynthesis stops, so the plant no longer removes CO₂ or releases O₂. The plant still uses its stored food for energy, so CO₂ rises and O₂ falls. After two weeks the plant is weakened and may die as its stored glucose runs out.</div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/><div class="ak-answer"><span class="ak-label">More answers for this section</span> <ul><li>Equation — CO₂ (from <strong>air</strong>)</li><li>Equation — H₂O (from <strong>soil</strong>)</li><li>Equation — O₂ (released into <strong>air (atmosphere)</strong>)</li><li>Flowchart — Water (from <strong>soil (through the roots)</strong>)</li><li>Flowchart — green pigment <strong>chlorophyll</strong></li><li>Flowchart — Carbon dioxide (from <strong>air</strong>)</li><li>Flowchart — <strong>oxygen</strong> (released into the air)</li></ul></div>
+<h2 class="section-title" id="s4">Section 4: Plant Reproduction</h2>
+<p><strong>Learning target:</strong> I can describe sexual and asexual reproduction in plants and explain the advantages of each strategy.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Photosynthesis</td>
-<td>The process plants use to make food (glucose) from carbon dioxide and water using light energy</td>
-<td>A leaf making sugar in sunlight</td>
+<td>Sexual reproduction</td>
+<td><span class="ak-text">Reproduction that combines sex cells from two parents; offspring are genetically different</span></td>
+<td><span class="ak-fill">A canola seed formed after pollination</span></td>
 </tr>
 <tr>
-<td>Chlorophyll</td>
-<td>The green pigment in chloroplasts that captures light energy</td>
-<td>Why leaves are green</td>
+<td>Asexual reproduction</td>
+<td><span class="ak-text">Reproduction from one parent with no sex cells; offspring are identical to the parent</span></td>
+<td><span class="ak-fill">A strawberry runner</span></td>
 </tr>
 <tr>
-<td>Glucose</td>
-<td>The sugar plants make as food; their energy source and building material</td>
-<td>Stored as starch in a potato</td>
+<td>Pollination</td>
+<td><span class="ak-fill">The transfer of pollen from the anther to the stigma</span></td>
+<td><span class="ak-fill">A bee carrying pollen between flowers</span></td>
 </tr>
 <tr>
-<td>Carbon dioxide (CO₂)</td>
-<td>A gas in the air that plants take in through their leaves</td>
-<td>The gas we breathe out</td>
+<td>Fertilization</td>
+<td><span class="ak-text">The joining of the pollen's sex cell with the egg to form a seed</span></td>
+<td><span class="ak-fill">A fertilized ovule becoming a pea</span></td>
+</tr>
+<tr>
+<td>Germination</td>
+<td><span class="ak-fill">When a seed begins to grow into a new plant</span></td>
+<td><span class="ak-fill">A bean sprouting</span></td>
+</tr>
+<tr>
+<td>Vegetative reproduction</td>
+<td><span class="ak-text">Asexual reproduction from a plant part such as a stem, root, or leaf</span></td>
+<td><span class="ak-fill">Potato tubers, cuttings</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
+<p><strong>Two strategies:</strong></p>
 <div class="vocab-wrap"><table>
 <thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
+<th>Strategy</th>
+<th>How it works</th>
+<th>Offspring are...</th>
+<th>Advantage</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Misconception box — mostly from ___ and ___ in the air</td>
-<td>water; carbon dioxide</td>
-<td>Van Helmont concluded it was water alone; we now know carbon dioxide supplies most of the mass</td>
+<td>Sexual reproduction</td>
+<td>Two parents combine <span class="ak-fill">sex cells (pollen and egg)</span></td>
+<td>Genetically <span class="ak-fill">different</span> from parents</td>
+<td><span class="ak-fill">genetic</span> variation; adaptation to change</td>
 </tr>
 <tr>
-<td>Equation — CO₂ (from ___)</td>
-<td>air</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Equation — H₂O (from ___)</td>
-<td>soil</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Equation — O₂ (released into ___)</td>
-<td>air (atmosphere)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>CO₂ comes from: ___</td>
-<td>the air</td>
-<td>Enters through tiny pores in the leaves</td>
-</tr>
-<tr>
-<td>Water comes from: ___</td>
-<td>the soil</td>
-<td>Travels through roots and xylem</td>
-</tr>
-<tr>
-<td>Light energy is captured by: ___</td>
-<td>chlorophyll</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>the green pigment in ___</td>
-<td>chloroplasts</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Glucose is: the ___</td>
-<td>food (sugar)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>stored as ___</td>
-<td>starch</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Oxygen is: a ___</td>
-<td>by-product (waste product)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>In the ___ of the</td>
-<td>chloroplasts</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>___ parts of plants</td>
-<td>green</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>primarily in ___</td>
-<td>leaves</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>the entry point of ___ into almost every food chain</td>
-<td>energy</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Producers convert ___ energy</td>
-<td>light (solar)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>into ___ energy</td>
-<td>chemical</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Flowchart — Water (from ___)</td>
-<td>soil (through the roots)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Flowchart — green pigment ___</td>
-<td>chlorophyll</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Flowchart — Carbon dioxide (from ___)</td>
-<td>air</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Flowchart — ___ (released into the air)</td>
-<td>oxygen</td>
-<td>&nbsp;</td>
+<td>Asexual reproduction</td>
+<td>One parent, no sex cells</td>
+<td>Genetically <span class="ak-fill">identical</span> to parent</td>
+<td><span class="ak-fill">fast; needs only one parent (no pollinator needed)</span>; rapid colonization of space</td>
 </tr>
 </tbody></table></div>
-<h3>Retrieval Check — Section 3</h3>
-<ol start="1">
-  <li>Photosynthesis uses carbon dioxide, water, and light energy to produce glucose and oxygen.</li>
-  <li>In the chloroplasts.</li>
-  <li>Chlorophyll absorbs most colours of light but reflects green, so leaves look green.</li>
-  <li>Photosynthesis is not breathing. It is how a plant makes its food: it uses light energy to turn carbon dioxide and water into glucose, releasing oxygen as a by-product.</li>
-  <li><strong>Stretch:</strong> In darkness photosynthesis stops, so the plant no longer removes CO₂ or releases O₂. The plant still uses its stored food for energy, so CO₂ rises and O₂ falls. After two weeks the plant is weakened and may die as its stored glucose runs out.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s4" class="section-title">Section 4: Plant Reproduction</h2>
+<!-- viz:sexual-vs-asexual -->
+<figure class="viz">
+<!-- tikz: reproduction-compare | sexual=2-parents | asexual=runner -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 200" aria-label="Left: two parent flowers, one red and one yellow, combine pollen and egg; their three offspring have different mixes of colours, showing genetic variation. Right: one strawberry plant sends out a runner that grows two new plants, identical, a blank, clones of the parent." width="520" height="200">
+<text x="130" y="16" text-anchor="middle" class="dg-title">Sexual: two parents</text>
+<text x="400" y="16" text-anchor="middle" class="dg-title">Asexual: one parent</text>
+<line x1="80" y1="54" x2="80" y2="78" class="dg-arrow plant thin"/><circle cx="80.0" cy="34.0" r="7" class="dg-fill-hot"/><circle cx="89.5" cy="40.9" r="7" class="dg-fill-hot"/><circle cx="85.9" cy="52.1" r="7" class="dg-fill-hot"/><circle cx="74.1" cy="52.1" r="7" class="dg-fill-hot"/><circle cx="70.5" cy="40.9" r="7" class="dg-fill-hot"/><circle cx="80" cy="44" r="6" class="dg-solid-sun"/>
+<line x1="180" y1="54" x2="180" y2="78" class="dg-arrow plant thin"/><circle cx="180.0" cy="34.0" r="7" class="dg-fill-sun"/><circle cx="189.5" cy="40.9" r="7" class="dg-fill-sun"/><circle cx="185.9" cy="52.1" r="7" class="dg-fill-sun"/><circle cx="174.1" cy="52.1" r="7" class="dg-fill-sun"/><circle cx="170.5" cy="40.9" r="7" class="dg-fill-sun"/><circle cx="180" cy="44" r="6" class="dg-solid-hot"/>
+<text x="130" y="50" text-anchor="middle" class="dg-label-sm">pollen + egg</text>
+<line x1="130" y1="78" x2="60" y2="110" class="dg-construction"/>
+<line x1="130" y1="78" x2="130" y2="110" class="dg-construction"/>
+<line x1="130" y1="78" x2="200" y2="110" class="dg-construction"/>
+<line x1="60" y1="130" x2="60" y2="154" class="dg-arrow plant thin"/><circle cx="60.0" cy="110.0" r="7" class="dg-fill-hot"/><circle cx="69.5" cy="116.9" r="7" class="dg-fill-sun"/><circle cx="65.9" cy="128.1" r="7" class="dg-fill-hot"/><circle cx="54.1" cy="128.1" r="7" class="dg-fill-sun"/><circle cx="50.5" cy="116.9" r="7" class="dg-fill-hot"/><circle cx="60" cy="120" r="6" class="dg-solid-sun"/>
+<line x1="130" y1="130" x2="130" y2="154" class="dg-arrow plant thin"/><circle cx="130.0" cy="110.0" r="7" class="dg-fill-sun"/><circle cx="139.5" cy="116.9" r="7" class="dg-fill-sun"/><circle cx="135.9" cy="128.1" r="7" class="dg-fill-sun"/><circle cx="124.1" cy="128.1" r="7" class="dg-fill-sun"/><circle cx="120.5" cy="116.9" r="7" class="dg-fill-sun"/><circle cx="130" cy="120" r="6" class="dg-solid-sun"/>
+<line x1="200" y1="130" x2="200" y2="154" class="dg-arrow plant thin"/><circle cx="200.0" cy="110.0" r="7" class="dg-fill-hot"/><circle cx="209.5" cy="116.9" r="7" class="dg-fill-hot"/><circle cx="205.9" cy="128.1" r="7" class="dg-fill-hot"/><circle cx="194.1" cy="128.1" r="7" class="dg-fill-hot"/><circle cx="190.5" cy="116.9" r="7" class="dg-fill-hot"/><circle cx="200" cy="120" r="6" class="dg-solid-hot"/>
+<text x="130" y="176" text-anchor="middle" class="dg-label">offspring: all a little different</text>
+<text x="130" y="192" text-anchor="middle" class="dg-label-sm">genetic variation</text>
+<line x1="290" y1="140" x2="510" y2="140" class="dg-line"/>
+<ellipse cx="307" cy="123" rx="14" ry="8" class="dg-fill-plant"/><ellipse cx="333" cy="123" rx="14" ry="8" class="dg-fill-plant"/><ellipse cx="320" cy="109" rx="10" ry="14" class="dg-fill-plant"/><circle cx="327" cy="134" r="6" class="dg-solid-hot"/>
+<path d="M330 138 Q 370 128 410 140 Q 450 128 490 140" class="dg-arrow plant thin"/>
+<ellipse cx="401" cy="128" rx="10" ry="6" class="dg-fill-plant"/><ellipse cx="419" cy="128" rx="10" ry="6" class="dg-fill-plant"/><ellipse cx="410" cy="118" rx="7" ry="10" class="dg-fill-plant"/><circle cx="415" cy="136" r="4" class="dg-solid-hot"/><ellipse cx="481" cy="128" rx="10" ry="6" class="dg-fill-plant"/><ellipse cx="499" cy="128" rx="10" ry="6" class="dg-fill-plant"/><ellipse cx="490" cy="118" rx="7" ry="10" class="dg-fill-plant"/><circle cx="495" cy="136" r="4" class="dg-solid-hot"/>
+<text x="320" y="160" text-anchor="middle" class="dg-label-sm">parent</text>
+<text x="368" y="122" text-anchor="middle" class="dg-label-sm">runner</text>
+<text x="450" y="160" text-anchor="middle" class="dg-label-sm">new plants</text>
+<text x="386" y="190" text-anchor="end" class="dg-label">offspring are</text>
+<rect x="392" y="176" width="80" height="20" rx="3" class="dg-tag"/><text x="432" y="190" text-anchor="middle" class="dg-tag-answer">identical</text>
+<text x="476" y="190" class="dg-label">clones</text>
+</svg>
+<figcaption>Two parents mix their traits, so every seedling is a little different. A strawberry runner makes exact copies of one parent, fast, without needing a pollinator.</figcaption>
+</figure>
+<!-- /viz:sexual-vs-asexual -->
+<p><strong>Sexual reproduction — the flower's job:</strong></p>
+<p>Flowers are <span class="ak-fill">reproductive</span> structures, not decoration. Their appearance, colour, and scent evolved to attract <span class="ak-fill">pollinators</span>.</p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Flower part</th>
+<th>Function</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Stamen (anther + filament)</td>
+<td>Produces <span class="ak-fill">pollen</span></td>
+</tr>
+<tr>
+<td>Pistil (stigma + style + ovary)</td>
+<td>Receives pollen; contains <span class="ak-fill">ovules (eggs)</span></td>
+</tr>
+<tr>
+<td>Petals</td>
+<td><span class="ak-fill">attract</span> pollinators</td>
+</tr>
+<tr>
+<td>Sepals</td>
+<td>Protect <span class="ak-fill">the developing (unopened)</span> flower bud</td>
+</tr>
+</tbody></table></div>
 <!-- viz:flower-parts -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: flower-section | stamen=2 | pistil=1 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 250" aria-label="Cross-section of a flower. Stamens: the anther makes a blank, pollen, held up by the filament. Pistil: the sticky stigma on top, the style, and the ovary, which contains blank, ovules. Petals around the outside and sepals below." width="520" height="250">
 <line x1="200" y1="242" x2="200" y2="190" class="dg-arrow plant"/>
@@ -1088,9 +1360,10 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>A flower cut in half. The stamens make pollen; the pistil catches it and holds the eggs. Petals attract pollinators, and the sepals wrapped the bud before it opened.</figcaption>
 </figure>
 <!-- /viz:flower-parts -->
+<p><strong>Pollination</strong> = transfer of pollen from <span class="ak-fill">anther</span> to <span class="ak-fill">stigma</span> of the same species. Agents: wind, bees, butterflies, birds, bats.</p>
+<p><strong>Fertilization</strong> = pollen reaches the egg → <span class="ak-fill">a fertilized egg (zygote / embryo)</span> forms → develops into a seed inside the <span class="ak-fill">ovary</span>, which becomes fruit.</p>
 <!-- viz:pollination-to-fruit -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: pollen-tube-to-fruit | pistil | pod -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 205" aria-label="A pistil: pollen lands on the stigma, a pollen tube grows down the style, and reaches the egg in the ovule, where a blank, fertilized egg, forms. Arrow to a pea pod: each ovule becomes a seed, and the blank, ovary, becomes the fruit, the pod." width="520" height="205">
 <ellipse cx="90" cy="30" rx="14" ry="6" class="dg-fill-plant"/>
@@ -1118,199 +1391,170 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Pollen lands on the stigma and grows a tube down to an egg. After fertilization, each ovule becomes a seed and the ovary swells into the fruit. A pea pod is an ovary full of seeds.</figcaption>
 </figure>
 <!-- /viz:pollination-to-fruit -->
-<!-- viz:sexual-vs-asexual -->
-<figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
-<!-- tikz: reproduction-compare | sexual=2-parents | asexual=runner -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 200" aria-label="Left: two parent flowers, one red and one yellow, combine pollen and egg; their three offspring have different mixes of colours, showing genetic variation. Right: one strawberry plant sends out a runner that grows two new plants, identical, a blank, clones of the parent." width="520" height="200">
-<text x="130" y="16" text-anchor="middle" class="dg-title">Sexual: two parents</text>
-<text x="400" y="16" text-anchor="middle" class="dg-title">Asexual: one parent</text>
-<line x1="80" y1="54" x2="80" y2="78" class="dg-arrow plant thin"/><circle cx="80.0" cy="34.0" r="7" class="dg-fill-hot"/><circle cx="89.5" cy="40.9" r="7" class="dg-fill-hot"/><circle cx="85.9" cy="52.1" r="7" class="dg-fill-hot"/><circle cx="74.1" cy="52.1" r="7" class="dg-fill-hot"/><circle cx="70.5" cy="40.9" r="7" class="dg-fill-hot"/><circle cx="80" cy="44" r="6" class="dg-solid-sun"/>
-<line x1="180" y1="54" x2="180" y2="78" class="dg-arrow plant thin"/><circle cx="180.0" cy="34.0" r="7" class="dg-fill-sun"/><circle cx="189.5" cy="40.9" r="7" class="dg-fill-sun"/><circle cx="185.9" cy="52.1" r="7" class="dg-fill-sun"/><circle cx="174.1" cy="52.1" r="7" class="dg-fill-sun"/><circle cx="170.5" cy="40.9" r="7" class="dg-fill-sun"/><circle cx="180" cy="44" r="6" class="dg-solid-hot"/>
-<text x="130" y="50" text-anchor="middle" class="dg-label-sm">pollen + egg</text>
-<line x1="130" y1="78" x2="60" y2="110" class="dg-construction"/>
-<line x1="130" y1="78" x2="130" y2="110" class="dg-construction"/>
-<line x1="130" y1="78" x2="200" y2="110" class="dg-construction"/>
-<line x1="60" y1="130" x2="60" y2="154" class="dg-arrow plant thin"/><circle cx="60.0" cy="110.0" r="7" class="dg-fill-hot"/><circle cx="69.5" cy="116.9" r="7" class="dg-fill-sun"/><circle cx="65.9" cy="128.1" r="7" class="dg-fill-hot"/><circle cx="54.1" cy="128.1" r="7" class="dg-fill-sun"/><circle cx="50.5" cy="116.9" r="7" class="dg-fill-hot"/><circle cx="60" cy="120" r="6" class="dg-solid-sun"/>
-<line x1="130" y1="130" x2="130" y2="154" class="dg-arrow plant thin"/><circle cx="130.0" cy="110.0" r="7" class="dg-fill-sun"/><circle cx="139.5" cy="116.9" r="7" class="dg-fill-sun"/><circle cx="135.9" cy="128.1" r="7" class="dg-fill-sun"/><circle cx="124.1" cy="128.1" r="7" class="dg-fill-sun"/><circle cx="120.5" cy="116.9" r="7" class="dg-fill-sun"/><circle cx="130" cy="120" r="6" class="dg-solid-sun"/>
-<line x1="200" y1="130" x2="200" y2="154" class="dg-arrow plant thin"/><circle cx="200.0" cy="110.0" r="7" class="dg-fill-hot"/><circle cx="209.5" cy="116.9" r="7" class="dg-fill-hot"/><circle cx="205.9" cy="128.1" r="7" class="dg-fill-hot"/><circle cx="194.1" cy="128.1" r="7" class="dg-fill-hot"/><circle cx="190.5" cy="116.9" r="7" class="dg-fill-hot"/><circle cx="200" cy="120" r="6" class="dg-solid-hot"/>
-<text x="130" y="176" text-anchor="middle" class="dg-label">offspring: all a little different</text>
-<text x="130" y="192" text-anchor="middle" class="dg-label-sm">genetic variation</text>
-<line x1="290" y1="140" x2="510" y2="140" class="dg-line"/>
-<ellipse cx="307" cy="123" rx="14" ry="8" class="dg-fill-plant"/><ellipse cx="333" cy="123" rx="14" ry="8" class="dg-fill-plant"/><ellipse cx="320" cy="109" rx="10" ry="14" class="dg-fill-plant"/><circle cx="327" cy="134" r="6" class="dg-solid-hot"/>
-<path d="M330 138 Q 370 128 410 140 Q 450 128 490 140" class="dg-arrow plant thin"/>
-<ellipse cx="401" cy="128" rx="10" ry="6" class="dg-fill-plant"/><ellipse cx="419" cy="128" rx="10" ry="6" class="dg-fill-plant"/><ellipse cx="410" cy="118" rx="7" ry="10" class="dg-fill-plant"/><circle cx="415" cy="136" r="4" class="dg-solid-hot"/><ellipse cx="481" cy="128" rx="10" ry="6" class="dg-fill-plant"/><ellipse cx="499" cy="128" rx="10" ry="6" class="dg-fill-plant"/><ellipse cx="490" cy="118" rx="7" ry="10" class="dg-fill-plant"/><circle cx="495" cy="136" r="4" class="dg-solid-hot"/>
-<text x="320" y="160" text-anchor="middle" class="dg-label-sm">parent</text>
-<text x="368" y="122" text-anchor="middle" class="dg-label-sm">runner</text>
-<text x="450" y="160" text-anchor="middle" class="dg-label-sm">new plants</text>
-<text x="386" y="190" text-anchor="end" class="dg-label">offspring are</text>
-<rect x="392" y="176" width="80" height="20" rx="3" class="dg-tag"/><text x="432" y="190" text-anchor="middle" class="dg-tag-answer">identical</text>
-<text x="476" y="190" class="dg-label">clones</text>
-</svg>
-<figcaption>Two parents mix their traits, so every seedling is a little different. A strawberry runner makes exact copies of one parent, fast, without needing a pollinator.</figcaption>
-</figure>
-<!-- /viz:sexual-vs-asexual -->
-<h3>Vocabulary</h3>
+<p><strong>Seed dispersal strategies:</strong></p>
 <div class="vocab-wrap"><table>
 <thead><tr>
-<th>Term</th>
-<th>Model definition</th>
+<th>Method</th>
+<th>Adaptation</th>
 <th>Example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Sexual reproduction</td>
-<td>Reproduction that combines sex cells from two parents; offspring are genetically different</td>
-<td>A canola seed formed after pollination</td>
+<td>Wind</td>
+<td>lightweight, wings or fluff</td>
+<td><span class="ak-fill">dandelion (also maple, poplar/cottonwood fluff)</span></td>
 </tr>
 <tr>
-<td>Asexual reproduction</td>
-<td>Reproduction from one parent with no sex cells; offspring are identical to the parent</td>
-<td>A strawberry runner</td>
+<td>Animal (eaten)</td>
+<td>nutritious fruit; seeds survive digestion</td>
+<td><span class="ak-fill">saskatoon berry (also raspberry, chokecherry, apple)</span></td>
 </tr>
 <tr>
-<td>Pollination</td>
-<td>The transfer of pollen from the anther to the stigma</td>
-<td>A bee carrying pollen between flowers</td>
+<td>Animal (hitchhike)</td>
+<td>hooks or burrs</td>
+<td>burdock</td>
 </tr>
 <tr>
-<td>Fertilization</td>
-<td>The joining of the pollen's sex cell with the egg to form a seed</td>
-<td>A fertilized ovule becoming a pea</td>
+<td>Water</td>
+<td>buoyant</td>
+<td>coconut</td>
 </tr>
 <tr>
-<td>Germination</td>
-<td>When a seed begins to grow into a new plant</td>
-<td>A bean sprouting</td>
-</tr>
-<tr>
-<td>Vegetative reproduction</td>
-<td>Asexual reproduction from a plant part such as a stem, root, or leaf</td>
-<td>Potato tubers, cuttings</td>
+<td>Mechanical</td>
+<td>pod explodes</td>
+<td><span class="ak-fill">caragana (also pea pods, lupine, touch-me-not)</span></td>
 </tr>
 </tbody></table></div>
-<h3>Guided Notes</h3>
+<p><strong>Asexual (vegetative) reproduction — no flowers needed:</strong></p>
 <div class="vocab-wrap"><table>
 <thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
+<th>Method</th>
+<th>How it works</th>
+<th>Plant example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Sexual — two parents combine ___</td>
-<td>sex cells (pollen and egg)</td>
-<td>&nbsp;</td>
+<td>Runners (stolons)</td>
+<td>horizontal stems send out new plants</td>
+<td><span class="ak-fill">strawberry</span></td>
 </tr>
 <tr>
-<td>Sexual — offspring are genetically ___ from parents</td>
-<td>different</td>
-<td>&nbsp;</td>
+<td>Bulbs</td>
+<td>underground modified stem with stored food</td>
+<td>tulip, garlic</td>
 </tr>
 <tr>
-<td>Sexual — advantage: ___ variation</td>
-<td>genetic</td>
-<td>&nbsp;</td>
+<td>Tubers</td>
+<td>underground stem that stores starch</td>
+<td><span class="ak-fill">potato</span></td>
 </tr>
 <tr>
-<td>Asexual — genetically ___ to parent</td>
-<td>identical</td>
-<td>A clone</td>
-</tr>
-<tr>
-<td>Asexual — advantage: ___; rapid colonization of space</td>
-<td>fast; needs only one parent (no pollinator needed)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Flowers are ___ structures</td>
-<td>reproductive</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>evolved to attract ___</td>
-<td>pollinators</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Stamen — produces ___</td>
-<td>pollen</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Pistil — contains ___</td>
-<td>ovules (eggs)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Petals — ___ pollinators</td>
-<td>attract</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Sepals — protect ___ flower bud</td>
-<td>the developing (unopened)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Pollination — from ___ to ___</td>
-<td>anther; stigma</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Fertilization — ___ forms</td>
-<td>a fertilized egg (zygote / embryo)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>develops into a seed inside the ___</td>
-<td>ovary</td>
-<td>The ovary becomes the fruit</td>
-</tr>
-<tr>
-<td>Seed dispersal — wind example</td>
-<td>dandelion (also maple, poplar/cottonwood fluff)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Seed dispersal — animal (eaten) example</td>
-<td>saskatoon berry (also raspberry, chokecherry, apple)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Seed dispersal — mechanical example</td>
-<td>caragana (also pea pods, lupine, touch-me-not)</td>
-<td>Pods dry, twist, and fling the seeds</td>
-</tr>
-<tr>
-<td>Runners — plant example</td>
-<td>strawberry</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Tubers — plant example</td>
-<td>potato</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Cuttings — plant example</td>
-<td>willow (also geranium, coleus)</td>
-<td>&nbsp;</td>
+<td>Cuttings</td>
+<td>stem piece roots when placed in soil</td>
+<td><span class="ak-fill">willow (also geranium, coleus)</span></td>
 </tr>
 </tbody></table></div>
-<h3>Retrieval Check — Section 4</h3>
-<ol start="1">
-  <li>Stamen: produces pollen. Pistil: receives pollen and contains the ovules, which become seeds after fertilization.</li>
-  <li>Any two with examples: runners (strawberry); bulbs (tulip, garlic); tubers (potato); cuttings (willow, geranium).</li>
-  <li>Animal dispersal by hitchhiking (hooks or burrs). The seeds are carried far from the parent plant, which reduces competition and spreads the species to new areas.</li>
-  <li>Variation means individuals have different traits. When conditions change (disease, drought, climate), some individuals are likely to survive and reproduce, so the species continues.</li>
-  <li><strong>Stretch:</strong> Biologically it is one organism — one root system and one set of genes — even though it looks like many trees. Advantages: spreads quickly, shares water and nutrients, regrows after fire from the roots. Risk: no genetic variation, so one disease or pest could kill the entire grove.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s5" class="section-title">Section 5: Plants for Food and Fibre — Alberta Agriculture</h2>
+<div class="connection">
+<div class="c-label">MISCONCEPTION</div>
+<p><em>"Cloning and asexual reproduction are unnatural — only done in a lab."</em> <strong>Why this is wrong:</strong> Vegetative reproduction is a completely natural strategy used by hundreds of plant species. Strawberry runners, aspen groves (which are often one connected organism), and potato tubers all reproduce asexually in the wild. Lab cloning of plants is an extension of a strategy plants evolved millions of years ago.</p>
+</div>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What is the function of the stamen? The pistil?<div class="ak-answer"><span class="ak-label">Answer</span> Stamen: produces pollen. Pistil: receives pollen and contains the ovules, which become seeds after fertilization.</div></li>
+
+<li>Name two asexual reproduction strategies and give a plant example of each.<div class="ak-answer"><span class="ak-label">Answer</span> Any two with examples: runners (strawberry); bulbs (tulip, garlic); tubers (potato); cuttings (willow, geranium).</div></li>
+
+<li>A plant produces seeds with hooks that stick to animal fur. What dispersal strategy is this? Why is it advantageous?<div class="ak-answer"><span class="ak-label">Answer</span> Animal dispersal by hitchhiking (hooks or burrs). The seeds are carried far from the parent plant, which reduces competition and spreads the species to new areas.</div></li>
+
+<li>Why is genetic variation (produced by sexual reproduction) beneficial to a species over time?<div class="ak-answer"><span class="ak-label">Answer</span> Variation means individuals have different traits. When conditions change (disease, drought, climate), some individuals are likely to survive and reproduce, so the species continues.</div></li>
+
+<li><strong>Stretch:</strong> An aspen grove in Alberta covers 20 hectares. All the trees are genetically identical and connected underground by one root system. Is this one organism or many? What are the advantages and risks of this strategy?<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> Biologically it is one organism — one root system and one set of genes — even though it looks like many trees. Advantages: spreads quickly, shares water and nutrients, regrows after fire from the roots. Risk: no genetic variation, so one disease or pest could kill the entire grove.</div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="s5">Section 5: Plants for Food and Fibre — Alberta Agriculture</h2>
+<p><strong>Learning target:</strong> I can identify crops grown for food and fibre in Alberta and describe their uses before and after processing.</p>
+<h3>Vocabulary</h3>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Term</th>
+<th>Definition in your own words</th>
+<th>One example</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Food crop</td>
+<td><span class="ak-fill">A plant grown to be eaten by people or livestock</span></td>
+<td><span class="ak-fill">Wheat, canola, peas</span></td>
+</tr>
+<tr>
+<td>Fibre crop</td>
+<td><span class="ak-fill">A plant grown for its fibres, used to make materials</span></td>
+<td><span class="ak-fill">Flax (linen), hemp (rope, fabric)</span></td>
+</tr>
+<tr>
+<td>Processing</td>
+<td><span class="ak-fill">Changing a harvested crop into a usable product</span></td>
+<td><span class="ak-fill">Milling wheat into flour</span></td>
+</tr>
+<tr>
+<td>Monoculture</td>
+<td><span class="ak-fill">Growing a single crop species over a large area</span></td>
+<td><span class="ak-fill">A quarter section planted entirely in canola</span></td>
+</tr>
+</tbody></table></div>
+<h3>Guided Notes</h3>
+<p><strong>Alberta is a major agricultural province:</strong></p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Crop</th>
+<th>Category</th>
+<th>Before processing use</th>
+<th>After processing use</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Wheat</td>
+<td>Food — grain</td>
+<td><span class="ak-fill">whole grain (kernels) — animal feed, seed, or cooked whole</span></td>
+<td>flour → bread, pasta</td>
+</tr>
+<tr>
+<td>Canola</td>
+<td>Food — oilseed</td>
+<td><span class="ak-fill">seed — used as seed for planting; crushed to release the oil</span></td>
+<td>canola oil, biodiesel</td>
+</tr>
+<tr>
+<td>Barley</td>
+<td>Food — grain</td>
+<td>animal feed</td>
+<td><span class="ak-fill">malt for brewing; pearl barley; flour</span></td>
+</tr>
+<tr>
+<td>Peas/lentils</td>
+<td>Food — pulse</td>
+<td><span class="ak-fill">whole dried seeds eaten directly (soups, stews)</span></td>
+<td>protein powder, food</td>
+</tr>
+<tr>
+<td>Flax</td>
+<td>Food + fibre</td>
+<td><span class="ak-fill">seeds eaten whole (flaxseed); straw from the stem</span></td>
+<td>linseed oil; linen fabric</td>
+</tr>
+<tr>
+<td>Hemp</td>
+<td>Food + fibre</td>
+<td>seeds (edible)</td>
+<td><span class="ak-fill">hemp oil and protein; fibre for rope, fabric, paper, and building materials</span></td>
+</tr>
+</tbody></table></div>
 <!-- viz:processing -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: process-chain-2-rows | wheat | canola -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 540 150" aria-label="Wheat: wheat plant, then grain, then milled into flour, then bread and pasta. Canola: canola plant, then seeds, then crushed and pressed, then oil and meal. A dashed line separates before processing from after processing." width="540" height="150">
 <text x="132" y="16" text-anchor="middle" class="dg-label-sm">before processing</text>
@@ -1330,9 +1574,15 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Two Alberta crops from field to product. Everything left of the line is the crop as harvested; everything right of it has been processed.</figcaption>
 </figure>
 <!-- /viz:processing -->
+<p><strong>Alberta statistics:</strong></p>
+<ul>
+<li>Alberta produces ~20% of Canada's <span class="ak-fill">wheat</span></li>
+<li>~40% of Canada's <span class="ak-fill">canola</span> comes from Alberta</li>
+<li>Alberta's agricultural industry generates over <span class="ak-fill">supply the current figure — farm cash receipts have been in the range of 15 to 20+ billion dollars in recent years</span> billion dollars per year</li>
+</ul>
+<p><strong>Monoculture</strong> = growing a single crop species over large areas. Advantages: <span class="ak-fill">efficient to plant and harvest with large machinery</span>, <span class="ak-fill">high yield at lower cost</span>. Disadvantages: <span class="ak-fill">one pest or disease can destroy the whole crop</span>, <span class="ak-fill">reduces biodiversity and wears out soil nutrients</span>.</p>
 <!-- viz:monoculture -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: field-grid-compare | pest=one-species -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 190" aria-label="Left: a monoculture field of one crop; a pest has killed almost every plant. Right: a mixed field of three crops; the pest has killed only the plants of one crop." width="520" height="190">
 <text x="125" y="18" text-anchor="middle" class="dg-title">Monoculture: one crop</text>
@@ -1438,111 +1688,50 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>The same pest arrives at two fields. An X marks each plant it kills.</figcaption>
 </figure>
 <!-- /viz:monoculture -->
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>Name two Alberta crops grown for food and two grown for fibre.<div class="ak-answer"><span class="ak-label">Answer</span> Food: any two of wheat, canola, barley, peas, lentils. Fibre: flax and hemp.</div></li>
+
+<li>What is the difference between a food crop and a fibre crop?<div class="ak-answer"><span class="ak-label">Answer</span> A food crop is grown to be eaten (or pressed for edible oil). A fibre crop is grown for its fibres to make materials such as fabric, rope, or paper.</div></li>
+
+<li>Name one advantage and one disadvantage of monoculture farming.<div class="ak-answer"><span class="ak-label">Answer</span> Advantage: efficient large-scale planting and harvesting. Disadvantage: a single pest or disease can wipe out the whole crop (also lower biodiversity, soil depletion).</div></li>
+
+<li><strong>Stretch:</strong> Explain why the health of bee populations is directly connected to Alberta's food security.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> Many Alberta crops, especially canola, depend on or benefit from insect pollination to set seed. Fewer bees means less pollination, lower seed yields, and less food and oil produced. Alberta is also a major honey producer.</div></li>
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="s6">Section 6: Plant Biotechnology</h2>
+<p><strong>Learning target:</strong> I can explain selective breeding and genetic modification and evaluate their effects on agriculture and biodiversity.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Food crop</td>
-<td>A plant grown to be eaten by people or livestock</td>
-<td>Wheat, canola, peas</td>
+<td>Selective breeding</td>
+<td><span class="ak-text">Choosing parent plants with wanted traits and breeding them over many generations</span></td>
+<td><span class="ak-fill">Wild mustard bred into broccoli and cabbage</span></td>
 </tr>
 <tr>
-<td>Fibre crop</td>
-<td>A plant grown for its fibres, used to make materials</td>
-<td>Flax (linen), hemp (rope, fabric)</td>
+<td>Genetically modified organism (GMO)</td>
+<td><span class="ak-text">An organism whose genes have been directly changed by scientists</span></td>
+<td><span class="ak-fill">Herbicide-tolerant canola</span></td>
 </tr>
 <tr>
-<td>Processing</td>
-<td>Changing a harvested crop into a usable product</td>
-<td>Milling wheat into flour</td>
-</tr>
-<tr>
-<td>Monoculture</td>
-<td>Growing a single crop species over a large area</td>
-<td>A quarter section planted entirely in canola</td>
+<td>Biotechnology</td>
+<td><span class="ak-text">Using living things or their parts to make products or solve problems</span></td>
+<td><span class="ak-fill">Breeding drought-tolerant wheat</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Wheat — before processing use</td>
-<td>whole grain (kernels) — animal feed, seed, or cooked whole</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Canola — before processing use</td>
-<td>seed — used as seed for planting; crushed to release the oil</td>
-<td>The leftover meal becomes livestock feed</td>
-</tr>
-<tr>
-<td>Barley — after processing use</td>
-<td>malt for brewing; pearl barley; flour</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Peas/lentils — before processing use</td>
-<td>whole dried seeds eaten directly (soups, stews)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Flax — before processing use</td>
-<td>seeds eaten whole (flaxseed); straw from the stem</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Hemp — after processing use</td>
-<td>hemp oil and protein; fibre for rope, fabric, paper, and building materials</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Alberta produces ~20% of Canada's ___</td>
-<td>wheat</td>
-<td>From the unit context</td>
-</tr>
-<tr>
-<td>~40% of Canada's ___ comes from Alberta</td>
-<td>canola</td>
-<td>From the unit context</td>
-</tr>
-<tr>
-<td>generates over ___ billion dollars per year</td>
-<td>supply the current figure — farm cash receipts have been in the range of 15 to 20+ billion dollars in recent years</td>
-<td>Not given in the unit context; confirm against current Alberta statistics before teaching</td>
-</tr>
-<tr>
-<td>Monoculture — advantages (2 blanks)</td>
-<td>efficient to plant and harvest with large machinery; high yield at lower cost</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Monoculture — disadvantages (2 blanks)</td>
-<td>one pest or disease can destroy the whole crop; reduces biodiversity and wears out soil nutrients</td>
-<td>&nbsp;</td>
-</tr>
-</tbody></table></div>
-<h3>Retrieval Check — Section 5</h3>
-<ol start="1">
-  <li>Food: any two of wheat, canola, barley, peas, lentils. Fibre: flax and hemp.</li>
-  <li>A food crop is grown to be eaten (or pressed for edible oil). A fibre crop is grown for its fibres to make materials such as fabric, rope, or paper.</li>
-  <li>Advantage: efficient large-scale planting and harvesting. Disadvantage: a single pest or disease can wipe out the whole crop (also lower biodiversity, soil depletion).</li>
-  <li><strong>Stretch:</strong> Many Alberta crops, especially canola, depend on or benefit from insect pollination to set seed. Fewer bees means less pollination, lower seed yields, and less food and oil produced. Alberta is also a major honey producer.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s6" class="section-title">Section 6: Plant Biotechnology</h2>
+<p><strong>Selective breeding:</strong> Humans choose plants with <span class="ak-fill">desirable (wanted)</span> traits and breed only those plants. Repeat over many generations. Results in dramatic changes over thousands of years. Example: wild mustard → cabbage, broccoli, kale, cauliflower, Brussels sprouts (all the same species, selectively bred for different traits).</p>
 <!-- viz:mustard-family -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: tree-1-to-5 | root=wild-mustard -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 540 212" aria-label="Wild mustard at the top branches to kale, bred for leaves; cabbage, bred for a tight end bud; broccoli, bred for flower buds; cauliflower, bred for flower clusters; Brussels sprouts, bred for side buds. Farmers kept only plants with the most blank, desirable, traits." width="540" height="212">
 <rect x="210" y="12" width="120" height="34" rx="8" class="dg-fill-plant"/>
@@ -1565,9 +1754,9 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>One wild plant, five vegetables. For each one, farmers kept and replanted the plants that were best at one thing: bigger leaves, tighter buds, more flowers.</figcaption>
 </figure>
 <!-- /viz:mustard-family -->
+<p><strong>Genetic modification (GMOs):</strong> Scientists directly <span class="ak-fill">change (modify / alter)</span> specific genes — inserting, removing, or altering sequences in the DNA. Faster and more precise than selective breeding, but requires laboratory techniques.</p>
 <!-- viz:breeding-vs-gm -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: compare-timelines | breeding=generations | gm=single-step -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 194" aria-label="Top row, selective breeding: six plants in a row, each generation with slightly bigger grain heads, taking many generations and up to thousands of years. Bottom row, genetic modification: one plant, then a gene inserted in a lab, then a plant with a new trait, in one step over a few years. Scientists directly blank, change, specific genes." width="520" height="194">
 <text x="10" y="16" class="dg-title">Selective breeding</text>
@@ -1600,116 +1789,124 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Both change a crop's traits. Selective breeding works with the plant's own variety over many generations; genetic modification changes a specific gene directly in one step.</figcaption>
 </figure>
 <!-- /viz:breeding-vs-gm -->
-<h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
-<th>Term</th>
-<th>Model definition</th>
+<th>Technology</th>
+<th>Timeline</th>
 <th>Example</th>
+<th>Alberta relevance</th>
 </tr></thead>
 <tbody>
 <tr>
 <td>Selective breeding</td>
-<td>Choosing parent plants with wanted traits and breeding them over many generations</td>
-<td>Wild mustard bred into broccoli and cabbage</td>
+<td>Thousands of years</td>
+<td>High-yield wheat varieties</td>
+<td>All Alberta crop varieties have been selectively bred</td>
 </tr>
 <tr>
-<td>Genetically modified organism (GMO)</td>
-<td>An organism whose genes have been directly changed by scientists</td>
-<td>Herbicide-tolerant canola</td>
-</tr>
-<tr>
-<td>Biotechnology</td>
-<td>Using living things or their parts to make products or solve problems</td>
-<td>Breeding drought-tolerant wheat</td>
+<td>GMOs</td>
+<td>Since ~1990</td>
+<td>Canola with herbicide resistance</td>
+<td>~95% of Alberta canola is GMO</td>
 </tr>
 </tbody></table></div>
-<h3>Guided Notes</h3>
+<p><strong>Common GMO modifications in Alberta crops:</strong></p>
+<ul>
+<li>Herbicide tolerance: crop survives herbicide that kills weeds → fewer herbicide applications needed</li>
+<li>Pest resistance: built-in insect repellent → less pesticide needed</li>
+<li>Drought tolerance: survive with less water</li>
+</ul>
+<p><strong>Evaluating biotechnology — multiple perspectives:</strong></p>
 <div class="vocab-wrap"><table>
 <thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
+<th>Perspective</th>
+<th>Concern or support</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Humans choose plants with ___ traits</td>
-<td>desirable (wanted)</td>
-<td>&nbsp;</td>
+<td>Agronomist (crop specialist)</td>
+<td><span class="ak-fill">Support: higher yields, less pesticide and tillage, crops that tolerate drought or pests</span></td>
 </tr>
 <tr>
-<td>Scientists directly ___ specific genes</td>
-<td>change (modify / alter)</td>
-<td>&nbsp;</td>
+<td>Ecologist</td>
+<td><span class="ak-fill">Concern: less genetic diversity, genes spreading to wild relatives, herbicide-resistant weeds, effects on other insects</span></td>
 </tr>
 <tr>
-<td>Perspectives — Agronomist</td>
-<td>Support: higher yields, less pesticide and tillage, crops that tolerate drought or pests</td>
-<td>Open response — accept any reasoned view that fits the role</td>
+<td>Consumer</td>
+<td><span class="ak-fill">Mixed: wants proof of safety and clear labelling; may welcome lower prices or better nutrition</span></td>
 </tr>
 <tr>
-<td>Perspectives — Ecologist</td>
-<td>Concern: less genetic diversity, genes spreading to wild relatives, herbicide-resistant weeds, effects on other insects</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Perspectives — Consumer</td>
-<td>Mixed: wants proof of safety and clear labelling; may welcome lower prices or better nutrition</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Perspectives — Indigenous farmer</td>
-<td>Concern: who owns the seeds; being able to save and share traditional seed varieties; responsibility to the land. Some may also see benefits</td>
-<td>Avoid a single "correct" stance — the point is that values differ</td>
+<td>Indigenous farmer</td>
+<td><span class="ak-fill">Concern: who owns the seeds; being able to save and share traditional seed varieties; responsibility to the land. Some may also see benefits</span></td>
 </tr>
 </tbody></table></div>
-<h3>Retrieval Check — Section 6</h3>
-<ol start="1">
-  <li>Choosing plants with desired traits and breeding only those, repeated over many generations. It has been used for thousands of years (about 10,000).</li>
-  <li>Any two: herbicide tolerance, pest resistance, drought tolerance.</li>
-  <li>Selective breeding: breeds whole plants, slow (many generations), less precise — many genes change at once. Genetic modification: changes specific genes directly in a lab, much faster, very precise.</li>
-  <li><strong>Stretch:</strong> Both are blanket statements about a technique, but safety depends on the specific change. Questions to ask: What gene was changed and what does it do? Has the crop been tested for effects on health? Can it spread to wild plants or affect other species? Who benefits and who carries the risk? Each GMO should be judged on its own evidence.</li>
-</ol>
-<hr class="section-break">
-<h2 id="synthesis" class="section-title">Unit Synthesis</h2>
-<ol start="1">
-  <li><strong>Plant cell drawing.</strong> At least five labelled structures with functions: cell wall (support and shape), cell membrane (controls what enters and leaves), central vacuole (stores water, keeps the cell firm), chloroplasts (photosynthesis), nucleus (controls the cell, holds DNA).</li>
-  <li><strong>Photosynthesis in words.</strong> Carbon dioxide + water, using light energy, → glucose + oxygen. Carbon dioxide comes from the air through pores in the leaf; water comes from the soil through the roots and xylem; light comes from the sun and is captured by chlorophyll; glucose is used for energy and growth or stored as starch (moved by phloem); oxygen is released into the air.</li>
-</ol>
-<ol start="3">
-  <li><strong>Table from memory:</strong></li>
-</ol>
+<div class="connection">
+<div class="c-label">Note:</div>
+<p>This is a contested topic. Scientists, farmers, consumers, and Indigenous communities have genuinely different values that lead to different conclusions — even when they agree on the facts. Recognising this is part of scientific literacy.</p>
+</div>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What is selective breeding? How long has it been used?<div class="ak-answer"><span class="ak-label">Answer</span> Choosing plants with desired traits and breeding only those, repeated over many generations. It has been used for thousands of years (about 10,000).</div></li>
+
+<li>Name two goals of genetic modification in Alberta crop plants.<div class="ak-answer"><span class="ak-label">Answer</span> Any two: herbicide tolerance, pest resistance, drought tolerance.</div></li>
+
+<li>What is the difference between selective breeding and genetic modification? (Method, speed, precision)<div class="ak-answer"><span class="ak-label">Answer</span> Selective breeding: breeds whole plants, slow (many generations), less precise — many genes change at once. Genetic modification: changes specific genes directly in a lab, much faster, very precise.</div></li>
+
+<li><strong>Stretch:</strong> A friend says "GMOs are definitely dangerous." Another says "GMOs are completely safe." Explain why both claims are oversimplified, and what questions would need to be answered to evaluate any specific GMO.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> Both are blanket statements about a technique, but safety depends on the specific change. Questions to ask: What gene was changed and what does it do? Has the crop been tested for effects on health? Can it spread to wild plants or affect other species? Who benefits and who carries the risk? Each GMO should be judged on its own evidence.</div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="synthesis">Unit Synthesis</h2>
+<p><em>Complete this page from memory — notes closed. Then open your notes and check.</em></p>
+<p><strong>1.</strong> Draw and label a plant cell. Include at least 5 structures and write the function of each.</p><div class="ak-answer"><span class="ak-label">Answer</span> At least five labelled structures with functions: cell wall (support and shape), cell membrane (controls what enters and leaves), central vacuole (stores water, keeps the cell firm), chloroplasts (photosynthesis), nucleus (controls the cell, holds DNA).</div>
+<p> </p>
+<p> </p>
+<p> </p>
+<p><strong>2.</strong> Write the photosynthesis equation in words (not symbols). For each input and output, identify where it comes from or where it goes.</p><div class="ak-answer"><span class="ak-label">Answer</span> Carbon dioxide + water, using light energy, → glucose + oxygen. Carbon dioxide comes from the air through pores in the leaf; water comes from the soil through the roots and xylem; light comes from the sun and is captured by chlorophyll; glucose is used for energy and growth or stored as starch (moved by phloem); oxygen is released into the air.</div>
+
+
+<p><strong>3.</strong> Fill in this table from memory:</p>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Concept</th>
-<th>Model explanation</th>
+<th>My explanation</th>
 </tr></thead>
 <tbody>
 <tr>
 <td>Three tenets of cell theory</td>
-<td>All living things are made of cells; cells are the basic unit of life; all cells come from pre-existing cells</td>
+<td><span class="ak-text">All living things are made of cells; cells are the basic unit of life; all cells come from pre-existing cells</span></td>
 </tr>
 <tr>
 <td>Xylem vs. phloem</td>
-<td>Xylem carries water and minerals up from the roots; phloem carries sugars from the leaves to the rest of the plant</td>
+<td><span class="ak-text">Xylem carries water and minerals up from the roots; phloem carries sugars from the leaves to the rest of the plant</span></td>
 </tr>
 <tr>
 <td>Why plants aren't getting food from soil</td>
-<td>Plants make their own food by photosynthesis from carbon dioxide and water; soil supplies only water and minerals (van Helmont's willow gained 74 kg while the soil lost 57 g)</td>
+<td><span class="ak-text">Plants make their own food by photosynthesis from carbon dioxide and water; soil supplies only water and minerals (van Helmont's willow gained 74 kg while the soil lost 57 g)</span></td>
 </tr>
 <tr>
 <td>Sexual vs. asexual reproduction</td>
-<td>Sexual: two parents, sex cells combine, offspring vary. Asexual: one parent, identical offspring, fast</td>
+<td><span class="ak-text">Sexual: two parents, sex cells combine, offspring vary. Asexual: one parent, identical offspring, fast</span></td>
 </tr>
 <tr>
 <td>Selective breeding vs. GMOs</td>
-<td>Selective breeding chooses parents over many generations (slow, less precise); GMOs change specific genes directly (fast, precise)</td>
+<td><span class="ak-text">Selective breeding chooses parents over many generations (slow, less precise); GMOs change specific genes directly (fast, precise)</span></td>
 </tr>
 </tbody></table></div>
-<ol start="4">
-  <li><strong>Recommendation.</strong> Either approach is acceptable if explained. Selective breeding: breed the plants that survive dry years, repeat over many generations — slow, and narrows genetic variety. GMO: insert or change a gene for drought tolerance — fast and precise; risks include gene spread to other plants, seed cost and ownership, and consumer acceptance.</li>
-  <li><strong>Return to the Pre-Knowledge Check.</strong> Open reflection. Look for: Q1 — plants make food by photosynthesis, not from soil; Q2 — the leaf captures light with chlorophyll and makes glucose and oxygen from carbon dioxide and water.</li>
-</ol>
+<p><strong>4.</strong> A farmer in Alberta wants to grow a crop that requires less water as the climate gets drier. Recommend a biotechnology approach (selective breeding or GMO), explain how it would work, and identify one potential risk.</p><div class="ak-answer"><span class="ak-label">Answer</span> Either approach is acceptable if explained. Selective breeding: breed the plants that survive dry years, repeat over many generations — slow, and narrows genetic variety. GMO: insert or change a gene for drought tolerance — fast and precise; risks include gene spread to other plants, seed cost and ownership, and consumer acceptance.</div>
 
+
+<p><strong>5.</strong> Go back and read your Pre-Knowledge Check on the first page.</p><div class="ak-answer"><span class="ak-label">Answer</span> Open reflection. Look for: Q1 — plants make food by photosynthesis, not from soil; Q2 — the leaf captures light with chlorophyll and makes glucose and oxygen from carbon dioxide and water.</div>
+<ul>
+<li>Question 1 asked where plants get their food. Was your answer correct? What did you miss?</li>
+</ul>
+<div class="al"></div>
+<ul>
+<li>Question 2 asked what happens in a leaf. What can you add now?</li>
+</ul>
+<div class="al"></div>
 </body>
 </html>

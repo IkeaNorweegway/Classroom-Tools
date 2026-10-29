@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Grade 7 Science — Heat and Temperature: Notes Answer Key</title>
 <style>
   /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
@@ -69,6 +69,8 @@
   }
   p { margin-bottom: 0.75rem; }
   strong { color: #1f1d1a; }
+  ul, ol { padding-left: 1.25rem; margin-bottom: 0.75rem; }
+  li { margin-bottom: 0.25rem; }
 
   /* ── Cover block ── */
   .cover {
@@ -332,8 +334,12 @@
     }
     .section-break { page-break-before: always; }
     h2.section-title { page-break-after: avoid; }
-      .vocab-wrap, tr { break-inside: avoid; page-break-inside: avoid; }
-    h1, h2, .section-title { break-after: avoid; page-break-after: avoid; }
+      .connection, .vocab-wrap, tr, .retrieval { break-inside: avoid; page-break-inside: avoid; }
+    h1, h2, h3, .section-title { break-after: avoid; page-break-after: avoid; }
+    p:has(+ .vocab-wrap), p:has(+ .connection), p:has(+ .retrieval),
+    p:has(+ .svg-wrap), p:has(+ ul), p:has(+ .synthesis-box) {
+      break-after: avoid; page-break-after: avoid;
+    }
     p { orphans: 3; widows: 3; }
 }
 
@@ -364,10 +370,6 @@
   svg .dg-label-sm    { font: 11px/1.3 var(--font-body); fill: var(--dg-secondary); stroke: none; }
   svg .dg-label-accent{ font: 11px/1.3 var(--font-body); fill: var(--dg-accent);    stroke: none; font-weight: 600; }
 
-  /* Answer key lists */
-  ol, ul { padding-left: 1.5rem; margin-bottom: 0.75rem; }
-  li { margin-bottom: 0.45rem; font-size: 0.92rem; }
-  li ul { margin-top: 0.35rem; }
 
 
 
@@ -436,24 +438,113 @@ svg .dg-label-plant { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif)
 svg .dg-label-water { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-water); }
 svg .dg-label-earth { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-earth); }
 svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif); fill: #fff; }
+svg .dg-land, svg .dg-land-hi, svg .dg-border { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-land        { fill: #ebe7df; stroke: #a8a294; stroke-width: .75px; }
+svg .dg-land-hi     { fill: var(--dg-accent); fill-opacity: .22; stroke: var(--dg-accent); stroke-width: 1px; }
+svg .dg-border      { fill: none; stroke: #a8a294; stroke-width: .5px; }
+svg .dg-sea         { fill: #f4f7f9; stroke: none; }
+svg .dg-route       { fill: none; stroke: var(--dg-accent); stroke-width: 2px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-route.muted { stroke: var(--dg-muted, #6b665d); stroke-dasharray: 5 3; }
+svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
 /* ── /viz-kit ── */
 </style>
-</head>
+<style id="key-link-css">
+  .key-link { margin: 6px 0 14px; font-size: 0.9rem; font-weight: 600; }
+  .key-link a { color: inherit; text-decoration: underline; text-underline-offset: 2px; opacity: 0.85; }
+  .key-link a:hover { opacity: 1; }
+  .key-check { text-align: right; margin: 14px 0 6px; }
+  @media print { .key-link { display: none !important; } }
+</style>
+<style>
+/* ── Answer key overlay (scripts/match_keys.py) ── */
+.answer-key-header { background: #1f1d1a; color: #fff; padding: 8px 14px; border-radius: 6px; margin: 0 0 16px; font-size: 9.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.ak-fill { display: inline; color: #166534; font-weight: 700; border-bottom: 2px solid #86efac; padding: 0 2px; min-width: 0; }
+td .ak-fill, li .ak-fill { white-space: normal; }
+.ak-answer { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 12px; margin: 8px 0; color: #1f1d1a; font-style: normal; break-inside: avoid; }
+.ak-answer p, .ak-answer ul, .ak-answer ol { margin: 0 0 5px; }
+.ak-answer p:last-child, .ak-answer ul:last-child, .ak-answer ol:last-child { margin-bottom: 0; }
+.ak-answer ul, .ak-answer ol { padding-left: 20px; }
+.ak-answer table { margin: 6px 0; }
+.ak-text { color: #166534; font-weight: 600; }
+.ak-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #15803d; margin-right: 6px; }
+.ak-teacher { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 8px 12px; margin: 8px 0; font-size: 10pt; break-inside: avoid; }
+.ak-teacher .ak-text { color: #166534; font-weight: 600; }
+.ak-label { color: #b45309; }
+.ak-teacher p { margin: 0 0 4px; } .ak-teacher p:last-child { margin-bottom: 0; }
+svg .ak-svg-fill { fill: #166534; font-weight: 700; }
+@media print { .ak-answer, .ak-teacher { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style></head>
 <body>
-
 <!-- Cover -->
 <div class="cover">
-  <h1>Heat and Temperature</h1>
-  <p>Grade 7 Science &nbsp;&middot;&nbsp; Notes Answer Key &nbsp;&middot;&nbsp; Teacher Reference &nbsp;&middot;&nbsp; Alberta Curriculum 2007</p>
-</div>
+<h1>Heat and Temperature — Answer Key</h1>
+<p>Grade 7 Science  ·  Guided Notes Package  ·  Alberta Curriculum 2007</p>
 
-<p><em>Every blank in the notes package, in the order it appears. Vocabulary definitions and open responses are model answers — accept equivalent wording in the student's own words.</em></p>
-<p><em>Pre-Knowledge Check: no answer key. Students record honest first thinking; do not correct it. They return to it in the Unit Synthesis.</em></p>
-<hr class="section-break">
-<h2 id="s1" class="section-title">Section 1: Temperature and Measurement</h2>
+<div class="name-line">
+<span>Name:                               </span>
+<span>Date:                 </span>
+<span>Block:      </span>
+</div>
+</div><div class="answer-key-header">Answer key · Teacher copy</div>
+<hr class="section-break"/>
+<h2 class="section-title" id="pre-check">Pre-Knowledge Check</h2>
+<p><em>Before you start this unit — no notes, no right or wrong answers. Write what you honestly think right now.</em></p>
+<ol>
+<li>What is the difference between heat and temperature? (Or do you think they're the same thing?)
+    <div class="al"></div>
+</li>
+<li>Touch a metal desk and a wooden desk. Which feels colder? Do you think they are actually different temperatures? Why?
+    <div class="al"></div>
+</li>
+<li>How does heat move from one place to another? List as many ways as you can think of.
+    <div class="al"></div>
+</li>
+<li>Why does Alberta have cold winters? Where does the "cold" come from?
+    <div class="al"></div>
+</li>
+</ol>
+<p><em>Keep this page. At the end of the unit, you will come back and read what you wrote here.</em></p>
+<hr class="section-break"/>
+<h2 class="section-title" id="s1">Section 1: Temperature and Measurement</h2>
+<p><strong>Learning target:</strong> I can distinguish between temperature and heat, read the Celsius and Kelvin scales, and convert between them.</p>
+<h3>Vocabulary</h3>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Term</th>
+<th>Definition in your own words</th>
+<th>One example</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Temperature</td>
+<td><span class="ak-text">A measure of the average kinetic energy (speed of motion) of the particles in a substance</span></td>
+<td><span class="ak-fill">A room at 21 °C</span></td>
+</tr>
+<tr>
+<td>Kelvin scale</td>
+<td><span class="ak-text">A temperature scale that starts at absolute zero; used in science</span></td>
+<td><span class="ak-fill">Water freezes at 273 K</span></td>
+</tr>
+<tr>
+<td>Celsius scale</td>
+<td><span class="ak-text">A temperature scale based on water freezing at 0 and boiling at 100</span></td>
+<td><span class="ak-fill">Body temperature is 37 °C</span></td>
+</tr>
+<tr>
+<td>Absolute zero</td>
+<td><span class="ak-text">The lowest possible temperature, where particles have the least possible motion</span></td>
+<td><span class="ak-fill">0 K = −273 °C</span></td>
+</tr>
+<tr>
+<td>Thermometer</td>
+<td><span class="ak-fill">A tool that measures temperature</span></td>
+<td><span class="ak-fill">A liquid thermometer on a classroom wall</span></td>
+</tr>
+</tbody></table></div>
+<h3>Guided Notes</h3>
+<p><strong>Temperature</strong> is a measure of the <span class="ak-fill">average</span> kinetic energy of particles in a substance. "Kinetic energy" means energy of <span class="ak-fill">motion (movement)</span>. When particles move faster, temperature <span class="ak-fill">increases (rises)</span>.</p>
 <!-- viz:particle-speed -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: particle-boxes | panels=cold,warm,hot | trail=6,14,20 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 205" aria-label="Three boxes of eight particles labelled cold, warm and hot. The motion trails behind the particles get longer from cold to hot. An arrow underneath reads: as temperature rises, particles move faster, with faster as a blank." width="520" height="205">
 <text x="90" y="28" text-anchor="middle" class="dg-title">Cold</text>
@@ -493,9 +584,24 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Same particles, three temperatures. The dashed trails show how far each particle moves in the same instant.</figcaption>
 </figure>
 <!-- /viz:particle-speed -->
+<p><strong>The Celsius scale:</strong></p>
+<ul>
+<li>Water freezes at <span class="ak-fill">0</span> °C</li>
+<li>Water boils at <span class="ak-fill">100</span> °C</li>
+<li>Normal body temperature: <span class="ak-fill">37</span> °C</li>
+<li>Room temperature: approximately <span class="ak-fill">20 (accept 20–22)</span> °C</li>
+<li>A typical Alberta January day: approximately <span class="ak-fill">about −10 to −15</span> °C</li>
+</ul>
+<p><strong>The Kelvin scale:</strong></p>
+<ul>
+<li>Used in <span class="ak-fill">scientific</span> contexts</li>
+<li>0 Kelvin (0 K) = <strong>absolute zero</strong> — the temperature at which particles have <span class="ak-fill">no (zero / the minimum possible)</span> kinetic energy (theoretically no movement at all)</li>
+<li>Absolute zero = <span class="ak-fill">−273</span> °C</li>
+<li>Conversion: <strong>K = °C + 273</strong></li>
+<li>There is <span class="ak-fill">no</span> negative temperature on the Kelvin scale (you can't go below zero movement)</li>
+</ul>
 <!-- viz:thermometer-scales -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: thermometer-dual-scale | C=-273,0,37,100 | K=0,273,310,373 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 470 350" aria-label="A liquid thermometer with a Celsius scale on the left and a Kelvin scale on the right. Water boils at 100 degrees Celsius or 373 kelvin; body temperature is 37 degrees Celsius or 310 kelvin; water freezes at 0 degrees Celsius and a blank number of kelvin; the bottom mark is minus 273 degrees Celsius or 0 kelvin, labelled with a blank. The formula K equals degrees Celsius plus 273 is shown." width="470" height="350">
 <text x="196" y="13" text-anchor="end" class="dg-title">Celsius</text>
@@ -526,162 +632,89 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>One thermometer, two scales. A step of 1 °C is the same size as a step of 1 K; Kelvin just starts counting at absolute zero.</figcaption>
 </figure>
 <!-- /viz:thermometer-scales -->
+<p><strong>Practice conversions:</strong></p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Celsius</th>
+<th>Kelvin</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>0 °C</td>
+<td><span class="ak-fill">273</span> K</td>
+</tr>
+<tr>
+<td>100 °C</td>
+<td><span class="ak-fill">373</span> K</td>
+</tr>
+<tr>
+<td>-40 °C</td>
+<td><span class="ak-fill">233</span> K</td>
+</tr>
+<tr>
+<td>20 °C</td>
+<td><span class="ak-fill">293</span> K</td>
+</tr>
+<tr>
+<td><span class="ak-fill">37</span> °C</td>
+<td>310 K (body temp)</td>
+</tr>
+</tbody></table></div>
+<p><strong>How thermometers work:</strong></p>
+<p>Liquid thermometers use the fact that liquids <span class="ak-fill">expand</span> when heated and <span class="ak-fill">contract</span> when cooled. The liquid rises up the tube as it expands. The scale was calibrated by defining two reference points: <span class="ak-fill">the freezing point of water (0 °C)</span> and <span class="ak-fill">the boiling point of water (100 °C)</span>.</p>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What does temperature measure at the particle level?<div class="ak-answer"><span class="ak-label">Answer</span> The average kinetic energy (speed of motion) of the particles in the substance.</div></li>
+
+<li>Convert: 25°C = <span class="b b-md"> </span> K and −10°C = <span class="b b-md"> </span> K<div class="ak-answer"><span class="ak-label">Answer</span> 25 °C = 298 K; −10 °C = 263 K</div></li>
+<li>What is absolute zero? Why can't a temperature be lower than absolute zero?<div class="ak-answer"><span class="ak-label">Answer</span> Absolute zero (0 K, −273 °C) is the temperature at which particles have the least possible motion. You cannot go lower because there is no more motion energy to remove.</div></li>
+
+<li>Why do thermometers use liquid inside a tube? What particle-level property makes this work?<div class="ak-answer"><span class="ak-label">Answer</span> Liquids expand when heated because their particles move faster and spread farther apart. In a narrow tube, a small expansion shows as a clear rise in the liquid level, which can be read against a scale.</div></li>
+
+<li><strong>Stretch:</strong> Scientists use the Kelvin scale rather than Celsius for most calculations. Why might a negative temperature in Celsius cause problems in a physics equation? (Hint: think about what 0 K means compared to what 0°C means.)<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> 0 °C is just the freezing point of water — particles still have plenty of energy. 0 K means no particle motion, so Kelvin numbers are in proportion to particle energy. A negative Celsius value in an equation would suggest "negative energy" or give a meaningless answer (e.g., doubling −10 °C). Kelvin has no negatives, so the maths works.</div></li>
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="s2">Section 2: Heat vs. Temperature</h2>
+<p><strong>Learning target:</strong> I can explain the difference between heat and temperature using specific examples.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Temperature</td>
-<td>A measure of the average kinetic energy (speed of motion) of the particles in a substance</td>
-<td>A room at 21 °C</td>
+<td>Heat</td>
+<td><span class="ak-text">Energy that is transferred from a warmer object to a cooler one</span></td>
+<td><span class="ak-fill">Heat moving from soup into a spoon</span></td>
 </tr>
 <tr>
-<td>Kelvin scale</td>
-<td>A temperature scale that starts at absolute zero; used in science</td>
-<td>Water freezes at 273 K</td>
+<td>Thermal energy</td>
+<td><span class="ak-fill">The total kinetic energy of all the particles in a substance</span></td>
+<td><span class="ak-text">A bathtub of warm water has more than a cup at the same temperature</span></td>
 </tr>
 <tr>
-<td>Celsius scale</td>
-<td>A temperature scale based on water freezing at 0 and boiling at 100</td>
-<td>Body temperature is 37 °C</td>
+<td>Heat transfer</td>
+<td><span class="ak-text">The movement of thermal energy from one place or object to another</span></td>
+<td><span class="ak-fill">A hot stove warming a pan</span></td>
 </tr>
 <tr>
-<td>Absolute zero</td>
-<td>The lowest possible temperature, where particles have the least possible motion</td>
-<td>0 K = −273 °C</td>
-</tr>
-<tr>
-<td>Thermometer</td>
-<td>A tool that measures temperature</td>
-<td>A liquid thermometer on a classroom wall</td>
+<td>Thermal equilibrium</td>
+<td><span class="ak-text">When two objects in contact reach the same temperature and heat stops flowing</span></td>
+<td><span class="ak-fill">A drink left out until it reaches room temperature</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>a measure of the ___ kinetic energy</td>
-<td>average</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>"Kinetic energy" means energy of ___</td>
-<td>motion (movement)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>When particles move faster, temperature ___</td>
-<td>increases (rises)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Water freezes at ___ °C</td>
-<td>0</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Water boils at ___ °C</td>
-<td>100</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Normal body temperature: ___ °C</td>
-<td>37</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Room temperature: approximately ___ °C</td>
-<td>20 (accept 20–22)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>A typical Alberta January day: approximately ___ °C</td>
-<td>about −10 to −15</td>
-<td>Accept any reasonable value from −5 to −25</td>
-</tr>
-<tr>
-<td>Kelvin is used in ___ contexts</td>
-<td>scientific</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>particles have ___ kinetic energy</td>
-<td>no (zero / the minimum possible)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Absolute zero = ___ °C</td>
-<td>−273</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>There is ___ negative temperature on the Kelvin scale</td>
-<td>no</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>0 °C = ___ K</td>
-<td>273</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>100 °C = ___ K</td>
-<td>373</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>−40 °C = ___ K</td>
-<td>233</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>20 °C = ___ K</td>
-<td>293</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>___ °C = 310 K</td>
-<td>37</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>liquids ___ when heated</td>
-<td>expand</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>and ___ when cooled</td>
-<td>contract</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>two reference points: ___ and ___</td>
-<td>the freezing point of water (0 °C); the boiling point of water (100 °C)</td>
-<td>&nbsp;</td>
-</tr>
-</tbody></table></div>
-<h3>Retrieval Check — Section 1</h3>
-<ol start="1">
-  <li>The average kinetic energy (speed of motion) of the particles in the substance.</li>
-  <li>25 °C = 298 K; −10 °C = 263 K</li>
-  <li>Absolute zero (0 K, −273 °C) is the temperature at which particles have the least possible motion. You cannot go lower because there is no more motion energy to remove.</li>
-  <li>Liquids expand when heated because their particles move faster and spread farther apart. In a narrow tube, a small expansion shows as a clear rise in the liquid level, which can be read against a scale.</li>
-  <li><strong>Stretch:</strong> 0 °C is just the freezing point of water — particles still have plenty of energy. 0 K means no particle motion, so Kelvin numbers are in proportion to particle energy. A negative Celsius value in an equation would suggest "negative energy" or give a meaningless answer (e.g., doubling −10 °C). Kelvin has no negatives, so the maths works.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s2" class="section-title">Section 2: Heat vs. Temperature</h2>
+<div class="connection">
+<div class="c-label">MISCONCEPTION — BEFORE WE START</div>
+<p><em>"Heat and temperature are the same thing."</em> <strong>The test:</strong> A cup of water at 90°C and a bathtub full of water at 90°C have the same <span class="ak-fill">temperature</span>. But if you put your hand in each, the bathtub would take much longer to cool down. Why? The bathtub has far more <span class="ak-fill">thermal energy (heat energy)</span> — more particles, each moving at the same average speed, so total kinetic energy is much higher. Temperature tells you <em>how fast</em> particles are moving on average. Heat tells you <em>how much total energy</em> is being transferred.</p>
+</div>
 <!-- viz:cup-vs-bathtub -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: particle-containers | left=cup,5 | right=tub,26 | T=90 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 225" aria-label="A small cup and a large bathtub of water, both at 90 degrees Celsius. Both contain particles with equal-length motion trails. The cup has 5 particles and the bathtub 26. Labels: same temperature, with temperature as a blank, and far more thermal energy in the bathtub, with thermal energy as a blank." width="520" height="225">
 <text x="100" y="40" text-anchor="middle" class="dg-title">Cup · 90 °C</text>
@@ -730,9 +763,11 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Every particle moves at the same average speed, so the temperature is the same. The bathtub just has far more particles, so it holds far more thermal energy.</figcaption>
 </figure>
 <!-- /viz:cup-vs-bathtub -->
+<p><strong>Heat</strong> is energy <span class="ak-fill">transferred (moving)</span> from a hotter object to a cooler one. Heat is not stored in an object — it is what we call the <span class="ak-fill">transfer (flow / movement)</span> of energy between objects of different temperatures.</p>
+<p><strong>Direction of heat flow:</strong> Heat always flows from <span class="ak-fill">hot (warmer)</span> (higher temperature) to <span class="ak-fill">cold (cooler)</span> (lower temperature) — never the other way, unless a machine forces it (like a refrigerator or air conditioner).</p>
+<p><strong>Thermal equilibrium:</strong> When two objects in contact reach the <span class="ak-fill">same</span> temperature, heat stops transferring. They are in thermal equilibrium.</p>
 <!-- viz:equilibrium -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: two-blocks-equilibrium | before=80,20 | after=50,50 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 470 160" aria-label="Before: an 80 degree block touches a 20 degree block and a heat arrow points from hot to cold. After some time: both blocks are 50 degrees, labelled with a blank for thermal equilibrium, and no more heat flows." width="470" height="160">
 <line x1="55" y1="30" x2="143.7" y2="30.0" class="dg-arrow hot"/><polygon points="150.0,30.0 142.3,34.6 142.3,25.4" class="dg-head hot"/>
@@ -754,9 +789,41 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Two equal metal blocks touching. Heat flows from the hot block to the cold one until they reach the same temperature.</figcaption>
 </figure>
 <!-- /viz:equilibrium -->
+<p><strong>The lake and the cup:</strong></p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th></th>
+<th>Cup of water (80°C)</th>
+<th>Lake (80°C)</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Temperature</td>
+<td>same</td>
+<td>same</td>
+</tr>
+<tr>
+<td>Number of particles</td>
+<td>very few</td>
+<td>trillions × more</td>
+</tr>
+<tr>
+<td>Total heat energy</td>
+<td><span class="ak-fill">small (low)</span></td>
+<td><span class="ak-fill">enormous (very high)</span></td>
+</tr>
+<tr>
+<td>Which cools your burn faster if spilled?</td>
+<td><span class="ak-fill">the cup — it holds so little total energy that it cools almost at once; the same amount of lake water would keep delivering heat</span></td>
+<td>—</td>
+</tr>
+</tbody></table></div>
+<div class="connection">
+<div class="c-label">MISCONCEPTION</div>
+<p><em>"Cold travels — cold air comes in through the window."</em> <strong>Why this is wrong:</strong> Cold is not a substance that travels. What happens is that <span class="ak-fill">heat (thermal energy)</span> leaves your warm house through the window and is lost to the cold outside air. When a cold wind "hits" you, it is not cold travelling to you — it is your body <span class="ak-fill">losing (transferring)</span> heat to the moving cold air faster. "Cold" is just the word we use for low heat energy; it doesn't move, arrive, or leave.</p>
+</div>
 <!-- viz:cold-does-not-travel -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: wall-heat-loss | inside=21 | outside=-20 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 200" aria-label="A wall with a window. Inside is 21 degrees, outside is minus 20 degrees. Three arrows labelled with a blank for heat go from inside to outside through the window. An arrow labelled cold coming in is crossed out." width="480" height="200">
 <text x="30" y="34" class="dg-label-hot">Inside · 21 °C</text>
@@ -777,122 +844,70 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Heat leaves the warm house through the window. Nothing called "cold" comes in.</figcaption>
 </figure>
 <!-- /viz:cold-does-not-travel -->
+<p><strong>Self-check question:</strong> Your soup is hot. You wait 20 minutes and it's lukewarm. Is it because "coldness came in from the air"? What actually happened?</p>
+<div class="ak-answer"><span class="ak-label">Answer</span> No. Heat flowed from the hot soup into the cooler air, bowl, and table until the soup was close to room temperature. Nothing "cold" moved in</div>
+
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What is the difference between heat and temperature?<div class="ak-answer"><span class="ak-label">Answer</span> Temperature is the average kinetic energy of the particles (how fast they move). Heat is energy transferred between objects at different temperatures; it depends on how much matter is involved.</div></li>
+
+<li>Which direction does heat always flow? What happens when two objects reach the same temperature?<div class="ak-answer"><span class="ak-label">Answer</span> From hotter to cooler. When both reach the same temperature, heat transfer stops — thermal equilibrium.</div></li>
+
+<li>A cup of boiling water (100°C) and a swimming pool at 30°C — which has more heat energy? Explain.<div class="ak-answer"><span class="ak-label">Answer</span> The swimming pool. Its temperature is lower, but it has vastly more particles, so its total thermal energy is far greater.</div></li>
+
+<li>Correct this statement: "Open the door — you're letting the cold in."<div class="ak-answer"><span class="ak-label">Answer</span> "You're letting the heat out." Heat flows from the warm room to the cold outside; cold is not a substance that moves in.</div></li>
+
+<li><strong>Stretch:</strong> You put a metal spoon in hot soup. After a minute the whole spoon is warm. Later you take it out and put it on a ceramic plate. After another minute, the spoon is cooler and the plate is slightly warmer. Explain both observations using your understanding of heat transfer and thermal equilibrium.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> In the soup: heat flows from the hot soup into the cooler spoon (conduction) until the spoon nears the soup's temperature. On the plate: the spoon is now the warmer object, so heat flows from the spoon into the cooler plate — the spoon cools and the plate warms until they reach the same temperature (thermal equilibrium).</div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="s3">Section 3: The Particle Model and Heat</h2>
+<p><strong>Learning target:</strong> I can use the particle model to explain thermal expansion, contraction, and changes of state.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Heat</td>
-<td>Energy that is transferred from a warmer object to a cooler one</td>
-<td>Heat moving from soup into a spoon</td>
+<td>Particle model</td>
+<td><span class="ak-text">The idea that all matter is made of tiny particles that are always moving</span></td>
+<td><span class="ak-fill">Particles in a solid vibrate in place</span></td>
 </tr>
 <tr>
-<td>Thermal energy</td>
-<td>The total kinetic energy of all the particles in a substance</td>
-<td>A bathtub of warm water has more than a cup at the same temperature</td>
+<td>Thermal expansion</td>
+<td><span class="ak-text">Matter taking up more space when heated because its particles move farther apart</span></td>
+<td><span class="ak-fill">A bridge getting longer in summer</span></td>
 </tr>
 <tr>
-<td>Heat transfer</td>
-<td>The movement of thermal energy from one place or object to another</td>
-<td>A hot stove warming a pan</td>
+<td>Thermal contraction</td>
+<td><span class="ak-text">Matter taking up less space when cooled because its particles move closer together</span></td>
+<td><span class="ak-fill">Power lines tightening in winter</span></td>
 </tr>
 <tr>
-<td>Thermal equilibrium</td>
-<td>When two objects in contact reach the same temperature and heat stops flowing</td>
-<td>A drink left out until it reaches room temperature</td>
+<td>Change of state</td>
+<td><span class="ak-text">Matter changing between solid, liquid, and gas as heat is absorbed or released</span></td>
+<td><span class="ak-fill">Ice melting</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Misconception box — cup and bathtub at 90 °C have the same ___</td>
-<td>temperature</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>The bathtub has far more ___</td>
-<td>thermal energy (heat energy)</td>
-<td>More particles at the same average speed</td>
-</tr>
-<tr>
-<td>Heat is energy ___ from a hotter object to a cooler one</td>
-<td>transferred (moving)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>it is what we call the ___ of energy</td>
-<td>transfer (flow / movement)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Heat always flows from ___ (higher temperature)</td>
-<td>hot (warmer)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>to ___ (lower temperature)</td>
-<td>cold (cooler)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>reach the ___ temperature</td>
-<td>same</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Table — total heat energy, cup</td>
-<td>small (low)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Table — total heat energy, lake</td>
-<td>enormous (very high)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Table — which cools your burn faster if spilled?</td>
-<td>the cup — it holds so little total energy that it cools almost at once; the same amount of lake water would keep delivering heat</td>
-<td>The point: same temperature, very different total energy</td>
-</tr>
-<tr>
-<td>"Cold travels" box — ___ leaves your warm house</td>
-<td>heat (thermal energy)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>your body ___ heat to the moving cold air</td>
-<td>losing (transferring)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Self-check question — the soup</td>
-<td>No. Heat flowed from the hot soup into the cooler air, bowl, and table until the soup was close to room temperature. Nothing "cold" moved in</td>
-<td>&nbsp;</td>
-</tr>
-</tbody></table></div>
-<h3>Retrieval Check — Section 2</h3>
-<ol start="1">
-  <li>Temperature is the average kinetic energy of the particles (how fast they move). Heat is energy transferred between objects at different temperatures; it depends on how much matter is involved.</li>
-  <li>From hotter to cooler. When both reach the same temperature, heat transfer stops — thermal equilibrium.</li>
-  <li>The swimming pool. Its temperature is lower, but it has vastly more particles, so its total thermal energy is far greater.</li>
-  <li>"You're letting the heat out." Heat flows from the warm room to the cold outside; cold is not a substance that moves in.</li>
-  <li><strong>Stretch:</strong> In the soup: heat flows from the hot soup into the cooler spoon (conduction) until the spoon nears the soup's temperature. On the plate: the spoon is now the warmer object, so heat flows from the spoon into the cooler plate — the spoon cools and the plate warms until they reach the same temperature (thermal equilibrium).</li>
+<p><strong>The particle model says:</strong> all matter is made of tiny particles that are <span class="ak-fill">always (constantly)</span> in motion. The faster the particles move, the <span class="ak-fill">higher</span> the temperature.</p>
+<p><strong>What happens when you heat a solid:</strong></p>
+<ol>
+<li>Particles absorb energy and <span class="ak-fill">vibrate (move)</span> faster</li>
+<li>Particles vibrate <span class="ak-fill">farther</span> apart from each other</li>
+<li>The material <span class="ak-fill">expands</span> — it takes up more space</li>
+<li>This is called <span class="ak-fill">thermal expansion</span></li>
 </ol>
-<hr class="section-break">
-<h2 id="s3" class="section-title">Section 3: The Particle Model and Heat</h2>
+<p><strong>What happens when you cool a solid:</strong></p>
+<p>Particles slow down → move <span class="ak-fill">closer</span> together → material <span class="ak-fill">contracts (shrinks)</span> — takes up less space.</p>
 <!-- viz:expansion-particles -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: particle-lattice-expansion | cold-spacing=18 | warm-spacing=26 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 470 208" aria-label="Left: a cold solid with sixteen particles packed closely, small vibration rings. Right: the warm solid with the same sixteen particles farther apart with larger vibration rings, and a wider width bracket labelled with a blank for expands." width="470" height="208">
 <text x="87" y="22" text-anchor="middle" class="dg-title">Cold solid</text>
@@ -929,9 +944,15 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Heating a solid does not make the particles bigger. They vibrate harder and push a little farther apart, so the whole solid takes up more space.</figcaption>
 </figure>
 <!-- /viz:expansion-particles -->
+<p><strong>Real-world applications of thermal expansion:</strong></p>
+<ul>
+<li>Railroad tracks: <span class="ak-fill">expansion (small)</span> gaps left between sections so tracks don't buckle in summer heat</li>
+<li>Bridges: <span class="ak-fill">expansion</span> joints allow the bridge to expand without cracking</li>
+<li>Power lines: hung <span class="ak-fill">slack (loose / sagging)</span> in summer; tighten in winter cold (if too tight, they would snap)</li>
+<li>Thermometers: <span class="ak-fill">liquid (coloured alcohol or mercury)</span> in the bulb expands up the tube</li>
+</ul>
 <!-- viz:rail-gaps -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: rail-expansion-gap | winter-gap=16 | summer-gap=0 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 460 145" aria-label="Two pairs of rails on wooden ties. Winter: the rails are shorter and there is a gap between them, labelled with a blank for expansion gap. Summer: the rails have expanded and the gap has closed." width="460" height="145">
 <text x="30" y="22" class="dg-label-cold">Winter (−30 °C): rails contract, the gap is wide</text>
@@ -950,9 +971,9 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Steel rails expand in summer. The gap left in winter gives them room to grow so they do not push against each other and buckle.</figcaption>
 </figure>
 <!-- /viz:rail-gaps -->
+<p><strong>Changes of state:</strong></p>
 <!-- viz:states-cycle -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: states-of-matter-cycle | states=solid,liquid,gas -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 540 220" aria-label="Particle boxes for solid, liquid and gas. Orange arrows going right show heat absorbed: melting from solid to liquid and evaporating from liquid to gas. Blue arrows going left show heat released: freezing from liquid to solid and condensation, a blank, from gas to liquid." width="540" height="220">
 <text x="75" y="54" text-anchor="middle" class="dg-title">Solid</text>
@@ -988,9 +1009,42 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Top arrows: heat is absorbed and particles break free. Bottom arrows: heat is released and particles pull together.</figcaption>
 </figure>
 <!-- /viz:states-cycle -->
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Change</th>
+<th>Direction</th>
+<th>Energy change</th>
+<th>Particle change</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Melting</td>
+<td>solid → liquid</td>
+<td>heat <span class="ak-fill">absorbed</span></td>
+<td>particles gain enough energy to overcome <span class="ak-fill">the attractive forces holding them in fixed positions</span></td>
+</tr>
+<tr>
+<td>Freezing</td>
+<td>liquid → solid</td>
+<td>heat <span class="ak-fill">released</span></td>
+<td>particles slow until locked in fixed positions</td>
+</tr>
+<tr>
+<td>Evaporation/boiling</td>
+<td>liquid → gas</td>
+<td>heat <span class="ak-fill">absorbed</span></td>
+<td>particles escape the liquid's surface entirely</td>
+</tr>
+<tr>
+<td>Condensation</td>
+<td>gas → liquid</td>
+<td>heat <span class="ak-fill">released</span></td>
+<td><span class="ak-fill">particles slow down and move close enough for attraction to pull them together into a liquid</span></td>
+</tr>
+</tbody></table></div>
+<p><strong>Why does temperature stay constant during a change of state?</strong></p>
 <!-- viz:heating-curve -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: heating-curve | T=-20..120 | plateaus=0,100 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 262" aria-label="Heating curve: temperature against time as heat keeps being added. The line rises as ice warms, stays flat at 0 degrees while melting, rises as water warms, stays flat at 100 degrees while boiling, then rises as steam warms. During each flat part the temperature, a blank, stays the same." width="520" height="262">
 <line x1="60" y1="192.9" x2="500" y2="192.9" class="dg-construction"/>
@@ -1014,162 +1068,69 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Heating ice steadily from −20 °C. The flat parts are changes of state: the energy goes into pulling particles apart, not into speeding them up.</figcaption>
 </figure>
 <!-- /viz:heating-curve -->
+<p>During melting or boiling, added heat goes into <span class="ak-fill">breaking (overcoming)</span> the bonds/attractive forces between particles, not into speeding them up. That's why the temperature <span class="ak-fill">stays the same (stays constant)</span> even though you keep adding energy — all the energy is being used to change the <span class="ak-fill">state</span>, not raise the temperature.</p>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>Why do materials expand when heated? Use the particle model in your explanation.<div class="ak-answer"><span class="ak-label">Answer</span> Heating gives the particles more energy, so they move or vibrate faster and push farther apart. The material takes up more space.</div></li>
+
+<li>Why does railroad track need expansion gaps?<div class="ak-answer"><span class="ak-label">Answer</span> Steel rails expand in summer heat. Without gaps they would have nowhere to go and would buckle.</div></li>
+
+<li>During melting, the temperature of an ice-water mixture stays at 0°C even while the stove is on. Why doesn't the temperature rise?<div class="ak-answer"><span class="ak-label">Answer</span> The added energy is being used to break the attractive forces holding the ice particles in place (changing state), not to speed the particles up. The temperature stays at 0 °C until all the ice has melted.</div></li>
+
+<li>Draw and label a simple particle diagram showing (a) a cold solid and (b) a warm solid. Show the difference in particle spacing and movement.<div class="ak-answer"><span class="ak-label">Answer</span> (a) Cold solid: particles close together in a regular pattern, small vibration marks. (b) Warm solid: same pattern, slightly farther apart, larger vibration marks. Particles are the same size and number in both.</div></li>
+<p> </p>
+<p> </p>
+<p> </p>
+<li><strong>Stretch:</strong> Engineers are building a 2-km bridge in Edmonton where temperatures range from −40°C in winter to +35°C in summer. Using thermal expansion knowledge, calculate approximately how much the steel bridge would expand seasonally if steel expands by about 0.0012% per degree Celsius. Show your reasoning.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> Temperature range = 35 − (−40) = 75 °C. 0.0012% = 0.000012 per degree. Expansion = 2000 m × 0.000012 × 75 = 1.8 m. The bridge is about 1.8 m longer in summer than in winter, which is why it needs expansion joints. <em>Correction: the v1 key gave 0.18 m (18 cm) by using 0.0000012 — one decimal place too many.</em></div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="s4">Section 4: Modes of Heat Transfer</h2>
+<p><strong>Learning target:</strong> I can describe conduction, convection, and radiation, and provide examples of each.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Particle model</td>
-<td>The idea that all matter is made of tiny particles that are always moving</td>
-<td>Particles in a solid vibrate in place</td>
+<td>Conduction</td>
+<td><span class="ak-text">Heat transfer by direct contact, passed from particle to particle</span></td>
+<td><span class="ak-fill">A spoon warming in hot soup</span></td>
 </tr>
 <tr>
-<td>Thermal expansion</td>
-<td>Matter taking up more space when heated because its particles move farther apart</td>
-<td>A bridge getting longer in summer</td>
+<td>Convection</td>
+<td><span class="ak-fill">Heat transfer by the movement of a fluid (liquid or gas)</span></td>
+<td><span class="ak-fill">Warm air rising from a heat register</span></td>
 </tr>
 <tr>
-<td>Thermal contraction</td>
-<td>Matter taking up less space when cooled because its particles move closer together</td>
-<td>Power lines tightening in winter</td>
+<td>Radiation</td>
+<td><span class="ak-fill">Heat transfer by electromagnetic waves; needs no matter</span></td>
+<td><span class="ak-fill">Feeling the Sun or a campfire on your face</span></td>
 </tr>
 <tr>
-<td>Change of state</td>
-<td>Matter changing between solid, liquid, and gas as heat is absorbed or released</td>
-<td>Ice melting</td>
+<td>Insulator</td>
+<td><span class="ak-fill">A material that transfers heat slowly</span></td>
+<td><span class="ak-fill">Wood, foam, wool, air</span></td>
+</tr>
+<tr>
+<td>Conductor</td>
+<td><span class="ak-fill">A material that transfers heat quickly</span></td>
+<td><span class="ak-fill">Copper, aluminum, steel</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>tiny particles that are ___ in motion</td>
-<td>always (constantly)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>the ___ the temperature</td>
-<td>higher</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Particles absorb energy and ___ faster</td>
-<td>vibrate (move)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Particles vibrate ___ apart</td>
-<td>farther</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>The material ___</td>
-<td>expands</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>This is called ___</td>
-<td>thermal expansion</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Cooling — particles move ___ together</td>
-<td>closer</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>material ___</td>
-<td>contracts (shrinks)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Railroad tracks: ___ gaps</td>
-<td>expansion (small)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Bridges: ___ joints</td>
-<td>expansion</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Power lines: hung ___ in summer</td>
-<td>slack (loose / sagging)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Thermometers: ___ in the bulb</td>
-<td>liquid (coloured alcohol or mercury)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Melting — heat ___</td>
-<td>absorbed</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Melting — overcome ___</td>
-<td>the attractive forces holding them in fixed positions</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Freezing — heat ___</td>
-<td>released</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Evaporation/boiling — heat ___</td>
-<td>absorbed</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Condensation — heat ___</td>
-<td>released</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Condensation — particle change</td>
-<td>particles slow down and move close enough for attraction to pull them together into a liquid</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>added heat goes into ___ the attractive forces</td>
-<td>breaking (overcoming)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>the temperature ___</td>
-<td>stays the same (stays constant)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>used to change the ___</td>
-<td>state</td>
-<td>&nbsp;</td>
-</tr>
-</tbody></table></div>
-<h3>Retrieval Check — Section 3</h3>
-<ol start="1">
-  <li>Heating gives the particles more energy, so they move or vibrate faster and push farther apart. The material takes up more space.</li>
-  <li>Steel rails expand in summer heat. Without gaps they would have nowhere to go and would buckle.</li>
-  <li>The added energy is being used to break the attractive forces holding the ice particles in place (changing state), not to speed the particles up. The temperature stays at 0 °C until all the ice has melted.</li>
-  <li>(a) Cold solid: particles close together in a regular pattern, small vibration marks. (b) Warm solid: same pattern, slightly farther apart, larger vibration marks. Particles are the same size and number in both.</li>
-  <li><strong>Stretch:</strong> Temperature range = 35 − (−40) = 75 °C. 0.0012% = 0.000012 per degree. Expansion = 2000 m × 0.000012 × 75 = 1.8 m. The bridge is about 1.8 m longer in summer than in winter, which is why it needs expansion joints. <em>Correction: the v1 key gave 0.18 m (18 cm) by using 0.0000012 — one decimal place too many.</em></li>
-</ol>
-<hr class="section-break">
-<h2 id="s4" class="section-title">Section 4: Modes of Heat Transfer</h2>
+<p>There are three ways heat moves:</p>
+<hr class="section-break"/>
+<p><strong>CONDUCTION</strong> — heat transfer through <span class="ak-fill">direct</span> contact, particle-to-particle</p>
+<p>How it works: Fast-moving particles in the hot region bump into <span class="ak-fill">slower</span> moving particles in the cooler region → energy transfers → heat moves through the material.</p>
 <!-- viz:conduction-rod -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: conduction-rod | particles=2x10 | gradient=hot-to-cold -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 165" aria-label="A metal rod heated by a flame at its left end. Particles in the rod have large vibration rings at the hot end and small ones at the cool end. An arrow along the top shows energy passing particle to particle. Text: fast particles bump into slower ones, with slower as a blank." width="520" height="165">
 <line x1="90" y1="38" x2="463.7" y2="38.0" class="dg-arrow hot"/><polygon points="470.0,38.0 462.3,42.6 462.3,33.4" class="dg-head hot"/>
@@ -1189,9 +1150,15 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>A metal rod with one end in a flame. Fast particles at the hot end bump their neighbours, passing energy along the rod one particle at a time.</figcaption>
 </figure>
 <!-- /viz:conduction-rod -->
+<p>Best in: <span class="ak-fill">solids</span> (particles are close together and touch)</p>
+<p>Good conductors: <span class="ak-fill">metals (copper, aluminum, iron)</span> (metals — why pans are metal)</p>
+<p>Poor conductors (insulators): <span class="ak-fill">non-metals such as wood, plastic, rubber, foam, air</span> (wood, rubber, foam, air — why pot handles are not metal)</p>
+<div class="connection">
+<div class="c-label">MISCONCEPTION</div>
+<p><em>"Metal is colder than wood."</em> <strong>The test:</strong> Touch a metal desk and a wooden desk that have been in the same room for hours. Metal feels colder — but measure them with a thermometer. They are at <span class="ak-fill">the same</span> temperature. Metal feels colder because it <span class="ak-fill">conducts</span> heat away from your hand much faster. Your hand is the warm object; the desk is the cooler one. Heat flows from your hand into the desk. Metal conducts so quickly that your hand loses heat fast — your brain reads this as "cold." Wood conducts so slowly that your hand barely loses any heat — your brain reads this as "warm."</p>
+</div>
 <!-- viz:metal-vs-wood -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: conduction-comparison | metal=fast | wood=slow | T=20 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 190" aria-label="Two hands at 33 degrees resting on desks at 20 degrees. On the metal desk, three thick heat arrows go from the hand into the desk: metal, a blank for conducts, heat away fast so it feels cold. On the wooden desk, one thin arrow: wood conducts heat slowly so it feels warm." width="520" height="190">
 <text x="130" y="20" text-anchor="middle" class="dg-title">Metal desk</text>
@@ -1215,9 +1182,17 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Both desks are at room temperature. Metal pulls heat out of your hand much faster, and your skin senses that heat loss as "cold."</figcaption>
 </figure>
 <!-- /viz:metal-vs-wood -->
+<hr class="section-break"/>
+<p><strong>CONVECTION</strong> — heat transfer through the movement of <span class="ak-fill">fluids</span> (liquids or gases)</p>
+<p>How it works:</p>
+<ol>
+<li>Fluid near heat source warms → particles move <span class="ak-fill">farther</span> apart → fluid becomes <span class="ak-fill">less</span> dense</li>
+<li>Less dense warm fluid <span class="ak-fill">rises</span></li>
+<li>Cooler, denser fluid <span class="ak-fill">sinks</span> to replace it</li>
+<li>A <span class="ak-fill">convection</span> current forms, continuously circulating</li>
+</ol>
 <!-- viz:convection-pot -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: convection-pot | loops=2 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 420 255" aria-label="A pot of water on a flame. Orange arrows rise up the middle (warm water rises) and blue arrows sink down the sides (cool water sinks), forming two loops. Labels: a blank for convection current, warm water a blank for rises, cool water a blank for sinks." width="420" height="255">
 <rect x="150" y="22" width="90" height="20" rx="3" class="dg-tag"/><text x="195" y="36" text-anchor="middle" class="dg-tag-answer">convection</text>
@@ -1243,9 +1218,19 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Water heated at the bottom spreads out, becomes less dense and rises. Cooler, denser water sinks to take its place, and the loop keeps going.</figcaption>
 </figure>
 <!-- /viz:convection-pot -->
+<p>Examples:</p>
+<ul>
+<li>Boiling water: <span class="ak-fill">hot (warm) water</span> rises from hot bottom, <span class="ak-fill">cooler water</span> sinks from surface</li>
+<li>Home heating: warm air from radiator <span class="ak-fill">rises</span>, cool air near windows <span class="ak-fill">sinks</span></li>
+<li>Sea breeze: land heats up faster than water → <span class="ak-fill">warm air rises</span> over land; cool ocean air moves in</li>
+</ul>
+<p><strong>Convection only works in <span class="ak-fill">liquids</span> and <span class="ak-fill">gases</span> — not in solids.</strong> (Solids can't circulate.)</p>
+<hr class="section-break"/>
+<p><strong>RADIATION</strong> — heat transfer through <span class="ak-fill">electromagnetic (infrared)</span> waves (no medium required)</p>
+<p>How it works: All objects above absolute zero emit electromagnetic waves that carry energy. When these waves hit a surface, they are absorbed as <span class="ak-fill">heat (thermal energy)</span>.</p>
+<p>Does NOT require matter — radiation travels through <span class="ak-fill">a vacuum (empty space)</span>. This is how the Sun heats the Earth across 150 million km of empty space.</p>
 <!-- viz:radiation-sun -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: radiation-sun-earth | distance=150e6km -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 150" aria-label="The Sun on the left and Earth on the right, with wavy arrows crossing 150 million kilometres of empty space between them. Label: a blank for electromagnetic waves." width="520" height="150">
 <circle cx="62" cy="75" r="40" class="dg-fill-sun"/>
@@ -1265,9 +1250,11 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Space between the Sun and Earth is almost empty, so there are no particles to bump or flow. Radiation carries the energy anyway.</figcaption>
 </figure>
 <!-- /viz:radiation-sun -->
+<p>Examples: <span class="ak-fill">the Sun</span>, <span class="ak-fill">a campfire</span>, <span class="ak-fill">a toaster or heat lamp</span>, <span class="ak-fill">a hot stove element</span></p>
+<p>Dark/matte surfaces <span class="ak-fill">absorb</span> radiation better. Light/shiny surfaces <span class="ak-fill">reflect</span> radiation.</p>
+<hr class="section-break"/>
 <!-- viz:three-modes -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: three-modes-stove | modes=conduction,convection,radiation -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 245" aria-label="A pot of water on a stove burner with a metal handle and a nearby hand. Heat moves along the handle (blank for conduction), water circulates in loops inside the pot (blank for convection), and wavy lines go from the flame to the hand (blank for radiation)." width="520" height="245">
 <rect x="142" y="112" width="156" height="66" class="dg-fill-water"/>
@@ -1296,187 +1283,119 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>All three modes happen at once on a stove. Name each one, then use the table to compare them.</figcaption>
 </figure>
 <!-- /viz:three-modes -->
-<h3>Vocabulary</h3>
+<p><strong>Comparison table:</strong></p>
 <div class="vocab-wrap"><table>
 <thead><tr>
-<th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Mode</th>
+<th>Medium needed?</th>
+<th>Works in solids?</th>
+<th>Works in fluids?</th>
+<th>Works in vacuum?</th>
 </tr></thead>
 <tbody>
 <tr>
 <td>Conduction</td>
-<td>Heat transfer by direct contact, passed from particle to particle</td>
-<td>A spoon warming in hot soup</td>
+<td>Yes</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
 </tr>
 <tr>
 <td>Convection</td>
-<td>Heat transfer by the movement of a fluid (liquid or gas)</td>
-<td>Warm air rising from a heat register</td>
+<td>Yes</td>
+<td>✗</td>
+<td>✓</td>
+<td>✗</td>
 </tr>
 <tr>
 <td>Radiation</td>
-<td>Heat transfer by electromagnetic waves; needs no matter</td>
-<td>Feeling the Sun or a campfire on your face</td>
-</tr>
-<tr>
-<td>Insulator</td>
-<td>A material that transfers heat slowly</td>
-<td>Wood, foam, wool, air</td>
-</tr>
-<tr>
-<td>Conductor</td>
-<td>A material that transfers heat quickly</td>
-<td>Copper, aluminum, steel</td>
+<td>No</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
 </tr>
 </tbody></table></div>
-<h3>Guided Notes</h3>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>Match the mode to the scenario:<div class="ak-answer"><span class="ak-label">Answer</span> Campfire from 2 metres away: radiation. Spoon in hot soup: conduction. Hot air rising from a radiator: convection.</div></li>
+</ol><div class="ak-answer"><span class="ak-label">More answers</span> <ol start="2"><li>Radiation travels as electromagnetic waves, which are energy and do not need particles to carry them. They can cross empty space.</li><li>Both desks are at room temperature. Metal is a good conductor, so it carries heat away from your hand quickly and your hand feels cold. Wood is a poor conductor, so your hand loses heat slowly and the wood feels warm.</li><li>Convection needs the material itself to flow and circulate. Particles in a solid are held in fixed positions, so they cannot move from place to place.</li><li><strong>Stretch:</strong> Vacuum layer: stops conduction and convection — no particles to pass energy along or to circulate. Shiny inner walls: reduce radiation by reflecting it back. Plastic cap: an insulator that slows conduction, and it stops warm air escaping by convection at the top.</li></ol></div></div>
+<ul>
+<li>You feel heat from a campfire from 2 metres away: <span class="ak-fill">radiation</span></li>
+<li>A spoon in hot soup gets warm: <span class="ak-fill">conduction</span></li>
+<li>Hot air rises from a radiator to warm the room: <span class="ak-fill">convection</span></li>
+</ul>
+<ol>
+<li>Why does radiation not need a medium?
+    <div class="al"></div>
+</li>
+<li>Explain the metal-vs-wood temperature misconception using what you now know about conduction.
+    <div class="al"></div>
+</li>
+<li>Why can't convection happen in a solid?
+    <div class="al"></div>
+</li>
+<li><strong>Stretch:</strong> A thermos keeps hot soup hot and cold drinks cold. It has: a vacuum layer (between inner and outer walls), shiny inner walls, and a plastic cap. Identify which heat transfer mode each feature is blocking, and explain how.
+    <div class="al"></div>
+<div class="al"></div>
+</li>
+</ol>
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="s5">Section 5: Specific Heat Capacity</h2>
+<p><strong>Learning target:</strong> I can explain specific heat capacity and describe its effects on everyday phenomena including climate and cooking.</p>
+<h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
+<th>Term</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>CONDUCTION — heat transfer through ___ contact</td>
-<td>direct</td>
-<td>&nbsp;</td>
+<td>Specific heat capacity</td>
+<td><span class="ak-text">The amount of heat energy needed to raise the temperature of 1 gram of a substance by 1 °C</span></td>
+<td><span class="ak-fill">Water needs far more energy than sand to warm up</span></td>
 </tr>
 <tr>
-<td>bump into ___ moving particles</td>
-<td>slower</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Best in: ___</td>
-<td>solids</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Good conductors: ___</td>
-<td>metals (copper, aluminum, iron)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Poor conductors (insulators): ___</td>
-<td>non-metals such as wood, plastic, rubber, foam, air</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Misconception box — they are at ___ temperature</td>
-<td>the same</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Metal feels colder because it ___ heat away</td>
-<td>conducts</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>CONVECTION — movement of ___</td>
-<td>fluids</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>particles move ___ apart</td>
-<td>farther</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>fluid becomes ___ dense</td>
-<td>less</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Less dense warm fluid ___</td>
-<td>rises</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Cooler, denser fluid ___</td>
-<td>sinks</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>A ___ current forms</td>
-<td>convection</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Boiling water: ___ rises from hot bottom</td>
-<td>hot (warm) water</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>___ sinks from surface</td>
-<td>cooler water</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>warm air from radiator ___</td>
-<td>rises</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>cool air near windows ___</td>
-<td>sinks</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Sea breeze: ___ over land</td>
-<td>warm air rises</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Convection only works in ___ and ___</td>
-<td>liquids; gases</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>RADIATION — through ___ waves</td>
-<td>electromagnetic (infrared)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>absorbed as ___</td>
-<td>heat (thermal energy)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>radiation travels through ___</td>
-<td>a vacuum (empty space)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Examples (4 blanks)</td>
-<td>the Sun, a campfire, a toaster or heat lamp, a hot stove element</td>
-<td>Any four sources felt at a distance</td>
-</tr>
-<tr>
-<td>Dark/matte surfaces ___ radiation better</td>
-<td>absorb</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Light/shiny surfaces ___ radiation</td>
-<td>reflect</td>
-<td>&nbsp;</td>
+<td>Thermal reservoir</td>
+<td><span class="ak-text">A large body of material that stores a great deal of heat and releases it slowly</span></td>
+<td><span class="ak-fill">The Pacific Ocean; a large lake</span></td>
 </tr>
 </tbody></table></div>
-<h3>Retrieval Check — Section 4</h3>
-<ol start="1">
-  <li>Campfire from 2 metres away: radiation. Spoon in hot soup: conduction. Hot air rising from a radiator: convection.</li>
-  <li>Radiation travels as electromagnetic waves, which are energy and do not need particles to carry them. They can cross empty space.</li>
-  <li>Both desks are at room temperature. Metal is a good conductor, so it carries heat away from your hand quickly and your hand feels cold. Wood is a poor conductor, so your hand loses heat slowly and the wood feels warm.</li>
-  <li>Convection needs the material itself to flow and circulate. Particles in a solid are held in fixed positions, so they cannot move from place to place.</li>
-  <li><strong>Stretch:</strong> Vacuum layer: stops conduction and convection — no particles to pass energy along or to circulate. Shiny inner walls: reduce radiation by reflecting it back. Plastic cap: an insulator that slows conduction, and it stops warm air escaping by convection at the top.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s5" class="section-title">Section 5: Specific Heat Capacity</h2>
+<h3>Guided Notes</h3>
+<p><strong>Specific heat capacity:</strong> the amount of heat energy required to raise the temperature of 1 gram of a substance by <span class="ak-fill">1 °C</span>.</p>
+<p>Some materials heat up (and cool down) <span class="ak-fill">faster (more quickly)</span> than others. Water requires about <span class="ak-fill">4</span> times more energy to change temperature by 1°C compared to most metals.</p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Material</th>
+<th>Relative specific heat</th>
+<th>Real-world implication</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Water</td>
+<td>Very <span class="ak-fill">high</span></td>
+<td>Heats and cools slowly; stores huge amounts of energy</td>
+</tr>
+<tr>
+<td>Metal (iron, aluminum)</td>
+<td>Low</td>
+<td><span class="ak-fill">heats up and cools down quickly (a pan heats fast; a metal slide burns in the sun)</span></td>
+</tr>
+<tr>
+<td>Sand / soil</td>
+<td>Medium-low</td>
+<td><span class="ak-fill">heats quickly in the sun and cools quickly at night (hot beach sand, cold desert nights)</span></td>
+</tr>
+<tr>
+<td>Air</td>
+<td>Very low</td>
+<td><span class="ak-fill">temperature changes very quickly (big day-to-night swings; chinooks)</span></td>
+</tr>
+</tbody></table></div>
 <!-- viz:beach-day-night -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: beach-specific-heat | day=45,20 | night=12,18 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 185" aria-label="Two beach scenes. Sunny afternoon: sand is 45 degrees and heats fast, water is 20 degrees and heats slowly, with heats slowly as a blank. Night: sand has cooled to 12 degrees, water is still 18 degrees and cools slowly." width="520" height="185">
 <text x="130" y="20" text-anchor="middle" class="dg-title">Sunny afternoon</text>
@@ -1503,9 +1422,14 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Same sunshine on sand and water. Sand has a low specific heat, so it heats up and cools down fast. Water changes temperature slowly.</figcaption>
 </figure>
 <!-- /viz:beach-day-night -->
+<p><strong>Why water is special:</strong></p>
+<ul>
+<li>Used as a <span class="ak-fill">coolant</span> in car radiators and nuclear reactors — carries heat away efficiently because it can absorb a lot without its temperature changing much</li>
+<li>Oceans act as a <span class="ak-fill">thermal reservoir</span> — they store solar heat in summer and release it slowly in winter, moderating the climate of coastal regions</li>
+<li>Inland Alberta has <span class="ak-fill">larger (more extreme)</span> temperature swings than coastal BC because there is no large water body nearby to moderate temperature</li>
+</ul>
 <!-- viz:coast-vs-inland -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: line-chart | series=Vancouver,Calgary | months=12 | y=-10..20 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 545 245" aria-label="Line chart of approximate monthly average temperature. Vancouver, on the coast, ranges from about 4 degrees in January to 18 in July and August, a swing of about 14 degrees. Calgary, inland, ranges from about minus 7 in January to 17 in July, a swing of about 24 degrees." width="545" height="245">
 <line x1="60" y1="210" x2="440" y2="210" class="dg-grid"/>
@@ -1528,101 +1452,85 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Approximate monthly average temperatures. The Pacific Ocean keeps Vancouver's year gentle; Calgary, far from any large body of water, swings much more.</figcaption>
 </figure>
 <!-- /viz:coast-vs-inland -->
+<p><strong>Alberta examples of specific heat in action:</strong></p>
+<ul>
+<li>Sand dunes at Athabasca (yes, Alberta has dunes): sand heats to 50°C+ in summer sun while air stays cooler</li>
+<li>Chestermere Lake vs. downtown Calgary: the lake moderates local temperature</li>
+<li>Why soil freezes faster than rivers in autumn: <span class="ak-fill">soil has a much lower specific heat than water, so it has less stored heat to lose before reaching 0 °C; river water holds more heat (and keeps moving)</span></li>
+</ul>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What is specific heat capacity? Which has higher specific heat — water or metal?<div class="ak-answer"><span class="ak-label">Answer</span> The amount of heat energy needed to raise the temperature of 1 gram of a substance by 1 °C. Water has the higher specific heat.</div></li>
+
+<li>Why is water used as a coolant in car engines?<div class="ak-answer"><span class="ak-label">Answer</span> Water can absorb a large amount of heat with only a small rise in its own temperature, so it carries heat away from the engine efficiently.</div></li>
+
+<li>On a beach in summer, the sand is scorching but the water is cool. Explain this using specific heat capacity.<div class="ak-answer"><span class="ak-label">Answer</span> Sand has a low specific heat, so the same sunlight raises its temperature quickly. Water has a high specific heat, so the same energy raises its temperature only a little.</div></li>
+
+<li><strong>Stretch:</strong> Vancouver has milder winters than Calgary even though it's at a similar latitude. Calgary has more extreme temperature swings. Using specific heat capacity and convection, explain this difference.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> The Pacific Ocean is a thermal reservoir: it absorbs heat all summer and releases it slowly in winter, and moving air (convection) carries that warmth over Vancouver. Calgary has no large body of water nearby; land and air have low specific heat, so they warm and cool quickly and temperatures swing widely.</div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="s6">Section 6: Insulation and Applications</h2>
+<p><strong>Learning target:</strong> I can explain how insulation works and describe applications of heat knowledge in technology and daily life.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Specific heat capacity</td>
-<td>The amount of heat energy needed to raise the temperature of 1 gram of a substance by 1 °C</td>
-<td>Water needs far more energy than sand to warm up</td>
+<td>Insulation</td>
+<td><span class="ak-fill">Material that slows heat transfer</span></td>
+<td><span class="ak-fill">Fibreglass batts, a down jacket, foam</span></td>
 </tr>
 <tr>
-<td>Thermal reservoir</td>
-<td>A large body of material that stores a great deal of heat and releases it slowly</td>
-<td>The Pacific Ocean; a large lake</td>
+<td>R-value</td>
+<td><span class="ak-text">A number that rates how well insulation resists heat flow; higher is better</span></td>
+<td><span class="ak-fill">Attic insulation rated R-50</span></td>
+</tr>
+<tr>
+<td>Thermal pollution</td>
+<td><span class="ak-fill">Harmful warming of a lake or river by waste heat</span></td>
+<td><span class="ak-fill">Warm cooling water released by a power plant</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
+<p><strong>Insulation</strong> works by slowing <span class="ak-fill">heat transfer</span> — all three modes. It does not generate or store heat.</p>
 <div class="vocab-wrap"><table>
 <thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
+<th>Insulation material</th>
+<th>Which mode it slows</th>
+<th>How</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>raise the temperature of 1 gram by ___</td>
-<td>1 °C</td>
-<td>&nbsp;</td>
+<td>Trapped air (down, wool, foam)</td>
+<td><span class="ak-fill">conduction and convection</span></td>
+<td>Air is a poor <span class="ak-fill">conductor</span>; prevents convection currents because bubbles are too small</td>
 </tr>
 <tr>
-<td>Some materials heat up (and cool down) ___ than others</td>
-<td>faster (more quickly)</td>
-<td>&nbsp;</td>
+<td>Fibreglass batts (home insulation)</td>
+<td><span class="ak-fill">conduction (and convection)</span></td>
+<td>Poor conductor; traps still air</td>
 </tr>
 <tr>
-<td>Water requires about ___ times more energy</td>
-<td>4</td>
-<td>Unit context figure ("about 4× most metals"); for iron or copper the real ratio is closer to 10</td>
+<td>Vacuum (thermos)</td>
+<td><span class="ak-fill">conduction and convection</span></td>
+<td>No medium means no conduction or convection</td>
 </tr>
 <tr>
-<td>Water — very ___</td>
-<td>high</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Metal — real-world implication</td>
-<td>heats up and cools down quickly (a pan heats fast; a metal slide burns in the sun)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Sand / soil — real-world implication</td>
-<td>heats quickly in the sun and cools quickly at night (hot beach sand, cold desert nights)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Air — real-world implication</td>
-<td>temperature changes very quickly (big day-to-night swings; chinooks)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Used as a ___ in car radiators</td>
-<td>coolant</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Oceans act as a ___</td>
-<td>thermal reservoir</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Inland Alberta has ___ temperature swings</td>
-<td>larger (more extreme)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Why soil freezes faster than rivers in autumn</td>
-<td>soil has a much lower specific heat than water, so it has less stored heat to lose before reaching 0 °C; river water holds more heat (and keeps moving)</td>
-<td>&nbsp;</td>
+<td>Shiny surfaces (space blankets)</td>
+<td><span class="ak-fill">radiation</span></td>
+<td>Reflects radiation rather than absorbing it</td>
 </tr>
 </tbody></table></div>
-<h3>Retrieval Check — Section 5</h3>
-<ol start="1">
-  <li>The amount of heat energy needed to raise the temperature of 1 gram of a substance by 1 °C. Water has the higher specific heat.</li>
-  <li>Water can absorb a large amount of heat with only a small rise in its own temperature, so it carries heat away from the engine efficiently.</li>
-  <li>Sand has a low specific heat, so the same sunlight raises its temperature quickly. Water has a high specific heat, so the same energy raises its temperature only a little.</li>
-  <li><strong>Stretch:</strong> The Pacific Ocean is a thermal reservoir: it absorbs heat all summer and releases it slowly in winter, and moving air (convection) carries that warmth over Vancouver. Calgary has no large body of water nearby; land and air have low specific heat, so they warm and cool quickly and temperatures swing widely.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s6" class="section-title">Section 6: Insulation and Applications</h2>
 <!-- viz:thermos -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: thermos-cross-section | parts=cap,shiny-walls,vacuum -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 270" aria-label="Cross-section of a thermos holding hot soup. A plastic cap blocks conduction (blank). Shiny inner walls block radiation (blank). A vacuum layer between the walls blocks conduction and convection (blank)." width="480" height="270">
 <rect x="150" y="50" width="140" height="205" rx="14" class="dg-boundary"/>
@@ -1648,9 +1556,10 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Cross-section of a thermos. Each part blocks a different way heat could escape.</figcaption>
 </figure>
 <!-- /viz:thermos -->
+<p><strong>R-value:</strong> a measure of insulation <span class="ak-fill">effectiveness (resistance to heat flow)</span>. Higher R-value = better insulator. Alberta building code requires higher R-values than milder provinces because of our cold winters.</p>
+<p><strong>Home insulation in Alberta:</strong> In a typical Alberta home, the biggest sources of heat loss are: <span class="ak-fill">windows and doors</span>, <span class="ak-fill">attic/roof</span>, and <span class="ak-fill">walls (also air leaks, basement)</span>. Proper insulation reduces heating costs and the amount of natural gas burned.</p>
 <!-- viz:house-heat-loss -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: house-heat-loss | paths=roof,windows,doors,walls -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 245" aria-label="A house at 21 degrees inside, minus 25 degrees outside. Heat arrows leave through the roof, a window, the door and the walls; each has a blank tag: attic or roof, windows, doors, walls." width="480" height="245">
 <text x="460" y="30" text-anchor="end" class="dg-label-cold">Outside · −25 °C</text>
@@ -1672,9 +1581,15 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Heat escapes a warm house in winter through every surface. The biggest losses are the places worth insulating first.</figcaption>
 </figure>
 <!-- /viz:house-heat-loss -->
+<p><strong>Thermal pollution:</strong> Industrial and power plants use water as a coolant and discharge warm water into rivers and lakes. Effects: <span class="ak-fill">dissolved oxygen</span> levels in water decrease (warm water holds less dissolved oxygen) → fish and aquatic life are harmed.</p>
+<p><strong>A note on "keeping things cold":</strong></p>
+<p>An insulated bag keeps your lunch cold — but it doesn't create cold. It simply slows the <span class="ak-fill">transfer (flow)</span> of heat FROM the warm air INTO the cool food. The insulation works equally well in both directions.</p>
+<div class="connection">
+<div class="c-label">MISCONCEPTION</div>
+<p><em>"Insulation keeps things warm."</em> <strong>More precisely:</strong> Insulation slows heat transfer in <span class="ak-fill">both</span> directions. A cooler bag keeps ice cold just as well as it keeps hot food hot — by slowing the flow of heat across the temperature difference. The insulation doesn't know which side is "warm."</p>
+</div>
 <!-- viz:insulation-both-ways -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: insulation-two-directions | hot-inside=70 | cold-inside=0 | room=20 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 500 175" aria-label="Two insulated lunch bags in a 20 degree room. Left: hot soup at 70 degrees inside, short arrows show heat slowly leaking out. Right: an ice pack at 0 degrees inside, short arrows show heat slowly leaking in." width="500" height="175">
 <text x="120" y="16" text-anchor="middle" class="dg-title">Hot soup inside</text>
@@ -1696,142 +1611,75 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>The same lunch bag works both ways. It does not make heat or cold; it slows heat flowing across the temperature difference, whichever way that is.</figcaption>
 </figure>
 <!-- /viz:insulation-both-ways -->
-<h3>Vocabulary</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Insulation</td>
-<td>Material that slows heat transfer</td>
-<td>Fibreglass batts, a down jacket, foam</td>
-</tr>
-<tr>
-<td>R-value</td>
-<td>A number that rates how well insulation resists heat flow; higher is better</td>
-<td>Attic insulation rated R-50</td>
-</tr>
-<tr>
-<td>Thermal pollution</td>
-<td>Harmful warming of a lake or river by waste heat</td>
-<td>Warm cooling water released by a power plant</td>
-</tr>
-</tbody></table></div>
-<h3>Guided Notes</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Insulation works by slowing ___</td>
-<td>heat transfer</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Trapped air — which mode it slows</td>
-<td>conduction and convection</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Air is a poor ___</td>
-<td>conductor</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Fibreglass batts — which mode</td>
-<td>conduction (and convection)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Vacuum — which mode</td>
-<td>conduction and convection</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Shiny surfaces — which mode</td>
-<td>radiation</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>R-value: a measure of insulation ___</td>
-<td>effectiveness (resistance to heat flow)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Biggest sources of heat loss (3 blanks)</td>
-<td>windows and doors; attic/roof; walls (also air leaks, basement)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>___ levels in water decrease</td>
-<td>dissolved oxygen</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>slows the ___ of heat</td>
-<td>transfer (flow)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Misconception box — slows heat transfer in ___ directions</td>
-<td>both</td>
-<td>&nbsp;</td>
-</tr>
-</tbody></table></div>
-<h3>Retrieval Check — Section 6</h3>
-<ol start="1">
-  <li>Insulation slows heat transfer in both directions; it does not make heat. A vacuum stops conduction and convection (it does not stop radiation).</li>
-  <li>Alberta winters are much colder, so the temperature difference between inside and outside is larger and heat is lost faster. More insulation is needed to slow it.</li>
-  <li>Thermal pollution is the release of warm water (from industry or power plants) into rivers and lakes. Warm water holds less dissolved oxygen, which harms fish and other aquatic life.</li>
-  <li><strong>Stretch:</strong> Example design — shiny reflective outer layer (reflects radiation from the sun); thick foam or a vacuum layer (slows conduction and stops convection); tight-fitting insulated lid (stops warm air entering by convection and slows conduction); optional ice packs inside. Each layer must be matched to the mode it blocks, with a reason.</li>
-</ol>
-<hr class="section-break">
-<h2 id="synthesis" class="section-title">Unit Synthesis</h2>
-<ol start="1">
-  <li><strong>Table from memory:</strong></li>
-</ol>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>How does insulation work? Which heat transfer mode(s) does a vacuum stop?<div class="ak-answer"><span class="ak-label">Answer</span> Insulation slows heat transfer in both directions; it does not make heat. A vacuum stops conduction and convection (it does not stop radiation).</div></li>
+
+<li>Why does Alberta's building code require higher R-values than British Columbia's?<div class="ak-answer"><span class="ak-label">Answer</span> Alberta winters are much colder, so the temperature difference between inside and outside is larger and heat is lost faster. More insulation is needed to slow it.</div></li>
+
+<li>What is thermal pollution and what effect does it have on aquatic ecosystems?<div class="ak-answer"><span class="ak-label">Answer</span> Thermal pollution is the release of warm water (from industry or power plants) into rivers and lakes. Warm water holds less dissolved oxygen, which harms fish and other aquatic life.</div></li>
+
+<li><strong>Stretch:</strong> Design the ideal insulated container for keeping ice cream frozen on a hot Alberta summer day (38°C). Identify the material for each layer, name which heat transfer mode each layer blocks, and explain why you chose it.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> Example design — shiny reflective outer layer (reflects radiation from the sun); thick foam or a vacuum layer (slows conduction and stops convection); tight-fitting insulated lid (stops warm air entering by convection and slows conduction); optional ice packs inside. Each layer must be matched to the mode it blocks, with a reason.</div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="synthesis">Unit Synthesis</h2>
+<p><em>Complete this page from memory — notes closed. Then open your notes and check.</em></p>
+<p><strong>1.</strong> Complete this table from memory:</p>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Concept</th>
-<th>Model explanation</th>
+<th>My explanation</th>
 </tr></thead>
 <tbody>
 <tr>
 <td>Difference between heat and temperature</td>
-<td>Temperature = average kinetic energy of the particles. Heat = energy transferred from a hotter object to a cooler one</td>
+<td><span class="ak-text">Temperature = average kinetic energy of the particles. Heat = energy transferred from a hotter object to a cooler one</span></td>
 </tr>
 <tr>
 <td>Why metal feels colder than wood</td>
-<td>Both are at the same temperature; metal conducts heat away from your hand much faster</td>
+<td><span class="ak-text">Both are at the same temperature; metal conducts heat away from your hand much faster</span></td>
 </tr>
 <tr>
 <td>Three modes of heat transfer</td>
-<td>Conduction (direct contact, particle to particle); convection (moving fluids); radiation (electromagnetic waves, no matter needed)</td>
+<td><span class="ak-text">Conduction (direct contact, particle to particle); convection (moving fluids); radiation (electromagnetic waves, no matter needed)</span></td>
 </tr>
 <tr>
 <td>Why water has a high specific heat</td>
-<td>It takes a lot of energy to raise its temperature, so it heats and cools slowly and stores large amounts of heat. (Grade 7 level: students state what this means, not the molecular cause)</td>
+<td><span class="ak-text">It takes a lot of energy to raise its temperature, so it heats and cools slowly and stores large amounts of heat. (Grade 7 level: students state what this means, not the molecular cause)</span></td>
 </tr>
 <tr>
 <td>How insulation works</td>
-<td>It slows heat transfer in both directions, mostly by trapping still air; it does not create heat</td>
+<td><span class="ak-text">It slows heat transfer in both directions, mostly by trapping still air; it does not create heat</span></td>
 </tr>
 <tr>
 <td>Absolute zero</td>
-<td>0 K = −273 °C; the lowest possible temperature, where particles have the least possible motion</td>
+<td><span class="ak-text">0 K = −273 °C; the lowest possible temperature, where particles have the least possible motion</span></td>
 </tr>
 </tbody></table></div>
-<ol start="2">
-  <li><strong>The mug of cocoa.</strong> Conduction: heat passes from the cocoa into the mug, and from the mug into the table and into your hand. Convection: air warmed above and beside the mug rises and carries heat away; evaporation from the surface also carries energy off. Radiation: the warm mug gives off infrared waves in all directions.</li>
-  <li><strong>Three recommendations.</strong> Any three with the science, e.g., add attic and wall insulation (trapped air slows conduction and convection; higher R-value); install double- or triple-pane windows (the gas gap is a poor conductor; coatings reflect radiation); seal air leaks around doors and windows (stops warm air escaping by convection); use heavy masonry, tile, or water to store daytime heat (high heat capacity releases heat slowly at night).</li>
-  <li><strong>Return to the Pre-Knowledge Check.</strong> Open reflection. Look for: Q1 — heat and temperature are different; Q2 — metal and wood are the same temperature, metal just conducts faster; Q4 — "cold" does not come from anywhere; Alberta winters are cold because less energy arrives from the Sun (lower Sun angle, shorter days) and heat is lost from the ground and air.</li>
-</ol>
+<p><strong>2.</strong> A mug of hot cocoa (90°C) is sitting on a wooden table in a room at 20°C. Explain ALL the ways heat is leaving the mug — identify which mode is responsible for each.</p><div class="ak-answer"><span class="ak-label">Answer</span> Conduction: heat passes from the cocoa into the mug, and from the mug into the table and into your hand. Convection: air warmed above and beside the mug rises and carries heat away; evaporation from the surface also carries energy off. Radiation: the warm mug gives off infrared waves in all directions.</div>
 
+
+
+<p><strong>3.</strong> An Alberta family is redesigning their home for maximum energy efficiency. Using your knowledge of heat transfer, insulation, and specific heat, give three specific recommendations and explain the science behind each.</p><div class="ak-answer"><span class="ak-label">Answer</span> Any three with the science, e.g., add attic and wall insulation (trapped air slows conduction and convection; higher R-value); install double- or triple-pane windows (the gas gap is a poor conductor; coatings reflect radiation); seal air leaks around doors and windows (stops warm air escaping by convection); use heavy masonry, tile, or water to store daytime heat (high heat capacity releases heat slowly at night).</div>
+
+
+
+<p><strong>4.</strong> Go back and read your Pre-Knowledge Check answers on the first page.</p><div class="ak-answer"><span class="ak-label">Answer</span> Open reflection. Look for: Q1 — heat and temperature are different; Q2 — metal and wood are the same temperature, metal just conducts faster; Q4 — "cold" does not come from anywhere; Alberta winters are cold because less energy arrives from the Sun (lower Sun angle, shorter days) and heat is lost from the ground and air.</div>
+<ul>
+<li>Question 1: Were heat and temperature the same in your answer? What do you know now?</li>
+</ul>
+<div class="al"></div>
+<ul>
+<li>Question 2: What was your answer about metal vs. wood? How would you correct it now?</li>
+</ul>
+<div class="al"></div>
+<ul>
+<li>Question 4: Where does "the cold" in Alberta winters actually come from?</li>
+</ul>
+<div class="al"></div>
 </body>
 </html>

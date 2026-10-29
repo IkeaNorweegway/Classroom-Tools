@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Grade 7 Science — Planet Earth: Notes Answer Key</title>
 <style>
   /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
@@ -69,6 +69,8 @@
   }
   p { margin-bottom: 0.75rem; }
   strong { color: #1f1d1a; }
+  ul, ol { padding-left: 1.25rem; margin-bottom: 0.75rem; }
+  li { margin-bottom: 0.25rem; }
 
   /* ── Cover block ── */
   .cover {
@@ -332,8 +334,12 @@
     }
     .section-break { page-break-before: always; }
     h2.section-title { page-break-after: avoid; }
-      .vocab-wrap, tr { break-inside: avoid; page-break-inside: avoid; }
-    h1, h2, .section-title { break-after: avoid; page-break-after: avoid; }
+      .connection, .vocab-wrap, svg, tr, .retrieval { break-inside: avoid; page-break-inside: avoid; }
+    h1, h2, h3, .section-title { break-after: avoid; page-break-after: avoid; }
+    p:has(+ .vocab-wrap), p:has(+ .connection), p:has(+ .retrieval),
+    p:has(+ .svg-wrap), p:has(+ ul), p:has(+ .synthesis-box) {
+      break-after: avoid; page-break-after: avoid;
+    }
     p { orphans: 3; widows: 3; }
 }
 
@@ -364,10 +370,6 @@
   svg .dg-label-sm    { font: 11px/1.3 var(--font-body); fill: var(--dg-secondary); stroke: none; }
   svg .dg-label-accent{ font: 11px/1.3 var(--font-body); fill: var(--dg-accent);    stroke: none; font-weight: 600; }
 
-  /* Answer key lists */
-  ol, ul { padding-left: 1.5rem; margin-bottom: 0.75rem; }
-  li { margin-bottom: 0.45rem; font-size: 0.92rem; }
-  li ul { margin-top: 0.35rem; }
 
 
 
@@ -434,24 +436,113 @@ svg .dg-label-plant { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif)
 svg .dg-label-water { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-water); }
 svg .dg-label-earth { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-earth); }
 svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif); fill: #fff; }
+svg .dg-land, svg .dg-land-hi, svg .dg-border { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-land        { fill: #ebe7df; stroke: #a8a294; stroke-width: .75px; }
+svg .dg-land-hi     { fill: var(--dg-accent); fill-opacity: .22; stroke: var(--dg-accent); stroke-width: 1px; }
+svg .dg-border      { fill: none; stroke: #a8a294; stroke-width: .5px; }
+svg .dg-sea         { fill: #f4f7f9; stroke: none; }
+svg .dg-route       { fill: none; stroke: var(--dg-accent); stroke-width: 2px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-route.muted { stroke: var(--dg-muted, #6b665d); stroke-dasharray: 5 3; }
+svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
 /* ── /viz-kit ── */
 </style>
-</head>
+<style id="key-link-css">
+  .key-link { margin: 6px 0 14px; font-size: 0.9rem; font-weight: 600; }
+  .key-link a { color: inherit; text-decoration: underline; text-underline-offset: 2px; opacity: 0.85; }
+  .key-link a:hover { opacity: 1; }
+  .key-check { text-align: right; margin: 14px 0 6px; }
+  @media print { .key-link { display: none !important; } }
+</style>
+<style>
+/* ── Answer key overlay (scripts/match_keys.py) ── */
+.answer-key-header { background: #1f1d1a; color: #fff; padding: 8px 14px; border-radius: 6px; margin: 0 0 16px; font-size: 9.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.ak-fill { display: inline; color: #166534; font-weight: 700; border-bottom: 2px solid #86efac; padding: 0 2px; min-width: 0; }
+td .ak-fill, li .ak-fill { white-space: normal; }
+.ak-answer { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 12px; margin: 8px 0; color: #1f1d1a; font-style: normal; break-inside: avoid; }
+.ak-answer p, .ak-answer ul, .ak-answer ol { margin: 0 0 5px; }
+.ak-answer p:last-child, .ak-answer ul:last-child, .ak-answer ol:last-child { margin-bottom: 0; }
+.ak-answer ul, .ak-answer ol { padding-left: 20px; }
+.ak-answer table { margin: 6px 0; }
+.ak-text { color: #166534; font-weight: 600; }
+.ak-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #15803d; margin-right: 6px; }
+.ak-teacher { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 8px 12px; margin: 8px 0; font-size: 10pt; break-inside: avoid; }
+.ak-teacher .ak-text { color: #166534; font-weight: 600; }
+.ak-label { color: #b45309; }
+.ak-teacher p { margin: 0 0 4px; } .ak-teacher p:last-child { margin-bottom: 0; }
+svg .ak-svg-fill { fill: #166534; font-weight: 700; }
+@media print { .ak-answer, .ak-teacher { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style></head>
 <body>
-
 <!-- Cover -->
 <div class="cover">
-  <h1>Planet Earth</h1>
-  <p>Grade 7 Science &nbsp;&middot;&nbsp; Notes Answer Key &nbsp;&middot;&nbsp; Teacher Reference &nbsp;&middot;&nbsp; Alberta Curriculum 2007</p>
-</div>
+<h1>Planet Earth — Answer Key</h1>
+<p>Grade 7 Science  ·  Guided Notes Package  ·  Alberta Curriculum 2007</p>
 
-<p><em>Every blank in the notes package, in the order it appears. Vocabulary definitions and open responses are model answers — accept equivalent wording in the student's own words.</em></p>
-<p><em>Pre-Knowledge Check: no answer key. Students record honest first thinking; do not correct it. They return to it in the Unit Synthesis.</em></p>
-<hr class="section-break">
-<h2 id="s1" class="section-title">Section 1: Earth's Interior</h2>
+<div class="name-line">
+<span>Name:                               </span>
+<span>Date:                 </span>
+<span>Block:      </span>
+</div>
+</div><div class="answer-key-header">Answer key · Teacher copy</div>
+<hr class="section-break"/>
+<h2 class="section-title" id="pre-check">Pre-Knowledge Check</h2>
+<p><em>Before you start this unit — no notes, no right or wrong answers. Write what you honestly think right now.</em></p>
+<ol>
+<li>What do you think the inside of the Earth looks like? Describe it or draw a quick sketch.
+    <div class="al"></div>
+</li>
+<li>Why do earthquakes happen? Where do most volcanoes occur?
+    <div class="al"></div>
+</li>
+<li>How do you think mountains form? How long do you think it takes?
+    <div class="al"></div>
+</li>
+<li>What do fossils tell us? How do scientists use them?
+    <div class="al"></div>
+</li>
+</ol>
+<p><em>Keep this page. At the end of the unit, you will come back and read what you wrote here.</em></p>
+<hr class="section-break"/>
+<h2 class="section-title" id="s1">Section 1: Earth's Interior</h2>
+<p><strong>Learning target:</strong> I can describe the four layers of Earth's interior and explain how we know what is inside.</p>
+<h3>Vocabulary</h3>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Term</th>
+<th>Definition in your own words</th>
+<th>One example</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Crust</td>
+<td><span class="ak-fill">Earth's thin, solid outer layer of rock</span></td>
+<td><span class="ak-fill">The ground we stand on; the ocean floor</span></td>
+</tr>
+<tr>
+<td>Mantle</td>
+<td><span class="ak-text">The thick layer of hot rock below the crust that flows very slowly</span></td>
+<td><span class="ak-fill">The source of magma</span></td>
+</tr>
+<tr>
+<td>Outer core</td>
+<td><span class="ak-fill">The liquid layer of iron and nickel below the mantle</span></td>
+<td><span class="ak-fill">Creates Earth's magnetic field</span></td>
+</tr>
+<tr>
+<td>Inner core</td>
+<td><span class="ak-fill">The solid ball of iron and nickel at Earth's centre</span></td>
+<td><span class="ak-fill">Kept solid by extreme pressure</span></td>
+</tr>
+<tr>
+<td>Seismic waves</td>
+<td><span class="ak-text">Waves of energy from earthquakes that travel through the Earth</span></td>
+<td><span class="ak-fill">Waves recorded on a seismograph</span></td>
+</tr>
+</tbody></table></div>
+<h3>Guided Notes</h3>
+<p><strong>We have never drilled to the mantle.</strong> The deepest drill hole ever (Kola Superdeep, Russia) reached only <span class="ak-fill">12</span> km — and the crust is up to 70 km thick in some places. Everything we know about Earth's interior comes from <span class="ak-fill">seismic waves</span>: waves produced by earthquakes that travel through the Earth and are recorded at stations worldwide.</p>
 <!-- viz:depth-zoom -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: depth-zoom | radius=6371km | zoom=0-100km | drill=12km -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 225" aria-label="Left: a to-scale column from the surface to Earth's centre: mantle to 2,900 km, outer core to 5,150 km, inner core to 6,371 km; the crust is too thin to see. Right: the top 100 km zoomed in: continental crust up to 70 km thick, then mantle. The deepest drill hole reached only a blank, 12, kilometres." width="520" height="225">
 <text x="140" y="20" text-anchor="middle" class="dg-title">To scale</text>
@@ -484,9 +575,68 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Left, the whole way to Earth's centre, drawn to scale; the crust is thinner than the outline. Right, the top 100 km zoomed in. The deepest hole ever drilled barely scratches the crust.</figcaption>
 </figure>
 <!-- /viz:depth-zoom -->
+<p><strong>Earth's four layers:</strong></p>
+<p><strong>1. Crust</strong> — the outermost layer</p>
+<ul>
+<li>Oceanic crust: <span class="ak-fill">thin</span> (5–10 km), dense (basalt); found under oceans</li>
+<li>Continental crust: <span class="ak-fill">thick</span> (up to 70 km), less dense (granite); the land we live on</li>
+<li>The crust + upper mantle together = the <span class="ak-fill">lithosphere</span> (the rigid outer shell, broken into tectonic plates)</li>
+</ul>
+<p><strong>2. Mantle</strong> — the largest layer (~2,900 km thick)</p>
+<ul>
+<li>Made of: <span class="ak-fill">hot, solid</span> rock</li>
+<li>Behaviour: solid, but under extreme heat and pressure it <span class="ak-fill">flows</span> extremely slowly (like very thick putty over millions of years)</li>
+<li>Contains <span class="ak-fill">convection</span> currents — slow circular movements of hot mantle rock rising and cool rock sinking; these drive <span class="ak-fill">tectonic</span> plate motion</li>
+</ul>
+<p><strong>3. Outer core</strong> — liquid layer of <span class="ak-fill">iron</span> and <span class="ak-fill">nickel</span></p>
+<ul>
+<li>Temperature: ~4,000–6,000°C — hot enough to be liquid despite being deep</li>
+<li>The moving liquid metal generates Earth's <span class="ak-fill">magnetic</span> field (protects life from solar radiation)</li>
+</ul>
+<p><strong>4. Inner core</strong> — solid ball of <span class="ak-fill">iron</span> and <span class="ak-fill">nickel</span></p>
+<ul>
+<li>Temperature: ~5,000–6,000°C — hotter than outer core, but solid because <span class="ak-fill">pressure</span> is so extreme that it keeps it solid</li>
+</ul>
+<p><strong>Diagram — label the four layers:</strong></p>
+<div class="svg-wrap" style="margin:1rem 0;">
+<svg aria-label="Cross-section diagram of Earth's four internal layers" height="300" role="img" viewbox="0 0 460 300" width="460" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="el-arrow" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3">
+<path d="M0,0 L8,3 L0,6 Z" fill="#64748b"></path>
+</marker>
+</defs>
+<!-- Crust (outermost, green) -->
+<circle cx="200" cy="150" r="130" style="fill:#86efac;stroke:#94a3b8;stroke-width:1.5;"></circle>
+<!-- Mantle (yellow) -->
+<circle cx="200" cy="150" r="115" style="fill:#fef08a;stroke:#94a3b8;stroke-width:1.5;stroke-dasharray:4,3;"></circle>
+<!-- Outer core (orange) -->
+<circle cx="200" cy="150" r="75" style="fill:#fdba74;stroke:#94a3b8;stroke-width:1.5;stroke-dasharray:4,3;"></circle>
+<!-- Inner core (red) -->
+<circle cx="200" cy="150" r="40" style="fill:#fca5a5;stroke:#94a3b8;stroke-width:1.5;stroke-dasharray:4,3;"></circle>
+<!-- Convection arrows in mantle -->
+<path d="M 200,42 A 108,108 0 0,1 305,148" marker-end="url(#el-arrow)" style="fill:none;stroke:var(--unit);stroke-width:1.5;stroke-dasharray:5,3;"></path>
+<path d="M 200,258 A 108,108 0 0,1 95,152" marker-end="url(#el-arrow)" style="fill:none;stroke:var(--unit);stroke-width:1.5;stroke-dasharray:5,3;"></path>
+<!-- Label leader lines and fill-in boxes (right side) -->
+<line marker-end="url(#el-arrow)" style="stroke:#64748b;stroke-width:1;" x1="322" x2="358" y1="112" y2="95"></line>
+<rect height="22" rx="3" style="fill:#f1f5f9;stroke:#cbd5e1;stroke-width:1;" width="92" x="360" y="80"></rect>
+<text class="dg-label" style="fill:#94a3b8;" text-anchor="middle" x="406" y="95">1. ___________</text>
+<line marker-end="url(#el-arrow)" style="stroke:#64748b;stroke-width:1;" x1="308" x2="358" y1="152" y2="135"></line>
+<rect height="22" rx="3" style="fill:#f1f5f9;stroke:#cbd5e1;stroke-width:1;" width="92" x="360" y="120"></rect>
+<text class="dg-label" style="fill:#94a3b8;" text-anchor="middle" x="406" y="135">2. ___________</text>
+<line marker-end="url(#el-arrow)" style="stroke:#64748b;stroke-width:1;" x1="272" x2="358" y1="178" y2="173"></line>
+<rect height="22" rx="3" style="fill:#f1f5f9;stroke:#cbd5e1;stroke-width:1;" width="92" x="360" y="158"></rect>
+<text class="dg-label" style="fill:#94a3b8;" text-anchor="middle" x="406" y="173">3. ___________</text>
+<line marker-end="url(#el-arrow)" style="stroke:#64748b;stroke-width:1;" x1="232" x2="360" y1="172" y2="210"></line>
+<rect height="22" rx="3" style="fill:#f1f5f9;stroke:#cbd5e1;stroke-width:1;" width="92" x="360" y="197"></rect>
+<text class="dg-label" style="fill:#94a3b8;" text-anchor="middle" x="406" y="212">4. ___________</text>
+<!-- Convection note -->
+<text class="dg-label-sm" style="fill:var(--unit-dark);" text-anchor="middle" x="200" y="286">Dashed arcs show convection current direction in the mantle</text>
+</svg>
+<p style="font-family: var(--font-body);font-size:0.78rem;color:#544f47;text-align:center;margin-top:0.2rem;">Fig. — Earth's internal layers. Label each numbered layer with its name.</p>
+</div>
+<p><strong>How do we know?</strong> Seismic waves travel at different speeds through different materials and <span class="ak-fill">bend (refract)</span> or <span class="ak-fill">reflect (bounce)</span> at layer boundaries. By analysing the paths and timings of these waves recorded at many stations, scientists mapped Earth's interior without ever seeing it.</p>
 <!-- viz:seismic-waves -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: seismic-rays | quake=top | shadow=104-180deg -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 292" aria-label="Cross-section of Earth with an earthquake at the top. Curved wave paths bend through the mantle to stations on the surface. The liquid outer core and solid inner core are labelled. Waves, a blank for bend, at every layer boundary. The bottom part of the surface is the S-wave shadow zone, because S waves cannot pass through the liquid outer core." width="480" height="292">
 <circle cx="180" cy="140" r="110" class="dg-fill-sun"/>
@@ -515,137 +665,93 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Waves from one earthquake spread through Earth to stations all over the world. Where they bend, bounce, or fail to arrive tells scientists what each layer is like.</figcaption>
 </figure>
 <!-- /viz:seismic-waves -->
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>Name Earth's four layers from outermost to innermost.<div class="ak-answer"><span class="ak-label">Answer</span> Crust → mantle → outer core → inner core</div></li>
+
+<li>Why is the inner core solid even though it's hotter than the outer core?<div class="ak-answer"><span class="ak-label">Answer</span> The pressure at the centre of the Earth is so extreme that it holds the particles together as a solid, even at that temperature.</div></li>
+
+<li>Why is the outer core important to life on Earth?<div class="ak-answer"><span class="ak-label">Answer</span> The moving liquid iron and nickel generate Earth's magnetic field, which shields living things from harmful solar radiation.</div></li>
+
+<li>How do scientists know what the inside of Earth looks like if we've never drilled there?<div class="ak-answer"><span class="ak-label">Answer</span> From seismic waves. Earthquake waves change speed, bend, and reflect when they pass through different materials. By recording when and where the waves arrive at stations around the world, scientists work out what the layers are made of and where they begin.</div></li>
+
+<li><strong>Stretch:</strong> Oceanic crust is thinner and denser than continental crust. When an oceanic plate and a continental plate collide, which one goes under? Use density to explain why this matters for the rock cycle.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> The oceanic plate goes under (subducts) because it is denser. As it sinks into the mantle it heats up and melts, becoming magma that can rise and cool into new igneous rock — so subduction recycles crust through the rock cycle. Continental crust is too light to sink.</div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/><div class="ak-answer"><span class="ak-label">More answers for this section</span> <ul><li>1 = crust; 2 = mantle; 3 = outer core; 4 = inner core. Convection arrows drawn as loops in the mantle (rising near the core, sinking near the crust)</li></ul></div>
+<h2 class="section-title" id="s2">Section 2: The Rock Cycle</h2>
+<p><strong>Learning target:</strong> I can classify rocks as igneous, sedimentary, or metamorphic and explain the conditions that form each type.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
+<th>Definition in your own words</th>
+<th>One example</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Igneous rock</td>
+<td><span class="ak-fill">Rock formed when melted rock cools and hardens</span></td>
+<td><span class="ak-fill">Granite, basalt</span></td>
+</tr>
+<tr>
+<td>Sedimentary rock</td>
+<td><span class="ak-text">Rock formed when layers of sediment are pressed and cemented together</span></td>
+<td><span class="ak-fill">Sandstone, shale, limestone</span></td>
+</tr>
+<tr>
+<td>Metamorphic rock</td>
+<td><span class="ak-fill">Rock changed by heat and pressure without melting</span></td>
+<td><span class="ak-fill">Marble, slate</span></td>
+</tr>
+<tr>
+<td>Magma</td>
+<td><span class="ak-text">Melted rock below Earth's surface (called lava at the surface)</span></td>
+<td><span class="ak-fill">Magma beneath a volcano</span></td>
+</tr>
+<tr>
+<td>Sediment</td>
+<td><span class="ak-fill">Small pieces of rock, shell, or once-living material</span></td>
+<td><span class="ak-fill">Sand, mud, gravel</span></td>
+</tr>
+<tr>
+<td>Rock cycle</td>
+<td><span class="ak-text">The ongoing processes that change rock from one type into another</span></td>
+<td><span class="ak-fill">Granite weathering into sand that becomes sandstone</span></td>
+</tr>
+</tbody></table></div>
+<h3>Guided Notes</h3>
+<p>Rock is not permanent — it changes continuously through the <span class="ak-fill">rock cycle</span>, driven by plate tectonics and solar energy.</p>
+<p><strong>Three rock families:</strong></p>
+<hr class="section-break"/>
+<p><strong>IGNEOUS ROCK</strong> — formed when <span class="ak-fill">magma</span> (underground) or <span class="ak-fill">lava</span> (surface) cools and solidifies</p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Type</th>
+<th>Cooling rate</th>
+<th>Crystal size</th>
 <th>Example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Crust</td>
-<td>Earth's thin, solid outer layer of rock</td>
-<td>The ground we stand on; the ocean floor</td>
+<td>Intrusive (plutonic)</td>
+<td><span class="ak-fill">slow</span> (underground)</td>
+<td><span class="ak-fill">large</span></td>
+<td>granite, gabbro</td>
 </tr>
 <tr>
-<td>Mantle</td>
-<td>The thick layer of hot rock below the crust that flows very slowly</td>
-<td>The source of magma</td>
-</tr>
-<tr>
-<td>Outer core</td>
-<td>The liquid layer of iron and nickel below the mantle</td>
-<td>Creates Earth's magnetic field</td>
-</tr>
-<tr>
-<td>Inner core</td>
-<td>The solid ball of iron and nickel at Earth's centre</td>
-<td>Kept solid by extreme pressure</td>
-</tr>
-<tr>
-<td>Seismic waves</td>
-<td>Waves of energy from earthquakes that travel through the Earth</td>
-<td>Waves recorded on a seismograph</td>
+<td>Extrusive (volcanic)</td>
+<td><span class="ak-fill">fast</span> (at surface)</td>
+<td><span class="ak-fill">small</span> (or glassy)</td>
+<td>basalt, obsidian, pumice</td>
 </tr>
 </tbody></table></div>
-<h3>Guided Notes</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Kola Superdeep reached only ___ km</td>
-<td>12</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Everything we know comes from ___</td>
-<td>seismic waves</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Oceanic crust: ___ (5–10 km)</td>
-<td>thin</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Continental crust: ___ (up to 70 km)</td>
-<td>thick</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>crust + upper mantle = the ___</td>
-<td>lithosphere</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Mantle — made of: ___ rock</td>
-<td>hot, solid</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>it ___ extremely slowly</td>
-<td>flows</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Contains ___ currents</td>
-<td>convection</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>these drive ___ plate motion</td>
-<td>tectonic</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Outer core — liquid layer of ___ and ___</td>
-<td>iron; nickel</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>generates Earth's ___ field</td>
-<td>magnetic</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Inner core — solid ball of ___ and ___</td>
-<td>iron; nickel</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>solid because ___ is so extreme</td>
-<td>pressure</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Diagram labels</td>
-<td>1 = crust; 2 = mantle; 3 = outer core; 4 = inner core. Convection arrows drawn as loops in the mantle (rising near the core, sinking near the crust)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>waves ___ or ___ at layer boundaries</td>
-<td>bend (refract); reflect (bounce)</td>
-<td>&nbsp;</td>
-</tr>
-</tbody></table></div>
-<h3>Retrieval Check — Section 1</h3>
-<ol start="1">
-  <li>Crust → mantle → outer core → inner core</li>
-  <li>The pressure at the centre of the Earth is so extreme that it holds the particles together as a solid, even at that temperature.</li>
-  <li>The moving liquid iron and nickel generate Earth's magnetic field, which shields living things from harmful solar radiation.</li>
-  <li>From seismic waves. Earthquake waves change speed, bend, and reflect when they pass through different materials. By recording when and where the waves arrive at stations around the world, scientists work out what the layers are made of and where they begin.</li>
-  <li><strong>Stretch:</strong> The oceanic plate goes under (subducts) because it is denser. As it sinks into the mantle it heats up and melts, becoming magma that can rise and cool into new igneous rock — so subduction recycles crust through the rock cycle. Continental crust is too light to sink.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s2" class="section-title">Section 2: The Rock Cycle</h2>
+<p><em>Why crystal size differs:</em> Slow cooling gives crystals <span class="ak-fill">time</span> to grow. Fast cooling freezes atoms before they can arrange into large crystals.</p>
 <!-- viz:crystal-size -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: igneous-cooling | intrusive=granite | extrusive=basalt -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 262" aria-label="Volcano cross-section. Lava on the surface cools fast and forms basalt with tiny crystals. Magma in a chamber deep underground cools slowly and forms granite with large crystals. Slow cooling gives crystals more time, a blank, to grow." width="520" height="262">
 <rect x="0" y="110" width="320" height="120" class="dg-fill-soft"/>
@@ -676,9 +782,16 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>The same melted rock can make two different igneous rocks. Lava that cools in hours makes tiny crystals; magma that cools over thousands of years underground makes big ones.</figcaption>
 </figure>
 <!-- /viz:crystal-size -->
+<hr class="section-break"/>
+<p><strong>SEDIMENTARY ROCK</strong> — formed from <span class="ak-fill">layers of sediment</span> of weathered rock and organic material, compressed and cemented over time</p>
+<p>Three types of sedimentary rock:</p>
+<ol>
+<li><span class="ak-fill">clastic</span> sedimentary: formed from rock fragments (sandstone, shale, conglomerate)</li>
+<li><span class="ak-fill">chemical</span> sedimentary: formed from mineral precipitation from water (rock salt, gypsum)</li>
+<li><span class="ak-fill">organic (biological)</span> sedimentary: formed from organic remains (coal, chalk, some limestone)</li>
+</ol>
 <!-- viz:sediment-layers -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: process-3-panel | weathering | deposition | compaction -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 540 180" aria-label="Three panels. One: weathering breaks a mountain into pieces and water carries them away. Two: sediment settles in flat layers at the bottom of a lake. Three: the weight of layers above squeezes the layers, which are cemented, a blank, into rock." width="540" height="180">
 <polygon points="20,125 75,56 130,125" class="dg-fill-earth"/>
@@ -711,9 +824,68 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Sedimentary rock builds up in three steps: rock is broken down and carried away, settles in flat layers, then is squeezed and cemented under the layers above.</figcaption>
 </figure>
 <!-- /viz:sediment-layers -->
+<p><strong>Why sedimentary rock is scientifically important:</strong></p>
+<ul>
+<li>Contains <span class="ak-fill">fossils</span> — preserved remains of ancient life</li>
+<li>Rock layers (strata) record Earth's history: <span class="ak-fill">oldest layers at the bottom</span> (younger layers on top)</li>
+<li>Widespread in <span class="ak-fill">Alberta</span> — oil sands, fossils, Alberta Badlands are all sedimentary</li>
+</ul>
+<hr class="section-break"/>
+<p><strong>METAMORPHIC ROCK</strong> — existing rock transformed by <span class="ak-fill">heat</span> and/or <span class="ak-fill">pressure</span> (but not melted — if it melted, it would become igneous)</p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Parent rock</th>
+<th>Becomes</th>
+<th>Change</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Limestone</td>
+<td><span class="ak-fill">marble</span></td>
+<td>heat + pressure</td>
+</tr>
+<tr>
+<td>Shale</td>
+<td><span class="ak-fill">slate</span></td>
+<td>heat + pressure</td>
+</tr>
+<tr>
+<td>Granite</td>
+<td><span class="ak-fill">gneiss</span></td>
+<td>extreme pressure</td>
+</tr>
+</tbody></table></div>
+<p>Foliated metamorphic rocks: have visible layers or bands (<span class="ak-fill">slate (or gneiss)</span>, schist)</p>
+<p>Non-foliated: no distinct layers (<span class="ak-fill">marble</span>, quartzite)</p>
+<hr class="section-break"/>
+<p><strong>The Rock Cycle:</strong></p>
+<p>All rock types can be converted to any other through the appropriate processes:</p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Process</th>
+<th>What happens</th>
+<th>Produces</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Melting + cooling</td>
+<td>rock melts to magma, then solidifies</td>
+<td><span class="ak-fill">igneous rock</span></td>
+</tr>
+<tr>
+<td>Weathering + erosion + deposition + compaction</td>
+<td>rock breaks down, transported, deposited, buried</td>
+<td><span class="ak-fill">sedimentary rock</span></td>
+</tr>
+<tr>
+<td>Heat + pressure (no melting)</td>
+<td>rock transformed</td>
+<td><span class="ak-fill">metamorphic rock</span></td>
+</tr>
+</tbody></table></div>
+<p><em>Draw the rock cycle as a triangle with arrows between all three corners. Label each arrow with the process.</em></p>
 <!-- viz:rock-cycle -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: rock-cycle-triangle | arrows=6 | labels=blank -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 500 300" aria-label="Rock cycle triangle: igneous at the top, sedimentary bottom left, metamorphic bottom right, with a pair of arrows between each pair of rock types. Each arrow has a blank: arrows into igneous are melting and cooling; arrows into sedimentary are weathering and erosion; arrows into metamorphic are heat and pressure." width="500" height="300">
 <rect x="185" y="22" width="130" height="36" rx="8" class="dg-fill-hot"/>
@@ -738,192 +910,71 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Your rock-cycle triangle. Each arrow is a process that turns one rock type into another; fill in the process on each arrow as we go.</figcaption>
 </figure>
 <!-- /viz:rock-cycle -->
+<p> </p>
+<p> </p>
+<p> </p>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What is the difference between intrusive and extrusive igneous rock? Why do they have different crystal sizes?<div class="ak-answer"><span class="ak-label">Answer</span> Intrusive rock cools slowly underground and has large crystals; extrusive rock cools quickly at the surface and has small crystals or is glassy. Slow cooling gives crystals time to grow.</div></li>
+
+<li>Why do sedimentary rocks have layers? What do these layers tell geologists?<div class="ak-answer"><span class="ak-label">Answer</span> Sediment settles in flat layers, one on top of another, over long periods. The layers show the order of events (oldest at the bottom) and what the environment was like when each layer formed.</div></li>
+
+<li>What conditions create metamorphic rock? What conditions DON'T occur during metamorphism?<div class="ak-answer"><span class="ak-label">Answer</span> Heat and/or pressure create metamorphic rock. Melting does not occur — if the rock melted and cooled it would be igneous.</div></li>
+
+<li>In which rock type would you most likely find a fossil? Why?<div class="ak-answer"><span class="ak-label">Answer</span> Sedimentary rock. Organisms are buried in sediment and preserved as it hardens. The heat of magma or of metamorphism would destroy the remains.</div></li>
+
+<li><strong>Stretch:</strong> A marble statue (metamorphic) is eroding in an acidic urban environment. Trace the marble through the rock cycle: where did the original rock come from, and where might the eroded marble end up in 10 million years?<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> The marble began as limestone, a sedimentary rock formed from the shells of sea organisms; heat and pressure changed it to marble. Acid rain now weathers it; the dissolved and broken material washes into rivers and is deposited in a lake or sea. Over millions of years it could be buried and cemented into new sedimentary rock — or carried deeper and changed again.</div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/><div class="ak-answer"><span class="ak-label">More answers for this section</span> <ul><li>Corners: igneous, sedimentary, metamorphic. Any rock → sedimentary by weathering, erosion, deposition, compaction. Any rock → metamorphic by heat and pressure. Any rock → igneous by melting, then cooling</li></ul></div>
+<h2 class="section-title" id="s3">Section 3: Plate Tectonics</h2>
+<p><strong>Learning target:</strong> I can explain plate tectonics and describe what happens at the three types of plate boundaries.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Igneous rock</td>
-<td>Rock formed when melted rock cools and hardens</td>
-<td>Granite, basalt</td>
+<td>Tectonic plate</td>
+<td><span class="ak-text">A large, rigid piece of Earth's outer shell (lithosphere) that moves slowly</span></td>
+<td><span class="ak-fill">North American Plate, Pacific Plate</span></td>
 </tr>
 <tr>
-<td>Sedimentary rock</td>
-<td>Rock formed when layers of sediment are pressed and cemented together</td>
-<td>Sandstone, shale, limestone</td>
+<td>Plate boundary</td>
+<td><span class="ak-fill">The edge where two plates meet</span></td>
+<td><span class="ak-fill">The west coast of North America</span></td>
 </tr>
 <tr>
-<td>Metamorphic rock</td>
-<td>Rock changed by heat and pressure without melting</td>
-<td>Marble, slate</td>
+<td>Divergent boundary</td>
+<td><span class="ak-fill">A boundary where two plates move apart</span></td>
+<td><span class="ak-fill">Mid-Atlantic Ridge</span></td>
 </tr>
 <tr>
-<td>Magma</td>
-<td>Melted rock below Earth's surface (called lava at the surface)</td>
-<td>Magma beneath a volcano</td>
+<td>Convergent boundary</td>
+<td><span class="ak-fill">A boundary where two plates move together</span></td>
+<td><span class="ak-fill">India and Eurasia — the Himalayas</span></td>
 </tr>
 <tr>
-<td>Sediment</td>
-<td>Small pieces of rock, shell, or once-living material</td>
-<td>Sand, mud, gravel</td>
+<td>Transform boundary</td>
+<td><span class="ak-fill">A boundary where two plates slide sideways past each other</span></td>
+<td><span class="ak-fill">San Andreas Fault</span></td>
 </tr>
 <tr>
-<td>Rock cycle</td>
-<td>The ongoing processes that change rock from one type into another</td>
-<td>Granite weathering into sand that becomes sandstone</td>
+<td>Subduction</td>
+<td><span class="ak-fill">A denser plate sinking beneath another plate</span></td>
+<td><span class="ak-fill">The Juan de Fuca Plate under North America</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>it changes continuously through the ___</td>
-<td>rock cycle</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>IGNEOUS — formed when ___ (underground)</td>
-<td>magma</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>or ___ (surface) cools</td>
-<td>lava</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Intrusive — cooling rate</td>
-<td>slow</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Intrusive — crystal size</td>
-<td>large</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Extrusive — cooling rate</td>
-<td>fast</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Extrusive — crystal size</td>
-<td>small</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Slow cooling gives crystals ___ to grow</td>
-<td>time</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>SEDIMENTARY — formed from ___</td>
-<td>layers of sediment</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>1. ___ sedimentary (rock fragments)</td>
-<td>clastic</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>2. ___ sedimentary (mineral precipitation)</td>
-<td>chemical</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>3. ___ sedimentary (organic remains)</td>
-<td>organic (biological)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Contains ___</td>
-<td>fossils</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>strata record Earth's history: ___ (younger layers on top)</td>
-<td>oldest layers at the bottom</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Widespread in ___</td>
-<td>Alberta</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>METAMORPHIC — transformed by ___ and/or ___</td>
-<td>heat; pressure</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Limestone becomes ___</td>
-<td>marble</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Shale becomes ___</td>
-<td>slate</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Granite becomes ___</td>
-<td>gneiss</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Foliated: (___, schist)</td>
-<td>slate (or gneiss)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Non-foliated: (___, quartzite)</td>
-<td>marble</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Melting + cooling produces ___</td>
-<td>igneous rock</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Weathering + erosion + deposition + compaction produces ___</td>
-<td>sedimentary rock</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Heat + pressure (no melting) produces ___</td>
-<td>metamorphic rock</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Draw the rock cycle as a triangle</td>
-<td>Corners: igneous, sedimentary, metamorphic. Any rock → sedimentary by weathering, erosion, deposition, compaction. Any rock → metamorphic by heat and pressure. Any rock → igneous by melting, then cooling</td>
-<td>Arrows should run both ways between every pair of corners</td>
-</tr>
-</tbody></table></div>
-<h3>Retrieval Check — Section 2</h3>
-<ol start="1">
-  <li>Intrusive rock cools slowly underground and has large crystals; extrusive rock cools quickly at the surface and has small crystals or is glassy. Slow cooling gives crystals time to grow.</li>
-  <li>Sediment settles in flat layers, one on top of another, over long periods. The layers show the order of events (oldest at the bottom) and what the environment was like when each layer formed.</li>
-  <li>Heat and/or pressure create metamorphic rock. Melting does not occur — if the rock melted and cooled it would be igneous.</li>
-  <li>Sedimentary rock. Organisms are buried in sediment and preserved as it hardens. The heat of magma or of metamorphism would destroy the remains.</li>
-  <li><strong>Stretch:</strong> The marble began as limestone, a sedimentary rock formed from the shells of sea organisms; heat and pressure changed it to marble. Acid rain now weathers it; the dissolved and broken material washes into rivers and is deposited in a lake or sea. Over millions of years it could be buried and cemented into new sedimentary rock — or carried deeper and changed again.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s3" class="section-title">Section 3: Plate Tectonics</h2>
+<p><strong>The theory of plate tectonics:</strong> Earth's outer shell (lithosphere) is broken into approximately <span class="ak-fill">7 (accept 7–8)</span> major plates and several smaller ones. These plates <span class="ak-fill">move</span> at a rate of 1–10 cm per year (roughly the rate your fingernails grow). The driving force is <span class="ak-fill">convection</span> currents in the mantle below.</p>
 <!-- viz:mantle-convection -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: convection-cells | cells=2 | plates=2 | ridge=centre -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 215" aria-label="Two plates separate at a mid-ocean ridge. Beneath them, hot mantle rock rises under the ridge, flows outward under each plate, cools and sinks at the edges, forming two loops. Mantle, a blank for convection, currents drag the plates." width="520" height="215">
 <text x="260" y="16" text-anchor="middle" class="dg-label-sm">mid-ocean ridge</text>
@@ -950,56 +1001,40 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Hot mantle rock slowly rises, spreads sideways under the plates, cools and sinks again. The plates ride on top of these slow loops, a few centimetres a year.</figcaption>
 </figure>
 <!-- /viz:mantle-convection -->
-<!-- viz:divergent -->
-<figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
-<!-- tikz: boundary-divergent | ridge=centre | magma=rising -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 190" aria-label="Divergent boundary cross-section. Ocean water above two plates that move apart. Magma rises into the gap and forms new seafloor at a mid-ocean ridge. Plates, a blank for move, apart." width="480" height="190">
-<rect x="10" y="20" width="460" height="40" class="dg-fill-water"/>
-<rect x="10" y="90" width="460" height="70" class="dg-fill-sun"/>
-<polygon points="10,60 214,60 228,48 232,90 10,90" class="dg-fill-earth"/>
-<polygon points="470,60 266,60 252,48 248,90 470,90" class="dg-fill-earth"/>
-<polygon points="226,160 254,160 248,60 232,60" class="dg-fill-hot"/>
-<line x1="190" y1="75" x2="96.3" y2="75.0" class="dg-arrow plain"/><polygon points="90.0,75.0 97.7,70.4 97.7,79.6" class="dg-head plain"/>
-<line x1="290" y1="75" x2="383.7" y2="75.0" class="dg-arrow plain"/><polygon points="390.0,75.0 382.3,79.6 382.3,70.4" class="dg-head plain"/>
-<text x="240" y="36" text-anchor="middle" class="dg-label-water">mid-ocean ridge: new seafloor</text>
-<text x="262" y="136" class="dg-label-hot">magma rises</text>
-<text x="120" y="130" text-anchor="middle" class="dg-label-sm">mantle</text>
-<text x="230" y="182" text-anchor="end" class="dg-label">Plates</text>
-<rect x="236" y="168" width="60" height="20" rx="3" class="dg-tag"/><text x="266" y="182" text-anchor="middle" class="dg-tag-answer">move</text>
-<text x="300" y="182" class="dg-label">apart</text>
-</svg>
-<figcaption>Divergent boundary. As two plates pull apart, magma rises into the gap and cools into new seafloor.</figcaption>
-</figure>
-<!-- /viz:divergent -->
-<!-- viz:subduction -->
-<figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
-<!-- tikz: boundary-subduction | ocean-continent | trench | volcanic-arc -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 220" aria-label="Convergent boundary cross-section. An oceanic plate moves toward a continental plate and slides under it into the mantle; the denser plate, a blank for sinks. A trench forms where it bends down. Magma rises from the sinking plate to a volcano on the continent." width="520" height="220">
-<rect x="10" y="88" width="500" height="127" class="dg-fill-sun"/>
-<rect x="10" y="40" width="240" height="24" class="dg-fill-water"/>
-<polygon points="10,64 240,64 360,186 340,200 222,88 10,88" class="dg-fill-earth"/>
-<polygon points="244,62 510,62 510,110 290,110" class="dg-fill-soft"/>
-<polygon points="325,168 335,168 398,40 392,40" class="dg-fill-hot"/>
-<polygon points="360,62 395,26 430,62" class="dg-fill-earth"/>
-<line x1="40" y1="52" x2="133.7" y2="52.0" class="dg-arrow plain"/><polygon points="140.0,52.0 132.3,56.6 132.3,47.4" class="dg-head plain"/>
-<line x1="490" y1="50" x2="452.3" y2="50.0" class="dg-arrow plain"/><polygon points="446.0,50.0 453.7,45.4 453.7,54.6" class="dg-head plain"/>
-<text x="242" y="34" text-anchor="middle" class="dg-label-water">trench</text>
-<text x="395" y="18" text-anchor="middle" class="dg-label">volcano</text>
-<text x="100" y="80" text-anchor="middle" class="dg-label">oceanic plate</text>
-<text x="460" y="92" text-anchor="middle" class="dg-label">continental plate</text>
-<text x="352" y="146" class="dg-label-hot">magma rises</text>
-<text x="194" y="140" text-anchor="end" class="dg-label">denser plate</text>
-<rect x="200" y="126" width="52" height="20" rx="3" class="dg-tag"/><text x="226" y="140" text-anchor="middle" class="dg-tag-answer">sinks</text>
-<text x="120" y="180" text-anchor="middle" class="dg-label-sm">mantle</text>
-</svg>
-<figcaption>Ocean meets continent. The denser oceanic plate dives under, making a deep trench. Rock melts as it sinks, and the magma rises to feed volcanoes on the continent.</figcaption>
-</figure>
-<!-- /viz:subduction -->
+<div class="connection">
+<div class="c-label">MISCONCEPTION</div>
+<p><em>"Tectonic plates are the same as continents."</em> <strong>Why this is wrong:</strong> Plates include both continental crust and oceanic crust. Many plate boundaries are <span class="ak-fill">underwater</span> (in the middle of oceans). The North American Plate, for example, includes most of North America AND the western half of the Atlantic Ocean. Some plates are almost entirely oceanic (Pacific Plate). Continents ride on plates; they are not the same thing as plates.</p>
+</div>
+<p><strong>Evidence for plate tectonics (how we know):</strong></p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Evidence type</th>
+<th>What it shows</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Continental fit</td>
+<td>Coastlines of Africa and South America <span class="ak-fill">fit together</span> like puzzle pieces</td>
+</tr>
+<tr>
+<td>Matching fossils</td>
+<td>Same species fossils found on <span class="ak-fill">different</span> continents now separated by thousands of km of ocean</td>
+</tr>
+<tr>
+<td>Paleomagnetic striping</td>
+<td>Magnetic reversal patterns are <span class="ak-fill">symmetrical (matching / mirror images)</span> on both sides of mid-ocean ridges — like a tape recording of spreading</td>
+</tr>
+<tr>
+<td>Earthquake/volcano distribution</td>
+<td>Most earthquakes and volcanoes occur <span class="ak-fill">in narrow bands (zones)</span> — along plate boundaries</td>
+</tr>
+<tr>
+<td>GPS measurements</td>
+<td>Modern technology directly measures plate <span class="ak-fill">movement (speed and direction)</span></td>
+</tr>
+</tbody></table></div>
 <!-- viz:magnetic-stripes -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: magnetic-stripes | ridge=centre | symmetric -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 152" aria-label="Seafloor stripes on either side of a mid-ocean ridge. The pattern of dark and light stripes on the left is a mirror image of the right. Arrows show the seafloor moving away from the ridge. The youngest rock is at the ridge and the oldest at the edges. The pattern is a blank, symmetrical, on both sides." width="520" height="152">
 <rect x="250" y="30" width="20" height="70" class="dg-solid-muted"/>
@@ -1025,145 +1060,75 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Seafloor seen from above. New rock records Earth's magnetic direction as it cools at the ridge, then moves away. Dark stripes formed when Earth's field pointed north as it does today, light stripes when it was reversed.</figcaption>
 </figure>
 <!-- /viz:magnetic-stripes -->
-<h3>Vocabulary</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Tectonic plate</td>
-<td>A large, rigid piece of Earth's outer shell (lithosphere) that moves slowly</td>
-<td>North American Plate, Pacific Plate</td>
-</tr>
-<tr>
-<td>Plate boundary</td>
-<td>The edge where two plates meet</td>
-<td>The west coast of North America</td>
-</tr>
-<tr>
-<td>Divergent boundary</td>
-<td>A boundary where two plates move apart</td>
-<td>Mid-Atlantic Ridge</td>
-</tr>
-<tr>
-<td>Convergent boundary</td>
-<td>A boundary where two plates move together</td>
-<td>India and Eurasia — the Himalayas</td>
-</tr>
-<tr>
-<td>Transform boundary</td>
-<td>A boundary where two plates slide sideways past each other</td>
-<td>San Andreas Fault</td>
-</tr>
-<tr>
-<td>Subduction</td>
-<td>A denser plate sinking beneath another plate</td>
-<td>The Juan de Fuca Plate under North America</td>
-</tr>
-</tbody></table></div>
-<h3>Guided Notes</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>approximately ___ major plates</td>
-<td>7 (accept 7–8)</td>
-<td>The v1 key said 15, which counts the larger minor plates too. Accept the figure you teach</td>
-</tr>
-<tr>
-<td>These plates ___ at a rate of 1–10 cm per year</td>
-<td>move</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>The driving force is ___ currents</td>
-<td>convection</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Misconception box — many plate boundaries are ___</td>
-<td>underwater</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Continental fit — coastlines ___ like puzzle pieces</td>
-<td>fit together</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Matching fossils — found on ___ continents</td>
-<td>different</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Paleomagnetic striping — patterns are ___ on both sides</td>
-<td>symmetrical (matching / mirror images)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Most earthquakes and volcanoes occur ___</td>
-<td>in narrow bands (zones)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>GPS directly measures plate ___</td>
-<td>movement (speed and direction)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>DIVERGENT — plates ___ apart</td>
-<td>move (pull)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Example: ___ Ridge</td>
-<td>Mid-Atlantic</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Alberta connection: ___</td>
-<td>none</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>CONVERGENT — plates ___ together</td>
-<td>move (push / collide)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>denser oceanic plate ___ (subducts)</td>
-<td>sinks (slides under)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Example: ___ + North American plate → Cascade volcanoes</td>
-<td>Juan de Fuca plate</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Example: ___ + Eurasian plate → Japan</td>
-<td>Pacific plate</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>India + Eurasia → ___ Mountains</td>
-<td>Himalaya</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>TRANSFORM — plates ___ sideways past each other</td>
-<td>slide</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Example: ___ Fault, California</td>
+<p><strong>Three boundary types:</strong></p>
+<p><strong>DIVERGENT BOUNDARY</strong> — plates <span class="ak-fill">move (pull)</span> apart</p>
+<p>Features: new seafloor created; mid-ocean ridges; volcanic activity (gentle, fluid lava); rift valleys on land</p>
+<p>Example: <span class="ak-fill">Mid-Atlantic</span> Ridge (North America + Europe separating) — Iceland sits on this ridge</p>
+<p>Alberta connection: <span class="ak-fill">none</span> (there are no divergent boundaries near Alberta)</p>
+<!-- viz:divergent -->
+<figure class="viz">
+<!-- tikz: boundary-divergent | ridge=centre | magma=rising -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 190" aria-label="Divergent boundary cross-section. Ocean water above two plates that move apart. Magma rises into the gap and forms new seafloor at a mid-ocean ridge. Plates, a blank for move, apart." width="480" height="190">
+<rect x="10" y="20" width="460" height="40" class="dg-fill-water"/>
+<rect x="10" y="90" width="460" height="70" class="dg-fill-sun"/>
+<polygon points="10,60 214,60 228,48 232,90 10,90" class="dg-fill-earth"/>
+<polygon points="470,60 266,60 252,48 248,90 470,90" class="dg-fill-earth"/>
+<polygon points="226,160 254,160 248,60 232,60" class="dg-fill-hot"/>
+<line x1="190" y1="75" x2="96.3" y2="75.0" class="dg-arrow plain"/><polygon points="90.0,75.0 97.7,70.4 97.7,79.6" class="dg-head plain"/>
+<line x1="290" y1="75" x2="383.7" y2="75.0" class="dg-arrow plain"/><polygon points="390.0,75.0 382.3,79.6 382.3,70.4" class="dg-head plain"/>
+<text x="240" y="36" text-anchor="middle" class="dg-label-water">mid-ocean ridge: new seafloor</text>
+<text x="262" y="136" class="dg-label-hot">magma rises</text>
+<text x="120" y="130" text-anchor="middle" class="dg-label-sm">mantle</text>
+<text x="230" y="182" text-anchor="end" class="dg-label">Plates</text>
+<rect x="236" y="168" width="60" height="20" rx="3" class="dg-tag"/><text x="266" y="182" text-anchor="middle" class="dg-tag-answer">move</text>
+<text x="300" y="182" class="dg-label">apart</text>
+</svg>
+<figcaption>Divergent boundary. As two plates pull apart, magma rises into the gap and cools into new seafloor.</figcaption>
+</figure>
+<!-- /viz:divergent -->
+<hr class="section-break"/>
+<p><strong>CONVERGENT BOUNDARY</strong> — plates <span class="ak-fill">move (push / collide)</span> together</p>
+<p>Three subtypes:</p>
+<ol>
+<li><strong>Ocean + continent:</strong> denser oceanic plate <span class="ak-fill">sinks (slides under)</span> (subducts) under continental plate → trench + volcanic arc on continent
+    <p>Example: <span class="ak-fill">Juan de Fuca plate</span> + North American plate → Cascade volcanoes</p>
+</li>
+<li><strong>Ocean + ocean:</strong> older, denser plate subducts → deep trench + volcanic island arc
+    <p>Example: <span class="ak-fill">Pacific plate</span> + Eurasian plate → Japan, Marianas Trench</p>
+</li>
+<li><strong>Continent + continent:</strong> neither subducts; both crumple upward → major mountain chain
+    <p>Example: India + Eurasia → <span class="ak-fill">Himalaya</span> Mountains</p>
+</li>
+</ol>
+<!-- viz:subduction -->
+<figure class="viz">
+<!-- tikz: boundary-subduction | ocean-continent | trench | volcanic-arc -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 220" aria-label="Convergent boundary cross-section. An oceanic plate moves toward a continental plate and slides under it into the mantle; the denser plate, a blank for sinks. A trench forms where it bends down. Magma rises from the sinking plate to a volcano on the continent." width="520" height="220">
+<rect x="10" y="88" width="500" height="127" class="dg-fill-sun"/>
+<rect x="10" y="40" width="240" height="24" class="dg-fill-water"/>
+<polygon points="10,64 240,64 360,186 340,200 222,88 10,88" class="dg-fill-earth"/>
+<polygon points="244,62 510,62 510,110 290,110" class="dg-fill-soft"/>
+<polygon points="325,168 335,168 398,40 392,40" class="dg-fill-hot"/>
+<polygon points="360,62 395,26 430,62" class="dg-fill-earth"/>
+<line x1="40" y1="52" x2="133.7" y2="52.0" class="dg-arrow plain"/><polygon points="140.0,52.0 132.3,56.6 132.3,47.4" class="dg-head plain"/>
+<line x1="490" y1="50" x2="452.3" y2="50.0" class="dg-arrow plain"/><polygon points="446.0,50.0 453.7,45.4 453.7,54.6" class="dg-head plain"/>
+<text x="242" y="34" text-anchor="middle" class="dg-label-water">trench</text>
+<text x="395" y="18" text-anchor="middle" class="dg-label">volcano</text>
+<text x="100" y="80" text-anchor="middle" class="dg-label">oceanic plate</text>
+<text x="460" y="92" text-anchor="middle" class="dg-label">continental plate</text>
+<text x="352" y="146" class="dg-label-hot">magma rises</text>
+<text x="194" y="140" text-anchor="end" class="dg-label">denser plate</text>
+<rect x="200" y="126" width="52" height="20" rx="3" class="dg-tag"/><text x="226" y="140" text-anchor="middle" class="dg-tag-answer">sinks</text>
+<text x="120" y="180" text-anchor="middle" class="dg-label-sm">mantle</text>
+</svg>
+<figcaption>Ocean meets continent. The denser oceanic plate dives under, making a deep trench. Rock melts as it sinks, and the magma rises to feed volcanoes on the continent.</figcaption>
+</figure>
+<!-- /viz:subduction -->
+<p><strong>Alberta connection:</strong> The Rocky Mountains formed ~100 million years ago when oceanic plates pushed under North America, and later continental collision crumpled up the layers. Alberta itself was pushed and folded. Alberta is safe from active tectonics today, but its rocks still record that ancient collision.</p>
+<hr class="section-break"/>
+<p><strong>TRANSFORM BOUNDARY</strong> — plates <span class="ak-fill">slide</span> sideways past each other</p>
+<p>Features: earthquakes; no new crust, no subduction; the two plates grind and lock</p>
+<p>Example: <span class="ak-fill">San Andreas</span> Fault, California — North American plate grinding past Pacific plate</p>
 <!-- viz:transform -->
 <figure class="viz">
 <!-- tikz: boundary-transform | plan-view | offset-stream -->
@@ -1188,28 +1153,83 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Transform boundary, seen from above. The plates grind past each other, so a stream that once ran straight across the fault is now offset.</figcaption>
 </figure>
 <!-- /viz:transform -->
-<td>San Andreas</td>
-<td>&nbsp;</td>
+<hr class="section-break"/>
+<p><strong>Diagram — draw and label the three boundary types (one simple sketch each):</strong></p>
+<p> </p>
+<p> </p>
+<p> </p>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What drives the movement of tectonic plates?<div class="ak-answer"><span class="ak-label">Answer</span> Convection currents in the mantle — hot rock rises, spreads, cools, and sinks, slowly carrying the plates.</div></li>
+
+<li>Name the three boundary types and identify ONE feature produced at each.<div class="ak-answer"><span class="ak-label">Answer</span> Divergent: plates move apart — mid-ocean ridges, new seafloor, rift valleys. Convergent: plates move together — mountains, trenches, volcanoes. Transform: plates slide past each other — earthquakes.</div></li>
+
+
+<li>Why do mountains form at continent-continent convergent boundaries?<div class="ak-answer"><span class="ak-label">Answer</span> Continental crust is too light to sink into the mantle, so neither plate subducts. The rock crumples and is pushed upward.</div></li>
+
+<li>Most earthquakes and volcanoes occur in predictable locations. What does this tell us about where plate boundaries are?<div class="ak-answer"><span class="ak-label">Answer</span> Plate boundaries lie where the earthquakes and volcanoes are. Mapping them outlines the edges of the plates.</div></li>
+
+<li><strong>Stretch:</strong> Iceland has active volcanoes and is slowly splitting apart. Scientists predict it will eventually divide into two islands. Explain what type of boundary runs through Iceland and what geological process is occurring.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> A divergent boundary — the Mid-Atlantic Ridge runs through Iceland. The North American and Eurasian plates are moving apart, magma rises into the gap, and it cools into new crust. This is the same process that makes new seafloor.</div></li>
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/><div class="ak-answer"><span class="ak-label">More answers for this section</span> <ul><li>Divergent: arrows pointing apart (← →) with magma rising between. Convergent: arrows pointing together (→ ←) with one plate sinking under the other, or both crumpling up. Transform: arrows passing in opposite directions side by side</li></ul></div>
+<h2 class="section-title" id="s4">Section 4: Earthquakes and Volcanoes</h2>
+<p><strong>Learning target:</strong> I can explain how earthquakes occur and describe two types of volcanoes in terms of their eruption style.</p>
+<h3>Vocabulary</h3>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Term</th>
+<th>Definition in your own words</th>
+<th>One example</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Fault</td>
+<td><span class="ak-fill">A break in Earth's crust along which rock moves</span></td>
+<td><span class="ak-fill">San Andreas Fault</span></td>
 </tr>
 <tr>
-<td>Draw and label the three boundary types</td>
-<td>Divergent: arrows pointing apart (← →) with magma rising between. Convergent: arrows pointing together (→ ←) with one plate sinking under the other, or both crumpling up. Transform: arrows passing in opposite directions side by side</td>
-<td>&nbsp;</td>
+<td>Focus (hypocenter)</td>
+<td><span class="ak-fill">The point underground where the rock first breaks</span></td>
+<td><span class="ak-fill">10 km below the surface</span></td>
+</tr>
+<tr>
+<td>Epicenter</td>
+<td><span class="ak-fill">The point on the surface directly above the focus</span></td>
+<td><span class="ak-fill">The location named in news reports</span></td>
+</tr>
+<tr>
+<td>Richter scale</td>
+<td><span class="ak-fill">A scale that measures the energy an earthquake releases</span></td>
+<td><span class="ak-fill">A magnitude 7 earthquake</span></td>
+</tr>
+<tr>
+<td>Mercalli scale</td>
+<td><span class="ak-text">A scale that rates an earthquake by its observed effects and damage</span></td>
+<td><span class="ak-fill">Level VI: felt by everyone, objects fall</span></td>
+</tr>
+<tr>
+<td>Shield volcano</td>
+<td><span class="ak-fill">A wide, gently sloping volcano built by runny lava</span></td>
+<td><span class="ak-fill">Mauna Loa, Kilauea</span></td>
+</tr>
+<tr>
+<td>Composite (stratovolcano)</td>
+<td><span class="ak-text">A steep, cone-shaped volcano with thick lava and explosive eruptions</span></td>
+<td><span class="ak-fill">Mt. St. Helens</span></td>
 </tr>
 </tbody></table></div>
-<h3>Retrieval Check — Section 3</h3>
-<ol start="1">
-  <li>Convection currents in the mantle — hot rock rises, spreads, cools, and sinks, slowly carrying the plates.</li>
-  <li>Divergent: plates move apart — mid-ocean ridges, new seafloor, rift valleys. Convergent: plates move together — mountains, trenches, volcanoes. Transform: plates slide past each other — earthquakes.</li>
-  <li>Continental crust is too light to sink into the mantle, so neither plate subducts. The rock crumples and is pushed upward.</li>
-  <li>Plate boundaries lie where the earthquakes and volcanoes are. Mapping them outlines the edges of the plates.</li>
-  <li><strong>Stretch:</strong> A divergent boundary — the Mid-Atlantic Ridge runs through Iceland. The North American and Eurasian plates are moving apart, magma rises into the gap, and it cools into new crust. This is the same process that makes new seafloor.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s4" class="section-title">Section 4: Earthquakes and Volcanoes</h2>
+<h3>Guided Notes</h3>
+<p><strong>Earthquakes:</strong></p>
+<p>Plates are locked together at their boundaries by <span class="ak-fill">friction</span>. As plates try to move, <span class="ak-fill">stress (pressure / stored energy)</span> builds. When the stress exceeds the strength of the rock, the rock <span class="ak-fill">breaks and slips suddenly</span> — seismic waves radiate outward in all directions.</p>
+<ul>
+<li><strong>Focus (hypocenter):</strong> the <span class="ak-fill">point</span> where the rock breaks (underground)</li>
+<li><strong>Epicenter:</strong> the point on the <span class="ak-fill">surface</span> directly above the focus; where shaking is usually strongest</li>
+</ul>
 <!-- viz:focus-epicenter -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: focus-epicenter | fault=diagonal | waves=3 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 200" aria-label="Cross-section of the ground with a fault. Seismic waves spread in circles from the focus, where rock breaks underground. Straight above it on the surface is the epicenter, a blank, where a house shakes the most." width="480" height="200">
 <rect x="10" y="50" width="460" height="140" class="dg-fill-earth"/>
@@ -1234,9 +1254,55 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>The rock breaks at the focus, deep underground. The epicenter is the spot on the surface straight above it, where the shaking is usually strongest.</figcaption>
 </figure>
 <!-- /viz:focus-epicenter -->
+<p><strong>Measuring earthquakes:</strong></p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Scale</th>
+<th>What it measures</th>
+<th>Type of measurement</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Richter</td>
+<td>Energy <span class="ak-fill">released</span> at the earthquake's focus</td>
+<td>Instrument-based; logarithmic (magnitude 6 = 10× more energy than magnitude 5)</td>
+</tr>
+<tr>
+<td>Mercalli</td>
+<td><span class="ak-fill">observed (damage)</span> effects — what people experience and see</td>
+<td>Observational; I (not felt) to XII (total destruction)</td>
+</tr>
+</tbody></table></div>
+<p>An earthquake of magnitude 7.0 on the Richter scale releases <span class="ak-fill">10</span>× more energy than one of magnitude 6.0.</p>
+<p><strong>Volcanoes:</strong></p>
+<p>All volcanoes form where <span class="ak-fill">magma</span> reaches the surface. Location: mostly along <span class="ak-fill">plate</span> boundaries and <span class="ak-fill">hot</span> spots (plumes of hot mantle material below the crust).</p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Type</th>
+<th>Lava viscosity</th>
+<th>Eruption style</th>
+<th>Shape</th>
+<th>Example</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Shield volcano</td>
+<td><span class="ak-fill">low</span> (fluid)</td>
+<td>gentle, flows</td>
+<td>broad, low-sloping dome</td>
+<td><span class="ak-fill">Kilauea</span>, Mauna Loa</td>
+</tr>
+<tr>
+<td>Composite (stratovolcano)</td>
+<td><span class="ak-fill">high</span> (thick)</td>
+<td>explosive, violent</td>
+<td>steep, cone-shaped</td>
+<td>Mt. Pinatubo, <span class="ak-fill">Mt. St. Helens (also Mt. Fuji, Mt. Rainier)</span></td>
+</tr>
+</tbody></table></div>
+<p><em>Why does lava viscosity affect eruption style?</em> Fluid lava lets gas escape gradually → gentle flow. Thick lava traps <span class="ak-fill">gas</span> → pressure builds until an explosive release.</p>
 <!-- viz:two-volcanoes -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: volcano-profiles | shield | composite -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 200" aria-label="Left: a shield volcano, a wide low dome with runny lava flowing far down its sides; runny lava lets gas escape, so eruptions are gentle. Right: a composite volcano, a steep cone with layers of ash and lava and an ash cloud above; thick lava traps a blank, gas, so it explodes." width="520" height="200">
 <path d="M20 150 Q 130 90 240 150 Z" class="dg-fill-earth"/>
@@ -1258,157 +1324,99 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Runny lava lets gas bubble out, so it flows far and builds a wide, gentle dome. Thick lava traps gas until it blasts out, building a steep cone of ash and lava layers.</figcaption>
 </figure>
 <!-- /viz:two-volcanoes -->
+<p><strong>Alberta and geological hazards:</strong></p>
+<ul>
+<li>Alberta is geologically stable — far from active plate boundaries</li>
+<li>Occasional small earthquakes in Alberta from <span class="ak-fill">hydraulic fracturing (fracking)</span> and <span class="ak-fill">waste-water injection</span> (human-caused: fracking, waste water injection)</li>
+<li>No volcanoes in Alberta; however, Alberta residents experience smoke from BC/Washington volcanic region</li>
+</ul>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What causes an earthquake at the particle level? (What is actually happening in the rock?)<div class="ak-answer"><span class="ak-label">Answer</span> Rock along a fault is locked by friction while the plates keep trying to move, so stress builds. When the stress is greater than the rock's strength, the rock breaks and slips suddenly, releasing energy as seismic waves.</div></li>
+
+<li>What is the difference between the focus and epicenter of an earthquake?<div class="ak-answer"><span class="ak-label">Answer</span> The focus is the point underground where the rock breaks. The epicenter is the point on the surface directly above it.</div></li>
+
+<li>Compare the Richter scale and Mercalli scale — what does each measure?<div class="ak-answer"><span class="ak-label">Answer</span> Richter measures the energy released, using instruments. Mercalli describes the effects — what people feel and the damage observed.</div></li>
+
+<li>A volcano in Hawaii has gentle lava flows that tourists can watch from nearby. What type is it and why is its lava so fluid?<div class="ak-answer"><span class="ak-label">Answer</span> A shield volcano. Its lava has low viscosity (it is runny), so gas escapes easily and the lava flows gently instead of exploding.</div></li>
+
+<li><strong>Stretch:</strong> The 1980 eruption of Mt. St. Helens was highly explosive and killed 57 people. The 1984 eruption of Mauna Loa in Hawaii lasted several weeks and caused almost no casualties despite being a larger eruption in terms of lava volume. Explain this difference using lava viscosity.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> Mauna Loa's low-viscosity lava lets gas escape gradually, so it erupts as slow flows that people can move away from. Mt. St. Helens has thick, high-viscosity magma that traps gas; pressure built up and was released in a sudden explosion. The eruption style, not the volume of lava, determines the danger.</div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="s5">Section 5: Weathering, Erosion, and Alberta Landforms</h2>
+<p><strong>Learning target:</strong> I can describe mechanical and chemical weathering, explain erosion and deposition, and identify Alberta landforms they have produced.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Fault</td>
-<td>A break in Earth's crust along which rock moves</td>
-<td>San Andreas Fault</td>
+<td>Weathering</td>
+<td><span class="ak-fill">The breaking down of rock at or near the surface</span></td>
+<td><span class="ak-fill">A cliff face crumbling</span></td>
 </tr>
 <tr>
-<td>Focus (hypocenter)</td>
-<td>The point underground where the rock first breaks</td>
-<td>10 km below the surface</td>
+<td>Mechanical weathering</td>
+<td><span class="ak-text">Breaking rock into smaller pieces without changing what it is made of</span></td>
+<td><span class="ak-fill">Freeze-thaw cracking</span></td>
 </tr>
 <tr>
-<td>Epicenter</td>
-<td>The point on the surface directly above the focus</td>
-<td>The location named in news reports</td>
+<td>Chemical weathering</td>
+<td><span class="ak-fill">Breaking down rock by changing what it is made of</span></td>
+<td><span class="ak-fill">Rusting; acid dissolving limestone</span></td>
 </tr>
 <tr>
-<td>Richter scale</td>
-<td>A scale that measures the energy an earthquake releases</td>
-<td>A magnitude 7 earthquake</td>
+<td>Erosion</td>
+<td><span class="ak-text">The moving of weathered material by water, wind, ice, or gravity</span></td>
+<td><span class="ak-fill">A river carrying silt</span></td>
 </tr>
 <tr>
-<td>Mercalli scale</td>
-<td>A scale that rates an earthquake by its observed effects and damage</td>
-<td>Level VI: felt by everyone, objects fall</td>
+<td>Deposition</td>
+<td><span class="ak-fill">The dropping of eroded material in a new place</span></td>
+<td><span class="ak-fill">A sandbar; a river delta</span></td>
 </tr>
 <tr>
-<td>Shield volcano</td>
-<td>A wide, gently sloping volcano built by runny lava</td>
-<td>Mauna Loa, Kilauea</td>
-</tr>
-<tr>
-<td>Composite (stratovolcano)</td>
-<td>A steep, cone-shaped volcano with thick lava and explosive eruptions</td>
-<td>Mt. St. Helens</td>
+<td>Glacial till</td>
+<td><span class="ak-text">The unsorted mix of clay, sand, gravel, and boulders left by a glacier</span></td>
+<td><span class="ak-fill">The soil under much of the prairies</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
+<p><strong>Weathering</strong> = the <span class="ak-fill">breaking down</span> of rock at or near the surface. Important: weathering does NOT move material — it only <span class="ak-fill">breaks</span> it.</p>
+<p><strong>Two types:</strong></p>
+<p><strong>MECHANICAL WEATHERING</strong> — rock is broken into smaller pieces but <span class="ak-fill">composition (what the rock is made of)</span> does not change</p>
 <div class="vocab-wrap"><table>
 <thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
+<th>Process</th>
+<th>How it works</th>
+<th>Alberta example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Plates are locked together by ___</td>
-<td>friction</td>
-<td>&nbsp;</td>
+<td>Freeze-thaw</td>
+<td>Water enters cracks, freezes, expands, widens crack</td>
+<td>Rocky Mountain trails crumble every spring</td>
 </tr>
 <tr>
-<td>As plates try to move, ___ builds</td>
-<td>stress (pressure / stored energy)</td>
-<td>&nbsp;</td>
+<td>Root growth</td>
+<td>Plant roots grow into cracks, pry rock apart</td>
+<td><span class="ak-fill">tree roots splitting rock on mountain slopes (or lifting sidewalks)</span></td>
 </tr>
 <tr>
-<td>the rock ___</td>
-<td>breaks and slips suddenly</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Focus: the ___ where the rock breaks</td>
-<td>point</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Epicenter: the point on the ___</td>
-<td>surface</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Richter — energy ___ at the focus</td>
-<td>released</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Mercalli — ___ effects</td>
-<td>observed (damage)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Magnitude 7.0 releases ___× more energy than 6.0</td>
-<td>10</td>
-<td>This matches the notes. Strictly, each whole number is 10× the shaking and about 32× the energy — accept 10 at this level</td>
-</tr>
-<tr>
-<td>All volcanoes form where ___ reaches the surface</td>
-<td>magma</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>mostly along ___ boundaries</td>
-<td>plate</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>and ___ spots</td>
-<td>hot</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Shield volcano — lava viscosity</td>
-<td>low</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Shield volcano — example: ___, Mauna Loa</td>
-<td>Kilauea</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Composite — lava viscosity</td>
-<td>high</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Composite — example: Mt. Pinatubo, ___</td>
-<td>Mt. St. Helens (also Mt. Fuji, Mt. Rainier)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Thick lava traps ___</td>
-<td>gas</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>small earthquakes in Alberta from ___ and ___</td>
-<td>hydraulic fracturing (fracking); waste-water injection</td>
-<td>The bracket in the notes names both; also accept "oil and gas activity"</td>
+<td>Abrasion</td>
+<td>Particles carried by wind/water/ice scratch rock</td>
+<td><span class="ak-fill">glaciers scraping bedrock in the Rockies; wind-blown sand in the Badlands</span></td>
 </tr>
 </tbody></table></div>
-<h3>Retrieval Check — Section 4</h3>
-<ol start="1">
-  <li>Rock along a fault is locked by friction while the plates keep trying to move, so stress builds. When the stress is greater than the rock's strength, the rock breaks and slips suddenly, releasing energy as seismic waves.</li>
-  <li>The focus is the point underground where the rock breaks. The epicenter is the point on the surface directly above it.</li>
-  <li>Richter measures the energy released, using instruments. Mercalli describes the effects — what people feel and the damage observed.</li>
-  <li>A shield volcano. Its lava has low viscosity (it is runny), so gas escapes easily and the lava flows gently instead of exploding.</li>
-  <li><strong>Stretch:</strong> Mauna Loa's low-viscosity lava lets gas escape gradually, so it erupts as slow flows that people can move away from. Mt. St. Helens has thick, high-viscosity magma that traps gas; pressure built up and was released in a sudden explosion. The eruption style, not the volume of lava, determines the danger.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s5" class="section-title">Section 5: Weathering, Erosion, and Alberta Landforms</h2>
 <!-- viz:freeze-thaw -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: freeze-thaw-3-panel | crack-width=10,20,30 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 170" aria-label="Three panels of a rock with a crack. One: during the day, above zero, water seeps into the crack. Two: at night, below zero, the water freezes and a blank, expands, pushing the crack wider. Three: after many cycles the crack widens and the rock splits." width="520" height="170">
 <text x="75" y="20" text-anchor="middle" class="dg-label">1. Water seeps in</text>
@@ -1432,9 +1440,34 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Freeze-thaw. Water takes up about 9% more space as ice, so every freeze pries the crack a little wider. Alberta's many freeze-thaw days make this a big deal in the mountains.</figcaption>
 </figure>
 <!-- /viz:freeze-thaw -->
+<p><strong>CHEMICAL WEATHERING</strong> — <span class="ak-fill">composition</span> of rock changes; minerals react with water, oxygen, or acids</p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Process</th>
+<th>How it works</th>
+<th>Example</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Acid rain</td>
+<td>CO₂ + water → carbonic acid dissolves limestone</td>
+<td><span class="ak-fill">limestone caves in the Rockies; worn limestone gravestones and statues</span></td>
+</tr>
+<tr>
+<td>Oxidation</td>
+<td>Oxygen reacts with iron in rocks → rust</td>
+<td>red/orange rocks in Alberta Badlands</td>
+</tr>
+<tr>
+<td>Dissolution</td>
+<td>Some minerals dissolve directly in water</td>
+<td><span class="ak-fill">rock salt or gypsum dissolving (sinkholes in northern Alberta)</span></td>
+</tr>
+</tbody></table></div>
+<p><strong>Erosion</strong> = transport of weathered material by <span class="ak-fill">water</span>, <span class="ak-fill">wind</span>, <span class="ak-fill">ice (glaciers)</span>, or <span class="ak-fill">gravity</span>. The agent determines what size of material is moved and where it goes.</p>
+<p><strong>Deposition</strong> = material <span class="ak-fill">is dropped (settles)</span> when the agent slows down. Larger/heavier particles settle first; finer particles travel farther.</p>
 <!-- viz:erosion-deposition -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: source-to-sink | mountain | river | sea | sorting -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 540 192" aria-label="A mountain, a river and the sea. Weathering breaks the mountain rock. Erosion, a blank, carries pieces down the river. Deposition, a blank, drops them where the river reaches the sea. Big rocks are dropped first near the mountain, pebbles and sand further on, and fine mud farthest out." width="540" height="192">
 <polygon points="10,150 80,56 150,150" class="dg-fill-earth"/>
@@ -1458,9 +1491,47 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Weathering breaks rock where it sits, erosion carries it, and deposition drops it when the water slows. Heavy pieces settle first; fine mud travels farthest.</figcaption>
 </figure>
 <!-- /viz:erosion-deposition -->
+<p><strong>Alberta landforms — what made them:</strong></p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Landform</th>
+<th>Location</th>
+<th>How it formed</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Rocky Mountains</td>
+<td>SW Alberta</td>
+<td><span class="ak-fill">plate collision — rock layers folded and pushed up</span> (plate tectonics) + glacial erosion</td>
+</tr>
+<tr>
+<td>Hoodoos</td>
+<td>Drumheller / Badlands</td>
+<td><span class="ak-fill">differential (uneven)</span> erosion of soft and hard rock layers</td>
+</tr>
+<tr>
+<td>Prairies</td>
+<td>central/southern Alberta</td>
+<td><span class="ak-fill">glacial</span> deposition of glacial till after the last ice age</td>
+</tr>
+<tr>
+<td>River valleys (Bow, Red Deer)</td>
+<td>throughout Alberta</td>
+<td><span class="ak-fill">water (river)</span> erosion cutting downward over thousands of years</td>
+</tr>
+<tr>
+<td>Athabasca Sand Dunes</td>
+<td>NE Alberta</td>
+<td><span class="ak-fill">wind</span> erosion of exposed sandstone + wind transport</td>
+</tr>
+<tr>
+<td>Glacial erratics</td>
+<td>throughout prairies</td>
+<td>boulders transported hundreds of km by <span class="ak-fill">glaciers (ice sheets)</span> during last ice age; dropped when glacier melted</td>
+</tr>
+</tbody></table></div>
 <!-- viz:hoodoo -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: hoodoo | caprock=hard | pillar=soft -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 460 235" aria-label="A hoodoo: a pillar of soft layered rock with a hard caprock on top. Rain and wind wear away the soft rock around it faster. Label: a blank, differential, erosion: soft rock wears away faster than hard rock." width="460" height="235">
 <line x1="150" y1="14" x2="146" y2="30" class="dg-arrow water thin"/><line x1="290" y1="14" x2="286" y2="30" class="dg-arrow water thin"/><line x1="310" y1="44" x2="306" y2="60" class="dg-arrow water thin"/><line x1="130" y1="44" x2="126" y2="60" class="dg-arrow water thin"/>
@@ -1485,157 +1556,116 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>A Drumheller hoodoo. A hard cap of sandstone shields the softer layers underneath, while rain and wind wear away the unprotected rock around it.</figcaption>
 </figure>
 <!-- /viz:hoodoo -->
+<div class="connection">
+<div class="c-label">MISCONCEPTION</div>
+<p><em>"Geological change is always dramatic and fast — like earthquakes and eruptions."</em> <strong>Why this is wrong:</strong> Most geological change is <span class="ak-fill">slow (gradual)</span>. The Rocky Mountains grew at the rate of centimetres per year over millions of years. River valleys cut downward millimetre by millimetre per year. The prairies were shaped by glaciers that moved at the speed of <span class="ak-fill">a few metres per year (slower than a snail)</span>. Dramatic events like floods and earthquakes exist but represent a tiny fraction of Earth's geological history.</p>
+</div>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What is the difference between weathering and erosion?<div class="ak-answer"><span class="ak-label">Answer</span> Weathering breaks rock down where it sits. Erosion carries the broken material away.</div></li>
+
+<li>Give one example of mechanical weathering and one of chemical weathering. Explain the difference.<div class="ak-answer"><span class="ak-label">Answer</span> Mechanical, e.g., freeze-thaw — water freezes in cracks, expands, and splits the rock. Chemical, e.g., oxidation — iron in the rock reacts with oxygen and rusts. Mechanical changes only the size of the pieces; chemical changes what the rock is made of.</div></li>
+
+<li>Explain what hoodoos are and how they form in the Alberta Badlands.<div class="ak-answer"><span class="ak-label">Answer</span> Hoodoos are tall pillars of soft rock topped by a harder cap. The cap protects the rock directly beneath it while wind and water wear away the softer rock around it (differential erosion).</div></li>
+
+<li>What left the large boulders (glacial erratics) scattered across the Alberta prairies, far from any mountains?<div class="ak-answer"><span class="ak-label">Answer</span> Glaciers. During the last ice age, ice sheets carried boulders hundreds of kilometres and dropped them when the ice melted.</div></li>
+
+<li><strong>Stretch:</strong> A student says Alberta's flat prairies look that way because "nothing has ever happened there geologically." Using what you know about glaciation, deposition, and time, explain why this is wrong.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> A great deal happened. Ice sheets up to kilometres thick covered Alberta, scraped the land, and left a thick, even layer of glacial till when they melted; meltwater lakes left flat beds of fine sediment. The flatness is the result of that deposition. It happened slowly and long ago, not "never."</div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="s6">Section 6: Fossils and Geological Time</h2>
+<p><strong>Learning target:</strong> I can explain how fossils form, use relative dating to interpret rock layers, and describe Alberta's fossil significance.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
+<th>Definition in your own words</th>
+<th>One example</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Fossil</td>
+<td><span class="ak-fill">Any preserved evidence of past life</span></td>
+<td><span class="ak-fill">Bone, shell, leaf imprint, footprint</span></td>
+</tr>
+<tr>
+<td>Index fossil</td>
+<td><span class="ak-text">A fossil of an organism that was common, widespread, and lived for only a short time; used to match rock ages</span></td>
+<td><span class="ak-fill">Ammonites, trilobites</span></td>
+</tr>
+<tr>
+<td>Relative dating</td>
+<td><span class="ak-text">Working out whether a rock or fossil is older or younger than another, without an age in years</span></td>
+<td><span class="ak-fill">"This layer is older than that one"</span></td>
+</tr>
+<tr>
+<td>Law of superposition</td>
+<td><span class="ak-text">In undisturbed rock, lower layers are older and upper layers are younger</span></td>
+<td><span class="ak-fill">Layers in the Badlands</span></td>
+</tr>
+<tr>
+<td>Geological time scale</td>
+<td><span class="ak-fill">The timeline of Earth's history, divided into eras</span></td>
+<td><span class="ak-fill">Mesozoic era — the age of dinosaurs</span></td>
+</tr>
+</tbody></table></div>
+<h3>Guided Notes</h3>
+<p><strong>What is a fossil?</strong> Any <span class="ak-fill">evidence (trace)</span> of past life preserved in rock or sediment. Not just bones.</p>
+<p><strong>Types of fossils:</strong></p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Type</th>
+<th>How it forms</th>
 <th>Example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Weathering</td>
-<td>The breaking down of rock at or near the surface</td>
-<td>A cliff face crumbling</td>
+<td>Replacement</td>
+<td>minerals replace original material atom by atom</td>
+<td>petrified wood, many dinosaur bones</td>
 </tr>
 <tr>
-<td>Mechanical weathering</td>
-<td>Breaking rock into smaller pieces without changing what it is made of</td>
-<td>Freeze-thaw cracking</td>
+<td>Mould</td>
+<td>organism dissolves, leaving a <span class="ak-fill">hollow impression (cavity)</span> in rock</td>
+<td>shell impression</td>
 </tr>
 <tr>
-<td>Chemical weathering</td>
-<td>Breaking down rock by changing what it is made of</td>
-<td>Rusting; acid dissolving limestone</td>
+<td>Cast</td>
+<td>mould fills with minerals, creating a 3D <span class="ak-fill">copy (replica)</span></td>
+<td>cast of a shell</td>
 </tr>
 <tr>
-<td>Erosion</td>
-<td>The moving of weathered material by water, wind, ice, or gravity</td>
-<td>A river carrying silt</td>
+<td>Compression</td>
+<td>organism flattened under sediment pressure</td>
+<td>leaf fossils, fern imprints</td>
 </tr>
 <tr>
-<td>Deposition</td>
-<td>The dropping of eroded material in a new place</td>
-<td>A sandbar; a river delta</td>
+<td>Amber preservation</td>
+<td>organism trapped in tree resin, now hardened</td>
+<td>insects in amber</td>
 </tr>
 <tr>
-<td>Glacial till</td>
-<td>The unsorted mix of clay, sand, gravel, and boulders left by a glacier</td>
-<td>The soil under much of the prairies</td>
+<td>Trace fossil</td>
+<td>preserved <span class="ak-fill">activity (behaviour)</span> of an organism, not the organism itself</td>
+<td>footprints, burrows, coprolites (fossil dung)</td>
 </tr>
 </tbody></table></div>
-<h3>Guided Notes</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Weathering = the ___ of rock</td>
-<td>breaking down</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>it only ___ it</td>
-<td>breaks</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>MECHANICAL — ___ does not change</td>
-<td>composition (what the rock is made of)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Root growth — Alberta example</td>
-<td>tree roots splitting rock on mountain slopes (or lifting sidewalks)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Abrasion — Alberta example</td>
-<td>glaciers scraping bedrock in the Rockies; wind-blown sand in the Badlands</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>CHEMICAL — ___ of rock changes</td>
-<td>composition</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Acid rain — example</td>
-<td>limestone caves in the Rockies; worn limestone gravestones and statues</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Dissolution — example</td>
-<td>rock salt or gypsum dissolving (sinkholes in northern Alberta)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Erosion = transport by (4 blanks)</td>
-<td>water, wind, ice (glaciers), gravity</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Deposition = material ___</td>
-<td>is dropped (settles)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Rocky Mountains — how formed</td>
-<td>plate collision — rock layers folded and pushed up</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Hoodoos — ___ erosion</td>
-<td>differential (uneven)</td>
-<td>A hard cap rock protects the softer rock below</td>
-</tr>
-<tr>
-<td>Prairies — ___ deposition</td>
-<td>glacial</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>River valleys — ___ erosion</td>
-<td>water (river)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Athabasca Sand Dunes — ___ erosion</td>
-<td>wind</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Glacial erratics — transported by ___</td>
-<td>glaciers (ice sheets)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Misconception box — most geological change is ___</td>
-<td>slow (gradual)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>glaciers that moved at the speed of ___</td>
-<td>a few metres per year (slower than a snail)</td>
-<td>Accept any image of extreme slowness</td>
-</tr>
-</tbody></table></div>
-<h3>Retrieval Check — Section 5</h3>
-<ol start="1">
-  <li>Weathering breaks rock down where it sits. Erosion carries the broken material away.</li>
-  <li>Mechanical, e.g., freeze-thaw — water freezes in cracks, expands, and splits the rock. Chemical, e.g., oxidation — iron in the rock reacts with oxygen and rusts. Mechanical changes only the size of the pieces; chemical changes what the rock is made of.</li>
-  <li>Hoodoos are tall pillars of soft rock topped by a harder cap. The cap protects the rock directly beneath it while wind and water wear away the softer rock around it (differential erosion).</li>
-  <li>Glaciers. During the last ice age, ice sheets carried boulders hundreds of kilometres and dropped them when the ice melted.</li>
-  <li><strong>Stretch:</strong> A great deal happened. Ice sheets up to kilometres thick covered Alberta, scraped the land, and left a thick, even layer of glacial till when they melted; meltwater lakes left flat beds of fine sediment. The flatness is the result of that deposition. It happened slowly and long ago, not "never."</li>
+<div class="connection">
+<div class="c-label">MISCONCEPTION</div>
+<p><em>"Fossils are mostly large dinosaur bones."</em> <strong>Why this is wrong:</strong> Most fossils are <span class="ak-fill">small (microscopic / microfossils)</span> — microscopic algae, pollen, bacteria. Large bones are rare because they require very specific conditions to preserve (rapid burial, mineral-rich water, no scavengers). The vast majority of the fossil record consists of shells, marine invertebrates, plant fragments, and microfossils. Alberta's Badlands fossil sites are remarkable precisely because large dinosaur fossils ARE found there — they are the exception.</p>
+</div>
+<p><strong>How fossils form (conditions needed):</strong></p>
+<ol>
+<li>Organism must be <span class="ak-fill">buried</span> quickly (before decomposition or scavenging)</li>
+<li>Burial must occur in <span class="ak-fill">sediment (mud, sand, silt)</span> — the only environment where sedimentary rock forms</li>
+<li>Mineral-rich groundwater slowly replaces or fills the hard parts over <span class="ak-fill">thousands to millions</span> of years</li>
 </ol>
-<hr class="section-break">
-<h2 id="s6" class="section-title">Section 6: Fossils and Geological Time</h2>
 <!-- viz:fossil-formation -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: fossil-4-panel | dies | buried | mineralized | exposed -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 540 170" aria-label="Four panels. One: a fish dies and lands on the mud. Two: it is quickly a blank, buried, by layers of sediment. Three: minerals replace the bone over thousands to millions of years. Four: erosion wears the rock away and exposes the fossil." width="540" height="170">
 <text x="18" y="20" class="dg-title">1 · Dies</text>
@@ -1663,9 +1693,11 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Four steps from living fish to fossil. If any step fails, especially fast burial, there is no fossil.</figcaption>
 </figure>
 <!-- /viz:fossil-formation -->
+<p><strong>Dating rock layers:</strong></p>
+<p><strong>Law of superposition:</strong> In undisturbed rock layers, <span class="ak-fill">lower (deeper)</span> layers are older and <span class="ak-fill">upper (top)</span> layers are younger. This allows relative dating — we can say layer A is older than layer B without knowing the actual age in years.</p>
+<p><strong>Index fossils:</strong> fossils of organisms that were <span class="ak-fill">abundant (common)</span> (found in many locations), <span class="ak-fill">widespread</span> (spread across different rock types), and existed for a <span class="ak-fill">short</span> time period. If you find the same index fossil in rocks in two different places, those rocks are the same <span class="ak-fill">age</span>.</p>
 <!-- viz:superposition-index -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: rock-columns-correlation | sites=2 | index=ammonite -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 210" aria-label="Two columns of rock layers, Site A and Site B, with younger layers at the top and older at the bottom. Both contain a limestone layer with the same ammonite index fossil, at different depths. Dashed lines connect them: same index fossil, same blank, age." width="520" height="210">
 <text x="120" y="20" text-anchor="middle" class="dg-title">Site A</text>
@@ -1693,9 +1725,56 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>In each stack the bottom layer is oldest. The same ammonite turns up in both places, so those two limestone layers formed at the same time, even though they sit at different depths.</figcaption>
 </figure>
 <!-- /viz:superposition-index -->
+<p><strong>Relative vs. absolute dating:</strong></p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Method</th>
+<th>What it tells you</th>
+<th>Examples</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Relative dating</td>
+<td>Which layers are <span class="ak-fill">older</span> or <span class="ak-fill">younger</span> than others</td>
+<td>Law of superposition, index fossils</td>
+</tr>
+<tr>
+<td>Absolute dating</td>
+<td>Actual <span class="ak-fill">age in years</span> of the rock or fossil</td>
+<td>Radioactive decay (not required at Grade 7 level)</td>
+</tr>
+</tbody></table></div>
+<p><strong>Geological time scale — broad eras:</strong></p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Era</th>
+<th>Approximate time range</th>
+<th>Life present</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Precambrian</td>
+<td>4.6 billion – 540 million years ago</td>
+<td>simple single-celled life; late period: first multicellular life</td>
+</tr>
+<tr>
+<td>Paleozoic</td>
+<td>540 – 252 million years ago</td>
+<td>marine invertebrates, fish, first land plants, first reptiles</td>
+</tr>
+<tr>
+<td>Mesozoic</td>
+<td>252 – 66 million years ago</td>
+<td><span class="ak-fill">dinosaur ("Age of Reptiles")</span> era; mammals appear; Alberta's oil sands deposit</td>
+</tr>
+<tr>
+<td>Cenozoic</td>
+<td>66 million years ago – present</td>
+<td>mammals diversify; humans appear in last 300,000 years</td>
+</tr>
+</tbody></table></div>
 <!-- viz:time-bar -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: timeline-bar | total=4600Ma | eras=4060,288,186,66 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 540 145" aria-label="A to-scale bar of Earth's 4.6 billion year history. The Precambrian fills about 88 percent. The Paleozoic, Mesozoic and Cenozoic are thin slices at the right end. The Mesozoic is the age of the blank, dinosaurs." width="540" height="145">
 <rect x="20" y="50" width="423.7" height="34" class="dg-fill-soft"/>
@@ -1717,196 +1796,85 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>All 4.6 billion years of Earth's history as one bar, drawn to scale. The Precambrian takes up almost all of it; all of human history would be thinner than the line at the right-hand end.</figcaption>
 </figure>
 <!-- /viz:time-bar -->
-<h3>Vocabulary</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Fossil</td>
-<td>Any preserved evidence of past life</td>
-<td>Bone, shell, leaf imprint, footprint</td>
-</tr>
-<tr>
-<td>Index fossil</td>
-<td>A fossil of an organism that was common, widespread, and lived for only a short time; used to match rock ages</td>
-<td>Ammonites, trilobites</td>
-</tr>
-<tr>
-<td>Relative dating</td>
-<td>Working out whether a rock or fossil is older or younger than another, without an age in years</td>
-<td>"This layer is older than that one"</td>
-</tr>
-<tr>
-<td>Law of superposition</td>
-<td>In undisturbed rock, lower layers are older and upper layers are younger</td>
-<td>Layers in the Badlands</td>
-</tr>
-<tr>
-<td>Geological time scale</td>
-<td>The timeline of Earth's history, divided into eras</td>
-<td>Mesozoic era — the age of dinosaurs</td>
-</tr>
-</tbody></table></div>
-<h3>Guided Notes</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Any ___ of past life</td>
-<td>evidence (trace)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Mould — leaving a ___ in rock</td>
-<td>hollow impression (cavity)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Cast — creating a 3D ___</td>
-<td>copy (replica)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Trace fossil — preserved ___ of an organism</td>
-<td>activity (behaviour)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Misconception box — most fossils are ___</td>
-<td>small (microscopic / microfossils)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Organism must be ___ quickly</td>
-<td>buried</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Burial must occur in ___</td>
-<td>sediment (mud, sand, silt)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>over ___ of years</td>
-<td>thousands to millions</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>___ layers are older</td>
-<td>lower (deeper)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>___ layers are younger</td>
-<td>upper (top)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Index fossils: ___ (found in many locations)</td>
-<td>abundant (common)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>___ (spread across different rock types)</td>
-<td>widespread</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>existed for a ___ time period</td>
-<td>short</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>those rocks are the same ___</td>
-<td>age</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Relative dating — which layers are ___ or ___</td>
-<td>older; younger</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Absolute dating — actual ___</td>
-<td>age in years</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Mesozoic — ___ era</td>
-<td>dinosaur ("Age of Reptiles")</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>The ___ era rock layers are exposed in the Badlands</td>
-<td>Mesozoic (Cretaceous period)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>world's largest collection of ___ fossils</td>
-<td>dinosaur</td>
-<td>&nbsp;</td>
-</tr>
-</tbody></table></div>
-<h3>Retrieval Check — Section 6</h3>
-<ol start="1">
-  <li>Conditions: quick burial in sediment before the organism decays or is eaten; mineral-rich groundwater; a very long time. Fossils are rare because most organisms decay or are eaten first, soft parts seldom preserve, and the right conditions are uncommon.</li>
-  <li>In undisturbed rock layers, lower layers are older and upper layers are younger. It lets geologists put layers and the fossils in them in order from oldest to youngest without knowing their age in years.</li>
-  <li>Alberta's Cretaceous sedimentary layers are exposed at the surface in the Badlands, where erosion has removed the rock above. An inland sea covered Alberta about 75 million years ago, and its coastal sediments buried and preserved both marine life and dinosaurs.</li>
-  <li>Any two with how they form, e.g., mould — the organism dissolves and leaves a hollow impression; cast — a mould fills with minerals to make a 3D copy; trace fossil — a footprint or burrow is preserved; compression — a leaf is flattened under sediment; amber — an insect is trapped in hardened tree resin.</li>
-  <li><strong>Stretch:</strong> The two rock layers are the same age — they formed during the short period when that organism lived. To find the age in years she would need absolute dating (measuring radioactive decay in the rock, usually a volcanic ash layer).</li>
+<p><strong>Alberta's fossil record:</strong></p>
+<p>Alberta is one of the world's most significant fossil locations because:</p>
+<ol>
+<li>The <span class="ak-fill">Mesozoic (Cretaceous period)</span> era rock layers are exposed at the surface in the Badlands (erosion removed overlying rock)</li>
+<li>The Cretaceous interior seaway covered Alberta ~75 million years ago → preserved marine fossils AND nearby dinosaur fossils</li>
+<li><strong>Royal Tyrrell Museum (Drumheller):</strong> world's largest collection of <span class="ak-fill">dinosaur</span> fossils; one of Alberta's major scientific assets</li>
+<li><strong>Burgess Shale</strong> (BC border, UNESCO World Heritage Site): Cambrian marine life (~505 million years ago) — some of the oldest animal fossils ever found</li>
 </ol>
-<hr class="section-break">
-<h2 id="synthesis" class="section-title">Unit Synthesis</h2>
-<ol start="1">
-  <li><strong>Cross-section of the Earth.</strong> Four labelled layers with a key property each: crust (thin, solid rock; oceanic is thin and dense, continental is thick and lighter); mantle (thickest layer; hot solid rock that flows slowly; convection currents); outer core (liquid iron and nickel; makes the magnetic field); inner core (solid iron and nickel; solid because of pressure).</li>
-  <li><strong>Rock cycle.</strong> Igneous, sedimentary, and metamorphic rock connected by at least five labelled arrows: melting, then cooling → igneous; weathering, erosion, deposition, compaction and cementation → sedimentary; heat and pressure → metamorphic. Any rock type can become any other.</li>
-</ol>
-<ol start="3">
-  <li><strong>Table from memory:</strong></li>
-</ol>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What conditions are needed for fossilization? Why are fossils rare compared to the number of organisms that ever lived?<div class="ak-answer"><span class="ak-label">Answer</span> Conditions: quick burial in sediment before the organism decays or is eaten; mineral-rich groundwater; a very long time. Fossils are rare because most organisms decay or are eaten first, soft parts seldom preserve, and the right conditions are uncommon.</div></li>
+
+<li>What is the law of superposition? How does it allow relative dating?<div class="ak-answer"><span class="ak-label">Answer</span> In undisturbed rock layers, lower layers are older and upper layers are younger. It lets geologists put layers and the fossils in them in order from oldest to youngest without knowing their age in years.</div></li>
+
+<li>Why is Alberta such a significant location for Cretaceous fossils specifically?<div class="ak-answer"><span class="ak-label">Answer</span> Alberta's Cretaceous sedimentary layers are exposed at the surface in the Badlands, where erosion has removed the rock above. An inland sea covered Alberta about 75 million years ago, and its coastal sediments buried and preserved both marine life and dinosaurs.</div></li>
+
+<li>Name two types of fossils other than bones. Explain how each forms.<div class="ak-answer"><span class="ak-label">Answer</span> Any two with how they form, e.g., mould — the organism dissolves and leaves a hollow impression; cast — a mould fills with minerals to make a 3D copy; trace fossil — a footprint or burrow is preserved; compression — a leaf is flattened under sediment; amber — an insect is trapped in hardened tree resin.</div></li>
+
+<li><strong>Stretch:</strong> You find two rock outcrops 200 km apart. Both contain the same index fossil. What can you conclude about these rocks? What else would you need to know to determine the actual age of the rocks in years?<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> The two rock layers are the same age — they formed during the short period when that organism lived. To find the age in years she would need absolute dating (measuring radioactive decay in the rock, usually a volcanic ash layer).</div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="synthesis">Unit Synthesis</h2>
+<p><em>Complete this page from memory — notes closed. Then open your notes and check.</em></p>
+<p><strong>1.</strong> Draw and label a cross-section of the Earth. Include all four layers with their key property.</p><div class="ak-answer"><span class="ak-label">Answer</span> Four labelled layers with a key property each: crust (thin, solid rock; oceanic is thin and dense, continental is thick and lighter); mantle (thickest layer; hot solid rock that flows slowly; convection currents); outer core (liquid iron and nickel; makes the magnetic field); inner core (solid iron and nickel; solid because of pressure).</div>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p><strong>2.</strong> Draw the rock cycle. Include all three rock types and the processes connecting them (at least 5 arrows and labels).</p><div class="ak-answer"><span class="ak-label">Answer</span> Igneous, sedimentary, and metamorphic rock connected by at least five labelled arrows: melting, then cooling → igneous; weathering, erosion, deposition, compaction and cementation → sedimentary; heat and pressure → metamorphic. Any rock type can become any other.</div>
+<p> </p>
+<p> </p>
+<p> </p>
+<p><strong>3.</strong> Complete this table from memory:</p>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Concept</th>
-<th>Model explanation</th>
+<th>My explanation</th>
 </tr></thead>
 <tbody>
 <tr>
 <td>Law of superposition</td>
-<td>In undisturbed rock layers, lower layers are older and upper layers are younger</td>
+<td><span class="ak-text">In undisturbed rock layers, lower layers are older and upper layers are younger</span></td>
 </tr>
 <tr>
 <td>Why oceanic crust subducts</td>
-<td>It is thinner and denser than continental crust, so it sinks beneath it where they meet</td>
+<td><span class="ak-text">It is thinner and denser than continental crust, so it sinks beneath it where they meet</span></td>
 </tr>
 <tr>
 <td>Three plate boundary types</td>
-<td>Divergent (plates move apart); convergent (plates move together); transform (plates slide past each other)</td>
+<td><span class="ak-text">Divergent (plates move apart); convergent (plates move together); transform (plates slide past each other)</span></td>
 </tr>
 <tr>
 <td>Why crystal size differs in igneous rocks</td>
-<td>Slow cooling underground gives crystals time to grow large; fast cooling at the surface leaves small crystals</td>
+<td><span class="ak-text">Slow cooling underground gives crystals time to grow large; fast cooling at the surface leaves small crystals</span></td>
 </tr>
 <tr>
 <td>How Alberta's mountains formed</td>
-<td>Plates collided along the west coast of North America about 100 million years ago; rock layers were folded and pushed up, then carved by glaciers</td>
+<td><span class="ak-text">Plates collided along the west coast of North America about 100 million years ago; rock layers were folded and pushed up, then carved by glaciers</span></td>
 </tr>
 <tr>
 <td>What Alberta's oil sands are made of</td>
-<td>Sand and clay (sedimentary deposits from the Mesozoic) mixed with water and bitumen, a thick heavy oil formed from ancient organisms</td>
+<td><span class="ak-text">Sand and clay (sedimentary deposits from the Mesozoic) mixed with water and bitumen, a thick heavy oil formed from ancient organisms</span></td>
 </tr>
 </tbody></table></div>
-<ol start="4">
-  <li><strong>The Badlands rock layer.</strong> By relative dating she can put the events in order: what lies lower formed first, so the bones and shells were buried before the dark layer above them was laid down. Marine shells and dinosaur bones together suggest a coastline or sea-edge environment. Known index fossils would tell her which period the layer belongs to. For an age in years she needs absolute dating — measuring radioactive decay in the dark layer or a volcanic ash layer.</li>
-  <li><strong>Return to the Pre-Knowledge Check.</strong> Open reflection. Look for: Q1 — four layers, with a liquid outer core and solid inner core; Q3 — mountains form by plate collision over millions of years, not suddenly.</li>
-</ol>
+<p><strong>4.</strong> A geologist finds a rock layer in the Alberta Badlands containing large dinosaur bones, small marine shells, and a thin layer of dark material that might be from an impact event. Using relative dating, what can she conclude about the sequence of events? What would she need to determine the actual date in years?</p><div class="ak-answer"><span class="ak-label">Answer</span> By relative dating she can put the events in order: what lies lower formed first, so the bones and shells were buried before the dark layer above them was laid down. Marine shells and dinosaur bones together suggest a coastline or sea-edge environment. Known index fossils would tell her which period the layer belongs to. For an age in years she needs absolute dating — measuring radioactive decay in the dark layer or a volcanic ash layer.</div>
 
+
+<p><strong>5.</strong> Go back and read your Pre-Knowledge Check on the first page.</p><div class="ak-answer"><span class="ak-label">Answer</span> Open reflection. Look for: Q1 — four layers, with a liquid outer core and solid inner core; Q3 — mountains form by plate collision over millions of years, not suddenly.</div>
+<ul>
+<li>Question 1: How accurate was your sketch of Earth's interior? What was missing?</li>
+</ul>
+<div class="al"></div>
+<ul>
+<li>Question 3: How does your mountain-formation answer compare to what you know now about plate tectonics?</li>
+</ul>
+<div class="al"></div>
 </body>
 </html>

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Grade 7 Science — Structures and Forces: Notes Answer Key</title>
 <style>
   /* ── Fonts (site faces, shared from /fonts/; system fallbacks print fine offline) ── */
@@ -69,6 +69,8 @@
   }
   p { margin-bottom: 0.75rem; }
   strong { color: #1f1d1a; }
+  ul, ol { padding-left: 1.25rem; margin-bottom: 0.75rem; }
+  li { margin-bottom: 0.25rem; }
 
   /* ── Cover block ── */
   .cover {
@@ -332,8 +334,12 @@
     }
     .section-break { page-break-before: always; }
     h2.section-title { page-break-after: avoid; }
-      .vocab-wrap, tr { break-inside: avoid; page-break-inside: avoid; }
-    h1, h2, .section-title { break-after: avoid; page-break-after: avoid; }
+      .connection, .vocab-wrap, tr, .retrieval { break-inside: avoid; page-break-inside: avoid; }
+    h1, h2, h3, .section-title { break-after: avoid; page-break-after: avoid; }
+    p:has(+ .vocab-wrap), p:has(+ .connection), p:has(+ .retrieval),
+    p:has(+ .svg-wrap), p:has(+ ul), p:has(+ .synthesis-box) {
+      break-after: avoid; page-break-after: avoid;
+    }
     p { orphans: 3; widows: 3; }
 }
 
@@ -364,10 +370,6 @@
   svg .dg-label-sm    { font: 11px/1.3 var(--font-body); fill: var(--dg-secondary); stroke: none; }
   svg .dg-label-accent{ font: 11px/1.3 var(--font-body); fill: var(--dg-accent);    stroke: none; font-weight: 600; }
 
-  /* Answer key lists */
-  ol, ul { padding-left: 1.5rem; margin-bottom: 0.75rem; }
-  li { margin-bottom: 0.45rem; font-size: 0.92rem; }
-  li ul { margin-top: 0.35rem; }
 
 
 
@@ -434,24 +436,136 @@ svg .dg-label-plant { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif)
 svg .dg-label-water { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-water); }
 svg .dg-label-earth { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-earth); }
 svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif); fill: #fff; }
+svg .dg-land, svg .dg-land-hi, svg .dg-border { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-land        { fill: #ebe7df; stroke: #a8a294; stroke-width: .75px; }
+svg .dg-land-hi     { fill: var(--dg-accent); fill-opacity: .22; stroke: var(--dg-accent); stroke-width: 1px; }
+svg .dg-border      { fill: none; stroke: #a8a294; stroke-width: .5px; }
+svg .dg-sea         { fill: #f4f7f9; stroke: none; }
+svg .dg-route       { fill: none; stroke: var(--dg-accent); stroke-width: 2px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-route.muted { stroke: var(--dg-muted, #6b665d); stroke-dasharray: 5 3; }
+svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
 /* ── /viz-kit ── */
 </style>
-</head>
+<style id="key-link-css">
+  .key-link { margin: 6px 0 14px; font-size: 0.9rem; font-weight: 600; }
+  .key-link a { color: inherit; text-decoration: underline; text-underline-offset: 2px; opacity: 0.85; }
+  .key-link a:hover { opacity: 1; }
+  .key-check { text-align: right; margin: 14px 0 6px; }
+  @media print { .key-link { display: none !important; } }
+</style>
+<style>
+/* ── Answer key overlay (scripts/match_keys.py) ── */
+.answer-key-header { background: #1f1d1a; color: #fff; padding: 8px 14px; border-radius: 6px; margin: 0 0 16px; font-size: 9.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.ak-fill { display: inline; color: #166534; font-weight: 700; border-bottom: 2px solid #86efac; padding: 0 2px; min-width: 0; }
+td .ak-fill, li .ak-fill { white-space: normal; }
+.ak-answer { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 12px; margin: 8px 0; color: #1f1d1a; font-style: normal; break-inside: avoid; }
+.ak-answer p, .ak-answer ul, .ak-answer ol { margin: 0 0 5px; }
+.ak-answer p:last-child, .ak-answer ul:last-child, .ak-answer ol:last-child { margin-bottom: 0; }
+.ak-answer ul, .ak-answer ol { padding-left: 20px; }
+.ak-answer table { margin: 6px 0; }
+.ak-text { color: #166534; font-weight: 600; }
+.ak-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #15803d; margin-right: 6px; }
+.ak-teacher { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 8px 12px; margin: 8px 0; font-size: 10pt; break-inside: avoid; }
+.ak-teacher .ak-text { color: #166534; font-weight: 600; }
+.ak-label { color: #b45309; }
+.ak-teacher p { margin: 0 0 4px; } .ak-teacher p:last-child { margin-bottom: 0; }
+svg .ak-svg-fill { fill: #166534; font-weight: 700; }
+@media print { .ak-answer, .ak-teacher { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style></head>
 <body>
-
 <!-- Cover -->
 <div class="cover">
-  <h1>Structures and Forces</h1>
-  <p>Grade 7 Science &nbsp;&middot;&nbsp; Notes Answer Key &nbsp;&middot;&nbsp; Teacher Reference &nbsp;&middot;&nbsp; Alberta Curriculum 2007</p>
-</div>
+<h1>Structures and Forces — Answer Key</h1>
+<p>Grade 7 Science  ·  Guided Notes Package  ·  Alberta Curriculum 2007</p>
 
-<p><em>Every blank in the notes package, in the order it appears. Vocabulary definitions and open responses are model answers — accept equivalent wording in the student's own words.</em></p>
-<p><em>Pre-Knowledge Check: no answer key. Students record honest first thinking; do not correct it. They return to it in the Unit Synthesis.</em></p>
-<hr class="section-break">
-<h2 id="s1" class="section-title">Section 1: Types of Structures</h2>
+<div class="name-line">
+<span>Name:                               </span>
+<span>Date:                 </span>
+<span>Block:      </span>
+</div>
+</div><div class="answer-key-header">Answer key · Teacher copy</div>
+<hr class="section-break"/>
+<h2 class="section-title" id="pre-check">Pre-Knowledge Check</h2>
+<p><em>Before you start this unit — no notes, no right or wrong answers. Write what you honestly think right now.</em></p>
+<ol>
+<li>What makes a structure strong? (Think about a bridge, a building, a chair — what makes them not collapse?)
+    <div class="al"></div>
+</li>
+<li>What kinds of forces act on a bridge? List as many as you can.
+    <div class="al"></div>
+</li>
+<li>Name as many simple machines as you can think of.
+    <div class="al"></div>
+</li>
+<li>If you use a ramp (inclined plane) to lift a heavy box, are you doing less work? Why or why not?
+    <div class="al"></div>
+</li>
+</ol>
+<p><em>Keep this page. At the end of the unit, you will come back and read what you wrote here.</em></p>
+<hr class="section-break"/>
+<h2 class="section-title" id="s1">Section 1: Types of Structures</h2>
+<p><strong>Learning target:</strong> I can classify structures as solid, frame, or shell, and explain why structure type matters.</p>
+<h3>Vocabulary</h3>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Term</th>
+<th>Definition in your own words</th>
+<th>One example</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Solid structure</td>
+<td><span class="ak-text">A structure made of solid material all the way through; its mass carries the load</span></td>
+<td><span class="ak-fill">Dam, brick, tree trunk</span></td>
+</tr>
+<tr>
+<td>Frame structure</td>
+<td><span class="ak-text">A structure made of connected parts (a skeleton) with open spaces between them</span></td>
+<td><span class="ak-fill">Bicycle, building frame, spider web</span></td>
+</tr>
+<tr>
+<td>Shell structure</td>
+<td><span class="ak-text">A thin, curved outer surface that carries the load through its shape</span></td>
+<td><span class="ak-fill">Egg, igloo, helmet</span></td>
+</tr>
+<tr>
+<td>Combination structure</td>
+<td><span class="ak-fill">A structure that uses two or three of the types together</span></td>
+<td><span class="ak-fill">House, car</span></td>
+</tr>
+</tbody></table></div>
+<h3>Guided Notes</h3>
+<p>A <strong>structure</strong> is any object that supports a <span class="ak-fill">load</span> or withstands <span class="ak-fill">forces</span> without changing its shape.</p>
+<p><strong>Three basic types:</strong></p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Type</th>
+<th>Description</th>
+<th>How it carries load</th>
+<th>Examples</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Solid</td>
+<td>Made throughout of <span class="ak-fill">solid (continuous)</span> material; no internal spaces</td>
+<td>Load spreads through the entire <span class="ak-fill">mass (structure)</span></td>
+<td>dam, brick, glacier, tree trunk</td>
+</tr>
+<tr>
+<td>Frame</td>
+<td>A rigid <span class="ak-fill">skeleton (framework)</span> of connected members; open spaces inside</td>
+<td>Load carried by the <span class="ak-fill">member (beam and strut)</span> network</td>
+<td>bicycle, Eiffel Tower, building frame, spider web</td>
+</tr>
+<tr>
+<td>Shell</td>
+<td>A <span class="ak-fill">thin</span> curved surface; thin walls</td>
+<td>Curved shape distributes forces along the <span class="ak-fill">surface</span></td>
+<td>egg, igloo, car body, dome, helmet</td>
+</tr>
+</tbody></table></div>
 <!-- viz:structure-types -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: structure-types | solid=dam | frame=tower | shell=dome -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 180" aria-label="Three structures. Solid: a dam, solid all the way through, holding back water. Frame: a tower made of connected members with open spaces. Shell: a dome, a thin curved surface that spreads the load along it." width="520" height="180">
 <polygon points="10,70 58,70 30,140 10,140" class="dg-fill-water"/>
@@ -476,9 +590,14 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Three ways to carry a load: a solid mass, an open skeleton of members, or a thin curved surface.</figcaption>
 </figure>
 <!-- /viz:structure-types -->
+<p><strong>Most real-world structures are <span class="ak-fill">combination</span> structures</strong> — they combine elements of two or three types. Examples:</p>
+<ul>
+<li>A house: <span class="ak-fill">wood (timber)</span> frame inside (frame) + brick/siding outside (shell) + concrete foundation (solid)</li>
+<li>A car: <span class="ak-fill">body panels</span> (shell/frame) surrounding <span class="ak-fill">the chassis</span> (frame engine)</li>
+</ul>
+<p><strong>Why does structure type matter?</strong> The same material can support vastly different loads depending on its <span class="ak-fill">shape</span>. A flat sheet of cardboard bends easily. Roll it into a tube → <span class="ak-fill">increases (multiplies)</span> the load-bearing capacity. Arch it → more again. The shape, not just the material, determines strength.</p>
 <!-- viz:paper-shapes -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: paper-bridge | flat | tube | arch -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 540 172" aria-label="One sheet of paper three ways. Flat across two supports it sags under one small book. Rolled into a tube it holds a stack of books. Bent into an arch it is stronger again. Same paper, different blank, shape." width="540" height="172">
 <text x="250" y="18" text-anchor="end" class="dg-label">Same paper, different</text>
@@ -499,142 +618,90 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Try it with one sheet of paper and two books as supports. Same material every time; only the shape changes how much it can hold.</figcaption>
 </figure>
 <!-- /viz:paper-shapes -->
+<p><strong>Alberta examples:</strong></p>
+<ul>
+<li>The Lethbridge Viaduct: <span class="ak-fill">frame</span> structure — one of the longest frame structures in North America</li>
+<li>Oil storage tanks: <span class="ak-fill">shell</span> structure — cylindrical shell</li>
+<li>Rocky Mountain dams: <span class="ak-fill">solid</span> + <span class="ak-fill">frame</span> combination</li>
+</ul>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What is the difference between a frame and a shell structure?<div class="ak-answer"><span class="ak-label">Answer</span> A frame is a rigid skeleton of connected members with open spaces; the members carry the load. A shell is a thin curved surface; the load spreads along the surface.</div></li>
+
+<li>Classify each: (a) egg <span class="b b-md"> </span> (b) bicycle <span class="b b-md"> </span> (c) concrete dam <span class="b b-md"> </span><div class="ak-answer"><span class="ak-label">Answer</span> (a) egg — shell (b) bicycle — frame (c) concrete dam — solid</div></li>
+<li>Name one combination structure and identify which types it combines.<div class="ak-answer"><span class="ak-label">Answer</span> Example: a house — wood frame (frame) + siding or brick exterior (shell) + concrete foundation (solid). Accept any combination structure with its types correctly identified.</div></li>
+
+<li>Why can a tube of cardboard hold more weight than the same flat sheet?<div class="ak-answer"><span class="ak-label">Answer</span> Shape determines strength. The curved wall of the tube spreads the load evenly around its whole surface, and the tube resists bending; a flat sheet has almost no resistance to bending.</div></li>
+
+<li><strong>Stretch:</strong> Design a structure to span a 30 cm gap using only 5 sheets of paper and tape. Before building: predict which structure type will work best and explain why.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> A frame or shell made from shaped paper will beat flat sheets: roll the paper into tubes, or fold it into triangular beams or accordion pleats, then tape them into a span. Reason: the same material carries far more load when its shape resists bending. Accept any prediction with a shape-based reason.</div></li>
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="s2">Section 2: Loads</h2>
+<p><strong>Learning target:</strong> I can identify dead, live, and dynamic loads, and explain how each affects a structure.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Solid structure</td>
-<td>A structure made of solid material all the way through; its mass carries the load</td>
-<td>Dam, brick, tree trunk</td>
+<td>Dead load</td>
+<td><span class="ak-fill">The permanent weight of the structure itself</span></td>
+<td><span class="ak-fill">The steel and concrete of a bridge</span></td>
 </tr>
 <tr>
-<td>Frame structure</td>
-<td>A structure made of connected parts (a skeleton) with open spaces between them</td>
-<td>Bicycle, building frame, spider web</td>
+<td>Live load</td>
+<td><span class="ak-fill">The changing weight of the things the structure supports</span></td>
+<td><span class="ak-fill">People, furniture, vehicles, snow on a roof</span></td>
 </tr>
 <tr>
-<td>Shell structure</td>
-<td>A thin, curved outer surface that carries the load through its shape</td>
-<td>Egg, igloo, helmet</td>
-</tr>
-<tr>
-<td>Combination structure</td>
-<td>A structure that uses two or three of the types together</td>
-<td>House, car</td>
+<td>Dynamic load</td>
+<td><span class="ak-text">A force that changes suddenly or keeps changing in size or direction</span></td>
+<td><span class="ak-fill">Wind gusts, earthquakes, moving traffic</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
+<p>Every structure must handle multiple types of loads — forces acting on it from many sources.</p>
+<p><strong>Dead load:</strong> the <span class="ak-fill">permanent (constant)</span> weight of the structure itself. Always present. Always acts <span class="ak-fill">downward</span> (gravity). Cannot be avoided — part of structural design is keeping dead load manageable.</p>
+<p>Examples: weight of steel beams, concrete, glass, roof tiles.</p>
+<p><strong>Live load:</strong> the weight of <span class="ak-fill">the people and objects (contents)</span> the structure is designed to support. Varies — it is not always at maximum. Acts <span class="ak-fill">downward</span> (gravity).</p>
+<p>Examples: people, furniture, vehicles, snow on a roof.</p>
+<p><strong>Dynamic load:</strong> <span class="ak-fill">changing (moving / sudden)</span> and often <span class="ak-fill">unpredictable (variable)</span> in direction. The most dangerous loads in terms of structural failure.</p>
 <div class="vocab-wrap"><table>
 <thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
+<th>Source</th>
+<th>Direction</th>
+<th>Effect</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>supports a ___</td>
-<td>load</td>
-<td>&nbsp;</td>
+<td>Wind</td>
+<td><span class="ak-fill">sideways (horizontal)</span> (lateral)</td>
+<td>pushes on walls, lifts roofs</td>
 </tr>
 <tr>
-<td>or withstands ___ without changing its shape</td>
-<td>forces</td>
-<td>&nbsp;</td>
+<td>Earthquake</td>
+<td><span class="ak-fill">back and forth and up and down (many directions)</span> (lateral and vertical)</td>
+<td>shakes foundations, causes structural collapse</td>
 </tr>
 <tr>
-<td>Solid — made throughout of ___ material</td>
-<td>solid (continuous)</td>
-<td>&nbsp;</td>
+<td>Moving traffic</td>
+<td><span class="ak-fill">downward (vertical)</span> and <span class="ak-fill">along the direction of travel (horizontal)</span></td>
+<td>rhythmic vibration; resonance danger</td>
 </tr>
 <tr>
-<td>Solid — load spreads through the entire ___</td>
-<td>mass (structure)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Frame — a rigid ___ of connected members</td>
-<td>skeleton (framework)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Frame — load carried by the ___ network</td>
-<td>member (beam and strut)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Shell — a ___ curved surface</td>
-<td>thin</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Shell — distributes forces along the ___</td>
-<td>surface</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Most real-world structures are ___ structures</td>
-<td>combination</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>A house: ___ frame inside</td>
-<td>wood (timber)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>A car: ___ (shell/frame)</td>
-<td>body panels</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>surrounding ___ (frame engine)</td>
-<td>the chassis</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>depending on its ___</td>
-<td>shape</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Roll it into a tube → ___ the load-bearing capacity</td>
-<td>increases (multiplies)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Lethbridge Viaduct: ___ structure</td>
-<td>frame</td>
-<td>Steel trestle bridge</td>
-</tr>
-<tr>
-<td>Oil storage tanks: ___ structure</td>
-<td>shell</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Rocky Mountain dams: ___ + ___ combination</td>
-<td>solid + frame</td>
-<td>Accept solid + shell for a curved concrete dam, if justified</td>
+<td>Impact (crash)</td>
+<td>any direction</td>
+<td>sudden concentrated force</td>
 </tr>
 </tbody></table></div>
-<h3>Retrieval Check — Section 1</h3>
-<ol start="1">
-  <li>A frame is a rigid skeleton of connected members with open spaces; the members carry the load. A shell is a thin curved surface; the load spreads along the surface.</li>
-  <li>(a) egg — shell (b) bicycle — frame (c) concrete dam — solid</li>
-  <li>Example: a house — wood frame (frame) + siding or brick exterior (shell) + concrete foundation (solid). Accept any combination structure with its types correctly identified.</li>
-  <li>Shape determines strength. The curved wall of the tube spreads the load evenly around its whole surface, and the tube resists bending; a flat sheet has almost no resistance to bending.</li>
-  <li><strong>Stretch:</strong> A frame or shell made from shaped paper will beat flat sheets: roll the paper into tubes, or fold it into triangular beams or accordion pleats, then tape them into a span. Reason: the same material carries far more load when its shape resists bending. Accept any prediction with a shape-based reason.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s2" class="section-title">Section 2: Loads</h2>
 <!-- viz:bridge-loads -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: bridge-loads | dead | live | dynamic -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 540 200" aria-label="A bridge on two piers. Dead load: arrows down along the deck for the bridge's own weight, always there. Live load: arrows down on a car and a person. A blank for dynamic load: wind arrows pushing sideways on the bridge." width="540" height="200">
 <rect x="10" y="10" width="76" height="20" rx="3" class="dg-tag"/><text x="48" y="24" text-anchor="middle" class="dg-tag-answer">dynamic</text>
@@ -656,9 +723,10 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>One bridge, three kinds of load. Its own weight is always there; traffic comes and goes; wind and shaking push from changing directions.</figcaption>
 </figure>
 <!-- /viz:bridge-loads -->
+<p><strong>Why dynamic loads fail structures:</strong></p>
+<p>Static loads are predictable — engineers design for the maximum expected load. Dynamic loads are <span class="ak-fill">unpredictable</span> in direction and <span class="ak-fill">variable (changing)</span> in magnitude. They can also cause <span class="ak-fill">resonance</span>: if a force is applied at a structure's natural frequency, it can cause it to vibrate with increasing amplitude until it fails.</p>
 <!-- viz:resonance -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: growing-oscillation | pushes=in-phase -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 172" aria-label="A wave that grows larger and larger over time. A small push arrives at the top of every swing, in time with the natural frequency. At the end the swings are so big the structure fails. Label: a blank, resonance." width="520" height="172">
 <line x1="40" y1="85" x2="480" y2="85" class="dg-grid"/>
@@ -679,118 +747,94 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Like pushing a swing: small pushes, each one timed with the structure's natural rhythm, add up until the shaking is big enough to break it.</figcaption>
 </figure>
 <!-- /viz:resonance -->
+<div class="connection">
+<div class="c-label">Historical example:</div>
+<p>The Tacoma Narrows Bridge (1940) — collapsed not because of extreme wind speed, but because wind matched the bridge's <span class="ak-fill">natural</span> frequency. The bridge started oscillating and tore itself apart.</p>
+</div>
+<p><strong>Alberta loads to consider:</strong></p>
+<ul>
+<li>Wind: high winds on open prairies; chinook winds in foothills</li>
+<li>Snow: dead load that accumulates — Alberta roofs must be designed to handle snow weight</li>
+<li>Frost heave: freezing ground expands (dynamic), pushing up foundations</li>
+</ul>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What is the difference between a live load and a dead load? Give one example of each.<div class="ak-answer"><span class="ak-label">Answer</span> Dead load is the permanent weight of the structure itself (e.g., a bridge's steel). Live load is the changing weight of what the structure supports (e.g., cars, people, snow).</div></li>
+
+<li>Why are dynamic loads more dangerous than static loads?<div class="ak-answer"><span class="ak-label">Answer</span> Dynamic loads change suddenly, can come from any direction, and vary in size, so they are hard to design for. They can also cause resonance, where vibrations build until the structure fails.</div></li>
+
+<li>A school roof in Edmonton collapses in February. It wasn't windy. What type of load likely caused the failure?<div class="ak-answer"><span class="ak-label">Answer</span> Snow load — a live load that built up on the roof beyond what it was designed to carry.</div></li>
+
+<li>Classify each load: (a) the weight of a bridge's steel <span class="b b-md"> </span> (b) a truck driving across <span class="b b-md"> </span> (c) an earthquake <span class="b b-md"> </span> (d) the weight of students in a classroom <span class="b b-md"> </span><div class="ak-answer"><span class="ak-label">Answer</span> (a) dead (b) dynamic (accept live) (c) dynamic (d) live</div></li>
+<li><strong>Stretch:</strong> A new skyscraper is being built downtown in Calgary. What specific dynamic loads should the engineers plan for? For each, describe its direction of force.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> Wind and chinook gusts — sideways, pushing on the walls and causing sway. Earth tremors — ground shaking back and forth and up and down. Moving people, elevators, and nearby traffic or trains — vertical and horizontal vibration. Accept temperature swings (expansion and contraction) and impact. Each load needs a direction.</div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="s3">Section 3: Internal Forces</h2>
+<p><strong>Learning target:</strong> I can identify compression, tension, shear, and torsion forces in structures and explain where they act.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Dead load</td>
-<td>The permanent weight of the structure itself</td>
-<td>The steel and concrete of a bridge</td>
+<td>Compression</td>
+<td><span class="ak-fill">A force that squeezes or pushes material together</span></td>
+<td><span class="ak-fill">A column holding up a roof</span></td>
 </tr>
 <tr>
-<td>Live load</td>
-<td>The changing weight of the things the structure supports</td>
-<td>People, furniture, vehicles, snow on a roof</td>
+<td>Tension</td>
+<td><span class="ak-fill">A force that stretches or pulls material apart</span></td>
+<td><span class="ak-fill">A cable on a suspension bridge</span></td>
 </tr>
 <tr>
-<td>Dynamic load</td>
-<td>A force that changes suddenly or keeps changing in size or direction</td>
-<td>Wind gusts, earthquakes, moving traffic</td>
+<td>Shear</td>
+<td><span class="ak-text">Forces pushing in opposite directions that make parts of a material slide past each other</span></td>
+<td><span class="ak-fill">Scissors cutting paper; a bolt between two plates</span></td>
+</tr>
+<tr>
+<td>Torsion</td>
+<td><span class="ak-fill">A twisting force</span></td>
+<td><span class="ak-fill">Wringing out a towel</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Dead load: the ___ weight of the structure itself</td>
-<td>permanent (constant)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Always acts ___ (gravity)</td>
-<td>downward</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Live load: the weight of ___</td>
-<td>the people and objects (contents)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Acts ___ (gravity)</td>
-<td>downward</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Dynamic load: ___</td>
-<td>changing (moving / sudden)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>and often ___ in direction</td>
-<td>unpredictable (variable)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Wind — direction</td>
-<td>sideways (horizontal)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Earthquake — direction</td>
-<td>back and forth and up and down (many directions)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Moving traffic — direction (2 blanks)</td>
-<td>downward (vertical); along the direction of travel (horizontal)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Dynamic loads are ___ in direction</td>
-<td>unpredictable</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>and ___ in magnitude</td>
-<td>variable (changing)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>They can also cause ___</td>
-<td>resonance</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>wind matched the bridge's ___ frequency</td>
-<td>natural</td>
-<td>&nbsp;</td>
-</tr>
-</tbody></table></div>
-<p><strong>Note on snow:</strong> the notes list "snow on a roof" as a live-load example, then under "Alberta loads to consider" call snow a "dead load that accumulates." Live load is the standard classification (it comes and goes). Mark "live load" as correct and flag the wording to students.</p>
-<h3>Retrieval Check — Section 2</h3>
-<ol start="1">
-  <li>Dead load is the permanent weight of the structure itself (e.g., a bridge's steel). Live load is the changing weight of what the structure supports (e.g., cars, people, snow).</li>
-  <li>Dynamic loads change suddenly, can come from any direction, and vary in size, so they are hard to design for. They can also cause resonance, where vibrations build until the structure fails.</li>
-  <li>Snow load — a live load that built up on the roof beyond what it was designed to carry.</li>
-  <li>(a) dead (b) dynamic (accept live) (c) dynamic (d) live</li>
-  <li><strong>Stretch:</strong> Wind and chinook gusts — sideways, pushing on the walls and causing sway. Earth tremors — ground shaking back and forth and up and down. Moving people, elevators, and nearby traffic or trains — vertical and horizontal vibration. Accept temperature swings (expansion and contraction) and impact. Each load needs a direction.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s3" class="section-title">Section 3: Internal Forces</h2>
+<p>External forces (loads) applied to a structure create <span class="ak-fill">internal</span> forces inside the materials of the structure. Engineers must understand what type of internal force each part of a structure experiences, because different materials resist different forces.</p>
+<p><strong>The four internal forces:</strong></p>
+<p><strong>COMPRESSION:</strong> forces that <span class="ak-fill">push (squeeze)</span> material together (squeezing inward)</p>
+<ul>
+<li>Direction: force pushes <span class="ak-fill">inward (together)</span></li>
+<li>Materials that resist well: <span class="ak-fill">hard, rigid materials (masonry)</span> (concrete, stone, brick)</li>
+<li>Failure mode: buckling (long columns under compression buckle sideways)</li>
+<li>Example in structures: column holding up a floor, arch bridge under load</li>
+</ul>
+<p><strong>TENSION:</strong> forces that <span class="ak-fill">pull (stretch)</span> material apart (pulling outward)</p>
+<ul>
+<li>Direction: force pulls <span class="ak-fill">outward (apart)</span></li>
+<li>Materials that resist well: <span class="ak-fill">steel and strong fibres</span> (steel cables, ropes)</li>
+<li>Failure mode: snapping</li>
+<li>Example in structures: cables in a suspension bridge, rebar in concrete</li>
+</ul>
+<p><strong>SHEAR:</strong> forces acting on <span class="ak-fill">parallel</span> planes in <span class="ak-fill">opposite</span> directions</p>
+<ul>
+<li>Direction: parallel to the surface, opposing each other</li>
+<li>Like trying to <span class="ak-fill">cut (slide apart / tear)</span> a material</li>
+<li>Example in structures: bolts in a joint, screws, a knife cutting through material</li>
+</ul>
+<p><strong>TORSION:</strong> a <span class="ak-fill">twisting</span> force</p>
+<ul>
+<li>Direction: rotational, around the long axis</li>
+<li>Like <span class="ak-fill">wringing (twisting)</span> a wet towel</li>
+<li>Example in structures: a shaft in an engine, a drill bit, a bridge deck in a twisting wind</li>
+</ul>
 <!-- viz:four-internal-forces -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: internal-forces-4 | compression | tension | shear | torsion -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 540 172" aria-label="Four panels. Compression: arrows push a block together from both ends, a blank, push together. Tension: arrows pull a block apart, a blank, pull apart. Shear: forces along the top and bottom in opposite directions slide the layers, a blank, slide past. Torsion: curved arrows twist a cylinder, a blank, twist." width="540" height="172">
 <text x="67" y="24" text-anchor="middle" class="dg-title">Compression</text>
@@ -820,9 +864,42 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>The four internal forces, each acting on a small block of material. Arrows show which way the forces push or pull.</figcaption>
 </figure>
 <!-- /viz:four-internal-forces -->
+<div class="connection">
+<div class="c-label">Key insight:</div>
+<p>A single structural element often experiences multiple types simultaneously. A beam supporting a floor experiences <span class="ak-fill">compression</span> on its top surface (being squashed by the floor above) and <span class="ak-fill">tension</span> on its bottom surface (being stretched by the weight pulling down). This is why steel I-beams have flanges at top and bottom — more material where compression and tension are greatest.</p>
+</div>
+<p><strong>Material selection:</strong></p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Material</th>
+<th>Strong in</th>
+<th>Weak in</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Concrete</td>
+<td>compression</td>
+<td>tension</td>
+</tr>
+<tr>
+<td>Steel</td>
+<td>both compression and tension</td>
+<td>shear under impact</td>
+</tr>
+<tr>
+<td>Wood</td>
+<td><span class="ak-fill">compression and tension along the grain</span></td>
+<td><span class="ak-fill">shear (it splits along the grain)</span></td>
+</tr>
+<tr>
+<td>Rope/cable</td>
+<td><span class="ak-fill">tension</span></td>
+<td>compression</td>
+</tr>
+</tbody></table></div>
+<p><strong>Reinforced concrete</strong> = concrete (compression) + steel rebar (<span class="ak-fill">tension</span>) → handles both. Used everywhere.</p>
 <!-- viz:beam-bending -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: beam-bending | supports=2 | load=centre | rebar=bottom -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 205" aria-label="A beam supported at both ends bends under a load in the middle. Arrows on the top surface point inward: top, a blank, compression. Arrows on the bottom point outward: bottom, a blank, tension. Steel rebar dots run along the bottom of the beam where the tension is." width="520" height="205">
 <path d="M60 100 Q 260 140 460 100 L460 124 Q 260 164 60 124 Z" class="dg-fill-soft"/>
@@ -845,147 +922,71 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>A loaded beam bends. Its top is squeezed and its bottom is stretched. Concrete is great at being squeezed but weak when stretched, so steel rebar goes in the bottom.</figcaption>
 </figure>
 <!-- /viz:beam-bending -->
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What is compression? What is tension? What is the key difference between them?<div class="ak-answer"><span class="ak-label">Answer</span> Compression pushes or squeezes material together; tension pulls or stretches it apart. They act in opposite directions.</div></li>
+
+<li>Why is concrete often reinforced with steel?<div class="ak-answer"><span class="ak-label">Answer</span> Concrete is strong in compression but weak in tension — it cracks when stretched. Steel rebar carries the tension, so reinforced concrete handles both.</div></li>
+
+<li>Name the force type:<div class="ak-answer"><span class="ak-label">Answer</span> Cable holding up a drawbridge: tension. Column supporting a roof: compression. Bolt connecting two plates: shear.</div></li>
+</ol><div class="ak-answer"><span class="ak-label">More answers</span> <ol start="4"><li>Beam on two supports with the weight in the middle; C marked along the top surface at mid-span; T marked along the bottom surface at mid-span.</li><li><strong>Stretch:</strong> Steel I-beam under torsion: steel is ductile, so it twists and deforms visibly before failing, usually at joints or welds. Concrete column under tension: concrete is brittle and weak in tension, so it cracks and breaks suddenly with little warning.</li></ol></div></div>
+<ul>
+<li>A cable holding up a drawbridge is under <span class="ak-fill">tension</span></li>
+<li>The column supporting a roof is under <span class="ak-fill">compression</span></li>
+<li>A bolt connecting two metal plates is experiencing <span class="ak-fill">shear</span></li>
+</ul>
+<ol>
+<li>Draw a simple beam supported at both ends with a weight in the middle. Mark where compression is greatest (C) and where tension is greatest (T).</li>
+</ol>
+<p> </p>
+<p> </p>
+<ol>
+<li><strong>Stretch:</strong> A twisted steel I-beam would fail differently than a concrete column. Predict the failure mode for each: the I-beam under torsion and the concrete column under tension. Explain using material properties.</li>
+</ol>
+<div class="al"></div>
+<div class="al"></div>
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="s4">Section 4: Stability</h2>
+<p><strong>Learning target:</strong> I can explain how centre of gravity and structural design affect stability, and describe failure modes.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Compression</td>
-<td>A force that squeezes or pushes material together</td>
-<td>A column holding up a roof</td>
+<td>Centre of gravity</td>
+<td><span class="ak-text">The single point where all of an object's weight seems to act</span></td>
+<td><span class="ak-fill">The middle of a ruler balanced on a finger</span></td>
 </tr>
 <tr>
-<td>Tension</td>
-<td>A force that stretches or pulls material apart</td>
-<td>A cable on a suspension bridge</td>
+<td>Base of support</td>
+<td><span class="ak-text">The area on the ground enclosed by the points where a structure touches it</span></td>
+<td><span class="ak-fill">The area between the four legs of a chair</span></td>
 </tr>
 <tr>
-<td>Shear</td>
-<td>Forces pushing in opposite directions that make parts of a material slide past each other</td>
-<td>Scissors cutting paper; a bolt between two plates</td>
+<td>Stability</td>
+<td><span class="ak-fill">The ability of a structure to stay upright and not tip over</span></td>
+<td><span class="ak-fill">A wide, low sports car</span></td>
 </tr>
 <tr>
-<td>Torsion</td>
-<td>A twisting force</td>
-<td>Wringing out a towel</td>
+<td>Triangulation</td>
+<td><span class="ak-fill">Using triangles in a structure to make it rigid</span></td>
+<td><span class="ak-fill">Trusses in a bridge or roof</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>loads create ___ forces inside the materials</td>
-<td>internal</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>COMPRESSION: forces that ___ material together</td>
-<td>push (squeeze)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Direction: force pushes ___</td>
-<td>inward (together)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Materials that resist well: ___</td>
-<td>hard, rigid materials (masonry)</td>
-<td>Examples given: concrete, stone, brick</td>
-</tr>
-<tr>
-<td>TENSION: forces that ___ material apart</td>
-<td>pull (stretch)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Direction: force pulls ___</td>
-<td>outward (apart)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Materials that resist well: ___</td>
-<td>steel and strong fibres</td>
-<td>Examples given: steel cables, ropes</td>
-</tr>
-<tr>
-<td>SHEAR: forces acting on ___ planes</td>
-<td>parallel</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>in ___ directions</td>
-<td>opposite</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Like trying to ___ a material</td>
-<td>cut (slide apart / tear)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>TORSION: a ___ force</td>
-<td>twisting</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Like ___ a wet towel</td>
-<td>wringing (twisting)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Key insight — ___ on its top surface</td>
-<td>compression</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>___ on its bottom surface</td>
-<td>tension</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Wood — strong in</td>
-<td>compression and tension along the grain</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Wood — weak in</td>
-<td>shear (it splits along the grain)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Rope/cable — strong in</td>
-<td>tension</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>steel rebar (___)</td>
-<td>tension</td>
-<td>&nbsp;</td>
-</tr>
-</tbody></table></div>
-<h3>Retrieval Check — Section 3</h3>
-<ol start="1">
-  <li>Compression pushes or squeezes material together; tension pulls or stretches it apart. They act in opposite directions.</li>
-  <li>Concrete is strong in compression but weak in tension — it cracks when stretched. Steel rebar carries the tension, so reinforced concrete handles both.</li>
-  <li>Cable holding up a drawbridge: tension. Column supporting a roof: compression. Bolt connecting two plates: shear.</li>
-  <li>Beam on two supports with the weight in the middle; C marked along the top surface at mid-span; T marked along the bottom surface at mid-span.</li>
-  <li><strong>Stretch:</strong> Steel I-beam under torsion: steel is ductile, so it twists and deforms visibly before failing, usually at joints or welds. Concrete column under tension: concrete is brittle and weak in tension, so it cracks and breaks suddenly with little warning.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s4" class="section-title">Section 4: Stability</h2>
+<p><strong>Centre of gravity (CoG):</strong> the single point where the entire weight of an object can be considered to act. For a uniform object, the CoG is at the <span class="ak-fill">centre (geometric centre)</span>. For an irregular object, it depends on where mass is distributed.</p>
+<p><strong>The stability rule:</strong></p>
+<p>A structure is stable when its <span class="ak-fill">centre</span> of gravity is <span class="ak-fill">above (over / within)</span> its base of support. When the CoG moves outside the base, the structure <span class="ak-fill">topples (tips over)</span>.</p>
+<p>Lower CoG → <span class="ak-fill">more</span> stable</p>
+<p>Wider base → <span class="ak-fill">more</span> stable</p>
 <!-- viz:stability -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: stability-tilt | angles=0,20,40 | cog=centre -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 190" aria-label="Three tall boxes. Upright: the centre of gravity is over the middle of the base, stable. Tilted 20 degrees: the line down from the centre of gravity still lands inside the base, so it falls back. Tilted 40 degrees: the line lands outside the base, so it blank, topples." width="520" height="190">
 <line x1="10" y1="150" x2="510" y2="150" class="dg-line"/>
@@ -1014,9 +1015,19 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Follow the dashed line straight down from the centre of gravity. If it lands inside the base, the object settles back; once it lands outside, the object tips over.</figcaption>
 </figure>
 <!-- /viz:stability -->
+<div class="connection">
+<div class="c-label">MISCONCEPTION</div>
+<p><em>"A heavy bottom always makes a structure more stable."</em> <strong>More precisely:</strong> What determines stability is where the centre of gravity is <em>relative to the base of support</em>. A very tall structure with a wide base but all its mass near the top can still topple. A short, wide structure with mass at the bottom is highly stable. The relationship between CoG position and base area is what matters — not weight alone.</p>
+</div>
+<p><strong>Increasing stability in design:</strong></p>
+<ul>
+<li>Widen the <span class="ak-fill">base</span> (triangle at the base)</li>
+<li>Lower the centre of <span class="ak-fill">gravity</span> (heavy components at the bottom)</li>
+<li>Use <span class="ak-fill">triangulation (triangles)</span> (rigid triangular units that cannot deform)</li>
+</ul>
+<p><strong>Why triangles?</strong> A triangle is the only polygon that cannot change shape without changing the length of its sides. A square under force can become a rhombus (deform) — a triangle cannot deform. This is why <span class="ak-fill">the triangle (triangulation)</span> is the fundamental structural element in bridges, cranes, and towers.</p>
 <!-- viz:triangles -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: square-vs-triangle | truss -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 172" aria-label="A square frame pushed sideways folds into a rhombus, shown dashed. A triangle pushed the same way keeps its shape. A bridge truss made of many triangles, labelled with a blank, triangulation." width="520" height="172">
 <polygon points="40,40 120,40 120,120 40,120" class="dg-line"/>
@@ -1037,9 +1048,38 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Push sideways on a square frame and it folds into a rhombus. A triangle cannot change shape unless a side changes length, so bridges and towers are built from triangles.</figcaption>
 </figure>
 <!-- /viz:triangles -->
+<p><strong>Failure modes:</strong></p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Failure</th>
+<th>Cause</th>
+<th>Example</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Buckling</td>
+<td><span class="ak-fill">compression</span> in a slender column</td>
+<td>tall, thin column under excessive compression</td>
+</tr>
+<tr>
+<td>Toppling</td>
+<td>CoG moves <span class="ak-fill">outside the</span> base</td>
+<td>tower crane with too much load on one side</td>
+</tr>
+<tr>
+<td>Shear failure</td>
+<td>opposing forces tear through a joint</td>
+<td>bolt snapping in a connection</td>
+</tr>
+<tr>
+<td>Fatigue</td>
+<td>repeated loading and unloading over time</td>
+<td>metal cracking after millions of cycles</td>
+</tr>
+</tbody></table></div>
+<p><strong>Arches</strong> redirect <span class="ak-fill">the load (compression forces)</span> down and outward to the supports (abutments). They are highly efficient under compression — stone and concrete arches have lasted thousands of years. The weakness: arches fail catastrophically if the abutments move apart.</p>
 <!-- viz:arch -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: arch-thrust | r-outer=150 | r-inner=110 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 228" aria-label="A stone arch on two abutments. A load presses down on top. Arrows follow the arch down both sides to the abutments, which push back. Label: a blank, the load, travels down and outward; the whole arch is in compression." width="480" height="228">
 <path d="M90 185 A 150 150 0 0 1 390 185 L350 185 A 110 110 0 0 0 130 185 Z" class="dg-fill-soft"/>
@@ -1063,122 +1103,123 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>An arch turns a downward load into a push that travels around the curve to the supports. Every stone is squeezed, which is exactly what stone is good at.</figcaption>
 </figure>
 <!-- /viz:arch -->
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What determines whether a structure topples?<div class="ak-answer"><span class="ak-label">Answer</span> Whether its centre of gravity stays above its base of support. If the centre of gravity moves outside the base, the structure topples.</div></li>
+
+<li>Why is a triangle the strongest polygon?<div class="ak-answer"><span class="ak-label">Answer</span> A triangle cannot change shape unless the length of one of its sides changes. A square can be pushed into a rhombus without any side changing length, so it deforms easily.</div></li>
+
+<li>A sports car is designed with a very low body. Why does this make the car more stable than a tall SUV with the same wheelbase?<div class="ak-answer"><span class="ak-label">Answer</span> The low body gives a lower centre of gravity. With the same wheelbase, the car has to tilt much farther before its centre of gravity moves outside the base, so it is harder to tip.</div></li>
+
+<li>Name two ways to increase the stability of a tall structure.<div class="ak-answer"><span class="ak-label">Answer</span> Any two: widen the base; lower the centre of gravity (heavy parts at the bottom); use triangulation or bracing.</div></li>
+
+<li><strong>Stretch:</strong> A boom crane lifts a load at the end of its horizontal arm. As the load increases, at what point does the crane risk toppling? Draw a diagram showing the crane's base of support, the CoG with a small load, and the CoG with an excessive load.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> The crane risks toppling when the combined centre of gravity (crane plus load) moves past the edge of its base of support. Diagram: base of support marked; with a small load the CoG sits above the base; with an excessive load the CoG has shifted out toward the load, beyond the base edge. Counterweights and outriggers shift the CoG back and widen the base.</div></li>
+<p> </p>
+<p> </p>
+<p> </p>
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="s5">Section 5: Simple Machines and Mechanical Advantage</h2>
+<p><strong>Learning target:</strong> I can identify the six simple machines, calculate mechanical advantage, and explain why machines do not create energy.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Centre of gravity</td>
-<td>The single point where all of an object's weight seems to act</td>
-<td>The middle of a ruler balanced on a finger</td>
+<td>Simple machine</td>
+<td><span class="ak-fill">A basic device that changes the size or direction of a force</span></td>
+<td><span class="ak-fill">Lever, pulley, ramp</span></td>
 </tr>
 <tr>
-<td>Base of support</td>
-<td>The area on the ground enclosed by the points where a structure touches it</td>
-<td>The area between the four legs of a chair</td>
+<td>Mechanical advantage (MA)</td>
+<td><span class="ak-text">How many times a machine multiplies your force; load force ÷ effort force</span></td>
+<td><span class="ak-fill">An MA of 4 lifts 200 N with 50 N of effort</span></td>
 </tr>
 <tr>
-<td>Stability</td>
-<td>The ability of a structure to stay upright and not tip over</td>
-<td>A wide, low sports car</td>
+<td>Effort force</td>
+<td><span class="ak-fill">The force you apply to the machine</span></td>
+<td><span class="ak-fill">Pushing down on a crowbar</span></td>
 </tr>
 <tr>
-<td>Triangulation</td>
-<td>Using triangles in a structure to make it rigid</td>
-<td>Trusses in a bridge or roof</td>
+<td>Load force</td>
+<td><span class="ak-text">The force the machine applies to the object (the weight being moved)</span></td>
+<td><span class="ak-fill">The weight of the rock being lifted</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
+<p>A <strong>simple machine</strong> changes the <span class="ak-fill">size (magnitude)</span> or <span class="ak-fill">direction</span> of a force. It does not create energy — it <span class="ak-fill">transfers</span> energy from input to output.</p>
+<p><strong>Mechanical advantage:</strong> MA = <span class="ak-fill">load</span> force ÷ <span class="ak-fill">effort</span> force</p>
+<p>If MA &gt; 1: the machine multiplies your <span class="ak-fill">force</span> (you apply less force, but over more distance)</p>
+<p>If MA = 1: direction of force changes only</p>
+<p>If MA &lt; 1: the machine multiplies your <span class="ak-fill">distance (speed)</span> (you apply more force over less distance, but get speed)</p>
+<div class="connection">
+<div class="c-label">MISCONCEPTION</div>
+<p><em>"Simple machines give you more power — you get more out than you put in."</em> <strong>Why this is wrong:</strong> Energy is conserved. If a machine multiplies your force by 3, you must push 3× the distance. The total work (force × distance) is the same on both sides — minus friction losses. You never get more energy out than you put in. What machines give you is <strong>convenience</strong> — the ability to apply a smaller force over a longer distance, which is often much more practical.</p>
+</div>
+<!-- viz:ramp-vs-lift -->
+<figure class="viz">
+<!-- tikz: ramp-vs-lift | load=100N | height=1m | ramp=4m -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 205" aria-label="A platform 1 metre high. Lifting a 100 newton box straight up takes 100 newtons over 1 metre, which is 100 joules. Pushing it up a 4 metre ramp takes 25 newtons over 4 metres, which is also 100 joules. MA equals 100 divided by 25, which is 4. The work is the blank, same." width="520" height="205">
+<line x1="10" y1="160" x2="510" y2="160" class="dg-line"/>
+<polygon points="40,160 272.4,100 272.4,160" class="dg-fill-soft"/>
+<rect x="272" y="100" width="120" height="60" class="dg-fill-soft"/>
+<line x1="40" y1="160" x2="272.4" y2="100" class="dg-line"/>
+<rect x="138.5" y="110.3" width="30" height="20" transform="rotate(-14.48 153.5 120.3)" class="dg-fill-earth"/>
+<line x1="80" y1="139.7" x2="118.9" y2="129.6" class="dg-arrow accent"/><polygon points="125.0,128.0 118.7,134.4 116.4,125.5" class="dg-head accent"/>
+<text x="40" y="92" class="dg-label">Push up the ramp</text>
+<text x="40" y="108" class="dg-label-accent">25 N × 4 m = 100 J</text>
+<text x="156" y="176" text-anchor="middle" class="dg-label-sm">ramp length 4 m</text>
+<text x="332" y="134" text-anchor="middle" class="dg-label-sm">height 1 m</text>
+<rect x="405" y="140" width="30" height="20" class="dg-fill-earth"/>
+<line x1="420" y1="136" x2="420.0" y2="108.3" class="dg-arrow accent"/><polygon points="420.0,102.0 424.6,109.7 415.4,109.7" class="dg-head accent"/>
+<text x="440" y="112" class="dg-label">Lift straight up</text>
+<text x="440" y="128" class="dg-label-accent">100 N × 1 m</text>
+<text x="440" y="142" class="dg-label-accent">= 100 J</text>
+<text x="300" y="40" class="dg-label">MA = 100 N ÷ 25 N = 4</text>
+<text x="300" y="198" text-anchor="end" class="dg-label">Less force, more distance: the work is the</text>
+<rect x="306" y="184" width="60" height="20" rx="3" class="dg-tag"/><text x="336" y="198" text-anchor="middle" class="dg-tag-answer">same</text>
+</svg>
+<figcaption>Raising a 100 N box 1 m. The ramp cuts the force to a quarter but makes you push four times as far. The work done is the same either way (ignoring friction).</figcaption>
+</figure>
+<!-- /viz:ramp-vs-lift -->
+<p><strong>The six simple machines:</strong></p>
+<p><strong>1. LEVER</strong> — a rigid bar that pivots on a <span class="ak-fill">fixed point</span> (fulcrum)</p>
+<p>Three classes based on where the fulcrum (F), effort (E), and load (L) are:</p>
 <div class="vocab-wrap"><table>
 <thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
+<th>Class</th>
+<th>Arrangement</th>
+<th>Example</th>
+<th>MA</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>For a uniform object, the CoG is at the ___</td>
-<td>centre (geometric centre)</td>
-<td>&nbsp;</td>
+<td>1st class</td>
+<td>F between E and L</td>
+<td><span class="ak-fill">seesaw (also scissors, pliers)</span>, crowbar</td>
+<td>can be &gt;1 or &lt;1</td>
 </tr>
 <tr>
-<td>stable when its ___ of gravity</td>
-<td>centre</td>
-<td>&nbsp;</td>
+<td>2nd class</td>
+<td>L between F and E</td>
+<td>wheelbarrow, <span class="ak-fill">nutcracker (also bottle opener)</span></td>
+<td>always <span class="ak-fill">greater than 1</span></td>
 </tr>
 <tr>
-<td>is ___ its base of support</td>
-<td>above (over / within)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>the structure ___</td>
-<td>topples (tips over)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Lower CoG → ___ stable</td>
-<td>more</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Wider base → ___ stable</td>
-<td>more</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Widen the ___</td>
-<td>base</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Lower the centre of ___</td>
-<td>gravity</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Use ___ (rigid triangular units)</td>
-<td>triangulation (triangles)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>This is why ___ is the fundamental structural element</td>
-<td>the triangle (triangulation)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Buckling — ___ in a slender column</td>
-<td>compression</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Toppling — CoG moves ___ base</td>
-<td>outside the</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Arches redirect ___ down and outward</td>
-<td>the load (compression forces)</td>
-<td>&nbsp;</td>
+<td>3rd class</td>
+<td>E between F and L</td>
+<td>tweezers, <span class="ak-fill">fishing rod (also broom, hockey stick, baseball bat)</span></td>
+<td>always <span class="ak-fill">less than 1</span></td>
 </tr>
 </tbody></table></div>
-<h3>Retrieval Check — Section 4</h3>
-<ol start="1">
-  <li>Whether its centre of gravity stays above its base of support. If the centre of gravity moves outside the base, the structure topples.</li>
-  <li>A triangle cannot change shape unless the length of one of its sides changes. A square can be pushed into a rhombus without any side changing length, so it deforms easily.</li>
-  <li>The low body gives a lower centre of gravity. With the same wheelbase, the car has to tilt much farther before its centre of gravity moves outside the base, so it is harder to tip.</li>
-  <li>Any two: widen the base; lower the centre of gravity (heavy parts at the bottom); use triangulation or bracing.</li>
-  <li><strong>Stretch:</strong> The crane risks toppling when the combined centre of gravity (crane plus load) moves past the edge of its base of support. Diagram: base of support marked; with a small load the CoG sits above the base; with an excessive load the CoG has shifted out toward the load, beyond the base edge. Counterweights and outriggers shift the CoG back and widen the base.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s5" class="section-title">Section 5: Simple Machines and Mechanical Advantage</h2>
 <!-- viz:lever-classes -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: lever-classes | F | L | E -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 540 178" aria-label="Three levers. First class, fulcrum in the middle, like a crowbar; MA can be more or less than 1. Second class, load in the middle, like a wheelbarrow; MA always blank, greater than 1. Third class, effort in the middle, like tweezers; MA always blank, less than 1." width="540" height="178">
 <text x="90" y="22" text-anchor="middle" class="dg-title">1st class: F in the middle</text>
@@ -1211,36 +1252,63 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>The class depends on what is in the middle: the fulcrum (F), the load (L) or the effort (E).</figcaption>
 </figure>
 <!-- /viz:lever-classes -->
-<!-- viz:ramp-vs-lift -->
+<p><strong>2. WHEEL AND AXLE</strong> — a large wheel attached to a smaller axle; rotating one rotates the other</p>
+<p>MA = radius of <span class="ak-fill">wheel</span> ÷ radius of <span class="ak-fill">axle</span></p>
+<!-- viz:wheel-axle -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
-<!-- tikz: ramp-vs-lift | load=100N | height=1m | ramp=4m -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 205" aria-label="A platform 1 metre high. Lifting a 100 newton box straight up takes 100 newtons over 1 metre, which is 100 joules. Pushing it up a 4 metre ramp takes 25 newtons over 4 metres, which is also 100 joules. MA equals 100 divided by 25, which is 4. The work is the blank, same." width="520" height="205">
-<line x1="10" y1="160" x2="510" y2="160" class="dg-line"/>
-<polygon points="40,160 272.4,100 272.4,160" class="dg-fill-soft"/>
-<rect x="272" y="100" width="120" height="60" class="dg-fill-soft"/>
-<line x1="40" y1="160" x2="272.4" y2="100" class="dg-line"/>
-<rect x="138.5" y="110.3" width="30" height="20" transform="rotate(-14.48 153.5 120.3)" class="dg-fill-earth"/>
-<line x1="80" y1="139.7" x2="118.9" y2="129.6" class="dg-arrow accent"/><polygon points="125.0,128.0 118.7,134.4 116.4,125.5" class="dg-head accent"/>
-<text x="40" y="92" class="dg-label">Push up the ramp</text>
-<text x="40" y="108" class="dg-label-accent">25 N × 4 m = 100 J</text>
-<text x="156" y="176" text-anchor="middle" class="dg-label-sm">ramp length 4 m</text>
-<text x="332" y="134" text-anchor="middle" class="dg-label-sm">height 1 m</text>
-<rect x="405" y="140" width="30" height="20" class="dg-fill-earth"/>
-<line x1="420" y1="136" x2="420.0" y2="108.3" class="dg-arrow accent"/><polygon points="420.0,102.0 424.6,109.7 415.4,109.7" class="dg-head accent"/>
-<text x="440" y="112" class="dg-label">Lift straight up</text>
-<text x="440" y="128" class="dg-label-accent">100 N × 1 m</text>
-<text x="440" y="142" class="dg-label-accent">= 100 J</text>
-<text x="300" y="40" class="dg-label">MA = 100 N ÷ 25 N = 4</text>
-<text x="300" y="198" text-anchor="end" class="dg-label">Less force, more distance: the work is the</text>
-<rect x="306" y="184" width="60" height="20" rx="3" class="dg-tag"/><text x="336" y="198" text-anchor="middle" class="dg-tag-answer">same</text>
+<!-- tikz: wheel-axle | R=80 | r=22 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 470 192" aria-label="A large wheel attached to a small axle. Wheel radius R and axle radius r are marked. A small effort on the rim lifts a load hanging from the axle. MA equals radius of the blank, wheel, divided by radius of the blank, axle. Example: R 20 centimetres, r 5 centimetres, MA 4." width="470" height="192">
+<circle cx="150" cy="90" r="80" class="dg-boundary"/>
+<circle cx="150" cy="90" r="22" class="dg-fill-accent"/>
+<line x1="150" y1="90" x2="206.6" y2="33.4" class="dg-accent"/>
+<line x1="150" y1="90" x2="150" y2="112" class="dg-line"/>
+<circle cx="150" cy="90" r="2.5" class="dg-point"/>
+<text x="184" y="52" class="dg-math-accent">R</text>
+<text x="156" y="106" class="dg-label">r</text>
+<line x1="234" y1="66" x2="234.0" y2="113.7" class="dg-arrow accent"/><polygon points="234.0,120.0 229.4,112.3 238.6,112.3" class="dg-head accent"/>
+<text x="240" y="96" class="dg-label-accent">effort</text>
+<line x1="128" y1="90" x2="128" y2="134" class="dg-line"/>
+<rect x="108" y="134" width="40" height="24" class="dg-fill-earth"/>
+<text x="128" y="150" text-anchor="middle" class="dg-label-sm">load</text>
+<text x="290" y="40" class="dg-label">small force on the rim</text>
+<text x="290" y="56" class="dg-label">→ big force at the axle</text>
+<text x="290" y="96" class="dg-label-sm">Example: R = 20 cm, r = 5 cm</text>
+<text x="290" y="112" class="dg-label-sm">MA = 20 ÷ 5 = 4</text>
+<text x="150" y="184" text-anchor="end" class="dg-label">MA = radius of</text>
+<rect x="156" y="170" width="60" height="20" rx="3" class="dg-tag"/><text x="186" y="184" text-anchor="middle" class="dg-tag-answer">wheel</text>
+<text x="222" y="184" class="dg-label">÷ radius of</text>
+<rect x="294" y="170" width="50" height="20" rx="3" class="dg-tag"/><text x="319" y="184" text-anchor="middle" class="dg-tag-answer">axle</text>
 </svg>
-<figcaption>Raising a 100 N box 1 m. The ramp cuts the force to a quarter but makes you push four times as far. The work done is the same either way (ignoring friction).</figcaption>
+<figcaption>A small force on the rim of the big wheel becomes a big force at the small axle. The bigger the wheel compared with the axle, the bigger the mechanical advantage.</figcaption>
 </figure>
-<!-- /viz:ramp-vs-lift -->
+<!-- /viz:wheel-axle -->
+<p>Examples: doorknob, steering wheel, screwdriver, <span class="ak-fill">water tap (also bicycle pedals and crank, winch)</span></p>
+<p><strong>3. PULLEY</strong> — a wheel with a rope over it; changes direction or magnitude of force</p>
+<div class="vocab-wrap"><table>
+<thead><tr>
+<th>Type</th>
+<th>MA</th>
+<th>How</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Single fixed pulley</td>
+<td><span class="ak-fill">1</span></td>
+<td>changes <span class="ak-fill">direction</span> only</td>
+</tr>
+<tr>
+<td>Single movable pulley</td>
+<td><span class="ak-fill">2</span></td>
+<td>multiplies force by 2</td>
+</tr>
+<tr>
+<td>Compound (block and tackle)</td>
+<td>= number of <span class="ak-fill">supporting rope segments</span></td>
+<td>each rope segment supports part of load</td>
+</tr>
+</tbody></table></div>
 <!-- viz:pulleys -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: pulleys-3 | fixed=1 | movable=2 | block-tackle=4 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 530 222" aria-label="Fixed pulley: pull down 100 newtons to lift 100 newtons; it changes blank, direction, only. Movable pulley: two rope segments hold the load, so pulling up 50 newtons lifts 100 newtons; MA equals blank, 2. Block and tackle: four rope segments hold the load, so 25 newtons lifts 100 newtons; MA equals the number of blank, supporting ropes." width="530" height="222">
 <line x1="20" y1="20" x2="500" y2="20" class="dg-line"/>
@@ -1281,38 +1349,14 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Lifting the same 100 N load three ways. Count the rope segments holding up the load; that number is the mechanical advantage.</figcaption>
 </figure>
 <!-- /viz:pulleys -->
-<!-- viz:wheel-axle -->
-<figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
-<!-- tikz: wheel-axle | R=80 | r=22 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 470 192" aria-label="A large wheel attached to a small axle. Wheel radius R and axle radius r are marked. A small effort on the rim lifts a load hanging from the axle. MA equals radius of the blank, wheel, divided by radius of the blank, axle. Example: R 20 centimetres, r 5 centimetres, MA 4." width="470" height="192">
-<circle cx="150" cy="90" r="80" class="dg-boundary"/>
-<circle cx="150" cy="90" r="22" class="dg-fill-accent"/>
-<line x1="150" y1="90" x2="206.6" y2="33.4" class="dg-accent"/>
-<line x1="150" y1="90" x2="150" y2="112" class="dg-line"/>
-<circle cx="150" cy="90" r="2.5" class="dg-point"/>
-<text x="184" y="52" class="dg-math-accent">R</text>
-<text x="156" y="106" class="dg-label">r</text>
-<line x1="234" y1="66" x2="234.0" y2="113.7" class="dg-arrow accent"/><polygon points="234.0,120.0 229.4,112.3 238.6,112.3" class="dg-head accent"/>
-<text x="240" y="96" class="dg-label-accent">effort</text>
-<line x1="128" y1="90" x2="128" y2="134" class="dg-line"/>
-<rect x="108" y="134" width="40" height="24" class="dg-fill-earth"/>
-<text x="128" y="150" text-anchor="middle" class="dg-label-sm">load</text>
-<text x="290" y="40" class="dg-label">small force on the rim</text>
-<text x="290" y="56" class="dg-label">→ big force at the axle</text>
-<text x="290" y="96" class="dg-label-sm">Example: R = 20 cm, r = 5 cm</text>
-<text x="290" y="112" class="dg-label-sm">MA = 20 ÷ 5 = 4</text>
-<text x="150" y="184" text-anchor="end" class="dg-label">MA = radius of</text>
-<rect x="156" y="170" width="60" height="20" rx="3" class="dg-tag"/><text x="186" y="184" text-anchor="middle" class="dg-tag-answer">wheel</text>
-<text x="222" y="184" class="dg-label">÷ radius of</text>
-<rect x="294" y="170" width="50" height="20" rx="3" class="dg-tag"/><text x="319" y="184" text-anchor="middle" class="dg-tag-answer">axle</text>
-</svg>
-<figcaption>A small force on the rim of the big wheel becomes a big force at the small axle. The bigger the wheel compared with the axle, the bigger the mechanical advantage.</figcaption>
-</figure>
-<!-- /viz:wheel-axle -->
+<p><strong>4. INCLINED PLANE</strong> — a <span class="ak-fill">sloped (slanted)</span> surface; reduces force required to raise an object</p>
+<p>MA = length of ramp ÷ height of ramp</p>
+<p>Example: <span class="ak-fill">ramp</span>, <span class="ak-fill">staircase</span>, <span class="ak-fill">switchback mountain road</span></p>
+<p><strong>5. WEDGE</strong> — two inclined planes back to back; converts a pushing force into a splitting force</p>
+<p>Examples: <span class="ak-fill">axe</span>, <span class="ak-fill">knife</span>, <span class="ak-fill">chisel</span></p>
+<p><strong>6. SCREW</strong> — an inclined plane <span class="ak-fill">wrapped</span> around a cylinder; converts rotational force into linear force</p>
 <!-- viz:screw-ramp -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: screw-as-inclined-plane | turns=3 -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 182" aria-label="A right-triangle of paper, an inclined plane, is wrapped around a cylinder. Its sloping edge becomes a spiral screw thread. A screw is an inclined plane blank, wrapped, around a cylinder." width="480" height="182">
 <polygon points="30,140 170,140 170,40" class="dg-fill-accent"/>
@@ -1334,167 +1378,104 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Cut a paper triangle and wrap it around a pencil: the sloping edge spirals round like a screw thread. A screw is a long ramp you climb by turning.</figcaption>
 </figure>
 <!-- /viz:screw-ramp -->
+<p>Examples: <span class="ak-fill">wood screw</span>, <span class="ak-fill">bolt</span>, <span class="ak-fill">jar lid</span></p>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What is mechanical advantage? What does an MA of 3 tell you?<div class="ak-answer"><span class="ak-label">Answer</span> Mechanical advantage is load force ÷ effort force — how many times the machine multiplies your force. An MA of 3 means the output force is three times the effort, and you must move the effort three times as far.</div></li>
+
+<li>Identify the simple machine: (a) a ramp at a loading dock <span class="b b-md"> </span> (b) a fishing rod <span class="b b-md"> </span> (c) a flagpole rope and pulley <span class="b b-md"> </span> (d) a jar lid <span class="b b-md"> </span><div class="ak-answer"><span class="ak-label">Answer</span> (a) inclined plane (b) lever (3rd class) (c) pulley (single fixed) (d) screw</div></li>
+<li>A lever has a 200 N load and the effort needed is 50 N. What is the MA?<div class="ak-answer"><span class="ak-label">Answer</span> MA = 200 ÷ 50 = 4</div></li>
+<p>MA = <span class="ak-fill">200 N</span> ÷ <span class="ak-fill">50 N</span> = <span class="ak-fill">4</span></p>
+<li>Explain: if a machine gives you a mechanical advantage of 4, do you have to do less work? Explain using energy conservation.<div class="ak-answer"><span class="ak-label">Answer</span> No. You apply one-quarter of the force, but over four times the distance. Work = force × distance, so the total work is the same (slightly more in practice because of friction). Machines do not create energy.</div></li>
+
+
+<li><strong>Stretch:</strong> Design a compound pulley system to lift a 600 N engine block using only 150 N of effort. How many rope segments does your system need? Draw it.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> MA needed = 600 ÷ 150 = 4, so four supporting rope segments. Drawing: a block and tackle with two pulleys on top and two on the bottom, four rope segments holding up the lower block.</div></li>
+<p> </p>
+<p> </p>
+<p> </p>
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/><div class="ak-answer"><span class="ak-label">More answers for this section</span> <ul><li>Inclined plane examples (3 blanks): <strong>ramp</strong></li><li>Inclined plane examples (3 blanks): <strong>staircase</strong></li><li>Inclined plane examples (3 blanks): <strong>switchback mountain road</strong></li></ul></div>
+<h2 class="section-title" id="s6">Section 6: Materials and Structural Design</h2>
+<p><strong>Learning target:</strong> I can compare material properties and recommend appropriate materials for specific structural roles.</p>
 <h3>Vocabulary</h3>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Definition in your own words</th>
+<th>One example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Simple machine</td>
-<td>A basic device that changes the size or direction of a force</td>
-<td>Lever, pulley, ramp</td>
+<td>Strength</td>
+<td><span class="ak-fill">How much force a material can take before it breaks</span></td>
+<td><span class="ak-fill">Steel beam</span></td>
 </tr>
 <tr>
-<td>Mechanical advantage (MA)</td>
-<td>How many times a machine multiplies your force; load force ÷ effort force</td>
-<td>An MA of 4 lifts 200 N with 50 N of effort</td>
+<td>Hardness</td>
+<td><span class="ak-fill">How well a material resists scratching and denting</span></td>
+<td><span class="ak-fill">Diamond, hardened steel</span></td>
 </tr>
 <tr>
-<td>Effort force</td>
-<td>The force you apply to the machine</td>
-<td>Pushing down on a crowbar</td>
+<td>Flexibility / ductility</td>
+<td><span class="ak-fill">The ability to bend or stretch without breaking</span></td>
+<td><span class="ak-fill">Copper wire, steel</span></td>
 </tr>
 <tr>
-<td>Load force</td>
-<td>The force the machine applies to the object (the weight being moved)</td>
-<td>The weight of the rock being lifted</td>
+<td>Elasticity</td>
+<td><span class="ak-text">The ability to return to its original shape after being bent or stretched</span></td>
+<td><span class="ak-fill">Rubber band, spring</span></td>
+</tr>
+<tr>
+<td>Brittleness</td>
+<td><span class="ak-fill">Breaking suddenly with little or no bending first</span></td>
+<td><span class="ak-fill">Glass, concrete</span></td>
 </tr>
 </tbody></table></div>
 <h3>Guided Notes</h3>
+<p><strong>Material properties that matter in structural engineering:</strong></p>
 <div class="vocab-wrap"><table>
 <thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
+<th>Property</th>
+<th>What it means</th>
+<th>Good example</th>
+<th>Bad example</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>changes the ___ or ___ of a force</td>
-<td>size (magnitude); direction</td>
-<td>&nbsp;</td>
+<td>Strength</td>
+<td>Resists <span class="ak-fill">forces (loads)</span> without breaking</td>
+<td><span class="ak-fill">steel</span></td>
+<td>glass under impact</td>
 </tr>
 <tr>
-<td>it ___ energy from input to output</td>
-<td>transfers</td>
-<td>&nbsp;</td>
+<td>Hardness</td>
+<td>Resists <span class="ak-fill">denting</span> or scratching</td>
+<td>diamond, hardened steel</td>
+<td>copper</td>
 </tr>
 <tr>
-<td>MA = ___ force ÷ ___ force</td>
-<td>load; effort</td>
-<td>&nbsp;</td>
+<td>Flexibility</td>
+<td>Can <span class="ak-fill">bend</span> without breaking; ductile</td>
+<td>steel, copper</td>
+<td>concrete</td>
 </tr>
 <tr>
-<td>MA &gt; 1: the machine multiplies your ___</td>
-<td>force</td>
-<td>&nbsp;</td>
+<td>Elasticity</td>
+<td>Returns to <span class="ak-fill">its original</span> shape after deformation</td>
+<td>rubber, spring steel</td>
+<td>clay (plastic — stays deformed)</td>
 </tr>
 <tr>
-<td>MA &lt; 1: the machine multiplies your ___</td>
-<td>distance (speed)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>LEVER — pivots on a ___ (fulcrum)</td>
-<td>fixed point</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>1st class — example</td>
-<td>seesaw (also scissors, pliers)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>2nd class — example</td>
-<td>nutcracker (also bottle opener)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>2nd class — MA always ___</td>
-<td>greater than 1</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>3rd class — example</td>
-<td>fishing rod (also broom, hockey stick, baseball bat)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>3rd class — MA always ___</td>
-<td>less than 1</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>WHEEL AND AXLE — MA = radius of ___ ÷ radius of ___</td>
-<td>wheel; axle</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Examples: doorknob, steering wheel, screwdriver, ___</td>
-<td>water tap (also bicycle pedals and crank, winch)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Single fixed pulley — MA</td>
-<td>1</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Single fixed pulley — changes ___ only</td>
-<td>direction</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Single movable pulley — MA</td>
-<td>2</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Compound — MA = number of ___</td>
-<td>supporting rope segments</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>INCLINED PLANE — a ___ surface</td>
-<td>sloped (slanted)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Inclined plane examples (3 blanks)</td>
-<td>ramp, staircase, switchback mountain road</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>WEDGE examples (3 blanks)</td>
-<td>axe, knife, chisel</td>
-<td>Also doorstop, nail tip</td>
-</tr>
-<tr>
-<td>SCREW — an inclined plane ___ around a cylinder</td>
-<td>wrapped</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Screw examples (3 blanks)</td>
-<td>wood screw, bolt, jar lid</td>
-<td>Also lightbulb base, car jack</td>
+<td>Brittleness</td>
+<td><span class="ak-fill">breaks (shatters / fractures)</span> with little deformation</td>
+<td>glass, concrete, cast iron</td>
+<td>steel</td>
 </tr>
 </tbody></table></div>
-<h3>Retrieval Check — Section 5</h3>
-<ol start="1">
-  <li>Mechanical advantage is load force ÷ effort force — how many times the machine multiplies your force. An MA of 3 means the output force is three times the effort, and you must move the effort three times as far.</li>
-  <li>(a) inclined plane (b) lever (3rd class) (c) pulley (single fixed) (d) screw</li>
-  <li>MA = 200 ÷ 50 = 4</li>
-  <li>No. You apply one-quarter of the force, but over four times the distance. Work = force × distance, so the total work is the same (slightly more in practice because of friction). Machines do not create energy.</li>
-  <li><strong>Stretch:</strong> MA needed = 600 ÷ 150 = 4, so four supporting rope segments. Drawing: a block and tackle with two pulleys on top and two on the bottom, four rope segments holding up the lower block.</li>
-</ol>
-<hr class="section-break">
-<h2 id="s6" class="section-title">Section 6: Materials and Structural Design</h2>
 <!-- viz:material-behaviour -->
 <figure class="viz">
-<p class="viz-ak-note">Diagram — answers</p>
 <!-- tikz: material-response | elastic | plastic | brittle -->
 <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 540 175" aria-label="Three bars bent by a load, then released. Elastic, like rubber or spring steel: springs back straight. Plastic, like clay or copper wire: stays bent. Brittle, like glass or concrete: snaps with almost no bending." width="540" height="175">
 <text x="90" y="16" text-anchor="middle" class="dg-title">Elastic</text>
@@ -1518,151 +1499,113 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <figcaption>Bend three bars, then let go. Elastic materials spring back, plastic (ductile) materials stay bent, and brittle materials snap with almost no bending.</figcaption>
 </figure>
 <!-- /viz:material-behaviour -->
-<h3>Vocabulary</h3>
+<p><strong>Choosing the right material:</strong></p>
 <div class="vocab-wrap"><table>
 <thead><tr>
-<th>Term</th>
-<th>Model definition</th>
-<th>Example</th>
+<th>Structural role</th>
+<th>Required property</th>
+<th>Best material choice</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Strength</td>
-<td>How much force a material can take before it breaks</td>
-<td>Steel beam</td>
+<td>Tower column under compression</td>
+<td><span class="ak-fill">compressive strength</span></td>
+<td>concrete or steel</td>
 </tr>
 <tr>
-<td>Hardness</td>
-<td>How well a material resists scratching and denting</td>
-<td>Diamond, hardened steel</td>
+<td>Suspension bridge cable</td>
+<td>tension strength</td>
+<td><span class="ak-fill">steel cable</span></td>
 </tr>
 <tr>
-<td>Flexibility / ductility</td>
-<td>The ability to bend or stretch without breaking</td>
-<td>Copper wire, steel</td>
+<td>Earthquake-resistant building frame</td>
+<td>flexibility</td>
+<td><span class="ak-fill">steel</span></td>
 </tr>
 <tr>
-<td>Elasticity</td>
-<td>The ability to return to its original shape after being bent or stretched</td>
-<td>Rubber band, spring</td>
-</tr>
-<tr>
-<td>Brittleness</td>
-<td>Breaking suddenly with little or no bending first</td>
-<td>Glass, concrete</td>
+<td>Cutting edge of a tool</td>
+<td><span class="ak-fill">hardness</span></td>
+<td>hardened steel, carbide</td>
 </tr>
 </tbody></table></div>
-<h3>Guided Notes</h3>
-<div class="vocab-wrap"><table>
-<thead><tr>
-<th>Blank / Prompt</th>
-<th>Expected Answer</th>
-<th>Annotation</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Strength — resists ___ without breaking</td>
-<td>forces (loads)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Strength — good example</td>
-<td>steel</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Hardness — resists ___ or scratching</td>
-<td>denting</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Flexibility — can ___ without breaking</td>
-<td>bend</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Elasticity — returns to ___ shape</td>
-<td>its original</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Brittleness — ___ with little deformation</td>
-<td>breaks (shatters / fractures)</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Tower column under compression — required property</td>
-<td>compressive strength</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Suspension bridge cable — best material</td>
-<td>steel cable</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Earthquake-resistant building frame — best material</td>
-<td>steel</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>Cutting edge of a tool — required property</td>
-<td>hardness</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>A triangulated ___ frame made of cardboard</td>
-<td>truss</td>
-<td>&nbsp;</td>
-</tr>
-</tbody></table></div>
-<h3>Retrieval Check — Section 6</h3>
-<ol start="1">
-  <li>Strength is how much force a material withstands before it breaks. Hardness is how well its surface resists scratching and denting. A material can be hard but still break easily (glass).</li>
-  <li>Steel is flexible: it bends and absorbs the shaking without breaking. Concrete is brittle and cracks suddenly under the same sideways forces.</li>
-  <li>(a) tensile strength (b) compressive strength (c) flexibility / elasticity (absorbs impact)</li>
-  <li><strong>Stretch:</strong> For: wood is locally available in Alberta, renewable, light for its strength, and flexible enough to handle wind and movement. Limits: it burns, rots if wet, and is weaker than steel or concrete for very tall buildings, so it needs fire protection, moisture protection, and engineered products (laminated timber). A reasoned judgement either way is acceptable.</li>
-</ol>
-<hr class="section-break">
-<h2 id="synthesis" class="section-title">Unit Synthesis</h2>
-<ol start="1">
-  <li><strong>Table from memory:</strong></li>
-</ol>
+<p><strong>Cost, sustainability, and availability</strong> must also factor into material selection — the best engineering material is often not affordable or locally available. In Alberta:</p>
+<ul>
+<li>Timber framing: wood is locally available, renewable, good strength-to-weight ratio</li>
+<li>Steel: manufactured, recyclable, high strength</li>
+<li>Concrete: locally sourced aggregate; low cost; poor in tension without rebar</li>
+</ul>
+<div class="connection">
+<div class="c-label">Connection to Section 1:</div>
+<p>Strong materials don't automatically make strong structures. A triangulated <span class="ak-fill">truss</span> frame made of cardboard can carry more load than a solid block of the same cardboard, because of how the structure distributes the force.</p>
+</div>
+<div class="retrieval"><div class="r-label">Retrieval Check</div><ol>
+<p><em>Cover your notes. Answer from memory.</em></p>
+<li>What is the difference between strength and hardness?<div class="ak-answer"><span class="ak-label">Answer</span> Strength is how much force a material withstands before it breaks. Hardness is how well its surface resists scratching and denting. A material can be hard but still break easily (glass).</div></li>
+
+<li>Why is steel often preferred over concrete for building frames in earthquake-prone areas?<div class="ak-answer"><span class="ak-label">Answer</span> Steel is flexible: it bends and absorbs the shaking without breaking. Concrete is brittle and cracks suddenly under the same sideways forces.</div></li>
+
+<li>Match: (a) suspension bridge cable needs <span class="b b-md"> </span> (b) bridge pier needs <span class="b b-md"> </span> (c) car bumper needs <span class="b b-md"> </span><div class="ak-answer"><span class="ak-label">Answer</span> (a) tensile strength (b) compressive strength (c) flexibility / elasticity (absorbs impact)</div></li>
+<li><strong>Stretch:</strong> Evaluate the use of wood as a structural material for a multi-story building in Alberta. Consider strength, flexibility, local availability, sustainability, and any limitations.<div class="ak-answer"><span class="ak-label">Answer</span> <strong>Stretch:</strong> For: wood is locally available in Alberta, renewable, light for its strength, and flexible enough to handle wind and movement. Limits: it burns, rots if wet, and is weaker than steel or concrete for very tall buildings, so it needs fire protection, moisture protection, and engineered products (laminated timber). A reasoned judgement either way is acceptable.</div></li>
+
+
+<p><strong>Self-check:</strong> How well do I know this section?   ☐ I could teach it   ☐ Getting there   ☐ Not yet</p>
+</ol></div>
+
+<hr class="section-break"/>
+<h2 class="section-title" id="synthesis">Unit Synthesis</h2>
+<p><em>Complete this page from memory — notes closed. Then open your notes and check.</em></p>
+<p><strong>1.</strong> Fill in this table from memory:</p>
 <div class="vocab-wrap"><table>
 <thead><tr>
 <th>Concept</th>
-<th>Model explanation</th>
+<th>My explanation</th>
 </tr></thead>
 <tbody>
 <tr>
 <td>Three types of structures</td>
-<td>Solid (solid all through — dam); frame (skeleton of connected members — bicycle); shell (thin curved surface — egg)</td>
+<td><span class="ak-text">Solid (solid all through — dam); frame (skeleton of connected members — bicycle); shell (thin curved surface — egg)</span></td>
 </tr>
 <tr>
 <td>Three types of loads</td>
-<td>Dead (the structure's own weight); live (what it supports — people, snow); dynamic (changing or sudden forces — wind, earthquake)</td>
+<td><span class="ak-text">Dead (the structure's own weight); live (what it supports — people, snow); dynamic (changing or sudden forces — wind, earthquake)</span></td>
 </tr>
 <tr>
 <td>Four internal forces</td>
-<td>Compression (squeezing); tension (stretching); shear (sliding in opposite directions); torsion (twisting)</td>
+<td><span class="ak-text">Compression (squeezing); tension (stretching); shear (sliding in opposite directions); torsion (twisting)</span></td>
 </tr>
 <tr>
 <td>What determines stability</td>
-<td>Where the centre of gravity is compared to the base of support — a low centre of gravity and wide base are most stable</td>
+<td><span class="ak-text">Where the centre of gravity is compared to the base of support — a low centre of gravity and wide base are most stable</span></td>
 </tr>
 <tr>
 <td>Why triangles are strong</td>
-<td>A triangle cannot change shape without changing the length of a side</td>
+<td><span class="ak-text">A triangle cannot change shape without changing the length of a side</span></td>
 </tr>
 <tr>
 <td>Mechanical advantage</td>
-<td>Load force ÷ effort force — how many times a machine multiplies your force</td>
+<td><span class="ak-text">Load force ÷ effort force — how many times a machine multiplies your force</span></td>
 </tr>
 </tbody></table></div>
-<ol start="2">
-  <li><strong>Suspension bridge:</strong></li>
-</ol>
-<div class="vocab-wrap"><table>
+<p><strong>2.</strong> A suspension bridge has: a concrete deck (road surface), vertical steel cables from the deck up to the main cables, main cables running from tower to tower, and concrete anchor blocks at each end where the cables terminate.</p>
+<p>For each component, identify: (a) which structural type it represents (solid/frame/shell); (b) which internal force it primarily experiences.</p>
+<ul>
+<li>Concrete deck: type <span class="ak-fill">solid</span>, force <span class="ak-fill">compression</span></li>
+<li>Vertical steel cables: type <span class="ak-fill">frame</span>, force <span class="ak-fill">tension</span></li>
+<li>Main cables: type <span class="ak-fill">frame</span>, force <span class="ak-fill">tension</span></li>
+<li>Concrete anchor blocks: type <span class="ak-fill">solid</span>, force <span class="ak-fill">compression</span></li>
+</ul>
+<p><strong>3.</strong> A student says: "Using a longer ramp makes lifting easier — you get more mechanical advantage, so you do less work." Is this correct? Explain using the principle of energy conservation.</p><div class="ak-answer"><span class="ak-label">Answer</span> Partly right. A longer ramp does give more mechanical advantage, so less force is needed. But the student does not do less work: the smaller force is applied over a longer distance, and work = force × distance stays the same (a little more with friction). Energy is conserved.</div>
+
+
+<p><strong>4.</strong> Go back and read your Pre-Knowledge Check on page 1.</p><div class="ak-answer"><span class="ak-label">Answer</span> Open reflection. Look for: Q1 — strength comes from shape and structure type as well as material; Q4 — a ramp reduces the force needed, not the work.</div>
+<ul>
+<li>Question 1: What did you say makes a structure strong? What would you add or change now?</li>
+</ul>
+<div class="al"></div>
+<ul>
+<li>Question 4: Were you right about the ramp? Explain the correction.</li>
+</ul>
+<div class="al"></div><div class="ak-answer"><span class="ak-label">More answers for this section</span> <ul><li><strong>Retrieval Check — Section 6</strong><table>
 <thead><tr>
 <th>Component</th>
 <th>Structural type</th>
@@ -1689,11 +1632,6 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif)
 <td>solid</td>
 <td>compression (their mass holds against the pull of the cables; accept tension where the cable attaches, with reasoning)</td>
 </tr>
-</tbody></table></div>
-<ol start="3">
-  <li><strong>The ramp claim.</strong> Partly right. A longer ramp does give more mechanical advantage, so less force is needed. But the student does not do less work: the smaller force is applied over a longer distance, and work = force × distance stays the same (a little more with friction). Energy is conserved.</li>
-  <li><strong>Return to the Pre-Knowledge Check.</strong> Open reflection. Look for: Q1 — strength comes from shape and structure type as well as material; Q4 — a ramp reduces the force needed, not the work.</li>
-</ol>
-
+</tbody></table></li></ul></div>
 </body>
 </html>
