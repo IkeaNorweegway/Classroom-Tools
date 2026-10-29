@@ -99,7 +99,7 @@ function standard(slug: string, label: string, strand: StrandSlug, stem: string)
 
 const rational = standard('rational-numbers', 'Rational Numbers', 'number', 'math9-rational-numbers');
 rational.extras = [
-  { label: 'Fraction Simulator (equivalent fractions, simplifying, cross-cancelling)', path: 'practice/math9-fraction-sim-v2' },
+  { label: 'Rational Numbers Trainer (compare, add, signs, multiply, divide, order of operations)', path: 'practice/math9-rational-numbers-trainer-v1', type: 'interactive' },
   { label: 'Extra Practice', path: 'worksheets/number/rational-numbers/math9-rational-numbers-worksheet-extra-v1', badge: '★' },
   { label: 'Practice Test', path: 'tests/rational-numbers/math9-rational-numbers-practice-test-v1', badge: 'Test prep' },
   { label: 'How Written Answers Are Scored (Rubric)', path: 'tests/rational-numbers/math9-rational-numbers-rubric-v1', badge: 'Test prep' },
@@ -116,9 +116,12 @@ function withPracticeTest(slug: string, label: string, strand: StrandSlug, stem:
 }
 
 const squareRoots = withPracticeTest('square-roots', 'Square Roots', 'number', 'math9-square-roots');
-squareRoots.extras.unshift({ label: 'Pythagorean Simulator (squares on the sides, why it works, scaling triangles)', path: 'practice/math9-pythagorean-sim-v1' });
 
 // Narrow trainers: one per topic, listed first under Extra help. Rules: _sims-context.md (rules 19–25).
+// The Fraction and Pythagorean Simulators they replaced stay in practice/, unlinked.
+squareRoots.extras.unshift({ label: 'Square Roots Trainer (perfect squares, estimating, rational or irrational, Pythagorean theorem)', path: 'practice/math9-square-roots-trainer-v1', type: 'interactive' });
+const powers = withPracticeTest('powers-exponents', 'Powers & Exponents', 'number', 'math9-powers');
+powers.extras.unshift({ label: 'Powers Trainer (base, zero, the exponent laws, brackets, negative exponents)', path: 'practice/math9-powers-exponents-trainer-v1', type: 'interactive' });
 const linearRelations = withPracticeTest('linear-relations', 'Linear Relations', 'algebra', 'math9-linear-relations');
 linearRelations.extras.unshift({ label: 'Linear Relations Trainer (table, slope, graph it, equation, direct or partial)', path: 'practice/math9-linear-relations-trainer-v1', type: 'interactive' });
 const linearEquations = withPracticeTest('linear-equations', 'Linear Equations & Inequalities', 'algebra', 'math9-linear-equations');
@@ -128,7 +131,7 @@ polynomials.extras.unshift({ label: 'Polynomials Trainer (parts, like terms, add
 
 export const topics: Topic[] = [
   rational,
-  withPracticeTest('powers-exponents', 'Powers & Exponents', 'number', 'math9-powers'),
+  powers,
   squareRoots,
   linearRelations,
   linearEquations,

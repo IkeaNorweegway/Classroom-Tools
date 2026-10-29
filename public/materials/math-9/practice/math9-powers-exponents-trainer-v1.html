@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Powers Trainer | Math 9</title>
+<!-- =====================================================================
+   POWERS & EXPONENTS TRAINER (narrow trainer format, see _sims-context.md)
+   Math 9 | Number | Powers and Exponents. Used after the lesson: it does not teach, it points back to the notes.
+   One narrow skill per tab, 10 items a round:
+     PE1 Base              evaluate (−a)ⁿ, −aⁿ, aⁿ; factor chips, negatives pair up
+     PE2 Zero              a⁰ forms (−a⁰, k × a⁰, a⁰ + b⁰, (kxᵉ)⁰); the ÷ base ladder lands on 1
+     PE3 Multiply          aᵐ × aⁿ: type base and exponent; the two groups of factors join
+     PE4 Divide            aᵐ ÷ aⁿ: matching factors cancel top and bottom
+     PE5 Power of a power  (aᵐ)ⁿ: n rows of m factors
+     PE6 Brackets          (kxᵐ)ⁿ: every factor inside gets the power
+     PE7 Negative          a⁻ⁿ, (−a)⁻ⁿ, (p/q)⁻ⁿ; the ladder keeps going below 0
+     Which law?            add, subtract or multiply the exponents, or no law (different bases, adding powers)
+   Integer exponents only (depth ceiling). Named mistakes: base × exponent, the brackets deciding the base,
+   odd/even negatives, a⁰ = 0 or a, multiplying the base, the wrong exponent operation, the coefficient
+   not raised or multiplied by n, a negative exponent read as a negative answer, no reciprocal.
+   ?debug=1 puts DRILL (and MODEL) on window, turns off saving and motion.
+   ===================================================================== -->
+<style>
+/* ===== DRILL SHELL CSS START (same in every Math 9 trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slot.sup { width: 1.9em; min-height: 40px; font-size: 20px; align-self: flex-start; margin-left: -2px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choices.two { grid-template-columns: 1fr 1fr; }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choices.one { grid-template-columns: 1fr; gap: 8px; }
+  .choices.one .choice { min-height: 54px; }
+  .choices.one .choice.math { font-size: 26px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+/* ===================== MODEL START (no DOM) ===================== */
+const MODEL = (() => {
+  const { q, eq, val, rnd, pick, nz, chance } = Q;
+  const pow = (a, n) => { let r = 1; for (let i = 0; i < Math.abs(n); i++) r *= a; return n < 0 ? q(1, r) : q(r); };   // exact a^n for integer a
+  // A base for the law tabs: a small number, a negative in brackets, or a letter.
+  function base() {
+    const k = rnd(0, 9);
+    if (k <= 5) { const v = rnd(2, 9); return { s: String(v), v }; }
+    if (k <= 7) { const v = -rnd(2, 5); return { s: '(−' + (-v) + ')', v }; }
+    return { s: pick(['x', 'a', 'm', 'y']), v: null, letter: true };
+  }
+
+  /* PE1 what a power means: (−a)^n, −a^n, a^n */
+  function genBase() {
+    for (;;) {
+      const a = rnd(2, 5), n = rnd(2, 5), form = pick(['paren', 'paren', 'neg', 'pos']);
+      if (Math.pow(a, n) > 256) continue;
+      const v = form === 'paren' ? Math.pow(-a, n) : form === 'neg' ? -Math.pow(a, n) : Math.pow(a, n);
+      return { a, n, form, v };
+    }
+  }
+  function checkBase(it, r) {
+    const g = r.v;
+    if (eq(g, it.v)) return { ok: true };
+    if (eq(g, it.a * it.n) || eq(g, -it.a * it.n)) return { code: 'mult', cue: 'The exponent counts the factors' };
+    if (eq(g, -it.v)) {
+      if (it.form === 'neg') return { code: 'base', cue: 'No brackets: the base is ' + it.a };
+      if (it.form === 'paren') return { code: 'pairs', cue: it.n % 2 ? 'Odd count: one negative left' : 'Even count: negatives pair up' };
+    }
+    return { code: 'other', cue: 'Write out the factors' };
+  }
+
+  /* PE2 zero exponent */
+  function genZero() {
+    const a = rnd(2, 60), form = pick(['plain', 'plain', 'paren', 'neg', 'times', 'sum', 'mono']);
+    const it = { a, form };
+    if (form === 'plain') it.v = 1;
+    if (form === 'paren') it.v = 1;
+    if (form === 'neg') it.v = -1;
+    if (form === 'times') { it.k = rnd(2, 9); it.v = it.k; }
+    if (form === 'sum') { it.b = rnd(2, 40); it.v = 2; }
+    if (form === 'mono') { it.k = rnd(2, 9); it.e = rnd(2, 5); it.v = 1; }
+    return it;
+  }
+  function checkZero(it, r) {
+    const g = r.v;
+    if (eq(g, it.v)) return { ok: true };
+    if (eq(g, 0)) return { code: 'zero', cue: 'Anything to the 0 is 1, not 0' };
+    if (eq(g, it.a)) return { code: 'base', cue: 'The 0 power is 1, not the base' };
+    if (it.form === 'neg' && eq(g, 1)) return { code: 'neg', cue: 'No brackets: −(1) = −1' };
+    if (it.form === 'times') return { code: 'times', cue: it.k + ' × 1 = ' + it.k };
+    if (it.form === 'sum') return { code: 'sum', cue: '1 + 1' };
+    return { code: 'other', cue: 'Follow the pattern down to 1' };
+  }
+
+  /* PE3 product, PE4 quotient, PE5 power of a power. Answer: base and exponent. */
+  function genProd() { const b = base(), m = rnd(1, 6), n = rnd(1, 6); return { b, m, n, e: m + n }; }
+  function genQuot() { const b = base(), n = rnd(1, 5), m = n + rnd(chance(.15) ? 0 : 1, 6); return { b, m, n, e: m - n }; }
+  function genPow() { const b = base(), m = rnd(2, 5), n = rnd(2, 4); return { b, m, n, e: m * n }; }
+  function lawCheck(kind) {
+    return (it, r) => {
+      const baseOk = it.b.letter || eq(r.b, it.b.v), e = r.e;
+      if (baseOk && eq(e, it.e)) return { ok: true };
+      if (!baseOk) {
+        if (!it.b.letter && (eq(r.b, it.b.v * it.b.v) || (kind === 'quot' && eq(r.b, 1)))) return { code: 'basemul', cue: 'Same base: it stays ' + it.b.s };
+        return { code: 'base', cue: 'The base stays ' + it.b.s };
+      }
+      if (kind === 'prod' && eq(e, it.m * it.n)) return { code: 'mulexp', cue: 'Count the factors: add' };
+      if (kind === 'quot' && it.n && eq(e, q(it.m, it.n))) return { code: 'divexp', cue: 'Cancel pairs: subtract' };
+      if (kind === 'quot' && eq(e, it.m + it.n)) return { code: 'addexp', cue: 'Dividing: subtract the exponents' };
+      if (kind === 'pow' && eq(e, it.m + it.n)) return { code: 'addexp', cue: it.n + ' copies of ' + it.m + ' factors: multiply' };
+      if (kind === 'pow' && eq(e, Math.pow(it.m, it.n))) return { code: 'powexp', cue: 'Multiply the exponents' };
+      return { code: 'other', cue: kind === 'prod' ? 'Add the exponents' : kind === 'quot' ? 'Subtract the exponents' : 'Multiply the exponents' };
+    };
+  }
+
+  /* PE6 power of a product: (k·x^m)^n -> c·x^e */
+  function genBr() {
+    for (;;) {
+      const k = pick([2, 3, 4, 5, -2, -3]), m = rnd(1, 4), n = rnd(2, 4), L = pick(['x', 'a', 'y']);
+      if (Math.pow(Math.abs(k), n) > 625) continue;
+      return { k, m, n, L, c: Math.pow(k, n), e: m * n };
+    }
+  }
+  function checkBr(it, r) {
+    const cOk = eq(r.c, it.c), eOk = eq(r.e, it.e);
+    if (cOk && eOk) return { ok: true };
+    if (eOk && eq(r.c, it.k)) return { code: 'coef', cue: 'Raise the ' + Math.abs(it.k) + ' to the ' + it.n + ' too' };
+    if (eOk && eq(r.c, it.k * it.n)) return { code: 'coefmul', cue: Math.abs(it.k) + '·' + Math.abs(it.k) + '·…, not ' + Math.abs(it.k) + ' × ' + it.n };
+    if (eOk && eq(r.c, -it.c)) return { code: 'sign', cue: it.n % 2 ? 'Odd power of a negative: negative' : 'Even power: negatives pair up' };
+    if (cOk && eq(r.e, it.m + it.n)) return { code: 'addexp', cue: 'Power of a power: multiply' };
+    return { code: 'other', cue: 'Every factor inside gets the power' };
+  }
+
+  /* PE7 negative exponents */
+  function genNeg() {
+    const form = pick(['int', 'int', 'int', 'negbase', 'frac']);
+    if (form === 'int') { for (;;) { const a = rnd(2, 10), n = rnd(1, 4); if (Math.pow(a, n) > 1000) continue; return { form, a, n, v: pow(a, -n) }; } }
+    if (form === 'negbase') { const a = rnd(2, 4), n = pick([1, 2, 3]); return { form, a: -a, n, v: pow(-a, -n) }; }
+    const p = rnd(1, 3), d = rnd(p + 1, 5), n = rnd(1, 3); if (Q.gcd(p, d) !== 1) return genNeg();
+    return { form, p, d, n, v: q(Math.pow(d, n), Math.pow(p, n)) };
+  }
+  function checkNeg(it, r) {
+    const g = r.v;
+    if (eq(g, it.v)) return { ok: true };
+    if (it.form !== 'frac') {
+      const pos = pow(it.a, it.n);
+      if (eq(g, Q.neg(pos))) return { code: 'negans', cue: 'Negative exponent: flip, not negative' };
+      if (eq(g, it.a * -it.n) || eq(g, q(1, it.a * it.n))) return { code: 'mult', cue: '1 over ' + it.a + ' to the ' + it.n };
+      if (eq(g, pos)) return { code: 'noflip', cue: 'Take the reciprocal: 1 over it' };
+      if (eq(g, Q.neg(it.v))) return { code: 'sign', cue: 'Odd power of a negative: negative' };
+    } else {
+      if (eq(g, Q.div(1, it.v))) return { code: 'noflip', cue: 'Flip the fraction first' };
+    }
+    return { code: 'other', cue: 'Reciprocal, then the positive power' };
+  }
+
+  /* PE3–PE5 which law? */
+  function genWhich() {
+    const kind = pick(['add', 'sub', 'mul', 'none']), L = pick(['x', 'a', 'm', 'y']), n = rnd(2, kind === 'mul' ? 4 : 5), m = kind === 'sub' ? rnd(n + 1, 7) : rnd(2, 6);
+    const other = { x: 'y', a: 'b', m: 'n', y: 'x' }[L];
+    return { kind, L, m, n, other, form: kind === 'none' ? pick(['times', 'plus']) : null };
+  }
+  function checkWhich(it, r) {
+    if (r.v === it.kind) return { ok: true };
+    const cue = { add: 'Multiplying powers: add', sub: 'Dividing powers: subtract', mul: 'Power of a power: multiply', none: it.form === 'plus' ? 'Adding powers: no law' : 'Different bases: no law' }[it.kind];
+    return { code: 'pick-' + r.v, cue };
+  }
+
+  return { pow, genBase, checkBase, genZero, checkZero, genProd, genQuot, genPow, checkProd: lawCheck('prod'), checkQuot: lawCheck('quot'), checkPow: lawCheck('pow'), genBr, checkBr, genNeg, checkNeg, genWhich, checkWhich };
+})();
+/* ===================== MODEL END ===================== */
+
+
+/* ===== DRILL SHELL START (same in every Math 9 trainer) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen()                 -> a new item (from MODEL)
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom'
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown). */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => { if (!part) return; const t = el('tspan', /^[a-z]$/.test(part) ? { 'font-style': 'italic' } : {}, e); t.textContent = part; });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (tab.kind === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (tab.kind === 'choice') {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 9);
+      row.className = 'choices' + (long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = tab.kind === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) { for (let i = 0; i < 25; i++) { it = tab.gen(); key = JSON.stringify(it); if (key !== lastKey) break; } }
+    lastKey = key || JSON.stringify(it);
+    item = it; resp = {}; att = 0; resolved = false;
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (tab.kind === 'choice' && resp.v == null) return;
+    if (tab.kind === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (tab.kind === 'choice' ? 1 : 2);
+    if (res.ok) {
+      resolved = true; marks.push(att === 1 ? 'g' : 'y');
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r');
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (tab.kind === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
+    } else if (tab.kind === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (tab.kind === 'slots') fillSlots(ans, 'shown');
+    else if (tab.kind === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(tab) + '" target="_blank" rel="noopener">📖 Notes §' + tab.sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => PAGE.notes + '#:~:text=' + encodeURIComponent('Section ' + t.sec + ' ' + (PAGE.sep || '—'));
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    const n = $('notes'); n.href = notesHref(tab); $('notesTxt').textContent = '§' + tab.sec;
+    n.title = 'Notes, Section ' + tab.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + tab.sec);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }) };
+  }
+  return { boot, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+
+/* ===================== PAGE: pictures and tabs ===================== */
+const { C, qHTML, fracHTML, mathHTML } = DRILL;
+const SUP = s => '<sup>' + s + '</sup>';
+const neg = n => (n < 0 ? '−' : '') + Math.abs(n);
+const bH = b => b.letter ? '<i>' + b.s + '</i>' : b.s;
+const pH = (b, e) => bH(b) + (e === 1 ? '' : SUP(neg(e)));
+// A power drawn in SVG: base with a raised exponent.
+function pw(A, p, x, y, base, exp, a) {
+  a = Object.assign({ 'font-size': 40 }, a || {});
+  const fs = +a['font-size'], t = A.el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', class: 'm', fill: C.text }, a), p);
+  const sp = (s, at) => { const e = A.el('tspan', at || {}, t); e.textContent = s; return e; };
+  String(base).split(/([a-z])/).forEach(s => { if (s) sp(s, /^[a-z]$/.test(s) ? { 'font-style': 'italic' } : {}); });
+  if (exp !== '' && exp != null) sp(String(exp), { dy: -fs * .42, 'font-size': fs * .62, fill: a.expFill || a.fill || C.text });
+  return t;
+}
+// A row of factor chips centred on cx. Returns the chip centres.
+function chipRow(A, p, cx, y, labels, o) {
+  o = o || {}; const n = labels.length, gap = 6, maxW = o.maxW || 560;
+  let w = Math.max(...labels.map(s => 18 + String(s).length * 14)); w = Math.min(w, (maxW - gap * (n - 1)) / n);
+  const fs = Math.min(24, w * .55), total = n * w + gap * (n - 1), xs = [];
+  labels.forEach((s, i) => {
+    const x = cx - total / 2 + i * (w + gap) + w / 2, col = Array.isArray(o.col) ? o.col[i] : (o.col || C.blue);
+    const g = A.el('g', { class: o.cls || null, style: o.cls ? 'animation-delay:' + (i * (o.step || 50)) + 'ms' : null }, p);
+    A.el('rect', { x: x - w / 2, y: y - 22, width: w, height: 44, rx: 9, fill: col, 'fill-opacity': .16, stroke: col, 'stroke-width': 2 }, g);
+    A.mtx(g, x, y + 1, s, { 'font-size': fs, fill: col });
+    xs.push(x);
+  });
+  return { xs, w };
+}
+const strike = (A, x, y, w) => A.el('path', { d: 'M' + (x - w / 2 + 4) + ' ' + (y + 18) + 'L' + (x + w / 2 - 4) + ' ' + (y - 18), stroke: C.red, 'stroke-width': 3, class: 'fade' }, A.svg);
+const done = V => V.phase === 'right' || V.phase === 'show';
+const valSlot = () => ['=', { k: 'v', label: 'value', wide: true }];
+const lawSlots = it => it.b.letter ? [{ h: '<i>' + it.b.s + '</i>' }, { k: 'e', sup: true, label: 'exponent' }] : [{ k: 'b', label: 'base' }, { k: 'e', sup: true, label: 'exponent' }];
+const lawAns = it => it.b.letter ? { e: Q.q(it.e) } : { b: Q.q(it.b.v), e: Q.q(it.e) };
+
+/* PE1 what a power means */
+const T_BASE = {
+  id: 'base', code: 'PE1', name: 'Base', sec: 1, q: 'Evaluate', kind: 'slots',
+  gen: MODEL.genBase,
+  prompt: it => (it.form === 'paren' ? '(−' + it.a + ')' : it.form === 'neg' ? '−' + it.a : it.a) + SUP(it.n),
+  slots: valSlot, check: MODEL.checkBase, answer: it => ({ v: Q.q(it.v) }),
+  draw(A, it, V) {
+    pw(A, A.svg, 320, 80, it.form === 'paren' ? '(−' + it.a + ')' : it.form === 'neg' ? '−' + it.a : String(it.a), it.n, { 'font-size': 56, expFill: C.gold });
+    if (V.phase === 'ask') return;
+    const labs = Array(it.n).fill(it.form === 'paren' ? '(−' + it.a + ')' : String(it.a));
+    const col = it.form === 'paren' ? C.red : C.blue;
+    if (it.form === 'neg') {
+      A.mtx(A.svg, 160, 210, '−', { 'font-size': 56, fill: C.red, class: 'fade' });
+      A.el('rect', { x: 196, y: 172, width: 330, height: 76, rx: 16, fill: 'none', stroke: C.muted, 'stroke-dasharray': '6 5', 'stroke-width': 2, class: 'fade' }, A.svg);
+    }
+    const r = chipRow(A, A.svg, it.form === 'neg' ? 361 : 320, 210, labs, { col, cls: 'pop', maxW: it.form === 'neg' ? 300 : 520 });
+    if (it.form === 'paren' && done(V)) {
+      for (let i = 0; i + 1 < it.n; i += 2) {
+        const x1 = r.xs[i], x2 = r.xs[i + 1];
+        A.el('path', { d: 'M' + x1 + ' 238Q' + (x1 + x2) / 2 + ' 290 ' + x2 + ' 238', stroke: C.green, 'stroke-width': 2.5, fill: 'none', class: 'fade' }, A.svg);
+        A.mtx(A.svg, (x1 + x2) / 2, 286, '+', { 'font-size': 26, fill: C.green, class: 'fade' });
+      }
+      if (it.n % 2) A.mtx(A.svg, r.xs[it.n - 1], 286, '−', { 'font-size': 30, fill: C.red, class: 'pop' });
+    }
+    if (done(V)) A.mtx(A.svg, 320, 352, '= ' + neg(it.v), { 'font-size': 44, fill: C.green, class: V.anim ? 'pop' : null, style: 'animation-delay:400ms' });
+  }
+};
+
+/* PE2 zero exponent: the pattern ladder */
+function ladder(A, B, top, bottom, V, target) {
+  const rows = [], h = Math.min(54, 330 / (top - bottom + 1)), y0 = 210 - (top - bottom) * h / 2;
+  for (let e = top; e >= bottom; e--) rows.push(e);
+  const bs = Q.of(B), bLab = bs.d === 1 ? (bs.n < 0 ? '(' + neg(bs.n) + ')' : String(bs.n)) : '(' + Q.str(bs) + ')';
+  rows.forEach((e, i) => {
+    const y = y0 + i * h, isT = e === target, v = MODEL.pow ? powQ(bs, e) : null;
+    pw(A, A.svg, 220, y, bLab, neg(e), { 'font-size': 30, fill: isT ? C.yellow : C.text });
+    A.mtx(A.svg, 300, y, '=', { 'font-size': 28, fill: C.muted });
+    const showV = !isT || done(V);
+    A.mtx(A.svg, 390, y, showV ? Q.str(v) : '?', { 'font-size': 30, fill: isT ? (showV ? C.green : C.yellow) : C.text, class: isT && done(V) ? 'pop' : null });
+    if (i) { A.el('path', { d: 'M470 ' + (y - h + 8) + 'Q500 ' + (y - h / 2) + ' 470 ' + (y - 8), stroke: C.gold, 'stroke-width': 2, fill: 'none', 'marker-end': 'url(#aG)' }, A.svg); A.mtx(A.svg, 530, y - h / 2, '÷ ' + bLab, { 'font-size': 20, fill: C.gold }); }
+  });
+}
+function powQ(b, e) { let r = Q.q(1); for (let i = 0; i < Math.abs(e); i++) r = Q.mul(r, b); return e < 0 ? Q.div(1, r) : r; }
+const T_ZERO = {
+  id: 'zero', code: 'PE2', name: 'Zero', sec: 2, q: 'Evaluate', kind: 'slots',
+  gen: MODEL.genZero,
+  prompt: it => ({ plain: it.a + SUP(0), paren: '(−' + it.a + ')' + SUP(0), neg: '−' + it.a + SUP(0), times: it.k + ' × ' + it.a + SUP(0), sum: it.a + SUP(0) + ' + ' + it.b + SUP(0), mono: '(' + it.k + '<i>x</i>' + SUP(it.e) + ')' + SUP(0) })[it.form],
+  slots: valSlot, check: MODEL.checkZero, answer: it => ({ v: Q.q(it.v) }),
+  draw(A, it, V) {
+    const B = it.form === 'paren' ? -Math.min(it.a, 9) : Math.min(it.a, 12);
+    ladder(A, B, 3, 0, V, 0);
+    if (done(V) && it.form !== 'plain' && it.form !== 'paren') {
+      const s = { neg: '−(1) = −1', times: it.k + ' × 1 = ' + it.k, sum: '1 + 1 = 2', mono: '(anything)⁰ = 1' }[it.form];
+      A.mtx(A.svg, 320, 392, s, { 'font-size': 30, fill: C.green, class: 'fade' });
+    }
+  }
+};
+
+/* PE3 product, PE4 quotient, PE5 power of a power */
+function prodPic(A, b, m, n, V, y) {
+  y = y || 140; const w = 560 * m / (m + n);
+  const r1 = chipRow(A, A.svg, 50 + w / 2 - 10, y, Array(m).fill(b.s), { col: C.blue, maxW: w - 30 });
+  A.mtx(A.svg, 50 + w + 4, y, '×', { 'font-size': 30, fill: C.muted });
+  const r2 = chipRow(A, A.svg, 50 + w + 30 + (560 - w) / 2 - 10, y, Array(n).fill(b.s), { col: C.gold, maxW: 560 - w - 40 });
+  A.mtx(A.svg, (r1.xs[0] + r1.xs[m - 1]) / 2, y + 46, String(m), { 'font-size': 22, fill: C.blue });
+  A.mtx(A.svg, (r2.xs[0] + r2.xs[n - 1]) / 2, y + 46, String(n), { 'font-size': 22, fill: C.gold });
+  if (done(V)) {
+    chipRow(A, A.svg, 320, y + 130, Array(m).fill(b.s).concat(Array(n).fill(b.s)), { col: Array(m).fill(C.blue).concat(Array(n).fill(C.gold)), cls: 'pop', step: 40 });
+    A.mtx(A.svg, 320, y + 190, m + ' + ' + n + ' = ' + (m + n) + ' factors', { 'font-size': 24, fill: C.green, class: 'fade' });
+  }
+}
+function quotPic(A, b, m, n, V) {
+  const top = chipRow(A, A.svg, 320, 120, Array(m).fill(b.s), { col: C.blue }), bot = chipRow(A, A.svg, 320, 230, Array(n).fill(b.s), { col: C.gold, maxW: 560 * n / Math.max(m, 1) + 20 });
+  A.el('line', { x1: 40, x2: 600, y1: 175, y2: 175, stroke: C.text, 'stroke-width': 3 }, A.svg);
+  if (V.phase !== 'ask') {
+    for (let i = 0; i < n; i++) { strike(A, top.xs[i], 120, top.w); strike(A, bot.xs[i], 230, bot.w); A.el('path', { d: 'M' + top.xs[i] + ' 144L' + bot.xs[i] + ' 206', stroke: C.red, 'stroke-width': 1.5, 'stroke-dasharray': '4 4', class: 'fade' }, A.svg); }
+  }
+  if (done(V)) A.mtx(A.svg, 320, 330, m + ' − ' + n + ' = ' + (m - n) + ' left', { 'font-size': 28, fill: C.green, class: 'fade' });
+}
+function powPic(A, b, m, n, V) {
+  const h = Math.min(58, 250 / n);
+  for (let row = 0; row < n; row++) {
+    const y = 90 + row * h;
+    const r = chipRow(A, A.svg, 320, y, Array(m).fill(b.s), { col: C.blue, maxW: 420 }), L = r.xs[0] - r.w / 2 - 12, R = r.xs[m - 1] + r.w / 2 + 12;
+    A.el("path", { d: "M" + L + " " + (y - 22) + "q-12 22 0 44M" + R + " " + (y - 22) + "q12 22 0 44", stroke: C.muted, "stroke-width": 2, fill: "none" }, A.svg);
+    A.mtx(A.svg, R + 22, y - 14, String(m), { "font-size": 18, fill: C.gold });
+  }
+  if (V.phase !== 'ask') {
+    A.mtx(A.svg, 320, 90 + n * h + 6, n + " rows of " + m, { "font-size": 24, fill: C.gold, class: "fade" });
+  }
+  if (done(V)) A.mtx(A.svg, 320, 90 + n * h + 58, n + ' × ' + m + ' = ' + (n * m) + ' factors', { 'font-size': 28, fill: C.green, class: 'fade' });
+}
+const T_PROD = {
+  id: 'prod', code: 'PE3', name: 'Multiply', sec: 3, q: 'One power', kind: 'slots',
+  gen: MODEL.genProd, prompt: it => pH(it.b, it.m) + ' × ' + pH(it.b, it.n), slots: lawSlots, check: MODEL.checkProd, answer: lawAns,
+  draw: (A, it, V) => prodPic(A, it.b, it.m, it.n, V)
+};
+const T_QUOT = {
+  id: 'quot', code: 'PE4', name: 'Divide', sec: 4, q: 'One power', kind: 'slots',
+  gen: MODEL.genQuot, prompt: it => pH(it.b, it.m) + ' ÷ ' + pH(it.b, it.n), slots: lawSlots, check: MODEL.checkQuot, answer: lawAns,
+  draw: (A, it, V) => quotPic(A, it.b, it.m, it.n, V)
+};
+const T_POW = {
+  id: 'pow', code: 'PE5', name: 'Power of a power', sec: 5, q: 'One power', kind: 'slots',
+  gen: MODEL.genPow, prompt: it => '(' + pH(it.b, it.m) + ')' + SUP(it.n), slots: lawSlots, check: MODEL.checkPow, answer: lawAns,
+  draw: (A, it, V) => powPic(A, it.b, it.m, it.n, V)
+};
+
+/* PE6 power of a product */
+const T_BR = {
+  id: 'br', code: 'PE6', name: 'Brackets', sec: 6, q: 'Simplify', kind: 'slots',
+  gen: MODEL.genBr,
+  prompt: it => '(' + neg(it.k) + '<i>' + it.L + '</i>' + (it.m > 1 ? SUP(it.m) : '') + ')' + SUP(it.n),
+  slots: it => [{ k: 'c', label: 'number' }, { h: '<i>' + it.L + '</i>' }, { k: 'e', sup: true, label: 'exponent' }],
+  check: MODEL.checkBr, answer: it => ({ c: Q.q(it.c), e: Q.q(it.e) }),
+  draw(A, it, V) {
+    const h = Math.min(56, 230 / it.n), kS = it.k < 0 ? '(' + neg(it.k) + ')' : String(it.k), xS = it.L + (it.m > 1 ? ['', '', '²', '³', '⁴'][it.m] : '');
+    for (let r = 0; r < it.n; r++) {
+      const y = 70 + r * h;
+      chipRow(A, A.svg, 190, y, [kS], { col: C.gold, maxW: 90 });
+      chipRow(A, A.svg, 330, y, [xS], { col: C.teal, maxW: 90 });
+      A.el('path', { d: 'M126 ' + (y - 22) + 'q-12 22 0 44M394 ' + (y - 22) + 'q12 22 0 44', stroke: C.muted, 'stroke-width': 2, fill: 'none' }, A.svg);
+    }
+    const yb = 70 + it.n * h + 20;
+    if (V.phase !== 'ask') {
+      [190, 330].forEach(x => A.el('path', { d: 'M' + x + ' ' + (yb - 14) + 'v26', stroke: C.muted, 'stroke-width': 2, 'marker-end': 'url(#aM)', class: 'fade' }, A.svg));
+      A.mtx(A.svg, 190, yb + 44, done(V) ? neg(it.c) : '?', { 'font-size': 32, fill: done(V) ? C.gold : C.muted, class: 'fade' });
+      pw(A, A.svg, 330, yb + 44, it.L, done(V) ? it.e : '?', { 'font-size': 32, fill: done(V) ? C.teal : C.muted, class: 'm fade' });
+      A.mtx(A.svg, 520, 70 + (it.n - 1) * h / 2, it.n + ' copies', { 'font-size': 22, fill: C.muted, class: 'fade' });
+    }
+    if (done(V)) {
+      A.mtx(A.svg, 190, yb + 92, Array(it.n).fill(kS).join('·'), { 'font-size': 18, fill: C.gold, class: 'fade' });
+      A.mtx(A.svg, 330, yb + 92, it.m + ' × ' + it.n, { 'font-size': 18, fill: C.teal, class: 'fade' });
+    }
+  }
+};
+
+/* PE7 negative exponents: the ladder keeps going */
+const T_NEG = {
+  id: 'neg', code: 'PE7', name: 'Negative', sec: 7, q: 'Evaluate', kind: 'slots',
+  gen: MODEL.genNeg,
+  prompt: it => (it.form === 'frac' ? '(' + fracHTML(it.p, it.d) + ')' : it.form === 'negbase' ? '(' + neg(it.a) + ')' : it.a) + SUP('−' + it.n),
+  slots: valSlot, check: MODEL.checkNeg, answer: it => ({ v: it.v }),
+  draw(A, it, V) { const B = it.form === 'frac' ? Q.q(it.p, it.d) : Q.q(it.a); ladder(A, B, Math.min(2, 4 - it.n), -it.n, V, -it.n); }
+};
+
+/* Which law? */
+const T_WHICH = {
+  id: 'which', code: 'PE3–5', name: 'Which law?', sec: 3, q: 'The exponents…', kind: 'choice',
+  gen: MODEL.genWhich,
+  prompt: it => { const x = '<i>' + it.L + '</i>'; return it.kind === 'add' ? x + SUP(it.m) + ' × ' + x + SUP(it.n) : it.kind === 'sub' ? x + SUP(it.m) + ' ÷ ' + x + SUP(it.n) : it.kind === 'mul' ? '(' + x + SUP(it.m) + ')' + SUP(it.n) : it.form === 'plus' ? x + SUP(it.m) + ' + ' + x + SUP(it.n) : x + SUP(it.m) + ' × <i>' + it.other + '</i>' + SUP(it.n); },
+  choices: () => [{ v: 'add', label: 'Add' }, { v: 'sub', label: 'Subtract' }, { v: 'mul', label: 'Multiply' }, { v: 'none', label: 'No law' }],
+  check: MODEL.checkWhich, answer: it => ({ v: it.kind }),
+  draw(A, it, V) {
+    const b = { s: it.L, letter: true }, m = it.m, n = it.n;
+    if (V.phase === 'ask') { A.mtx(A.svg, 320, 210, '?', { 'font-size': 90, fill: C.edge }); return; }
+    const V2 = { phase: 'show', anim: V.anim };
+    if (it.kind === 'add') prodPic(A, b, m, n, V2, 120);
+    else if (it.kind === 'sub') quotPic(A, b, m, n, V2);
+    else if (it.kind === 'mul') powPic(A, b, m, n, V2);
+    else {
+      chipRow(A, A.svg, 180, 180, Array(Math.min(m, 4)).fill(it.L), { col: C.blue, maxW: 220 });
+      A.mtx(A.svg, 320, 180, it.form === 'plus' ? '+' : '×', { 'font-size': 36, fill: C.muted });
+      chipRow(A, A.svg, 460, 180, Array(Math.min(n, 4)).fill(it.form === 'plus' ? it.L : it.other), { col: it.form === 'plus' ? C.blue : C.pink, maxW: 220 });
+      A.mtx(A.svg, 320, 290, it.form === 'plus' ? 'adding powers: no exponent law' : 'different bases: no exponent law', { 'font-size': 24, fill: C.gold, class: 'fade' });
+    }
+  }
+};
+
+const PAGE = {
+  key: 'math9-powers-exponents-trainer-v1', course: 'Math 9 · Number', title: 'Powers & Exponents', sep: '·',
+  notes: '../notes/powers-exponents/math9-powers-notes-v1.html',
+  tabs: [T_BASE, T_ZERO, T_PROD, T_QUOT, T_POW, T_BR, T_NEG, T_WHICH]
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>

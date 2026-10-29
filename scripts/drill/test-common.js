@@ -9,7 +9,8 @@
     // 1. Model: the right answer passes for 400 items in every tab
     D.PAGE.tabs.forEach(t => {
       let bad = 0, n = 0, err = '';
-      for (let i = 0; i < 400; i++) { const it = t.gen(); n++; try { const r = t.check(it, t.answer(it)); if (!r.ok) { bad++; err = JSON.stringify(it); } } catch (e) { bad++; err = e.message; } }
+      const asQ = a => { const o = {}; for (const k in a) o[k] = typeof a[k] === 'string' && t.kind === 'slots' ? Q.parse(a[k]) : a[k]; return o; };
+      for (let i = 0; i < 400; i++) { const it = t.gen(); n++; try { const r = t.check(it, asQ(t.answer(it))); if (!r.ok) { bad++; err = JSON.stringify(it); } } catch (e) { bad++; err = e.message; } }
       ok(bad === 0, t.id + ': right answer passes ' + n + ' items ' + err.slice(0, 200));
     });
     // 2. UI flow per tab: right first try, wrong then right, wrong twice, Show; draw every phase
@@ -20,7 +21,7 @@
         try {
           const st = D.state(), it = st.item, ans = t.answer(it), path = i % 4;
           const give = right => {
-            if (t.kind === 'slots') { const v = {}; for (const k in ans) v[k] = right ? Q.str(ans[k]).replace('−', '-') : ((window.WRONG && WRONG(t, it)) || {})[k] ?? String(Q.val(ans[k]) + 1); D.fill(v); D.check(); }
+            if (t.kind === 'slots') { const v = {}; for (const k in ans) { const a = ans[k], s = typeof a === 'string' ? a : Q.str(a).replace('−', '-'); v[k] = right ? s : ((window.WRONG && WRONG(t, it)) || {})[k] ?? String(Q.val(Q.parse(s)) + 7); } D.fill(v); D.check(); }
             else if (t.kind === 'choice') { const ch = t.choices(it); const w = ch.find(c => c.v !== ans.v); D.pickChoice(right ? ans.v : w.v); }
             else { D.setResp(right ? ans : WRONG(t, it)); D.check(); }
           };

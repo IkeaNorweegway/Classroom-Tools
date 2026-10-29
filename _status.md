@@ -142,7 +142,14 @@ All 11 topics have notes, notes answer key, teacher notes, concept one-pager, Co
     - **Tested in headless Chrome** (`sh scripts/drill/test.sh`): 35, 38 and 37 checks pass. Every tab's right answer passes for 400 generated items; every tab plays a full round through the UI (right first time, wrong then right, wrong twice, Show me); each named mistake gets its own cue; the balance steps end at the answer for 1000 problems; the flip test point is true in both lines for 600 items. No page or panel scroll on any tab at 1348 × 638, 982 × 604 and 1262 × 504; phone checked at 390 px in a frame. Screenshots of every tab checked.
     - **Known limits:** the graph taps have no keyboard route; the Monomial × answer row wraps to two lines (no scrolling).
     - **Untested:** students, touch, school Chromebooks, the notes jump (`#:~:text=`) on the live site, and the site build (check the Actions run).
-  - **Next batches (narrow format):** Number (Powers & Exponents, Rational Numbers, Square Roots), then Measurement & Geometry, then Statistics & Probability.
+  - **Number batch, narrow format (site, 2026-10-29):** each linked first under Extra help on its topic page.
+    - **Powers Trainer** (`math9-powers-exponents-trainer-v1`, 8 tabs): Base, Zero, Multiply, Divide, Power of a power, Brackets, Negative, Which law?
+    - **Rational Numbers Trainer** (`math9-rational-numbers-trainer-v1`, 7 tabs): Compare, Add fractions, Signs, Multiply, Divide, Bigger?, First step. Replaces the Fraction Simulator link.
+    - **Square Roots Trainer** (`math9-square-roots-trainer-v1`, 7 tabs): Perfect squares, Between, Estimate, Rational?, Hypotenuse, Leg, Fractions & decimals. Replaces the Pythagorean Simulator link. Both old sims stay in `practice/`, unlinked.
+    - **Tested in headless Chrome** (`sh scripts/drill/test.sh`): 47, 41 and 39 checks pass (all six narrow pages re-run after the shared shell changed: 35, 38, 37). Every tab's right answer passes for 400 generated items and plays a full round through the page; each named mistake gets its own cue; the order-of-operations steps always reduce to one number (500 items, 10 expression shapes); every "rational or irrational?" item is classified right (600). No page or panel scroll at the three test sizes. Screenshots of every tab checked.
+    - **Shell changes (all six pages rebuilt):** raised exponent boxes, decimal answers, a notes-heading separator per page (the Powers notes use "Section 1 ·"), long choices stack one per row, three or four choices keep a fixed grid.
+    - **Untested:** students, touch, school Chromebooks, the notes jump on the live site.
+  - **Next batches (narrow format):** Measurement & Geometry (Circle Geometry, Surface Area & Volume, Similarity), then Statistics & Probability.
 
 Answer key design follows `research/answer-key-design-research.md`: full worked solutions for Core, partial solutions for Challenge, faded structure in strand workbooks.
 

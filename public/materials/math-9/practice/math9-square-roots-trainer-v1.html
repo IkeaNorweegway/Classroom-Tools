@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Square Roots Trainer | Math 9</title>
+<!-- =====================================================================
+   SQUARE ROOTS TRAINER (narrow trainer format, see _sims-context.md)
+   Math 9 | Number | Square Roots. Used after the lesson: it does not teach, it points back to the notes.
+   Replaces the Pythagorean Simulator on the site (that page stays, unlinked).
+   One narrow skill per tab, 10 items a round:
+     SR1 Perfect squares       √n and −√n for n = 1..400; a square of n tiles, side √n
+     SR2 Between               a < √n < b; a "square ruler" with k² above k
+     SR2 Estimate              √n to one decimal (within 0.1); the tenths between and their squares
+     SR2 Rational?             rational or irrational: √n, √(a/b), √0.09 vs √0.9
+     SR3 Hypotenuse, SR3 Leg   squares on the three sides; answers to one decimal (within 0.05)
+     SR4 Fractions & decimals  √(p²/q²) and √0.09, √1.44: a shaded square inside the unit square
+   Principal root only (depth ceiling). Named mistakes: a negative root, the − outside, √ as half, squares instead
+   of roots, adding the sides, forgetting the root, adding for a leg, rooting only the top, decimal places.
+   ?debug=1 puts DRILL (and MODEL) on window, turns off saving and motion.
+   ===================================================================== -->
+<style>
+/* ===== DRILL SHELL CSS START (same in every Math 9 trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slot.sup { width: 1.9em; min-height: 40px; font-size: 20px; align-self: flex-start; margin-left: -2px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choices.two { grid-template-columns: 1fr 1fr; }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choices.one { grid-template-columns: 1fr; gap: 8px; }
+  .choices.one .choice { min-height: 54px; }
+  .choices.one .choice.math { font-size: 26px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+/* ===================== MODEL START (no DOM) ===================== */
+const MODEL = (() => {
+  const { q, eq, val, rnd, pick, chance, gcd } = Q;
+  const isSq = n => Number.isInteger(Math.sqrt(n));
+  const one = x => Math.round(x * 10) / 10;
+  const near = (g, x, tol) => g != null && Math.abs(val(g) - x) <= tol + 1e-9;
+
+  /* SR1 perfect squares */
+  function genPerfect() { const k = rnd(2, 20), form = pick(['root', 'root', 'root', 'neg']); return { k, n: k * k, form, v: form === 'neg' ? -k : k }; }
+  function checkPerfect(it, r) {
+    const g = r.v;
+    if (eq(g, it.v)) return { ok: true };
+    if (it.form === 'root' && eq(g, -it.k)) return { code: 'negroot', cue: '√ means the positive root' };
+    if (it.form === 'neg' && eq(g, it.k)) return { code: 'outside', cue: 'The − is outside: −(' + it.k + ')' };
+    if (eq(g, it.n / 2) || eq(g, -it.n / 2)) return { code: 'half', cue: '√ is not half' };
+    if (eq(g, it.n) || eq(g, it.n * it.n)) return { code: 'square', cue: 'Which number times itself?' };
+    return { code: 'other', cue: 'Which number times itself?' };
+  }
+
+  /* SR2 between which whole numbers? */
+  function genBetween() { let n; do { n = rnd(2, 400); } while (isSq(n)); const lo = Math.floor(Math.sqrt(n)); return { n, lo, hi: lo + 1 }; }
+  function checkBetween(it, r) {
+    if (eq(r.a, it.lo) && eq(r.b, it.hi)) return { ok: true };
+    if (eq(r.a, it.lo * it.lo) && eq(r.b, it.hi * it.hi)) return { code: 'squares', cue: 'Those are squares: take their roots' };
+    if (eq(r.a, it.hi) && eq(r.b, it.lo)) return { code: 'swap', cue: 'Smaller number on the left' };
+    return { code: 'other', cue: 'Find squares just below and above ' + it.n };
+  }
+
+  /* SR2 estimate to one decimal */
+  function genEst() { let n; do { n = rnd(2, 150); } while (isSq(n)); const lo = Math.floor(Math.sqrt(n)); return { n, lo, hi: lo + 1, x: Math.sqrt(n) }; }
+  function checkEst(it, r) {
+    const g = r.v;
+    if (near(g, it.x, .1)) return { ok: true };
+    const gv = val(g);
+    if (Math.abs(gv - it.n / 2) < .05) return { code: 'half', cue: '√ is not half' };
+    if (gv < it.lo || gv > it.hi) return { code: 'range', cue: 'It’s between ' + it.lo + ' and ' + it.hi };
+    const sq = Math.round(gv * gv * 100) / 100;
+    return { code: gv > it.x ? 'high' : 'low', cue: String(gv) + '² = ' + sq + ': too ' + (gv > it.x ? 'high' : 'low') };
+  }
+
+  /* SR2/SR4 rational or irrational? */
+  function genRat() {
+    const kind = pick(['int', 'int', 'frac', 'dec']);
+    if (kind === 'int') { const sq = chance(.5); let n; do { n = rnd(2, 200); } while (isSq(n) !== sq); return { kind, n, rat: sq, x: Math.sqrt(n) }; }
+    if (kind === 'frac') { const a = chance(.6) ? Math.pow(rnd(1, 9), 2) : rnd(2, 30), b = chance(.7) ? Math.pow(rnd(2, 10), 2) : rnd(2, 30); if (gcd(a, b) !== 1 || a === b) return genRat(); return { kind, a, b, rat: isSq(a) && isSq(b), x: Math.sqrt(a / b) }; }
+    // Perfect: (k/10)² such as 0.09, 0.49, 1.44. Not perfect: 0.9 looks like 9 but is 90 hundredths.
+    if (chance(.5)) { const k = pick([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15]); return { kind, d: k * k / 100, rat: true, x: k / 10 }; }
+    const d = pick([0.1, 0.4, 0.9, 0.2, 0.5, 1.6, 2.5, 0.8, 3.6, 0.03]);
+    return { kind, d, rat: false, x: Math.sqrt(d) };
+  }
+  function checkRat(it, r) {
+    if ((r.v === 'rat') === it.rat) return { ok: true };
+    if (it.rat) return { code: 'saidirr', cue: it.kind === 'frac' ? 'Top and bottom are perfect squares' : 'A perfect square: the root ends' };
+    return { code: 'saidrat', cue: 'Not a perfect square: never ends' };
+  }
+
+  /* SR3 Pythagorean theorem */
+  const TRIPLES = [[3, 4, 5], [5, 12, 13], [8, 15, 17], [7, 24, 25], [6, 8, 10], [9, 12, 15], [12, 16, 20], [9, 40, 41], [20, 21, 29]];
+  function genHyp() {
+    if (chance(.5)) { const t = pick(TRIPLES); return chance(.5) ? { a: t[0], b: t[1], c: t[2] } : { a: t[1], b: t[0], c: t[2] }; }
+    const a = rnd(2, 12), b = rnd(2, 12); return { a, b, c: Math.sqrt(a * a + b * b) };
+  }
+  const ans1 = x => Number.isInteger(Math.round(x * 1e9) / 1e9) ? String(Math.round(x)) : one(x).toFixed(1);
+  function checkHyp(it, r) {
+    const g = r.v, c2 = it.a * it.a + it.b * it.b;
+    if (near(g, it.c, .05)) return { ok: true };
+    if (near(g, it.a + it.b, .01)) return { code: 'sides', cue: 'Add the squares, not the sides' };
+    if (near(g, c2, .01)) return { code: 'noroot', cue: 'That’s c². Take the square root' };
+    if (near(g, Math.sqrt(Math.abs(it.a * it.a - it.b * it.b)), .05)) return { code: 'sub', cue: 'Hypotenuse: add the squares' };
+    return { code: 'other', cue: 'c² = a² + b²' };
+  }
+  function genLeg() {
+    if (chance(.5)) { const t = pick(TRIPLES), s = chance(.5); return { c: t[2], a: s ? t[0] : t[1], b: s ? t[1] : t[0] }; }
+    const c = rnd(6, 20), a = rnd(2, c - 1); return { c, a, b: Math.sqrt(c * c - a * a) };
+  }
+  function checkLeg(it, r) {
+    const g = r.v;
+    if (near(g, it.b, .05)) return { ok: true };
+    if (near(g, Math.sqrt(it.c * it.c + it.a * it.a), .05)) return { code: 'add', cue: 'Leg: c² minus a²' };
+    if (near(g, it.c - it.a, .01)) return { code: 'sides', cue: 'Subtract the squares, not the sides' };
+    if (near(g, it.c * it.c - it.a * it.a, .01)) return { code: 'noroot', cue: 'That’s b². Take the square root' };
+    return { code: 'other', cue: 'b² = c² − a²' };
+  }
+
+  /* SR4 square roots of fractions and decimals */
+  function genFD() {
+    if (chance(.5)) { for (;;) { const p = rnd(1, 9), qq = rnd(2, 10); if (gcd(p, qq) !== 1) continue; return { kind: 'frac', p, q: qq, v: q(p, qq) }; } }
+    const k = pick([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15]); return { kind: 'dec', k, d: k * k / 100, v: q(k, 10) };
+  }
+  function checkFD(it, r) {
+    const g = r.v;
+    if (eq(g, it.v)) return { ok: true };
+    if (it.kind === 'frac') {
+      if (eq(g, q(it.p, it.q * it.q))) return { code: 'top', cue: 'Root the bottom too' };
+      if (eq(g, q(it.p * it.p, it.q))) return { code: 'bottom', cue: 'Root the top too' };
+      return { code: 'other', cue: 'Root the top, root the bottom' };
+    }
+    if (eq(g, q(it.k, 100)) || eq(g, q(it.k, 1000))) return { code: 'place', cue: (it.k / 10) + ' × ' + (it.k / 10) + ' = ' + it.d };
+    if (Math.abs(val(g) - it.d / 2) < 1e-9) return { code: 'half', cue: '√ is not half' };
+    return { code: 'other', cue: 'Which decimal times itself?' };
+  }
+
+  return { isSq, ans1, genPerfect, checkPerfect, genBetween, checkBetween, genEst, checkEst, genRat, checkRat, genHyp, checkHyp, genLeg, checkLeg, genFD, checkFD };
+})();
+/* ===================== MODEL END ===================== */
+
+
+/* ===== DRILL SHELL START (same in every Math 9 trainer) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen()                 -> a new item (from MODEL)
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom'
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown). */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => { if (!part) return; const t = el('tspan', /^[a-z]$/.test(part) ? { 'font-style': 'italic' } : {}, e); t.textContent = part; });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (tab.kind === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (tab.kind === 'choice') {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 9);
+      row.className = 'choices' + (long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = tab.kind === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) { for (let i = 0; i < 25; i++) { it = tab.gen(); key = JSON.stringify(it); if (key !== lastKey) break; } }
+    lastKey = key || JSON.stringify(it);
+    item = it; resp = {}; att = 0; resolved = false;
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (tab.kind === 'choice' && resp.v == null) return;
+    if (tab.kind === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (tab.kind === 'choice' ? 1 : 2);
+    if (res.ok) {
+      resolved = true; marks.push(att === 1 ? 'g' : 'y');
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r');
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (tab.kind === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
+    } else if (tab.kind === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (tab.kind === 'slots') fillSlots(ans, 'shown');
+    else if (tab.kind === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(tab) + '" target="_blank" rel="noopener">📖 Notes §' + tab.sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => PAGE.notes + '#:~:text=' + encodeURIComponent('Section ' + t.sec + ' ' + (PAGE.sep || '—'));
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    const n = $('notes'); n.href = notesHref(tab); $('notesTxt').textContent = '§' + tab.sec;
+    n.title = 'Notes, Section ' + tab.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + tab.sec);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }) };
+  }
+  return { boot, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+
+/* ===================== PAGE: pictures and tabs ===================== */
+const { C, fracHTML } = DRILL;
+const done = V => V.phase === 'right' || V.phase === 'show';
+const rt = s => '√<span style="text-decoration:overline">' + s + '</span>';
+const valSlot = () => ['=', { k: 'v', label: 'answer', wide: true }];
+
+/* SR1 perfect squares: a square of n tiles has side √n */
+function tileSquare(A, cells, shade, unit, V, o) {
+  // cells × cells grid, shade × shade filled; unit = cells per 1 (for fraction and decimal roots)
+  o = o || {}; const S = Math.min(320, Math.max(220, 26 * cells)), cs = S / cells, x0 = 320 - S / 2 + (o.dx || 0), y0 = 210 - S / 2;
+  const grid = o.grid !== false;
+  A.el('rect', { x: x0, y: y0 + S - shade * cs, width: shade * cs, height: shade * cs, fill: C.blue, 'fill-opacity': .3, stroke: C.blue, 'stroke-width': 2.5 }, A.svg);
+  if (grid) for (let i = 1; i < cells; i++) {
+    A.el('line', { x1: x0 + i * cs, x2: x0 + i * cs, y1: y0, y2: y0 + S, stroke: C.grid2, 'stroke-width': 1, class: 'fade' }, A.svg);
+    A.el('line', { x1: x0, x2: x0 + S, y1: y0 + i * cs, y2: y0 + i * cs, stroke: C.grid2, 'stroke-width': 1, class: 'fade' }, A.svg);
+  }
+  if (unit) A.el('rect', { x: x0, y: y0 + S - unit * cs, width: unit * cs, height: unit * cs, fill: 'none', stroke: C.text, 'stroke-width': 2, 'stroke-dasharray': '6 5' }, A.svg);
+  return { x0, y0, S, cs };
+}
+const T_PERF = {
+  id: 'perf', code: 'SR1', name: 'Perfect squares', sec: 1, q: 'Evaluate', kind: 'slots',
+  gen: MODEL.genPerfect, prompt: it => (it.form === 'neg' ? '−' : '') + rt(it.n),
+  slots: valSlot, check: MODEL.checkPerfect, answer: it => ({ v: Q.q(it.v) }),
+  draw(A, it, V) {
+    const g = tileSquare(A, it.k, it.k, 0, V, { grid: V.phase !== 'ask', dx: -40 });
+    A.mtx(A.svg, g.x0 + g.S / 2, g.y0 + g.S / 2, String(it.n), { 'font-size': 40, fill: C.text });
+    const side = done(V) ? String(it.k) : '?';
+    A.mtx(A.svg, g.x0 + g.S / 2, g.y0 + g.S + 30, side, { 'font-size': 30, fill: done(V) ? C.green : C.yellow, class: done(V) ? 'pop' : null });
+    A.mtx(A.svg, g.x0 - 30, g.y0 + g.S / 2, side, { 'font-size': 30, fill: done(V) ? C.green : C.yellow, class: done(V) ? 'pop' : null });
+    if (done(V)) A.mtx(A.svg, 560, 210, (it.form === 'neg' ? '−' : '') + it.k, { 'font-size': 52, fill: C.green, class: 'pop' });
+  }
+};
+
+/* SR2 between: the square ruler */
+function ruler(A, lo, hi, n, V, mark) {
+  const a = Math.max(0, lo - 2), b = Math.min(21, hi + 2), X = v => 70 + (v - a) / (b - a) * 500;
+  A.el('line', { x1: 50, x2: 590, y1: 150, y2: 150, stroke: C.gold, 'stroke-width': 2 }, A.svg);
+  A.el('line', { x1: 50, x2: 590, y1: 290, y2: 290, stroke: C.axis, 'stroke-width': 2.5 }, A.svg);
+  A.tx(A.svg, 40, 118, 'n', { 'font-size': 18, fill: C.gold, 'font-style': 'italic', class: 'm' });
+  A.tx(A.svg, 40, 322, '√n', { 'font-size': 18, fill: C.muted, class: 'm' });
+  for (let k = a; k <= b; k++) {
+    A.el('line', { x1: X(k), x2: X(k), y1: 142, y2: 158, stroke: C.gold, 'stroke-width': 2 }, A.svg);
+    A.mtx(A.svg, X(k), 124, String(k * k), { 'font-size': 18, fill: C.gold });
+    A.el('line', { x1: X(k), x2: X(k), y1: 280, y2: 300, stroke: C.axis, 'stroke-width': 2 }, A.svg);
+    A.mtx(A.svg, X(k), 322, String(k), { 'font-size': 20 });
+    A.el('line', { x1: X(k), x2: X(k), y1: 160, y2: 278, stroke: C.grid2, 'stroke-width': 1 }, A.svg);
+  }
+  if (mark) {
+    const x = X(Math.sqrt(n));
+    A.el('circle', { cx: x, cy: 150, r: 8, fill: C.yellow, class: 'pop' }, A.svg);
+    A.mtx(A.svg, x, 82, String(n), { 'font-size': 26, fill: C.yellow, class: 'pop' });
+    A.el('path', { d: 'M' + x + ' 160V280', stroke: C.yellow, 'stroke-width': 2, 'stroke-dasharray': '5 5', class: 'fade' }, A.svg);
+    if (done(V)) {
+      A.el('path', { d: 'M' + X(lo) + ' 290H' + X(hi), stroke: C.green, 'stroke-width': 8, 'stroke-linecap': 'round', class: 'draw', pathLength: 1 }, A.svg);
+      A.el('circle', { cx: x, cy: 290, r: 8, fill: C.yellow, class: 'pop' }, A.svg);
+      A.mtx(A.svg, 320, 372, lo + ' < √' + n + ' < ' + hi, { 'font-size': 30, fill: C.green, class: 'fade' });
+    }
+  }
+  return X;
+}
+const T_BETWEEN = {
+  id: 'between', code: 'SR2', name: 'Between', sec: 2, q: 'Between which whole numbers?', kind: 'slots',
+  gen: MODEL.genBetween,
+  slots: it => [{ k: 'a', label: 'lower whole number' }, { h: '&lt; ' + rt(it.n) + ' &lt;' }, { k: 'b', label: 'upper whole number' }],
+  check: MODEL.checkBetween, answer: it => ({ a: Q.q(it.lo), b: Q.q(it.hi) }),
+  draw(A, it, V) { ruler(A, it.lo, it.hi, it.n, V, V.phase !== 'ask'); }
+};
+
+/* SR2 estimate to one decimal: the tenths between, with their squares */
+const T_EST = {
+  id: 'est', code: 'SR2', name: 'Estimate', sec: 2, q: 'To one decimal place', kind: 'slots',
+  gen: MODEL.genEst, prompt: it => rt(it.n),
+  slots: () => ['≈', { k: 'v', label: 'estimate', wide: true }], check: MODEL.checkEst, answer: it => ({ v: (Math.round(it.x * 10) / 10).toFixed(1) }),
+  draw(A, it, V) {
+    const X = v => 70 + (v - it.lo) * 500, y = 230;
+    A.el('line', { x1: 50, x2: 590, y1: y, y2: y, stroke: C.axis, 'stroke-width': 2.5 }, A.svg);
+    for (let t = 0; t <= 10; t++) {
+      const v = it.lo + t / 10, whole = t === 0 || t === 10;
+      A.el('line', { x1: X(v), x2: X(v), y1: y - (whole ? 14 : 7), y2: y + (whole ? 14 : 7), stroke: C.axis, 'stroke-width': whole ? 2.5 : 1.2 }, A.svg);
+      A.mtx(A.svg, X(v), y + 34, whole ? String(Math.round(v)) : v.toFixed(1).slice(-2), { 'font-size': whole ? 22 : 15, fill: whole ? C.text : C.tick });
+      if (V.phase !== 'ask' || whole) {
+        const sq = Math.round(v * v * 100) / 100, below = sq <= it.n;
+        A.mtx(A.svg, X(v), y - 38 - (t % 2 ? 0 : 18), String(sq), { 'font-size': whole ? 18 : 14, fill: whole ? C.gold : (below ? C.gold : C.muted), class: whole ? null : 'fade' });
+      }
+    }
+    A.tx(A.svg, 40, y - 60, 'x²', { 'font-size': 15, fill: C.gold, class: 'm' });
+    A.mtx(A.svg, 320, 70, it.n + ' is between ' + it.lo * it.lo + ' and ' + it.hi * it.hi, { 'font-size': 22, fill: C.muted });
+    const g = V.resp && V.resp.v; if (g && V.phase !== 'ask') { const gv = Q.val(g); if (gv >= it.lo - .2 && gv <= it.hi + .2) A.el('circle', { cx: X(gv), cy: y, r: 8, fill: C.yellow, stroke: C.stage, 'stroke-width': 2 }, A.svg); }
+    if (done(V)) { A.el('circle', { cx: X(it.x), cy: y, r: 9, fill: C.green, stroke: C.stage, 'stroke-width': 2, class: 'pop' }, A.svg); A.mtx(A.svg, X(it.x), y + 80, '√' + it.n + ' ≈ ' + it.x.toFixed(2), { 'font-size': 24, fill: C.green, class: 'fade' }); }
+  }
+};
+
+/* SR2/SR4 rational or irrational? */
+const ratPrompt = it => it.kind === 'int' ? rt(it.n) : it.kind === 'frac' ? '√' + fracHTML(it.a, it.b) : rt(String(it.d));
+const T_RAT = {
+  id: 'rat', code: 'SR2', name: 'Rational?', sec: 2, q: 'Rational or irrational?', kind: 'choice',
+  gen: MODEL.genRat, prompt: ratPrompt,
+  choices: () => [{ v: 'rat', label: 'Rational' }, { v: 'irr', label: 'Irrational' }],
+  check: MODEL.checkRat, answer: it => ({ v: it.rat ? 'rat' : 'irr' }),
+  draw(A, it, V) {
+    if (V.phase === 'ask') { A.mtx(A.svg, 320, 210, '?', { 'font-size': 90, fill: C.edge }); return; }
+    if (it.kind === 'frac') {
+      A.mtx(A.svg, 320, 110, '√' + it.a + ' ÷ √' + it.b, { 'font-size': 36 });
+      const pa = MODEL.isSq(it.a), pb = MODEL.isSq(it.b);
+      A.mtx(A.svg, 220, 190, pa ? '= ' + Math.sqrt(it.a) : '√' + it.a + ' never ends', { 'font-size': 24, fill: pa ? C.green : C.red, class: 'fade' });
+      A.mtx(A.svg, 440, 190, pb ? '= ' + Math.sqrt(it.b) : '√' + it.b + ' never ends', { 'font-size': 24, fill: pb ? C.green : C.red, class: 'fade' });
+    }
+    const s = it.rat ? String(Math.round(it.x * 1e6) / 1e6) : it.x.toFixed(9) + '…';
+    A.mtx(A.svg, 320, 280, '= ' + s, { 'font-size': 40, fill: it.rat ? C.green : C.gold, class: 'pop' });
+    A.mtx(A.svg, 320, 345, it.rat ? 'ends' : 'never ends, never repeats', { 'font-size': 22, fill: C.muted, class: 'fade' });
+  }
+};
+
+/* SR3 Pythagorean: squares on the three sides */
+function triSquares(A, a, b, V, o) {
+  const s = Math.min(560 / (a + 2 * b), 360 / (2 * a + b)), ox = 320 - (a / 2) * s, oy = 210 + (b / 2) * s - (a / 2) * s * 0;
+  const P = (x, y) => [ox + x * s, oy - y * s], pts = arr => arr.map(p => P(p[0], p[1]).join(',')).join(' ');
+  const sq = (arr, col, lab, labCol, cls) => {
+    A.el('polygon', { points: pts(arr), fill: col, 'fill-opacity': .16, stroke: col, 'stroke-width': 2.5, class: cls || null }, A.svg);
+    const cx = arr.reduce((t, p) => t + p[0], 0) / 4, cy = arr.reduce((t, p) => t + p[1], 0) / 4, [X, Y] = P(cx, cy);
+    A.mtx(A.svg, X, Y, lab, { 'font-size': Math.max(18, Math.min(30, s * 2.2)), fill: labCol || col, class: cls || null });
+  };
+  sq([[0, 0], [a, 0], [a, -a], [0, -a]], C.blue, o.la, null);
+  sq([[0, 0], [0, b], [-b, b], [-b, 0]], C.gold, o.lb, null);
+  sq([[a, 0], [0, b], [b, a + b], [a + b, a]], C.green, o.lc, o.lcCol);
+  A.el('polygon', { points: pts([[0, 0], [a, 0], [0, b]]), fill: C.stage, stroke: C.text, 'stroke-width': 3 }, A.svg);
+  const [rx, ry] = P(0, 0), m = Math.min(14, s * a / 3);
+  A.el('path', { d: 'M' + (rx + m) + ' ' + ry + 'V' + (ry - m) + 'H' + rx, stroke: C.text, 'stroke-width': 2, fill: 'none' }, A.svg);
+  const [ax, ay] = P(a / 2, 0), [bx, by] = P(0, b / 2), [cx, cy] = P(a / 2, b / 2);
+  A.mtx(A.svg, ax, ay - 16, o.sa, { 'font-size': 22, fill: C.blue });
+  A.mtx(A.svg, bx + 18, by, o.sb, { 'font-size': 22, fill: C.gold });
+  const c = Math.hypot(a, b); A.mtx(A.svg, cx - b / c * 18, cy + a / c * 18, o.sc, { 'font-size': 22, fill: C.green });
+}
+const T_HYP = {
+  id: 'hyp', code: 'SR3', name: 'Hypotenuse', sec: 3, q: 'Hypotenuse, one decimal', kind: 'slots',
+  gen: MODEL.genHyp, prompt: it => '<i>a</i> = ' + it.a + ', <i>b</i> = ' + it.b,
+  slots: () => ['c =', { k: 'v', label: 'hypotenuse', wide: true }], check: MODEL.checkHyp, answer: it => ({ v: MODEL.ans1(it.c) }),
+  draw(A, it, V) {
+    const hint = V.phase !== 'ask', c2 = it.a * it.a + it.b * it.b;
+    triSquares(A, it.a, it.b, V, { la: hint ? String(it.a * it.a) : '', lb: hint ? String(it.b * it.b) : '', lc: hint ? (done(V) ? String(c2) : '?') : '', lcCol: done(V) ? C.green : C.yellow, sa: String(it.a), sb: String(it.b), sc: done(V) ? MODEL.ans1(it.c) : 'c' });
+    if (hint) A.mtx(A.svg, 112, 34, it.a * it.a + ' + ' + it.b * it.b + ' = ' + (done(V) ? c2 : '?'), { 'font-size': 22, fill: C.muted, class: 'fade' });
+    if (done(V)) A.mtx(A.svg, 112, 70, 'c = √' + c2 + (MODEL.isSq(c2) ? ' = ' : ' ≈ ') + MODEL.ans1(it.c), { 'font-size': 22, fill: C.green, class: 'fade' });
+  }
+};
+const T_LEG = {
+  id: 'leg', code: 'SR3', name: 'Leg', sec: 3, q: 'Leg, one decimal', kind: 'slots',
+  gen: MODEL.genLeg, prompt: it => '<i>c</i> = ' + it.c + ', <i>a</i> = ' + it.a,
+  slots: () => ['b =', { k: 'v', label: 'leg', wide: true }], check: MODEL.checkLeg, answer: it => ({ v: MODEL.ans1(it.b) }),
+  draw(A, it, V) {
+    const hint = V.phase !== 'ask', b2 = it.c * it.c - it.a * it.a;
+    triSquares(A, it.a, it.b, V, { la: hint ? String(it.a * it.a) : '', lb: hint ? (done(V) ? String(b2) : '?') : '', lc: hint ? String(it.c * it.c) : '', sa: String(it.a), sb: done(V) ? MODEL.ans1(it.b) : 'b', sc: String(it.c) });
+    if (hint) A.mtx(A.svg, 112, 34, it.c * it.c + ' − ' + it.a * it.a + ' = ' + (done(V) ? b2 : '?'), { 'font-size': 22, fill: C.muted, class: 'fade' });
+    if (done(V)) A.mtx(A.svg, 112, 70, 'b = √' + b2 + (MODEL.isSq(b2) ? ' = ' : ' ≈ ') + MODEL.ans1(it.b), { 'font-size': 22, fill: C.green, class: 'fade' });
+  }
+};
+
+/* SR4 roots of fractions and decimals: the shaded square inside a unit square */
+const T_FD = {
+  id: 'fd', code: 'SR4', name: 'Fractions & decimals', sec: 4, q: 'Evaluate', kind: 'slots',
+  gen: MODEL.genFD, prompt: it => it.kind === 'frac' ? '√' + fracHTML(it.p * it.p, it.q * it.q) : rt(String(it.d)),
+  slots: valSlot, check: MODEL.checkFD, answer: it => ({ v: it.kind === 'frac' ? it.v : String(it.k / 10) }),
+  draw(A, it, V) {
+    const k = it.kind === 'frac' ? it.p : it.k, u = it.kind === 'frac' ? it.q : 10, cells = Math.max(k, u);
+    const g = tileSquare(A, cells, k, u, V, { grid: V.phase !== 'ask', dx: -60 });
+    const area = it.kind === 'frac' ? (it.p * it.p) + '/' + (it.q * it.q) : String(it.d);
+    if (k * g.cs > 70) A.mtx(A.svg, g.x0 + k * g.cs / 2, g.y0 + g.S - k * g.cs / 2, area, { 'font-size': Math.min(30, 8 + k * g.cs / 5), fill: C.text });
+    else { A.mtx(A.svg, g.x0 + k * g.cs + 40, g.y0 + g.S - k * g.cs - 30, area, { 'font-size': 22, fill: C.blue, 'text-anchor': 'start' }); A.el('path', { d: 'M' + (g.x0 + k * g.cs + 36) + ' ' + (g.y0 + g.S - k * g.cs - 24) + 'L' + (g.x0 + k * g.cs / 2 + 4) + ' ' + (g.y0 + g.S - k * g.cs / 2 - 4), stroke: C.blue, 'stroke-width': 1.5 }, A.svg); }
+    A.mtx(A.svg, g.x0 + u * g.cs / 2, g.y0 + g.S - u * g.cs - 16, '1', { 'font-size': 20, fill: C.muted });
+    const side = done(V) ? (it.kind === 'frac' ? it.p + '/' + it.q : String(it.k / 10)) : '?';
+    A.mtx(A.svg, g.x0 + k * g.cs / 2, g.y0 + g.S + 30, side, { 'font-size': 28, fill: done(V) ? C.green : C.yellow, class: done(V) ? 'pop' : null });
+    if (V.phase !== 'ask') A.mtx(A.svg, 560, 260, k + ' of ' + u + ' per side', { 'font-size': 20, fill: C.muted, class: 'fade' });
+  }
+};
+
+const PAGE = {
+  key: 'math9-square-roots-trainer-v1', course: 'Math 9 · Number', title: 'Square Roots',
+  notes: '../notes/square-roots/math9-square-roots-notes-v1.html',
+  tabs: [T_PERF, T_BETWEEN, T_EST, T_RAT, T_HYP, T_LEG, T_FD]
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>

@@ -118,8 +118,9 @@ const DRILL = (() => {
       const row = document.createElement('div'); row.className = 'slots';
       tab.slots(item).forEach(p => {
         if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
         const inp = document.createElement('input');
-        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : ''); inp.dataset.k = p.k;
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
         inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
         if (COARSE) inp.inputMode = 'none';
         inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
@@ -129,8 +130,9 @@ const DRILL = (() => {
       box.appendChild(row);
       if (COARSE) box.appendChild(keypad());
     } else if (tab.kind === 'choice') {
-      const row = document.createElement('div'); row.className = 'choices';
-      tab.choices(item).forEach(c => {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 9);
+      row.className = 'choices' + (long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
         const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
         b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
         b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
@@ -169,7 +171,7 @@ const DRILL = (() => {
     return bad ? 'bad' : any ? out : null;
   }
   function fillSlots(ans, cls) {
-    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
   }
 
   /* ---------- one item ---------- */
@@ -226,7 +228,7 @@ const DRILL = (() => {
   function markAnswer(ok) {
     if (tab.kind === 'slots') {
       const ans = tab.answer(item);
-      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); inp.classList.add(ok || Q.eq(v, ans[inp.dataset.k]) ? 'ok' : 'bad'); });
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
     } else if (tab.kind === 'choice') {
       $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
     }
@@ -271,7 +273,7 @@ const DRILL = (() => {
     marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
     if (!COARSE) $('bAgain').focus();
   }
-  const notesHref = t => PAGE.notes + '#:~:text=' + encodeURIComponent('Section ' + t.sec + ' —');
+  const notesHref = t => PAGE.notes + '#:~:text=' + encodeURIComponent('Section ' + t.sec + ' ' + (PAGE.sep || '—'));
 
   /* ---------- tabs ---------- */
   function tabsBar() {
