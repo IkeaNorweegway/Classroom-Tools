@@ -421,7 +421,12 @@ const DRILL = (() => {
   // Math text: single letters in italics.
   function mtx(p, x, y, s, a) {
     const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
-    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => { if (!part) return; const t = el('tspan', /^[a-z]$/.test(part) ? { 'font-style': 'italic' } : {}, e); t.textContent = part; });
+    let prevItalic = false;
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => {
+      if (!part) return; const it = /^[a-z]$/.test(part);
+      // an italic letter leans into a following ² or ³: nudge it right
+      const t = el('tspan', it ? { 'font-style': 'italic' } : prevItalic && /^[²³]/.test(part) ? { dx: '0.12em' } : {}, e); t.textContent = part; prevItalic = it;
+    });
     return e;
   }
   // A stacked fraction centred at (x, y).
@@ -518,7 +523,7 @@ const DRILL = (() => {
       box.appendChild(row);
       if (COARSE) box.appendChild(keypad());
     } else if (tab.kind === 'choice') {
-      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 9);
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
       row.className = 'choices' + (long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
       chs.forEach(c => {
         const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;

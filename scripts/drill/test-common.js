@@ -21,7 +21,7 @@
         try {
           const st = D.state(), it = st.item, ans = t.answer(it), path = i % 4;
           const give = right => {
-            if (t.kind === 'slots') { const v = {}; for (const k in ans) { const a = ans[k], s = typeof a === 'string' ? a : Q.str(a).replace('−', '-'); v[k] = right ? s : ((window.WRONG && WRONG(t, it)) || {})[k] ?? String(Q.val(Q.parse(s)) + 7); } D.fill(v); D.check(); }
+            if (t.kind === 'slots') { const v = {}; for (const k in ans) { const a = ans[k], s = typeof a === 'string' ? a : Q.str(a).replace('−', '-'); v[k] = right ? s : ((window.WRONG && WRONG(t, it)) || {})[k] ?? String(Q.val(Q.parse(s)) * 1.5 + 7); } D.fill(v); D.check(); }
             else if (t.kind === 'choice') { const ch = t.choices(it); const w = ch.find(c => c.v !== ans.v); D.pickChoice(right ? ans.v : w.v); }
             else { D.setResp(right ? ans : WRONG(t, it)); D.check(); }
           };

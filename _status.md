@@ -149,7 +149,15 @@ All 11 topics have notes, notes answer key, teacher notes, concept one-pager, Co
     - **Tested in headless Chrome** (`sh scripts/drill/test.sh`): 47, 41 and 39 checks pass (all six narrow pages re-run after the shared shell changed: 35, 38, 37). Every tab's right answer passes for 400 generated items and plays a full round through the page; each named mistake gets its own cue; the order-of-operations steps always reduce to one number (500 items, 10 expression shapes); every "rational or irrational?" item is classified right (600). No page or panel scroll at the three test sizes. Screenshots of every tab checked.
     - **Shell changes (all six pages rebuilt):** raised exponent boxes, decimal answers, a notes-heading separator per page (the Powers notes use "Section 1 ·"), long choices stack one per row, three or four choices keep a fixed grid.
     - **Untested:** students, touch, school Chromebooks, the notes jump on the live site.
-  - **Next batches (narrow format):** Measurement & Geometry (Circle Geometry, Surface Area & Volume, Similarity), then Statistics & Probability.
+  - **Measurement & Geometry and Statistics & Probability batches, narrow format (site, 2026-10-29):** every Math 9 topic now has a trainer, linked first under Extra help.
+    - **Circle Geometry** (`math9-circle-geometry-trainer-v1`, 4 tabs): Name it, Chords, Angles, Tangent.
+    - **Surface Area & Volume** (`math9-measurement-trainer-v1`, 7 tabs): Area, Surface area, Volume, ⅓ rule, Sphere, Composite, SA or V?
+    - **Similarity** (`math9-similarity-trainer-v1`, 7 tabs): Proportion, Scale factor, Missing side, Similar?, Which rule?, Shadows, Map scale.
+    - **Statistics** (`math9-statistics-trainer-v1`, 6 tabs): 1 or 2 variables?, Direction, Strength, Best fit, Predict, Inside or outside? Generated sample data on plain x/y axes.
+    - **Probability** (`math9-probability-trainer-v1`, 7 tabs): Probability, Not, Expected, Outcomes, And, No replacement, Next one?
+    - **Tested in headless Chrome** (`sh scripts/drill/test.sh`, all 11 pages re-run): 26, 38, 36, 28 and 37 checks pass on the new pages. Every tab's right answer passes for 400 generated items and plays a full round; named mistakes get their own cues; generated scatter plots meet their correlation bands (direction above 0.6, none below 0.2, strong above 0.92, weak 0.3–0.62); the best-fit line is least squares, balances points above and below, and beats the other two clearly; every similar/congruent/neither and inside/outside item is classified right. No page or panel scroll at the three test sizes. Screenshots of every tab checked.
+    - **Choices to review:** answers with π are accepted within 0.2 % (π or 3.14); lengths to one decimal within 0.05; "Predict" accepts within 4 of the line. Correlation vs causation stays on paper (it needs reading).
+    - **Untested:** students, touch, school Chromebooks, the notes jump on the live site.
 
 Answer key design follows `research/answer-key-design-research.md`: full worked solutions for Core, partial solutions for Challenge, faded structure in strand workbooks.
 

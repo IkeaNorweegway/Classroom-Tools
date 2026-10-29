@@ -128,6 +128,16 @@ const linearEquations = withPracticeTest('linear-equations', 'Linear Equations &
 linearEquations.extras.unshift({ label: 'Equations Trainer (two-step, brackets, both sides, fractions, the sign flip, graphing)', path: 'practice/math9-linear-equations-trainer-v2', type: 'interactive' });
 const polynomials = withPracticeTest('polynomials', 'Polynomials', 'algebra', 'math9-polynomials');
 polynomials.extras.unshift({ label: 'Polynomials Trainer (parts, like terms, add, subtract, multiply)', path: 'practice/math9-polynomials-trainer-v2', type: 'interactive' });
+const circles = withPracticeTest('circle-geometry', 'Circle Geometry', 'measurement-geometry', 'math9-circle-geometry');
+circles.extras.unshift({ label: 'Circle Geometry Trainer (name the parts, chords, inscribed angles, tangents)', path: 'practice/math9-circle-geometry-trainer-v1', type: 'interactive' });
+const measurement = withPracticeTest('measurement', 'Surface Area & Volume', 'measurement-geometry', 'math9-measurement');
+measurement.extras.unshift({ label: 'Surface Area & Volume Trainer (area, nets, volume, cones and spheres, composite objects)', path: 'practice/math9-measurement-trainer-v1', type: 'interactive' });
+const similarity = withPracticeTest('similarity', 'Similarity & Scale', 'measurement-geometry', 'math9-similarity');
+similarity.extras.unshift({ label: 'Similarity Trainer (proportions, scale factor, similar triangles, shadows, map scale)', path: 'practice/math9-similarity-trainer-v1', type: 'interactive' });
+const statistics = withPracticeTest('statistics', 'Statistics & Scatter Plots', 'statistics-probability', 'math9-statistics');
+statistics.extras.unshift({ label: 'Statistics Trainer (variables, correlation, line of best fit, predicting)', path: 'practice/math9-statistics-trainer-v1', type: 'interactive' });
+const probability = withPracticeTest('probability', 'Probability', 'statistics-probability', 'math9-probability');
+probability.extras.unshift({ label: 'Probability Trainer (one event, complements, expected counts, two events, without replacement)', path: 'practice/math9-probability-trainer-v1', type: 'interactive' });
 
 export const topics: Topic[] = [
   rational,
@@ -136,11 +146,11 @@ export const topics: Topic[] = [
   linearRelations,
   linearEquations,
   polynomials,
-  withPracticeTest('circle-geometry', 'Circle Geometry', 'measurement-geometry', 'math9-circle-geometry'),
-  withPracticeTest('measurement', 'Surface Area & Volume', 'measurement-geometry', 'math9-measurement'),
-  withPracticeTest('similarity', 'Similarity & Scale', 'measurement-geometry', 'math9-similarity'),
-  withPracticeTest('statistics', 'Statistics & Scatter Plots', 'statistics-probability', 'math9-statistics'),
-  withPracticeTest('probability', 'Probability', 'statistics-probability', 'math9-probability'),
+  circles,
+  measurement,
+  similarity,
+  statistics,
+  probability,
 ];
 
 // Home practice sheets for the parent pages, by topic: [file name part, skill].

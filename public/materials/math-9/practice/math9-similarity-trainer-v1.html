@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Similarity Trainer | Math 9</title>
+<!-- =====================================================================
+   SIMILARITY & SCALE TRAINER (narrow trainer format, see _sims-context.md)
+   Math 9 | Measurement & Geometry | Similarity. Used after the lesson: it does not teach, it points back to the notes.
+   One narrow skill per tab, 10 items a round:
+     SI1 Proportion    a/b = x/d or a/b = c/x; a ratio table with × k arrows
+     SI1 Scale factor  k = image ÷ original; image or original from k
+     SI2 Missing side  △ABC ~ △DEF: matching sides share a colour; k = DE ÷ AB
+     SI2 Similar?      congruent, similar or neither: the side ratios are listed
+     SI3 Which rule?   AA, SSS, SAS or not enough (an angle not between the sides)
+     SI4 Shadows       stick and tree: height ÷ shadow is the same
+     SI4 Map scale     1 : n, map cm to real metres
+   Named mistakes: adding instead of multiplying, a flipped proportion, k upside down, the wrong matching side, SSA,
+   cm left as cm.
+   ?debug=1 puts DRILL (and MODEL) on window, turns off saving and motion.
+   ===================================================================== -->
+<style>
+/* ===== DRILL SHELL CSS START (same in every Math 9 trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slot.sup { width: 1.9em; min-height: 40px; font-size: 20px; align-self: flex-start; margin-left: -2px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choices.two { grid-template-columns: 1fr 1fr; }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choices.one { grid-template-columns: 1fr; gap: 8px; }
+  .choices.one .choice { min-height: 54px; }
+  .choices.one .choice.math { font-size: 26px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+/* ===================== MODEL START (no DOM) ===================== */
+const MODEL = (() => {
+  const { q, val, eq, rnd, pick, chance, shuffle } = Q;
+  const near = (g, x, t) => g != null && Math.abs(val(g) - x) <= (t == null ? .05 : t) + 1e-9;
+  const ans1 = x => Math.abs(x - Math.round(x)) < 1e-9 ? String(Math.round(x)) : (Math.round(x * 100) / 100).toString();
+
+  /* SI1 solve a proportion */
+  function genProp() {
+    for (;;) {
+      const a = rnd(2, 12), b = rnd(2, 12); if (a === b) continue;
+      const k = pick([2, 3, 4, 5, 1.5, 2.5]), form = pick(['num', 'num', 'den']);
+      if (form === 'num') { const d = b * k; if (!Number.isInteger(d)) continue; return { form, a, b, d, v: a * d / b }; }
+      const c = a * k; if (!Number.isInteger(c)) continue; return { form, a, b, c, v: b * c / a };
+    }
+  }
+  function checkProp(it, r) {
+    const g = r.v; if (near(g, it.v)) return { ok: true };
+    if (it.form === 'num' && near(g, it.a + it.d - it.b)) return { code: 'add', cue: 'Multiply, don’t add' };
+    if (it.form === 'num' && near(g, it.b * it.d / it.a)) return { code: 'flip', cue: 'Top to top, bottom to bottom' };
+    if (it.form === 'den' && near(g, it.b + it.c - it.a)) return { code: 'add', cue: 'Multiply, don’t add' };
+    if (it.form === 'den' && near(g, it.a * it.c / it.b)) return { code: 'flip', cue: 'Top to top, bottom to bottom' };
+    return { code: 'other', cue: 'Find the × factor, use it again' };
+  }
+
+  /* SI1 scale factor k = image ÷ original */
+  function genScale() {
+    for (;;) {
+      const o = rnd(2, 16), k = pick([2, 3, 4, 0.5, 0.25, 1.5, 2.5, 0.75]), i = o * k, form = pick(['k', 'k', 'img', 'orig']);
+      if (!Number.isInteger(i * 4)) continue;
+      return { o, k, i, form, v: form === 'k' ? k : form === 'img' ? i : o };
+    }
+  }
+  function checkScale(it, r) {
+    const g = r.v; if (near(g, it.v, .005)) return { ok: true };
+    if (it.form === 'k' && near(g, it.o / it.i, .005)) return { code: 'flip', cue: 'k = image ÷ original' };
+    if (it.form === 'img' && near(g, it.o / it.k)) return { code: 'div', cue: 'Image = k × original' };
+    if (it.form === 'orig' && near(g, it.i * it.k)) return { code: 'mul', cue: 'Original = image ÷ k' };
+    return { code: 'other', cue: 'image = k × original' };
+  }
+
+  /* SI2 missing side of similar triangles: △ABC ~ △DEF */
+  const SIDES = [[3, 4, 5], [4, 6, 7], [5, 7, 8], [6, 8, 9], [4, 5, 6], [5, 6, 8], [7, 8, 10]];
+  function genSide() {
+    const [p, qq, rr] = shuffle(pick(SIDES)), k = pick([2, 3, 1.5, 2.5, 0.5]), ask = pick(['EF', 'DF']);
+    return { AB: p, BC: qq, CA: rr, k, DE: p * k, ask, v: (ask === 'EF' ? qq : rr) * k };
+  }
+  function checkSide(it, r) {
+    const g = r.v; if (near(g, it.v)) return { ok: true };
+    const base = it.ask === 'EF' ? it.BC : it.CA, other = it.ask === 'EF' ? it.CA : it.BC;
+    if (near(g, base / it.k)) return { code: 'flip', cue: 'k = DEF side ÷ ABC side' };
+    if (near(g, other * it.k)) return { code: 'match', cue: it.ask + ' matches ' + (it.ask === 'EF' ? 'BC' : 'CA') };
+    if (near(g, base + (it.DE - it.AB))) return { code: 'add', cue: 'Multiply by k, don’t add' };
+    return { code: 'other', cue: 'k = DE ÷ AB, then × k' };
+  }
+
+  /* SI2 congruent, similar or neither? */
+  function genSim() {
+    const kind = pick(['cong', 'sim', 'sim', 'neither', 'neither']), shape = pick(['rect', 'tri']);
+    const a = shape === 'rect' ? [rnd(2, 8), rnd(2, 8)] : pick(SIDES).slice();
+    if (shape === 'rect' && a[0] === a[1]) a[1] += 1;
+    let b;
+    if (kind === 'cong') b = a.slice();
+    else { const k = pick([2, 3, 1.5, 0.5, 2.5]); b = a.map(x => x * k); if (kind === 'neither') { const i = rnd(0, b.length - 1); b[i] += pick([1, 2, -1]); if (b[i] <= 0) b[i] += 3; } }
+    return { kind, shape, a, b };
+  }
+  function checkSim(it, r) {
+    if (r.v === it.kind) return { ok: true };
+    return { code: 'pick', cue: { cong: 'Same size and shape: congruent', sim: 'Every ratio the same: similar', neither: 'Ratios differ: not similar' }[it.kind] };
+  }
+
+  /* SI3 which test? AA, SSS, SAS or not enough (SSA) */
+  function genRule() {
+    const rule = pick(['AA', 'SSS', 'SAS', 'none']), k = pick([2, 1.5, 3, 0.5]), A1 = rnd(35, 75), B1 = rnd(35, 70);
+    const s = pick(SIDES);
+    return { rule, k, A1, B1, s };
+  }
+  function checkRule(it, r) {
+    if (r.v === it.rule) return { ok: true };
+    return { code: 'pick', cue: { AA: 'Two angles match: AA', SSS: 'All three sides in the same ratio: SSS', SAS: 'Angle between the two sides: SAS', none: 'Angle not between the sides: not enough' }[it.rule] };
+  }
+
+  /* SI4 shadows */
+  function genShadow() { for (;;) { const h = pick([1, 1.2, 1.5, 1.6, 1.8, 2]), s = pick([1.2, 1.5, 2, 2.4, 3]), S = rnd(4, 30), v = h * S / s; if (v >= 3 && v <= 30) return { h, s, S, v }; } }
+  function checkShadow(it, r) {
+    const g = r.v; if (near(g, it.v, Math.max(.05, it.v * .01))) return { ok: true };
+    if (near(g, it.h * it.s / it.S, .05) || near(g, it.s * it.S / it.h, Math.max(.05, it.s * it.S / it.h * .01))) return { code: 'flip', cue: 'Height ÷ shadow is the same for both' };
+    return { code: 'other', cue: 'h ÷ shadow = H ÷ Shadow' };
+  }
+
+  /* SI4 map scale 1 : n, map length in cm, real length in m */
+  function genMap() { const n = pick([500, 1000, 2000, 2500, 5000, 10000, 25000, 50000]), m = rnd(3, 24) / 2; return { n, m, v: m * n / 100 }; }
+  function checkMap(it, r) {
+    const g = r.v; if (near(g, it.v, .005)) return { ok: true };
+    if (near(g, it.m * it.n, .5)) return { code: 'cm', cue: 'That’s cm: ÷ 100 for metres' };
+    if (near(g, it.m * it.n / 1000, .005) || near(g, it.m * it.n / 10, .05)) return { code: 'unit', cue: '100 cm in a metre' };
+    if (near(g, it.m / it.n, .001)) return { code: 'div', cue: 'Real = map × ' + it.n };
+    return { code: 'other', cue: 'map cm × ' + it.n + ', then ÷ 100' };
+  }
+
+  return { near, ans1, genProp, checkProp, genScale, checkScale, genSide, checkSide, genSim, checkSim, genRule, checkRule, genShadow, checkShadow, genMap, checkMap };
+})();
+/* ===================== MODEL END ===================== */
+
+
+/* ===== DRILL SHELL START (same in every Math 9 trainer) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen()                 -> a new item (from MODEL)
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom'
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown). */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    let prevItalic = false;
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => {
+      if (!part) return; const it = /^[a-z]$/.test(part);
+      // an italic letter leans into a following ² or ³: nudge it right
+      const t = el('tspan', it ? { 'font-style': 'italic' } : prevItalic && /^[²³]/.test(part) ? { dx: '0.12em' } : {}, e); t.textContent = part; prevItalic = it;
+    });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (tab.kind === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (tab.kind === 'choice') {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
+      row.className = 'choices' + (long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = tab.kind === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) { for (let i = 0; i < 25; i++) { it = tab.gen(); key = JSON.stringify(it); if (key !== lastKey) break; } }
+    lastKey = key || JSON.stringify(it);
+    item = it; resp = {}; att = 0; resolved = false;
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (tab.kind === 'choice' && resp.v == null) return;
+    if (tab.kind === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (tab.kind === 'choice' ? 1 : 2);
+    if (res.ok) {
+      resolved = true; marks.push(att === 1 ? 'g' : 'y');
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r');
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (tab.kind === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
+    } else if (tab.kind === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (tab.kind === 'slots') fillSlots(ans, 'shown');
+    else if (tab.kind === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(tab) + '" target="_blank" rel="noopener">📖 Notes §' + tab.sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => PAGE.notes + '#:~:text=' + encodeURIComponent('Section ' + t.sec + ' ' + (PAGE.sep || '—'));
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    const n = $('notes'); n.href = notesHref(tab); $('notesTxt').textContent = '§' + tab.sec;
+    n.title = 'Notes, Section ' + tab.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + tab.sec);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }) };
+  }
+  return { boot, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+
+/* ===================== PAGE: pictures and tabs ===================== */
+const { C, fracHTML } = DRILL;
+const done = V => V.phase === 'right' || V.phase === 'show';
+const F = MODEL.ans1;
+const lab = (A, x, y, s, col, a) => A.mtx(A.svg, x, y, s, Object.assign({ 'font-size': 20, fill: col || C.text }, a || {}));
+const poly = (A, pts, a) => A.el('polygon', Object.assign({ points: pts.map(p => p.join(',')).join(' '), 'stroke-linejoin': 'round' }, a), A.svg);
+// A triangle from its three sides: A at origin, B along the x-axis, C above.
+function triPts(ab, bc, ca) { const x = (ab * ab + ca * ca - bc * bc) / (2 * ab), y = Math.sqrt(Math.max(.01, ca * ca - x * x)); return [[0, 0], [ab, 0], [x, y]]; }
+function triFromAngles(ab, A1, B1) { const a = A1 * Math.PI / 180, b = B1 * Math.PI / 180, ca = ab * Math.sin(b) / Math.sin(a + b); return [[0, 0], [ab, 0], [ca * Math.cos(a), ca * Math.sin(a)]]; }
+// Draw a triangle (math coords) at x0, y0 (bottom-left) with scale s. Returns screen points.
+function drawTri(A, pts, x0, y0, s, cols, labels, names) {
+  const P = pts.map(p => [x0 + p[0] * s, y0 - p[1] * s]);
+  poly(A, P, { fill: C.blue, 'fill-opacity': .08, stroke: 'none' });
+  [[0, 1], [1, 2], [2, 0]].forEach(([i, j], k) => {
+    A.el('line', { x1: P[i][0], y1: P[i][1], x2: P[j][0], y2: P[j][1], stroke: cols[k], 'stroke-width': 3.5, 'stroke-linecap': 'round' }, A.svg);
+    if (labels && labels[k] != null) {
+      const m = [(P[i][0] + P[j][0]) / 2, (P[i][1] + P[j][1]) / 2], cx = (P[0][0] + P[1][0] + P[2][0]) / 3, cy = (P[0][1] + P[1][1] + P[2][1]) / 3;
+      const dx = m[0] - cx, dy = m[1] - cy, d = Math.hypot(dx, dy) || 1;
+      lab(A, m[0] + dx / d * 20, m[1] + dy / d * 20, labels[k], cols[k], { 'font-size': 19 });
+    }
+  });
+  if (names) names.forEach((n, i) => { const cx = (P[0][0] + P[1][0] + P[2][0]) / 3, cy = (P[0][1] + P[1][1] + P[2][1]) / 3, dx = P[i][0] - cx, dy = P[i][1] - cy, d = Math.hypot(dx, dy) || 1; lab(A, P[i][0] + dx / d * 18, P[i][1] + dy / d * 18, n, C.muted, { 'font-size': 17, 'font-style': 'italic' }); });
+  return P;
+}
+function angleArc(A, P, i, lab_, col) {
+  const V = P[i], a = P[(i + 1) % 3], b = P[(i + 2) % 3], a1 = Math.atan2(a[1] - V[1], a[0] - V[0]), a2 = Math.atan2(b[1] - V[1], b[0] - V[0]);
+  let d = a2 - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI;
+  const r = 24, s = [V[0] + r * Math.cos(a1), V[1] + r * Math.sin(a1)], e = [V[0] + r * Math.cos(a1 + d), V[1] + r * Math.sin(a1 + d)];
+  A.el('path', { d: 'M' + s + 'A' + r + ' ' + r + ' 0 0 ' + (d > 0 ? 1 : 0) + ' ' + e, stroke: col || C.yellow, 'stroke-width': 3, fill: 'none' }, A.svg);
+  if (lab_) { const m = a1 + d / 2; lab(A, V[0] + 44 * Math.cos(m), V[1] + 44 * Math.sin(m), lab_, col || C.yellow, { 'font-size': 16 }); }
+}
+const COLS = [C.blue, C.gold, C.teal];
+
+/* SI1 proportion */
+const T_PROP = {
+  id: 'prop', code: 'SI1', name: 'Proportion', sec: 1, q: 'Solve for x', kind: 'slots',
+  gen: MODEL.genProp,
+  prompt: it => it.form === 'num' ? fracHTML(it.a, it.b) + ' = ' + fracHTML('<i>x</i>', it.d) : fracHTML(it.a, it.b) + ' = ' + fracHTML(it.c, '<i>x</i>'),
+  slots: () => ['x =', { k: 'v', label: 'x', wide: true }], check: MODEL.checkProp, answer: it => ({ v: F(it.v) }),
+  draw(A, it, V) {
+    const hint = V.phase !== 'ask', k = it.form === 'num' ? it.d / it.b : it.c / it.a, top2 = it.form === 'num' ? (done(V) ? F(it.v) : 'x') : String(it.c), bot2 = it.form === 'num' ? String(it.d) : (done(V) ? F(it.v) : 'x');
+    const cell = (x, y, s, col) => { A.el('rect', { x: x - 50, y: y - 32, width: 100, height: 64, rx: 12, fill: C.stage, stroke: col || C.edge, 'stroke-width': 2 }, A.svg); lab(A, x, y + 2, s, col || C.text, { 'font-size': 30 }); };
+    cell(200, 150, String(it.a), C.blue); cell(200, 270, String(it.b), C.gold); cell(440, 150, top2, it.form === 'num' ? C.yellow : C.blue); cell(440, 270, bot2, it.form === 'num' ? C.gold : C.yellow);
+    if (!hint) return;
+    const known = it.form === 'num' ? 270 : 150, other = it.form === 'num' ? 150 : 270;
+    [known, other].forEach((y, i) => { if (i && !done(V)) return; A.el('path', { d: 'M256 ' + y + 'H382', stroke: C.green, 'stroke-width': 2.5, 'marker-end': 'url(#aN)', class: 'fade' }, A.svg); lab(A, 320, y - 16, '× ' + F(k), C.green, { class: 'fade' }); });
+    if (!done(V)) lab(A, 320, other - 16, '× same', C.muted, { class: 'fade' });
+  }
+};
+
+/* SI1 scale factor */
+const T_SCALE = {
+  id: 'scale', code: 'SI1', name: 'Scale factor', sec: 1, q: it => it.form === 'k' ? 'Scale factor k' : it.form === 'img' ? 'Length on the image' : 'Length on the original', kind: 'slots',
+  gen: MODEL.genScale, slots: it => [it.form === 'k' ? 'k =' : '=', { k: 'v', label: 'answer', wide: true }], check: MODEL.checkScale, answer: it => ({ v: F(it.v) }),
+  draw(A, it, V) {
+    const s = 240 / Math.max(it.o, it.i), w1 = it.o * s, w2 = it.i * s, y = 270;
+    A.el('rect', { x: 60, y: y - w1 * .6, width: w1, height: w1 * .6, fill: C.muted, 'fill-opacity': .15, stroke: C.muted, 'stroke-width': 2.5 }, A.svg);
+    A.el('rect', { x: 340, y: y - w2 * .6, width: w2, height: w2 * .6, fill: C.blue, 'fill-opacity': .18, stroke: C.blue, 'stroke-width': 2.5 }, A.svg);
+    lab(A, 60 + w1 / 2, y + 26, it.form === 'orig' && !done(V) ? '?' : String(it.o), C.muted); lab(A, 340 + w2 / 2, y + 26, it.form === 'img' && !done(V) ? '?' : F(it.i), C.blue);
+    lab(A, 60 + w1 / 2, 340, 'original', C.muted, { 'font-size': 16 }); lab(A, 340 + w2 / 2, 340, 'image', C.blue, { 'font-size': 16 });
+    A.el('path', { d: 'M' + (60 + w1 / 2) + ' 80Q320 56 ' + (340 + w2 / 2) + ' 80', stroke: C.gold, 'stroke-width': 2.5, fill: 'none', 'marker-end': 'url(#aG)' }, A.svg);
+    lab(A, 320, 34, '× ' + (it.form === 'k' && !done(V) ? 'k' : F(it.k)), C.gold, { 'font-size': 24 });
+    if (V.phase !== 'ask') lab(A, 320, 390, 'image = k × original', C.muted, { class: 'fade' });
+  }
+};
+
+/* SI2 missing side */
+const T_SIDE = {
+  id: 'side', code: 'SI2', name: 'Missing side', sec: 2, q: it => '△ABC ~ △DEF. Find ' + it.ask, kind: 'slots',
+  gen: MODEL.genSide, slots: it => [it.ask + ' =', { k: 'v', label: it.ask, wide: true }], check: MODEL.checkSide, answer: it => ({ v: F(it.v) }),
+  draw(A, it, V) {
+    const pts = triPts(it.AB, it.BC, it.CA), big = Math.max(1, it.k), maxW = Math.max(it.AB, pts[2][0]) - Math.min(0, pts[2][0]), maxH = pts[2][1];
+    const s = Math.min(230 / (maxW * big), 260 / (maxH * big), 230 / maxW);
+    drawTri(A, pts, 50 - Math.min(0, pts[2][0]) * s, 330, s, COLS, [String(it.AB), String(it.BC), String(it.CA)], ['A', 'B', 'C']);
+    const p2 = pts.map(p => [p[0] * it.k, p[1] * it.k]), ask = it.ask === 'EF' ? 1 : 2;
+    const L2 = [F(it.DE), ask === 1 ? (done(V) ? F(it.v) : '?') : null, ask === 2 ? (done(V) ? F(it.v) : '?') : null];
+    drawTri(A, p2, 340 - Math.min(0, p2[2][0]) * s, 330, s, COLS, L2, ['D', 'E', 'F']);
+    if (V.phase !== 'ask') lab(A, 320, 386, 'k = DE ÷ AB = ' + F(it.DE) + ' ÷ ' + it.AB + ' = ' + F(it.k), C.green, { class: 'fade' });
+  }
+};
+
+/* SI2 congruent, similar, neither */
+const T_SIM = {
+  id: 'sim', code: 'SI2', name: 'Similar?', sec: 2, q: 'Congruent, similar or neither?', kind: 'choice',
+  gen: MODEL.genSim, choices: () => [{ v: 'cong', label: 'Congruent' }, { v: 'sim', label: 'Similar' }, { v: 'neither', label: 'Neither' }],
+  check: MODEL.checkSim, answer: it => ({ v: it.kind }),
+  draw(A, it, V) {
+    const big = Math.max(...it.a, ...it.b), s = 200 / big;
+    if (it.shape === 'rect') {
+      [[it.a, 60, C.muted], [it.b, 340, C.blue]].forEach(([d, x, col]) => { A.el('rect', { x, y: 300 - d[1] * s, width: d[0] * s, height: d[1] * s, fill: col, 'fill-opacity': .15, stroke: col, 'stroke-width': 2.5 }, A.svg); lab(A, x + d[0] * s / 2, 324, F(d[0]), col); lab(A, x - 18, 300 - d[1] * s / 2, F(d[1]), col); });
+    } else {
+      const p1 = triPts(...it.a), p2 = triPts(...it.b), s2 = Math.min(s, 240 / Math.max(it.a[0], it.b[0]));
+      drawTri(A, p1, 50, 300, s2, [C.muted, C.muted, C.muted], it.a.map(F)); drawTri(A, p2, 330, 300, s2, [C.blue, C.blue, C.blue], it.b.map(F));
+    }
+    if (V.phase === 'ask') return;
+    const rs = it.b.map((x, i) => x / it.a[i]), same = rs.every(r => Math.abs(r - rs[0]) < 1e-9);
+    rs.forEach((r, i) => lab(A, 320, 40 + i * 30, F(it.b[i]) + ' ÷ ' + F(it.a[i]) + ' = ' + F(r), Math.abs(r - rs[0]) < 1e-9 ? (same ? C.green : C.text) : C.red, { 'font-size': 18, class: 'fade' }));
+  }
+};
+
+/* SI3 which test? */
+const T_RULE = {
+  id: 'rule', code: 'SI3', name: 'Which rule?', sec: 3, q: 'Which shows they are similar?', kind: 'choice',
+  gen: MODEL.genRule, choices: () => [{ v: 'AA', label: 'AA' }, { v: 'SSS', label: 'SSS' }, { v: 'SAS', label: 'SAS' }, { v: 'none', label: 'Not enough' }],
+  check: MODEL.checkRule, answer: it => ({ v: it.rule }),
+  draw(A, it, V) {
+    const base = it.rule === 'AA' ? triFromAngles(5, it.A1, it.B1) : triPts(...it.s), k = it.k, p2 = base.map(p => [p[0] * k, p[1] * k]);
+    const ab = it.rule === 'AA' ? 5 : it.s[0], s = Math.min(200 / (ab * Math.max(1, k)), 200 / (Math.max(...base.map(p => p[1])) * Math.max(1, k)), 200 / ab);
+    const sides1 = it.rule === 'AA' ? [null, null, null] : it.s.map(String), sides2 = it.rule === 'AA' ? [null, null, null] : it.s.map(x => F(x * k));
+    // which sides are shown: SSS all; SAS AB and CA (angle A between them); none: AB and BC with angle A (not between)
+    const keep = it.rule === 'SSS' ? [1, 1, 1] : it.rule === 'SAS' ? [1, 0, 1] : it.rule === 'none' ? [1, 1, 0] : [0, 0, 0];
+    const L1 = sides1.map((x, i) => keep[i] ? x : null), L2 = sides2.map((x, i) => keep[i] ? x : null);
+    const P1 = drawTri(A, base, 50, 320, s, [C.muted, C.muted, C.muted], L1, ['A', 'B', 'C']), P2 = drawTri(A, p2, 330, 320, s, [C.blue, C.blue, C.blue], L2, ['D', 'E', 'F']);
+    const angA = it.rule === 'AA' ? it.A1 : Math.round(Math.acos((it.s[0] ** 2 + it.s[2] ** 2 - it.s[1] ** 2) / (2 * it.s[0] * it.s[2])) * 180 / Math.PI);
+    if (it.rule !== 'SSS') { angleArc(A, P1, 0, angA + '°'); angleArc(A, P2, 0, angA + '°'); }
+    if (it.rule === 'AA') { angleArc(A, P1, 1, it.B1 + '°', C.teal); angleArc(A, P2, 1, it.B1 + '°', C.teal); }
+    if (V.phase !== 'ask') lab(A, 320, 390, { AA: '2 angles equal', SSS: '3 side ratios equal', SAS: '2 side ratios + the angle between', none: 'the angle is not between the sides' }[it.rule], C.green, { class: 'fade' });
+  }
+};
+
+/* SI4 shadows */
+const T_SHADOW = {
+  id: 'shadow', code: 'SI4', name: 'Shadows', sec: 4, q: 'Height of the tree (m, one decimal)', kind: 'slots',
+  gen: MODEL.genShadow, slots: () => ['H =', { k: 'v', label: 'height', wide: true }], check: MODEL.checkShadow, answer: it => ({ v: F(Math.round(it.v * 10) / 10) }),
+  draw(A, it, V) {
+    const H = it.v, s = Math.min(280 / H, 220 / it.S, 120 / it.s), g = 350, x1 = 60, x2 = 320;
+    A.el('line', { x1: 30, x2: 620, y1: g, y2: g, stroke: C.axis, 'stroke-width': 2 }, A.svg);
+    const tri = (x, h, sh, col) => { poly(A, [[x, g], [x, g - h * s], [x + sh * s, g]], { fill: col, 'fill-opacity': V.phase !== 'ask' ? .2 : .05, stroke: 'none' }); A.el('line', { x1: x, x2: x, y1: g, y2: g - h * s, stroke: col, 'stroke-width': 5 }, A.svg); A.el('line', { x1: x, x2: x + sh * s, y1: g + 6, y2: g + 6, stroke: C.muted, 'stroke-width': 5 }, A.svg); A.el('line', { x1: x, x2: x + sh * s, y1: g - h * s, y2: g, stroke: C.yellow, 'stroke-width': 1.5, 'stroke-dasharray': '6 5' }, A.svg); };
+    tri(x1, it.h, it.s, C.gold); tri(x2, H, it.S, C.green);
+    A.el('circle', { cx: x2, cy: g - H * s - 10, r: 18, fill: C.green, 'fill-opacity': .4 }, A.svg);
+    A.tx(A.svg, x1 - 8, g - it.h * s / 2, it.h + ' m', { fill: C.gold, 'text-anchor': 'end', 'font-size': 18 }); A.tx(A.svg, x1 + it.s * s / 2, g + 28, it.s + ' m', { fill: C.muted, 'font-size': 18 });
+    A.tx(A.svg, x2 - 10, g - H * s / 2, done(V) ? F(Math.round(H * 10) / 10) + ' m' : 'H', { fill: done(V) ? C.green : C.yellow, 'text-anchor': 'end', 'font-size': 20 }); A.tx(A.svg, x2 + it.S * s / 2, g + 28, it.S + ' m', { fill: C.muted, 'font-size': 18 });
+    A.tx(A.svg, 600, 40, '☀', { 'font-size': 40, fill: C.yellow, stroke: 'none' });
+    if (V.phase !== 'ask') lab(A, 600, 90, 'H ÷ ' + it.S + ' = ' + it.h + ' ÷ ' + it.s, C.muted, { 'text-anchor': 'end', class: 'fade' });
+  }
+};
+
+/* SI4 map scale */
+const T_MAP = {
+  id: 'map', code: 'SI4', name: 'Map scale', sec: 4, q: 'Real length in metres', kind: 'slots',
+  gen: MODEL.genMap, prompt: it => '1 : ' + it.n.toLocaleString('en-CA'),
+  slots: () => ['=', { k: 'v', label: 'metres', wide: true }, { h: '<span style="font-family:inherit">m</span>' }], check: MODEL.checkMap, answer: it => ({ v: F(it.v) }),
+  draw(A, it, V) {
+    const cm = 38;
+    A.el('rect', { x: 40, y: 40, width: 560, height: 240, rx: 14, fill: '#0f1a14', stroke: C.edge }, A.svg);
+    A.el('path', { d: 'M80 220C180 120 260 260 360 160S520 120 ' + (80 + it.m * cm > 560 ? 560 : 80 + it.m * cm) + ' 110', stroke: C.muted, 'stroke-width': 2, fill: 'none', opacity: .3 }, A.svg);
+    const len = it.m * cm, x0 = 320 - len / 2;
+    A.el('line', { x1: x0, x2: x0 + len, y1: 160, y2: 160, stroke: C.yellow, 'stroke-width': 5, 'stroke-linecap': 'round' }, A.svg);
+    lab(A, 320, 136, it.m + ' cm on the map', C.yellow);
+    for (let i = 0; i <= 4; i++) { A.el('line', { x1: 80 + i * cm, x2: 80 + i * cm, y1: 250, y2: 262, stroke: C.text, 'stroke-width': 2 }, A.svg); }
+    A.el('line', { x1: 80, x2: 80 + 4 * cm, y1: 262, y2: 262, stroke: C.text, 'stroke-width': 2 }, A.svg); lab(A, 80 + 2 * cm, 240, '0 – 4 cm', C.muted, { 'font-size': 14 });
+    if (V.phase === 'ask') return;
+    A.tx(A.svg, 320, 320, '1 cm on the map = ' + it.n.toLocaleString('en-CA') + ' cm = ' + F(it.n / 100) + ' m', { fill: C.muted, 'font-size': 20, class: 'fade' });
+    if (done(V)) A.tx(A.svg, 320, 362, it.m + ' × ' + F(it.n / 100) + ' = ' + F(it.v) + ' m', { fill: C.green, 'font-size': 24, class: 'fade' });
+  }
+};
+
+const PAGE = {
+  key: 'math9-similarity-trainer-v1', course: 'Math 9 · Measurement & Geometry', title: 'Similarity & Scale',
+  notes: '../notes/similarity/math9-similarity-notes-v1.html',
+  tabs: [T_PROP, T_SCALE, T_SIDE, T_SIM, T_RULE, T_SHADOW, T_MAP]
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>

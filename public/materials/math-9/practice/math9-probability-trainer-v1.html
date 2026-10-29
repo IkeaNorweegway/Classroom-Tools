@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probability Trainer | Math 9</title>
+<!-- =====================================================================
+   PROBABILITY TRAINER (narrow trainer format, see _sims-context.md)
+   Math 9 | Statistics & Probability | Probability. Used after the lesson: it does not teach, it points back to the notes.
+   One narrow skill per tab, 10 items a round:
+     PR1 Probability     a bag of marbles or one die: favourable ÷ total
+     PR1 Not             P(not A) = 1 − P(A); a bar split into A and not A
+     PR1 Expected        trials × P; one simulated run wobbles around it
+     PR2 Outcomes        two experiments: rows × columns in a grid
+     PR3 And             independent events: P(A) × P(B); the grid shades the matches
+     PR4 No replacement  two draws: the bag shrinks after the first
+     Next one?           higher, same or lower after a streak or after drawing: no memory vs a changed bag
+   Named mistakes: part to part, the complement for the event, adding instead of multiplying, counting the rest,
+   replacing when you shouldn't, the gambler's fallacy.
+   ?debug=1 puts DRILL (and MODEL) on window, turns off saving and motion.
+   ===================================================================== -->
+<style>
+/* ===== DRILL SHELL CSS START (same in every Math 9 trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slot.sup { width: 1.9em; min-height: 40px; font-size: 20px; align-self: flex-start; margin-left: -2px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choices.two { grid-template-columns: 1fr 1fr; }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choices.one { grid-template-columns: 1fr; gap: 8px; }
+  .choices.one .choice { min-height: 54px; }
+  .choices.one .choice.math { font-size: 26px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+/* ===================== MODEL START (no DOM) ===================== */
+const MODEL = (() => {
+  const { q, eq, val, add, sub, mul, div, rnd, pick, chance } = Q;
+  const COLS = ['red', 'blue', 'green'];
+
+  /* PR1 probability of one event */
+  const DIE = { even: [2, 4, 6], 'greater than 4': [5, 6], 'a 6': [6], 'less than 3': [1, 2], odd: [1, 3, 5], 'a multiple of 3': [3, 6] };
+  function genProb() {
+    if (chance(.6)) {
+      const counts = { red: rnd(1, 6), blue: rnd(1, 6), green: chance(.5) ? rnd(1, 5) : 0 }, ask = pick(COLS.filter(c => counts[c] > 0));
+      const n = counts.red + counts.blue + counts.green; return { type: 'bag', counts, ask, n, v: q(counts[ask], n) };
+    }
+    const ev = pick(Object.keys(DIE)); return { type: 'die', ev, fav: DIE[ev], n: 6, v: q(DIE[ev].length, 6) };
+  }
+  function checkProb(it, r) {
+    const g = r.v; if (eq(g, it.v)) return { ok: true };
+    const f = it.type === 'bag' ? it.counts[it.ask] : it.fav.length;
+    if (f < it.n && eq(g, q(f, it.n - f))) return { code: 'part', cue: 'Out of all of them, not the rest' };
+    if (eq(g, q(it.n - f, it.n))) return { code: 'not', cue: 'That’s the chance it doesn’t happen' };
+    return { code: 'other', cue: 'Favourable ÷ total' };
+  }
+
+  /* PR1 complement */
+  function genNot() {
+    if (chance(.5)) { const p = rnd(5, 95) / 100; return { form: 'dec', p: q(Math.round(p * 100), 100), v: q(100 - Math.round(p * 100), 100) }; }
+    const d = pick([3, 4, 5, 6, 8, 10, 12]), n = rnd(1, d - 1); return { form: 'frac', p: q(n, d), v: q(d - n, d) };
+  }
+  function checkNot(it, r) {
+    const g = r.v; if (eq(g, it.v)) return { ok: true };
+    if (eq(g, it.p)) return { code: 'same', cue: 'Not A: 1 − P(A)' };
+    if (val(it.p) !== 0 && eq(g, div(1, it.p))) return { code: 'recip', cue: 'They add to 1: subtract' };
+    return { code: 'other', cue: 'P(A) + P(not A) = 1' };
+  }
+
+  /* PR1 expected count in the long run */
+  function genExp() {
+    const p = pick([q(1, 2), q(1, 3), q(1, 4), q(1, 5), q(1, 6), q(2, 5), q(3, 8), q(3, 4)]), n = pick([20, 30, 40, 60, 80, 100, 120, 200]);
+    // one simulated run, seeded by the kit's random, to set against the expectation
+    let hits = 0; for (let i = 0; i < n; i++) if (rnd(0, p.d - 1) < p.n) hits++;
+    return { p, n, v: n * val(p), hits };
+  }
+  function checkExp(it, r) {
+    const g = val(r.v); if (Math.abs(g - it.v) <= .5) return { ok: true };
+    if (Math.abs(g - it.n * (1 - val(it.p))) <= .5) return { code: 'rest', cue: 'Count the event, not the rest' };
+    if (Math.abs(g - it.n / val(it.p)) <= .5) return { code: 'div', cue: 'Expected = trials × P' };
+    if (g === it.hits) return { code: 'run', cue: 'One run wobbles: use n × P' };
+    return { code: 'other', cue: 'Expected = trials × P' };
+  }
+
+  /* PR2 count the outcomes of two experiments */
+  const EXPS = [{ id: 'coin', n: 2, labs: ['H', 'T'] }, { id: 'die', n: 6, labs: ['1', '2', '3', '4', '5', '6'] }, { id: 'spin3', n: 3, labs: ['R', 'G', 'B'] }, { id: 'spin4', n: 4, labs: ['1', '2', '3', '4'] }, { id: 'spin5', n: 5, labs: ['A', 'B', 'C', 'D', 'E'] }];
+  function genOut() { const a = pick(EXPS), b = pick(EXPS); return { a, b, v: a.n * b.n }; }
+  function checkOut(it, r) {
+    const g = val(r.v); if (g === it.v) return { ok: true };
+    if (g === it.a.n + it.b.n) return { code: 'add', cue: 'Every pair counts: multiply' };
+    return { code: 'other', cue: it.a.n + ' rows × ' + it.b.n + ' columns' };
+  }
+
+  /* PR3 independent: P(A and B) = P(A) × P(B) */
+  const EVENTS = [{ exp: 'coin', name: 'H', fav: ['H'] }, { exp: 'die', name: 'even', fav: ['2', '4', '6'] }, { exp: 'die', name: '6', fav: ['6'] }, { exp: 'die', name: 'more than 4', fav: ['5', '6'] }, { exp: 'spin4', name: '1', fav: ['1'] }, { exp: 'spin3', name: 'B', fav: ['B'] }, { exp: 'spin5', name: 'a vowel', fav: ['A', 'E'] }];
+  function genAnd() {
+    const e1 = pick(EVENTS); let e2; do { e2 = pick(EVENTS); } while (e2.exp === e1.exp && e2.name === e1.name);
+    const A1 = EXPS.find(x => x.id === e1.exp), B1 = EXPS.find(x => x.id === e2.exp);
+    const p1 = q(e1.fav.length, A1.n), p2 = q(e2.fav.length, B1.n);
+    return { e1, e2, a: A1, b: B1, p1, p2, v: mul(p1, p2) };
+  }
+  function checkAnd(it, r) {
+    const g = r.v; if (eq(g, it.v)) return { ok: true };
+    if (eq(g, add(it.p1, it.p2))) return { code: 'add', cue: 'And: multiply' };
+    if (eq(g, q(it.e1.fav.length * it.e2.fav.length, it.a.n + it.b.n))) return { code: 'addtot', cue: 'Total outcomes: ' + it.a.n + ' × ' + it.b.n };
+    return { code: 'other', cue: 'P(A) × P(B)' };
+  }
+
+  /* PR4 two draws without replacement */
+  function genNoRep() {
+    const red = rnd(2, 6), blue = rnd(2, 6), n = red + blue, ask = pick(['RR', 'RR', 'BB', 'RB']);
+    const f1 = ask[0] === 'R' ? red : blue, f2 = ask === 'RR' ? red - 1 : ask === 'BB' ? blue - 1 : blue;
+    return { red, blue, n, ask, f1, f2, v: q(f1 * f2, n * (n - 1)) };
+  }
+  function checkNoRep(it, r) {
+    const g = r.v; if (eq(g, it.v)) return { ok: true };
+    const f2w = it.ask === 'RB' ? it.f2 : it.f2 + 1;
+    if (eq(g, q(it.f1 * f2w, it.n * it.n))) return { code: 'rep', cue: 'One is gone: the bag shrinks' };
+    if (eq(g, q(it.f1 * it.f2, it.n * it.n))) return { code: 'total', cue: 'One fewer in total too' };
+    if (eq(g, add(q(it.f1, it.n), q(it.f2, it.n - 1)))) return { code: 'add', cue: 'First and second: multiply' };
+    return { code: 'other', cue: 'First draw × second draw' };
+  }
+
+  /* PR3/PR4 does the chance change? */
+  function genNext() {
+    const kind = pick(['coin', 'die', 'bagout', 'bagout', 'bagback', 'bagother']);
+    if (kind === 'coin') { const k = rnd(4, 7); return { kind, k, ans: 'same' }; }
+    if (kind === 'die') { const k = rnd(6, 12); return { kind, k, ans: 'same' }; }
+    const red = rnd(4, 7), blue = rnd(3, 6), k = rnd(2, 3);
+    if (kind === 'bagback') return { kind, red, blue, k, ans: 'same' };
+    if (kind === 'bagout') return { kind, red, blue, k, ans: 'lower' };
+    return { kind, red, blue, k, ans: 'higher' };   // blues drawn and kept out: red goes up
+  }
+  function checkNext(it, r) {
+    if (r.v === it.ans) return { ok: true };
+    const cue = { coin: 'The coin has no memory', die: 'The die has no memory', bagback: 'Put back: the bag is the same', bagout: 'Fewer reds left: lower', bagother: 'Fewer blues, same reds: higher' }[it.kind];
+    return { code: 'pick', cue };
+  }
+
+  return { COLS, DIE, EXPS, genProb, checkProb, genNot, checkNot, genExp, checkExp, genOut, checkOut, genAnd, checkAnd, genNoRep, checkNoRep, genNext, checkNext };
+})();
+/* ===================== MODEL END ===================== */
+
+
+/* ===== DRILL SHELL START (same in every Math 9 trainer) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen()                 -> a new item (from MODEL)
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom'
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown). */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    let prevItalic = false;
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => {
+      if (!part) return; const it = /^[a-z]$/.test(part);
+      // an italic letter leans into a following ² or ³: nudge it right
+      const t = el('tspan', it ? { 'font-style': 'italic' } : prevItalic && /^[²³]/.test(part) ? { dx: '0.12em' } : {}, e); t.textContent = part; prevItalic = it;
+    });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (tab.kind === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (tab.kind === 'choice') {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
+      row.className = 'choices' + (long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = tab.kind === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) { for (let i = 0; i < 25; i++) { it = tab.gen(); key = JSON.stringify(it); if (key !== lastKey) break; } }
+    lastKey = key || JSON.stringify(it);
+    item = it; resp = {}; att = 0; resolved = false;
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (tab.kind === 'choice' && resp.v == null) return;
+    if (tab.kind === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (tab.kind === 'choice' ? 1 : 2);
+    if (res.ok) {
+      resolved = true; marks.push(att === 1 ? 'g' : 'y');
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r');
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (tab.kind === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
+    } else if (tab.kind === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (tab.kind === 'slots') fillSlots(ans, 'shown');
+    else if (tab.kind === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(tab) + '" target="_blank" rel="noopener">📖 Notes §' + tab.sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => PAGE.notes + '#:~:text=' + encodeURIComponent('Section ' + t.sec + ' ' + (PAGE.sep || '—'));
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    const n = $('notes'); n.href = notesHref(tab); $('notesTxt').textContent = '§' + tab.sec;
+    n.title = 'Notes, Section ' + tab.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + tab.sec);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }) };
+  }
+  return { boot, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+
+/* ===================== PAGE: pictures and tabs ===================== */
+const { C, qHTML } = DRILL;
+const done = V => V.phase === 'right' || V.phase === 'show';
+const lab = (A, x, y, s, col, a) => A.mtx(A.svg, x, y, s, Object.assign({ 'font-size': 20, fill: col || C.text }, a || {}));
+const CC = { red: C.red, blue: C.blue, green: C.green };
+const word = (c, s) => '<span style="color:' + (CC[c] || 'inherit') + ';font-family:inherit;font-weight:700">' + (s || c) + '</span>';
+// A bag of marbles centred at cx. list = colour names. ring(i) marks a marble.
+function bag(A, cx, cy, list, o) {
+  o = o || {}; const per = 4, rows = Math.ceil(list.length / per), w = 4 * 40 + 40, h = rows * 40 + 50;
+  A.el('path', { d: 'M' + (cx - w / 2) + ' ' + (cy - h / 2 + 20) + 'Q' + (cx - w / 2 - 14) + ' ' + (cy + h / 2) + ' ' + cx + ' ' + (cy + h / 2) + 'Q' + (cx + w / 2 + 14) + ' ' + (cy + h / 2) + ' ' + (cx + w / 2) + ' ' + (cy - h / 2 + 20), fill: C.panel, stroke: C.muted, 'stroke-width': 2 }, A.svg);
+  A.el('path', { d: 'M' + (cx - w / 2 + 6) + ' ' + (cy - h / 2 + 18) + 'Q' + cx + ' ' + (cy - h / 2) + ' ' + (cx + w / 2 - 6) + ' ' + (cy - h / 2 + 18), stroke: C.muted, 'stroke-width': 2, fill: 'none' }, A.svg);
+  list.forEach((c, i) => {
+    const x = cx - (Math.min(per, list.length - Math.floor(i / per) * per) - 1) * 20 + (i % per) * 40, y = cy - h / 2 + 48 + Math.floor(i / per) * 40;
+    const gone = o.gone && o.gone.includes(i);
+    A.el('circle', { cx: x, cy: y, r: 15, fill: CC[c], 'fill-opacity': gone ? .12 : .85, stroke: gone ? CC[c] : C.stage, 'stroke-width': 2, 'stroke-dasharray': gone ? '4 4' : null }, A.svg);
+    if (o.ring && o.ring(c, i)) A.el('circle', { cx: x, cy: y, r: 20, fill: 'none', stroke: C.yellow, 'stroke-width': 3, class: 'pop' }, A.svg);
+  });
+}
+const bagList = counts => ['red', 'blue', 'green'].flatMap(c => Array(counts[c] || 0).fill(c));
+const valSlot = () => ['=', { k: 'v', label: 'probability', wide: true }];
+
+/* PR1 probability */
+const T_PROB = {
+  id: 'prob', code: 'PR1', name: 'Probability', sec: 1, q: 'Find the probability', kind: 'slots',
+  gen: MODEL.genProb, prompt: it => 'P(' + (it.type === 'bag' ? word(it.ask) : '<span style="font-family:inherit;font-weight:700">' + it.ev + '</span>') + ')',
+  slots: valSlot, check: MODEL.checkProb, answer: it => ({ v: it.v }),
+  draw(A, it, V) {
+    const hint = V.phase !== 'ask';
+    if (it.type === 'bag') bag(A, 320, 190, bagList(it.counts), { ring: hint ? c => c === it.ask : null });
+    else for (let k = 1; k <= 6; k++) { const x = 320 + (k - 3.5) * 80, fav = it.fav.includes(k); A.el('rect', { x: x - 30, y: 150, width: 60, height: 60, rx: 10, fill: C.panel, stroke: hint && fav ? C.yellow : C.muted, 'stroke-width': hint && fav ? 4 : 2 }, A.svg); lab(A, x, 181, String(k), C.text, { 'font-size': 28 }); }
+    if (hint) lab(A, 320, 330, (it.type === 'bag' ? it.counts[it.ask] : it.fav.length) + ' favourable out of ' + it.n, C.muted, { class: 'fade' });
+    if (done(V)) lab(A, 320, 372, 'P = ' + Q.str(it.v), C.green, { 'font-size': 26, class: 'fade' });
+  }
+};
+
+/* PR1 complement */
+const T_NOT = {
+  id: 'not', code: 'PR1', name: 'Not', sec: 1, q: 'P(not A)', kind: 'slots',
+  gen: MODEL.genNot, prompt: it => 'P(A) = ' + (it.form === 'dec' ? String(Q.val(it.p)) : qHTML(it.p)),
+  slots: valSlot, check: MODEL.checkNot, answer: it => ({ v: it.form === 'dec' ? String(Q.val(it.v)) : it.v }),
+  draw(A, it, V) {
+    const x0 = 60, W = 520, p = Q.val(it.p), y = 180;
+    A.el('rect', { x: x0, y, width: W * p, height: 60, fill: C.blue, 'fill-opacity': .35, stroke: C.blue, 'stroke-width': 2 }, A.svg);
+    A.el('rect', { x: x0 + W * p, y, width: W * (1 - p), height: 60, fill: V.phase !== 'ask' ? C.gold : C.stage, 'fill-opacity': .3, stroke: C.gold, 'stroke-width': 2 }, A.svg);
+    lab(A, x0 + W * p / 2, y + 31, 'A', C.blue); lab(A, x0 + W * p + W * (1 - p) / 2, y + 31, 'not A', C.gold);
+    lab(A, x0, y + 90, '0', C.muted); lab(A, x0 + W, y + 90, '1', C.muted);
+    lab(A, x0 + W * p / 2, y - 26, it.form === 'dec' ? String(p) : Q.str(it.p), C.blue);
+    lab(A, x0 + W * p + W * (1 - p) / 2, y - 26, done(V) ? (it.form === 'dec' ? String(Q.val(it.v)) : Q.str(it.v)) : '?', done(V) ? C.green : C.gold);
+    if (V.phase !== 'ask') lab(A, 320, 360, 'the two parts make 1 whole', C.muted, { class: 'fade' });
+  }
+};
+
+/* PR1 expected count */
+const T_EXP = {
+  id: 'exp', code: 'PR1', name: 'Expected', sec: 1, q: 'Expected count in the long run', kind: 'slots',
+  gen: MODEL.genExp, prompt: it => 'P = ' + qHTML(it.p) + ', ' + it.n + ' trials',
+  slots: () => ['≈', { k: 'v', label: 'expected count', wide: true }], check: MODEL.checkExp, answer: it => ({ v: MODEL.EXPS && Number.isInteger(it.v) ? String(it.v) : (Math.round(it.v * 10) / 10).toString() }),
+  draw(A, it, V) {
+    const x0 = 80, W = 480, s = W / it.n, y = 200;
+    A.el('rect', { x: x0, y: y - 20, width: W, height: 40, rx: 6, fill: 'none', stroke: C.muted, 'stroke-width': 2 }, A.svg);
+    lab(A, x0, y + 46, '0', C.muted); lab(A, x0 + W, y + 46, String(it.n), C.muted); lab(A, x0 + W / 2, y + 74, 'trials', C.muted, { 'font-size': 16 });
+    if (V.phase === 'ask') return;
+    A.el('rect', { x: x0, y: y - 20, width: it.hits * s, height: 40, rx: 6, fill: C.blue, 'fill-opacity': .35, class: 'fade' }, A.svg);
+    lab(A, x0 + it.hits * s, y - 40, 'one run: ' + it.hits, C.blue, { 'font-size': 17, class: 'fade' });
+    A.el('line', { x1: x0 + it.v * s, x2: x0 + it.v * s, y1: y - 30, y2: y + 30, stroke: C.green, 'stroke-width': 3, class: 'fade' }, A.svg);
+    lab(A, x0 + it.v * s, y + 110, done(V) ? 'expected ' + it.n + ' × ' + Q.str(it.p) + ' = ' + (Math.round(it.v * 10) / 10) : 'expected = ?', done(V) ? C.green : C.muted, { class: 'fade' });
+  }
+};
+
+/* PR2 outcomes of two experiments */
+const ICON = { coin: '🪙', die: '🎲', spin3: '◔', spin4: '◕', spin5: '⬠' };
+function grid(A, a, b, V, mark) {
+  const cw = Math.min(70, 440 / b.n), ch = Math.min(46, 260 / a.n), x0 = 320 - b.n * cw / 2 + 20, y0 = 80;
+  b.labs.forEach((l, j) => lab(A, x0 + j * cw + cw / 2, y0 - 18, l, C.gold, { 'font-size': 18 }));
+  a.labs.forEach((l, i) => lab(A, x0 - 22, y0 + i * ch + ch / 2, l, C.blue, { 'font-size': 18 }));
+  a.labs.forEach((la, i) => b.labs.forEach((lb, j) => {
+    const on = mark ? mark(la, lb) : V.phase !== 'ask';
+    A.el('rect', { x: x0 + j * cw + 2, y: y0 + i * ch + 2, width: cw - 4, height: ch - 4, rx: 6, fill: on ? (mark ? C.green : C.teal) : C.stage, 'fill-opacity': on ? .35 : 1, stroke: C.edge, class: on ? 'fade' : null, style: on && !mark ? 'animation-delay:' + (i * b.n + j) * 25 + 'ms' : null }, A.svg);
+    if (V.phase !== 'ask' && ch > 26) A.mtx(A.svg, x0 + j * cw + cw / 2, y0 + i * ch + ch / 2, la + lb, { 'font-size': 13, fill: C.muted });
+  }));
+  return { x0, y0, cw, ch };
+}
+const T_OUT = {
+  id: 'out', code: 'PR2', name: 'Outcomes', sec: 2, q: 'How many outcomes?', kind: 'slots',
+  gen: MODEL.genOut, prompt: it => ICON[it.a.id] + ' ' + it.a.n + ' and ' + ICON[it.b.id] + ' ' + it.b.n,
+  slots: () => ['=', { k: 'v', label: 'outcomes' }], check: MODEL.checkOut, answer: it => ({ v: Q.q(it.v) }),
+  draw(A, it, V) { grid(A, it.a, it.b, V); if (done(V)) lab(A, 320, 390, it.a.n + ' × ' + it.b.n + ' = ' + it.v, C.green, { 'font-size': 24, class: 'fade' }); }
+};
+
+/* PR3 independent events */
+const T_AND = {
+  id: 'and', code: 'PR3', name: 'And', sec: 3, q: 'Probability of both', kind: 'slots',
+  gen: MODEL.genAnd, prompt: it => 'P(' + ICON[it.a.id] + ' ' + it.e1.name + ' and ' + ICON[it.b.id] + ' ' + it.e2.name + ')',
+  slots: valSlot, check: MODEL.checkAnd, answer: it => ({ v: it.v }),
+  draw(A, it, V) {
+    grid(A, it.a, it.b, V, V.phase === 'ask' ? () => false : (la, lb) => it.e1.fav.includes(la) && it.e2.fav.includes(lb));
+    if (V.phase !== 'ask') lab(A, 320, 390, Q.str(it.p1) + ' × ' + Q.str(it.p2) + (done(V) ? ' = ' + Q.str(it.v) : ''), done(V) ? C.green : C.muted, { 'font-size': 24, class: 'fade' });
+  }
+};
+
+/* PR4 without replacement */
+const T_NOREP = {
+  id: 'norep', code: 'PR4', name: 'No replacement', sec: 4, q: 'Draw two, don’t put back', kind: 'slots',
+  gen: MODEL.genNoRep, prompt: it => 'P(' + word(it.ask[0] === 'R' ? 'red' : 'blue') + ', then ' + word(it.ask[1] === 'R' ? 'red' : 'blue') + ')',
+  slots: valSlot, check: MODEL.checkNoRep, answer: it => ({ v: it.v }),
+  draw(A, it, V) {
+    const list = bagList({ red: it.red, blue: it.blue }), first = it.ask[0] === 'R' ? 'red' : 'blue', second = it.ask[1] === 'R' ? 'red' : 'blue';
+    bag(A, 170, 180, list);
+    lab(A, 170, 330, 'first: ' + it.f1 + '/' + it.n, CC[first], { 'font-size': 22 });
+    if (V.phase === 'ask') return;
+    const gi = list.indexOf(first);
+    A.el('path', { d: 'M300 180H360', stroke: C.muted, 'stroke-width': 2.5, 'marker-end': 'url(#aM)' }, A.svg);
+    bag(A, 470, 180, list, { gone: [gi] });
+    lab(A, 470, 330, 'second: ' + it.f2 + '/' + (it.n - 1), CC[second], { 'font-size': 22, class: 'fade' });
+    if (done(V)) lab(A, 320, 385, it.f1 + '/' + it.n + ' × ' + it.f2 + '/' + (it.n - 1) + ' = ' + Q.str(it.v), C.green, { 'font-size': 24, class: 'fade' });
+  }
+};
+
+/* PR3/PR4 does the chance change? */
+const T_NEXT = {
+  id: 'next', code: 'PR3–4', name: 'Next one?', sec: 3, q: 'The chance next time is…', kind: 'choice',
+  gen: MODEL.genNext,
+  prompt: it => ({ coin: '🪙 ' + 'H '.repeat(it.k) + '→ H?', die: '🎲 no 6 in ' + it.k + ' rolls → 6?', bagout: word('red') + ' × ' + it.k + ' drawn, kept out → ' + word('red') + '?', bagback: word('red') + ' × ' + it.k + ' drawn, put back → ' + word('red') + '?', bagother: word('blue') + ' × ' + it.k + ' drawn, kept out → ' + word('red') + '?' })[it.kind],
+  choices: () => [{ v: 'higher', label: 'Higher' }, { v: 'same', label: 'Same' }, { v: 'lower', label: 'Lower' }],
+  check: MODEL.checkNext, answer: it => ({ v: it.ans }),
+  draw(A, it, V) {
+    if (it.kind === 'coin' || it.kind === 'die') {
+      const k = Math.min(it.k, 8);
+      for (let i = 0; i < k; i++) { A.el('circle', { cx: 320 + (i - (k - 1) / 2) * 56, cy: 150, r: 24, fill: C.gold, 'fill-opacity': .25, stroke: C.gold, 'stroke-width': 2 }, A.svg); lab(A, 320 + (i - (k - 1) / 2) * 56, 151, it.kind === 'coin' ? 'H' : '–', C.gold); }
+      if (V.phase !== 'ask') lab(A, 320, 280, (it.kind === 'coin' ? 'P(H) = 1/2' : 'P(6) = 1/6') + ' every time', C.green, { 'font-size': 26, class: 'fade' });
+      return;
+    }
+    const before = bagList({ red: it.red, blue: it.blue }), removed = it.kind === 'bagother' ? 'blue' : 'red';
+    bag(A, 170, 170, before);
+    lab(A, 170, 315, 'red ' + it.red + '/' + (it.red + it.blue), C.red);
+    if (V.phase === 'ask') return;
+    const gone = it.kind === 'bagback' ? [] : before.map((c, i) => c === removed ? i : -1).filter(i => i >= 0).slice(0, it.k);
+    bag(A, 470, 170, before, { gone });
+    const r2 = it.kind === 'bagout' ? it.red - it.k : it.red, n2 = it.kind === 'bagback' ? it.red + it.blue : it.red + it.blue - it.k;
+    lab(A, 470, 315, 'red ' + r2 + '/' + n2, C.red, { class: 'fade' });
+    lab(A, 320, 372, Q.val(Q.q(r2, n2)) > Q.val(Q.q(it.red, it.red + it.blue)) + 1e-9 ? 'higher' : Q.val(Q.q(r2, n2)) < Q.val(Q.q(it.red, it.red + it.blue)) - 1e-9 ? 'lower' : 'the same', C.green, { 'font-size': 24, class: 'fade' });
+  }
+};
+
+const PAGE = {
+  key: 'math9-probability-trainer-v1', course: 'Math 9 · Statistics & Probability', title: 'Probability',
+  notes: '../notes/probability/math9-probability-notes-v1.html',
+  tabs: [T_PROB, T_NOT, T_EXP, T_OUT, T_AND, T_NOREP, T_NEXT]
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>
