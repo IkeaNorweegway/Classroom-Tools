@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Structures Trainer | Science 7</title>
+<!-- =====================================================================
+   STRUCTURES TRAINER (narrow trainer format, see _sims-context.md)
+   Science 7 | Structures and Forces | LO 7-4-01 to 7-4-04. Used after the lesson: it does not teach,
+   it points back to the notes (Sections 1–5). One narrow skill per tab, 10 items a round:
+     7-4-01 Type         solid, frame or shell
+     7-4-02 Load         dead, live or dynamic (snow is left out: the notes call it both live and dead)
+     7-4-02 Forces       compression, tension, shear or torsion, from an arrow picture or an example
+     7-4-02 Beam         a loaded beam: top squeezed (compression), bottom stretched (tension); where concrete cracks, where rebar goes
+     7-4-03 Stable?      two blocks with the centre of gravity marked: the larger tipping angle is more stable
+     7-4-04 Lever class  what is in the middle: fulcrum (1st), load (2nd), effort (3rd)
+     7-4-04 MA           type load ÷ effort; the fulcrum is drawn where effort arm ÷ load arm = MA
+     7-4-04 Machines     lever, wheel and axle, pulley, inclined plane, wedge or screw
+   Model: the blocks are uniform, so the CoG is exact; tipping angle = atan(half the base ÷ CoG height).
+   Not covered here: Section 6 (materials) needs reading and stays on paper.
+   Named mistakes: compression and tension mixed up, MA upside down, MA by subtracting, a heavy-looking or wide-topped
+   block judged stable, a screwdriver called a screw.
+   ?debug=1 puts DRILL (and MODEL) on window, turns off saving and motion.
+   ===================================================================== -->
+<style>
+/* ===== DRILL SHELL CSS START (same in every narrow trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .stage svg text.emo { stroke: none; font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif; font-weight: 400; }
+  .sans .prompt { font-family: inherit; font-weight: 650; font-size: 26px; }
+  .sans .choice { font-size: 19px; line-height: 1.15; padding: 4px 8px; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slot.sup { width: 1.9em; min-height: 40px; font-size: 20px; align-self: flex-start; margin-left: -2px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choices.two { grid-template-columns: 1fr 1fr; }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choices.one { grid-template-columns: 1fr; gap: 8px; }
+  .choices.one .choice { min-height: 54px; }
+  .choices.one .choice.math { font-size: 26px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+/* ===================== MODEL START (no DOM) ===================== */
+const MODEL = (() => {
+  const { rnd, pick, chance, shuffle } = Q;
+  const four = (all, ans) => { const o = shuffle(all.filter(x => x !== ans)).slice(0, 3); return all.filter(x => x === ans || o.includes(x)); };
+
+  /* 7-4-01 solid, frame or shell */
+  const TYPE = [
+    ['A brick', '🧱'], ['A concrete dam', '⬛'], ['A tree trunk', '🪵'], ['A stone statue', '🗿'], ['A block of ice', '🧊']
+  ].map(([t, i]) => ({ t, i, a: 'solid' })).concat([
+    ['A bicycle', '🚲'], ['A building frame', '🏗️'], ['A spider web', '🕸️'], ['A ladder', '🪜'], ['A transmission tower', '🗼'], ['The Lethbridge Viaduct', '🌉']
+  ].map(([t, i]) => ({ t, i, a: 'frame' }))).concat([
+    ['An egg', '🥚'], ['A bike helmet', '⛑️'], ['An oil storage tank', '🛢️'], ['A pop can', '🥫'], ['A turtle shell', '🐢'], ['A canoe', '🛶']
+  ].map(([t, i]) => ({ t, i, a: 'shell' })));
+  const TYPE_CUE = { solid: 'Solid all through: solid', frame: 'Connected parts, open spaces: frame', shell: 'Thin curved surface: shell' };
+
+  /* 7-4-02 dead, live or dynamic load (snow is left out: the notes call it both) */
+  const LOAD = [
+    ['The steel and concrete of a bridge', '🌉'], ["A roof's own beams and shingles", '🏠'], ['The weight of the bleachers themselves', '🏟️'],
+    ["A tower's own weight", '🗼'], ['The bricks of a wall', '🧱']
+  ].map(([t, i]) => ({ t, i, a: 'dead' })).concat([
+    ['People sitting in the bleachers', '👥'], ['Books on a shelf', '📚'], ['Furniture in a house', '🛋️'], ['Cars parked on a bridge', '🚗'],
+    ['Water filling a tank', '💧'], ['Grain inside a grain elevator', '🌾']
+  ].map(([t, i]) => ({ t, i, a: 'live' }))).concat([
+    ['A wind gust hits a tower', '🌬️'], ['An earthquake shakes a building', '🏚️'], ['Moving traffic on a bridge', '🚚'],
+    ['Fans jumping in a stadium', '🙌'], ['A chinook gust rocks a sign', '💨']
+  ].map(([t, i]) => ({ t, i, a: 'dyn' })));
+  const LOAD_CUE = { dead: "The structure's own weight: dead", live: 'What it holds: live load', dyn: 'Sudden or changing: dynamic' };
+
+  /* 7-4-02 internal forces: from an arrow picture or an example */
+  const FORCES = ['comp', 'tens', 'shear', 'tors'];
+  const FORCE_NAME = { comp: 'Compression', tens: 'Tension', shear: 'Shear', tors: 'Torsion' };
+  const FORCE_EX = {
+    comp: [['A column holding up a roof', '🏛️'], ['Chair legs under a person', '🪑'], ['Squeezing a sponge', '🧽'], ['The bottom bricks of a wall', '🧱']],
+    tens: [['A rope in tug-of-war', '🪢'], ['A suspension bridge cable', '🌉'], ['A stretched rubber band', '➰'], ['A guitar string', '🎸']],
+    shear: [['Scissors cutting paper', '✂️'], ['A bolt holding two plates', '🔩'], ['A hole punch cutting paper', '📄'], ['Tearing a sheet of paper', '📃']],
+    tors: [['Wringing out a towel', '🧺'], ['Turning a screwdriver', '🪛'], ['Twisting a bottle cap', '🍾'], ['Turning a key', '🔑']]
+  };
+  const FORCE_CUE = { comp: 'Squeezed together: compression', tens: 'Pulled apart: tension', shear: 'Sliding opposite ways: shear', tors: 'Twisted: torsion' };
+  function genForce() { const a = pick(FORCES); if (chance(.45)) return { form: 'arrows', a, flip: chance(.5) }; const [t, i] = pick(FORCE_EX[a]); return { form: 'example', a, t, i }; }
+  const checkForce = (it, r) => r.v === it.a ? { ok: true } : { code: 'is-' + it.a, cue: FORCE_CUE[it.a] };
+
+  /* 7-4-02 a beam on two supports: compression on top, tension underneath */
+  const BEAMS = ['Wooden shelf', 'Plank bridge', 'Concrete beam', 'Steel beam'];
+  function genBeam() {
+    const form = pick(['squeezed', 'squeezed', 'stretched', 'crack', 'rebar']);
+    return { form, beam: form === 'crack' || form === 'rebar' ? 'Concrete beam' : pick(BEAMS), off: rnd(-60, 60), a: form === 'squeezed' ? 'top' : 'bottom' };
+  }
+  function checkBeam(it, r) {
+    if (r.v === it.a) return { ok: true };
+    if (it.form === 'squeezed') return { code: 'top', cue: 'Top is squeezed: compression' };
+    if (it.form === 'stretched') return { code: 'bottom', cue: 'Bottom is stretched: tension' };
+    if (it.form === 'crack') return { code: 'crack', cue: 'Concrete cracks where stretched: bottom' };
+    return { code: 'rebar', cue: 'Steel goes on the stretched side' };
+  }
+
+  /* 7-4-03 stability: tipping angle = atan((base / 2) / CoG height). Shapes are uniform, so the CoG is exact. */
+  // kind 'rect' | 'wide' (trapezoid, wide bottom) | 'narrow' (wide top). b = bottom width, t = top width, H = height (px).
+  function shape() {
+    const kind = pick(['rect', 'wide', 'narrow']), H = rnd(90, 250), b0 = rnd(50, 190);
+    const b = kind === 'narrow' ? Math.round(b0 * .55) : b0, t = kind === 'rect' ? b : kind === 'wide' ? Math.round(b0 * .4) : b0;
+    const hc = H * (b + 2 * t) / (3 * (b + t)), ang = Math.atan2(b / 2, hc) * 180 / Math.PI;
+    return { kind, b, t, H, hc, ang };
+  }
+  function genStable() {
+    let A, B, n = 0;
+    do { A = shape(); B = shape(); n++; } while (Math.abs(A.ang - B.ang) < 12 && n < 200);
+    return { A, B, a: A.ang > B.ang ? 'A' : 'B' };
+  }
+  const checkStable = (it, r) => r.v === it.a ? { ok: true } : { code: 'cog', cue: 'Lower CoG, wider base: more stable' };
+
+  /* 7-4-04 lever class: what is in the middle */
+  const LEVER_EX = [['Seesaw', '⚖️', 1], ['Scissors', '✂️', 1], ['Pliers', '🔧', 1], ['Nutcracker', '🌰', 2], ['Bottle opener', '🍾', 2],
+    ['Fishing rod', '🎣', 3], ['Broom', '🧹', 3], ['Hockey stick', '🏒', 3], ['Baseball bat', '⚾', 3]];
+  const CLASS_CUE = { 1: 'Fulcrum in the middle: 1st class', 2: 'Load in the middle: 2nd class', 3: 'Effort in the middle: 3rd class' };
+  function genLever() {
+    if (chance(.35)) { const [t, i, c] = pick(LEVER_EX); return { form: 'example', t, i, cls: c, a: String(c), flip: chance(.5) }; }
+    const c = rnd(1, 3); return { form: 'diagram', cls: c, a: String(c), flip: chance(.5), d: rnd(0, 2) };
+  }
+  const checkLever = (it, r) => r.v === it.a ? { ok: true } : { code: 'class-' + it.a, cue: CLASS_CUE[it.cls] };
+
+  /* 7-4-04 mechanical advantage = load force ÷ effort force */
+  function genMA() {
+    if (chance(.2)) { const L = pick([10, 20, 30, 40, 50]), k = pick([2, 4]); return { L, E: L * k, v: Q.q(1, k), small: true }; }
+    const ma = pick([2, 3, 4, 5, 6, 8, 10]), E = pick([10, 20, 25, 30, 40, 50, 60, 100]); return { L: ma * E, E, v: Q.q(ma), small: false };
+  }
+  function checkMA(it, r) {
+    const x = Q.val(r.v);
+    if (Q.eq(r.v, it.v)) return { ok: true };
+    if (Math.abs(x - it.E / it.L) < 1e-9) return { code: 'flip', cue: 'MA = load ÷ effort' };
+    if (x === it.L - it.E || x === it.E - it.L) return { code: 'sub', cue: "Divide, don't subtract" };
+    if (x === it.L * it.E) return { code: 'mul', cue: "Divide, don't multiply" };
+    return { code: 'other', cue: 'MA = load ÷ effort' };
+  }
+
+  /* 7-4-04 name the simple machine */
+  const MACH = ['lever', 'wheel', 'pulley', 'incline', 'wedge', 'screw'];
+  const MACH_NAME = { lever: 'Lever', wheel: 'Wheel and axle', pulley: 'Pulley', incline: 'Inclined plane', wedge: 'Wedge', screw: 'Screw' };
+  const MACH_EX = {
+    lever: [['Seesaw', '⚖️'], ['Fishing rod', '🎣'], ['Nutcracker', '🌰'], ['Bottle opener', '🍾'], ['Broom', '🧹']],
+    wheel: [['Doorknob', '🚪'], ['Steering wheel', '🚗'], ['Screwdriver', '🪛'], ['Water tap', '🚰'], ['Bike pedals and crank', '🚲']],
+    pulley: [['Flagpole rope', '🏳️'], ['Window blind cord', '🪟'], ['Crane hook and rope', '🏗️'], ['Well bucket rope', '🪣']],
+    incline: [['Wheelchair ramp', '♿'], ['Staircase', '🪜'], ['Switchback mountain road', '🏔️'], ['Loading ramp', '🚚']],
+    wedge: [['Axe', '🪓'], ['Knife', '🔪'], ['Chisel', '🔨'], ['Nail tip', '📌'], ['Doorstop', '🛑']],
+    screw: [['Wood screw', '🔩'], ['Jar lid', '🥫'], ['Lightbulb base', '💡'], ['Car jack', '🚘']]
+  };
+  const MACH_CUE = { lever: 'A bar on a pivot: lever', wheel: 'Big wheel turns small axle', pulley: 'Rope over a wheel: pulley', incline: 'A sloped surface: inclined plane', wedge: 'Two slopes that split: wedge', screw: 'Ramp wrapped around: screw' };
+  function genMach() { const a = pick(MACH), [t, i] = pick(MACH_EX[a]); return { a, t, i, opts: four(MACH, a) }; }
+  const checkMach = (it, r) => r.v === it.a ? { ok: true } : { code: 'is-' + it.a, cue: MACH_CUE[it.a] };
+
+  return { TYPE, TYPE_CUE, LOAD, LOAD_CUE, FORCES, FORCE_NAME, FORCE_EX, genForce, checkForce, genBeam, checkBeam, shape, genStable, checkStable,
+    LEVER_EX, genLever, checkLever, genMA, checkMA, MACH, MACH_NAME, MACH_EX, genMach, checkMach };
+})();
+/* ===================== MODEL END ===================== */
+
+
+/* ===== DRILL SHELL START (same in every narrow trainer: Math 9 and Science 7) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   Optional: PAGE.sep (heading separator after "Section N", default —), PAGE.secText(tab) (the whole heading text
+   for the 📖 link), PAGE.sans (prompts in the plain font, for science). TAB.cols (2 or 3) sets the choice grid.
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen()                 -> a new item (from MODEL)
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom'
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+     typeOf(item)          -> the question type, for weighting (optional; default: the item's form/kind/shape/... fields)
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown).
+   Weighting: each question type has a score, saved per tab. A first-try right answer lowers it (to half weight at
+   most), a miss or Show me raises it (to about 2.5× at most). Each new item is picked from 8 generated candidates
+   by weight, so missed types come back more often and types answered right still appear, less often. */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {}, w: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); if (!save.w || typeof save.w !== 'object') save.w = {}; } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    let prevItalic = false;
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => {
+      if (!part) return; const it = /^[a-z]$/.test(part);
+      // an italic letter leans into a following ² or ³: nudge it right
+      const t = el('tspan', it ? { 'font-style': 'italic' } : prevItalic && /^[²³]/.test(part) ? { dx: '0.12em' } : {}, e); t.textContent = part; prevItalic = it;
+    });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (tab.kind === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (tab.kind === 'choice') {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
+      row.className = 'choices' + (tab.cols === 2 ? ' two' : tab.cols === 3 ? ' three' : long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = tab.kind === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  /* ---------- weighting: missed question types come back more often ---------- */
+  const TYPE_FIELDS = ['form', 'kind', 'shape', 'type', 'rep', 'ask', 'what', 'mode', 'rule', 'ans', 'useD', 'back', 'direct', 'flip', 'rat', 'idCol'];
+  function keyOf(it) {
+    if (tab.typeOf) return String(tab.typeOf(it));
+    return TYPE_FIELDS.filter(k => typeof it[k] === 'string' || typeof it[k] === 'boolean').map(k => k + ':' + it[k]).join('|');
+  }
+  const scores = () => (save.w[tab.id] = save.w[tab.id] || {});
+  const weightOf = k => Math.pow(2, scores()[k] || 0);
+  function record(right) {
+    const s = scores(), k = item.__key; if (k == null) return;
+    s[k] = right ? Math.max(-1, (s[k] || 0) - .5) : Math.min(1.3, (s[k] || 0) + 1);
+    store();
+  }
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) {
+      const cands = [];
+      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
+      if (!cands.length) cands.push(tab.gen());
+      const ws = cands.map(c => weightOf(keyOf(c))), total = ws.reduce((a, b) => a + b, 0);
+      let r = Q.rnd(0, 999999) / 1e6 * total, i = 0; while (i < cands.length - 1 && r >= ws[i]) { r -= ws[i]; i++; }
+      it = cands[i]; key = JSON.stringify(it);
+    }
+    lastKey = key || JSON.stringify(it);
+    Object.defineProperty(it, '__key', { value: keyOf(it), enumerable: false, configurable: true, writable: true });
+    item = it; resp = {}; att = 0; resolved = false;
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (tab.kind === 'choice' && resp.v == null) return;
+    if (tab.kind === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (tab.kind === 'choice' ? 1 : 2);
+    if (res.ok) {
+      resolved = true; marks.push(att === 1 ? 'g' : 'y'); record(att === 1);
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r'); record(false);
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (tab.kind === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
+    } else if (tab.kind === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (tab.kind === 'slots') fillSlots(ans, 'shown');
+    else if (tab.kind === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); record(false); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(tab) + '" target="_blank" rel="noopener">📖 Notes §' + tab.sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => (t.notes || PAGE.notes) + '#:~:text=' + encodeURIComponent(PAGE.secText ? PAGE.secText(t) : 'Section ' + t.sec + ' ' + (t.sep || PAGE.sep || '—'));
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    const n = $('notes'); n.href = notesHref(tab); $('notesTxt').textContent = '§' + tab.sec;
+    n.title = 'Notes, Section ' + tab.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + tab.sec);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    if (P.sans) document.body.classList.add('sans');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }),
+      keyOf: (it, t) => { const cur = tab; if (t) tab = t; try { return keyOf(it); } finally { tab = cur; } }, weights: () => Object.assign({}, scores()), resetWeights: () => { save.w[tab.id] = {}; }, setScore: (k, s) => { scores()[k] = s; } };
+  }
+  return { boot, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+/* ===== SCIENCE KIT START (Science 7 narrow trainers only; needs DRILL) =====
+   Icon + label + arrow pictures, not drawings of real objects (see the icon-flowchart rule in _sims-context.md).
+     S.emo(p, x, y, icon, size, a)          an emoji icon
+     S.lines(p, x, y, text, n, a)           text wrapped at n characters, centred on (x, y)
+     S.card(p, o)                           an icon card {x, y, w, h, icon, label, col, fill, size, fs, n, cls}
+     S.arrow(p, x1, y1, x2, y2, col, key)   a straight arrow; key = marker colour letter (Y yellow, N green, R red, …)
+     S.curve(p, d, col, key)                an arrow along an SVG path
+     S.sorter(A, it, V, cats, o)            the sorting picture: the item card on top, one bin per choice below;
+                                            after the answer an arrow drops the card into its bin, and each bin shows
+                                            what it means. cats: [{v, label, means, glyph(g, x, y)}]
+     S.classTab(o)                          a whole tap-to-sort tab from a bank (S.sortGen, S.sortCheck) */
+const S = (() => {
+  const { C, el, tx } = DRILL;
+  const done = V => V.phase === 'right' || V.phase === 'show';
+  function emo(p, x, y, ch, size, a) { return tx(p, x, y, ch, Object.assign({ 'font-size': size || 48 }, a, { class: 'emo' + (a && a.class ? ' ' + a.class : '') })); }
+  function wrap(s, n) {
+    const out = []; let line = '';
+    String(s).split(' ').forEach(w => { if (line && (line + ' ' + w).length > n) { out.push(line); line = w; } else line = line ? line + ' ' + w : w; });
+    if (line) out.push(line); return out;
+  }
+  function lines(p, x, y, s, n, a) {
+    const L = wrap(s, n || 22), fs = (a && a['font-size']) || 18, lh = fs * 1.22, g = el('g', { class: a && a.gcls || null }, p);
+    L.forEach((l, i) => tx(g, x, y + (i - (L.length - 1) / 2) * lh, l, Object.assign({}, a, { gcls: null })));
+    return g;
+  }
+  // Label lines sit at the bottom (o.lb padding); the icon is centred in the space above them.
+  function card(p, o) {
+    const g = el('g', { class: o.cls || null }, p), w = o.w || 150, h = o.h || 130, hasL = o.label != null && o.label !== '';
+    el('rect', { x: o.x - w / 2, y: o.y - h / 2, width: w, height: h, rx: 16, fill: o.fill || C.panel, stroke: o.col || C.edge, 'stroke-width': o.sw || 2.5 }, g);
+    const fs = o.fs || 17, n = o.n || Math.round(w / 9.5), L = hasL ? wrap(o.label, n).length : 0, lh = fs * 1.22;
+    const labTop = hasL ? o.y + h / 2 - (o.lb || 12) - L * lh : o.y + h / 2, top = o.y - h / 2;
+    if (o.icon) emo(g, o.x, (top + labTop) / 2 + 2, o.icon, Math.min(o.size || 999, (labTop - top) * .78, w * .6));
+    if (hasL) lines(g, o.x, labTop + L * lh / 2, o.label, n, { 'font-size': fs, fill: o.tcol || C.text });
+    return g;
+  }
+  function arrow(p, x1, y1, x2, y2, col, key, a) {
+    return el('line', Object.assign({ x1, y1, x2, y2, stroke: col, 'stroke-width': 4, 'stroke-linecap': 'round', 'marker-end': 'url(#a' + (key || 'W') + ')' }, a), p);
+  }
+  function curve(p, d, col, key, a) {
+    return el('path', Object.assign({ d, stroke: col, 'stroke-width': 4, fill: 'none', 'stroke-linecap': 'round', 'marker-end': 'url(#a' + (key || 'W') + ')' }, a), p);
+  }
+  // A small pill label with a dark backing, for notes on a picture.
+  function chip(p, x, y, s, col, a) {
+    const g = el('g', { class: a && a.cls || null }, p), fs = (a && a.fs) || 16, w = String(s).length * fs * .56 + 22;
+    el('rect', { x: x - w / 2, y: y - fs * .9, width: w, height: fs * 1.8, rx: fs * .9, fill: C.stage, stroke: col, 'stroke-width': 2 }, g);
+    tx(g, x, y, s, { 'font-size': fs, fill: col });
+    return g;
+  }
+
+  function sorter(A, it, V, cats, o) {
+    o = o || {};
+    const n = cats.length, by = o.by || 335, bh = o.bh || 118, gap = 14, bw = Math.min(190, (600 - gap * (n - 1)) / n);
+    const span = n * bw + (n - 1) * gap, bx = i => 320 - span / 2 + bw / 2 + i * (bw + gap);
+    const fin = done(V), ai = cats.findIndex(c => c.v === it.a), pi = cats.findIndex(c => c.v === (V.resp && V.resp.v));
+    cats.forEach((c, i) => {
+      const x = bx(i), good = fin && i === ai, bad = fin && i === pi && pi !== ai, g = el('g', {}, A.svg);
+      el('rect', { x: x - bw / 2, y: by - bh / 2, width: bw, height: bh, rx: 16, fill: good ? '#13301c' : bad ? '#331417' : C.panel, stroke: good ? C.green : bad ? C.red : C.edge, 'stroke-width': good || bad ? 3 : 2, 'stroke-dasharray': good || bad ? null : '7 6' }, g);
+      const lab = lines(g, x, fin && c.means ? by - bh / 2 + 26 : by, c.label, Math.round(bw / 10.5), { 'font-size': n > 3 ? 17 : 19, fill: good ? C.green : bad ? '#ff9a90' : C.text });
+      if (fin && c.means) lines(g, x, by + 22, c.means, Math.round(bw / 8.5), { 'font-size': 14.5, fill: good ? C.text : C.muted, gcls: 'fade' });
+      if (fin && good && c.glyph) c.glyph(g, x, by + bh / 2 + 4);
+    });
+    const cw = o.cw || 320, ch = o.ch || 156, cy = o.cy || 108;
+    card(A.svg, { x: 320, y: cy, w: cw, h: ch, icon: it.i, label: it.t, size: o.size || 64, fs: o.fs || 21, n: o.n || 26, col: fin ? (pi === ai || V.phase === 'show' && pi < 0 ? C.green : C.edge) : C.yellow, sw: 3, lb: 16 });
+    if (fin && it.why) chip(A.svg, 320, cy + ch / 2 + 24, it.why, C.green, { cls: 'pop', fs: 15 });
+    if (!fin) return;
+    const y0 = cy + ch / 2 + (it.why ? 44 : 8), y1 = by - bh / 2 - 8;
+    if (pi >= 0 && pi !== ai) arrow(A.svg, 320 + (bx(pi) - 320) * .25, y0, bx(pi), y1, C.red, 'R', { 'stroke-dasharray': '6 6', 'stroke-width': 3, class: 'fade' });
+    arrow(A.svg, 320 + (bx(ai) - 320) * .25, y0, bx(ai), y1, C.green, 'N', { class: 'draw', pathLength: 1 });
+  }
+
+  // Bank items: {t: label, i: icon, a: answer, why?: note shown after, cue?: own cue}. No DOM.
+  // Each answer comes up equally often, whatever the bank sizes.
+  const sortGen = bank => { const a = Q.pick([...new Set(bank.map(b => b.a))]); return Object.assign({}, Q.pick(bank.filter(b => b.a === a))); };
+  const sortCheck = (it, r, cues) => r.v === it.a ? { ok: true } : { code: 'is-' + it.a, cue: it.cue || (cues && cues[it.a]) || 'Not quite' };
+
+  // A tap-to-sort tab. o: {id, code, name, sec, q, cats, bank, cues, cols, pic} — the bank and cues come from MODEL.
+  function classTab(o) {
+    return {
+      id: o.id, code: o.code, name: o.name, sec: o.sec, q: o.q, kind: 'choice', cols: o.cols,
+      typeOf: it => it.t,  // a missed item comes back more often
+      gen: () => sortGen(o.bank),
+      choices: () => o.cats.map(c => ({ v: c.v, label: c.label })),
+      check: (it, r) => sortCheck(it, r, o.cues), answer: it => ({ v: it.a }),
+      draw(A, it, V) { sorter(A, it, V, o.cats, o.pic); }
+    };
+  }
+  return { emo, wrap, lines, card, arrow, curve, chip, sorter, classTab, sortGen, sortCheck, done };
+})();
+/* ===== SCIENCE KIT END ===== */
+
+/* ===================== PAGE: pictures and tabs ===================== */
+const { C } = DRILL;
+const done = S.done;
+const el = (tag, a, p) => DRILL.el(tag, a, p);
+const AB = [{ v: 'A', label: 'A' }, { v: 'B', label: 'B' }];
+
+/* 7-4-01 structure type */
+const T_TYPE = S.classTab({
+  id: 'type', code: '7-4-01', name: 'Type', sec: 1, q: 'What type of structure?', bank: MODEL.TYPE, cues: MODEL.TYPE_CUE,
+  cats: [{ v: 'solid', label: 'Solid', means: 'solid all the way through' }, { v: 'frame', label: 'Frame', means: 'connected parts with open spaces' },
+    { v: 'shell', label: 'Shell', means: 'a thin curved surface' }]
+});
+
+/* 7-4-02 load type */
+const T_LOAD = S.classTab({
+  id: 'load', code: '7-4-02', name: 'Load', sec: 2, q: 'What kind of load?', bank: MODEL.LOAD, cues: MODEL.LOAD_CUE,
+  cats: [{ v: 'dead', label: 'Dead', means: "the structure's own weight" }, { v: 'live', label: 'Live', means: 'what it holds; comes and goes' },
+    { v: 'dyn', label: 'Dynamic', means: 'sudden or changing, any direction' }]
+});
+
+/* Force arrows on a bar centred at (x, y) */
+function forceBar(A, x, y, f, col, cls) {
+  const w = 240, h = 54, g = el('g', { class: cls || null }, A.svg), k = col === C.green ? 'N' : 'Y';
+  el('rect', { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 6, fill: '#1d2a3b', stroke: '#8d9bb0', 'stroke-width': 2 }, g);
+  const ar = (x1, y1, x2, y2) => S.arrow(g, x1, y1, x2, y2, col, k, { 'stroke-width': 5 });
+  if (f === 'comp') { ar(x - w / 2 - 70, y, x - w / 2 - 8, y); ar(x + w / 2 + 70, y, x + w / 2 + 8, y); }
+  if (f === 'tens') { ar(x - w / 2 - 6, y, x - w / 2 - 70, y); ar(x + w / 2 + 6, y, x + w / 2 + 70, y); }
+  if (f === 'shear') { ar(x - 90, y - h / 2 - 16, x + 40, y - h / 2 - 16); ar(x + 90, y + h / 2 + 16, x - 40, y + h / 2 + 16); el('line', { x1: x - 30, x2: x + 30, y1: y - 8, y2: y + 8, stroke: '#8d9bb0', 'stroke-width': 2, 'stroke-dasharray': '4 4' }, g); }
+  if (f === 'tors') [[-1, 1], [1, -1]].forEach(([s, d]) => {
+    const cx = x + s * (w / 2 + 26);
+    S.curve(g, `M${cx - 12} ${y + 34}A14 34 0 1 ${d > 0 ? 1 : 0} ${cx + 12} ${y - 34}`, col, k, { 'stroke-width': 4 });
+  });
+  return g;
+}
+
+/* 7-4-02 internal forces */
+const T_FORCE = {
+  id: 'force', code: '7-4-02', name: 'Forces', sec: 3, q: it => it.form === 'arrows' ? 'Which internal force?' : 'Which force is acting?', kind: 'choice', cols: 2,
+  gen: MODEL.genForce, typeOf: it => it.form + ':' + it.a,
+  choices: () => MODEL.FORCES.map(f => ({ v: f, label: MODEL.FORCE_NAME[f] })),
+  check: MODEL.checkForce, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V);
+    if (it.form === 'arrows') { forceBar(A, 320, 200, it.a, fin ? C.green : C.yellow); if (fin) S.chip(A.svg, 320, 350, MODEL.FORCE_NAME[it.a], C.green, { cls: 'pop', fs: 22 }); return; }
+    S.card(A.svg, { x: 320, y: 110, w: 330, h: 170, icon: it.i, label: it.t, size: 64, fs: 21, n: 26, col: fin ? C.green : C.yellow, sw: 3 });
+    if (fin) { forceBar(A, 320, 300, it.a, C.green, 'fade'); A.tx(A.svg, 320, 395, MODEL.FORCE_NAME[it.a], { 'font-size': 20, fill: C.green, class: 'fade' }); }
+  }
+};
+
+/* 7-4-02 the loaded beam */
+const BEAM_Q = { squeezed: 'Which side is squeezed?', stretched: 'Which side is stretched?', crack: 'Where does a crack start?', rebar: 'Where should steel rebar go?' };
+const T_BEAM = {
+  id: 'beam', code: '7-4-02', name: 'Beam', sec: 3, q: it => BEAM_Q[it.form], kind: 'choice',
+  gen: MODEL.genBeam, typeOf: it => it.form,
+  choices: () => [{ v: 'top', label: 'Top' }, { v: 'bottom', label: 'Bottom' }],
+  check: MODEL.checkBeam, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V), x0 = 100, x1 = 540, y = 230, lx = 320 + it.off;
+    A.tx(A.svg, 320, 40, it.beam, { 'font-size': 20, fill: C.muted });
+    [x0 + 30, x1 - 30].forEach(x => el('path', { d: `M${x} ${y + 20}l-22 38h44z`, fill: '#3a4658', stroke: C.axis, 'stroke-width': 2 }, A.svg));
+    const sag = fin ? 22 : 0, top = `M${x0} ${y - 15}Q${lx} ${y - 15 + sag * 2} ${x1} ${y - 15}`, bot = `M${x1} ${y + 15}Q${lx} ${y + 15 + sag * 2} ${x0} ${y + 15}`;
+    el('path', { d: top + 'L' + x1 + ' ' + (y + 15) + bot.slice(bot.indexOf('Q') - 0).replace(/^/, '') + 'Z', fill: it.beam === 'Concrete beam' ? '#4a4f58' : it.beam === 'Steel beam' ? '#5a6878' : '#7a5a33', stroke: C.axis, 'stroke-width': 2 }, A.svg);
+    S.emo(A.svg, lx, y - 64 + sag, '📦', 46);
+    S.arrow(A.svg, lx, y - 118, lx, y - 92, C.text, 'W', { 'stroke-width': 3 });
+    A.tx(A.svg, lx + 50, y - 112, 'load', { 'font-size': 15, fill: C.muted, 'text-anchor': 'start' });
+    if (!fin) { A.tx(A.svg, x1 + 34, y - 15, 'top', { 'font-size': 15, fill: C.muted, 'text-anchor': 'start' }); A.tx(A.svg, x1 + 34, y + 15, 'bottom', { 'font-size': 15, fill: C.muted, 'text-anchor': 'start' }); return; }
+    const ty = y - 15 + sag * 1.05 - 18, by = y + 15 + sag * 1.05 + 18;
+    S.arrow(A.svg, lx - 120, ty, lx - 40, ty, C.gold, 'G', { 'stroke-width': 3, class: 'fade' }); S.arrow(A.svg, lx + 120, ty, lx + 40, ty, C.gold, 'G', { 'stroke-width': 3, class: 'fade' });
+    S.arrow(A.svg, lx - 40, by, lx - 120, by, C.teal, 'B', { 'stroke-width': 3, class: 'fade' }); S.arrow(A.svg, lx + 40, by, lx + 120, by, C.teal, 'B', { 'stroke-width': 3, class: 'fade' });
+    A.tx(A.svg, 320, 330, 'top: squeezed (compression)', { 'font-size': 17, fill: C.gold, class: 'fade' });
+    A.tx(A.svg, 320, 358, 'bottom: stretched (tension)', { 'font-size': 17, fill: C.teal, class: 'fade' });
+    if (it.form === 'crack') el('path', { d: `M${lx - 4} ${y + 15 + sag * 2 - 2}l6 -8l-6 -6l5 -7`, stroke: C.red, 'stroke-width': 3, fill: 'none', class: 'pop' }, A.svg);
+    if (it.form === 'rebar') el('line', { x1: x0 + 10, x2: x1 - 10, y1: y + 8 + sag, y2: y + 8 + sag, stroke: C.yellow, 'stroke-width': 4, 'stroke-dasharray': '10 5', class: 'fade' }, A.svg);
+    if (it.form === 'crack' || it.form === 'rebar') A.tx(A.svg, 320, 392, it.form === 'crack' ? 'concrete is weak when stretched' : 'steel carries the tension', { 'font-size': 15, fill: C.muted, class: 'fade' });
+  }
+};
+
+/* 7-4-03 stability */
+function block(A, x, s, col, fin) {
+  const gy = 352, pts = [[x - s.b / 2, gy], [x + s.b / 2, gy], [x + s.t / 2, gy - s.H], [x - s.t / 2, gy - s.H]];
+  el('polygon', { points: pts.map(p => p.join(',')).join(' '), fill: '#1d2a3b', stroke: col, 'stroke-width': col === C.edge ? 2 : 3 }, A.svg);
+  const cy = gy - s.hc;
+  el('circle', { cx: x, cy, r: 9, fill: C.yellow, stroke: C.stage, 'stroke-width': 2 }, A.svg);
+  A.tx(A.svg, x + 16, cy, 'CoG', { 'font-size': 13, fill: C.yellow, 'text-anchor': 'start' });
+  el('line', { x1: x - s.b / 2, x2: x + s.b / 2, y1: gy + 7, y2: gy + 7, stroke: C.teal, 'stroke-width': 4 }, A.svg);
+  if (!fin) return;
+  el('line', { x1: x, y1: cy, x2: x, y2: gy, stroke: C.muted, 'stroke-width': 2, 'stroke-dasharray': '5 5', class: 'fade' }, A.svg);
+  el('line', { x1: x, y1: cy, x2: x + s.b / 2, y2: gy, stroke: C.gold, 'stroke-width': 2.5, class: 'fade' }, A.svg);
+  A.tx(A.svg, x, 384, 'tips after ' + Math.round(s.ang) + '°', { 'font-size': 16, fill: col === C.green ? C.green : C.muted, class: 'fade' });
+}
+const T_STABLE = {
+  id: 'stable', code: '7-4-03', name: 'Stable?', sec: 4, q: 'Which is more stable?', kind: 'choice',
+  gen: MODEL.genStable, typeOf: it => it.A.kind + '-' + it.B.kind,
+  choices: () => AB, check: MODEL.checkStable, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V);
+    el('line', { x1: 20, x2: 620, y1: 352, y2: 352, stroke: C.axis, 'stroke-width': 2 }, A.svg);
+    [['A', it.A, 170], ['B', it.B, 470]].forEach(([nm, s, x]) => { block(A, x, s, fin && it.a === nm ? C.green : C.edge, fin); A.tx(A.svg, x - 120, 40, nm, { 'font-size': 22, fill: C.muted }); });
+    A.tx(A.svg, 320, 410, fin ? 'Lower CoG and wider base: more stable' : 'teal = base of support', { 'font-size': 14, fill: fin ? C.gold : C.muted });
+  }
+};
+
+/* Lever: bar, fulcrum, load and effort placed in order. pos: {F, L, E} as x; effort arrow up or down. */
+function lever(A, y, pos, effUp, opt) {
+  opt = opt || {};
+  const g = el('g', { class: opt.cls || null }, A.svg);
+  el('rect', { x: 80, y: y - 7, width: 480, height: 14, rx: 7, fill: '#7a5a33', stroke: C.axis, 'stroke-width': 1.5 }, g);
+  el('path', { d: `M${pos.F} ${y + 7}l-24 40h48z`, fill: '#3a4658', stroke: C.axis, 'stroke-width': 2 }, g);
+  el('rect', { x: pos.L - 30, y: y - 57, width: 60, height: 50, rx: 6, fill: '#3b2f1f', stroke: C.gold, 'stroke-width': 2 }, g);
+  DRILL.tx(g, pos.L, y - 32, opt.loadText || 'Load', { 'font-size': 14, fill: C.gold });
+  if (effUp) S.arrow(g, pos.E, y + 70, pos.E, y + 12, C.blue, 'L', { 'stroke-width': 5 }); else S.arrow(g, pos.E, y - 80, pos.E, y - 12, C.blue, 'L', { 'stroke-width': 5 });
+  DRILL.tx(g, pos.E + 14, effUp ? y + 60 : y - 72, opt.effText || 'Effort', { 'font-size': 14, fill: C.blue, 'text-anchor': 'start' });
+  DRILL.tx(g, pos.F, y + 64, 'Fulcrum', { 'font-size': 14, fill: C.muted });
+  return g;
+}
+function leverPos(cls, flip, d) {
+  const ends = [110, 530], mid = 320 + ((d || 0) - 1) * 40, [a, b] = flip ? [ends[1], ends[0]] : ends;
+  if (cls === 1) return { F: mid, L: a, E: b, up: false };
+  if (cls === 2) return { F: a, L: mid, E: b, up: true };
+  return { F: a, E: mid, L: b, up: true };
+}
+
+/* 7-4-04 lever class */
+const T_LEVER = {
+  id: 'lever', code: '7-4-04', name: 'Lever class', sec: 5, q: 'Which class of lever?', kind: 'choice', cols: 3,
+  gen: MODEL.genLever, typeOf: it => it.form + ':' + it.a,
+  choices: () => [{ v: '1', label: '1st' }, { v: '2', label: '2nd' }, { v: '3', label: '3rd' }],
+  check: MODEL.checkLever, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V), p = leverPos(it.cls, it.flip, it.d), y = it.form === 'example' ? 300 : 220;
+    if (it.form === 'example') S.card(A.svg, { x: 320, y: 92, w: 260, h: 150, icon: it.i, label: it.t, size: 60, fs: 21, col: fin ? C.green : C.yellow, sw: 3 });
+    if (it.form === 'diagram' || fin) lever(A, y, p, p.up, { cls: it.form === 'example' ? 'fade' : null });
+    if (!fin) return;
+    const midX = it.cls === 1 ? p.F : it.cls === 2 ? p.L : p.E;
+    el('circle', { cx: midX, cy: y - 10, r: 46, fill: 'none', stroke: C.green, 'stroke-width': 3, class: 'pop' }, A.svg);
+    S.chip(A.svg, 320, it.form === 'example' ? 404 : 360, ['', 'Fulcrum in the middle: 1st class', 'Load in the middle: 2nd class', 'Effort in the middle: 3rd class'][it.cls], C.green, { cls: 'pop', fs: 16 });
+  }
+};
+
+/* 7-4-04 mechanical advantage. The fulcrum sits where effort arm ÷ load arm = MA, so the picture is true. */
+const T_MA = {
+  id: 'ma', code: '7-4-04', name: 'MA', sec: 5, q: 'Mechanical advantage', kind: 'slots',
+  gen: MODEL.genMA, typeOf: it => it.small ? 'below-1' : 'above-1',
+  prompt: it => 'Load ' + it.L + ' N, effort ' + it.E + ' N',
+  slots: () => ['MA =', { k: 'v', label: 'mechanical advantage' }],
+  check: MODEL.checkMA, answer: it => ({ v: it.v }),
+  draw(A, it, V) {
+    const fin = done(V), ma = it.L / it.E, a = 420 / (ma + 1), F = 110 + a;
+    lever(A, 230, { F, L: 110, E: 530 }, false, { loadText: it.L + ' N', effText: it.E + ' N' });
+    if (V.phase === 'ask') return;
+    el('line', { x1: 110, x2: F, y1: 318, y2: 318, stroke: C.gold, 'stroke-width': 3, class: 'fade' }, A.svg);
+    el('line', { x1: F, x2: 530, y1: 318, y2: 318, stroke: C.blue, 'stroke-width': 3, class: 'fade' }, A.svg);
+    A.tx(A.svg, (110 + F) / 2, 336, 'load arm', { 'font-size': 13, fill: C.gold, class: 'fade' }); A.tx(A.svg, (F + 530) / 2, 336, 'effort arm', { 'font-size': 13, fill: C.blue, class: 'fade' });
+    A.tx(A.svg, 320, 374, 'MA = load ÷ effort = ' + it.L + ' ÷ ' + it.E + (fin ? ' = ' + Q.str(it.v).replace('1/2', '½').replace('1/4', '¼') : ''), { 'font-size': 20, fill: fin ? C.green : C.text, class: 'fade' });
+    if (fin) A.tx(A.svg, 320, 404, ma >= 1 ? 'less force, but the effort moves ' + ma + '× farther' : 'more force, but the load moves farther and faster', { 'font-size': 15, fill: C.muted, class: 'fade' });
+  }
+};
+
+/* 7-4-04 name the simple machine; afterwards a small diagram of that machine */
+function machGlyph(A, k, x, y, col) {
+  const g = el('g', { class: 'fade', stroke: col, 'stroke-width': 3, fill: 'none' }, A.svg);
+  if (k === 'lever') { el('line', { x1: x - 70, y1: y - 10, x2: x + 70, y2: y + 4 }, g); el('path', { d: `M${x - 10} ${y - 2}l-16 28h32z` }, g); }
+  if (k === 'wheel') { el('circle', { cx: x, cy: y, r: 36 }, g); el('circle', { cx: x, cy: y, r: 9, fill: col }, g); }
+  if (k === 'pulley') { el('circle', { cx: x, cy: y - 14, r: 22 }, g); el('path', { d: `M${x - 22} ${y - 14}v52M${x + 22} ${y - 14}v40` }, g); el('rect', { x: x + 10, y: y + 26, width: 24, height: 18 }, g); }
+  if (k === 'incline') el('path', { d: `M${x - 70} ${y + 30}h140v-60z` }, g);
+  if (k === 'wedge') el('path', { d: `M${x - 26} ${y - 34}h52l-26 70z` }, g);
+  if (k === 'screw') { el('rect', { x: x - 16, y: y - 36, width: 32, height: 72 }, g); for (let i = 0; i < 5; i++) el('line', { x1: x - 16, y1: y - 30 + i * 14, x2: x + 16, y2: y - 22 + i * 14 }, g); }
+  return g;
+}
+const T_MACH = {
+  id: 'machine', code: '7-4-04', name: 'Machines', sec: 5, q: 'Which simple machine?', kind: 'choice', cols: 2,
+  gen: MODEL.genMach, typeOf: it => it.a,
+  choices: it => it.opts.map(k => ({ v: k, label: MODEL.MACH_NAME[k] })),
+  check: MODEL.checkMach, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V);
+    S.card(A.svg, { x: 320, y: 130, w: 300, h: 190, icon: it.i, label: it.t, size: 80, fs: 22, col: fin ? C.green : C.yellow, sw: 3 });
+    if (!fin) return;
+    machGlyph(A, it.a, 250, 320, C.green);
+    A.tx(A.svg, 340, 320, MODEL.MACH_NAME[it.a], { 'font-size': 22, fill: C.green, 'text-anchor': 'start', class: 'fade' });
+  }
+};
+
+const PAGE = {
+  key: 'sci7-structures-forces-trainer-v1', course: 'Science 7 · Structures and Forces', title: 'Structures Trainer',
+  notes: 'sci7-structures-forces-notes-v1.html', secText: t => 'Section ' + t.sec + ':', sans: true,
+  tabs: [T_TYPE, T_LOAD, T_FORCE, T_BEAM, T_STABLE, T_LEVER, T_MA, T_MACH]
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>

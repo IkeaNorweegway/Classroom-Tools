@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planet Earth Trainer | Science 7</title>
+<!-- =====================================================================
+   PLANET EARTH TRAINER (narrow trainer format, see _sims-context.md)
+   Science 7 | Planet Earth | LO 7-5-01 to 7-5-06. Used after the lesson: it does not teach,
+   it points back to the notes (Sections 1–6). One narrow skill per tab, 10 items a round:
+     7-5-01 Layers      name the yellow layer, or match a property (liquid iron and nickel, flows slowly, …)
+     7-5-02 Rock type   igneous, sedimentary or metamorphic, from a rock name or how it formed
+     7-5-02 Crystals    big crystals: cooled slowly underground; small: fast at the surface (and back)
+     7-5-03 Boundaries  divergent, convergent or transform, from plate arrows (top view) or a place or feature
+     7-5-04 Earthquake  focus, epicenter (the notes' spelling) or fault in a cross-section
+     7-5-04 Volcano     shield or composite, from the shape or a fact
+     7-5-05 Surface     weathering, erosion or deposition
+     7-5-06 Oldest?     the law of superposition in undisturbed layers: oldest, youngest, which fossil lived first
+   Model and limits: layer radii are not to scale (the crust is drawn thicker). Plate arrows are a top view.
+   Rock layers are always undisturbed here; the notes cover tilted and folded layers.
+   Named mistakes: the top layer called oldest, melting called metamorphic, crystal size backwards, the epicenter put
+   underground, boundary types mixed up.
+   ?debug=1 puts DRILL (and MODEL) on window, turns off saving and motion.
+   ===================================================================== -->
+<style>
+/* ===== DRILL SHELL CSS START (same in every narrow trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .stage svg text.emo { stroke: none; font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif; font-weight: 400; }
+  .sans .prompt { font-family: inherit; font-weight: 650; font-size: 26px; }
+  .sans .choice { font-size: 19px; line-height: 1.15; padding: 4px 8px; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slot.sup { width: 1.9em; min-height: 40px; font-size: 20px; align-self: flex-start; margin-left: -2px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choices.two { grid-template-columns: 1fr 1fr; }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choices.one { grid-template-columns: 1fr; gap: 8px; }
+  .choices.one .choice { min-height: 54px; }
+  .choices.one .choice.math { font-size: 26px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+/* ===================== MODEL START (no DOM) ===================== */
+const MODEL = (() => {
+  const { rnd, pick, chance, shuffle } = Q;
+
+  /* 7-5-01 Earth's layers: name the yellow layer, or match a property */
+  const LAYERS = ['crust', 'mantle', 'outer', 'inner'];
+  const LAYER_NAME = { crust: 'Crust', mantle: 'Mantle', outer: 'Outer core', inner: 'Inner core' };
+  const LAYER_FACT = {
+    crust: ['Thinnest layer', 'Has oceanic and continental parts', 'The rock we stand on'],
+    mantle: ['Hot rock that flows very slowly', 'Convection currents move the plates', 'Thickest layer'],
+    outer: ['Liquid iron and nickel', "Makes Earth's magnetic field"],
+    inner: ['Solid iron and nickel ball', 'Solid because the pressure is extreme', "At Earth's centre"]
+  };
+  const LAYER_CUE = { crust: 'Thin outer rock: crust', mantle: 'Thick, slowly flowing rock: mantle', outer: 'Liquid iron and nickel: outer core', inner: 'Solid iron and nickel: inner core' };
+  function genLayer() { const a = pick(LAYERS); return chance(.5) ? { form: 'pic', a } : { form: 'fact', a, t: pick(LAYER_FACT[a]) }; }
+  const checkLayer = (it, r) => r.v === it.a ? { ok: true } : { code: 'is-' + it.a, cue: LAYER_CUE[it.a] };
+
+  /* 7-5-02 igneous, sedimentary or metamorphic */
+  const ROCK = [
+    ['Lava cools at the surface', '🌋'], ['Magma cools slowly underground', '🔥'], ['Granite', '🪨'], ['Basalt', '⬛'], ['Obsidian (volcanic glass)', '🖤'], ['Rock melts, then cools', '🌋']
+  ].map(([t, i]) => ({ t, i, a: 'ign' })).concat([
+    ['Sand pressed and cemented', '🏖️'], ['Layers of shells cemented together', '🐚'], ['Sandstone', '🟫'], ['Shale', '🪨'], ['Limestone', '⬜'], ['Rock with fossils in its layers', '🦴']
+  ].map(([t, i]) => ({ t, i, a: 'sed' }))).concat([
+    ['Heat and pressure change a rock without melting it', '🔥'], ['Limestone changed into marble', '🏛️'], ['Shale changed into slate', '⬛'], ['Granite changed into gneiss', '🪨'], ['Marble', '🏛️'], ['Slate', '⬛']
+  ].map(([t, i]) => ({ t, i, a: 'met' })));
+  const ROCK_CUE = { ign: 'Melted rock that cooled: igneous', sed: 'Sediment pressed and cemented: sedimentary', met: 'Heat and pressure, no melting: metamorphic' };
+
+  /* 7-5-02 crystal size: slow cooling underground gives large crystals */
+  function genCrys() { const slow = chance(.5); return { form: chance(.6) ? 'pic' : 'cond', slow, seed: rnd(1, 99999), a: slow ? 'slow' : 'fast' }; }
+  const checkCrys = (it, r) => r.v === it.a ? { ok: true } : it.slow ? { code: 'slow', cue: 'Slow cooling: crystals grow large' } : { code: 'fast', cue: 'Fast cooling: crystals stay small' };
+
+  /* 7-5-03 plate boundaries */
+  const BOUND = ['div', 'conv', 'trans'];
+  const BOUND_NAME = { div: 'Divergent', conv: 'Convergent', trans: 'Transform' };
+  const BOUND_FACT = {
+    div: ['Mid-Atlantic Ridge', 'New seafloor forms', 'A rift opens in Iceland'],
+    conv: ['Himalaya Mountains', 'An ocean trench with volcanoes', 'The Rocky Mountains form', 'Cascade volcanoes'],
+    trans: ['San Andreas Fault', 'Plates grind past: earthquakes', 'No crust made or destroyed']
+  };
+  const BOUND_CUE = { div: 'Moving apart: divergent', conv: 'Moving together: convergent', trans: 'Sliding past: transform' };
+  function genBound() { const a = pick(BOUND); return chance(.5) ? { form: 'arrows', a, flip: chance(.5) } : { form: 'fact', a, t: pick(BOUND_FACT[a]) }; }
+  const checkBound = (it, r) => r.v === it.a ? { ok: true } : { code: 'is-' + it.a, cue: BOUND_CUE[it.a] };
+
+  /* 7-5-04 focus, epicenter (the notes' spelling) or fault */
+  const QUAKE = ['focus', 'epi', 'fault'];
+  const QUAKE_NAME = { focus: 'Focus', epi: 'Epicenter', fault: 'Fault' };
+  const QUAKE_CUE = { focus: 'Underground, where rock breaks: focus', epi: 'Surface point above: epicenter', fault: 'The break in the crust: fault' };
+  function genQuake() { return { a: pick(QUAKE), x: rnd(220, 420), d: rnd(110, 200), lean: chance(.5) ? 1 : -1 }; }
+  const checkQuake = (it, r) => r.v === it.a ? { ok: true } : { code: 'is-' + it.a, cue: QUAKE_CUE[it.a] };
+
+  /* 7-5-04 shield or composite volcano */
+  const VOLC_FACT = { shield: ['Runny lava flows out gently', 'Low-viscosity lava', 'Mauna Loa, Hawaii', 'Kilauea, Hawaii', 'Wide, with gentle slopes'],
+    comp: ['Thick lava traps gas: it explodes', 'High-viscosity lava', 'Mt. St. Helens', 'Mt. Fuji', 'A steep cone'] };
+  function genVolc() { const a = chance(.5) ? 'shield' : 'comp'; return chance(.5) ? { form: 'shape', a, w: rnd(0, 9), h: rnd(0, 9) } : { form: 'fact', a, t: pick(VOLC_FACT[a]), w: rnd(0, 9), h: rnd(0, 9) }; }
+  const checkVolc = (it, r) => r.v === it.a ? { ok: true } : it.a === 'shield' ? { code: 'shield', cue: 'Runny lava, gentle slopes: shield' } : { code: 'comp', cue: 'Thick lava, steep, explosive: composite' };
+
+  /* 7-5-05 weathering, erosion or deposition */
+  const SURF = [
+    ['Water freezes in a crack and splits a rock', '🧊'], ['Tree roots crack a rock', '🌳'], ['Acid rain dissolves limestone', '🌧️'], ['Iron in a rock rusts', '🟠'], ['Wind-blown sand wears down a hoodoo', '💨']
+  ].map(([t, i]) => ({ t, i, a: 'weath' })).concat([
+    ['A river carries sand downstream', '🏞️'], ['Wind blows soil off a field', '🌬️'], ['A glacier drags boulders along', '🏔️'], ['A landslide moves rock downhill', '⛰️']
+  ].map(([t, i]) => ({ t, i, a: 'eros' }))).concat([
+    ['A river drops sand at its mouth (a delta)', '🏝️'], ['A sandbar forms where a river slows', '🏖️'], ['A melting glacier leaves a boulder behind', '🪨'], ['Glacial till spread across the prairies', '🌾']
+  ].map(([t, i]) => ({ t, i, a: 'depo' })));
+  const SURF_CUE = { weath: 'Breaks rock where it sits: weathering', eros: 'Moves the pieces: erosion', depo: 'Drops them somewhere new: deposition' };
+
+  /* 7-5-06 law of superposition: lower layers are older (undisturbed rock) */
+  const FOSSILS = [['Trilobite', '🦐'], ['Ammonite', '🐚'], ['Fish', '🐟'], ['Leaf imprint', '🍃'], ['Dinosaur bone', '🦴'], ['Footprint', '🐾']];
+  function genOld() {
+    const n = rnd(4, 5), letters = shuffle(['A', 'B', 'C', 'D', 'E'].slice(0, n)), form = pick(['oldest', 'youngest', 'fossil']);
+    const fos = shuffle(FOSSILS.slice()).slice(0, 2), spots = shuffle([...Array(n).keys()]).slice(0, 2);
+    // letters[k] is the layer k from the top. For 'fossil', fossils sit in two different layers.
+    const lower = spots[0] > spots[1] ? 0 : 1;
+    const a = form === 'oldest' ? letters[n - 1] : form === 'youngest' ? letters[0] : fos[lower][0];
+    return { n, letters, form, fos, spots, a };
+  }
+  function checkOld(it, r) {
+    if (r.v === it.a) return { ok: true };
+    if (it.form === 'youngest') return { code: 'young', cue: 'The top layer formed last' };
+    return { code: 'old', cue: 'Lower layers are older' };
+  }
+
+  return { LAYERS, LAYER_NAME, LAYER_FACT, genLayer, checkLayer, ROCK, ROCK_CUE, genCrys, checkCrys, BOUND, BOUND_NAME, BOUND_FACT, genBound, checkBound,
+    QUAKE, QUAKE_NAME, genQuake, checkQuake, VOLC_FACT, genVolc, checkVolc, SURF, SURF_CUE, FOSSILS, genOld, checkOld };
+})();
+/* ===================== MODEL END ===================== */
+
+
+/* ===== DRILL SHELL START (same in every narrow trainer: Math 9 and Science 7) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   Optional: PAGE.sep (heading separator after "Section N", default —), PAGE.secText(tab) (the whole heading text
+   for the 📖 link), PAGE.sans (prompts in the plain font, for science). TAB.cols (2 or 3) sets the choice grid.
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen()                 -> a new item (from MODEL)
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom'
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+     typeOf(item)          -> the question type, for weighting (optional; default: the item's form/kind/shape/... fields)
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown).
+   Weighting: each question type has a score, saved per tab. A first-try right answer lowers it (to half weight at
+   most), a miss or Show me raises it (to about 2.5× at most). Each new item is picked from 8 generated candidates
+   by weight, so missed types come back more often and types answered right still appear, less often. */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {}, w: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); if (!save.w || typeof save.w !== 'object') save.w = {}; } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    let prevItalic = false;
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => {
+      if (!part) return; const it = /^[a-z]$/.test(part);
+      // an italic letter leans into a following ² or ³: nudge it right
+      const t = el('tspan', it ? { 'font-style': 'italic' } : prevItalic && /^[²³]/.test(part) ? { dx: '0.12em' } : {}, e); t.textContent = part; prevItalic = it;
+    });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (tab.kind === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (tab.kind === 'choice') {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
+      row.className = 'choices' + (tab.cols === 2 ? ' two' : tab.cols === 3 ? ' three' : long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = tab.kind === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  /* ---------- weighting: missed question types come back more often ---------- */
+  const TYPE_FIELDS = ['form', 'kind', 'shape', 'type', 'rep', 'ask', 'what', 'mode', 'rule', 'ans', 'useD', 'back', 'direct', 'flip', 'rat', 'idCol'];
+  function keyOf(it) {
+    if (tab.typeOf) return String(tab.typeOf(it));
+    return TYPE_FIELDS.filter(k => typeof it[k] === 'string' || typeof it[k] === 'boolean').map(k => k + ':' + it[k]).join('|');
+  }
+  const scores = () => (save.w[tab.id] = save.w[tab.id] || {});
+  const weightOf = k => Math.pow(2, scores()[k] || 0);
+  function record(right) {
+    const s = scores(), k = item.__key; if (k == null) return;
+    s[k] = right ? Math.max(-1, (s[k] || 0) - .5) : Math.min(1.3, (s[k] || 0) + 1);
+    store();
+  }
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) {
+      const cands = [];
+      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
+      if (!cands.length) cands.push(tab.gen());
+      const ws = cands.map(c => weightOf(keyOf(c))), total = ws.reduce((a, b) => a + b, 0);
+      let r = Q.rnd(0, 999999) / 1e6 * total, i = 0; while (i < cands.length - 1 && r >= ws[i]) { r -= ws[i]; i++; }
+      it = cands[i]; key = JSON.stringify(it);
+    }
+    lastKey = key || JSON.stringify(it);
+    Object.defineProperty(it, '__key', { value: keyOf(it), enumerable: false, configurable: true, writable: true });
+    item = it; resp = {}; att = 0; resolved = false;
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (tab.kind === 'choice' && resp.v == null) return;
+    if (tab.kind === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (tab.kind === 'choice' ? 1 : 2);
+    if (res.ok) {
+      resolved = true; marks.push(att === 1 ? 'g' : 'y'); record(att === 1);
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r'); record(false);
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (tab.kind === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
+    } else if (tab.kind === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (tab.kind === 'slots') fillSlots(ans, 'shown');
+    else if (tab.kind === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); record(false); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(tab) + '" target="_blank" rel="noopener">📖 Notes §' + tab.sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => (t.notes || PAGE.notes) + '#:~:text=' + encodeURIComponent(PAGE.secText ? PAGE.secText(t) : 'Section ' + t.sec + ' ' + (t.sep || PAGE.sep || '—'));
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    const n = $('notes'); n.href = notesHref(tab); $('notesTxt').textContent = '§' + tab.sec;
+    n.title = 'Notes, Section ' + tab.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + tab.sec);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    if (P.sans) document.body.classList.add('sans');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }),
+      keyOf: (it, t) => { const cur = tab; if (t) tab = t; try { return keyOf(it); } finally { tab = cur; } }, weights: () => Object.assign({}, scores()), resetWeights: () => { save.w[tab.id] = {}; }, setScore: (k, s) => { scores()[k] = s; } };
+  }
+  return { boot, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+/* ===== SCIENCE KIT START (Science 7 narrow trainers only; needs DRILL) =====
+   Icon + label + arrow pictures, not drawings of real objects (see the icon-flowchart rule in _sims-context.md).
+     S.emo(p, x, y, icon, size, a)          an emoji icon
+     S.lines(p, x, y, text, n, a)           text wrapped at n characters, centred on (x, y)
+     S.card(p, o)                           an icon card {x, y, w, h, icon, label, col, fill, size, fs, n, cls}
+     S.arrow(p, x1, y1, x2, y2, col, key)   a straight arrow; key = marker colour letter (Y yellow, N green, R red, …)
+     S.curve(p, d, col, key)                an arrow along an SVG path
+     S.sorter(A, it, V, cats, o)            the sorting picture: the item card on top, one bin per choice below;
+                                            after the answer an arrow drops the card into its bin, and each bin shows
+                                            what it means. cats: [{v, label, means, glyph(g, x, y)}]
+     S.classTab(o)                          a whole tap-to-sort tab from a bank (S.sortGen, S.sortCheck) */
+const S = (() => {
+  const { C, el, tx } = DRILL;
+  const done = V => V.phase === 'right' || V.phase === 'show';
+  function emo(p, x, y, ch, size, a) { return tx(p, x, y, ch, Object.assign({ 'font-size': size || 48 }, a, { class: 'emo' + (a && a.class ? ' ' + a.class : '') })); }
+  function wrap(s, n) {
+    const out = []; let line = '';
+    String(s).split(' ').forEach(w => { if (line && (line + ' ' + w).length > n) { out.push(line); line = w; } else line = line ? line + ' ' + w : w; });
+    if (line) out.push(line); return out;
+  }
+  function lines(p, x, y, s, n, a) {
+    const L = wrap(s, n || 22), fs = (a && a['font-size']) || 18, lh = fs * 1.22, g = el('g', { class: a && a.gcls || null }, p);
+    L.forEach((l, i) => tx(g, x, y + (i - (L.length - 1) / 2) * lh, l, Object.assign({}, a, { gcls: null })));
+    return g;
+  }
+  // Label lines sit at the bottom (o.lb padding); the icon is centred in the space above them.
+  function card(p, o) {
+    const g = el('g', { class: o.cls || null }, p), w = o.w || 150, h = o.h || 130, hasL = o.label != null && o.label !== '';
+    el('rect', { x: o.x - w / 2, y: o.y - h / 2, width: w, height: h, rx: 16, fill: o.fill || C.panel, stroke: o.col || C.edge, 'stroke-width': o.sw || 2.5 }, g);
+    const fs = o.fs || 17, n = o.n || Math.round(w / 9.5), L = hasL ? wrap(o.label, n).length : 0, lh = fs * 1.22;
+    const labTop = hasL ? o.y + h / 2 - (o.lb || 12) - L * lh : o.y + h / 2, top = o.y - h / 2;
+    if (o.icon) emo(g, o.x, (top + labTop) / 2 + 2, o.icon, Math.min(o.size || 999, (labTop - top) * .78, w * .6));
+    if (hasL) lines(g, o.x, labTop + L * lh / 2, o.label, n, { 'font-size': fs, fill: o.tcol || C.text });
+    return g;
+  }
+  function arrow(p, x1, y1, x2, y2, col, key, a) {
+    return el('line', Object.assign({ x1, y1, x2, y2, stroke: col, 'stroke-width': 4, 'stroke-linecap': 'round', 'marker-end': 'url(#a' + (key || 'W') + ')' }, a), p);
+  }
+  function curve(p, d, col, key, a) {
+    return el('path', Object.assign({ d, stroke: col, 'stroke-width': 4, fill: 'none', 'stroke-linecap': 'round', 'marker-end': 'url(#a' + (key || 'W') + ')' }, a), p);
+  }
+  // A small pill label with a dark backing, for notes on a picture.
+  function chip(p, x, y, s, col, a) {
+    const g = el('g', { class: a && a.cls || null }, p), fs = (a && a.fs) || 16, w = String(s).length * fs * .56 + 22;
+    el('rect', { x: x - w / 2, y: y - fs * .9, width: w, height: fs * 1.8, rx: fs * .9, fill: C.stage, stroke: col, 'stroke-width': 2 }, g);
+    tx(g, x, y, s, { 'font-size': fs, fill: col });
+    return g;
+  }
+
+  function sorter(A, it, V, cats, o) {
+    o = o || {};
+    const n = cats.length, by = o.by || 335, bh = o.bh || 118, gap = 14, bw = Math.min(190, (600 - gap * (n - 1)) / n);
+    const span = n * bw + (n - 1) * gap, bx = i => 320 - span / 2 + bw / 2 + i * (bw + gap);
+    const fin = done(V), ai = cats.findIndex(c => c.v === it.a), pi = cats.findIndex(c => c.v === (V.resp && V.resp.v));
+    cats.forEach((c, i) => {
+      const x = bx(i), good = fin && i === ai, bad = fin && i === pi && pi !== ai, g = el('g', {}, A.svg);
+      el('rect', { x: x - bw / 2, y: by - bh / 2, width: bw, height: bh, rx: 16, fill: good ? '#13301c' : bad ? '#331417' : C.panel, stroke: good ? C.green : bad ? C.red : C.edge, 'stroke-width': good || bad ? 3 : 2, 'stroke-dasharray': good || bad ? null : '7 6' }, g);
+      const lab = lines(g, x, fin && c.means ? by - bh / 2 + 26 : by, c.label, Math.round(bw / 10.5), { 'font-size': n > 3 ? 17 : 19, fill: good ? C.green : bad ? '#ff9a90' : C.text });
+      if (fin && c.means) lines(g, x, by + 22, c.means, Math.round(bw / 8.5), { 'font-size': 14.5, fill: good ? C.text : C.muted, gcls: 'fade' });
+      if (fin && good && c.glyph) c.glyph(g, x, by + bh / 2 + 4);
+    });
+    const cw = o.cw || 320, ch = o.ch || 156, cy = o.cy || 108;
+    card(A.svg, { x: 320, y: cy, w: cw, h: ch, icon: it.i, label: it.t, size: o.size || 64, fs: o.fs || 21, n: o.n || 26, col: fin ? (pi === ai || V.phase === 'show' && pi < 0 ? C.green : C.edge) : C.yellow, sw: 3, lb: 16 });
+    if (fin && it.why) chip(A.svg, 320, cy + ch / 2 + 24, it.why, C.green, { cls: 'pop', fs: 15 });
+    if (!fin) return;
+    const y0 = cy + ch / 2 + (it.why ? 44 : 8), y1 = by - bh / 2 - 8;
+    if (pi >= 0 && pi !== ai) arrow(A.svg, 320 + (bx(pi) - 320) * .25, y0, bx(pi), y1, C.red, 'R', { 'stroke-dasharray': '6 6', 'stroke-width': 3, class: 'fade' });
+    arrow(A.svg, 320 + (bx(ai) - 320) * .25, y0, bx(ai), y1, C.green, 'N', { class: 'draw', pathLength: 1 });
+  }
+
+  // Bank items: {t: label, i: icon, a: answer, why?: note shown after, cue?: own cue}. No DOM.
+  // Each answer comes up equally often, whatever the bank sizes.
+  const sortGen = bank => { const a = Q.pick([...new Set(bank.map(b => b.a))]); return Object.assign({}, Q.pick(bank.filter(b => b.a === a))); };
+  const sortCheck = (it, r, cues) => r.v === it.a ? { ok: true } : { code: 'is-' + it.a, cue: it.cue || (cues && cues[it.a]) || 'Not quite' };
+
+  // A tap-to-sort tab. o: {id, code, name, sec, q, cats, bank, cues, cols, pic} — the bank and cues come from MODEL.
+  function classTab(o) {
+    return {
+      id: o.id, code: o.code, name: o.name, sec: o.sec, q: o.q, kind: 'choice', cols: o.cols,
+      typeOf: it => it.t,  // a missed item comes back more often
+      gen: () => sortGen(o.bank),
+      choices: () => o.cats.map(c => ({ v: c.v, label: c.label })),
+      check: (it, r) => sortCheck(it, r, o.cues), answer: it => ({ v: it.a }),
+      draw(A, it, V) { sorter(A, it, V, o.cats, o.pic); }
+    };
+  }
+  return { emo, wrap, lines, card, arrow, curve, chip, sorter, classTab, sortGen, sortCheck, done };
+})();
+/* ===== SCIENCE KIT END ===== */
+
+/* ===================== PAGE: pictures and tabs ===================== */
+const { C } = DRILL;
+const done = S.done;
+const el = (tag, a, p) => DRILL.el(tag, a, p);
+const rng = seed => { let s = seed >>> 0 || 1; return () => (s = (s * 16807) % 2147483647) / 2147483647; };
+const HLA = col => ({ stroke: col, 'stroke-width': 6, filter: 'url(#glow)' });
+
+/* 7-5-01 Earth's layers (radii not to scale: the crust is drawn thicker) */
+const LAYER_R = { crust: 1, mantle: .94, outer: .55, inner: .2 }, LAYER_FILL = { crust: '#7a5a33', mantle: '#8a3b2a', outer: '#c9702a', inner: '#f2c14e' };
+const T_LAYER = {
+  id: 'layers', code: '7-5-01', name: 'Layers', sec: 1, q: it => it.form === 'pic' ? 'The yellow layer is the…' : 'Which layer?', kind: 'choice', cols: 2,
+  gen: MODEL.genLayer, typeOf: it => it.form + ':' + it.a,
+  choices: () => MODEL.LAYERS.map(k => ({ v: k, label: MODEL.LAYER_NAME[k] })),
+  check: MODEL.checkLayer, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V), cx = 200, cy = 212, R = 182;
+    MODEL.LAYERS.forEach(k => el('circle', { cx, cy, r: R * LAYER_R[k], fill: LAYER_FILL[k], stroke: C.stage, 'stroke-width': 2 }, A.svg));
+    if (it.form === 'pic' || fin) {
+      const r1 = R * LAYER_R[it.a], idx = MODEL.LAYERS.indexOf(it.a), r0 = idx < 3 ? R * LAYER_R[MODEL.LAYERS[idx + 1]] : 0;
+      el('circle', Object.assign({ cx, cy, r: r1, fill: 'none' }, HLA(fin ? C.green : C.yellow)), A.svg);
+      if (r0) el('circle', Object.assign({ cx, cy, r: r0, fill: 'none' }, HLA(fin ? C.green : C.yellow), { 'stroke-width': 3 }), A.svg);
+    }
+    if (it.form === 'fact') S.card(A.svg, { x: 500, y: 140, w: 230, h: 150, label: it.t, fs: 20, n: 18, lb: 40, col: fin ? C.green : C.yellow, sw: 3 });
+    if (!fin) return;
+    const r1 = R * LAYER_R[it.a], idx = MODEL.LAYERS.indexOf(it.a), r0 = idx < 3 ? R * LAYER_R[MODEL.LAYERS[idx + 1]] : 0, px = cx + (r0 + r1) / 2 * .7, py = cy + (r0 + r1) / 2 * .7;
+    S.arrow(A.svg, 420, 330, px + 6, py + 6, C.green, 'N', { 'stroke-width': 3, class: 'fade' });
+    A.tx(A.svg, 425, 345, MODEL.LAYER_NAME[it.a], { 'font-size': 22, fill: C.green, 'text-anchor': 'start', class: 'pop' });
+    A.tx(A.svg, 425, 375, MODEL.LAYER_FACT[it.a][0], { 'font-size': 15, fill: C.muted, 'text-anchor': 'start', class: 'fade' });
+  }
+};
+
+/* 7-5-02 rock type */
+const T_ROCK = S.classTab({
+  id: 'rock', code: '7-5-02', name: 'Rock type', sec: 2, q: 'Which kind of rock?', bank: MODEL.ROCK, cues: MODEL.ROCK_CUE,
+  cats: [{ v: 'ign', label: 'Igneous', means: 'melted rock that cooled' }, { v: 'sed', label: 'Sedimentary', means: 'sediment pressed and cemented' },
+    { v: 'met', label: 'Metamorphic', means: 'changed by heat and pressure, no melting' }]
+});
+
+/* 7-5-02 crystal size. A jittered grid of crystals: big cells for slow cooling, tiny for fast. */
+function texture(A, x0, y0, size, slow, seed, cls) {
+  const r = rng(seed), n = slow ? 6 : 26, s = size / n, P = [], g = el('g', { class: cls || null }, A.svg);
+  const pal = slow ? ['#e9d8c8', '#c98f8f', '#3c3c44', '#d9d9d9', '#b56b6b', '#f2efe9'] : ['#3a3d45', '#2e3138', '#4a4e57', '#565b66', '#41454d'];
+  for (let i = 0; i <= n; i++) { P.push([]); for (let j = 0; j <= n; j++) { const edge = i === 0 || j === 0 || i === n || j === n, jt = edge ? 0 : s * .32; P[i].push([x0 + i * s + (r() - .5) * 2 * jt, y0 + j * s + (r() - .5) * 2 * jt]); } }
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+    const q = [P[i][j], P[i + 1][j], P[i + 1][j + 1], P[i][j + 1]];
+    el('polygon', { points: q.map(p => p.map(v => v.toFixed(1)).join(',')).join(' '), fill: pal[Math.floor(r() * pal.length)], stroke: '#1a1d22', 'stroke-width': slow ? 2 : .6 }, g);
+  }
+  el('rect', { x: x0, y: y0, width: size, height: size, fill: 'none', stroke: C.edge, 'stroke-width': 2 }, g);
+  return g;
+}
+const T_CRYS = {
+  id: 'crystals', code: '7-5-02', name: 'Crystals', sec: 2, q: it => it.form === 'pic' ? 'How did this igneous rock cool?' : 'What size are the crystals?', kind: 'choice',
+  gen: MODEL.genCrys, typeOf: it => it.form + ':' + it.a,
+  choices: it => it.form === 'pic' ? [{ v: 'slow', label: 'Slowly, underground' }, { v: 'fast', label: 'Fast, at the surface' }] : [{ v: 'slow', label: 'Large crystals' }, { v: 'fast', label: 'Small crystals' }],
+  check: MODEL.checkCrys, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V);
+    if (it.form === 'pic' || fin) texture(A, 40, 60, 300, it.slow, it.seed, it.form === 'cond' ? 'fade' : null);
+    if (it.form === 'cond') S.card(A.svg, { x: 490, y: 130, w: 240, h: 130, icon: it.slow ? '🐢' : '⚡', label: it.slow ? 'Magma cools slowly, deep underground' : 'Lava cools fast at the surface', fs: 18, n: 20, size: 40, col: fin ? C.green : C.yellow, sw: 3 });
+    if (!fin) return;
+    const y = it.form === 'cond' ? 260 : 150;
+    A.tx(A.svg, 380, y, it.slow ? 'Large crystals' : 'Small crystals', { 'font-size': 22, fill: C.green, 'text-anchor': 'start', class: 'pop' });
+    A.tx(A.svg, 380, y + 32, it.slow ? 'cooled slowly underground' : 'cooled fast at the surface', { 'font-size': 16, fill: C.text, 'text-anchor': 'start', class: 'fade' });
+    A.tx(A.svg, 380, y + 58, it.slow ? '(intrusive: time to grow)' : '(extrusive: no time to grow)', { 'font-size': 15, fill: C.muted, 'text-anchor': 'start', class: 'fade' });
+  }
+};
+
+/* 7-5-03 plate boundaries, top view: two plates and their arrows */
+function plates(A, kind, y0, h, opt) {
+  opt = opt || {};
+  const g = el('g', { class: opt.cls || null }, A.svg), ym = y0 + h / 2, fin = opt.fin;
+  el('rect', { x: 70, y: y0, width: 245, height: h, rx: 10, fill: '#22324a', stroke: C.edge, 'stroke-width': 2 }, g);
+  el('rect', { x: 325, y: y0, width: 245, height: h, rx: 10, fill: '#2f3a28', stroke: C.edge, 'stroke-width': 2 }, g);
+  const col = opt.col || C.yellow, key = col === C.green ? 'N' : 'Y', ar = (x1, y1, x2, y2) => S.arrow(g, x1, y1, x2, y2, col, key, { 'stroke-width': 7 });
+  if (kind === 'div') { ar(250, ym, 140, ym); ar(390, ym, 500, ym); }
+  if (kind === 'conv') { ar(140, ym, 250, ym); ar(500, ym, 390, ym); }
+  if (kind === 'trans') { ar(192, ym + h * .3, 192, ym - h * .3); ar(448, ym - h * .3, 448, ym + h * .3); }
+  if (!fin) return g;
+  if (kind === 'div') { el('rect', { x: 312, y: y0, width: 16, height: h, fill: C.red, class: 'fade' }, g); DRILL.tx(g, 320, y0 + h + 18, 'magma rises: new crust', { 'font-size': 15, fill: C.red, class: 'fade' }); }
+  if (kind === 'conv') { el('path', { d: `M300 ${y0 + h * .2}l20 -30l20 30M300 ${y0 + h * .55}l20 -30l20 30M300 ${y0 + h * .9}l20 -30l20 30`, stroke: C.gold, 'stroke-width': 3, fill: 'none', class: 'fade' }, g); DRILL.tx(g, 320, y0 + h + 18, 'crumple or sink: mountains, volcanoes', { 'font-size': 15, fill: C.gold, class: 'fade' }); }
+  if (kind === 'trans') { el('path', { d: `M320 ${y0}l-7 20l14 20l-14 20l14 20l-14 20l14 20l-14 20l14 20l-7 ${Math.max(0, h - 160)}`, stroke: C.red, 'stroke-width': 3, fill: 'none', class: 'fade' }, g); DRILL.tx(g, 320, y0 + h + 18, 'grinding past: earthquakes', { 'font-size': 15, fill: C.red, class: 'fade' }); }
+  return g;
+}
+const T_BOUND = {
+  id: 'bound', code: '7-5-03', name: 'Boundaries', sec: 3, q: it => it.form === 'arrows' ? 'Which kind of boundary?' : 'Where does this happen?', kind: 'choice',
+  gen: MODEL.genBound, typeOf: it => it.form + ':' + it.a,
+  choices: () => MODEL.BOUND.map(k => ({ v: k, label: MODEL.BOUND_NAME[k] })),
+  check: MODEL.checkBound, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V);
+    if (it.form === 'arrows') { plates(A, it.a, 60, 270, { fin, col: fin ? C.green : C.yellow }); if (fin) S.chip(A.svg, 320, 395, MODEL.BOUND_NAME[it.a], C.green, { cls: 'pop', fs: 20 }); return; }
+    S.card(A.svg, { x: 320, y: 90, w: 360, h: 120, label: it.t, fs: 22, n: 28, lb: 40, col: fin ? C.green : C.yellow, sw: 3 });
+    if (fin) { plates(A, it.a, 190, 170, { fin, col: C.green, cls: 'fade' }); }
+  }
+};
+
+/* 7-5-04 focus, epicenter, fault in a cross-section */
+const T_QUAKE = {
+  id: 'quake', code: '7-5-04', name: 'Earthquake', sec: 4, q: 'The yellow part is the…', kind: 'choice',
+  gen: MODEL.genQuake, typeOf: it => it.a,
+  choices: () => MODEL.QUAKE.map(k => ({ v: k, label: MODEL.QUAKE_NAME[k] })),
+  check: MODEL.checkQuake, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V), gy = 110, fx = it.x, fy = gy + it.d, L = it.lean, hc = fin ? C.green : C.yellow;
+    el('rect', { x: 20, y: gy, width: 600, height: 300, fill: '#3a2c20' }, A.svg);
+    [0, 1, 2].forEach(k => el('line', { x1: 20, x2: 620, y1: gy + 70 + k * 80, y2: gy + 70 + k * 80, stroke: '#4a3a2b', 'stroke-width': 2 }, A.svg));
+    el('line', { x1: 20, x2: 620, y1: gy, y2: gy, stroke: '#83c167', 'stroke-width': 5 }, A.svg);
+    A.tx(A.svg, 30, gy - 16, 'surface', { 'font-size': 14, fill: C.muted, 'text-anchor': 'start' });
+    const tx0 = fx + L * it.d * .55, bx = fx - L * (410 - fy) * .55;
+    el('line', Object.assign({ x1: tx0, y1: gy, x2: bx, y2: 410, stroke: '#c9d3e1', 'stroke-width': 3, 'stroke-dasharray': '10 6' }, it.a === 'fault' ? HLA(hc) : {}), A.svg);
+    [40, 75, 110].forEach(r => el('circle', { cx: fx, cy: fy, r, fill: 'none', stroke: '#8d9bb0', 'stroke-width': 1.5, opacity: .5 }, A.svg));
+    el('path', Object.assign({ d: `M${fx} ${fy - 16}l5 11l12 -3l-7 10l9 8l-12 1l-1 12l-6 -10l-6 10l-1 -12l-12 -1l9 -8l-7 -10l12 3z`, fill: it.a === 'focus' ? hc : C.red, stroke: C.stage, 'stroke-width': 1.5 }, it.a === 'focus' ? { filter: 'url(#glow)' } : {}), A.svg);
+    el('circle', Object.assign({ cx: fx, cy: gy, r: 10, fill: it.a === 'epi' ? hc : '#f5f7fb', stroke: C.stage, 'stroke-width': 2 }, it.a === 'epi' ? { filter: 'url(#glow)' } : {}), A.svg);
+    if (!fin) return;
+    el('line', { x1: fx, x2: fx, y1: gy + 12, y2: fy - 18, stroke: C.muted, 'stroke-width': 2, 'stroke-dasharray': '4 5', class: 'fade' }, A.svg);
+    const lab = (x, y, s, on) => A.tx(A.svg, x, y, s, { 'font-size': on ? 19 : 15, fill: on ? C.green : C.text, class: 'fade', 'text-anchor': 'start' });
+    lab(fx + 16, gy - 20, 'Epicenter (on the surface)', it.a === 'epi');
+    lab(fx + 24, fy + 2, 'Focus (rock breaks here)', it.a === 'focus');
+    lab(Math.min(bx, 470) + 12, 390, 'Fault', it.a === 'fault');
+  }
+};
+
+/* 7-5-04 shield or composite volcano */
+function volcano(A, a, w, h, cls) {
+  const gy = 370, W = a === 'shield' ? 470 + w * 10 : 230 + w * 8, H = a === 'shield' ? 70 + h * 4 : 200 + h * 5, x = 320, c = a === 'shield' ? 40 : 26;
+  const d = a === 'shield' ? `M${x - W / 2} ${gy}Q${x - W * .3} ${gy - H * .9} ${x - c} ${gy - H}h${2 * c}Q${x + W * .3} ${gy - H * .9} ${x + W / 2} ${gy}Z`
+    : `M${x - W / 2} ${gy}Q${x - W * .2} ${gy - H * .25} ${x - c} ${gy - H}l${c} 14l${c} -14Q${x + W * .2} ${gy - H * .25} ${x + W / 2} ${gy}Z`;
+  const g = el('g', { class: cls || null }, A.svg);
+  el('path', { d, fill: '#4a3a33', stroke: '#c9d3e1', 'stroke-width': 2.5 }, g);
+  return { g, H, W, gy };
+}
+const T_VOLC = {
+  id: 'volcano', code: '7-5-04', name: 'Volcano', sec: 4, q: it => it.form === 'shape' ? 'Which type of volcano?' : 'Shield or composite?', kind: 'choice',
+  gen: MODEL.genVolc, typeOf: it => it.form + ':' + it.a,
+  choices: () => [{ v: 'shield', label: 'Shield' }, { v: 'comp', label: 'Composite' }],
+  check: MODEL.checkVolc, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V);
+    el('line', { x1: 20, x2: 620, y1: 370, y2: 370, stroke: C.axis, 'stroke-width': 2 }, A.svg);
+    if (it.form === 'fact') S.card(A.svg, { x: 320, y: 62, w: 380, h: 84, label: it.t, fs: 22, n: 30, lb: 26, col: fin ? C.green : C.yellow, sw: 3 });
+    if (it.form === 'shape' || fin) volcano(A, it.a, it.w, it.h, it.form === 'fact' ? 'fade' : null);
+    if (!fin) return;
+    A.tx(A.svg, 320, 398, it.a === 'shield' ? 'Shield: runny lava, wide gentle slopes, gentle flows' : 'Composite: thick lava traps gas, steep, explosive', { 'font-size': 16, fill: C.green, class: 'fade' });
+  }
+};
+
+/* 7-5-05 weathering, erosion, deposition */
+const T_SURF = S.classTab({
+  id: 'surface', code: '7-5-05', name: 'Surface', sec: 5, q: 'Which process is this?', bank: MODEL.SURF, cues: MODEL.SURF_CUE,
+  cats: [{ v: 'weath', label: 'Weathering', means: 'breaks rock down where it is' }, { v: 'eros', label: 'Erosion', means: 'carries the pieces away' },
+    { v: 'depo', label: 'Deposition', means: 'drops them in a new place' }]
+});
+
+/* 7-5-06 oldest layer (law of superposition) */
+const LAYER_COL = ['#c9a46a', '#8a6a45', '#b5835a', '#6f7d5c', '#9c8f7a'];
+const T_OLD = {
+  id: 'oldest', code: '7-5-06', name: 'Oldest?', sec: 6, q: it => ({ oldest: 'Which layer is oldest?', youngest: 'Which layer is youngest?', fossil: 'Which lived first?' })[it.form], kind: 'choice',
+  gen: MODEL.genOld, typeOf: it => it.form,
+  choices: it => it.form === 'fossil' ? it.fos.map(f => ({ v: f[0], label: f[0] })) : it.letters.slice().sort().map(l => ({ v: l, label: l })),
+  check: MODEL.checkOld, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V), top = 50, H = 320, h = H / it.n;
+    for (let k = 0; k < it.n; k++) {
+      const y = top + k * h, ans = fin && it.form !== 'fossil' && it.letters[k] === it.a;
+      el('path', { d: `M130 ${y}Q320 ${y + (k % 2 ? 6 : -6)} 510 ${y}V${y + h}H130Z`, fill: LAYER_COL[k], stroke: ans ? C.green : '#1a1d22', 'stroke-width': ans ? 4 : 2 }, A.svg);
+      if (it.form !== 'fossil') A.tx(A.svg, 104, y + h / 2, it.letters[k], { 'font-size': 24, fill: ans ? C.green : C.text });
+    }
+    if (it.form === 'fossil') it.spots.forEach((k, j) => {
+      const y = top + k * h + h / 2, good = fin && it.fos[j][0] === it.a;
+      S.emo(A.svg, 250 + j * 140, y, it.fos[j][1], 34);
+      A.tx(A.svg, 250 + j * 140, y + 26, it.fos[j][0], { 'font-size': 14, fill: good ? C.green : C.text });
+    });
+    if (!fin) return;
+    S.arrow(A.svg, 560, 70, 560, 360, C.gold, 'G', { 'stroke-width': 4, class: 'draw', pathLength: 1 });
+    A.tx(A.svg, 560, 50, 'younger', { 'font-size': 14, fill: C.gold });
+    A.tx(A.svg, 560, 390, 'older', { 'font-size': 14, fill: C.gold });
+    A.tx(A.svg, 320, 400, 'Lower layers formed first', { 'font-size': 16, fill: C.green, class: 'fade' });
+  }
+};
+
+const PAGE = {
+  key: 'sci7-planet-earth-trainer-v1', course: 'Science 7 · Planet Earth', title: 'Planet Earth Trainer',
+  notes: 'sci7-planet-earth-notes-v1.html', secText: t => 'Section ' + t.sec + ':', sans: true,
+  tabs: [T_LAYER, T_ROCK, T_CRYS, T_BOUND, T_QUAKE, T_VOLC, T_SURF, T_OLD]
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>

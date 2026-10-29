@@ -67,6 +67,20 @@ One page per topic, one narrow skill per tab, 10 items a round. Built from one s
 
 LE5 (word problems) has no tab on the Equations page. PAT-style word problems have their own page, the PAT Word Problems trainer (user request, 2026-10-29), the one narrow trainer that keeps a short story on screen (rule 21).
 
+### Science 7 concept trainers (narrow format, 2026-10-29)
+
+One page per unit, 8 tabs each, same shell as Math 9 plus `scripts/drill/sci.js` (icon cards, arrows, the sort-into-bins picture). Almost every tab is tap choices (one try); three tabs type a number. Tabs carry the LO code (7-1-02). The 📖 link uses `PAGE.secText` for the "Section 2:" headings. Pictures are icon cards, labels and arrows (emoji icons up to Unicode 13), plus schematic cells, a flower, a lever, Earth's layers and plate maps.
+
+| File | Unit | Tabs | Named errors | Save key | Test hook |
+|---|---|---|---|---|---|
+| `public/materials/sci7-interactions-ecosystems-trainer-v1.html` | Interactions and Ecosystems | **Biotic?**, **Role** (producer, consumer, decomposer), **Level** (yellow card in an Alberta food chain), **Arrow** ("lynx eats hare": which way), **Food web** (one species crossed out: a linked one goes up or down), **10% rule** (type the energy; pyramid with ÷ 10 and heat lost), **Biodiversity** (two plots: count kinds, not living things), **Change** (natural or human-caused) | producer counted as a consumer, arrow as "eats", energy growing up the pyramid, 90% passed on, one ÷ 10 for two levels, individuals counted | `sci7-interactions-ecosystems-trainer-v1` | `?debug=1` |
+| `public/materials/sci7-plants-food-fibre-trainer-v1.html` | Plants for Food and Fibre | **Cell parts**, **Plant/animal** (onion cells: plant, no chloroplasts), **Jobs** (root, stem, leaf, flower), **Xylem/phloem** (both directions; "food from the soil" offered), **Photosynthesis** (flowchart with one box blank; "soil" offered), **Flower** (7 parts; a part and its whole never both offered), **Sexual?**, **Biotech** (selective breeding or GMO) | food from the soil, roots taking in food, wall vs membrane, onion cell called animal, anther/stamen and stigma/pistil | `sci7-plants-food-fibre-trainer-v1` | `?debug=1` |
+| `public/materials/sci7-heat-temperature-trainer-v1.html` | Heat and Temperature | **°C ↔ K** (typed; two scales), **Heat or temp?** (cup vs bathtub, pool, lake: A, B or same), **Heat flow** (or no flow at the same temperature), **Particles** (expand or contract; why: spread apart, never bigger), **Transfer** (conduction, convection, radiation), **Conductors** (metal and wood both at 21 °C), **Heats faster?** (sand vs water, Calgary vs Vancouver), **Insulation** (slows heat both ways; insulation taken off: faster) | subtracting 273, negative kelvin, temperature as amount, cold flowing, particles growing, metal "colder", insulation making heat | `sci7-heat-temperature-trainer-v1` | `?debug=1` |
+| `public/materials/sci7-structures-forces-trainer-v1.html` | Structures and Forces | **Type**, **Load** (no snow: the notes call it both), **Forces** (arrows or an example), **Beam** (top squeezed, bottom stretched; where concrete cracks, where rebar goes), **Stable?** (two blocks with CoG; tipping angle shown after), **Lever class**, **MA** (typed; the fulcrum is drawn where the arms give that MA), **Machines** (six simple machines) | compression/tension swapped, MA upside down or subtracted, a tall or top-heavy block judged stable, screwdriver called a screw | `sci7-structures-forces-trainer-v1` | `?debug=1` |
+| `public/materials/sci7-planet-earth-trainer-v1.html` | Planet Earth | **Layers** (yellow layer or a property), **Rock type**, **Crystals** (texture to cooling, and back), **Boundaries** (top-view arrows or a place), **Earthquake** (focus, epicenter, fault), **Volcano** (shape or fact), **Surface** (weathering, erosion, deposition), **Oldest?** (superposition; which fossil lived first) | top layer called oldest, melting called metamorphic, crystal size backwards, epicenter underground, boundary types mixed | `sci7-planet-earth-trainer-v1` | `?debug=1` |
+
+Left on paper because they need reading: Ecosystems §6 (stewardship), Plants §5 (crops), Structures §6 (materials).
+
 ### Older Math 9 trainers (superseded, not linked)
 
 | File | Course · unit | Follows | What the student does | Simplifications | Save key | Test hook |
@@ -97,7 +111,8 @@ Every STEAM trainer step names the page of the notes or journal it matches (its 
 4. **Model apart from page.** The model goes in its own part of the script with no DOM calls (games build rule 5).
 5. **Test hook.** `?debug=1` puts the model on `window` and turns saving off (games build rule 6). It also skips the first-visit popups and tutorial, and turns off tweens, so scripted checks are exact. Every new build needs one. The Fraction and Pythagorean sims and the STEAM trainers do not have it yet.
 6. **Save only what helps a student come back.** That means finished missions, finished steps, and whether the tour was seen. Use a versioned key, check its shape on load, and start fresh if it does not fit. When a new version should keep progress, read the old key once (Plant Lab does this).
-7. **Narrow trainers are stitched from one shell.** The exception to "the HTML is the source": the Math 9 narrow trainers are built by `scripts/drill/build.sh` from parts in `scripts/drill/`. Edit the parts, never the HTML.
+7. **Narrow trainers are stitched from one shell.** The exception to "the HTML is the source": the narrow trainers (Math 9 and Science 7) are built by `scripts/drill/build.sh` from parts in `scripts/drill/`. Edit the parts, never the HTML.
+   - `pages.sh` lists each page's key, file name, output folder (`dir`: Science 7 goes flat in `public/materials/`) and extra shared parts (`libs`: Science 7 adds `sci.js` after `shell.js`).
    - Shared by every page: `shell-css.html` (look and layout), `kit.js` (exact fractions, seeded random), `shell.js` (tabs, rounds, checking, feedback, notes link, drawing helpers), `tail.html`.
    - Per page: `top-<p>.html` (title and header comment), `model-<p>.js` (generators and checkers, no DOM), `view-<p>.js` (pictures and the tab list).
    - A fix to the shell rebuilds every page with `sh scripts/drill/build.sh`. Test with `sh scripts/drill/test.sh` (prints failures only).
@@ -160,7 +175,7 @@ Every STEAM trainer step names the page of the notes or journal it matches (its 
     - Reduced motion and `?debug=1` jump straight to the end.
 18. **The viewer.** On the site, a `-sim-` or `-trainer-` page opens in the course viewer without the site nav. It gets a slim Back bar and a **⛶ Full screen** button (Math 9, Science 7 and STEAM viewers).
 
-### Narrow trainer format (Math 9, user request 2026-10-29)
+### Narrow trainer format (Math 9 and Science 7, user request 2026-10-29)
 These pages are used **after** the lesson. They do not teach: they give practice on one narrow skill and point back to the notes. Where they differ from rules 3, 4, 8, 11 and 15, these rules win. Evidence: `research/simulations-research.md`, "Narrow practice after instruction".
 
 19. **One narrow skill per tab.** A tab practises one thing (slope from two points, not "slope"; the sign flip, not "inequalities"). A few tabs share a page to save clicks. Tabs follow the notes order and carry the local code (LR2, PO4).
@@ -226,6 +241,7 @@ Then add a row to the tables above and an entry to `_status.md` (what it does, w
 - **Math 9 plan (2026-10-28, narrowed 2026-10-29):** one narrow trainer page per topic (rules 19–25), built a strand at a time.
   - Done for all 11 topics (2026-10-29): Algebra, Number, Measurement & Geometry, Statistics & Probability.
   - Correlation vs causation needs reading, so it stays on paper. Word problems now have the PAT Word Problems trainer.
+- **Science 7 trainers (2026-10-29):** all five units done. Emoji icons look different on each device (Chromebook, Windows, iPad), so a picture may not match its label exactly; the label always names it. No teacher read-through yet.
 - **Narrow trainers:** the graph taps (LR3 Graph it, LE4 Graph it) have no keyboard route yet. The Monomial × answer row wraps onto two lines in the 330 px panel; it still fits without scrolling.
 - **Not on the new layout and look yet (rules 14–17):** the Science 7 sims and the STEAM trainers. (The Fraction and Pythagorean sims are replaced and unlinked.)
 - The Fraction and Pythagorean sims and the STEAM trainers have no `?debug=1` hook. No sim or trainer has a teacher report.

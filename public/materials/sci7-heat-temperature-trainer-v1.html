@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heat Trainer | Science 7</title>
+<!-- =====================================================================
+   HEAT TRAINER (narrow trainer format, see _sims-context.md)
+   Science 7 | Heat and Temperature | LO 7-3-01 to 7-3-05. Used after the lesson: it does not teach,
+   it points back to the notes (Sections 1–6). One narrow skill per tab, 10 items a round:
+     7-3-01 °C ↔ K          type the other scale (K = °C + 273); two scales side by side
+     7-3-01 Heat or temp?   cup vs bathtub, pool or lake: more thermal energy, or higher temperature (A, B or same)
+     7-3-01 Heat flow       two things touching: heat flows hot to cold, or no flow at the same temperature
+     7-3-02 Particles       expands or contracts (power lines, bridges, balloons); why: particles spread out, never grow
+     7-3-03 Transfer        conduction, convection or radiation
+     7-3-03 Conductors      better conductor or insulator; metal and wood at room temperature are the same temperature
+     7-3-04 Heats faster?   sand vs water, pot vs pot of water, Calgary vs Vancouver: water warms and cools slowly
+     7-3-05 Insulation      insulation slows heat both ways (the snowman's coat); more insulation loses less heat
+   Model and limits: particle pictures are schematic (same particles, spacing changes). Specific heat is qualitative,
+   as in the notes; no formula.
+   Named mistakes: subtracting 273 for kelvin, negative kelvin, temperature read as amount of heat, cold flowing,
+   particles getting bigger, metal "colder" than wood, insulation making heat.
+   ?debug=1 puts DRILL (and MODEL) on window, turns off saving and motion.
+   ===================================================================== -->
+<style>
+/* ===== DRILL SHELL CSS START (same in every narrow trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .stage svg text.emo { stroke: none; font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif; font-weight: 400; }
+  .sans .prompt { font-family: inherit; font-weight: 650; font-size: 26px; }
+  .sans .choice { font-size: 19px; line-height: 1.15; padding: 4px 8px; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slot.sup { width: 1.9em; min-height: 40px; font-size: 20px; align-self: flex-start; margin-left: -2px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choices.two { grid-template-columns: 1fr 1fr; }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choices.one { grid-template-columns: 1fr; gap: 8px; }
+  .choices.one .choice { min-height: 54px; }
+  .choices.one .choice.math { font-size: 26px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+/* ===================== MODEL START (no DOM) ===================== */
+const MODEL = (() => {
+  const { rnd, pick, chance, shuffle } = Q;
+  const val = Q.val;
+
+  /* 7-3-01 Celsius and Kelvin: K = °C + 273 */
+  const TEMPS = [-273, -200, -100, -40, -30, -20, -15, -10, -5, 0, 5, 10, 15, 20, 21, 22, 25, 30, 37, 40, 50, 60, 75, 80, 90, 100, 150, 200];
+  function genK() { const c = pick(TEMPS), form = chance(.6) ? 'toK' : 'toC'; return { form, c, k: c + 273, v: form === 'toK' ? c + 273 : c }; }
+  function checkK(it, r) {
+    const x = val(r.v);
+    if (x === it.v) return { ok: true };
+    if (it.form === 'toK') {
+      if (x < 0) return { code: 'neg-k', cue: 'No negative kelvin' };
+      if (x === it.c - 273) return { code: 'sub', cue: 'K = °C + 273' };
+      if (x === it.c) return { code: 'same', cue: 'Add 273 for kelvin' };
+    } else {
+      if (x === it.k + 273) return { code: 'add', cue: '°C = K − 273' };
+      if (x === it.k) return { code: 'same', cue: 'Subtract 273 for °C' };
+    }
+    return { code: 'other', cue: 'Kelvin is 273 more than °C' };
+  }
+
+  /* 7-3-01 heat (thermal energy) vs temperature */
+  const SMALL = [['Cup', '☕'], ['Mug', '☕'], ['Kettle', '🫖']], BIG = [['Bathtub', '🛁'], ['Swimming pool', '🏊'], ['Lake', '🏞️']];
+  function genMore() {
+    const ask = chance(.55) ? 'thermal' : 'temp', kase = pick(['sameT', 'sameSize', 'hotSmall']);
+    let A, B;
+    if (kase === 'sameT') { const t = pick([20, 30, 40, 60, 80, 90]); A = { o: pick(SMALL), t, big: false }; B = { o: pick(BIG), t, big: true }; }
+    else if (kase === 'sameSize') { const o = pick(SMALL), t1 = pick([20, 30, 40]), t2 = pick([70, 80, 90]); A = { o, t: t1, big: false }; B = { o, t: t2, big: false }; }
+    else { A = { o: pick(SMALL), t: pick([80, 85, 90, 95]), big: false }; B = { o: pick(BIG), t: pick([15, 20, 25]), big: true }; }
+    if (chance(.5)) [A, B] = [B, A];
+    let a;
+    if (ask === 'temp') a = A.t === B.t ? 'same' : A.t > B.t ? 'A' : 'B';
+    else a = A.big !== B.big ? (A.big ? 'A' : 'B') : A.t > B.t ? 'A' : 'B';
+    return { ask, kase, A, B, a };
+  }
+  function checkMore(it, r) {
+    if (r.v === it.a) return { ok: true };
+    if (it.ask === 'temp') return it.a === 'same' ? { code: 'temp-amount', cue: 'Same reading: same temperature' } : { code: 'temp-amount', cue: 'Temperature ignores the amount' };
+    if (it.kase === 'sameSize') return { code: 'hotter', cue: 'Same amount: hotter has more' };
+    return { code: 'thermal-amount', cue: 'More particles: more thermal energy' };
+  }
+
+  /* 7-3-01 which way does heat flow (hot to cold; none at the same temperature) */
+  const PAIRS = [
+    [['Your hand', '🖐️', 34], ['Snowball', '⛄', 0]], [['Soup', '🍲', 80], ['Spoon', '🥄', 20]], [['Ice cube', '🧊', 0], ['Juice', '🧃', 22]],
+    [['Warm house', '🏠', 21], ['Winter air', '❄️', -20]], [['Frozen peas', '🧊', -18], ['Your hand', '🖐️', 34]], [['Hot pan', '🍳', 150], ['Egg', '🥚', 5]],
+    [['Hot cocoa', '☕', 70], ['Room air', '💨', 21]], [['Metal desk', '🔩', 21], ['Wood desk', '🪵', 21]], [['Drink', '🥤', 21], ['Room air', '💨', 21]]
+  ];
+  function genFlow() {
+    let [L, R] = pick(PAIRS); if (chance(.5)) [L, R] = [R, L];
+    return { L, R, a: L[2] === R[2] ? 'none' : L[2] > R[2] ? 'r' : 'l' };
+  }
+  function checkFlow(it, r) {
+    if (r.v === it.a) return { ok: true };
+    if (it.a === 'none') return { code: 'none', cue: 'Same temperature: no heat flows' };
+    if (r.v === 'none') return { code: 'flows', cue: 'Different temperatures: heat flows' };
+    return { code: 'cold-flows', cue: 'Heat flows hot to cold' };
+  }
+
+  /* 7-3-02 particle model: expand or contract, and why */
+  const SCEN = [
+    ['Power lines on a hot day', 'exp'], ['A bridge in July heat', 'exp'], ['Thermometer liquid in a warm room', 'exp'], ['Railroad tracks in summer sun', 'exp'],
+    ['A jar lid under hot water', 'exp'], ['Air in a balloon in the sun', 'exp'],
+    ['Power lines at −30 °C', 'con'], ['A balloon in a freezer', 'con'], ['A sidewalk on a cold night', 'con'], ['Thermometer liquid outside in winter', 'con'], ['A bridge in January', 'con']
+  ];
+  function genPart() {
+    if (chance(.6)) { const [t, a] = pick(SCEN); return { form: 'scen', t, a, hot: a === 'exp' }; }
+    const hot = chance(.6); return { form: 'why', hot, a: hot ? 'apart' : 'closer' };
+  }
+  function checkPart(it, r) {
+    if (r.v === it.a) return { ok: true };
+    if (r.v === 'bigger' || r.v === 'smaller') return { code: 'size', cue: 'Particles stay the same size' };
+    if (it.form === 'scen') return it.a === 'exp' ? { code: 'exp', cue: 'Heated: particles spread apart' } : { code: 'con', cue: 'Cooled: particles move closer' };
+    return it.hot ? { code: 'apart', cue: 'Heated: faster and farther apart' } : { code: 'closer', cue: 'Cooled: slower and closer together' };
+  }
+
+  /* 7-3-03 conduction, convection, radiation */
+  const MODE = [
+    ['A spoon in hot soup gets hot', '🥄'], ['A pan handle heats up', '🍳'], ['Bare feet on a cold tile floor', '🦶'], ['A hand on a cold metal railing', '🖐️'],
+    ['Ironing a shirt', '👕'], ['An ice cube melts in your hand', '🧊']
+  ].map(([t, i]) => ({ t, i, a: 'cond' })).concat([
+    ['Warm air rises from a heater', '♨️'], ['Water circles in a boiling pot', '🍲'], ['A sea breeze blows onto land', '🌊'],
+    ['Cool air sinks near a cold window', '🪟'], ['Warm air rises up a chimney', '🏠']
+  ].map(([t, i]) => ({ t, i, a: 'conv' }))).concat([
+    ['Feeling a campfire from 2 m away', '🔥'], ['The Sun warms Earth through space', '☀️'], ['A heat lamp keeps fries warm', '💡'],
+    ['A dark car seat gets hot in the sun', '🚗'], ['Warmth from a glowing stove element', '🟠']
+  ].map(([t, i]) => ({ t, i, a: 'rad' })));
+  const MODE_CUE = { cond: 'Touching: conduction', conv: 'A moving fluid: convection', rad: 'Waves, no contact: radiation' };
+
+  /* 7-3-03 conductors and insulators; metal and wood at room temperature */
+  const MATS = [[['Metal spoon', '🥄'], ['Wooden spoon', '🪵']], [['Copper pot', '🍲'], ['Foam cup', '🥤']], [['Steel railing', '🔩'], ['Wooden bench', '🪑']],
+    [['Aluminum pan', '🍳'], ['Oven mitt', '🧤']], [['Metal desk', '🔩'], ['Wooden desk', '🪵']]];
+  function genCond() {
+    const ask = pick(['conductor', 'insulator', 'colder', 'faster']), [m, w] = pick(ask === 'colder' ? MATS.filter(p => /desk|spoon|railing/i.test(p[0][0])) : MATS), metalLeft = chance(.5);
+    const A = metalLeft ? m : w, B = metalLeft ? w : m;
+    const a = ask === 'colder' ? 'same' : (ask === 'insulator') === metalLeft ? 'B' : 'A';
+    return { ask, A, B, metalLeft, a };
+  }
+  function checkCond(it, r) {
+    if (r.v === it.a) return { ok: true };
+    if (it.ask === 'colder') return { code: 'metal-colder', cue: 'Same temperature; metal conducts faster' };
+    if (r.v === 'same') return { code: 'same', cue: it.ask === 'insulator' ? 'Wood, foam and wool insulate' : 'Metals conduct heat fast' };
+    return it.ask === 'insulator' ? { code: 'ins', cue: 'Wood, foam and wool insulate' } : { code: 'cond', cue: 'Metals conduct heat fast' };
+  }
+
+  /* 7-3-04 specific heat: water warms and cools slowly */
+  const SPEC = [
+    { q: 'Sunny afternoon: warms faster?', lo: ['Sand', '🏖️'], hi: ['Water', '🌊'], heat: true },
+    { q: 'At night: cools faster?', lo: ['Sand', '🏖️'], hi: ['Water', '🌊'], heat: false },
+    { q: 'On the stove: heats faster?', lo: ['Empty metal pot', '🍳'], hi: ['Pot of water', '🍲'], heat: true },
+    { q: 'Bigger temperature swings?', lo: ['Calgary (inland)', '🏙️'], hi: ['Vancouver (ocean)', '🌊'], heat: true },
+    { q: 'Changes temperature faster?', lo: ['Air', '💨'], hi: ['Lake', '🏞️'], heat: true },
+    { q: 'Freezes first in the fall?', lo: ['Soil', '🟫'], hi: ['River', '🌊'], heat: false }
+  ];
+  function genSpec() { const s = pick(SPEC), loLeft = chance(.5); return { s: SPEC.indexOf(s), loLeft, a: loLeft ? 'A' : 'B' }; }
+  const checkSpec = (it, r) => r.v === it.a ? { ok: true } : { code: 'water-slow', cue: SPEC[it.s].lo[0].indexOf('Calgary') === 0 ? 'No ocean nearby: bigger swings' : 'Water heats and cools slowly' };
+
+  /* 7-3-05 insulation slows heat transfer both ways; it makes no heat */
+  const INS = [
+    { form: 'rate', t: 'A wool coat on a snowman. It melts…', i: '⛄', hot: false },
+    { form: 'rate', t: 'Foam around an ice-cold drink. It warms up…', i: '🥤', hot: false },
+    { form: 'rate', t: 'Hot soup in a thermos. It cools…', i: '🍲', hot: true },
+    { form: 'rate', t: 'A blanket over a cooler of ice. The ice melts…', i: '🧊', hot: false },
+    { form: 'rate', t: 'A tea cozy on a hot teapot. It cools…', i: '🫖', hot: true },
+    { form: 'rate', t: 'Take the wool coat off the snowman. It melts…', i: '⛄', hot: false, bare: true },
+    { form: 'rate', t: 'Hot soup poured out of the thermos into a bowl. It cools…', i: '🍲', hot: true, bare: true },
+    { form: 'rate', t: 'The blanket comes off the cooler. The ice melts…', i: '🧊', hot: false, bare: true },
+    { form: 'pick', t: 'Loses less heat?', A: ['Single-pane window', '🪟', 0], B: ['Double-pane window', '🪟', 1] },
+    { form: 'pick', t: 'Loses less heat?', A: ['Thin attic insulation', '🏠', 0], B: ['Thick attic insulation', '🏠', 1] },
+    { form: 'pick', t: 'Keeps cocoa hot longer?', A: ['Metal mug', '☕', 0], B: ['Foam cup', '🥤', 1] },
+    { form: 'pick', t: 'Keeps a popsicle frozen longer?', A: ['Bare in a bag', '🍭', 0], B: ['In a foam cooler', '🧊', 1] }
+  ];
+  function genIns() {
+    const k = rnd(0, INS.length - 1), x = INS[k];
+    if (x.form === 'rate') return { k, form: 'rate', a: x.bare ? 'faster' : 'slower' };
+    const swap = chance(.5); return { k, form: 'pick', swap, a: swap ? 'A' : 'B' };
+  }
+  function checkIns(it, r) {
+    if (r.v === it.a) return { ok: true };
+    if (it.form === 'rate' && INS[it.k].bare) return { code: 'bare', cue: 'No insulation: heat moves faster' };
+    if (it.form === 'rate') return r.v === 'faster' && !INS[it.k].hot ? { code: 'makes-heat', cue: 'Insulation makes no heat' } : { code: 'slows', cue: 'Insulation slows heat both ways' };
+    return { code: 'trapped-air', cue: 'More insulation: slower heat loss' };
+  }
+
+  return { TEMPS, genK, checkK, genMore, checkMore, PAIRS, genFlow, checkFlow, SCEN, genPart, checkPart, MODE, MODE_CUE,
+    MATS, genCond, checkCond, SPEC, genSpec, checkSpec, INS, genIns, checkIns };
+})();
+/* ===================== MODEL END ===================== */
+
+
+/* ===== DRILL SHELL START (same in every narrow trainer: Math 9 and Science 7) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   Optional: PAGE.sep (heading separator after "Section N", default —), PAGE.secText(tab) (the whole heading text
+   for the 📖 link), PAGE.sans (prompts in the plain font, for science). TAB.cols (2 or 3) sets the choice grid.
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen()                 -> a new item (from MODEL)
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom'
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+     typeOf(item)          -> the question type, for weighting (optional; default: the item's form/kind/shape/... fields)
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown).
+   Weighting: each question type has a score, saved per tab. A first-try right answer lowers it (to half weight at
+   most), a miss or Show me raises it (to about 2.5× at most). Each new item is picked from 8 generated candidates
+   by weight, so missed types come back more often and types answered right still appear, less often. */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {}, w: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); if (!save.w || typeof save.w !== 'object') save.w = {}; } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    let prevItalic = false;
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => {
+      if (!part) return; const it = /^[a-z]$/.test(part);
+      // an italic letter leans into a following ² or ³: nudge it right
+      const t = el('tspan', it ? { 'font-style': 'italic' } : prevItalic && /^[²³]/.test(part) ? { dx: '0.12em' } : {}, e); t.textContent = part; prevItalic = it;
+    });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (tab.kind === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (tab.kind === 'choice') {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
+      row.className = 'choices' + (tab.cols === 2 ? ' two' : tab.cols === 3 ? ' three' : long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = tab.kind === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  /* ---------- weighting: missed question types come back more often ---------- */
+  const TYPE_FIELDS = ['form', 'kind', 'shape', 'type', 'rep', 'ask', 'what', 'mode', 'rule', 'ans', 'useD', 'back', 'direct', 'flip', 'rat', 'idCol'];
+  function keyOf(it) {
+    if (tab.typeOf) return String(tab.typeOf(it));
+    return TYPE_FIELDS.filter(k => typeof it[k] === 'string' || typeof it[k] === 'boolean').map(k => k + ':' + it[k]).join('|');
+  }
+  const scores = () => (save.w[tab.id] = save.w[tab.id] || {});
+  const weightOf = k => Math.pow(2, scores()[k] || 0);
+  function record(right) {
+    const s = scores(), k = item.__key; if (k == null) return;
+    s[k] = right ? Math.max(-1, (s[k] || 0) - .5) : Math.min(1.3, (s[k] || 0) + 1);
+    store();
+  }
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) {
+      const cands = [];
+      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
+      if (!cands.length) cands.push(tab.gen());
+      const ws = cands.map(c => weightOf(keyOf(c))), total = ws.reduce((a, b) => a + b, 0);
+      let r = Q.rnd(0, 999999) / 1e6 * total, i = 0; while (i < cands.length - 1 && r >= ws[i]) { r -= ws[i]; i++; }
+      it = cands[i]; key = JSON.stringify(it);
+    }
+    lastKey = key || JSON.stringify(it);
+    Object.defineProperty(it, '__key', { value: keyOf(it), enumerable: false, configurable: true, writable: true });
+    item = it; resp = {}; att = 0; resolved = false;
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (tab.kind === 'choice' && resp.v == null) return;
+    if (tab.kind === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (tab.kind === 'choice' ? 1 : 2);
+    if (res.ok) {
+      resolved = true; marks.push(att === 1 ? 'g' : 'y'); record(att === 1);
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r'); record(false);
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (tab.kind === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
+    } else if (tab.kind === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (tab.kind === 'slots') fillSlots(ans, 'shown');
+    else if (tab.kind === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); record(false); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(tab) + '" target="_blank" rel="noopener">📖 Notes §' + tab.sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => (t.notes || PAGE.notes) + '#:~:text=' + encodeURIComponent(PAGE.secText ? PAGE.secText(t) : 'Section ' + t.sec + ' ' + (t.sep || PAGE.sep || '—'));
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    const n = $('notes'); n.href = notesHref(tab); $('notesTxt').textContent = '§' + tab.sec;
+    n.title = 'Notes, Section ' + tab.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + tab.sec);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    if (P.sans) document.body.classList.add('sans');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }),
+      keyOf: (it, t) => { const cur = tab; if (t) tab = t; try { return keyOf(it); } finally { tab = cur; } }, weights: () => Object.assign({}, scores()), resetWeights: () => { save.w[tab.id] = {}; }, setScore: (k, s) => { scores()[k] = s; } };
+  }
+  return { boot, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+/* ===== SCIENCE KIT START (Science 7 narrow trainers only; needs DRILL) =====
+   Icon + label + arrow pictures, not drawings of real objects (see the icon-flowchart rule in _sims-context.md).
+     S.emo(p, x, y, icon, size, a)          an emoji icon
+     S.lines(p, x, y, text, n, a)           text wrapped at n characters, centred on (x, y)
+     S.card(p, o)                           an icon card {x, y, w, h, icon, label, col, fill, size, fs, n, cls}
+     S.arrow(p, x1, y1, x2, y2, col, key)   a straight arrow; key = marker colour letter (Y yellow, N green, R red, …)
+     S.curve(p, d, col, key)                an arrow along an SVG path
+     S.sorter(A, it, V, cats, o)            the sorting picture: the item card on top, one bin per choice below;
+                                            after the answer an arrow drops the card into its bin, and each bin shows
+                                            what it means. cats: [{v, label, means, glyph(g, x, y)}]
+     S.classTab(o)                          a whole tap-to-sort tab from a bank (S.sortGen, S.sortCheck) */
+const S = (() => {
+  const { C, el, tx } = DRILL;
+  const done = V => V.phase === 'right' || V.phase === 'show';
+  function emo(p, x, y, ch, size, a) { return tx(p, x, y, ch, Object.assign({ 'font-size': size || 48 }, a, { class: 'emo' + (a && a.class ? ' ' + a.class : '') })); }
+  function wrap(s, n) {
+    const out = []; let line = '';
+    String(s).split(' ').forEach(w => { if (line && (line + ' ' + w).length > n) { out.push(line); line = w; } else line = line ? line + ' ' + w : w; });
+    if (line) out.push(line); return out;
+  }
+  function lines(p, x, y, s, n, a) {
+    const L = wrap(s, n || 22), fs = (a && a['font-size']) || 18, lh = fs * 1.22, g = el('g', { class: a && a.gcls || null }, p);
+    L.forEach((l, i) => tx(g, x, y + (i - (L.length - 1) / 2) * lh, l, Object.assign({}, a, { gcls: null })));
+    return g;
+  }
+  // Label lines sit at the bottom (o.lb padding); the icon is centred in the space above them.
+  function card(p, o) {
+    const g = el('g', { class: o.cls || null }, p), w = o.w || 150, h = o.h || 130, hasL = o.label != null && o.label !== '';
+    el('rect', { x: o.x - w / 2, y: o.y - h / 2, width: w, height: h, rx: 16, fill: o.fill || C.panel, stroke: o.col || C.edge, 'stroke-width': o.sw || 2.5 }, g);
+    const fs = o.fs || 17, n = o.n || Math.round(w / 9.5), L = hasL ? wrap(o.label, n).length : 0, lh = fs * 1.22;
+    const labTop = hasL ? o.y + h / 2 - (o.lb || 12) - L * lh : o.y + h / 2, top = o.y - h / 2;
+    if (o.icon) emo(g, o.x, (top + labTop) / 2 + 2, o.icon, Math.min(o.size || 999, (labTop - top) * .78, w * .6));
+    if (hasL) lines(g, o.x, labTop + L * lh / 2, o.label, n, { 'font-size': fs, fill: o.tcol || C.text });
+    return g;
+  }
+  function arrow(p, x1, y1, x2, y2, col, key, a) {
+    return el('line', Object.assign({ x1, y1, x2, y2, stroke: col, 'stroke-width': 4, 'stroke-linecap': 'round', 'marker-end': 'url(#a' + (key || 'W') + ')' }, a), p);
+  }
+  function curve(p, d, col, key, a) {
+    return el('path', Object.assign({ d, stroke: col, 'stroke-width': 4, fill: 'none', 'stroke-linecap': 'round', 'marker-end': 'url(#a' + (key || 'W') + ')' }, a), p);
+  }
+  // A small pill label with a dark backing, for notes on a picture.
+  function chip(p, x, y, s, col, a) {
+    const g = el('g', { class: a && a.cls || null }, p), fs = (a && a.fs) || 16, w = String(s).length * fs * .56 + 22;
+    el('rect', { x: x - w / 2, y: y - fs * .9, width: w, height: fs * 1.8, rx: fs * .9, fill: C.stage, stroke: col, 'stroke-width': 2 }, g);
+    tx(g, x, y, s, { 'font-size': fs, fill: col });
+    return g;
+  }
+
+  function sorter(A, it, V, cats, o) {
+    o = o || {};
+    const n = cats.length, by = o.by || 335, bh = o.bh || 118, gap = 14, bw = Math.min(190, (600 - gap * (n - 1)) / n);
+    const span = n * bw + (n - 1) * gap, bx = i => 320 - span / 2 + bw / 2 + i * (bw + gap);
+    const fin = done(V), ai = cats.findIndex(c => c.v === it.a), pi = cats.findIndex(c => c.v === (V.resp && V.resp.v));
+    cats.forEach((c, i) => {
+      const x = bx(i), good = fin && i === ai, bad = fin && i === pi && pi !== ai, g = el('g', {}, A.svg);
+      el('rect', { x: x - bw / 2, y: by - bh / 2, width: bw, height: bh, rx: 16, fill: good ? '#13301c' : bad ? '#331417' : C.panel, stroke: good ? C.green : bad ? C.red : C.edge, 'stroke-width': good || bad ? 3 : 2, 'stroke-dasharray': good || bad ? null : '7 6' }, g);
+      const lab = lines(g, x, fin && c.means ? by - bh / 2 + 26 : by, c.label, Math.round(bw / 10.5), { 'font-size': n > 3 ? 17 : 19, fill: good ? C.green : bad ? '#ff9a90' : C.text });
+      if (fin && c.means) lines(g, x, by + 22, c.means, Math.round(bw / 8.5), { 'font-size': 14.5, fill: good ? C.text : C.muted, gcls: 'fade' });
+      if (fin && good && c.glyph) c.glyph(g, x, by + bh / 2 + 4);
+    });
+    const cw = o.cw || 320, ch = o.ch || 156, cy = o.cy || 108;
+    card(A.svg, { x: 320, y: cy, w: cw, h: ch, icon: it.i, label: it.t, size: o.size || 64, fs: o.fs || 21, n: o.n || 26, col: fin ? (pi === ai || V.phase === 'show' && pi < 0 ? C.green : C.edge) : C.yellow, sw: 3, lb: 16 });
+    if (fin && it.why) chip(A.svg, 320, cy + ch / 2 + 24, it.why, C.green, { cls: 'pop', fs: 15 });
+    if (!fin) return;
+    const y0 = cy + ch / 2 + (it.why ? 44 : 8), y1 = by - bh / 2 - 8;
+    if (pi >= 0 && pi !== ai) arrow(A.svg, 320 + (bx(pi) - 320) * .25, y0, bx(pi), y1, C.red, 'R', { 'stroke-dasharray': '6 6', 'stroke-width': 3, class: 'fade' });
+    arrow(A.svg, 320 + (bx(ai) - 320) * .25, y0, bx(ai), y1, C.green, 'N', { class: 'draw', pathLength: 1 });
+  }
+
+  // Bank items: {t: label, i: icon, a: answer, why?: note shown after, cue?: own cue}. No DOM.
+  // Each answer comes up equally often, whatever the bank sizes.
+  const sortGen = bank => { const a = Q.pick([...new Set(bank.map(b => b.a))]); return Object.assign({}, Q.pick(bank.filter(b => b.a === a))); };
+  const sortCheck = (it, r, cues) => r.v === it.a ? { ok: true } : { code: 'is-' + it.a, cue: it.cue || (cues && cues[it.a]) || 'Not quite' };
+
+  // A tap-to-sort tab. o: {id, code, name, sec, q, cats, bank, cues, cols, pic} — the bank and cues come from MODEL.
+  function classTab(o) {
+    return {
+      id: o.id, code: o.code, name: o.name, sec: o.sec, q: o.q, kind: 'choice', cols: o.cols,
+      typeOf: it => it.t,  // a missed item comes back more often
+      gen: () => sortGen(o.bank),
+      choices: () => o.cats.map(c => ({ v: c.v, label: c.label })),
+      check: (it, r) => sortCheck(it, r, o.cues), answer: it => ({ v: it.a }),
+      draw(A, it, V) { sorter(A, it, V, o.cats, o.pic); }
+    };
+  }
+  return { emo, wrap, lines, card, arrow, curve, chip, sorter, classTab, sortGen, sortCheck, done };
+})();
+/* ===== SCIENCE KIT END ===== */
+
+/* ===================== PAGE: pictures and tabs ===================== */
+const { C } = DRILL;
+const done = S.done;
+const el = (tag, a, p) => DRILL.el(tag, a, p);
+const AB = [{ v: 'A', label: 'A' }, { v: 'B', label: 'B' }];
+const tag = (A, x, y, s) => A.tx(A.svg, x, y, s, { 'font-size': 20, fill: C.muted });
+// A small thermometer reading under a card.
+const reading = (A, x, y, t, col) => A.tx(A.svg, x, y, '🌡️ ' + String(t).replace('-', '−') + ' °C', { 'font-size': 18, fill: col || C.text });
+
+/* 7-3-01 °C and K */
+const T_K = {
+  id: 'kelvin', code: '7-3-01', name: '°C ↔ K', sec: 1, q: it => it.form === 'toK' ? 'Change to kelvin' : 'Change to degrees Celsius', kind: 'slots',
+  gen: MODEL.genK, typeOf: it => it.form + (it.c < 0 ? '-neg' : ''),
+  prompt: it => it.form === 'toK' ? String(it.c).replace('-', '−') + ' °C' : it.k + ' K',
+  slots: it => ['=', { k: 'v', label: it.form === 'toK' ? 'kelvin' : 'degrees Celsius', wide: true }, it.form === 'toK' ? 'K' : '°C'],
+  check: MODEL.checkK, answer: it => ({ v: Q.q(it.v) }),
+  draw(A, it, V) {
+    const fin = done(V), Y = c => 372 - (c + 273) * (320 / 473), xc = 210, xk = 430;
+    [[xc, '°C'], [xk, 'K']].forEach(([x, u]) => {
+      el('line', { x1: x, x2: x, y1: Y(-273) + 6, y2: Y(200) - 6, stroke: C.axis, 'stroke-width': 3 }, A.svg);
+      A.tx(A.svg, x, 26, u === 'K' ? 'Kelvin' : 'Celsius', { 'font-size': 16, fill: C.muted });
+    });
+    [-273, -200, -100, 0, 100, 200].forEach(c => {
+      const y = Y(c);
+      el('line', { x1: xc - 8, x2: xc + 8, y1: y, y2: y, stroke: C.axis, 'stroke-width': 2 }, A.svg);
+      el('line', { x1: xk - 8, x2: xk + 8, y1: y, y2: y, stroke: C.axis, 'stroke-width': 2 }, A.svg);
+      A.tx(A.svg, xc - 16, y, String(c).replace('-', '−'), { 'font-size': 14, fill: C.tick, 'text-anchor': 'end' });
+      A.tx(A.svg, xk + 16, y, String(c + 273), { 'font-size': 14, fill: C.tick, 'text-anchor': 'start' });
+    });
+    [[100, 'water boils'], [0, 'water freezes'], [-273, 'absolute zero']].forEach(([c, s]) => A.tx(A.svg, xk + 64, Y(c), s, { 'font-size': 13, fill: C.muted, 'text-anchor': 'start' }));
+    const y = Y(it.c), giveX = it.form === 'toK' ? xc : xk, askX = it.form === 'toK' ? xk : xc;
+    el('circle', { cx: giveX, cy: y, r: 9, fill: C.yellow }, A.svg);
+    el('circle', { cx: askX, cy: y, r: 9, fill: fin ? C.green : 'none', stroke: fin ? C.green : C.yellow, 'stroke-width': 3 }, A.svg);
+    if (V.phase === 'ask') return;
+    el('line', { x1: xc + 14, x2: xk - 14, y1: y, y2: y, stroke: fin ? C.green : C.gold, 'stroke-width': 3, 'stroke-dasharray': fin ? null : '6 6', class: 'fade' }, A.svg);
+    S.chip(A.svg, (xc + xk) / 2, y - 22, it.form === 'toK' ? '+ 273' : '− 273', C.gold, { cls: 'pop', fs: 17 });
+    if (fin) A.tx(A.svg, askX + (askX === xk ? -16 : 16), y + 22, String(it.v).replace('-', '−') + (askX === xk ? ' K' : ' °C'), { 'font-size': 18, fill: C.green, 'text-anchor': askX === xk ? 'end' : 'start', class: 'pop' });
+  }
+};
+
+/* Particles in a box: n of them, spacing grows with heat; wiggle marks show motion. */
+function particles(A, x, y, n, opt) {
+  opt = opt || {};
+  const cols = Math.ceil(Math.sqrt(n)), gap = opt.gap || 26, r = opt.r || 8, g = el('g', { class: opt.cls || null }, A.svg);
+  for (let i = 0; i < n; i++) {
+    const cx = x + (i % cols - (cols - 1) / 2) * gap, cy = y + (Math.floor(i / cols) - (Math.ceil(n / cols) - 1) / 2) * gap;
+    el('circle', { cx, cy, r, fill: opt.col || C.blue }, g);
+    if (opt.wiggle) el('path', { d: `M${cx - r - 3} ${cy - 4}q-4 4 0 8M${cx + r + 3} ${cy - 4}q4 4 0 8`, stroke: C.muted, 'stroke-width': 1.5, fill: 'none' }, g);
+  }
+  return g;
+}
+
+/* 7-3-01 heat vs temperature */
+const T_MORE = {
+  id: 'more', code: '7-3-01', name: 'Heat or temp?', sec: 2, q: it => it.ask === 'temp' ? 'Higher temperature?' : 'More thermal energy?', kind: 'choice',
+  gen: MODEL.genMore, typeOf: it => it.ask + ':' + it.kase,
+  choices: () => AB.concat([{ v: 'same', label: 'Same' }]),
+  check: MODEL.checkMore, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V);
+    [['A', it.A, 165], ['B', it.B, 475]].forEach(([nm, c, x]) => {
+      const good = fin && (it.a === nm || it.a === 'same');
+      S.card(A.svg, { x, y: 120, w: 250, h: 170, icon: c.o[1], label: c.o[0], size: c.big ? 76 : 44, fs: 19, col: good ? C.green : C.edge, sw: good ? 3 : 2 });
+      tag(A, x - 108, 52, nm);
+      reading(A, x, 228, c.t);
+      if (!fin) return;
+      particles(A, x, 320, c.big ? 24 : 6, { gap: c.big ? 22 : 24, r: 6, wiggle: c.t >= 60, cls: 'fade', col: c.t >= 60 ? C.red : C.blue });
+      A.tx(A.svg, x, 395, (c.big ? 'many' : 'few') + ' particles · ' + (c.t >= 60 ? 'fast' : 'slower'), { 'font-size': 14, fill: C.muted, class: 'fade' });
+    });
+    if (fin) A.tx(A.svg, 320, 262, it.ask === 'temp' ? 'temperature = average particle speed' : 'thermal energy = all the particles', { 'font-size': 15, fill: C.gold, class: 'fade' });
+  }
+};
+
+/* 7-3-01 which way does heat flow */
+const T_FLOW = {
+  id: 'flow', code: '7-3-01', name: 'Heat flow', sec: 2, q: 'Which way does heat flow?', kind: 'choice',
+  gen: MODEL.genFlow, typeOf: it => it.a,
+  choices: () => [{ v: 'l', label: '←', math: true, aria: 'left' }, { v: 'r', label: '→', math: true, aria: 'right' }, { v: 'none', label: 'No flow' }],
+  check: MODEL.checkFlow, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V);
+    [[it.L, 150], [it.R, 490]].forEach(([o, x]) => { S.card(A.svg, { x, y: 170, w: 200, h: 170, icon: o[1], label: o[0], size: 66, fs: 19 }); reading(A, x, 285, o[2]); });
+    if (!fin) { A.tx(A.svg, 320, 170, '?', { 'font-size': 48, fill: C.yellow }); return; }
+    if (it.a === 'none') { A.tx(A.svg, 320, 170, '=', { 'font-size': 52, fill: C.green, class: 'pop' }); S.chip(A.svg, 320, 360, 'Same temperature: no heat flows', C.green, { cls: 'pop', fs: 18 }); return; }
+    const r = it.a === 'r';
+    S.arrow(A.svg, r ? 258 : 382, 170, r ? 382 : 258, 170, C.green, 'N', { 'stroke-width': 6, class: 'draw', pathLength: 1 });
+    A.tx(A.svg, 320, 140, 'heat', { 'font-size': 18, fill: C.green, class: 'fade' });
+    S.chip(A.svg, 320, 360, 'Heat flows from hot to cold', C.green, { cls: 'pop', fs: 18 });
+  }
+};
+
+/* 7-3-02 the particle model */
+const T_PART = {
+  id: 'particles', code: '7-3-02', name: 'Particles', sec: 3, q: it => it.form === 'scen' ? 'Expands or contracts?' : 'Its particles…', kind: 'choice',
+  gen: MODEL.genPart, typeOf: it => it.form + ':' + it.a,
+  choices: it => it.form === 'scen' ? [{ v: 'exp', label: 'Expands' }, { v: 'con', label: 'Contracts' }]
+    : [{ v: 'apart', label: 'Move faster, spread apart' }, { v: 'closer', label: 'Slow down, move closer' }, { v: it.hot ? 'bigger' : 'smaller', label: it.hot ? 'Get bigger' : 'Get smaller' }],
+  check: MODEL.checkPart, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V), hot = it.hot;
+    S.card(A.svg, { x: 320, y: 62, w: 520, h: 84, label: it.form === 'scen' ? it.t : hot ? 'A solid is heated' : 'A solid is cooled', fs: 21, n: 40, lb: 30, col: C.yellow, sw: 3 });
+    const box = (x, lab) => { el('rect', { x: x - 100, y: 150, width: 200, height: 200, rx: 14, fill: C.panel, stroke: C.edge, 'stroke-width': 2 }, A.svg); A.tx(A.svg, x, 372, lab, { 'font-size': 15, fill: C.muted }); };
+    box(170, 'before'); box(470, 'after');
+    particles(A, 170, 250, 16, { gap: 34, r: 10, wiggle: true });
+    const showHeat = fin || it.form === 'why';
+    S.arrow(A.svg, 285, 250, 355, 250, C.text, 'W', { 'stroke-width': 3 });
+    A.tx(A.svg, 320, 226, showHeat ? (hot ? '+ heat' : '− heat') : '?', { 'font-size': 17, fill: showHeat ? (hot ? C.red : C.blue) : C.yellow });
+    if (!fin) { A.tx(A.svg, 470, 250, '?', { 'font-size': 44, fill: C.yellow }); return; }
+    particles(A, 470, 250, 16, { gap: hot ? 44 : 27, r: 10, wiggle: true, cls: 'fade', col: hot ? C.red : C.blue });
+    S.chip(A.svg, 320, 405, hot ? 'Faster, farther apart: expands' : 'Slower, closer together: contracts', C.green, { cls: 'pop', fs: 16 });
+  }
+};
+
+/* 7-3-03 conduction, convection, radiation */
+const T_MODE = S.classTab({
+  id: 'mode', code: '7-3-03', name: 'Transfer', sec: 4, q: 'How does the heat move?', bank: MODEL.MODE, cues: MODEL.MODE_CUE,
+  cats: [{ v: 'cond', label: 'Conduction', means: 'direct contact, particle to particle' }, { v: 'conv', label: 'Convection', means: 'a moving liquid or gas' },
+    { v: 'rad', label: 'Radiation', means: 'waves; no matter needed' }]
+});
+
+/* 7-3-03 conductors, insulators; metal feels colder */
+const COND_Q = { conductor: 'Better conductor?', insulator: 'Better insulator?', colder: 'Which one is colder?', faster: 'Takes heat from your hand faster?' };
+const T_COND = {
+  id: 'cond', code: '7-3-03', name: 'Conductors', sec: 4, q: it => COND_Q[it.ask], kind: 'choice',
+  gen: MODEL.genCond, typeOf: it => it.ask,
+  choices: () => AB.concat([{ v: 'same', label: 'Same' }]),
+  check: MODEL.checkCond, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V), hand = it.ask === 'colder' || it.ask === 'faster';
+    [['A', it.A, 165, it.metalLeft], ['B', it.B, 475, !it.metalLeft]].forEach(([nm, o, x, metal]) => {
+      const good = fin && (it.a === nm || it.a === 'same');
+      S.card(A.svg, { x, y: 210, w: 230, h: 150, icon: o[1], label: o[0], size: 56, fs: 19, col: good ? C.green : C.edge, sw: good ? 3 : 2 });
+      tag(A, x - 98, 152, nm);
+      reading(A, x, 310, 21);
+      if (hand) S.emo(A.svg, x, 70, '🖐️', 44);
+      if (!fin) return;
+      if (hand) S.arrow(A.svg, x, 98, x, 128, C.red, 'R', { 'stroke-width': metal ? 9 : 2.5, class: 'fade' });
+      A.tx(A.svg, x, 350, metal ? 'conductor: heat moves fast' : 'insulator: heat moves slowly', { 'font-size': 15, fill: C.gold, class: 'fade' });
+    });
+    if (fin && it.ask === 'colder') S.chip(A.svg, 320, 395, 'Same temperature; metal pulls heat faster', C.green, { cls: 'pop', fs: 16 });
+  }
+};
+
+/* 7-3-04 specific heat */
+const T_SPEC = {
+  id: 'spec', code: '7-3-04', name: 'Heats faster?', sec: 5, q: it => MODEL.SPEC[it.s].q, kind: 'choice',
+  gen: MODEL.genSpec, typeOf: it => String(it.s),
+  choices: it => { const s = MODEL.SPEC[it.s], L = it.loLeft ? s.lo : s.hi, R = it.loLeft ? s.hi : s.lo; return [{ v: 'A', label: L[0] }, { v: 'B', label: R[0] }]; },
+  check: MODEL.checkSpec, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const s = MODEL.SPEC[it.s], fin = done(V);
+    S.emo(A.svg, 320, 44, s.heat ? '☀️' : '🌙', 40);
+    [[it.loLeft ? s.lo : s.hi, 165, it.loLeft], [it.loLeft ? s.hi : s.lo, 475, !it.loLeft]].forEach(([o, x, lo], k) => {
+      const good = fin && lo;
+      S.card(A.svg, { x, y: 160, w: 240, h: 160, icon: o[1], label: o[0], size: 60, fs: 18, col: good ? C.green : C.edge, sw: good ? 3 : 2 });
+      tag(A, x - 102, 98, k ? 'B' : 'A');
+      el('rect', { x: x - 80, y: 280, width: 160, height: 22, rx: 11, fill: C.panel, stroke: C.edge, 'stroke-width': 2 }, A.svg);
+      const bar = el('rect', { x: x - 78, y: 282, width: 0, height: 18, rx: 9, fill: s.heat ? C.red : C.blue }, A.svg);
+      if (!fin) return;
+      const W = lo ? 150 : 40;
+      A.tween(700, t => bar.setAttribute('width', W * t));
+      A.tx(A.svg, x, 330, (s.heat ? 'warms ' : 'cools ') + (lo ? 'fast' : 'slowly'), { 'font-size': 16, fill: lo ? C.green : C.muted, class: 'fade' });
+      A.tx(A.svg, x, 356, lo ? 'low specific heat' : 'high specific heat', { 'font-size': 14, fill: C.muted, class: 'fade' });
+    });
+    if (fin) A.tx(A.svg, 320, 400, 'Water takes a lot of energy to change temperature', { 'font-size': 15, fill: C.gold, class: 'fade' });
+  }
+};
+
+/* 7-3-05 insulation */
+const T_INS = {
+  id: 'ins', code: '7-3-05', name: 'Insulation', sec: 6, q: it => it.form === 'rate' ? 'With insulation, it changes…' : MODEL.INS[it.k].t, kind: 'choice',
+  gen: MODEL.genIns, typeOf: it => String(it.k),
+  choices: it => { const x = MODEL.INS[it.k]; if (it.form === 'rate') return [{ v: 'slower', label: 'Slower' }, { v: 'faster', label: 'Faster' }, { v: 'same', label: 'Same' }];
+    const L = it.swap ? x.B : x.A, R = it.swap ? x.A : x.B; return [{ v: 'A', label: L[0] }, { v: 'B', label: R[0] }]; },
+  check: MODEL.checkIns, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const x = MODEL.INS[it.k], fin = done(V);
+    if (it.form === 'rate') {
+      if (!x.bare) { el('rect', { x: 200, y: 110, width: 240, height: 200, rx: 26, fill: 'none', stroke: '#c7a76a', 'stroke-width': 18, 'stroke-dasharray': '4 6' }, A.svg); A.tx(A.svg, 320, 92, 'insulation', { 'font-size': 14, fill: '#c7a76a' }); }
+      else A.tx(A.svg, 320, 92, 'no insulation', { 'font-size': 14, fill: C.muted });
+      S.card(A.svg, { x: 320, y: 210, w: 190, h: 160, icon: x.i, label: '', size: 70, col: C.yellow, sw: 3 });
+      S.lines(A.svg, 320, 365, x.t, 44, { 'font-size': 19, fill: C.text });
+      if (!fin) return;
+      [[110, 140], [110, 280], [530, 140], [530, 280]].forEach(([px, py]) => {
+        const inward = !x.hot, x1 = px < 320 ? (inward ? 70 : 205) : (inward ? 570 : 435), x2 = px < 320 ? (inward ? 180 : 95) : (inward ? 460 : 545);
+        S.arrow(A.svg, x1, py, x2, py, C.red, 'R', { 'stroke-width': x.bare ? 8 : 2.5, class: 'fade' });
+      });
+      A.tx(A.svg, 90, 210, x.hot ? 'heat out' : 'heat in', { 'font-size': 15, fill: C.red, class: 'fade' });
+      S.chip(A.svg, 320, 405, x.bare ? 'Faster: nothing slows the heat now' : 'Slower: insulation slows heat both ways', C.green, { cls: 'pop', fs: 15 });
+      return;
+    }
+    const L = it.swap ? x.B : x.A, R = it.swap ? x.A : x.B;
+    [[L, 165, 'A'], [R, 475, 'B']].forEach(([o, cx, nm]) => {
+      const more = o[2] === 1, good = fin && more;
+      if (more) el('rect', { x: cx - 128, y: 72, width: 256, height: 196, rx: 26, fill: 'none', stroke: '#c7a76a', 'stroke-width': 14, 'stroke-dasharray': '4 6' }, A.svg);
+      S.card(A.svg, { x: cx, y: 170, w: 210, h: 160, icon: o[1], label: o[0], size: 54, fs: 17, n: 18, col: good ? C.green : C.edge, sw: good ? 3 : 2 });
+      tag(A, cx - 112, 52, nm);
+      if (!fin) return;
+      S.arrow(A.svg, cx, 290, cx, 350, C.red, 'R', { 'stroke-width': more ? 2.5 : 9, class: 'fade' });
+      A.tx(A.svg, cx, 378, more ? 'heat escapes slowly' : 'heat escapes fast', { 'font-size': 15, fill: more ? C.green : C.muted, class: 'fade' });
+    });
+  }
+};
+
+const PAGE = {
+  key: 'sci7-heat-temperature-trainer-v1', course: 'Science 7 · Heat and Temperature', title: 'Heat Trainer',
+  notes: 'sci7-heat-temperature-notes-v1.html', secText: t => 'Section ' + t.sec + ':', sans: true,
+  tabs: [T_K, T_MORE, T_FLOW, T_PART, T_MODE, T_COND, T_SPEC, T_INS]
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>

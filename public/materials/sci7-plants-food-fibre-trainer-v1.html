@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plants Trainer | Science 7</title>
+<!-- =====================================================================
+   PLANTS TRAINER (narrow trainer format, see _sims-context.md)
+   Science 7 | Plants for Food and Fibre | LO 7-2-01 to 7-2-05. Used after the lesson: it does not teach,
+   it points back to the notes (Sections 1–4 and 6). One narrow skill per tab, 10 items a round:
+     7-2-01 Cell parts      name the yellow part of a plant cell (wall, membrane, vacuole, chloroplast, nucleus)
+     7-2-01 Plant/animal    plant or animal cell; onion skin cells are plant cells with no chloroplasts
+     7-2-02 Jobs            which part does this job: root, stem, leaf or flower (root and shoot systems)
+     7-2-02 Xylem/phloem    what moves -> which tube, or tube -> what it carries ("food from the soil" is offered)
+     7-2-03 Photosynthesis  carbon dioxide + water (light) -> glucose + oxygen with one box blank; "soil" is offered
+     7-2-04 Flower          name the yellow part (petal, sepal, stamen, anther, pistil, stigma, ovary)
+     7-2-04 Sexual?         sexual (pollen, seeds) or asexual (runners, tubers, bulbs, cuttings, root shoots)
+     7-2-05 Biotech         selective breeding or genetic modification
+   Model and limits: schematic cells and flower, not to scale. Phloem carries sugar from the leaves to the rest of the
+   plant; the picture shows it moving down to the roots, the notes' simplification.
+   Named mistakes: food from the soil, roots taking in food, wall vs membrane, onion cells called animal cells, a part
+   and its whole mixed up (anther/stamen, stigma/pistil).
+   ?debug=1 puts DRILL (and MODEL) on window, turns off saving and motion.
+   ===================================================================== -->
+<style>
+/* ===== DRILL SHELL CSS START (same in every narrow trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .stage svg text.emo { stroke: none; font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif; font-weight: 400; }
+  .sans .prompt { font-family: inherit; font-weight: 650; font-size: 26px; }
+  .sans .choice { font-size: 19px; line-height: 1.15; padding: 4px 8px; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slot.sup { width: 1.9em; min-height: 40px; font-size: 20px; align-self: flex-start; margin-left: -2px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choices.two { grid-template-columns: 1fr 1fr; }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choices.one { grid-template-columns: 1fr; gap: 8px; }
+  .choices.one .choice { min-height: 54px; }
+  .choices.one .choice.math { font-size: 26px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+/* ===================== MODEL START (no DOM) ===================== */
+const MODEL = (() => {
+  const { rnd, pick, chance, shuffle } = Q;
+  // Four choices from a fixed list: the answer plus three others, kept in list order.
+  const four = (all, ans, not) => { const others = shuffle(all.filter(x => x !== ans && !(not || []).includes(x))).slice(0, 3); return all.filter(x => x === ans || others.includes(x)); };
+
+  /* 7-2-01 plant cell parts (the five in the notes) */
+  const CELL = ['wall', 'membrane', 'vacuole', 'chloro', 'nucleus'];
+  const CELL_NAME = { wall: 'Cell wall', membrane: 'Cell membrane', vacuole: 'Vacuole', chloro: 'Chloroplast', nucleus: 'Nucleus' };
+  const CELL_JOB = { wall: 'support and shape', membrane: 'controls what moves in and out', vacuole: 'stores water, keeps the cell firm', chloro: 'photosynthesis happens here', nucleus: 'control centre, holds DNA' };
+  const CELL_CUE = { wall: 'Stiff outer layer: cell wall', membrane: 'Thin layer inside the wall: membrane', vacuole: 'Big water store: vacuole', chloro: 'Green ovals: chloroplasts', nucleus: 'Control centre: nucleus' };
+  function genCell() { const a = pick(CELL); return { a, opts: four(CELL, a), lay: rnd(0, 2) }; }
+  const checkCell = (it, r) => r.v === it.a ? { ok: true } : { code: 'is-' + it.a, cue: CELL_CUE[it.a] };
+
+  /* 7-2-01 plant or animal cell. Onion skin cells are plant cells with no chloroplasts. */
+  function genKind() { const a = chance(.5) ? 'plant' : 'animal'; return { a, onion: a === 'plant' && chance(.35), seed: rnd(1, 9999) }; }
+  const checkKind = (it, r) => r.v === it.a ? { ok: true } : it.a === 'plant' ? { code: 'plant', cue: it.onion ? 'Cell wall, big vacuole: still plant' : 'Cell wall and chloroplasts: plant' } : { code: 'animal', cue: 'No cell wall: animal cell' };
+
+  /* 7-2-02 which part does this job (root and shoot systems) */
+  const PARTS = ['root', 'stem', 'leaf', 'flower'];
+  const JOBS = [
+    ['Absorbs water and minerals', 'root'], ['Anchors the plant', 'root'], ['Stores food, like a carrot', 'root'],
+    ['Holds the leaves up to the light', 'stem'], ['Carries water up to the leaves', 'stem'], ['Supports the plant', 'stem'],
+    ["Makes the plant's food", 'leaf'], ['Main place for photosynthesis', 'leaf'], ['Takes in carbon dioxide', 'leaf'],
+    ['Makes seeds', 'flower'], ['Attracts pollinators', 'flower'], ['Makes pollen', 'flower']
+  ].map(([t, a]) => ({ t, a }));
+  const JOB_CUE = { root: 'Roots absorb, anchor, store', stem: 'Stems support and carry', leaf: 'Leaves make the food', flower: 'Flowers are for reproduction' };
+  function genJob() { return Object.assign({}, pick(JOBS)); }
+  function checkJob(it, r) {
+    if (r.v === it.a) return { ok: true };
+    if (it.a === 'leaf' && r.v === 'root' && /food/.test(it.t)) return { code: 'root-food', cue: 'Roots take water, not food' };
+    return { code: 'is-' + it.a, cue: JOB_CUE[it.a] };
+  }
+
+  /* 7-2-02 xylem or phloem. Form 'cargo': what moves -> which tube. Form 'tube': tube -> what it carries. */
+  const CARGO = [
+    ['Water and minerals moving up from the roots', 'xylem'], ['Red dye climbing a celery stalk', 'xylem'], ['Water reaching the leaves', 'xylem'],
+    ['Sugar moving out of the leaves', 'phloem'], ['Maple sap carrying sugar', 'phloem'], ['Food from the leaves going to the roots', 'phloem']
+  ].map(([t, a]) => ({ t, a }));
+  function genTube() {
+    const left = chance(.5) ? 'xylem' : 'phloem';
+    if (chance(.6)) return Object.assign({ form: 'cargo', left }, pick(CARGO));
+    const tube = chance(.5) ? 'xylem' : 'phloem';
+    return { form: 'tube', tube, left, a: tube === 'xylem' ? 'water' : 'sugar' };
+  }
+  function checkTube(it, r) {
+    if (r.v === it.a) return { ok: true };
+    if (r.v === 'soil') return { code: 'soil-food', cue: 'Plants make food; soil gives water' };
+    const isX = it.form === 'cargo' ? it.a === 'xylem' : it.tube === 'xylem';
+    return { code: isX ? 'xylem' : 'phloem', cue: isX ? 'Xylem: water up from roots' : 'Phloem: sugar from the leaves' };
+  }
+
+  /* 7-2-03 photosynthesis: carbon dioxide + water (+ light) -> glucose + oxygen. One box is blank. */
+  const PHOTO = ['light', 'water', 'co2', 'glucose', 'oxygen', 'soil'];
+  const PHOTO_NAME = { light: 'Light', water: 'Water', co2: 'Carbon dioxide', glucose: 'Glucose', oxygen: 'Oxygen', soil: 'Soil' };
+  const PHOTO_CUE = { light: 'Light is the energy in', water: 'Water comes up from the soil', co2: 'Carbon dioxide comes from the air', glucose: 'Glucose is the food made', oxygen: 'Oxygen goes out into the air' };
+  function genPhoto() {
+    const a = pick(['light', 'water', 'co2', 'glucose', 'oxygen']), inSide = ['light', 'water', 'co2'].includes(a);
+    // 'Soil' is offered often on the input side: the "food from soil" idea.
+    const others = shuffle(PHOTO.filter(y => y !== a && y !== 'soil')).slice(0, 2);
+    const opts = inSide && chance(.7) ? PHOTO.filter(x => x === a || x === 'soil' || others.includes(x)) : four(PHOTO, a);
+    return { a, opts };
+  }
+  function checkPhoto(it, r) {
+    if (r.v === it.a) return { ok: true };
+    if (r.v === 'soil') return { code: 'soil', cue: 'Soil gives water, not food' };
+    return { code: 'is-' + it.a, cue: PHOTO_CUE[it.a] };
+  }
+
+  /* 7-2-04 flower parts. A part and the whole it belongs to are never both offered. */
+  const FLOWER = ['petal', 'sepal', 'stamen', 'anther', 'pistil', 'stigma', 'ovary'];
+  const FLOWER_NAME = { petal: 'Petal', sepal: 'Sepal', stamen: 'Stamen', anther: 'Anther', pistil: 'Pistil', stigma: 'Stigma', ovary: 'Ovary' };
+  const FLOWER_JOB = { petal: 'attracts pollinators', sepal: 'protects the bud', stamen: 'makes pollen', anther: 'makes the pollen', pistil: 'receives pollen, holds the ovules', stigma: 'catches pollen', ovary: 'holds ovules; becomes the fruit' };
+  const CLASH = { stamen: ['anther'], anther: ['stamen'], pistil: ['stigma', 'ovary'], stigma: ['pistil'], ovary: ['pistil'] };
+  function genFlower() { const a = pick(FLOWER); return { a, opts: four(FLOWER, a, CLASH[a]) }; }
+  const checkFlower = (it, r) => r.v === it.a ? { ok: true } : { code: 'is-' + it.a, cue: FLOWER_NAME[it.a] + ': ' + FLOWER_JOB[it.a] };
+
+  /* 7-2-04 sexual or asexual */
+  const REPRO = [
+    ['A bee carries pollen to another flower', '🐝'], ['Canola seeds form after pollination', '🌼'], ['Saskatoon berry seeds sprout', '🫐'],
+    ['Apple seeds grow into new trees', '🍎'], ['Wind carries wheat pollen', '🌾'], ['Pollen joins an egg in the ovary', '🌸']
+  ].map(([t, i]) => ({ t, i, a: 'sex', why: 'Two parents: offspring differ' })).concat([
+    ['Strawberry runners root nearby', '🍓'], ['A potato tuber sprouts', '🥔'], ['A tulip bulb splits in two', '🌷'],
+    ['A willow cutting grows roots', '🌿'], ['A garlic clove grows a new plant', '🧄'], ['Aspen roots send up new trees', '🌳']
+  ].map(([t, i]) => ({ t, i, a: 'asex', why: 'One parent: identical offspring' })));
+  const REPRO_CUE = { sex: 'Pollen and seeds: sexual', asex: 'One parent, a clone: asexual' };
+
+  /* 7-2-05 selective breeding or genetic modification */
+  const BIOTECH = [
+    ['Farmers save seeds from their best wheat each year', '🌾'], ['Wild mustard bred into broccoli', '🥦'],
+    ['Breeders cross two barleys and keep the best', '🌾'], ['Farmers kept seeds of the best corn for centuries', '🌽'],
+    ['Only the biggest saskatoons are planted again', '🫐']
+  ].map(([t, i]) => ({ t, i, a: 'breed', why: 'Choosing parents, many generations' })).concat([
+    ['Scientists add a gene so canola resists a weed killer', '🧬'], ['A lab adds a drought gene to wheat', '🧪'],
+    ['A bacteria gene makes corn resist insects', '🌽'], ["A gene is switched off so apples don't brown", '🍎']
+  ].map(([t, i]) => ({ t, i, a: 'gmo', why: 'A gene changed directly' })));
+  const BIOTECH_CUE = { breed: 'Choosing parents: selective breeding', gmo: 'Genes changed directly: GMO' };
+
+  return { CELL, CELL_NAME, CELL_JOB, genCell, checkCell, genKind, checkKind, PARTS, JOBS, genJob, checkJob, CARGO, genTube, checkTube,
+    PHOTO, PHOTO_NAME, genPhoto, checkPhoto, FLOWER, FLOWER_NAME, FLOWER_JOB, CLASH, genFlower, checkFlower, REPRO, REPRO_CUE, BIOTECH, BIOTECH_CUE };
+})();
+/* ===================== MODEL END ===================== */
+
+
+/* ===== DRILL SHELL START (same in every narrow trainer: Math 9 and Science 7) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   Optional: PAGE.sep (heading separator after "Section N", default —), PAGE.secText(tab) (the whole heading text
+   for the 📖 link), PAGE.sans (prompts in the plain font, for science). TAB.cols (2 or 3) sets the choice grid.
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen()                 -> a new item (from MODEL)
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom'
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+     typeOf(item)          -> the question type, for weighting (optional; default: the item's form/kind/shape/... fields)
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown).
+   Weighting: each question type has a score, saved per tab. A first-try right answer lowers it (to half weight at
+   most), a miss or Show me raises it (to about 2.5× at most). Each new item is picked from 8 generated candidates
+   by weight, so missed types come back more often and types answered right still appear, less often. */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {}, w: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); if (!save.w || typeof save.w !== 'object') save.w = {}; } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    let prevItalic = false;
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => {
+      if (!part) return; const it = /^[a-z]$/.test(part);
+      // an italic letter leans into a following ² or ³: nudge it right
+      const t = el('tspan', it ? { 'font-style': 'italic' } : prevItalic && /^[²³]/.test(part) ? { dx: '0.12em' } : {}, e); t.textContent = part; prevItalic = it;
+    });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (tab.kind === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (tab.kind === 'choice') {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
+      row.className = 'choices' + (tab.cols === 2 ? ' two' : tab.cols === 3 ? ' three' : long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = tab.kind === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  /* ---------- weighting: missed question types come back more often ---------- */
+  const TYPE_FIELDS = ['form', 'kind', 'shape', 'type', 'rep', 'ask', 'what', 'mode', 'rule', 'ans', 'useD', 'back', 'direct', 'flip', 'rat', 'idCol'];
+  function keyOf(it) {
+    if (tab.typeOf) return String(tab.typeOf(it));
+    return TYPE_FIELDS.filter(k => typeof it[k] === 'string' || typeof it[k] === 'boolean').map(k => k + ':' + it[k]).join('|');
+  }
+  const scores = () => (save.w[tab.id] = save.w[tab.id] || {});
+  const weightOf = k => Math.pow(2, scores()[k] || 0);
+  function record(right) {
+    const s = scores(), k = item.__key; if (k == null) return;
+    s[k] = right ? Math.max(-1, (s[k] || 0) - .5) : Math.min(1.3, (s[k] || 0) + 1);
+    store();
+  }
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) {
+      const cands = [];
+      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
+      if (!cands.length) cands.push(tab.gen());
+      const ws = cands.map(c => weightOf(keyOf(c))), total = ws.reduce((a, b) => a + b, 0);
+      let r = Q.rnd(0, 999999) / 1e6 * total, i = 0; while (i < cands.length - 1 && r >= ws[i]) { r -= ws[i]; i++; }
+      it = cands[i]; key = JSON.stringify(it);
+    }
+    lastKey = key || JSON.stringify(it);
+    Object.defineProperty(it, '__key', { value: keyOf(it), enumerable: false, configurable: true, writable: true });
+    item = it; resp = {}; att = 0; resolved = false;
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (tab.kind === 'choice' && resp.v == null) return;
+    if (tab.kind === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (tab.kind === 'choice' ? 1 : 2);
+    if (res.ok) {
+      resolved = true; marks.push(att === 1 ? 'g' : 'y'); record(att === 1);
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r'); record(false);
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (tab.kind === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
+    } else if (tab.kind === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (tab.kind === 'slots') fillSlots(ans, 'shown');
+    else if (tab.kind === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); record(false); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(tab) + '" target="_blank" rel="noopener">📖 Notes §' + tab.sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => (t.notes || PAGE.notes) + '#:~:text=' + encodeURIComponent(PAGE.secText ? PAGE.secText(t) : 'Section ' + t.sec + ' ' + (t.sep || PAGE.sep || '—'));
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    const n = $('notes'); n.href = notesHref(tab); $('notesTxt').textContent = '§' + tab.sec;
+    n.title = 'Notes, Section ' + tab.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + tab.sec);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    if (P.sans) document.body.classList.add('sans');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }),
+      keyOf: (it, t) => { const cur = tab; if (t) tab = t; try { return keyOf(it); } finally { tab = cur; } }, weights: () => Object.assign({}, scores()), resetWeights: () => { save.w[tab.id] = {}; }, setScore: (k, s) => { scores()[k] = s; } };
+  }
+  return { boot, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+/* ===== SCIENCE KIT START (Science 7 narrow trainers only; needs DRILL) =====
+   Icon + label + arrow pictures, not drawings of real objects (see the icon-flowchart rule in _sims-context.md).
+     S.emo(p, x, y, icon, size, a)          an emoji icon
+     S.lines(p, x, y, text, n, a)           text wrapped at n characters, centred on (x, y)
+     S.card(p, o)                           an icon card {x, y, w, h, icon, label, col, fill, size, fs, n, cls}
+     S.arrow(p, x1, y1, x2, y2, col, key)   a straight arrow; key = marker colour letter (Y yellow, N green, R red, …)
+     S.curve(p, d, col, key)                an arrow along an SVG path
+     S.sorter(A, it, V, cats, o)            the sorting picture: the item card on top, one bin per choice below;
+                                            after the answer an arrow drops the card into its bin, and each bin shows
+                                            what it means. cats: [{v, label, means, glyph(g, x, y)}]
+     S.classTab(o)                          a whole tap-to-sort tab from a bank (S.sortGen, S.sortCheck) */
+const S = (() => {
+  const { C, el, tx } = DRILL;
+  const done = V => V.phase === 'right' || V.phase === 'show';
+  function emo(p, x, y, ch, size, a) { return tx(p, x, y, ch, Object.assign({ 'font-size': size || 48 }, a, { class: 'emo' + (a && a.class ? ' ' + a.class : '') })); }
+  function wrap(s, n) {
+    const out = []; let line = '';
+    String(s).split(' ').forEach(w => { if (line && (line + ' ' + w).length > n) { out.push(line); line = w; } else line = line ? line + ' ' + w : w; });
+    if (line) out.push(line); return out;
+  }
+  function lines(p, x, y, s, n, a) {
+    const L = wrap(s, n || 22), fs = (a && a['font-size']) || 18, lh = fs * 1.22, g = el('g', { class: a && a.gcls || null }, p);
+    L.forEach((l, i) => tx(g, x, y + (i - (L.length - 1) / 2) * lh, l, Object.assign({}, a, { gcls: null })));
+    return g;
+  }
+  // Label lines sit at the bottom (o.lb padding); the icon is centred in the space above them.
+  function card(p, o) {
+    const g = el('g', { class: o.cls || null }, p), w = o.w || 150, h = o.h || 130, hasL = o.label != null && o.label !== '';
+    el('rect', { x: o.x - w / 2, y: o.y - h / 2, width: w, height: h, rx: 16, fill: o.fill || C.panel, stroke: o.col || C.edge, 'stroke-width': o.sw || 2.5 }, g);
+    const fs = o.fs || 17, n = o.n || Math.round(w / 9.5), L = hasL ? wrap(o.label, n).length : 0, lh = fs * 1.22;
+    const labTop = hasL ? o.y + h / 2 - (o.lb || 12) - L * lh : o.y + h / 2, top = o.y - h / 2;
+    if (o.icon) emo(g, o.x, (top + labTop) / 2 + 2, o.icon, Math.min(o.size || 999, (labTop - top) * .78, w * .6));
+    if (hasL) lines(g, o.x, labTop + L * lh / 2, o.label, n, { 'font-size': fs, fill: o.tcol || C.text });
+    return g;
+  }
+  function arrow(p, x1, y1, x2, y2, col, key, a) {
+    return el('line', Object.assign({ x1, y1, x2, y2, stroke: col, 'stroke-width': 4, 'stroke-linecap': 'round', 'marker-end': 'url(#a' + (key || 'W') + ')' }, a), p);
+  }
+  function curve(p, d, col, key, a) {
+    return el('path', Object.assign({ d, stroke: col, 'stroke-width': 4, fill: 'none', 'stroke-linecap': 'round', 'marker-end': 'url(#a' + (key || 'W') + ')' }, a), p);
+  }
+  // A small pill label with a dark backing, for notes on a picture.
+  function chip(p, x, y, s, col, a) {
+    const g = el('g', { class: a && a.cls || null }, p), fs = (a && a.fs) || 16, w = String(s).length * fs * .56 + 22;
+    el('rect', { x: x - w / 2, y: y - fs * .9, width: w, height: fs * 1.8, rx: fs * .9, fill: C.stage, stroke: col, 'stroke-width': 2 }, g);
+    tx(g, x, y, s, { 'font-size': fs, fill: col });
+    return g;
+  }
+
+  function sorter(A, it, V, cats, o) {
+    o = o || {};
+    const n = cats.length, by = o.by || 335, bh = o.bh || 118, gap = 14, bw = Math.min(190, (600 - gap * (n - 1)) / n);
+    const span = n * bw + (n - 1) * gap, bx = i => 320 - span / 2 + bw / 2 + i * (bw + gap);
+    const fin = done(V), ai = cats.findIndex(c => c.v === it.a), pi = cats.findIndex(c => c.v === (V.resp && V.resp.v));
+    cats.forEach((c, i) => {
+      const x = bx(i), good = fin && i === ai, bad = fin && i === pi && pi !== ai, g = el('g', {}, A.svg);
+      el('rect', { x: x - bw / 2, y: by - bh / 2, width: bw, height: bh, rx: 16, fill: good ? '#13301c' : bad ? '#331417' : C.panel, stroke: good ? C.green : bad ? C.red : C.edge, 'stroke-width': good || bad ? 3 : 2, 'stroke-dasharray': good || bad ? null : '7 6' }, g);
+      const lab = lines(g, x, fin && c.means ? by - bh / 2 + 26 : by, c.label, Math.round(bw / 10.5), { 'font-size': n > 3 ? 17 : 19, fill: good ? C.green : bad ? '#ff9a90' : C.text });
+      if (fin && c.means) lines(g, x, by + 22, c.means, Math.round(bw / 8.5), { 'font-size': 14.5, fill: good ? C.text : C.muted, gcls: 'fade' });
+      if (fin && good && c.glyph) c.glyph(g, x, by + bh / 2 + 4);
+    });
+    const cw = o.cw || 320, ch = o.ch || 156, cy = o.cy || 108;
+    card(A.svg, { x: 320, y: cy, w: cw, h: ch, icon: it.i, label: it.t, size: o.size || 64, fs: o.fs || 21, n: o.n || 26, col: fin ? (pi === ai || V.phase === 'show' && pi < 0 ? C.green : C.edge) : C.yellow, sw: 3, lb: 16 });
+    if (fin && it.why) chip(A.svg, 320, cy + ch / 2 + 24, it.why, C.green, { cls: 'pop', fs: 15 });
+    if (!fin) return;
+    const y0 = cy + ch / 2 + (it.why ? 44 : 8), y1 = by - bh / 2 - 8;
+    if (pi >= 0 && pi !== ai) arrow(A.svg, 320 + (bx(pi) - 320) * .25, y0, bx(pi), y1, C.red, 'R', { 'stroke-dasharray': '6 6', 'stroke-width': 3, class: 'fade' });
+    arrow(A.svg, 320 + (bx(ai) - 320) * .25, y0, bx(ai), y1, C.green, 'N', { class: 'draw', pathLength: 1 });
+  }
+
+  // Bank items: {t: label, i: icon, a: answer, why?: note shown after, cue?: own cue}. No DOM.
+  // Each answer comes up equally often, whatever the bank sizes.
+  const sortGen = bank => { const a = Q.pick([...new Set(bank.map(b => b.a))]); return Object.assign({}, Q.pick(bank.filter(b => b.a === a))); };
+  const sortCheck = (it, r, cues) => r.v === it.a ? { ok: true } : { code: 'is-' + it.a, cue: it.cue || (cues && cues[it.a]) || 'Not quite' };
+
+  // A tap-to-sort tab. o: {id, code, name, sec, q, cats, bank, cues, cols, pic} — the bank and cues come from MODEL.
+  function classTab(o) {
+    return {
+      id: o.id, code: o.code, name: o.name, sec: o.sec, q: o.q, kind: 'choice', cols: o.cols,
+      typeOf: it => it.t,  // a missed item comes back more often
+      gen: () => sortGen(o.bank),
+      choices: () => o.cats.map(c => ({ v: c.v, label: c.label })),
+      check: (it, r) => sortCheck(it, r, o.cues), answer: it => ({ v: it.a }),
+      draw(A, it, V) { sorter(A, it, V, o.cats, o.pic); }
+    };
+  }
+  return { emo, wrap, lines, card, arrow, curve, chip, sorter, classTab, sortGen, sortCheck, done };
+})();
+/* ===== SCIENCE KIT END ===== */
+
+/* ===================== PAGE: pictures and tabs ===================== */
+const { C } = DRILL;
+const done = S.done;
+const el = (tag, a, p) => DRILL.el(tag, a, p);
+const HL = { stroke: C.yellow, 'stroke-width': 5, filter: 'url(#glow)' };
+// A small seeded random for drawing, so a picture stays the same on every redraw of the same item.
+const rng = seed => { let s = seed >>> 0 || 1; return () => (s = (s * 16807) % 2147483647) / 2147483647; };
+
+/* ---- a plant cell (schematic): wall, membrane, big vacuole, nucleus, chloroplasts ---- */
+function plantCell(A, o) {
+  const { cx, cy, w, h } = o, hl = o.hl, g = el('g', {}, A.svg), hc = o.hcol || C.yellow;
+  const hlA = k => hl === k ? Object.assign({}, HL, { stroke: hc }) : {};
+  el('rect', Object.assign({ x: cx - w / 2, y: cy - h / 2, width: w, height: h, rx: 22, fill: '#121a24', stroke: '#6f8f5c', 'stroke-width': 12 }, hl === 'wall' ? { stroke: hc, filter: 'url(#glow)' } : {}), g);
+  el('rect', Object.assign({ x: cx - w / 2 + 11, y: cy - h / 2 + 11, width: w - 22, height: h - 22, rx: 14, fill: 'none', stroke: '#c9d3e1', 'stroke-width': 2 }, hl === 'membrane' ? { stroke: hc, 'stroke-width': 5, filter: 'url(#glow)' } : {}), g);
+  const lay = o.lay || 0, nx = [-1, 1, -1][lay], ny = [-1, 1, 1][lay];
+  el('ellipse', Object.assign({ cx: cx - nx * w * .06, cy: cy - ny * h * .04, rx: w * .3, ry: h * .27, fill: '#17324b', stroke: '#58c4dd', 'stroke-width': 2.5 }, hlA('vacuole')), g);
+  const nX = cx + nx * w * .33, nY = cy + ny * h * .28;
+  el('circle', Object.assign({ cx: nX, cy: nY, r: Math.min(w, h) * .11, fill: '#3b2a52', stroke: '#b58ce0', 'stroke-width': 2.5 }, hlA('nucleus')), g);
+  el('circle', { cx: nX + 4, cy: nY - 3, r: 6, fill: '#b58ce0' }, g);
+  if (o.chloro !== false) {
+    const spots = [[-.38, -.32], [-.1, -.38], [.2, -.37], [.4, -.1], [.36, .3], [.05, .38], [-.25, .36], [-.42, .08]];
+    spots.forEach(([a, b], i) => {
+      const x = cx + a * w, y = cy + b * h;
+      if (Math.hypot(x - nX, y - nY) < Math.min(w, h) * .2) return;
+      el('ellipse', Object.assign({ cx: x, cy: y, rx: 17, ry: 9, transform: 'rotate(' + ((i * 47) % 90 - 45) + ' ' + x + ' ' + y + ')', fill: '#2e6b2a', stroke: '#83c167', 'stroke-width': 2 }, hl === 'chloro' ? { stroke: hc, 'stroke-width': 4, filter: 'url(#glow)' } : {}), g);
+    });
+  }
+  return g;
+}
+/* ---- an animal cell: wobbly outline, no wall, small vacuoles, no chloroplasts ---- */
+function animalCell(A, o) {
+  const r = rng(o.seed), g = el('g', {}, A.svg), ph = r() * 6, pts = [];
+  for (let k = 0; k < 48; k++) { const t = k / 48 * Math.PI * 2, rr = 1 + .07 * Math.sin(3 * t + ph) + .04 * Math.sin(5 * t + ph * 2); pts.push([o.cx + Math.cos(t) * o.w / 2 * rr, o.cy + Math.sin(t) * o.h / 2 * rr]); }
+  el('path', { d: 'M' + pts.map(p => p.map(v => v.toFixed(1)).join(',')).join('L') + 'Z', fill: '#1a1622', stroke: '#c9d3e1', 'stroke-width': 2.5 }, g);
+  el('circle', { cx: o.cx + o.w * .05, cy: o.cy - o.h * .03, r: Math.min(o.w, o.h) * .13, fill: '#3b2a52', stroke: '#b58ce0', 'stroke-width': 2.5 }, g);
+  el('circle', { cx: o.cx + o.w * .05 + 4, cy: o.cy - o.h * .03 - 3, r: 6, fill: '#b58ce0' }, g);
+  [[-.28, -.2], [.25, .22], [-.15, .27], [.3, -.18]].forEach(([a, b], i) => el('circle', { cx: o.cx + a * o.w, cy: o.cy + b * o.h, r: 8 + i * 2, fill: '#17324b', stroke: '#58c4dd', 'stroke-width': 1.5 }, g));
+  return g;
+}
+
+/* 7-2-01 name the plant cell part */
+const T_CELL = {
+  id: 'cell', code: '7-2-01', name: 'Cell parts', sec: 1, q: 'The yellow part is the…', kind: 'choice', cols: 2,
+  gen: MODEL.genCell, typeOf: it => it.a,
+  choices: it => it.opts.map(k => ({ v: k, label: MODEL.CELL_NAME[k] })),
+  check: MODEL.checkCell, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V);
+    plantCell(A, { cx: 320, cy: 190, w: 440, h: 300, hl: it.a, lay: it.lay, hcol: fin ? C.green : C.yellow });
+    if (fin) S.chip(A.svg, 320, 385, MODEL.CELL_NAME[it.a] + ': ' + MODEL.CELL_JOB[it.a], C.green, { cls: 'pop', fs: 18 });
+  }
+};
+
+/* 7-2-01 plant cell or animal cell */
+const T_KIND = {
+  id: 'kind', code: '7-2-01', name: 'Plant/animal', sec: 1, q: 'Plant cell or animal cell?', kind: 'choice',
+  gen: MODEL.genKind, typeOf: it => it.a + (it.onion ? '-onion' : ''),
+  choices: () => [{ v: 'plant', label: 'Plant' }, { v: 'animal', label: 'Animal' }],
+  check: MODEL.checkKind, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V), r = rng(it.seed), w = 300 + r() * 50, h = 220 + r() * 50, cx = fin ? 220 : 320;
+    if (it.a === 'plant') plantCell(A, { cx, cy: 205, w, h, chloro: !it.onion, lay: Math.floor(r() * 3) });
+    else animalCell(A, { cx, cy: 205, w, h, seed: it.seed });
+    if (!fin) return;
+    const has = it.a === 'plant' ? [true, true, !it.onion] : [false, false, false];
+    ['Cell wall', 'Big vacuole', 'Chloroplasts'].forEach((t, k) => {
+      const y = 130 + k * 62;
+      A.tx(A.svg, 430, y, has[k] ? '✓' : '✗', { 'font-size': 28, fill: has[k] ? C.green : C.red, class: 'pop' });
+      A.tx(A.svg, 458, y, t, { 'font-size': 19, fill: C.text, 'text-anchor': 'start', class: 'fade' });
+    });
+    S.chip(A.svg, 320, 385, it.a === 'plant' ? (it.onion ? 'Plant cell (onion: no chloroplasts)' : 'Plant cell') : 'Animal cell', C.green, { cls: 'pop', fs: 19 });
+  }
+};
+
+/* 7-2-02 which part does this job */
+const PART_ROW = { flower: ['Flower', '🌸', 62], leaf: ['Leaf', '🍃', 146], stem: ['Stem', '🌱', 230], root: ['Root', '🥕', 352] };
+function rowCard(A, x, y, w, h, icon, label, col, fill) {
+  el('rect', { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 14, fill: fill || C.panel, stroke: col || C.edge, 'stroke-width': col ? 3 : 2 }, A.svg);
+  S.emo(A.svg, x - w / 2 + 34, y + 2, icon, 32);
+  A.tx(A.svg, x - w / 2 + 64, y, label, { 'font-size': 20, fill: C.text, 'text-anchor': 'start' });
+}
+const T_JOB = {
+  id: 'job', code: '7-2-02', name: 'Jobs', sec: 2, q: 'Which part does this job?', kind: 'choice',
+  gen: MODEL.genJob, typeOf: it => it.t,
+  choices: () => MODEL.PARTS.map(k => ({ v: k, label: PART_ROW[k][0] })),
+  check: MODEL.checkJob, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V), x = 150;
+    el('line', { x1: 30, x2: 300, y1: 296, y2: 296, stroke: '#8a6a45', 'stroke-width': 4 }, A.svg);
+    A.tx(A.svg, 40, 312, 'ground', { 'font-size': 13, fill: C.muted, 'text-anchor': 'start' });
+    Object.keys(PART_ROW).forEach(k => { const [t, i, y] = PART_ROW[k], good = fin && k === it.a, bad = fin && k === V.resp.v && k !== it.a; rowCard(A, x, y, 190, 66, i, t, good ? C.green : bad ? C.red : null, good ? '#13301c' : null); });
+    [[24, 268, 'Shoot system'], [320, 390, 'Root system']].forEach(([y1, y2, t]) => {
+      el('path', { d: 'M262 ' + y1 + 'h10V' + y2 + 'h-10', stroke: C.muted, 'stroke-width': 2, fill: 'none' }, A.svg);
+      A.tx(A.svg, 280, (y1 + y2) / 2, t, { 'font-size': 14, fill: C.muted, 'text-anchor': 'start' });
+    });
+    S.card(A.svg, { x: 500, y: 200, w: 210, h: 150, label: it.t, fs: 19, n: 17, lb: 30, col: fin ? C.green : C.yellow, sw: 3 });
+    if (!fin) { A.tx(A.svg, 500, 152, '?', { 'font-size': 30, fill: C.yellow }); return; }
+    const y = PART_ROW[it.a][2];
+    S.arrow(A.svg, 395, 200, 252, y, C.green, 'N', { class: 'draw', pathLength: 1 });
+  }
+};
+
+/* 7-2-02 xylem and phloem */
+const TUBE = { xylem: { name: 'Xylem', icon: '💧', what: 'water ↑ from roots', dir: -1, col: C.blue }, phloem: { name: 'Phloem', icon: '🍬', what: 'sugar from leaves', dir: 1, col: C.gold } };
+const T_TUBE = {
+  id: 'tube', code: '7-2-02', name: 'Xylem/phloem', sec: 2, q: it => it.form === 'cargo' ? 'Which tube carries it?' : TUBE[it.tube].name + ' carries…', kind: 'choice',
+  gen: MODEL.genTube, typeOf: it => it.form + ':' + it.a,
+  choices: it => it.form === 'cargo' ? [{ v: 'xylem', label: 'Xylem' }, { v: 'phloem', label: 'Phloem' }]
+    : [{ v: 'water', label: 'Water up from the roots' }, { v: 'sugar', label: 'Sugar from the leaves' }, { v: 'soil', label: 'Food from the soil' }],
+  check: MODEL.checkTube, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V), sx = 190, other = it.left === 'xylem' ? 'phloem' : 'xylem', asked = it.form === 'cargo' ? it.a : it.tube;
+    rowCard(A, sx, 42, 190, 58, '🍃', 'Leaves');
+    rowCard(A, sx, 376, 190, 58, '🥕', 'Roots');
+    el('rect', { x: sx - 70, y: 102, width: 140, height: 236, rx: 12, fill: '#16241a', stroke: '#3e5c3a', 'stroke-width': 2 }, A.svg);
+    A.tx(A.svg, sx - 84, 220, 'Stem', { 'font-size': 15, fill: C.muted, 'text-anchor': 'end' });
+    [[it.left, sx - 32], [other, sx + 32]].forEach(([k, x]) => {
+      const T = TUBE[k], hot = k === asked, show = fin || (it.form === 'cargo' && hot);
+      el('rect', { x: x - 15, y: 108, width: 30, height: 224, rx: 13, fill: '#0e1620', stroke: hot ? (fin ? C.green : C.yellow) : fin ? T.col : C.edge, 'stroke-width': hot ? 4 : 2.5 }, A.svg);
+      if (show) [0, 1, 2].forEach(j => S.emo(A.svg, x, 140 + j * 76, T.icon, 22, { class: fin ? 'fade' : null }));
+      if (show) S.arrow(A.svg, x, T.dir < 0 ? 312 : 126, x, T.dir < 0 ? 122 : 316, fin ? T.col : C.yellow, fin ? (k === 'xylem' ? 'L' : 'G') : 'Y', { 'stroke-width': 3, opacity: .7 });
+      if ((it.form === 'tube' && hot) || fin) A.tx(A.svg, x, 88, T.name, { 'font-size': 15, fill: fin ? T.col : C.yellow, class: fin ? 'fade' : null });
+    });
+    if (it.form === 'cargo') S.card(A.svg, { x: 470, y: 160, w: 250, h: 160, label: it.t, fs: 19, n: 20, lb: 34, col: fin ? C.green : C.yellow, sw: 3 });
+    else if (fin) S.chip(A.svg, 470, 160, it.a === 'water' ? 'Xylem: water and minerals' : 'Phloem: sugar (food)', C.green, { cls: 'pop', fs: 17 });
+    if (!fin) return;
+    A.tx(A.svg, 352, 300, '💧 Xylem: water up from roots', { 'font-size': 16, fill: C.blue, 'text-anchor': 'start', class: 'fade' });
+    A.tx(A.svg, 352, 334, '🍬 Phloem: sugar from leaves', { 'font-size': 16, fill: C.gold, 'text-anchor': 'start', class: 'fade' });
+    if (V.resp.v === 'soil') S.chip(A.svg, 470, 262, 'Soil gives water, not food', C.red, { cls: 'pop', fs: 16 });
+  }
+
+};
+
+/* 7-2-03 photosynthesis flowchart with one blank */
+const PH_BOX = { light: ['☀️', 'Light', 'from the Sun', 95, 80], water: ['💧', 'Water', 'from the soil', 95, 210], co2: ['☁️', 'Carbon dioxide', 'from the air', 95, 340],
+  glucose: ['🍬', 'Glucose', 'food (sugar)', 545, 140], oxygen: ['💨', 'Oxygen', 'into the air', 545, 280] };
+const T_PHOTO = {
+  id: 'photo', code: '7-2-03', name: 'Photosynthesis', sec: 3, q: 'What goes in the yellow box?', kind: 'choice', cols: 2,
+  gen: MODEL.genPhoto, typeOf: it => it.a,
+  choices: it => it.opts.map(k => ({ v: k, label: MODEL.PHOTO_NAME[k] })),
+  check: MODEL.checkPhoto, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V);
+    S.card(A.svg, { x: 320, y: 210, w: 150, h: 130, icon: '🍃', label: 'Leaf (chloroplasts)', fs: 15, n: 12, size: 46, col: C.green });
+    Object.keys(PH_BOX).forEach(k => {
+      const [icon, name, from, x, y] = PH_BOX[k], blank = k === it.a, out = x > 320;
+      if (out) S.arrow(A.svg, 398, 210 + (y - 210) * .3, x - 82, y, C.text, 'W', { 'stroke-width': 3 });
+      else S.arrow(A.svg, x + 78, y, 242, 210 + (y - 210) * .3, C.text, 'W', { 'stroke-width': 3 });
+      if (blank && !fin) { S.card(A.svg, { x, y, w: 150, h: 100, label: '?', fs: 30, col: C.yellow, sw: 3, fill: '#262110', lb: 34 }); return; }
+      S.card(A.svg, { x, y, w: 150, h: 100, icon, label: name, fs: 16, n: 15, size: 34, col: blank ? C.green : C.edge, sw: blank ? 3 : 2, fill: blank ? '#13301c' : C.panel, cls: blank ? 'pop' : null });
+      if (fin) A.tx(A.svg, x, y + 62, from, { 'font-size': 14, fill: blank ? C.green : C.muted, class: 'fade' });
+    });
+    A.tx(A.svg, 320, 300, 'light energy', { 'font-size': 14, fill: C.muted });
+    if (fin) A.tx(A.svg, 410, 405, 'carbon dioxide + water → glucose + oxygen', { 'font-size': 16, fill: C.text, class: 'fade' });
+    if (fin && V.resp.v === 'soil') S.chip(A.svg, 320, 70, 'Soil gives water, not food', C.red, { cls: 'pop', fs: 16 });
+  }
+};
+
+/* 7-2-04 flower parts (schematic side view) */
+function flower(A, hl, hc) {
+  const g = el('g', {}, A.svg), H = k => (hl === k || (hl === 'stamen' && k === 'anther') || (hl === 'pistil' && (k === 'stigma' || k === 'ovary' || k === 'style')) || (hl === 'stamen' && k === 'filament')) ? { stroke: hc, 'stroke-width': 5, filter: 'url(#glow)' } : {};
+  el('path', { d: 'M320 335V410', stroke: '#4f8a3c', 'stroke-width': 9, 'stroke-linecap': 'round' }, g);
+  [1, -1].forEach(s => {
+    el('path', Object.assign({ d: `M320 338Q${320 - s * 50} 352 ${320 - s * 98} 312Q${320 - s * 46} 312 320 330Z`, fill: '#2e5e26', stroke: '#83c167', 'stroke-width': 2.5 }, H('sepal')), g);
+    el('path', Object.assign({ d: `M316 326C${320 - s * 95} 326 ${320 - s * 165} 220 ${320 - s * 140} 108C${320 - s * 80} 140 ${320 - s * 20} 230 316 326Z`, transform: s < 0 ? 'translate(8 0)' : null, fill: 'rgba(239,127,198,.22)', stroke: '#ef7fc6', 'stroke-width': 2.5 }, H('petal')), g);
+    el('line', Object.assign({ x1: 320 - s * 14, y1: 315, x2: 320 - s * 62, y2: 182, stroke: '#d9c27a', 'stroke-width': 3 }, H('filament')), g);
+    el('ellipse', Object.assign({ cx: 320 - s * 64, cy: 172, rx: 17, ry: 9, transform: `rotate(${s * 20} ${320 - s * 64} 172)`, fill: '#b9852f', stroke: '#f0ac5f', 'stroke-width': 2 }, H('anther')), g);
+  });
+  el('ellipse', Object.assign({ cx: 320, cy: 300, rx: 26, ry: 22, fill: '#2c4a3a', stroke: '#5cd0b3', 'stroke-width': 2.5 }, H('ovary')), g);
+  el('rect', Object.assign({ x: 316, y: 158, width: 8, height: 122, fill: '#2c4a3a', stroke: '#5cd0b3', 'stroke-width': 2 }, H('style')), g);
+  el('ellipse', Object.assign({ cx: 320, cy: 150, rx: 19, ry: 10, fill: '#3f6b55', stroke: '#5cd0b3', 'stroke-width': 2.5 }, H('stigma')), g);
+  return g;
+}
+const T_FLOWER = {
+  id: 'flower', code: '7-2-04', name: 'Flower', sec: 4, q: 'The yellow part is the…', kind: 'choice', cols: 2,
+  gen: MODEL.genFlower, typeOf: it => it.a,
+  choices: it => it.opts.map(k => ({ v: k, label: MODEL.FLOWER_NAME[k] })),
+  check: MODEL.checkFlower, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V);
+    flower(A, it.a, fin ? C.green : C.yellow);
+    if (fin) S.chip(A.svg, 320, 40, MODEL.FLOWER_NAME[it.a] + ': ' + MODEL.FLOWER_JOB[it.a], C.green, { cls: 'pop', fs: 18 });
+  }
+};
+
+/* 7-2-04 sexual or asexual */
+const T_REPRO = S.classTab({
+  id: 'repro', code: '7-2-04', name: 'Sexual?', sec: 4, q: 'Sexual or asexual?', bank: MODEL.REPRO, cues: MODEL.REPRO_CUE,
+  cats: [{ v: 'sex', label: 'Sexual', means: 'pollen + egg → seed; two parents' }, { v: 'asex', label: 'Asexual', means: 'a plant part grows; one parent' }]
+});
+
+/* 7-2-05 selective breeding or GMO */
+const T_BIOTECH = S.classTab({
+  id: 'biotech', code: '7-2-05', name: 'Biotech', sec: 6, q: 'Which kind of biotechnology?', bank: MODEL.BIOTECH, cues: MODEL.BIOTECH_CUE,
+  cats: [{ v: 'breed', label: 'Selective breeding', means: 'choose parents over many generations' }, { v: 'gmo', label: 'Genetically modified', means: 'genes changed directly in a lab' }]
+});
+
+const PAGE = {
+  key: 'sci7-plants-food-fibre-trainer-v1', course: 'Science 7 · Plants for Food and Fibre', title: 'Plants Trainer',
+  notes: 'sci7-plants-food-fibre-notes-v1.html', secText: t => 'Section ' + t.sec + ':', sans: true,
+  tabs: [T_CELL, T_KIND, T_JOB, T_TUBE, T_PHOTO, T_FLOWER, T_REPRO, T_BIOTECH]
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>

@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ecosystems Trainer | Science 7</title>
+<!-- =====================================================================
+   ECOSYSTEMS TRAINER (narrow trainer format, see _sims-context.md)
+   Science 7 | Interactions and Ecosystems | LO 7-1-01 to 7-1-04. Used after the lesson: it does not teach,
+   it points back to the notes (Sections 1–5). One narrow skill per tab, 10 items a round:
+     7-1-01 Biotic?       sort a card: biotic (living) or abiotic (non-living); soil counts as abiotic, as in the notes
+     7-1-02 Role          producer, consumer or decomposer
+     7-1-02 Level         the yellow card in an Alberta food chain: producer, primary, secondary or tertiary consumer
+     7-1-02 Arrow         "lynx eats hare": which way the arrow points (food to eater, the way energy flows)
+     7-1-02 Food web      one species removed from a boreal web: a directly linked one goes up or down
+     §3     10% rule      energy pyramid: one level up keeps 1/10 (÷ 10), one level down × 10
+     7-1-03 Biodiversity  two plots: the one with more kinds (species), not more living things
+     7-1-04 Change        natural disturbance or human-caused change
+   Model: food-web effects are first effects on a directly linked species only (less food: down; fewer predators: up).
+   The 10% rule is the notes' rule of thumb (5–15% is realistic).
+   Named mistakes: the producer counted as a consumer, arrows drawn as "eats", energy growing up the pyramid, 90% passed
+   on, one ÷ 10 for two levels, individuals counted for biodiversity, decomposers left out.
+   ?debug=1 puts DRILL (and MODEL) on window, turns off saving and motion.
+   ===================================================================== -->
+<style>
+/* ===== DRILL SHELL CSS START (same in every narrow trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .stage svg text.emo { stroke: none; font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif; font-weight: 400; }
+  .sans .prompt { font-family: inherit; font-weight: 650; font-size: 26px; }
+  .sans .choice { font-size: 19px; line-height: 1.15; padding: 4px 8px; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slot.sup { width: 1.9em; min-height: 40px; font-size: 20px; align-self: flex-start; margin-left: -2px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choices.two { grid-template-columns: 1fr 1fr; }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choices.one { grid-template-columns: 1fr; gap: 8px; }
+  .choices.one .choice { min-height: 54px; }
+  .choices.one .choice.math { font-size: 26px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+/* ===================== MODEL START (no DOM) ===================== */
+const MODEL = (() => {
+  const { rnd, pick, chance, shuffle } = Q;
+
+  /* 7-1-01 biotic or abiotic (notes: soil is abiotic) */
+  const BIOTIC = [
+    ['Wolf', '🐺'], ['Aspen tree', '🌳'], ['Mushroom', '🍄'], ['Bacteria', '🦠'], ['Grass', '🌾'], ['Beaver', '🦫'],
+    ['Great horned owl', '🦉'], ['Wood frog', '🐸'], ['Bull trout', '🐟'], ['White spruce', '🌲'], ['Bumblebee', '🐝'],
+    ['Snowshoe hare', '🐇'], ['Mosquito', '🦟'], ['Earthworm', '🪱'], ['Wild rose', '🌹']
+  ].map(([t, i]) => ({ t, i, a: 'bio' })).concat([
+    ['Sunlight', '☀️'], ['Water', '💧'], ['Soil', '🟫'], ['Temperature', '🌡️'], ['Air', '💨'], ['Rock', '🪨'],
+    ['Snow', '❄️'], ['Rain', '🌧️'], ['Wind', '🌬️'], ['Minerals', '💎']
+  ].map(([t, i]) => ({ t, i, a: 'abio' })));
+  const BIOTIC_CUES = { bio: 'It is alive: biotic', abio: 'Not alive: abiotic' };
+
+  /* 7-1-02 producer, consumer or decomposer */
+  const ROLE = [
+    ['Grass', '🌾'], ['Aspen tree', '🌳'], ['White spruce', '🌲'], ['Wild rose', '🌹'], ['Willow', '🌿'], ['Saskatoon bush', '🫐']
+  ].map(([t, i]) => ({ t, i, a: 'prod' })).concat([
+    ['Snowshoe hare', '🐇'], ['Lynx', '🐈'], ['Wolf', '🐺'], ['Elk', '🦌'], ['Great horned owl', '🦉'], ['Grasshopper', '🦗'],
+    ['Red fox', '🦊'], ['Golden eagle', '🦅'], ['Beaver', '🦫'], ['Black bear', '🐻'], ['Bull trout', '🐟']
+  ].map(([t, i]) => ({ t, i, a: 'cons' }))).concat([
+    ['Mushroom', '🍄'], ['Bacteria', '🦠'], ['Shelf fungus', '🍄'], ['Soil bacteria', '🦠'], ['Mould', '🦠']
+  ].map(([t, i]) => ({ t, i, a: 'decomp' })));
+  const ROLE_CUES = { prod: 'Makes its own food: producer', cons: 'Eats other living things: consumer', decomp: 'Breaks down dead things: decomposer' };
+
+  /* 7-1-02 food chains, food first. Arrows mean "is eaten by". */
+  const CHAINS = [
+    [['Grass', '🌾'], ['Grasshopper', '🦗'], ['Meadowlark', '🐦'], ['Hawk', '🦅']],
+    [['Grass', '🌾'], ['Grasshopper', '🦗'], ['Frog', '🐸'], ['Garter snake', '🐍']],
+    [['Grass', '🌾'], ['Mouse', '🐭'], ['Garter snake', '🐍'], ['Great horned owl', '🦉']],
+    [['Aspen', '🌳'], ['Snowshoe hare', '🐇'], ['Lynx', '🐈']],
+    [['Grass', '🌾'], ['Deer', '🦌'], ['Wolf', '🐺']],
+    [['Aspen', '🌳'], ['Beaver', '🦫'], ['Wolf', '🐺']],
+    [['Pond algae', '🌿'], ['Insect larva', '🐛'], ['Trout', '🐟'], ['Osprey', '🦅']],
+    [['Clover', '🍀'], ['Ground squirrel', '🐿️'], ['Ferruginous hawk', '🦅']],
+    [['Willow', '🌿'], ['Snowshoe hare', '🐇'], ['Red fox', '🦊']]
+  ];
+  const LEVELS = ['prod', 'pri', 'sec', 'ter'];
+  function genLevel() { const c = rnd(0, CHAINS.length - 1), k = rnd(0, CHAINS[c].length - 1); return { c, k, a: LEVELS[k] }; }
+  function checkLevel(it, r) {
+    if (r.v === it.a) return { ok: true };
+    const p = LEVELS.indexOf(r.v);
+    if (it.k === 0) return { code: 'prod', cue: 'Plants make food: producer' };
+    if (p === it.k + 1) return { code: 'counted-producer', cue: 'The producer is not a consumer' };
+    if (p === 0) return { code: 'not-prod', cue: 'It eats something: a consumer' };
+    return { code: 'count', cue: 'Count the eaters from the producer' };
+  }
+
+  /* 7-1-02 which way does the arrow point? Food on the left half the time. */
+  function genArrow() {
+    const c = rnd(0, CHAINS.length - 1), k = rnd(0, CHAINS[c].length - 2), foodLeft = chance(.5);
+    return { c, k, foodLeft, a: foodLeft ? 'r' : 'l' };
+  }
+  const checkArrow = (it, r) => r.v === it.a ? { ok: true } : { code: 'eats', cue: 'Arrow points to the eater' };
+
+  /* 7-1-02 food web: remove one, what happens to a directly linked one? */
+  const WEB = {
+    nodes: { lynx: ['Lynx', '🐈'], owl: ['Owl', '🦉'], wolf: ['Wolf', '🐺'], fox: ['Fox', '🦊'],
+      hare: ['Hare', '🐇'], moose: ['Moose', '🦌'], beaver: ['Beaver', '🦫'], mouse: ['Mouse', '🐭'],
+      aspen: ['Aspen', '🌳'], grass: ['Grass', '🌾'], willow: ['Willow', '🌿'] },
+    rows: [['lynx', 'owl', 'wolf', 'fox'], ['hare', 'moose', 'beaver', 'mouse'], ['aspen', 'grass', 'willow']],
+    edges: [['aspen', 'hare'], ['aspen', 'moose'], ['aspen', 'beaver'], ['grass', 'hare'], ['grass', 'moose'], ['grass', 'mouse'],
+      ['willow', 'moose'], ['willow', 'beaver'], ['hare', 'lynx'], ['hare', 'owl'], ['hare', 'wolf'], ['hare', 'fox'],
+      ['moose', 'wolf'], ['beaver', 'wolf'], ['mouse', 'owl'], ['mouse', 'fox']]
+  };
+  function genWeb() {
+    const [food, eater] = pick(WEB.edges), lostFood = chance(.5);
+    return lostFood ? { gone: food, who: eater, a: 'down' } : { gone: eater, who: food, a: 'up' };
+  }
+  const checkWeb = (it, r) => r.v === it.a ? { ok: true }
+    : it.a === 'down' ? { code: 'lost-food', cue: 'It lost food: goes down' } : { code: 'lost-predator', cue: 'Fewer predators eat it: up' };
+
+  /* 7-1-02 / §3 the 10% rule: one level up keeps 1/10 of the energy */
+  const BASES = [1000, 2000, 5000, 8000, 10000, 20000, 30000, 40000, 50000, 60000, 100000];
+  function genEnergy() {
+    const base = pick(BASES); let g, a;
+    do { g = rnd(0, 3); a = rnd(0, 3); } while (g === a || Math.abs(g - a) > (chance(.7) ? 1 : 2));
+    return { base, g, a, given: base / Math.pow(10, g), v: base / Math.pow(10, a) };
+  }
+  function checkEnergy(it, r) {
+    const x = Q.val(r.v);
+    if (x === it.v) return { ok: true };
+    const steps = it.a - it.g;
+    if (x === it.given * Math.pow(10, steps)) return steps > 0 ? { code: 'up-times', cue: 'Energy shrinks going up' } : { code: 'down-div', cue: 'Lower levels have more energy' };
+    if (steps > 0 && Math.abs(x - it.given * Math.pow(.9, steps)) < 1e-6) return { code: 'ninety', cue: 'Only 10% passes up' };
+    if (Math.abs(steps) === 2 && (x === it.given / 10 || x === it.given * 10)) return { code: 'one-step', cue: '÷ 10 at every level' };
+    return { code: 'other', cue: steps > 0 ? 'One level up: ÷ 10' : 'One level down: × 10' };
+  }
+
+  /* 7-1-03 biodiversity = number of different species. Trap: the poorer plot has more individuals. */
+  const KINDS = ['🌼', '🐞', '🐝', '🦋', '🐜', '🍄', '🐌', '🌿', '🍀', '🦗', '🐛', '🌸', '🕷️', '🌾'];
+  function genBio() {
+    const rich = rnd(4, 7), poor = rnd(1, Math.min(3, rich - 2)), kinds = shuffle(KINDS);
+    const richK = kinds.slice(0, rich), poorK = kinds.slice(rich, rich + poor);
+    const richP = [], poorP = [];
+    richK.forEach(k => { const m = rnd(1, 2); for (let j = 0; j < m; j++) richP.push(k); });
+    const total = Math.min(16, Math.max(richP.length + rnd(2, 4), 10));
+    for (let j = 0; j < total; j++) poorP.push(poorK[j % poor]);
+    const richLeft = chance(.5);
+    return { A: shuffle(richLeft ? richP : poorP), B: shuffle(richLeft ? poorP : richP), nA: richLeft ? rich : poor, nB: richLeft ? poor : rich, a: richLeft ? 'A' : 'B' };
+  }
+  const checkBio = (it, r) => r.v === it.a ? { ok: true } : { code: 'individuals', cue: 'Count kinds, not individuals' };
+
+  /* 7-1-04 natural or human-caused */
+  const CHANGE = [
+    ['Lightning starts a forest fire', '⚡', 'Cause: lightning'], ['A spring flood covers a valley', '🌊', 'Cause: snowmelt and rain'],
+    ['A summer drought dries a slough', '☀️', 'Cause: little rain'], ['A disease kills many hares', '🦠', 'Cause: a disease'],
+    ['A beaver dam floods a meadow', '🦫', 'Cause: beavers'], ['A windstorm knocks down trees', '🌪️', 'Cause: wind'],
+    ['Hail flattens prairie grass', '🌨️', 'Cause: a storm']
+  ].map(([t, i, why]) => ({ t, i, why, a: 'nat' })).concat([
+    ['A wetland is drained for a farm', '🚜', 'Cause: people'], ['A forest is cleared for a road', '🛣️', 'Cause: people'],
+    ['Oil spills into a river', '🛢️', 'Cause: people'], ['Zebra mussels ride in on a boat', '🚤', 'Cause: people moved them'],
+    ['A lake is overfished', '🎣', 'Cause: people'], ['A campfire left burning starts a fire', '🏕️', 'Cause: people'],
+    ['Purple loosestrife escapes a garden', '🌸', 'Cause: people planted it'], ['Smoke from a factory', '🏭', 'Cause: people']
+  ].map(([t, i, why]) => ({ t, i, why, a: 'hum' })));
+  const CHANGE_CUES = { nat: 'Nature caused it: natural', hum: 'People caused it: human-caused' };
+
+  return { BIOTIC, BIOTIC_CUES, ROLE, ROLE_CUES, CHAINS, LEVELS, genLevel, checkLevel, genArrow, checkArrow, WEB, genWeb, checkWeb,
+    genEnergy, checkEnergy, KINDS, genBio, checkBio, CHANGE, CHANGE_CUES };
+})();
+/* ===================== MODEL END ===================== */
+
+
+/* ===== DRILL SHELL START (same in every narrow trainer: Math 9 and Science 7) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   Optional: PAGE.sep (heading separator after "Section N", default —), PAGE.secText(tab) (the whole heading text
+   for the 📖 link), PAGE.sans (prompts in the plain font, for science). TAB.cols (2 or 3) sets the choice grid.
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen()                 -> a new item (from MODEL)
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom'
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+     typeOf(item)          -> the question type, for weighting (optional; default: the item's form/kind/shape/... fields)
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown).
+   Weighting: each question type has a score, saved per tab. A first-try right answer lowers it (to half weight at
+   most), a miss or Show me raises it (to about 2.5× at most). Each new item is picked from 8 generated candidates
+   by weight, so missed types come back more often and types answered right still appear, less often. */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {}, w: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); if (!save.w || typeof save.w !== 'object') save.w = {}; } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    let prevItalic = false;
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => {
+      if (!part) return; const it = /^[a-z]$/.test(part);
+      // an italic letter leans into a following ² or ³: nudge it right
+      const t = el('tspan', it ? { 'font-style': 'italic' } : prevItalic && /^[²³]/.test(part) ? { dx: '0.12em' } : {}, e); t.textContent = part; prevItalic = it;
+    });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (tab.kind === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (tab.kind === 'choice') {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
+      row.className = 'choices' + (tab.cols === 2 ? ' two' : tab.cols === 3 ? ' three' : long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = tab.kind === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  /* ---------- weighting: missed question types come back more often ---------- */
+  const TYPE_FIELDS = ['form', 'kind', 'shape', 'type', 'rep', 'ask', 'what', 'mode', 'rule', 'ans', 'useD', 'back', 'direct', 'flip', 'rat', 'idCol'];
+  function keyOf(it) {
+    if (tab.typeOf) return String(tab.typeOf(it));
+    return TYPE_FIELDS.filter(k => typeof it[k] === 'string' || typeof it[k] === 'boolean').map(k => k + ':' + it[k]).join('|');
+  }
+  const scores = () => (save.w[tab.id] = save.w[tab.id] || {});
+  const weightOf = k => Math.pow(2, scores()[k] || 0);
+  function record(right) {
+    const s = scores(), k = item.__key; if (k == null) return;
+    s[k] = right ? Math.max(-1, (s[k] || 0) - .5) : Math.min(1.3, (s[k] || 0) + 1);
+    store();
+  }
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) {
+      const cands = [];
+      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
+      if (!cands.length) cands.push(tab.gen());
+      const ws = cands.map(c => weightOf(keyOf(c))), total = ws.reduce((a, b) => a + b, 0);
+      let r = Q.rnd(0, 999999) / 1e6 * total, i = 0; while (i < cands.length - 1 && r >= ws[i]) { r -= ws[i]; i++; }
+      it = cands[i]; key = JSON.stringify(it);
+    }
+    lastKey = key || JSON.stringify(it);
+    Object.defineProperty(it, '__key', { value: keyOf(it), enumerable: false, configurable: true, writable: true });
+    item = it; resp = {}; att = 0; resolved = false;
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (tab.kind === 'choice' && resp.v == null) return;
+    if (tab.kind === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (tab.kind === 'choice' ? 1 : 2);
+    if (res.ok) {
+      resolved = true; marks.push(att === 1 ? 'g' : 'y'); record(att === 1);
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r'); record(false);
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (tab.kind === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
+    } else if (tab.kind === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (tab.kind === 'slots') fillSlots(ans, 'shown');
+    else if (tab.kind === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); record(false); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(tab) + '" target="_blank" rel="noopener">📖 Notes §' + tab.sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => (t.notes || PAGE.notes) + '#:~:text=' + encodeURIComponent(PAGE.secText ? PAGE.secText(t) : 'Section ' + t.sec + ' ' + (t.sep || PAGE.sep || '—'));
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    const n = $('notes'); n.href = notesHref(tab); $('notesTxt').textContent = '§' + tab.sec;
+    n.title = 'Notes, Section ' + tab.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + tab.sec);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    if (P.sans) document.body.classList.add('sans');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }),
+      keyOf: (it, t) => { const cur = tab; if (t) tab = t; try { return keyOf(it); } finally { tab = cur; } }, weights: () => Object.assign({}, scores()), resetWeights: () => { save.w[tab.id] = {}; }, setScore: (k, s) => { scores()[k] = s; } };
+  }
+  return { boot, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+/* ===== SCIENCE KIT START (Science 7 narrow trainers only; needs DRILL) =====
+   Icon + label + arrow pictures, not drawings of real objects (see the icon-flowchart rule in _sims-context.md).
+     S.emo(p, x, y, icon, size, a)          an emoji icon
+     S.lines(p, x, y, text, n, a)           text wrapped at n characters, centred on (x, y)
+     S.card(p, o)                           an icon card {x, y, w, h, icon, label, col, fill, size, fs, n, cls}
+     S.arrow(p, x1, y1, x2, y2, col, key)   a straight arrow; key = marker colour letter (Y yellow, N green, R red, …)
+     S.curve(p, d, col, key)                an arrow along an SVG path
+     S.sorter(A, it, V, cats, o)            the sorting picture: the item card on top, one bin per choice below;
+                                            after the answer an arrow drops the card into its bin, and each bin shows
+                                            what it means. cats: [{v, label, means, glyph(g, x, y)}]
+     S.classTab(o)                          a whole tap-to-sort tab from a bank (S.sortGen, S.sortCheck) */
+const S = (() => {
+  const { C, el, tx } = DRILL;
+  const done = V => V.phase === 'right' || V.phase === 'show';
+  function emo(p, x, y, ch, size, a) { return tx(p, x, y, ch, Object.assign({ 'font-size': size || 48 }, a, { class: 'emo' + (a && a.class ? ' ' + a.class : '') })); }
+  function wrap(s, n) {
+    const out = []; let line = '';
+    String(s).split(' ').forEach(w => { if (line && (line + ' ' + w).length > n) { out.push(line); line = w; } else line = line ? line + ' ' + w : w; });
+    if (line) out.push(line); return out;
+  }
+  function lines(p, x, y, s, n, a) {
+    const L = wrap(s, n || 22), fs = (a && a['font-size']) || 18, lh = fs * 1.22, g = el('g', { class: a && a.gcls || null }, p);
+    L.forEach((l, i) => tx(g, x, y + (i - (L.length - 1) / 2) * lh, l, Object.assign({}, a, { gcls: null })));
+    return g;
+  }
+  // Label lines sit at the bottom (o.lb padding); the icon is centred in the space above them.
+  function card(p, o) {
+    const g = el('g', { class: o.cls || null }, p), w = o.w || 150, h = o.h || 130, hasL = o.label != null && o.label !== '';
+    el('rect', { x: o.x - w / 2, y: o.y - h / 2, width: w, height: h, rx: 16, fill: o.fill || C.panel, stroke: o.col || C.edge, 'stroke-width': o.sw || 2.5 }, g);
+    const fs = o.fs || 17, n = o.n || Math.round(w / 9.5), L = hasL ? wrap(o.label, n).length : 0, lh = fs * 1.22;
+    const labTop = hasL ? o.y + h / 2 - (o.lb || 12) - L * lh : o.y + h / 2, top = o.y - h / 2;
+    if (o.icon) emo(g, o.x, (top + labTop) / 2 + 2, o.icon, Math.min(o.size || 999, (labTop - top) * .78, w * .6));
+    if (hasL) lines(g, o.x, labTop + L * lh / 2, o.label, n, { 'font-size': fs, fill: o.tcol || C.text });
+    return g;
+  }
+  function arrow(p, x1, y1, x2, y2, col, key, a) {
+    return el('line', Object.assign({ x1, y1, x2, y2, stroke: col, 'stroke-width': 4, 'stroke-linecap': 'round', 'marker-end': 'url(#a' + (key || 'W') + ')' }, a), p);
+  }
+  function curve(p, d, col, key, a) {
+    return el('path', Object.assign({ d, stroke: col, 'stroke-width': 4, fill: 'none', 'stroke-linecap': 'round', 'marker-end': 'url(#a' + (key || 'W') + ')' }, a), p);
+  }
+  // A small pill label with a dark backing, for notes on a picture.
+  function chip(p, x, y, s, col, a) {
+    const g = el('g', { class: a && a.cls || null }, p), fs = (a && a.fs) || 16, w = String(s).length * fs * .56 + 22;
+    el('rect', { x: x - w / 2, y: y - fs * .9, width: w, height: fs * 1.8, rx: fs * .9, fill: C.stage, stroke: col, 'stroke-width': 2 }, g);
+    tx(g, x, y, s, { 'font-size': fs, fill: col });
+    return g;
+  }
+
+  function sorter(A, it, V, cats, o) {
+    o = o || {};
+    const n = cats.length, by = o.by || 335, bh = o.bh || 118, gap = 14, bw = Math.min(190, (600 - gap * (n - 1)) / n);
+    const span = n * bw + (n - 1) * gap, bx = i => 320 - span / 2 + bw / 2 + i * (bw + gap);
+    const fin = done(V), ai = cats.findIndex(c => c.v === it.a), pi = cats.findIndex(c => c.v === (V.resp && V.resp.v));
+    cats.forEach((c, i) => {
+      const x = bx(i), good = fin && i === ai, bad = fin && i === pi && pi !== ai, g = el('g', {}, A.svg);
+      el('rect', { x: x - bw / 2, y: by - bh / 2, width: bw, height: bh, rx: 16, fill: good ? '#13301c' : bad ? '#331417' : C.panel, stroke: good ? C.green : bad ? C.red : C.edge, 'stroke-width': good || bad ? 3 : 2, 'stroke-dasharray': good || bad ? null : '7 6' }, g);
+      const lab = lines(g, x, fin && c.means ? by - bh / 2 + 26 : by, c.label, Math.round(bw / 10.5), { 'font-size': n > 3 ? 17 : 19, fill: good ? C.green : bad ? '#ff9a90' : C.text });
+      if (fin && c.means) lines(g, x, by + 22, c.means, Math.round(bw / 8.5), { 'font-size': 14.5, fill: good ? C.text : C.muted, gcls: 'fade' });
+      if (fin && good && c.glyph) c.glyph(g, x, by + bh / 2 + 4);
+    });
+    const cw = o.cw || 320, ch = o.ch || 156, cy = o.cy || 108;
+    card(A.svg, { x: 320, y: cy, w: cw, h: ch, icon: it.i, label: it.t, size: o.size || 64, fs: o.fs || 21, n: o.n || 26, col: fin ? (pi === ai || V.phase === 'show' && pi < 0 ? C.green : C.edge) : C.yellow, sw: 3, lb: 16 });
+    if (fin && it.why) chip(A.svg, 320, cy + ch / 2 + 24, it.why, C.green, { cls: 'pop', fs: 15 });
+    if (!fin) return;
+    const y0 = cy + ch / 2 + (it.why ? 44 : 8), y1 = by - bh / 2 - 8;
+    if (pi >= 0 && pi !== ai) arrow(A.svg, 320 + (bx(pi) - 320) * .25, y0, bx(pi), y1, C.red, 'R', { 'stroke-dasharray': '6 6', 'stroke-width': 3, class: 'fade' });
+    arrow(A.svg, 320 + (bx(ai) - 320) * .25, y0, bx(ai), y1, C.green, 'N', { class: 'draw', pathLength: 1 });
+  }
+
+  // Bank items: {t: label, i: icon, a: answer, why?: note shown after, cue?: own cue}. No DOM.
+  // Each answer comes up equally often, whatever the bank sizes.
+  const sortGen = bank => { const a = Q.pick([...new Set(bank.map(b => b.a))]); return Object.assign({}, Q.pick(bank.filter(b => b.a === a))); };
+  const sortCheck = (it, r, cues) => r.v === it.a ? { ok: true } : { code: 'is-' + it.a, cue: it.cue || (cues && cues[it.a]) || 'Not quite' };
+
+  // A tap-to-sort tab. o: {id, code, name, sec, q, cats, bank, cues, cols, pic} — the bank and cues come from MODEL.
+  function classTab(o) {
+    return {
+      id: o.id, code: o.code, name: o.name, sec: o.sec, q: o.q, kind: 'choice', cols: o.cols,
+      typeOf: it => it.t,  // a missed item comes back more often
+      gen: () => sortGen(o.bank),
+      choices: () => o.cats.map(c => ({ v: c.v, label: c.label })),
+      check: (it, r) => sortCheck(it, r, o.cues), answer: it => ({ v: it.a }),
+      draw(A, it, V) { sorter(A, it, V, o.cats, o.pic); }
+    };
+  }
+  return { emo, wrap, lines, card, arrow, curve, chip, sorter, classTab, sortGen, sortCheck, done };
+})();
+/* ===== SCIENCE KIT END ===== */
+
+/* ===================== PAGE: pictures and tabs ===================== */
+const { C } = DRILL;
+const done = S.done;
+const LEVEL_NAME = { prod: 'Producer', pri: 'Primary consumer', sec: 'Secondary consumer', ter: 'Tertiary consumer' };
+
+/* 7-1-01 biotic or abiotic */
+const T_BIO = S.classTab({
+  id: 'biotic', code: '7-1-01', name: 'Biotic?', sec: 1, q: 'Biotic or abiotic?',
+  bank: MODEL.BIOTIC, cues: MODEL.BIOTIC_CUES,
+  cats: [{ v: 'bio', label: 'Biotic', means: 'a living part of the ecosystem' }, { v: 'abio', label: 'Abiotic', means: 'a non-living part of the ecosystem' }]
+});
+
+/* 7-1-02 producer, consumer, decomposer */
+const T_ROLE = S.classTab({
+  id: 'role', code: '7-1-02', name: 'Role', sec: 2, q: 'Its role in the ecosystem', bank: MODEL.ROLE, cues: MODEL.ROLE_CUES,
+  cats: [{ v: 'prod', label: 'Producer', means: 'makes its own food from sunlight' }, { v: 'cons', label: 'Consumer', means: 'eats other living things' },
+    { v: 'decomp', label: 'Decomposer', means: 'breaks down dead things, returns nutrients' }]
+});
+
+/* A food chain in a row of cards, food first, arrows to the eater. Returns card centres. */
+function chainRow(A, chain, y, opt) {
+  opt = opt || {};
+  const n = chain.length, w = n === 4 ? 122 : 140, gap = n === 4 ? 36 : 60, span = n * w + (n - 1) * gap, x0 = 320 - span / 2 + w / 2;
+  const xs = chain.map((_, i) => x0 + i * (w + gap));
+  chain.forEach(([t, i], k) => S.card(A.svg, { x: xs[k], y, w, h: 128, icon: i, label: t, size: 46, fs: 15, n: 12, col: opt.col && opt.col(k) || C.edge, sw: 3 }));
+  for (let k = 0; k < n - 1; k++) S.arrow(A.svg, xs[k] + w / 2 + 4, y, xs[k + 1] - w / 2 - 6, y, C.text, 'W', { 'stroke-width': 3 });
+  return { xs, w };
+}
+
+/* 7-1-02 trophic level in a chain */
+const T_LEVEL = {
+  id: 'level', code: '7-1-02', name: 'Level', sec: 2, q: 'The yellow one is a…', kind: 'choice', cols: 2,
+  gen: MODEL.genLevel, typeOf: it => it.a,
+  choices: () => [{ v: 'prod', label: 'Producer' }, { v: 'pri', label: 'Primary consumer' }, { v: 'sec', label: 'Secondary consumer' }, { v: 'ter', label: 'Tertiary consumer' }],
+  check: MODEL.checkLevel, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const ch = MODEL.CHAINS[it.c], fin = done(V);
+    const { xs } = chainRow(A, ch, 160, { col: k => k === it.k ? (fin ? C.green : C.yellow) : null });
+    S.lines(A.svg, 320, 52, 'arrow = “is eaten by”', 30, { 'font-size': 16, fill: C.muted });
+    if (!fin) { A.tx(A.svg, xs[it.k], 252, '?', { 'font-size': 34, fill: C.yellow }); return; }
+    ch.forEach((_, k) => {
+      const lab = k === 0 ? 'Producer' : ['', '1st eater', '2nd eater', '3rd eater'][k];
+      A.tx(A.svg, xs[k], 250, lab, { 'font-size': 15, fill: k === it.k ? C.green : C.muted, class: 'fade' });
+    });
+    S.chip(A.svg, 320, 330, LEVEL_NAME[it.a], C.green, { cls: 'pop', fs: 22 });
+    if (it.k > 0) A.tx(A.svg, 320, 378, 'Count eaters from the producer', { 'font-size': 16, fill: C.muted, class: 'fade' });
+  }
+};
+
+/* 7-1-02 which way does the arrow point */
+const T_ARROW = {
+  id: 'arrow', code: '7-1-02', name: 'Arrow', sec: 2, q: 'Which way does the arrow point?', kind: 'choice',
+  gen: MODEL.genArrow, typeOf: it => it.foodLeft ? 'food-left' : 'food-right',
+  prompt: it => { const c = MODEL.CHAINS[it.c]; return c[it.k + 1][0] + ' eats ' + c[it.k][0].toLowerCase(); },
+  choices: () => [{ v: 'l', label: '←', math: true, aria: 'left' }, { v: 'r', label: '→', math: true, aria: 'right' }],
+  check: MODEL.checkArrow, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const c = MODEL.CHAINS[it.c], food = c[it.k], eater = c[it.k + 1], L = it.foodLeft ? food : eater, R = it.foodLeft ? eater : food, fin = done(V);
+    S.card(A.svg, { x: 150, y: 190, w: 180, h: 170, icon: L[1], label: L[0], size: 70, fs: 19, n: 16 });
+    S.card(A.svg, { x: 490, y: 190, w: 180, h: 170, icon: R[1], label: R[0], size: 70, fs: 19, n: 16 });
+    if (!fin) { A.tx(A.svg, 320, 190, '?', { 'font-size': 48, fill: C.yellow }); return; }
+    const fx = it.foodLeft ? 248 : 392, ex = it.foodLeft ? 392 : 248;
+    S.arrow(A.svg, fx, 190, ex, 190, C.green, 'N', { 'stroke-width': 6, class: 'draw', pathLength: 1 });
+    A.tx(A.svg, 320, 160, 'energy', { 'font-size': 17, fill: C.green, class: 'fade' });
+    A.tx(A.svg, 150, 310, it.foodLeft ? 'food' : 'eater', { 'font-size': 18, fill: C.muted, class: 'fade' });
+    A.tx(A.svg, 490, 310, it.foodLeft ? 'eater' : 'food', { 'font-size': 18, fill: C.muted, class: 'fade' });
+    S.chip(A.svg, 320, 375, 'Arrow points to the eater', C.green, { cls: 'pop', fs: 18 });
+  }
+};
+
+/* 7-1-02 food web: one species gone */
+const T_WEB = {
+  id: 'web', code: '7-1-02', name: 'Food web', sec: 2, q: it => 'No more ' + MODEL.WEB.nodes[it.gone][0].toLowerCase(), kind: 'choice',
+  gen: MODEL.genWeb, typeOf: it => it.a,
+  prompt: () => 'The yellow one will…',
+  choices: () => [{ v: 'up', label: 'Go up ↑' }, { v: 'down', label: 'Go down ↓' }],
+  check: MODEL.checkWeb, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const W = MODEL.WEB, pos = {}, fin = done(V), cw = 104, chh = 74, ys = [62, 210, 358];
+    W.rows.forEach((row, r) => row.forEach((k, i) => { pos[k] = [320 + (i - (row.length - 1) / 2) * 140, ys[r]]; }));
+    const key = (a, b) => (a === it.gone && b === it.who) || (b === it.gone && a === it.who);
+    W.edges.forEach(([f, e]) => {
+      const hot = fin && key(f, e), [x1, y1] = pos[f], [x2, y2] = pos[e];
+      S.arrow(A.svg, x1, y1 - chh / 2, x2 + (x1 - x2) * .08, y2 + chh / 2 + 4, hot ? C.green : '#4a5870', hot ? 'N' : 'M', { 'stroke-width': hot ? 5 : 2 });
+    });
+    Object.keys(W.nodes).forEach(k => {
+      const [t, i] = W.nodes[k], [x, y] = pos[k], gone = k === it.gone, who = k === it.who;
+      S.card(A.svg, { x, y, w: cw, h: chh, icon: i, label: t, size: 30, fs: 14, lb: 8, col: who ? (fin ? C.green : C.yellow) : gone ? C.red : C.edge, sw: who || gone ? 3.5 : 2, fill: gone ? '#1a1012' : C.panel });
+      if (gone) { A.el('line', { x1: x - 30, y1: y - 26, x2: x + 30, y2: y + 26, stroke: C.red, 'stroke-width': 6, 'stroke-linecap': 'round' }, A.svg); A.el('line', { x1: x + 30, y1: y - 26, x2: x - 30, y2: y + 26, stroke: C.red, 'stroke-width': 6, 'stroke-linecap': 'round' }, A.svg); }
+    });
+    if (!fin) return;
+    const [x, y] = pos[it.who], up = it.a === 'up';
+    A.tx(A.svg, x + cw / 2 + 22, y, up ? '↑' : '↓', { 'font-size': 40, fill: C.green, class: 'pop' });
+    S.chip(A.svg, 320, 136, up ? 'Its predator is gone' : 'Its food is gone', C.green, { cls: 'pop', fs: 17 });
+  }
+};
+
+/* 7-1-02 / §3 energy pyramid, the 10% rule */
+const T_ENERGY = {
+  id: 'energy', code: '7-1-02', name: '10% rule', sec: 3, q: 'Energy at the ? level', kind: 'slots',
+  gen: MODEL.genEnergy, typeOf: it => 'steps' + (it.a - it.g),
+  slots: () => ['=', { k: 'v', label: 'energy units', wide: true }, 'units'],
+  check: MODEL.checkEnergy, answer: it => ({ v: Q.q(it.v) }),
+  draw(A, it, V) {
+    const fin = done(V), names = ['Producers', 'Primary consumers', 'Secondary consumers', 'Tertiary consumers'];
+    const fmtN = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '), cx = 300, h = 74, yb = 392, w = [500, 380, 260, 140];
+    for (let L = 0; L < 4; L++) {
+      const y = yb - (L + 1) * h, wb = w[L], wt = L < 3 ? w[L + 1] : 40, show = fin || L === it.g, ask = L === it.a;
+      A.el('polygon', { points: [[cx - wb / 2, y + h], [cx + wb / 2, y + h], [cx + wt / 2, y], [cx - wt / 2, y]].map(p => p.join(',')).join(' '), fill: ask ? (fin ? '#13301c' : '#262110') : C.panel, stroke: ask ? (fin ? C.green : C.yellow) : C.edge, 'stroke-width': ask ? 3 : 2 }, A.svg);
+      A.tx(A.svg, cx, y + h / 2 - (L < 3 ? 12 : 0), show ? fmtN(L === it.a || fin ? it.base / Math.pow(10, L) : it.given) : ask ? '?' : '', { 'font-size': L < 3 ? 22 : 17, fill: ask ? (fin ? C.green : C.yellow) : C.text, class: fin && L !== it.g ? 'fade' : null });
+      if (L < 3) A.tx(A.svg, cx, y + h / 2 + 14, names[L], { 'font-size': 13, fill: C.muted });
+      else A.tx(A.svg, cx + 100, y + h / 2, names[L], { 'font-size': 13, fill: C.muted, 'text-anchor': 'start' });
+    }
+    if (V.phase === 'ask') return;
+    for (let L = 0; L < 3; L++) {
+      const y = yb - (L + 1) * h;
+      A.tx(A.svg, cx + w[L] / 2 + 34, y + 2, '÷ 10', { 'font-size': 18, fill: C.gold, class: 'fade', 'text-anchor': 'start' });
+      S.emo(A.svg, cx - w[L] / 2 - 26, y + 6, '🔥', 22, { class: 'fade' });
+    }
+    A.tx(A.svg, 18, 40, '🔥 about 90% lost as heat at each step', { 'font-size': 15, fill: C.muted, 'text-anchor': 'start', class: 'fade' });
+  }
+};
+
+/* 7-1-03 which plot has more biodiversity */
+const T_BIOD = {
+  id: 'biodiv', code: '7-1-03', name: 'Biodiversity', sec: 4, q: 'More biodiversity?', kind: 'choice',
+  gen: MODEL.genBio, typeOf: () => 'bio',
+  choices: () => [{ v: 'A', label: 'A' }, { v: 'B', label: 'B' }],
+  check: MODEL.checkBio, answer: it => ({ v: it.a }),
+  draw(A, it, V) {
+    const fin = done(V);
+    [['A', it.A, it.nA, 165], ['B', it.B, it.nB, 475]].forEach(([nm, list, n, x]) => {
+      const good = fin && nm === it.a;
+      A.el('rect', { x: x - 140, y: 30, width: 280, height: 270, rx: 18, fill: good ? '#13301c' : C.panel, stroke: good ? C.green : C.edge, 'stroke-width': good ? 3 : 2 }, A.svg);
+      A.tx(A.svg, x - 118, 54, nm, { 'font-size': 22, fill: C.muted });
+      const cols = 4, rows = Math.ceil(list.length / cols);
+      list.forEach((k, j) => S.emo(A.svg, x - 96 + (j % cols) * 64 + ((Math.floor(j / cols) % 2) * 14), 92 + Math.floor(j / cols) * (rows > 4 ? 46 : 56), k, 34));
+      if (!fin) return;
+      const kinds = [...new Set(list)];
+      kinds.forEach((k, j) => S.emo(A.svg, x - (kinds.length - 1) * 19 + j * 38, 330, k, 28, { class: 'pop' }));
+      A.tx(A.svg, x, 370, n + (n === 1 ? ' kind' : ' kinds') + ' · ' + list.length + ' living things', { 'font-size': 17, fill: good ? C.green : C.muted, class: 'fade' });
+    });
+    if (fin) A.tx(A.svg, 320, 402, 'Biodiversity counts kinds (species)', { 'font-size': 15, fill: C.muted, class: 'fade' });
+  }
+};
+
+/* 7-1-04 natural or human-caused change */
+const T_CHANGE = S.classTab({
+  id: 'change', code: '7-1-04', name: 'Change', sec: 5, q: 'What kind of change?', bank: MODEL.CHANGE, cues: MODEL.CHANGE_CUES,
+  cats: [{ v: 'nat', label: 'Natural', means: 'a natural disturbance' }, { v: 'hum', label: 'Human-caused', means: 'people caused it' }]
+});
+
+const PAGE = {
+  key: 'sci7-interactions-ecosystems-trainer-v1', course: 'Science 7 · Interactions and Ecosystems', title: 'Ecosystems Trainer',
+  notes: 'sci7-interactions-ecosystems-notes-v1.html', secText: t => 'Section ' + t.sec + ':', sans: true,
+  tabs: [T_BIO, T_ROLE, T_LEVEL, T_ARROW, T_WEB, T_ENERGY, T_BIOD, T_CHANGE]
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>

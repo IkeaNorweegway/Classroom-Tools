@@ -5,6 +5,16 @@ import { getReady, homeSheets, type CourseManifest, type CourseUnit, type Doc } 
 const accessible = { badge: 'Accessible' };
 const nonReader = { badge: 'Non-reader' };
 
+// Narrow concept trainers: one per unit, practice after the lesson. Rules: _sims-context.md (rules 19–25).
+// Built by scripts/drill/build.sh; edit the parts there, not the HTML.
+const trainers: Record<string, string> = {
+  'interactions-ecosystems': 'Ecosystems Trainer (biotic or abiotic, roles, food chains and webs, the 10% rule, biodiversity, change)',
+  'plants-food-fibre': 'Plants Trainer (cell parts, plant or animal cell, part jobs, xylem and phloem, photosynthesis, flowers, reproduction, biotech)',
+  'heat-temperature': 'Heat Trainer (°C and K, heat or temperature, heat flow, particles, conduction, convection, radiation, insulation)',
+  'structures-forces': 'Structures Trainer (structure types, loads, internal forces, beams, stability, levers, mechanical advantage, machines)',
+  'planet-earth': 'Planet Earth Trainer (layers, rock types, crystals, plate boundaries, earthquakes, volcanoes, weathering, rock layers)',
+};
+
 // Teacher guide version per unit; every guide is v2 except heat, which is v3.
 const guideVersion: Record<string, number> = { 'heat-temperature': 3 };
 
@@ -20,6 +30,7 @@ function unit(slug: string, label: string, sheets: [string, string][], more: { h
     ],
     extras: [
       getReady(`sci7-${slug}-prereq-practice-v1`),
+      ...(trainers[slug] ? [{ heading: 'Practice after the lesson', items: [{ label: trainers[slug], doc: `sci7-${slug}-trainer-v1`, type: 'interactive' as const }] }] : []),
       ...more,
       {
         heading: 'Quizzes and tests',
