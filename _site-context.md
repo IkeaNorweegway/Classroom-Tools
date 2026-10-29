@@ -180,6 +180,7 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 |---|---|---|
 | `Nav` | `Nav.astro` | Top nav bar (site name, course tabs, audience switch) and the per-course subnav |
 | `Progression` | `Progression.astro` | "The big picture" strip on parent pages: earlier grades → this year → later courses |
+| `Search` | `Search.astro` (+ `search-match.js`, `search-ui.js`) | Site search: the nav button and panel, the small-screen trigger in the subject row, and the inline box on the home page and `/parents` (see Search below) |
 | `UnitCard` | `UnitCard.astro` | Card on course index pages |
 | `LessonSection` | `LessonSection.astro` | Section within a lesson page |
 | `BaseLayout` | `BaseLayout.astro` | Base layout wrapping all pages |
@@ -220,9 +221,21 @@ Materials (HTML notes, worksheets, teacher guides) are served as static files fr
 /steam/view/[grade]/[doc]       Material viewer
 /resources/                     More resources — site-level page for extras not tied to a course
 /resources/morning-routine      Morning routine — CNN 10 newest episode (uploads playlist) + three reasoning questions; a photo writing prompt (`src/data/morning-routine.ts` `writingPrompts`, images in `public/morning-routine/`); an open-middle math question (`mathQuestions`). Shows one set per school day from a fixed start date (2026-09-01); Previous/Random/Next browse the banks
+/search-index.json              Site search index, built from the manifests, unit text and notes (src/pages/search-index.json.ts)
 ```
 
 `/resources/` is not a course: no tab in the top nav, no turntable icon, no `CourseKey`. It is linked from the home page, directly below the teacher Google Drive link. Its list is the `resources` array at the top of `src/pages/resources/index.astro`; it shows a "coming soon" card while that array is empty.
+
+---
+
+## Search
+
+One search across every course, for students and parents. A search button sits at the right of the top nav on wide screens and at the end of the subject row on small ones (`/` or Ctrl+K opens it on any page). The home page and `/parents` also have a search box.
+
+- **What it finds:** unit and topic pages; concepts, which are the `<h2>` section titles and vocabulary-table terms in each unit's student notes (CEFL has no notes, so its mini-workbook moments); and activities, which are the unit's `interactive` items (sims, games, trainers, prereq practice). Answer keys, teacher guides and any file with `answers` or `teacher` in its name are never indexed.
+- **Where it comes from:** `src/data/search.ts` builds `/search-index.json` at build time from the course manifests (links), the unit collections and parent guides (words to match on), and the notes HTML in `public/materials/`. New units and notes are picked up on the next build. A vocabulary table is found by the heading just before it ("Vocabulary", "Words to know", "New words", "Key terms"), so keep that pattern in new notes. A notes file the index can't find shows in the build log as `[search] missing notes`.
+- **Where a result goes:** the reader's view. In the parent view (or after choosing Parent on the home page), a unit or concept opens the parent guide; otherwise the student unit page. A concept row also links to its notes; an activity opens its viewer.
+- **Matching** (`src/components/search-match.js`): whole words, word starts, plurals and typos (1 in words of 5–7 letters, 2 in longer ones; swapped letters count as one). When nothing matches without a typo, it offers "Did you mean …?" from the words in the index. Results from the current course rank a little higher.
 
 ---
 

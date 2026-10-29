@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { navSubjects, courseByKey, audiences, audiencePath, type Audience, type Course, type CourseKey } from '../data/courses';
+import Search from './Search.astro';
 
 interface Props {
   course?: CourseKey;
@@ -125,11 +126,16 @@ let n = 0; // entry stagger index
               </div>
             </li>
           ))}
+          <!-- Small screens: search sits here, the top bar has no room -->
+          <li class="ml-1 lg:hidden">
+            <Search variant="trigger" dark={dark} />
+          </li>
         </ul>
         </div>
       </nav>
 
-      <div class="nav-intro ml-auto flex h-16 items-center" style="--n: 8">
+      <div class="nav-intro ml-auto flex h-16 items-center gap-2" style="--n: 8">
+        <Search dark={dark} />
         {showSwitch && (
           <nav aria-label="View for" class={`aud-switch ${dark ? 'aud-switch--dark' : ''}`}>
             {switchItems.map((a) => (
