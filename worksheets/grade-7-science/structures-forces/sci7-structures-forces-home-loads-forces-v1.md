@@ -4,6 +4,8 @@ course: science7
 unit: Structures and Forces
 skill: naming loads and the forces inside materials
 time: about 15 minutes
+notes: science7/view/structures-forces/sci7-structures-forces-notes-v1
+sections: s2, s3
 ---
 
 ::: tip

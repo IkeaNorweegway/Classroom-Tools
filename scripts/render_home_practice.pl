@@ -14,6 +14,14 @@
 #   perl scripts/render_home_practice.pl                       # every sheet
 #   perl scripts/render_home_practice.pl path/to/sheet.md ...  # just these
 #
+# Optional front matter `notes:` (a notes viewer path, as in the site URL after
+# /Classroom-Tools/) and `sections:` (ids such as s2, s3) add a line under the
+# header linking to those sections of the class notes. On a key, point `notes:`
+# at the notes answer key and the line says "filled-in class notes". The notes
+# HTML must be in public/materials and have those ids, or the render stops.
+#
+# After rendering, run scripts/stack_fractions.py on the Math 8 and Math 9 output.
+#
 # The format is the one in templates/home-practice-template.md. Keep the two
 # scripts in step: a change to one belongs in the other.
 use strict;
@@ -24,6 +32,7 @@ use Cwd qw(abs_path);
 use File::Basename qw(dirname basename);
 use File::Path qw(make_path);
 use File::Spec;
+use File::Find qw(find);
 use File::Glob qw(:bsd_glob);   # glob() must not split "Classroom tools" at the space
 
 my $ROOT = dirname(dirname(abs_path($0)));
@@ -47,6 +56,8 @@ my %COURSE = (
     'ela5'     => ['Grade 5 English Language Arts', '#b4235a', '#fbeaf0', '#d0688d'],
 );
 
+my $SITE_BASE = '/Classroom-Tools/';   # the site's base path (astro.config.mjs)
+
 my %BOX_LABEL = (example => 'Worked example', tip => '', check => 'Check yourself', answer => '');
 
 my $CSS = <<'CSS';
@@ -65,6 +76,8 @@ my $CSS = <<'CSS';
     .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 14px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
     .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
     .header-strip .meta { font-size: 9.5pt; color: #64748b; }
+    .header-strip .notes-link { font-size: 9.5pt; color: #64748b; margin: 2px 0 0; }
+    .notes-link a { color: var(--accent); font-weight: 600; }
     .name-row { display: flex; gap: 24px; margin: 8px 0 14px; font-size: 10.5pt; align-items: baseline; }
     .name-row span { color: #64748b; white-space: nowrap; }
     .name-row .b { flex: 1; width: auto; }
@@ -98,6 +111,48 @@ CSS
 
 sub esc { my ($s) = @_; $s =~ s/&/&amp;/g; $s =~ s/</&lt;/g; $s =~ s/>/&gt;/g; return $s; }
 sub escq { my ($s) = @_; $s = esc($s); $s =~ s/"/&quot;/g; $s =~ s/'/&#x27;/g; return $s; }
+
+my %NOTES_FILES;   # notes file name -> paths under public/materials
+my %ENT = (nbsp => ' ', amp => '&', lt => '<', gt => '>', quot => '"', apos => "'", rsquo => "\x{2019}", lsquo => "\x{2018}",
+           rdquo => "\x{201d}", ldquo => "\x{201c}", mdash => "\x{2014}", ndash => "\x{2013}", middot => "\x{b7}");
+sub decode_ent {
+    my ($s) = @_;
+    $s =~ s/&(?:#x([0-9a-f]+)|#(\d+)|(\w+));/defined $1 ? chr(hex $1) : defined $2 ? chr($2) : ($ENT{lc $3} \/\/ "&$3;")/gie;
+    return $s;
+}
+
+# The "See the class notes" line, linking to sections of the unit's notes.
+sub notes_line {
+    my ($meta, $path) = @_;
+    my $view = $meta->{notes} // '';
+    $view =~ s{^[\s/]+|[\s/]+$}{}g;
+    return '' if $view eq '';
+    (my $name = $view) =~ s{.*/}{};
+    my $base = basename($path);
+    find(sub { push @{ $NOTES_FILES{ substr($_, 0, -5) } }, $File::Find::name if /notes.*\.html\z/ }, $MATERIALS) unless %NOTES_FILES;
+    my $found = $NOTES_FILES{$name} // [];
+    die "$base: notes $name.html found " . scalar(@$found) . " times in public/materials\n" if @$found != 1;
+    open my $fh, '<', $found->[0] or die "$found->[0]: $!";
+    my $text = do { local $/; <$fh> };
+    close $fh;
+    my %heads;
+    $heads{$1} = $2 while $text =~ /<h2 id="([su]\d+)"[^>]*>(.*?)<\/h2>/gs;
+    my @ids = ($meta->{sections} // '') =~ /([su]\d+)/g;
+    die "$base: notes given but no sections\n" unless @ids;
+    my @links;
+    for my $sid (@ids) {
+        die "$base: $name has no section $sid\n" unless exists $heads{$sid};
+        (my $t = $heads{$sid}) =~ s/<[^>]+>//g;
+        $t = decode_ent($t);
+        $t =~ s/[\s\x{a0}]+/ /g;
+        $t =~ s/^ | $//g;
+        # "Section 2 · Sign rules", "2 · Fact", "Part 1: Energy" -> "Section 2: Sign rules"
+        $t = ($1 // 'Section') . " $2: $3" if $t =~ /^(?:(Section|Concept|Part|Unit)\s+)?(\d+)(?:\s*[:\x{2014}\x{2013}\x{b7}.-]\s*|\s+)(.*)$/i;
+        push @links, qq{<a href="$SITE_BASE} . escq($view) . qq{#$sid" target="_top">} . escq($t) . '</a>';
+    }
+    my $what = $name =~ /-answers/ ? 'filled-in class notes' : 'class notes';
+    return qq{\n    <p class="notes-link">Need a reminder? See the $what: } . join(" \x{b7} ", @links) . '</p>';
+}
 
 sub inline {
     my ($s) = @_;
@@ -206,7 +261,7 @@ $CSS  </style>
   <div class="header-strip">
     <p class="course-label">} . escq($course_label) . qq{ · Home practice</p>
     <h1>} . escq($title) . qq{</h1>
-    <p class="meta">One skill: } . escq($meta{skill}) . ' · ' . escq($time) . qq{</p>
+    <p class="meta">One skill: } . escq($meta{skill}) . ' · ' . escq($time) . qq{</p>} . notes_line(\%meta, $path) . qq{
   </div>
   $name_row
 } . body_html($text) . qq{

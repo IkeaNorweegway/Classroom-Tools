@@ -4,6 +4,8 @@ topic: linear-equations
 strand: algebra
 skill: solving and graphing one-variable inequalities
 time: about 15 minutes
+notes: math9/view/notes/linear-equations/math9-linear-equations-notes-v1
+sections: s4
 ---
 
 ::: tip

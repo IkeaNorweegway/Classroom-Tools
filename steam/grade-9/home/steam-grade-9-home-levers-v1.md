@@ -4,6 +4,8 @@ course: steam
 unit: Grade 9
 skill: how levers trade force for distance, as in a trebuchet
 time: about 15 minutes
+notes: steam/view/grade-9/steam9-trebuchet-notes-v1
+sections: s1
 ---
 
 ::: tip

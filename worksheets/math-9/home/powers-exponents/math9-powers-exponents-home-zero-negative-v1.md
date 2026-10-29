@@ -4,6 +4,8 @@ topic: powers-exponents
 strand: number
 skill: evaluating powers with zero exponents, negative bases and negative exponents
 time: about 15 minutes
+notes: math9/view/notes/powers-exponents/math9-powers-notes-v1
+sections: s1, s2, s7
 ---
 
 ::: tip

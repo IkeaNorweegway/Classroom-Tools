@@ -5,6 +5,8 @@ topic: probability
 strand: statistics-probability
 skill: P(A and B) = P(A) × P(B) for independent events
 time: about 15 minutes
+notes: math8/view/notes/probability/math8-probability-notes-v1
+sections: s3
 ---
 
 ::: tip

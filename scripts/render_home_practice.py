@@ -13,7 +13,13 @@ Run from the repo root:
 
 The format is the one in templates/home-practice-template.md. Styling matches
 the course worksheets (same header strip and name row; course or strand colour).
-After rendering, run scripts/stack_fractions.py on the output files.
+After rendering, run scripts/stack_fractions.py on the Math 8 and Math 9 output.
+
+Optional front matter `notes:` (a notes viewer path, as in the site URL after
+/Classroom-Tools/) and `sections:` (ids such as s2, s3) add a line under the
+header linking to those sections of the class notes. On a key, point `notes:`
+at the notes answer key and the line says "filled-in class notes". The notes
+HTML must be in public/materials and have those ids, or the render stops.
 """
 import html
 import re
@@ -37,11 +43,14 @@ STRAND = {
 COURSE = {
     'science':  ('Grade 6 Science',        '#1d7486', '#e8f2f4', '#4f9aa8'),
     'science7': ('Grade 7 Science',        '#2e7d55', '#e9f3ed', '#5fa37f'),
+    'social7':  ('Grade 7 Social Studies', '#4a6680', '#ecf1f5', '#7f97ad'),
     'social8':  ('Grade 8 Social Studies', '#8a4a78', '#f4eaf1', '#b07aa2'),
     'social9':  ('Grade 9 Social Studies', '#a6452f', '#f7ebe7', '#c97a66'),
     'steam':    ('STEAM',                  '#6650c2', '#efecf9', '#9483d8'),
     'ela5':     ('Grade 5 English Language Arts', '#b4235a', '#fbeaf0', '#d0688d'),
 }
+
+SITE_BASE = '/Classroom-Tools/'   # the site's base path (astro.config.mjs)
 
 BOX_LABEL = {'example': 'Worked example', 'tip': '', 'check': 'Check yourself', 'answer': ''}
 
@@ -61,6 +70,8 @@ CSS = """
     .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 14px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
     .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
     .header-strip .meta { font-size: 9.5pt; color: #64748b; }
+    .header-strip .notes-link { font-size: 9.5pt; color: #64748b; margin: 2px 0 0; }
+    .notes-link a { color: var(--accent); font-weight: 600; }
     .name-row { display: flex; gap: 24px; margin: 8px 0 14px; font-size: 10.5pt; align-items: baseline; }
     .name-row span { color: #64748b; white-space: nowrap; }
     .name-row .b { flex: 1; width: auto; }
@@ -99,6 +110,40 @@ def front_matter(text):
         raise SystemExit('missing front matter')
     meta = dict(re.findall(r'^(\w+):\s*(.*)$', m.group(1), re.M))
     return meta, text[m.end():]
+
+
+NOTES_FILES = {}   # notes file name -> paths under public/materials
+
+
+def notes_line(meta, md_path):
+    """The "See the class notes" line, linking to sections of the unit's notes."""
+    view = meta.get('notes', '').strip().strip('/')
+    if not view:
+        return ''
+    name = view.rsplit('/', 1)[-1]
+    if not NOTES_FILES:
+        for f in MATERIALS.rglob('*notes*.html'):
+            NOTES_FILES.setdefault(f.stem, []).append(f)
+    found = NOTES_FILES.get(name, [])
+    if len(found) != 1:
+        raise SystemExit(f'{md_path.name}: notes {name}.html found {len(found)} times in public/materials')
+    text = found[0].read_text(encoding='utf-8')
+    heads = dict(re.findall(r'<h2 id="([su]\d+)"[^>]*>(.*?)</h2>', text, re.S))
+    ids = re.findall(r'[su]\d+', meta.get('sections', ''))
+    if not ids:
+        raise SystemExit(f'{md_path.name}: notes given but no sections')
+    links = []
+    for sid in ids:
+        if sid not in heads:
+            raise SystemExit(f'{md_path.name}: {name} has no section {sid}')
+        t = re.sub(r'\s+', ' ', html.unescape(re.sub(r'<[^>]+>', '', heads[sid]))).strip()
+        # "Section 2 · Sign rules", "2 · Fact", "Part 1: Energy" -> "Section 2: Sign rules"
+        m = re.match(r'(?:(Section|Concept|Part|Unit)\s+)?(\d+)(?:\s*[:—–·.-]\s*|\s+)(.*)', t, re.I)
+        if m:
+            t = f'{m.group(1) or "Section"} {m.group(2)}: {m.group(3)}'
+        links.append(f'<a href="{SITE_BASE}{html.escape(view)}#{sid}" target="_top">{html.escape(t)}</a>')
+    what = 'filled-in class notes' if '-answers' in name else 'class notes'
+    return f'\n    <p class="notes-link">Need a reminder? See the {what}: ' + ' · '.join(links) + '</p>'
 
 
 def inline(s):
@@ -239,7 +284,7 @@ def render(md_path):
   <div class="header-strip">
     <p class="course-label">{html.escape(course_label)} · Home practice</p>
     <h1>{html.escape(title)}</h1>
-    <p class="meta">One skill: {html.escape(meta['skill'])} · {html.escape(meta.get('time', 'about 15 minutes'))}</p>
+    <p class="meta">One skill: {html.escape(meta['skill'])} · {html.escape(meta.get('time', 'about 15 minutes'))}</p>{notes_line(meta, md_path)}
   </div>
   {name_row}
 {body_html(body)}

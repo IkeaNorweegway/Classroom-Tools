@@ -4,6 +4,8 @@ topic: measurement
 strand: measurement-geometry
 skill: choosing and using volume formulas
 time: about 15 minutes
+notes: math9/view/notes/measurement/math9-measurement-notes-answers-v1
+sections: s3, s4
 ---
 
 ::: tip

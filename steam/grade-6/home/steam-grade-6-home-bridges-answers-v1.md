@@ -4,6 +4,8 @@ course: steam
 unit: Grade 6
 skill: why triangles and good design make strong structures
 time: about 15 minutes
+notes: steam/view/grade-6/steam6-bridges-notes-v1
+sections: s1, s2
 ---
 
 ::: tip

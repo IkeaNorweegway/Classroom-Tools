@@ -4,6 +4,8 @@ course: steam
 unit: Grade 7
 skill: using Newton's three laws
 time: about 15 minutes
+notes: steam/view/grade-7/steam7-dragster-notes-v1
+sections: s1, s2
 ---
 
 ::: tip

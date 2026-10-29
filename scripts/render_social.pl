@@ -72,7 +72,11 @@ my $EXTRA_CSS = <<'CSS';
 CSS
 
 sub slurp { my ($p) = @_; open my $fh, '<', $p or die "$p: $!"; local $/; my $s = <$fh>; close $fh; return $s; }
-sub spit  { my ($p, $s) = @_; $s = section_ids($s) if basename($p) =~ /notes/; open my $fh, '>', $p or die "$p: $!"; print $fh $s; close $fh; }
+# Student notes written this run. At the end, add_key_links.pl links each one
+# to its answer key (written in the same run).
+my @NOTES_WRITTEN;
+END { local $?; system($^X, "$ROOT/scripts/add_key_links.pl", @NOTES_WRITTEN) if @NOTES_WRITTEN; }
+sub spit  { my ($p, $s) = @_; push @NOTES_WRITTEN, $p if basename($p) =~ /notes/ && basename($p) !~ /-answers|teacher/; $s = section_ids($s) if basename($p) =~ /notes/; open my $fh, '>', $p or die "$p: $!"; print $fh $s; close $fh; }
 # Section ids on notes headings, so other pages can link to one section
 # (file.html#s3). Same rules as scripts/add_section_ids.py; keep them in step.
 sub section_ids {

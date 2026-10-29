@@ -4,6 +4,8 @@ course: science7
 unit: Heat and Temperature
 skill: identifying the three ways heat moves
 time: about 15 minutes
+notes: science7/view/heat-temperature/sci7-heat-temperature-notes-v1
+sections: s4
 ---
 
 ::: tip

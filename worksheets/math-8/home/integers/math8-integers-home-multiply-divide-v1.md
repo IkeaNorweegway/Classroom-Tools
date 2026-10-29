@@ -5,6 +5,8 @@ topic: integers
 strand: number
 skill: the sign rules for multiplying and dividing integers
 time: about 15 minutes
+notes: math8/view/notes/integers/math8-integers-notes-v1
+sections: s2, s3
 ---
 
 ::: tip

@@ -4,6 +4,8 @@ course: social9
 unit: Evolving Citizenship
 skill: matching real situations to Charter rights
 time: about 15 minutes
+notes: social9/view/evolving-citizenship/soc9-evolving-citizenship-notes-v1
+sections: s3
 ---
 
 ::: tip

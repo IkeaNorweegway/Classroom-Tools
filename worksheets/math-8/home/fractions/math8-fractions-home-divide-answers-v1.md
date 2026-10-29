@@ -5,6 +5,8 @@ topic: fractions
 strand: number
 skill: dividing fractions ("how many fit" and keep-change-flip)
 time: about 15 minutes
+notes: math8/view/notes/fractions/math8-fractions-notes-answers-v1
+sections: s3
 ---
 
 ::: tip

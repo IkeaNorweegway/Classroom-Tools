@@ -4,6 +4,8 @@ topic: linear-relations
 strand: algebra
 skill: explaining the slope and y-intercept in real situations
 time: about 15 minutes
+notes: math9/view/notes/linear-relations/math9-linear-relations-notes-answers-v1
+sections: s2, s3
 ---
 
 ::: tip

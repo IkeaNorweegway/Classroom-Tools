@@ -4,6 +4,8 @@ course: science
 unit: Living Systems
 skill: sorting biotic and abiotic factors and explaining how they connect
 time: about 15 minutes
+notes: materials/view/living-systems/sci6-living-systems-notes-gr6-v1
+sections: s1
 ---
 
 ::: tip

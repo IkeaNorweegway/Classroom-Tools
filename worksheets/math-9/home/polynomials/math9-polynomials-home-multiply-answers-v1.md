@@ -4,6 +4,8 @@ topic: polynomials
 strand: algebra
 skill: expanding (x + a)(x + b) with an area model
 time: about 15 minutes
+notes: math9/view/notes/polynomials/math9-polynomials-notes-answers-v1
+sections: s6
 ---
 
 ::: tip

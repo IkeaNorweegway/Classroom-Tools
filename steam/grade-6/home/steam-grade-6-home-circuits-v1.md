@@ -4,6 +4,8 @@ course: steam
 unit: Grade 6
 skill: how a complete circuit works
 time: about 15 minutes
+notes: steam/view/grade-6/steam6-littlebits-notes-v1
+sections: s1
 ---
 
 ::: tip

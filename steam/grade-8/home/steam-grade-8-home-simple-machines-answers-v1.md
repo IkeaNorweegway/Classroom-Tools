@@ -4,6 +4,8 @@ course: steam
 unit: Grade 8
 skill: naming simple machines and finding mechanical advantage
 time: about 15 minutes
+notes: steam/view/grade-8/steam8-rubegoldberg-notes-v1
+sections: s1
 ---
 
 ::: tip

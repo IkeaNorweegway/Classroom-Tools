@@ -4,6 +4,8 @@ course: ela5
 unit: Science Fiction
 skill: turning a "what if?" idea into a science fiction story plan
 time: about 15 minutes
+notes: ela5/view/science-fiction/ela5-science-fiction-anchor-notes-v1
+sections: s1
 ---
 
 ::: tip

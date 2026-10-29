@@ -4,6 +4,8 @@ course: social9
 unit: Evolving Citizenship
 skill: citizenship statuses, rights and responsibilities
 time: about 15 minutes
+notes: social9/view/evolving-citizenship/soc9-evolving-citizenship-notes-answers-v1
+sections: s1, s4
 ---
 
 ::: tip

@@ -4,6 +4,8 @@ course: social9
 unit: Canada in the Second World War
 skill: how the war changed life at home in Canada
 time: about 15 minutes
+notes: social9/view/canada-in-wwii/soc9-canada-in-wwii-notes-answers-v1
+sections: s3
 ---
 
 ::: tip

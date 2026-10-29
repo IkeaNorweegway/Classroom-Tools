@@ -5,6 +5,8 @@ topic: surface-area-volume
 strand: measurement-geometry
 skill: finding the surface area of a rectangular prism
 time: about 15 minutes
+notes: math8/view/notes/surface-area-volume/math8-surface-area-volume-notes-answers-v1
+sections: s2
 ---
 
 ::: tip

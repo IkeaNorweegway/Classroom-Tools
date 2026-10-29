@@ -5,6 +5,8 @@ topic: data-displays
 strand: statistics-probability
 skill: matching data to the best kind of graph
 time: about 15 minutes
+notes: math8/view/notes/data-displays/math8-data-displays-notes-answers-v1
+sections: s2
 ---
 
 ::: tip

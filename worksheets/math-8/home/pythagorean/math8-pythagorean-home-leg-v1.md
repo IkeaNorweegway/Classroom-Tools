@@ -5,6 +5,8 @@ topic: pythagorean
 strand: measurement-geometry
 skill: finding a shorter side when the longest side is known
 time: about 15 minutes
+notes: math8/view/notes/pythagorean/math8-pythagorean-notes-v1
+sections: s3
 ---
 
 ::: tip

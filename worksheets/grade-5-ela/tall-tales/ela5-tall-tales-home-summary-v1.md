@@ -4,6 +4,8 @@ course: ela5
 unit: Tall Tales
 skill: writing a short summary of a story in your own words
 time: about 15 minutes
+notes: ela5/view/tall-tales/ela5-tall-tales-anchor-notes-v1
+sections: s5
 ---
 
 ::: tip

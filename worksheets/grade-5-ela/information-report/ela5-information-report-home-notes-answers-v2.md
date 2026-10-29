@@ -4,6 +4,8 @@ course: ela5
 unit: Information Report
 skill: taking short notes and retelling facts in your own words
 time: about 15 minutes
+notes: ela5/view/information-report/ela5-information-report-anchor-notes-answers-v2
+sections: s8
 ---
 
 ::: tip

@@ -5,6 +5,8 @@ topic: percents
 strand: number
 skill: finding a percent of a number with benchmarks
 time: about 15 minutes
+notes: math8/view/notes/percents/math8-percents-notes-v1
+sections: s2
 ---
 
 ::: tip

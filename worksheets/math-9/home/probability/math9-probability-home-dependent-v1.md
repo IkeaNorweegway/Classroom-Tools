@@ -4,6 +4,8 @@ topic: probability
 strand: statistics-probability
 skill: finding probabilities when items are not replaced
 time: about 15 minutes
+notes: math9/view/notes/probability/math9-probability-notes-v1
+sections: s4
 ---
 
 ::: tip

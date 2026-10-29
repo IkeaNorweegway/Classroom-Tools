@@ -5,6 +5,8 @@ topic: square-roots
 strand: number
 skill: squaring a number and finding the square root of a perfect square
 time: about 15 minutes
+notes: math8/view/notes/square-roots/math8-square-roots-notes-v1
+sections: s1, s2
 ---
 
 ::: tip

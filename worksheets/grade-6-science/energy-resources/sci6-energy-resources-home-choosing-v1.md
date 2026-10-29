@@ -4,6 +4,8 @@ course: science
 unit: Energy Resources
 skill: weighing cost, reliability and environment
 time: about 15 minutes
+notes: materials/view/energy-resources/sci6-energy-resources-notes-v1
+sections: s3
 ---
 
 ::: tip

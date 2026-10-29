@@ -4,6 +4,8 @@ topic: square-roots
 strand: number
 skill: finding a missing side of a right triangle
 time: about 15 minutes
+notes: math9/view/notes/square-roots/math9-square-roots-notes-v1
+sections: s3
 ---
 
 ::: tip

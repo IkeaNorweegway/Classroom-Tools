@@ -4,6 +4,8 @@ topic: rational-numbers
 strand: number
 skill: adding and subtracting positive and negative fractions and decimals
 time: about 15 minutes
+notes: math9/view/notes/rational-numbers/math9-rational-numbers-notes-answers-v1
+sections: s2
 ---
 
 ::: tip

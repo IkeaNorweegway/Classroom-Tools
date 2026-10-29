@@ -6,6 +6,8 @@ strand: [Math 8 and 9 only: number | algebra | measurement-geometry | statistics
 unit: [other courses: unit name for the header, e.g. Heat and Temperature]
 skill: [one skill, in a few words]
 time: [about 15 minutes]
+notes: [the unit's notes, as its site address after /Classroom-Tools/, e.g. math8/view/notes/integers/math8-integers-notes-v1]
+sections: [the notes sections this sheet practises, e.g. s2, s3]
 ---
 
 <!--
@@ -23,6 +25,17 @@ Name: [prefix]-[unit]-home-[skill]-v1.md in the unit's type folder (Math 9:
 worksheets/math-9/home/[topic]/; STEAM: steam/grade-N/home/), and list it in
 the course manifest in src/data/ so the pages and the viewer link it.
 Answers: same name with -answers, same format, with every step shown.
+
+Notes link: `notes:` and `sections:` put "Need a reminder? See the class
+notes: Section 2: ..." under the title, linked to those sections. Copy the
+address from the unit parent page's "Jump to a part of the notes" list
+(drop /Classroom-Tools/ and the #s2). Pick the one or two sections that
+teach this sheet's skill. On the answers file, point `notes:` at the notes
+answer key instead (e.g. ...-notes-answers-v1, from the parent page's answer
+keys); the line then says "filled-in class notes". STEAM notes have no key,
+so STEAM answers link to the notes. The render stops if a file or section is
+missing.
+After adding the line, print the sheet to check it still fits one page.
 
 Format rules for the renderer:
   ## Heading            section heading

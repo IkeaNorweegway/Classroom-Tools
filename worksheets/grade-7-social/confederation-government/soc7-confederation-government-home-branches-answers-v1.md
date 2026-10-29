@@ -4,6 +4,8 @@ course: social7
 unit: Creating Canada's Government
 skill: matching government jobs to the executive, legislative and judicial branches
 time: about 15 minutes
+notes: social7/view/confederation-government/soc7-confederation-government-notes-answers-v1
+sections: s3
 ---
 
 ::: tip

@@ -5,6 +5,8 @@ topic: square-roots
 strand: number
 skill: estimating the square root of a number that is not a perfect square
 time: about 15 minutes
+notes: math8/view/notes/square-roots/math8-square-roots-notes-answers-v1
+sections: s3
 ---
 
 ::: tip

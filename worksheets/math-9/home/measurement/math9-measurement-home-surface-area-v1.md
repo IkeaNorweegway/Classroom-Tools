@@ -4,6 +4,8 @@ topic: measurement
 strand: measurement-geometry
 skill: finding surface area and leaving out hidden faces
 time: about 15 minutes
+notes: math9/view/notes/measurement/math9-measurement-notes-v1
+sections: s5
 ---
 
 ::: tip

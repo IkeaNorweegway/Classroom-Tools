@@ -4,6 +4,8 @@ course: steam
 unit: Grade 8
 skill: finding and fixing bugs one change at a time
 time: about 15 minutes
+notes: steam/view/grade-8/steam8-platformgame-notes-v1
+sections: s2
 ---
 
 ::: tip

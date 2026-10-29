@@ -4,6 +4,8 @@ course: social8
 unit: Ideologies
 skill: sorting ideas by individualism and collectivism
 time: about 15 minutes
+notes: social8/view/ideologies/soc8-ideologies-notes-answers-v1
+sections: s1, s3
 ---
 
 ::: tip

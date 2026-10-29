@@ -4,6 +4,8 @@ topic: square-roots
 strand: number
 skill: estimating square roots that aren't perfect squares
 time: about 15 minutes
+notes: math9/view/notes/square-roots/math9-square-roots-notes-answers-v1
+sections: s2
 ---
 
 ::: tip

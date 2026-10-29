@@ -4,6 +4,8 @@ course: science
 unit: Energy Resources
 skill: sorting energy resources and explaining processing
 time: about 15 minutes
+notes: materials/view/energy-resources/sci6-energy-resources-notes-answers-v1
+sections: s1, s2
 ---
 
 ::: tip

@@ -4,6 +4,8 @@ course: science
 unit: Matter
 skill: describing solids, liquids and gases with the particle model
 time: about 15 minutes
+notes: materials/view/matter/sci6-matter-notes-v1
+sections: s1, s2
 ---
 
 ::: tip

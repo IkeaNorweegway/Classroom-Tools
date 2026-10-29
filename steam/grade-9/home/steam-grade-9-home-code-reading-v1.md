@@ -4,6 +4,8 @@ course: steam
 unit: Grade 9
 skill: tracing short Python programs line by line
 time: about 15 minutes
+notes: steam/view/grade-9/steam9-python-notes-v1
+sections: s2
 ---
 
 ::: tip

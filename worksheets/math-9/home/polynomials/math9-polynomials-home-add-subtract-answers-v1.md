@@ -4,6 +4,8 @@ topic: polynomials
 strand: algebra
 skill: collecting like terms when adding and subtracting polynomials
 time: about 15 minutes
+notes: math9/view/notes/polynomials/math9-polynomials-notes-answers-v1
+sections: s3, s4
 ---
 
 ::: tip

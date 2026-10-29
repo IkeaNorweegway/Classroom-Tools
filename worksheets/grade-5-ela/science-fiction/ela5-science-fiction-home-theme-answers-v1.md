@@ -4,6 +4,8 @@ course: ela5
 unit: Science Fiction
 skill: stating the theme of a story as a full sentence
 time: about 15 minutes
+notes: ela5/view/science-fiction/ela5-science-fiction-anchor-notes-answers-v1
+sections: s3
 ---
 
 ::: tip

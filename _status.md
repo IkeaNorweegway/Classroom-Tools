@@ -1,5 +1,5 @@
 # Project Status
-*Last updated: 2026-10-28*
+*Last updated: 2026-10-29*
 
 Current state only. Keep this file short: update the tables and the open list, and put session detail in the commit message. The session log up to 2026-10-05 is in `_status-archive.md`.
 
@@ -31,6 +31,8 @@ Current state only. Keep this file short: update the tables and the open list, a
 - **STEAM:** Grade 9 Unit 1 language (Java or Python, both built). Soldering safety protocol, wood-shop access, littleBits inventory, and the Rube Goldberg cross-group protocol are open in `steam/_context.md`.
 - **Slow reveal graphs:** decide whether to build a generic recording sheet for daily warm-up use.
 - **Materials suite:** `_meta-context.md` lists a PPTX deck per unit. Class slides now exist as web decks (`slides/`, first one 2026-10-19), not PPTX. Decide whether web decks replace the PPTX line in the suite.
+- **Home sheet notes links (2026-10-29):** every linked home sheet (122) names and links the one to three notes sections it practises; each key links to the same sections of the notes answer key (STEAM: the notes, which have no key). The matches were picked from sheet and section titles and key words; a teacher should skim them (the `sections:` line in each source). Gaps: Math 9 "Can You Trust the Data?" covers bias and samples, which the notes don't teach (it links to correlation versus cause only). STEAM sheets link to the project notes they practise, not always the grade's first project. Grade 5 Science Fiction "What If…?" already printed on two pages before this change.
+- **Notes answer-key links (2026-10-29):** 77 student notes packages link to their key at the top and at the end of each section (437 section links, hidden in print). French Grade 6 notes, the Grade 6 year notes and STEAM notes have no key, so no links. Decide whether students should see the key links this easily (they were already on the student pages, collapsed).
 - **Social 9 Urbanization notes answer key:** the notes say "Canada experienced a ___ boom" (answer: population), but the key's prompt is "a population ___" with the answer "boom". The class slides use "population". Fix the key.
 
 - **Social 7 (2026-10-19):** all five units need a teacher read-through, especially the sensitive content (the Indian Act, treaties, scrip, Red River and 1885, the head tax, Komagata Maru, the 1907 riots, P.C. 1911-1324) and the misconceptions, importance scores, week allocations, unit order, local outcome codes and inquiry options in `_courses/grade-7-social/_context.md`, which are this workspace's additions. The Grade 5–6 "comes from" lines in the parent guides are best guesses. Workbook and test quotes marked "sample" were written for the questions; the 1900s poster slogans are real. Facts worth a second look before printing: Red River population (~12,000), Komagata Maru admissions (about two dozen), Victoria Crosses (about 70), CPR land grant (25 million acres), House of Commons seats (343). The boundary "maps" are schematic blocks; real maps could be built with `scripts/build_social_maps.py`.

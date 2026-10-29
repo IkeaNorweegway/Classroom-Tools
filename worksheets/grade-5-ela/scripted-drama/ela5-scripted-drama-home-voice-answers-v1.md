@@ -4,6 +4,8 @@ course: ela5
 unit: Scripted Drama
 skill: using voice and body to change the meaning of a line
 time: about 15 minutes
+notes: ela5/view/scripted-drama/ela5-scripted-drama-anchor-notes-answers-v1
+sections: s4
 ---
 
 ::: tip

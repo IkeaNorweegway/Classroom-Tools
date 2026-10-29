@@ -74,6 +74,19 @@ const backHref = `${base}${backPathFor(slug!)}`;
       function go() { if (f && location.hash) f.src = f.src.split('#')[0] + location.hash; }
       go();
       window.addEventListener('hashchange', go);
+      // Answer-key links in a notes file (.key-link, from scripts/add_key_links.pl) point at
+      // the key file beside it. Open the key in this viewer instead, in the whole window.
+      function keyLinks() {
+        var d; try { d = f.contentDocument; } catch (e) { return; }
+        if (!d) return;
+        var here = location.pathname.replace(/[^/]*\/?$/, '');
+        d.querySelectorAll('.key-link a').forEach(function (a) {
+          var u = new URL(a.getAttribute('href'), d.baseURI);
+          a.href = here + u.pathname.split('/').pop().replace(/\.html$/, '') + u.hash;
+          a.target = '_top';
+        });
+      }
+      if (f) { f.addEventListener('load', keyLinks); keyLinks(); }
     })();
   </script>
 </body>

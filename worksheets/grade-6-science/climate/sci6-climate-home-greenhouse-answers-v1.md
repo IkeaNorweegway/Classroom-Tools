@@ -4,6 +4,8 @@ course: science
 unit: Climate
 skill: explaining the greenhouse effect and climate change
 time: about 15 minutes
+notes: materials/view/climate/sci6-climate-notes-answers-v1
+sections: s2, s3
 ---
 
 ::: tip

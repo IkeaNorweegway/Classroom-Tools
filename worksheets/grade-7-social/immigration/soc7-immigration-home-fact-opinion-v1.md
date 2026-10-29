@@ -4,6 +4,8 @@ course: social7
 unit: Immigration After Confederation
 skill: telling facts from opinions in historical sources
 time: about 15 minutes
+notes: social7/view/immigration/soc7-immigration-notes-v1
+sections: s6
 ---
 
 ::: tip

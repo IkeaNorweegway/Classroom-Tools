@@ -5,6 +5,8 @@ topic: probability
 strand: statistics-probability
 skill: listing the outcomes of two events and finding a probability
 time: about 15 minutes
+notes: math8/view/notes/probability/math8-probability-notes-answers-v1
+sections: s2
 ---
 
 ::: tip

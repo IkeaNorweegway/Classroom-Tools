@@ -4,6 +4,8 @@ topic: similarity
 strand: measurement-geometry
 skill: finding and using a scale factor between similar shapes
 time: about 15 minutes
+notes: math9/view/notes/similarity/math9-similarity-notes-v1
+sections: s2
 ---
 
 ::: tip

@@ -4,6 +4,8 @@ course: science
 unit: Forces
 skill: finding the push-back force, and elastic versus plastic
 time: about 15 minutes
+notes: materials/view/forces/sci6-forces-notes-v1
+sections: s4, s5
 ---
 
 ::: tip

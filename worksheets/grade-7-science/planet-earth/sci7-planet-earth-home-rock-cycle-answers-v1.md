@@ -4,6 +4,8 @@ course: science7
 unit: Planet Earth
 skill: how igneous, sedimentary and metamorphic rocks form and change
 time: about 15 minutes
+notes: science7/view/planet-earth/sci7-planet-earth-notes-answers-v2
+sections: s2
 ---
 
 ::: tip

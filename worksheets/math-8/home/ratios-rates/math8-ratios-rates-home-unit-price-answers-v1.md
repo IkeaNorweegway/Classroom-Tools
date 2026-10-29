@@ -5,6 +5,8 @@ topic: ratios-rates
 strand: number
 skill: finding unit rates to compare prices
 time: about 15 minutes
+notes: math8/view/notes/ratios-rates/math8-ratios-rates-notes-answers-v1
+sections: s3
 ---
 
 ::: tip

@@ -5,6 +5,8 @@ topic: views-transformations
 strand: measurement-geometry
 skill: finding coordinates after a translation, reflection or rotation
 time: about 15 minutes
+notes: math8/view/notes/views-transformations/math8-views-transformations-notes-v1
+sections: s3
 ---
 
 ::: tip

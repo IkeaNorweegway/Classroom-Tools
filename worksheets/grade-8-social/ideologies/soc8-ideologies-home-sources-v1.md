@@ -4,6 +4,8 @@ course: social8
 unit: Ideologies
 skill: asking who made a source, why, and what it leaves out
 time: about 15 minutes
+notes: social8/view/ideologies/soc8-ideologies-notes-v1
+sections: s5
 ---
 
 ::: tip

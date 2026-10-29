@@ -4,6 +4,8 @@ topic: similarity
 strand: measurement-geometry
 skill: using similar triangles to find heights and distances
 time: about 15 minutes
+notes: math9/view/notes/similarity/math9-similarity-notes-answers-v1
+sections: s4
 ---
 
 ::: tip

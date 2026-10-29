@@ -5,6 +5,8 @@ topic: data-displays
 strand: statistics-probability
 skill: explaining how a graph can give the wrong idea
 time: about 15 minutes
+notes: math8/view/notes/data-displays/math8-data-displays-notes-v1
+sections: s3
 ---
 
 ::: tip

@@ -4,6 +4,8 @@ course: social7
 unit: Building the Canadian State
 skill: reading a timeline of provinces and territories joining Canada
 time: about 15 minutes
+notes: social7/view/state-building/soc7-state-building-notes-v1
+sections: s3, s6
 ---
 
 ::: tip

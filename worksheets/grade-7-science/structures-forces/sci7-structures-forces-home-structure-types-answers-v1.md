@@ -4,6 +4,8 @@ course: science7
 unit: Structures and Forces
 skill: classifying solid, frame and shell structures
 time: about 15 minutes
+notes: science7/view/structures-forces/sci7-structures-forces-notes-answers-v2
+sections: s1
 ---
 
 ::: tip

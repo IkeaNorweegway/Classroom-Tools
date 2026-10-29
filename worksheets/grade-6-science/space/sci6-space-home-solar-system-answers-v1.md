@@ -4,6 +4,8 @@ course: science
 unit: Space
 skill: naming and comparing objects in the solar system
 time: about 15 minutes
+notes: materials/view/space/sci6-space-notes-answers-v1
+sections: s1
 ---
 
 ::: tip

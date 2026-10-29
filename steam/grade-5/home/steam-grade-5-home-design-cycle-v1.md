@@ -4,6 +4,8 @@ course: steam
 unit: Grade 5
 skill: planning, building, testing and improving a design
 time: about 15 minutes
+notes: steam/view/grade-5/steam5-coaster-notes-v1
+sections: s3
 ---
 
 ::: tip
