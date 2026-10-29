@@ -6,7 +6,11 @@ const MODEL = (() => {
 
   /* CG1 name the part */
   const KINDS = ['radius', 'diameter', 'chord', 'tangent'];
-  function genName() { const kind = pick(KINDS), a = rnd(0, 359), span = rnd(50, 150); return { kind, a, span }; }
+  // Chords are sometimes nearly diameters (the trap); a faint second part is sometimes drawn to ignore.
+  function genName() {
+    const kind = pick(KINDS), a = rnd(0, 359), span = chance(.4) ? rnd(150, 170) : rnd(40, 140);
+    return { kind, a, span, extra: chance(.5) ? pick(KINDS.filter(k => k !== kind)) : null, ea: a + rnd(70, 290), espan: rnd(60, 140) };
+  }
   function checkName(it, r) {
     if (r.v === it.kind) return { ok: true };
     return { code: 'is-' + it.kind, cue: { radius: 'Centre to the circle: radius', diameter: 'Through the centre: diameter', chord: 'Misses the centre: a chord', tangent: 'Touches at one point: tangent' }[it.kind] };

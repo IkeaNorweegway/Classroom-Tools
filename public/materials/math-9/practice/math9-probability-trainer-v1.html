@@ -20,7 +20,7 @@
    ?debug=1 puts DRILL (and MODEL) on window, turns off saving and motion.
    ===================================================================== -->
 <style>
-/* ===== DRILL SHELL CSS START (same in every Math 9 trainer; see _sims-context.md "Narrow trainer format") ===== */
+/* ===== DRILL SHELL CSS START (same in every narrow trainer; see _sims-context.md "Narrow trainer format") ===== */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   [hidden] { display: none !important; }
   :root {
@@ -64,6 +64,9 @@
   .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
   .stage svg text.m { font-family: var(--math); font-weight: 400; }
   .stage svg .hit { cursor: pointer; }
+  .stage svg text.emo { stroke: none; font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif; font-weight: 400; }
+  .sans .prompt { font-family: inherit; font-weight: 650; font-size: 26px; }
+  .sans .choice { font-size: 19px; line-height: 1.15; padding: 4px 8px; }
   .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
   .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
   .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
@@ -196,6 +199,7 @@ const Q = (() => {
   function parse(s) {
     s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
     if (s === '') return '';
+    if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
     if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
     const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
     if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
@@ -302,10 +306,17 @@ const MODEL = (() => {
   }
 
   /* PR3/PR4 does the chance change? */
+  // No memory (coin, die, spinner, anything put back) vs a changed bag or deck (kept out).
+  const SUITS = [['♥', 'hearts'], ['♠', 'spades'], ['♦', 'diamonds'], ['♣', 'clubs']];
   function genNext() {
-    const kind = pick(['coin', 'die', 'bagout', 'bagout', 'bagback', 'bagother']);
-    if (kind === 'coin') { const k = rnd(4, 7); return { kind, k, ans: 'same' }; }
-    if (kind === 'die') { const k = rnd(6, 12); return { kind, k, ans: 'same' }; }
+    const kind = pick(['coin', 'die', 'spin', 'bagout', 'bagback', 'bagother', 'cardout', 'cardback', 'cardother']);
+    if (kind === 'coin') { const face = pick(['H', 'T']); return { kind, face, k: rnd(4, 7), ans: 'same' }; }
+    if (kind === 'die') { const face = rnd(1, 6); return { kind, face, k: rnd(6, 12), ans: 'same', miss: chance(.5) }; }
+    if (kind === 'spin') { const sec = pick([3, 4, 5]), col = pick(['red', 'blue', 'green']); return { kind, sec, col, k: rnd(3, 6), ans: 'same' }; }
+    if (kind.startsWith('card')) {
+      const [s1, s2] = Q.shuffle(SUITS), k = rnd(2, 4);
+      return { kind, drawn: s1, ask: kind === 'cardother' ? s2 : s1, k, ans: kind === 'cardout' ? 'lower' : kind === 'cardother' ? 'higher' : 'same' };
+    }
     const red = rnd(4, 7), blue = rnd(3, 6), k = rnd(2, 3);
     if (kind === 'bagback') return { kind, red, blue, k, ans: 'same' };
     if (kind === 'bagout') return { kind, red, blue, k, ans: 'lower' };
@@ -313,17 +324,25 @@ const MODEL = (() => {
   }
   function checkNext(it, r) {
     if (r.v === it.ans) return { ok: true };
-    const cue = { coin: 'The coin has no memory', die: 'The die has no memory', bagback: 'Put back: the bag is the same', bagout: 'Fewer reds left: lower', bagother: 'Fewer blues, same reds: higher' }[it.kind];
+    const cue = { coin: 'The coin has no memory', die: 'The die has no memory', spin: 'The spinner has no memory', bagback: 'Put back: the bag is the same', bagout: 'Fewer reds left: lower', bagother: 'Fewer blues, same reds: higher', cardback: 'Put back: the deck is the same', cardout: 'Fewer of that suit left: lower', cardother: 'Same suit count, smaller deck: higher' }[it.kind];
     return { code: 'pick', cue };
   }
+  // P(the asked thing) before and after, for the picture.
+  function nextOdds(it) {
+    if (it.kind.startsWith('card')) { const out = it.kind !== 'cardback', same = it.ask === it.drawn; return [Q.q(13, 52), Q.q(13 - (out && same ? it.k : 0), 52 - (out ? it.k : 0))]; }
+    if (it.kind.startsWith('bag')) { const n = it.red + it.blue, out = it.kind !== 'bagback'; return [Q.q(it.red, n), Q.q(it.red - (it.kind === 'bagout' ? it.k : 0), n - (out ? it.k : 0))]; }
+    const p = it.kind === 'coin' ? Q.q(1, 2) : it.kind === 'die' ? Q.q(1, 6) : Q.q(1, it.sec); return [p, p];
+  }
 
-  return { COLS, DIE, EXPS, genProb, checkProb, genNot, checkNot, genExp, checkExp, genOut, checkOut, genAnd, checkAnd, genNoRep, checkNoRep, genNext, checkNext };
+  return { COLS, DIE, EXPS, genProb, checkProb, genNot, checkNot, genExp, checkExp, genOut, checkOut, genAnd, checkAnd, genNoRep, checkNoRep, genNext, checkNext, nextOdds };
 })();
 /* ===================== MODEL END ===================== */
 
 
-/* ===== DRILL SHELL START (same in every Math 9 trainer) =====
+/* ===== DRILL SHELL START (same in every narrow trainer: Math 9 and Science 7) =====
    A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   Optional: PAGE.sep (heading separator after "Section N", default —), PAGE.secText(tab) (the whole heading text
+   for the 📖 link), PAGE.sans (prompts in the plain font, for science). TAB.cols (2 or 3) sets the choice grid.
    A TAB is one narrow skill:
      id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
      gen()                 -> a new item (from MODEL)
@@ -336,7 +355,11 @@ const MODEL = (() => {
      check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
      answer(item)          -> the right answer, as resp, for Show me
      draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
-   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown). */
+     typeOf(item)          -> the question type, for weighting (optional; default: the item's form/kind/shape/... fields)
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown).
+   Weighting: each question type has a score, saved per tab. A first-try right answer lowers it (to half weight at
+   most), a miss or Show me raises it (to about 2.5× at most). Each new item is picked from 8 generated candidates
+   by weight, so missed types come back more often and types answered right still appear, less often. */
 const DRILL = (() => {
   const $ = id => document.getElementById(id);
   const NS = 'http://www.w3.org/2000/svg';
@@ -346,8 +369,8 @@ const DRILL = (() => {
   const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
     blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
   let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
-  let save = { tab: null, best: {} };
-  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); } catch (e) { /* storage blocked */ } }
+  let save = { tab: null, best: {}, w: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); if (!save.w || typeof save.w !== 'object') save.w = {}; } catch (e) { /* storage blocked */ } }
   function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
 
   /* ---------- SVG drawing kit ---------- */
@@ -459,7 +482,7 @@ const DRILL = (() => {
       if (COARSE) box.appendChild(keypad());
     } else if (tab.kind === 'choice') {
       const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
-      row.className = 'choices' + (long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      row.className = 'choices' + (tab.cols === 2 ? ' two' : tab.cols === 3 ? ' three' : long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
       chs.forEach(c => {
         const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
         b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
@@ -503,10 +526,31 @@ const DRILL = (() => {
   }
 
   /* ---------- one item ---------- */
+  /* ---------- weighting: missed question types come back more often ---------- */
+  const TYPE_FIELDS = ['form', 'kind', 'shape', 'type', 'rep', 'ask', 'what', 'mode', 'rule', 'ans', 'useD', 'back', 'direct', 'flip', 'rat', 'idCol'];
+  function keyOf(it) {
+    if (tab.typeOf) return String(tab.typeOf(it));
+    return TYPE_FIELDS.filter(k => typeof it[k] === 'string' || typeof it[k] === 'boolean').map(k => k + ':' + it[k]).join('|');
+  }
+  const scores = () => (save.w[tab.id] = save.w[tab.id] || {});
+  const weightOf = k => Math.pow(2, scores()[k] || 0);
+  function record(right) {
+    const s = scores(), k = item.__key; if (k == null) return;
+    s[k] = right ? Math.max(-1, (s[k] || 0) - .5) : Math.min(1.3, (s[k] || 0) + 1);
+    store();
+  }
   function newItem(given) {
     let it = given, key = '';
-    if (!it) { for (let i = 0; i < 25; i++) { it = tab.gen(); key = JSON.stringify(it); if (key !== lastKey) break; } }
+    if (!it) {
+      const cands = [];
+      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
+      if (!cands.length) cands.push(tab.gen());
+      const ws = cands.map(c => weightOf(keyOf(c))), total = ws.reduce((a, b) => a + b, 0);
+      let r = Q.rnd(0, 999999) / 1e6 * total, i = 0; while (i < cands.length - 1 && r >= ws[i]) { r -= ws[i]; i++; }
+      it = cands[i]; key = JSON.stringify(it);
+    }
     lastKey = key || JSON.stringify(it);
+    Object.defineProperty(it, '__key', { value: keyOf(it), enumerable: false, configurable: true, writable: true });
     item = it; resp = {}; att = 0; resolved = false;
     $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
     $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
@@ -537,11 +581,11 @@ const DRILL = (() => {
     const res = tab.check(item, r); att++;
     const tries = tab.tries || (tab.kind === 'choice' ? 1 : 2);
     if (res.ok) {
-      resolved = true; marks.push(att === 1 ? 'g' : 'y');
+      resolved = true; marks.push(att === 1 ? 'g' : 'y'); record(att === 1);
       setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
       markAnswer(true); draw('right', res, true); afterResolve();
     } else if (att >= tries) {
-      resolved = true; marks.push('r');
+      resolved = true; marks.push('r'); record(false);
       setFb('bad', res.cue);
       markAnswer(false); reveal(); draw('show', res, true); afterResolve();
     } else {
@@ -574,7 +618,7 @@ const DRILL = (() => {
   }
   function show() {
     if (resolved) return;
-    resolved = true; marks.push('r'); reveal();
+    resolved = true; marks.push('r'); record(false); reveal();
     setFb('info', 'Watch');
     draw('show', { ok: false, code: 'shown' }, true); afterResolve();
   }
@@ -601,7 +645,7 @@ const DRILL = (() => {
     marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
     if (!COARSE) $('bAgain').focus();
   }
-  const notesHref = t => PAGE.notes + '#:~:text=' + encodeURIComponent('Section ' + t.sec + ' ' + (PAGE.sep || '—'));
+  const notesHref = t => (t.notes || PAGE.notes) + '#:~:text=' + encodeURIComponent(PAGE.secText ? PAGE.secText(t) : 'Section ' + t.sec + ' ' + (t.sep || PAGE.sep || '—'));
 
   /* ---------- tabs ---------- */
   function tabsBar() {
@@ -625,6 +669,7 @@ const DRILL = (() => {
   function boot(P) {
     PAGE = P; load();
     if (RM) document.body.classList.add('nomo');
+    if (P.sans) document.body.classList.add('sans');
     $('course').textContent = P.course; $('title').textContent = P.title;
     $('bCheck').addEventListener('click', check);
     $('bShow').addEventListener('click', show);
@@ -637,7 +682,8 @@ const DRILL = (() => {
       fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
       pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
       setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
-      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }) };
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }),
+      keyOf: (it, t) => { const cur = tab; if (t) tab = t; try { return keyOf(it); } finally { tab = cur; } }, weights: () => Object.assign({}, scores()), resetWeights: () => { save.w[tab.id] = {}; }, setScore: (k, s) => { scores()[k] = s; } };
   }
   return { boot, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
 })();
@@ -766,14 +812,37 @@ const T_NOREP = {
 const T_NEXT = {
   id: 'next', code: 'PR3–4', name: 'Next one?', sec: 3, q: 'The chance next time is…', kind: 'choice',
   gen: MODEL.genNext,
-  prompt: it => ({ coin: '🪙 ' + 'H '.repeat(it.k) + '→ H?', die: '🎲 no 6 in ' + it.k + ' rolls → 6?', bagout: word('red') + ' × ' + it.k + ' drawn, kept out → ' + word('red') + '?', bagback: word('red') + ' × ' + it.k + ' drawn, put back → ' + word('red') + '?', bagother: word('blue') + ' × ' + it.k + ' drawn, kept out → ' + word('red') + '?' })[it.kind],
+  prompt: it => {
+    const sb = s => '<span style="font-family:inherit;font-weight:700;color:' + (s[0] === '♥' || s[0] === '♦' ? 'var(--red)' : 'inherit') + '">' + s[0] + '</span>';
+    return ({
+      coin: '🪙 ' + (it.face + ' ').repeat(it.k) + '→ ' + it.face + '?',
+      die: it.miss ? '🎲 no ' + it.face + ' in ' + it.k + ' rolls → ' + it.face + '?' : '🎲 ' + it.face + ' × ' + Math.min(it.k, 5) + ' in a row → ' + it.face + '?',
+      spin: '◔ ' + word(it.col) + ' × ' + it.k + ' in a row → ' + word(it.col) + '?',
+      bagout: word('red') + ' × ' + it.k + ' drawn, kept out → ' + word('red') + '?', bagback: word('red') + ' × ' + it.k + ' drawn, put back → ' + word('red') + '?', bagother: word('blue') + ' × ' + it.k + ' drawn, kept out → ' + word('red') + '?',
+      cardout: '🂠 ' + sb(it.drawn || ['']) + ' × ' + it.k + ' drawn, kept out → ' + sb(it.ask || ['']) + '?', cardback: '🂠 ' + sb(it.drawn || ['']) + ' × ' + it.k + ' drawn, put back → ' + sb(it.ask || ['']) + '?', cardother: '🂠 ' + sb(it.drawn || ['']) + ' × ' + it.k + ' drawn, kept out → ' + sb(it.ask || ['']) + '?'
+    })[it.kind];
+  },
   choices: () => [{ v: 'higher', label: 'Higher' }, { v: 'same', label: 'Same' }, { v: 'lower', label: 'Lower' }],
   check: MODEL.checkNext, answer: it => ({ v: it.ans }),
   draw(A, it, V) {
-    if (it.kind === 'coin' || it.kind === 'die') {
-      const k = Math.min(it.k, 8);
-      for (let i = 0; i < k; i++) { A.el('circle', { cx: 320 + (i - (k - 1) / 2) * 56, cy: 150, r: 24, fill: C.gold, 'fill-opacity': .25, stroke: C.gold, 'stroke-width': 2 }, A.svg); lab(A, 320 + (i - (k - 1) / 2) * 56, 151, it.kind === 'coin' ? 'H' : '–', C.gold); }
-      if (V.phase !== 'ask') lab(A, 320, 280, (it.kind === 'coin' ? 'P(H) = 1/2' : 'P(6) = 1/6') + ' every time', C.green, { 'font-size': 26, class: 'fade' });
+    if (it.kind === 'coin' || it.kind === 'die' || it.kind === 'spin') {
+      const k = Math.min(it.k, 8), face = it.kind === 'coin' ? it.face : it.kind === 'die' ? (it.miss ? '✗' : String(it.face)) : '', col = it.kind === 'spin' ? CC[it.col] : C.gold;
+      for (let i = 0; i < k; i++) { A.el('circle', { cx: 320 + (i - (k - 1) / 2) * 56, cy: 150, r: 24, fill: col, 'fill-opacity': .25, stroke: col, 'stroke-width': 2 }, A.svg); lab(A, 320 + (i - (k - 1) / 2) * 56, 151, face, col); }
+      if (V.phase !== 'ask') { const p = MODEL.nextOdds(it)[0]; lab(A, 320, 280, 'P = ' + Q.str(p) + ' every time', C.green, { 'font-size': 26, class: 'fade' }); lab(A, 320, 330, 'no memory', C.muted, { class: 'fade' }); }
+      return;
+    }
+    if (it.kind.startsWith('card')) {
+      const [p0, p1] = MODEL.nextOdds(it), red = s => s[0] === '♥' || s[0] === '♦' ? C.red : C.text;
+      const deck = (x, n, suitLeft, lb) => {
+        for (let i = 0; i < 4; i++) A.el('rect', { x: x - 60 + i * 6, y: 90 + i * 6, width: 110, height: 150, rx: 10, fill: C.panel, stroke: C.muted, 'stroke-width': 2 }, A.svg);
+        A.tx(A.svg, x + 13, 192, it.ask[0], { 'font-size': 56, fill: red(it.ask), stroke: 'none' });
+        lab(A, x + 13, 290, suitLeft + ' / ' + n, red(it.ask), { 'font-size': 24 }); lab(A, x + 13, 320, lb, C.muted, { 'font-size': 16 });
+      };
+      deck(170, 52, 13, 'before');
+      if (V.phase === 'ask') return;
+      A.el('path', { d: 'M290 170H350', stroke: C.muted, 'stroke-width': 2.5, 'marker-end': 'url(#aM)' }, A.svg);
+      deck(470, p1.d === 1 && p1.n === 0 ? 52 : (it.kind === 'cardback' ? 52 : 52 - it.k), it.kind === 'cardout' ? 13 - it.k : 13, it.kind === 'cardback' ? 'put back' : it.k + ' ' + it.drawn[0] + ' kept out');
+      lab(A, 320, 372, Q.val(p1) > Q.val(p0) + 1e-9 ? 'higher' : Q.val(p1) < Q.val(p0) - 1e-9 ? 'lower' : 'the same', C.green, { 'font-size': 24, class: 'fade' });
       return;
     }
     const before = bagList({ red: it.red, blue: it.blue }), removed = it.kind === 'bagother' ? 'blue' : 'red';

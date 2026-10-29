@@ -19,6 +19,7 @@ const Q = (() => {
   function parse(s) {
     s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
     if (s === '') return '';
+    if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
     if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
     const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
     if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }

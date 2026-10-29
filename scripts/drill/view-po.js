@@ -157,14 +157,14 @@ const T_SUB = {
 /* PO5 monomial × polynomial, PO6 binomial × binomial (area model) */
 const T_MONO = {
   id: 'mono', code: 'PO5', name: 'Monomial ×', sec: 5, q: 'Multiply', kind: 'slots',
-  gen: MODEL.genMono, prompt: it => mathHTML(termStr(it.m, true)) + '(' + mathHTML(polyStr(it.P)) + ')',
+  gen: MODEL.genMono, typeOf: it => "e" + it.m.e + (it.m.c < 0 ? "-" : "+"), prompt: it => mathHTML(termStr(it.m, true)) + '(' + mathHTML(polyStr(it.P)) + ')',
   slots: () => [{ k: 'c3', label: 'x cubed coefficient', narrow: true }, 'x³ +', { k: 'c2', label: 'x squared coefficient', narrow: true }, 'x² +', { k: 'c1', label: 'x coefficient', narrow: true }, 'x +', { k: 'c0', label: 'constant', narrow: true }],
   check: MODEL.checkMono, answer: it => MODEL.toResp(it.p),
   draw: (A, it, V) => areaModel(A, it.P, [it.m], V, { result: it.p, hot: (e, code) => code === 'xx' && e >= 2 || code === 'firstonly' })
 };
 const T_BIN = {
   id: 'bin', code: 'PO6', name: 'Binomial ×', sec: 6, q: 'Multiply', kind: 'slots',
-  gen: MODEL.genBin,
+  gen: MODEL.genBin, typeOf: it => (it.p * it.s > 1 ? "coef" : "plain") + (it.a < 0 || it.b < 0 ? "-" : "+"),
   prompt: it => '(' + mathHTML(termStr({ c: it.p, e: 1 }, true) + ' ' + termStr({ c: it.a, e: 0 })) + ')(' + mathHTML(termStr({ c: it.s, e: 1 }, true) + ' ' + termStr({ c: it.b, e: 0 })) + ')',
   slots: stdSlots, check: MODEL.checkBin, answer: it => MODEL.toResp(it.r),
   draw: (A, it, V) => areaModel(A, [{ c: it.p, e: 1 }, { c: it.a, e: 0 }], [{ c: it.s, e: 1 }, { c: it.b, e: 0 }], V, { result: it.r, hot: (e, code) => (code === 'middle' || code === 'onemid') && e === 1 })

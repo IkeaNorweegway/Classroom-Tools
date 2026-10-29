@@ -41,7 +41,7 @@ function jump(A, x1, x2, y, col, h) { return A.el('path', { d: 'M' + x1 + ' ' + 
 /* RN1 compare */
 const T_CMP = {
   id: 'cmp', code: 'RN1', name: 'Compare', sec: 1, q: 'Which sign?', kind: 'choice',
-  gen: MODEL.genCmp,
+  gen: MODEL.genCmp, typeOf: it => it.ans + (Q.val(it.a) < 0 && Q.val(it.b) < 0 ? "bothneg" : ""),
   prompt: it => rnHTML(it.a, it.fa) + ' <span style="color:var(--yellow)">▢</span> ' + rnHTML(it.b, it.fb),
   choices: () => ['<', '=', '>'].map(v => ({ v, label: v, math: true })),
   check: MODEL.checkCmp, answer: it => ({ v: it.ans }),
@@ -87,7 +87,7 @@ const T_ADDF = {
 /* RN2 signs with decimals */
 const T_SIGNS = {
   id: 'signs', code: 'RN2', name: 'Signs', sec: 2, q: 'Calculate', kind: 'slots',
-  gen: MODEL.genSigns,
+  gen: MODEL.genSigns, typeOf: it => it.op + (Q.val(it.b) < 0 ? "neg" : "pos"),
   prompt: it => MODEL.decStr(it.a) + ' ' + it.op + ' ' + (Q.val(it.b) < 0 ? '(' + MODEL.decStr(it.b) + ')' : MODEL.decStr(it.b)),
   slots: valSlot, check: MODEL.checkSigns, answer: it => ({ v: MODEL.decStr(it.v).replace('−', '-') }),
   draw(A, it, V) {
@@ -113,7 +113,7 @@ function signs(A, x, y, s1, s2, show) {
 }
 const T_MUL = {
   id: 'mul', code: 'RN3', name: 'Multiply', sec: 3, q: 'Calculate', kind: 'slots',
-  gen: MODEL.genMul, prompt: it => rnHTML(it.x) + ' × ' + par(it.y),
+  gen: MODEL.genMul, typeOf: it => Math.sign(it.x.n) * Math.sign(it.y.n) < 0 ? "neg" : "pos", prompt: it => rnHTML(it.x) + ' × ' + par(it.y),
   slots: valSlot, check: MODEL.checkMul, answer: it => ({ v: it.v }),
   draw(A, it, V) {
     const x0 = 320, y0 = 80, S = 260, cx = Math.abs(it.x.n), dx = it.x.d, cy = Math.abs(it.y.n), dy = it.y.d, hint = V.phase !== 'ask';
@@ -134,7 +134,7 @@ const T_MUL = {
 /* RN4 divide: flip the second, and how many pieces fit */
 const T_DIV = {
   id: 'div', code: 'RN4', name: 'Divide', sec: 4, q: 'Calculate', kind: 'slots',
-  gen: MODEL.genDiv, prompt: it => rnHTML(it.x) + ' ÷ ' + par(it.y),
+  gen: MODEL.genDiv, typeOf: it => Math.sign(it.x.n) * Math.sign(it.y.n) < 0 ? "neg" : "pos", prompt: it => rnHTML(it.x) + ' ÷ ' + par(it.y),
   slots: valSlot, check: MODEL.checkDiv, answer: it => ({ v: it.v }),
   draw(A, it, V) {
     rnSVG(A, 150, 80, it.x, 'frac', { 'font-size': 34 }); A.mtx(A.svg, 220, 80, '÷', { 'font-size': 34 }); rnSVG(A, 290, 80, it.y, 'frac', { 'font-size': 34, fill: C.gold });
@@ -163,7 +163,7 @@ const T_DIV = {
 /* RN4 bigger or smaller? */
 const T_BIG = {
   id: 'big', code: 'RN4', name: 'Bigger?', sec: 4, q: it => 'Bigger or smaller than ' + it.n + '?', kind: 'choice',
-  gen: MODEL.genBig, prompt: it => it.n + ' ' + it.op + ' ' + rnHTML(it.f),
+  gen: MODEL.genBig, typeOf: it => it.op + (Q.val(it.f) < 1 ? "<1" : ">1"), prompt: it => it.n + ' ' + it.op + ' ' + rnHTML(it.f),
   choices: () => [{ v: 'bigger', label: 'Bigger' }, { v: 'smaller', label: 'Smaller' }],
   check: MODEL.checkBig, answer: it => ({ v: it.ans }),
   draw(A, it, V) {
@@ -197,7 +197,7 @@ function exprRow(A, ts, y, fs, hiFrom, hiTo, col, cls) {
 }
 const T_ORDER = {
   id: 'order', code: 'RN5', name: 'First step', sec: 5, q: 'Which step first?', kind: 'choice',
-  gen: MODEL.genOrder,
+  gen: MODEL.genOrder, typeOf: it => it.ts.map(t => t.t === "op" ? t.o : t.t).join(""),
   choices: it => it.opts.map(i => ({ v: String(i), label: '<span class="math">' + optLabel(it.ts, i) + '</span>', aria: optLabel(it.ts, i) })),
   check: MODEL.checkOrder, answer: it => ({ v: it.ans }),
   draw(A, it, V) {

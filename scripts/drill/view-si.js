@@ -105,16 +105,20 @@ const T_RULE = {
   gen: MODEL.genRule, choices: () => [{ v: 'AA', label: 'AA' }, { v: 'SSS', label: 'SSS' }, { v: 'SAS', label: 'SAS' }, { v: 'none', label: 'Not enough' }],
   check: MODEL.checkRule, answer: it => ({ v: it.rule }),
   draw(A, it, V) {
-    const base = it.rule === 'AA' ? triFromAngles(5, it.A1, it.B1) : triPts(...it.s), k = it.k, p2 = base.map(p => [p[0] * k, p[1] * k]);
-    const ab = it.rule === 'AA' ? 5 : it.s[0], s = Math.min(200 / (ab * Math.max(1, k)), 200 / (Math.max(...base.map(p => p[1])) * Math.max(1, k)), 200 / ab);
-    const sides1 = it.rule === 'AA' ? [null, null, null] : it.s.map(String), sides2 = it.rule === 'AA' ? [null, null, null] : it.s.map(x => F(x * k));
-    // which sides are shown: SSS all; SAS AB and CA (angle A between them); none: AB and BC with angle A (not between)
-    const keep = it.rule === 'SSS' ? [1, 1, 1] : it.rule === 'SAS' ? [1, 0, 1] : it.rule === 'none' ? [1, 1, 0] : [0, 0, 0];
-    const L1 = sides1.map((x, i) => keep[i] ? x : null), L2 = sides2.map((x, i) => keep[i] ? x : null);
-    const P1 = drawTri(A, base, 50, 320, s, [C.muted, C.muted, C.muted], L1, ['A', 'B', 'C']), P2 = drawTri(A, p2, 330, 320, s, [C.blue, C.blue, C.blue], L2, ['D', 'E', 'F']);
-    const angA = it.rule === 'AA' ? it.A1 : Math.round(Math.acos((it.s[0] ** 2 + it.s[2] ** 2 - it.s[1] ** 2) / (2 * it.s[0] * it.s[2])) * 180 / Math.PI);
-    if (it.rule !== 'SSS') { angleArc(A, P1, 0, angA + '°'); angleArc(A, P2, 0, angA + '°'); }
-    if (it.rule === 'AA') { angleArc(A, P1, 1, it.B1 + '°', C.teal); angleArc(A, P2, 1, it.B1 + '°', C.teal); }
+    // side k joins vertex k and k + 1 (AB, BC, CA); vertex v sits between sides v + 2 and v
+    const base = it.rule === 'AA' ? triFromAngles(5, it.A1, it.B1) : triPts(...it.s), k = it.k;
+    const len = (P, i) => Math.hypot(P[(i + 1) % 3][0] - P[i][0], P[(i + 1) % 3][1] - P[i][1]);
+    const ang = (P, i) => { const a = P[(i + 1) % 3], b = P[(i + 2) % 3], u = [a[0] - P[i][0], a[1] - P[i][1]], w = [b[0] - P[i][0], b[1] - P[i][1]]; return Math.round(Math.acos((u[0] * w[0] + u[1] * w[1]) / (Math.hypot(...u) * Math.hypot(...w))) * 180 / Math.PI); };
+    // the copy: scaled, turned, maybe flipped, then moved so its lowest-left corner is at the origin
+    const t = it.rot * Math.PI / 180, raw = base.map(([x, y]) => { const X = (it.flip ? -x : x) * k, Y = y * k; return [X * Math.cos(t) - Y * Math.sin(t), X * Math.sin(t) + Y * Math.cos(t)]; });
+    const mx = Math.min(...raw.map(p => p[0])), my = Math.min(...raw.map(p => p[1])), p2 = raw.map(([x, y]) => [x - mx, y - my]);
+    const size = P => Math.max(Math.max(...P.map(p => p[0])) - Math.min(...P.map(p => p[0])), Math.max(...P.map(p => p[1])) - Math.min(...P.map(p => p[1])));
+    const s = Math.min(220 / size(base), 220 / size(p2)), bx = -Math.min(0, ...base.map(p => p[0]));
+    const v = it.v, keep = [0, 1, 2].map(i => it.rule === 'SSS' || ((it.rule === 'SAS' || it.rule === 'none') && (i === v || i === (v + 2) % 3)));
+    const L1 = [0, 1, 2].map(i => keep[i] && it.rule !== 'AA' ? F(len(base, i)) : null), L2 = [0, 1, 2].map(i => keep[i] && it.rule !== 'AA' ? F(len(base, i) * k) : null);
+    const P1 = drawTri(A, base, 50 + bx * s, 330, s, [C.muted, C.muted, C.muted], L1, ['A', 'B', 'C']), P2 = drawTri(A, p2, 340, 330, s, [C.blue, C.blue, C.blue], L2, ['D', 'E', 'F']);
+    if (it.rule === 'SAS' || it.rule === 'none') { const w = it.rule === 'SAS' ? v : (v + 1) % 3; angleArc(A, P1, w, ang(base, w) + '°'); angleArc(A, P2, w, ang(base, w) + '°'); }
+    if (it.rule === 'AA') { [v, (v + 1) % 3].forEach((w, j) => { angleArc(A, P1, w, ang(base, w) + '°', j ? C.teal : null); angleArc(A, P2, w, ang(base, w) + '°', j ? C.teal : null); }); }
     if (V.phase !== 'ask') lab(A, 320, 390, { AA: '2 angles equal', SSS: '3 side ratios equal', SAS: '2 side ratios + the angle between', none: 'the angle is not between the sides' }[it.rule], C.green, { class: 'fade' });
   }
 };

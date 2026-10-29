@@ -134,7 +134,7 @@ function triSquares(A, a, b, V, o) {
 }
 const T_HYP = {
   id: 'hyp', code: 'SR3', name: 'Hypotenuse', sec: 3, q: 'Hypotenuse, one decimal', kind: 'slots',
-  gen: MODEL.genHyp, prompt: it => '<i>a</i> = ' + it.a + ', <i>b</i> = ' + it.b,
+  gen: MODEL.genHyp, typeOf: it => Math.abs(it.c - Math.round(it.c)) < 1e-9 ? "whole" : "decimal", prompt: it => '<i>a</i> = ' + it.a + ', <i>b</i> = ' + it.b,
   slots: () => ['c =', { k: 'v', label: 'hypotenuse', wide: true }], check: MODEL.checkHyp, answer: it => ({ v: MODEL.ans1(it.c) }),
   draw(A, it, V) {
     const hint = V.phase !== 'ask', c2 = it.a * it.a + it.b * it.b;
@@ -145,7 +145,7 @@ const T_HYP = {
 };
 const T_LEG = {
   id: 'leg', code: 'SR3', name: 'Leg', sec: 3, q: 'Leg, one decimal', kind: 'slots',
-  gen: MODEL.genLeg, prompt: it => '<i>c</i> = ' + it.c + ', <i>a</i> = ' + it.a,
+  gen: MODEL.genLeg, typeOf: it => Math.abs(it.b - Math.round(it.b)) < 1e-9 ? "whole" : "decimal", prompt: it => '<i>c</i> = ' + it.c + ', <i>a</i> = ' + it.a,
   slots: () => ['b =', { k: 'v', label: 'leg', wide: true }], check: MODEL.checkLeg, answer: it => ({ v: MODEL.ans1(it.b) }),
   draw(A, it, V) {
     const hint = V.phase !== 'ask', b2 = it.c * it.c - it.a * it.a;

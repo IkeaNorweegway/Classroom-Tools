@@ -69,10 +69,12 @@ const MODEL = (() => {
   }
 
   /* SI3 which test? AA, SSS, SAS or not enough (SSA) */
+  // v: the vertex with the marked angle (SAS: between the two marked sides; none: next to them but not between).
+  // The second triangle is turned (rot, degrees) and sometimes flipped, so position gives nothing away.
   function genRule() {
     const rule = pick(['AA', 'SSS', 'SAS', 'none']), k = pick([2, 1.5, 3, 0.5]), A1 = rnd(35, 75), B1 = rnd(35, 70);
-    const s = pick(SIDES);
-    return { rule, k, A1, B1, s };
+    const s = shuffle(pick(SIDES));
+    return { rule, k, A1, B1, s, v: rnd(0, 2), rot: pick([0, 0, 25, -25, 50, -50, 180]), flip: chance(.3) };
   }
   function checkRule(it, r) {
     if (r.v === it.rule) return { ok: true };

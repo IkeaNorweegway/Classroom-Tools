@@ -96,14 +96,34 @@ const MODEL = (() => {
   }
 
   /* SA or V? */
-  const JOBS = [['🎨', 'Paint a water tank', 'sa'], ['💧', 'Fill a pool', 'v'], ['🎁', 'Wrap a gift box', 'sa'], ['⛱', 'Sand for a sandbox', 'v'], ['🥫', 'Label around a can', 'sa'], ['🎈', 'Air in a ball', 'v'], ['🌾', 'Grain in an elevator', 'v'], ['🏠', 'Shingles for a roof', 'sa'], ['🧊', 'Ice in a cube tray', 'v'], ['🎂', 'Icing on a cake', 'sa'], ['⛽', 'Gas in a tank', 'v'], ['📦', 'Cardboard for a box', 'sa']];
+  // Many jobs come in pairs on the same object (the can's label vs the soup inside), so the object never gives the answer.
+  const JOBS = [
+    ['🎨', 'Paint a water tank', 'sa'], ['💧', 'Water a tank holds', 'v'],
+    ['🥫', 'Label around a can', 'sa'], ['🥣', 'Soup in a can', 'v'],
+    ['🐠', 'Glass for a fish tank', 'sa'], ['🐠', 'Water in a fish tank', 'v'],
+    ['📦', 'Cardboard for a box', 'sa'], ['📦', 'Packing peanuts to fill a box', 'v'],
+    ['🎈', 'Rubber for a balloon', 'sa'], ['🎈', 'Air in a balloon', 'v'],
+    ['⛺', 'Fabric for a tent', 'sa'], ['⛺', 'Air inside a tent', 'v'],
+    ['🥛', 'Wax coating on a milk carton', 'sa'], ['🥛', 'Milk in a carton', 'v'],
+    ['🏠', 'Shingles for a roof', 'sa'], ['🏠', 'Air to heat in a house', 'v'],
+    ['🎁', 'Wrap a gift box', 'sa'], ['⛱', 'Sand for a sandbox', 'v'],
+    ['🎂', 'Icing on a cake', 'sa'], ['🌾', 'Grain in an elevator', 'v'],
+    ['⚽', 'Leather to cover a ball', 'sa'], ['🧊', 'Ice in a cube tray', 'v'],
+    ['🍫', 'Chocolate coating on a bar', 'sa'], ['⛽', 'Gas in a tank', 'v'],
+    ['🌯', 'Foil around a burrito', 'sa'], ['🧱', 'Concrete for a step', 'v'],
+    ['🪵', 'Varnish on a wooden chest', 'sa'], ['🪴', 'Soil for a planter', 'v'],
+    ['🖼', 'Wallpaper for a room', 'sa'], ['🍿', 'Popcorn in a bucket', 'v'],
+    ['🎲', 'Stickers to cover a cube', 'sa'], ['☕', 'Coffee in a mug', 'v'],
+    ['🛢', 'Rust paint on a barrel', 'sa'], ['🛢', 'Oil a barrel holds', 'v'],
+    ['🏊', 'Tiles to line a pool', 'sa'], ['💧', 'Fill a pool', 'v']
+  ];
   function genJob() { const [icon, text, ans] = pick(JOBS); return { icon, text, ans }; }
   function checkJob(it, r) {
     if (r.v === it.ans) return { ok: true };
     return it.ans === 'sa' ? { code: 'saidv', cue: 'Covers the outside: surface area' } : { code: 'saidsa', cue: 'Fills the inside: volume' };
   }
 
-  return { PI, tol, near, ans1, genArea, checkArea, genSA, checkSA, genVol, checkVol, SA, VOL, genThird, checkThird, genSphere, checkSphere, genComp, checkComp, genJob, checkJob };
+  return { JOBS, PI, tol, near, ans1, genArea, checkArea, genSA, checkSA, genVol, checkVol, SA, VOL, genThird, checkThird, genSphere, checkSphere, genComp, checkComp, genJob, checkJob };
 })();
 /* ===================== MODEL END ===================== */
 

@@ -168,6 +168,12 @@ These pages are used **after** the lesson. They do not teach: they give practice
 23. **Two tries, then the answer.** First wrong try: ✗, the cue, and the picture hint. Second wrong try, or 👁: the answer fills in grey and the picture plays the full solution. Tap choices get one try. Dots: green on the first try, yellow on the second, red when shown.
 24. **Point back to the notes.** The 📖 button opens the notes package at the tab's section, using a text fragment (`#:~:text=Section 2 —`), which jumps to the heading in Chrome. A round under 7 out of 10 shows the same link next to **Again**.
 25. **Rounds, not progress bars.** Ten items, generated from the model (no repeats in a row), then a score, **Again**, and the next tab. The best score per tab is saved; 8 or more puts a green dot on the tab.
+26. **Missed types come back more often (user request, 2026-10-29).** Each tab keeps a score per question type, saved in the page's `localStorage` key.
+    - **How the score moves:** a miss, a second-try answer, or Show me raises it (up to about 2.5× weight). A first-try right answer lowers it (down to half weight, never zero).
+    - **How it is used:** each new item is drawn from 8 generated candidates by weight. Missed types return more often, and types a student gets right still appear, just less often.
+    - **What counts as a type:** `TAB.typeOf(item)`, or the item's `form`/`kind`/`shape`/`type`/`rep`/`ask`/`what`/`mode`/`rule`/`ans` fields. Give a tab a `typeOf` when those fields don't name the trap (sign of the slope, minus a negative, letter vs number base).
+    - **Test:** the test suite checks that a missed type's share rises and a right type's share falls but stays above zero.
+27. **No small fixed lists.** If a tab draws from a list (jobs, situations), make it big enough that answers can't be memorized. Pair items on the same object with opposite answers (the can's label vs the soup inside) so the object never gives the answer away. SA or V? has 36 jobs in pairs. Next one? has 9 situation types (coin, die, spinner, bag and deck, each put back or kept out). Name it adds near-diameter chords and a faint part to ignore. Which rule? marks the angle at any vertex and turns or flips the second triangle.
 
 ---
 

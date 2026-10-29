@@ -32,11 +32,14 @@ const T_NAME = {
   check: MODEL.checkName, answer: it => ({ v: it.kind }),
   draw(A, it, V) {
     const cx = 300, cy = 215, R = 150, P = circle(A, cx, cy, R), O = [cx, cy];
-    let p, q;
-    if (it.kind === 'radius') { p = O; q = P(it.a); }
-    else if (it.kind === 'diameter') { p = P(it.a); q = P(it.a + 180); }
-    else if (it.kind === 'chord') { p = P(it.a); q = P(it.a + it.span); }
-    else { const T = P(it.a), u = [-Math.sin(rad(it.a)), -Math.cos(rad(it.a))]; p = [T[0] - u[0] * 150, T[1] - u[1] * 150]; q = [T[0] + u[0] * 150, T[1] + u[1] * 150]; }
+    const ends = (kind, a, span) => {
+      if (kind === 'radius') return [O, P(a)];
+      if (kind === 'diameter') return [P(a), P(a + 180)];
+      if (kind === 'chord') return [P(a), P(a + span)];
+      const T = P(a), u = [-Math.sin(rad(a)), -Math.cos(rad(a))]; return [[T[0] - u[0] * 150, T[1] - u[1] * 150], [T[0] + u[0] * 150, T[1] + u[1] * 150]];
+    };
+    if (it.extra) { const [e1, e2] = ends(it.extra, it.ea, it.espan); seg(A, e1, e2, C.edge, 3); }
+    const [p, q] = ends(it.kind, it.a, it.span);
     seg(A, p, q, C.yellow, 5);
     if (it.kind !== 'tangent') { if (it.kind !== 'radius') pt(A, p, C.yellow); pt(A, q, C.yellow); } else pt(A, P(it.a), C.yellow);
     if (V.phase === 'ask') return;

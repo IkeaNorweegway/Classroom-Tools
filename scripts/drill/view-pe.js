@@ -128,24 +128,24 @@ function powPic(A, b, m, n, V) {
 }
 const T_PROD = {
   id: 'prod', code: 'PE3', name: 'Multiply', sec: 3, q: 'One power', kind: 'slots',
-  gen: MODEL.genProd, prompt: it => pH(it.b, it.m) + ' × ' + pH(it.b, it.n), slots: lawSlots, check: MODEL.checkProd, answer: lawAns,
+  gen: MODEL.genProd, typeOf: it => it.b.letter ? "letter" : it.b.v < 0 ? "neg" : "num", prompt: it => pH(it.b, it.m) + ' × ' + pH(it.b, it.n), slots: lawSlots, check: MODEL.checkProd, answer: lawAns,
   draw: (A, it, V) => prodPic(A, it.b, it.m, it.n, V)
 };
 const T_QUOT = {
   id: 'quot', code: 'PE4', name: 'Divide', sec: 4, q: 'One power', kind: 'slots',
-  gen: MODEL.genQuot, prompt: it => pH(it.b, it.m) + ' ÷ ' + pH(it.b, it.n), slots: lawSlots, check: MODEL.checkQuot, answer: lawAns,
+  gen: MODEL.genQuot, typeOf: it => it.b.letter ? "letter" : it.b.v < 0 ? "neg" : "num", prompt: it => pH(it.b, it.m) + ' ÷ ' + pH(it.b, it.n), slots: lawSlots, check: MODEL.checkQuot, answer: lawAns,
   draw: (A, it, V) => quotPic(A, it.b, it.m, it.n, V)
 };
 const T_POW = {
   id: 'pow', code: 'PE5', name: 'Power of a power', sec: 5, q: 'One power', kind: 'slots',
-  gen: MODEL.genPow, prompt: it => '(' + pH(it.b, it.m) + ')' + SUP(it.n), slots: lawSlots, check: MODEL.checkPow, answer: lawAns,
+  gen: MODEL.genPow, typeOf: it => it.b.letter ? "letter" : it.b.v < 0 ? "neg" : "num", prompt: it => '(' + pH(it.b, it.m) + ')' + SUP(it.n), slots: lawSlots, check: MODEL.checkPow, answer: lawAns,
   draw: (A, it, V) => powPic(A, it.b, it.m, it.n, V)
 };
 
 /* PE6 power of a product */
 const T_BR = {
   id: 'br', code: 'PE6', name: 'Brackets', sec: 6, q: 'Simplify', kind: 'slots',
-  gen: MODEL.genBr,
+  gen: MODEL.genBr, typeOf: it => it.k < 0 ? "neg" : "pos",
   prompt: it => '(' + neg(it.k) + '<i>' + it.L + '</i>' + (it.m > 1 ? SUP(it.m) : '') + ')' + SUP(it.n),
   slots: it => [{ k: 'c', label: 'number' }, { h: '<i>' + it.L + '</i>' }, { k: 'e', sup: true, label: 'exponent' }],
   check: MODEL.checkBr, answer: it => ({ c: Q.q(it.c), e: Q.q(it.e) }),

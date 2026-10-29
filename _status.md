@@ -158,6 +158,12 @@ All 11 topics have notes, notes answer key, teacher notes, concept one-pager, Co
     - **Tested in headless Chrome** (`sh scripts/drill/test.sh`, all 11 pages re-run): 26, 38, 36, 28 and 37 checks pass on the new pages. Every tab's right answer passes for 400 generated items and plays a full round; named mistakes get their own cues; generated scatter plots meet their correlation bands (direction above 0.6, none below 0.2, strong above 0.92, weak 0.3–0.62); the best-fit line is least squares, balances points above and below, and beats the other two clearly; every similar/congruent/neither and inside/outside item is classified right. No page or panel scroll at the three test sizes. Screenshots of every tab checked.
     - **Choices to review:** answers with π are accepted within 0.2 % (π or 3.14); lengths to one decimal within 0.05; "Predict" accepts within 4 of the line. Correlation vs causation stays on paper (it needs reading).
     - **Untested:** students, touch, school Chromebooks, the notes jump on the live site.
+  - **Mistake weighting and bigger lists (site, 2026-10-29, user request):** all 11 Math 9 trainers now bring back the question types a student missed more often, and types they got right still come, at a lower weight. Rule: `_sims-context.md` design rule 26. Bigger lists (rule 27):
+    - SA or V? grew from 12 to 36 jobs, in pairs on the same object.
+    - Next one? grew from 5 to 9 situation types.
+    - Name it adds near-diameter chords and a faint part to ignore.
+    - Which rule? marks any vertex and turns or flips the second triangle.
+    - Tested in headless Chrome: all 11 pages pass, including a weighting check on each page (example, Powers Base tab: one type's share is 26 % at the start, 42 % after misses, 14 % after right answers). Untested with students.
 
 Answer key design follows `research/answer-key-design-research.md`: full worked solutions for Core, partial solutions for Challenge, faded structure in strand workbooks.
 

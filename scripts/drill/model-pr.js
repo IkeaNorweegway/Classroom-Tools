@@ -87,10 +87,17 @@ const MODEL = (() => {
   }
 
   /* PR3/PR4 does the chance change? */
+  // No memory (coin, die, spinner, anything put back) vs a changed bag or deck (kept out).
+  const SUITS = [['♥', 'hearts'], ['♠', 'spades'], ['♦', 'diamonds'], ['♣', 'clubs']];
   function genNext() {
-    const kind = pick(['coin', 'die', 'bagout', 'bagout', 'bagback', 'bagother']);
-    if (kind === 'coin') { const k = rnd(4, 7); return { kind, k, ans: 'same' }; }
-    if (kind === 'die') { const k = rnd(6, 12); return { kind, k, ans: 'same' }; }
+    const kind = pick(['coin', 'die', 'spin', 'bagout', 'bagback', 'bagother', 'cardout', 'cardback', 'cardother']);
+    if (kind === 'coin') { const face = pick(['H', 'T']); return { kind, face, k: rnd(4, 7), ans: 'same' }; }
+    if (kind === 'die') { const face = rnd(1, 6); return { kind, face, k: rnd(6, 12), ans: 'same', miss: chance(.5) }; }
+    if (kind === 'spin') { const sec = pick([3, 4, 5]), col = pick(['red', 'blue', 'green']); return { kind, sec, col, k: rnd(3, 6), ans: 'same' }; }
+    if (kind.startsWith('card')) {
+      const [s1, s2] = Q.shuffle(SUITS), k = rnd(2, 4);
+      return { kind, drawn: s1, ask: kind === 'cardother' ? s2 : s1, k, ans: kind === 'cardout' ? 'lower' : kind === 'cardother' ? 'higher' : 'same' };
+    }
     const red = rnd(4, 7), blue = rnd(3, 6), k = rnd(2, 3);
     if (kind === 'bagback') return { kind, red, blue, k, ans: 'same' };
     if (kind === 'bagout') return { kind, red, blue, k, ans: 'lower' };
@@ -98,11 +105,17 @@ const MODEL = (() => {
   }
   function checkNext(it, r) {
     if (r.v === it.ans) return { ok: true };
-    const cue = { coin: 'The coin has no memory', die: 'The die has no memory', bagback: 'Put back: the bag is the same', bagout: 'Fewer reds left: lower', bagother: 'Fewer blues, same reds: higher' }[it.kind];
+    const cue = { coin: 'The coin has no memory', die: 'The die has no memory', spin: 'The spinner has no memory', bagback: 'Put back: the bag is the same', bagout: 'Fewer reds left: lower', bagother: 'Fewer blues, same reds: higher', cardback: 'Put back: the deck is the same', cardout: 'Fewer of that suit left: lower', cardother: 'Same suit count, smaller deck: higher' }[it.kind];
     return { code: 'pick', cue };
   }
+  // P(the asked thing) before and after, for the picture.
+  function nextOdds(it) {
+    if (it.kind.startsWith('card')) { const out = it.kind !== 'cardback', same = it.ask === it.drawn; return [Q.q(13, 52), Q.q(13 - (out && same ? it.k : 0), 52 - (out ? it.k : 0))]; }
+    if (it.kind.startsWith('bag')) { const n = it.red + it.blue, out = it.kind !== 'bagback'; return [Q.q(it.red, n), Q.q(it.red - (it.kind === 'bagout' ? it.k : 0), n - (out ? it.k : 0))]; }
+    const p = it.kind === 'coin' ? Q.q(1, 2) : it.kind === 'die' ? Q.q(1, 6) : Q.q(1, it.sec); return [p, p];
+  }
 
-  return { COLS, DIE, EXPS, genProb, checkProb, genNot, checkNot, genExp, checkExp, genOut, checkOut, genAnd, checkAnd, genNoRep, checkNoRep, genNext, checkNext };
+  return { COLS, DIE, EXPS, genProb, checkProb, genNot, checkNot, genExp, checkExp, genOut, checkOut, genAnd, checkAnd, genNoRep, checkNoRep, genNext, checkNext, nextOdds };
 })();
 /* ===================== MODEL END ===================== */
 

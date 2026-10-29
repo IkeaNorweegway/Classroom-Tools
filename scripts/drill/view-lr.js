@@ -57,7 +57,7 @@ const sgn = n => (n < 0 ? '−' : '+') + Math.abs(n);
 /* LR1 Table -> rule */
 const T_TABLE = {
   id: 'table', code: 'LR1', name: 'Table', sec: 1, q: 'Write the rule', kind: 'slots',
-  gen: MODEL.genTable, slots: ruleSlots, check: MODEL.checkRule,
+  gen: MODEL.genTable, typeOf: it => (it.x0 > 0 ? "late" : "zero") + (it.m < 0 ? "-" : "+"), slots: ruleSlots, check: MODEL.checkRule,
   answer: it => ({ m: Q.q(it.m), b: Q.q(it.b) }),
   draw(A, it, V) {
     const cw = 70, X = i => 260 + i * cw, r1 = 64, r2 = 110, done = V.phase === 'right' || V.phase === 'show', code = V.res && V.res.code;
@@ -91,7 +91,7 @@ const T_TABLE = {
 /* LR2 Slope from two points */
 const T_SLOPE = {
   id: 'slope', code: 'LR2', name: 'Slope', sec: 2, q: 'Find the slope', kind: 'slots',
-  gen: MODEL.genSlope, slots: () => ['m =', { k: 'm', tint: 'M', wide: true, label: 'slope' }], check: MODEL.checkSlope,
+  gen: MODEL.genSlope, typeOf: it => it.rise < 0 ? "down" : it.rise === 0 ? "flat" : "up", slots: () => ['m =', { k: 'm', tint: 'M', wide: true, label: 'slope' }], check: MODEL.checkSlope,
   answer: it => ({ m: Q.q(it.rise, it.run) }),
   draw(A, it, V) {
     const P = A.plane(A.svg, SQ), L = it.P.x < it.Q.x ? it.P : it.Q, R = L === it.P ? it.Q : it.P, done = V.phase === 'right' || V.phase === 'show';
@@ -107,7 +107,7 @@ const T_SLOPE = {
 /* LR3 Equation -> graph: tap two grid points */
 const T_GRAPH = {
   id: 'graph', code: 'LR3', name: 'Graph it', sec: 3, q: 'Tap two points on the line', kind: 'custom',
-  gen: MODEL.genGraph, prompt: it => eqHTML(it.m, it.b),
+  gen: MODEL.genGraph, typeOf: it => (it.m.d > 1 ? "frac" : "int") + (it.m.n < 0 ? "-" : "+"), prompt: it => eqHTML(it.m, it.b),
   panel(box, it, A) {
     const s = document.createElement('div'); s.className = 'seg';
     s.innerHTML = '<button type="button" aria-label="Clear points" title="Clear">⟲</button>';
@@ -146,7 +146,7 @@ const T_GRAPH = {
 /* LR3 Graph -> equation */
 const T_READ = {
   id: 'read', code: 'LR3', name: 'Equation', sec: 3, q: 'Write the equation', kind: 'slots',
-  gen: MODEL.genRead, slots: ruleSlots, check: MODEL.checkRule,
+  gen: MODEL.genRead, typeOf: it => (it.m.d > 1 ? "frac" : "int") + (it.m.n < 0 ? "-" : "+") + (it.xint != null ? "x" : ""), slots: ruleSlots, check: MODEL.checkRule,
   answer: it => ({ m: it.m, b: Q.q(it.b) }),
   draw(A, it, V) {
     const P = A.plane(A.svg, SQ), code = V.res && V.res.code, done = V.phase === 'right' || V.phase === 'show';

@@ -121,14 +121,37 @@ const T_NOREP = {
 const T_NEXT = {
   id: 'next', code: 'PR3–4', name: 'Next one?', sec: 3, q: 'The chance next time is…', kind: 'choice',
   gen: MODEL.genNext,
-  prompt: it => ({ coin: '🪙 ' + 'H '.repeat(it.k) + '→ H?', die: '🎲 no 6 in ' + it.k + ' rolls → 6?', bagout: word('red') + ' × ' + it.k + ' drawn, kept out → ' + word('red') + '?', bagback: word('red') + ' × ' + it.k + ' drawn, put back → ' + word('red') + '?', bagother: word('blue') + ' × ' + it.k + ' drawn, kept out → ' + word('red') + '?' })[it.kind],
+  prompt: it => {
+    const sb = s => '<span style="font-family:inherit;font-weight:700;color:' + (s[0] === '♥' || s[0] === '♦' ? 'var(--red)' : 'inherit') + '">' + s[0] + '</span>';
+    return ({
+      coin: '🪙 ' + (it.face + ' ').repeat(it.k) + '→ ' + it.face + '?',
+      die: it.miss ? '🎲 no ' + it.face + ' in ' + it.k + ' rolls → ' + it.face + '?' : '🎲 ' + it.face + ' × ' + Math.min(it.k, 5) + ' in a row → ' + it.face + '?',
+      spin: '◔ ' + word(it.col) + ' × ' + it.k + ' in a row → ' + word(it.col) + '?',
+      bagout: word('red') + ' × ' + it.k + ' drawn, kept out → ' + word('red') + '?', bagback: word('red') + ' × ' + it.k + ' drawn, put back → ' + word('red') + '?', bagother: word('blue') + ' × ' + it.k + ' drawn, kept out → ' + word('red') + '?',
+      cardout: '🂠 ' + sb(it.drawn || ['']) + ' × ' + it.k + ' drawn, kept out → ' + sb(it.ask || ['']) + '?', cardback: '🂠 ' + sb(it.drawn || ['']) + ' × ' + it.k + ' drawn, put back → ' + sb(it.ask || ['']) + '?', cardother: '🂠 ' + sb(it.drawn || ['']) + ' × ' + it.k + ' drawn, kept out → ' + sb(it.ask || ['']) + '?'
+    })[it.kind];
+  },
   choices: () => [{ v: 'higher', label: 'Higher' }, { v: 'same', label: 'Same' }, { v: 'lower', label: 'Lower' }],
   check: MODEL.checkNext, answer: it => ({ v: it.ans }),
   draw(A, it, V) {
-    if (it.kind === 'coin' || it.kind === 'die') {
-      const k = Math.min(it.k, 8);
-      for (let i = 0; i < k; i++) { A.el('circle', { cx: 320 + (i - (k - 1) / 2) * 56, cy: 150, r: 24, fill: C.gold, 'fill-opacity': .25, stroke: C.gold, 'stroke-width': 2 }, A.svg); lab(A, 320 + (i - (k - 1) / 2) * 56, 151, it.kind === 'coin' ? 'H' : '–', C.gold); }
-      if (V.phase !== 'ask') lab(A, 320, 280, (it.kind === 'coin' ? 'P(H) = 1/2' : 'P(6) = 1/6') + ' every time', C.green, { 'font-size': 26, class: 'fade' });
+    if (it.kind === 'coin' || it.kind === 'die' || it.kind === 'spin') {
+      const k = Math.min(it.k, 8), face = it.kind === 'coin' ? it.face : it.kind === 'die' ? (it.miss ? '✗' : String(it.face)) : '', col = it.kind === 'spin' ? CC[it.col] : C.gold;
+      for (let i = 0; i < k; i++) { A.el('circle', { cx: 320 + (i - (k - 1) / 2) * 56, cy: 150, r: 24, fill: col, 'fill-opacity': .25, stroke: col, 'stroke-width': 2 }, A.svg); lab(A, 320 + (i - (k - 1) / 2) * 56, 151, face, col); }
+      if (V.phase !== 'ask') { const p = MODEL.nextOdds(it)[0]; lab(A, 320, 280, 'P = ' + Q.str(p) + ' every time', C.green, { 'font-size': 26, class: 'fade' }); lab(A, 320, 330, 'no memory', C.muted, { class: 'fade' }); }
+      return;
+    }
+    if (it.kind.startsWith('card')) {
+      const [p0, p1] = MODEL.nextOdds(it), red = s => s[0] === '♥' || s[0] === '♦' ? C.red : C.text;
+      const deck = (x, n, suitLeft, lb) => {
+        for (let i = 0; i < 4; i++) A.el('rect', { x: x - 60 + i * 6, y: 90 + i * 6, width: 110, height: 150, rx: 10, fill: C.panel, stroke: C.muted, 'stroke-width': 2 }, A.svg);
+        A.tx(A.svg, x + 13, 192, it.ask[0], { 'font-size': 56, fill: red(it.ask), stroke: 'none' });
+        lab(A, x + 13, 290, suitLeft + ' / ' + n, red(it.ask), { 'font-size': 24 }); lab(A, x + 13, 320, lb, C.muted, { 'font-size': 16 });
+      };
+      deck(170, 52, 13, 'before');
+      if (V.phase === 'ask') return;
+      A.el('path', { d: 'M290 170H350', stroke: C.muted, 'stroke-width': 2.5, 'marker-end': 'url(#aM)' }, A.svg);
+      deck(470, p1.d === 1 && p1.n === 0 ? 52 : (it.kind === 'cardback' ? 52 : 52 - it.k), it.kind === 'cardout' ? 13 - it.k : 13, it.kind === 'cardback' ? 'put back' : it.k + ' ' + it.drawn[0] + ' kept out');
+      lab(A, 320, 372, Q.val(p1) > Q.val(p0) + 1e-9 ? 'higher' : Q.val(p1) < Q.val(p0) - 1e-9 ? 'lower' : 'the same', C.green, { 'font-size': 24, class: 'fade' });
       return;
     }
     const before = bagList({ red: it.red, blue: it.blue }), removed = it.kind === 'bagother' ? 'blue' : 'red';

@@ -66,7 +66,7 @@ function playSteps(A, S, upto, anim) {
 /* LE1 two-step */
 const T_TWO = {
   id: 'two', code: 'LE1', name: 'Two-step', sec: 1, q: 'Solve', kind: 'slots',
-  gen: MODEL.genTwo, prompt: it => mathHTML(cHTML(it.a) + 'x') + kHTML(it.c) + ' = ' + kHTML(it.d, true),
+  gen: MODEL.genTwo, typeOf: it => it.a < 0 ? "neg" : "pos", prompt: it => mathHTML(cHTML(it.a) + 'x') + kHTML(it.c) + ' = ' + kHTML(it.d, true),
   slots: () => ['x =', { k: 'x', label: 'x' }], check: MODEL.checkTwo, answer: it => ({ x: Q.q(it.x) }),
   draw(A, it, V) { const S = MODEL.steps(it.a, it.c, 0, it.d); playSteps(A, S, V.phase === 'ask' ? 0 : V.phase === 'wrong' ? 1 : S.length - 1, V.anim); }
 };
@@ -74,7 +74,7 @@ const T_TWO = {
 /* LE2 expand a(px + c) */
 const T_BR = {
   id: 'br', code: 'LE2', name: 'Brackets', sec: 2, q: 'Expand', kind: 'slots',
-  gen: MODEL.genBr, prompt: it => cHTML(it.a) + '(' + mathHTML(cHTML(it.p) + 'x') + kHTML(it.c) + ')',
+  gen: MODEL.genBr, typeOf: it => (it.a < 0 ? "neg" : "pos") + (it.p > 1 ? "p" : "") + (it.c < 0 ? "-" : "+"), prompt: it => cHTML(it.a) + '(' + mathHTML(cHTML(it.p) + 'x') + kHTML(it.c) + ')',
   slots: () => [{ k: 'k', label: 'x coefficient' }, 'x +', { k: 'c0', label: 'number' }], check: MODEL.checkBr,
   answer: it => ({ k: Q.q(it.a * it.p), c0: Q.q(it.a * it.c) }),
   draw(A, it, V) {
@@ -110,7 +110,7 @@ const T_BR = {
 /* LE2 x on both sides */
 const T_BOTH = {
   id: 'both', code: 'LE2', name: 'Both sides', sec: 2, q: 'Solve', kind: 'slots',
-  gen: MODEL.genBoth, prompt: it => mathHTML(cHTML(it.a) + 'x') + kHTML(it.c) + ' = ' + mathHTML(cHTML(it.b) + 'x') + kHTML(it.d),
+  gen: MODEL.genBoth, typeOf: it => it.a > it.b ? "left" : "right", prompt: it => mathHTML(cHTML(it.a) + 'x') + kHTML(it.c) + ' = ' + mathHTML(cHTML(it.b) + 'x') + kHTML(it.d),
   slots: () => ['x =', { k: 'x', label: 'x' }], check: MODEL.checkBoth, answer: it => ({ x: Q.q(it.x) }),
   draw(A, it, V) { const S = MODEL.steps(it.a, it.c, it.b, it.d); playSteps(A, S, V.phase === 'ask' ? 0 : V.phase === 'wrong' ? 1 : S.length - 1, V.anim); }
 };
