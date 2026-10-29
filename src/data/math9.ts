@@ -177,7 +177,7 @@ for (const t of topics) {
 }
 
 /** Files the viewer serves that no page lists. */
-const unlisted = ['worksheets/number/powers-exponents/math9-powers-repeated-mult-lesson-v1'];
+const unlisted = ['worksheets/number/powers-exponents/math9-powers-repeated-mult-lesson-v1', 'practice/math9-pat-trainer-v1'];
 
 export const topicBySlug = (slug: string) => topics.find((t) => t.slug === slug);
 export const strandBySlug = (slug: string) => strands.find((s) => s.slug === slug);
@@ -214,6 +214,7 @@ export function allViewPaths(): string[] {
 export function backPathFor(path: string): string {
   const parts = path.split('/');
   if (parts[0] === 'home') return `math9/parents/${parts[1]}`;
+  if (path === 'practice/math9-pat-trainer-v1') return 'math9/pat-prep';
   for (const s of strands) {
     if (s.project?.guide === path) return `math9/teacher#${s.slug}-project`;
     if (s.project?.brief === path || s.project?.journal === path) return `math9/materials/${s.slug}`;

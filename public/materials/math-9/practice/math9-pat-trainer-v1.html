@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAT Word Problems Trainer | Math 9</title>
+<!-- =====================================================================
+   PAT WORD PROBLEMS TRAINER (narrow trainer format, see _sims-context.md)
+   Math 9 | all strands | PAT prep. Used after the units: it does not teach, each tab points back to its notes section.
+   The one narrow trainer that keeps word problems on screen (user request, 2026-10-29): each tab is one PAT-style
+   problem type, the story is two short sentences, and the picture is a schematic of the story (a tape, a road, a
+   room, a triangle in the scene), not decoration.
+   One problem type per tab, 10 items a round, numerical response like PAT Part B:
+     RN3 Trip       distance = speed × time for two legs; times in fractions of an hour or in minutes
+     SR1 Rug        a square covers p% of a rectangle: area first, then √
+     LR4 Bill       total = fee + rate × n, or n from the total (partial variation)
+     LE5 Save up    (goal − have) ÷ rate, rounded UP to a whole number
+     LE4 Budget     fee + rate × n ≤ budget, rounded DOWN
+     LE5 Shares     three people, one unknown: a bar model (t, k·t, k·t ± d)
+     LE5 Catch up   two plans, fee + rate × n: when do they cost the same?
+     SR3 Ladder     the Pythagorean theorem in a scene (ladder, screen, ramp, shortcut across a park)
+     ME2 Paint      surface area of a box, closed or open-topped
+     PR1 Predict    a sample result scaled to the whole group
+     Mixed          any of the above, as on the PAT
+   Named mistakes: minutes read as decimal hours, one leg only, speeds added; area given for the side, √ as ÷ 2, the
+   percent left out; the fee left out or multiplied; rounding the wrong way, not taking off what you have; the
+   extra amount not taken off first, another person's share; the fee gap not divided, rates added; adding the sides,
+   no root, adding for a leg, the diagonal for "how much shorter"; the top counted on an open box, one face of each
+   pair, volume for area; part to part, the percent for the count, the sample count.
+   Model: exact arithmetic on generated stories; every answer is checked in the model tests (400 per tab).
+   ?debug=1 puts DRILL (and MODEL) on window, turns off saving and motion.
+   ===================================================================== -->
+<style>
+/* page only: the story text in the prompt, and tighter tabs (11 of them) */
+  .prompt .story { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 17px; line-height: 1.45; text-align: left; }
+  .prompt .story b { color: var(--yellow); font-weight: 650; }
+  .tabs .tab { padding: 2px 10px; }
+  @media (max-width: 1150px) { .tabs .tab { padding: 2px 7px; } .top .tabs { gap: 4px; } }
+  @media (max-height: 700px) { .prompt .story { font-size: 16px; line-height: 1.35; } }
+  .stage svg text.emo { stroke: none; font-family: "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", sans-serif; font-weight: 400; }
+</style>
+<style>
+/* ===== DRILL SHELL CSS START (same in every narrow trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .stage svg text.emo { stroke: none; font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif; font-weight: 400; }
+  .sans .prompt { font-family: inherit; font-weight: 650; font-size: 26px; }
+  .sans .choice { font-size: 19px; line-height: 1.15; padding: 4px 8px; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slot.sup { width: 1.9em; min-height: 40px; font-size: 20px; align-self: flex-start; margin-left: -2px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choices.two { grid-template-columns: 1fr 1fr; }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choices.one { grid-template-columns: 1fr; gap: 8px; }
+  .choices.one .choice { min-height: 54px; }
+  .choices.one .choice.math { font-size: 26px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+
+/* ===================== MODEL START (no DOM) ===================== */
+/* PAT word problems. Money is kept in whole cents and distances in tenths, so every answer is exact. */
+const MODEL = (() => {
+  const { val, rnd, pick, chance, shuffle } = Q;
+  const near = (g, x, t) => g != null && Math.abs(val(g) - x) <= (t == null ? .005 : t) + 1e-9;
+  const r1 = x => Math.round(x * 10) / 10, r2 = x => Math.round(x * 100) / 100;
+  const ans = x => String(r2(x));
+  const $c = c => '$' + (c % 100 === 0 ? String(c / 100) : (c / 100).toFixed(2)); // cents -> "$5" or "$0.06"
+  const NAMES = ['Maya', 'Liam', 'Aiyana', 'Noah', 'Priya', 'Owen', 'Sofia', 'Kai', 'Amara', 'Ethan', 'Zoe', 'Jonah', 'Leah', 'Arjun', 'Nadia', 'Cole', 'Hana', 'Mateo'];
+  const TRIOS = [['Tara', 'Jen', 'Mindy'], ['Ari', 'Ben', 'Cody'], ['Lena', 'Raj', 'Sam'], ['Mia', 'Eli', 'Rosa'], ['Dev', 'Ivy', 'Max']];
+
+  /* RN3 Trip: two legs, distance = speed × time. Speeds are 1.2k so every leg is a whole number of tenths. */
+  const TRIP = [{ w: 'bikes', icon: '🚲', lo: 8, hi: 15 }, { w: 'paddles', icon: '🛶', lo: 3, hi: 6 }, { w: 'drives', icon: '🚗', lo: 50, hi: 90 }];
+  const HOURS = [[1, 4], [1, 2], [3, 4], [1, 3], [2, 3], [3, 2]], MINS = [15, 20, 30, 40, 45];
+  function genTrip() {
+    const c = pick(TRIP), mode = pick(['frac', 'frac', 'min']);
+    let k1, k2; do { k1 = rnd(c.lo, c.hi); k2 = rnd(c.lo, c.hi); } while (k1 === k2);
+    const t = [0, 1].map(() => { if (mode === 'min') { const m = pick(MINS); return { n: m, d: 60, m }; } const [n, d] = pick(HOURS); return { n, d }; });
+    if (mode === 'min' && t[0].m === t[1].m) t[1] = { n: t[0].m === 30 ? 45 : 30, d: 60, m: t[0].m === 30 ? 45 : 30 };
+    const S = [12 * k1, 12 * k2], D = S.map((s, i) => s * t[i].n / t[i].d); // tenths
+    return { form: mode, who: pick(NAMES), ctx: c.w, icon: c.icon, s: S.map(x => x / 10), t, d: D.map(x => x / 10), v: (D[0] + D[1]) / 10 };
+  }
+  function checkTrip(it, r) {
+    const g = r.v, s = it.s, t = it.t.map(x => x.n / x.d), T = .05;
+    if (near(g, it.v, T)) return { ok: true };
+    if (it.form === 'min' && near(g, s[0] * it.t[0].m / 100 + s[1] * it.t[1].m / 100, T)) return { code: 'min', cue: '60 minutes in an hour' };
+    if (near(g, it.d[0], T) || near(g, it.d[1], T)) return { code: 'one', cue: 'Add both parts of the trip' };
+    if (near(g, (s[0] + s[1]) * (t[0] + t[1]), T) || near(g, (s[0] + s[1]) / 2 * (t[0] + t[1]), T)) return { code: 'mix', cue: 'Each part: its own speed × time' };
+    if (near(g, s[0] / t[0] + s[1] / t[1], T)) return { code: 'div', cue: 'distance = speed × time' };
+    return { code: 'other', cue: 'speed × time for each part' };
+  }
+
+  /* SR1 Rug: a square covers p% of a rectangle. Area first, then the square root. */
+  const RUG = [{ w: 'rug', place: 'the floor of a', what: 'room' }, { w: 'garden', place: 'a', what: 'yard' }, { w: 'patio', place: 'a', what: 'backyard' }];
+  function genRug() {
+    for (;;) {
+      const L = rnd(6, 24), W = rnd(4, L), p = pick([12.5, 20, 25, 37.5, 40, 50, 60, 75, 80]), A = L * W * p / 100, s = Math.round(Math.sqrt(A));
+      if (s * s !== A || s < 2 || s > Math.min(L, W) || s === Math.min(L, W)) continue;
+      return Object.assign({ L, W, p, area: A, v: s }, pick(RUG));
+    }
+  }
+  function checkRug(it, r) {
+    const g = r.v, T = .05; if (near(g, it.v, T)) return { ok: true };
+    if (near(g, it.area, T)) return { code: 'area', cue: 'That’s the area: now take √' };
+    if (near(g, it.area / 2, T)) return { code: 'half', cue: '√ is not ÷ 2' };
+    if (near(g, Math.sqrt(it.L * it.W), T) || near(g, it.L * it.W, T)) return { code: 'full', cue: 'Only ' + it.p + '% of the ' + it.what };
+    if (near(g, it.area / 4, T)) return { code: 'perim', cue: 'Area = side × side' };
+    return { code: 'other', cue: 'Area first, then √' };
+  }
+
+  /* LR4 Bill: total = fee + rate × n, or n from the total. Cents throughout. */
+  const BILL = [
+    { id: 'phone', icon: '📱', fees: [500, 1000, 1500], rates: [5, 6, 8, 10], lo: 20, hi: 150, unit: 'minute', units: 'minutes',
+      plan: (f, r) => 'A phone plan is ' + f + ' a month plus ' + r + ' a minute.', use: (w, n) => w + ' talks ' + n + ' minutes.', paid: (w, T) => w + '’s bill is ' + T + '.' },
+    { id: 'taxi', icon: '🚕', fees: [350, 400, 425], rates: [175, 200, 225], lo: 3, hi: 20, unit: 'km', units: 'km',
+      plan: (f, r) => 'A taxi charges ' + f + ' plus ' + r + ' per km.', use: (w, n) => w + ' rides ' + n + ' km.', paid: (w, T) => w + '’s fare is ' + T + '.' },
+    { id: 'gym', icon: '🏋️', fees: [2500, 5000, 7500], rates: [1500, 2000, 3000], lo: 2, hi: 12, unit: 'month', units: 'months',
+      plan: (f, r) => 'A gym charges a ' + f + ' sign-up fee plus ' + r + ' a month.', use: (w, n) => w + ' goes for ' + n + ' months.', paid: (w, T) => w + ' has paid ' + T + ' in all.' },
+    { id: 'bowl', icon: '🎳', fees: [300, 400, 500], rates: [450, 500, 600], lo: 2, hi: 6, unit: 'game', units: 'games',
+      plan: (f, r) => 'Bowling costs ' + f + ' for shoes plus ' + r + ' a game.', use: (w, n) => w + ' bowls ' + n + ' games.', paid: (w, T) => w + ' pays ' + T + '.' }
+  ];
+  function genBill() {
+    const c = pick(BILL), fee = pick(c.fees), rate = pick(c.rates), n = rnd(c.lo, c.hi), form = pick(['total', 'total', 'n']);
+    const T = fee + rate * n;
+    return { form, ctx: c.id, who: pick(NAMES), fee, rate, n, T, v: form === 'total' ? T / 100 : n };
+  }
+  const billCtx = it => BILL.find(c => c.id === it.ctx);
+  function checkBill(it, r) {
+    const g = r.v;
+    if (it.form === 'total') {
+      if (near(g, it.T / 100)) return { ok: true };
+      if (near(g, it.rate * it.n / 100)) return { code: 'nofee', cue: 'Add the ' + $c(it.fee) + ' fee' };
+      if (near(g, (it.fee + it.rate) * it.n / 100)) return { code: 'both', cue: 'The fee is paid once' };
+      return { code: 'other', cue: 'fee + rate × ' + it.n };
+    }
+    if (near(g, it.n, .05)) return { ok: true };
+    if (near(g, it.T / it.rate, .05) || near(g, Math.round(it.T / it.rate), .05)) return { code: 'nofee', cue: 'Take off the ' + $c(it.fee) + ' fee first' };
+    if (near(g, (it.T - it.fee) / 100)) return { code: 'sub', cue: 'That’s dollars: ÷ ' + $c(it.rate) };
+    return { code: 'other', cue: '(total − fee) ÷ rate' };
+  }
+
+  /* LE5 Save up: (goal − have) ÷ rate, rounded UP. */
+  const SAVE = [
+    { id: 'work', icon: '⏱️', rates: [1025, 1250, 1500, 1575, 1650], unit: 'hours', one: 'hour', earn: r => 'earns ' + r + ' an hour' },
+    { id: 'week', icon: '📅', rates: [1500, 2000, 2500, 3000, 3500, 4000], unit: 'weeks', one: 'week', earn: r => 'saves ' + r + ' a week' },
+    { id: 'cars', icon: '🚗', rates: [800, 1000, 1200], unit: 'cars', one: 'car', earn: r => 'gets ' + r + ' for each car washed' },
+    { id: 'lawns', icon: '🌱', rates: [1500, 2000, 2500], unit: 'lawns', one: 'lawn', earn: r => 'gets ' + r + ' for each lawn mowed' }
+  ];
+  const ITEMS = [['pair of skates', '⛸️'], ['bike', '🚲'], ['guitar', '🎸'], ['set of headphones', '🎧'], ['game console', '🎮'], ['tent', '⛺']];
+  function genSave() {
+    for (let i = 0; ; i++) {
+      const c = pick(SAVE), rate = pick(c.rates), G = rnd(24, 120) * 5, H = rnd(2, Math.floor(G / 10)) * 5 + pick([0, 1, 3]);
+      const need = (G - H) * 100, n = Math.ceil(need / rate), exact = need % rate === 0;
+      if (n < 3 || n > 28 || H >= G) continue;
+      if (exact && chance(.8)) continue;
+      const [thing, ticon] = pick(ITEMS);
+      return { form: c.id, who: pick(NAMES), G, H, rate, need, n, exact, thing, ticon, v: n };
+    }
+  }
+  const saveCtx = it => SAVE.find(c => c.id === it.form);
+  function checkSave(it, r) {
+    const g = r.v, q0 = it.need / it.rate; if (near(g, it.n, .001)) return { ok: true };
+    if (!it.exact && near(g, Math.floor(q0), .001)) return { code: 'down', cue: 'Not enough yet: round up' };
+    if (!it.exact && near(g, q0, .05)) return { code: 'dec', cue: 'Whole ' + saveCtx(it).unit + ': round up' };
+    const q1 = it.G * 100 / it.rate;
+    if (near(g, q1, .05) || near(g, Math.ceil(q1), .001) || near(g, Math.floor(q1), .001)) return { code: 'nohave', cue: 'Take off the $' + it.H + ' first' };
+    if (near(g, it.G - it.H, .001)) return { code: 'need', cue: 'That’s dollars: ÷ ' + $c(it.rate) };
+    return { code: 'other', cue: '(goal − have) ÷ rate, round up' };
+  }
+
+  /* LE4 Budget: fee + rate × n ≤ budget, rounded DOWN. */
+  const BUD = [
+    { id: 'fair', icon: '🎡', place: 'the fair', fees: [500, 800, 1000], rates: [250, 300, 350, 400], each: 'each ride', unit: 'rides', fee: 'Entry' },
+    { id: 'arcade', icon: '🕹️', place: 'the arcade', fees: [300, 500], rates: [125, 150, 175, 200], each: 'each game', unit: 'games', fee: 'A game card' },
+    { id: 'taxi', icon: '🚕', place: 'a taxi', fees: [350, 400], rates: [175, 200, 225], each: 'each km', unit: 'km', fee: 'The base fare' },
+    { id: 'pool', icon: '🏊', place: 'swim lessons', fees: [1500, 2000], rates: [650, 800, 950], each: 'each lesson', unit: 'lessons', fee: 'Sign-up' }
+  ];
+  function genBudget() {
+    for (;;) {
+      const c = pick(BUD), fee = pick(c.fees), rate = pick(c.rates), B = rnd(4, 18) * 5, room = B * 100 - fee, n = Math.floor(room / rate);
+      if (n < 3 || n > 25) continue;
+      const exact = room % rate === 0; if (exact && chance(.85)) continue;
+      return { form: c.id, who: pick(NAMES), B, fee, rate, n, exact, v: n };
+    }
+  }
+  const budCtx = it => BUD.find(c => c.id === it.form);
+  function checkBudget(it, r) {
+    const g = r.v, q0 = (it.B * 100 - it.fee) / it.rate; if (near(g, it.n, .001)) return { ok: true };
+    if (!it.exact && near(g, Math.ceil(q0), .001)) return { code: 'up', cue: 'Over budget: round down' };
+    if (!it.exact && near(g, q0, .05)) return { code: 'dec', cue: 'Whole ' + budCtx(it).unit + ': round down' };
+    const q1 = it.B * 100 / it.rate;
+    if (near(g, Math.floor(q1), .001) || near(g, q1, .05) || near(g, Math.ceil(q1), .001)) return { code: 'nofee', cue: 'Pay the ' + $c(it.fee) + ' first' };
+    return { code: 'other', cue: '(budget − fee) ÷ rate, round down' };
+  }
+
+  /* LE5 Shares: three people, one unknown t. less: A = t, B = k·t, C = k·t − d. more: C = t + d. extra: C = k·t + d. */
+  const SHARE = [{ id: 'money', verb: 'raised', unit: '$' }, { id: 'points', verb: 'scored', unit: 'points' }, { id: 'cards', verb: 'collected', unit: 'cards' }];
+  function genShares() {
+    for (;;) {
+      const form = pick(['less', 'more', 'extra']), k = pick([2, 2, 3]), t = rnd(4, 30), d = rnd(1, 4) * 5;
+      if (form === 'less' && d >= k * t) continue;
+      const c = [t, k * t, form === 'less' ? k * t - d : form === 'more' ? t + d : k * t + d];
+      return Object.assign({ form, k, t, d, c, total: c[0] + c[1] + c[2], parts: form === 'more' ? k + 2 : 2 * k + 1, names: pick(TRIOS), v: t }, { ctx: pick(SHARE) });
+    }
+  }
+  function checkShares(it, r) {
+    const g = r.v, T = .05; if (near(g, it.t, T)) return { ok: true };
+    const sgn = it.form === 'less' ? 1 : -1, nm = it.names;
+    if (near(g, it.total / it.parts, T)) return { code: 'ignore', cue: (sgn > 0 ? 'Add the ' : 'Take off the ') + it.d + ' first' };
+    if (near(g, (it.total - sgn * it.d) / it.parts, T)) return { code: 'way', cue: sgn > 0 ? nm[2] + ' has less: add it back' : nm[2] + ' has extra: take it off' };
+    if (near(g, it.c[1], T)) return { code: 'who', cue: 'That’s ' + nm[1] + '’s share' };
+    if (near(g, it.c[2], T)) return { code: 'who', cue: 'That’s ' + nm[2] + '’s share' };
+    if (near(g, (it.total + sgn * it.d) / 3, T) || near(g, it.total / 3, T)) return { code: 'count', cue: 'Count the blocks: ' + it.parts };
+    return { code: 'other', cue: 'Fix the ' + it.d + ', then ÷ ' + it.parts };
+  }
+
+  /* LE5 Catch up: plan A has the smaller fee and the bigger rate. n = fee gap ÷ rate gap. */
+  const CATCH = [{ id: 'class', icon: '🧘', who: 'Studio', fee: 'to join', each: 'a class', unit: 'classes' }, { id: 'rink', icon: '⛸️', who: 'Rink', fee: 'for a pass', each: 'a visit', unit: 'visits' },
+    { id: 'bike', icon: '🚲', who: 'Shop', fee: 'to rent', each: 'an hour', unit: 'hours' }, { id: 'game', icon: '🎮', who: 'Club', fee: 'to join', each: 'a game', unit: 'games' }];
+  function genCatch() {
+    const c = pick(CATCH), rB = rnd(3, 12), gap = rnd(1, 6), rA = rB + gap, n = rnd(3, 14), fA = rnd(1, 6) * 5, fB = fA + gap * n;
+    return { form: c.id, fA, fB, rA, rB, n, cost: fA + rA * n, v: n };
+  }
+  const catchCtx = it => CATCH.find(c => c.id === it.form);
+  function checkCatch(it, r) {
+    const g = r.v, T = .05; if (near(g, it.n, T)) return { ok: true };
+    if (near(g, it.fB - it.fA, T)) return { code: 'fee', cue: 'Now ÷ the rate gap: ' + (it.rA - it.rB) };
+    if (near(g, (it.fB - it.fA) / (it.rA + it.rB), T)) return { code: 'sum', cue: 'Subtract the rates' };
+    if (near(g, it.cost, T)) return { code: 'cost', cue: 'That’s the cost: find n' };
+    if (near(g, (it.fB - it.fA) / it.rA, T) || near(g, (it.fB - it.fA) / it.rB, T)) return { code: 'one', cue: 'Divide by the rate gap' };
+    return { code: 'other', cue: 'fee gap ÷ rate gap' };
+  }
+
+  /* SR3 Ladder: the Pythagorean theorem in a scene. a = horizontal leg, b = vertical leg, c = hypotenuse. */
+  const TRIPLES = [[3, 4, 5], [5, 12, 13], [8, 15, 17], [7, 24, 25], [6, 8, 10], [9, 12, 15], [20, 21, 29], [12, 16, 20]];
+  function genLadder() {
+    const form = pick(['ladder', 'kite', 'screen', 'park']);
+    let a, b, given = null;
+    if (form === 'ladder') {
+      if (chance(.7)) { const k = pick([.5, 1]), [x, y] = pick([[3, 4], [5, 12], [6, 8]]).map(v => v * k); a = x; b = y; }
+      else { given = rnd(8, 16) / 2; a = rnd(2, 5) / 2; b = Math.sqrt(given * given - a * a); }
+    }
+    else if (form === 'kite') { const [x, y] = pick([[7, 24], [8, 15], [5, 12], [9, 12], [12, 16], [20, 21]]); const k = pick([1, 2]); a = x * k; b = y * k; }
+    else if (form === 'screen') { if (chance(.6)) { const t = pick([[3, 4], [6, 8], [9, 12], [12, 16]]); const k = pick([2, 3]); a = t[1] * k; b = t[0] * k; } else { a = pick([48, 40, 32, 64]); b = a * 9 / 16; } }
+    else { const t = pick(TRIPLES), k = pick([5, 10, 20]); a = t[1] * k; b = t[0] * k; }
+    const c = given != null ? given : Math.sqrt(a * a + b * b);
+    const askLeg = form === 'ladder' || form === 'kite';
+    const v = form === 'park' ? r1(a + b - c) : askLeg ? r1(b) : r1(c);
+    return { form, a, b, c, v };
+  }
+  function checkLadder(it, r) {
+    const g = r.v, T = .051, { a, b, c } = it; if (near(g, it.v, T)) return { ok: true };
+    if (it.form === 'park') {
+      if (near(g, c, T)) return { code: 'diag', cue: 'That’s the path: how much shorter?' };
+      if (near(g, a + b, T)) return { code: 'around', cue: 'Subtract the path from the walk' };
+      if (near(g, a * a + b * b, T) || near(g, a + b - Math.sqrt(Math.abs(a * a - b * b)), T)) return { code: 'noroot', cue: 'Path² = a² + b², then √' };
+      return { code: 'other', cue: '(a + b) − path' };
+    }
+    if (it.form === 'screen') {
+      if (near(g, a + b, T)) return { code: 'add', cue: 'Square, add, then √' };
+      if (near(g, a * a + b * b, T)) return { code: 'noroot', cue: 'Now take the square root' };
+      if (near(g, Math.sqrt(Math.abs(a * a - b * b)), T)) return { code: 'sub', cue: 'Longest side: add the squares' };
+      return { code: 'other', cue: 'c² = a² + b²' };
+    }
+    if (near(g, Math.sqrt(c * c + a * a), T)) return { code: 'legadd', cue: 'A leg: subtract the squares' };
+    if (near(g, c * c - a * a, T)) return { code: 'noroot', cue: 'Now take the square root' };
+    if (near(g, c - a, T) || near(g, c + a, T)) return { code: 'add', cue: 'Square them first' };
+    return { code: 'other', cue: 'b² = c² − a²' };
+  }
+
+  /* ME2 Paint: surface area of a box. closed = 6 faces, open = no top (5 faces). */
+  const BOX = { closed: [['gift box', 'How much paper covers it exactly?', '🎁']], open: [['planter box', 'How much outside area is there to paint?', '🪴'], ['fish tank', 'How much glass does it take?', '🐟']] };
+  function genPaint() {
+    const form = pick(['closed', 'open', 'open']), [what, job, icon] = pick(BOX[form]);
+    let l, w, h; do { l = rnd(2, 12) * 5; w = rnd(2, 8) * 5; h = rnd(2, 8) * 5; } while (w >= l || h === w);
+    const lw = l * w, lh = l * h, wh = w * h, v = form === 'closed' ? 2 * (lw + lh + wh) : lw + 2 * (lh + wh);
+    return { form, what, job, icon, l, w, h, lw, lh, wh, v };
+  }
+  function checkPaint(it, r) {
+    const g = r.v, T = .5, all = 2 * (it.lw + it.lh + it.wh); if (near(g, it.v, T)) return { ok: true };
+    if (it.form === 'open' && near(g, all, T)) return { code: 'all6', cue: 'No top: 5 faces' };
+    if (it.form === 'closed' && near(g, all - it.lw, T)) return { code: 'five', cue: 'Closed box: all 6 faces' };
+    if (near(g, it.lw + it.lh + it.wh, T)) return { code: 'half', cue: 'Each side face has a twin' };
+    if (near(g, it.l * it.w * it.h, T)) return { code: 'vol', cue: 'That’s volume: add face areas' };
+    if (it.form === 'open' && near(g, 2 * (it.lh + it.wh), T)) return { code: 'nobase', cue: 'Count the bottom too' };
+    return { code: 'other', cue: 'Add the area of every face' };
+  }
+
+  /* PR1 Predict: a sample result scaled up. answer = hits × (whole ÷ sample). */
+  const PRED = [
+    { id: 'watch', icon: '⌚', mark: '✗', s: (n, h) => 'A worker tests ' + n + ' watches and finds ' + h + ' faulty.', w: N => 'About how many of ' + N + ' watches are faulty?', q: 'Faulty watches' },
+    { id: 'walk', icon: '🚶', mark: '✓', s: (n, h) => 'In a survey, ' + h + ' of ' + n + ' students walk to school.', w: N => 'About how many of the ' + N + ' students walk?', q: 'Students who walk' },
+    { id: 'seed', icon: '🌱', mark: '✓', s: (n, h) => 'Of ' + n + ' seeds planted, ' + h + ' sprouted.', w: N => 'How many of ' + N + ' seeds should sprout?', q: 'Seeds that sprout' }
+  ];
+  function genPredict() {
+    for (;;) {
+      const n = pick([10, 20, 25, 40, 50]), h = rnd(1, n - 1), m = rnd(4, 40), c = pick(PRED);
+      if (h * 2 > n && c.id === 'watch') continue;
+      return { form: c.id, n, h, m, N: n * m, v: h * m };
+    }
+  }
+  const predCtx = it => PRED.find(c => c.id === it.form);
+  function checkPredict(it, r) {
+    const g = r.v, T = .5; if (near(g, it.v, T)) return { ok: true };
+    if (near(g, it.h / (it.n - it.h) * it.N, 1)) return { code: 'pp', cue: it.h + ' out of all ' + it.n };
+    if (near(g, it.h / it.n * 100, .05)) return { code: 'pct', cue: 'That’s the percent: of ' + it.N + '?' };
+    if (near(g, it.h, .001)) return { code: 'sample', cue: 'Scale up to ' + it.N };
+    if (near(g, it.h * it.N, T) || near(g, it.N / it.h, 1)) return { code: 'scale', cue: it.N + ' is ' + it.m + ' groups of ' + it.n };
+    return { code: 'other', cue: it.h + '/' + it.n + ' of ' + it.N };
+  }
+
+  return { near, r1, r2, ans, $c, billCtx, saveCtx, budCtx, catchCtx, predCtx,
+    genTrip, checkTrip, genRug, checkRug, genBill, checkBill, genSave, checkSave, genBudget, checkBudget,
+    genShares, checkShares, genCatch, checkCatch, genLadder, checkLadder, genPaint, checkPaint, genPredict, checkPredict };
+})();
+/* ===================== MODEL END ===================== */
+
+
+/* ===== DRILL SHELL START (same in every narrow trainer: Math 9 and Science 7) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   Optional: PAGE.sep (heading separator after "Section N", default —), PAGE.secText(tab) (the whole heading text
+   for the 📖 link), PAGE.sans (prompts in the plain font, for science). TAB.cols (2 or 3) sets the choice grid.
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen()                 -> a new item (from MODEL)
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom'
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+     typeOf(item)          -> the question type, for weighting (optional; default: the item's form/kind/shape/... fields)
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown).
+   Weighting: each question type has a score, saved per tab. A first-try right answer lowers it (to half weight at
+   most), a miss or Show me raises it (to about 2.5× at most). Each new item is picked from 8 generated candidates
+   by weight, so missed types come back more often and types answered right still appear, less often. */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {}, w: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); if (!save.w || typeof save.w !== 'object') save.w = {}; } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    let prevItalic = false;
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => {
+      if (!part) return; const it = /^[a-z]$/.test(part);
+      // an italic letter leans into a following ² or ³: nudge it right
+      const t = el('tspan', it ? { 'font-style': 'italic' } : prevItalic && /^[²³]/.test(part) ? { dx: '0.12em' } : {}, e); t.textContent = part; prevItalic = it;
+    });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (tab.kind === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (tab.kind === 'choice') {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
+      row.className = 'choices' + (tab.cols === 2 ? ' two' : tab.cols === 3 ? ' three' : long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = tab.kind === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  /* ---------- weighting: missed question types come back more often ---------- */
+  const TYPE_FIELDS = ['form', 'kind', 'shape', 'type', 'rep', 'ask', 'what', 'mode', 'rule', 'ans', 'useD', 'back', 'direct', 'flip', 'rat', 'idCol'];
+  function keyOf(it) {
+    if (tab.typeOf) return String(tab.typeOf(it));
+    return TYPE_FIELDS.filter(k => typeof it[k] === 'string' || typeof it[k] === 'boolean').map(k => k + ':' + it[k]).join('|');
+  }
+  const scores = () => (save.w[tab.id] = save.w[tab.id] || {});
+  const weightOf = k => Math.pow(2, scores()[k] || 0);
+  function record(right) {
+    const s = scores(), k = item.__key; if (k == null) return;
+    s[k] = right ? Math.max(-1, (s[k] || 0) - .5) : Math.min(1.3, (s[k] || 0) + 1);
+    store();
+  }
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) {
+      const cands = [];
+      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
+      if (!cands.length) cands.push(tab.gen());
+      const ws = cands.map(c => weightOf(keyOf(c))), total = ws.reduce((a, b) => a + b, 0);
+      let r = Q.rnd(0, 999999) / 1e6 * total, i = 0; while (i < cands.length - 1 && r >= ws[i]) { r -= ws[i]; i++; }
+      it = cands[i]; key = JSON.stringify(it);
+    }
+    lastKey = key || JSON.stringify(it);
+    Object.defineProperty(it, '__key', { value: keyOf(it), enumerable: false, configurable: true, writable: true });
+    item = it; resp = {}; att = 0; resolved = false;
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (tab.kind === 'choice' && resp.v == null) return;
+    if (tab.kind === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (tab.kind === 'choice' ? 1 : 2);
+    if (res.ok) {
+      resolved = true; marks.push(att === 1 ? 'g' : 'y'); record(att === 1);
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r'); record(false);
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (tab.kind === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
+    } else if (tab.kind === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (tab.kind === 'slots') fillSlots(ans, 'shown');
+    else if (tab.kind === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); record(false); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(tab) + '" target="_blank" rel="noopener">📖 Notes §' + tab.sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => (t.notes || PAGE.notes) + '#:~:text=' + encodeURIComponent(PAGE.secText ? PAGE.secText(t) : 'Section ' + t.sec + ' ' + (t.sep || PAGE.sep || '—'));
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    const n = $('notes'); n.href = notesHref(tab); $('notesTxt').textContent = '§' + tab.sec;
+    n.title = 'Notes, Section ' + tab.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + tab.sec);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    if (P.sans) document.body.classList.add('sans');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }),
+      keyOf: (it, t) => { const cur = tab; if (t) tab = t; try { return keyOf(it); } finally { tab = cur; } }, weights: () => Object.assign({}, scores()), resetWeights: () => { save.w[tab.id] = {}; }, setScore: (k, s) => { scores()[k] = s; } };
+  }
+  return { boot, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+
+/* ===================== PAGE: pictures and tabs ===================== */
+const { C, fracHTML } = DRILL;
+const M = MODEL, $c = M.$c;
+const done = V => V.phase === 'right' || V.phase === 'show';
+const after = V => V.phase !== 'ask';
+const story = s => '<div class="story">' + s + '</div>';
+const B = s => '<b>' + s + '</b>';
+const lab = (A, x, y, s, col, a) => A.tx(A.svg, x, y, s, Object.assign({ 'font-size': 18, fill: col || C.text }, a || {}));
+const mlab = (A, x, y, s, col, a) => A.mtx(A.svg, x, y, s, Object.assign({ 'font-size': 22, fill: col || C.text }, a || {}));
+const emo = (A, x, y, s, size) => A.tx(A.svg, x, y, s, { 'font-size': size || 34, class: 'emo' });
+const box = (A, x, y, w, h, col, a) => A.el('rect', Object.assign({ x, y, width: Math.max(0, w), height: h, rx: 6, fill: col, 'fill-opacity': .22, stroke: col, 'stroke-width': 2 }, a || {}), A.svg);
+// A brace under (or over) a span, with a label.
+function brace(A, x1, x2, y, s, col, up) {
+  const d = up ? -1 : 1, m = (x1 + x2) / 2;
+  A.el('path', { d: 'M' + x1 + ' ' + y + 'q0 ' + 8 * d + ' 8 ' + 8 * d + 'H' + (m - 8) + 'q8 0 8 ' + 8 * d + 'q0 ' + -8 * d + ' 8 ' + -8 * d + 'H' + (x2 - 8) + 'q8 0 8 ' + -8 * d, stroke: col || C.muted, 'stroke-width': 2, fill: 'none' }, A.svg);
+  if (s != null) lab(A, m, y + 32 * d, s, col || C.muted, { 'font-size': 19 });
+}
+// Time as HTML (story) and as text (picture).
+const tHTML = t => t.m ? t.m + ' min' : t.n > t.d ? '1' + fracHTML(t.n - t.d, t.d) + ' h' : fracHTML(t.n, t.d) + ' h';
+const tTXT = t => t.m ? t.m + ' min' : ({ '1/4': '¼', '1/2': '½', '3/4': '¾', '1/3': '⅓', '2/3': '⅔', '3/2': '1½' })[t.n + '/' + t.d] + ' h';
+const num = x => String(M.r2(x));
+const kmS = x => num(x) + ' km/h';
+
+/* RN3 Trip */
+const T_TRIP = {
+  id: 'trip', code: 'RN3', name: 'Trip', sec: 3, notes: '../notes/rational-numbers/math9-rational-numbers-notes-v1.html',
+  q: 'How far in all?', kind: 'slots', gen: M.genTrip, typeOf: it => it.form + ':' + it.ctx,
+  prompt: it => story(it.who + ' ' + it.ctx + ' at ' + B(kmS(it.s[0])) + ' for ' + B(tHTML(it.t[0])) + ', then at ' + B(kmS(it.s[1])) + ' for ' + B(tHTML(it.t[1])) + '.'),
+  slots: () => [{ k: 'v', label: 'distance', wide: true }, { h: '<span style="font-family:inherit">km</span>' }],
+  check: M.checkTrip, answer: it => ({ v: num(it.v) }),
+  draw(A, it, V) {
+    const D = it.d[0] + it.d[1], x0 = 70, W = 500, px = W / D, y = 190, xm = x0 + it.d[0] * px, cols = [C.blue, C.gold];
+    emo(A, x0 - 22, y - 46, it.icon, 36);
+    [[x0, xm], [xm, x0 + W]].forEach(([a, b], i) => {
+      A.el('line', { x1: a, x2: b, y1: y, y2: y, stroke: cols[i], 'stroke-width': 12, 'stroke-linecap': 'butt' }, A.svg);
+      const m = (a + b) / 2, red = V.res && V.res.code === 'min';
+      lab(A, m, y - 30, kmS(it.s[i]), cols[i], { 'font-size': 19 });
+      lab(A, m, y + 32, tTXT(it.t[i]), red && !done(V) ? C.red : C.text, { 'font-size': 20 });
+      if (red || (done(V) && it.t[i].m)) lab(A, m, y + 60, it.t[i].m + '/60 h = ' + tTXT({ n: it.t[i].m / Q.gcd(it.t[i].m, 60), d: 60 / Q.gcd(it.t[i].m, 60) }), red ? C.red : C.muted, { 'font-size': 16, class: 'fade' });
+      if (after(V)) lab(A, m, y + 92, done(V) ? num(it.d[i]) + ' km' : 'speed × time', done(V) ? cols[i] : C.muted, { 'font-size': 19, class: 'fade' });
+    });
+    A.el('circle', { cx: x0, cy: y, r: 9, fill: C.text }, A.svg); A.el('line', { x1: x0 + W, x2: x0 + W, y1: y - 40, y2: y + 10, stroke: C.text, 'stroke-width': 3 }, A.svg);
+    A.el('path', { d: 'M' + (x0 + W) + ' ' + (y - 40) + 'h26l-8 9l8 9h-26', fill: C.green, stroke: 'none' }, A.svg);
+    if (V.res && V.res.code === 'one') brace(A, x0, x0 + W, y + 118, 'both parts', C.red);
+    else if (done(V)) brace(A, x0, x0 + W, y + 118, num(it.d[0]) + ' + ' + num(it.d[1]) + ' = ' + num(it.v) + ' km', C.green);
+  }
+};
+
+/* SR1 Rug */
+const T_RUG = {
+  id: 'rug', code: 'SR1', name: 'Rug', sec: 1, notes: '../notes/square-roots/math9-square-roots-notes-v1.html',
+  q: 'Side length of the square', kind: 'slots', gen: M.genRug, typeOf: it => it.w,
+  prompt: it => story('A square ' + it.w + ' covers ' + B(it.p + '%') + ' of ' + it.place + ' ' + B(it.L + ' m') + ' by ' + B(it.W + ' m') + ' ' + it.what + '.'),
+  slots: () => ['side =', { k: 'v', label: 'side', wide: true }, { h: '<span style="font-family:inherit">m</span>' }],
+  check: M.checkRug, answer: it => ({ v: String(it.v) }),
+  draw(A, it, V) {
+    const s = Math.min(380 / it.L, 270 / it.W), w = it.L * s, h = it.W * s, x0 = 40 + (400 - w) / 2, y0 = 60 + (280 - h) / 2, side = it.v * s;
+    A.el('rect', { x: x0, y: y0, width: w, height: h, fill: C.blue, 'fill-opacity': .06, stroke: C.blue, 'stroke-width': 3 }, A.svg);
+    lab(A, x0 + w / 2, y0 - 18, it.L + ' m', C.blue); lab(A, x0 - 12, y0 + h / 2, it.W + ' m', C.blue, { 'text-anchor': 'end' });
+    const rx = x0 + 3, ry = y0 + h - side - 3;
+    A.el('rect', { x: rx, y: ry, width: side, height: side, fill: C.yellow, 'fill-opacity': .22, stroke: C.yellow, 'stroke-width': 3 }, A.svg);
+    if (done(V)) for (let i = 1; i < it.v; i++) { A.el('line', { x1: rx + i * s, x2: rx + i * s, y1: ry, y2: ry + side, stroke: C.yellow, 'stroke-opacity': .35 }, A.svg); A.el('line', { x1: rx, x2: rx + side, y1: ry + i * s, y2: ry + i * s, stroke: C.yellow, 'stroke-opacity': .35 }, A.svg); }
+    lab(A, rx + side / 2, ry + side / 2, it.p + '%', C.yellow, { 'font-size': side > 60 ? 20 : 14 });
+    lab(A, rx + side / 2, y0 + h + 22, done(V) ? it.v + ' m' : '?', done(V) ? C.green : C.yellow, { 'font-size': 20 });
+    if (!after(V)) return;
+    const X = 470, code = V.res && V.res.code;
+    lab(A, X + 70, 110, it.what + ' area', C.blue, { 'font-size': 15 });
+    mlab(A, X + 70, 140, it.L + ' × ' + it.W + ' = ' + it.L * it.W, C.blue, { class: 'fade' });
+    if (code === 'full') lab(A, X + 70, 190, 'only ' + it.p + '%', C.red, { class: 'pulse' });
+    if (done(V) || code === 'area' || code === 'half' || code === 'perim') {
+      lab(A, X + 70, 190, it.w + ' area', C.yellow, { 'font-size': 15 });
+      mlab(A, X + 70, 220, it.p + '% → ' + it.area, C.yellow, { class: 'fade' });
+      mlab(A, X + 70, 270, 'side × side = ' + it.area, code === 'area' || code === 'half' || code === 'perim' ? C.red : C.muted, { 'font-size': 19, class: 'fade' });
+    }
+    if (done(V)) mlab(A, X + 70, 320, '√' + it.area + ' = ' + it.v, C.green, { class: 'fade' });
+  }
+};
+
+/* A tape: fee block, then rate blocks. segs = [{v, col, label}], px per unit. Returns the x where it ends. */
+function tape(A, x, y, h, segs, px, a) {
+  segs.forEach(s => { const w = s.v * px; box(A, x, y, w, h, s.col, Object.assign({}, a || {}, s.attr || {})); if (s.label && w > 18) lab(A, x + w / 2, y + h / 2, s.label, s.lc || C.text, { 'font-size': s.fs || (w > 70 ? 17 : 13) }); x += w; });
+  return x;
+}
+
+/* LR4 Bill */
+const T_BILL = {
+  id: 'bill', code: 'LR4', name: 'Bill', sec: 4, notes: '../notes/linear-relations/math9-linear-relations-notes-v1.html',
+  q: it => it.form === 'total' ? 'What is the total?' : 'How many ' + M.billCtx(it).units + '?', kind: 'slots', gen: M.genBill, typeOf: it => it.form + ':' + it.ctx,
+  prompt: it => { const c = M.billCtx(it); return story(c.plan(B($c(it.fee)), B($c(it.rate))) + ' ' + (it.form === 'total' ? c.use(it.who, B(it.n)) : c.paid(it.who, B($c(it.T))))); },
+  slots: it => it.form === 'total' ? ['$', { k: 'v', label: 'total in dollars', wide: true }] : [{ k: 'v', label: 'how many', wide: true }, { h: '<span style="font-family:inherit">' + M.billCtx(it).units + '</span>' }],
+  check: M.checkBill, answer: it => ({ v: it.form === 'total' ? (it.T / 100).toFixed(2) : String(it.n) }),
+  draw(A, it, V) {
+    const c = M.billCtx(it), code = V.res && V.res.code, x0 = 60, W = 520, y = 150, h = 70;
+    // keep both blocks readable: the fee at least 70 px, the usage at least 160 px
+    let fw = W * it.fee / it.T; fw = Math.max(70, Math.min(W - 160, fw)); const uw = W - fw;
+    emo(A, 52, 70, c.icon, 40);
+    box(A, x0, y, fw, h, C.teal, code === 'nofee' || code === 'both' ? { filter: 'url(#glow)', 'stroke-width': 4 } : {});
+    lab(A, x0 + fw / 2, y + h / 2 - 10, 'fee', C.teal, { 'font-size': 14 }); lab(A, x0 + fw / 2, y + h / 2 + 12, $c(it.fee), C.text, { 'font-size': 19 });
+    box(A, x0 + fw, y, uw, h, C.gold);
+    const nTxt = it.form === 'n' && !done(V) ? 'n' : String(it.n);
+    lab(A, x0 + fw + uw / 2, y + h / 2 - 10, nTxt + ' × ' + $c(it.rate), C.gold, { 'font-size': 17 });
+    if (done(V) || (it.form === 'n' && after(V))) lab(A, x0 + fw + uw / 2, y + h / 2 + 14, '= ' + $c(it.rate * it.n), it.form === 'n' && !done(V) ? C.muted : C.text, { 'font-size': 17, class: 'fade' });
+    const tot = it.form === 'total' && !done(V) ? '$ ?' : $c(it.T);
+    brace(A, x0, x0 + W, y - 14, 'total ' + tot, it.form === 'total' && done(V) ? C.green : C.text, true);
+    if (it.form === 'n' && done(V)) lab(A, x0 + fw + uw / 2, y + h + 34, $c(it.T - it.fee) + ' ÷ ' + $c(it.rate) + ' = ' + it.n + ' ' + c.units, C.green, { 'font-size': 19, class: 'fade' });
+    if (code === 'nofee') lab(A, x0 + fw / 2, y + h + 34, 'the fee counts', C.red, { 'font-size': 17 });
+    if (code === 'both') lab(A, x0 + fw / 2, y + h + 34, 'paid once', C.red, { 'font-size': 17 });
+    if (after(V)) mlab(A, 320, 360, 'C = ' + M.r2(it.fee / 100) + ' + ' + M.r2(it.rate / 100) + 'n', C.muted, { class: 'fade' });
+  }
+};
+
+/* LE5 Save up and LE4 Budget share one picture: a money bar with a fee or "have" block, then rate chunks. */
+function chunks(A, x, y, h, n, w, col, last) {
+  for (let i = 0; i < n; i++) A.el('rect', { x: x + i * w + 1, y, width: Math.max(1, w - 2), height: h, rx: 4, fill: i === n - 1 && last ? last : col, 'fill-opacity': i % 2 ? .4 : .28, stroke: i === n - 1 && last ? last : col, 'stroke-width': 1.5, class: 'fade', style: 'animation-delay:' + i * 40 + 'ms' }, A.svg);
+}
+const T_SAVE = {
+  id: 'save', code: 'LE5', name: 'Save up', sec: 5, notes: '../notes/linear-equations/math9-linear-equations-notes-v1.html',
+  q: it => 'Fewest whole ' + M.saveCtx(it).unit, kind: 'slots', gen: M.genSave, typeOf: it => it.form,
+  prompt: it => { const c = M.saveCtx(it); return story(it.who + ' has ' + B('$' + it.H) + ' and wants a ' + B('$' + it.G) + ' ' + it.thing + '. ' + it.who + ' ' + c.earn(B($c(it.rate))) + '.'); },
+  slots: it => [{ k: 'v', label: 'how many', wide: true }, { h: '<span style="font-family:inherit">' + M.saveCtx(it).unit + '</span>' }],
+  check: M.checkSave, answer: it => ({ v: String(it.n) }),
+  draw(A, it, V) {
+    const c = M.saveCtx(it), code = V.res && V.res.code, x0 = 60, W = 500, y = 170, h = 64;
+    const top = Math.max(it.G * 100, it.H * 100 + it.n * it.rate), px = W / top, gx = x0 + it.G * 100 * px, hx = x0 + it.H * 100 * px, cw = it.rate * px;
+    A.el('rect', { x: x0, y, width: gx - x0, height: h, rx: 6, fill: 'none', stroke: C.edge, 'stroke-width': 2, 'stroke-dasharray': '6 5' }, A.svg);
+    box(A, x0, y, hx - x0, h, C.green, code === 'nohave' ? { filter: 'url(#glow)', 'stroke-width': 4 } : {});
+    if (hx - x0 > 40) lab(A, (x0 + hx) / 2, y + h / 2, '$' + it.H, C.text, { 'font-size': 17 });
+    lab(A, (x0 + hx) / 2, y + h + 24, 'has', C.green, { 'font-size': 14 });
+    A.el('line', { x1: gx, x2: gx, y1: y - 46, y2: y + h + 12, stroke: C.yellow, 'stroke-width': 3 }, A.svg);
+    emo(A, gx, y - 70, it.ticon, 34); lab(A, gx, y + h + 30, '$' + it.G, C.yellow, { 'font-size': 18 });
+    emo(A, 40, 60, c.icon, 30);
+    if (!after(V)) {
+      box(A, hx, y, cw, h, C.gold, { 'stroke-dasharray': '5 4' });
+      lab(A, hx + Math.max(cw, 60) / 2 + 30, y - 22, '+ ' + $c(it.rate) + ' each ' + c.one, C.gold, { 'font-size': 16 });
+      brace(A, hx, gx, y + h + 46, '?', C.muted);
+      return;
+    }
+    if (!done(V) && code !== 'down') { brace(A, hx, gx, y + h + 46, '$' + it.G + ' − $' + it.H + ' = $' + (it.G - it.H), C.muted); box(A, hx, y, cw, h, C.gold, { 'stroke-dasharray': '5 4' }); lab(A, hx + cw / 2, y - 22, '$' + M.r2(it.rate / 100) + ' each', C.gold, { 'font-size': 16 }); return; }
+    const shown = code === 'down' ? Math.floor(it.need / it.rate) : it.n;
+    chunks(A, hx, y + 6, h - 12, shown, cw, C.gold, done(V) && !it.exact ? C.green : null);
+    if (code === 'down') { lab(A, gx - 6, y + h + 62, 'still ' + $c(it.need - shown * it.rate) + ' short', C.red, { 'text-anchor': 'end', 'font-size': 18 }); A.el('rect', { x: hx + shown * cw, y: y + 6, width: gx - hx - shown * cw, height: h - 12, fill: C.red, 'fill-opacity': .35 }, A.svg); }
+    else brace(A, hx, gx, y + h + 46, '$' + it.G + ' − $' + it.H + ' = $' + (it.G - it.H), C.muted);
+    if (done(V)) lab(A, 320, 372, $c(it.need) + ' ÷ ' + $c(it.rate) + ' = ' + M.r2(it.need / it.rate) + (it.exact ? '' : ' → ' + it.n) + ' ' + c.unit, C.green, { 'font-size': 20, class: 'fade' });
+  }
+};
+
+const T_BUDGET = {
+  id: 'budget', code: 'LE4', name: 'Budget', sec: 4, notes: '../notes/linear-equations/math9-linear-equations-notes-v1.html',
+  q: it => 'Greatest number of ' + M.budCtx(it).unit, kind: 'slots', gen: M.genBudget, typeOf: it => it.form,
+  prompt: it => { const c = M.budCtx(it); return story(it.who + ' has ' + B('$' + it.B) + ' for ' + c.place + '. ' + c.fee + ' is ' + B($c(it.fee)) + ' and ' + c.each + ' costs ' + B($c(it.rate)) + '.'); },
+  slots: it => [{ k: 'v', label: 'how many', wide: true }, { h: '<span style="font-family:inherit">' + M.budCtx(it).unit + '</span>' }],
+  check: M.checkBudget, answer: it => ({ v: String(it.n) }),
+  draw(A, it, V) {
+    const c = M.budCtx(it), code = V.res && V.res.code, x0 = 60, W = 480, y = 170, h = 64, cap = it.B * 100 + it.rate * 2, px = W / cap;
+    const bx = x0 + it.B * 100 * px, fx = x0 + it.fee * px, cw = it.rate * px;
+    emo(A, 40, 60, c.icon, 30);
+    box(A, x0, y, fx - x0, h, C.teal, code === 'nofee' ? { filter: 'url(#glow)', 'stroke-width': 4 } : {});
+    lab(A, (x0 + fx) / 2, y + h + 24, $c(it.fee), C.teal, { 'font-size': 16 });
+    A.el('line', { x1: bx, x2: bx, y1: y - 40, y2: y + h + 12, stroke: C.yellow, 'stroke-width': 3 }, A.svg);
+    lab(A, bx, y - 56, 'budget $' + it.B, C.yellow, { 'font-size': 18 });
+    if (!after(V)) { box(A, fx, y, cw, h, C.gold, { 'stroke-dasharray': '5 4' }); lab(A, fx + cw + 8, y + h + 24, '+ ' + $c(it.rate) + ' ' + c.each, C.gold, { 'font-size': 16, 'text-anchor': 'start' }); return; }
+    if (!done(V) && code !== 'up') { box(A, fx, y, cw, h, C.gold, { 'stroke-dasharray': '5 4' }); brace(A, fx, bx, y + h + 46, '$' + it.B + ' − ' + $c(it.fee) + ' = ' + $c(it.B * 100 - it.fee) + ' for ' + c.unit, C.muted); mlab(A, 320, 360, M.r2(it.fee / 100) + ' + ' + M.r2(it.rate / 100) + 'n ≤ ' + it.B, C.text, { class: 'fade' }); return; }
+    const shown = code === 'up' ? it.n + 1 : it.n;
+    chunks(A, fx, y + 6, h - 12, shown, cw, C.gold, code === 'up' ? C.red : null);
+    if (code === 'up') lab(A, bx + 6, y + h + 30, 'over by ' + $c(it.fee + shown * it.rate - it.B * 100), C.red, { 'font-size': 17, 'text-anchor': 'start' });
+    else if (done(V)) lab(A, bx + 6, y + h + 30, $c(it.B * 100 - it.fee - it.n * it.rate) + ' left', C.muted, { 'font-size': 16, 'text-anchor': 'start' });
+    mlab(A, 320, 330, M.r2(it.fee / 100) + ' + ' + M.r2(it.rate / 100) + 'n ≤ ' + it.B, C.text, { class: 'fade' });
+    if (done(V)) mlab(A, 320, 372, 'n ≤ ' + M.r2((it.B * 100 - it.fee) / it.rate) + (it.exact ? '' : '  →  ' + it.n), C.green, { 'font-size': 20, class: 'fade' });
+  }
+};
+
+/* LE5 Shares: a bar model */
+const T_SHARES = {
+  id: 'shares', code: 'LE5', name: 'Shares', sec: 5, notes: '../notes/linear-equations/math9-linear-equations-notes-v1.html',
+  q: it => 'How much for ' + it.names[0] + '?', kind: 'slots', gen: M.genShares, typeOf: it => it.form + ':' + it.k,
+  prompt: it => {
+    const n = it.names, u = it.ctx.unit, amt = x => u === '$' ? '$' + x : x + ' ' + u, times = it.k === 2 ? 'twice as many' : 'three times as many', much = u === '$' ? (it.k === 2 ? 'twice as much' : 'three times as much') : times;
+    const third = it.form === 'less' ? n[2] + ' ' + it.ctx.verb + ' ' + B(amt(it.d)) + ' less than ' + n[1] : it.form === 'more' ? n[2] + ' ' + it.ctx.verb + ' ' + B(amt(it.d)) + ' more than ' + n[0] : n[2] + ' ' + it.ctx.verb + ' ' + B(amt(it.d)) + ' more than ' + n[1];
+    return story(n.join(', ').replace(/, ([^,]*)$/, ' and $1') + ' ' + it.ctx.verb + ' ' + B(amt(it.total)) + ' in all. ' + n[1] + ' ' + it.ctx.verb + ' ' + much + ' as ' + n[0] + '. ' + third + '.');
+  },
+  slots: it => it.ctx.unit === '$' ? ['$', { k: 'v', label: 'amount', wide: true }] : [{ k: 'v', label: 'amount', wide: true }, { h: '<span style="font-family:inherit">' + it.ctx.unit + '</span>' }],
+  check: M.checkShares, answer: it => ({ v: String(it.t) }),
+  draw(A, it, V) {
+    const code = V.res && V.res.code, x0 = 130, W = 400, k = it.k, base = it.form === 'more' ? 1 : k, longest = it.form === 'less' ? k * it.t : base * it.t + it.d;
+    const px = W / longest, bw = it.t * px, dw = Math.max(16, it.d * px), ys = [70, 170, 270], h = 56;
+    const tLab = done(V) ? String(it.t) : 't';
+    const row = (y, nb) => { for (let i = 0; i < nb; i++) { box(A, x0 + i * bw, y, bw, h, C.blue); lab(A, x0 + i * bw + bw / 2, y + h / 2, tLab, done(V) ? C.green : C.blue, { 'font-size': bw > 40 ? 20 : 14 }); } };
+    it.names.forEach((nm, i) => lab(A, x0 - 14, ys[i] + h / 2, nm, C.text, { 'text-anchor': 'end', 'font-size': 18 }));
+    row(ys[0], 1); row(ys[1], k); row(ys[2], base);
+    const dTxt = (it.form === 'less' ? '−' : '+') + it.d, hot = code === 'ignore' || code === 'way';
+    if (it.form === 'less') {
+      const x = x0 + k * bw - dw;
+      A.el('rect', { x, y: ys[2] - 4, width: dw, height: h + 8, fill: C.stage, 'fill-opacity': .85, stroke: C.red, 'stroke-width': 2.5, 'stroke-dasharray': '5 4' }, A.svg);
+      lab(A, x + dw / 2, ys[2] + h + 20, dTxt, C.red, { 'font-size': 17, class: hot ? 'pulse' : '' });
+    } else {
+      const x = x0 + base * bw; box(A, x, ys[2], dw, h, C.teal, hot ? { filter: 'url(#glow)', 'stroke-width': 4 } : {});
+      lab(A, x + dw / 2, ys[2] + h + 20, dTxt, C.teal, { 'font-size': 17 });
+    }
+    const right = x0 + W + 22;
+    A.el('path', { d: 'M' + right + ' ' + ys[0] + 'q10 0 10 10V' + (ys[2] + h / 2 - 10) + 'q0 10 10 10q-10 0 -10 10V' + (ys[2] + h - 10) + 'q0 10 -10 10', stroke: C.yellow, 'stroke-width': 2, fill: 'none' }, A.svg);
+    lab(A, right + 30, ys[1] + h / 2 + 12, String(it.total), C.yellow, { 'font-size': 20, 'text-anchor': 'start' });
+    if (!after(V)) return;
+    const sgn = it.form === 'less' ? 1 : -1, fixed = it.total + sgn * it.d;
+    lab(A, 330, 386, it.parts + ' blocks = ' + it.total + (sgn > 0 ? ' + ' : ' − ') + it.d + ' = ' + fixed + (done(V) ? '   →   t = ' + fixed + ' ÷ ' + it.parts + ' = ' + it.t : ''), code === 'count' ? C.red : done(V) ? C.green : C.muted, { 'font-size': 18, class: 'fade' });
+  }
+};
+
+/* LE5 Catch up: two plans as tapes; the cheaper-fee plan catches up rate-gap per unit */
+const T_CATCH = {
+  id: 'catch', code: 'LE5', name: 'Catch up', sec: 5, notes: '../notes/linear-equations/math9-linear-equations-notes-v1.html',
+  q: it => 'Same cost after how many ' + M.catchCtx(it).unit + '?', kind: 'slots', gen: M.genCatch, typeOf: it => it.form,
+  prompt: it => { const c = M.catchCtx(it); return story(c.who + ' A: ' + B('$' + it.fA) + ' ' + c.fee + ', then ' + B('$' + it.rA) + ' ' + c.each + '. ' + c.who + ' B: ' + B('$' + it.fB) + ' ' + c.fee + ', then ' + B('$' + it.rB) + ' ' + c.each + '.'); },
+  slots: it => ['n =', { k: 'v', label: 'how many', wide: true }],
+  check: M.checkCatch, answer: it => ({ v: String(it.n) }),
+  draw(A, it, V) {
+    const c = M.catchCtx(it), code = V.res && V.res.code, x0 = 90, W = 490, px = W / it.cost, ys = [100, 230], h = 58;
+    emo(A, 40, 40, c.icon, 28);
+    const plans = [[it.fA, it.rA, 'A'], [it.fB, it.rB, 'B']];
+    plans.forEach(([f, r, nm], i) => {
+      const y = ys[i]; lab(A, x0 - 30, y + h / 2, nm, C.text, { 'font-size': 22 });
+      box(A, x0, y, f * px, h, C.teal); if (f * px > 34) lab(A, x0 + f * px / 2, y + h / 2, '$' + f, C.text, { 'font-size': 16 });
+      const n = done(V) ? it.n : after(V) && code !== 'fee' ? Math.min(it.n, 3) : 1;
+      for (let j = 0; j < n; j++) A.el('rect', { x: x0 + f * px + j * r * px + 1, y: y + 6, width: Math.max(1, r * px - 2), height: h - 12, rx: 3, fill: C.gold, 'fill-opacity': j % 2 ? .42 : .26, stroke: C.gold, 'stroke-width': 1.2, class: 'fade', style: 'animation-delay:' + j * 50 + 'ms' }, A.svg);
+      lab(A, x0 + f * px + 4, y - 14, '+$' + r + ' ' + c.each, C.gold, { 'font-size': 15, 'text-anchor': 'start' });
+    });
+    if (!after(V)) return;
+    const gx1 = x0 + it.fA * px, gx2 = x0 + it.fB * px;
+    A.el('line', { x1: gx1, x2: gx1, y1: ys[0] + h, y2: ys[1], stroke: C.muted, 'stroke-dasharray': '4 4' }, A.svg);
+    A.el('line', { x1: gx2, x2: gx2, y1: ys[0] + h, y2: ys[1], stroke: C.muted, 'stroke-dasharray': '4 4' }, A.svg);
+    lab(A, (gx1 + gx2) / 2, (ys[0] + h + ys[1]) / 2, '$' + (it.fB - it.fA) + ' gap', code === 'fee' ? C.red : C.yellow, { 'font-size': 17 });
+    lab(A, 330, 330, 'A gains $' + it.rA + ' − $' + it.rB + ' = $' + (it.rA - it.rB) + ' on B each time', code === 'sum' || code === 'one' || code === 'fee' ? C.red : C.muted, { 'font-size': 17, class: 'fade' });
+    if (done(V)) {
+      const ex = x0 + W; A.el('line', { x1: ex, x2: ex, y1: ys[0] - 4, y2: ys[1] + h + 4, stroke: C.green, 'stroke-width': 3 }, A.svg);
+      lab(A, 330, 372, '$' + (it.fB - it.fA) + ' ÷ $' + (it.rA - it.rB) + ' = ' + it.n + ' ' + c.unit + ': both $' + it.cost, C.green, { 'font-size': 19, class: 'fade' });
+    }
+  }
+};
+
+/* SR3 Ladder: right triangles in scenes */
+const T_LADDER = {
+  id: 'ladder', code: 'SR3', name: 'Ladder', sec: 3, notes: '../notes/square-roots/math9-square-roots-notes-v1.html',
+  q: it => ({ ladder: 'How high up the wall?', kite: 'How high is the kite?', screen: 'Length of the diagonal', park: 'How much shorter?' })[it.form] + (it.form === 'kite' ? '' : ' (one decimal)'),
+  kind: 'slots', gen: M.genLadder, typeOf: it => it.form,
+  prompt: it => story(({
+    ladder: it => 'A ' + B(num(it.c) + ' m') + ' ladder leans on a wall. Its foot is ' + B(num(it.a) + ' m') + ' from the wall.',
+    kite: it => 'A kite string is ' + B(num(it.c) + ' m') + ' long. The kite is right above a point ' + B(it.a + ' m') + ' away.',
+    screen: it => 'A screen is ' + B(it.a + ' cm') + ' wide and ' + B(num(it.b) + ' cm') + ' tall.',
+    park: it => 'A park is ' + B(it.a + ' m') + ' by ' + B(it.b + ' m') + '. Cut across the diagonal instead of walking two sides.'
+  })[it.form](it)),
+  slots: it => [{ k: 'v', label: 'answer', wide: true }, { h: '<span style="font-family:inherit">' + (it.form === 'screen' ? 'cm' : 'm') + '</span>' }],
+  check: M.checkLadder, answer: it => ({ v: num(it.v) }),
+  draw(A, it, V) {
+    const code = V.res && V.res.code, { a, b, c } = it;
+    const s = Math.min(380 / a, 270 / b), aw = a * s, bh = b * s, cols = { a: C.teal, b: C.gold, c: C.yellow };
+    let P, Q_, R; // right angle at P, Q_ along a, R along b
+    if (it.form === 'ladder' || it.form === 'kite') {
+      const gx = it.form === 'ladder' ? 470 : 90, g = 360, dir = it.form === 'ladder' ? -1 : 1;
+      A.el('line', { x1: 30, x2: 610, y1: g, y2: g, stroke: C.axis, 'stroke-width': 2 }, A.svg);
+      P = [it.form === 'ladder' ? gx : gx + aw, g]; Q_ = [it.form === 'ladder' ? gx - aw : gx, g]; R = [P[0], g - bh];
+      if (it.form === 'ladder') A.el('rect', { x: gx, y: 40, width: 26, height: g - 40, fill: C.edge }, A.svg);
+      else { emo(A, R[0] + 6, R[1] - 12, '🪁', 34); emo(A, Q_[0] - 4, g - 18, '🧍', 30); }
+      void dir;
+    } else {
+      const x0 = 320 - aw / 2, y0 = 60 + (270 - bh) / 2;
+      A.el('rect', { x: x0, y: y0, width: aw, height: bh, rx: it.form === 'screen' ? 8 : 2, fill: it.form === 'park' ? C.green : C.blue, 'fill-opacity': .1, stroke: it.form === 'park' ? C.green : C.blue, 'stroke-width': 3 }, A.svg);
+      P = [x0 + aw, y0 + bh]; Q_ = [x0, y0 + bh]; R = [x0 + aw, y0];
+      if (it.form === 'park') { emo(A, Q_[0] - 18, Q_[1] + 16, '🚶', 26); A.el('path', { d: 'M' + Q_ + 'L' + P + 'L' + R, stroke: C.gold, 'stroke-width': 4, fill: 'none', 'stroke-dasharray': '2 8', 'stroke-linecap': 'round' }, A.svg); }
+    }
+    const hyp = A.el('line', { x1: Q_[0], y1: Q_[1], x2: R[0], y2: R[1], stroke: cols.c, 'stroke-width': it.form === 'ladder' ? 7 : it.form === 'kite' ? 2 : 3, 'stroke-dasharray': it.form === 'park' ? '10 7' : null }, A.svg);
+    void hyp;
+    if (it.form !== 'park' && it.form !== 'screen') { A.el('line', { x1: P[0], y1: P[1], x2: R[0], y2: R[1], stroke: cols.b, 'stroke-width': 3, 'stroke-dasharray': it.form === 'kite' ? '6 5' : null }, A.svg); A.el('line', { x1: P[0], y1: P[1], x2: Q_[0], y2: Q_[1], stroke: cols.a, 'stroke-width': 4 }, A.svg); }
+    const sq = 16, sx = P[0] > Q_[0] ? -1 : 1;
+    A.el('path', { d: 'M' + (P[0] + sx * sq) + ' ' + P[1] + 'v' + -sq + 'h' + -sx * sq, stroke: C.text, 'stroke-width': 2, fill: 'none' }, A.svg);
+    const askLeg = it.form === 'ladder' || it.form === 'kite', u = it.form === 'screen' ? ' cm' : ' m';
+    lab(A, (P[0] + Q_[0]) / 2, P[1] + 22, num(a) + u, cols.a);
+    lab(A, P[0] + (it.form === 'ladder' ? 44 : -sx * 40), (P[1] + R[1]) / 2, askLeg ? (done(V) ? num(it.v) + u : '?') : num(b) + u, askLeg && done(V) ? C.green : cols.b, { 'text-anchor': 'middle' });
+    const hm = [(Q_[0] + R[0]) / 2, (Q_[1] + R[1]) / 2], nx = -(R[1] - Q_[1]), ny = R[0] - Q_[0], nl = Math.hypot(nx, ny), off = (nx * (P[0] - hm[0]) + ny * (P[1] - hm[1])) > 0 ? -26 : 26;
+    const cTxt = askLeg ? num(c) + u : done(V) ? num(M.r1(c)) + u : '?';
+    lab(A, hm[0] + nx / nl * off, hm[1] + ny / nl * off, cTxt, !askLeg && done(V) ? C.green : cols.c);
+    if (!after(V)) return;
+    const red = code === 'add' || code === 'noroot' || code === 'sub' || code === 'legadd';
+    const f = askLeg ? 'b² = c² − a²' : it.form === 'park' ? 'path² = a² + b²' : 'c² = a² + b²';
+    mlab(A, 320, 30, f, red ? C.red : C.muted, { 'font-size': 20, class: 'fade' });
+    if (it.form === 'park') lab(A, 320, 395, 'walk ' + (a + b) + ' m' + (done(V) ? '  −  path ' + num(M.r1(c)) + ' m  =  ' + num(it.v) + ' m' : '  −  path'), code === 'diag' || code === 'around' ? C.red : done(V) ? C.green : C.muted, { 'font-size': 18, class: 'fade' });
+    else if (done(V)) mlab(A, 320, 395, askLeg ? 'b = √(' + num(c * c) + ' − ' + num(a * a) + ') ≈ ' + num(it.v) : 'c = √(' + num(a * a) + ' + ' + num(b * b) + ') ≈ ' + num(M.r1(c)), C.green, { 'font-size': 19, class: 'fade' });
+  }
+};
+
+/* ME2 Paint: an oblique box, then its faces listed */
+const T_PAINT = {
+  id: 'paint', code: 'ME2', name: 'Paint', sec: 2, notes: '../notes/measurement/math9-measurement-notes-v1.html',
+  q: it => 'Area to cover (cm²)', kind: 'slots', gen: M.genPaint, typeOf: it => it.form,
+  prompt: it => story('A ' + it.what + (it.form === 'open' ? ' with ' + B('no top') : '') + ' is ' + B(it.l + ' cm') + ' long, ' + B(it.w + ' cm') + ' wide and ' + B(it.h + ' cm') + ' tall. ' + it.job),
+  slots: () => [{ k: 'v', label: 'area', wide: true }, { h: '<span style="font-family:inherit">cm²</span>' }],
+  check: M.checkPaint, answer: it => ({ v: String(it.v) }),
+  draw(A, it, V) {
+    const code = V.res && V.res.code, wide = after(V), s = Math.min((wide ? 200 : 360) / (it.l + it.w * .5), 240 / (it.h + it.w * .5));
+    const L = it.l * s, H = it.h * s, D = it.w * s * .5, x0 = wide ? 110 : 320 - (L + D) / 2, y0 = 340;
+    const poly = (pts, a) => A.el('polygon', Object.assign({ points: pts.map(p => p.join(',')).join(' '), 'stroke-linejoin': 'round' }, a), A.svg);
+    const fl = [x0, y0], fr = [x0 + L, y0], tl = [x0, y0 - H], tr = [x0 + L, y0 - H], o = [D, -D], add = p => [p[0] + o[0], p[1] + o[1]];
+    poly([fr, add(fr), add(tr), tr], { fill: C.teal, 'fill-opacity': .22, stroke: C.teal, 'stroke-width': 2.5 });
+    poly([tl, tr, add(tr), add(tl)], it.form === 'open' ? { fill: C.stage, stroke: code === 'all6' ? C.red : C.muted, 'stroke-width': 2.5, 'stroke-dasharray': '6 5' } : { fill: C.gold, 'fill-opacity': .22, stroke: C.gold, 'stroke-width': 2.5 });
+    poly([fl, fr, tr, tl], { fill: C.blue, 'fill-opacity': .22, stroke: C.blue, 'stroke-width': 2.5 });
+    if (it.form === 'open') lab(A, (tl[0] + add(tr)[0]) / 2, (tl[1] + add(tr)[1]) / 2, 'no top', code === 'all6' ? C.red : C.muted, { 'font-size': 15 });
+    emo(A, x0 + L / 2, y0 - H / 2, it.icon, Math.min(40, H * .6));
+    lab(A, x0 + L / 2, y0 + 22, it.l + ' cm', C.blue); lab(A, x0 - 10, y0 - H / 2, it.h + ' cm', C.blue, { 'text-anchor': 'end' });
+    lab(A, fr[0] + D / 2 + 30, fr[1] - D / 2 + 6, it.w + ' cm', C.teal, { 'text-anchor': 'start' });
+    if (!wide) return;
+    const rows = [['bottom', it.l + ' × ' + it.w, it.lw, 1, C.gold], [it.form === 'open' ? 'top: none' : 'top', it.l + ' × ' + it.w, it.lw, it.form === 'open' ? 0 : 1, C.gold], ['front, back', it.l + ' × ' + it.h, it.lh, 2, C.blue], ['two ends', it.w + ' × ' + it.h, it.wh, 2, C.teal]];
+    const X = 360; let y = 70;
+    rows.forEach(([nm, f, a, k, col]) => {
+      const off = k === 0, warn = (off && code === 'all6') || (k === 2 && code === 'half') || (nm === 'bottom' && code === 'nobase') || (nm === 'top' && code === 'five');
+      lab(A, X, y, nm, off ? C.muted : col, { 'font-size': 16, 'text-anchor': 'start' });
+      lab(A, X + 250, y, off ? '—' : (k === 2 ? '2 × ' : '') + f + (done(V) ? ' = ' + k * a : ''), warn ? C.red : off ? C.muted : C.text, { 'font-size': 16, 'text-anchor': 'end', class: warn ? 'pulse' : '' });
+      y += 44;
+    });
+    A.el('line', { x1: X, x2: X + 250, y1: y - 18, y2: y - 18, stroke: C.edge, 'stroke-width': 2 }, A.svg);
+    lab(A, X + 250, y + 6, done(V) ? it.v + ' cm²' : (it.form === 'open' ? '5 faces' : '6 faces'), done(V) ? C.green : code === 'vol' ? C.red : C.muted, { 'font-size': 19, 'text-anchor': 'end', class: 'fade' });
+    if (code === 'vol') lab(A, X + 125, y + 46, 'l × w × h is volume', C.red, { 'font-size': 16 });
+  }
+};
+
+/* PR1 Predict: a sample grid, then the whole as copies of the sample */
+const T_PREDICT = {
+  id: 'predict', code: 'PR1', name: 'Predict', sec: 1, notes: '../notes/probability/math9-probability-notes-v1.html',
+  q: it => M.predCtx(it).q, kind: 'slots', gen: M.genPredict, typeOf: it => it.form,
+  prompt: it => { const c = M.predCtx(it); return story(c.s(B(it.n), B(it.h)) + ' ' + c.w(B(it.N.toLocaleString('en-CA')))); },
+  slots: () => [{ k: 'v', label: 'how many', wide: true }],
+  check: M.checkPredict, answer: it => ({ v: String(it.v) }),
+  draw(A, it, V) {
+    const code = V.res && V.res.code, cols = it.n <= 25 ? 5 : 10, rows = Math.ceil(it.n / cols), gap = Math.min(30, 220 / rows, 230 / cols), x0 = 40 + (240 - cols * gap) / 2 + gap / 2, y0 = 90;
+    const hit = M.predCtx(it).id === 'watch' ? C.red : C.green;
+    for (let i = 0; i < it.n; i++) {
+      const on = i < it.h, x = x0 + (i % cols) * gap, y = y0 + Math.floor(i / cols) * gap;
+      A.el('circle', { cx: x, cy: y, r: gap * .36, fill: on ? hit : C.muted, 'fill-opacity': on ? .9 : code === 'pp' ? .1 : .3, stroke: on ? hit : C.muted, 'stroke-width': code === 'pp' && !on ? 2 : 1 }, A.svg);
+    }
+    lab(A, 160, 58, it.h + ' of ' + it.n, hit, { 'font-size': 20 });
+    emo(A, 40, 40, M.predCtx(it).icon, 28);
+    const gc = Math.min(8, it.m), gr = Math.ceil(it.m / gc), g = Math.min(34, 240 / gr, 250 / gc), X0 = 360 + (250 - gc * g) / 2;
+    for (let i = 0; i < it.m; i++) {
+      const x = X0 + (i % gc) * g, y = y0 - g / 2 + Math.floor(i / gc) * g;
+      A.el('rect', { x: x + 2, y: y + 2, width: g - 4, height: g - 4, rx: 4, fill: C.blue, 'fill-opacity': i === 0 ? .4 : .14, stroke: C.blue, 'stroke-width': 1.2, class: done(V) ? 'fade' : '', style: done(V) ? 'animation-delay:' + i * 25 + 'ms' : null }, A.svg);
+      if (done(V) && g > 22) lab(A, x + g / 2, y + g / 2, String(it.h), hit, { 'font-size': Math.min(14, g * .45) });
+    }
+    lab(A, 485, 58, it.N.toLocaleString('en-CA') + ' in all', C.blue, { 'font-size': 20 });
+    A.el('path', { d: 'M290 200H345', stroke: C.yellow, 'stroke-width': 3, 'marker-end': 'url(#aY)' }, A.svg);
+    if (!after(V)) return;
+    lab(A, 318, 178, '× ' + it.m, code === 'sample' || code === 'scale' ? C.red : C.yellow, { 'font-size': 20, class: 'fade' });
+    lab(A, 320, 360, it.N.toLocaleString('en-CA') + ' = ' + it.m + ' groups of ' + it.n, code === 'pp' ? C.text : C.muted, { 'font-size': 18, class: 'fade' });
+    if (code === 'pp') lab(A, 160, 330, 'out of all ' + it.n + ', not ' + (it.n - it.h), C.red, { 'font-size': 16 });
+    if (done(V)) lab(A, 320, 395, it.m + ' × ' + it.h + ' = ' + it.v, C.green, { 'font-size': 22, class: 'fade' });
+  }
+};
+
+const SUB = [T_TRIP, T_RUG, T_BILL, T_SAVE, T_BUDGET, T_SHARES, T_CATCH, T_LADDER, T_PAINT, T_PREDICT];
+const sub = it => SUB.find(t => t.id === it.t);
+/* Mixed: one of the ten at random, as on the PAT */
+const T_MIX = {
+  id: 'mix', code: 'PAT', name: 'Mixed', sec: 5, notes: '../notes/linear-equations/math9-linear-equations-notes-v1.html',
+  q: it => { const t = sub(it); return typeof t.q === 'function' ? t.q(it.it) : t.q; }, kind: 'slots',
+  gen: () => { const t = Q.pick(SUB); return { t: t.id, it: t.gen() }; }, typeOf: it => it.t,
+  prompt: it => sub(it).prompt(it.it), slots: it => sub(it).slots(it.it),
+  check: (it, r) => sub(it).check(it.it, r), answer: it => sub(it).answer(it.it), draw: (A, it, V) => sub(it).draw(A, it.it, V)
+};
+
+const PAGE = {
+  key: 'math9-pat-trainer-v1', course: 'Math 9 · PAT prep', title: 'PAT Word Problems',
+  notes: '../notes/linear-equations/math9-linear-equations-notes-v1.html',
+  tabs: SUB.concat([T_MIX])
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>
