@@ -336,7 +336,7 @@ const MODEL = (() => {
      id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
      gen()                 -> a new item (from MODEL)
      prompt(item)          -> HTML for the prompt (optional)
-     kind: 'slots' | 'choice' | 'custom'
+     kind: 'slots' | 'choice' | 'custom', or kind(item) -> one of those (a page that mixes typed and tap answers)
        slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
        choices(item)       -> [{v, label, math}]                                     tap to answer
        panel(box, item, A) -> builds controls; the stage can also set A.resp
@@ -344,6 +344,7 @@ const MODEL = (() => {
      check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
      answer(item)          -> the right answer, as resp, for Show me
      draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+     link(item)            -> {notes, sec, sep} for this item's 📖 link (optional; a tab whose items span topics)
      typeOf(item)          -> the question type, for weighting (optional; default: the item's form/kind/shape/... fields)
    Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown).
    Weighting: each question type has a score, saved per tab. A first-try right answer lowers it (to half weight at
@@ -451,10 +452,13 @@ const DRILL = (() => {
     tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
   }
 
+  const kindOf = (t, it) => typeof t.kind === 'function' ? t.kind(it) : t.kind;
+  const K = () => kindOf(tab, item);
+
   /* ---------- the answer area ---------- */
   function buildAnswer() {
     const box = $('ans'); box.innerHTML = '';
-    if (tab.kind === 'slots') {
+    if (K() === 'slots') {
       const row = document.createElement('div'); row.className = 'slots';
       tab.slots(item).forEach(p => {
         if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
@@ -469,7 +473,7 @@ const DRILL = (() => {
       });
       box.appendChild(row);
       if (COARSE) box.appendChild(keypad());
-    } else if (tab.kind === 'choice') {
+    } else if (K() === 'choice') {
       const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
       row.className = 'choices' + (tab.cols === 2 ? ' two' : tab.cols === 3 ? ' three' : long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
       chs.forEach(c => {
@@ -480,7 +484,7 @@ const DRILL = (() => {
       });
       box.appendChild(row);
     } else if (tab.panel) tab.panel(box, item, A);
-    $('bCheck').hidden = tab.kind === 'choice';
+    $('bCheck').hidden = K() === 'choice';
   }
   let lastSlot = null;
   function keypad() {
@@ -541,6 +545,7 @@ const DRILL = (() => {
     lastKey = key || JSON.stringify(it);
     Object.defineProperty(it, '__key', { value: keyOf(it), enumerable: false, configurable: true, writable: true });
     item = it; resp = {}; att = 0; resolved = false;
+    if (tab.link) setNotes(linkOf());
     $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
     $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
     const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
@@ -558,8 +563,8 @@ const DRILL = (() => {
   function check() {
     if (resolved) return nextOrFinish();
     let r = resp;
-    if (tab.kind === 'choice' && resp.v == null) return;
-    if (tab.kind === 'slots') {
+    if (K() === 'choice' && resp.v == null) return;
+    if (K() === 'slots') {
       const s = readSlots();
       if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
       if (!s) return setFb('info', 'Type your answer');
@@ -568,7 +573,7 @@ const DRILL = (() => {
     const need = tab.ready ? tab.ready(resp, item) : '';
     if (need) return setFb('info', need);
     const res = tab.check(item, r); att++;
-    const tries = tab.tries || (tab.kind === 'choice' ? 1 : 2);
+    const tries = tab.tries || (K() === 'choice' ? 1 : 2);
     if (res.ok) {
       resolved = true; marks.push(att === 1 ? 'g' : 'y'); record(att === 1);
       setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
@@ -587,17 +592,17 @@ const DRILL = (() => {
   }
   const pick = a => a[Math.floor(Math.random() * a.length)];
   function markAnswer(ok) {
-    if (tab.kind === 'slots') {
+    if (K() === 'slots') {
       const ans = tab.answer(item);
       $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
-    } else if (tab.kind === 'choice') {
+    } else if (K() === 'choice') {
       $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
     }
   }
   function reveal() {
     const ans = tab.answer(item);
-    if (tab.kind === 'slots') fillSlots(ans, 'shown');
-    else if (tab.kind === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    if (K() === 'slots') fillSlots(ans, 'shown');
+    else if (K() === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
     else resp.shown = ans;
   }
   function afterResolve() {
@@ -626,7 +631,7 @@ const DRILL = (() => {
     d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
       '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
       (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
-      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(tab) + '" target="_blank" rel="noopener">📖 Notes §' + tab.sec + '</a>' : '');
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(linkOf()) + '" target="_blank" rel="noopener">📖 Notes §' + linkOf().sec + '</a>' : '');
     $('bAgain').onclick = () => setTab(tab.id);
     if (nx) $('bNextTab').onclick = () => setTab(nx.id);
     $('svg').innerHTML = ''; defs($('svg'));
@@ -647,12 +652,17 @@ const DRILL = (() => {
       bar.appendChild(b);
     });
   }
+  function setNotes(t) {
+    const n = $('notes'); n.href = notesHref(t); $('notesTxt').textContent = '§' + t.sec;
+    n.title = 'Notes, Section ' + t.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + t.sec);
+  }
+  // A tab with link(item) points the 📖 button at the current item's own notes.
+  const linkOf = () => tab.link ? Object.assign({}, tab, tab.link(item)) : tab;
   function setTab(id) {
     tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
     save.tab = tab.id; store(); marks = []; lastKey = '';
     tabsBar();
-    const n = $('notes'); n.href = notesHref(tab); $('notesTxt').textContent = '§' + tab.sec;
-    n.title = 'Notes, Section ' + tab.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + tab.sec);
+    setNotes(tab);
     newItem();
   }
   function boot(P) {
@@ -674,7 +684,7 @@ const DRILL = (() => {
       state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }),
       keyOf: (it, t) => { const cur = tab; if (t) tab = t; try { return keyOf(it); } finally { tab = cur; } }, weights: () => Object.assign({}, scores()), resetWeights: () => { save.w[tab.id] = {}; }, setScore: (k, s) => { scores()[k] = s; } };
   }
-  return { boot, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+  return { boot, kindOf, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
 })();
 /* ===== DRILL SHELL END ===== */
 

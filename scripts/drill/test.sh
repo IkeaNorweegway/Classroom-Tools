@@ -1,12 +1,14 @@
 #!/bin/sh
-# Headless Chrome tests for the narrow trainers (Git Bash on Windows; Chrome at the usual path).
+# Headless Chrome tests for the narrow trainers (Git Bash on Windows, or Linux with google-chrome or chromium).
 #   sh scripts/drill/test.sh [pages]    model + UI tests, then layout at 3 sizes
 # Prints only failures, then a count. Test copies go in scripts/drill/t/ (ignored by git).
 cd "$(dirname "$0")"
 CH="/c/Program Files/Google/Chrome/Application/chrome.exe"
+[ -x "$CH" ] || CH=$(command -v google-chrome || command -v chromium)
+url() { if command -v cygpath >/dev/null; then echo "file:///$(cygpath -m "$PWD/$1")"; else echo "file://$PWD/$1"; fi; }
 
 mkdir -p t
-run() { "$CH" --headless=new --disable-gpu --window-size=$2 --virtual-time-budget=8000 --dump-dom "file:///$(cygpath -m "$PWD/$1")?debug=1" 2>/dev/null | sed -n '/<pre id="results">/,/<\/pre>/p' | sed 's/<[^>]*>//g'; }
+run() { "$CH" --headless=new --disable-gpu --window-size=$2 --virtual-time-budget=8000 --dump-dom "$(url $1)?debug=1" 2>/dev/null | sed -n '/<pre id="results">/,/<\/pre>/p' | sed 's/<[^>]*>//g'; }
 . ./pages.sh
 for k in ${@:-$PAGES}; do [ -f model-$k.js ] || continue; n=$(name $k)
 

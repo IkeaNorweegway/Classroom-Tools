@@ -16,8 +16,8 @@
       const r = document.querySelector('.slots') && [...document.querySelectorAll('.slot')].map(s => s.getBoundingClientRect().top); if (r && r.length && Math.max(...r) - Math.min(...r) > 4) probs.push(when + ' slots wrap to 2 lines');
     };
     chk('ask');
-    if (t.kind === 'slots') { const v = {}; for (const k in ans) v[k] = '-88'; D.fill(v); D.check(); }
-    else if (t.kind === 'choice') D.pickChoice(t.choices(st.item).find(c => c.v !== ans.v).v);
+    if (DRILL.kindOf(t, st.item) === 'slots') { const v = {}; for (const k in ans) v[k] = '-88'; D.fill(v); D.check(); }
+    else if (DRILL.kindOf(t, st.item) === 'choice') D.pickChoice(t.choices(st.item).find(c => c.v !== ans.v).v);
     else { D.setResp(window.WRONG ? WRONG(t, st.item) : ans); D.check(); }
     chk('after');
     out.push((probs.length ? 'FAIL ' : 'PASS ') + innerWidth + 'x' + innerHeight + ' ' + t.id + ' ' + probs.join('; '));

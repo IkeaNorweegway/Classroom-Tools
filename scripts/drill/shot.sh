@@ -7,5 +7,7 @@ mkdir -p t/shots
 { sed '/<\/body>/,$d' $(dir $k)/$n.html; cat extra-$k.js shot-inject.js; printf '</body></html>\n'; } > t/$n-shot.html
 tab=$(echo "$hash" | sed 's/.*tab=\([^&]*\).*/\1/'); d=$(echo "$hash" | sed -n 's/.*do=\([^&]*\).*/\1/p')
 out="t/shots/$k-$tab-${d:-ask}.png"
-"/c/Program Files/Google/Chrome/Application/chrome.exe" --headless=new --disable-gpu --hide-scrollbars --window-size=$size --virtual-time-budget=3000 --screenshot="$(cygpath -m "$PWD/$out")" "file:///$(cygpath -m "$PWD/t/$n-shot.html")?debug=1#$hash" >/dev/null 2>&1
+CH="/c/Program Files/Google/Chrome/Application/chrome.exe"; [ -x "$CH" ] || CH=$(command -v google-chrome || command -v chromium)
+if command -v cygpath >/dev/null; then shot="$(cygpath -m "$PWD/$out")"; page="file:///$(cygpath -m "$PWD/t/$n-shot.html")"; else shot="$PWD/$out"; page="file://$PWD/t/$n-shot.html"; fi
+"$CH" --headless=new --disable-gpu --hide-scrollbars --window-size=$size --virtual-time-budget=3000 --screenshot="$shot" "$page?debug=1#$hash" >/dev/null 2>&1
 echo "$PWD/$out"

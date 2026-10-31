@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAT Questions Trainer | Math 9</title>
+<!-- =====================================================================
+   PAT QUESTIONS TRAINER (narrow trainer format, see _sims-context.md)
+   Math 9 | all strands | PAT prep. The released PAT items (2013, 2015, 2019) that used to sit on the PAT Prep page,
+   in the trainer look (user request, 2026-10-30), plus PAT-style generated items so a round is never the same list.
+   One PAT strand per tab, 10 items a round, multiple choice (tap, one try) or numerical response (type, two tries):
+     N   Number                 powers, rational numbers, order of operations, square roots
+     PR  Patterns               equations, inequalities, polynomials, linear relations, word problems
+     SS  Shape & Space          area and √, surface area of cubes, circle angles and tangents, similarity and scale
+     SP  Stats & Prob           sampling and bias, subjective judgment, predicting from a sample
+     PAT Mixed                  any strand, weighted like the PAT blueprint (32 / 36 / 24 / 8)
+   Every word problem has a schematic picture of its story (a tape, a road, a bar model, the gong and its chain, the
+   cubes in 3-D, the school and its sample); computations show their worked steps instead. The 📖 link follows the
+   current item's own topic and section. About 7 in 10 items are released items, kept out for the next 6 items of their strand;
+   the rest are generated (exponent chains, perfect-square counts, two plans, saving up, ages, gardens, tickets,
+   inscribed angles, scale factors, predictions, fair samples).
+   Model: every item's answer and named mistakes are checked in the model tests (extra-pq.js).
+   ?debug=1 puts DRILL (and MODEL) on window, turns off saving and motion.
+   ===================================================================== -->
+<style>
+/* page only: story prompts, the PAT year tag, letters on choices, five tabs */
+  .prompt .story { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 17px; line-height: 1.45; text-align: left; }
+  .prompt .story b { color: var(--yellow); font-weight: 650; }
+  .prompt .story .mrow { display: block; margin-top: 6px; font-family: var(--math); font-size: 20px; text-align: center; }
+  .prompt .src { font: 700 11px system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-align: left; margin-bottom: 4px; }
+  .choice { position: relative; padding: 4px 10px 4px 30px; }
+  .choice .lt { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font: 700 12px system-ui, sans-serif; color: var(--muted); }
+  .choices.one .choice { font-size: 17px; text-align: left; }
+  .choices.one .choice.math { font-size: 23px; }
+  @media (max-height: 700px) { .prompt .story { font-size: 16px; line-height: 1.35; } .choices.one .choice { min-height: 46px; } }
+  @media (max-height: 640px) {
+    .side { gap: 8px; } .side .prompt { font-size: 26px; } .prompt .src { display: none; } .prompt .story { font-size: 15px; line-height: 1.3; }
+    .choices.one { gap: 6px; } .choices.one .choice { min-height: 40px; font-size: 15px; } .choices.one .choice.math { font-size: 19px; }
+    .choices.one .choice.math { min-height: 34px; } .choices.one:has(.math) { gap: 4px; } .fb { min-height: 36px; }
+    .choices.one:not(:has(.math)) { grid-template-columns: 1fr 1fr; } .choices.one:not(:has(.math)) .choice { font-size: 14px; line-height: 1.2; padding-left: 24px; }
+  }
+</style>
+<style>
+/* ===== DRILL SHELL CSS START (same in every narrow trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .stage svg text.emo { stroke: none; font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif; font-weight: 400; }
+  .sans .prompt { font-family: inherit; font-weight: 650; font-size: 26px; }
+  .sans .choice { font-size: 19px; line-height: 1.15; padding: 4px 8px; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slot.sup { width: 1.9em; min-height: 40px; font-size: 20px; align-self: flex-start; margin-left: -2px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choices.two { grid-template-columns: 1fr 1fr; }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choices.one { grid-template-columns: 1fr; gap: 8px; }
+  .choices.one .choice { min-height: 54px; }
+  .choices.one .choice.math { font-size: 26px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+
+/* ===================== MODEL START (no DOM) ===================== */
+/* PAT questions: the released PAT items (2013, 2015, 2019) from the PAT Prep page, plus PAT-style generated items.
+   An item: { id, s (strand), yr, code, topic, sec, fmt: 'mc' | 'nr', ask, stem (HTML), story (true for a word problem),
+   opts + a (index) + cues (per option) for mc, a (number) + pre/unit + miss ([[value, cue]]) for nr, cue, steps, pic }. */
+const MODEL = (() => {
+  const { rnd, pick, chance, shuffle } = Q;
+  const near = (g, x, t) => g != null && Math.abs(g - x) <= (t == null ? .001 : t) + 1e-9;
+  const B = s => '<b>' + s + '</b>';
+  const SUP = n => String(n).split('').map(d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]).join('');
+  const r2 = x => Math.round(x * 100) / 100;
+  const money = x => '$' + (Number.isInteger(x) ? String(x) : x.toFixed(2));
+  const sgn = n => n < 0 ? '− ' + -n : '+ ' + n;
+  const LET = ['A', 'B', 'C', 'D'];
+
+  /* ---------- the released items ---------- */
+  const BANK = [
+    /* Number */
+    { id: 'n1', s: 'num', yr: '2019', code: 'PE2', topic: 'pe', sec: 2, fmt: 'nr', ask: 'Evaluate', stem: '2³ × 2⁰', a: 8,
+      miss: [[0, 'Any power to 0 is 1'], [6, '2³ means 2 × 2 × 2'], [2, 'Any power to 0 is 1']], cue: 'Any power to 0 is 1', steps: ['2³ × 2⁰', '= 8 × 1', '= 8'] },
+    { id: 'n2', s: 'num', yr: '2019', code: 'PE5', topic: 'pe', sec: 5, fmt: 'nr', ask: 'Simplify, then evaluate', stem: '(3²)⁴ ÷ [3(3)(3⁴)]', a: 9,
+      miss: [[1, 'Power of a power: multiply'], [81, '3(3)(3⁴) is 3⁶']], cue: 'Write both as powers of 3', steps: ['(3²)⁴ ÷ [3(3)(3⁴)]', '= 3⁸ ÷ 3⁶', '= 3²', '= 9'] },
+    { id: 'n3', s: 'num', yr: '2019', code: 'RN2', topic: 'rn', sec: 2, fmt: 'nr', ask: 'Simplest form', stem: '1/6 + 1/3 + 2½', a: 3,
+      miss: [[2.5, 'Add the fractions too']], cue: 'Common denominator: 6', steps: ['1/6 + 1/3 + 2½', '= 1/6 + 2/6 + 15/6', '= 18/6', '= 3'] },
+    { id: 'n4', s: 'num', yr: '2019', code: 'RN3', topic: 'rn', sec: 3, fmt: 'nr', ask: 'Simplest form', stem: '−½ × (−⅓) × 12', a: 2,
+      miss: [[-2, 'Negative × negative is positive']], cue: 'Multiply the fractions first', steps: ['−½ × (−⅓) × 12', '= ⅙ × 12', '= 2'] },
+    { id: 'n5', s: 'num', yr: '2019', code: 'RN2', topic: 'rn', sec: 2, fmt: 'nr', ask: 'Evaluate', stem: '13.2 + 0.05 − 5.45', a: 7.8,
+      miss: [[8.25, 'Line up the decimal points'], [7.75, 'Line up the decimal points']], cue: 'Line up the decimal points', steps: ['13.2 + 0.05 − 5.45', '= 13.25 − 5.45', '= 7.8'] },
+    { id: 'n6', s: 'num', yr: '2019', code: 'RN5', topic: 'rn', sec: 5, fmt: 'nr', ask: 'As a decimal', stem: '(2 + 2 × 5)² ÷ [2(4 × 5)]', a: 3.6,
+      miss: [[10, 'Multiply before you add'], [0.6, 'Square the bracket']], cue: 'Brackets, then the square', steps: ['(2 + 2 × 5)² ÷ [2(4 × 5)]', '= (2 + 10)² ÷ [2(20)]', '= 12² ÷ 40', '= 144 ÷ 40', '= 3.6'] },
+    { id: 'n7', s: 'num', yr: '2019', code: 'SR4', topic: 'sr', sec: 4, fmt: 'nr', ask: 'Evaluate', stem: '√(100/25) + √(36/9)', a: 4,
+      miss: [[8, '√4 is 2, not 4']], cue: 'Simplify inside each root', steps: ['√(100/25) + √(36/9)', '= √4 + √4', '= 2 + 2', '= 4'] },
+    { id: 'n8', s: 'num', yr: '2019', code: 'SR1', topic: 'sr', sec: 1, fmt: 'nr', ask: 'How many?', stem: 'How many whole numbers between ' + B(39) + ' and ' + B(160) + ' are perfect squares?', story: true,
+      a: 6, unit: 'squares', miss: [[7, 'Check the ends: 39 and 160']], cue: 'List 7², 8², … to 160', pic: 'squares', lo: 39, hi: 160 },
+    { id: 'n9', s: 'num', yr: '2019', code: 'RN5', topic: 'rn', sec: 5, fmt: 'nr', ask: 'Evaluate', stem: '6 ÷ (2 − 3)³', a: -6,
+      miss: [[6, '(−1)³ is −1'], [2, 'Brackets first: 2 − 3']], cue: 'Brackets first: 2 − 3', steps: ['6 ÷ (2 − 3)³', '= 6 ÷ (−1)³', '= 6 ÷ (−1)', '= −6'] },
+    { id: 'n10', s: 'num', yr: '2019', code: 'PE3', topic: 'pe', sec: 3, fmt: 'nr', ask: 'Simplify, then evaluate', stem: '(3⁴ × 3³) − (3⁷ × 3⁰)', a: 0,
+      miss: [[2187, '3⁷ × 3⁰ is 3⁷ too'], [-2187, '3⁴ × 3³ is 3⁷']], cue: 'Add exponents when multiplying', steps: ['(3⁴ × 3³) − (3⁷ × 3⁰)', '= 3⁷ − 3⁷', '= 0'] },
+    { id: 'n11', s: 'num', yr: '2013', code: 'SR2', topic: 'sr', sec: 2, fmt: 'mc', ask: 'How many?', story: true,
+      stem: 'How many of these are between ' + B('7.8') + ' and ' + B('8.8') + '?<br><span class="mrow">√51, √55, √61, √66, √71, √77, √81, √88</span>',
+      opts: ['2', '3', '4', '5'], a: 2, om: true, cue: 'Square 7.8 and 8.8 first', pic: 'between', vals: [51, 55, 61, 66, 71, 77, 81, 88], lo: 7.8, hi: 8.8 },
+    { id: 'n12', s: 'num', yr: '2013', code: 'PE1', topic: 'pe', sec: 1, fmt: 'mc', ask: 'Which means the same?', stem: '7² + 7³',
+      opts: ['(7 + 7)²⁺³', '(7 + 7)²ˣ³', '(7 × 7) + (7 × 7 × 7)', '(7 + 7) × (7 + 7 + 7)'], a: 2, om: true, cue: 'Write each power out',
+      steps: ['7² = 7 × 7', '7³ = 7 × 7 × 7', '7² + 7³ = (7 × 7) + (7 × 7 × 7)'] },
+    { id: 'n13', s: 'num', yr: '2013', code: 'PE5', topic: 'pe', sec: 5, fmt: 'nr', ask: 'Whole number x', stem: '(x³)² ÷ x⁴ = 144', pre: 'x =', a: 12,
+      miss: [[72, 'x² = 144: take √'], [144, 'x² = 144: take √']], cue: 'Simplify the left side first', steps: ['(x³)² ÷ x⁴ = 144', 'x⁶ ÷ x⁴ = 144', 'x² = 144', 'x = 12'] },
+    { id: 'n14', s: 'num', yr: '2013', code: 'PE1', topic: 'pe', sec: 1, fmt: 'mc', ask: 'Least to greatest', stem: 'Which list goes from least to greatest?', story: true,
+      opts: ['−2², −1², (−1)², (−2)²', '(−2)², (−1)², −1², −2²', '−1², (−1)², −2², (−2)²', '(−1)², −1², −2², (−2)²'], a: 0, om: true,
+      cue: '−2² is −4, not 4', pic: 'order4' },
+    { id: 'n15', s: 'num', yr: '2013', code: 'RN3', topic: 'rn', sec: 3, fmt: 'mc', ask: 'Emily’s bill', story: true,
+      stem: 'A phone plan is ' + B('$5.00') + ' a month, plus ' + B('$0.05') + ' a text and ' + B('$0.06') + ' a minute. Emily sends ' + B(33) + ' texts and talks ' + B(47) + ' minutes.',
+      opts: ['$5.11', '$6.65', '$7.82', '$9.47'], a: 3, cues: ['Multiply each rate first', 'Add the minutes too', 'Add the texts too'], cue: 'fee + texts + minutes', pic: 'phone' },
+    { id: 'n16', s: 'num', yr: '2015', code: 'PE1', topic: 'pe', sec: 1, fmt: 'mc', ask: 'Another way to write it', stem: '(2/3)⁴',
+      opts: ['(2 + 4)/(3 + 4)', '(2 × 4)/(3 × 4)', '(2 + 2 + 2 + 2)/(3 + 3 + 3 + 3)', '(2 × 2 × 2 × 2)/(3 × 3 × 3 × 3)'], a: 3, om: true,
+      cue: 'The exponent counts the factors', steps: ['(2/3)⁴ = 2/3 × 2/3 × 2/3 × 2/3', '= (2 × 2 × 2 × 2)/(3 × 3 × 3 × 3)'] },
+    { id: 'n17', s: 'num', yr: '2015', code: 'RN3', topic: 'rn', sec: 3, fmt: 'mc', ask: 'How far in all?', story: true,
+      stem: 'Patrick bikes at ' + B('14.4 km/h') + ' for ' + B('¾ h') + ', then at ' + B('13.2 km/h') + ' for ' + B('⅓ h') + '.',
+      opts: ['15.2 km', '15.0 km', '14.7 km', '14.3 km'], a: 0, cue: 'speed × time for each part', pic: 'trip', sp: [14.4, 13.2], tt: ['¾ h', '⅓ h'], d: [10.8, 4.4], icon: '🚲' },
+    { id: 'n18', s: 'num', yr: '2015', code: 'RN5', topic: 'rn', sec: 5, fmt: 'mc', ask: 'Evaluate', stem: '6 − 1/4 ÷ 1/2 − 2³ × 0.75',
+      opts: ['−1/2', '−1/8', '1/8', '1/2'], a: 0, om: true, cue: '÷ and × before −', steps: ['6 − 1/4 ÷ 1/2 − 2³ × 0.75', '= 6 − 1/2 − 8 × 0.75', '= 6 − 1/2 − 6', '= −1/2'] },
+
+    /* Patterns and relations */
+    { id: 'p1', s: 'pat', yr: '2019', code: 'LE2', topic: 'le', sec: 2, fmt: 'nr', ask: 'Solve', stem: 'x + 1 = 2x + 2', pre: 'x =', a: -1,
+      miss: [[1, 'Check the sign: 1 − 2']], cue: 'Get x on one side', steps: ['x + 1 = 2x + 2', '1 − 2 = 2x − x', '−1 = x'] },
+    { id: 'p2', s: 'pat', yr: '2019', code: 'LE2', topic: 'le', sec: 2, fmt: 'nr', ask: 'Solve (nearest tenth)', stem: '2(x − 2) = 4x − 13', pre: 'x =', a: 4.5,
+      miss: [[5.5, 'Multiply both terms by 2'], [-4.5, '9 = 2x: x is positive']], cue: 'Expand the bracket first', steps: ['2(x − 2) = 4x − 13', '2x − 4 = 4x − 13', '9 = 2x', 'x = 4.5'] },
+    { id: 'p3', s: 'pat', yr: '2019', code: 'LE3', topic: 'le', sec: 3, fmt: 'nr', ask: 'Solve', stem: '2x = −4(1/4 − 3/4x) + 4', pre: 'x =', a: -3,
+      miss: [[3, '−x = 3, so x = −3']], cue: '−4 times both terms', steps: ['2x = −4(1/4 − 3/4x) + 4', '2x = −1 + 3x + 4', '2x = 3x + 3', '−x = 3', 'x = −3'] },
+    { id: 'p4', s: 'pat', yr: '2019', code: 'LE3', topic: 'le', sec: 3, fmt: 'nr', ask: 'Solve', stem: 'x/3 + 7 = −2', pre: 'x =', a: -27,
+      miss: [[15, '−2 − 7 = −9'], [-3, 'Multiply by 3, don’t divide'], [27, '−9 × 3 = −27']], cue: 'Subtract 7, then × 3', steps: ['x/3 + 7 = −2', 'x/3 = −9', 'x = −27'] },
+    { id: 'p5', s: 'pat', yr: '2019', code: 'LE4', topic: 'le', sec: 4, fmt: 'mc', ask: 'Solve', stem: '−3x + 7 > −17',
+      opts: ['x < 8', 'x > 8', 'x < −8', 'x > −8'], a: 0, om: true, cues: [null, 'Dividing by −3 flips the sign', '−24 ÷ (−3) = 8', '−24 ÷ (−3) = 8'], cue: 'Dividing by −3 flips the sign', pic: 'ineq' },
+    { id: 'p6', s: 'pat', yr: '2013', code: 'LR4', topic: 'lr', sec: 4, fmt: 'nr', ask: 'One-time fee', story: true,
+      stem: 'A club charges a one-time fee plus ' + B('$15') + ' a month. The total is ' + B('$135') + ' after ' + B(4) + ' months, ' + B('$165') + ' after ' + B(6) + ', and ' + B('$255') + ' after ' + B(12) + '.',
+      pre: '$', a: 75, miss: [[135, 'That’s the 4-month total'], [60, 'That’s 4 months of $15'], [15, 'That’s the monthly rate']], cue: 'Total − months × $15', pic: 'member' },
+    { id: 'p7', s: 'pat', yr: '2013', code: 'LE2', topic: 'le', sec: 2, fmt: 'mc', ask: 'Solve', stem: '2(x + 5) − 12 = 50',
+      opts: ['24', '26', '32', '36'], a: 1, om: true, cue: 'Add 12, then ÷ 2', steps: ['2(x + 5) − 12 = 50', '2(x + 5) = 62', 'x + 5 = 31', 'x = 26'] },
+    { id: 'p8', s: 'pat', yr: '2013', code: 'LE2', topic: 'le', sec: 2, fmt: 'mc', ask: 'Tara’s amount', story: true,
+      stem: 'Jennifer gave ' + B('twice') + ' what Tara gave. Mindy gave ' + B('$10 less') + ' than Jennifer. Together they gave ' + B('$50') + '.',
+      opts: ['$6', '$8', '$12', '$24'], a: 2, cues: ['Tara is one block', 'Add the $10 back first', null, 'That’s Jennifer’s share'], cue: 'Count the blocks: 5',
+      pic: 'bars', rows: [['Tara', 1, 0], ['Jennifer', 2, 0], ['Mindy', 2, -10]], t: 12, total: 50, unit: '$' },
+    { id: 'p9', s: 'pat', yr: '2013', code: 'LE2', topic: 'le', sec: 2, fmt: 'mc', ask: 'Fewer payments, Plan 2', story: true,
+      stem: 'Connie buys a ' + B('$750') + ' horse. Plan 1: ' + B('$150') + ' down, then ' + B('$25') + ' a month. Plan 2: ' + B('$200') + ' down, then ' + B('$55') + ' a month.',
+      opts: ['10', '14', '20', '24'], a: 1, om: true, cues: ['That’s Plan 2 alone', null, 'Take off each down payment', 'That’s Plan 1 alone'], cue: 'Payments on each plan, then subtract', pic: 'plans2' },
+    { id: 'p10', s: 'pat', yr: '2013', code: 'PO5', topic: 'po', sec: 5, fmt: 'nr', ask: 'Find ■', stem: '(−12x² − 9x) ÷ ■x = −4x − 3', pre: '■ =', a: 3,
+      miss: [[-3, 'Signs: −12 ÷ ■ = −4'], [4, '−12x² ÷ ■x = −4x']], cue: '−12x² ÷ ■x = −4x', steps: ['−12x² ÷ ■x = −4x', '■ = 12 ÷ 4 = 3', 'check: −9x ÷ 3x = −3'] },
+    { id: 'p11', s: 'pat', yr: '2015', code: 'LE2', topic: 'le', sec: 2, fmt: 'mc', ask: 'Weeks to the goal', story: true,
+      stem: 'Jennifer earns ' + B('$576') + ' a week and saves ' + B('20%') + ' of it. Her goal is ' + B('$1200') + '.',
+      opts: ['10', '11', '24', '29'], a: 1, om: true, cues: ['Not enough yet: round up', null, 'Find 20% of $576 first', 'Find 20% of $576 first'], cue: 'Find 20% of $576 first', pic: 'save20' },
+    { id: 'p12', s: 'pat', yr: '2015', code: 'LR3', topic: 'lr', sec: 3, fmt: 'mc', ask: 'Monthly profit', story: true,
+      stem: 'Catherine sells cupcakes for ' + B('$1.50') + ' each. Each one costs ' + B('$0.30') + ' to make, and other costs are ' + B('$20') + ' a month. She sells <i>c</i> cupcakes.',
+      opts: ['1.5c − (20 + 0.3c)', '20c − (1.5 + 0.3c)', '(20 + 0.3c) − 1.5c', '(1.5 + 0.3c) − 20c'], a: 0, om: true,
+      cues: [null, '$20 is once, not per cupcake', 'Profit = money in − costs', '$20 is once, not per cupcake'], cue: 'Profit = money in − costs', pic: 'profit' },
+    { id: 'p13', s: 'pat', yr: '2015', code: 'LE3', topic: 'le', sec: 3, fmt: 'mc', ask: 'Solve', stem: '3(2x − 1) = 1/2(x + 6)',
+      opts: ['8/11', '12/11', '14/11', '18/11'], a: 1, om: true, cue: 'Expand both sides first', steps: ['3(2x − 1) = 1/2(x + 6)', '6x − 3 = 1/2x + 3', '11/2x = 6', 'x = 12/11'] },
+    { id: 'p14', s: 'pat', yr: '2015', code: 'PO4', topic: 'po', sec: 4, fmt: 'mc', ask: 'Simplify', stem: '(x² − 5x + 4) − (3x² + 8x − 20)',
+      opts: ['−2x² − 13x + 24', '−2x² − 3x + 16', '2x² + 13x − 24', '2x² + 3x − 16'], a: 0, om: true,
+      cues: [null, 'Subtract every term in the bracket', 'x² − 3x² = −2x²', 'Subtract every term in the bracket'], cue: 'Subtract every term in the bracket',
+      steps: ['(x² − 5x + 4) − (3x² + 8x − 20)', '= x² − 5x + 4 − 3x² − 8x + 20', '= −2x² − 13x + 24'] },
+    { id: 'p15', s: 'pat', yr: '2015', code: 'LE1', topic: 'le', sec: 1, fmt: 'nr', ask: 'How many lawns?', story: true,
+      stem: 'Dale earned ' + B('$180') + '. ' + B('$45') + ' came from washing cars. The rest came from mowing lawns at ' + B('$9') + ' each.',
+      unit: 'lawns', a: 15, miss: [[135, 'That’s dollars: ÷ $9'], [20, 'Take off the $45 first'], [25, 'Subtract the $45, don’t add']], cue: '(180 − 45) ÷ 9', pic: 'dale' },
+    { id: 'p16', s: 'pat', yr: '2015', code: 'LE1', topic: 'le', sec: 1, fmt: 'nr', ask: 'Fewest whole hours', story: true,
+      stem: 'Patricia wants ' + B('$250') + ' skates. She has ' + B('$86') + ' and earns ' + B('$10.25') + ' an hour.',
+      unit: 'hours', a: 16, miss: [[164, 'That’s dollars: ÷ $10.25'], [24.39, 'Take off the $86 first'], [24, 'Take off the $86 first'], [25, 'Take off the $86 first']], cue: '(goal − have) ÷ rate',
+      pic: 'save', have: 86, goal: 250, rate: 10.25, n: 16, icon: '⛸️', each: 'hour' },
+    { id: 'p17', s: 'pat', yr: '2013', code: 'PO4', topic: 'po', sec: 4, fmt: 'mc', ask: 'First error', story: true,
+      stem: 'Robert and Jacob both simplify ' + B('3(x² + 4x − 1) − (2x + 5)') + '. Their steps are in the picture.',
+      opts: ['Robert, Step 1', 'Jacob, Step 1', 'Robert, Step 2', 'Jacob, Step 2'], a: 1, cues: ['Robert’s Step 1 is right', null, 'Someone went wrong before that', 'Jacob’s Step 1 is already wrong'], cue: 'Check each Step 1 first', pic: 'error' },
+
+    /* Shape and space */
+    { id: 's1', s: 'ss', yr: '2013', code: 'SR1', topic: 'sr', sec: 1, fmt: 'mc', ask: 'Carpet side length', story: true,
+      stem: 'A square carpet covers ' + B('37.5%') + ' of a ' + B('12 m') + ' by ' + B('8 m') + ' room.',
+      opts: ['7 m', '6 m', '5 m', '4 m'], a: 1, cue: 'Area first: 37.5% of 96', pic: 'rug', L: 12, W: 8, p: 37.5, area: 36, side: 6 },
+    { id: 's2', s: 'ss', yr: '2013', code: 'ME2', topic: 'me', sec: 2, fmt: 'mc', ask: 'Surface area', story: true,
+      stem: B(7) + ' identical cubes make a 3-D cross: one cube with a cube on each of its ' + B(6) + ' faces. The volume is ' + B('56 cm³') + '.',
+      opts: ['30 cm²', '60 cm²', '120 cm²', '144 cm²'], a: 2, cues: ['That’s faces: × 4 cm²', 'A face is 4 cm²', null, 'Each join hides 2 faces'], cue: 'Count the faces you can see',
+      pic: 'cubes', shape: 'cross', V: 56 },
+    { id: 's3', s: 'ss', yr: '2013', code: 'CG3', topic: 'cg', sec: 3, fmt: 'mc', ask: 'Find ∠ACB', story: true,
+      stem: 'O is the centre. A, B and C are on the circle. ' + B('∠AOB + ∠ACB = 75°') + '.',
+      opts: ['30°', '25°', '20°', '15°'], a: 1, cue: '∠AOB is twice ∠ACB', pic: 'angles', ins: 25, sum: 75 },
+    { id: 's4', s: 'ss', yr: '2013', code: 'CG4', topic: 'cg', sec: 4, fmt: 'mc', ask: 'Nail above the gong', story: true,
+      stem: 'A gong ' + B('30 cm') + ' across hangs from a nail on an ' + B('18 cm') + ' chain. Each half of the chain is tangent to the gong.',
+      opts: ['2.3 cm', '2.5 cm', '12.0 cm', '17.5 cm'], a: 1, cues: ['√306 ≈ 17.49, then − 15', null, 'Use the 15 cm radius', 'That’s nail to centre: − 15'], cue: 'Radius ⟂ tangent: a right triangle', pic: 'gong' },
+    { id: 's5', s: 'ss', yr: '2015', code: 'ME2', topic: 'me', sec: 2, fmt: 'mc', ask: 'Surface area', story: true,
+      stem: B(7) + ' cubes of ' + B('8 cm³') + ' each make an L: a row of ' + B(4) + ', with ' + B(3) + ' more stacked on the end cube.',
+      opts: ['120 cm²', '100 cm²', '88 cm²', '72 cm²'], a: 0, cue: 'Count the faces you can see', pic: 'cubes', shape: 'L', V: 56 },
+    { id: 's6', s: 'ss', yr: '2015', code: 'SI4', topic: 'si', sec: 4, fmt: 'nr', ask: 'Small sail height', story: true,
+      stem: 'A sail is enlarged by a scale factor of ' + B('2.50') + '. The large sail is ' + B('280 cm') + ' tall.',
+      unit: 'cm', a: 112, miss: [[700, 'Smaller sail: divide'], [277.5, 'Scale factor multiplies'], [282.5, 'Scale factor multiplies']], cue: '280 ÷ 2.5', pic: 'sail' },
+    { id: 's7', s: 'ss', yr: '2015', code: 'SI2', topic: 'si', sec: 2, fmt: 'mc', ask: 'Length of BC', story: true,
+      stem: '△ABC ~ △DEF. ' + B('AC = 18') + ', ' + B('BC = 2<i>y</i> + 5') + ', ' + B('DF = 6') + ', ' + B('EF = <i>y</i>') + '.',
+      opts: ['11', '13', '15', '17'], a: 2, om: true, cue: 'Scale factor: 18 ÷ 6', pic: 'similar' },
+
+    /* Statistics and probability */
+    { id: 't1', s: 'sp', yr: '2013', code: 'PR1', topic: 'pr', sec: 1, fmt: 'mc', ask: 'His choice is based on', story: true,
+      stem: 'A student picks the red envelope because red is his favourite colour.',
+      opts: ['subjective judgment', 'theoretical probability', 'experimental probability', 'a calculation'], a: 0, cue: 'A feeling, not a calculation', pic: 'envelope' },
+    { id: 't2', s: 'sp', yr: '2013', code: 'ST1', topic: 'st', sec: 1, fmt: 'mc', ask: 'Why is Nina wrong?', story: true,
+      stem: 'Nina finds ' + B(6) + ' of the ' + B(10) + ' girls in her class are under 160 cm. She predicts ' + B(246) + ' of the ' + B(410) + ' students in her school are.',
+      opts: ['Her sample is only girls', 'Her math is wrong', 'She used no questionnaire', 'She surveyed too quickly'], a: 0,
+      cues: [null, '6/10 of 410 is 246', 'Who is in her sample?', 'Who is in her sample?'], cue: 'Who is in her sample?', pic: 'nina' },
+    { id: 't3', s: 'sp', yr: '2013', code: 'ST1', topic: 'st', sec: 1, fmt: 'mc', ask: 'The bias', story: true,
+      stem: 'A school is choosing a new mascot. It surveys ' + B(120) + ' of its ' + B(250) + ' Grade 10 students.',
+      opts: ['The question is confusing', 'The survey takes too long', 'Grade 10s don’t represent the school', 'Cultural beliefs are ignored'], a: 2, cue: 'Who is the mascot for?', pic: 'mascot' },
+    { id: 't4', s: 'sp', yr: '2013', code: 'ST1', topic: 'st', sec: 1, fmt: 'mc', ask: 'Least biased sample', story: true,
+      stem: 'Ethan surveys his town about building a new skating rink.',
+      opts: ['People of different ages', 'People in different cities', 'Only figure skaters', 'People at the rink each day'], a: 0,
+      cues: [null, 'The rink is for his town', 'Not just people who skate', 'Not just people who skate'], cue: 'Who would use the rink?', pic: 'rink' },
+    { id: 't5', s: 'sp', yr: '2015', code: 'PR1', topic: 'pr', sec: 1, fmt: 'mc', ask: 'His assumption', story: true,
+      stem: 'A manager tests ' + B(25) + ' of ' + B(750) + ' watches and finds ' + B(3) + ' faulty. He says ' + B('12%') + ' of all the watches are faulty.',
+      opts: ['The testing was unreliable', 'Parts are rarely faulty', 'The sample is like all 750', 'One worker made them all'], a: 2, cue: 'He used 3/25 for all 750',
+      pic: 'predict', n: 25, h: 3, m: 30, N: 750, icon: '⌚', hit: 'bad' }
+  ];
+  BANK.forEach(it => { it.src = it.yr + ' PAT'; });
+
+  /* ---------- generated items (PAT style) ---------- */
+  function gExp() {
+    for (;;) {
+      const b = rnd(2, 5), m1 = rnd(2, 4), m2 = rnd(2, 3), d = rnd(1, 3), e = m1 * m2 - d, v = Math.pow(b, e);
+      if (v > 10000) continue;
+      const st = '(' + b + SUP(m1) + ')' + SUP(m2) + ' ÷ ' + b + (d === 1 ? '' : SUP(d));
+      return { id: 'g:exp', s: 'num', code: 'PE5', topic: 'pe', sec: 5, fmt: 'nr', ask: 'Simplify, then evaluate', stem: st, a: v,
+        miss: [[Math.pow(b, m1 + m2 - d), 'Power of a power: multiply']], cue: 'Power of a power: multiply',
+        steps: [st, '= ' + b + SUP(m1 * m2) + ' ÷ ' + b + SUP(d), '= ' + b + SUP(e), '= ' + v] };
+    }
+  }
+  function gBed() {
+    const a = rnd(2, 8), b = rnd(2, 5), c = rnd(2, 4), d = rnd(2, 4), p = Math.pow(c, d), v = a + b * p;
+    const st = a + ' + ' + b + ' × ' + c + SUP(d);
+    return { id: 'g:bed', s: 'num', code: 'RN5', topic: 'rn', sec: 5, fmt: 'nr', ask: 'Evaluate', stem: st, a: v,
+      miss: [[(a + b) * p, 'Multiply before you add'], [a + Math.pow(b * c, d), 'The exponent is on ' + c + ' only'], [a + b * c * d, c + SUP(d) + ' is not ' + c + ' × ' + d]], cue: 'Exponent, then ×, then +',
+      steps: [st, '= ' + a + ' + ' + b + ' × ' + p, '= ' + a + ' + ' + b * p, '= ' + v] };
+  }
+  function gSq() {
+    for (;;) {
+      const lo = rnd(10, 80), hi = rnd(lo + 30, 200), sq = x => Number.isInteger(Math.sqrt(x));
+      if (sq(lo) || sq(hi)) continue;
+      const first = Math.floor(Math.sqrt(lo)) + 1, last = Math.floor(Math.sqrt(hi)), n = last - first + 1;
+      return { id: 'g:sq', s: 'num', code: 'SR1', topic: 'sr', sec: 1, fmt: 'nr', ask: 'How many?', story: true,
+        stem: 'How many whole numbers between ' + B(lo) + ' and ' + B(hi) + ' are perfect squares?', a: n, unit: 'squares',
+        miss: [[n + 1, 'Check the ends: ' + lo + ' and ' + hi]], cue: 'List the squares from ' + first + '²', pic: 'squares', lo, hi };
+    }
+  }
+  function gEq() {
+    for (;;) {
+      const x = rnd(-8, 8), a = rnd(2, 5), c = rnd(2, 5), b = rnd(-10, 10);
+      if (a === c || b === 0) continue;
+      const d = (a - c) * x + b; if (d === 0) continue;
+      const st = a + 'x ' + sgn(b) + ' = ' + c + 'x ' + sgn(d);
+      return { id: 'g:eq', s: 'pat', code: 'LE2', topic: 'le', sec: 2, fmt: 'nr', ask: 'Solve', stem: st, pre: 'x =', a: x,
+        miss: [[-x, 'Check the signs'], [(d + b) / (a - c), 'Subtract ' + b + ' from both sides']], cue: 'x terms left, numbers right',
+        steps: [st, (a - c) + 'x = ' + (d - b), 'x = ' + x] };
+    }
+  }
+  /* two plans: A has the bigger fee and the smaller rate */
+  const PLANS = [['Company A', 'Company B', 'a load', 'loads'], ['Gym A', 'Gym B', 'a visit', 'visits'], ['Rental A', 'Rental B', 'a day', 'days']];
+  function gPlans() {
+    const c = pick(PLANS), n = rnd(4, 20), r1 = rnd(5, 20), r2 = r1 + rnd(2, 12), b2 = rnd(5, 20) * 5, b1 = b2 + (r2 - r1) * n;
+    return { id: 'g:plans', s: 'pat', code: 'LE2', topic: 'le', sec: 2, fmt: 'nr', ask: 'Same cost at', story: true,
+      stem: c[0] + ' charges ' + B('$' + b1) + ' plus ' + B('$' + r1) + ' ' + c[2] + '. ' + c[1] + ' charges ' + B('$' + b2) + ' plus ' + B('$' + r2) + ' ' + c[2] + '.',
+      a: n, unit: c[3], miss: [[b1 - b2, 'Now ÷ the rate gap'], [r2 - r1, 'Fee gap ÷ rate gap'], [b1 + r1 * n, 'That’s the cost: find n']], cue: 'Fee gap ÷ rate gap',
+      pic: 'lines', b1, b2, r1, r2, n, names: c };
+  }
+  const BUYS = [['bike', '🚲'], ['guitar', '🎸'], ['tent', '⛺'], ['game console', '🎮'], ['set of headphones', '🎧'], ['pair of skates', '⛸️']];
+  const NAMES = ['Maya', 'Liam', 'Aiyana', 'Noah', 'Priya', 'Owen', 'Sofia', 'Kai', 'Amara', 'Ethan', 'Zoe', 'Jonah'];
+  function gHours() {
+    for (;;) {
+      const rate = pick([10, 12, 15, 16, 18, 20]), goal = rnd(20, 60) * 10, have = rnd(2, 12) * 5, need = goal - have, n = Math.ceil(need / rate);
+      if (n < 4 || n > 30 || (need % rate === 0 && chance(.8))) continue;
+      const [thing, icon] = pick(BUYS), who = pick(NAMES);
+      return { id: 'g:hours', s: 'pat', code: 'LE1', topic: 'le', sec: 1, fmt: 'nr', ask: 'Fewest whole hours', story: true,
+        stem: who + ' wants a ' + B('$' + goal) + ' ' + thing + '. ' + who + ' has ' + B('$' + have) + ' and earns ' + B('$' + rate) + ' an hour.',
+        a: n, unit: 'hours', miss: [[Math.floor(need / rate), 'Not enough yet: round up'], [r2(need / rate), 'Whole hours: round up'], [Math.ceil(goal / rate), 'Take off the $' + have + ' first'], [need, 'That’s dollars: ÷ $' + rate]],
+        cue: 'Take off what you have, round up', pic: 'save', have, goal, rate, n, icon, each: 'hour' };
+    }
+  }
+  function gAge() {
+    const mia = rnd(5, 15), n = rnd(2, 10), sum = 3 * mia + 2 * n, pair = pick([['Jordan', 'Mia'], ['Ravi', 'Asha'], ['Leo', 'Nora']]);
+    return { id: 'g:age', s: 'pat', code: 'LE2', topic: 'le', sec: 2, fmt: 'nr', ask: pair[1] + '’s age now', story: true,
+      stem: pair[0] + ' is ' + B('twice') + ' as old as ' + pair[1] + '. In ' + B(n) + ' years, their ages will add to ' + B(sum) + '.',
+      a: mia, unit: 'years', miss: [[mia + n, 'That’s her age in ' + n + ' years'], [2 * mia, 'That’s ' + pair[0] + '’s age'], [r2((sum - n) / 3), 'Both of them age ' + n + ' years'], [r2(sum / 3), 'Take off the ' + 2 * n + ' years first']],
+      cue: '3 blocks + ' + 2 * n + ' = ' + sum, pic: 'bars', rows: [[pair[1], 1, n], [pair[0], 2, n]], t: mia, total: sum, unit: '' };
+  }
+  function gGarden() {
+    const w = rnd(4, 20), x = rnd(2, 15), P = 2 * (2 * w + x);
+    return { id: 'g:garden', s: 'pat', code: 'LE2', topic: 'le', sec: 2, fmt: 'nr', ask: 'Width of the garden', story: true,
+      stem: 'A rectangular garden has a perimeter of ' + B(P + ' m') + '. Its length is ' + B(x + ' m') + ' more than its width.',
+      a: w, unit: 'm', miss: [[w + x, 'That’s the length'], [r2((P - x) / 4), 'Two lengths: take off 2 × ' + x], [r2(P / 4), 'Take off the extra first'], [r2((P - x) / 2), 'Four sides, not two']],
+      cue: '2 widths + 2 lengths = ' + P, pic: 'garden', w, x, P };
+  }
+  function gTix() {
+    const sp = rnd(5, 10), ap = sp + rnd(3, 10), st = rnd(20, 80), ad = rnd(10, 40), T = sp * st + ap * ad;
+    return { id: 'g:tix', s: 'pat', code: 'LE1', topic: 'le', sec: 1, fmt: 'nr', ask: 'Student tickets sold', story: true,
+      stem: 'Play tickets cost ' + B('$' + sp) + ' for students and ' + B('$' + ap) + ' for adults. ' + B(ad) + ' adult tickets sold, and sales were ' + B('$' + T) + ' in all.',
+      a: st, unit: 'tickets', miss: [[T - ap * ad, 'That’s dollars: ÷ $' + sp], [r2(T / sp), 'Take off the adult sales first']], cue: '(total − adult sales) ÷ ' + sp,
+      pic: 'tix', sp, ap, st, ad, T };
+  }
+  function gInsc() {
+    const ins = rnd(15, 80), mode = pick(['toIns', 'toCen']), ctx = pick(['track', 'window']);
+    const st = ctx === 'track'
+      ? (mode === 'toIns' ? 'A round track has centre O. Lines from O to A and B on the track make ' + B('∠AOB = ' + 2 * ins + '°') + '. A coach stands at C on the track.'
+        : 'A coach stands at C on a round track with centre O. The coach sees A and B on the track at ' + B('∠ACB = ' + ins + '°') + '.')
+      : (mode === 'toIns' ? 'A round window has centre O. Two spokes from O to A and B on the rim make ' + B('∠AOB = ' + 2 * ins + '°') + '. C is on the rim.'
+        : 'A round window has centre O. From C on the rim, A and B on the rim make ' + B('∠ACB = ' + ins + '°') + '.');
+    return { id: 'g:insc', s: 'ss', code: 'CG3', topic: 'cg', sec: 3, fmt: 'nr', ask: mode === 'toIns' ? 'Find ∠ACB' : 'Find ∠AOB', story: true, stem: st,
+      a: mode === 'toIns' ? ins : 2 * ins, unit: '°', miss: mode === 'toIns' ? [[4 * ins, 'Inscribed is half of central'], [2 * ins, 'Inscribed is half of central']] : [[ins / 2, 'Central is twice inscribed'], [ins, 'Central is twice inscribed']],
+      cue: 'Central = 2 × inscribed', pic: 'angles', ins, mode, ctx };
+  }
+  function gScale() {
+    const sf = rnd(2, 5), o = rnd(10, 50), big = o * sf, mode = pick(['sf', 'orig']);
+    return mode === 'sf'
+      ? { id: 'g:scale', s: 'ss', code: 'SI4', topic: 'si', sec: 4, fmt: 'nr', ask: 'Scale factor', story: true,
+        stem: 'A model of a building is ' + B(o + ' cm') + ' tall. The real building is ' + B(big + ' cm') + ' tall.', a: sf,
+        miss: [[r2(o / big), 'Real ÷ model'], [big - o, 'A scale factor multiplies']], cue: 'real height ÷ model height', pic: 'scale', mode, o, big, sf }
+      : { id: 'g:scale', s: 'ss', code: 'SI4', topic: 'si', sec: 4, fmt: 'nr', ask: 'Photo height', story: true,
+        stem: 'A photo is enlarged by a scale factor of ' + B(sf) + ' to make a poster ' + B(big + ' cm') + ' tall.', a: o, unit: 'cm',
+        miss: [[big * sf, 'The photo is smaller: divide'], [big - sf, 'A scale factor multiplies']], cue: 'poster ÷ scale factor', pic: 'scale', mode, o, big, sf };
+  }
+  const PRED = [
+    { id: 'watch', icon: '⌚', hit: 'bad', s: (n, h) => 'A worker tests ' + B(n) + ' watches and finds ' + B(h) + ' faulty.', w: N => 'About how many of ' + B(N) + ' watches are faulty?' },
+    { id: 'walk', icon: '🚶', hit: 'good', s: (n, h) => 'In a survey, ' + B(h) + ' of ' + B(n) + ' students walk to school.', w: N => 'About how many of the ' + B(N) + ' students walk?' },
+    { id: 'seed', icon: '🌱', hit: 'good', s: (n, h) => 'Of ' + B(n) + ' seeds planted, ' + B(h) + ' sprouted.', w: N => 'How many of ' + B(N) + ' seeds should sprout?' }
+  ];
+  function gPred() {
+    for (;;) {
+      const n = pick([10, 20, 25, 40, 50]), h = rnd(1, n - 1), m = rnd(4, 40), c = pick(PRED);
+      if (h * 2 > n && c.id === 'watch') continue;
+      return { id: 'g:pred', s: 'sp', code: 'PR1', topic: 'pr', sec: 1, fmt: 'nr', ask: 'Predict', story: true, stem: c.s(n, h) + ' ' + c.w(n * m),
+        a: h * m, miss: [[r2(h / n * 100), 'That’s the percent: of ' + n * m + '?'], [h, 'Scale up to ' + n * m]], tol: .5, cue: h + '/' + n + ' of ' + n * m,
+        pic: 'predict', n, h, m, N: n * m, icon: c.icon, hit: c.hit, ctx: c.id };
+    }
+  }
+  /* a fair sample: random students from every grade, against three narrow groups */
+  const TOPICS = ['a new lunch menu', 'the school start time', 'a theme for the dance', 'where to go on a field trip', 'a name for the school team', 'new games for the gym'];
+  const NARROW = [['g9', 'Only the Grade 9s'], ['team', 'Only the basketball team'], ['band', 'Only students in the band'], ['friends', 'Only your friends'], ['lib', 'Students in the library at lunch'], ['class', 'Only your own class']];
+  function gBias() {
+    const topic = pick(TOPICS), wrong = shuffle(NARROW).slice(0, 3), all = shuffle([['fair', 'Random students from every grade']].concat(wrong));
+    return { id: 'g:bias', s: 'sp', code: 'ST1', topic: 'st', sec: 1, fmt: 'mc', ask: 'Best sample', story: true,
+      stem: 'A Grade 7–9 school wants to know what students think about ' + B(topic) + '.',
+      opts: all.map(o => o[1]), groups: all.map(o => o[0]), a: all.findIndex(o => o[0] === 'fair'), cue: 'Every student needs a chance', pic: 'bias' };
+  }
+  // A generated mistake can land on the right answer (x = 0, say): drop it.
+  const clean = f => () => { const it = f(); if (it.miss) it.miss = it.miss.filter(m => !near(m[0], it.a, it.tol)); return it; };
+  const GENS = { num: [gExp, gBed, gSq], pat: [gEq, gPlans, gHours, gAge, gGarden, gTix], ss: [gInsc, gScale], sp: [gPred, gBias] };
+  for (const k in GENS) GENS[k] = GENS[k].map(clean);
+
+  /* ---------- checking ---------- */
+  function check(it, r) {
+    if (it.fmt === 'mc') {
+      const i = LET.indexOf(String(r.v)); if (i === it.a) return { ok: true };
+      return { code: 'o' + i, cue: (it.cues && it.cues[i]) || it.cue };
+    }
+    const g = Q.val(r.v), tol = it.tol || .001;
+    if (near(g, it.a, tol)) return { ok: true };
+    const m = (it.miss || []).find(x => near(g, x[0], tol));
+    return m ? { code: 'm' + it.miss.indexOf(m), cue: m[1] } : { code: 'other', cue: it.cue };
+  }
+  const answer = it => ({ v: it.fmt === 'mc' ? LET[it.a] : String(it.a) });
+
+  return { BANK, GENS, LET, check, answer, near, money, r2, SUP };
+})();
+/* ===================== MODEL END ===================== */
+
+/* ===== DRILL SHELL START (same in every narrow trainer: Math 9 and Science 7) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   Optional: PAGE.sep (heading separator after "Section N", default —), PAGE.secText(tab) (the whole heading text
+   for the 📖 link), PAGE.sans (prompts in the plain font, for science). TAB.cols (2 or 3) sets the choice grid.
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen()                 -> a new item (from MODEL)
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom', or kind(item) -> one of those (a page that mixes typed and tap answers)
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+     link(item)            -> {notes, sec, sep} for this item's 📖 link (optional; a tab whose items span topics)
+     typeOf(item)          -> the question type, for weighting (optional; default: the item's form/kind/shape/... fields)
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown).
+   Weighting: each question type has a score, saved per tab. A first-try right answer lowers it (to half weight at
+   most), a miss or Show me raises it (to about 2.5× at most). Each new item is picked from 8 generated candidates
+   by weight, so missed types come back more often and types answered right still appear, less often. */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {}, w: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); if (!save.w || typeof save.w !== 'object') save.w = {}; } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    let prevItalic = false;
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => {
+      if (!part) return; const it = /^[a-z]$/.test(part);
+      // an italic letter leans into a following ² or ³: nudge it right
+      const t = el('tspan', it ? { 'font-style': 'italic' } : prevItalic && /^[²³]/.test(part) ? { dx: '0.12em' } : {}, e); t.textContent = part; prevItalic = it;
+    });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  const kindOf = (t, it) => typeof t.kind === 'function' ? t.kind(it) : t.kind;
+  const K = () => kindOf(tab, item);
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (K() === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (K() === 'choice') {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
+      row.className = 'choices' + (tab.cols === 2 ? ' two' : tab.cols === 3 ? ' three' : long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = K() === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  /* ---------- weighting: missed question types come back more often ---------- */
+  const TYPE_FIELDS = ['form', 'kind', 'shape', 'type', 'rep', 'ask', 'what', 'mode', 'rule', 'ans', 'useD', 'back', 'direct', 'flip', 'rat', 'idCol'];
+  function keyOf(it) {
+    if (tab.typeOf) return String(tab.typeOf(it));
+    return TYPE_FIELDS.filter(k => typeof it[k] === 'string' || typeof it[k] === 'boolean').map(k => k + ':' + it[k]).join('|');
+  }
+  const scores = () => (save.w[tab.id] = save.w[tab.id] || {});
+  const weightOf = k => Math.pow(2, scores()[k] || 0);
+  function record(right) {
+    const s = scores(), k = item.__key; if (k == null) return;
+    s[k] = right ? Math.max(-1, (s[k] || 0) - .5) : Math.min(1.3, (s[k] || 0) + 1);
+    store();
+  }
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) {
+      const cands = [];
+      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
+      if (!cands.length) cands.push(tab.gen());
+      const ws = cands.map(c => weightOf(keyOf(c))), total = ws.reduce((a, b) => a + b, 0);
+      let r = Q.rnd(0, 999999) / 1e6 * total, i = 0; while (i < cands.length - 1 && r >= ws[i]) { r -= ws[i]; i++; }
+      it = cands[i]; key = JSON.stringify(it);
+    }
+    lastKey = key || JSON.stringify(it);
+    Object.defineProperty(it, '__key', { value: keyOf(it), enumerable: false, configurable: true, writable: true });
+    item = it; resp = {}; att = 0; resolved = false;
+    if (tab.link) setNotes(linkOf());
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (K() === 'choice' && resp.v == null) return;
+    if (K() === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (K() === 'choice' ? 1 : 2);
+    if (res.ok) {
+      resolved = true; marks.push(att === 1 ? 'g' : 'y'); record(att === 1);
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r'); record(false);
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (K() === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
+    } else if (K() === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (K() === 'slots') fillSlots(ans, 'shown');
+    else if (K() === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); record(false); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(linkOf()) + '" target="_blank" rel="noopener">📖 Notes §' + linkOf().sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => (t.notes || PAGE.notes) + '#:~:text=' + encodeURIComponent(PAGE.secText ? PAGE.secText(t) : 'Section ' + t.sec + ' ' + (t.sep || PAGE.sep || '—'));
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setNotes(t) {
+    const n = $('notes'); n.href = notesHref(t); $('notesTxt').textContent = '§' + t.sec;
+    n.title = 'Notes, Section ' + t.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + t.sec);
+  }
+  // A tab with link(item) points the 📖 button at the current item's own notes.
+  const linkOf = () => tab.link ? Object.assign({}, tab, tab.link(item)) : tab;
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    setNotes(tab);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    if (P.sans) document.body.classList.add('sans');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }),
+      keyOf: (it, t) => { const cur = tab; if (t) tab = t; try { return keyOf(it); } finally { tab = cur; } }, weights: () => Object.assign({}, scores()), resetWeights: () => { save.w[tab.id] = {}; }, setScore: (k, s) => { scores()[k] = s; } };
+  }
+  return { boot, kindOf, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+/* ===================== PAGE: pictures and tabs ===================== */
+const { C, fracHTML, mathHTML } = DRILL;
+const M = MODEL, LET = M.LET, $m = M.money;
+const done = V => V.phase === 'right' || V.phase === 'show';
+const after = V => V.phase !== 'ask';
+const code = V => V.res && V.res.code;
+const lab = (A, x, y, s, col, a) => A.tx(A.svg, x, y, s, Object.assign({ 'font-size': 18, fill: col || C.text }, a || {}));
+const mlab = (A, x, y, s, col, a) => A.mtx(A.svg, x, y, s, Object.assign({ 'font-size': 22, fill: col || C.text }, a || {}));
+const emo = (A, x, y, s, size) => A.tx(A.svg, x, y, s, { 'font-size': size || 34, class: 'emo' });
+const box = (A, x, y, w, h, col, a) => A.el('rect', Object.assign({ x, y, width: Math.max(0, w), height: h, rx: 6, fill: col, 'fill-opacity': .22, stroke: col, 'stroke-width': 2 }, a || {}), A.svg);
+const line = (A, x1, y1, x2, y2, col, w, a) => A.el('line', Object.assign({ x1, y1, x2, y2, stroke: col, 'stroke-width': w || 2 }, a || {}), A.svg);
+const dot = (A, x, y, r, col, a) => A.el('circle', Object.assign({ cx: x, cy: y, r, fill: col }, a || {}), A.svg);
+const fade = (i, a) => Object.assign({ class: 'fade', style: 'animation-delay:' + (i || 0) * 90 + 'ms' }, a || {});
+const glow = { filter: 'url(#glow)', 'stroke-width': 4 };
+function brace(A, x1, x2, y, s, col, up) {
+  const d = up ? -1 : 1, m = (x1 + x2) / 2;
+  A.el('path', { d: 'M' + x1 + ' ' + y + 'q0 ' + 8 * d + ' 8 ' + 8 * d + 'H' + (m - 8) + 'q8 0 8 ' + 8 * d + 'q0 ' + -8 * d + ' 8 ' + -8 * d + 'H' + (x2 - 8) + 'q8 0 8 ' + -8 * d, stroke: col || C.muted, 'stroke-width': 2, fill: 'none' }, A.svg);
+  if (s != null) lab(A, m, y + 32 * d, s, col || C.muted, { 'font-size': 19 });
+}
+// A column of lines; k = how many to show. The last one shown can take its own colour.
+function panel(A, x, y, lines, gap, size) {
+  lines.forEach((l, i) => { if (!l) return; const [s, col] = Array.isArray(l) ? l : [l, C.text]; mlab(A, x, y + i * (gap || 34), s, col, fade(i, { 'font-size': size || 20 })); });
+}
+
+/* ---------- prompt text ---------- */
+// a/b and (a)/(b) as stacked fractions; single letters in italics (outside tags).
+function mathText(s) {
+  s = String(s).replace(/\(([^()]+)\)\/\(([^()]+)\)/g, (m, a, b) => fracHTML(a, b)).replace(/([\w.]+)\/(\d+)/g, (m, a, b) => fracHTML(a, b));
+  return s.split(/(<[^>]+>)/).map(p => p[0] === '<' ? p : mathHTML(p)).join('');
+}
+
+/* ---------- worked steps: the picture for a computation ---------- */
+function steps(A, it, V) {
+  const L = it.steps, k = done(V) ? L.length : after(V) ? Math.min(2, L.length) : 1, n = L.length;
+  const long = Math.max(...L.map(s => s.length)), fs = Math.min(32, 560 / (long * .52)), gap = Math.min(fs * 1.8, 330 / n), y0 = 210 - gap * (n - 1) / 2;
+  L.slice(0, k).forEach((s, i) => {
+    const col = i === 0 ? C.text : done(V) && i === n - 1 ? C.green : !done(V) && i === k - 1 ? C.yellow : C.muted;
+    mlab(A, 320, y0 + i * gap, s, col, fade(i, { 'font-size': fs }));
+  });
+  if (V.phase === 'wrong') lab(A, 320, 395, 'first step', C.yellow, { 'font-size': 15 });
+}
+
+/* ---------- number lines ---------- */
+function axis(A, x0, x1, y, lo, hi, step, labEvery) {
+  const X = v => x0 + (v - lo) / (hi - lo) * (x1 - x0);
+  line(A, x0 - 14, y, x1 + 14, y, C.axis, 2.5, { 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' });
+  for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) {
+    const big = Math.abs(v / labEvery - Math.round(v / labEvery)) < 1e-9;
+    line(A, X(v), y - (big ? 9 : 5), X(v), y + (big ? 9 : 5), C.axis, 1.5);
+    if (big) lab(A, X(v), y + 26, String(Math.round(v * 100) / 100).replace('-', '−'), C.tick, { 'font-size': 14 });
+  }
+  return X;
+}
+const PICS = {};
+PICS.squares = (A, it, V) => {
+  const lo0 = Math.max(0, Math.floor((it.lo - 12) / 10) * 10), hi0 = Math.ceil((it.hi + 12) / 10) * 10, span = hi0 - lo0;
+  const X = axis(A, 50, 590, 240, lo0, hi0, span > 150 ? 10 : 5, span > 150 ? 50 : 20);
+  [it.lo, it.hi].forEach((b, i) => {
+    line(A, X(b), 150, X(b), 252, C.yellow, 3);
+    lab(A, X(b), 130, String(b), C.yellow, { 'font-size': 22 });
+    if (after(V)) lab(A, X(b), 300, '√' + b + ' ≈ ' + Math.sqrt(b).toFixed(1), C.muted, fade(i, { 'font-size': 16 }));
+  });
+  if (!done(V)) { lab(A, 320, 60, 'perfect squares between ' + it.lo + ' and ' + it.hi + '?', C.muted, { 'font-size': 17 }); return; }
+  let k = 0, first = null, last = null;
+  for (let r = 1; r * r <= hi0; r++) {
+    const v = r * r; if (v < lo0) continue;
+    const inside = v > it.lo && v < it.hi; if (inside) { first = first == null ? v : first; last = v; }
+    dot(A, X(v), 240, 7, inside ? C.green : C.muted, fade(k, { 'fill-opacity': inside ? 1 : .5 }));
+    lab(A, X(v), k % 2 ? 182 : 206, r + '²', inside ? C.green : C.muted, fade(k, { 'font-size': 14 }));
+    k++;
+  }
+  if (first != null) brace(A, X(first) - 6, X(last) + 6, 330, it.a + ' perfect squares', C.green);
+};
+PICS.between = (A, it, V) => {
+  const X = axis(A, 50, 590, 220, 45, 95, 1, 5), lo = it.lo * it.lo, hi = it.hi * it.hi;
+  it.vals.forEach((v, i) => {
+    const inside = v > lo && v < hi, col = done(V) ? (inside ? C.green : C.muted) : C.blue;
+    dot(A, X(v), 220, 7, col);
+    lab(A, X(v), i % 2 ? 158 : 182, '√' + v, col, { 'font-size': 17 });
+  });
+  if (!after(V)) { lab(A, 320, 70, 'each √ sits at its number', C.muted, { 'font-size': 16 }); return; }
+  [[lo, it.lo], [hi, it.hi]].forEach(([b, r], i) => {
+    line(A, X(b), 130, X(b), 232, C.yellow, 3, fade(i));
+    lab(A, X(b), 290 + i * 30, r + '² = ' + Math.round(b * 100) / 100, C.yellow, fade(i, { 'font-size': 18 }));
+  });
+  if (done(V)) { const ins = it.vals.filter(v => v > lo && v < hi); brace(A, X(ins[0]) - 6, X(ins[ins.length - 1]) + 6, 100, ins.length + ' are between', C.green, true); }
+};
+PICS.order4 = (A, it, V) => {
+  const cards = [['(−2)²', 4], ['−1²', -1], ['(−1)²', 1], ['−2²', -4]], X = axis(A, 80, 560, 290, -5, 5, 1, 1);
+  cards.forEach(([s, v], i) => {
+    const x = 125 + i * 130;
+    A.el('rect', { x: x - 52, y: 70, width: 104, height: 50, rx: 10, fill: C.panel, stroke: C.edge, 'stroke-width': 2 }, A.svg);
+    mlab(A, x, 95, s, C.text, { 'font-size': 26 });
+    if (after(V)) mlab(A, x, 150, '= ' + String(v).replace('-', '−'), v < 0 && s[0] === '−' ? C.yellow : C.muted, fade(i, { 'font-size': 20 }));
+    if (done(V)) { A.el('path', { d: 'M' + x + ' 166 L' + X(v) + ' 278', stroke: C.blue, 'stroke-width': 1.5, 'stroke-dasharray': '4 4', fill: 'none' }, A.svg); dot(A, X(v), 290, 8, C.green, fade(i)); }
+  });
+  if (V.phase === 'wrong') mlab(A, 320, 370, '−2² = −(2 × 2) = −4', C.yellow, { 'font-size': 20 });
+  if (done(V)) lab(A, 320, 370, 'least → greatest: −2², −1², (−1)², (−2)²', C.green, { 'font-size': 18 });
+};
+PICS.ineq = (A, it, V) => {
+  panel(A, 320, 70, [['−3x + 7 > −17', C.text], after(V) ? ['−3x > −24', C.muted] : null, after(V) ? ['÷ (−3): the sign flips', C.yellow] : null, done(V) ? ['x < 8', C.green] : null], 38, 24);
+  const X = axis(A, 70, 570, 300, 0, 14, 1, 2);
+  if (!done(V)) return;
+  line(A, X(8) - 10, 300, X(0) - 12, 300, C.green, 7, { 'marker-end': 'url(#aN)', class: 'fade' });
+  dot(A, X(8), 300, 10, C.stage, { stroke: C.green, 'stroke-width': 3 });
+  lab(A, X(8), 268, 'open: 8 is not in', C.green, { 'font-size': 14 });
+};
+
+/* ---------- money, trips and tapes ---------- */
+PICS.trip = (A, it, V) => {
+  const D = it.d[0] + it.d[1], x0 = 70, W = 500, px = W / D, y = 190, xm = x0 + it.d[0] * px, cols = [C.blue, C.gold];
+  emo(A, x0 - 20, y - 50, it.icon, 36);
+  [[x0, xm], [xm, x0 + W]].forEach(([a, b], i) => {
+    line(A, a, y, b, y, cols[i], 12);
+    const m = (a + b) / 2;
+    lab(A, m, y - 30, it.sp[i] + ' km/h', cols[i], { 'font-size': 19 });
+    lab(A, m, y + 32, it.tt[i], C.text, { 'font-size': 20 });
+    if (after(V)) lab(A, m, y + 66, done(V) ? it.sp[i] + ' × ' + it.tt[i].replace(' h', '') + ' = ' + it.d[i] + ' km' : 'speed × time', done(V) ? cols[i] : C.muted, fade(i, { 'font-size': 18 }));
+  });
+  dot(A, x0, y, 9, C.text); line(A, x0 + W, y - 40, x0 + W, y + 10, C.text, 3);
+  A.el('path', { d: 'M' + (x0 + W) + ' ' + (y - 40) + 'h26l-8 9l8 9h-26', fill: C.green }, A.svg);
+  if (done(V)) brace(A, x0, x0 + W, y + 100, it.d[0] + ' + ' + it.d[1] + ' = ' + (it.d[0] + it.d[1]).toFixed(1) + ' km', C.green);
+};
+PICS.phone = (A, it, V) => {
+  const segs = [['fee', '$5.00', 5, C.teal, ''], ['33 texts', '× $0.05', 1.65, C.gold, '$1.65'], ['47 minutes', '× $0.06', 2.82, C.blue, '$2.82']];
+  const x0 = 60, W = 520, y = 150, h = 84, ws = [190, 160, 170];
+  emo(A, 40, 60, '📱', 38);
+  let x = x0;
+  segs.forEach(([a, b, v, col, prod], i) => {
+    const w = ws[i]; box(A, x, y, w, h, col, code(V) === [null, 'o2', 'o1'][i] ? glow : {});
+    lab(A, x + w / 2, y + 28, a, col, { 'font-size': 17 }); lab(A, x + w / 2, y + 56, b, C.text, { 'font-size': 19 });
+    if (i && after(V)) lab(A, x + w / 2, y + h + 30, '= ' + prod, done(V) ? col : C.yellow, fade(i, { 'font-size': 19 }));
+    x += w;
+  });
+  if (code(V) === 'o0') lab(A, 320, y + h + 70, '0.05 + 0.06 counts one text, one minute', C.red, { 'font-size': 16 });
+  brace(A, x0, x0 + W, y - 14, done(V) ? '5.00 + 1.65 + 2.82 = $9.47' : 'bill = ?', done(V) ? C.green : C.text, true);
+};
+// A goal bar: what you have, then chunks of the rate until you reach the goal.
+function saveBar(A, V, o) {
+  const x0 = 60, W = 500, y = o.y || 170, h = 60, top = Math.max(o.goal, o.have + o.n * o.rate), px = W / top;
+  const gx = x0 + o.goal * px, hx = x0 + o.have * px, cw = o.rate * px;
+  A.el('rect', { x: x0, y, width: gx - x0, height: h, rx: 6, fill: 'none', stroke: C.edge, 'stroke-width': 2, 'stroke-dasharray': '6 5' }, A.svg);
+  if (o.have) { box(A, x0, y, hx - x0, h, C.green, V.res && /Take off/.test(V.res.cue || '') ? glow : {}); if (hx - x0 > 40) lab(A, (x0 + hx) / 2, y + h / 2, $m(o.have), C.text, { 'font-size': 17 }); lab(A, (x0 + hx) / 2, y + h + 22, 'has', C.green, { 'font-size': 14 }); }
+  line(A, gx, y - 40, gx, y + h + 10, C.yellow, 3);
+  if (o.icon) emo(A, gx, y - 62, o.icon, 32);
+  lab(A, gx, y + h + 28, $m(o.goal), C.yellow, { 'font-size': 18 });
+  if (!done(V)) {
+    box(A, hx, y, cw, h, C.gold, { 'stroke-dasharray': '5 4' });
+    lab(A, hx + 10, y - 20, '+ ' + $m(o.rate) + ' each ' + o.each, C.gold, { 'font-size': 16, 'text-anchor': 'start' });
+    brace(A, hx, gx, y + h + 44, after(V) ? $m(o.goal) + ' − ' + $m(o.have) + ' = ' + $m(M.r2(o.goal - o.have)) : '?', after(V) ? C.yellow : C.muted);
+    return;
+  }
+  for (let i = 0; i < o.n; i++) {
+    const last = i === o.n - 1;
+    A.el('rect', { x: hx + i * cw + 1, y, width: Math.max(1, cw - 2), height: h, rx: 3, fill: last ? C.green : C.gold, 'fill-opacity': i % 2 ? .42 : .28, stroke: last ? C.green : C.gold, 'stroke-width': 1.5, class: 'fade', style: 'animation-delay:' + i * 35 + 'ms' }, A.svg);
+  }
+  lab(A, (hx + hx + o.n * cw) / 2, y - 20, o.n + ' ' + o.each + 's', C.green, { 'font-size': 18 });
+  const q = (o.goal - o.have) / o.rate;
+  brace(A, hx, gx, y + h + 44, $m(M.r2(o.goal - o.have)) + ' ÷ ' + $m(o.rate) + ' = ' + (Number.isInteger(q) ? q : q.toFixed(2) + ' → ' + o.n), C.green);
+}
+PICS.save = (A, it, V) => saveBar(A, V, it);
+PICS.save20 = (A, it, V) => {
+  const x0 = 60, y = 46, w = 330, h = 50, p = w * .2;
+  lab(A, x0, y - 14, 'one week’s pay', C.blue, { 'font-size': 14, 'text-anchor': 'start' });
+  box(A, x0, y, w, h, C.blue); box(A, x0, y, p, h, C.gold, { 'fill-opacity': .4 });
+  lab(A, x0 + p / 2, y + h / 2, '20%', C.text, { 'font-size': 16 }); lab(A, x0 + w - 40, y + h / 2, '$576', C.text, { 'font-size': 17 });
+  lab(A, x0 + w + 20, y + h / 2, after(V) ? '20% of $576 = $115.20' : 'saved: ?', after(V) ? C.gold : C.muted, { 'font-size': 17, 'text-anchor': 'start' });
+  saveBar(A, V, { y: 220, have: 0, goal: 1200, rate: 115.2, n: 11, icon: '🎯', each: 'week' });
+  if (done(V)) lab(A, 320, 395, '10 weeks is only $1152: round up', C.muted, { 'font-size': 15 });
+};
+PICS.dale = (A, it, V) => {
+  const x0 = 60, W = 520, y = 170, h = 64, px = W / 180, cx = x0 + 45 * px;
+  brace(A, x0, x0 + W, y - 14, '$180 earned', C.text, true);
+  box(A, x0, y, cx - x0, h, C.teal, code(V) === 'm1' || code(V) === 'm2' ? glow : {}); lab(A, (x0 + cx) / 2, y + 22, 'cars', C.teal, { 'font-size': 15 }); lab(A, (x0 + cx) / 2, y + 44, '$45', C.text, { 'font-size': 18 });
+  emo(A, (x0 + cx) / 2, y + h + 34, '🚗', 26);
+  if (!done(V)) {
+    A.el('rect', { x: cx, y, width: x0 + W - cx, height: h, rx: 6, fill: C.green, 'fill-opacity': .08, stroke: C.green, 'stroke-width': 2, 'stroke-dasharray': '6 5' }, A.svg);
+    lab(A, (cx + x0 + W) / 2, y + h / 2, after(V) ? '$180 − $45 = $135' : 'lawns × $9', after(V) ? C.yellow : C.green, { 'font-size': 19 });
+  } else {
+    for (let i = 0; i < 15; i++) A.el('rect', { x: cx + i * 9 * px + 1, y, width: 9 * px - 2, height: h, rx: 3, fill: C.green, 'fill-opacity': i % 2 ? .42 : .26, stroke: C.green, 'stroke-width': 1.5, class: 'fade', style: 'animation-delay:' + i * 40 + 'ms' }, A.svg);
+    brace(A, cx, x0 + W, y + h + 16, '$135 ÷ $9 = 15 lawns', C.green);
+  }
+  emo(A, (cx + x0 + W) / 2, y - 60, '🌱', 26);
+};
+PICS.tix = (A, it, V) => {
+  const x0 = 60, W = 520, y = 170, h = 70, aw = Math.max(150, Math.min(300, W * it.ap * it.ad / it.T)), sx = x0 + aw, ad = it.ap * it.ad, rest = it.T - ad;
+  emo(A, 44, 66, '🎭', 34);
+  brace(A, x0, x0 + W, y - 14, '$' + it.T + ' in all', C.text, true);
+  box(A, x0, y, aw, h, C.teal); lab(A, x0 + aw / 2, y + 24, it.ad + ' adults', C.teal, { 'font-size': 16 }); lab(A, x0 + aw / 2, y + 48, '× $' + it.ap, C.text, { 'font-size': 18 });
+  box(A, sx, y, x0 + W - sx, h, C.gold, done(V) ? {} : { 'stroke-dasharray': '6 5' });
+  lab(A, (sx + x0 + W) / 2, y + 24, (done(V) ? it.st : '?') + ' students', C.gold, { 'font-size': 16 }); lab(A, (sx + x0 + W) / 2, y + 48, '× $' + it.sp, C.text, { 'font-size': 18 });
+  if (after(V)) { lab(A, x0 + aw / 2, y + h + 30, '= $' + ad, C.teal, fade(0, { 'font-size': 18 })); lab(A, (sx + x0 + W) / 2, y + h + 30, '$' + it.T + ' − $' + ad + ' = $' + rest, C.yellow, fade(1, { 'font-size': 18 })); }
+  if (done(V)) lab(A, 320, y + h + 90, '$' + rest + ' ÷ $' + it.sp + ' = ' + it.st + ' student tickets', C.green, fade(2, { 'font-size': 20 }));
+};
+PICS.plans2 = (A, it, V) => {
+  const x0 = 90, W = 500, px = W / 750, rows = [[150, 25, 24, 'Plan 1'], [200, 55, 10, 'Plan 2']];
+  brace(A, x0, x0 + W, 64, '$750 horse 🐴', C.text, true);
+  rows.forEach(([down, r, n, name], i) => {
+    const y = 100 + i * 130, h = 56, dx = x0 + down * px;
+    lab(A, x0 - 12, y + h / 2, name, C.text, { 'font-size': 15, 'text-anchor': 'end' });
+    box(A, x0, y, dx - x0, h, C.teal); lab(A, (x0 + dx) / 2, y + h / 2, '$' + down, C.text, { 'font-size': 16 });
+    if (!done(V)) {
+      A.el('rect', { x: dx, y, width: x0 + W - dx, height: h, rx: 6, fill: C.gold, 'fill-opacity': .08, stroke: C.gold, 'stroke-width': 2, 'stroke-dasharray': '6 5' }, A.svg);
+      lab(A, (dx + x0 + W) / 2, y + h / 2, '? × $' + r, C.gold, { 'font-size': 18 });
+      if (after(V)) lab(A, (dx + x0 + W) / 2, y + h + 26, '$' + (750 - down) + ' ÷ $' + r, C.yellow, fade(i, { 'font-size': 18 }));
+    } else {
+      for (let k = 0; k < n; k++) A.el('rect', { x: dx + k * r * px + 1, y, width: r * px - 2, height: h, rx: 3, fill: C.gold, 'fill-opacity': k % 2 ? .42 : .26, stroke: C.gold, 'stroke-width': 1.2, class: 'fade', style: 'animation-delay:' + k * 30 + 'ms' }, A.svg);
+      lab(A, (dx + x0 + W) / 2, y + h + 26, '$' + (750 - down) + ' ÷ $' + r + ' = ' + n + ' payments', C.gold, fade(i, { 'font-size': 18 }));
+    }
+  });
+  if (done(V)) lab(A, 340, 392, '24 − 10 = 14 fewer payments', C.green, fade(2, { 'font-size': 21 }));
+};
+PICS.profit = (A, it, V) => {
+  const x0 = 110, W = 440, y1 = 100, y2 = 230, h = 56, fw = 130, cw = W * .3 / 1.5;
+  lab(A, x0 - 12, y1 + h / 2, 'money in', C.gold, { 'font-size': 15, 'text-anchor': 'end' });
+  box(A, x0, y1, W, h, C.gold); mlab(A, x0 + W / 2, y1 + h / 2, '1.5c', C.text);
+  lab(A, x0 + W / 2, y1 - 18, '$1.50 for each of c cupcakes', C.muted, { 'font-size': 14 });
+  lab(A, x0 - 12, y2 + h / 2, 'costs', C.red, { 'font-size': 15, 'text-anchor': 'end' });
+  box(A, x0, y2, fw, h, C.teal, code(V) === 'o1' || code(V) === 'o3' ? glow : {}); mlab(A, x0 + fw / 2, y2 + h / 2, '20', C.text);
+  lab(A, x0 + fw / 2, y2 + h + 20, 'once a month', C.teal, { 'font-size': 14 });
+  box(A, x0 + fw, y2, cw, h, C.red); mlab(A, x0 + fw + cw / 2, y2 + h / 2, '0.3c', C.text);
+  lab(A, x0 + fw + cw / 2, y2 + h + 20, '$0.30 each', C.red, { 'font-size': 14 });
+  const px = x0 + fw + cw;
+  A.el('rect', { x: px, y: y2, width: x0 + W - px, height: h, rx: 6, fill: C.green, 'fill-opacity': done(V) ? .25 : .06, stroke: C.green, 'stroke-width': 2, 'stroke-dasharray': '6 5' }, A.svg);
+  lab(A, (px + x0 + W) / 2, y2 + h / 2, 'profit', C.green, { 'font-size': 18 });
+  line(A, x0 + W, y1 + h, x0 + W, y2, C.muted, 1.5, { 'stroke-dasharray': '4 4' });
+  if (after(V)) mlab(A, 320, 345, done(V) ? 'profit = 1.5c − (20 + 0.3c)' : 'profit = money in − costs', done(V) ? C.green : C.yellow, fade(0, { 'font-size': 22 }));
+};
+PICS.bars = (A, it, V) => {
+  const rows = it.rows, t = it.t, u = it.unit, maxU = Math.max(...rows.map(r => r[1] * t + Math.max(0, r[2]))), px = 360 / maxU, bw = t * px, x0 = 160;
+  const K = rows.reduce((a, r) => a + r[1], 0), adj = rows.reduce((a, r) => a + r[2], 0);
+  rows.forEach(([name, k, d], i) => {
+    const y = 56 + i * 74, h = 48;
+    lab(A, x0 - 14, y + h / 2, name, C.text, { 'font-size': 16, 'text-anchor': 'end' });
+    for (let j = 0; j < k; j++) { const cut = j === k - 1 && d < 0 ? -d * px : 0; box(A, x0 + j * bw, y, bw, h, C.gold); if (bw - cut > 40) lab(A, x0 + j * bw + (bw - cut) / 2, y + h / 2, done(V) ? u + t : '?', done(V) ? C.text : C.gold, { 'font-size': 17 }); }
+    const end = x0 + k * bw;
+    if (d > 0) { box(A, end, y, d * px, h, C.teal); lab(A, end + d * px / 2, y + h / 2, '+' + u + d, C.text, { 'font-size': 15 }); }
+    if (d < 0) { A.el('rect', { x: end + d * px, y: y - 4, width: -d * px, height: h + 8, rx: 4, fill: C.stage, 'fill-opacity': .7, stroke: C.red, 'stroke-width': 2.5, 'stroke-dasharray': '5 4' }, A.svg); lab(A, end + d * px / 2, y + h / 2, '−' + u + -d, C.red, { 'font-size': 15 }); }
+  });
+  const yb = 56 + rows.length * 74;
+  lab(A, x0, yb + 6, 'all together: ' + u + it.total, C.text, { 'font-size': 18, 'text-anchor': 'start' });
+  if (!after(V)) return;
+  const s = adj < 0 ? ' − ' + u + -adj : adj > 0 ? ' + ' + u + adj : '';
+  panel(A, 320, yb + 46, [[K + ' blocks' + s + ' = ' + u + it.total, done(V) ? C.muted : C.yellow], done(V) ? [K + ' blocks = ' + u + (it.total - adj), C.muted] : null, done(V) ? ['one block = ' + u + t, C.green] : null], 32, 19);
+};
+PICS.member = (A, it, V) => {
+  const P = A.plane(A.svg, { x0: 80, y0: 36, w: 500, h: 300, xmin: 0, xmax: 13, ymin: 0, ymax: 300, xstep: 1, ystep: 50, labx: 2, laby: 50 });
+  lab(A, 560, 370, 'months', C.muted, { 'font-size': 14 }); lab(A, 92, 16, 'total ($)', C.muted, { 'font-size': 14, 'text-anchor': 'start' });
+  if (after(V)) line(A, P.X(0), P.Y(75), P.X(12), P.Y(255), done(V) ? C.blue : C.yellow, done(V) ? 3 : 2, done(V) ? {} : { 'stroke-dasharray': '7 6' });
+  [[4, 135], [6, 165], [12, 255]].forEach(([x, y], i) => { dot(A, P.X(x), P.Y(y), 7, C.blue); lab(A, P.X(x) + 10, P.Y(y) - 18, '$' + y, C.blue, { 'font-size': 15, 'text-anchor': 'start' }); });
+  if (V.phase === 'wrong') lab(A, P.X(0) + 14, P.Y(40), 'back to 0 months?', C.yellow, { 'font-size': 16, 'text-anchor': 'start' });
+  if (done(V)) {
+    dot(A, P.X(0), P.Y(75), 9, C.green, { filter: 'url(#glow)' });
+    lab(A, P.X(0) + 16, P.Y(75) + 2, '$75 at 0 months: the fee', C.green, { 'font-size': 16, 'text-anchor': 'start' });
+    lab(A, P.X(8), P.Y(260), '135 − 4 × 15 = 75', C.green, fade(1, { 'font-size': 18 }));
+  }
+};
+PICS.lines = (A, it, V) => {
+  const xmax = Math.ceil(it.n * 1.6 / 2) * 2, top = Math.max(it.b1 + it.r1 * xmax, it.b2 + it.r2 * xmax), step = [10, 20, 25, 50, 100, 200, 250, 500].find(s => top / s <= 6), ymax = Math.ceil(top / step) * step;
+  const P = A.plane(A.svg, { x0: 80, y0: 30, w: 470, h: 310, xmin: 0, xmax, ymin: 0, ymax, xstep: 1, ystep: step, labx: xmax > 20 ? 5 : 2, laby: step });
+  lab(A, 540, 372, it.names[3], C.muted, { 'font-size': 14 });
+  [[it.b1, it.r1, C.gold, it.names[0]], [it.b2, it.r2, C.teal, it.names[1]]].forEach(([b, r, col, nm], i) => {
+    line(A, P.X(0), P.Y(b), P.X(xmax), P.Y(b + r * xmax), col, 3);
+    lab(A, P.X(xmax) + 4, P.Y(b + r * xmax) + (i ? -14 : 14), nm, col, { 'font-size': 14, 'text-anchor': 'end' });
+  });
+  if (V.phase === 'wrong') lab(A, 320, 400, 'fee gap $' + (it.b1 - it.b2) + ', closes $' + (it.r2 - it.r1) + ' each time', C.yellow, { 'font-size': 16 });
+  if (!done(V)) return;
+  const cost = it.b1 + it.r1 * it.n;
+  line(A, P.X(it.n), P.Y(cost), P.X(it.n), P.Y(0), C.green, 2, { 'stroke-dasharray': '5 4' });
+  dot(A, P.X(it.n), P.Y(cost), 9, C.green, { filter: 'url(#glow)' });
+  lab(A, P.X(it.n), P.Y(cost) - 22, 'same: $' + cost, C.green, { 'font-size': 16 });
+  lab(A, 320, 400, '$' + (it.b1 - it.b2) + ' ÷ $' + (it.r2 - it.r1) + ' = ' + it.n + ' ' + it.names[3], C.green, { 'font-size': 18 });
+};
+PICS.garden = (A, it, V) => {
+  const L = it.w + it.x, s = Math.min(330 / L, 210 / it.w), w = L * s, h = it.w * s, x0 = 250 - w / 2, y0 = 200 - h / 2;
+  A.el('rect', { x: x0, y: y0, width: w, height: h, rx: 4, fill: C.green, 'fill-opacity': .14, stroke: C.green, 'stroke-width': 3 }, A.svg);
+  emo(A, x0 + w / 2, y0 + h / 2, '🌻', Math.min(40, h * .5));
+  mlab(A, x0 + w / 2, y0 - 20, done(V) ? L + ' m' : 'w + ' + it.x, C.gold); mlab(A, x0 + w / 2, y0 + h + 22, done(V) ? L + ' m' : 'w + ' + it.x, C.gold);
+  mlab(A, x0 - 14, y0 + h / 2, done(V) ? it.w + ' m' : 'w', C.teal, { 'text-anchor': 'end' }); mlab(A, x0 + w + 14, y0 + h / 2, done(V) ? it.w + ' m' : 'w', C.teal, { 'text-anchor': 'start' });
+  lab(A, 250, 385, 'all the way round: ' + it.P + ' m', C.text, { 'font-size': 17 });
+  if (!after(V)) return;
+  panel(A, 545, 130, [['4w + ' + 2 * it.x + ' = ' + it.P, done(V) ? C.muted : C.yellow], done(V) ? ['4w = ' + (it.P - 2 * it.x), C.muted] : null, done(V) ? ['w = ' + it.w + ' m', C.green] : null], 44, 21);
+};
+
+/* ---------- algebra: whose step is wrong ---------- */
+PICS.error = (A, it, V) => {
+  mlab(A, 320, 48, '3(x² + 4x − 1) − (2x + 5)', C.text, { 'font-size': 24 });
+  const cols = [['Robert', ['3x² + 12x − 3', '3x² + 10x + 2'], 1, '−5, not +5'], ['Jacob', ['3x² + 12x − 1', '3x² + 10x − 6'], 0, '3 × (−1) = −3']];
+  cols.forEach(([nm, st, bad, why], c) => {
+    const x = 170 + c * 300;
+    lab(A, x, 102, nm, C.blue, { 'font-size': 18 });
+    st.forEach((s, i) => {
+      const y = 160 + i * 80, wrong = after(V) && i === bad, first = done(V) && c === 1 && i === 0;
+      lab(A, x - 150, y, 'Step ' + (i + 1), C.muted, { 'font-size': 13, 'text-anchor': 'start' });
+      if (first) A.el('rect', { x: x - 82, y: y - 24, width: 200, height: 48, rx: 10, fill: 'none', stroke: C.green, 'stroke-width': 3, filter: 'url(#glow)' }, A.svg);
+      mlab(A, x + 18, y, s, wrong ? C.red : C.text, { 'font-size': 22 });
+      if (wrong) lab(A, x + 18, y + 38, why, C.red, fade(c, { 'font-size': 14 }));
+    });
+  });
+  line(A, 320, 90, 320, 290, C.edge, 2);
+  if (done(V)) { lab(A, 320, 335, 'right: 3x² + 12x − 3 − 2x − 5 = 3x² + 10x − 8', C.muted, { 'font-size': 16 }); lab(A, 320, 372, 'Jacob slips in Step 1, before Robert’s Step 2', C.green, { 'font-size': 17 }); }
+};
+
+/* ---------- shape and space ---------- */
+PICS.rug = (A, it, V) => {
+  const s = Math.min(330 / it.L, 260 / it.W), w = it.L * s, h = it.W * s, x0 = 60 + (360 - w) / 2, y0 = 70 + (270 - h) / 2, side = it.side * s;
+  A.el('rect', { x: x0, y: y0, width: w, height: h, fill: C.blue, 'fill-opacity': .06, stroke: C.blue, 'stroke-width': 3 }, A.svg);
+  lab(A, x0 + w / 2, y0 - 18, it.L + ' m', C.blue); lab(A, x0 - 12, y0 + h / 2, it.W + ' m', C.blue, { 'text-anchor': 'end' });
+  const rx = x0 + 3, ry = y0 + h - side - 3;
+  A.el('rect', { x: rx, y: ry, width: side, height: side, fill: C.yellow, 'fill-opacity': .22, stroke: C.yellow, 'stroke-width': 3 }, A.svg);
+  if (done(V)) for (let i = 1; i < it.side; i++) { line(A, rx + i * s, ry, rx + i * s, ry + side, C.yellow, 1, { 'stroke-opacity': .35 }); line(A, rx, ry + i * s, rx + side, ry + i * s, C.yellow, 1, { 'stroke-opacity': .35 }); }
+  lab(A, rx + side / 2, ry + side / 2, it.p + '%', C.yellow, { 'font-size': 18 });
+  lab(A, rx + side / 2, y0 + h + 22, done(V) ? it.side + ' m' : '?', done(V) ? C.green : C.yellow, { 'font-size': 20 });
+  if (!after(V)) return;
+  panel(A, 530, 120, [['room: ' + it.L + ' × ' + it.W + ' = ' + it.L * it.W, C.blue], [it.p + '% of ' + it.L * it.W + ' = ' + it.area, C.yellow], done(V) ? ['√' + it.area + ' = ' + it.side + ' m', C.green] : null], 52, 20);
+};
+// Unit cubes in an isometric view; faces that touch another cube are not drawn.
+PICS.cubes = (A, it, V) => {
+  const cubes = it.shape === 'cross' ? [[1, 1, 0], [0, 1, 1], [1, 0, 1], [1, 1, 1], [2, 1, 1], [1, 2, 1], [1, 1, 2]] : [[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3]];
+  const has = (x, y, z) => cubes.some(c => c[0] === x && c[1] === y && c[2] === z), s = 46;
+  const P = (x, y, z) => [(x - y) * s * .866, (x + y) * s * .5 - z * s];
+  const all = []; cubes.forEach(([x, y, z]) => { for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) for (let k = 0; k < 2; k++) all.push(P(x + i, y + j, z + k)); });
+  const mnx = Math.min(...all.map(p => p[0])), mxx = Math.max(...all.map(p => p[0])), mny = Math.min(...all.map(p => p[1])), mxy = Math.max(...all.map(p => p[1]));
+  const ox = 215 - (mnx + mxx) / 2, oy = 215 - (mny + mxy) / 2, pt = (x, y, z) => { const p = P(x, y, z); return (p[0] + ox) + ',' + (p[1] + oy); };
+  const face = (pts, fill) => A.el('polygon', { points: pts.map(p => pt(...p)).join(' '), fill, stroke: C.blue, 'stroke-width': 1.6, 'stroke-linejoin': 'round' }, A.svg);
+  cubes.slice().sort((a, b) => (a[0] + a[1] + a[2]) - (b[0] + b[1] + b[2])).forEach(([x, y, z]) => {
+    if (!has(x, y, z + 1)) face([[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]], '#2b5f6c');
+    if (!has(x + 1, y, z)) face([[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]], '#1d4550');
+    if (!has(x, y + 1, z)) face([[x, y + 1, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]], '#163640');
+  });
+  const L = [['7 cubes, ' + (it.shape === 'cross' ? '56 cm³ in all' : '8 cm³ each'), C.text]];
+  if (after(V)) L.push(['one cube: 8 cm³', C.muted], ['edge 2 cm, face 4 cm²', C.yellow]);
+  if (done(V)) L.push(['7 × 6 = 42 faces', C.muted], ['6 joins hide 12', C.muted], ['30 faces × 4 = 120 cm²', C.green]);
+  panel(A, 520, 70, L, 46, 18);
+};
+PICS.angles = (A, it, V) => {
+  const O = { x: 210, y: 215 }, R = 150, c = 2 * it.ins, P = d => ({ x: O.x + R * Math.cos(d * Math.PI / 180), y: O.y - R * Math.sin(d * Math.PI / 180) });
+  const Ap = P(270 - c / 2), Bp = P(270 + c / 2), Cp = P(90), arc = (Q, a1, a2, r, col) => { const p1 = { x: Q.x + r * Math.cos(a1), y: Q.y + r * Math.sin(a1) }, p2 = { x: Q.x + r * Math.cos(a2), y: Q.y + r * Math.sin(a2) }; A.el('path', { d: 'M' + p1.x + ' ' + p1.y + 'A' + r + ' ' + r + ' 0 0 1 ' + p2.x + ' ' + p2.y, stroke: col, 'stroke-width': 3, fill: 'none' }, A.svg); };
+  const ang = (Q, T) => Math.atan2(T.y - Q.y, T.x - Q.x);
+  A.el('circle', { cx: O.x, cy: O.y, r: R, fill: 'none', stroke: C.muted, 'stroke-width': 2 }, A.svg);
+  if (it.ctx === 'track') emo(A, Cp.x + 30, Cp.y - 20, '🏃', 28);
+  [Ap, Bp].forEach(T => { line(A, O.x, O.y, T.x, T.y, C.gold, 3); line(A, Cp.x, Cp.y, T.x, T.y, C.teal, 3); });
+  arc(O, ang(O, Bp), ang(O, Ap), 30, C.gold); arc(Cp, ang(Cp, Bp), ang(Cp, Ap), 46, C.teal);
+  [[O, 'O', 0, -18], [Ap, 'A', -16, 14], [Bp, 'B', 16, 14], [Cp, 'C', 0, -20]].forEach(([Q, s, dx, dy]) => { dot(A, Q.x, Q.y, 5, C.text); mlab(A, Q.x + dx, Q.y + dy, s, C.text, { 'font-size': 20 }); });
+  const knowC = it.mode === 'toIns', knowI = it.mode === 'toCen', sum = it.sum;
+  lab(A, O.x, O.y + 52, done(V) || knowC ? c + '°' : '?', done(V) && !knowC ? C.green : C.gold, { 'font-size': 18 });
+  lab(A, Cp.x, Cp.y + 70, done(V) || knowI ? it.ins + '°' : '?', done(V) && !knowI ? C.green : C.teal, { 'font-size': 18 });
+  const L = [];
+  if (sum) L.push(['∠AOB + ∠ACB = ' + sum + '°', C.text]);
+  if (after(V)) L.push(['∠AOB = 2 × ∠ACB', C.yellow]);
+  if (done(V) && sum) L.push(['2x + x = ' + sum + '°', C.muted], ['x = ' + it.ins + '°', C.green]);
+  else if (done(V)) L.push([knowC ? c + '° ÷ 2 = ' + it.ins + '°' : '2 × ' + it.ins + '° = ' + c + '°', C.green]);
+  panel(A, 510, 140, L, 44, 19);
+  lab(A, 510, 330, 'central', C.gold, { 'font-size': 15 }); lab(A, 510, 356, 'inscribed', C.teal, { 'font-size': 15 });
+};
+PICS.gong = (A, it, V) => {
+  const k = 8.4, G = { x: 300, y: 285 }, r = 15 * k, d = Math.sqrt(306) * k, N = { x: G.x, y: G.y - d }, sn = 9 / Math.sqrt(306), cs = 15 / Math.sqrt(306);
+  const T = [-1, 1].map(s => ({ x: G.x + s * r * sn, y: G.y - r * cs }));
+  A.el('circle', { cx: G.x, cy: G.y, r, fill: C.gold, 'fill-opacity': .14, stroke: C.gold, 'stroke-width': 3 }, A.svg);
+  A.el('circle', { cx: G.x, cy: G.y, r: r * .55, fill: 'none', stroke: C.gold, 'stroke-opacity': .35, 'stroke-width': 2 }, A.svg);
+  T.forEach(t => line(A, N.x, N.y, t.x, t.y, C.muted, 4, { 'stroke-dasharray': '6 3' }));
+  A.el('rect', { x: N.x - 4, y: N.y - 16, width: 8, height: 14, fill: C.muted }, A.svg); dot(A, N.x, N.y, 5, C.text);
+  lab(A, (N.x + T[0].x) / 2 - 22, (N.y + T[0].y) / 2 - 8, '9 cm', C.muted, { 'font-size': 15 });
+  line(A, G.x - r, G.y, G.x + r, G.y, C.gold, 1.5, { 'stroke-dasharray': '5 5' }); lab(A, G.x, G.y + 22, '30 cm', C.gold, { 'font-size': 15 });
+  line(A, N.x + 14, N.y + 2, N.x + 14, G.y - r - 2, C.yellow, 2.5, { 'marker-end': 'url(#aY)', 'marker-start': 'url(#aY)' });
+  lab(A, N.x + 30, (N.y + G.y - r) / 2, done(V) ? '2.5' : '?', done(V) ? C.green : C.yellow, { 'font-size': 18, 'text-anchor': 'start' });
+  if (after(V)) {
+    const t = T[1];
+    line(A, G.x, G.y, t.x, t.y, C.teal, 3.5, fade(0)); line(A, t.x, t.y, N.x, N.y, C.gold, 3.5, fade(1)); line(A, G.x, G.y, N.x, N.y, C.blue, 3, fade(2, { 'stroke-dasharray': '7 5' }));
+    const ux = (G.x - t.x) / r, uy = (G.y - t.y) / r, vx = (N.x - t.x) / (9 * k), vy = (N.y - t.y) / (9 * k), q = 12;
+    A.el('path', { d: 'M' + (t.x + ux * q) + ' ' + (t.y + uy * q) + 'l' + vx * q + ' ' + vy * q + 'l' + -ux * q + ' ' + -uy * q, stroke: C.text, 'stroke-width': 2, fill: 'none' }, A.svg);
+    lab(A, (G.x + t.x) / 2 + 22, (G.y + t.y) / 2 + 8, '15', C.teal, { 'font-size': 16 });
+  }
+  const L = [['radius ⟂ tangent', after(V) ? C.yellow : C.muted]];
+  if (done(V)) L.push(['9² + 15² = 306', C.muted], ['√306 ≈ 17.49', C.blue], ['17.49 − 15 ≈ 2.5 cm', C.green]);
+  if (after(V)) panel(A, 540, 120, L, 44, 18);
+};
+PICS.sail = (A, it, V) => {
+  const k = .93, by = 330, sails = [[110, 112 * k, 45], [330, 280 * k, 112]];
+  sails.forEach(([x, h, b], i) => {
+    A.el('polygon', { points: x + ',' + (by - h) + ' ' + x + ',' + by + ' ' + (x + b) + ',' + by, fill: C.blue, 'fill-opacity': .22, stroke: C.blue, 'stroke-width': 2.5 }, A.svg);
+    A.el('path', { d: 'M' + (x - b * .3 - 10) + ' ' + (by + 6) + 'H' + (x + b + 14) + 'l-14 22H' + (x - b * .3 + 4) + 'z', fill: C.gold, 'fill-opacity': .3, stroke: C.gold, 'stroke-width': 2 }, A.svg);
+    line(A, x - 16, by, x - 16, by - h, C.muted, 1.5, { 'marker-end': 'url(#aM)', 'marker-start': 'url(#aM)' });
+    lab(A, x - 26, by - h / 2, i ? '280 cm' : done(V) ? '112 cm' : '?', i ? C.text : done(V) ? C.green : C.yellow, { 'font-size': 18, 'text-anchor': 'end' });
+  });
+  A.el('path', { d: 'M170 ' + (by - 130) + ' Q 240 ' + (by - 240) + ' 316 ' + (by - 250), stroke: C.gold, 'stroke-width': 2.5, fill: 'none', 'marker-end': 'url(#aG)' }, A.svg);
+  lab(A, 230, by - 240, '× 2.5', C.gold, { 'font-size': 19 });
+  if (V.phase === 'wrong') lab(A, 560, 150, 'going smaller: ÷', C.red, { 'font-size': 18 });
+  if (done(V)) lab(A, 540, 200, '280 ÷ 2.5 = 112', C.green, fade(0, { 'font-size': 22 }));
+};
+PICS.similar = (A, it, V) => {
+  const big = [[50, 340], [330, 340], [130, 100]], sm = big.map(([x, y]) => [400 + (x - 50) / 3, 340 - (340 - y) / 3]);
+  [[big, ['A', 'B', 'C']], [sm, ['D', 'E', 'F']]].forEach(([T, n]) => {
+    A.el('polygon', { points: T.map(p => p.join(',')).join(' '), fill: C.blue, 'fill-opacity': .07, stroke: C.muted, 'stroke-width': 2 }, A.svg);
+    line(A, T[0][0], T[0][1], T[2][0], T[2][1], C.blue, 3.5); line(A, T[1][0], T[1][1], T[2][0], T[2][1], C.gold, 3.5);
+    [[-14, 14], [14, 14], [0, -18]].forEach(([dx, dy], i) => mlab(A, T[i][0] + dx, T[i][1] + dy, n[i], C.text, { 'font-size': 19 }));
+  });
+  const mid = (T, a, b, dx, dy) => [(T[a][0] + T[b][0]) / 2 + dx, (T[a][1] + T[b][1]) / 2 + dy];
+  mlab(A, ...mid(big, 0, 2, -22, 0), '18', C.blue); mlab(A, ...mid(big, 1, 2, 48, -4), done(V) ? '15' : '2y + 5', done(V) ? C.green : C.gold);
+  mlab(A, ...mid(sm, 0, 2, -14, 0), '6', C.blue, { 'font-size': 19 }); mlab(A, ...mid(sm, 1, 2, 16, -2), done(V) ? '5' : 'y', C.gold, { 'font-size': 19 });
+  if (!after(V)) return;
+  panel(A, 520, 90, [['k = 18 ÷ 6 = 3', C.yellow], done(V) ? ['2y + 5 = 3y', C.muted] : null, done(V) ? ['y = 5', C.muted] : null, done(V) ? ['BC = 2(5) + 5 = 15', C.green] : null], 36, 18);
+};
+PICS.scale = (A, it, V) => {
+  const k = 290 / it.big, hs = Math.max(14, it.o * k), hb = it.big * k, by = 350, show = done(V);
+  const known = it.mode === 'sf' ? [true, true] : [show, true];
+  [[110, hs, 70, 0], [330, hb, 130, 1]].forEach(([x, h, w, i]) => {
+    if (it.mode === 'sf') {
+      box(A, x, by - h, w, h, C.blue);
+      if (h > 40) for (let r = 0; r < Math.floor(h / 28); r++) for (let c = 0; c < 2; c++) A.el('rect', { x: x + w * (.2 + c * .4), y: by - h + 10 + r * 28, width: w * .2, height: 12, fill: C.yellow, 'fill-opacity': .4 }, A.svg);
+    } else {
+      const ww = h * .75; box(A, x, by - h, ww, h, C.teal);
+      A.el('path', { d: 'M' + (x + 6) + ' ' + (by - 6) + 'L' + (x + ww * .4) + ' ' + (by - h * .55) + 'L' + (x + ww * .6) + ' ' + (by - h * .3) + 'L' + (x + ww * .75) + ' ' + (by - h * .45) + 'L' + (x + ww - 6) + ' ' + (by - 6) + 'z', fill: C.green, 'fill-opacity': .35 }, A.svg);
+    }
+    lab(A, x - 12, by - h / 2, known[i] ? (i ? it.big : it.o) + ' cm' : '?', !known[i] ? C.yellow : i || !show || it.mode === 'sf' ? C.text : C.green, { 'font-size': 17, 'text-anchor': 'end' });
+    lab(A, x + (it.mode === 'sf' ? w : h * .75) / 2, by + 22, i ? (it.mode === 'sf' ? 'real' : 'poster') : (it.mode === 'sf' ? 'model' : 'photo'), C.muted, { 'font-size': 15 });
+  });
+  lab(A, 250, 60, '× ' + (it.mode === 'sf' && !show ? '?' : it.sf), it.mode === 'sf' && show ? C.green : C.gold, { 'font-size': 22 });
+  if (V.phase === 'wrong') lab(A, 320, 395, it.mode === 'sf' ? 'real ÷ model' : 'photo is smaller: ÷', C.yellow, { 'font-size': 17 });
+  if (show) lab(A, 320, 395, it.mode === 'sf' ? it.big + ' ÷ ' + it.o + ' = ' + it.sf : it.big + ' ÷ ' + it.sf + ' = ' + it.o, C.green, { 'font-size': 20 });
+};
+
+/* ---------- statistics and probability ---------- */
+PICS.envelope = (A, it, V) => {
+  [[C.red, 140], [C.blue, 320], [C.green, 500]].forEach(([col, x], i) => {
+    const w = 130, h = 86, y = 110;
+    A.el('rect', { x: x - w / 2, y, width: w, height: h, rx: 6, fill: col, 'fill-opacity': .25, stroke: col, 'stroke-width': 2.5 }, A.svg);
+    A.el('path', { d: 'M' + (x - w / 2) + ' ' + y + 'L' + x + ' ' + (y + h * .55) + 'L' + (x + w / 2) + ' ' + y, stroke: col, 'stroke-width': 2.5, fill: 'none' }, A.svg);
+    if (!i) { emo(A, x, y - 30, '❤️', 28); lab(A, x, y + h + 24, 'his favourite', C.red, { 'font-size': 15 }); }
+  });
+  if (!after(V)) return;
+  const L = [['theoretical: count the outcomes', 'o1'], ['experimental: run trials', 'o2'], ['a calculation: use numbers', 'o3'], ['subjective: a feeling or opinion', 'ok']];
+  L.forEach(([s, k], i) => lab(A, 320, 262 + i * 34, s, k === 'ok' ? (done(V) ? C.green : C.muted) : code(V) === k ? C.red : C.muted, fade(i, { 'font-size': 17 })));
+};
+PICS.nina = (A, it, V) => {
+  const y0 = 90, h = 220;
+  lab(A, 320, 60, 'the whole school: 410 students', C.text, { 'font-size': 17 });
+  box(A, 60, y0, 260, h, C.teal, { 'fill-opacity': .1 }); box(A, 320, y0, 260, h, C.blue, after(V) ? Object.assign({ 'fill-opacity': .1, stroke: C.red }, glow) : { 'fill-opacity': .1 });
+  lab(A, 190, y0 + 24, 'girls', C.teal, { 'font-size': 16 }); lab(A, 450, y0 + 24, 'boys', after(V) ? C.red : C.blue, { 'font-size': 16 });
+  for (let i = 0; i < 10; i++) dot(A, 140 + (i % 5) * 26, 180 + Math.floor(i / 5) * 28, 9, i < 6 ? C.yellow : C.muted);
+  A.el('rect', { x: 118, y: 160, width: 148, height: 64, rx: 12, fill: 'none', stroke: C.yellow, 'stroke-width': 2, 'stroke-dasharray': '5 4' }, A.svg);
+  lab(A, 192, 250, 'Nina’s sample: 10 girls', C.yellow, { 'font-size': 15 });
+  if (after(V)) lab(A, 450, 210, 'no one asked here', C.red, { 'font-size': 17 });
+  if (done(V)) { lab(A, 320, 350, '6/10 × 410 = 246: the math is fine', C.muted, { 'font-size': 16 }); lab(A, 320, 382, 'but the sample is only girls', C.green, { 'font-size': 18 }); }
+};
+PICS.mascot = (A, it, V) => {
+  lab(A, 320, 44, '🏫 the mascot is for the whole school', C.text, { 'font-size': 17 });
+  [10, 11, 12].forEach((g, c) => {
+    const x0 = 95 + c * 170, y0 = 100, asked = c === 0;
+    box(A, x0 - 14, y0 - 14, 5 * 26 + 2, 5 * 26 + 2, asked ? C.gold : C.muted, !asked && after(V) ? { stroke: C.red, 'fill-opacity': .06 } : { 'fill-opacity': .06 });
+    for (let i = 0; i < 25; i++) dot(A, x0 + (i % 5) * 26, y0 + Math.floor(i / 5) * 26, 8, asked && i < 12 ? C.gold : C.muted, { 'fill-opacity': asked && i < 12 ? 1 : .35 });
+    lab(A, x0 + 52, y0 + 150, 'Grade ' + g, asked ? C.gold : after(V) ? C.red : C.muted, { 'font-size': 16 });
+    if (!asked && after(V)) lab(A, x0 + 52, y0 + 176, 'not asked', C.red, fade(c, { 'font-size': 15 }));
+  });
+  lab(A, 147, 300, '120 asked', C.gold, { 'font-size': 15 });
+  if (done(V)) lab(A, 320, 380, 'one grade can’t speak for every grade', C.green, { 'font-size': 18 });
+};
+PICS.rink = (A, it, V) => {
+  const P = ['👶', '🧒', '👦', '🧑', '👩', '🧔', '👵', '👴'];
+  emo(A, 320, 60, '⛸️', 36); lab(A, 320, 100, 'a new rink for the town', C.muted, { 'font-size': 16 });
+  const narrow = code(V) === 'o2' || code(V) === 'o3';
+  P.forEach((p, i) => { const x = 110 + i * 60; const on = !narrow || i === 3 || i === 4; A.tx(A.svg, x, 200, p, { 'font-size': 38, class: 'emo', opacity: on ? 1 : .25 }); });
+  if (narrow) lab(A, 320, 260, 'only some people: skaters', C.red, { 'font-size': 17 });
+  if (code(V) === 'o1') lab(A, 320, 260, 'other cities won’t use this rink', C.red, { 'font-size': 17 });
+  if (done(V)) brace(A, 90, 550, 240, 'every age in the town', C.green);
+};
+PICS.predict = (A, it, V) => {
+  const cols = it.n <= 25 ? 5 : 10, rowsN = Math.ceil(it.n / cols), gap = Math.min(30, 220 / cols, 200 / rowsN), x0 = 160 - (cols - 1) * gap / 2, y0 = 200 - (rowsN - 1) * gap / 2, hit = it.hit === 'bad' ? C.red : C.green;
+  for (let i = 0; i < it.n; i++) dot(A, x0 + (i % cols) * gap, y0 + Math.floor(i / cols) * gap, gap * .36, i < it.h ? hit : C.muted, { 'fill-opacity': i < it.h ? .9 : .3 });
+  lab(A, 160, 64, it.h + ' of ' + it.n, hit, { 'font-size': 20 }); emo(A, 46, 44, it.icon, 28);
+  const gc = Math.min(8, it.m), gr = Math.ceil(it.m / gc), g = Math.min(34, 240 / gr, 250 / gc), X0 = 360 + (250 - gc * g) / 2;
+  for (let i = 0; i < it.m; i++) {
+    const x = X0 + (i % gc) * g, y = 200 - g / 2 + Math.floor(i / gc) * g - (gr - 1) * g / 2;
+    A.el('rect', { x: x + 2, y: y + 2, width: g - 4, height: g - 4, rx: 4, fill: C.blue, 'fill-opacity': i === 0 ? .4 : .14, stroke: C.blue, 'stroke-width': 1.2 }, A.svg);
+    if (done(V) && g > 22) lab(A, x + g / 2, y + g / 2, String(it.h), hit, { 'font-size': Math.min(14, g * .45) });
+  }
+  lab(A, 485, 64, it.N + ' in all', C.blue, { 'font-size': 20 });
+  A.el('path', { d: 'M290 200H345', stroke: C.yellow, 'stroke-width': 3, 'marker-end': 'url(#aY)' }, A.svg);
+  if (!after(V)) return;
+  lab(A, 318, 178, '× ' + it.m, C.yellow, fade(0, { 'font-size': 20 }));
+  lab(A, 320, 350, it.N + ' = ' + it.m + ' groups of ' + it.n, C.muted, fade(1, { 'font-size': 17 }));
+  if (done(V)) lab(A, 320, 388, it.fmt === 'mc' ? '3/25 = 12% only if the sample is like all 750' : it.m + ' × ' + it.h + ' = ' + it.a, C.green, fade(2, { 'font-size': 19 }));
+};
+// A Grade 7–9 school: 3 classes per grade, 8 students per class. Each sample is a set of [grade, class, seat].
+const SAMPLE = {
+  fair: [[0, 0, 1], [0, 1, 6], [0, 2, 3], [1, 0, 4], [1, 1, 0], [1, 2, 7], [2, 0, 2], [2, 1, 5], [2, 2, 1]],
+  g9: [0, 1, 2].flatMap(c => [0, 2, 4, 6].map(s => [2, c, s])),
+  team: [[1, 0, 2], [1, 2, 5], [2, 0, 1], [2, 1, 3], [2, 1, 6], [2, 2, 4]],
+  band: [[0, 1, 2], [1, 1, 3], [1, 1, 7], [2, 2, 0], [2, 2, 5]],
+  friends: [[1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 1, 3]],
+  lib: [[0, 2, 0], [0, 2, 1], [1, 2, 6], [2, 1, 7], [2, 1, 4]],
+  class: [0, 1, 2, 3, 4, 5, 6, 7].map(s => [1, 1, s])
+};
+PICS.bias = (A, it, V) => {
+  const chosen = V.res && V.res.code && V.res.code[0] === 'o' ? it.groups[+V.res.code.slice(1)] : null, show = done(V) ? 'fair' : chosen;
+  const inS = (g, c, s) => show && SAMPLE[show].some(p => p[0] === g && p[1] === c && p[2] === s), col = done(V) ? C.green : C.red;
+  [7, 8, 9].forEach((gr, g) => {
+    const x0 = 80 + g * 175;
+    lab(A, x0 + 60, 58, 'Grade ' + gr, C.text, { 'font-size': 16 });
+    [0, 1, 2].forEach(c => {
+      const y0 = 84 + c * 88;
+      A.el('rect', { x: x0 - 8, y: y0 - 8, width: 136, height: 70, rx: 10, fill: C.panel, stroke: C.edge, 'stroke-width': 1.5 }, A.svg);
+      for (let s = 0; s < 8; s++) { const on = inS(g, c, s); dot(A, x0 + 12 + (s % 4) * 32, y0 + 12 + Math.floor(s / 4) * 30, 9, on ? col : C.muted, { 'fill-opacity': on ? 1 : .3, class: on ? 'pop' : null }); }
+    });
+  });
+  if (V.phase === 'show' && chosen && chosen !== 'fair') lab(A, 320, 360, 'your pick misses most students', C.red, { 'font-size': 16 });
+  if (!done(V) && chosen) lab(A, 320, 385, 'only these students are asked', C.red, { 'font-size': 17 });
+  if (done(V)) lab(A, 320, 385, 'random from every grade: everyone has a chance', C.green, { 'font-size': 17 });
+};
+
+/* ---------- tabs ---------- */
+const NOTES = {
+  pe: 'powers-exponents/math9-powers-notes-v1.html', rn: 'rational-numbers/math9-rational-numbers-notes-v1.html', sr: 'square-roots/math9-square-roots-notes-v1.html',
+  le: 'linear-equations/math9-linear-equations-notes-v1.html', lr: 'linear-relations/math9-linear-relations-notes-v1.html', po: 'polynomials/math9-polynomials-notes-v1.html',
+  cg: 'circle-geometry/math9-circle-geometry-notes-v1.html', me: 'measurement/math9-measurement-notes-v1.html', si: 'similarity/math9-similarity-notes-v1.html',
+  st: 'statistics/math9-statistics-notes-v1.html', pr: 'probability/math9-probability-notes-v1.html'
+};
+// About 7 in 10 items are released items, the rest generated. A released item does not come back until about
+// 6 other items from its strand have been shown, so repeats in a round are rare; missed ones then
+// come back more often through the shell's weighting.
+const recent = [];
+const windowOf = s => Math.min(6, M.BANK.filter(b => b.s === s).length - 2);
+function shown(it) { if (!it.src) return; const i = recent.indexOf(it.id); if (i >= 0) recent.splice(i, 1); recent.push(it.id); }
+function genStrand(s) {
+  const pool = M.BANK.filter(b => b.s === s), skip = recent.filter(id => id[0] === pool[0].id[0]).slice(-windowOf(s));
+  const fresh = pool.filter(b => skip.indexOf(b.id) < 0);
+  return Q.chance(.7) ? Object.assign({}, Q.pick(fresh.length ? fresh : pool)) : Q.pick(M.GENS[s])();
+}
+const optHTML = (o, math) => math ? mathText(o) : o;
+function makeTab(id, code, name, gen) {
+  return {
+    id, code, name, sec: 1, notes: '../notes/' + NOTES.rn, link: it => ({ notes: '../notes/' + NOTES[it.topic], sec: it.sec }),
+    kind: it => it.fmt === 'mc' ? 'choice' : 'slots', gen, typeOf: it => it.code,
+    q: it => { shown(it); return it.ask; },
+    prompt: it => (it.src ? '<div class="src">' + it.src + '</div>' : '') + (it.story ? '<div class="story">' + it.stem + '</div>' : mathText(it.stem)),
+    choices: it => it.opts.map((o, i) => ({ v: LET[i], label: '<span class="lt">' + LET[i] + '</span>' + optHTML(o, it.om), math: !!it.om, aria: o })),
+    slots: it => [it.pre || null, { k: 'v', label: 'answer', wide: true }, it.unit ? { h: '<span style="font-family:inherit;font-size:.7em">' + it.unit + '</span>' } : null].filter(Boolean),
+    check: M.check, answer: M.answer,
+    draw: (A, it, V) => (PICS[it.pic] || steps)(A, it, V)
+  };
+}
+const WEIGHT = [['num', 32], ['pat', 36], ['ss', 24], ['sp', 8]];
+const PAGE = {
+  key: 'math9-pat-questions-trainer-v1', course: 'Math 9 · PAT prep', title: 'PAT Questions',
+  notes: '../notes/' + NOTES.rn,
+  tabs: [
+    makeTab('num', 'N', 'Number', () => genStrand('num')),
+    makeTab('pat', 'PR', 'Patterns', () => genStrand('pat')),
+    makeTab('ss', 'SS', 'Shape & Space', () => genStrand('ss')),
+    makeTab('sp', 'SP', 'Stats & Prob', () => genStrand('sp')),
+    makeTab('mix', 'PAT', 'Mixed', () => { let r = Q.rnd(0, 99); const s = WEIGHT.find(w => (r -= w[1]) < 0)[0]; return genStrand(s); })
+  ]
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>
