@@ -583,11 +583,143 @@ def apply_overrides(s, name, report):
                     b.clear(); b.append('\xa0'); b['class'] = ['b', 'b-md']
             else:
                 fill(s, b, a)
+    apply_ctx(s, name, report)
+    apply_boxes(s, name, report)
+    if name in NO_MORE:
+        for b in s.select('.ak-answer'):
+            lab = b.select_one('.ak-label')
+            h = b.find_previous('h2')
+            if lab is not None and lab.get_text().startswith('More answers') and h is not None and h.get_text().strip().startswith('Section'):
+                b.decompose()
     for i, a in FIX.get(name, {}).items():
         if a is None:
             bl[i].clear(); bl[i].append('\xa0'); bl[i]['class'] = ['b', 'b-md']
         else:
             fill(s, bl[i], a)
+
+
+def slot_text(el):
+    parts = []
+    for x in el.descendants:
+        if isinstance(x, Tag) and x.name in ('td', 'th', 'br'):
+            parts.append(' ')
+        if isinstance(x, NavigableString):
+            if not any((isinstance(p, Tag) and (is_blank(p) or 'ak-fill' in (p.get('class') or []))) for p in x.parents):
+                parts.append(str(x))
+        elif is_blank(x) or (x.name == 'span' and 'ak-fill' in (x.get('class') or [])):
+            parts.append(' ___ ')
+    return re.sub(r'\s+', ' ', ''.join(parts)).strip()
+
+
+def block_slots(block):
+    """Answer slots in a row or sentence, in page order: blanks (empty or
+    already filled) and empty table cells."""
+    out = []
+    for x in block.descendants:
+        if not isinstance(x, Tag):
+            continue
+        if is_blank(x) or (x.name == 'span' and 'ak-fill' in (x.get('class') or [])):
+            if not any(o in x.parents for o in out):
+                out.append(x)
+        elif x.name == 'td' and not x.get_text(strip=True) and not x.find(['svg', 'img']):
+            out.append(x)
+    return out
+
+
+def apply_ctx(s, name, report):
+    """CTX[name]: [(text in the row/sentence, [answers in order])]. The row
+    (tr) or sentence (p, li, td, div) whose text contains the needle gets its
+    slots filled in order; None skips a slot. Needles match the text with
+    blanks shown as ___ ."""
+    used = set()
+    for needle, answers in CTX.get(name, []):
+        if answers is None:
+            continue
+        hit = None
+        cands = s.body.find_all('tr') + s.body.find_all(['li', 'p', 'td', 'div', 'h4', 'figcaption'])
+        for el in cands:
+            if id(el) in used:
+                continue
+            if el.name == 'div' and any(block_slots(c) for c in el.find_all(['p', 'div', 'table', 'li', 'tr'])):
+                continue
+            if el.name == 'td' and el.find_parent('tr') is not None and needle in slot_text(el.find_parent('tr')):
+                continue  # prefer the whole row
+            if needle in slot_text(el) and block_slots(el):
+                hit = el; break
+        if hit is None:
+            # fall back: the writing lines right after a sentence that has none
+            src = next((el for el in s.body.find_all(['p', 'li', 'div', 'h4']) if needle in slot_text(el)
+                        and not (el.name == 'div' and el.find(['p', 'li', 'div']))), None)
+            if src is None:
+                report.append(f'   CTX not found: {needle!r}'); continue
+            slots = []
+            for x in src.find_all_next(True):
+                if is_blank(x) or (x.name == 'span' and 'ak-fill' in (x.get('class') or [])):
+                    slots.append(x)
+                elif x.name in ('p', 'h2', 'h3', 'h4', 'li', 'table') and slots:
+                    break
+                elif x.name in ('h2', 'h3') :
+                    break
+                if len(slots) >= len(answers):
+                    break
+            if not slots:
+                report.append(f'   CTX not found: {needle!r}'); continue
+            for sl, a in zip(slots, answers):
+                if a is not None:
+                    fill(s, sl, a)
+            continue
+        used.add(id(hit))
+        slots = block_slots(hit)
+        if len(answers) > len(slots):
+            report.append(f'   CTX {needle!r}: {len(answers)} answers for {len(slots)} slots')
+        for sl, a in zip(slots, answers):
+            if a is None:
+                continue
+            if sl.name == 'td':
+                fill_cell(s, sl, a)
+            else:
+                fill(s, sl, a)
+
+
+
+def apply_boxes(s, name, report):
+    """BOXES[name]: [(text of the prompt line, answer html)]. The first writing
+    box (or answer box) after the line gets this answer."""
+    used = set()
+    for needle, html in BOXES.get(name, []):
+        src = None
+        exact = needle.startswith('^')
+        nd = needle[1:] if exact else needle
+        for el in s.body.find_all(['p', 'li', 'div', 'h4']):
+            txt = el.get_text(' ', strip=True)
+            if id(el) in used or (txt != nd if exact else nd not in txt):
+                continue
+            if any(id(a) in used for a in el.parents):
+                continue
+            if el.find(['p', 'li', 'div', 'table']) and el.name != 'p':
+                continue
+            src = el; break
+        if src is None:
+            report.append(f'   BOX not found: {needle!r}'); continue
+        used.add(id(src))
+        tgt, after = None, src
+        for x in src.find_all_next(True):
+            if src in x.parents:
+                continue
+            cls = x.get('class') or []
+            if 'ak-answer' in cls or any(c in cls for c in ('response', 'work-box', 'ws', 'lines')):
+                tgt = x; break
+            if x.name == 'figure':
+                after = x; continue
+            if any(p is after or (p.name == 'figure') for p in x.parents):
+                continue
+            if x.name in ('h2', 'h3', 'h4', 'p', 'li', 'table') and x.get_text(strip=True):
+                break
+        if tgt is not None:
+            tgt.replace_with(answer_box(s, html))
+        else:
+            after.insert_after(answer_box(s, html))
+
 
 
 FULL = {
@@ -608,7 +740,648 @@ FULL = {
         None, None, None,
     ],
 }
+NO_MORE = {'math9-linear-equations-notes'}
+BOXES = {
+    'math9-linear-equations-notes': [
+        ('The inverse of + 7 is', 'x + 7 − 7 = −3 − 7, so x = −10'),
+        ('What is x?', 'x = −10'),
+        ('Substitute your answer back into the original equation x + 7 = −3', '−10 + 7 = −3 ✓'),
+        ('Undo the subtraction (add to both sides)', '2x − 5 + 5 = 9 + 5 → 2x = 14'),
+        ('Undo the multiplication (divide both sides)', '2x ÷ 2 = 14 ÷ 2 → x = 7'),
+        ('^Verify:', '2(7) − 5 = 14 − 5 = 9 ✓'),
+        ('Why undo in reverse order?', 'Undoing works backwards: the last thing done to x (subtract 5) is the first thing undone, like taking off socks and shoes in the reverse order you put them on.'),
+        ('Solve and verify:', 'Multiply both sides by 4: x = −12. Verify: −12 ÷ 4 = −3 ✓'),
+        ('a) x − 9 = −4', 'x = −4 + 9 = 5. Verify: 5 − 9 = −4 ✓'),
+        ('b) 3x = −18', 'x = −18 ÷ 3 = −6. Verify: 3(−6) = −18 ✓'),
+        ('c) x / −2 = 5', 'x = 5 × (−2) = −10. Verify: −10 ÷ (−2) = 5 ✓'),
+        ('d) −4 + x = 7', 'x = 7 + 4 = 11. Verify: −4 + 11 = 7 ✓'),
+        ('Subtract to undo the addition', '3x + 12 − 12 = 21 − 12 → 3x = 9'),
+        ('Divide to isolate x', 'x = 9 ÷ 3 = 3'),
+        ('Substitute back into 3(x + 4) = 21', '3(3 + 4) = 3(7) = 21 ✓'),
+        ('Why must we distribute before doing any other steps', 'The 3 multiplies the whole bracket, so it must reach both terms first. (Dividing both sides by 3 first also works here: x + 4 = 7. Dividing only the x term would be wrong.)'),
+        ('Move variable terms to one side', '5x − 2x − 3 = 9 → 3x − 3 = 9'),
+        ('Move constants to the other side', '3x = 9 + 3 = 12'),
+        ('Isolate x', 'x = 12 ÷ 3 = 4'),
+        ('Check both sides with your answer', 'Left: 5(4) − 3 = 17. Right: 2(4) + 9 = 17 ✓'),
+        ('Why does it not matter which side you move the variable term to', 'Both sides stay balanced either way. Moving 5x right: −3 = −3x + 9 → −12 = −3x → x = 4, the same answer.'),
+        ('Solve and verify. Show all steps:', '4x − 8 = 2x + 6 → 2x − 8 = 6 → 2x = 14 → x = 7. Verify: 4(7 − 2) = 20 and 2(7) + 6 = 20 ✓'),
+        ('Common version with negatives', 'The −2 multiplies both terms: (−2)(x) + (−2)(−5) = −2x + 10.'),
+        ('a) 2(3x − 1) = 16', '6x − 2 = 16 → 6x = 18 → x = 3. Verify: 2(9 − 1) = 16 ✓'),
+        ('b) 5x + 3 = 3x − 7', '2x + 3 = −7 → 2x = −10 → x = −5. Verify: 5(−5) + 3 = −22 and 3(−5) − 7 = −22 ✓'),
+        ('c) −4(x + 2) = 2x − 8', '−4x − 8 = 2x − 8 → −6x = 0 → x = 0. Verify: −4(2) = −8 and 2(0) − 8 = −8 ✓'),
+        ('Solve the resulting equation', '2x + 3 = 5 → 2x = 2 → x = 1'),
+        ('Substitute back into x / 3 + 1 / 2', '1/3 + 1/2 = 2/6 + 3/6 = 5/6 ✓'),
+        ('Why does multiplying every term by the LCD eliminate the fractions', '6 × (x/3) = (6 ÷ 3)x = 2x. The LCD divides evenly by every denominator, so every fraction becomes a whole-number term.'),
+        ('Find the LCD, multiply all terms, then solve', 'LCD = 12: 8x − 48 = 3x → 5x = 48 → x = 48/5 = 9.6'),
+        ('Solve using two different methods', '×10: 3x + 12 = 9 → 3x = −3 → x = −1. Directly: 0.3x = 0.9 − 1.2 = −0.3 → x = −1'),
+        ('Which is less prone to rounding errors?', 'Multiplying by 10 first: you then work only with whole numbers, so nothing needs rounding.'),
+        ('a) x / 2 − x / 3', 'LCD = 6: 3x − 2x = 1 → x = 1. Verify: 1/2 − 1/3 = 1/6 ✓'),
+        ('b) 3 / 4 x + 2', 'LCD = 4: 3x + 8 = 2x + 20 → x = 12. Verify: 9 + 2 = 11 and 6 + 5 = 11 ✓'),
+        ('c) 0.5x − 3 = 0.2x + 0.6', '×10: 5x − 30 = 2x + 6 → 3x = 36 → x = 12. Verify: 6 − 3 = 3 and 2.4 + 0.6 = 3 ✓'),
+        ('Why is there NO sign flip?', 'We divided by positive 2. Only multiplying or dividing by a negative number flips the sign.'),
+        ('Graph on a number line (what kind of circle', 'Open circle at 2 (2 is not included); arrow pointing right.'),
+        ('Pick a value IN the solution set', 'x = 3: 2(3) + 3 = 9 > 7 ✓. x = 1: 2(1) + 3 = 5, which is not > 7, so it is correctly left out.'),
+        ('Remember: when do you flip the sign?', '−3x ≤ 9. Divide by −3 and flip the sign: x ≥ −3'),
+        ('Graph (what kind of circle? which direction?)', 'Closed circle at −3 (−3 is included); arrow pointing right.'),
+        ('a) 4x − 1 < 11', '4x < 12 → x < 3. Open circle at 3, arrow left. Check x = 0: −1 < 11 ✓'),
+        ('b) −2x + 5 ≥ 1', '−2x ≥ −4 → x ≤ 2 (flip). Closed circle at 2, arrow left. Check x = 0: 5 ≥ 1 ✓'),
+        ('c) 3(x − 2) ≤ 2x + 1', '3x − 6 ≤ 2x + 1 → x ≤ 7. Closed circle at 7, arrow left. Check x = 0: −6 ≤ 1 ✓'),
+        ('^Solve:', '50h ≤ 350 − 75 = 275 → h ≤ 5.5'),
+        ('Answer the question in a complete sentence', 'The homeowner can have at most 5 full hours of work done.'),
+        ('Substitute your answer back in', '75 + 50(5) = 325 ≤ 350 ✓. Six hours would cost 375, which is over $350.'),
+        ('Why do we write the inequality ≤ rather than <', '"At most" means the total can equal $350 but not go over it, so we use ≤.'),
+        ('Define, translate, solve, and interpret:', 'Let n = the smallest even integer. n + (n + 2) + (n + 4) = 48 → 3n + 6 = 48 → 3n = 42 → n = 14. The integers are 14, 16 and 18.'),
+        ('Do your three numbers add to 48?', '14 + 16 + 18 = 48 ✓'),
+        ('Define, translate, solve, and interpret:', 'Let c = cups sold. Profit needs 2.50c > 75 → c > 30. They must sell at least 31 cups to make a profit.'),
+    ],
+}
+CTX = {
+    'math9-linear-equations-notes': [
+        ('3(x + 4) = 3·x + 3·4 =', ['3x + 12']),
+        ('Correct: 3(x + 4) = 3x +', ['12']),
+        ('LCD = ___', ['6']),
+        ('2x + 3 > 7 → 2x >', ['4', '2']),
+        ('−3 ___ −1. Did the direction change?', ['<', 'Yes']),
+        ('Multiply both by −1: −3', ['<']),
+        ('Define: Let x =', ['the unknown quantity, with its units (for example, h = hours of work)']),
+        ('75 + 50h ___ 350', ['≤']),
+    ],
+    'math9-statistics-notes': [
+        ('Describe the pattern you see in the scatter plot', ['As temperature rises, the number of visitors rises: a strong positive, roughly linear pattern.']),
+        ('"The scatter plot shows a ___ positive', ['strong']),
+        ('An outlier is a point that falls', ['far']),
+        ('How does an outlier affect the correlation description?', ['It can make the correlation look weaker (or stronger) than the rest of the data shows; mention it, but describe the overall pattern.']),
+        ('Direction: ___ Strength:', ['Positive', 'Strong']),
+        ('Full description:', ['A strong positive correlation: as temperature increases, the number of splash pad visitors increases.']),
+        ('What is the same about how you read a trend in both', ['In both you look at the overall direction of change, not at single points.', 'A line graph shows one variable over time; a scatter plot compares two variables.']),
+        ('Choose two points ON the line', ['85', '225']),
+        ('Step 3: Calculate the slope', ['225', '85', '140', '14', '10']),
+        ('Step 4: Find the y-intercept', ['85', '10', '−115']),
+        ('Step 5: Write the equation: v =', ['10', '− 115']),
+        ('rather than actual data points to find the equation', ['Points on the line follow the trend exactly.', 'A data point may sit above or below the line, so using it would give a different, less accurate equation.']),
+        ('approximately ___ more visitors', ['10']),
+        ('Complete the verbal description for your line', ['For each 1°C rise in temperature, about 10 more visitors come to the splash pad.']),
+        ('v = 10(26) +', ['(−115)', '145']),
+        ('because 26 is ___ the data range', ['inside']),
+        ('v = 10(40) +', ['(−115)', '285']),
+        ('because 40 is ___ the data range', ['outside']),
+        ('a) Predict yield for 150 kg/hectare', ['0.015(150) + 1.2 = 3.45 t/ha', 'Interpolation (inside 0–200)']),
+        ('b) Predict yield for 400 kg/hectare', ['0.015(400) + 1.2 = 7.2 t/ha', 'Extrapolation (outside 0–200)']),
+        ('Why might the extrapolation be unreliable', ['Too much fertilizer can harm the crop, so the yield levels off or drops.', 'The line assumes the trend keeps rising, but the data never went past 200 kg/hectare.']),
+    ],
+    'math9-linear-relations-notes': [
+        ('Starting at 10 cm. y = ___ x', ['4', '10']),
+        ('What stays the same across all four', ['They all describe one rule: start at 10 cm', 'and add 4 cm every year (rate of change 4, starting value 10).']),
+        ('Cost depends on number of items', ['Number of items', 'Cost']),
+        ('Distance depends on travel time', ['Travel time', 'Distance']),
+        ('Temperature depends on time of day', ['Time of day', 'Temperature']),
+        ('Slope = ___ / ___ = ___', ['6', '3', '2']),
+        ('for every 1 unit right, the line goes', ['2']),
+        ('m = 0 − 6/3 − 0 =', ['−6', '3', '−2']),
+        ('A negative slope means the line is going', ['down (it falls from left to right)']),
+        ('Find the slope using (0,1) and (2,5)', ['4/2 = 2', '4/2 = 2', 'Yes']),
+        ('m > 0', ['Rises from left to right']),
+        ('m < 0', ['Falls from left to right']),
+        ('Zero ___ m', ['Horizontal (flat)', '0']),
+        ('Undefined ___ m', ['Vertical', 'undefined']),
+        ('Temperature stays at 0°C all day', ['0']),
+        ('A wall is perfectly vertical', ['undefined']),
+        ('A ski hill drops 3 m per 10 m across', ['−3/10 = −0.3']),
+        ('m = 300 km / 3 h', ['100']),
+        ('you travel ___ km', ['100']),
+        ('m = ___ / ___ = ___ The slope means', ['−120', '800', '−0.15', 'the road drops 0.15 m for every 1 m across (it goes downhill)']),
+        ('unit rate? Where is it different', ['Both tell how much one quantity changes for each 1 unit of another.', 'A slope can be negative or zero, and it describes a whole line, not just one price.']),
+        ('Slope m = ___ y-intercept b', ['3', '−4']),
+        ('Starting point (0, b) = (0,', ['−4']),
+        ('Equation: C = ___ n', ['90', '25']),
+        ('Second point: (1,', ['115']),
+        ('y-intercept (set x = 0)', ['−6', '0', '−6']),
+        ('x-intercept (set y = 0)', ['3', '3', '0']),
+        ('b = ___', ['1']),
+        ('Equation: y = ___', ['2x + 1']),
+        ('Why can we substitute the point', ['(3, 7) is on the line, so its x and y values must make the equation true.']),
+        ('Verbal: "Starting at', ['6', '2']),
+        ('y = ___ (no constant added)', ['kx']),
+        ('The graph passes through the ___', ['origin (0, 0)']),
+        ('The ratio y/x is', ['constant']),
+        ('where b ≠ ___', ['0']),
+        ('Graph passes through', ['the origin (0, 0)', '(0, b), not the origin']),
+        ('Type: ___ Equation:', ['Direct variation', 'y = 5x']),
+        ('Type: ___ Equation:', ['Partial variation', 'y = 4x + 8']),
+        ('Look at the y-value when x = 0', ['direct variation', 'partial variation']),
+        ('Plan A equation: C =', ['0.15t', '0.05t + 10']),
+        ('For 50 texts: Plan A costs', ['$7.50', '$12.50', '$30', '$20']),
+        ('Table A above — when x = 0', ['0', 'Yes, so it is direct variation']),
+        ('Write the equation for your example', ['Example: a plumber charges $60 to come out plus $40 per hour.', 'C = 40h + 60']),
+        ('Cost ($)', ['50', '70', '90', '110']),
+        ('Slope = ___ What does it mean in this context?', ['0.20', 'Each kilometre driven adds $0.20 to the cost']),
+        ('y-intercept = ___ What does it mean', ['50', 'The $50 daily charge before any kilometres are driven']),
+        ('Is this direct or partial variation?', ['Partial: the cost is $50 even at 0 km, so the line does not pass through the origin.']),
+    ],
+    'math9-measurement-notes': [
+        ('Rectangle area:', ['4', '6', '24']),
+        ('Semicircle area:', ['2', '2π ≈ 6.28']),
+        ('Total area:', ['24', '6.28', '30.28']),
+        ('rather than the full formula', ['The shape on top is only half a circle, so we take half of the full circle area πr².']),
+        ('always the ___ distance', ['perpendicular (straight, at 90°)']),
+        ('Rectangle l = 12 m', ['54 m²']),
+        ('Parallelogram b = 10 m', ['70 m²']),
+        ('Two l × w faces', ['30']), ('Two l × h faces', ['40']), ('Two w × h faces', ['24']),
+        ('SA = ___ + ___ + ___ = ___ cm2', ['30', '40', '24', '94']),
+        ('Why does a rectangular prism have 6 faces', ['Every face has an identical face opposite it: top and bottom, front and back, left and right.']),
+        ('Two bases: 2 ×', ['15.6', '31.2']),
+        ('Perimeter of base = 6 + 6 + 6', ['18']),
+        ('Lateral area = perimeter × height', ['18', '180']),
+        ('SA = ___ + ___ = ___ cm2', ['31.2', '180', '211.2']),
+        ('A cylinder has: two', ['bases', 'curved (lateral) surface']),
+        ('2πr2 = area of the', ['two']),
+        ('= 2π( ___ ) + 2π(', ['16', '36']),
+        ('= ___ π + ___ π', ['32', '72']),
+        ('= ___ π ≈', ['104', '326.73']),
+        ('What shape does the curved surface become', ['It unrolls into a rectangle.', 'Its length is the circumference 2πr and its width is the height h, so its area is 2πr × h.']),
+        ('A cube with side 2 cm', ['24', '8']),
+        ('one where you would care about volume', ['Surface area: how much wrapping paper or paint you need.', 'Volume: how much water a tank or pool holds.']),
+        ('B = l × w = 6 × 4', ['24']),
+        ('V = B × h = ___ × 3', ['24', '72']),
+        ('B = πr2 = π(5)2', ['25']),
+        ('V = B × h = ___ π × 12', ['25', '300', '942.48']),
+        ('B = base × height/2 = 6 × 8/2', ['24']),
+        ('V = ___ × 10', ['24', '240']),
+        ('Volume of oil it can hold', ['8² = 64', '15', '960', '3015.93']),
+        ('the tank holds approximately', ['3 016 000 (about 3 million)']),
+        ('SA = area of ___ + area of', ['base', 'four']),
+        ('SA = ___ + 2(6)(5)', ['36', '36', '60']),
+        ('used for surface area but NOT for volume', ['Volume needs the straight-up (perpendicular) height of the solid.', 'The slant height runs along a face, so it is only used for the areas of the triangular faces.']),
+        ('πr2 = area of the circular', ['base']),
+        ('√(9 + 16) = √', ['25']),
+        ('SA = π(3)2 + π(3)(', ['5', '15', '24']),
+        ('V = (1/3)π(3)2(4)', ['9', '4', '12', '37.70']),
+        ('SA = 4π(6)2 = 4π(36)', ['144', '452.39']),
+        ('V = (4/3)π(6)3', ['288', '904.78']),
+        ('Cone with same r and h', ['18', 'The cone is 1/3 of the cylinder (18π : 54π = 1 : 3)']),
+        ('Subtract the ___ faces', ['hidden']),
+        ('the volumes (or subtract if one is removed)', ['Add']),
+        ('(20)(20)(5) + π(4)2(10)', ['2000', '160', '2502.65']),
+        ('Hidden area = area of one circle', ['16']),
+        ('SA of prism = 2(20×20) + 4(20×5)', ['800', '400', '1200', '1200', '16', '1149.73']),
+        ('SA of cylinder = 2π(4)2 + 2π(4)(10)', ['32', '80', '112', '112', '16', '96']),
+        ('Total SA ≈', ['1149.73', '301.59 (96π)', '1451.33']),
+        ('subtract the hidden circle from BOTH', ['The circle is covered on top of the prism and is also the cylinder’s bottom face.', 'Neither copy is on the outside, so each is removed once.']),
+        ('What does this overcount?', ['The two glued faces (one from each box), which are hidden inside.']),
+        ('How much should be subtracted?', ['2 × the area of the glued face']),
+        ('V of prism = ___', ['8 × 8 × 20 = 1280']),
+        ('√(25 − 16) =', ['3']),
+        ('V of pyramid = ___', ['(1/3)(64)(3) = 64']),
+        ('Total V = ___', ['1280 + 64 = 1344']),
+        ('SA = ___', ['Prism without its top: 64 + 4(8 × 20) = 704; pyramid without its base: 4 × (8 × 5 ÷ 2) = 80; total 784 m²']),
+    ],
+    'math9-probability-notes': [
+        ('0 ___ — the event cannot occur', ['impossible']),
+        ('1 ___ — the event must occur', ['certain']),
+        ('0.5 ___', ['equally likely (even chance)']),
+        ('P(event) = number of ___ outcomes', ['favourable', 'possible']),
+        ('P(event) = number of times event', ['occurred', 'trials']),
+        ('Sample space size = ___', ['6']),
+        ('P(rolling a 4) =', ['1', '6']),
+        ('P(rolling an even number) =', ['3', '6', '2', '4', '6']),
+        ('P(rolling a 7) =', ['0', '6', '0']),
+        ('P(rolling less than 7) =', ['6', '6', '1']),
+        ('P(red) experimental =', ['14', '40', '0.35']),
+        ('P(blue) experimental =', ['16', '40', '0.4']),
+        ('Is the experimental result close?', ['A fair 3-section spinner gives P(red) = 1/3 ≈ 0.33. 0.35 is close.', 'Small differences are normal random variation; more spins usually bring the result closer to 1/3.']),
+        ('P(rolling a 4, 5, or 6) = 1 − 1/2', ['1/2']),
+        ('Fraction: 3/8 Decimal:', ['0.375', '37.5']),
+        ('1/4 ___', ['0.25', '25%']),
+        ('5/8 ___', ['0.625', '62.5%']),
+        ('75%', ['3/4', '0.75']),
+        ('Total outcomes = ___ × ___ = ___', ['2', '3', '6']),
+        ('P(Heads and Green) =', ['1', '6']),
+        ('P(Tails and NOT Red) =', ['2', '6']),
+        ('the total number of outcomes for both events', ['m', 'n']),
+        ('Total = ___ × ___ × ___', ['4', '3', '2', '24']),
+        ('Total outcomes = ___', ['36']),
+        ('P(sum = 7) =', ['6', '36']),
+        ('P(both show the same number) =', ['6', '36']),
+        ('P(first die > second die) =', ['15', '36']),
+        ('P(exactly one head) =', ['2', '4']),
+        ('Hint: think about P(A AND B)', ['Both multiply: counting multiplies the choices at each step,', 'and P(A and B) = P(A) × P(B) multiplies the chances at each step.']),
+        ('does NOT affect the ___ of the other', ['probability']),
+        ('P(H and 3) = (1/2) × (1/6)', ['1', '12']),
+        ('How many show (H, 3)?', ['1', '1', '12', 'Yes']),
+        ('P(red and red) = (5/8) × (5/8)', ['25/64']),
+        ('What condition makes this true?', ['The marble is put back, so the bag again has 5 red out of 8.', 'Replacement is the condition that makes the draws independent.']),
+        ('given heads on flips 1–4', ['1/2']),
+        ('how many aces remain?', ['3', '51']),
+        ('P(Ace on draw 2 | Ace on draw 1)', ['3']),
+        ('P(both aces) = (4/52) × (', ['3', '12', '0.0045 (= 1/221)']),
+        ('Why does the second probability change to', ['3']),
+        ('After removing one red:', ['4', '7']),
+        ('P(blue second | red first) = 3/', ['7']),
+        ('P(red then blue) = (5/8) × (3/7)', ['15', '0.268']),
+        ('WITH replacement', ['15/64 ≈ 0.234']),
+        ('WITHOUT replacement', ['15/56 ≈ 0.268']),
+        ('without replacement changes the', ['total number of items (the sample space) for the second draw']),
+        ('Is the difference meaningful?', ['Yes: 4/7 ≈ 0.571 is noticeably lower than 5/8 = 0.625, because one red is gone.']),
+        ('After 1st red drawn:', ['3', '6', '9', '3']),
+        ('After 2nd red drawn:', ['2', '6', '8', '6']),
+        ('P(R, R, B) = (4/10) × (', ['3', '6', '72/720 = 1/10', '0.1']),
+    ],
+    'math9-rational-numbers-notes': [
+        ('can be written in the form', ['a', 'b', '≠']),
+        ('All integers: 5 =', ['5', '−3']),
+        ('Common denominator: ___', ['24']),
+        ('−5/6 = − ___ 24', ['20', '21']),
+        ('Compare: − ___ 24', ['20', '>', '21', '>']),
+        ('Key insight with negatives', ['larger', 'smaller']),
+        ('___ , ___ , ___ , ___ , ___ , ___', ['−1', '−3/4', '−1/3', '0', '1/2', '5/6']),
+        ('they must have the ___ denominator', ['same']),
+        ('Find the ___', ['lowest common denominator (LCD)']),
+        ('Add/subtract the ___', ['numerators']),
+        ('Step 1: LCD of 4 and 6', ['12']),
+        ('Step 2: 3/4 = ___ 12', ['9', '10']),
+        ('Step 3: ___ 12 + ___ 12', ['9', '10', '19']),
+        ('Step 4: Simplify:', ['19/12 = 1 7/12']),
+        ('Explain Step 2', ['Multiplying the top and bottom by the same number is multiplying by 1, so the value does not change; only the size of the pieces changes.']),
+        ('−1/3 = − ___ 12', ['4', '9']),
+        ('12 + (− ___ 12) = − ___ 12', ['4', '9', '13']),
+        ('Simplified: ___', ['−13/12 = −1 1/12']),
+        ('Adding two negative rationals always gives a', ['negative']),
+        ('−5/6 = −5/6 1/2 =', ['3']),
+        ('−5/6 + ___ 6 = − ___ 6', ['3', '2']),
+        ('When the signs differ, do you add or subtract', ['Subtract the numerators (5 − 3 = 2). The answer takes the sign of the fraction with the larger absolute value, so it is negative: −2/6 = −1/3.']),
+        ('Where does it break down', ['The same sign rules as integers apply.', 'The only extra step is finding a common denominator first.']),
+        ('= 5/8 + ___ = ___', ['3/8', '8/8 = 1']),
+        ('Temperature = −7.5 +', ['11.25', '3.75']),
+        ('To multiply fractions: Multiply', ['numerator', 'numerator', 'denominator', 'denominator']),
+        ('(a/b) × (c/d) =', ['ac', 'bd']),
+        ('If there is an ___ number of negative factors', ['odd']),
+        ('Numerators: ___ × ___', ['−3', '2', '−6']),
+        ('Denominators: ___ × ___', ['5', '7', '35']),
+        ('Sign: ___ × ___ = ___', ['negative', 'positive', 'negative']),
+        ('Result: ___', ['−6/35']),
+        ('What does the sign rule tell you the product will be', ['Negative: one negative factor (an odd number) gives a negative product.']),
+        ('8 and 4 share factor', ['4', '5']),
+        ('Reduce: 8/4 =', ['2/1', '1/3']),
+        ('Now multiply:', ['2', '3', '1', '1', '2/3']),
+        ('Why does cross-cancelling before multiplying', ['You divide the same common factor out of the top and bottom either way, so the value is the same.', 'Cancelling first is easier: the numbers stay small.']),
+        ('Rewrite 8 as ___ /1', ['8']),
+        ('(−3/4) × (8/1) = −', ['24', '−6']),
+        ('Can you cancel the 8 and the 4?', ['Yes', '8 is a numerator and 4 is a denominator, and they share the factor 4']),
+        ('(−5/6) × (3/4) = ___', ['−15/24 = −5/8']),
+        ('is the same as ___ by its reciprocal', ['multiplying']),
+        ('a ÷ (b/c) = a ×', ['c', 'b']),
+        ('The reciprocal of a/b is', ['b', 'a']),
+        ('Does 6 ÷ (1/3) give something bigger', ['Bigger', '6 × 3 = 18']),
+        ('Rewrite as multiplication by the reciprocal', ['5/2', '−15/8']),
+        ('How do you find the reciprocal of 2/5', ['Flip it: the reciprocal of 2/5 is 5/2.', 'Multiplying by 5/2 undoes multiplying by 2/5, which is exactly what dividing by 2/5 does.']),
+        ('Convert to improper fraction', ['5']),
+        ('Rewrite as multiplication: (', ['5', '4', '−20/6']),
+        ('Sign: ___ Result:', ['positive × negative = negative', '−10/3 = −3 1/3']),
+        ('= (2/3) × (5/4) = ___', ['10/12 = 5/6']),
+        ('Check: ___ × (4/5)', ['5/6']),
+        ('(2/3) ÷ 3 = (2/3) ×', ['1/3', '2/9']),
+        ('Each family receives', ['2/9']),
+        ('Apply sign rules: (−2/3)2 =', ['4/9']),
+        ('B: −1/2 + 3/4 = −2/4 + 3/4', ['1']),
+        ('E: (1/4)2 =', ['1/16']),
+        ('D: ___ ÷ (−1/4)', ['1/16', '1/16', '−4/16 = −1/4']),
+        ('Why do we handle the bracket before squaring', ['The bracket must become one number (1/4) before it is squared.', 'Squaring each part first gives 1/4 + 9/16, which is a different (wrong) value.']),
+        ('This gives: ___', ['(5/4) × (−2/3) = −10/12 = −5/6 (wrong)']),
+        ('3/4 × (−2/3) = ___ Then', ['−1/2', '(−1/2)', '0']),
+        ('−(3/4)2 = −(', ['9/16', '−9/16']),
+        ('(−3/4)2 = (−3/4) × (−3/4) =', ['9/16']),
+        ('Which answer is negative and why', ['−(3/4)² is negative: the exponent applies only to 3/4, and the negative sign is applied after squaring.']),
+        ('Answer: ___', ['(−1/4) ÷ (−5/6) = 3/10; then 3/10 × (−2/5) = −6/50 = −3/25']),
+    ],
+    'math9-similarity-notes': [
+        ('a/b = c/d means a ×', ['d', 'c']),
+        ('Cross-multiply: 9x = 6 × 4', ['24', '24', '8/3 ≈ 2.67']),
+        ('What operation are we actually applying', ['Multiplying both sides by both denominators (6 and 9),', 'which clears the fractions and keeps the equation balanced.']),
+        ('Scale factor = ___ length', ['image (new)', 'original']),
+        ('If scale factor > 1: the image is', ['larger', 'smaller', 'the same size']),
+        ('Scale factor = 10/4 =', ['2.5', '2.5']),
+        ('BOTH ratios give the same scale factor', ['If the two ratios were different, the shape was stretched, not scaled, so it would not be a true scale copy.']),
+        ('d = ___ cm = ___ km', ['320 000', '3.2']),
+        ('All corresponding angles are ___', ['equal']),
+        ('All corresponding sides are ___', ['proportional']),
+        ('They are ___ (same proportions)', ['similar', 'No (different sizes)']),
+        ('A corresponds to E → angle A = angle', ['E']),
+        ('AB corresponds to EF → AB/EF =', ['BC', 'FG']),
+        ('Scale factor = DE/AB = 4/6', ['2/3', '2/3', '2/3', '6']),
+        ('Why did we use DE/AB', ['The scale factor is new over original.', 'DEF is the image (new) and ABC is the original, so DE goes on top.']),
+        ('Check angles: P = W?', ['Yes', 'Yes', 'Yes', 'Yes', '2', '2', '2', '2', 'Yes', 'Yes', 'Yes']),
+        ('the ratio of their perimeters = ___', ['k (the same scale factor)']),
+        ('Quadrilateral PQRS perimeter', ['18', '36', '36', '18', '2']),
+        ('Think of at least one example from maps', ['Maps are similar to the land they show (every distance uses the same scale).', 'Architects’ scale drawings and scale models are similar to the real building.']),
+        ('Third angle = 180° −', ['the first angle', 'the second angle']),
+        ('If angle A = angle D and angle B = angle E', ['C', 'F', 'DEF']),
+        ('In PQR: angle R = 180 − 55 − 75', ['50', '75', 'Yes ✓', '50', 'XYZ']),
+        ('d/a = 4/6 =', ['2/3', '2/3', '2/3', 'Yes', 'SSS']),
+        ('creates a smaller triangle that is ___', ['similar']),
+        ('Triangle ADE ~ Triangle ___', ['ABC']),
+        ('1 cm on the diagram = ___ cm', ['5000', '50']),
+        ('Real length = 3.2 × 25 000', ['80 000', '0.8']),
+        ('Diagram length = 50 m / 500', ['0.1', '10', '0.05', '5']),
+        ('h = 7.2 × (1.5/0.9)', ['1.67 (1.5 ÷ 0.9)', '12']),
+        ('if we measure at different times', ['The sun’s angle changes during the day, so shadow lengths change.', 'Both shadows must be measured at the same time, or the triangles are not similar.']),
+        ('h/60 = 1.6/10', ['9.6']),
+    ],
+    'math9-square-roots-notes': [
+        ('√(9/25) = √9/√25', ['3', '5', '3/5']),
+        ('√(4/49) =', ['√4', '√49', '2/7']),
+        ('√(16/81) =', ['4/9']),
+        ('Find the perfect squares on either side.', ['36', '49', '36', '49', '6', '7']),
+        ('√20', ['4', '5', '4.5']), ('√55', ['7', '8', '7.4']), ('√80', ['8', '9', '8.9']), ('√120', ['10', '11', '11.0 (10.95)']),
+        ('square rooting = power of', ['½', 'Yes:', '√x = x<sup>1/2</sup>']),
+        ('___ + ___ = c2', ['36', '64']),
+        ('c2 = ___', ['100']),
+        ('c = √ ___ = ___', ['100', '10 cm']),
+        ('Explain the final step', ['c² = 100 tells us c squared, so we undo the square with a square root.', 'A length cannot be negative, so we use only the positive root: c = 10 cm.']),
+        ('___ + b2 = ___', ['16', '100']),
+        ('b2 = ___', ['100 − 16 = 84']),
+        ('b = √ ___ ≈', ['84', '9.2']),
+        ('Explain Step 4', ['We must get b² alone first. The square root of 16 + b² is not 4 + b, so we subtract 16, then take the root.']),
+        ('Does a triangle with sides 3, 4, 6', ['25', '36', 'No (25 ≠ 36)', 'No']),
+        ('Multiples also work', ['2']),
+        ('c = √(92 + 402)', ['81', '1600', '1681', '41']),
+        ('√(9/16) = √9/√16', ['3', '4']),
+        ('Method 1: Convert to fraction', ['7', '10', '0.7']),
+        ('Method 2: Think of a decimal', ['0.7', '0.7', '0.7']),
+        ('√0.25', ['Convert: √(25/100) = 5/10', '0.5']),
+        ('√(4/9)', ['√4 / √9', '2/3']),
+        ('√1.44', ['Convert: √(144/100) = 12/10', '1.2']),
+        ('√(0.01)', ['Convert: √(1/100) = 1/10', '0.1']),
+        ('So x(1/2) = ___', ['√x']),
+        ('Verify: 9(1/2) =', ['3', '3']),
+        ('Let a = 16, b = 9', ['√25 = 5', '√16 + √9 = 4 + 3 = 7', 'No']),
+        ('√(4 × 9) = √4 × √9', ['2 × 3 = 6 ✓ (√36 = 6)']),
+        ('√(36/4) = √36/√4', ['6 ÷ 2 = 3 ✓ (√9 = 3)']),
+        ('Answer: ___', ['h² = 13² − 5² = 169 − 25 = 144, so h = 12 m. Rational (12 is a whole number).']),
+    ],
+    'math9-circle-geometry-notes': [
+        ('so QR is a ___', ['diameter', 'shorter than']),
+        ('vertex at the ___ of the circle', ['centre']),
+        ('vertex on the ___ of the circle', ['circle itself (circumference)']),
+        ('the arc that lies ___ the angle', ['inside (between the arms of)']),
+        ('at exactly ___ point', ['one']),
+        ('the tangent is ___ to the radius. (We will', ['perpendicular (at 90°)']),
+        ('Is a tangent the same as a chord?', ['No', 'A chord joins two points on the circle; a tangent touches the circle at only one point']),
+        ('A minor arc is the ___', ['shorter']),
+        ('A major arc is the ___', ['longer']),
+        ('A semicircle is exactly', ['half', 'diameter']),
+        ('AM = ___ /2', ['16', '8']),
+        ('Right triangle OMA: OA =', ['10 cm', '8 cm']),
+        ('OM2 = ___ − ___ = ___', ['10² = 100', '8² = 64', '36']),
+        ('OM = ___ cm', ['6']),
+        ('Which side is the hypotenuse in triangle OMA', ['OA (the radius): it is opposite the right angle at M']),
+        ('If two chords are ___ in length', ['equal', 'equidistant (the same distance)']),
+        ('PM = ___ /2', ['24', '12 cm']),
+        ('OM = ___', ['√(13² − 12²) = √25 = 5 cm']),
+        ('Describe the steps', ['Draw any two chords that are not parallel and construct the perpendicular bisector of each.', 'The point where the two bisectors cross is the centre.']),
+        ('Angle AOB (central) = ___', ['2 × APB (measure it)', '½ × AOB']),
+        ('Inscribed angle = Central angle / ___', ['2']),
+        ('APB = 80° / 2 =', ['40']),
+        ('AOB = 2 × 35° =', ['70']),
+        ('Why does being at the centre make it', ['The arms of the central angle meet the arc from the centre, so they open across the whole arc;', 'an inscribed angle sits on the far edge of the circle, so for the same arc it opens only half as wide.']),
+        ('always the ___ size', ['same']),
+        ('APB = AQB = ___', ['½ × AOB']),
+        ('So the inscribed angle = 180°/2', ['90']),
+        ('any inscribed angle APB = ___', ['90']),
+        ('central angle for a diameter is always', ['180°', '90°']),
+        ('What is angle APB? ___', ['90°']),
+        ('a) Inscribed angle APB (same arc)', ['55']),
+        ('the major arc central angle', ['250', '250', '125']),
+        ('A tangent to a circle is ___', ['perpendicular']),
+        ('Angle OTP = ___', ['90']),
+        ('angle at the point of tangency is ___', ['90°']),
+        ('they form a ___ triangle', ['right']),
+        ('Right angle is at ___', ['T']),
+        ('Hypotenuse = PO = ___', ['13 cm']),
+        ('PT2 = ___ − ___ = ___', ['169', '25', '144']),
+        ('PT = ___ cm', ['12']),
+        ('Why is PO the hypotenuse', ['PO is opposite the right angle at T, so it is the longest side']),
+        ('are ___ in length', ['equal']),
+        ('PT₁ = ___', ['PT₂']),
+    ],
+    'soc8-civic-engagement-notes': [
+        ('they choose who ___ them', ['represents']),
+        ('Be a ___', ['Canadian citizen']),
+        ('Be at least ___ years old', ['18']),
+        ('Have valid proof of ___ in the riding', ['residence (address)']),
+        ('Have valid proof of ___ A document', ['identity']),
+        ('Deng, age 19', ['Yes']),
+        ('Sofia, age 16', ['No', 'No']),
+        ('Liam, age 20', ['No', 'No']),
+    ],
+    'soc8-ideologies-notes': [
+        ('Short label Rule by ___', ['the wise (philosopher-kings)', 'law']),
+    ],
+    'soc8-political-systems-notes': [
+        ('divided into three branches', ['executive', 'legislative', 'judicial']),
+    ],
+    'soc9-evolving-citizenship-notes': [
+        ("advocacy for women's suffrage by the ___", ['Famous Five']),
+        ('The Canadian Multiculturalism Policy', ['5 (1971)']),
+        ('The Canadian Bill of Rights', ['1 (1960)']),
+        ('The Royal Commission on Bilingualism and Biculturalism', ['2 (1963)']),
+        ('The Royal Commission on the Status of Women', ['3 (1967)']),
+        ('The Official Languages Act', ['4 (1969)']),
+    ],
+    'soc9-independence-democratic-rights-notes': [
+        ('secure the right of women to ___', ['vote', 'hold public office (run for election)']),
+    ],
+    'soc9-postwar-canada-notes': [
+        ('non-European regions such as', ['Asia', 'the Caribbean', 'Africa (and Latin America)']),
+        ('NATO', ['North Atlantic Treaty Organization (1949): a military alliance of Canada, the US and Western European countries for shared defence against the Soviet Union']),
+        ('NORAD', ['North American Air (now Aerospace) Defence Command (1957–58): a joint Canada–US command defending North American airspace']),
+        ('Suez Crisis', ['1956 conflict after Egypt took over the Suez Canal and Britain, France and Israel invaded; Lester B. Pearson proposed the first UN peacekeeping force and won the Nobel Peace Prize']),
+    ],
+    'soc9-modern-economy-notes': [
+        ('Automobile manufacturing', ['Cars and trucks, mainly in southern Ontario (expanded by the 1965 Auto Pact with the US)']),
+        ('Petroleum and energy production', ['Oil and natural gas, especially in Alberta after the Leduc No. 1 discovery in 1947']),
+        ('Paper and forestry', ['Lumber, pulp and newsprint, mainly from BC, Ontario and Quebec, much of it exported to the US']),
+        ('Hydroelectric power development', ['Electricity from large dams (Quebec, BC, Ontario, Manitoba) that powered homes and industry']),
+    ],
+    'soc9-system-of-government-notes': [
+        ('Third reading (final approval)', ['5']),
+        ('First reading (introduction)', ['2']),
+        ('Royal assent by the Crown', ['7']),
+        ('Bill drafting', ['1']),
+        ('Second reading (debate)', ['3']),
+        ('Committee stage (detailed review)', ['4']),
+        ('Approval by the Senate', ['6']),
+        ('___ ___', ['Defence', 'Education']),
+        ('___ ___', ['Banking and Currency', 'Healthcare']),
+        ('___ ___', ['Trade and Commerce · Criminal Law · Citizenship', 'Property and Civil Rights · Municipalities · Natural Resources']),
+        ("economy relies heavily on ___", ['oil and natural gas (energy resources)', 'oil and gas royalties']),
+    ],
+    'sci6-energy-resources-notes': [
+        ('Heating a home', ['Natural gas, wood (biomass), geothermal, solar']),
+        ('Cooking food', ['Natural gas, electricity (from any source), wood']),
+        ('Transportation (cars, buses)', ['Oil (gasoline, diesel), electricity, biofuels']),
+        ('Lighting (electricity)', ['Electricity from coal, natural gas, hydro, wind or solar']),
+        ('Manufacturing (factories)', ['Natural gas, coal, oil, electricity']),
+    ],
+    'sci7-interactions-ecosystems-notes': [
+        ('Individual', ['one single organism']),
+    ],
+    'math9-polynomials-notes': [
+        ('Degree of each term:', ['3', '2', '1', '0']),
+        ('Degree of the polynomial: ___', ['3']),
+        ('Leading coefficient: ___', ['4']),
+        ('coefficient: ___ degree: ___', ['5', '2']),
+        ('coefficient: ___ degree: ___', ['−3', '1']),
+        ('this is a ___', ['constant (degree 0)']),
+        ('Both have ___', ['x²']),
+        ('Different ___', ['exponents']),
+        ('Different ___', ['variables']),
+        ('Both are ___', ['constants (no variable)']),
+        ('add or subtract the ___ only', ['coefficients']),
+        ('+ 7x2 = ___', ['10']),
+        ('Only tiles of the same', ['size', 'shape']),
+        ('Remove the ___', ['brackets']),
+        ('Identify ___ terms', ['like']),
+        ('write in ___ form', ['standard']),
+        ('from ___ degree to lowest', ['highest']),
+        ('remove brackets', ['3x² + 2x − 1 + x² − 5x + 4']),
+        ('group like terms', ['(3x² + x²) + (2x − 5x) + (−1 + 4)']),
+        ('___ ← simplified', ['4x² − 3x + 3']),
+        ('− 5x + 4 ___', ['4x²', '− 3x', '+ 3']),
+        ('Total width = ___', ['(3x + 2) m']),
+        ('(−x2 + 3x − 5) =', ['3x² + 2x − 3']),
+        ('(−x2 + 1) =', ['5x − 3']),
+        ('Subtracting a polynomial means adding its', ['opposite', 'every term']),
+        ('Opposite of (2x2 − 3x + 1) =', ['−2x² + 3x − 1']),
+        ('= 5x2 + 3x − 4 ___ 2x2', ['−', '+', '−']),
+        ('___ ← simplified', ['3x² + 4x − 10']),
+        ('Write the correct sign-changed version below:', ['−(2x² − x + 6) = −2x² + x − 6']),
+        ('flip all signs here first', ['− 2x²', '+ x', '− 6']),
+        ('Remaining area = ___', ['(4x² + 5x − 5) m²']),
+        ('(x2 − 2x + 1) =', ['3x² + 3x − 4']),
+        ('(5x − 3) =', ['−3x + 10']),
+        ('a(b + c) = ___', ['ab + ac']),
+        ('multiply the monomial by ___', ['every term']),
+        ('xn = x', ['ᵐ⁺ⁿ']),
+        ('x × x = x', ['²']),
+        ('x2 × x3 = x', ['⁵']),
+        ('= ___ + ___ + ___', ['6x³', '− 12x²', '+ 3x']),
+        ('= 4x × ___', ['3x²', '(−2x)', '5']),
+        ('= ___ + ___ + ___', ['12x³', '− 8x²', '+ 20x']),
+        ('Area = 2x(', ['x² + 3x − 1', '(2x³ + 6x² − 2x) m²']),
+        ('What is x2 × x3?', ['x⁵']),
+        ('Expand: 2x(x + 5) =', ['2x² + 10x']),
+        ('Expand: −3x(2x2 − x + 4) =', ['−6x³ + 3x² − 12x']),
+        ('every term in the ___', ['second bracket', '4']),
+        ('x ___ ___', ['x²', '4x']),
+        ('+3 ___ ___', ['3x', '12']),
+        ('Sum of partial products:', ['x²', '4x', '3x', '12']),
+        ('Simplified: ___', ['x² + 7x + 12']),
+        ('2x ___ ___', ['2x²', '10x']),
+        ('+1 ___ ___', ['x', '5']),
+        ('Simplified: ___', ['2x² + 11x + 5']),
+        ('Area = ___ m²', ['x² + 13x + 40']),
+        ('How many partial products', ['4']),
+        ('Expand: (x + 2)(x + 7) =', ['x² + 9x + 14']),
+        ('Expand: (2x − 1)(x + 3) =', ['2x² + 5x − 3']),
+        ('Answer: ___', ['2x² + 5x − 3 + 2x² + 6x = 4x² + 11x − 3']),
+    ],
+    'math9-powers-notes': [
+        ('"5 multiplied by itself 2 times"', ['5²', '25']),
+        ('2⁶', ['"2 multiplied by itself 6 times"', '2', '2', '2', '2', '2', '2', '64']),
+        ('4 × 4 × 4', ['"4 multiplied by itself 3 times"', '4³', '64']),
+        ('7³', ['7', '3']), ('(−2)⁵', ['−2', '5']), ('10²', ['10', '2']), ('(−1)⁸', ['−1', '8']),
+        ('2⁵ = 2 × 2 × 2 × 2 × 2 =', ['32']),
+        ('Step 1: ___ × (−3)', None), ('Step 1: (−3) × (−3) =', ['9', 'positive']),
+        ('Step 2: ___ × (−3)', ['9', '−27', 'negative']),
+        ('Step 3: ___ × (−3)', ['−27', '81', 'positive']),
+        ('(−3)⁴ = ___', ['81']),
+        ('−2³ = ___', ['−8', '−8']),
+        ('(−2)² (−2)(−2)', ['4', 'Positive']),
+        ('(−2)³ (−2)(−2)(−2)', ['−8', 'Negative']),
+        ('(−2)⁴', ['(−2)(−2)(−2)(−2)', '16', 'Positive']),
+        ('(−2)⁵', ['(−2)(−2)(−2)(−2)(−2)', '−32', 'Negative']),
+        ('(−2)⁶', ['(−2)(−2)(−2)(−2)(−2)(−2)', '64', 'Positive']),
+        ('3³', ['3 × 3 × 3', '27']), ('3²', ['3 × 3', '9']), ('3¹', ['3', '3']), ('3⁰', ['(no factors left)', '1']),
+        ('5²', ['25']), ('5¹', ['5']), ('5⁰', ['1']),
+        ('5⁰ = ___', ['1']), ('a⁰ = ___ for any', ['1']),
+        ('10² ÷ 10 =', ['10', '1', '1']),
+        ('Evaluate: 7⁰ =', ['1']), ('Evaluate: (−15)⁰ =', ['1']),
+        ('3² × 3⁵', ['(3×3) × (3×3×3×3×3)', '7', '3⁷']),
+        ('5⁴ × 5¹', ['(5×5×5×5) × 5', '5 fives', '5⁵']),
+        ('a³ × a⁶', ['(a×a×a) × (a×a×a×a×a×a)', '9 a’s', 'a⁹']),
+        ('the same base, ___', ['keep the base and add the exponents']),
+        ('Write the rule in symbols: aᵐ × aⁿ =', ['aᵐ⁺ⁿ']),
+        ('Are they the same?', ['Yes — both are (−4)']),
+        ('(−4)³ × (−4)⁵ = (−4)(', ['3', '5', '(−4)⁸']),
+        ('(positive or negative?', ['65 536', 'positive', 'even']),
+        ('Add all the exponents', ['4', '2', '3', '⁹']),
+        ('Are they equal?', ['No: 2³ × 3⁴ = 648, but 6⁷ = 279 936']),
+        ('Simplify: a⁵ × a⁴ =', ['a⁹']), ('Simplify: (−2)³ × (−2)⁶ =', ['(−2)⁹ = −512']),
+        ('5⁴ × 5³', ['✓', '—']),
+        ('3² × 4²', ['✗', 'Different bases (3 and 4), so you cannot add exponents']),
+        ('m⁵ × m', ['✓', '— (m = m¹, so m⁶)']),
+        ('2x³ × 3x²', ['✓ (for x)', 'Multiply the coefficients, add the exponents: 6x⁵']),
+        ('a⁴b² × a³b', ['✓', 'Add exponents for each base: a⁷b³']),
+        ('4⁶ ÷ 4²', ['(4×4×4×4×4×4) ÷ (4×4)', 'Four 4s remain', '4⁴']),
+        ('a⁷ ÷ a³', ['(a×a×a×a×a×a×a) ÷ (a×a×a)', 'Four a’s remain', 'a⁴']),
+        ('(−2)⁸ ÷ (−2)⁵', ['eight (−2)s ÷ five (−2)s', 'Three (−2)s remain', '(−2)³ = −8']),
+        ('Write the rule in words: ___', ['When dividing powers with the same base, keep the base and subtract the exponents']),
+        ('aᵐ ÷ aⁿ = ___ (where', ['aᵐ⁻ⁿ']),
+        ('x⁹ ÷ x⁴ = x(', ['9', '4', '⁵']),
+        ('a⁵ ÷ a⁵ = a(', ['5', '5', '⁰']),
+        ('3² ÷ 3⁵ = 3', ['⁻³']),
+        ('Simplify: m⁸ ÷ m³ =', ['m⁵']), ('Simplify: (−5)⁶ ÷ (−5)² =', ['(−5)⁴ = 625']),
+        ('(3²)⁴', ['(3×3) × (3×3) × (3×3) × (3×3)', '3⁸']),
+        ('(a⁴)³', ['a⁴ × a⁴ × a⁴', '(a×a×a×a) × (a×a×a×a) × (a×a×a×a)', 'a¹²']),
+        ('(5²)⁵', ['5² × 5² × 5² × 5² × 5²', '(5×5) × (5×5) × (5×5) × (5×5) × (5×5)', '5¹⁰']),
+        ('(x²)³', ['Power of a power: multiply exponents', 'x⁶']),
+        ('x² × x³', ['Product of powers: add exponents', 'x⁵']),
+        ('(y⁵)²', ['Power of a power: multiply exponents', 'y¹⁰']),
+        ('y⁵ × y²', ['Product of powers: add exponents', 'y⁷']),
+        ('Write the rule: (aᵐ)ⁿ =', ['aᵐⁿ']),
+        ('Apply power of a power rule: (−2)(', ['3', '4', '¹²']),
+        ('Is the result positive or negative?', ['Positive', 'even (12)']),
+        ('Write the power of a power rule in symbols', ['aᵐⁿ']),
+        ('Simplify: (a³)⁵ =', ['a¹⁵']), ('Simplify: ((−3)²)³ =', ['(−3)⁶ = 729']),
+        ('(2 × 3)²', ['36']), ('(ab)³', ['b³']),
+        ('(2x)⁴', ['(2x)(2x)(2x)(2x)', '(2×2×2×2) × (x×x×x×x)', '16x⁴']),
+        ('(3mn)²', ['(3mn)(3mn)', '(3×3)(m×m)(n×n)', '9m²n²']),
+        ('Write the rule: (ab)ⁿ =', ['aⁿbⁿ']),
+        ('(a/b)³ = (a/b)', ['a³', 'b³']),
+        ('Write the rule: (a/b)ⁿ =', ['aⁿ / bⁿ']),
+        ('Step 2: Evaluate 3⁴ =', ['81']), ('Apply power of a power: (x²)⁴ = x', ['⁸']), ('Result:', ['81x⁸']),
+        ('Simplify: (2a)³ =', ['8a³']), ('Simplify: (x/3)² =', ['x² / 9']), ('Simplify: (−5m²)³ =', ['−125m⁶']),
+        ('2²', ['4']), ('2¹', ['2']), ('2⁰', ['1']), ('2⁻¹', ['1/2']), ('2⁻²', ['1/4']), ('2⁻³', ['1/8']),
+        ('Look at 2⁻¹', ['1/2 (one half)']),
+        ('Write the rule: a⁻ⁿ =', ['1 / aⁿ']),
+        ('5⁻² = 1/5² = 1/', ['25', '1/25']),
+        ('(1/3)⁻² = (3/1)² =', ['9']),
+        ('Evaluate: 4⁻² =', ['1/16']), ('Evaluate: (−3)⁻³ =', ['−1/27']), ('x⁻⁵ =', ['1 / x⁵']),
+        ('Product of powers aᵐ × aⁿ', ['aᵐ⁺ⁿ']), ('Quotient of powers aᵐ ÷ aⁿ', ['aᵐ⁻ⁿ']),
+        ('Power of a power (aᵐ)ⁿ', ['aᵐⁿ']), ('Power of a product (ab)ⁿ', ['aⁿbⁿ']),
+        ('Power of a quotient (a/b)ⁿ', ['aⁿ / bⁿ']), ('Zero exponent a⁰', ['1']), ('Negative exponent a⁻ⁿ', ['1 / aⁿ']),
+        ('3⁴ × 3³', ['Product of powers', '3⁷ = 2187']),
+        ('(x⁵)²', ['Power of a power', 'x¹⁰']),
+        ('a⁸ ÷ a³', ['Quotient of powers', 'a⁵']),
+        ('(2y)³', ['Power of a product', '8y³']),
+        ('7⁰ × 7²', ['Zero exponent + product', '1 × 49 = 49']),
+        ('(3a²)⁰', ['Zero exponent', '1']),
+        ('b⁻⁴', ['Negative exponent', '1 / b⁴']),
+        ('(m³)² × m⁴', ['Power of a power + product', 'm⁶ × m⁴ = m¹⁰']),
+        ('(4x³)² ÷ (2x)²', ['Power of a product + quotient', '16x⁶ ÷ 4x² = 4x⁴']),
+        ('5⁻² × 5⁴', ['Product (negative exponent)', '5² = 25']),
+        ('(5x³)² = 5x⁶', None),
+        ('Error:', ['The 5 was not squared']), ('Corrected:', ['(5x³)² = 25x⁶']),
+        ('Error:', ['The exponents were multiplied instead of added']), ('Corrected:', ['a³ × a⁴ = a⁷']),
+        ('Error:', ['No error: (m²)³ = m⁶ and m⁶ ÷ m⁵ = m¹ = m. (This item may need a deliberate mistake.)']), ('Corrected:', ['m¹ = m']),
+        ('Product of powers aᵐ × aⁿ =', ['aᵐ⁺ⁿ']), ('Quotient of powers aᵐ ÷ aⁿ =', ['aᵐ⁻ⁿ']),
+        ('Power of a power (aᵐ)ⁿ =', ['aᵐⁿ']), ('Power of a product (ab)ⁿ =', ['aⁿbⁿ']),
+        ('Zero exponent a⁰ =', ['1']), ('Negative exponent a⁻ⁿ =', ['1 / aⁿ']),
+    ],
+}
 FIX = {
+    'math9-linear-relations-notes': {15: 'choose (control)', 16: 'depends', 36: 'From any point on the line, move 1 right and 2 up and you land on the line again.', 41: 'The temperature falls 2°C for every hour that passes.', 82: '6', 83: '4', 84: '2', 85: '0', 116: 'C = 0.20d + 50'},
+    'math9-probability-notes': {93: 'One ace and one card have been removed,', 94: 'so only 3 aces are left among 51 cards.'},
     'sci7-heat-temperature-notes': {85: 'radiation', 86: 'conduction', 87: 'convection'},
     'sci7-structures-forces-notes': {
         57: 'tension', 58: 'compression', 59: 'shear',
@@ -783,14 +1556,32 @@ def norm(s):
     return ' '.join(words(s))
 
 
+def label_key(text):
+    """Comparable form of a row label. Word labels compare by words; math
+    labels ("3² × 4²", "x⁹ ÷ x⁴") compare by their exact characters."""
+    w = norm(text)
+    if len(w.replace(' ', '')) >= 4 and not re.search(r'[\d⁰¹²³⁴⁵⁶⁷⁸⁹⁻×÷=+−/^()]', text):
+        return w
+    return re.sub(r'\s+', '', text.translate(SUPMAP)).lower()
+
+
+SUPMAP = str.maketrans('⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺−–', '0123456789-+--')
+
+
 def best_key_row(label, krows):
-    lw = norm(label)
+    lw = label_key(label)
+    if not lw:
+        return None
     best, sc = None, 0
     for kr in krows:
-        r = difflib.SequenceMatcher(None, lw, norm(kr[0].get_text(' ', strip=True))).ratio()
+        kw = label_key(kr[0].get_text(' ', strip=True))
+        if not kw:
+            continue
+        r = 1.0 if kw == lw else difflib.SequenceMatcher(None, lw, kw).ratio()
         if r > sc:
             best, sc = kr, r
-    return best if sc >= 0.75 else None
+    need = 0.75 if re.search(r'[a-z]{3}', lw) else 0.95
+    return best if sc >= need else None
 
 
 def fill_cell(s, td, html):
@@ -1007,6 +1798,43 @@ def build_notes_key(student, keyp, name, rev, dry):
                 if not BeautifulSoup(html, 'html.parser').get_text(strip=True):
                     continue
                 answer_list_items(s, [p], [html], report, tag + f' Q{k}')
+        # synthesis: plain "1. …" prompts get the key answer whose question matches;
+        # every other synthesis answer in the old key goes to the section-end box
+        if 'synthesis' in title.lower():
+            prompts = [x for x in doc.between(s.find_all('p'), h, nxt)
+                       if re.match(r'^\s*\d+\.\s', x.get_text(' ', strip=True)) and not (x.find_next_sibling() and 'ak-answer' in (x.find_next_sibling().get('class') or []))]
+            krows = []
+            for kt in ktables:
+                for tr in kt.find_all('tr'):
+                    tds = tr.find_all('td')
+                    if len(tds) >= 2:
+                        krows.append([tds[0].get_text(' ', strip=True), inner(tds[-1]), False])
+            for pr in prompts:
+                pw = set(words(re.sub(r'^\s*\d+\.', '', pr.get_text(' ', strip=True))))
+                best, sc = None, 0
+                for kr in krows:
+                    if kr[2]:
+                        continue
+                    kw = set(words(re.sub(r'^\s*\d+\.', '', kr[0])))
+                    num_ok = re.match(r'^\s*(\d+)\.', kr[0]) and re.match(r'^\s*(\d+)\.', pr.get_text(strip=True)) and re.match(r'^\s*(\d+)\.', kr[0]).group(1) == re.match(r'^\s*(\d+)\.', pr.get_text(strip=True)).group(1)
+                    v = len(pw & kw) / max(1, len(kw)) + (0.3 if num_ok else 0)
+                    if v > sc:
+                        best, sc = kr, v
+                if best is not None and sc >= 0.6:
+                    best[2] = True
+                    answer_list_items(s, [pr], [best[1]], report, tag)
+            for kr in krows:
+                if not kr[2]:
+                    MORE.append(f'<strong>{kr[0]}</strong> {kr[1]}')
+            used_tables.update(id(kt) for kt in ktables)
+            label = ''
+            for kb in kdoc.between(key_blocks(kold), kh, knext):
+                if kb.name in ('h3', 'h4'):
+                    label = kb.get_text(' ', strip=True); continue
+                if kb.name in ('p', 'ul', 'ol') and kb.find_parent('table') is None and kb.get_text(strip=True) \
+                        and not re.search(r'fill this in|notes closed|end of .* answer key', kb.get_text(' ', strip=True), re.I):
+                    MORE.append((f'<em>{label}</em> ' if label else '') + inner(kb))
+                    label = ''
         # teacher-only boxes in the old key (misconception targets, flags)
         stext = norm(s.body.get_text(' ', strip=True))
         for kb in kdoc.between(kold.find_all('div'), kh, knext):
@@ -1065,7 +1893,7 @@ def math9_notes(units, dry, rev):
             build_notes_key(student, keyp, keyp.stem.replace('-answers', '').rsplit('-v', 1)[0], rev, dry)
 
 
-NUMRE = re.compile(r'^\s*((?:S|Q)?\d+[a-z]?)\s*[.):]?\s*$', re.I)
+NUMRE = re.compile(r'^\s*((?:S|Q)?\d+[a-z]?)\s*[★☆]*\s*[.):]?\s*$', re.I)
 
 
 def card_number(card):
