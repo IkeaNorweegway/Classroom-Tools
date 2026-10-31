@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probability — Guided Notes | Grade 7 Mathematics</title>
+<style>
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../../../../fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('../../../../fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../../../../fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
+:root { --accent: #0f766e; --accent-light: #f0fdfa; --accent-mid: #0d9488; }
+:root {
+  --font-body: 'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-mono: Consolas, 'Courier New', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); font-size: 12pt; line-height: 1.6; color: #1f1d1a; background: #fff;
+  max-width: 800px; margin: 0 auto; padding: 28px 32px 48px; font-kerning: normal; }
+h1 { font-family: var(--font-display); font-size: 22pt; font-weight: 600; color: #1f1d1a; margin-bottom: 4px; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-size: 15pt; font-weight: 600; color: var(--accent); margin: 0 0 10px; border-bottom: 2px solid var(--accent-light); padding-bottom: 4px; text-wrap: balance; }
+h3 { font-size: 11pt; font-weight: 700; color: #3f3b35; margin: 18px 0 6px; text-transform: uppercase; letter-spacing: .04em; }
+h4 { font-size: 12pt; font-weight: 700; color: #3f3b35; margin: 14px 0 4px; }
+p { margin-bottom: 8px; text-wrap: pretty; }
+ul, ol { margin: 6px 0 10px 22px; }
+li { margin-bottom: 5px; }
+ol.q-parts { list-style: none; margin-left: 4px; }
+.part { font-weight: 700; color: var(--accent); margin-right: 2px; }
+strong { font-weight: 700; }
+em { font-style: italic; color: #3f3b35; }
+.b { display: inline-block; border-bottom: 2px solid #3f3b35; vertical-align: bottom; min-height: 1.25em; }
+.b-sm { min-width: 60px; } .b-md { min-width: 110px; } .b-lg { min-width: 180px; } .b-xl { min-width: 260px; }
+.ak-fill { color: #166534; font-weight: 700; border-bottom: 2px solid #86efac; padding: 0 2px; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 11pt; }
+th { background: var(--accent-light); color: #1f1d1a; font-weight: 700; text-align: left; padding: 7px 10px; border: 1px solid var(--accent-mid); }
+td { padding: 8px 10px; border: 1px solid #c9c4b9; vertical-align: top; }
+td.term { font-weight: 700; }
+td .b-sm, td .b-md { min-width: 2.4em; } td .b-lg { min-width: 5em; }
+.worked-example p, .key-idea p, .try p { margin-bottom: 5px; }
+td.write-cell { height: 3.2em; }
+.frac { display: inline-flex; flex-direction: column; text-align: center; vertical-align: middle; font-size: 0.9em; line-height: 1.15; margin: 0 2px; }
+.frac .num { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+.frac .den { padding: 1px 3px 0; }
+.frac .frac-slash { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.header-strip { border-left: 6px solid var(--accent); padding: 12px 18px; margin-bottom: 22px; background: var(--accent-light); border-radius: 0 10px 10px 0; }
+.header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
+.header-strip .sub { font-size: 10.5pt; color: #3f3b35; margin: 2px 0 0; }
+.name-row { display: flex; gap: 18px; margin: 14px 0 22px; font-size: 11pt; align-items: baseline; }
+.name-row span { color: #544f47; white-space: nowrap; }
+.name-row .b { flex: 1; }
+.how { background: #faf9f6; border: 1px solid #c9c4b9; border-radius: 10px; padding: 12px 16px; margin: 0 0 18px; font-size: 11pt; }
+.how ol { margin-bottom: 0; }
+.answer-key-header { background: #1f1d1a; color: #fff; padding: 8px 14px; border-radius: 6px; margin: 0 0 16px; font-size: 9.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.section { margin-bottom: 26px; }
+.learning-target { font-size: 11pt; color: #3f3b35; margin: 0 0 12px; padding: 7px 12px; border-left: 3px solid var(--accent-mid); background: var(--accent-light); border-radius: 0 6px 6px 0; }
+.worked-example { border-left: 4px solid var(--accent-mid); background: var(--accent-light); padding: 10px 14px; margin: 12px 0; border-radius: 0 8px 8px 0; }
+.we-label, .try-label, .ki-label { font-size: 10.5pt; font-weight: 700; letter-spacing: .01em; color: var(--accent); margin-bottom: 6px; }
+.try { border: 2px dashed var(--accent-mid); border-radius: 10px; padding: 10px 14px; margin: 14px 0; }
+.key-idea { border: 2px solid var(--accent); border-radius: 10px; padding: 10px 14px; margin: 14px 0; background: #fff; }
+.key-idea p:last-child { margin-bottom: 0; }
+.explain { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 9px 14px; margin: 10px 0 14px; }
+.explain-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #92400e; margin-right: 6px; }
+.hint { font-size: 10.5pt; color: #3f3b35; background: #f4f2ed; border-radius: 6px; padding: 6px 10px; margin: 6px 0; }
+.hint-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #6b665d; margin-right: 4px; }
+.misconception { border-left: 4px solid #dc2626; background: #fef2f2; padding: 10px 14px; margin: 14px 0; border-radius: 0 8px 8px 0; }
+.misconception .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #b91c1c; margin-bottom: 4px; }
+.misconception .m-wrong { font-weight: 700; }
+.misconception .m-wrong::before { content: '✗ '; color: #b91c1c; }
+.misconception .m-right::before { content: '✓ '; color: #15803d; font-weight: 700; }
+.connection { border-left: 4px solid #f97316; background: #fff7ed; padding: 10px 14px; margin: 14px 0; border-radius: 0 8px 8px 0; }
+.connection .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #c2410c; margin-bottom: 4px; }
+.retrieval { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 18px; margin: 18px 0 8px; }
+.retrieval-header { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #1d4ed8; margin-bottom: 10px; }
+.retrieval > ol { margin-left: 20px; }
+.retrieval > ol > li { margin-bottom: 14px; }
+.stretch-label { font-size: 8.5pt; font-weight: 700; color: #92400e; background: #fef3c7; border-radius: 4px; padding: 1px 6px; }
+.self-check { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px 14px; margin: 8px 0 16px; font-size: 11pt; }
+.self-check .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #15803d; margin-right: 8px; }
+.pre-knowledge { background: #faf9f6; border: 1px solid #c9c4b9; border-radius: 10px; padding: 16px 20px; margin: 12px 0; }
+.pre-knowledge .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #544f47; margin-bottom: 10px; }
+.teacher-box { border: 1px solid #f59e0b; background: #fffbeb; border-radius: 8px; padding: 10px 14px; margin: 12px 0; font-size: 10.5pt; }
+.teacher-box .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #b45309; margin-bottom: 4px; }
+.answer { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 12px; margin: 8px 0; font-size: 11pt; }
+.a-label { font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #15803d; margin-right: 6px; }
+.lines { margin: 4px 0 8px; }
+.al { display: block; border-bottom: 1.5px solid #8a8478; height: 2rem; }
+.response { display: block; border: 1.5px solid #b8b2a7; border-radius: 6px; margin: 6px 0 10px; background: #fafbfc; }
+.response-grid { background-image: radial-gradient(circle, #d6d1c7 0.8px, transparent 0.8px); background-size: 18px 18px; background-position: 9px 9px; }
+.work-1 { min-height: 2.4rem; } .work-2 { min-height: 4rem; } .work-3 { min-height: 5.6rem; } .work-4 { min-height: 7.2rem; }
+.work-5 { min-height: 8.8rem; } .work-6 { min-height: 10.4rem; } .work-7 { min-height: 12rem; } .work-8 { min-height: 13.6rem; }
+.section-break { border: none; border-top: 2px dashed #c9c4b9; margin: 24px 0; }
+.question { border: 1px solid #d6d1c7; border-radius: 10px; padding: 12px 16px; margin: 0 0 14px; }
+.q-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.q-num { font-family: var(--font-display); font-weight: 700; font-size: 15pt; color: var(--accent); min-width: 1.6em; }
+.badge { font-size: 8.5pt; font-weight: 700; border-radius: 999px; padding: 2px 9px; }
+.badge-core { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-mid); }
+.badge-ext { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+.badge-code { background: #f4f2ed; color: #544f47; border: 1px solid #c9c4b9; }
+.marks { margin-left: auto; font-size: 10pt; color: #544f47; }
+.q-context { font-size: 9.5pt; color: #6b665d; font-style: italic; margin-bottom: 4px; }
+.ticket { border: 2px dashed #8a8478; border-radius: 12px; padding: 14px 18px; margin: 0 0 22px; }
+.ticket h2 { font-size: 13pt; }
+.meta-block { background: #faf9f6; border: 1px solid #c9c4b9; border-radius: 10px; padding: 12px 16px; margin: 16px 0; }
+.meta-block h4 { margin-top: 0; color: var(--accent); }
+.rubric table td.rating { font-size: 10pt; color: #544f47; white-space: nowrap; }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 11pt; margin-top: 6px; }
+@media print {
+  body { padding: 10px 14px; font-size: 11.5pt; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .section { break-before: page; }
+  .section:first-of-type { break-before: auto; }
+  .question, .retrieval, .misconception, .connection, .self-check, .worked-example, .learning-target,
+  .name-row, table, figure, .try, .key-idea, .explain, .ticket, .meta-block, .answer { break-inside: avoid; }
+  .response { border-color: #6b665d; background-color: #fff; }
+  h2, h3, h4 { break-after: avoid; }
+  p:has(+ figure), p:has(+ table), p:has(+ .response), p:has(+ .lines) { break-after: avoid; }
+  p { orphans: 3; widows: 3; }
+  .ticket { break-inside: avoid; }
+}
+/* ── dg-* SVG classes and the viz kit (shared with Math 9 notes) ── */
+:root { --dg-stroke: #3f3b35; --dg-fill: #faf9f6; --dg-accent: var(--accent); --dg-secondary: #544f47; --dg-muted: #6b665d;
+  --viz-hot: #c2410c; --viz-cold: #1d4ed8; --viz-plant: #15803d; --viz-water: #0369a1; --viz-earth: #92400e; --viz-sun: #ca8a04; --viz-key: #15803d; }
+.viz { margin: 0.9rem auto 1.1rem; text-align: center; break-inside: avoid; page-break-inside: avoid; }
+.viz svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.viz figcaption { font-size: 0.85rem; line-height: 1.4; color: #544f47; margin: 0.4rem auto 0; max-width: 40rem; font-style: italic; }
+svg .dg-boundary, svg .dg-line, svg .dg-accent, svg .dg-dashed, svg .dg-right-angle, svg .dg-construction, svg .dg-grid, svg .dg-outline,
+svg .dg-fill-accent, svg .dg-fill-hot, svg .dg-fill-cold, svg .dg-fill-plant, svg .dg-fill-water, svg .dg-fill-earth, svg .dg-fill-sun, svg .dg-fill-soft, svg .dg-arrow, svg .dg-tag { vector-effect: non-scaling-stroke; }
+svg .dg-boundary    { stroke: var(--dg-stroke); fill: var(--dg-fill); stroke-width: 1.5px; }
+svg .dg-line        { stroke: var(--dg-stroke); fill: none; stroke-width: 1.5px; }
+svg .dg-accent      { stroke: var(--dg-accent); fill: none; stroke-width: 2.5px; }
+svg .dg-dashed      { stroke: var(--dg-secondary); fill: none; stroke-width: 1.5px; stroke-dasharray: 5 3; }
+svg .dg-right-angle { stroke: var(--dg-stroke); fill: none; stroke-width: 1px; }
+svg .dg-construction{ stroke: var(--dg-muted); fill: none; stroke-width: 1px; stroke-dasharray: 2 3; }
+svg .dg-grid        { stroke: var(--dg-muted); stroke-opacity: .45; fill: none; stroke-width: 1px; }
+svg .dg-outline     { stroke: var(--dg-stroke); fill: none; stroke-width: 1.5px; }
+svg .dg-point       { fill: var(--dg-stroke); stroke: none; }
+svg .dg-point-accent{ fill: var(--dg-accent); stroke: none; }
+svg .dg-shade       { fill: var(--dg-accent); fill-opacity: .42; stroke: none; }
+svg .dg-fill-accent { fill: var(--dg-accent); fill-opacity: .16; stroke: var(--dg-accent); stroke-width: 1.5px; }
+svg .dg-fill-hot    { fill: var(--viz-hot);   fill-opacity: .18; stroke: var(--viz-hot);   stroke-width: 1.5px; }
+svg .dg-fill-cold   { fill: var(--viz-cold);  fill-opacity: .14; stroke: var(--viz-cold);  stroke-width: 1.5px; }
+svg .dg-fill-plant  { fill: var(--viz-plant); fill-opacity: .18; stroke: var(--viz-plant); stroke-width: 1.5px; }
+svg .dg-fill-water  { fill: var(--viz-water); fill-opacity: .16; stroke: var(--viz-water); stroke-width: 1.5px; }
+svg .dg-fill-earth  { fill: var(--viz-earth); fill-opacity: .18; stroke: var(--viz-earth); stroke-width: 1.5px; }
+svg .dg-fill-sun    { fill: var(--viz-sun);   fill-opacity: .26; stroke: var(--viz-sun);   stroke-width: 1.5px; }
+svg .dg-fill-soft   { fill: #efece6; stroke: #a8a196; stroke-width: 1px; }
+svg .dg-solid-accent{ fill: var(--dg-accent); stroke: none; }
+svg .dg-solid-muted { fill: var(--dg-muted); stroke: none; }
+svg .dg-arrow       { fill: none; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-arrow.plain { stroke: var(--dg-stroke); }  svg .dg-head.plain  { fill: var(--dg-stroke); }
+svg .dg-arrow.accent{ stroke: var(--dg-accent); }  svg .dg-head.accent { fill: var(--dg-accent); }
+svg .dg-arrow.hot   { stroke: var(--viz-hot); }    svg .dg-head.hot    { fill: var(--viz-hot); }
+svg .dg-arrow.muted { stroke: var(--dg-muted); }   svg .dg-head.muted  { fill: var(--dg-muted); }
+svg .dg-head        { stroke: none; }
+svg .dg-tag         { fill: #fff; stroke: var(--dg-accent); stroke-width: 1.25px; stroke-dasharray: 4 2; }
+svg .dg-tag-answer  { font-weight: 700; fill: var(--viz-key); }
+svg .dg-label       { font: 13px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+svg .dg-label-sm    { font: 11.5px/1.3 var(--font-body); fill: var(--dg-secondary); stroke: none; }
+svg .dg-label-accent{ font: 600 12.5px/1.3 var(--font-body); fill: var(--dg-accent); stroke: none; }
+svg .dg-label-hot   { font: 600 12px/1.3 var(--font-body); fill: var(--viz-hot); stroke: none; }
+svg .dg-label-cold  { font: 600 12px/1.3 var(--font-body); fill: var(--viz-cold); stroke: none; }
+svg .dg-label-earth { font: 600 12px/1.3 var(--font-body); fill: var(--viz-earth); stroke: none; }
+svg .dg-label-white { font: 700 12px/1.3 var(--font-body); fill: #fff; stroke: none; }
+svg .dg-title       { font: 700 13.5px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+svg .dg-math        { font: 16px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+svg .dg-math-lg     { font: 600 20px/1.2 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+</style>
+<style id="key-link-css">
+  .key-link { margin: 6px 0 14px; font-size: 0.9rem; font-weight: 600; }
+  .key-link a { color: inherit; text-decoration: underline; text-underline-offset: 2px; opacity: 0.85; }
+  .key-link a:hover { opacity: 1; }
+  .key-check { text-align: right; margin: 14px 0 6px; }
+  @media print { .key-link { display: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="header-strip">
+  <div class="course-label">Grade 7 Mathematics · Alberta Curriculum · Statistics & Probability</div>
+  <h1>Probability</h1>
+  <p class="sub">Guided Notes</p>
+<p class="key-link key-top"><a href="math7-probability-notes-answers-v1.html">Answer key &rarr;</a></p>
+</div>
+<div class="name-row"><span>Name:</span><span class="b"></span><span>Date:</span><span class="b b-md" style="flex:0 0 130px"></span></div>
+
+<div class="how"><strong>How to use these notes</strong><ol><li>Fill in the blanks as we learn. Think first, then write.</li><li>Do the "Explain it" boxes. They help you remember.</li><li>At the end of each section, cover your notes. Try the retrieval check from memory.</li></ol></div>
+<div class="section">
+<h2 id="pre-check">Before we start</h2>
+<div class="pre-knowledge">
+<div class="label">What do you think? No marks. No wrong answers.</div>
+<p><strong>1.</strong> Write <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> as a decimal and as a percent.</p>
+<div class="lines"><div class="al"></div><div class="al"></div></div>
+<p><strong>2.</strong> Simplify <span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">10</span></span>.</p>
+<div class="lines"><div class="al"></div><div class="al"></div></div>
+<p><strong>3.</strong> Write 0.25 as a fraction and as a percent.</p>
+<div class="lines"><div class="al"></div><div class="al"></div></div>
+<p><strong>4.</strong> Find 1 − 0.4.</p>
+<div class="lines"><div class="al"></div><div class="al"></div></div>
+<p><strong>5.</strong> Find <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span> of 40.</p>
+<div class="lines"><div class="al"></div><div class="al"></div></div>
+<p><strong>6.</strong> How many more students picked red than blue?</p>
+<figure class="viz">
+<!-- tikz: m8-bar | data="red:7;blue:4;green:5" ymax=8 ystep=1 title="Favourite colour" ylabel="students" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 318 260" width="318" height="260" aria-label="Bar graph: Favourite colour. red: 7, blue: 4, green: 5. Vertical axis from 0 to 8.">
+<text x="178.0" y="20.0" text-anchor="middle" class="dg-title">Favourite colour</text><line x1="58.0" y1="234.0" x2="298.0" y2="234.0" class="dg-grid"/><text x="52.0" y="238.0" text-anchor="end" class="dg-label-sm">0</text><line x1="58.0" y1="209.0" x2="298.0" y2="209.0" class="dg-grid"/><text x="52.0" y="213.0" text-anchor="end" class="dg-label-sm">1</text><line x1="58.0" y1="184.0" x2="298.0" y2="184.0" class="dg-grid"/><text x="52.0" y="188.0" text-anchor="end" class="dg-label-sm">2</text><line x1="58.0" y1="159.0" x2="298.0" y2="159.0" class="dg-grid"/><text x="52.0" y="163.0" text-anchor="end" class="dg-label-sm">3</text><line x1="58.0" y1="134.0" x2="298.0" y2="134.0" class="dg-grid"/><text x="52.0" y="138.0" text-anchor="end" class="dg-label-sm">4</text><line x1="58.0" y1="109.0" x2="298.0" y2="109.0" class="dg-grid"/><text x="52.0" y="113.0" text-anchor="end" class="dg-label-sm">5</text><line x1="58.0" y1="84.0" x2="298.0" y2="84.0" class="dg-grid"/><text x="52.0" y="88.0" text-anchor="end" class="dg-label-sm">6</text><line x1="58.0" y1="59.0" x2="298.0" y2="59.0" class="dg-grid"/><text x="52.0" y="63.0" text-anchor="end" class="dg-label-sm">7</text><line x1="58.0" y1="34.0" x2="298.0" y2="34.0" class="dg-grid"/><text x="52.0" y="38.0" text-anchor="end" class="dg-label-sm">8</text><line x1="58.0" y1="30.0" x2="58.0" y2="234.0" class="dg-line"/><line x1="58.0" y1="234.0" x2="306.0" y2="234.0" class="dg-line"/><text x="98.0" y="250.0" text-anchor="middle" class="dg-label-sm">red</text><rect x="75.6" y="59.0" width="44.8" height="175.0" class="dg-fill-accent"/><text x="178.0" y="250.0" text-anchor="middle" class="dg-label-sm">blue</text><rect x="155.6" y="134.0" width="44.8" height="100.0" class="dg-fill-accent"/><text x="258.0" y="250.0" text-anchor="middle" class="dg-label-sm">green</text><rect x="235.6" y="109.0" width="44.8" height="125.0" class="dg-fill-accent"/><g transform="translate(14,134.0) rotate(-90)"><text x="0.0" y="0.0" text-anchor="middle" class="dg-label">students</text></g>
+</svg>
+</figure>
+<div class="lines"><div class="al"></div><div class="al"></div></div>
+<p><em>Keep this page. You will look at it again at the end.</em></p>
+</div>
+</div>
+<div class="section">
+<h2 id="s1">Section 1 · Outcomes, events and likelihood</h2>
+<div class="learning-target"><strong>Learning target:</strong> I can list the outcomes. I can say how likely an event is, from impossible to certain.</div>
+
+<h3>Words to know</h3>
+<table class="vocab"><thead><tr><th style="width:24%">Word</th><th style="width:42%">What it means (in your own words)</th><th>Example or picture</th></tr></thead><tbody>
+<tr><td class="term">experiment</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">outcome</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">event</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">favourable outcome</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">simple event</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">equally likely</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">probability</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">impossible</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">certain</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+</tbody></table>
+<h4>Outcomes and events</h4>
+<p>Roll a die. It can land on 1, 2, 3, 4, 5 or 6. Each one is an <strong>outcome</strong>.</p>
+<figure class="viz">
+<!-- tikz: m8-dice | label="Roll a die: 6 outcomes" caption="A fair die has 6 faces. Each face has the same chance." -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 270 66" width="270" height="66" aria-label="Die faces: 1, 2, 3, 4, 5, 6">
+<rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="25.0" cy="23.0" r="2.9" class="dg-point"/><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="61.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="76.8" cy="30.8" r="2.9" class="dg-point"/><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="105.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="113.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="120.8" cy="30.8" r="2.9" class="dg-point"/><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="149.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="164.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="149.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="164.8" cy="30.8" r="2.9" class="dg-point"/><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="193.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="208.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="201.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="193.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="208.8" cy="30.8" r="2.9" class="dg-point"/><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="237.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="237.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="237.5" cy="31.8" r="2.9" class="dg-point"/><circle cx="252.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="252.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="252.5" cy="31.8" r="2.9" class="dg-point"/><text x="135.0" y="58.0" text-anchor="middle" class="dg-label-accent">Roll a die: 6 outcomes</text>
+</svg>
+<figcaption>A fair die has 6 faces. Each face has the same chance.</figcaption>
+</figure>
+<p>An <strong>event</strong> is what you are looking for. "Roll an even number" is an event.</p>
+<p>The outcomes that match the event are <strong>favourable</strong>.</p>
+<div class="worked-example">
+<div class="we-label">Worked Example 1 — Favourable outcomes</div>
+<p>Event: roll a number greater than 4.</p>
+<figure class="viz">
+<!-- tikz: m8-dice | hot="5,6" labels="no;no;no;no;yes;yes" label="Greater than 4? Shade the yes faces." -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 270 82" width="270" height="82" aria-label="Die faces: 1, 2, 3, 4, 5, 6. Shaded: 5, 6">
+<rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="25.0" cy="23.0" r="2.9" class="dg-point"/><text x="25.0" y="56.0" text-anchor="middle" class="dg-label-sm">no</text><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="61.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="76.8" cy="30.8" r="2.9" class="dg-point"/><text x="69.0" y="56.0" text-anchor="middle" class="dg-label-sm">no</text><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="105.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="113.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="120.8" cy="30.8" r="2.9" class="dg-point"/><text x="113.0" y="56.0" text-anchor="middle" class="dg-label-sm">no</text><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="149.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="164.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="149.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="164.8" cy="30.8" r="2.9" class="dg-point"/><text x="157.0" y="56.0" text-anchor="middle" class="dg-label-sm">no</text><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-sun"/><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="193.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="208.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="201.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="193.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="208.8" cy="30.8" r="2.9" class="dg-point"/><text x="201.0" y="56.0" text-anchor="middle" class="dg-label-sm">yes</text><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-sun"/><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="237.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="237.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="237.5" cy="31.8" r="2.9" class="dg-point"/><circle cx="252.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="252.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="252.5" cy="31.8" r="2.9" class="dg-point"/><text x="245.0" y="56.0" text-anchor="middle" class="dg-label-sm">yes</text><text x="135.0" y="74.0" text-anchor="middle" class="dg-label-accent">Greater than 4? Shade the yes faces.</text>
+</svg>
+</figure>
+<p>Step 1: List all the outcomes: 1, 2, 3, 4, 5, 6.</p>
+<p>Step 2: Which ones match? 5 and 6. They are the favourable outcomes.</p>
+<p>Step 3: There are <span class="b b-sm"></span> favourable outcomes out of 6.</p>
+</div>
+<h4>From impossible to certain</h4>
+<p>A <strong>probability</strong> is a number from 0 to 1.</p>
+<figure class="viz">
+<!-- tikz: m8-numberline | min=0 max=1 step=0.25 ticklabels="0:0;0.25:unlikely;0.5:even chance;0.75:likely;1:1" ends="impossible,certain" width=560 caption="Every probability sits somewhere on this line." -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 560 108" width="560" height="108" aria-label="Number line from 0 to 1">
+<line x1="16.0" y1="52.0" x2="544.0" y2="52.0" class="dg-line"/><polygon points="10.0,52.0 20.0,47.0 20.0,57.0" class="dg-head plain"/><polygon points="550.0,52.0 540.0,47.0 540.0,57.0" class="dg-head plain"/><line x1="34.0" y1="45.0" x2="34.0" y2="59.0" class="dg-line"/><text x="34.0" y="76.0" text-anchor="middle" class="dg-label">0</text><line x1="157.0" y1="45.0" x2="157.0" y2="59.0" class="dg-line"/><text x="157.0" y="76.0" text-anchor="middle" class="dg-label">unlikely</text><line x1="280.0" y1="45.0" x2="280.0" y2="59.0" class="dg-line"/><text x="280.0" y="76.0" text-anchor="middle" class="dg-label">even chance</text><line x1="403.0" y1="45.0" x2="403.0" y2="59.0" class="dg-line"/><text x="403.0" y="76.0" text-anchor="middle" class="dg-label">likely</text><line x1="526.0" y1="45.0" x2="526.0" y2="59.0" class="dg-line"/><text x="526.0" y="76.0" text-anchor="middle" class="dg-label">1</text><text x="16.0" y="96.0" text-anchor="start" class="dg-label-sm">← impossible</text><text x="544.0" y="96.0" text-anchor="end" class="dg-label-sm">certain →</text>
+</svg>
+<figcaption>Every probability sits somewhere on this line.</figcaption>
+</figure>
+<div class="key-idea">
+<div class="ki-label">How likely?</div>
+<p>Probability is a number from <strong>0 to 1</strong>.</p>
+<p>0 means <strong>impossible</strong>. 1 means <strong>certain</strong>.</p>
+<p><span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> means an <strong>even chance</strong>. It is as likely as not.</p>
+<p>Closer to 1 means more likely.</p>
+</div>
+
+<div class="worked-example">
+<div class="we-label">Worked Example 2 — Place events on the line</div>
+<p>Kai has a bag of 5 red counters. He draws one without looking.</p>
+<figure class="viz">
+<!-- tikz: m8-bag | counters="red:5" label="5 red counters" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 126 130" width="126" height="130" aria-label="A bag of counters: 5 red. 5 in all.">
+<polygon points="41.8,28.0 33.3,6.0 92.7,6.0 84.2,28.0" class="dg-fill-earth"/><rect x="10.0" y="26.0" width="106.0" height="78.0" rx="18" class="dg-fill-earth"/><rect x="39.7" y="20.0" width="46.6" height="8.0" rx="3" class="dg-fill-hot"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="37.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="63.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="63.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="89.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="89.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="89.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="50.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="50.0" cy="79.0" r="11.0" class="dg-fill-hot"/><text x="50.0" y="83.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="76.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="76.0" cy="79.0" r="11.0" class="dg-fill-hot"/><text x="76.0" y="83.0" text-anchor="middle" class="dg-label-sm">R</text><text x="63.0" y="122.0" text-anchor="middle" class="dg-label-accent">5 red counters</text>
+</svg>
+</figure>
+<figure class="viz">
+<!-- tikz: m8-numberline | min=0 max=1 step=0.5 ticklabels="0:impossible;0.5:even chance;1:certain" points="0:draw blue;1:draw red" keypoints="…" width=520 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 88" width="520" height="88" aria-label="Number line from 0 to 1, marked: 0 (draw blue), 1 (draw red)">
+<line x1="16.0" y1="52.0" x2="504.0" y2="52.0" class="dg-line"/><polygon points="10.0,52.0 20.0,47.0 20.0,57.0" class="dg-head plain"/><polygon points="510.0,52.0 500.0,47.0 500.0,57.0" class="dg-head plain"/><line x1="34.0" y1="45.0" x2="34.0" y2="59.0" class="dg-line"/><text x="34.0" y="76.0" text-anchor="middle" class="dg-label">impossible</text><line x1="260.0" y1="45.0" x2="260.0" y2="59.0" class="dg-line"/><text x="260.0" y="76.0" text-anchor="middle" class="dg-label">even chance</text><line x1="486.0" y1="45.0" x2="486.0" y2="59.0" class="dg-line"/><text x="486.0" y="76.0" text-anchor="middle" class="dg-label">certain</text><circle cx="34.0" cy="52.0" r="5.5" class="dg-point-accent"/><text x="34.0" y="36.0" text-anchor="middle" class="dg-label-accent">draw blue</text><circle cx="486.0" cy="52.0" r="5.5" class="dg-point-accent"/><text x="486.0" y="36.0" text-anchor="middle" class="dg-label-accent">draw red</text>
+</svg>
+</figure>
+<p>Step 1: Draw a red counter. Every counter is red. It is <strong>certain</strong>: probability 1.</p>
+<p>Step 2: Draw a blue counter. There are no blue ones. It is <strong>impossible</strong>: probability 0.</p>
+<p>Step 3: Flip a coin and get heads. Heads and tails have the same chance. It is an <span class="b b-lg"></span>: probability <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>.</p>
+</div>
+<h4>Not always equally likely</h4>
+<p>A fair coin lands heads or tails with the same chance. Not every experiment is like that.</p>
+<figure class="viz">
+<!-- tikz: m8-spin | sections="red:2;blue:1;yellow:1" size=130 caption="Red takes up more space. The arrow lands on red more often." -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 138 136" width="138" height="136" aria-label="Spinner with unequal parts: red (50%), blue (25%), yellow (25%)">
+<path d="M69.0,69.0 L69.0,10.0 A59.0,59.0 0 0 1 69.0,128.0 Z" class="dg-fill-hot"/><path d="M69.0,69.0 L69.0,128.0 A59.0,59.0 0 0 1 10.0,69.0 Z" class="dg-fill-cold"/><path d="M69.0,69.0 L10.0,69.0 A59.0,59.0 0 0 1 69.0,10.0 Z" class="dg-fill-sun"/><text x="104.4" y="73.0" text-anchor="middle" class="dg-label">red</text><text x="44.0" y="98.0" text-anchor="middle" class="dg-label">blue</text><text x="44.0" y="48.0" text-anchor="middle" class="dg-label">yellow</text><circle cx="69.0" cy="69.0" r="59.0" class="dg-outline"/><line x1="69.0" y1="69.0" x2="81.7" y2="64.4" class="dg-arrow plain"/><polygon points="87.8,62.1 81.9,69.2 78.8,60.5" class="dg-head plain"/><circle cx="69.0" cy="69.0" r="4.0" class="dg-point"/>
+</svg>
+<figcaption>Red takes up more space. The arrow lands on red more often.</figcaption>
+</figure>
+<figure class="viz">
+<!-- tikz: m8-bag | counters="red:4;blue:1" caption="There are more red counters. Red is more likely than blue." -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 126 110" width="126" height="110" aria-label="A bag of counters: 4 red, 1 blue. 5 in all.">
+<polygon points="41.8,28.0 33.3,6.0 92.7,6.0 84.2,28.0" class="dg-fill-earth"/><rect x="10.0" y="26.0" width="106.0" height="78.0" rx="18" class="dg-fill-earth"/><rect x="39.7" y="20.0" width="46.6" height="8.0" rx="3" class="dg-fill-hot"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="37.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="63.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="63.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="89.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="89.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="89.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="50.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="50.0" cy="79.0" r="11.0" class="dg-fill-hot"/><text x="50.0" y="83.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="76.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="76.0" cy="79.0" r="11.0" class="dg-fill-cold"/><text x="76.0" y="83.0" text-anchor="middle" class="dg-label-sm">B</text>
+</svg>
+<figcaption>There are more red counters. Red is more likely than blue.</figcaption>
+</figure>
+<p>A bent coin may land heads more often than tails. Then heads and tails are not equally likely.</p>
+<div class="worked-example">
+<div class="we-label">Worked Example 3 — More likely or less likely?</div>
+<p>Mia spins this spinner at a Calgary Stampede booth.</p>
+<figure class="viz">
+<!-- tikz: m8-spin | sections="red:2;blue:1;yellow:1" size=150 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 158 156" width="158" height="156" aria-label="Spinner with unequal parts: red (50%), blue (25%), yellow (25%)">
+<path d="M79.0,79.0 L79.0,10.0 A69.0,69.0 0 0 1 79.0,148.0 Z" class="dg-fill-hot"/><path d="M79.0,79.0 L79.0,148.0 A69.0,69.0 0 0 1 10.0,79.0 Z" class="dg-fill-cold"/><path d="M79.0,79.0 L10.0,79.0 A69.0,69.0 0 0 1 79.0,10.0 Z" class="dg-fill-sun"/><text x="120.4" y="83.0" text-anchor="middle" class="dg-label">red</text><text x="49.7" y="112.3" text-anchor="middle" class="dg-label">blue</text><text x="49.7" y="53.7" text-anchor="middle" class="dg-label">yellow</text><circle cx="79.0" cy="79.0" r="69.0" class="dg-outline"/><line x1="79.0" y1="79.0" x2="94.9" y2="73.2" class="dg-arrow plain"/><polygon points="101.0,71.0 95.1,78.0 91.9,69.4" class="dg-head plain"/><circle cx="79.0" cy="79.0" r="4.0" class="dg-point"/>
+</svg>
+</figure>
+<p>Step 1: Red covers half the spinner. Blue covers a quarter.</p>
+<p>Step 2: So red is <strong>more likely</strong> than blue.</p>
+<p>Step 3: Blue and yellow are the same size. They are <span class="b b-lg"></span>.</p>
+<p>Step 4: Yellow is <span class="b b-lg"></span> than red.</p>
+</div>
+
+<div class="misconception">
+<div class="label">Watch out — a common mistake</div>
+<p class="m-wrong">"The chance of rain is 120%! It will surely rain." Or: "The probability is 3."</p>
+<p><strong>Why it is wrong:</strong> A probability compares the favourable outcomes to all the outcomes. The favourable ones can never be more than all of them.</p>
+<figure class="viz">
+<!-- tikz: m8-numberline | min=0 max=1.5 step=0.25 ticklabels="0:0;0.5:0.5;1:1;1.5:1.5" highlight="0,1" points="1.25:no probability here" width=480 caption="Probabilities live on the thick part, from 0 to 1." -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 88" width="480" height="88" aria-label="Number line from 0 to 1.5, marked: 1.25 (no probability here)">
+<line x1="16.0" y1="52.0" x2="464.0" y2="52.0" class="dg-line"/><polygon points="10.0,52.0 20.0,47.0 20.0,57.0" class="dg-head plain"/><polygon points="470.0,52.0 460.0,47.0 460.0,57.0" class="dg-head plain"/><line x1="34.0" y1="52" x2="308.7" y2="52" class="dg-accent"/><line x1="34.0" y1="45.0" x2="34.0" y2="59.0" class="dg-line"/><text x="34.0" y="76.0" text-anchor="middle" class="dg-label">0</text><line x1="102.7" y1="45.0" x2="102.7" y2="59.0" class="dg-line"/><line x1="171.3" y1="45.0" x2="171.3" y2="59.0" class="dg-line"/><text x="171.3" y="76.0" text-anchor="middle" class="dg-label">0.5</text><line x1="240.0" y1="45.0" x2="240.0" y2="59.0" class="dg-line"/><line x1="308.7" y1="45.0" x2="308.7" y2="59.0" class="dg-line"/><text x="308.7" y="76.0" text-anchor="middle" class="dg-label">1</text><line x1="377.3" y1="45.0" x2="377.3" y2="59.0" class="dg-line"/><line x1="446.0" y1="45.0" x2="446.0" y2="59.0" class="dg-line"/><text x="446.0" y="76.0" text-anchor="middle" class="dg-label">1.5</text><circle cx="377.3" cy="52.0" r="5.5" class="dg-point-accent"/><text x="377.3" y="36.0" text-anchor="middle" class="dg-label-accent">no probability here</text>
+</svg>
+<figcaption>Probabilities live on the thick part, from 0 to 1.</figcaption>
+</figure>
+<p class="m-right"><strong>What is true:</strong> A probability is from 0 to 1. As a percent, it is from 0% to 100%. Certain is 1, or 100%.</p>
+</div>
+<div class="explain"><span class="explain-label">Explain it</span> In Worked Example 2, why is drawing a red counter certain?<div class="lines"><div class="al"></div><div class="al"></div></div></div>
+
+<div class="try">
+<div class="try-label">Your turn</div>
+<ol class="q-parts"><li><span class="part">1.</span> A spinner has 4 equal parts. List the outcomes. <span class="b b-xl"></span></li></ol>
+<figure class="viz">
+<!-- tikz: m8-spin | sections="red;blue;green;yellow" size=120 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 128 126" width="128" height="126" aria-label="Spinner with equal parts: red, blue, green, yellow">
+<path d="M64.0,64.0 L64.0,10.0 A54.0,54.0 0 0 1 118.0,64.0 Z" class="dg-fill-hot"/><path d="M64.0,64.0 L118.0,64.0 A54.0,54.0 0 0 1 64.0,118.0 Z" class="dg-fill-cold"/><path d="M64.0,64.0 L64.0,118.0 A54.0,54.0 0 0 1 10.0,64.0 Z" class="dg-fill-plant"/><path d="M64.0,64.0 L10.0,64.0 A54.0,54.0 0 0 1 64.0,10.0 Z" class="dg-fill-sun"/><text x="86.9" y="45.1" text-anchor="middle" class="dg-label">red</text><text x="86.9" y="90.9" text-anchor="middle" class="dg-label">blue</text><text x="41.1" y="90.9" text-anchor="middle" class="dg-label">green</text><text x="41.1" y="45.1" text-anchor="middle" class="dg-label">yellow</text><circle cx="64.0" cy="64.0" r="54.0" class="dg-outline"/><line x1="64.0" y1="64.0" x2="75.1" y2="59.9" class="dg-arrow plain"/><polygon points="81.2,57.7 75.3,64.8 72.2,56.1" class="dg-head plain"/><circle cx="64.0" cy="64.0" r="4.0" class="dg-point"/>
+</svg>
+</figure>
+<ol class="q-parts"><li><span class="part">2.</span> Event: roll an odd number. List the favourable outcomes. <span class="b b-md"></span></li><li><span class="part">3.</span> How likely is it? a) Roll a 0 on a die. b) The sun rises tomorrow. c) Roll a 1. <span class="b b-xl"></span></li><li><span class="part">4.</span> A bag has 2 red and 6 blue counters. Which colour is more likely? <span class="b b-xl"></span></li></ol>
+<figure class="viz">
+<!-- tikz: m8-bag | counters="red:2;blue:6" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 152 110" width="152" height="110" aria-label="A bag of counters: 2 red, 6 blue. 8 in all.">
+<polygon points="49.6,28.0 39.0,6.0 113.0,6.0 102.4,28.0" class="dg-fill-earth"/><rect x="10.0" y="26.0" width="132.0" height="78.0" rx="18" class="dg-fill-earth"/><rect x="47.0" y="20.0" width="58.1" height="8.0" rx="3" class="dg-fill-hot"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="37.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="63.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="63.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="89.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="89.0" cy="53.0" r="11.0" class="dg-fill-cold"/><text x="89.0" y="57.0" text-anchor="middle" class="dg-label-sm">B</text><circle cx="115.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="115.0" cy="53.0" r="11.0" class="dg-fill-cold"/><text x="115.0" y="57.0" text-anchor="middle" class="dg-label-sm">B</text><circle cx="37.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="37.0" cy="79.0" r="11.0" class="dg-fill-cold"/><text x="37.0" y="83.0" text-anchor="middle" class="dg-label-sm">B</text><circle cx="63.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="79.0" r="11.0" class="dg-fill-cold"/><text x="63.0" y="83.0" text-anchor="middle" class="dg-label-sm">B</text><circle cx="89.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="89.0" cy="79.0" r="11.0" class="dg-fill-cold"/><text x="89.0" y="83.0" text-anchor="middle" class="dg-label-sm">B</text><circle cx="115.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="115.0" cy="79.0" r="11.0" class="dg-fill-cold"/><text x="115.0" y="83.0" text-anchor="middle" class="dg-label-sm">B</text>
+</svg>
+</figure>
+<ol class="q-parts"><li><span class="part">5.</span> Leo says P(win) = 1.5. Is he right? <span class="b b-xl"></span></li></ol>
+</div>
+<div class="retrieval">
+<div class="retrieval-header">Retrieval check — close your notes</div>
+<ol>
+<li>Write <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">4</span></span> as a decimal and a percent.<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li>Simplify <span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">8</span></span>.<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li>Find the mean of 4, 6 and 8.<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li>Find 20% of 50.<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li><span class="stretch-label">★ Stretch</span> A bag has 3 red counters and some blue ones. Blue is more likely than red. What is the fewest blue counters it can have?<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+</ol>
+</div>
+<div class="self-check"><span class="label">Self-check</span> ☐ I could teach it &nbsp;&nbsp; ☐ Getting there &nbsp;&nbsp; ☐ Not yet</div>
+
+</div>
+<p class="key-link key-check"><a href="math7-probability-notes-answers-v1.html#s1">Check your answers for Section 1 &rarr;</a></p>
+<div class="section">
+<h2 id="s2">Section 2 · Theoretical probability</h2>
+<div class="learning-target"><strong>Learning target:</strong> I can list the sample space. I can find a probability as a ratio, fraction, decimal and percent.</div>
+
+<h3>Words to know</h3>
+<table class="vocab"><thead><tr><th style="width:24%">Word</th><th style="width:42%">What it means (in your own words)</th><th>Example or picture</th></tr></thead><tbody>
+<tr><td class="term">sample space</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">theoretical probability</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">P(event)</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+</tbody></table>
+<h4>The sample space</h4>
+<p>List every outcome once, inside curly brackets. This list is the <strong>sample space</strong>.</p>
+<figure class="viz">
+<!-- tikz: m8-flips | items="H,T" label="Coin: {H, T}" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 104 66" width="104" height="66" aria-label="Coin flips: H, T">
+<circle cx="30.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="30.0" cy="23.0" r="14.0" class="dg-outline"/><text x="30.0" y="28.0" text-anchor="middle" class="dg-label">H</text><circle cx="74.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="74.0" cy="23.0" r="14.0" class="dg-outline"/><text x="74.0" y="28.0" text-anchor="middle" class="dg-label">T</text><text x="52.0" y="58.0" text-anchor="middle" class="dg-label-accent">Coin: {H, T}</text>
+</svg>
+</figure>
+<figure class="viz">
+<!-- tikz: m8-dice | label="Die: {1, 2, 3, 4, 5, 6}" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 270 66" width="270" height="66" aria-label="Die faces: 1, 2, 3, 4, 5, 6">
+<rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="25.0" cy="23.0" r="2.9" class="dg-point"/><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="61.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="76.8" cy="30.8" r="2.9" class="dg-point"/><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="105.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="113.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="120.8" cy="30.8" r="2.9" class="dg-point"/><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="149.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="164.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="149.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="164.8" cy="30.8" r="2.9" class="dg-point"/><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="193.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="208.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="201.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="193.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="208.8" cy="30.8" r="2.9" class="dg-point"/><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="237.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="237.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="237.5" cy="31.8" r="2.9" class="dg-point"/><circle cx="252.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="252.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="252.5" cy="31.8" r="2.9" class="dg-point"/><text x="135.0" y="58.0" text-anchor="middle" class="dg-label-accent">Die: {1, 2, 3, 4, 5, 6}</text>
+</svg>
+</figure>
+<figure class="viz">
+<!-- tikz: m8-spin | sections="red;blue;green;yellow" size=120 label="Spinner: {red, blue, green, yellow}" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 232 146" width="232" height="146" aria-label="Spinner with equal parts: red, blue, green, yellow">
+<path d="M115.8,64.0 L115.8,10.0 A54.0,54.0 0 0 1 169.8,64.0 Z" class="dg-fill-hot"/><path d="M115.8,64.0 L169.8,64.0 A54.0,54.0 0 0 1 115.8,118.0 Z" class="dg-fill-cold"/><path d="M115.8,64.0 L115.8,118.0 A54.0,54.0 0 0 1 61.8,64.0 Z" class="dg-fill-plant"/><path d="M115.8,64.0 L61.8,64.0 A54.0,54.0 0 0 1 115.8,10.0 Z" class="dg-fill-sun"/><text x="138.7" y="45.1" text-anchor="middle" class="dg-label">red</text><text x="138.7" y="90.9" text-anchor="middle" class="dg-label">blue</text><text x="92.9" y="90.9" text-anchor="middle" class="dg-label">green</text><text x="92.9" y="45.1" text-anchor="middle" class="dg-label">yellow</text><circle cx="115.8" cy="64.0" r="54.0" class="dg-outline"/><line x1="115.8" y1="64.0" x2="126.9" y2="59.9" class="dg-arrow plain"/><polygon points="133.0,57.7 127.1,64.8 124.0,56.1" class="dg-head plain"/><circle cx="115.8" cy="64.0" r="4.0" class="dg-point"/><text x="115.8" y="138.0" text-anchor="middle" class="dg-label-accent">Spinner: {red, blue, green, yellow}</text>
+</svg>
+</figure>
+<div class="key-idea">
+<div class="ki-label">Theoretical probability</div>
+<p>When all the outcomes are equally likely:</p>
+<p><strong>P(event) = favourable outcomes ÷ all outcomes</strong></p>
+<p>Write it four ways. Ratio 3:6 (favourable to all). Fraction <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">6</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>. Decimal 0.5. Percent 50%.</p>
+<p>All the probabilities in a sample space <strong>add to 1</strong>.</p>
+</div>
+
+<div class="worked-example">
+<div class="we-label">Worked Example 1 — Four ways</div>
+<p>A bag has 4 red counters and 1 blue counter. Find P(red).</p>
+<figure class="viz">
+<!-- tikz: m8-bag | counters="red:4;blue:1" out="?" outlabel="draw one" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 217 110" width="217" height="110" aria-label="A bag of counters: 4 red, 1 blue. 5 in all. One is drawn out.">
+<polygon points="41.8,28.0 33.3,6.0 92.7,6.0 84.2,28.0" class="dg-fill-earth"/><rect x="10.0" y="26.0" width="106.0" height="78.0" rx="18" class="dg-fill-earth"/><rect x="39.7" y="20.0" width="46.6" height="8.0" rx="3" class="dg-fill-hot"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="37.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="63.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="63.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="89.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="89.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="89.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="50.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="50.0" cy="79.0" r="11.0" class="dg-fill-hot"/><text x="50.0" y="83.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="76.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="76.0" cy="79.0" r="11.0" class="dg-fill-cold"/><text x="76.0" y="83.0" text-anchor="middle" class="dg-label-sm">B</text><line x1="124.0" y1="65.0" x2="157.5" y2="65.0" class="dg-arrow accent"/><polygon points="164.0,65.0 156.0,69.6 156.0,60.4" class="dg-head accent"/><text x="144.0" y="56.0" text-anchor="middle" class="dg-label-sm">draw</text><circle cx="184.0" cy="65.0" r="13.0" class="dg-dashed"/><text x="184.0" y="69.0" text-anchor="middle" class="dg-label">?</text><text x="184.0" y="95.0" text-anchor="middle" class="dg-label-sm">draw one</text>
+</svg>
+</figure>
+<p>Step 1: Count all the counters: 4 + 1 = 5. Each counter is equally likely.</p>
+<p>Step 2: Count the favourable ones (red): 4.</p>
+<p>Step 3: Ratio: 4:5. Fraction: <span class="frac"><span class="num">4</span><span class="frac-slash">/</span><span class="den">5</span></span>.</p>
+<p>Step 4: Decimal: 4 ÷ 5 = <span class="b b-sm"></span>. Percent: <span class="b b-sm"></span>.</p>
+<figure class="viz">
+<!-- tikz: m8-percentbar | percent=80 top="0%,[[ ]],100%" bottom="0,4,5" toplabel="percent" bottomlabel="counters" width=480 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 106" width="480" height="106" aria-label="Percent bar: 80% shaded. Percents 0%, blank, 100%; values 0, 4, 5">
+<rect x="93.8" y="40.0" width="362.2" height="34.0" class="dg-fill-soft"/><rect x="93.8" y="40.0" width="289.8" height="34.0" class="dg-fill-accent"/><rect x="93.8" y="40.0" width="362.2" height="34.0" class="dg-outline"/><line x1="93.8" y1="35.0" x2="93.8" y2="79.0" class="dg-line"/><text x="93.8" y="30.0" text-anchor="middle" class="dg-label">0%</text><text x="93.8" y="96.0" text-anchor="middle" class="dg-label">0</text><line x1="383.6" y1="35.0" x2="383.6" y2="79.0" class="dg-line"/><rect x="367.5" y="17.0" width="32.2" height="19.0" rx="3" class="dg-tag"/><text x="383.6" y="96.0" text-anchor="middle" class="dg-label">4</text><line x1="456.0" y1="35.0" x2="456.0" y2="79.0" class="dg-line"/><text x="456.0" y="30.0" text-anchor="middle" class="dg-label">100%</text><text x="456.0" y="96.0" text-anchor="middle" class="dg-label">5</text><text x="6.0" y="30.0" text-anchor="start" class="dg-label-accent">percent</text><text x="6.0" y="96.0" text-anchor="start" class="dg-label-accent">counters</text>
+</svg>
+</figure>
+</div>
+
+<div class="worked-example">
+<div class="we-label">Worked Example 2 — Roll a 6</div>
+<p>Find P(roll a 6) on a fair die.</p>
+<figure class="viz">
+<!-- tikz: m8-dice | hot="6" label="The favourable outcome is shaded." -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 270 66" width="270" height="66" aria-label="Die faces: 1, 2, 3, 4, 5, 6. Shaded: 6">
+<rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="25.0" cy="23.0" r="2.9" class="dg-point"/><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="61.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="76.8" cy="30.8" r="2.9" class="dg-point"/><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="105.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="113.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="120.8" cy="30.8" r="2.9" class="dg-point"/><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="149.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="164.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="149.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="164.8" cy="30.8" r="2.9" class="dg-point"/><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="193.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="208.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="201.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="193.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="208.8" cy="30.8" r="2.9" class="dg-point"/><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-sun"/><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="237.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="237.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="237.5" cy="31.8" r="2.9" class="dg-point"/><circle cx="252.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="252.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="252.5" cy="31.8" r="2.9" class="dg-point"/><text x="135.0" y="58.0" text-anchor="middle" class="dg-label-accent">The favourable outcome is shaded.</text>
+</svg>
+</figure>
+<p>Step 1: The sample space is {1, 2, 3, 4, 5, 6}. That is 6 outcomes.</p>
+<p>Step 2: Only one face is a 6. It is a <strong>simple event</strong>.</p>
+<p>Step 3: P(roll a 6) = <span class="b b-sm"></span>.</p>
+<p>Step 4: 1 ÷ 6 = 0.1666… It keeps going. P ≈ <span class="b b-sm"></span>, or about <span class="b b-sm"></span>.</p>
+</div>
+
+<div class="misconception">
+<div class="label">Watch out — a common mistake</div>
+<p class="m-wrong">"Rolling a 6 either happens or it doesn't. So P(6) = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>."</p>
+<p><strong>Why it is wrong:</strong> "Happens" and "doesn't happen" are not equally likely. Only one face is a 6. Five faces are not.</p>
+<figure class="viz">
+<!-- tikz: m8-dice | hot="6" labels="not 6;not 6;not 6;not 6;not 6;6" caption="One face is a 6. Five faces are not." -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 270 62" width="270" height="62" aria-label="Die faces: 1, 2, 3, 4, 5, 6. Shaded: 6">
+<rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="25.0" cy="23.0" r="2.9" class="dg-point"/><text x="25.0" y="56.0" text-anchor="middle" class="dg-label-sm">not 6</text><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="61.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="76.8" cy="30.8" r="2.9" class="dg-point"/><text x="69.0" y="56.0" text-anchor="middle" class="dg-label-sm">not 6</text><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="105.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="113.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="120.8" cy="30.8" r="2.9" class="dg-point"/><text x="113.0" y="56.0" text-anchor="middle" class="dg-label-sm">not 6</text><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="149.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="164.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="149.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="164.8" cy="30.8" r="2.9" class="dg-point"/><text x="157.0" y="56.0" text-anchor="middle" class="dg-label-sm">not 6</text><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="193.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="208.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="201.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="193.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="208.8" cy="30.8" r="2.9" class="dg-point"/><text x="201.0" y="56.0" text-anchor="middle" class="dg-label-sm">not 6</text><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-sun"/><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="237.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="237.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="237.5" cy="31.8" r="2.9" class="dg-point"/><circle cx="252.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="252.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="252.5" cy="31.8" r="2.9" class="dg-point"/><text x="245.0" y="56.0" text-anchor="middle" class="dg-label-sm">6</text>
+</svg>
+<figcaption>One face is a 6. Five faces are not.</figcaption>
+</figure>
+<p class="m-right"><strong>What is true:</strong> Count the equally likely outcomes. P(roll a 6) = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span>, not <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>.</p>
+</div>
+
+<div class="worked-example">
+<div class="we-label">Worked Example 3 — Unequal parts</div>
+<p>Find P(red) on Mia's Stampede spinner.</p>
+<figure class="viz">
+<!-- tikz: m8-spin | sections="red:2;blue:1;yellow:1" guides=1 size=150 label="Split red into equal pieces." -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 189 176" width="189" height="176" aria-label="Spinner with unequal parts: red (50%), blue (25%), yellow (25%)">
+<path d="M94.2,79.0 L94.2,10.0 A69.0,69.0 0 0 1 94.2,148.0 Z" class="dg-fill-hot"/><line x1="94.2" y1="79.0" x2="163.2" y2="79.0" class="dg-dashed"/><path d="M94.2,79.0 L94.2,148.0 A69.0,69.0 0 0 1 25.2,79.0 Z" class="dg-fill-cold"/><path d="M94.2,79.0 L25.2,79.0 A69.0,69.0 0 0 1 94.2,10.0 Z" class="dg-fill-sun"/><text x="123.5" y="53.7" text-anchor="middle" class="dg-label">red</text><text x="123.5" y="112.3" text-anchor="middle" class="dg-label">red</text><text x="65.0" y="112.3" text-anchor="middle" class="dg-label">blue</text><text x="65.0" y="53.7" text-anchor="middle" class="dg-label">yellow</text><circle cx="94.2" cy="79.0" r="69.0" class="dg-outline"/><line x1="94.2" y1="79.0" x2="110.2" y2="73.2" class="dg-arrow plain"/><polygon points="116.3,71.0 110.3,78.0 107.2,69.4" class="dg-head plain"/><circle cx="94.2" cy="79.0" r="4.0" class="dg-point"/><text x="94.2" y="168.0" text-anchor="middle" class="dg-label-accent">Split red into equal pieces.</text>
+</svg>
+</figure>
+<p>Step 1: The parts are not the same size. Split the spinner into equal pieces.</p>
+<p>Step 2: Now there are 4 equal pieces. Red covers <span class="b b-sm"></span> of them.</p>
+<p>Step 3: P(red) = <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">4</span></span> = <span class="b b-sm"></span> = <span class="b b-sm"></span> = <span class="b b-sm"></span>.</p>
+</div>
+<h4>All the probabilities add to 1</h4>
+<div class="worked-example">
+<div class="we-label">Worked Example 4 — Every colour</div>
+<p>A bag has 3 red, 2 blue and 5 yellow counters. Find the probability of each colour.</p>
+<figure class="viz">
+<!-- tikz: m8-bag | counters="red:3;blue:2;yellow:5" label="10 counters in all" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 152 156" width="152" height="156" aria-label="A bag of counters: 3 red, 2 blue, 5 yellow. 10 in all.">
+<polygon points="49.6,28.0 39.0,6.0 113.0,6.0 102.4,28.0" class="dg-fill-earth"/><rect x="10.0" y="26.0" width="132.0" height="104.0" rx="18" class="dg-fill-earth"/><rect x="47.0" y="20.0" width="58.1" height="8.0" rx="3" class="dg-fill-hot"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="37.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="63.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="63.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="89.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="89.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="89.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="115.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="115.0" cy="53.0" r="11.0" class="dg-fill-cold"/><text x="115.0" y="57.0" text-anchor="middle" class="dg-label-sm">B</text><circle cx="37.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="37.0" cy="79.0" r="11.0" class="dg-fill-cold"/><text x="37.0" y="83.0" text-anchor="middle" class="dg-label-sm">B</text><circle cx="63.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="79.0" r="11.0" class="dg-fill-sun"/><text x="63.0" y="83.0" text-anchor="middle" class="dg-label-sm">Y</text><circle cx="89.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="89.0" cy="79.0" r="11.0" class="dg-fill-sun"/><text x="89.0" y="83.0" text-anchor="middle" class="dg-label-sm">Y</text><circle cx="115.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="115.0" cy="79.0" r="11.0" class="dg-fill-sun"/><text x="115.0" y="83.0" text-anchor="middle" class="dg-label-sm">Y</text><circle cx="63.0" cy="105.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="105.0" r="11.0" class="dg-fill-sun"/><text x="63.0" y="109.0" text-anchor="middle" class="dg-label-sm">Y</text><circle cx="89.0" cy="105.0" r="11.0" class="dg-boundary"/><circle cx="89.0" cy="105.0" r="11.0" class="dg-fill-sun"/><text x="89.0" y="109.0" text-anchor="middle" class="dg-label-sm">Y</text><text x="76.0" y="148.0" text-anchor="middle" class="dg-label-accent">10 counters in all</text>
+</svg>
+</figure>
+<table><thead><tr><th>Colour</th><th>Fraction</th><th>Decimal</th><th>Percent</th></tr></thead><tbody><tr><td>red</td><td><span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">10</span></span></td><td>0.3</td><td>30%</td></tr><tr><td>blue</td><td><span class="b b-md"></span></td><td><span class="b b-sm"></span></td><td><span class="b b-sm"></span></td></tr><tr><td>yellow</td><td><span class="b b-md"></span></td><td><span class="b b-sm"></span></td><td><span class="b b-sm"></span></td></tr><tr><td>all</td><td><span class="frac"><span class="num">10</span><span class="frac-slash">/</span><span class="den">10</span></span> = 1</td><td><span class="b b-sm"></span></td><td><span class="b b-sm"></span></td></tr></tbody></table>
+<p>Step 1: Add the decimals: 0.3 + 0.2 + 0.5 = 1. They add to 1.</p>
+<p>Step 2: P(not red) = 1 − 0.3 = <span class="b b-sm"></span>.</p>
+<p>Step 3: Check: blue and yellow make <span class="b b-sm"></span> of the 10 counters.</p>
+</div>
+<h4>Cards</h4>
+<p>Ten cards are numbered 1 to 10. They are mixed and face down. Each card is equally likely.</p>
+<figure class="viz">
+<!-- tikz: m8-flips | kind=card items="1,2,3,4,5,6,7,8,9,10" label="10 cards: 10 equally likely outcomes" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 456 80" width="456" height="80" aria-label="Cards: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10">
+<rect x="13.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="13.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="30.0" y="35.0" text-anchor="middle" class="dg-label">1</text><rect x="57.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="57.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="74.0" y="35.0" text-anchor="middle" class="dg-label">2</text><rect x="101.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="101.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="118.0" y="35.0" text-anchor="middle" class="dg-label">3</text><rect x="145.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="145.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="162.0" y="35.0" text-anchor="middle" class="dg-label">4</text><rect x="189.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="189.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="206.0" y="35.0" text-anchor="middle" class="dg-label">5</text><rect x="233.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="233.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="250.0" y="35.0" text-anchor="middle" class="dg-label">6</text><rect x="277.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="277.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="294.0" y="35.0" text-anchor="middle" class="dg-label">7</text><rect x="321.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="321.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="338.0" y="35.0" text-anchor="middle" class="dg-label">8</text><rect x="365.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="365.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="382.0" y="35.0" text-anchor="middle" class="dg-label">9</text><rect x="409.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="409.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="426.0" y="35.0" text-anchor="middle" class="dg-label">10</text><text x="228.0" y="72.0" text-anchor="middle" class="dg-label-accent">10 cards: 10 equally likely outcomes</text>
+</svg>
+</figure>
+<p>P(an even card) = <span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">10</span></span> = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>. The even cards are 2, 4, 6, 8 and 10.</p>
+<div class="explain"><span class="explain-label">Explain it</span> In Worked Example 3, why do we split red into 2 pieces first?<div class="lines"><div class="al"></div><div class="al"></div></div></div>
+
+<div class="try">
+<div class="try-label">Your turn</div>
+<ol class="q-parts"><li><span class="part">1.</span> A spinner has 3 equal parts: A, B and C. Write the sample space. <span class="b b-md"></span></li><li><span class="part">2.</span> Find P(roll an even number). Write it as a fraction, a decimal and a percent. <span class="b b-xl"></span></li><li><span class="part">3.</span> Ten cards are numbered 1 to 10. Find P(a multiple of 3). <span class="b b-xl"></span></li></ol>
+<figure class="viz">
+<!-- tikz: m8-flips | kind=card items="1,2,3,4,5,6,7,8,9,10" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 456 60" width="456" height="60" aria-label="Cards: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10">
+<rect x="13.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="13.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="30.0" y="35.0" text-anchor="middle" class="dg-label">1</text><rect x="57.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="57.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="74.0" y="35.0" text-anchor="middle" class="dg-label">2</text><rect x="101.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="101.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="118.0" y="35.0" text-anchor="middle" class="dg-label">3</text><rect x="145.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="145.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="162.0" y="35.0" text-anchor="middle" class="dg-label">4</text><rect x="189.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="189.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="206.0" y="35.0" text-anchor="middle" class="dg-label">5</text><rect x="233.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="233.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="250.0" y="35.0" text-anchor="middle" class="dg-label">6</text><rect x="277.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="277.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="294.0" y="35.0" text-anchor="middle" class="dg-label">7</text><rect x="321.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="321.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="338.0" y="35.0" text-anchor="middle" class="dg-label">8</text><rect x="365.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="365.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="382.0" y="35.0" text-anchor="middle" class="dg-label">9</text><rect x="409.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-fill-soft"/><rect x="409.0" y="6.0" width="34.0" height="48.0" rx="4" class="dg-outline"/><text x="426.0" y="35.0" text-anchor="middle" class="dg-label">10</text>
+</svg>
+</figure>
+<ol class="q-parts"><li><span class="part">4.</span> A bag has 1 red and 3 blue counters. Find P(red) and P(blue). Do they add to 1? <span class="b b-xl"></span></li></ol>
+<figure class="viz">
+<!-- tikz: m8-bag | counters="red:1;blue:3" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 126 110" width="126" height="110" aria-label="A bag of counters: 1 red, 3 blue. 4 in all.">
+<polygon points="41.8,28.0 33.3,6.0 92.7,6.0 84.2,28.0" class="dg-fill-earth"/><rect x="10.0" y="26.0" width="106.0" height="78.0" rx="18" class="dg-fill-earth"/><rect x="39.7" y="20.0" width="46.6" height="8.0" rx="3" class="dg-fill-hot"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="37.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="63.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="53.0" r="11.0" class="dg-fill-cold"/><text x="63.0" y="57.0" text-anchor="middle" class="dg-label-sm">B</text><circle cx="89.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="89.0" cy="53.0" r="11.0" class="dg-fill-cold"/><text x="89.0" y="57.0" text-anchor="middle" class="dg-label-sm">B</text><circle cx="63.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="79.0" r="11.0" class="dg-fill-cold"/><text x="63.0" y="83.0" text-anchor="middle" class="dg-label-sm">B</text>
+</svg>
+</figure>
+<ol class="q-parts"><li><span class="part">5.</span> Zoe says P(roll a 1) = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>: "it happens or it doesn't." Fix her mistake. <span class="b b-xl"></span></li><li><span class="part">6.</span> ★ Stretch: P(snow) = 0.35. Find P(no snow) as a percent. <span class="b b-xl"></span></li></ol>
+</div>
+<div class="retrieval">
+<div class="retrieval-header">Retrieval check — close your notes</div>
+<ol>
+<li>Impossible, even chance or certain: draw red from a bag of only blue counters?<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li>Can a probability be 1.2? Why?<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li>Write <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">5</span></span> as a percent.<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li>Find the median of 7, 2, 9, 4, 5.<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li><span class="stretch-label">★ Stretch</span> A spinner has 8 equal parts. P(green) = <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">8</span></span>. How many parts are green? Find P(not green).<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+</ol>
+</div>
+<div class="self-check"><span class="label">Self-check</span> ☐ I could teach it &nbsp;&nbsp; ☐ Getting there &nbsp;&nbsp; ☐ Not yet</div>
+
+</div>
+<p class="key-link key-check"><a href="math7-probability-notes-answers-v1.html#s2">Check your answers for Section 2 &rarr;</a></p>
+<div class="section">
+<h2 id="s3">Section 3 · Experimental probability</h2>
+<div class="learning-target"><strong>Learning target:</strong> I can do an experiment. I can find the experimental probability from my results.</div>
+
+<h3>Words to know</h3>
+<table class="vocab"><thead><tr><th style="width:24%">Word</th><th style="width:42%">What it means (in your own words)</th><th>Example or picture</th></tr></thead><tbody>
+<tr><td class="term">trial</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">experimental probability</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">with replacement</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">simulation</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+</tbody></table>
+<h4>Doing an experiment</h4>
+<p>Theory tells what <em>should</em> happen. An experiment shows what <em>does</em> happen.</p>
+<p>Noor flips a coin 20 times. Each flip is one <strong>trial</strong>.</p>
+<figure class="viz">
+<!-- tikz: m8-bar | data="Heads:12;Tails:8" ymax=14 ystep=2 values=1 title="20 flips of a coin" ylabel="times" caption="Heads came up 12 times in 20 trials." -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 238 260" width="238" height="260" aria-label="Bar graph: 20 flips of a coin. Heads: 12, Tails: 8. Vertical axis from 0 to 14.">
+<text x="138.0" y="20.0" text-anchor="middle" class="dg-title">20 flips of a coin</text><line x1="58.0" y1="234.0" x2="218.0" y2="234.0" class="dg-grid"/><text x="52.0" y="238.0" text-anchor="end" class="dg-label-sm">0</text><line x1="58.0" y1="205.4" x2="218.0" y2="205.4" class="dg-grid"/><text x="52.0" y="209.4" text-anchor="end" class="dg-label-sm">2</text><line x1="58.0" y1="176.9" x2="218.0" y2="176.9" class="dg-grid"/><text x="52.0" y="180.9" text-anchor="end" class="dg-label-sm">4</text><line x1="58.0" y1="148.3" x2="218.0" y2="148.3" class="dg-grid"/><text x="52.0" y="152.3" text-anchor="end" class="dg-label-sm">6</text><line x1="58.0" y1="119.7" x2="218.0" y2="119.7" class="dg-grid"/><text x="52.0" y="123.7" text-anchor="end" class="dg-label-sm">8</text><line x1="58.0" y1="91.1" x2="218.0" y2="91.1" class="dg-grid"/><text x="52.0" y="95.1" text-anchor="end" class="dg-label-sm">10</text><line x1="58.0" y1="62.6" x2="218.0" y2="62.6" class="dg-grid"/><text x="52.0" y="66.6" text-anchor="end" class="dg-label-sm">12</text><line x1="58.0" y1="34.0" x2="218.0" y2="34.0" class="dg-grid"/><text x="52.0" y="38.0" text-anchor="end" class="dg-label-sm">14</text><line x1="58.0" y1="30.0" x2="58.0" y2="234.0" class="dg-line"/><line x1="58.0" y1="234.0" x2="226.0" y2="234.0" class="dg-line"/><text x="98.0" y="250.0" text-anchor="middle" class="dg-label-sm">Heads</text><rect x="75.6" y="62.6" width="44.8" height="171.4" class="dg-fill-accent"/><text x="98.0" y="57.6" text-anchor="middle" class="dg-label-sm">12</text><text x="178.0" y="250.0" text-anchor="middle" class="dg-label-sm">Tails</text><rect x="155.6" y="119.7" width="44.8" height="114.3" class="dg-fill-accent"/><text x="178.0" y="114.7" text-anchor="middle" class="dg-label-sm">8</text><g transform="translate(14,134.0) rotate(-90)"><text x="0.0" y="0.0" text-anchor="middle" class="dg-label">times</text></g>
+</svg>
+<figcaption>Heads came up 12 times in 20 trials.</figcaption>
+</figure>
+<p>Experimental P(heads) = <span class="frac"><span class="num">12</span><span class="frac-slash">/</span><span class="den">20</span></span> = 0.6 = 60%.</p>
+<div class="key-idea">
+<div class="ki-label">Experimental probability</div>
+<p><strong>Experimental P(event) = times it happened ÷ number of trials</strong></p>
+<p>Write it as a fraction, decimal or percent, like theoretical probability.</p>
+</div>
+
+<div class="worked-example">
+<div class="we-label">Worked Example 1 — Spinner results</div>
+<p>Ava spins a spinner with 4 equal parts. She spins it 40 times.</p>
+<figure class="viz">
+<!-- tikz: m8-spin | sections="red;blue;yellow;green" size=120 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 128 126" width="128" height="126" aria-label="Spinner with equal parts: red, blue, yellow, green">
+<path d="M64.0,64.0 L64.0,10.0 A54.0,54.0 0 0 1 118.0,64.0 Z" class="dg-fill-hot"/><path d="M64.0,64.0 L118.0,64.0 A54.0,54.0 0 0 1 64.0,118.0 Z" class="dg-fill-cold"/><path d="M64.0,64.0 L64.0,118.0 A54.0,54.0 0 0 1 10.0,64.0 Z" class="dg-fill-sun"/><path d="M64.0,64.0 L10.0,64.0 A54.0,54.0 0 0 1 64.0,10.0 Z" class="dg-fill-plant"/><text x="86.9" y="45.1" text-anchor="middle" class="dg-label">red</text><text x="86.9" y="90.9" text-anchor="middle" class="dg-label">blue</text><text x="41.1" y="90.9" text-anchor="middle" class="dg-label">yellow</text><text x="41.1" y="45.1" text-anchor="middle" class="dg-label">green</text><circle cx="64.0" cy="64.0" r="54.0" class="dg-outline"/><line x1="64.0" y1="64.0" x2="75.1" y2="59.9" class="dg-arrow plain"/><polygon points="81.2,57.7 75.3,64.8 72.2,56.1" class="dg-head plain"/><circle cx="64.0" cy="64.0" r="4.0" class="dg-point"/>
+</svg>
+</figure>
+<figure class="viz">
+<!-- tikz: m8-bar | data="red:12;blue:9;yellow:11;green:8" ymax=14 ystep=2 values=1 title="40 spins" ylabel="times" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 398 260" width="398" height="260" aria-label="Bar graph: 40 spins. red: 12, blue: 9, yellow: 11, green: 8. Vertical axis from 0 to 14.">
+<text x="218.0" y="20.0" text-anchor="middle" class="dg-title">40 spins</text><line x1="58.0" y1="234.0" x2="378.0" y2="234.0" class="dg-grid"/><text x="52.0" y="238.0" text-anchor="end" class="dg-label-sm">0</text><line x1="58.0" y1="205.4" x2="378.0" y2="205.4" class="dg-grid"/><text x="52.0" y="209.4" text-anchor="end" class="dg-label-sm">2</text><line x1="58.0" y1="176.9" x2="378.0" y2="176.9" class="dg-grid"/><text x="52.0" y="180.9" text-anchor="end" class="dg-label-sm">4</text><line x1="58.0" y1="148.3" x2="378.0" y2="148.3" class="dg-grid"/><text x="52.0" y="152.3" text-anchor="end" class="dg-label-sm">6</text><line x1="58.0" y1="119.7" x2="378.0" y2="119.7" class="dg-grid"/><text x="52.0" y="123.7" text-anchor="end" class="dg-label-sm">8</text><line x1="58.0" y1="91.1" x2="378.0" y2="91.1" class="dg-grid"/><text x="52.0" y="95.1" text-anchor="end" class="dg-label-sm">10</text><line x1="58.0" y1="62.6" x2="378.0" y2="62.6" class="dg-grid"/><text x="52.0" y="66.6" text-anchor="end" class="dg-label-sm">12</text><line x1="58.0" y1="34.0" x2="378.0" y2="34.0" class="dg-grid"/><text x="52.0" y="38.0" text-anchor="end" class="dg-label-sm">14</text><line x1="58.0" y1="30.0" x2="58.0" y2="234.0" class="dg-line"/><line x1="58.0" y1="234.0" x2="386.0" y2="234.0" class="dg-line"/><text x="98.0" y="250.0" text-anchor="middle" class="dg-label-sm">red</text><rect x="75.6" y="62.6" width="44.8" height="171.4" class="dg-fill-accent"/><text x="98.0" y="57.6" text-anchor="middle" class="dg-label-sm">12</text><text x="178.0" y="250.0" text-anchor="middle" class="dg-label-sm">blue</text><rect x="155.6" y="105.4" width="44.8" height="128.6" class="dg-fill-accent"/><text x="178.0" y="100.4" text-anchor="middle" class="dg-label-sm">9</text><text x="258.0" y="250.0" text-anchor="middle" class="dg-label-sm">yellow</text><rect x="235.6" y="76.9" width="44.8" height="157.1" class="dg-fill-accent"/><text x="258.0" y="71.9" text-anchor="middle" class="dg-label-sm">11</text><text x="338.0" y="250.0" text-anchor="middle" class="dg-label-sm">green</text><rect x="315.6" y="119.7" width="44.8" height="114.3" class="dg-fill-accent"/><text x="338.0" y="114.7" text-anchor="middle" class="dg-label-sm">8</text><g transform="translate(14,134.0) rotate(-90)"><text x="0.0" y="0.0" text-anchor="middle" class="dg-label">times</text></g>
+</svg>
+</figure>
+<p>Step 1: Red came up 12 times in 40 trials.</p>
+<p>Step 2: Experimental P(red) = <span class="frac"><span class="num">12</span><span class="frac-slash">/</span><span class="den">40</span></span> = <span class="b b-sm"></span> = <span class="b b-sm"></span> = <span class="b b-sm"></span>.</p>
+<p>Step 3: Theoretical P(red) = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">4</span></span> = 25%. The results are close, but not the same.</p>
+</div>
+
+<div class="worked-example">
+<div class="we-label">Worked Example 2 — Draw and put back</div>
+<p>Sam's bag has 3 red and 1 blue counter. He draws one and writes the colour. Then he puts it back.</p>
+<figure class="viz">
+<!-- tikz: m8-bag | counters="red:3;blue:1" out="red" outlabel="put it back" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 226 110" width="226" height="110" aria-label="A bag of counters: 3 red, 1 blue. 4 in all. One is drawn out.">
+<polygon points="41.8,28.0 33.3,6.0 92.7,6.0 84.2,28.0" class="dg-fill-earth"/><rect x="10.0" y="26.0" width="106.0" height="78.0" rx="18" class="dg-fill-earth"/><rect x="39.7" y="20.0" width="46.6" height="8.0" rx="3" class="dg-fill-hot"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="37.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="63.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="63.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="89.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="89.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="89.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="63.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="79.0" r="11.0" class="dg-fill-cold"/><text x="63.0" y="83.0" text-anchor="middle" class="dg-label-sm">B</text><line x1="124.0" y1="65.0" x2="157.5" y2="65.0" class="dg-arrow accent"/><polygon points="164.0,65.0 156.0,69.6 156.0,60.4" class="dg-head accent"/><text x="144.0" y="56.0" text-anchor="middle" class="dg-label-sm">draw</text><circle cx="184.0" cy="65.0" r="13.0" class="dg-boundary"/><circle cx="184.0" cy="65.0" r="13.0" class="dg-fill-hot"/><text x="184.0" y="69.0" text-anchor="middle" class="dg-label-sm">R</text><text x="184.0" y="95.0" text-anchor="middle" class="dg-label-sm">put it back</text>
+</svg>
+</figure>
+<p>He does this 50 times.</p>
+<table><thead><tr><th>Colour</th><th>red</th><th>blue</th><th>all</th></tr></thead><tbody><tr><td>Times</td><td>36</td><td>14</td><td>50</td></tr></tbody></table>
+<p>Step 1: He puts it back each time. So the bag is the same for every draw.</p>
+<p>Step 2: Experimental P(red) = <span class="frac"><span class="num">36</span><span class="frac-slash">/</span><span class="den">50</span></span> = <span class="b b-sm"></span> = <span class="b b-sm"></span>.</p>
+<p>Step 3: Theoretical P(red) = <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">4</span></span> = <span class="b b-sm"></span>. The experiment is close to the theory.</p>
+</div>
+
+<div class="misconception">
+<div class="label">Watch out — a common mistake</div>
+<p class="m-wrong">"Leo got heads 5 times in a row. Tails is due next!"</p>
+<p><strong>Why it is wrong:</strong> A coin does not remember past flips. Every flip is a new trial.</p>
+<figure class="viz">
+<!-- tikz: m8-flips | items="H,H,H,H,H,?" under="1st;2nd;3rd;4th;5th;6th" label="6th flip: still a 1/2 chance of tails" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 280 82" width="280" height="82" aria-label="Coin flips: H, H, H, H, H, ?">
+<circle cx="30.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="30.0" cy="23.0" r="14.0" class="dg-outline"/><text x="30.0" y="28.0" text-anchor="middle" class="dg-label">H</text><text x="30.0" y="55.0" text-anchor="middle" class="dg-label-sm">1st</text><circle cx="74.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="74.0" cy="23.0" r="14.0" class="dg-outline"/><text x="74.0" y="28.0" text-anchor="middle" class="dg-label">H</text><text x="74.0" y="55.0" text-anchor="middle" class="dg-label-sm">2nd</text><circle cx="118.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="118.0" cy="23.0" r="14.0" class="dg-outline"/><text x="118.0" y="28.0" text-anchor="middle" class="dg-label">H</text><text x="118.0" y="55.0" text-anchor="middle" class="dg-label-sm">3rd</text><circle cx="162.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="162.0" cy="23.0" r="14.0" class="dg-outline"/><text x="162.0" y="28.0" text-anchor="middle" class="dg-label">H</text><text x="162.0" y="55.0" text-anchor="middle" class="dg-label-sm">4th</text><circle cx="206.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="206.0" cy="23.0" r="14.0" class="dg-outline"/><text x="206.0" y="28.0" text-anchor="middle" class="dg-label">H</text><text x="206.0" y="55.0" text-anchor="middle" class="dg-label-sm">5th</text><circle cx="250.0" cy="23.0" r="17.0" class="dg-dashed"/><text x="250.0" y="28.0" text-anchor="middle" class="dg-label">?</text><text x="250.0" y="55.0" text-anchor="middle" class="dg-label-sm">6th</text><text x="140.0" y="74.0" text-anchor="middle" class="dg-label-accent">6th flip: still a 1/2 chance of tails</text>
+</svg>
+</figure>
+<p class="m-right"><strong>What is true:</strong> Trials don't affect each other. P(tails) is still <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span> on the 6th flip.</p>
+</div>
+<h4>Simulations</h4>
+<p>Some things are hard to do many times. Act them out with a coin, die or spinner. This is a <strong>simulation</strong>.</p>
+<figure class="viz">
+<!-- tikz: m8-flow | steps="Pick a tool with the same chances|Match each outcome|Do many trials|Find the probability" width=600 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 600 96" width="600" height="96" aria-label="Steps: Pick a tool with the same chances, then Match each outcome, then Do many trials, then Find the probability">
+<rect x="10.0" y="22.0" width="128.5" height="64.0" rx="8" class="dg-fill-soft"/><rect x="10.0" y="22.0" width="128.5" height="64.0" rx="8" class="dg-outline"/><circle cx="74.2" cy="22.0" r="12.0" class="dg-solid-accent"/><text x="74.2" y="27.0" text-anchor="middle" class="dg-label-white">1</text><text x="74.2" y="54.0" text-anchor="middle" class="dg-label">Pick a tool with</text><text x="74.2" y="70.0" text-anchor="middle" class="dg-label">the same chances</text><line x1="141.5" y1="54.0" x2="151.0" y2="54.0" class="dg-arrow accent"/><polygon points="157.5,54.0 149.5,58.6 149.5,49.4" class="dg-head accent"/><rect x="160.5" y="22.0" width="128.5" height="64.0" rx="8" class="dg-fill-soft"/><rect x="160.5" y="22.0" width="128.5" height="64.0" rx="8" class="dg-outline"/><circle cx="224.8" cy="22.0" r="12.0" class="dg-solid-accent"/><text x="224.8" y="27.0" text-anchor="middle" class="dg-label-white">2</text><text x="224.8" y="54.0" text-anchor="middle" class="dg-label">Match each</text><text x="224.8" y="70.0" text-anchor="middle" class="dg-label">outcome</text><line x1="292.0" y1="54.0" x2="301.5" y2="54.0" class="dg-arrow accent"/><polygon points="308.0,54.0 300.0,58.6 300.0,49.4" class="dg-head accent"/><rect x="311.0" y="22.0" width="128.5" height="64.0" rx="8" class="dg-fill-soft"/><rect x="311.0" y="22.0" width="128.5" height="64.0" rx="8" class="dg-outline"/><circle cx="375.2" cy="22.0" r="12.0" class="dg-solid-accent"/><text x="375.2" y="27.0" text-anchor="middle" class="dg-label-white">3</text><text x="375.2" y="62.0" text-anchor="middle" class="dg-label">Do many trials</text><line x1="442.5" y1="54.0" x2="452.0" y2="54.0" class="dg-arrow accent"/><polygon points="458.5,54.0 450.5,58.6 450.5,49.4" class="dg-head accent"/><rect x="461.5" y="22.0" width="128.5" height="64.0" rx="8" class="dg-fill-soft"/><rect x="461.5" y="22.0" width="128.5" height="64.0" rx="8" class="dg-outline"/><circle cx="525.8" cy="22.0" r="12.0" class="dg-solid-accent"/><text x="525.8" y="27.0" text-anchor="middle" class="dg-label-white">4</text><text x="525.8" y="54.0" text-anchor="middle" class="dg-label">Find the</text><text x="525.8" y="70.0" text-anchor="middle" class="dg-label">probability</text>
+</svg>
+</figure>
+<div class="worked-example">
+<div class="we-label">Worked Example 3 — A 50-50 guess</div>
+<p>Noor guesses on a 10-question true-or-false quiz. Each guess is a 50-50 chance.</p>
+<p>She simulates it with a coin. Heads = right. Tails = wrong.</p>
+<figure class="viz">
+<!-- tikz: m8-flips | items="H,T,T,H,H,T,H,H,T,H" under="1;2;3;4;5;6;7;8;9;10" hot="1,4,5,7,8,10" label="Heads (shaded) = a right answer" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 456 82" width="456" height="82" aria-label="Coin flips: H, T, T, H, H, T, H, H, T, H">
+<circle cx="30.0" cy="23.0" r="17.0" class="dg-fill-sun"/><circle cx="30.0" cy="23.0" r="14.0" class="dg-outline"/><text x="30.0" y="28.0" text-anchor="middle" class="dg-label">H</text><text x="30.0" y="55.0" text-anchor="middle" class="dg-label-sm">1</text><circle cx="74.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="74.0" cy="23.0" r="14.0" class="dg-outline"/><text x="74.0" y="28.0" text-anchor="middle" class="dg-label">T</text><text x="74.0" y="55.0" text-anchor="middle" class="dg-label-sm">2</text><circle cx="118.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="118.0" cy="23.0" r="14.0" class="dg-outline"/><text x="118.0" y="28.0" text-anchor="middle" class="dg-label">T</text><text x="118.0" y="55.0" text-anchor="middle" class="dg-label-sm">3</text><circle cx="162.0" cy="23.0" r="17.0" class="dg-fill-sun"/><circle cx="162.0" cy="23.0" r="14.0" class="dg-outline"/><text x="162.0" y="28.0" text-anchor="middle" class="dg-label">H</text><text x="162.0" y="55.0" text-anchor="middle" class="dg-label-sm">4</text><circle cx="206.0" cy="23.0" r="17.0" class="dg-fill-sun"/><circle cx="206.0" cy="23.0" r="14.0" class="dg-outline"/><text x="206.0" y="28.0" text-anchor="middle" class="dg-label">H</text><text x="206.0" y="55.0" text-anchor="middle" class="dg-label-sm">5</text><circle cx="250.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="250.0" cy="23.0" r="14.0" class="dg-outline"/><text x="250.0" y="28.0" text-anchor="middle" class="dg-label">T</text><text x="250.0" y="55.0" text-anchor="middle" class="dg-label-sm">6</text><circle cx="294.0" cy="23.0" r="17.0" class="dg-fill-sun"/><circle cx="294.0" cy="23.0" r="14.0" class="dg-outline"/><text x="294.0" y="28.0" text-anchor="middle" class="dg-label">H</text><text x="294.0" y="55.0" text-anchor="middle" class="dg-label-sm">7</text><circle cx="338.0" cy="23.0" r="17.0" class="dg-fill-sun"/><circle cx="338.0" cy="23.0" r="14.0" class="dg-outline"/><text x="338.0" y="28.0" text-anchor="middle" class="dg-label">H</text><text x="338.0" y="55.0" text-anchor="middle" class="dg-label-sm">8</text><circle cx="382.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="382.0" cy="23.0" r="14.0" class="dg-outline"/><text x="382.0" y="28.0" text-anchor="middle" class="dg-label">T</text><text x="382.0" y="55.0" text-anchor="middle" class="dg-label-sm">9</text><circle cx="426.0" cy="23.0" r="17.0" class="dg-fill-sun"/><circle cx="426.0" cy="23.0" r="14.0" class="dg-outline"/><text x="426.0" y="28.0" text-anchor="middle" class="dg-label">H</text><text x="426.0" y="55.0" text-anchor="middle" class="dg-label-sm">10</text><text x="228.0" y="74.0" text-anchor="middle" class="dg-label-accent">Heads (shaded) = a right answer</text>
+</svg>
+</figure>
+<p>Step 1: A coin has 2 equally likely outcomes, like a 50-50 guess.</p>
+<p>Step 2: The coin landed heads <span class="b b-sm"></span> times in 10 flips.</p>
+<p>Step 3: Experimental P(right) = <span class="frac"><span class="num">6</span><span class="frac-slash">/</span><span class="den">10</span></span> = <span class="b b-sm"></span> = <span class="b b-sm"></span>.</p>
+</div>
+
+<div class="worked-example">
+<div class="we-label">Worked Example 4 — Six prizes at the Stampede</div>
+<p>A booth gives one of 6 plush toys. Each toy is equally likely. Raj wants to know how often he gets a horse.</p>
+<figure class="viz">
+<!-- tikz: m8-dice | hot="1" labels="horse;bear;moose;goose;bison;fox" label="One face for each toy" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 270 82" width="270" height="82" aria-label="Die faces: 1, 2, 3, 4, 5, 6. Shaded: 1">
+<rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-sun"/><rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="25.0" cy="23.0" r="2.9" class="dg-point"/><text x="25.0" y="56.0" text-anchor="middle" class="dg-label-sm">horse</text><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="61.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="76.8" cy="30.8" r="2.9" class="dg-point"/><text x="69.0" y="56.0" text-anchor="middle" class="dg-label-sm">bear</text><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="105.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="113.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="120.8" cy="30.8" r="2.9" class="dg-point"/><text x="113.0" y="56.0" text-anchor="middle" class="dg-label-sm">moose</text><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="149.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="164.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="149.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="164.8" cy="30.8" r="2.9" class="dg-point"/><text x="157.0" y="56.0" text-anchor="middle" class="dg-label-sm">goose</text><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="193.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="208.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="201.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="193.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="208.8" cy="30.8" r="2.9" class="dg-point"/><text x="201.0" y="56.0" text-anchor="middle" class="dg-label-sm">bison</text><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="237.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="237.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="237.5" cy="31.8" r="2.9" class="dg-point"/><circle cx="252.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="252.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="252.5" cy="31.8" r="2.9" class="dg-point"/><text x="245.0" y="56.0" text-anchor="middle" class="dg-label-sm">fox</text><text x="135.0" y="74.0" text-anchor="middle" class="dg-label-accent">One face for each toy</text>
+</svg>
+</figure>
+<p>Raj rolls a die 60 times. A 1 (horse) comes up 12 times.</p>
+<p>Step 1: Why a die? It has <span class="b b-sm"></span> equally likely outcomes, like the 6 toys.</p>
+<p>Step 2: Experimental P(horse) = <span class="frac"><span class="num">12</span><span class="frac-slash">/</span><span class="den">60</span></span> = <span class="b b-sm"></span> = <span class="b b-sm"></span> = <span class="b b-sm"></span>.</p>
+<p>Step 3: Theoretical P(horse) = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span>. That is about <span class="b b-sm"></span>.</p>
+</div>
+<div class="explain"><span class="explain-label">Explain it</span> In Worked Example 2, why does Sam put the counter back each time?<div class="lines"><div class="al"></div><div class="al"></div></div></div>
+
+<div class="try">
+<div class="try-label">Your turn</div>
+<ol class="q-parts"><li><span class="part">1.</span> Kai flips a coin 30 times. He gets 18 heads. Find the experimental P(heads). <span class="b b-xl"></span></li><li><span class="part">2.</span> Mia rolls a die 50 times. Find the experimental P(roll a 4) as a percent. <span class="b b-xl"></span></li></ol>
+<figure class="viz">
+<!-- tikz: m8-bar | data="1:7;2:9;3:8;4:10;5:9;6:7" ymax=12 ystep=2 title="Mia's 50 rolls" ylabel="times" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 498 260" width="498" height="260" aria-label="Bar graph: Mia's 50 rolls. 1: 7, 2: 9, 3: 8, 4: 10, 5: 9, 6: 7. Vertical axis from 0 to 12.">
+<text x="268.0" y="20.0" text-anchor="middle" class="dg-title">Mia's 50 rolls</text><line x1="58.0" y1="234.0" x2="478.0" y2="234.0" class="dg-grid"/><text x="52.0" y="238.0" text-anchor="end" class="dg-label-sm">0</text><line x1="58.0" y1="200.7" x2="478.0" y2="200.7" class="dg-grid"/><text x="52.0" y="204.7" text-anchor="end" class="dg-label-sm">2</text><line x1="58.0" y1="167.3" x2="478.0" y2="167.3" class="dg-grid"/><text x="52.0" y="171.3" text-anchor="end" class="dg-label-sm">4</text><line x1="58.0" y1="134.0" x2="478.0" y2="134.0" class="dg-grid"/><text x="52.0" y="138.0" text-anchor="end" class="dg-label-sm">6</text><line x1="58.0" y1="100.7" x2="478.0" y2="100.7" class="dg-grid"/><text x="52.0" y="104.7" text-anchor="end" class="dg-label-sm">8</text><line x1="58.0" y1="67.3" x2="478.0" y2="67.3" class="dg-grid"/><text x="52.0" y="71.3" text-anchor="end" class="dg-label-sm">10</text><line x1="58.0" y1="34.0" x2="478.0" y2="34.0" class="dg-grid"/><text x="52.0" y="38.0" text-anchor="end" class="dg-label-sm">12</text><line x1="58.0" y1="30.0" x2="58.0" y2="234.0" class="dg-line"/><line x1="58.0" y1="234.0" x2="486.0" y2="234.0" class="dg-line"/><text x="93.0" y="250.0" text-anchor="middle" class="dg-label-sm">1</text><rect x="73.4" y="117.3" width="39.2" height="116.7" class="dg-fill-accent"/><text x="163.0" y="250.0" text-anchor="middle" class="dg-label-sm">2</text><rect x="143.4" y="84.0" width="39.2" height="150.0" class="dg-fill-accent"/><text x="233.0" y="250.0" text-anchor="middle" class="dg-label-sm">3</text><rect x="213.4" y="100.7" width="39.2" height="133.3" class="dg-fill-accent"/><text x="303.0" y="250.0" text-anchor="middle" class="dg-label-sm">4</text><rect x="283.4" y="67.3" width="39.2" height="166.7" class="dg-fill-accent"/><text x="373.0" y="250.0" text-anchor="middle" class="dg-label-sm">5</text><rect x="353.4" y="84.0" width="39.2" height="150.0" class="dg-fill-accent"/><text x="443.0" y="250.0" text-anchor="middle" class="dg-label-sm">6</text><rect x="423.4" y="117.3" width="39.2" height="116.7" class="dg-fill-accent"/><g transform="translate(14,134.0) rotate(-90)"><text x="0.0" y="0.0" text-anchor="middle" class="dg-label">times</text></g>
+</svg>
+</figure>
+<ol class="q-parts"><li><span class="part">3.</span> Omar flipped 4 tails in a row. He says heads is due. Is he right? <span class="b b-xl"></span></li></ol>
+<figure class="viz">
+<!-- tikz: m8-flips | items="T,T,T,T,?" under="1st;2nd;3rd;4th;5th" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 236 62" width="236" height="62" aria-label="Coin flips: T, T, T, T, ?">
+<circle cx="30.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="30.0" cy="23.0" r="14.0" class="dg-outline"/><text x="30.0" y="28.0" text-anchor="middle" class="dg-label">T</text><text x="30.0" y="55.0" text-anchor="middle" class="dg-label-sm">1st</text><circle cx="74.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="74.0" cy="23.0" r="14.0" class="dg-outline"/><text x="74.0" y="28.0" text-anchor="middle" class="dg-label">T</text><text x="74.0" y="55.0" text-anchor="middle" class="dg-label-sm">2nd</text><circle cx="118.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="118.0" cy="23.0" r="14.0" class="dg-outline"/><text x="118.0" y="28.0" text-anchor="middle" class="dg-label">T</text><text x="118.0" y="55.0" text-anchor="middle" class="dg-label-sm">3rd</text><circle cx="162.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="162.0" cy="23.0" r="14.0" class="dg-outline"/><text x="162.0" y="28.0" text-anchor="middle" class="dg-label">T</text><text x="162.0" y="55.0" text-anchor="middle" class="dg-label-sm">4th</text><circle cx="206.0" cy="23.0" r="17.0" class="dg-dashed"/><text x="206.0" y="28.0" text-anchor="middle" class="dg-label">?</text><text x="206.0" y="55.0" text-anchor="middle" class="dg-label-sm">5th</text>
+</svg>
+</figure>
+<ol class="q-parts"><li><span class="part">4.</span> A spinner has 3 equal parts. How could you simulate it with a die? <span class="b b-xl"></span></li><li><span class="part">5.</span> ★ Stretch: Zoe draws a counter and puts it back, 40 times. She gets red 10 times. About what fraction of the bag is red? <span class="b b-xl"></span></li></ol>
+</div>
+<div class="retrieval">
+<div class="retrieval-header">Retrieval check — close your notes</div>
+<ol>
+<li>Find P(roll a number less than 3) on a die.<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li>A bag has 2 red and 8 blue counters. Find P(blue) as a percent.<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li>P(rain) = 0.4. Find P(no rain).<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li>Find 15% of 60.<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li><span class="stretch-label">★ Stretch</span> A spinner has red, blue and green parts. P(red) = 0.25 and P(blue) = 0.5. Find P(green).<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+</ol>
+</div>
+<div class="self-check"><span class="label">Self-check</span> ☐ I could teach it &nbsp;&nbsp; ☐ Getting there &nbsp;&nbsp; ☐ Not yet</div>
+
+</div>
+<p class="key-link key-check"><a href="math7-probability-notes-answers-v1.html#s3">Check your answers for Section 3 &rarr;</a></p>
+<div class="section">
+<h2 id="s4">Section 4 · Comparing and deciding</h2>
+<div class="learning-target"><strong>Learning target:</strong> I can predict results from theory. I can compare results to theory. I can use probability to decide.</div>
+
+<h3>Words to know</h3>
+<table class="vocab"><thead><tr><th style="width:24%">Word</th><th style="width:42%">What it means (in your own words)</th><th>Example or picture</th></tr></thead><tbody>
+<tr><td class="term">predict</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">pool</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+<tr><td class="term">fair game</td><td class="write-cell"></td><td class="write-cell"></td></tr>
+</tbody></table>
+<h4>Predict from theory</h4>
+<p>Theory helps you predict. Multiply the probability by the number of trials.</p>
+<figure class="viz">
+<!-- tikz: m8-percentbar | percent=50 top="0%,50%,100%" bottom="0,[[ ]],50" toplabel="P(heads)" bottomlabel="flips" width=480 caption="Half of 50 flips: about how many heads?" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 106" width="480" height="106" aria-label="Percent bar: 50% shaded. Percents 0%, 50%, 100%; values 0, blank, 50">
+<rect x="93.8" y="40.0" width="362.2" height="34.0" class="dg-fill-soft"/><rect x="93.8" y="40.0" width="181.1" height="34.0" class="dg-fill-accent"/><rect x="93.8" y="40.0" width="362.2" height="34.0" class="dg-outline"/><line x1="93.8" y1="35.0" x2="93.8" y2="79.0" class="dg-line"/><text x="93.8" y="30.0" text-anchor="middle" class="dg-label">0%</text><text x="93.8" y="96.0" text-anchor="middle" class="dg-label">0</text><line x1="274.9" y1="35.0" x2="274.9" y2="79.0" class="dg-line"/><text x="274.9" y="30.0" text-anchor="middle" class="dg-label">50%</text><rect x="261.9" y="83.0" width="26.0" height="19.0" rx="3" class="dg-tag"/><line x1="456.0" y1="35.0" x2="456.0" y2="79.0" class="dg-line"/><text x="456.0" y="30.0" text-anchor="middle" class="dg-label">100%</text><text x="456.0" y="96.0" text-anchor="middle" class="dg-label">50</text><text x="6.0" y="30.0" text-anchor="start" class="dg-label-accent">P(heads)</text><text x="6.0" y="96.0" text-anchor="start" class="dg-label-accent">flips</text>
+</svg>
+<figcaption>Half of 50 flips: about how many heads?</figcaption>
+</figure>
+<div class="worked-example">
+<div class="we-label">Worked Example 1 — Predict</div>
+<p>Lily will roll a die 120 times. Predict how many 3s she will get.</p>
+<figure class="viz">
+<!-- tikz: m8-dice | hot="3" label="Event: roll a 3" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 270 66" width="270" height="66" aria-label="Die faces: 1, 2, 3, 4, 5, 6. Shaded: 3">
+<rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="25.0" cy="23.0" r="2.9" class="dg-point"/><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="61.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="76.8" cy="30.8" r="2.9" class="dg-point"/><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-sun"/><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="105.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="113.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="120.8" cy="30.8" r="2.9" class="dg-point"/><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="149.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="164.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="149.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="164.8" cy="30.8" r="2.9" class="dg-point"/><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="193.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="208.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="201.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="193.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="208.8" cy="30.8" r="2.9" class="dg-point"/><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="237.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="237.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="237.5" cy="31.8" r="2.9" class="dg-point"/><circle cx="252.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="252.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="252.5" cy="31.8" r="2.9" class="dg-point"/><text x="135.0" y="58.0" text-anchor="middle" class="dg-label-accent">Event: roll a 3</text>
+</svg>
+</figure>
+<p>Step 1: P(roll a 3) = <span class="b b-sm"></span>.</p>
+<p>Step 2: Predict: <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span> × 120 = 120 ÷ 6 = <span class="b b-sm"></span>.</p>
+<p>Step 3: She should get <span class="b b-md"></span> threes. It may not be exactly 20.</p>
+</div>
+<h4>A few trials or many?</h4>
+<p>A few trials can give results far from the theory. Many trials get close to it.</p>
+<figure class="viz">
+<!-- tikz: m8-trials | data="10:0.7;20:0.6;50:0.56;100:0.47;200:0.52;500:0.49" theory=0.5 theorylabel="theory: 0.5" xlabel="number of flips so far" ylabel="P(heads)" caption="Kai's flips. The more flips, the closer to 0.5." -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 440 216" width="440" height="216" aria-label="Line graph of experimental probability as the number of trials grows: 10 trials: 0.7, 20 trials: 0.6, 50 trials: 0.56, 100 trials: 0.47, 200 trials: 0.52, 500 trials: 0.49. Dashed line at the theoretical probability, theory: 0.5">
+<line x1="52.0" y1="172.0" x2="358.2" y2="172.0" class="dg-grid"/><text x="46.0" y="176.0" text-anchor="end" class="dg-label-sm">0</text><line x1="52.0" y1="156.0" x2="358.2" y2="156.0" class="dg-grid"/><line x1="52.0" y1="140.0" x2="358.2" y2="140.0" class="dg-grid"/><text x="46.0" y="144.0" text-anchor="end" class="dg-label-sm">0.2</text><line x1="52.0" y1="124.0" x2="358.2" y2="124.0" class="dg-grid"/><line x1="52.0" y1="108.0" x2="358.2" y2="108.0" class="dg-grid"/><text x="46.0" y="112.0" text-anchor="end" class="dg-label-sm">0.4</text><line x1="52.0" y1="92.0" x2="358.2" y2="92.0" class="dg-grid"/><line x1="52.0" y1="76.0" x2="358.2" y2="76.0" class="dg-grid"/><text x="46.0" y="80.0" text-anchor="end" class="dg-label-sm">0.6</text><line x1="52.0" y1="60.0" x2="358.2" y2="60.0" class="dg-grid"/><line x1="52.0" y1="44.0" x2="358.2" y2="44.0" class="dg-grid"/><text x="46.0" y="48.0" text-anchor="end" class="dg-label-sm">0.8</text><line x1="52.0" y1="28.0" x2="358.2" y2="28.0" class="dg-grid"/><line x1="52.0" y1="12.0" x2="358.2" y2="12.0" class="dg-grid"/><text x="46.0" y="16.0" text-anchor="end" class="dg-label-sm">1</text><line x1="52.0" y1="8.0" x2="52.0" y2="172.0" class="dg-line"/><line x1="52.0" y1="172.0" x2="364.2" y2="172.0" class="dg-line"/><line x1="52.0" y1="92.0" x2="358.2" y2="92.0" class="dg-dashed"/><text x="364.2" y="96.0" text-anchor="start" class="dg-label-accent">theory: 0.5</text><text x="77.5" y="188.0" text-anchor="middle" class="dg-label-sm">10</text><text x="128.6" y="188.0" text-anchor="middle" class="dg-label-sm">20</text><text x="179.6" y="188.0" text-anchor="middle" class="dg-label-sm">50</text><text x="230.6" y="188.0" text-anchor="middle" class="dg-label-sm">100</text><text x="281.7" y="188.0" text-anchor="middle" class="dg-label-sm">200</text><text x="332.7" y="188.0" text-anchor="middle" class="dg-label-sm">500</text><path d="M77.5,60.0 L128.6,76.0 L179.6,82.4 L230.6,96.8 L281.7,88.8 L332.7,93.6" class="dg-accent"/><circle cx="77.5" cy="60.0" r="4.0" class="dg-point-accent"/><circle cx="128.6" cy="76.0" r="4.0" class="dg-point-accent"/><circle cx="179.6" cy="82.4" r="4.0" class="dg-point-accent"/><circle cx="230.6" cy="96.8" r="4.0" class="dg-point-accent"/><circle cx="281.7" cy="88.8" r="4.0" class="dg-point-accent"/><circle cx="332.7" cy="93.6" r="4.0" class="dg-point-accent"/><text x="205.1" y="206.0" text-anchor="middle" class="dg-label">number of flips so far</text><g transform="translate(13,92.0) rotate(-90)"><text x="0.0" y="0.0" text-anchor="middle" class="dg-label-sm">P(heads)</text></g>
+</svg>
+<figcaption>Kai's flips. The more flips, the closer to 0.5.</figcaption>
+</figure>
+<div class="misconception">
+<div class="label">Watch out — a common mistake</div>
+<p class="m-wrong">"P(heads) = <span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>. So 10 flips will give exactly 5 heads."</p>
+<p><strong>Why it is wrong:</strong> Each flip is up to chance. Results vary. Ten flips can give 7 heads, or 3.</p>
+<figure class="viz">
+<!-- tikz: m8-flips | items="H,T,H,H,H,T,H,H,T,H" hot="1,3,4,5,7,8,10" label="10 flips: 7 heads" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 456 66" width="456" height="66" aria-label="Coin flips: H, T, H, H, H, T, H, H, T, H">
+<circle cx="30.0" cy="23.0" r="17.0" class="dg-fill-sun"/><circle cx="30.0" cy="23.0" r="14.0" class="dg-outline"/><text x="30.0" y="28.0" text-anchor="middle" class="dg-label">H</text><circle cx="74.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="74.0" cy="23.0" r="14.0" class="dg-outline"/><text x="74.0" y="28.0" text-anchor="middle" class="dg-label">T</text><circle cx="118.0" cy="23.0" r="17.0" class="dg-fill-sun"/><circle cx="118.0" cy="23.0" r="14.0" class="dg-outline"/><text x="118.0" y="28.0" text-anchor="middle" class="dg-label">H</text><circle cx="162.0" cy="23.0" r="17.0" class="dg-fill-sun"/><circle cx="162.0" cy="23.0" r="14.0" class="dg-outline"/><text x="162.0" y="28.0" text-anchor="middle" class="dg-label">H</text><circle cx="206.0" cy="23.0" r="17.0" class="dg-fill-sun"/><circle cx="206.0" cy="23.0" r="14.0" class="dg-outline"/><text x="206.0" y="28.0" text-anchor="middle" class="dg-label">H</text><circle cx="250.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="250.0" cy="23.0" r="14.0" class="dg-outline"/><text x="250.0" y="28.0" text-anchor="middle" class="dg-label">T</text><circle cx="294.0" cy="23.0" r="17.0" class="dg-fill-sun"/><circle cx="294.0" cy="23.0" r="14.0" class="dg-outline"/><text x="294.0" y="28.0" text-anchor="middle" class="dg-label">H</text><circle cx="338.0" cy="23.0" r="17.0" class="dg-fill-sun"/><circle cx="338.0" cy="23.0" r="14.0" class="dg-outline"/><text x="338.0" y="28.0" text-anchor="middle" class="dg-label">H</text><circle cx="382.0" cy="23.0" r="17.0" class="dg-fill-soft"/><circle cx="382.0" cy="23.0" r="14.0" class="dg-outline"/><text x="382.0" y="28.0" text-anchor="middle" class="dg-label">T</text><circle cx="426.0" cy="23.0" r="17.0" class="dg-fill-sun"/><circle cx="426.0" cy="23.0" r="14.0" class="dg-outline"/><text x="426.0" y="28.0" text-anchor="middle" class="dg-label">H</text><text x="228.0" y="58.0" text-anchor="middle" class="dg-label-accent">10 flips: 7 heads</text>
+</svg>
+</figure>
+<p class="m-right"><strong>What is true:</strong> Theory tells <em>about</em> what to expect. Over many trials, results get close to the theory.</p>
+</div>
+
+<div class="worked-example">
+<div class="we-label">Worked Example 2 — Pool the class data</div>
+<p>Five groups each flip a coin 20 times.</p>
+<figure class="viz">
+<!-- tikz: m8-bar | data="G1:13;G2:8;G3:11;G4:9;G5:12" ymax=14 ystep=2 values=1 title="Heads in 20 flips" ylabel="heads" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 478 260" width="478" height="260" aria-label="Bar graph: Heads in 20 flips. G1: 13, G2: 8, G3: 11, G4: 9, G5: 12. Vertical axis from 0 to 14.">
+<text x="258.0" y="20.0" text-anchor="middle" class="dg-title">Heads in 20 flips</text><line x1="58.0" y1="234.0" x2="458.0" y2="234.0" class="dg-grid"/><text x="52.0" y="238.0" text-anchor="end" class="dg-label-sm">0</text><line x1="58.0" y1="205.4" x2="458.0" y2="205.4" class="dg-grid"/><text x="52.0" y="209.4" text-anchor="end" class="dg-label-sm">2</text><line x1="58.0" y1="176.9" x2="458.0" y2="176.9" class="dg-grid"/><text x="52.0" y="180.9" text-anchor="end" class="dg-label-sm">4</text><line x1="58.0" y1="148.3" x2="458.0" y2="148.3" class="dg-grid"/><text x="52.0" y="152.3" text-anchor="end" class="dg-label-sm">6</text><line x1="58.0" y1="119.7" x2="458.0" y2="119.7" class="dg-grid"/><text x="52.0" y="123.7" text-anchor="end" class="dg-label-sm">8</text><line x1="58.0" y1="91.1" x2="458.0" y2="91.1" class="dg-grid"/><text x="52.0" y="95.1" text-anchor="end" class="dg-label-sm">10</text><line x1="58.0" y1="62.6" x2="458.0" y2="62.6" class="dg-grid"/><text x="52.0" y="66.6" text-anchor="end" class="dg-label-sm">12</text><line x1="58.0" y1="34.0" x2="458.0" y2="34.0" class="dg-grid"/><text x="52.0" y="38.0" text-anchor="end" class="dg-label-sm">14</text><line x1="58.0" y1="30.0" x2="58.0" y2="234.0" class="dg-line"/><line x1="58.0" y1="234.0" x2="466.0" y2="234.0" class="dg-line"/><text x="98.0" y="250.0" text-anchor="middle" class="dg-label-sm">G1</text><rect x="75.6" y="48.3" width="44.8" height="185.7" class="dg-fill-accent"/><text x="98.0" y="43.3" text-anchor="middle" class="dg-label-sm">13</text><text x="178.0" y="250.0" text-anchor="middle" class="dg-label-sm">G2</text><rect x="155.6" y="119.7" width="44.8" height="114.3" class="dg-fill-accent"/><text x="178.0" y="114.7" text-anchor="middle" class="dg-label-sm">8</text><text x="258.0" y="250.0" text-anchor="middle" class="dg-label-sm">G3</text><rect x="235.6" y="76.9" width="44.8" height="157.1" class="dg-fill-accent"/><text x="258.0" y="71.9" text-anchor="middle" class="dg-label-sm">11</text><text x="338.0" y="250.0" text-anchor="middle" class="dg-label-sm">G4</text><rect x="315.6" y="105.4" width="44.8" height="128.6" class="dg-fill-accent"/><text x="338.0" y="100.4" text-anchor="middle" class="dg-label-sm">9</text><text x="418.0" y="250.0" text-anchor="middle" class="dg-label-sm">G5</text><rect x="395.6" y="62.6" width="44.8" height="171.4" class="dg-fill-accent"/><text x="418.0" y="57.6" text-anchor="middle" class="dg-label-sm">12</text><g transform="translate(14,134.0) rotate(-90)"><text x="0.0" y="0.0" text-anchor="middle" class="dg-label">heads</text></g>
+</svg>
+</figure>
+<table><thead><tr><th>Group</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>All</th></tr></thead><tbody><tr><td>Heads</td><td>13</td><td>8</td><td>11</td><td>9</td><td>12</td><td><span class="b b-sm"></span></td></tr><tr><td>Flips</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td><td><span class="b b-sm"></span></td></tr><tr><td>Experimental P</td><td>0.65</td><td>0.4</td><td><span class="b b-sm"></span></td><td><span class="b b-sm"></span></td><td><span class="b b-sm"></span></td><td><span class="b b-sm"></span></td></tr></tbody></table>
+<p>Step 1: The groups go from 0.4 to 0.65. A few trials can be far apart.</p>
+<p>Step 2: Pool the data: <span class="b b-sm"></span> heads in <span class="b b-sm"></span> flips. That is <span class="b b-sm"></span>.</p>
+<p>Step 3: The pooled result is <span class="b b-lg"></span> than most groups.</p>
+</div>
+<h4>Is the game fair?</h4>
+<p>In a <strong>fair game</strong>, every player has the same chance to win.</p>
+<div class="worked-example">
+<div class="we-label">Worked Example 3 — A fair game?</div>
+<p>Ava and Sam play a dice game. Ava wins on a 1 or 2. Sam wins on 3, 4, 5 or 6.</p>
+<figure class="viz">
+<!-- tikz: m8-dice | labels="Ava;Ava;Sam;Sam;Sam;Sam" hot="1,2" label="Who wins on each roll?" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 270 82" width="270" height="82" aria-label="Die faces: 1, 2, 3, 4, 5, 6. Shaded: 1, 2">
+<rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-sun"/><rect x="8.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="25.0" cy="23.0" r="2.9" class="dg-point"/><text x="25.0" y="56.0" text-anchor="middle" class="dg-label-sm">Ava</text><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-sun"/><rect x="52.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="61.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="76.8" cy="30.8" r="2.9" class="dg-point"/><text x="69.0" y="56.0" text-anchor="middle" class="dg-label-sm">Ava</text><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="96.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="105.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="113.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="120.8" cy="30.8" r="2.9" class="dg-point"/><text x="113.0" y="56.0" text-anchor="middle" class="dg-label-sm">Sam</text><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="140.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="149.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="164.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="149.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="164.8" cy="30.8" r="2.9" class="dg-point"/><text x="157.0" y="56.0" text-anchor="middle" class="dg-label-sm">Sam</text><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="184.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="193.2" cy="15.2" r="2.9" class="dg-point"/><circle cx="208.8" cy="15.2" r="2.9" class="dg-point"/><circle cx="201.0" cy="23.0" r="2.9" class="dg-point"/><circle cx="193.2" cy="30.8" r="2.9" class="dg-point"/><circle cx="208.8" cy="30.8" r="2.9" class="dg-point"/><text x="201.0" y="56.0" text-anchor="middle" class="dg-label-sm">Sam</text><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-fill-soft"/><rect x="228.0" y="6.0" width="34.0" height="34.0" rx="6" class="dg-outline"/><circle cx="237.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="237.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="237.5" cy="31.8" r="2.9" class="dg-point"/><circle cx="252.5" cy="14.2" r="2.9" class="dg-point"/><circle cx="252.5" cy="23.0" r="2.9" class="dg-point"/><circle cx="252.5" cy="31.8" r="2.9" class="dg-point"/><text x="245.0" y="56.0" text-anchor="middle" class="dg-label-sm">Sam</text><text x="135.0" y="74.0" text-anchor="middle" class="dg-label-accent">Who wins on each roll?</text>
+</svg>
+</figure>
+<p>Step 1: P(Ava wins) = <span class="frac"><span class="num">2</span><span class="frac-slash">/</span><span class="den">6</span></span> = <span class="b b-sm"></span>. P(Sam wins) = <span class="b b-md"></span>.</p>
+<p>Step 2: The chances are not the same. The game is <span class="b b-md"></span>.</p>
+<p>Step 3: Fix it: Ava wins on 1, 2 or 3. Sam wins on <span class="b b-md"></span>.</p>
+<p>Step 4: Now each player has P = <span class="b b-md"></span>.</p>
+</div>
+
+<div class="worked-example">
+<div class="we-label">Worked Example 4 — Which bag?</div>
+<p>You win a prize if you draw red. Pick a bag.</p>
+<figure class="viz">
+<!-- tikz: m8-bag | counters="red:3;blue:2" label="Bag A" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 126 130" width="126" height="130" aria-label="A bag of counters: 3 red, 2 blue. 5 in all.">
+<polygon points="41.8,28.0 33.3,6.0 92.7,6.0 84.2,28.0" class="dg-fill-earth"/><rect x="10.0" y="26.0" width="106.0" height="78.0" rx="18" class="dg-fill-earth"/><rect x="39.7" y="20.0" width="46.6" height="8.0" rx="3" class="dg-fill-hot"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="37.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="63.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="63.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="89.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="89.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="89.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="50.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="50.0" cy="79.0" r="11.0" class="dg-fill-cold"/><text x="50.0" y="83.0" text-anchor="middle" class="dg-label-sm">B</text><circle cx="76.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="76.0" cy="79.0" r="11.0" class="dg-fill-cold"/><text x="76.0" y="83.0" text-anchor="middle" class="dg-label-sm">B</text><text x="63.0" y="122.0" text-anchor="middle" class="dg-label-accent">Bag A</text>
+</svg>
+</figure>
+<figure class="viz">
+<!-- tikz: m8-bag | counters="red:5;blue:5" label="Bag B" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 152 156" width="152" height="156" aria-label="A bag of counters: 5 red, 5 blue. 10 in all.">
+<polygon points="49.6,28.0 39.0,6.0 113.0,6.0 102.4,28.0" class="dg-fill-earth"/><rect x="10.0" y="26.0" width="132.0" height="104.0" rx="18" class="dg-fill-earth"/><rect x="47.0" y="20.0" width="58.1" height="8.0" rx="3" class="dg-fill-hot"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="37.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="37.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="63.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="63.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="89.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="89.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="89.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="115.0" cy="53.0" r="11.0" class="dg-boundary"/><circle cx="115.0" cy="53.0" r="11.0" class="dg-fill-hot"/><text x="115.0" y="57.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="37.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="37.0" cy="79.0" r="11.0" class="dg-fill-hot"/><text x="37.0" y="83.0" text-anchor="middle" class="dg-label-sm">R</text><circle cx="63.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="79.0" r="11.0" class="dg-fill-cold"/><text x="63.0" y="83.0" text-anchor="middle" class="dg-label-sm">B</text><circle cx="89.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="89.0" cy="79.0" r="11.0" class="dg-fill-cold"/><text x="89.0" y="83.0" text-anchor="middle" class="dg-label-sm">B</text><circle cx="115.0" cy="79.0" r="11.0" class="dg-boundary"/><circle cx="115.0" cy="79.0" r="11.0" class="dg-fill-cold"/><text x="115.0" y="83.0" text-anchor="middle" class="dg-label-sm">B</text><circle cx="63.0" cy="105.0" r="11.0" class="dg-boundary"/><circle cx="63.0" cy="105.0" r="11.0" class="dg-fill-cold"/><text x="63.0" y="109.0" text-anchor="middle" class="dg-label-sm">B</text><circle cx="89.0" cy="105.0" r="11.0" class="dg-boundary"/><circle cx="89.0" cy="105.0" r="11.0" class="dg-fill-cold"/><text x="89.0" y="109.0" text-anchor="middle" class="dg-label-sm">B</text><text x="76.0" y="148.0" text-anchor="middle" class="dg-label-accent">Bag B</text>
+</svg>
+</figure>
+<p>Step 1: Bag A: P(red) = <span class="frac"><span class="num">3</span><span class="frac-slash">/</span><span class="den">5</span></span> = <span class="b b-sm"></span>.</p>
+<p>Step 2: Bag B: P(red) = <span class="frac"><span class="num">5</span><span class="frac-slash">/</span><span class="den">10</span></span> = <span class="b b-sm"></span>.</p>
+<p>Step 3: Pick Bag <span class="b b-sm"></span>. It has fewer red counters, but a bigger chance of red.</p>
+</div>
+
+<div class="worked-example">
+<div class="we-label">Worked Example 5 — A weather forecast</div>
+<p>The forecast for Calgary says a 70% chance of rain.</p>
+<figure class="viz">
+<!-- tikz: m8-percentbar | percent=70 top="0%,70%,100%" bottom="0,0.7,1" toplabel="percent" bottomlabel="decimal" width=480 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 106" width="480" height="106" aria-label="Percent bar: 70% shaded. Percents 0%, 70%, 100%; values 0, 0.7, 1">
+<rect x="87.0" y="40.0" width="369.0" height="34.0" class="dg-fill-soft"/><rect x="87.0" y="40.0" width="258.3" height="34.0" class="dg-fill-accent"/><rect x="87.0" y="40.0" width="369.0" height="34.0" class="dg-outline"/><line x1="87.0" y1="35.0" x2="87.0" y2="79.0" class="dg-line"/><text x="87.0" y="30.0" text-anchor="middle" class="dg-label">0%</text><text x="87.0" y="96.0" text-anchor="middle" class="dg-label">0</text><line x1="345.3" y1="35.0" x2="345.3" y2="79.0" class="dg-line"/><text x="345.3" y="30.0" text-anchor="middle" class="dg-label">70%</text><text x="345.3" y="96.0" text-anchor="middle" class="dg-label">0.7</text><line x1="456.0" y1="35.0" x2="456.0" y2="79.0" class="dg-line"/><text x="456.0" y="30.0" text-anchor="middle" class="dg-label">100%</text><text x="456.0" y="96.0" text-anchor="middle" class="dg-label">1</text><text x="6.0" y="30.0" text-anchor="start" class="dg-label-accent">percent</text><text x="6.0" y="96.0" text-anchor="start" class="dg-label-accent">decimal</text>
+</svg>
+</figure>
+<p>Step 1: P(rain) = 70% = 0.7. Rain is likely, but not certain.</p>
+<p>Step 2: P(no rain) = 100% − 70% = <span class="b b-sm"></span>.</p>
+<p>Step 3: Should Tess bring a raincoat to the parade? <span class="b b-xl"></span></p>
+<p>Step 4: It stayed dry. Was the forecast wrong? <span class="b b-xl"></span></p>
+</div>
+<div class="explain"><span class="explain-label">Explain it</span> In Worked Example 2, why is the pooled result closer to 0.5 than most groups?<div class="lines"><div class="al"></div><div class="al"></div></div></div>
+
+<div class="try">
+<div class="try-label">Your turn</div>
+<ol class="q-parts"><li><span class="part">1.</span> Predict the number of heads in 80 flips. <span class="b b-xl"></span></li><li><span class="part">2.</span> A spinner has 4 equal parts. One is red. Predict the number of reds in 200 spins. <span class="b b-xl"></span></li></ol>
+<figure class="viz">
+<!-- tikz: m8-spin | sections="red;blue;yellow;green" size=120 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 128 126" width="128" height="126" aria-label="Spinner with equal parts: red, blue, yellow, green">
+<path d="M64.0,64.0 L64.0,10.0 A54.0,54.0 0 0 1 118.0,64.0 Z" class="dg-fill-hot"/><path d="M64.0,64.0 L118.0,64.0 A54.0,54.0 0 0 1 64.0,118.0 Z" class="dg-fill-cold"/><path d="M64.0,64.0 L64.0,118.0 A54.0,54.0 0 0 1 10.0,64.0 Z" class="dg-fill-sun"/><path d="M64.0,64.0 L10.0,64.0 A54.0,54.0 0 0 1 64.0,10.0 Z" class="dg-fill-plant"/><text x="86.9" y="45.1" text-anchor="middle" class="dg-label">red</text><text x="86.9" y="90.9" text-anchor="middle" class="dg-label">blue</text><text x="41.1" y="90.9" text-anchor="middle" class="dg-label">yellow</text><text x="41.1" y="45.1" text-anchor="middle" class="dg-label">green</text><circle cx="64.0" cy="64.0" r="54.0" class="dg-outline"/><line x1="64.0" y1="64.0" x2="75.1" y2="59.9" class="dg-arrow plain"/><polygon points="81.2,57.7 75.3,64.8 72.2,56.1" class="dg-head plain"/><circle cx="64.0" cy="64.0" r="4.0" class="dg-point"/>
+</svg>
+</figure>
+<ol class="q-parts"><li><span class="part">3.</span> Ben flips a coin 10 times. He gets 3 heads. He says the coin is broken. Is he right? <span class="b b-xl"></span></li><li><span class="part">4.</span> Mia wins on red. Kai wins on blue or green. Is the game fair? <span class="b b-xl"></span></li></ol>
+<figure class="viz">
+<!-- tikz: m8-spin | sections="red;blue;green" size=120 label="3 equal parts" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 128 146" width="128" height="146" aria-label="Spinner with equal parts: red, blue, green">
+<path d="M64.0,64.0 L64.0,10.0 A54.0,54.0 0 0 1 110.8,91.0 Z" class="dg-fill-hot"/><path d="M64.0,64.0 L110.8,91.0 A54.0,54.0 0 0 1 17.2,91.0 Z" class="dg-fill-cold"/><path d="M64.0,64.0 L17.2,91.0 A54.0,54.0 0 0 1 64.0,10.0 Z" class="dg-fill-plant"/><text x="92.1" y="51.8" text-anchor="middle" class="dg-label">red</text><text x="64.0" y="100.4" text-anchor="middle" class="dg-label">blue</text><text x="35.9" y="51.8" text-anchor="middle" class="dg-label">green</text><circle cx="64.0" cy="64.0" r="54.0" class="dg-outline"/><line x1="64.0" y1="64.0" x2="75.1" y2="59.9" class="dg-arrow plain"/><polygon points="81.2,57.7 75.3,64.8 72.2,56.1" class="dg-head plain"/><circle cx="64.0" cy="64.0" r="4.0" class="dg-point"/><text x="64.0" y="138.0" text-anchor="middle" class="dg-label-accent">3 equal parts</text>
+</svg>
+</figure>
+<ol class="q-parts"><li><span class="part">5.</span> Edmonton has a 20% chance of snow today. Is snow likely? Find P(no snow). <span class="b b-xl"></span></li><li><span class="part">6.</span> ★ Stretch: Bag B has 5 red and 5 blue. Add red counters until it beats Bag A (60%). How many? <span class="b b-xl"></span></li></ol>
+</div>
+<div class="retrieval">
+<div class="retrieval-header">Retrieval check — close your notes</div>
+<ol>
+<li>A spinner has 5 equal parts. 2 are red. Write P(red) four ways.<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li>Sam got red 9 times in 30 spins. Find the experimental P(red).<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li>You roll three 6s in a row. Is a 6 less likely on the next roll?<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li>Find the mean of 13, 8, 11, 9 and 12.<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+<li><span class="stretch-label">★ Stretch</span> You roll a die 90 times. Predict how many 5s or 6s you get.<div class="lines"><div class="al"></div><div class="al"></div></div></li>
+</ol>
+</div>
+<div class="self-check"><span class="label">Self-check</span> ☐ I could teach it &nbsp;&nbsp; ☐ Getting there &nbsp;&nbsp; ☐ Not yet</div>
+
+</div>
+<p class="key-link key-check"><a href="math7-probability-notes-answers-v1.html#s4">Check your answers for Section 4 &rarr;</a></p>
+<div class="section">
+<h2 id="synthesis">Put it all together</h2>
+<div class="retrieval">
+<div class="retrieval-header">From memory — notes closed</div>
+<ol>
+<li>A Stampede booth has a spinner with 8 equal parts. Yellow wins a big prize. Green wins a small prize. Blue wins nothing. Find each probability as a fraction and a percent. Do they add to 1?<figure class="viz">
+<!-- tikz: m8-spin | sections="yellow;green;blue;green;blue;green;blue;blue" size=190 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 198 196" width="198" height="196" aria-label="Spinner with equal parts: yellow, green, blue, green, blue, green, blue, blue">
+<path d="M99.0,99.0 L99.0,10.0 A89.0,89.0 0 0 1 161.9,36.1 Z" class="dg-fill-sun"/><path d="M99.0,99.0 L161.9,36.1 A89.0,89.0 0 0 1 188.0,99.0 Z" class="dg-fill-plant"/><path d="M99.0,99.0 L188.0,99.0 A89.0,89.0 0 0 1 161.9,161.9 Z" class="dg-fill-cold"/><path d="M99.0,99.0 L161.9,161.9 A89.0,89.0 0 0 1 99.0,188.0 Z" class="dg-fill-plant"/><path d="M99.0,99.0 L99.0,188.0 A89.0,89.0 0 0 1 36.1,161.9 Z" class="dg-fill-cold"/><path d="M99.0,99.0 L36.1,161.9 A89.0,89.0 0 0 1 10.0,99.0 Z" class="dg-fill-plant"/><path d="M99.0,99.0 L10.0,99.0 A89.0,89.0 0 0 1 36.1,36.1 Z" class="dg-fill-cold"/><path d="M99.0,99.0 L36.1,36.1 A89.0,89.0 0 0 1 99.0,10.0 Z" class="dg-fill-cold"/><text x="119.4" y="53.7" text-anchor="middle" class="dg-label">yellow</text><text x="148.3" y="82.6" text-anchor="middle" class="dg-label">green</text><text x="148.3" y="123.4" text-anchor="middle" class="dg-label">blue</text><text x="119.4" y="152.3" text-anchor="middle" class="dg-label">green</text><text x="78.6" y="152.3" text-anchor="middle" class="dg-label">blue</text><text x="49.7" y="123.4" text-anchor="middle" class="dg-label">green</text><text x="49.7" y="82.6" text-anchor="middle" class="dg-label">blue</text><text x="78.6" y="53.7" text-anchor="middle" class="dg-label">blue</text><circle cx="99.0" cy="99.0" r="89.0" class="dg-outline"/><line x1="99.0" y1="99.0" x2="121.3" y2="90.9" class="dg-arrow plain"/><polygon points="127.4,88.6 121.5,95.7 118.3,87.0" class="dg-head plain"/><circle cx="99.0" cy="99.0" r="4.0" class="dg-point"/>
+</svg>
+</figure>
+<div class="lines"><div class="al"></div><div class="al"></div><div class="al"></div></div></li>
+<li>400 people play in one day. Predict the number of big prizes.<div class="lines"><div class="al"></div><div class="al"></div><div class="al"></div></div></li>
+<li>Tess spins 40 times. She gets yellow 3 times, green 17 times and blue 20 times. Find each experimental probability. Compare them to the theory.<figure class="viz">
+<!-- tikz: m8-bar | data="yellow:3;green:17;blue:20" ymax=20 ystep=5 values=1 title="Tess's 40 spins" ylabel="times" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 318 260" width="318" height="260" aria-label="Bar graph: Tess's 40 spins. yellow: 3, green: 17, blue: 20. Vertical axis from 0 to 20.">
+<text x="178.0" y="20.0" text-anchor="middle" class="dg-title">Tess's 40 spins</text><line x1="58.0" y1="234.0" x2="298.0" y2="234.0" class="dg-grid"/><text x="52.0" y="238.0" text-anchor="end" class="dg-label-sm">0</text><line x1="58.0" y1="184.0" x2="298.0" y2="184.0" class="dg-grid"/><text x="52.0" y="188.0" text-anchor="end" class="dg-label-sm">5</text><line x1="58.0" y1="134.0" x2="298.0" y2="134.0" class="dg-grid"/><text x="52.0" y="138.0" text-anchor="end" class="dg-label-sm">10</text><line x1="58.0" y1="84.0" x2="298.0" y2="84.0" class="dg-grid"/><text x="52.0" y="88.0" text-anchor="end" class="dg-label-sm">15</text><line x1="58.0" y1="34.0" x2="298.0" y2="34.0" class="dg-grid"/><text x="52.0" y="38.0" text-anchor="end" class="dg-label-sm">20</text><line x1="58.0" y1="30.0" x2="58.0" y2="234.0" class="dg-line"/><line x1="58.0" y1="234.0" x2="306.0" y2="234.0" class="dg-line"/><text x="98.0" y="250.0" text-anchor="middle" class="dg-label-sm">yellow</text><rect x="75.6" y="204.0" width="44.8" height="30.0" class="dg-fill-accent"/><text x="98.0" y="199.0" text-anchor="middle" class="dg-label-sm">3</text><text x="178.0" y="250.0" text-anchor="middle" class="dg-label-sm">green</text><rect x="155.6" y="64.0" width="44.8" height="170.0" class="dg-fill-accent"/><text x="178.0" y="59.0" text-anchor="middle" class="dg-label-sm">17</text><text x="258.0" y="250.0" text-anchor="middle" class="dg-label-sm">blue</text><rect x="235.6" y="34.0" width="44.8" height="200.0" class="dg-fill-accent"/><text x="258.0" y="29.0" text-anchor="middle" class="dg-label-sm">20</text><g transform="translate(14,134.0) rotate(-90)"><text x="0.0" y="0.0" text-anchor="middle" class="dg-label">times</text></g>
+</svg>
+</figure>
+<div class="lines"><div class="al"></div><div class="al"></div><div class="al"></div></div></li>
+<li>Tess loses 5 spins in a row. She says her next spin is sure to win. Is she right?<div class="lines"><div class="al"></div><div class="al"></div><div class="al"></div></div></li>
+<li>Look back at the Pre-Knowledge Check. What would you change now?<div class="lines"><div class="al"></div><div class="al"></div><div class="al"></div></div></li>
+</ol>
+</div>
+</div>
+
+</body>
+</html>

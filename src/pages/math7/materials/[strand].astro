@@ -1,0 +1,56 @@
+---
+// Strand page: pick a topic, or open the strand's mixed-practice workbook.
+// Each topic's materials live on its own page (math7/[topic]).
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CourseHero from '../../../components/CourseHero.astro';
+import TopicList from '../../../components/TopicList.astro';
+import MaterialRow from '../../../components/MaterialRow.astro';
+import { getEntry } from 'astro:content';
+import { strands, topicsInStrand, type Strand } from '../../../data/math7';
+
+export function getStaticPaths() {
+  return strands.map((s) => ({ params: { strand: s.slug }, props: { s } }));
+}
+
+const { s } = Astro.props as { s: Strand };
+const base = import.meta.env.BASE_URL;
+const view = (path: string) => `${base}math7/view/${path}`;
+
+const items = await Promise.all(
+  topicsInStrand(s.slug).map(async (t) => {
+    const entry = await getEntry('math7-units', t.slug);
+    return { art: t.slug, href: `${base}math7/${t.slug}`, title: t.label, description: entry?.data.hook };
+  }),
+);
+---
+
+<BaseLayout course="math7" title={`${s.label} — Math 7`} audienceLinks={{ parent: `math7/parents#${s.slug}` }}>
+  <CourseHero
+    back={{ href: `${base}math7`, label: 'Math 7' }}
+    eyebrow={`Grade 7 Math · ${s.label} strand`}
+    title={s.label}
+    description={s.blurb}
+  >
+    <div class="mt-5 flex flex-wrap gap-x-5 gap-y-1">
+      <a href={view(s.workbook)} class="text-sm font-semibold text-accent-ink hover:underline">Strand workbook →</a>
+    </div>
+  </CourseHero>
+
+  <TopicList heading="Pick a topic" items={items} />
+
+  <section class="mb-10">
+    <h2 class="mb-4 text-sm font-semibold text-slate-500">Review the whole strand</h2>
+    <div class="grid gap-3">
+      <MaterialRow label={`${s.label} — Strand Workbook`} href={view(s.workbook)} />
+    </div>
+    <details class="disclosure mt-4">
+      <summary class="keys-toggle">
+        <span class="chev inline-block text-[0.625rem]" aria-hidden="true">▶</span> Workbook answer key
+      </summary>
+      <div class="mt-4 grid gap-2.5 sm:grid-cols-2">
+        <MaterialRow label={`${s.label} Workbook Answer Key`} href={view(s.workbookKey)} type="key" compact />
+      </div>
+    </details>
+  </section>
+
+</BaseLayout>

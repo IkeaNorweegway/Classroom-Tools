@@ -1,0 +1,33 @@
+---
+// Parent topic page (shared ParentUnit layout), one per file in
+// src/content/parent-guides/math7/.
+import ParentUnit from '../../../components/ParentUnit.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { math7Course, topics, strandBySlug } from '../../../data/math7';
+import type { CourseUnit } from '../../../data/manifest';
+
+export async function getStaticPaths() {
+  const guides = await getCollection('parent-guides', (e) => e.slug.startsWith('math7/'));
+  const pages = math7Course.units
+    .map((u, i) => ({ u, i, entry: guides.find((e) => e.slug === `math7/${u.slug}`) }))
+    .filter((p) => p.entry);
+  return pages.map((p, k) => ({
+    params: { topic: p.u.slug },
+    props: { ...p, prev: pages[k - 1]?.u, next: pages[k + 1]?.u },
+  }));
+}
+
+interface Props { u: CourseUnit; i: number; entry: CollectionEntry<'parent-guides'>; prev?: CourseUnit; next?: CourseUnit }
+const { u, i, entry, prev, next } = Astro.props;
+const strand = strandBySlug(topics[i].strand)!;
+---
+
+<ParentUnit
+  manifest={math7Course}
+  unit={u}
+  entry={entry}
+  eyebrow={`Parent guide · Grade 7 Math · ${strand.label}`}
+  thisYear="Grade 7"
+  prev={prev}
+  next={next}
+/>

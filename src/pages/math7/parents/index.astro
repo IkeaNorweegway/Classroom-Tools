@@ -1,0 +1,64 @@
+---
+// Parent overview for Math 7: what the course covers in plain words, where
+// it sits between Grade 6 and Grade 8, general ways to help, and a link to
+// each topic's parent guide.
+import ParentOverview from '../../../components/ParentOverview.astro';
+import { getCollection } from 'astro:content';
+import { strands, topicsInStrand } from '../../../data/math7';
+
+const base = import.meta.env.BASE_URL;
+const written = new Set((await getCollection('parent-guides')).map((e) => e.slug));
+
+const stages = [
+  { label: 'Grade 6', idea: 'Whole numbers and decimals, adding and subtracting fractions, first steps with negative numbers, simple equations, area of triangles, and volume of boxes.' },
+  { label: 'Grade 7', idea: 'All four operations with integers, multiplying and dividing fractions and decimals, ratios and percents, equations with x on both sides, functions, angles, circles, volume, sampling and probability.', now: true },
+  { label: 'Grade 8', idea: 'Rational and irrational numbers, square roots, polynomials, inequalities, slope, similar shapes, the Pythagorean theorem, surface area, and the chance of two events.' },
+  { label: 'High school', idea: 'Math 10C leads on to the 20-1/30-1 and 20-2/30-2 courses. Math 10-3 leads on to 20-3 and 30-3, which focus on workplace math.' },
+];
+
+const plainStrand: Record<string, string> = {
+  number: 'Working with negative numbers, fractions and decimals in all four operations, plus squares, cubes, ratios and percents. These skills show up in every other topic.',
+  algebra: 'Solving equations by keeping both sides balanced, and seeing how one quantity depends on another in tables and graphs.',
+  'measurement-geometry': 'Naming lines and angles, spotting equal angles and matching shapes, measuring circles with π, and finding how much a box or can holds.',
+  'statistics-probability': 'Choosing a fair sample, summing up data with the mean, median, mode and range, and testing chance with real experiments.',
+};
+
+const tips: [string, string][] = [
+  ['Ask them to teach you', 'Have your child explain a problem from their notes. Explaining is one of the best ways to learn, and you don’t need to know the answer to listen.'],
+  ['Ask “How do you know?”', 'Instead of “Is that right?”, ask how they know. Checking their own work is a skill they need on tests.'],
+  ['Look at the pictures', 'The Grade 7 notes use lots of pictures: number lines, coloured chips, fraction bars, algebra tiles and diagrams. Ask your child to show you the picture that goes with a problem.'],
+  ['Short and often', 'Fifteen focused minutes a few times a week beats a long session the night before a test.'],
+  ['Mistakes are clues', 'When an answer is wrong, have them find the step where it went off track. That is where the learning happens.'],
+  ['Keep the basics sharp', 'Times tables, negative numbers and fractions come up all year. A few minutes of practice on these pays off in every topic.'],
+];
+
+const groups = strands.map((s) => ({
+  id: s.slug,
+  label: s.label,
+  blurb: plainStrand[s.slug],
+  items: topicsInStrand(s.slug).map((t) => ({
+    label: t.label,
+    href: written.has(`math7/${t.slug}`) ? `${base}math7/parents/${t.slug}` : undefined,
+  })),
+}));
+---
+
+<ParentOverview
+  course="math7"
+  title="Grade 7 math at home"
+  pageTitle="Grade 7 Math — Parent guide"
+  metaDescription="What your child learns in Grade 7 math, where it leads, and how to help at home."
+  eyebrow="Parent guide · Grade 7 Mathematics"
+  numeral="7"
+  description="What your child is learning this year, how it connects to Grade 6 and Grade 8, and simple ways to help, with worked examples and short practice sheets for each topic."
+  aboutHeading="What Grade 7 math is about"
+  about={[
+    'Grade 7 follows Alberta\'s new math curriculum (the 2026 draft). Students finish all four operations with negative numbers, multiply and divide fractions and decimals, and use ratios and percents. They solve equations with x on both sides, meet functions, work with angles and circles, find volumes, and run their own samples and probability experiments.',
+    'The notes are written in short, plain sentences with lots of pictures, so the reading never gets in the way of the math. Every topic starts with a picture (chips, tiles, bars, number lines, balances) before the rule.',
+  ]}
+  stages={stages}
+  groups={groups}
+  listHeading="Topics this year"
+  listIntro="Four strands, twelve topics. Pick one to see the parent guide."
+  tips={tips}
+/>

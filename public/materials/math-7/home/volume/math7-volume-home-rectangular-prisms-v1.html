@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volume of a Box — Home Practice | Grade 7 Mathematics</title>
+  <style>
+    :root { --accent: #16a34a; --accent-light: #f0fdf4; --accent-mid: #22c55e; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 11pt; line-height: 1.55; color: #1e293b; background: #fff; max-width: 780px; margin: 0 auto; padding: 28px 32px 48px; }
+    h1 { font-size: 20pt; font-weight: 700; color: #1e293b; margin-bottom: 2px; }
+    h2 { font-size: 13pt; font-weight: 700; color: var(--accent); margin: 18px 0 8px; border-bottom: 2px solid var(--accent-light); padding-bottom: 3px; }
+    p { margin-bottom: 6px; }
+    ul, ol { margin: 4px 0 8px 22px; }
+    li { margin-bottom: 3px; }
+    strong { font-weight: 700; }
+    em { font-style: italic; color: #475569; }
+    .b { display: inline-block; border-bottom: 1.5px solid #334155; width: 90px; vertical-align: bottom; }
+    .al { display: block; border-bottom: 1px solid #cbd5e1; height: 1.7rem; }
+    .work { margin: 4px 0 2px; }
+    .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 14px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
+    .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
+    .header-strip .meta { font-size: 9.5pt; color: #64748b; }
+    .header-strip .notes-link { font-size: 9.5pt; color: #64748b; margin: 2px 0 0; }
+    .notes-link a { color: var(--accent); font-weight: 600; }
+    .name-row { display: flex; gap: 24px; margin: 8px 0 14px; font-size: 10.5pt; align-items: baseline; }
+    .name-row span { color: #64748b; white-space: nowrap; }
+    .name-row .b { flex: 1; width: auto; }
+    .qgrid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; }
+    .question { padding: 6px 0 4px; break-inside: avoid; }
+    .question ul { list-style: none; margin-left: 0; }
+    .question li { margin-bottom: 1px; }
+    @media (max-width: 560px) { .qgrid { grid-template-columns: 1fr; } }
+    .box { border-radius: 8px; padding: 10px 14px; margin: 8px 0 10px; break-inside: avoid; }
+    .box .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .box-example { background: var(--accent-light); border: 1px solid var(--accent-mid); }
+    .box-example .label { color: var(--accent); }
+    .box-tip { background: #fffbeb; border: 1px solid #fde68a; font-size: 10pt; }
+    .box-check { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .box-check .label { color: #16a34a; }
+    .box-answer { background: #f8fafc; border: 1px solid #e2e8f0; }
+    @page { size: letter; margin: 11mm 13mm; }
+    @media print {
+      body { padding: 0; font-size: 10pt; line-height: 1.45; }
+      .header-strip { padding: 7px 14px; margin-bottom: 8px; }
+      h1 { font-size: 17pt; }
+      h2 { margin: 10px 0 5px; }
+      .name-row { margin: 4px 0 8px; }
+      .box { padding: 7px 12px; margin: 5px 0 7px; }
+      .question { padding: 4px 0 2px; }
+      .al { height: 1.3rem; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      h2 { break-after: avoid; }
+    }
+:root { --font-body: 'Segoe UI', system-ui, sans-serif; }
+/* Diagrams on a one-page sheet: smaller in print so the sheet stays on one page. */
+@media print { html { zoom: .84; } .viz { margin: 2px auto 4px; } .viz svg { max-height: 44mm; width: auto; } .viz figcaption { font-size: 8.5pt; margin-top: 1px; } }
+/* ── dg-* SVG classes and the viz kit (shared with Math 9 notes) ── */
+:root { --dg-stroke: #3f3b35; --dg-fill: #faf9f6; --dg-accent: var(--accent); --dg-secondary: #544f47; --dg-muted: #6b665d;
+  --viz-hot: #c2410c; --viz-cold: #1d4ed8; --viz-plant: #15803d; --viz-water: #0369a1; --viz-earth: #92400e; --viz-sun: #ca8a04; --viz-key: #15803d; }
+.viz { margin: 0.9rem auto 1.1rem; text-align: center; break-inside: avoid; page-break-inside: avoid; }
+.viz svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.viz figcaption { font-size: 0.85rem; line-height: 1.4; color: #544f47; margin: 0.4rem auto 0; max-width: 40rem; font-style: italic; }
+svg .dg-boundary, svg .dg-line, svg .dg-accent, svg .dg-dashed, svg .dg-right-angle, svg .dg-construction, svg .dg-grid, svg .dg-outline,
+svg .dg-fill-accent, svg .dg-fill-hot, svg .dg-fill-cold, svg .dg-fill-plant, svg .dg-fill-water, svg .dg-fill-earth, svg .dg-fill-sun, svg .dg-fill-soft, svg .dg-arrow, svg .dg-tag { vector-effect: non-scaling-stroke; }
+svg .dg-boundary    { stroke: var(--dg-stroke); fill: var(--dg-fill); stroke-width: 1.5px; }
+svg .dg-line        { stroke: var(--dg-stroke); fill: none; stroke-width: 1.5px; }
+svg .dg-accent      { stroke: var(--dg-accent); fill: none; stroke-width: 2.5px; }
+svg .dg-dashed      { stroke: var(--dg-secondary); fill: none; stroke-width: 1.5px; stroke-dasharray: 5 3; }
+svg .dg-right-angle { stroke: var(--dg-stroke); fill: none; stroke-width: 1px; }
+svg .dg-construction{ stroke: var(--dg-muted); fill: none; stroke-width: 1px; stroke-dasharray: 2 3; }
+svg .dg-grid        { stroke: var(--dg-muted); stroke-opacity: .45; fill: none; stroke-width: 1px; }
+svg .dg-outline     { stroke: var(--dg-stroke); fill: none; stroke-width: 1.5px; }
+svg .dg-point       { fill: var(--dg-stroke); stroke: none; }
+svg .dg-point-accent{ fill: var(--dg-accent); stroke: none; }
+svg .dg-shade       { fill: var(--dg-accent); fill-opacity: .42; stroke: none; }
+svg .dg-fill-accent { fill: var(--dg-accent); fill-opacity: .16; stroke: var(--dg-accent); stroke-width: 1.5px; }
+svg .dg-fill-hot    { fill: var(--viz-hot);   fill-opacity: .18; stroke: var(--viz-hot);   stroke-width: 1.5px; }
+svg .dg-fill-cold   { fill: var(--viz-cold);  fill-opacity: .14; stroke: var(--viz-cold);  stroke-width: 1.5px; }
+svg .dg-fill-plant  { fill: var(--viz-plant); fill-opacity: .18; stroke: var(--viz-plant); stroke-width: 1.5px; }
+svg .dg-fill-water  { fill: var(--viz-water); fill-opacity: .16; stroke: var(--viz-water); stroke-width: 1.5px; }
+svg .dg-fill-earth  { fill: var(--viz-earth); fill-opacity: .18; stroke: var(--viz-earth); stroke-width: 1.5px; }
+svg .dg-fill-sun    { fill: var(--viz-sun);   fill-opacity: .26; stroke: var(--viz-sun);   stroke-width: 1.5px; }
+svg .dg-fill-soft   { fill: #efece6; stroke: #a8a196; stroke-width: 1px; }
+svg .dg-solid-accent{ fill: var(--dg-accent); stroke: none; }
+svg .dg-solid-muted { fill: var(--dg-muted); stroke: none; }
+svg .dg-arrow       { fill: none; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-arrow.plain { stroke: var(--dg-stroke); }  svg .dg-head.plain  { fill: var(--dg-stroke); }
+svg .dg-arrow.accent{ stroke: var(--dg-accent); }  svg .dg-head.accent { fill: var(--dg-accent); }
+svg .dg-arrow.hot   { stroke: var(--viz-hot); }    svg .dg-head.hot    { fill: var(--viz-hot); }
+svg .dg-arrow.muted { stroke: var(--dg-muted); }   svg .dg-head.muted  { fill: var(--dg-muted); }
+svg .dg-head        { stroke: none; }
+svg .dg-tag         { fill: #fff; stroke: var(--dg-accent); stroke-width: 1.25px; stroke-dasharray: 4 2; }
+svg .dg-tag-answer  { font-weight: 700; fill: var(--viz-key); }
+svg .dg-label       { font: 13px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+svg .dg-label-sm    { font: 11.5px/1.3 var(--font-body); fill: var(--dg-secondary); stroke: none; }
+svg .dg-label-accent{ font: 600 12.5px/1.3 var(--font-body); fill: var(--dg-accent); stroke: none; }
+svg .dg-label-hot   { font: 600 12px/1.3 var(--font-body); fill: var(--viz-hot); stroke: none; }
+svg .dg-label-cold  { font: 600 12px/1.3 var(--font-body); fill: var(--viz-cold); stroke: none; }
+svg .dg-label-earth { font: 600 12px/1.3 var(--font-body); fill: var(--viz-earth); stroke: none; }
+svg .dg-label-white { font: 700 12px/1.3 var(--font-body); fill: #fff; stroke: none; }
+svg .dg-title       { font: 700 13.5px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+svg .dg-math        { font: 16px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+svg .dg-math-lg     { font: 600 20px/1.2 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+  </style>
+</head>
+<body>
+  <div class="header-strip">
+    <p class="course-label">Grade 7 Math · Geometry &amp; Measurement · Home practice</p>
+    <h1>Volume of a Box</h1>
+    <p class="meta">One skill: volume of a box by layers, in cubic units · about 15 minutes</p>
+    <p class="notes-link">Need a reminder? See the class notes: <a href="/Classroom-Tools/math7/view/notes/volume/math7-volume-notes-v1#s1" target="_top">Section 1: Prisms and cylinders</a> · <a href="/Classroom-Tools/math7/view/notes/volume/math7-volume-notes-v1#s2" target="_top">Section 2: Volume by layers</a></p>
+  </div>
+  <div class="name-row"><span>Name</span><span class="b"></span><span>Date</span><span class="b" style="flex:0 0 120px"></span></div>
+<div class="box box-tip"><p><strong>For the adult:</strong> Volume is the space inside a box. We count it in cubes, so the units are cm³ or m³. One layer of cubes covers the bottom: length × width. The number of layers is the height. So volume = length × width × height.</p></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>A juice box is 6 cm long, 4 cm wide and 10 cm tall. Find its volume.</strong></p><figure class="viz">
+<!-- tikz: m8-solid | kind=box l="6 cm" w="4 cm" h="10 cm" lv=6 wv=4 hv=10 slices=10 size=110 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 150 144" width="150" height="144" aria-label="Rectangular prism with its two bases shaded, 6 cm, 4 cm, 10 cm.">
+<g transform="translate(48.8,110)"><polygon points="0.0,0.0 53.2,0.0 53.2,-88.7 0.0,-88.7" class="dg-fill-soft"/><polygon points="53.2,0.0 70.9,-11.3 70.9,-100.0 53.2,-88.7" class="dg-fill-soft"/><line x1="70.9" y1="-11.3" x2="17.7" y2="-11.3" class="dg-dashed"/><line x1="17.7" y1="-11.3" x2="0.0" y2="0.0" class="dg-dashed"/><line x1="17.7" y1="-11.3" x2="17.7" y2="-100.0" class="dg-dashed"/><line x1="0.0" y1="-8.9" x2="53.2" y2="-8.9" class="dg-grid"/><line x1="53.2" y1="-8.9" x2="70.9" y2="-20.2" class="dg-grid"/><line x1="0.0" y1="-17.7" x2="53.2" y2="-17.7" class="dg-grid"/><line x1="53.2" y1="-17.7" x2="70.9" y2="-29.1" class="dg-grid"/><line x1="0.0" y1="-26.6" x2="53.2" y2="-26.6" class="dg-grid"/><line x1="53.2" y1="-26.6" x2="70.9" y2="-37.9" class="dg-grid"/><line x1="0.0" y1="-35.5" x2="53.2" y2="-35.5" class="dg-grid"/><line x1="53.2" y1="-35.5" x2="70.9" y2="-46.8" class="dg-grid"/><line x1="0.0" y1="-44.3" x2="53.2" y2="-44.3" class="dg-grid"/><line x1="53.2" y1="-44.3" x2="70.9" y2="-55.7" class="dg-grid"/><line x1="0.0" y1="-53.2" x2="53.2" y2="-53.2" class="dg-grid"/><line x1="53.2" y1="-53.2" x2="70.9" y2="-64.5" class="dg-grid"/><line x1="0.0" y1="-62.1" x2="53.2" y2="-62.1" class="dg-grid"/><line x1="53.2" y1="-62.1" x2="70.9" y2="-73.4" class="dg-grid"/><line x1="0.0" y1="-70.9" x2="53.2" y2="-70.9" class="dg-grid"/><line x1="53.2" y1="-70.9" x2="70.9" y2="-82.3" class="dg-grid"/><line x1="0.0" y1="-79.8" x2="53.2" y2="-79.8" class="dg-grid"/><line x1="53.2" y1="-79.8" x2="70.9" y2="-91.1" class="dg-grid"/><line x1="0.0" y1="0.0" x2="53.2" y2="0.0" class="dg-line"/><line x1="0.0" y1="-88.7" x2="53.2" y2="-88.7" class="dg-line"/><line x1="0.0" y1="0.0" x2="0.0" y2="-88.7" class="dg-line"/><line x1="53.2" y1="0.0" x2="70.9" y2="-11.3" class="dg-line"/><line x1="53.2" y1="-88.7" x2="70.9" y2="-100.0" class="dg-line"/><line x1="53.2" y1="0.0" x2="53.2" y2="-88.7" class="dg-line"/><line x1="70.9" y1="-100.0" x2="17.7" y2="-100.0" class="dg-line"/><line x1="70.9" y1="-11.3" x2="70.9" y2="-100.0" class="dg-line"/><line x1="17.7" y1="-100.0" x2="0.0" y2="-88.7" class="dg-line"/><polygon points="0.0,-88.7 53.2,-88.7 70.9,-100.0 17.7,-100.0" class="dg-fill-accent"/><polygon points="0.0,0.0 53.2,0.0 70.9,-11.3 17.7,-11.3" class="dg-fill-accent" style="stroke-dasharray:5 3"/><text style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round" x="26.6" y="19.0" text-anchor="middle" class="dg-label-accent">6 cm</text><text style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round" x="-8.0" y="-40.3" text-anchor="end" class="dg-label-accent">10 cm</text><text style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round" x="66.4" y="11.9" text-anchor="start" class="dg-label-accent">4 cm</text></g>
+</svg>
+</figure><p>Step 1: One layer: 6 × 4 = 24 cubes.<br>Step 2: 10 layers: 24 × 10 = 240. The volume is 240 cm³.</p></div>
+<h2>Your turn</h2>
+<div class="qgrid">
+<div class="question">
+<p><strong>1.</strong> Count one layer, then the layers. Find the volume. <em>(One layer is 3 × 2.)</em></p>
+<figure class="viz">
+<!-- tikz: m8-layers | l=3 w=2 h=2 llabel="one layer: [[ ]] cubes" blabel="[[ ]] layers" -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 458 216" width="458" height="216" aria-label="One layer of 3 by 2 cubes, and a box built from 2 of those layers">
+<g transform="translate(0,0)"><polygon points="101.0,59.0 123.5,46.0 101.0,33.0 78.5,46.0" class="dg-fill-soft"/><polygon points="101.0,59.0 78.5,46.0 78.5,72.0 101.0,85.0" class="dg-fill-accent"/><polygon points="101.0,59.0 123.5,46.0 123.5,72.0 101.0,85.0" class="dg-fill-sun"/><polygon points="123.5,72.0 146.1,59.0 123.5,46.0 101.0,59.0" class="dg-fill-soft"/><polygon points="123.5,72.0 101.0,59.0 101.0,85.0 123.5,98.0" class="dg-fill-accent"/><polygon points="123.5,72.0 146.1,59.0 146.1,85.0 123.5,98.0" class="dg-fill-sun"/><polygon points="78.5,72.0 101.0,59.0 78.5,46.0 56.0,59.0" class="dg-fill-soft"/><polygon points="78.5,72.0 56.0,59.0 56.0,85.0 78.5,98.0" class="dg-fill-accent"/><polygon points="78.5,72.0 101.0,59.0 101.0,85.0 78.5,98.0" class="dg-fill-sun"/><polygon points="146.1,85.0 168.6,72.0 146.1,59.0 123.5,72.0" class="dg-fill-soft"/><polygon points="146.1,85.0 123.5,72.0 123.5,98.0 146.1,111.0" class="dg-fill-accent"/><polygon points="146.1,85.0 168.6,72.0 168.6,98.0 146.1,111.0" class="dg-fill-sun"/><polygon points="101.0,85.0 123.5,72.0 101.0,59.0 78.5,72.0" class="dg-fill-soft"/><polygon points="101.0,85.0 78.5,72.0 78.5,98.0 101.0,111.0" class="dg-fill-accent"/><polygon points="101.0,85.0 123.5,72.0 123.5,98.0 101.0,111.0" class="dg-fill-sun"/><polygon points="123.5,98.0 146.1,85.0 123.5,72.0 101.0,85.0" class="dg-fill-soft"/><polygon points="123.5,98.0 101.0,85.0 101.0,111.0 123.5,124.0" class="dg-fill-accent"/><polygon points="123.5,98.0 146.1,85.0 146.1,111.0 123.5,124.0" class="dg-fill-sun"/>
+</g><text x="33.6" y="208.0" text-anchor="start" class="dg-label-accent">one layer: </text><rect x="103.4" y="196.0" width="26.0" height="18.0" rx="3" class="dg-tag"/><text x="131.4" y="208.0" text-anchor="start" class="dg-label-accent"> cubes</text><line x1="206.0" y1="108.0" x2="235.5" y2="108.0" class="dg-arrow accent"/><polygon points="242.0,108.0 234.0,112.6 234.0,103.4" class="dg-head accent"/><g transform="translate(246,0)"><polygon points="101.0,85.0 123.5,72.0 101.0,59.0 78.5,72.0" class="dg-fill-soft"/><polygon points="101.0,85.0 78.5,72.0 78.5,98.0 101.0,111.0" class="dg-fill-accent"/><polygon points="101.0,85.0 123.5,72.0 123.5,98.0 101.0,111.0" class="dg-fill-sun"/><polygon points="101.0,59.0 123.5,46.0 101.0,33.0 78.5,46.0" class="dg-fill-soft"/><polygon points="101.0,59.0 78.5,46.0 78.5,72.0 101.0,85.0" class="dg-fill-accent"/><polygon points="101.0,59.0 123.5,46.0 123.5,72.0 101.0,85.0" class="dg-fill-sun"/><polygon points="123.5,98.0 146.1,85.0 123.5,72.0 101.0,85.0" class="dg-fill-soft"/><polygon points="123.5,98.0 101.0,85.0 101.0,111.0 123.5,124.0" class="dg-fill-accent"/><polygon points="123.5,98.0 146.1,85.0 146.1,111.0 123.5,124.0" class="dg-fill-sun"/><polygon points="78.5,98.0 101.0,85.0 78.5,72.0 56.0,85.0" class="dg-fill-soft"/><polygon points="78.5,98.0 56.0,85.0 56.0,111.0 78.5,124.0" class="dg-fill-accent"/><polygon points="78.5,98.0 101.0,85.0 101.0,111.0 78.5,124.0" class="dg-fill-sun"/><polygon points="123.5,72.0 146.1,59.0 123.5,46.0 101.0,59.0" class="dg-fill-soft"/><polygon points="123.5,72.0 101.0,59.0 101.0,85.0 123.5,98.0" class="dg-fill-accent"/><polygon points="123.5,72.0 146.1,59.0 146.1,85.0 123.5,98.0" class="dg-fill-sun"/><polygon points="78.5,72.0 101.0,59.0 78.5,46.0 56.0,59.0" class="dg-fill-soft"/><polygon points="78.5,72.0 56.0,59.0 56.0,85.0 78.5,98.0" class="dg-fill-accent"/><polygon points="78.5,72.0 101.0,59.0 101.0,85.0 78.5,98.0" class="dg-fill-sun"/><polygon points="146.1,111.0 168.6,98.0 146.1,85.0 123.5,98.0" class="dg-fill-soft"/><polygon points="146.1,111.0 123.5,98.0 123.5,124.0 146.1,137.0" class="dg-fill-accent"/><polygon points="146.1,111.0 168.6,98.0 168.6,124.0 146.1,137.0" class="dg-fill-sun"/><polygon points="101.0,111.0 123.5,98.0 101.0,85.0 78.5,98.0" class="dg-fill-soft"/><polygon points="101.0,111.0 78.5,98.0 78.5,124.0 101.0,137.0" class="dg-fill-accent"/><polygon points="101.0,111.0 123.5,98.0 123.5,124.0 101.0,137.0" class="dg-fill-sun"/><polygon points="146.1,85.0 168.6,72.0 146.1,59.0 123.5,72.0" class="dg-fill-soft"/><polygon points="146.1,85.0 123.5,72.0 123.5,98.0 146.1,111.0" class="dg-fill-accent"/><polygon points="146.1,85.0 168.6,72.0 168.6,98.0 146.1,111.0" class="dg-fill-sun"/><polygon points="101.0,85.0 123.5,72.0 101.0,59.0 78.5,72.0" class="dg-fill-soft"/><polygon points="101.0,85.0 78.5,72.0 78.5,98.0 101.0,111.0" class="dg-fill-accent"/><polygon points="101.0,85.0 123.5,72.0 123.5,98.0 101.0,111.0" class="dg-fill-sun"/><polygon points="123.5,124.0 146.1,111.0 123.5,98.0 101.0,111.0" class="dg-fill-soft"/><polygon points="123.5,124.0 101.0,111.0 101.0,137.0 123.5,150.0" class="dg-fill-accent"/><polygon points="123.5,124.0 146.1,111.0 146.1,137.0 123.5,150.0" class="dg-fill-sun"/><polygon points="123.5,98.0 146.1,85.0 123.5,72.0 101.0,85.0" class="dg-fill-soft"/><polygon points="123.5,98.0 101.0,85.0 101.0,111.0 123.5,124.0" class="dg-fill-accent"/><polygon points="123.5,98.0 146.1,85.0 146.1,111.0 123.5,124.0" class="dg-fill-sun"/>
+</g><rect x="312.4" y="196.0" width="26.0" height="18.0" rx="3" class="dg-tag"/><text x="340.4" y="208.0" text-anchor="start" class="dg-label-accent"> layers</text>
+</svg>
+</figure>
+</div>
+<div class="question">
+<p><strong>2.</strong> Find the volume. <span class="b"></span> <em>(Multiply length × width × height.)</em></p>
+<figure class="viz">
+<!-- tikz: m8-solid | kind=box l="5 cm" w="2 cm" h="4 cm" lv=5 wv=2 hv=4 size=100 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 174 122" width="174" height="122" aria-label="Rectangular prism with its two bases shaded, 5 cm, 2 cm, 4 cm.">
+<g transform="translate(42.64,87.3333333333333)"><polygon points="0.0,0.0 83.3,0.0 83.3,-66.7 0.0,-66.7" class="dg-fill-soft"/><polygon points="83.3,0.0 100.0,-10.7 100.0,-77.3 83.3,-66.7" class="dg-fill-soft"/><line x1="100.0" y1="-10.7" x2="16.7" y2="-10.7" class="dg-dashed"/><line x1="16.7" y1="-10.7" x2="0.0" y2="0.0" class="dg-dashed"/><line x1="16.7" y1="-10.7" x2="16.7" y2="-77.3" class="dg-dashed"/><line x1="0.0" y1="0.0" x2="83.3" y2="0.0" class="dg-line"/><line x1="0.0" y1="-66.7" x2="83.3" y2="-66.7" class="dg-line"/><line x1="0.0" y1="0.0" x2="0.0" y2="-66.7" class="dg-line"/><line x1="83.3" y1="0.0" x2="100.0" y2="-10.7" class="dg-line"/><line x1="83.3" y1="-66.7" x2="100.0" y2="-77.3" class="dg-line"/><line x1="83.3" y1="0.0" x2="83.3" y2="-66.7" class="dg-line"/><line x1="100.0" y1="-77.3" x2="16.7" y2="-77.3" class="dg-line"/><line x1="100.0" y1="-10.7" x2="100.0" y2="-77.3" class="dg-line"/><line x1="16.7" y1="-77.3" x2="0.0" y2="-66.7" class="dg-line"/><polygon points="0.0,-66.7 83.3,-66.7 100.0,-77.3 16.7,-77.3" class="dg-fill-accent"/><polygon points="0.0,0.0 83.3,0.0 100.0,-10.7 16.7,-10.7" class="dg-fill-accent" style="stroke-dasharray:5 3"/><text style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round" x="41.7" y="19.0" text-anchor="middle" class="dg-label-accent">5 cm</text><text style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round" x="-8.0" y="-29.3" text-anchor="end" class="dg-label-accent">4 cm</text><text style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round" x="96.0" y="12.2" text-anchor="start" class="dg-label-accent">2 cm</text></g>
+</svg>
+</figure>
+</div>
+<div class="question">
+<p><strong>3.</strong> A cereal box is 20 cm wide, 5 cm deep and 30 cm tall. Find its volume. <span class="b"></span></p>
+</div>
+<div class="question">
+<p><strong>4.</strong> A sandbox is 3 m long, 2 m wide and 0.5 m deep. How much sand fills it? <span class="b"></span></p>
+</div>
+<div class="question">
+<p><strong>5.</strong> Ben says a box 4 cm by 3 cm by 2 cm has a volume of 24 cm². Is he right? <span class="b"></span></p>
+</div>
+<div class="question">
+<p><strong>6.</strong> This box lies on a rectangle. Name the prism. What shape are its bases? <span class="b"></span></p>
+<figure class="viz">
+<!-- tikz: m8-solid | kind=tri bv=4 thv=3.5 lv=8 ground=1 shade=0 size=150 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 198 106" width="198" height="106" aria-label="Triangular prism with its two bases shaded.">
+<g transform="translate(24,92.7884615384615)"><polygon points="57.7,0.0 28.8,-50.5 121.2,-82.8 150.0,-32.3" class="dg-fill-soft"/><line x1="92.3" y1="-32.3" x2="150.0" y2="-32.3" class="dg-dashed"/><line x1="0.0" y1="0.0" x2="92.3" y2="-32.3" class="dg-dashed"/><line x1="121.2" y1="-82.8" x2="92.3" y2="-32.3" class="dg-dashed"/><line x1="0.0" y1="0.0" x2="57.7" y2="0.0" class="dg-line"/><line x1="57.7" y1="0.0" x2="28.8" y2="-50.5" class="dg-line"/><line x1="150.0" y1="-32.3" x2="121.2" y2="-82.8" class="dg-line"/><line x1="57.7" y1="0.0" x2="150.0" y2="-32.3" class="dg-line"/><line x1="28.8" y1="-50.5" x2="0.0" y2="0.0" class="dg-line"/><line x1="28.8" y1="-50.5" x2="121.2" y2="-82.8" class="dg-line"/><polygon points="0.0,0.0 57.7,0.0 28.8,-50.5" class="dg-fill-soft"/><line x1="-14.0" y1="1.0" x2="164.0" y2="1.0" class="dg-line"/></g>
+</svg>
+</figure>
+</div>
+<div class="question">
+<p><strong>7.</strong> A fish tank is 50 cm long, 20 cm wide and 30 cm tall. How many litres does it hold? (1000 cm³ = 1 L) <span class="b"></span></p>
+</div>
+</div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can find the volume of a box and give the right units. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+</body>
+</html>

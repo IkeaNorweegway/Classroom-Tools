@@ -7,6 +7,11 @@
 # Sources and output, by course (front matter `course:`, default math9):
 #   math9:   worksheets/math-9/home/<topic>/*.md  ->  public/materials/math-9/home/<topic>/
 #   math8:   worksheets/math-8/home/<topic>/*.md  ->  public/materials/math-8/home/<topic>/ (strand colours, as Math 9)
+#   math7:   worksheets/math-7/home/<topic>/*.md  ->  public/materials/math-7/home/<topic>/ (strand colours, as Math 9)
+#
+# Diagrams: a line `@viz type args` draws a diagram with scripts/Math8Viz.pm (the
+# Math 7/8 diagram kit). [[answer]] in a label is a dashed box on a practice
+# sheet and the answer on an -answers- sheet.
 #   others:  worksheets/<course folder>/<unit>/*-home-*.md and steam/grade-N/home/*.md
 #            ->  public/materials/ (flat, like the course's other materials)
 #
@@ -36,6 +41,9 @@ use File::Find qw(find);
 use File::Glob qw(:bsd_glob);   # glob() must not split "Classroom tools" at the space
 
 my $ROOT = dirname(dirname(abs_path($0)));
+use lib dirname(abs_path($0));
+use Math8Viz;
+our $VIZ_USED = 0;   # set when a sheet has a diagram, so the page gets the diagram styles
 my $MATERIALS = File::Spec->catdir($ROOT, 'public', 'materials');
 
 my %STRAND = (
@@ -57,6 +65,59 @@ my %COURSE = (
 );
 
 my $SITE_BASE = '/Classroom-Tools/';   # the site's base path (astro.config.mjs)
+
+my $VIZ_CSS = <<'CSS';
+:root { --font-body: 'Segoe UI', system-ui, sans-serif; }
+/* Diagrams on a one-page sheet: smaller in print so the sheet stays on one page. */
+@media print { html { zoom: .84; } .viz { margin: 2px auto 4px; } .viz svg { max-height: 44mm; width: auto; } .viz figcaption { font-size: 8.5pt; margin-top: 1px; } }
+/* ── dg-* SVG classes and the viz kit (shared with Math 9 notes) ── */
+:root { --dg-stroke: #3f3b35; --dg-fill: #faf9f6; --dg-accent: var(--accent); --dg-secondary: #544f47; --dg-muted: #6b665d;
+  --viz-hot: #c2410c; --viz-cold: #1d4ed8; --viz-plant: #15803d; --viz-water: #0369a1; --viz-earth: #92400e; --viz-sun: #ca8a04; --viz-key: #15803d; }
+.viz { margin: 0.9rem auto 1.1rem; text-align: center; break-inside: avoid; page-break-inside: avoid; }
+.viz svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.viz figcaption { font-size: 0.85rem; line-height: 1.4; color: #544f47; margin: 0.4rem auto 0; max-width: 40rem; font-style: italic; }
+svg .dg-boundary, svg .dg-line, svg .dg-accent, svg .dg-dashed, svg .dg-right-angle, svg .dg-construction, svg .dg-grid, svg .dg-outline,
+svg .dg-fill-accent, svg .dg-fill-hot, svg .dg-fill-cold, svg .dg-fill-plant, svg .dg-fill-water, svg .dg-fill-earth, svg .dg-fill-sun, svg .dg-fill-soft, svg .dg-arrow, svg .dg-tag { vector-effect: non-scaling-stroke; }
+svg .dg-boundary    { stroke: var(--dg-stroke); fill: var(--dg-fill); stroke-width: 1.5px; }
+svg .dg-line        { stroke: var(--dg-stroke); fill: none; stroke-width: 1.5px; }
+svg .dg-accent      { stroke: var(--dg-accent); fill: none; stroke-width: 2.5px; }
+svg .dg-dashed      { stroke: var(--dg-secondary); fill: none; stroke-width: 1.5px; stroke-dasharray: 5 3; }
+svg .dg-right-angle { stroke: var(--dg-stroke); fill: none; stroke-width: 1px; }
+svg .dg-construction{ stroke: var(--dg-muted); fill: none; stroke-width: 1px; stroke-dasharray: 2 3; }
+svg .dg-grid        { stroke: var(--dg-muted); stroke-opacity: .45; fill: none; stroke-width: 1px; }
+svg .dg-outline     { stroke: var(--dg-stroke); fill: none; stroke-width: 1.5px; }
+svg .dg-point       { fill: var(--dg-stroke); stroke: none; }
+svg .dg-point-accent{ fill: var(--dg-accent); stroke: none; }
+svg .dg-shade       { fill: var(--dg-accent); fill-opacity: .42; stroke: none; }
+svg .dg-fill-accent { fill: var(--dg-accent); fill-opacity: .16; stroke: var(--dg-accent); stroke-width: 1.5px; }
+svg .dg-fill-hot    { fill: var(--viz-hot);   fill-opacity: .18; stroke: var(--viz-hot);   stroke-width: 1.5px; }
+svg .dg-fill-cold   { fill: var(--viz-cold);  fill-opacity: .14; stroke: var(--viz-cold);  stroke-width: 1.5px; }
+svg .dg-fill-plant  { fill: var(--viz-plant); fill-opacity: .18; stroke: var(--viz-plant); stroke-width: 1.5px; }
+svg .dg-fill-water  { fill: var(--viz-water); fill-opacity: .16; stroke: var(--viz-water); stroke-width: 1.5px; }
+svg .dg-fill-earth  { fill: var(--viz-earth); fill-opacity: .18; stroke: var(--viz-earth); stroke-width: 1.5px; }
+svg .dg-fill-sun    { fill: var(--viz-sun);   fill-opacity: .26; stroke: var(--viz-sun);   stroke-width: 1.5px; }
+svg .dg-fill-soft   { fill: #efece6; stroke: #a8a196; stroke-width: 1px; }
+svg .dg-solid-accent{ fill: var(--dg-accent); stroke: none; }
+svg .dg-solid-muted { fill: var(--dg-muted); stroke: none; }
+svg .dg-arrow       { fill: none; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-arrow.plain { stroke: var(--dg-stroke); }  svg .dg-head.plain  { fill: var(--dg-stroke); }
+svg .dg-arrow.accent{ stroke: var(--dg-accent); }  svg .dg-head.accent { fill: var(--dg-accent); }
+svg .dg-arrow.hot   { stroke: var(--viz-hot); }    svg .dg-head.hot    { fill: var(--viz-hot); }
+svg .dg-arrow.muted { stroke: var(--dg-muted); }   svg .dg-head.muted  { fill: var(--dg-muted); }
+svg .dg-head        { stroke: none; }
+svg .dg-tag         { fill: #fff; stroke: var(--dg-accent); stroke-width: 1.25px; stroke-dasharray: 4 2; }
+svg .dg-tag-answer  { font-weight: 700; fill: var(--viz-key); }
+svg .dg-label       { font: 13px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+svg .dg-label-sm    { font: 11.5px/1.3 var(--font-body); fill: var(--dg-secondary); stroke: none; }
+svg .dg-label-accent{ font: 600 12.5px/1.3 var(--font-body); fill: var(--dg-accent); stroke: none; }
+svg .dg-label-hot   { font: 600 12px/1.3 var(--font-body); fill: var(--viz-hot); stroke: none; }
+svg .dg-label-cold  { font: 600 12px/1.3 var(--font-body); fill: var(--viz-cold); stroke: none; }
+svg .dg-label-earth { font: 600 12px/1.3 var(--font-body); fill: var(--viz-earth); stroke: none; }
+svg .dg-label-white { font: 700 12px/1.3 var(--font-body); fill: #fff; stroke: none; }
+svg .dg-title       { font: 700 13.5px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+svg .dg-math        { font: 16px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+svg .dg-math-lg     { font: 600 20px/1.2 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+CSS
 
 my %BOX_LABEL = (example => 'Worked example', tip => '', check => 'Check yourself', answer => '');
 
@@ -174,6 +235,12 @@ sub blocks {
     for my $line (@lines) {
         (my $s = $line) =~ s/^\s+|\s+$//g;
         if ($s eq '') { $flush->(); }
+        elsif ($s =~ /^\@viz\s/) {
+            $flush->();
+            my ($svg, $cap) = Math8Viz::draw($s);
+            $VIZ_USED = 1;
+            push @out, qq{<figure class="viz">\n$svg\n} . (defined $cap && $cap ne '' ? '<figcaption>' . inline($cap) . "</figcaption>\n" : '') . '</figure>';
+        }
         elsif ($s =~ /^\(work(?: (\d))?\)$/) { $flush->(); push @out, '<div class="work">' . ('<span class="al"></span>' x ($1 // 4)) . '</div>'; }
         elsif ($s =~ /^([-*]|\d+\.) (.*)$/) {
             my ($mark, $item) = ($1, $2);
@@ -229,11 +296,12 @@ sub render {
     my $course = $meta{course} // 'math9';
     my ($course_label, $accent, $light, $mid, $doc_suffix, $out);
     my $stem = basename($path, '.md');
-    if ($course eq 'math9' || $course eq 'math8') {
-        my $g = $course eq 'math8' ? 8 : 9;
+    if ($course =~ /^math([789])$/) {
+        my $g = $1;
         my $st = $STRAND{ $meta{strand} } or die "$path: unknown strand\n";
         ($accent, $light, $mid) = @$st[1 .. 3];
-        $course_label = "Grade $g Math · $st->[0]";
+        my %g7 = ('algebra' => 'Algebra & Functions', 'measurement-geometry' => 'Geometry & Measurement');
+        $course_label = "Grade $g Math · " . ($g == 7 && $g7{ $meta{strand} } ? $g7{ $meta{strand} } : $st->[0]);
         $doc_suffix = "Grade $g Mathematics";
         $out = File::Spec->catfile($MATERIALS, "math-$g", 'home', $meta{topic}, "$stem.html");
     } else {
@@ -247,6 +315,10 @@ sub render {
     my $title = $meta{title} . ($answers ? ' — Answers' : '');
     my $name_row = $answers ? '' : '<div class="name-row"><span>Name</span><span class="b"></span><span>Date</span><span class="b" style="flex:0 0 120px"></span></div>';
     my $time = $meta{time} // 'about 15 minutes';
+    local $Math8Viz::KEY = $answers ? 1 : 0;
+    $VIZ_USED = 0;
+    my $body = body_html($text);
+    my $css = $CSS . ($VIZ_USED ? $VIZ_CSS : '');
     my $doc = qq{<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -255,7 +327,7 @@ sub render {
   <title>} . escq($title) . ' — Home Practice | ' . escq($doc_suffix) . qq{</title>
   <style>
     :root { --accent: $accent; --accent-light: $light; --accent-mid: $mid; }
-$CSS  </style>
+$css  </style>
 </head>
 <body>
   <div class="header-strip">
@@ -264,7 +336,7 @@ $CSS  </style>
     <p class="meta">One skill: } . escq($meta{skill}) . ' · ' . escq($time) . qq{</p>} . notes_line(\%meta, $path) . qq{
   </div>
   $name_row
-} . body_html($text) . qq{
+} . $body . qq{
 </body>
 </html>
 };

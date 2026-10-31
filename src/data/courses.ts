@@ -4,8 +4,9 @@
 
 import { strands as math9Strands, topicsInStrand, type StrandSlug } from './math9';
 import { strands as math8Strands, topicsInStrand as math8TopicsInStrand } from './math8';
+import { strands as math7Strands, topicsInStrand as math7TopicsInStrand } from './math7';
 
-export type CourseKey = 'science' | 'math8' | 'math9' | 'science7' | 'social9' | 'social8' | 'social7' | 'steam' | 'cefl' | 'ela5';
+export type CourseKey = 'science' | 'math7' | 'math8' | 'math9' | 'science7' | 'social9' | 'social8' | 'social7' | 'steam' | 'cefl' | 'ela5';
 
 /** Who a page is written for. Each course has a student path and may add a
  *  teacher and a parent path; the nav switch offers only the ones that exist. */
@@ -53,6 +54,9 @@ const inTopicOf = (strand: StrandSlug, prefix: string) => (p: string) =>
 // The same for Math 8 (its topic slugs differ from Math 9's).
 const inMath8TopicOf = (strand: StrandSlug, prefix: string) => (p: string) =>
   math8TopicsInStrand(strand).some((t) => new RegExp(`/${prefix}${t.slug}/?$`).test(p));
+// And for Math 7.
+const inMath7TopicOf = (strand: StrandSlug, prefix: string) => (p: string) =>
+  math7TopicsInStrand(strand).some((t) => new RegExp(`/${prefix}${t.slug}/?$`).test(p));
 
 const unitItems = (prefix: string, units: [string, string][]): SubnavItem[] =>
   units.map(([slug, label]) => ({ label, path: `${prefix}${slug}`, match: includes(slug) }));
@@ -166,6 +170,34 @@ export const courses: Course[] = [
       { label: 'Français', path: 'materials/fr', match: includes('/materials/fr') },
     ],
     parentSubnav: parentItems('science6/parents', sci6Units),
+  },
+  {
+    key: 'math7',
+    tab: 'Math 7',
+    name: 'Mathematics',
+    grade: 'Grade 7',
+    numeral: '7',
+    path: 'math7',
+    teacherPath: 'math7/teacher',
+    parentPath: 'math7/parents',
+    blurb: 'Alberta’s new (2026 draft) Grade 7 math: four strands and twelve topics in plain words with lots of pictures. Notes, concept pages, worksheets, exit tickets and strand workbooks.',
+    facts: ['4 strands', '12 topics', '2026 draft'],
+    subnav: [
+      ...math7Strands.map((s) => ({
+        label: s.short,
+        path: `math7/materials/${s.slug}`,
+        match: (p: string) => (p.includes('/math7/') && p.includes(`/materials/${s.slug}`)) || inMath7TopicOf(s.slug, 'math7/')(p),
+      })),
+      { label: 'All materials', path: 'math7/materials', match: endsWith('/math7/materials') },
+    ],
+    parentSubnav: [
+      { label: 'Overview', path: 'math7/parents', match: endsWith('/math7/parents') },
+      ...math7Strands.map((s) => ({
+        label: s.short,
+        path: `math7/parents#${s.slug}`,
+        match: inMath7TopicOf(s.slug, 'math7/parents/'),
+      })),
+    ],
   },
   {
     key: 'math8',
@@ -346,7 +378,7 @@ export const courses: Course[] = [
 export const navSubjects: { label: string; courses: CourseKey[] }[] = [
   { label: 'ELA', courses: ['ela5'] },
   { label: 'Science', courses: ['science', 'science7'] },
-  { label: 'Math', courses: ['math8', 'math9'] },
+  { label: 'Math', courses: ['math7', 'math8', 'math9'] },
   { label: 'Social', courses: ['social7', 'social8', 'social9'] },
   { label: 'STEAM', courses: ['steam'] },
   { label: 'CEFL', courses: ['cefl'] },
@@ -360,6 +392,7 @@ export const audiencePath = (course: Course, audience: Audience) =>
 
 export const footerNames: Record<CourseKey, string> = {
   science: 'Grade 6 Science',
+  math7: 'Grade 7 Mathematics',
   math8: 'Grade 8 Mathematics',
   math9: 'Grade 9 Mathematics',
   science7: 'Grade 7 Science',

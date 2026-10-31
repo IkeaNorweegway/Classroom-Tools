@@ -98,6 +98,7 @@ Materials are organized inside type folders by subject and unit:
 | `_courses/grade-6-science/living-systems/_context.md` | Living Systems unit: LOs, knowledge clusters, scope boundary, misconceptions |
 | `_courses/grade-7-science/_context.md` | Science 7 (Alberta 2007 PoS): 5 units, LOs, misconception inventory, depth ceilings |
 | `_courses/grade-7-science/[unit]/_context.md` | Unit-level contexts: interactions-ecosystems, plants-food-fibre, heat-temperature, structures-forces, planet-earth |
+| `_courses/math-7/_context.md` | Math 7 on the **June 2026 draft** curriculum: 12 topics in 4 strands, local codes PN/IN/SC/FD/RP/LE/FN/LA/CI/VO/ST/PB, depth ceilings, misconceptions, reading level (F&P N–P) and picture rules (3+ diagrams per notes section), materials map. Renders with `scripts/render_math8.pl` (it handles both grades) |
 | `_courses/math-8/_context.md` | Math 8: 12 topics (2016 Grade 8 outcomes), local codes SQ/PC/RR/FR/IN/LR/LE/PY/SV/VT/DD/PB, depth ceilings, misconceptions, reading-level and picture rules, materials map. Render with `scripts/render_math8.pl` |
 | `_courses/grade-5-ela/_context.md` | Grade 5 ELA (Alberta ELAL K–6, 2023): six genre units, 60-min block, editions A/B/C, local codes TF/OL/VO/CO/WR/CV, error patterns, F&P and Words Their Way use. Does **not** use the math/science formats. Evidence: `research/literacy-reading-writing-research.md`. Render with `scripts/render_ela5.pl` |
 | `_courses/math-9/_context.md` | Math 9: 11 topics, depth ceilings, misconception inventory, recommended sequence |
@@ -132,6 +133,7 @@ Materials are organized inside type folders by subject and unit:
 | "Build / revise a game" | `_games-context.md` → unit `_context.md` in `_courses/` | type-folder contexts, `templates/` |
 | "Build / revise a sim or trainer" | `_sims-context.md` → `research/simulations-research.md` → unit `_context.md` in `_courses/` (or `steam/grade-[N]/`) | type-folder contexts, `templates/` |
 | "Build a CEFL workbook / project / teacher guide" | `_courses/cefl/_context.md` → `research/project-based-learning-research.md` → `research/financial-career-education-research.md` | `templates/`, `tests-quizzes/` — CEFL uses its own mini-workbook and project formats |
+| "Build / revise a Math 7 [notes / worksheet / workbook / exits / quiz / teacher notes]" | `_courses/math-7/_context.md` → the type-folder context → the source format at the top of `scripts/render_math8.pl` (diagram types in `scripts/Math8Viz.pm`) | `research/` |
 | "Build / revise a Math 8 [notes / worksheet / workbook / exits / quiz / teacher notes]" | `_courses/math-8/_context.md` → the type-folder context → the source format at the top of `scripts/render_math8.pl` (diagram types in `scripts/Math8Viz.pm`) | `research/` |
 | "Build / revise a Grade 5 ELA [unit / notebook / reader / anything]" | `_courses/grade-5-ela/_context.md` → `research/literacy-reading-writing-research.md` → the source format at the top of `scripts/render_ela5.pl` | `templates/`, `worksheets/workbooks-context.md`, `notes-packages/_context.md` — ELA uses its own formats |
 | "Build / revise slides" | `slides/_context.md` → the unit's notes package and notes answer key → unit `_context.md` in `_courses/` | `research/`, `tests-quizzes/` |
@@ -149,6 +151,7 @@ Materials are organized inside type folders by subject and unit:
 | A notes package | `[subject]-[unit]-notes-[grade]-v[N].md` | `sci6-living-systems-notes-gr6-v1.md` |
 | A teacher notes / sub plan | `[subject]-[unit]-[type]-v[N].md` | `sci6-forces-teachernotes-v1.md` |
 | A CEFL 7–9 material | `cefl[G]-[unit]-[type]-v[N].md` | `cefl7-income-tax-workbook-v1.md` |
+| A Math 7 material | `math7-[topic]-[type]-v[N].md` (same pattern as Math 8) | `math7-circles-notes-v1.md` |
 | A Math 8 material | `math8-[topic]-[type]-v[N].md` (practice sheets: `-practice-`, one source for Core and Challenge) | `math8-pythagorean-notes-v1.md` |
 | A Grade 5 ELA material | `ela5-[unit]-[type]-v[N].md`; editions add `-scaffolded` or `-ef` before `-v[N]` | `ela5-tall-tales-notebook-scaffolded-v1.md` |
 | A PhysEd 5–6 material | `pew56-[unit]-[type]-v[N].md` | `pew56-invasion-games-exits-v1.md` |

@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CourseHero from '../../components/CourseHero.astro';
+import TopicList from '../../components/TopicList.astro';
+import { strands, topics, topicsInStrand, math7Course } from '../../data/math7';
+import { materialCount } from '../../data/manifest';
+const base = import.meta.env.BASE_URL;
+// The same three facts as the other courses' landing pages, all read from the data.
+const materials = materialCount(math7Course.units);
+
+// One card per strand; each strand page lists its topics and workbook.
+const descriptions: Record<string, string> = {
+  number: 'Negative numbers, all four operations with integers, squares and cubes, multiplying and dividing fractions and decimals, and ratios and percents.',
+  algebra: 'Solving equations with x on both sides using tiles and a balance, and reading functions from tables and graphs.',
+  'measurement-geometry': 'Lines, angles and congruent shapes, circles and π, and the volume of prisms and cylinders.',
+  'statistics-probability': 'Picking a fair sample, finding the mean, median, mode and range, and comparing experiments with theory.',
+};
+---
+
+<BaseLayout course="math7" title="Grade 7 Mathematics">
+  <CourseHero
+    eyebrow="Alberta curriculum"
+    title="Grade 7 Mathematics"
+    numeral="7"
+    vtName="course-num-math7"
+    description="Four strands, twelve topics, on Alberta's new (2026 draft) curriculum. Short sentences, lots of pictures, and practice for every topic."
+    facts={[
+      { n: `${strands.length}`, label: 'strands' },
+      { n: `${topics.length}`, label: 'topics' },
+      { n: `${materials}`, label: 'materials' },
+    ]}
+  />
+
+  <TopicList
+    heading="Strands"
+    items={strands.map((s) => ({
+      art: s.slug,
+      href: `${base}math7/materials/${s.slug}`,
+      title: s.label,
+      kicker: topicsInStrand(s.slug).map((t) => t.label).join(' · '),
+      description: descriptions[s.slug],
+    }))}
+  />
+</BaseLayout>

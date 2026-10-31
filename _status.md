@@ -91,6 +91,22 @@ All six units plus the year review have, on the site: notes, workbook, teacher n
 - **Motion pass on the five Plants v2 games and sims (2026-10-17):** gauges, meters, and the coverage bar now slide with `transform`; the hint glow fades a ring with `opacity` instead of animating `box-shadow`; the scene drawings write a value only when it changes; the light rays (and Seed to Seed's sway) stop while the clock is stopped. Fixes a bug: the meter bars in both sims were inline spans, so they never showed (numbers only); they now fill. Models unchanged. Tested in headless Chrome with the CPU slowed 6×: paused, all three real-time pages went from a repaint every frame to none; running, Flower Lab paint fell about 60%, the others a little. No console errors; gauges, meters, and the glow checked by screenshot at 1340 and 600 px. Untested: school Chromebooks, touch, students.
 - Not built: FR or EF adaptations of the core materials.
 
+### Math 7 (built 2026-10-29 to 31, June 2026 draft curriculum; not on master yet)
+
+Twelve topics in four strands from Alberta's **June 2026 draft** 7–9 math (7N1–7N5, 7A2, 7F1, 7G1, 7M1–7M2, 7ST1, 7PR1). Course context: `_courses/math-7/_context.md`. Pages at `/math7/` (student, parent, teacher), data in `src/data/math7.ts`. Rendered by `render_math8.pl` (it now handles both grades by path).
+
+| Strand | Topics |
+|---|---|
+| Number | Positive & Negative Numbers · Integers · Squares & Cubes · Fractions & Decimals (× ÷) · Ratios & Percents |
+| Algebra & Functions | Linear Equations · Functions |
+| Geometry & Measurement | Lines, Angles & Congruence · Circles · Volume |
+| Statistics & Probability | Samples & Statistics · Probability |
+
+- Per topic: notes + key + concept sheet, Core and Challenge worksheets + keys, exits, quiz, teacher notes, two home sheets + keys (with diagrams and "See the class notes" section links), prereq practice (`prereq-practice/math7-bank.js`), student page, parent guide (jump list from the notes section ids).
+- Reading level F&P N–P; 6–14 diagrams per notes section. About 30 new diagram types added at the end of `scripts/Math8Viz.pm` (Math 8 output unchanged). Home sheets now support `@viz` diagrams and print slightly smaller when they have them.
+- Checked: every topic passes the topic checker (4 sections with ids s1–s4, diagram counts, no answers on student copies), all 24 home sheets print on one page, site builds (1,581 pages).
+- **Not done:** the four strand workbooks (the site links them, so they show as missing), teacher read-through, guiding questions are written from the outcome stems (check against the draft wording), all data is made up or rounded (each teacher notes file lists it). Math 8 is to be rebuilt on the draft next (old 2016 files kept, unlinked).
+
 ### Math 8 (site ✓, 2026-10-22)
 
 Twelve topics in four strands, from the 2016 Alberta Grade 8 outcomes (N1–N7, PR1–PR2, SS1–SS6, SP1–SP2). Course context: `_courses/math-8/_context.md` (local codes, depth ceilings, misconceptions, reading-level and picture rules). Pages at `/math8/` (student, parent and teacher views), same shape as Math 9; data in `src/data/math8.ts`.

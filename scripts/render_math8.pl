@@ -1,5 +1,7 @@
 #!/usr/bin/env perl
-# Render Math 8 materials (markdown) to printable HTML in the Math 9 layout.
+# Render Math 8 and Math 7 materials (markdown) to printable HTML in the Math 9 layout.
+# Math 7 sources sit in the same folders under math-7/ with math7- names and
+# render to public/materials/math-7/ (same format, same diagrams).
 #
 # One source gives the student copy and its answer key: answers sit in the
 # source beside the blanks they fill. Diagrams are `@viz` lines drawn by
@@ -66,7 +68,11 @@ use lib dirname(abs_path($0));
 use Math8Viz;
 
 my $ROOT = dirname(dirname(abs_path($0)));
+# Math 7 sources (…/math-7/…) use this same renderer: output goes to
+# public/materials/math-7/ and the pages say Grade 7. Set per file in main.
 my $OUT  = File::Spec->catdir($ROOT, 'public', 'materials', 'math-8');
+my $GRADE = 'Grade 8 Mathematics';
+my %STRAND7 = ('algebra' => 'Algebra & Functions', 'measurement-geometry' => 'Geometry & Measurement');
 
 my %STRAND = (
     'number'                 => ['Number',                   '#1d4ed8', '#eff6ff', '#3b82f6'],
@@ -530,13 +536,15 @@ CSS
 sub page {
     my (%o) = @_;
     my $strand = $STRAND{ $o{strand} } or die "unknown strand $o{strand}\n";
+    $strand = [strand_label($o{strand}), @$strand[1 .. 3]];
     my $css = fonts_css($o{depth}) . ":root { --accent: $strand->[1]; --accent-light: $strand->[2]; --accent-mid: $strand->[3]; }\n" . $BASE_CSS . ($o{extra_css} // '');
-    my $header = $o{teacher} ? '' : qq{<div class="header-strip">\n  <div class="course-label">Grade 8 Mathematics · Alberta Curriculum · $strand->[0]</div>\n  <h1>} . esc($o{title}) . qq{</h1>\n  <p class="sub">} . esc($o{sub}) . "</p>\n</div>\n";
+    my $header = $o{teacher} ? '' : qq{<div class="header-strip">\n  <div class="course-label">$GRADE · Alberta Curriculum · $strand->[0]</div>\n  <h1>} . esc($o{title}) . qq{</h1>\n  <p class="sub">} . esc($o{sub}) . "</p>\n</div>\n";
     $header .= qq{<div class="answer-key-header">Answer key · Teacher copy</div>\n} if $o{key};
     $header .= qq{<div class="name-row"><span>Name:</span><span class="b"></span><span>Date:</span><span class="b b-md" style="flex:0 0 130px"></span></div>\n} if $o{name};
-    return qq{<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>} . esc($o{doc_title}) . qq{ | Grade 8 Mathematics</title>\n<style>\n$css</style>\n</head>\n<body>\n\n$header\n$o{body}\n\n</body>\n</html>\n};
+    return qq{<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>} . esc($o{doc_title}) . qq{ | $GRADE</title>\n<style>\n$css</style>\n</head>\n<body>\n\n$header\n$o{body}\n\n</body>\n</html>\n};
 }
 
+sub strand_label { my ($k) = @_; return $GRADE =~ /Grade 7/ && $STRAND7{$k} ? $STRAND7{$k} : $STRAND{$k}[0]; }
 sub out_path { return File::Spec->catfile($OUT, @_); }
 sub depth_of { my ($p) = @_; my $rel = File::Spec->abs2rel($p, File::Spec->catdir($ROOT, 'public')); my @d = File::Spec->splitdir(dirname($rel)); return scalar @d; }
 
@@ -694,7 +702,7 @@ sub render_teacher {
     my ($m, $text) = front(slurp($path));
     my ($topic, $strand) = ($m->{topic}, $m->{strand});
     my @B;
-    push @B, qq{<div class="teacher-header">\n<span class="teacher-badge">Teacher notes</span>\n<h1>} . esc($m->{title}) . qq{</h1>\n<p class="sub">Grade 8 Mathematics · } . esc($STRAND{$strand}[0]) . ' · ' . esc($m->{subtitle} // '') . "</p>\n</div>";
+    push @B, qq{<div class="teacher-header">\n<span class="teacher-badge">Teacher notes</span>\n<h1>} . esc($m->{title}) . qq{</h1>\n<p class="sub">$GRADE · } . esc(strand_label($strand)) . ' · ' . esc($m->{subtitle} // '') . "</p>\n</div>";
     my %PILL = (SHOW => 'show', SAY => 'say', DO => 'do', CUE => 'cue', WATCH => 'watch');
     for my $sec (sections($text)) {
         my ($h, $lines) = @$sec;
@@ -781,14 +789,23 @@ my @files = @ARGV ? @ARGV : (
     glob("$ROOT/worksheets/math-8/*/math8-*-workbook-v1.md"),
     glob("$ROOT/tests-quizzes/math-8/*/math8-*-exits-v1.md"),
     glob("$ROOT/tests-quizzes/math-8/*/math8-*-quiz-v1.md"),
+    glob("$ROOT/notes-packages/math-7/*/math7-*-notes-v1.md"),
+    glob("$ROOT/notes-packages/math-7/*/math7-*-teachernotes-v1.md"),
+    glob("$ROOT/worksheets/math-7/*/*/math7-*-practice-v1.md"),
+    glob("$ROOT/worksheets/math-7/*/math7-*-workbook-v1.md"),
+    glob("$ROOT/tests-quizzes/math-7/*/math7-*-exits-v1.md"),
+    glob("$ROOT/tests-quizzes/math-7/*/math7-*-quiz-v1.md"),
 );
 for my $f (@files) {
+    my $g = $f =~ m{/math-7/|(?:^|/)math7-} ? 7 : 8;
+    $OUT = File::Spec->catdir($ROOT, 'public', 'materials', "math-$g");
+    $GRADE = "Grade $g Mathematics";
     my @out = $f =~ /-notes-v\d+\.md$/        ? render_notes($f)
             : $f =~ /-teachernotes-v\d+\.md$/ ? render_teacher($f)
             : $f =~ /-practice-v\d+\.md$/     ? render_practice($f)
             : $f =~ /-workbook-v\d+\.md$/     ? render_workbook($f)
             : $f =~ /-exits-v\d+\.md$/        ? render_exits($f)
             : $f =~ /-quiz-v\d+\.md$/         ? render_quiz($f)
-            : die "$f: not a Math 8 source\n";
+            : die "$f: not a Math 7 or Math 8 source\n";
     print File::Spec->abs2rel($_, $ROOT), "\n" for @out;
 }

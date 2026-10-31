@@ -4,6 +4,9 @@
 Sources and output, by course (front matter `course:`, default math9):
   math9:   worksheets/math-9/home/<topic>/*.md  ->  public/materials/math-9/home/<topic>/
   math8:   worksheets/math-8/home/<topic>/*.md  ->  public/materials/math-8/home/<topic>/ (strand colours, as Math 9)
+  math7:   worksheets/math-7/home/<topic>/*.md  ->  public/materials/math-7/home/<topic>/ (strand colours, as Math 9)
+  `@viz` diagram lines are drawn only by the Perl renderer (render_home_practice.pl);
+  use that one for Math 7 sheets.
   others:  worksheets/<course folder>/<unit>/*-home-*.md and steam/grade-N/home/*.md
            ->  public/materials/ (flat, like the course's other materials)
 
@@ -255,8 +258,8 @@ def body_html(text):
 def render(md_path):
     meta, body = front_matter(md_path.read_text(encoding='utf-8'))
     course = meta.get('course', 'math9')
-    if course in ('math9', 'math8'):
-        g = 8 if course == 'math8' else 9
+    if course in ('math9', 'math8', 'math7'):
+        g = int(course[-1])
         strand_label, accent, light, mid = STRAND[meta['strand']]
         course_label = f'Grade {g} Math · {strand_label}'
         doc_suffix = f'Grade {g} Mathematics'
