@@ -116,18 +116,26 @@ def underscores_to_blanks(s):
 
 
 def first_header(s):
+    """The block that holds the page title (h1)."""
+    h1 = s.find('h1')
+    if h1 is not None:
+        el, best = h1, None
+        while el is not None and el.name != 'body':
+            cls = ' '.join(el.get('class') or [])
+            is_wrapper = el.parent is not None and el.parent.name == 'body' and (el.name == 'main' or re.search(r'\b(page|wrap\w*|container|content)\b', cls)) and not re.search(r'header|cover|title|hero|banner', cls)
+            if is_wrapper:
+                break
+            if el is not h1 and re.search(r'header|cover|title|hero|banner|masthead', cls):
+                best = el
+            if el.parent is not None and el.parent.name == 'body':
+                return best or el
+            el = el.parent
+        return best or h1
     for sel in ['.header-strip', '.cover', 'header', '.title-block', '.doc-header']:
         el = s.select_one(sel)
         if el is not None:
             return el
-    h1 = s.find('h1')
-    if h1 is None:
-        return None
-    # climb to a direct child of body
-    el = h1
-    while el.parent is not None and el.parent.name != 'body':
-        el = el.parent
-    return el
+    return None
 
 
 def save(s, path, dry):
@@ -1293,6 +1301,96 @@ def cefl(units, dry, rev):
         save(s, keyp, dry)
 
 
+def md_inline(s):
+    s = s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+    s = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', s)
+    s = re.sub(r'(?<![*\w])\*(?!\s)(.+?)(?<!\s)\*(?!\w)', r'<em>\1</em>', s)
+    return s
+
+
+def md_to_html(text):
+    """Small markdown reader for answer files: paragraphs, - lists (nested by
+    two spaces), 1. lists, | tables |, **bold**, *italic*."""
+    out, lines = [], text.strip('\n').split('\n')
+    i = 0
+    while i < len(lines):
+        ln = lines[i]
+        if not ln.strip():
+            i += 1; continue
+        if ln.lstrip().startswith('|'):
+            rows = []
+            while i < len(lines) and lines[i].lstrip().startswith('|'):
+                cells = [c.strip() for c in lines[i].strip().strip('|').split('|')]
+                if not all(re.fullmatch(r':?-+:?', c) for c in cells):
+                    rows.append(cells)
+                i += 1
+            h = '<tr>' + ''.join(f'<th>{md_inline(c)}</th>' for c in rows[0]) + '</tr>'
+            b = ''.join('<tr>' + ''.join(f'<td>{md_inline(c)}</td>' for c in r) + '</tr>' for r in rows[1:])
+            out.append(f'<table><thead>{h}</thead><tbody>{b}</tbody></table>')
+            continue
+        m = re.match(r'^(\s*)(-|\d+\.)\s+', ln)
+        if m:
+            items = []
+            while i < len(lines) and re.match(r'^\s*(-|\d+\.)\s+', lines[i]):
+                mm = re.match(r'^(\s*)(-|\d+\.)\s+(.*)$', lines[i])
+                items.append((len(mm.group(1)), mm.group(2), mm.group(3)))
+                i += 1
+            out.append(list_html(items))
+            continue
+        para = []
+        while i < len(lines) and lines[i].strip() and not lines[i].lstrip().startswith('|') and not re.match(r'^\s*(-|\d+\.)\s+', lines[i]):
+            para.append(lines[i].strip()); i += 1
+        out.append('<p>' + md_inline(' '.join(para)) + '</p>')
+    return ''.join(out)
+
+
+def list_html(items, level=None):
+    if not items:
+        return ''
+    level = items[0][0] if level is None else level
+    tag = 'ul' if items[0][1] == '-' else 'ol'
+    html, j = f'<{tag}>', 0
+    while j < len(items):
+        ind, _, txt = items[j]
+        sub = []
+        k = j + 1
+        while k < len(items) and items[k][0] > ind:
+            sub.append(items[k]); k += 1
+        html += '<li>' + md_inline(txt) + (list_html(sub) if sub else '') + '</li>'
+        j = k
+    return html + f'</{tag}>'
+
+
+def read_md_answers(path):
+    """## Q1 / ## S1 sections → {id: html}; text before the first ## → intro html."""
+    text = Path(path).read_text(encoding='utf-8')
+    parts = re.split(r'^##\s+(\S+)\s*$', text, flags=re.M)
+    intro = re.sub(r'^#\s.*$', '', parts[0], flags=re.M)
+    ans = {qid(parts[k]): md_to_html(parts[k + 1]) for k in range(1, len(parts), 2)}
+    return md_to_html(intro), ans
+
+
+def sci7_workbooks(units, dry, rev):
+    """Science 7 workbooks: the old keys belong to an earlier workbook, so the
+    answers come from worksheets/grade-7-science/<unit>/*-workbook-answers-v2.md."""
+    units = units or ['heat-temperature', 'interactions-ecosystems', 'planet-earth', 'plants-food-fibre', 'structures-forces']
+    for u in units:
+        student = MAT / f'sci7-{u}-workbook-v1.html'
+        keyp = MAT / f'sci7-{u}-workbook-answers-v1.html'
+        src = ROOT / 'worksheets' / 'grade-7-science' / u / f'sci7-{u}-workbook-answers-v2.md'
+        print(f'== sci7 {u} workbook')
+        kold = soup_of(git_text(rev, keyp) if rev else keyp)
+        s = start_key(student, kold)
+        intro, answers = read_md_answers(src)
+        report = []
+        n = inject_by_qnum(s, answers, report)
+        print(f'   placed {n} of {len(answers)}')
+        if BeautifulSoup(intro, 'html.parser').get_text(strip=True):
+            s.select_one('.answer-key-header').insert_after(teacher_box(s, intro))
+        print('\n'.join(report))
+        save(s, keyp, dry)
+
+
 def sci6_workbooks(units, dry, rev):
     units = units or ['climate', 'energy-resources', 'forces', 'living-systems', 'matter', 'space', 'year-review']
     for u in units:
@@ -1345,6 +1443,7 @@ ADAPTERS = {
     'sci6-notes': sci6_notes,
     'sci6-workbooks': sci6_workbooks,
     'sci7-notes': sci7_notes,
+    'sci7-workbooks': sci7_workbooks,
     'math9-notes': math9_notes,
     'math9-worksheets': numbered_family('math-9/worksheets/*/*/*-worksheet-*-answers-v*.html'),
     'math9-workbooks': numbered_family('math-9/worksheets/*/*-workbook-answers-v*.html'),
