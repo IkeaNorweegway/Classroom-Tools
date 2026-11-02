@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Classroom Tools: How the Workspace Runs</title>
+<style>
+  :root {
+    --bg: #f7f6f2;
+    --card: #ffffff;
+    --ink: #1f2328;
+    --muted: #5c636b;
+    --line: #8b939c;
+    --start: #2f6f4f;
+    --step: #2c5282;
+    --decide: #b7791f;
+    --gate: #7b4397;
+    --rule: #c53030;
+    --folder: #4a5568;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161a1f; --card: #1f252c; --ink: #e6e8eb; --muted: #9aa3ad; --line: #6b7480;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #161a1f; --card: #1f252c; --ink: #e6e8eb; --muted: #9aa3ad; --line: #6b7480;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 1100px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  h2 { font-size: 18px; margin: 0 0 14px; }
+  .sub { color: var(--muted); margin: 0 0 28px; }
+  section { background: var(--card); border: 1px solid color-mix(in srgb, var(--line) 35%, transparent);
+    border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+  .tag { display: inline-block; font-size: 12px; font-weight: 600; color: #fff; padding: 2px 8px;
+    border-radius: 999px; margin-right: 6px; vertical-align: middle; }
+  .small { font-size: 13px; color: var(--muted); }
+
+  /* Boxes */
+  .box { border-radius: 8px; padding: 10px 12px; border: 2px solid; background: var(--card); }
+  .box b { display: block; font-size: 14px; }
+  .box span { font-size: 13px; color: var(--muted); }
+  .start { border-color: var(--start); }
+  .step { border-color: var(--step); }
+  .decide { border-color: var(--decide); background: color-mix(in srgb, var(--decide) 10%, var(--card)); }
+  .gate { border-color: var(--gate); }
+  .rule { border-color: var(--rule); }
+  .folder { border-color: var(--folder); }
+  .arrow { text-align: center; color: var(--line); font-size: 20px; line-height: 1; padding: 4px 0; }
+
+  /* Row flow (start-of-task) */
+  .row { display: flex; align-items: stretch; gap: 8px; flex-wrap: wrap; }
+  .row > .box { flex: 1 1 180px; }
+  .row .a { align-self: center; color: var(--line); font-size: 22px; flex: 0 0 auto; }
+
+  /* Build protocol: vertical column with branch */
+  .col { display: flex; flex-direction: column; align-items: stretch; max-width: 560px; margin: 0 auto; }
+  .branch { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .branch .lbl { font-size: 12px; font-weight: 700; text-align: center; color: var(--muted); }
+  .no-path { max-width: 260px; }
+
+  /* Gate grid */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  .gate-card h3 { margin: 0 0 6px; font-size: 15px; }
+  .gate-card .gc { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+  .gate-card code { font-size: 12px; background: color-mix(in srgb, var(--gate) 12%, transparent);
+    padding: 1px 4px; border-radius: 4px; word-break: break-word; }
+
+  /* Rules */
+  .rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+  .rules .box h3 { margin: 0 0 4px; font-size: 15px; color: var(--rule); }
+
+  /* Folders */
+  .folders { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+  .folders .box b { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
+
+  /* Routing table */
+  .route { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px 10px; align-items: center; }
+  .route .say { font-weight: 600; }
+  .route .read { color: var(--muted); font-size: 13px; }
+  .route .hd { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+
+  /* Compact Rule strip */
+  .strip { display: flex; gap: 10px; flex-wrap: wrap; }
+  .strip .box { flex: 1 1 200px; }
+
+  @media (max-width: 600px) {
+    .branch { grid-template-columns: 1fr; }
+    .route { grid-template-columns: 1fr; }
+    .route .hd { display: none; }
+    .route .arrowx { display: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Classroom Tools: how the workspace runs</h1>
+  <p class="sub">A one-glance map of <code>CLAUDE.md</code>. Read the boxes top to bottom; the detail lives in the files named inside them.</p>
+
+  <!-- 1. START -->
+  <section>
+    <h2><span class="tag" style="background:var(--start)">START</span>Every task begins here</h2>
+    <div class="row">
+      <div class="box start"><b>1. Read _status.md</b><span>What is built and what is next</span></div>
+      <div class="a">&rarr;</div>
+      <div class="box start"><b>2. Read _meta-context.md</b><span>Principles, design rules, lesson and unit architecture</span></div>
+      <div class="a">&rarr;</div>
+      <div class="box start"><b>3. Read on demand</b><span>_pedagogy-reference.md when designing a lesson, task, or scaffold</span></div>
+    </div>
+  </section>
+
+  <!-- 2. BUILD PROTOCOL -->
+  <section>
+    <h2><span class="tag" style="background:var(--decide)">DECIDE</span>Is this a build request?</h2>
+    <div class="col">
+      <div class="box decide"><b>Does the request say build, make, create, write, or design?</b></div>
+      <div class="branch">
+        <div>
+          <div class="lbl">NO</div>
+          <div class="arrow">&darr;</div>
+          <div class="box step"><b>Route it</b><span>Use the routing table below and read only the listed files</span></div>
+        </div>
+        <div>
+          <div class="lbl">YES</div>
+          <div class="arrow">&darr;</div>
+          <div class="box decide"><b>Anything genuinely missing?</b><span>Ask only what is missing. Max 4 short questions. Skip what is already in context.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="tag" style="background:var(--step)">BUILD</span>The build protocol, in order</h2>
+    <div class="col">
+      <div class="box step"><b>A. Trust mode?</b><span>Only when the user says <em>"i trust you."</em> Then: state "Trust mode active", skip per-step confirmation, and flag (never silently guess) any ambiguity that would need rework.</span></div>
+      <div class="arrow">&darr;</div>
+      <div class="box gate"><b>B. Artifact compliance check</b><span>Before the first line. Applies even in trust mode.</span>
+        <div class="small" style="margin-top:6px">1. Copy the template from <code>templates/</code><br>2. Read the artifact context file<br>3. State the gate constraint (see the gate cards below)</div></div>
+      <div class="arrow">&darr;</div>
+      <div class="box step"><b>C. Build the artifact</b><span>Fill the template. Keep it clean enough to print as-is.</span></div>
+      <div class="arrow">&darr;</div>
+      <div class="box decide"><b>D. Evidence check</b><span>Embeds at least one Tier 1 strategy AND passes 3 of 5 checklist items in <code>templates/evidence-design-principles.md</code>. Tier 1 units need all 5.</span></div>
+      <div class="arrow">&darr;</div>
+      <div class="box folder"><b>E. Save with the naming rule</b><span>Type folder, then subject, then unit. Never overwrite: bump <code>-v[N]</code>. Renders go only in <code>public/materials/</code>.</span></div>
+    </div>
+  </section>
+
+  <!-- 3. GATES -->
+  <section>
+    <h2><span class="tag" style="background:var(--gate)">GATE</span>Gate constraint per artifact type</h2>
+    <p class="small" style="margin-top:-8px">Step B3: say the matching line out loud before writing.</p>
+    <div class="grid">
+      <div class="box gate gate-card"><h3>Workbook</h3><code>Interleaving confirmed. No part headers.</code><p class="gc">Template: workbook. Clusters with ★/★★ levels and notes context.</p></div>
+      <div class="box gate gate-card"><h3>Notes package</h3><code>Progressive blanking confirmed.</code><p class="gc">Refutation-first on misconceptions. State section order and why.</p></div>
+      <div class="box gate gate-card"><h3>Quiz</h3><code>Outcome map complete.</code><p class="gc">Every item maps to a specific learning outcome (LO).</p></div>
+      <div class="box gate gate-card"><h3>Unit test</h3><code>Outcome map complete. All LOs covered.</code><p class="gc">Includes an extended response rubric.</p></div>
+      <div class="box gate gate-card"><h3>Exit tickets</h3><code>One ticket per cluster.</code><p class="gc">Every question maps to a specific LO.</p></div>
+      <div class="box gate gate-card"><h3>Thinking prompt</h3><code>Requires showing reasoning, not recalling.</code><p class="gc">No template.</p></div>
+      <div class="box gate gate-card"><h3>Game</h3><code>Outcomes, model, real-time or turn-based, test hook.</code><p class="gc">Full rules in <code>_games-context.md</code>. HTML only.</p></div>
+    </div>
+  </section>
+
+  <!-- 4. HARD RULES -->
+  <section>
+    <h2><span class="tag" style="background:var(--rule)">RULES</span>Two hard rules, always</h2>
+    <div class="rules">
+      <div class="box rule"><h3>1. Every test item maps to an LO</h3><span>No orphan questions on quizzes or tests.</span></div>
+      <div class="box rule"><h3>2. Every thinking prompt asks for reasoning</h3><span>If the answer is a recalled fact, rewrite the prompt.</span></div>
+    </div>
+    <p class="small" style="margin-bottom:0">Also: the repo is public. Check any new test, or anything with names in it, against <code>.gitignore</code> before committing.</p>
+  </section>
+
+  <!-- 5. FOLDERS -->
+  <section>
+    <h2><span class="tag" style="background:var(--folder)">WHERE</span>Where things live</h2>
+    <div class="folders">
+      <div class="box folder"><b>worksheets/</b><span>Workbooks, practice, project briefs</span></div>
+      <div class="box folder"><b>tests-quizzes/</b><span>Quizzes, tests, exit tickets</span></div>
+      <div class="box folder"><b>notes-packages/</b><span>Student and teacher notes</span></div>
+      <div class="box folder"><b>lesson-plans/</b><span>Lesson plans, sub packages</span></div>
+      <div class="box folder"><b>prompts/</b><span>Thinking and writing prompts</span></div>
+      <div class="box folder"><b>research/</b><span>Assessment and delivery evidence</span></div>
+      <div class="box folder"><b>templates/</b><span>Blank structures to start from</span></div>
+      <div class="box folder"><b>scripts/</b><span>Render scripts</span></div>
+      <div class="box folder"><b>src/ and public/</b><span>The Astro site and published files</span></div>
+    </div>
+    <div class="strip" style="margin-top:12px">
+      <div class="box rule"><b>Sources vs renders</b><span>Markdown sources live in type folders. HTML and PDF renders live only in <code>public/materials/</code>. No duplicate copies.</span></div>
+      <div class="box folder"><b>STEAM exception (Grades 5 to 9)</b><span>Self-contained under <code>steam/</code>. Nothing there lives in the type folders.</span></div>
+    </div>
+    <p class="small" style="margin-bottom:0">Folder path pattern: <code>[type]/[subject]/[unit]/filename.md</code>. Each folder has its own <code>_context.md</code>. Read it before working there.</p>
+  </section>
+
+  <!-- 6. ROUTING -->
+  <section>
+    <h2><span class="tag" style="background:var(--start)">ROUTE</span>"When you say..." then read</h2>
+    <div class="route">
+      <div class="hd">You say</div><div class="hd"></div><div class="hd">Claude reads first</div>
+      <div class="say">Make a worksheet</div><div class="arrowx">&rarr;</div><div class="read">worksheets/_context.md, then the unit context in _courses/</div>
+      <div class="say">Build a workbook</div><div class="arrowx">&rarr;</div><div class="read">worksheets/workbooks-context.md, unit context, lesson notes</div>
+      <div class="say">Write a quiz, test, or exits</div><div class="arrowx">&rarr;</div><div class="read">tests-quizzes/_context.md, then unit context</div>
+      <div class="say">Build notes or teacher notes</div><div class="arrowx">&rarr;</div><div class="read">notes-packages/_context.md, then unit context</div>
+      <div class="say">Build a lesson or sub plan</div><div class="arrowx">&rarr;</div><div class="read">lesson-plans/_context.md, then unit context</div>
+      <div class="say">Improve thinking prompts</div><div class="arrowx">&rarr;</div><div class="read">prompts/_context.md only</div>
+      <div class="say">Research assessment or delivery</div><div class="arrowx">&rarr;</div><div class="read">research/_context.md only</div>
+      <div class="say">Make a template</div><div class="arrowx">&rarr;</div><div class="read">templates/_context.md only</div>
+      <div class="say">Change the site</div><div class="arrowx">&rarr;</div><div class="read">_site-context.md</div>
+      <div class="say">Render or re-render</div><div class="arrowx">&rarr;</div><div class="read">scripts/_context.md</div>
+      <div class="say">Build or revise a game</div><div class="arrowx">&rarr;</div><div class="read">_games-context.md, then unit context</div>
+      <div class="say">Build STEAM material</div><div class="arrowx">&rarr;</div><div class="read">steam/_context.md, then steam/grade-N/_context.md</div>
+    </div>
+  </section>
+
+  <p class="small" style="text-align:center">Source: <code>CLAUDE.md</code> at the project root. If the file changes, this map may need updating.</p>
+</main>
+</body>
+</html>
