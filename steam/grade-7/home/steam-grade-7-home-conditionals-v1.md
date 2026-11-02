@@ -4,6 +4,8 @@ course: steam
 unit: Grade 7
 skill: writing and tracing if-then-else rules
 time: about 15 minutes
+notes: steam/view/grade-7/steam7-spikeprime-notes-v1
+sections: s3
 ---
 
 ::: tip

@@ -104,7 +104,7 @@ Label the boxes below: write "hot" or "cold" and "faster" or "slower" under each
 | What the model says | Fill in the blank |
 |---|---|
 | All matter is made of | _______ |
-| Particles have _______ between them | space |
+| Particles have | _______ between them |
 | Particles are always | _______ |
 | Heating makes particles move | _______ and spread _______ |
 | Cooling makes particles move | _______ and come _______ |

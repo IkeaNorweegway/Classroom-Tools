@@ -4,6 +4,8 @@ course: ela5
 unit: Lyric Poetry
 skill: explaining and writing comparisons (similes and metaphors)
 time: about 15 minutes
+notes: ela5/view/lyric-poetry/ela5-lyric-poetry-anchor-notes-v1
+sections: s3
 ---
 
 ::: tip

@@ -1,5 +1,7 @@
 #!/usr/bin/env perl
-# Render Math 8 materials (markdown) to printable HTML in the Math 9 layout.
+# Render Math 8 and Math 7 materials (markdown) to printable HTML in the Math 9 layout.
+# Math 7 sources sit in the same folders under math-7/ with math7- names and
+# render to public/materials/math-7/ (same format, same diagrams).
 #
 # One source gives the student copy and its answer key: answers sit in the
 # source beside the blanks they fill. Diagrams are `@viz` lines drawn by
@@ -26,7 +28,8 @@
 # measurement-geometry, statistics-probability). Workbooks: rubric: list.
 #
 # Inline: **bold**, *italic*, [[answer]] is a blank (filled in the key),
-# ___ is a blank with no answer, {3/4} is a stacked fraction (also {[[3]]/4}).
+# ___ is a blank with no answer, {3/4} is a stacked fraction (also {[[3]]/4}),
+# {bar:45} puts a repeat bar over 45 (0.{bar:45} = 0.4545…).
 # Lines: (lines N) ruled answer lines · (work N) a grid box N lines tall ·
 # => answer (key only; several in a row make one answer) · @viz type args
 # (a diagram; see Math8Viz.pm %DOC) with caption="…" · #### sub-heading ·
@@ -66,7 +69,11 @@ use lib dirname(abs_path($0));
 use Math8Viz;
 
 my $ROOT = dirname(dirname(abs_path($0)));
+# Math 7 sources (…/math-7/…) use this same renderer: output goes to
+# public/materials/math-7/ and the pages say Grade 7. Set per file in main.
 my $OUT  = File::Spec->catdir($ROOT, 'public', 'materials', 'math-8');
+my $GRADE = 'Grade 8 Mathematics';
+my %STRAND7 = ('algebra' => 'Algebra & Functions', 'measurement-geometry' => 'Geometry & Measurement');
 
 my %STRAND = (
     'number'                 => ['Number',                   '#1d4ed8', '#eff6ff', '#3b82f6'],
@@ -76,7 +83,31 @@ my %STRAND = (
 );
 
 sub slurp { my ($p) = @_; open my $fh, '<', $p or die "$p: $!"; local $/; my $s = <$fh>; close $fh; $s =~ s/\r\n/\n/g; return $s; }
-sub spit  { my ($p, $s) = @_; make_path(dirname($p)); open my $fh, '>', $p or die "$p: $!"; print $fh $s; close $fh; }
+# Student notes written this run. At the end, add_key_links.pl links each one
+# to its answer key (written in the same run).
+my @NOTES_WRITTEN;
+END { local $?; system($^X, "$ROOT/scripts/add_key_links.pl", @NOTES_WRITTEN) if @NOTES_WRITTEN; }
+sub spit  { my ($p, $s) = @_; push @NOTES_WRITTEN, $p if basename($p) =~ /notes/ && basename($p) !~ /-answers|teacher/; $s = section_ids($s) if basename($p) =~ /notes/; make_path(dirname($p)); open my $fh, '>', $p or die "$p: $!"; print $fh $s; close $fh; }
+# Section ids on notes headings, so other pages can link to one section
+# (file.html#s3). Same rules as scripts/add_section_ids.py; keep them in step.
+sub section_ids {
+    my ($html) = @_;
+    my %used = map { $_ => 1 } $html =~ /\sid="([^"]+)"/g;
+    $html =~ s{<h2(\s[^>]*)?>(.*?)</h2>}{
+        my ($attrs, $inner) = ($1 // '', $2);
+        my $t = $inner =~ s/<[^>]+>//gr;
+        $t =~ s/&nbsp;|\x{00a0}/ /g; $t =~ s/^\s+|\s+$//g;
+        my $id = $t =~ /^(?:Section|Concept|Part)\s+(\d+)\b/i ? "s$1"
+               : $t =~ /^Unit[ée]?\s+(\d+)\b/i ? "u$1"
+               : $t =~ /^(\d+)\s*·/ ? "s$1"
+               : $t =~ /^(?:Pre-Knowledge Check|Before we start)/i ? 'pre-check'
+               : $t =~ /^(?:Unit Synthesis|Synthèse|Unit Check|Unit Wrap-Up|Put it all together)/i ? 'synthesis'
+               : $t =~ /^(?:Vocabulary|Words to know|New Words in This Unit)\s*$/i ? 'vocab'
+               : undef;
+        ($attrs =~ /\sid=/ || !defined $id || $used{$id}++) ? "<h2$attrs>$inner</h2>" : qq{<h2 id="$id"$attrs>$inner</h2>};
+    }gse;
+    return $html;
+}
 
 sub esc {
     my ($s) = @_;
@@ -101,6 +132,8 @@ sub unq { my ($s) = @_; $s =~ s/^"(.*)"$/$1/; return $s; }
 # ── inline ────────────────────────────────────────────────────────────────
 sub frac_html { my ($n, $d) = @_; return qq{<span class="frac"><span class="num">$n</span><span class="frac-slash">/</span><span class="den">$d</span></span>}; }
 
+sub bars { my ($s) = @_; $s =~ s{\{bar:([^{}]+)\}}{<span class="rep">$1</span>}g; return $s; }   # {bar:45}: repeating digits with a bar over them
+
 sub fracs { my ($s) = @_; $s =~ s{\{([^{}/]+)/([^{}/]+)\}}{frac_html($1, $2)}ge; return $s; }
 
 sub plain_len { my ($s) = @_; $s =~ s/\{([^{}\/]+)\/([^{}\/]+)\}/$1$2/g; $s =~ s/\*//g; return length $s; }
@@ -111,6 +144,7 @@ sub inline {
     my @a;
     $s =~ s/\[\[(.+?)\]\]/push @a, $1; "\x{1}" . $#a . "\x{2}"/ge;
     $s = esc($s);
+    $s = bars($s);
     $s = fracs($s);
     $s =~ s/\*\*(.+?)\*\*/<strong>$1<\/strong>/g;
     $s =~ s/(?<![\w*])\*(?!\s)(.+?)(?<!\s)\*(?![\w*])/<em>$1<\/em>/g;
@@ -118,7 +152,7 @@ sub inline {
     $s =~ s{\x{1}(\d+)\x{2}}{
         my $x = $a[$1];
         my $len = plain_len($x);
-        $key ? '<span class="ak-fill">' . fracs(esc($x)) . '</span>'
+        $key ? '<span class="ak-fill">' . fracs(bars(esc($x))) . '</span>'
              : '<span class="b ' . ($len > 18 ? 'b-xl' : $len > 10 ? 'b-lg' : $len > 4 ? 'b-md' : 'b-sm') . '"></span>'
     }ge;
     return $s;
@@ -485,6 +519,7 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body); fill: #fff; stroke: n
 svg .dg-title       { font: 700 13.5px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
 svg .dg-math        { font: 16px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
 svg .dg-math-lg     { font: 600 20px/1.2 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+.rep { text-decoration: overline; text-decoration-thickness: 1.5px; }
 CSS
 
 my $GUIDE_CSS = <<'CSS';
@@ -506,13 +541,16 @@ CSS
 sub page {
     my (%o) = @_;
     my $strand = $STRAND{ $o{strand} } or die "unknown strand $o{strand}\n";
+    $strand = [strand_label($o{strand}), @$strand[1 .. 3]];
     my $css = fonts_css($o{depth}) . ":root { --accent: $strand->[1]; --accent-light: $strand->[2]; --accent-mid: $strand->[3]; }\n" . $BASE_CSS . ($o{extra_css} // '');
-    my $header = $o{teacher} ? '' : qq{<div class="header-strip">\n  <div class="course-label">Grade 8 Mathematics · Alberta Curriculum · $strand->[0]</div>\n  <h1>} . esc($o{title}) . qq{</h1>\n  <p class="sub">} . esc($o{sub}) . "</p>\n</div>\n";
+    my $header = $o{teacher} ? '' : qq{<div class="header-strip">\n  <div class="course-label">$GRADE · Alberta Curriculum · $strand->[0]</div>\n  <h1>} . esc($o{title}) . qq{</h1>\n  <p class="sub">} . esc($o{sub}) . "</p>\n</div>\n";
     $header .= qq{<div class="answer-key-header">Answer key · Teacher copy</div>\n} if $o{key};
     $header .= qq{<div class="name-row"><span>Name:</span><span class="b"></span><span>Date:</span><span class="b b-md" style="flex:0 0 130px"></span></div>\n} if $o{name};
-    return qq{<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>} . esc($o{doc_title}) . qq{ | Grade 8 Mathematics</title>\n<style>\n$css</style>\n</head>\n<body>\n\n$header\n$o{body}\n\n</body>\n</html>\n};
+    return qq{<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>} . esc($o{doc_title}) . qq{ | $GRADE</title>\n<style>\n$css</style>\n</head>\n<body>\n\n$header\n$o{body}\n\n</body>\n</html>\n};
 }
 
+# Draft-curriculum strand names (Math 7, and Math 8 since its 2026-10-31 rebuild).
+sub strand_label { my ($k) = @_; return $STRAND7{$k} // $STRAND{$k}[0]; }
 sub out_path { return File::Spec->catfile($OUT, @_); }
 sub depth_of { my ($p) = @_; my $rel = File::Spec->abs2rel($p, File::Spec->catdir($ROOT, 'public')); my @d = File::Spec->splitdir(dirname($rel)); return scalar @d; }
 
@@ -670,7 +708,7 @@ sub render_teacher {
     my ($m, $text) = front(slurp($path));
     my ($topic, $strand) = ($m->{topic}, $m->{strand});
     my @B;
-    push @B, qq{<div class="teacher-header">\n<span class="teacher-badge">Teacher notes</span>\n<h1>} . esc($m->{title}) . qq{</h1>\n<p class="sub">Grade 8 Mathematics · } . esc($STRAND{$strand}[0]) . ' · ' . esc($m->{subtitle} // '') . "</p>\n</div>";
+    push @B, qq{<div class="teacher-header">\n<span class="teacher-badge">Teacher notes</span>\n<h1>} . esc($m->{title}) . qq{</h1>\n<p class="sub">$GRADE · } . esc(strand_label($strand)) . ' · ' . esc($m->{subtitle} // '') . "</p>\n</div>";
     my %PILL = (SHOW => 'show', SAY => 'say', DO => 'do', CUE => 'cue', WATCH => 'watch');
     for my $sec (sections($text)) {
         my ($h, $lines) = @$sec;
@@ -755,16 +793,26 @@ my @files = @ARGV ? @ARGV : (
     glob("$ROOT/notes-packages/math-8/*/math8-*-teachernotes-v1.md"),
     glob("$ROOT/worksheets/math-8/*/*/math8-*-practice-v1.md"),
     glob("$ROOT/worksheets/math-8/*/math8-*-workbook-v1.md"),
+    glob("$ROOT/worksheets/math-8/*/math8-*-workbook-v2.md"),   # draft-curriculum workbooks (2026-10-31)
     glob("$ROOT/tests-quizzes/math-8/*/math8-*-exits-v1.md"),
     glob("$ROOT/tests-quizzes/math-8/*/math8-*-quiz-v1.md"),
+    glob("$ROOT/notes-packages/math-7/*/math7-*-notes-v1.md"),
+    glob("$ROOT/notes-packages/math-7/*/math7-*-teachernotes-v1.md"),
+    glob("$ROOT/worksheets/math-7/*/*/math7-*-practice-v1.md"),
+    glob("$ROOT/worksheets/math-7/*/math7-*-workbook-v1.md"),
+    glob("$ROOT/tests-quizzes/math-7/*/math7-*-exits-v1.md"),
+    glob("$ROOT/tests-quizzes/math-7/*/math7-*-quiz-v1.md"),
 );
 for my $f (@files) {
+    my $g = $f =~ m{/math-7/|(?:^|/)math7-} ? 7 : 8;
+    $OUT = File::Spec->catdir($ROOT, 'public', 'materials', "math-$g");
+    $GRADE = "Grade $g Mathematics";
     my @out = $f =~ /-notes-v\d+\.md$/        ? render_notes($f)
             : $f =~ /-teachernotes-v\d+\.md$/ ? render_teacher($f)
             : $f =~ /-practice-v\d+\.md$/     ? render_practice($f)
             : $f =~ /-workbook-v\d+\.md$/     ? render_workbook($f)
             : $f =~ /-exits-v\d+\.md$/        ? render_exits($f)
             : $f =~ /-quiz-v\d+\.md$/         ? render_quiz($f)
-            : die "$f: not a Math 8 source\n";
+            : die "$f: not a Math 7 or Math 8 source\n";
     print File::Spec->abs2rel($_, $ROOT), "\n" for @out;
 }

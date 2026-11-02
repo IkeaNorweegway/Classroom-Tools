@@ -4,6 +4,8 @@ course: social8
 unit: Political Systems
 skill: who does what in Canada's government
 time: about 15 minutes
+notes: social8/view/political-systems/soc8-political-systems-notes-v1
+sections: s4
 ---
 
 ::: tip

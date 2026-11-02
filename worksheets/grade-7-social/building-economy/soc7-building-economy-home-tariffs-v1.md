@@ -4,6 +4,8 @@ course: social7
 unit: Building Canada's Economy
 skill: working out how a tariff changes prices and who it helps
 time: about 15 minutes
+notes: social7/view/building-economy/soc7-building-economy-notes-v1
+sections: s4
 ---
 
 ::: tip

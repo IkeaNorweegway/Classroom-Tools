@@ -4,6 +4,8 @@ course: ela5
 unit: Opinion and Editorial
 skill: telling facts from opinions
 time: about 15 minutes
+notes: ela5/view/opinion/ela5-opinion-anchor-notes-answers-v1
+sections: s1
 ---
 
 ::: tip

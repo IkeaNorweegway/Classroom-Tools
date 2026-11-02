@@ -4,6 +4,8 @@ course: social9
 unit: Independence and Democratic Rights
 skill: explaining the Persons Case and why equal rights matter
 time: about 15 minutes
+notes: social9/view/independence-democratic-rights/soc9-independence-democratic-rights-notes-answers-v1
+sections: s2
 ---
 
 ::: tip

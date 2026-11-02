@@ -4,6 +4,8 @@ course: social7
 unit: Armed Forces and Sovereignty
 skill: using four questions to read a war memorial as a primary source
 time: about 20 minutes (plus a short walk, if you can)
+notes: social7/view/armed-forces/soc7-armed-forces-notes-answers-v1
+sections: s5
 ---
 
 ::: tip

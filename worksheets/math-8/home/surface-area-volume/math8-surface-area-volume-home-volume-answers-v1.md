@@ -5,6 +5,8 @@ topic: surface-area-volume
 strand: measurement-geometry
 skill: volume = area of the base × height
 time: about 15 minutes
+notes: math8/view/notes/surface-area-volume/math8-surface-area-volume-notes-answers-v1
+sections: s4
 ---
 
 ::: tip

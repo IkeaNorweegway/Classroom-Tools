@@ -5,6 +5,8 @@ topic: fractions
 strand: number
 skill: multiplying fractions and mixed numbers
 time: about 15 minutes
+notes: math8/view/notes/fractions/math8-fractions-notes-answers-v1
+sections: s2
 ---
 
 ::: tip

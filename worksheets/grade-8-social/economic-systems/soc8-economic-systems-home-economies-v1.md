@@ -4,6 +4,8 @@ course: social8
 unit: Economic Systems
 skill: comparing traditional, command, market and mixed economies
 time: about 15 minutes
+notes: social8/view/economic-systems/soc8-economic-systems-notes-v1
+sections: s1, s2
 ---
 
 ::: tip

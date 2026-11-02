@@ -4,6 +4,8 @@ course: social9
 unit: Canada's System of Government
 skill: which level of government handles what
 time: about 15 minutes
+notes: social9/view/system-of-government/soc9-system-of-government-notes-v1
+sections: s3
 ---
 
 ::: tip

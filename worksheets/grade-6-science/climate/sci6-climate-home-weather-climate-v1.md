@@ -4,6 +4,8 @@ course: science
 unit: Climate
 skill: telling weather and climate apart
 time: about 15 minutes
+notes: materials/view/climate/sci6-climate-notes-v1
+sections: s1
 ---
 
 ::: tip

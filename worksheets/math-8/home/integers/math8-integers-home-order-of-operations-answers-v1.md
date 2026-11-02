@@ -5,6 +5,8 @@ topic: integers
 strand: number
 skill: using the order of operations with negative numbers
 time: about 15 minutes
+notes: math8/view/notes/integers/math8-integers-notes-answers-v1
+sections: s4
 ---
 
 ::: tip

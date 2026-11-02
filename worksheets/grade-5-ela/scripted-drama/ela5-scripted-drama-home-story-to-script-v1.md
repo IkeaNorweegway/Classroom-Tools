@@ -4,6 +4,8 @@ course: ela5
 unit: Scripted Drama
 skill: turning a few lines of a story into a script
 time: about 15 minutes
+notes: ela5/view/scripted-drama/ela5-scripted-drama-anchor-notes-v1
+sections: s5
 ---
 
 ::: tip

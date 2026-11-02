@@ -4,6 +4,8 @@ course: social9
 unit: Post-War Canada
 skill: asking who made a source, why, and for whom
 time: about 15 minutes
+notes: social9/view/postwar-canada/soc9-postwar-canada-notes-v1
+sections: s4
 ---
 
 ::: tip

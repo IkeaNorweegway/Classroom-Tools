@@ -5,6 +5,8 @@ topic: percents
 strand: number
 skill: adding percents (tax and tip) and two percent changes in a row
 time: about 15 minutes
+notes: math8/view/notes/percents/math8-percents-notes-answers-v1
+sections: s3, s4
 ---
 
 ::: tip

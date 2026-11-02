@@ -4,6 +4,8 @@ course: science
 unit: Forces
 skill: showing forces with arrows and spotting balanced forces
 time: about 15 minutes
+notes: materials/view/forces/sci6-forces-notes-answers-v1
+sections: s1
 ---
 
 ::: tip

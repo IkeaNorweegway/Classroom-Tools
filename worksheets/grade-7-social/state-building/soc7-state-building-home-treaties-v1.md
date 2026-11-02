@@ -4,6 +4,8 @@ course: social7
 unit: Building the Canadian State
 skill: comparing two points of view on the numbered treaties
 time: about 15 minutes
+notes: social7/view/state-building/soc7-state-building-notes-v1
+sections: s5
 ---
 
 ::: tip

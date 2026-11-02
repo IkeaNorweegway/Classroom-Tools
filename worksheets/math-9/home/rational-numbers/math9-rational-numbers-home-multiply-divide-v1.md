@@ -4,6 +4,8 @@ topic: rational-numbers
 strand: number
 skill: multiplying and dividing positive and negative fractions
 time: about 15 minutes
+notes: math9/view/notes/rational-numbers/math9-rational-numbers-notes-v1
+sections: s3, s4
 ---
 
 ::: tip

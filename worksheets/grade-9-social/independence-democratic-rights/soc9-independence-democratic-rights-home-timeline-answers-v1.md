@@ -4,6 +4,8 @@ course: social9
 unit: Independence and Democratic Rights
 skill: putting the steps to independence in order and explaining each one
 time: about 15 minutes
+notes: social9/view/independence-democratic-rights/soc9-independence-democratic-rights-notes-answers-v1
+sections: s1
 ---
 
 ::: tip

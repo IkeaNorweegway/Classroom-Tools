@@ -4,6 +4,8 @@ course: social8
 unit: Economic Systems
 skill: telling a surplus, a deficit and debt apart
 time: about 15 minutes
+notes: social8/view/economic-systems/soc8-economic-systems-notes-answers-v1
+sections: s5
 ---
 
 ::: tip

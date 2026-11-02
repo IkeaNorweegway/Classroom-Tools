@@ -1,5 +1,6 @@
-// Math 8 materials manifest: the one list of strands, topics and the files
-// each one links to. Same shape as math9.ts, so the student, parent and
+// Math 8 materials manifest (Alberta June 2026 draft curriculum, rebuilt
+// 2026-10-31): the one list of strands, topics and the files each one links to.
+// The 2016-program files (old slugs) stay in public/materials/math-8/ unlinked. Same shape as math9.ts, so the student, parent and
 // teacher pages and the viewer work the same way.
 //
 // File paths are relative to public/materials/math-8/ and have no .html
@@ -50,17 +51,17 @@ export interface Strand {
   workbookKey: string;
 }
 
-const wb = (s: StrandSlug) => `worksheets/${s}/math8-${s}-workbook-v1`;
-const wbKey = (s: StrandSlug) => `worksheets/${s}/math8-${s}-workbook-answers-v1`;
+const wb = (s: StrandSlug) => `worksheets/${s}/math8-${s}-workbook-v2`;
+const wbKey = (s: StrandSlug) => `worksheets/${s}/math8-${s}-workbook-answers-v2`;
 
 export const strands: Strand[] = [
-  { slug: 'number', label: 'Number', short: 'Number', blurb: 'Square roots, percents, ratios and rates, and multiplying and dividing fractions and integers.', workbook: wb('number'), workbookKey: wbKey('number') },
-  { slug: 'algebra', label: 'Algebra', short: 'Algebra', blurb: 'Turning patterns into tables, equations and graphs, and solving equations with a balance.', workbook: wb('algebra'), workbookKey: wbKey('algebra') },
-  { slug: 'measurement-geometry', label: 'Measurement & Geometry', short: 'M&G', blurb: 'Right triangles, wrapping and filling 3-D shapes, views of block buildings, and moving shapes on a grid.', workbook: wb('measurement-geometry'), workbookKey: wbKey('measurement-geometry') },
-  { slug: 'statistics-probability', label: 'Statistics & Probability', short: 'Stats & Prob', blurb: 'Choosing fair graphs, catching misleading ones, and finding the chance of two things happening.', workbook: wb('statistics-probability'), workbookKey: wbKey('statistics-probability') },
+  { slug: 'number', label: 'Number', short: 'Number', blurb: 'Rational and irrational numbers, square roots, and proportional reasoning.', workbook: wb('number'), workbookKey: wbKey('number') },
+  { slug: 'algebra', label: 'Algebra & Functions', short: 'Algebra', blurb: 'Polynomials, equations with fractions and x on both sides, inequalities, and slope and straight-line graphs.', workbook: wb('algebra'), workbookKey: wbKey('algebra') },
+  { slug: 'measurement-geometry', label: 'Geometry & Measurement', short: 'Geometry', blurb: 'Similar shapes and dilations, triangle facts and the Pythagorean theorem, and surface area.', workbook: wb('measurement-geometry'), workbookKey: wbKey('measurement-geometry') },
+  { slug: 'statistics-probability', label: 'Statistics & Probability', short: 'Stats & Prob', blurb: 'The shape of data, histograms and circle graphs, and the chance of two events.', workbook: wb('statistics-probability'), workbookKey: wbKey('statistics-probability') },
 ];
 
-/** Every topic has the same set: notes, concepts, core, challenge, exits, quiz, practice test, keys, teacher notes. */
+/** Every topic has the same set: notes, concepts, core, challenge, exits, quiz, keys, teacher notes. */
 function topic(slug: string, label: string, strand: StrandSlug): Topic {
   const stem = `math8-${slug}`;
   const ws = `worksheets/${strand}/${slug}/${stem}`;
@@ -78,13 +79,11 @@ function topic(slug: string, label: string, strand: StrandSlug): Topic {
     prereq: `practice/${stem}-prereq-practice-v1`,
     extras: [
       { label: 'Mid-Unit Quiz', path: `quizzes/${slug}/${stem}-quiz-v1`, type: 'assessment' },
-      { label: 'Practice Test', path: `tests/${slug}/${stem}-practice-test-v1`, badge: 'Test prep' },
     ],
     keys: [
       { label: 'Notes Answer Key', path: `notes/${slug}/${stem}-notes-answers-v1` },
       { label: 'Core Practice Answer Key', path: `${ws}-worksheet-core-answers-v1` },
       { label: 'Challenge Answer Key', path: `${ws}-worksheet-challenge-answers-v1` },
-      { label: 'Practice Test Answer Key', path: `tests/${slug}/${stem}-practice-test-answers-v1` },
     ],
     teacherNotes: `notes/${slug}/${stem}-teachernotes-v1`,
     home: [],
@@ -92,35 +91,35 @@ function topic(slug: string, label: string, strand: StrandSlug): Topic {
 }
 
 export const topics: Topic[] = [
-  topic('square-roots', 'Squares & Square Roots', 'number'),
-  topic('percents', 'Percents', 'number'),
-  topic('ratios-rates', 'Ratios & Rates', 'number'),
-  topic('fractions', 'Fractions (× and ÷)', 'number'),
-  topic('integers', 'Integers (× and ÷)', 'number'),
-  topic('linear-relations', 'Linear Relations', 'algebra'),
-  topic('linear-equations', 'Linear Equations', 'algebra'),
-  topic('pythagorean', 'Pythagorean Theorem', 'measurement-geometry'),
-  topic('surface-area-volume', 'Surface Area & Volume', 'measurement-geometry'),
-  topic('views-transformations', '3-D Views & Transformations', 'measurement-geometry'),
-  topic('data-displays', 'Data Displays', 'statistics-probability'),
-  topic('probability', 'Probability', 'statistics-probability'),
+  topic('rational-numbers', 'Rational Numbers', 'number'),
+  topic('roots-irrationals', 'Square Roots & Irrational Numbers', 'number'),
+  topic('proportional-reasoning', 'Proportional Reasoning', 'number'),
+  topic('polynomials', 'Polynomials', 'algebra'),
+  topic('solving-equations', 'Solving Equations', 'algebra'),
+  topic('inequalities', 'Inequalities', 'algebra'),
+  topic('linear-functions', 'Linear Functions', 'algebra'),
+  topic('similarity-dilations', 'Similarity & Dilations', 'measurement-geometry'),
+  topic('triangle-theorems', 'Triangle Theorems', 'measurement-geometry'),
+  topic('surface-area', 'Surface Area', 'measurement-geometry'),
+  topic('distributions', 'Distributions & Circle Graphs', 'statistics-probability'),
+  topic('compound-probability', 'Independent & Dependent Events', 'statistics-probability'),
 ];
 
 // Home practice sheets for the parent pages, by topic: [file name part, skill].
 // Sources: worksheets/math-8/home/<topic>/; render with scripts/render_home_practice.pl.
 const homeSheets: Record<string, [string, string][]> = {
-  'square-roots': [['squares-roots', 'Squares and square roots'], ['estimating', 'Estimating square roots']],
-  'percents': [['percent-of', 'Percent of a number'], ['tax-tip', 'Tax, tips and sales']],
-  'ratios-rates': [['equal-ratios', 'Equal ratios'], ['unit-price', 'Unit prices and best buys']],
-  'fractions': [['multiply', 'Multiplying fractions'], ['divide', 'Dividing fractions']],
-  'integers': [['multiply-divide', 'Multiplying and dividing integers'], ['order-of-operations', 'Order of operations with integers']],
-  'linear-relations': [['table-to-equation', 'From patterns to equations'], ['graphs', 'Reading a relation']],
-  'linear-equations': [['two-step', 'Two-step equations'], ['brackets', 'Equations with brackets']],
-  'pythagorean': [['hypotenuse', 'Finding the hypotenuse'], ['leg', 'Finding a missing leg']],
-  'surface-area-volume': [['surface-area', 'Surface area of a box'], ['volume', 'Volume of prisms and cylinders']],
-  'views-transformations': [['views', 'Top, front and side views'], ['transformations', 'Slides, flips and turns']],
-  'data-displays': [['choosing', 'Choosing a graph'], ['misleading', 'Spot the misleading graph']],
-  'probability': [['outcomes', 'Listing outcomes'], ['multiply-rule', 'The multiply rule']],
+  'rational-numbers': [['kinds-order', 'Kinds of numbers and ordering'], ['operations', 'Operations with rational numbers']],
+  'roots-irrationals': [['square-roots', 'Square roots, both signs'], ['estimating', 'Estimating roots and irrational numbers']],
+  'proportional-reasoning': [['constant', 'The constant of proportionality'], ['direct-inverse', 'Direct and inverse proportion']],
+  'polynomials': [['naming', 'Naming polynomials'], ['add-subtract', 'Adding and subtracting polynomials']],
+  'solving-equations': [['fractions', 'Equations with fractions and decimals'], ['both-sides', 'Brackets and x on both sides']],
+  'inequalities': [['number-line', 'Inequalities on a number line'], ['real-world', 'Writing and checking inequalities']],
+  'linear-functions': [['slope', 'Finding slope'], ['equations', 'y = mx + b']],
+  'similarity-dilations': [['scale-factor', 'Scale factor'], ['dilations', 'Dilations on a grid']],
+  'triangle-theorems': [['angles-sides', 'Triangle angles and sides'], ['pythagorean', 'The Pythagorean theorem']],
+  'surface-area': [['prisms', 'Surface area of prisms and pyramids'], ['cylinders-drawings', 'Cylinders and 3-D drawings']],
+  'distributions': [['shape', 'The shape of data'], ['circle-graphs', 'Circle graphs']],
+  'compound-probability': [['independent', 'Independent events'], ['dependent', 'Dependent events']],
 };
 for (const t of topics) {
   t.home = (homeSheets[t.slug] ?? []).map(([name, skill]) => ({

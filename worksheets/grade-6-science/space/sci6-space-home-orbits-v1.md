@@ -4,6 +4,8 @@ course: science
 unit: Space
 skill: how orbits work and what satellites do
 time: about 15 minutes
+notes: materials/view/space/sci6-space-notes-v1
+sections: s3
 ---
 
 ::: tip

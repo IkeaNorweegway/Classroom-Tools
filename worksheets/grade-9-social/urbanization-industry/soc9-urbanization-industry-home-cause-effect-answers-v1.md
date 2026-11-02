@@ -4,6 +4,8 @@ course: social9
 unit: Urbanization and Industry
 skill: tracing causes and effects of rapid growth
 time: about 15 minutes
+notes: social9/view/urbanization-industry/soc9-urbanization-industry-notes-answers-v1
+sections: s2, s3
 ---
 
 ::: tip

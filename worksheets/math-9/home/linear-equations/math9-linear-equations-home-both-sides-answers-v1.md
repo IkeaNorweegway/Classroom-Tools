@@ -4,6 +4,8 @@ topic: linear-equations
 strand: algebra
 skill: solving equations with x on both sides
 time: about 15 minutes
+notes: math9/view/notes/linear-equations/math9-linear-equations-notes-answers-v1
+sections: s2
 ---
 
 ::: tip

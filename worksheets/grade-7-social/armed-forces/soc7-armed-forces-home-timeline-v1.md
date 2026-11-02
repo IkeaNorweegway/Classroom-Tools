@@ -4,6 +4,8 @@ course: social7
 unit: Armed Forces and Sovereignty
 skill: ordering the steps that built Canada's own police and military
 time: about 15 minutes
+notes: social7/view/armed-forces/soc7-armed-forces-notes-v1
+sections: s1, s2
 ---
 
 ::: tip

@@ -4,6 +4,8 @@ topic: circle-geometry
 strand: measurement-geometry
 skill: using right angles from tangents and chords with the Pythagorean theorem
 time: about 15 minutes
+notes: math9/view/notes/circle-geometry/math9-circle-geometry-notes-answers-v1
+sections: s2, s4
 ---
 
 ::: tip

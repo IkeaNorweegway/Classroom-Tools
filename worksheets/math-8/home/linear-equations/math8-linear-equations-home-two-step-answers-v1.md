@@ -5,6 +5,8 @@ topic: linear-equations
 strand: algebra
 skill: solving equations like 3x + 4 = 19
 time: about 15 minutes
+notes: math8/view/notes/linear-equations/math8-linear-equations-notes-answers-v1
+sections: s2
 ---
 
 ::: tip

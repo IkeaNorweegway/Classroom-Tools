@@ -4,6 +4,8 @@ topic: circle-geometry
 strand: measurement-geometry
 skill: using the centre-angle, edge-angle and semicircle rules
 time: about 15 minutes
+notes: math9/view/notes/circle-geometry/math9-circle-geometry-notes-answers-v1
+sections: s3
 ---
 
 ::: tip

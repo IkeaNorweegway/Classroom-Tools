@@ -4,6 +4,8 @@ course: social9
 unit: Post-War Canada
 skill: describing post-war changes in Canada, good and harmful
 time: about 15 minutes
+notes: social9/view/postwar-canada/soc9-postwar-canada-notes-answers-v1
+sections: s1, s3
 ---
 
 ::: tip

@@ -5,6 +5,8 @@ topic: linear-relations
 strand: algebra
 skill: writing an equation from a pattern or table
 time: about 15 minutes
+notes: math8/view/notes/linear-relations/math8-linear-relations-notes-v1
+sections: s1, s2
 ---
 
 ::: tip

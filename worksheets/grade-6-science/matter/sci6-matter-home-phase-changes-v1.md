@@ -4,6 +4,8 @@ course: science
 unit: Matter
 skill: naming and explaining melting, freezing, evaporation and condensation
 time: about 15 minutes
+notes: materials/view/matter/sci6-matter-notes-v1
+sections: s2
 ---
 
 ::: tip

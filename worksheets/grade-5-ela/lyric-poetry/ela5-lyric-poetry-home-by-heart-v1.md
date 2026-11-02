@@ -4,6 +4,8 @@ course: ela5
 unit: Lyric Poetry
 skill: memorizing a poem and reciting it with expression
 time: about 10 minutes a day for a week
+notes: ela5/view/lyric-poetry/ela5-lyric-poetry-anchor-notes-v1
+sections: s6
 ---
 
 ::: tip

@@ -4,6 +4,8 @@ course: science
 unit: Living Systems
 skill: producers, consumers and decomposers in food chains and webs
 time: about 15 minutes
+notes: materials/view/living-systems/sci6-living-systems-notes-answers-v1
+sections: s3
 ---
 
 ::: tip

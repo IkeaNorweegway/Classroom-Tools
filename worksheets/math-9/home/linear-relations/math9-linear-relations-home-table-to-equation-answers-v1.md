@@ -4,6 +4,8 @@ topic: linear-relations
 strand: algebra
 skill: finding the slope and y-intercept from a table and writing y = mx + b
 time: about 15 minutes
+notes: math9/view/notes/linear-relations/math9-linear-relations-notes-answers-v1
+sections: s2, s3
 ---
 
 ::: tip

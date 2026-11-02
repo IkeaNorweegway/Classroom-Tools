@@ -259,6 +259,63 @@ export const unitArt: Record<string, UnitArt> = {
       <g class="u-m"><rect class="u-d" x="28" y="18" width="8" height="34" opacity=".6"/></g>`,
   },
 
+  // ── Math 7 (topics whose slugs Math 8 and 9 don't already have) ─────
+  'positive-negative': {
+    m: 'slide',
+    svg: `<path class="u-s" d="M6 40h52M32 34v12M16 37v6M48 37v6"/>
+      <path class="u-s" d="M20 28c4-8 20-8 24 0" opacity=".5"/>
+      <g class="u-m"><circle class="u-s u-f" cx="16" cy="40" r="5"/><circle class="u-d" cx="48" cy="40" r="5"/></g>`,
+  },
+  'squares-cubes': {
+    m: 'float',
+    svg: `<rect class="u-s u-f" x="8" y="26" width="24" height="24"/>
+      <path class="u-s" d="M16 26v24M24 26v24M8 34h24M8 42h24" opacity=".4"/>
+      <g class="u-m"><path class="u-s u-f" d="M38 30l9-5 9 5v12l-9 5-9-5z"/><path class="u-s" d="M38 30l9 5 9-5M47 35v12" opacity=".6"/></g>`,
+  },
+  'fractions-decimals': {
+    m: 'grow',
+    svg: `<rect class="u-s u-f" x="12" y="12" width="40" height="40" rx="2"/>
+      <path class="u-s" d="M12 25.3h40M12 38.7h40M32 12v40" opacity=".45"/>
+      <g class="u-m"><rect class="u-d" x="12" y="12" width="20" height="26.7" opacity=".55"/></g>`,
+  },
+  'ratios-percents': {
+    m: 'slide',
+    svg: `<rect class="u-s u-f" x="8" y="18" width="48" height="10" rx="2"/>
+      <rect class="u-s" x="8" y="38" width="48" height="10" rx="2"/>
+      <path class="u-s" d="M20 18v10M32 18v10M44 18v10" opacity=".5"/>
+      <g class="u-m"><rect class="u-d" x="8" y="38" width="30" height="10" rx="2" opacity=".6"/></g>`,
+  },
+  functions: {
+    m: 'push',
+    svg: `<rect class="u-s u-f" x="22" y="20" width="20" height="24" rx="3"/>
+      <path class="u-s" d="M8 32h10M46 32h10"/><path class="u-s" d="M14 28l4 4-4 4M52 28l4 4-4 4"/>
+      <g class="u-m"><circle class="u-d" cx="32" cy="32" r="4"/></g>`,
+  },
+  'lines-angles': {
+    m: 'tilt',
+    svg: `<path class="u-s" d="M6 24h52M6 44h52"/><path class="u-s" d="M30 20l2-4M30 40l2-4" opacity=".5"/>
+      <g class="u-m"><path class="u-s" d="M20 56L44 10" style="stroke-width: 2.4"/></g>
+      <path class="u-s" d="M40.5 24a6 6 0 0 0-2-5" opacity=".7"/>`,
+  },
+  circles: {
+    m: 'spin',
+    svg: `<circle class="u-s u-f" cx="32" cy="32" r="22"/>
+      <g class="u-m" style="transform-origin: 32px 32px"><path class="u-s" d="M32 32L52 22" style="stroke-width: 2.4"/></g>
+      <path class="u-s" d="M10 32h44" opacity=".45"/><circle class="u-d" cx="32" cy="32" r="3"/>`,
+  },
+  volume: {
+    m: 'grow',
+    svg: `<ellipse class="u-s u-f" cx="32" cy="16" rx="16" ry="6"/>
+      <path class="u-s" d="M16 16v32c0 3.3 7.2 6 16 6s16-2.7 16-6V16"/>
+      <g class="u-m"><path class="u-d" d="M16 34c0 3.3 7.2 6 16 6s16-2.7 16-6v14c0 3.3-7.2 6-16 6s-16-2.7-16-6z" opacity=".5"/></g>`,
+  },
+  'samples-statistics': {
+    m: 'pulse',
+    svg: `<circle class="u-s u-f" cx="14" cy="18" r="4"/><circle class="u-s u-f" cx="28" cy="18" r="4"/><circle class="u-s u-f" cx="42" cy="18" r="4"/>
+      <circle class="u-s u-f" cx="21" cy="32" r="4"/><circle class="u-s u-f" cx="49" cy="32" r="4"/><circle class="u-s u-f" cx="14" cy="46" r="4"/><circle class="u-s u-f" cx="42" cy="46" r="4"/>
+      <g class="u-m"><circle class="u-d" cx="35" cy="32" r="4"/><circle class="u-d" cx="28" cy="46" r="4"/><circle class="u-d" cx="50" cy="16" r="4"/></g>`,
+  },
+
   // ── Grade 7 Science ──────────────────────────────────────────────────
   'interactions-ecosystems': {
     m: 'pulse',

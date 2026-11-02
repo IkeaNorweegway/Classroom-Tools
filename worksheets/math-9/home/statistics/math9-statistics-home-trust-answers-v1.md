@@ -4,6 +4,8 @@ topic: statistics
 strand: statistics-probability
 skill: spotting bias, poor samples and correlation versus cause
 time: about 15 minutes
+notes: math9/view/notes/statistics/math9-statistics-notes-answers-v1
+sections: s2
 ---
 
 ::: tip

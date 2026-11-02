@@ -4,6 +4,8 @@ course: ela5
 unit: Scripted Drama
 skill: using voice and body to change the meaning of a line
 time: about 15 minutes
+notes: ela5/view/scripted-drama/ela5-scripted-drama-anchor-notes-v1
+sections: s4
 ---
 
 ::: tip
@@ -26,7 +28,7 @@ time: about 15 minutes
 
 **2.** Now your adult says "We're having broccoli." You guess the feeling each time. Write the feelings you guessed.
 
-(work 2)
+(work 1)
 
 **3.** Say "I'm fine" so that it means you're **not** fine. What did you change?
 

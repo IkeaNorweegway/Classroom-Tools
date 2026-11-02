@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+import { strands as manifestStrands, topicsInStrand } from '../../../data/math7';
+const base = import.meta.env.BASE_URL;
+
+function viewHref(path: string) { return `${base}math7/view/${path}`; }
+
+const style: Record<string, { color: string; tagStyle: string }> = {
+  number:                   { color: 'border-l-blue-400',   tagStyle: 'bg-blue-100 text-blue-800' },
+  algebra:                  { color: 'border-l-violet-400', tagStyle: 'bg-violet-100 text-violet-800' },
+  'measurement-geometry':   { color: 'border-l-green-400',  tagStyle: 'bg-green-100 text-green-800' },
+  'statistics-probability': { color: 'border-l-teal-400',   tagStyle: 'bg-teal-100 text-teal-800' },
+};
+
+const strands = await Promise.all(
+  manifestStrands.map(async (s) => ({
+    slug: s.slug,
+    label: s.label,
+    workbook: s.workbook,
+    workbookKey: s.workbookKey,
+    ...style[s.slug],
+    topics: await Promise.all(
+      topicsInStrand(s.slug).map(async (t) => ({ ...t, unit: (await getEntry('math7-units', t.slug))?.data })),
+    ),
+  })),
+);
+---
+
+<BaseLayout title="Math 7 — Teacher Hub" course="math7" audience="teacher">
+
+  <div class="mb-8">
+    <p class="text-xs font-bold uppercase tracking-widest text-teacher-600 mb-2">Teacher Hub · Math 7</p>
+    <h1 class="text-3xl font-bold text-slate-900 mb-2">Grade 7 Mathematics — Teacher View</h1>
+    <p class="text-slate-500">Teaching guides, answer keys, and delivery notes for all 12 topics, plus a mixed-practice workbook for each strand.</p>
+  </div>
+
+  {strands.map(strand => (
+    <section class="mb-12">
+      <h2 class={`text-xs font-bold uppercase tracking-widest mb-4 pb-2 border-b border-slate-100 text-slate-500`}>
+        {strand.label}
+      </h2>
+
+      <div id={`${strand.slug}-workbook`} class={`scroll-mt-32 mb-3 bg-white rounded-xl border border-slate-200 border-l-4 ${strand.color} px-5 py-4`}>
+        <div class="flex items-center gap-2 mb-2">
+          <span class={`text-xs font-semibold px-2 py-0.5 rounded-full ${strand.tagStyle}`}>{strand.label}</span>
+          <span class="text-sm font-bold text-slate-800">Strand Workbook</span>
+        </div>
+        <p class="mb-3 max-w-[78ch] text-sm leading-relaxed text-slate-600">Interleaved practice across every topic in the strand, with ★ Core and ★★ Extended questions. The key says which notes section opens each question and which questions target a misconception.</p>
+        <div class="space-y-2">
+          {[
+            { tag: 'Student', label: 'Strand workbook', path: strand.workbook },
+            { tag: 'Answer Key', label: 'Workbook answer key (opens-after notes, misconception targets)', path: strand.workbookKey },
+          ].map(d => (
+            <div class="flex items-center justify-between gap-4 rounded-lg border px-4 py-2.5 bg-slate-50 border-slate-200">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">{d.tag}</span>
+                <span class="text-sm font-medium text-slate-700">{d.label}</span>
+              </div>
+              <a href={viewHref(d.path)} target="_blank" rel="noopener" class="flex-shrink-0 text-sm font-semibold text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-400 px-4 py-1.5 rounded-lg transition-colors">Open ↗</a>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        {strand.topics.map(t => (
+          <div id={t.slug} class={`scroll-mt-32 bg-white rounded-xl border border-slate-200 border-l-4 ${strand.color} px-5 py-4`}>
+            <div class="flex items-center justify-between gap-4 mb-2">
+              <div class="flex items-center gap-2">
+                <span class={`text-xs font-semibold px-2 py-0.5 rounded-full ${strand.tagStyle}`}>{strand.label}</span>
+                <span class="text-sm font-bold text-slate-800">{t.label}</span>
+              </div>
+              <a href={`${base}math7/${t.slug}`} class="shrink-0 text-xs font-semibold text-slate-400 hover:text-slate-700">Student page →</a>
+            </div>
+            {t.unit && (
+              <p class="mb-3 max-w-[78ch] text-sm leading-relaxed text-slate-600">{t.unit.teacherSummary}</p>
+            )}
+            <div class="space-y-2">
+              <!-- Teaching guide -->
+              <div class="flex items-center justify-between gap-4 bg-amber-50 rounded-lg border border-amber-200 px-4 py-2.5">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-teacher-600 text-white">Teacher Guide</span>
+                  <span class="text-sm font-medium text-slate-700">SHOW / SAY / CUE Delivery Notes</span>
+                </div>
+                <a
+                  href={viewHref(t.teacherNotes)}
+                  target="_blank"
+                  rel="noopener"
+                  class="flex-shrink-0 text-sm font-semibold text-teacher-700 hover:text-teacher-900 border border-teacher-300 hover:border-teacher-500 px-4 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+                >
+                  Open ↗
+                </a>
+              </div>
+              <!-- Answer keys -->
+              <details class="group">
+                <summary class="cursor-pointer list-none flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors select-none px-1 py-1">
+                  <span class="inline-block transition-transform group-open:rotate-90">▶</span> Answer keys
+                </summary>
+                <div class="mt-2 space-y-1.5">
+                  {t.keys.map(ak => (
+                    <div class="bg-slate-50 rounded-lg border border-slate-200 px-4 py-2.5 flex items-center justify-between gap-4">
+                      <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">Answer Key</span>
+                        <span class="text-sm font-medium text-slate-600">{ak.label}</span>
+                      </div>
+                      <a
+                        href={viewHref(ak.path)}
+                        target="_blank"
+                        rel="noopener"
+                        class="flex-shrink-0 text-sm font-semibold text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-400 px-4 py-1.5 rounded-lg transition-colors"
+                      >
+                        Open ↗
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </details>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  ))}
+
+  <div class="mt-10 pt-6 border-t border-slate-100">
+    <a href={`${base}math7`} class="text-sm text-slate-400 hover:text-slate-600 transition-colors">
+      ← Back to Grade 7 Mathematics
+    </a>
+  </div>
+
+</BaseLayout>

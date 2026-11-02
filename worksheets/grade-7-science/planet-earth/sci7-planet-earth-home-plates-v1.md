@@ -4,6 +4,8 @@ course: science7
 unit: Planet Earth
 skill: Earth's layers and what happens at plate boundaries
 time: about 15 minutes
+notes: science7/view/planet-earth/sci7-planet-earth-notes-v1
+sections: s1, s3
 ---
 
 ::: tip

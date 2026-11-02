@@ -4,6 +4,8 @@ topic: powers-exponents
 strand: number
 skill: multiplying and dividing powers with the same base
 time: about 15 minutes
+notes: math9/view/notes/powers-exponents/math9-powers-notes-answers-v1
+sections: s3, s4
 ---
 
 ::: tip

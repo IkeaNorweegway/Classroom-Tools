@@ -5,6 +5,8 @@ topic: pythagorean
 strand: measurement-geometry
 skill: finding the longest side of a right triangle
 time: about 15 minutes
+notes: math8/view/notes/pythagorean/math8-pythagorean-notes-v1
+sections: s2
 ---
 
 ::: tip

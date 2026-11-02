@@ -9,6 +9,7 @@ import Progression from './Progression.astro';
 import { courseByKey } from '../data/courses';
 import type { CollectionEntry } from 'astro:content';
 import { prereqPractice, type CourseManifest, type CourseUnit, type Doc } from '../data/manifest';
+import { notesSections } from '../data/notesSections';
 
 interface Props {
   manifest: CourseManifest;
@@ -42,6 +43,9 @@ const stages = [
 ];
 // The materials the student works through, in order.
 const inClass = u.path.flatMap((s) => s.items.map((i) => ({ ...i, label: s.title && s.items.length > 1 ? `${s.title.replace(/^Unit \d+ · /, '')}: ${i.label}` : i.label })));
+// The unit's main notes and their numbered sections, so a parent can open the part their child is on.
+const notesDoc = inClass.find((d) => d.type === 'notes' && !d.href && d.doc);
+const sections = notesDoc ? notesSections(notesDoc.doc) : [];
 ---
 
 <BaseLayout
@@ -147,6 +151,22 @@ const inClass = u.path.flatMap((s) => s.items.map((i) => ({ ...i, label: s.title
         <MaterialRow label={`${i + 1}. ${doc.label}`} href={href(doc)} type={doc.type} compact />
       ))}
     </div>
+    {notesDoc && sections.length > 1 && (
+      <div class="raised mt-6 rounded-2xl p-6">
+        <h3 class="mb-1 text-[1.0625rem] font-bold text-slate-900">Jump to a part of the notes</h3>
+        <p class="mb-4 text-sm text-slate-500">Ask your child which section they are on, then open it here.</p>
+        <ol class="grid gap-2.5 sm:grid-cols-2">
+          {sections.map((s) => (
+            <li>
+              <a href={`${href(notesDoc)}#${s.id}`} class="flex items-baseline gap-3 text-[0.9375rem] leading-snug text-slate-700 hover:text-accent-ink hover:underline">
+                <span class="num-chip font-display tabular shrink-0" aria-hidden="true">{s.num}</span>
+                <span><span class="sr-only">{s.id.startsWith('u') ? 'Unit' : 'Section'} {s.num}: </span>{s.title}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    )}
     {u.keys.length > 0 && (
       <details class="disclosure mt-4">
         <summary class="keys-toggle">

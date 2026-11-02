@@ -48,6 +48,26 @@ When active:
 - Flag decisions that are genuinely ambiguous and would require rework to fix — do not silently guess on these
 - Trust mode applies to the current build task, not all future requests in the session
 
+### Model routing (standing rule)
+All rendering and all site page work goes to the **`render-and-site`** agent (`.claude/agents/render-and-site.md`, runs on Sonnet). This covers render scripts and their post-render steps, Astro pages, `src/data/*.ts`, nav and links, and the site build. The user has asked for this, so delegate without asking. Writing and checking teaching content (notes, worksheets, keys, quizzes, diagrams, outcome maps) stays in the main session.
+- Batch it: write the content first, then send one task that renders and wires up everything at once.
+- Give the agent the exact files or topics, and what should be on which page.
+- The agent reports content problems back instead of fixing them. Fix those in the main session, then send the re-render.
+
+### Batching (standing rule)
+Plan every build as batches, even when the request is short.
+- **One batch = one topic or unit** (a strand at most): all its content, then one render + site hand-off, then `_status.md` and a commit.
+- Collect fixes and do them together; don't stop after each one.
+- Ask clarifying questions once, at the start. In trust mode, don't check in between pieces.
+- For a multi-topic job, finish and commit each batch before starting the next, so a new conversation can pick up from `_status.md`.
+
+### Prompt for a new conversation (standing rule)
+Long conversations re-send all their history every turn, so tell the user when to start fresh. End your message with a one-line note, **"Good time to start a new conversation:"** plus what to paste in to continue, when:
+- a batch is finished and committed, and the next task is a different topic, course or kind of work;
+- the conversation has run through about two batches, or a lot of large files have been read;
+- the conversation has been compacted (summarised) once.
+Don't suggest it mid-batch or with uncommitted work. Commit or update `_status.md` first. Make the pasted line self-contained, for example: "Continue the Math 8 rebuild: Topic 6 next. Read `_status.md`. I trust you."
+
 ---
 
 ## Folder structure
@@ -98,7 +118,8 @@ Materials are organized inside type folders by subject and unit:
 | `_courses/grade-6-science/living-systems/_context.md` | Living Systems unit: LOs, knowledge clusters, scope boundary, misconceptions |
 | `_courses/grade-7-science/_context.md` | Science 7 (Alberta 2007 PoS): 5 units, LOs, misconception inventory, depth ceilings |
 | `_courses/grade-7-science/[unit]/_context.md` | Unit-level contexts: interactions-ecosystems, plants-food-fibre, heat-temperature, structures-forces, planet-earth |
-| `_courses/math-8/_context.md` | Math 8: 12 topics (2016 Grade 8 outcomes), local codes SQ/PC/RR/FR/IN/LR/LE/PY/SV/VT/DD/PB, depth ceilings, misconceptions, reading-level and picture rules, materials map. Render with `scripts/render_math8.pl` |
+| `_courses/math-7/_context.md` | Math 7 on the **June 2026 draft** curriculum: 12 topics in 4 strands, local codes PN/IN/SC/FD/RP/LE/FN/LA/CI/VO/ST/PB, depth ceilings, misconceptions, reading level (F&P N–P) and picture rules (3+ diagrams per notes section), materials map. Renders with `scripts/render_math8.pl` (it handles both grades) |
+| `_courses/math-8/_context.md` | Math 8 on the **June 2026 draft** (rebuilt 2026-10-31): 12 topics, local codes RN/SR/PR/PO/SE/IQ/LF/SD/TT/SA/DI/CP, depth ceilings, misconceptions; reading and picture rules as Math 7. The 2016-program version is `_context-2016.md` (its files stay unlinked). Render with `scripts/render_math8.pl`; per-topic diagram types live in `scripts/vizext/*.pl` |
 | `_courses/grade-5-ela/_context.md` | Grade 5 ELA (Alberta ELAL K–6, 2023): six genre units, 60-min block, editions A/B/C, local codes TF/OL/VO/CO/WR/CV, error patterns, F&P and Words Their Way use. Does **not** use the math/science formats. Evidence: `research/literacy-reading-writing-research.md`. Render with `scripts/render_ela5.pl` |
 | `_courses/math-9/_context.md` | Math 9: 11 topics, depth ceilings, misconception inventory, recommended sequence |
 | `_courses/grade-7-social/_context.md` | Social 7 (draft 7–9 curriculum): 5 units, verbatim K/U/S, local codes SB/CG/BE/IM/AF, misconceptions, sensitive-content notes. Materials render with `scripts/render_social.pl` |
@@ -132,6 +153,7 @@ Materials are organized inside type folders by subject and unit:
 | "Build / revise a game" | `_games-context.md` → unit `_context.md` in `_courses/` | type-folder contexts, `templates/` |
 | "Build / revise a sim or trainer" | `_sims-context.md` → `research/simulations-research.md` → unit `_context.md` in `_courses/` (or `steam/grade-[N]/`) | type-folder contexts, `templates/` |
 | "Build a CEFL workbook / project / teacher guide" | `_courses/cefl/_context.md` → `research/project-based-learning-research.md` → `research/financial-career-education-research.md` | `templates/`, `tests-quizzes/` — CEFL uses its own mini-workbook and project formats |
+| "Build / revise a Math 7 [notes / worksheet / workbook / exits / quiz / teacher notes]" | `_courses/math-7/_context.md` → the type-folder context → the source format at the top of `scripts/render_math8.pl` (diagram types in `scripts/Math8Viz.pm`) | `research/` |
 | "Build / revise a Math 8 [notes / worksheet / workbook / exits / quiz / teacher notes]" | `_courses/math-8/_context.md` → the type-folder context → the source format at the top of `scripts/render_math8.pl` (diagram types in `scripts/Math8Viz.pm`) | `research/` |
 | "Build / revise a Grade 5 ELA [unit / notebook / reader / anything]" | `_courses/grade-5-ela/_context.md` → `research/literacy-reading-writing-research.md` → the source format at the top of `scripts/render_ela5.pl` | `templates/`, `worksheets/workbooks-context.md`, `notes-packages/_context.md` — ELA uses its own formats |
 | "Build / revise slides" | `slides/_context.md` → the unit's notes package and notes answer key → unit `_context.md` in `_courses/` | `research/`, `tests-quizzes/` |
@@ -149,6 +171,7 @@ Materials are organized inside type folders by subject and unit:
 | A notes package | `[subject]-[unit]-notes-[grade]-v[N].md` | `sci6-living-systems-notes-gr6-v1.md` |
 | A teacher notes / sub plan | `[subject]-[unit]-[type]-v[N].md` | `sci6-forces-teachernotes-v1.md` |
 | A CEFL 7–9 material | `cefl[G]-[unit]-[type]-v[N].md` | `cefl7-income-tax-workbook-v1.md` |
+| A Math 7 material | `math7-[topic]-[type]-v[N].md` (same pattern as Math 8) | `math7-circles-notes-v1.md` |
 | A Math 8 material | `math8-[topic]-[type]-v[N].md` (practice sheets: `-practice-`, one source for Core and Challenge) | `math8-pythagorean-notes-v1.md` |
 | A Grade 5 ELA material | `ela5-[unit]-[type]-v[N].md`; editions add `-scaffolded` or `-ef` before `-v[N]` | `ela5-tall-tales-notebook-scaffolded-v1.md` |
 | A PhysEd 5–6 material | `pew56-[unit]-[type]-v[N].md` | `pew56-invasion-games-exits-v1.md` |

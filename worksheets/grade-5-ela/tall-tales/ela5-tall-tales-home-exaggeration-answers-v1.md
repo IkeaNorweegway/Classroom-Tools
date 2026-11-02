@@ -4,6 +4,8 @@ course: ela5
 unit: Tall Tales
 skill: explaining what an exaggeration or comparison means and why an author used it
 time: about 15 minutes
+notes: ela5/view/tall-tales/ela5-tall-tales-anchor-notes-answers-v1
+sections: s4
 ---
 
 ::: tip

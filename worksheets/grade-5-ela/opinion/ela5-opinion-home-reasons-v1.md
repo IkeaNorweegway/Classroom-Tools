@@ -4,6 +4,8 @@ course: ela5
 unit: Opinion and Editorial
 skill: backing up an opinion with a reason and evidence
 time: about 15 minutes
+notes: ela5/view/opinion/ela5-opinion-anchor-notes-v1
+sections: s3, s5
 ---
 
 ::: tip

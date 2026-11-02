@@ -4,6 +4,8 @@ course: science7
 unit: Plants for Food and Fibre
 skill: the inputs, outputs and location of photosynthesis
 time: about 15 minutes
+notes: science7/view/plants-food-fibre/sci7-plants-food-fibre-notes-answers-v2
+sections: s3
 ---
 
 ::: tip

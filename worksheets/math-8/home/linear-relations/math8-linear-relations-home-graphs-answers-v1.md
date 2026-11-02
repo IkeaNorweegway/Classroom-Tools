@@ -5,6 +5,8 @@ topic: linear-relations
 strand: algebra
 skill: describing a relation in words and predicting
 time: about 15 minutes
+notes: math8/view/notes/linear-relations/math8-linear-relations-notes-answers-v1
+sections: s4
 ---
 
 ::: tip

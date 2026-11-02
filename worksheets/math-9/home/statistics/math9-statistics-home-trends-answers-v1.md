@@ -4,6 +4,8 @@ topic: statistics
 strand: statistics-probability
 skill: describing correlation and making predictions from data
 time: about 15 minutes
+notes: math9/view/notes/statistics/math9-statistics-notes-answers-v1
+sections: s2, s4
 ---
 
 ::: tip

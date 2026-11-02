@@ -4,6 +4,8 @@ course: social7
 unit: Building Canada's Economy
 skill: linking each region's economy to its natural resources
 time: about 15 minutes
+notes: social7/view/building-economy/soc7-building-economy-notes-answers-v1
+sections: s1
 ---
 
 ::: tip

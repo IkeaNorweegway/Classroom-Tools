@@ -4,6 +4,8 @@ course: science7
 unit: Interactions and Ecosystems
 skill: following energy through food chains and webs
 time: about 15 minutes
+notes: science7/view/interactions-ecosystems/sci7-interactions-ecosystems-notes-answers-v2
+sections: s2
 ---
 
 ::: tip

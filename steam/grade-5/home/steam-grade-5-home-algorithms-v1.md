@@ -4,6 +4,8 @@ course: steam
 unit: Grade 5
 skill: writing exact steps with sequence, loops and conditionals
 time: about 15 minutes
+notes: steam/view/grade-5/steam5-dash-notes-v1
+sections: s1, s2
 ---
 
 ::: tip

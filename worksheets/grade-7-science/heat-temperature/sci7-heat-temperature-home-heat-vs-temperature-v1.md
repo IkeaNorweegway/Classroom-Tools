@@ -4,6 +4,8 @@ course: science7
 unit: Heat and Temperature
 skill: using the particle model to explain heat and temperature
 time: about 15 minutes
+notes: science7/view/heat-temperature/sci7-heat-temperature-notes-v1
+sections: s2, s3
 ---
 
 ::: tip

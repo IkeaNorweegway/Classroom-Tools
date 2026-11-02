@@ -4,6 +4,8 @@ course: social9
 unit: Building a Modern Economy
 skill: why trade with the U.S. matters and who wins and loses
 time: about 15 minutes
+notes: social9/view/modern-economy/soc9-modern-economy-notes-v1
+sections: s4
 ---
 
 ::: tip

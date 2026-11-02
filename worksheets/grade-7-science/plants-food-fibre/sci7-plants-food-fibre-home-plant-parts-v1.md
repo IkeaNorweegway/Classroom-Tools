@@ -4,6 +4,8 @@ course: science7
 unit: Plants for Food and Fibre
 skill: roots, stems, leaves and flowers, and how plants reproduce
 time: about 15 minutes
+notes: science7/view/plants-food-fibre/sci7-plants-food-fibre-notes-v1
+sections: s2, s4
 ---
 
 ::: tip

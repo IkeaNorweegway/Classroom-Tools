@@ -4,6 +4,8 @@ course: ela5
 unit: Information Report
 skill: using headings, captions and bold words to find information
 time: about 15 minutes
+notes: ela5/view/information-report/ela5-information-report-anchor-notes-answers-v2
+sections: s1
 ---
 
 ::: tip

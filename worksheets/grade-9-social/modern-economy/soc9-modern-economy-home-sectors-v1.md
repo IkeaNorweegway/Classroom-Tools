@@ -4,6 +4,8 @@ course: social9
 unit: Building a Modern Economy
 skill: primary, secondary and tertiary industries, and the Great Depression
 time: about 15 minutes
+notes: social9/view/modern-economy/soc9-modern-economy-notes-v1
+sections: s1, s3
 ---
 
 ::: tip

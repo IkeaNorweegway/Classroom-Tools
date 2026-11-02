@@ -4,6 +4,8 @@ course: social8
 unit: Civic Engagement
 skill: finding ways to take part beyond voting
 time: about 15 minutes
+notes: social8/view/civic-engagement/soc8-civic-engagement-notes-answers-v1
+sections: s2
 ---
 
 ::: tip

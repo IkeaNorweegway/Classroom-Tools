@@ -4,6 +4,8 @@ course: social9
 unit: Urbanization and Industry
 skill: explaining why people moved to Canada and its cities
 time: about 15 minutes
+notes: social9/view/urbanization-industry/soc9-urbanization-industry-notes-answers-v1
+sections: s1
 ---
 
 ::: tip

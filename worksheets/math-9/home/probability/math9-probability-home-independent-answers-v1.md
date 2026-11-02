@@ -4,6 +4,8 @@ topic: probability
 strand: statistics-probability
 skill: finding the probability of two independent events
 time: about 15 minutes
+notes: math9/view/notes/probability/math9-probability-notes-answers-v1
+sections: s3
 ---
 
 ::: tip
