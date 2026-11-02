@@ -1,0 +1,80 @@
+---
+// Print support for the material viewers. Adds a Print button to the back bar,
+// sends Ctrl+P to the material (not the viewer shell), and adds "Page X of Y"
+// at the bottom of every printed page (Chrome/Edge 131+; other browsers print
+// without it). Skips sims and trainers (back bar has the "app" class) and
+// materials that print with no page margin (posters, slide decks).
+---
+<style is:global>
+  .back-bar.has-print { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .print-btn {
+    font: 600 0.8rem 'Atkinson Hyperlegible Next Variable', system-ui, sans-serif;
+    color: #6b665d; background: #fff; border: 1px solid rgb(31 29 26 / 0.15);
+    border-radius: 8px; padding: 0.3rem 0.8rem; cursor: pointer;
+  }
+  .print-btn:hover { color: #1f1d1a; border-color: rgb(31 29 26 / 0.35); }
+</style>
+<script is:inline>
+  (function () {
+    var frame = document.querySelector('.doc-frame');
+    var bar = document.querySelector('.back-bar');
+    if (!frame || !bar || bar.classList.contains('app')) return;
+
+    var PAGE_CSS = '@page { @bottom-center { content: "Page " counter(page) " of " counter(pages);' +
+      ' font: 9pt system-ui, sans-serif; color: #6b665d; } }';
+
+    // True when the material sets a zero bottom page margin (no room for a number).
+    function noBottomMargin(rules) {
+      for (var i = 0; i < rules.length; i++) {
+        var r = rules[i];
+        if (r.type === 6 && r.style.marginBottom !== '' && parseFloat(r.style.marginBottom) === 0) return true;
+        if (r.cssRules && noBottomMargin(r.cssRules)) return true;
+      }
+      return false;
+    }
+
+    function onKey(e) {
+      if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && (e.key === 'p' || e.key === 'P')) {
+        e.preventDefault();
+        printDoc();
+      }
+    }
+
+    function prepare() {
+      var doc;
+      try { doc = frame.contentDocument; } catch (e) { return; }
+      if (!doc || !doc.head || doc.getElementById('site-page-numbers')) return;
+      var skip = false;
+      for (var i = 0; i < doc.styleSheets.length && !skip; i++) {
+        try { skip = noBottomMargin(doc.styleSheets[i].cssRules); } catch (e) {}
+      }
+      var s = doc.createElement('style');
+      s.id = 'site-page-numbers';
+      if (!skip) s.textContent = PAGE_CSS;
+      doc.head.appendChild(s);
+      doc.addEventListener('keydown', onKey);
+    }
+
+    function printDoc() {
+      try {
+        prepare();
+        frame.contentWindow.focus();
+        frame.contentWindow.print();
+      } catch (e) {
+        window.print();
+      }
+    }
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'print-btn';
+    btn.textContent = '🖨 Print';
+    btn.addEventListener('click', printDoc);
+    bar.appendChild(btn);
+    bar.classList.add('has-print');
+
+    document.addEventListener('keydown', onKey);
+    frame.addEventListener('load', prepare);
+    prepare();
+  })();
+</script>
