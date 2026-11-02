@@ -11,6 +11,7 @@ sub draw_prtimes {
     my @rows = items($A->{rows});
     my @tot = list($A->{total}, qr/\s*;\s*/);
     my $maxc = max(map { num($_->[1]) // 1 } @rows);
+    $maxc = int($maxc - 1e-9) + 1 if $maxc - int($maxc + 1e-9) > 0.01;   # a part block's dashed full block needs room too
     my $lw = max(map { tw($_->[0] // '', 12) } @rows) + 20;
     my $u = min(60, int(360 / ($maxc || 1)));
     my ($bh, $gap) = (32, 22);

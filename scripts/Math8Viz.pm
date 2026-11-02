@@ -2178,22 +2178,29 @@ sub draw_sqside {
     my $side = $a->{side} // $n;
     my @lab = list($a->{labels}, qr/\s*;\s*/);
     my $ty = defined $a->{title} ? 22 : 0;
-    my ($x0, $y0) = (18 + tw(plain($side), 13), 12 + $ty);
+    # a side written with a stacked fraction, side="{5/6} m", is drawn stacked (se_text, vizext/solving-equations.pl)
+    my $stk = $side =~ m{\{[^{}/]+/[^{}]+\}};
+    my ($x0, $y0) = (18 + ($stk ? se_w($side, 12) : tw(plain($side), 13)), 12 + $ty);
     my $b = '';
     $b .= rect($x0, $y0, $S, $S, 'dg-fill-' . ($a->{fill} // 'accent'));
     if ($a->{grid} // 1) {
         for my $k (1 .. $n - 1) { $b .= line($x0 + $k * $c, $y0, $x0 + $k * $c, $y0 + $S, 'dg-grid') . line($x0, $y0 + $k * $c, $x0 + $S, $y0 + $k * $c, 'dg-grid'); }
     }
     $b .= rect($x0, $y0, $S, $S, $a->{fence} ? 'dg-accent' : 'dg-outline');
-    $b .= T($x0 + $S / 2, $y0 + $S + 18, $side, anchor => 'middle', cls => 'dg-label');
-    $b .= T($x0 - 7, $y0 + $S / 2 + 4, $side, anchor => 'end', cls => 'dg-label');
+    if ($stk) {
+        $b .= se_text($x0 + $S / 2, $y0 + $S + 26, $side, anchor => 'middle', cls => 'dg-label');
+        $b .= se_text($x0 - 7, $y0 + $S / 2 + 4, $side, anchor => 'end', cls => 'dg-label');
+    } else {
+        $b .= T($x0 + $S / 2, $y0 + $S + 18, $side, anchor => 'middle', cls => 'dg-label');
+        $b .= T($x0 - 7, $y0 + $S / 2 + 4, $side, anchor => 'end', cls => 'dg-label');
+    }
     my $lx = $x0 + $S + 18;
     my $lw = max(0, map { tw(plain($_), 12.5) + (/\[\[/ ? 26 : 0) } @lab);
     my $ly = $y0 + $S / 2 - (@lab - 1) * 11 + 4;
     for my $i (0 .. $#lab) { $b .= T($lx, $ly + 22 * $i, $lab[$i], cls => 'dg-label-accent'); }
     my $W = max($lx + $lw + 10, $x0 + $S + 20);
     $b .= T($W / 2, 16, $a->{title}, anchor => 'middle', cls => 'dg-title') if defined $a->{title};
-    return (svg($W, $y0 + $S + 28, "A square of $n by $n unit squares, side " . plain($side) . (@lab ? '. ' . join('. ', map { plain($_) } @lab) : ''), $b));
+    return (svg($W, $y0 + $S + ($stk ? 42 : 28), "A square of $n by $n unit squares, side " . plain($side) =~ s{\{([^{}/]+)/([^{}]+)\}}{$1/$2}gr . (@lab ? '. ' . join('. ', map { plain($_) } @lab) : ''), $b));
 }
 
 

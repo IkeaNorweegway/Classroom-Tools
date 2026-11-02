@@ -61,7 +61,13 @@ export const strands: Strand[] = [
   { slug: 'statistics-probability', label: 'Statistics & Probability', short: 'Stats & Prob', blurb: 'The shape of data, histograms and circle graphs, and the chance of two events.', workbook: wb('statistics-probability'), workbookKey: wbKey('statistics-probability') },
 ];
 
-/** Every topic has the same set: notes, concepts, core, challenge, exits, quiz, keys, teacher notes. */
+/**
+ * Topics with a posted practice test (tests/<slug>/math8-<slug>-practice-test-v1 and its key).
+ * Unit tests are teacher only, kept out of the repo, and never listed here.
+ */
+const practiceTests = new Set(['rational-numbers', 'roots-irrationals', 'proportional-reasoning']);
+
+/** Every topic has the same set: notes, concepts, core, challenge, exits, quiz, keys, teacher notes; practice test and key where one is posted. */
 function topic(slug: string, label: string, strand: StrandSlug): Topic {
   const stem = `math8-${slug}`;
   const ws = `worksheets/${strand}/${slug}/${stem}`;
@@ -79,11 +85,13 @@ function topic(slug: string, label: string, strand: StrandSlug): Topic {
     prereq: `practice/${stem}-prereq-practice-v1`,
     extras: [
       { label: 'Mid-Unit Quiz', path: `quizzes/${slug}/${stem}-quiz-v1`, type: 'assessment' },
+      ...(practiceTests.has(slug) ? [{ label: 'Practice Test', path: `tests/${slug}/${stem}-practice-test-v1`, badge: 'Test prep', type: 'assessment' as const }] : []),
     ],
     keys: [
       { label: 'Notes Answer Key', path: `notes/${slug}/${stem}-notes-answers-v1` },
       { label: 'Core Practice Answer Key', path: `${ws}-worksheet-core-answers-v1` },
       { label: 'Challenge Answer Key', path: `${ws}-worksheet-challenge-answers-v1` },
+      ...(practiceTests.has(slug) ? [{ label: 'Practice Test Answer Key', path: `tests/${slug}/${stem}-practice-test-answers-v1` }] : []),
     ],
     teacherNotes: `notes/${slug}/${stem}-teachernotes-v1`,
     home: [],

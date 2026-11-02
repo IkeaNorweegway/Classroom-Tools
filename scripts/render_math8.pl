@@ -22,6 +22,17 @@
 #   tests-quizzes/math-8/<topic>/math8-<topic>-exits-v1.md → exits/<topic>/
 #   tests-quizzes/math-8/<topic>/math8-<topic>-quiz-v1.md  → quizzes/<topic>/ (student copy only;
 #       the answers stay in the markdown)
+#   tests-quizzes/math-8/<topic>/math8-<topic>-practice-test-v1.md  (front matter test: practice)
+#       → tests/<topic>/math8-<topic>-practice-test-v1.html and -practice-test-answers-v1.html
+#         (posted for students; the default run renders these)
+#   tests-quizzes/math-8/<topic>/math8-<topic>-test-v1.md           (front matter test: unit)
+#       → TEACHER ONLY. Written beside the source as math8-<topic>-test-v1.html and
+#         -test-answers-v1.html, plus a PDF of each (headless Chrome; $CHROME overrides the
+#         browser). Never to public/, dist/ or src/, and never in the default run: name the file
+#         on the command line. The renderer refuses unless the source and every output are
+#         git-ignored (git check-ignore). Math 7: same patterns under math-7/ with math7- names
+#         (add a matching *-test-* ignore line to .gitignore first).
+#   Files without `test:` front matter (the 2016 text copies of practice tests) are skipped.
 #
 # ── Format ────────────────────────────────────────────────────────────────
 # Front matter (--- … ---): title, topic, strand (number, algebra,
@@ -52,6 +63,26 @@
 # Practice: "## Core" and "## Challenge"; each "### " line starts a question.
 # Exits:    "## Section N: Title", "Target: …", then "### " questions.
 # Quiz:     "### [CODE · marks] question".
+# Tests:    front matter: title, topic, strand, test: practice|unit, marks, time, calculator
+#           (the line to print, e.g. "No calculator"). `<!-- … -->` gate comment (kept for
+#           checks, not printed). "## Part A — Choose the Answer" etc.; the first plain line
+#           after a Part heading is its instruction line. "### [CODE · marks] question" is one
+#           item, numbered 1, 2, 3… straight through all parts. A Part whose items start "(a)",
+#           "(b)"… (Part C) is ONE question number with lettered parts; its text before the
+#           first ### is the shared scenario (paragraph and/or table), printed once. Multiple
+#           choice: list lines "- A) …" to "- D) …" (laid out as a row or grid with a circled
+#           letter; the key marks the letter in "=> **C.** …"). A stem holding "a) … b) …" is
+#           split into lettered lines. `=>` lines and `::: teacher label: Marking guide`
+#           blocks (Part D tables) show in the key only. (lines N) · (work N) · @viz as usual.
+#           Generated: header (Name / Date / Block, total marks, time, calculator line),
+#           per-Part "/N" subtotal, item marks "[3]", an Outcome Map (code — "## Section N:"
+#           title from the notes; RN1 = Section 1) on the practice student copy and both keys
+#           (unit-test student copy: none), and on the practice student copy "After You Mark
+#           This Practice Test" (Learning target line from the notes per code, question
+#           numbers, /marks, an empty "What I will do about it" column, a reflection prompt).
+#           Fails if the item marks do not add to `marks`; warns (stderr) if the gate comment's
+#           per-code marks or multiple-choice letters, or the "(1 mark)" notes in the answer
+#           lines, disagree with the items.
 # Workbook: "## core | TOPIC — section" or "## ext | …" or "## stretch | …"
 #           (the part after | is the key's "opens after" note), "## CHECKIN".
 # Teacher:  "## Heading", "### Lesson title (time)" cards with SHOW:/SAY:/
@@ -313,6 +344,7 @@ sub block_html {
     if ($kind eq 'teacher') {
         return '' unless $key;
         my @t = @$in; my $label = 'Teacher note';
+        $label = $1 if $arg =~ /^label:\s*(.*)$/;   # ::: teacher label: Marking guide
         $label = $1 if @t && $t[0] =~ /^label:\s*(.*)$/ && shift @t;
         return qq{<div class="teacher-box"><div class="label">} . esc($label) . "</div>\n" . prose(\@t, 1) . '</div>';
     }
@@ -354,8 +386,8 @@ sub body_html {
 
 # ── CSS ───────────────────────────────────────────────────────────────────
 sub fonts_css {
-    my ($depth) = @_;
-    my $up = '../' x $depth;
+    my ($depth, $abs) = @_;
+    my $up = defined $abs ? "$abs/" : '../' x $depth;   # $abs: file:// folder of the fonts, for renders outside public/
     return <<"CSS";
   \@font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('${up}fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations'); }
   \@font-face { font-family: 'Atkinson Hyperlegible Next'; font-style: italic; font-weight: 200 800; font-display: swap; src: url('${up}fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations'); }
@@ -542,7 +574,7 @@ sub page {
     my (%o) = @_;
     my $strand = $STRAND{ $o{strand} } or die "unknown strand $o{strand}\n";
     $strand = [strand_label($o{strand}), @$strand[1 .. 3]];
-    my $css = fonts_css($o{depth}) . ":root { --accent: $strand->[1]; --accent-light: $strand->[2]; --accent-mid: $strand->[3]; }\n" . $BASE_CSS . ($o{extra_css} // '');
+    my $css = fonts_css($o{depth}, $o{font_base}) . ":root { --accent: $strand->[1]; --accent-light: $strand->[2]; --accent-mid: $strand->[3]; }\n" . $BASE_CSS . ($o{extra_css} // '');
     my $header = $o{teacher} ? '' : qq{<div class="header-strip">\n  <div class="course-label">$GRADE · Alberta Curriculum · $strand->[0]</div>\n  <h1>} . esc($o{title}) . qq{</h1>\n  <p class="sub">} . esc($o{sub}) . "</p>\n</div>\n";
     $header .= qq{<div class="answer-key-header">Answer key · Teacher copy</div>\n} if $o{key};
     $header .= qq{<div class="name-row"><span>Name:</span><span class="b"></span><span>Date:</span><span class="b b-md" style="flex:0 0 130px"></span></div>\n} if $o{name};
@@ -556,7 +588,7 @@ sub depth_of { my ($p) = @_; my $rel = File::Spec->abs2rel($p, File::Spec->catdi
 
 sub write_page {
     my ($path, %o) = @_;
-    $o{depth} = depth_of($path);
+    $o{depth} //= depth_of($path);
     spit($path, page(%o));
     return $path;
 }
@@ -702,6 +734,272 @@ sub render_quiz {
     return (write_page(out_path('quizzes', $topic, "$stem.html"), strand => $strand, title => $m->{title}, sub => 'Mid-Unit Quiz', doc_title => "$m->{title} — Mid-Unit Quiz", name => 1, body => $intro . "\n" . join("\n", @Q)));
 }
 
+# ── Practice tests and unit tests ─────────────────────────────────────────
+# Source format is in the header. One source gives the student copy and the key.
+# Practice tests (test: practice) go to public/materials/math-<g>/tests/<topic>/.
+# Unit tests (test: unit) are teacher only: they are written beside the source
+# (git-ignored) with a PDF of each, and never to public/, dist/ or src/.
+my $TEST_CSS = <<'CSS';
+@page { size: letter; margin: 0.5in; }
+.header-strip { padding: 8px 16px; margin-bottom: 10px; }
+.header-strip h1 { font-size: 19pt; }
+.name-row { margin: 6px 0 8px; }
+.t-meta { display: flex; gap: 22px; flex-wrap: wrap; font-size: 11pt; margin: 0 0 10px; }
+.t-part { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 0 6px; font-size: 14pt; }
+.t-part .t-sub-total { font-family: var(--font-body); font-size: 11pt; font-weight: 700; color: #3f3b35; }
+.t-instr { font-size: 11pt; font-style: italic; color: #3f3b35; margin: 0 0 8px; }
+.t-item { display: grid; grid-template-columns: 2.1em 1fr auto; column-gap: 6px; padding: 7px 0 8px; border-bottom: 1px solid #e4e0d7; break-inside: avoid; }
+.t-item:last-child { border-bottom: none; }
+.t-num { font-family: var(--font-display); font-weight: 700; font-size: 13pt; color: var(--accent); line-height: 1.5; }
+.t-main { min-width: 0; }
+.t-main > p, .t-stem { margin-bottom: 4px; font-size: 11.5pt; line-height: 1.5; }
+.t-main > *:last-child { margin-bottom: 0; }
+.t-tag { text-align: right; white-space: nowrap; font-size: 9.5pt; color: #544f47; padding-top: 3px; }
+.t-tag .badge { font-size: 8pt; padding: 1px 7px; margin-right: 4px; }
+.t-tag .t-marks { font-weight: 700; font-size: 11pt; color: #1f1d1a; }
+.t-group { display: grid; grid-template-columns: 2.1em 1fr; column-gap: 6px; padding: 7px 0 8px; border-bottom: 1px solid #e4e0d7; }
+.t-group > .t-main > .t-scenario { margin-bottom: 8px; padding: 8px 12px; background: #faf9f6; border: 1px solid #d6d1c7; border-radius: 8px; }
+.t-group > .t-main > .t-scenario { break-after: avoid; }
+.t-scenario p { margin-bottom: 6px; font-size: 11.5pt; } .t-scenario p:last-child, .t-scenario table:last-child { margin-bottom: 0; }
+.t-scenario table { margin: 4px 0; font-size: 11pt; width: auto; min-width: 70%; } .t-scenario td, .t-scenario th { text-align: center; padding: 5px 12px; }
+.t-group .t-item { grid-template-columns: 1.9em 1fr auto; padding: 5px 0 6px; border-bottom: 1px dashed #e4e0d7; }
+.t-group .t-item:last-child { border-bottom: none; }
+.t-group .t-item .t-num { font-size: 11pt; color: #3f3b35; }
+.sp-row { display: flex; flex-wrap: wrap; gap: 4px 28px; margin: 2px 0 4px; font-size: 11.5pt; }
+.sp-col { margin: 2px 0 4px; font-size: 11.5pt; } .sp-col > div { margin-bottom: 2px; }
+.sp .part { margin-right: 4px; }
+.choices { display: grid; gap: 4px 16px; margin: 4px 0 2px; font-size: 11.5pt; }
+.choices.c4 { grid-template-columns: repeat(4, 1fr); } .choices.c2 { grid-template-columns: 1fr 1fr; } .choices.c1 { grid-template-columns: 1fr; }
+.ch { display: flex; align-items: center; gap: 8px; }
+.ch-l { display: inline-flex; flex: none; width: 1.7em; height: 1.7em; border: 1.5px solid #3f3b35; border-radius: 50%; align-items: center; justify-content: center; font-weight: 700; font-size: 10.5pt; }
+.ch.correct .ch-l { background: #166534; border-color: #166534; color: #fff; }
+.ch.correct .ch-t { font-weight: 700; color: #166534; }
+.t-item .viz { margin: 4px auto 6px; } .t-item .viz svg { max-height: 190px; }
+.t-item .lines { margin: 2px 0 2px; } .t-item .al { height: 1.85rem; }
+.t-item .answer { margin: 6px 0 2px; font-size: 10.5pt; padding: 6px 10px; }
+.t-item .teacher-box { margin: 6px 0 2px; font-size: 10pt; } .t-item .teacher-box table { font-size: 10pt; margin: 4px 0 0; } .t-item .teacher-box td, .t-item .teacher-box th { padding: 4px 8px; }
+.map { margin: 6px 0 10px; } .map table { margin: 4px 0; font-size: 10.5pt; } .map td, .map th { padding: 5px 9px; }
+.map h2, .after h2 { font-size: 13pt; }
+.after { break-inside: avoid; margin-top: 18px; } .after td { vertical-align: middle; } .after td.write-cell { height: 3.4em; }
+.after .lt { font-size: 10pt; color: #544f47; display: block; margin-top: 2px; }
+.after p.reflect { margin-top: 12px; font-weight: 700; font-size: 11.5pt; }
+@media print {
+  body { padding: 0; font-size: 11pt; }
+  .t-item, .t-group > .t-main > .t-scenario, .map, .after tr { break-inside: avoid; }
+  .t-part { break-after: avoid; }
+  .t-item .teacher-box, .t-item .answer { break-inside: avoid; }
+}
+CSS
+
+sub is_ignored { my ($p) = @_; return system('git', '-C', $ROOT, 'check-ignore', '-q', '--', $p) == 0; }
+
+# "Write each as a/b. a) 2.3 b) -0.08" → (intro, [[a, '2.3'], [b, '-0.08']]); no parts → (stem).
+sub split_parts {
+    my ($stem) = @_;
+    return ($stem) unless $stem =~ /^(.*?)\s+a\)\s+(.*)$/;
+    my ($intro, $rest) = ($1, $2);
+    my @parts; my $letter = 'a';
+    while (1) {
+        my $next = chr(ord($letter) + 1);
+        if ($rest =~ /^(.*?)\s+\Q$next\E\)\s+(.*)$/) { push @parts, [$letter, $1]; $letter = $next; $rest = $2; }
+        else { push @parts, [$letter, $rest]; last; }
+    }
+    return ($stem) if @parts < 2;
+    return ($intro, \@parts);
+}
+
+sub choices_html {
+    my ($ch, $correct, $key) = @_;
+    my $max = 0;
+    for (@$ch) { my $l = plain_len($_->[1]); $max = $l if $l > $max; }
+    my $cls = $max <= 11 ? 'c4' : $max <= 38 ? 'c2' : 'c1';
+    return qq{<div class="choices $cls">} . join('', map {
+        my ($l, $t) = @$_;
+        '<div class="ch' . ($key && $correct && $correct eq $l ? ' correct' : '') . qq{"><span class="ch-l">$l</span><span class="ch-t">} . inline($t, $key) . '</span></div>'
+    } @$ch) . '</div>';
+}
+
+# One item (a numbered question, or a lettered part of the Part C question).
+sub test_item_html {
+    my ($label, $stem, $lines, $code, $marks, $key, $path, %o) = @_;
+    my (@ch, @rest);
+    for (@$lines) { if (/^\s*-\s+([A-D])\)\s+(.*)$/) { push @ch, [$1, $2]; } else { push @rest, $_; } }
+    my ($correct) = map { /^\s*=>\s*\*\*([A-D])\.\*\*/ ? $1 : () } @rest;
+    my ($intro, $parts) = split_parts($stem);
+    my $main = '<div class="t-stem">' . inline($intro, $key) . '</div>';
+    if ($parts) {
+        my $max = 0;
+        for (@$parts) { my $l = plain_len($_->[1]); $max = $l if $l > $max; }
+        my $cell = sub { '<div class="sp"><span class="part">' . $_[0][0] . ')</span>' . inline($_[0][1], $key) . '</div>' };
+        $main .= $max <= 30 ? '<div class="sp-row">' . join('', map { $cell->($_) } @$parts) . '</div>'
+                            : '<div class="sp-col">' . join('', map { $cell->($_) } @$parts) . '</div>';
+    }
+    my $body = body_html(\@rest, $key, $path);
+    # the picture or table goes before the choices; lines, boxes and answers after
+    $main .= "\n" . (@ch ? choices_html(\@ch, $correct, $key) . "\n" : '') . $body;
+    my $num = $o{sub} ? "($o{sub})" : "$label.";
+    return qq{<div class="t-item" id="q$o{id}">\n<span class="t-num">$num</span>\n<div class="t-main">$main</div>\n}
+        . qq{<div class="t-tag"><span class="badge badge-code">$code</span><span class="t-marks">[$marks]</span></div>\n</div>};
+}
+
+sub render_test {
+    my ($path) = @_;
+    my $g = $path =~ m{/math-7/|(?:^|/)math7-} ? 7 : 8;
+    my $raw = slurp($path);
+    my ($m, $text) = front($raw);
+    my $kind = $m->{test} // die "$path: front matter needs test: practice|unit\n";
+    die "$path: test: must be practice or unit\n" unless $kind =~ /^(practice|unit)$/;
+    my ($topic, $strand) = ($m->{topic}, $m->{strand});
+    my $want = $m->{marks} // die "$path: front matter needs marks\n";
+    my $comment = join "\n", $text =~ /<!--(.*?)-->/gs;
+    $text =~ s/<!--.*?-->//gs;
+
+    # section titles and learning targets from the notes
+    my $notes = "$ROOT/notes-packages/math-$g/$topic/math$g-$topic-notes-v1.md";
+    my (%title, %target);
+    {
+        my (undef, $nt) = front(slurp($notes));
+        $nt =~ s/<!--.*?-->//gs;
+        for my $sec (sections($nt)) {
+            next unless $sec->[0] =~ /^Section (\d+):\s*(.*)$/;
+            my ($n, $t) = ($1, $2);
+            $title{$n} = $t;
+            for (@{ $sec->[1] }) { if (/^Learning target:\s*(.*)$/) { $target{$n} = $1; last; } }
+        }
+    }
+
+    my (@PARTS, %bycode, @mc_letters, $num, $total);
+    $num = 0; $total = 0;
+    my @answer_warn;
+    for my $sec (sections($text)) {
+        my ($h, $lines) = @$sec;
+        next if $h eq '';
+        $h =~ /^Part ([A-Z])\b/ or die "$path: section '$h' must start with 'Part A', 'Part B'…\n";
+        my ($pre, @q) = questions_of($lines);
+        my @pre = grep { /\S/ } @$pre;
+        my ($instr, $scenario);
+        my $grouped = @q && $q[0][0] =~ /^\[[A-Z]{2}\d\s*·\s*\d+\]\s*\(a\)/;
+        if ($grouped) { $scenario = [@$pre]; }          # Part C: the whole preamble is the shared scenario
+        elsif (@pre) { $instr = shift @pre; }           # first plain line = the instruction
+        my (@items, $part_marks, $group_open);
+        $part_marks = 0;
+        my @group;
+        for my $q (@q) {
+            my ($stem, $ilines) = @$q;
+            $stem =~ s/^\[([A-Z]{2}\d)\s*·\s*(\d+)\]\s*// or die "$path: item needs [CODE · marks]: '$stem'\n";
+            my ($code, $mk) = ($1, $2);
+            $part_marks += $mk; $total += $mk;
+            $code =~ /^[A-Z]{2}(\d)$/ or die "$path: bad code $code\n";
+            die "$path: $code has no 'Section $1' in $notes\n" unless exists $title{$1};
+            my $sub;
+            if ($stem =~ s/^\(([a-h])\)\s*//) {
+                $sub = $1;
+                if ($sub eq 'a') { $num++; @group = (); }
+                die "$path: part ($sub) of question $num is out of order\n" if $sub ne chr(ord('a') + @group);
+                push @group, 1;
+            } else { $num++; @group = (); }
+            my $label = $sub ? "$num$sub" : "$num";
+            my $bc = ($bycode{$code} //= { items => [], marks => 0 });
+            push @{ $bc->{items} }, $label; $bc->{marks} += $mk;
+            my ($ans) = map { /^\s*=>\s*\*\*([A-D])\.\*\*/ ? $1 : () } @$ilines;
+            if (grep { /^\s*-\s+[A-D]\)/ } @$ilines) {
+                push @mc_letters, $ans // '?';
+                push @answer_warn, "item $label: multiple choice with no '=> **X.**' answer" unless $ans;
+            }
+            # marks quoted in the answer lines should add up to the item's marks
+            my $said = 0; my $found = 0;
+            for (@$ilines) { next unless /^\s*=>/; while (/\((\d+) marks?\b(?! each)/g) { $said += $1; $found++; } }
+            push @answer_warn, "item $label: answer lines award $said marks, item is worth $mk" if $found && $said != $mk;
+            push @items, { sub => $sub, label => $label, id => $label, stem => $stem, lines => $ilines, code => $code, marks => $mk };
+        }
+        push @PARTS, { name => $h, instr => $instr, scenario => $scenario, items => \@items, marks => $part_marks, grouped => $grouped, qnum => $grouped ? $num : undef };
+    }
+    die "$path: item marks add to $total, front matter says $want\n" unless $total == $want;
+
+    # warnings (not errors): the source's own gate comment against the items
+    if ($comment =~ /Marks:\s*((?:[A-Z]{2}\d\s+\d+\s*·?\s*)+)=/) {
+        my %c = $1 =~ /([A-Z]{2}\d)\s+(\d+)/g;
+        for my $k (sort keys %c) { push @answer_warn, "gate comment says $k $c{$k}, items add to " . ($bycode{$k}{marks} // 0) if ($bycode{$k}{marks} // 0) != $c{$k}; }
+        for my $k (sort keys %bycode) { push @answer_warn, "$k has items but is not in the gate comment" unless exists $c{$k}; }
+    }
+    if ($comment =~ /Multiple-choice answers:\s*((?:[A-D]\s+)*[A-D])\b/) {
+        my @c = split /\s+/, $1;
+        push @answer_warn, "gate comment lists MC answers @c, the key lines give @mc_letters" if "@c" ne "@mc_letters";
+    }
+    warn "$path: $_\n" for @answer_warn;
+
+    my @codes = sort { ($a =~ /(\d)$/)[0] <=> ($b =~ /(\d)$/)[0] || $a cmp $b } keys %bycode;
+    my $map = '<div class="map"><h2>Outcome Map</h2><table><thead><tr><th>Code</th><th>Items</th><th style="width:5em">Marks</th></tr></thead><tbody>'
+        . join('', map { my $c = $_; (my $n = $c) =~ s/^[A-Z]{2}//;
+            '<tr><td>' . esc("$c — $title{$n}") . '</td><td>' . join(', ', @{ $bycode{$c}{items} }) . '</td><td>' . $bycode{$c}{marks} . '</td></tr>' } @codes)
+        . "<tr><td><strong>Total</strong></td><td></td><td><strong>$total</strong></td></tr></tbody></table></div>";
+    my $after = '<div class="after"><h2>After You Mark This Practice Test</h2><table><thead><tr><th style="width:36%">Section and learning target</th><th style="width:15%">Questions</th><th style="width:13%">My marks</th><th>What I will do about it</th></tr></thead><tbody>'
+        . join('', map { my $c = $_; (my $n = $c) =~ s/^[A-Z]{2}//;
+            '<tr><td><strong>' . esc("$c — $title{$n}") . '</strong><span class="lt">' . inline($target{$n} // '', 0) . '</span></td><td>' . join(', ', @{ $bycode{$c}{items} }) . '</td><td>/' . $bycode{$c}{marks} . '</td><td class="write-cell"></td></tr>' } @codes)
+        . '</tbody></table><p class="reflect">Pick one question you got wrong. Did you not understand the idea, or did you make a small mistake? How can you tell?</p>' . '<div class="lines">' . ('<div class="al"></div>' x 3) . "</div></div>";
+
+    my $label = $kind eq 'practice' ? 'Practice Test' : 'Unit Test';
+    my $calc = esc($m->{calculator} // '');
+    my $time = esc($m->{time} // '');
+    my @body_for;
+    for my $key (0, 1) {
+        my @h;
+        if ($key) { push @h, qq{<div class="t-meta"><span><strong>Total marks:</strong> $total</span><span><strong>Time:</strong> $time</span><span><strong>$calc</strong></span></div>}; }
+        else {
+            push @h, qq{<div class="name-row"><span>Name:</span><span class="b"></span><span>Date:</span><span class="b b-md" style="flex:0 0 120px"></span><span>Block:</span><span class="b b-sm" style="flex:0 0 70px"></span></div>};
+            push @h, qq{<div class="t-meta"><span><strong>Total marks:</strong> /$total</span><span><strong>Time:</strong> $time</span><span><strong>$calc</strong></span></div>};
+        }
+        push @h, $map if $key || $kind eq 'practice';
+        for my $p (@PARTS) {
+            push @h, qq{<h2 class="t-part"><span>} . esc($p->{name}) . qq{</span><span class="t-sub-total">/$p->{marks}</span></h2>};
+            push @h, '<p class="t-instr">' . inline($p->{instr}, 0) . '</p>' if $p->{instr};
+            my @its = @{ $p->{items} };
+            if ($p->{grouped}) {
+                my $sc = body_html($p->{scenario}, $key, $path);
+                push @h, qq{<div class="t-group" id="q$p->{qnum}">\n<span class="t-num">$p->{qnum}.</span>\n<div class="t-main">\n<div class="t-scenario">$sc</div>\n}
+                    . join("\n", map { test_item_html($_->{label}, $_->{stem}, $_->{lines}, $_->{code}, $_->{marks}, $key, $path, sub => $_->{sub}, id => $_->{id}) } @its) . "\n</div>\n</div>";
+            } else {
+                push @h, map { test_item_html($_->{label}, $_->{stem}, $_->{lines}, $_->{code}, $_->{marks}, $key, $path, id => $_->{id}) } @its;
+            }
+        }
+        push @h, $after if !$key && $kind eq 'practice';
+        push @body_for, join("\n", @h);
+    }
+
+    my $stem = basename($path, '.md');
+    (my $kstem = $stem) =~ s/-test-v(\d+)$/-test-answers-v$1/;
+    my %pg = (strand => $strand, title => $m->{title}, extra_css => $TEST_CSS);
+    if ($kind eq 'practice') {
+        return (
+            write_page(out_path('tests', $topic, "$stem.html"), %pg, sub => $label, doc_title => "$m->{title} — $label", body => $body_for[0]),
+            write_page(out_path('tests', $topic, "$kstem.html"), %pg, sub => "$label — Answer Key", doc_title => "$m->{title} — $label Answer Key", key => 1, body => $body_for[1]),
+        );
+    }
+    # unit test: teacher only, beside the source, never under public/ dist/ src/
+    my $dir = dirname(abs_path($path));
+    die "$path: a unit test must not sit under public/, dist/ or src/\n" if $dir =~ m{^\Q$ROOT\E/(?:public|dist|src)(?:/|$)};
+    die "$path: this unit test source is not git-ignored; refusing to render it (check .gitignore)\n" unless is_ignored($path);
+    my @out;
+    for my $pair ([$stem, 0, $label], [$kstem, 1, "$label — Answer Key"]) {
+        my ($st, $key, $sub) = @$pair;
+        my $file = "$dir/$st.html";
+        die "$file: output is not git-ignored; refusing to write it\n" unless is_ignored($file);
+        write_page($file, %pg, depth => 0, font_base => 'file://' . $ROOT . '/public', sub => $sub . ' · Teacher only', doc_title => "$m->{title} — $sub", key => $key, body => $body_for[$key]);
+        push @out, $file, make_pdf($file);
+    }
+    return @out;
+}
+
+# HTML → PDF (letter) with headless Chrome. $ENV{CHROME} overrides the browser.
+sub make_pdf {
+    my ($html) = @_;
+    (my $pdf = $html) =~ s/\.html$/.pdf/;
+    die "$pdf: output is not git-ignored; refusing to write it\n" unless is_ignored($pdf);
+    my $chrome = $ENV{CHROME} // (grep { -x $_ } qw(/usr/bin/google-chrome /usr/bin/chromium /usr/bin/chromium-browser))[0] // die "no Chrome found (set CHROME)\n";
+    system($chrome, '--headless=new', '--no-sandbox', '--disable-gpu', '--no-pdf-header-footer', "--print-to-pdf=$pdf", "file://$html") == 0 or die "Chrome failed on $html\n";
+    return $pdf;
+}
+
 # ── Teacher notes ─────────────────────────────────────────────────────────
 sub render_teacher {
     my ($path) = @_;
@@ -796,23 +1094,28 @@ my @files = @ARGV ? @ARGV : (
     glob("$ROOT/worksheets/math-8/*/math8-*-workbook-v2.md"),   # draft-curriculum workbooks (2026-10-31)
     glob("$ROOT/tests-quizzes/math-8/*/math8-*-exits-v1.md"),
     glob("$ROOT/tests-quizzes/math-8/*/math8-*-quiz-v1.md"),
+    glob("$ROOT/tests-quizzes/math-8/*/math8-*-practice-test-v1.md"),   # practice tests only; unit tests are never in the default run
     glob("$ROOT/notes-packages/math-7/*/math7-*-notes-v1.md"),
     glob("$ROOT/notes-packages/math-7/*/math7-*-teachernotes-v1.md"),
     glob("$ROOT/worksheets/math-7/*/*/math7-*-practice-v1.md"),
     glob("$ROOT/worksheets/math-7/*/math7-*-workbook-v1.md"),
     glob("$ROOT/tests-quizzes/math-7/*/math7-*-exits-v1.md"),
     glob("$ROOT/tests-quizzes/math-7/*/math7-*-quiz-v1.md"),
+    glob("$ROOT/tests-quizzes/math-7/*/math7-*-practice-test-v1.md"),
 );
 for my $f (@files) {
     my $g = $f =~ m{/math-7/|(?:^|/)math7-} ? 7 : 8;
     $OUT = File::Spec->catdir($ROOT, 'public', 'materials', "math-$g");
     $GRADE = "Grade $g Mathematics";
+    # Practice and unit tests: skip the 2016 text copies (no `test:` front matter)
+    if ($f =~ /-test-v\d+\.md$/ && slurp($f) !~ /\A---\n(?:.*\n)*?test:\s*(?:practice|unit)\s*\n/) { warn "skipped (no test: front matter): $f\n"; next; }
     my @out = $f =~ /-notes-v\d+\.md$/        ? render_notes($f)
             : $f =~ /-teachernotes-v\d+\.md$/ ? render_teacher($f)
             : $f =~ /-practice-v\d+\.md$/     ? render_practice($f)
             : $f =~ /-workbook-v\d+\.md$/     ? render_workbook($f)
             : $f =~ /-exits-v\d+\.md$/        ? render_exits($f)
             : $f =~ /-quiz-v\d+\.md$/         ? render_quiz($f)
+            : $f =~ /-test-v\d+\.md$/         ? render_test($f)   # -practice-test- and unit -test-
             : die "$f: not a Math 7 or Math 8 source\n";
     print File::Spec->abs2rel($_, $ROOT), "\n" for @out;
 }

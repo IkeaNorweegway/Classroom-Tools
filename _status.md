@@ -19,6 +19,7 @@ Current state only, one line per item. Keep it under 130 lines: put session deta
 ## In progress
 
 - **Math 8 rebuilt on the June 2026 draft** (branch `section-ids`, not on `master` yet): 12 new topics with the full suite, 4 strand workbooks (v2), new `_courses/math-8/_context.md`. The 2016 context is kept as `_context-2016.md`, and the old 2016 materials are kept, unlinked (including the 2016 practice tests and unit tests, which have no draft version yet). Waiting for the teacher read-through and a merge. Facts to confirm: Alberta minimum wage, licence ages, Calaway Park height limits (Inequalities); guiding questions are written from the outcome stems; made-up data is listed in each teacher notes file.
+- **Math 8 (draft) tests:** Number strand done (Rational Numbers, Square Roots & Irrational Numbers, Proportional Reasoning): a 40-mark, 60-minute practice test + key on each topic page, and a 30-mark, 40-minute teacher-only unit test + key (HTML and PDF beside the source, git-ignored; upload the PDFs to Drive, Teacher Materials › Grade 8 › Mathematics, Tests and Answer Keys). Source format: top of `scripts/render_math8.pl` (unit tests render only when named, and only if git-ignored). Next: Algebra & Functions, then Geometry & Measurement, then Statistics & Probability. Made-up data is listed in each source's comment.
 - **Math 7** (branch `section-ids`, not on `master` yet): built, waiting for the teacher read-through and a merge.
 
 ---
@@ -86,6 +87,6 @@ Current state only, one line per item. Keep it under 130 lines: put session deta
 
 ### Next up
 - Teacher read-through of Math 7 and Math 8, then merge `section-ids` (Math 7 + Math 8) to `master`.
-- Math 8 (draft): practice tests and unit tests (the 2016 ones no longer match).
+- Math 8 (draft): practice tests and unit tests for Algebra & Functions, Geometry & Measurement, Statistics & Probability (Number is done).
 - Math 9 sims: Number batch (Powers trainer; widen the Fraction and Pythagorean sims), then Measurement & Geometry, then Statistics & Probability.
 - Math 9 answer keys follow `research/answer-key-design-research.md` (full solutions for Core, partial for Challenge, faded in workbooks).
