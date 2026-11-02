@@ -301,7 +301,7 @@ sub render {
         my $st = $STRAND{ $meta{strand} } or die "$path: unknown strand\n";
         ($accent, $light, $mid) = @$st[1 .. 3];
         my %g7 = ('algebra' => 'Algebra & Functions', 'measurement-geometry' => 'Geometry & Measurement');
-        $course_label = "Grade $g Math · " . ($g == 7 && $g7{ $meta{strand} } ? $g7{ $meta{strand} } : $st->[0]);
+        $course_label = "Grade $g Math · " . ($g <= 8 && $g7{ $meta{strand} } ? $g7{ $meta{strand} } : $st->[0]);
         $doc_suffix = "Grade $g Mathematics";
         $out = File::Spec->catfile($MATERIALS, "math-$g", 'home', $meta{topic}, "$stem.html");
     } else {

@@ -18,7 +18,7 @@ Current state only, one line per item. Keep it under 130 lines: put session deta
 
 ## In progress
 
-- **Math 8 rebuild on the June 2026 draft** (branch `section-ids`, uncommitted): 12 new topics (notes, exits, home sheets so far), new `_courses/math-8/_context.md`. The 2016 context is kept as `_context-2016.md`, and the old 2016 materials are kept, unlinked.
+- **Math 8 rebuilt on the June 2026 draft** (branch `section-ids`, not on `master` yet): 12 new topics with the full suite, 4 strand workbooks (v2), new `_courses/math-8/_context.md`. The 2016 context is kept as `_context-2016.md`, and the old 2016 materials are kept, unlinked (including the 2016 practice tests and unit tests, which have no draft version yet). Waiting for the teacher read-through and a merge. Facts to confirm: Alberta minimum wage, licence ages, Calaway Park height limits (Inequalities); guiding questions are written from the outcome stems; made-up data is listed in each teacher notes file.
 - **Math 7** (branch `section-ids`, not on `master` yet): built, waiting for the teacher read-through and a merge.
 
 ---
@@ -73,7 +73,7 @@ Current state only, one line per item. Keep it under 130 lines: put session deta
 | Grade 6 Science | site ✓ | 6 units + year review: notes, workbook, teacher notes, workbook key (EN, EF, FR). Forces exits, project brief, sub plan |
 | Grade 7 Science | site ✓ | 5 units, full suite (notes + key v2, workbook + key, exits, quiz, test, teacher guide). Plants extras: Plant Hunt, Lily Lab, organizers, 3 games and 2 sims (v2). The site workbook HTML is newer than its v2 markdown, so don't re-render it. No FR/EF |
 | Math 7 | built, not merged | 12 topics, June 2026 draft. Per topic: notes + key, concept sheet, Core/Challenge + keys, exits, quiz, teacher notes, 2 home sheets, prereq practice. 4 strand workbooks + keys. Renders with `render_math8.pl` |
-| Math 8 | site ✓ (2016), rebuild in progress | 12 topics: full suite, practice tests, unit tests (teacher only, Drive), 4 strand workbooks |
+| Math 8 | site ✓ (2016); draft rebuild built, not merged | Draft: 12 topics (Rational Numbers … Independent & Dependent Events), same suite as Math 7, 4 strand workbooks v2. New diagram types in `scripts/vizext/<slug>.pl`. 2016: full suite, practice tests, unit tests (teacher only, Drive), workbooks v1, kept unlinked |
 | Math 9 | site ✓ | 11 topics: notes + key, teacher notes, concept sheet, Core/Challenge + keys, poster, exits, 4 strand workbooks, practice tests, unit tests (Drive), 4 inquiry projects. Sims: Fraction v2, Pythagorean, Linear Relations, Equations and Polynomials trainers. No quizzes |
 | Grade 5 ELA | site ✓ | 6 genre units (170 lessons), editions A/B/C, regions map. Render with `render_ela5.pl` |
 | Grade 7 Social | site ✓ | 5 units, full suite. Source and HTML match, so edit the markdown and re-render |
@@ -85,6 +85,7 @@ Current state only, one line per item. Keep it under 130 lines: put session deta
 | PhysEd 5–6, 7–9 | context only | 7 units each; nothing built |
 
 ### Next up
-- Finish the Math 8 rebuild, then merge `section-ids` (Math 7 + Math 8) to `master`.
+- Teacher read-through of Math 7 and Math 8, then merge `section-ids` (Math 7 + Math 8) to `master`.
+- Math 8 (draft): practice tests and unit tests (the 2016 ones no longer match).
 - Math 9 sims: Number batch (Powers trainer; widen the Fraction and Pythagorean sims), then Measurement & Geometry, then Statistics & Probability.
 - Math 9 answer keys follow `research/answer-key-design-research.md` (full solutions for Core, partial for Challenge, faded in workbooks).

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circle Graphs — Home Practice | Grade 8 Mathematics</title>
+  <style>
+    :root { --accent: #0d9488; --accent-light: #f0fdfa; --accent-mid: #14b8a6; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 11pt; line-height: 1.55; color: #1e293b; background: #fff; max-width: 780px; margin: 0 auto; padding: 28px 32px 48px; }
+    h1 { font-size: 20pt; font-weight: 700; color: #1e293b; margin-bottom: 2px; }
+    h2 { font-size: 13pt; font-weight: 700; color: var(--accent); margin: 18px 0 8px; border-bottom: 2px solid var(--accent-light); padding-bottom: 3px; }
+    p { margin-bottom: 6px; }
+    ul, ol { margin: 4px 0 8px 22px; }
+    li { margin-bottom: 3px; }
+    strong { font-weight: 700; }
+    em { font-style: italic; color: #475569; }
+    .b { display: inline-block; border-bottom: 1.5px solid #334155; width: 90px; vertical-align: bottom; }
+    .al { display: block; border-bottom: 1px solid #cbd5e1; height: 1.7rem; }
+    .work { margin: 4px 0 2px; }
+    .header-strip { border-left: 5px solid var(--accent); padding: 10px 16px; margin-bottom: 14px; background: var(--accent-light); border-radius: 0 8px 8px 0; }
+    .header-strip .course-label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 4px; }
+    .header-strip .meta { font-size: 9.5pt; color: #64748b; }
+    .header-strip .notes-link { font-size: 9.5pt; color: #64748b; margin: 2px 0 0; }
+    .notes-link a { color: var(--accent); font-weight: 600; }
+    .name-row { display: flex; gap: 24px; margin: 8px 0 14px; font-size: 10.5pt; align-items: baseline; }
+    .name-row span { color: #64748b; white-space: nowrap; }
+    .name-row .b { flex: 1; width: auto; }
+    .qgrid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; }
+    .question { padding: 6px 0 4px; break-inside: avoid; }
+    .question ul { list-style: none; margin-left: 0; }
+    .question li { margin-bottom: 1px; }
+    @media (max-width: 560px) { .qgrid { grid-template-columns: 1fr; } }
+    .box { border-radius: 8px; padding: 10px 14px; margin: 8px 0 10px; break-inside: avoid; }
+    .box .label { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .box-example { background: var(--accent-light); border: 1px solid var(--accent-mid); }
+    .box-example .label { color: var(--accent); }
+    .box-tip { background: #fffbeb; border: 1px solid #fde68a; font-size: 10pt; }
+    .box-check { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .box-check .label { color: #16a34a; }
+    .box-answer { background: #f8fafc; border: 1px solid #e2e8f0; }
+    @page { size: letter; margin: 11mm 13mm; }
+    @media print {
+      body { padding: 0; font-size: 10pt; line-height: 1.45; }
+      .header-strip { padding: 7px 14px; margin-bottom: 8px; }
+      h1 { font-size: 17pt; }
+      h2 { margin: 10px 0 5px; }
+      .name-row { margin: 4px 0 8px; }
+      .box { padding: 7px 12px; margin: 5px 0 7px; }
+      .question { padding: 4px 0 2px; }
+      .al { height: 1.3rem; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      h2 { break-after: avoid; }
+    }
+:root { --font-body: 'Segoe UI', system-ui, sans-serif; }
+/* Diagrams on a one-page sheet: smaller in print so the sheet stays on one page. */
+@media print { html { zoom: .84; } .viz { margin: 2px auto 4px; } .viz svg { max-height: 44mm; width: auto; } .viz figcaption { font-size: 8.5pt; margin-top: 1px; } }
+/* ── dg-* SVG classes and the viz kit (shared with Math 9 notes) ── */
+:root { --dg-stroke: #3f3b35; --dg-fill: #faf9f6; --dg-accent: var(--accent); --dg-secondary: #544f47; --dg-muted: #6b665d;
+  --viz-hot: #c2410c; --viz-cold: #1d4ed8; --viz-plant: #15803d; --viz-water: #0369a1; --viz-earth: #92400e; --viz-sun: #ca8a04; --viz-key: #15803d; }
+.viz { margin: 0.9rem auto 1.1rem; text-align: center; break-inside: avoid; page-break-inside: avoid; }
+.viz svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.viz figcaption { font-size: 0.85rem; line-height: 1.4; color: #544f47; margin: 0.4rem auto 0; max-width: 40rem; font-style: italic; }
+svg .dg-boundary, svg .dg-line, svg .dg-accent, svg .dg-dashed, svg .dg-right-angle, svg .dg-construction, svg .dg-grid, svg .dg-outline,
+svg .dg-fill-accent, svg .dg-fill-hot, svg .dg-fill-cold, svg .dg-fill-plant, svg .dg-fill-water, svg .dg-fill-earth, svg .dg-fill-sun, svg .dg-fill-soft, svg .dg-arrow, svg .dg-tag { vector-effect: non-scaling-stroke; }
+svg .dg-boundary    { stroke: var(--dg-stroke); fill: var(--dg-fill); stroke-width: 1.5px; }
+svg .dg-line        { stroke: var(--dg-stroke); fill: none; stroke-width: 1.5px; }
+svg .dg-accent      { stroke: var(--dg-accent); fill: none; stroke-width: 2.5px; }
+svg .dg-dashed      { stroke: var(--dg-secondary); fill: none; stroke-width: 1.5px; stroke-dasharray: 5 3; }
+svg .dg-right-angle { stroke: var(--dg-stroke); fill: none; stroke-width: 1px; }
+svg .dg-construction{ stroke: var(--dg-muted); fill: none; stroke-width: 1px; stroke-dasharray: 2 3; }
+svg .dg-grid        { stroke: var(--dg-muted); stroke-opacity: .45; fill: none; stroke-width: 1px; }
+svg .dg-outline     { stroke: var(--dg-stroke); fill: none; stroke-width: 1.5px; }
+svg .dg-point       { fill: var(--dg-stroke); stroke: none; }
+svg .dg-point-accent{ fill: var(--dg-accent); stroke: none; }
+svg .dg-shade       { fill: var(--dg-accent); fill-opacity: .42; stroke: none; }
+svg .dg-fill-accent { fill: var(--dg-accent); fill-opacity: .16; stroke: var(--dg-accent); stroke-width: 1.5px; }
+svg .dg-fill-hot    { fill: var(--viz-hot);   fill-opacity: .18; stroke: var(--viz-hot);   stroke-width: 1.5px; }
+svg .dg-fill-cold   { fill: var(--viz-cold);  fill-opacity: .14; stroke: var(--viz-cold);  stroke-width: 1.5px; }
+svg .dg-fill-plant  { fill: var(--viz-plant); fill-opacity: .18; stroke: var(--viz-plant); stroke-width: 1.5px; }
+svg .dg-fill-water  { fill: var(--viz-water); fill-opacity: .16; stroke: var(--viz-water); stroke-width: 1.5px; }
+svg .dg-fill-earth  { fill: var(--viz-earth); fill-opacity: .18; stroke: var(--viz-earth); stroke-width: 1.5px; }
+svg .dg-fill-sun    { fill: var(--viz-sun);   fill-opacity: .26; stroke: var(--viz-sun);   stroke-width: 1.5px; }
+svg .dg-fill-soft   { fill: #efece6; stroke: #a8a196; stroke-width: 1px; }
+svg .dg-solid-accent{ fill: var(--dg-accent); stroke: none; }
+svg .dg-solid-muted { fill: var(--dg-muted); stroke: none; }
+svg .dg-arrow       { fill: none; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-arrow.plain { stroke: var(--dg-stroke); }  svg .dg-head.plain  { fill: var(--dg-stroke); }
+svg .dg-arrow.accent{ stroke: var(--dg-accent); }  svg .dg-head.accent { fill: var(--dg-accent); }
+svg .dg-arrow.hot   { stroke: var(--viz-hot); }    svg .dg-head.hot    { fill: var(--viz-hot); }
+svg .dg-arrow.muted { stroke: var(--dg-muted); }   svg .dg-head.muted  { fill: var(--dg-muted); }
+svg .dg-head        { stroke: none; }
+svg .dg-tag         { fill: #fff; stroke: var(--dg-accent); stroke-width: 1.25px; stroke-dasharray: 4 2; }
+svg .dg-tag-answer  { font-weight: 700; fill: var(--viz-key); }
+svg .dg-label       { font: 13px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+svg .dg-label-sm    { font: 11.5px/1.3 var(--font-body); fill: var(--dg-secondary); stroke: none; }
+svg .dg-label-accent{ font: 600 12.5px/1.3 var(--font-body); fill: var(--dg-accent); stroke: none; }
+svg .dg-label-hot   { font: 600 12px/1.3 var(--font-body); fill: var(--viz-hot); stroke: none; }
+svg .dg-label-cold  { font: 600 12px/1.3 var(--font-body); fill: var(--viz-cold); stroke: none; }
+svg .dg-label-earth { font: 600 12px/1.3 var(--font-body); fill: var(--viz-earth); stroke: none; }
+svg .dg-label-white { font: 700 12px/1.3 var(--font-body); fill: #fff; stroke: none; }
+svg .dg-title       { font: 700 13.5px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+svg .dg-math        { font: 16px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+svg .dg-math-lg     { font: 600 20px/1.2 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+  </style>
+</head>
+<body>
+  <div class="header-strip">
+    <p class="course-label">Grade 8 Math · Statistics &amp; Probability · Home practice</p>
+    <h1>Circle Graphs</h1>
+    <p class="meta">One skill: drawing and reading circle graphs · about 15 minutes</p>
+    <p class="notes-link">Need a reminder? See the class notes: <a href="/Classroom-Tools/math8/view/notes/distributions/math8-distributions-notes-v1#s1" target="_top">Section 1: Bar graphs and histograms</a> · <a href="/Classroom-Tools/math8/view/notes/distributions/math8-distributions-notes-v1#s4" target="_top">Section 4: Circle graphs</a></p>
+  </div>
+  <div class="name-row"><span>Name</span><span class="b"></span><span>Date</span><span class="b" style="flex:0 0 120px"></span></div>
+<div class="box box-tip"><p><strong>For the adult:</strong> A <strong>circle graph</strong> shows parts of one whole. The whole circle is 100% and also 360°. To find a sector's angle, multiply its percent (as a decimal) by 360°. To go back, divide the angle by 360°. Check: the angles add to 360°.</p></div>
+<div class="box box-example"><p class="label">Worked example</p><p><strong>40 students pick a favourite season: winter 10, spring 6, summer 16, fall 8. Find each angle.</strong></p><figure class="viz">
+<!-- tikz: m8-dipie | data="Winter:10;Spring:6;Summer:16;Fall:8" labels="Winter:90°;Spring:54°;Summer:144°;Fall:72°" r=60 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 440 182" width="440" height="182" aria-label="Circle graph. Winter 10, Spring 6, Summer 16, Fall 8.">
+<path d="M220.0,92.0 L220.0,32.0 A60,60 0 0 1 280.0,92.0 Z" class="dg-fill-accent"/><text x="270.9" y="45.1" text-anchor="start" class="dg-label">Winter</text><text x="245.5" y="70.5" text-anchor="middle" class="dg-label">90°</text><path d="M220.0,92.0 L280.0,92.0 A60,60 0 0 1 255.3,140.5 Z" class="dg-fill-sun"/><text x="284.2" y="128.7" text-anchor="start" class="dg-label">Spring</text><text x="252.1" y="112.3" text-anchor="middle" class="dg-label">54°</text><path d="M220.0,92.0 L255.3,140.5 A60,60 0 0 1 162.9,73.5 Z" class="dg-fill-water"/><text x="177.7" y="162.2" text-anchor="end" class="dg-label">Summer</text><text x="198.8" y="125.1" text-anchor="middle" class="dg-label">144°</text><path d="M220.0,92.0 L162.9,73.5 A60,60 0 0 1 220.0,32.0 Z" class="dg-fill-plant"/><text x="177.7" y="37.8" text-anchor="end" class="dg-label">Fall</text><text x="198.8" y="66.9" text-anchor="middle" class="dg-label">72°</text><circle cx="220.0" cy="92.0" r="2.5" class="dg-point"/>
+</svg>
+</figure><p>Step 1: Percent = count ÷ 40. Winter: 10 ÷ 40 = 25%. Spring 15%, summer 40%, fall 20%.<br>Step 2: Angle = percent × 360°. Winter: 0.25 × 360° = 90°. Spring 54°, summer 144°, fall 72°.<br>Step 3: Check: 90 + 54 + 144 + 72 = 360°.</p></div>
+<h2>Your turn</h2>
+<div class="qgrid">
+<div class="question">
+<p><strong>1.</strong> Find the angle for 50%. <span class="b"></span> <em>(0.50 × 360°.)</em></p>
+</div>
+<div class="question">
+<p><strong>2.</strong> A sector is 36°. What percent is it? <span class="b"></span> <em>(36 ÷ 360.)</em></p>
+</div>
+<div class="question">
+<p><strong>3.</strong> Find each angle. Write it in the circle graph. <em>(Percent × 360°.)</em></p>
+<figure class="viz">
+<!-- tikz: m8-dipie | data="Dog:50;Cat:25;Fish:15;None:10" labels="Dog:[[ ]];Cat:[[ ]];Fish:[[ ]];None:[[ ]]" title="Our pets" r=55 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 440 196" width="440" height="196" aria-label="Circle graph: Our pets. Dog 50, Cat 25, Fish 15, None 10.">
+<text x="220.0" y="20.0" text-anchor="middle" class="dg-title">Our pets</text><path d="M220.0,111.0 L220.0,56.0 A55,55 0 0 1 220.0,166.0 Z" class="dg-fill-accent"/><text x="287.0" y="115.0" text-anchor="start" class="dg-label">Dog</text><rect x="233.6" y="102.0" width="38.9" height="19.0" rx="3" class="dg-tag"/><path d="M220.0,111.0 L220.0,166.0 A55,55 0 0 1 165.0,111.0 Z" class="dg-fill-sun"/><text x="172.6" y="162.4" text-anchor="end" class="dg-label">Cat</text><rect x="180.6" y="125.3" width="32.2" height="19.0" rx="3" class="dg-tag"/><path d="M220.0,111.0 L165.0,111.0 A55,55 0 0 1 187.7,66.5 Z" class="dg-fill-water"/><text x="160.3" y="84.6" text-anchor="end" class="dg-label">Fish</text><rect x="174.5" y="87.0" width="32.2" height="19.0" rx="3" class="dg-tag"/><path d="M220.0,111.0 L187.7,66.5 A55,55 0 0 1 220.0,56.0 Z" class="dg-fill-plant"/><text x="199.3" y="51.3" text-anchor="end" class="dg-label">None</text><rect x="193.7" y="70.6" width="32.2" height="19.0" rx="3" class="dg-tag"/><circle cx="220.0" cy="111.0" r="2.5" class="dg-point"/>
+</svg>
+</figure>
+</div>
+<div class="question">
+<p><strong>4.</strong> 60 people pick a Stampede event. The Rodeo sector is 120°. How many chose the rodeo? <span class="b"></span></p>
+</div>
+<div class="question">
+<p><strong>5.</strong> Which graph fits best: bar graph, histogram, circle graph or line graph? a) the Oilers' goals each season for 5 seasons b) how a family spends its money c) heights of Grade 8 students <span class="b"></span></p>
+</div>
+<div class="question">
+<p><strong>6.</strong> A family spends $3000 a year on home energy. How much goes to space heating? <span class="b"></span></p>
+<figure class="viz">
+<!-- tikz: m8-dipie | data="Space heating:60;Water heating:20;Appliances:15;Lighting:5" show=pct r=55 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 440 172" width="440" height="172" aria-label="Circle graph. Space heating 60, Water heating 20, Appliances 15, Lighting 5.">
+<path d="M220.0,87.0 L220.0,32.0 A55,55 0 1 1 187.7,131.5 Z" class="dg-fill-accent"/><text x="283.7" y="111.7" text-anchor="start" class="dg-label">Space heating</text><text x="251.4" y="101.2" text-anchor="middle" class="dg-label">60%</text><path d="M220.0,87.0 L187.7,131.5 A55,55 0 0 1 167.7,70.0 Z" class="dg-fill-sun"/><text x="156.3" y="111.7" text-anchor="end" class="dg-label">Water heating</text><text x="188.6" y="101.2" text-anchor="middle" class="dg-label">20%</text><path d="M220.0,87.0 L167.7,70.0 A55,55 0 0 1 203.0,34.7 Z" class="dg-fill-water"/><text x="172.6" y="43.6" text-anchor="end" class="dg-label">Appliances</text><text x="196.7" y="67.7" text-anchor="middle" class="dg-label">15%</text><path d="M220.0,87.0 L203.0,34.7 A55,55 0 0 1 220.0,32.0 Z" class="dg-fill-plant"/><text x="209.5" y="24.8" text-anchor="middle" class="dg-label">Lighting (5%)</text><circle cx="220.0" cy="87.0" r="2.5" class="dg-point"/>
+</svg>
+</figure>
+</div>
+</div>
+<div class="box box-check"><p class="label">Check yourself</p><p>I can find the angles of a circle graph and use one to solve a problem. ☐ Yes ☐ Almost ☐ Not yet</p></div>
+</body>
+</html>

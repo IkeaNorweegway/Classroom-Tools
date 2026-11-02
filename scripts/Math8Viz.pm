@@ -13,6 +13,9 @@ use warnings;
 use utf8;
 use POSIX qw(floor ceil);
 use List::Util qw(max min sum);
+use File::Spec;
+use File::Basename ();
+use File::Glob qw(:bsd_glob);   # the work machine path has a space
 
 our $KEY = 0;   # 1 while rendering an answer key
 
@@ -108,6 +111,7 @@ sub T {
     my $fs = $FS{$cls} || 12;
     $s //= '';
     return '' if $s eq '';
+    $s =~ s/\{bar:([^{}]+)\}/join '', map { "$_\x{0305}" } split \/\/, $1/ge;   # {bar:45}: repeat bar in a label
     if ($s !~ /\[\[/) {
         return sprintf('<text x="%.1f" y="%.1f" text-anchor="%s" class="%s">%s</text>', $x, $y, $anchor, $cls, xesc($s));
     }
@@ -751,7 +755,7 @@ sub draw_coord {
         $b .= sprintf('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" class="dg-dashed"/>', $vx, $Y->($o{ymax}), $vx, $Y->($o{ymin}));
     }
     for my $q (map { my ($x, $y) = split /\s*,\s*/; [num($x), num($y)] } list($a->{open}, qr/\s*;\s*/)) {   # open="x,y;…": open circles
-        $b .= sprintf('<circle cx="%.1f" cy="%.1f" r="4.5" fill="#fff" class="dg-accent"/>', $X->($q->[0]), $Y->($q->[1]));
+        $b .= sprintf('<circle cx="%.1f" cy="%.1f" r="4.5" style="fill:#fff" class="dg-accent"/>', $X->($q->[0]), $Y->($q->[1]));
     }
     for my $q (@p) {
         $b .= circ($X->($q->[0]), $Y->($q->[1]), 4.5, 'dg-point-accent');
@@ -2351,7 +2355,7 @@ sub draw_curve {
         $b .= circ($X->($q->[0]), $Y->($q->[1]), 7, 'dg-fill-hot');
     }
     for my $q (map { my ($x, $y) = split /\s*,\s*/; [num($x), num($y)] } list($a->{open}, qr/\s*;\s*/)) {
-        $b .= sprintf('<circle cx="%.1f" cy="%.1f" r="4.5" fill="#fff" class="dg-accent"/>', $X->($q->[0]), $Y->($q->[1]));
+        $b .= sprintf('<circle cx="%.1f" cy="%.1f" r="4.5" style="fill:#fff" class="dg-accent"/>', $X->($q->[0]), $Y->($q->[1]));
     }
     for my $q (map { my ($xy, $lab) = split /\s*:\s*/, $_, 2; my ($x, $y) = split /\s*,\s*/, $xy; [num($x), num($y), $lab] } list($a->{points}, qr/\s*;\s*/)) {
         $b .= circ($X->($q->[0]), $Y->($q->[1]), 4.5, 'dg-point-accent');
@@ -3110,6 +3114,16 @@ sub draw_trials {
     $b .= T($ml + $gw / 2, 20, $a->{title}, anchor => 'middle', cls => 'dg-title') if defined $a->{title};
     return (svg($W, $H, 'Line graph of experimental probability as the number of trials grows: ' . join(', ', map { plain("$_->[0] trials: $_->[1]") } @d)
         . (defined $a->{theory} ? '. Dashed line at the theoretical probability, ' . plain($tl) : ''), $b));
+}
+
+# ── Extra types in their own files ───────────────────────────────────────
+# scripts/vizext/*.pl hold more draw_<type> subs (package Math8Viz), one file
+# per build, so builds running side by side never edit this file at once.
+# Each file may add its own %DOC lines: $DOC{type} = '…';
+{
+    my $dir = File::Spec->catdir(File::Spec->rel2abs(File::Basename::dirname(__FILE__)), 'vizext');
+    # A broken file is skipped with a warning, so one build can't stop the others' renders.
+    for my $f (sort glob("$dir/*.pl")) { my $r = do $f; warn "vizext skipped $f: $@\n" if $@; }
 }
 
 1;

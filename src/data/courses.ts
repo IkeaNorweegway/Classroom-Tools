@@ -208,8 +208,8 @@ export const courses: Course[] = [
     path: 'math8',
     teacherPath: 'math8/teacher',
     parentPath: 'math8/parents',
-    blurb: 'Four strands and twelve topics, in plain words with lots of pictures. Notes, concept pages, worksheets, exit tickets and strand workbooks.',
-    facts: ['4 strands', '12 topics', '120 materials'],
+    blurb: 'Alberta’s new (2026 draft) Grade 8 math: four strands and twelve topics in plain words with lots of pictures. Notes, concept pages, worksheets, exit tickets and strand workbooks.',
+    facts: ['4 strands', '12 topics', '2026 draft'],
     subnav: [
       // A strand tab is current on its strand page and on its topic pages.
       ...math8Strands.map((s) => ({

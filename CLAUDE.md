@@ -48,6 +48,12 @@ When active:
 - Flag decisions that are genuinely ambiguous and would require rework to fix — do not silently guess on these
 - Trust mode applies to the current build task, not all future requests in the session
 
+### Model routing (standing rule)
+All rendering and all site page work goes to the **`render-and-site`** agent (`.claude/agents/render-and-site.md`, runs on Sonnet). This covers render scripts and their post-render steps, Astro pages, `src/data/*.ts`, nav and links, and the site build. The user has asked for this, so delegate without asking. Writing and checking teaching content (notes, worksheets, keys, quizzes, diagrams, outcome maps) stays in the main session.
+- Batch it: write the content first, then send one task that renders and wires up everything at once.
+- Give the agent the exact files or topics, and what should be on which page.
+- The agent reports content problems back instead of fixing them. Fix those in the main session, then send the re-render.
+
 ---
 
 ## Folder structure
@@ -99,7 +105,7 @@ Materials are organized inside type folders by subject and unit:
 | `_courses/grade-7-science/_context.md` | Science 7 (Alberta 2007 PoS): 5 units, LOs, misconception inventory, depth ceilings |
 | `_courses/grade-7-science/[unit]/_context.md` | Unit-level contexts: interactions-ecosystems, plants-food-fibre, heat-temperature, structures-forces, planet-earth |
 | `_courses/math-7/_context.md` | Math 7 on the **June 2026 draft** curriculum: 12 topics in 4 strands, local codes PN/IN/SC/FD/RP/LE/FN/LA/CI/VO/ST/PB, depth ceilings, misconceptions, reading level (F&P N–P) and picture rules (3+ diagrams per notes section), materials map. Renders with `scripts/render_math8.pl` (it handles both grades) |
-| `_courses/math-8/_context.md` | Math 8: 12 topics (2016 Grade 8 outcomes), local codes SQ/PC/RR/FR/IN/LR/LE/PY/SV/VT/DD/PB, depth ceilings, misconceptions, reading-level and picture rules, materials map. Render with `scripts/render_math8.pl` |
+| `_courses/math-8/_context.md` | Math 8 on the **June 2026 draft** (rebuilt 2026-10-31): 12 topics, local codes RN/SR/PR/PO/SE/IQ/LF/SD/TT/SA/DI/CP, depth ceilings, misconceptions; reading and picture rules as Math 7. The 2016-program version is `_context-2016.md` (its files stay unlinked). Render with `scripts/render_math8.pl`; per-topic diagram types live in `scripts/vizext/*.pl` |
 | `_courses/grade-5-ela/_context.md` | Grade 5 ELA (Alberta ELAL K–6, 2023): six genre units, 60-min block, editions A/B/C, local codes TF/OL/VO/CO/WR/CV, error patterns, F&P and Words Their Way use. Does **not** use the math/science formats. Evidence: `research/literacy-reading-writing-research.md`. Render with `scripts/render_ela5.pl` |
 | `_courses/math-9/_context.md` | Math 9: 11 topics, depth ceilings, misconception inventory, recommended sequence |
 | `_courses/grade-7-social/_context.md` | Social 7 (draft 7–9 curriculum): 5 units, verbatim K/U/S, local codes SB/CG/BE/IM/AF, misconceptions, sensitive-content notes. Materials render with `scripts/render_social.pl` |

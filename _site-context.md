@@ -24,7 +24,7 @@ Ten courses are live. PhysEd and eSports are in the workspace but not on the sit
 |---|---|---|---|---|
 | Grade 6 Science | `/materials/` | `science-*` | `#0891b2` (cyan) | Live |
 | Math 7 | `/math7/` | `[data-course='math7']` in global.css | `#5c781e` (olive) | Built 2026-10-29 on the June 2026 draft curriculum. Same shape as Math 8; data in `math7.ts`. Materials in `public/materials/math-7/` (rendered by `render_math8.pl`, which handles both grades) |
-| Math 8 | `/math8/` | `[data-course='math8']` in global.css | `#b65426` (burnt orange) | Live (2026-10-22). Same shape as Math 9 (strands, topic pages, parent and teacher views); data in `math8.ts`. Materials in `public/materials/math-8/` |
+| Math 8 | `/math8/` | `[data-course='math8']` in global.css | `#b65426` (burnt orange) | Rebuilt 2026-10-31 on the June 2026 draft curriculum (12 new topic slugs; data in `math8.ts`; workbooks are v2). The 2016-program files stay in `public/materials/math-8/` unlinked |
 | Math 9 | `/math9/` | `math9-*` | `#4f46e5` (indigo) | Live |
 | Grade 7 Science | `/science7/` | inline hex | `#059669` (emerald) | Live |
 | Social Studies 9 | `/social9/` | inline hex | `#b91c1c` (red) | Live |
@@ -76,7 +76,7 @@ Every page has two nav levels:
 - Grade 6 Science subnav: `Matter | Forces | Living Systems | Climate | Energy | Space | Materials`
 - Math 9 subnav: `Number | Algebra | M&G | Stats & Prob | PAT Prep | POTD | All materials`. A strand tab is also active on that strand's topic pages. Parent pages use `parentSubnav`: `Overview | Number | Algebra | M&G | Stats & Prob`
 - Math 7 subnav: `Number | Algebra | Geometry | Stats & Prob | All materials` (strand labels "Algebra & Functions" and "Geometry & Measurement"; slugs as Math 8).
-- Math 8 subnav: `Number | Algebra | M&G | Stats & Prob | All materials` (no PAT prep or POTD). Parent pages use the same strand tabs as Math 9.
+- Math 8 subnav (since the 2026-10-31 rebuild): `Number | Algebra | Geometry | Stats & Prob | All materials`, same strand labels as Math 7. (no PAT prep or POTD). Parent pages use the same strand tabs as Math 9.
 - Science 7 and Social 7, 8 and 9 subnavs list their units; the STEAM subnav lists Grades 5–9 and the CEFL subnav lists Grades 7–9
 - The home page turntable spaces its slots by the number of courses (and widens the ring past six)
 

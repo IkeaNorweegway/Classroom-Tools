@@ -28,7 +28,8 @@
 # measurement-geometry, statistics-probability). Workbooks: rubric: list.
 #
 # Inline: **bold**, *italic*, [[answer]] is a blank (filled in the key),
-# ___ is a blank with no answer, {3/4} is a stacked fraction (also {[[3]]/4}).
+# ___ is a blank with no answer, {3/4} is a stacked fraction (also {[[3]]/4}),
+# {bar:45} puts a repeat bar over 45 (0.{bar:45} = 0.4545…).
 # Lines: (lines N) ruled answer lines · (work N) a grid box N lines tall ·
 # => answer (key only; several in a row make one answer) · @viz type args
 # (a diagram; see Math8Viz.pm %DOC) with caption="…" · #### sub-heading ·
@@ -131,6 +132,8 @@ sub unq { my ($s) = @_; $s =~ s/^"(.*)"$/$1/; return $s; }
 # ── inline ────────────────────────────────────────────────────────────────
 sub frac_html { my ($n, $d) = @_; return qq{<span class="frac"><span class="num">$n</span><span class="frac-slash">/</span><span class="den">$d</span></span>}; }
 
+sub bars { my ($s) = @_; $s =~ s{\{bar:([^{}]+)\}}{<span class="rep">$1</span>}g; return $s; }   # {bar:45}: repeating digits with a bar over them
+
 sub fracs { my ($s) = @_; $s =~ s{\{([^{}/]+)/([^{}/]+)\}}{frac_html($1, $2)}ge; return $s; }
 
 sub plain_len { my ($s) = @_; $s =~ s/\{([^{}\/]+)\/([^{}\/]+)\}/$1$2/g; $s =~ s/\*//g; return length $s; }
@@ -141,6 +144,7 @@ sub inline {
     my @a;
     $s =~ s/\[\[(.+?)\]\]/push @a, $1; "\x{1}" . $#a . "\x{2}"/ge;
     $s = esc($s);
+    $s = bars($s);
     $s = fracs($s);
     $s =~ s/\*\*(.+?)\*\*/<strong>$1<\/strong>/g;
     $s =~ s/(?<![\w*])\*(?!\s)(.+?)(?<!\s)\*(?![\w*])/<em>$1<\/em>/g;
@@ -148,7 +152,7 @@ sub inline {
     $s =~ s{\x{1}(\d+)\x{2}}{
         my $x = $a[$1];
         my $len = plain_len($x);
-        $key ? '<span class="ak-fill">' . fracs(esc($x)) . '</span>'
+        $key ? '<span class="ak-fill">' . fracs(bars(esc($x))) . '</span>'
              : '<span class="b ' . ($len > 18 ? 'b-xl' : $len > 10 ? 'b-lg' : $len > 4 ? 'b-md' : 'b-sm') . '"></span>'
     }ge;
     return $s;
@@ -515,6 +519,7 @@ svg .dg-label-white { font: 700 12px/1.3 var(--font-body); fill: #fff; stroke: n
 svg .dg-title       { font: 700 13.5px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
 svg .dg-math        { font: 16px/1.3 var(--font-body); fill: var(--dg-stroke); stroke: none; }
 svg .dg-math-lg     { font: 600 20px/1.2 var(--font-body); fill: var(--dg-stroke); stroke: none; }
+.rep { text-decoration: overline; text-decoration-thickness: 1.5px; }
 CSS
 
 my $GUIDE_CSS = <<'CSS';
@@ -544,7 +549,8 @@ sub page {
     return qq{<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>} . esc($o{doc_title}) . qq{ | $GRADE</title>\n<style>\n$css</style>\n</head>\n<body>\n\n$header\n$o{body}\n\n</body>\n</html>\n};
 }
 
-sub strand_label { my ($k) = @_; return $GRADE =~ /Grade 7/ && $STRAND7{$k} ? $STRAND7{$k} : $STRAND{$k}[0]; }
+# Draft-curriculum strand names (Math 7, and Math 8 since its 2026-10-31 rebuild).
+sub strand_label { my ($k) = @_; return $STRAND7{$k} // $STRAND{$k}[0]; }
 sub out_path { return File::Spec->catfile($OUT, @_); }
 sub depth_of { my ($p) = @_; my $rel = File::Spec->abs2rel($p, File::Spec->catdir($ROOT, 'public')); my @d = File::Spec->splitdir(dirname($rel)); return scalar @d; }
 
@@ -787,6 +793,7 @@ my @files = @ARGV ? @ARGV : (
     glob("$ROOT/notes-packages/math-8/*/math8-*-teachernotes-v1.md"),
     glob("$ROOT/worksheets/math-8/*/*/math8-*-practice-v1.md"),
     glob("$ROOT/worksheets/math-8/*/math8-*-workbook-v1.md"),
+    glob("$ROOT/worksheets/math-8/*/math8-*-workbook-v2.md"),   # draft-curriculum workbooks (2026-10-31)
     glob("$ROOT/tests-quizzes/math-8/*/math8-*-exits-v1.md"),
     glob("$ROOT/tests-quizzes/math-8/*/math8-*-quiz-v1.md"),
     glob("$ROOT/notes-packages/math-7/*/math7-*-notes-v1.md"),

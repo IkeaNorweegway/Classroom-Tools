@@ -1,4 +1,5 @@
 # Math 8 — Course Context
+*Superseded 2026-10-31: Math 8 was rebuilt on the June 2026 draft curriculum (see `_context.md`). This file describes the 2016-program materials, which stay in the repo unlinked.*
 *Alberta Mathematics Grade 8. Outcomes from the Alberta K–9 Mathematics Program of Studies, as listed in* Alberta K–9 Mathematics Achievement Indicators *(2016), Grade 8, pp. 103–117. Local copy: `research/2016kto9mathachind.pdf` (not committed).*
 *Built 2026-10-22. Same layout as Math 9 (`_courses/math-9/_context.md`), written for a lower reading level and with more pictures.*
 
