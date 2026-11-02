@@ -14,6 +14,10 @@
 #   perl scripts/render_assessments.pl --out DIR path/to/file.md
 #     Unit tests and answer keys are unreleased. They are skipped unless --out
 #     names a folder outside the repo, so they never land in public/materials/.
+#   perl scripts/render_assessments.pl --rich --out DIR path/to/file.md
+#     --rich (off by default, so released renders do not change) adds: markdown
+#     tables, "- " bullet lists, "### " sub-headings, and "&nbsp;" spacer lines
+#     that stay blank instead of printing the text "&nbsp;". For answer keys.
 #
 # Handles: "# Title" (page title), "## Heading" (one section per ticket or part),
 # "**LO 1:** ..." lines, "**N.** question" lines, *italic*, **bold**, answer
@@ -87,6 +91,37 @@ sub trim {
     return $s;
 }
 
+my $RICH = 0;
+my $RICH_CSS = <<'CSS';
+h3 { font-family: system-ui, sans-serif; font-size: 0.95rem; color: #475569; margin: 0 0 1rem; }
+h4 { font-family: system-ui, sans-serif; font-size: 0.95rem; color: var(--accent); margin: 1.4rem 0 0.4rem; }
+table { border-collapse: collapse; width: 100%; margin: 0.6rem 0 1rem; font-family: system-ui, sans-serif; font-size: 0.82rem; line-height: 1.4; }
+th, td { border: 1px solid #cbd5e1; padding: 0.3rem 0.5rem; text-align: left; vertical-align: top; }
+th { background: #f1f5f9; }
+tr { break-inside: avoid; }
+ul { margin: 0.3rem 0 0.8rem; padding-left: 1.4rem; }
+.sp { height: 1.8rem; margin: 0; }
+.opts { white-space: pre-wrap; margin: 0.1rem 0 0.1rem 1.2rem; }
+@media print { h2, h3, h4 { break-after: avoid; } .ticket { break-inside: auto; } .q, .opts:has(+ .opts), p:has(+ .ans), p:has(+ .sp) { break-after: avoid; } .opts { break-inside: avoid; } }
+CSS
+
+sub render_table {
+    my (@rows) = @_;
+    my @out = ('<table>');
+    my $first = 1;
+    for my $r (@rows) {
+        next if $r =~ /^\|[\s:|-]+\|?$/;    # separator row
+        (my $c = $r) =~ s/^\|//;
+        $c =~ s/\|$//;
+        my @cells = map { inline(trim($_)) } split /(?<!\\)\|/, $c, -1;
+        my $tag = $first ? 'th' : 'td';
+        push @out, '<tr>' . join('', map { "<$tag>$_</$tag>" } @cells) . '</tr>';
+        $first = 0;
+    }
+    push @out, '</table>';
+    return join("\n", @out);
+}
+
 sub render {
     my ($md, $key) = @_;
     my $accent = exists $ACCENT{$key} ? $ACCENT{$key} : '#334155';
@@ -97,8 +132,32 @@ sub render {
     my @body;
     my $in_section = 0;
 
-    for my $raw (split /\n/, $text) {
+    my @lines = split /\n/, $text;
+    my $in_list = 0;
+    while (@lines) {
+        my $raw  = shift @lines;
         my $line = trim($raw);
+        if ($RICH) {
+            if ($line =~ /^- /) {
+                push @body, '<ul>' unless $in_list;
+                $in_list = 1;
+                push @body, '<li>' . inline(substr($line, 2)) . '</li>';
+                next;
+            }
+            if ($in_list) { push @body, '</ul>'; $in_list = 0; }
+            if ($line =~ /^\|/) {
+                my @rows = ($line);
+                while (@lines && trim($lines[0]) =~ /^\|/) { push @rows, trim(shift @lines); }
+                push @body, render_table(@rows);
+                next;
+            }
+            if ($line =~ /^[a-d]\) .*\S {2,}[b-d]\) /) {
+                push @body, '<p class="opts">' . inline($line) . '</p>'; next;
+            }
+            if ($line eq '&nbsp;') { push @body, '<div class="sp"></div>'; next; }
+            if ($line =~ /^### /) { push @body, '<h3>' . inline(trim(substr($line, 4))) . '</h3>'; next; }
+            if ($line =~ /^#### /) { push @body, '<h4>' . inline(trim(substr($line, 5))) . '</h4>'; next; }
+        }
         next if $line eq '';
 
         if ($line =~ /^# /) {
@@ -119,9 +178,11 @@ sub render {
             push @body, '<p>' . inline($line) . '</p>';
         }
     }
+    push @body, '</ul>' if $in_list;
     push @body, '</div>' if $in_section;
 
     my $t = esc($title);
+    my $css = $CSS . ($RICH ? $RICH_CSS : '');
     return <<"HTML";
 <!DOCTYPE html>
 <html lang="en">
@@ -130,7 +191,7 @@ sub render {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>$t</title>
 <style>:root { --accent: $accent; }
-$CSS</style>
+$css</style>
 </head>
 <body>
 <h1>$t</h1>
@@ -157,7 +218,9 @@ sub main {
     my $out_arg;
     while (@ARGV) {
         my $a = shift @ARGV;
-        if ($a eq '--out') {
+        if ($a eq '--rich') {
+            $RICH = 1;
+        } elsif ($a eq '--out') {
             $out_arg = shift @ARGV;
             die "--out needs a folder\n" unless defined $out_arg;
         } else {

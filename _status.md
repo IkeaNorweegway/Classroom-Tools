@@ -47,6 +47,7 @@ Current state only, one line per item. Keep it under 130 lines: put session deta
 
 ### Not yet checked or finished
 - **Needs a teacher read-through:** prereq practice questions (Science 6, Science 7 rewrite, Social 8/9), Math 8 and Math 9 practice and unit tests, Social 8/9 notes visuals.
+- **Science 7 Plants unit test v2** (teacher-only, git-ignored, in `tests-quizzes/grade-7-science/plants-food-fibre/`): split into a Sections 1–4 test (/40) and a Plant Uses test for Sections 5–6 (/22), one key file (`-test-v2-key.md`). Rendered to `../test-renders` for the Drive folder. v1 stays on the site. Needs a read-through; aspen-clone and beaver-girdling contexts are new.
 - **Social 8/9 notes sources:** Government S2 says "six steps" but lists seven; Citizenship S3 misstates the amending formula and the notwithstanding clause.
 - **Science prereq diagrams:** the printed 10-question sheet now runs to two pages.
 - **Notes visuals (Science 7, Math 9, Social 8/9):** markdown sources have no `[SVG: …]` placeholders; old Math 9 HTML copies in `notes-packages/math-9/` not updated; no copier print test.
