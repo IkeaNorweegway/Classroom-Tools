@@ -54,6 +54,20 @@ All rendering and all site page work goes to the **`render-and-site`** agent (`.
 - Give the agent the exact files or topics, and what should be on which page.
 - The agent reports content problems back instead of fixing them. Fix those in the main session, then send the re-render.
 
+### Batching (standing rule)
+Plan every build as batches, even when the request is short.
+- **One batch = one topic or unit** (a strand at most): all its content, then one render + site hand-off, then `_status.md` and a commit.
+- Collect fixes and do them together; don't stop after each one.
+- Ask clarifying questions once, at the start. In trust mode, don't check in between pieces.
+- For a multi-topic job, finish and commit each batch before starting the next, so a new conversation can pick up from `_status.md`.
+
+### Prompt for a new conversation (standing rule)
+Long conversations re-send all their history every turn, so tell the user when to start fresh. End your message with a one-line note, **"Good time to start a new conversation:"** plus what to paste in to continue, when:
+- a batch is finished and committed, and the next task is a different topic, course or kind of work;
+- the conversation has run through about two batches, or a lot of large files have been read;
+- the conversation has been compacted (summarised) once.
+Don't suggest it mid-batch or with uncommitted work. Commit or update `_status.md` first. Make the pasted line self-contained, for example: "Continue the Math 8 rebuild: Topic 6 next. Read `_status.md`. I trust you."
+
 ---
 
 ## Folder structure
