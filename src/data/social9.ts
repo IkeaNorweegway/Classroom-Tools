@@ -29,6 +29,8 @@ const trainers: Record<string, string> = {
   'independence-democratic-rights': 'Independence Trainer (Balfour or Westminster, why it changed, colony or nation, vote or office, the Persons Case, timeline, key words)',
   'canada-in-wwii': 'Second World War Trainer (1914 or 1939, timeline, Force 136 and code talkers, evidence, key words)',
   'postwar-canada': 'Post-War Canada Trainer (welfare state, social programs, NATO NORAD Korea Suez, the points system, Quebec or the West, 1982, timeline)',
+  'modern-economy': 'Modern Economy Trainer (the downward spiral, causes, government tools, deficit spending, sectors, free trade, timeline)',
+  'system-of-government': 'Government Trainer (parts of Parliament, responsible government, the bill path, shortcuts, federal or provincial, courts, key words)',
 };
 for (const u of social9.units) {
   if (trainers[u.slug]) u.extras.push({ heading: 'Practice after the lesson', items: [{ label: trainers[u.slug], doc: `soc9-${u.slug}-trainer-v1`, type: 'interactive' }] });
