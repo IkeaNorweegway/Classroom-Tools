@@ -4,7 +4,7 @@
 cd "$(dirname "$0")"; . ./pages.sh
 k=$1; hash=$2; size=${3:-1366,734}; n=$(name $k)
 mkdir -p t/shots
-{ sed '/<\/body>/,$d' $(dir $k)/$n.html; cat extra-$k.js shot-inject.js; printf '</body></html>\n'; } > t/$n-shot.html
+{ sed '/<\/body>/,$d' $(dir $k)/$n.html; cat extra-$k.js $(tlibs $k) shot-inject.js; printf '</body></html>\n'; } > t/$n-shot.html
 tab=$(echo "$hash" | sed 's/.*tab=\([^&]*\).*/\1/'); d=$(echo "$hash" | sed -n 's/.*do=\([^&]*\).*/\1/p')
 out="t/shots/$k-$tab-${d:-ask}.png"
 CH="/c/Program Files/Google/Chrome/Application/chrome.exe"; [ -x "$CH" ] || CH=$(command -v google-chrome || command -v chromium)

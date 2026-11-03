@@ -1,5 +1,5 @@
 # Project Status
-*Last updated: 2026-11-01*
+*Last updated: 2026-11-03*
 
 Current state only, one line per item. Keep it under 130 lines: put session detail in the commit message, and move finished build or test logs to `_status-archive.md`. The archive's **2026-11-01 snapshot** has the full detail behind every line here: test logs, file lists, and the exact facts to check before printing.
 
@@ -20,6 +20,7 @@ Current state only, one line per item. Keep it under 130 lines: put session deta
 
 - **Math 8 rebuilt on the June 2026 draft** (on `master` since 2026-11-01): 12 new topics with the full suite, 4 strand workbooks (v2), new `_courses/math-8/_context.md`. The 2016 context is kept as `_context-2016.md`, and the old 2016 materials are kept, unlinked (including the 2016 practice tests and unit tests, which have no draft version yet). Waiting for the teacher read-through. Facts to confirm: Alberta minimum wage, licence ages, Calaway Park height limits (Inequalities); guiding questions are written from the outcome stems; made-up data is listed in each teacher notes file.
 - **Math 7** (on `master` since 2026-11-01): built, waiting for the teacher read-through.
+- **Social 9 trainers** (narrow format, `scripts/drill/`, new shared `soc.js`): batch 1 done 2026-11-03: Urbanization, Independence, WWII, Post-War (`soc9-<unit>-trainer-v1.html`). Next: batch 2, Modern Economy and System of Government (Systems); then batch 3, Evolving Citizenship. Tested: model and UI checks pass in headless Chrome, plus layout at 1366, 1000 and 1280×600; screenshots checked. Not tested: students, touch screens, Chromebooks. Teacher check: facts beyond the notes (Alberta 1916 vote, McKinney 1917, Macphail 1921, Wilson 1930, Quebec 1940 and 1980, the Veterans Charter). Residential schools and the Sixties Scoop are left on paper on purpose.
 
 ---
 

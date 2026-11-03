@@ -3,6 +3,7 @@
   const h = new URLSearchParams(location.hash.slice(1)), D = window.DRILL;
   Q.seed(+(h.get('seed') || 7));
   D.setTab(h.get('tab'));
+  if (h.get('item')) D.newItem(JSON.parse(h.get('item')));  // a given item, e.g. item={"L":1,"R":2,"first":1,"a":"L"}
   const t = D.PAGE.tabs.find(x => x.id === h.get('tab')), it = D.state().item, ans = t.answer(it), a = h.get('do');
   const wrong = () => {
     if (DRILL.kindOf(t, it) === 'slots') { const v = {}; const w = (window.WRONG && WRONG(t, it)) || {}; for (const k in ans) { const a = ans[k], s = typeof a === 'string' ? a : Q.str(a).replace('−', '-'); v[k] = w[k] ?? String(Q.val(Q.parse(s)) * 1.5 + 7.3); } D.fill(v); D.check(); }

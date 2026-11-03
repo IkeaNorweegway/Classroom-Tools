@@ -82,6 +82,23 @@ One page per unit, 8 tabs each, same shell as Math 9 plus `scripts/drill/sci.js`
 
 Left on paper because they need reading: Ecosystems §6 (stewardship), Plants §5 (crops), Structures §6 (materials).
 
+### Social 9 concept trainers (narrow format, 2026-11-03)
+
+One page per unit, 5–7 tabs, same shell plus `sci.js` and `scripts/drill/soc.js`. Every tab is tap choices (one try). Social 9 has no course context and its quizzes number LO 1–4 per unit without a section map, so tabs carry the notes section (§2) instead of an outcome code. Three tab types beyond the Science sort:
+- **First?** (`S.orderTab`): two dated event cards, then a timeline places both. It is built from a bank of 7–12 dated events, so each tab has 21–66 pairs.
+- **Words** (`S.pickTab`): a card with three term choices drawn from a longer list, so the choices change each time.
+- **Missing step** (`S.chainTab`): a chain or loop with one blank. Unused so far; meant for the bill path and the Depression loop.
+
+| File | Unit | Tabs | Named errors | Save key | Test hook |
+|---|---|---|---|---|---|
+| `public/materials/soc9-urbanization-industry-trainer-v1.html` | Urbanization and the Growth of Industry | **Push/pull**, **DP?** (displaced person or another kind of move), **Industry** (infrastructure, oil and gas, hydro, cars and paper), **Loop** (cities need oil and gas, or it needs them), **Impact** (pollution, land consumption, land division, wildlife route), **Area** (population, economy, environment) | push and pull swapped, every immigrant called displaced, consumption vs division (the highway pair) | `soc9-urbanization-industry-trainer-v1` | `?debug=1` |
+| `public/materials/soc9-independence-democratic-rights-trainer-v1.html` | Canada's Independence and Democratic Rights | **Which act?** (Balfour 1926 or Westminster 1931), **Why?** (war exhaustion, Dominion pressure, cooperation), **Who decides?** (colony or sovereign nation), **Vote/office**, **Persons** (true or false), **First?** (1914–1960), **Words** | the Persons Case read as winning the vote, Balfour and Westminster swapped, "women" as one group | `soc9-independence-democratic-rights-trainer-v1` | `?debug=1` |
+| `public/materials/soc9-canada-in-wwii-trainer-v1.html` | Canada in the Second World War | **1914/1939**, **First?** (Sept 3 vs Sept 10 1939, the five campaigns), **Who?** (Force 136, Cree code talkers, both), **Evidence** (independence, military role, diverse contributions), **Words** | automatic war in 1939, campaigns out of order, the two groups mixed | `soc9-canada-in-wwii-trainer-v1` | `?debug=1` |
+| `public/materials/soc9-postwar-canada-trainer-v1.html` | Post-War Canada | **Why?** (the Depression or the war), **Program?** (a social program or not), **World** (NATO, NORAD, Korea, Suez), **Points** (counted by the 1967 points system or not), **Region** (Quebec or the West), **1982** (before or after), **First?** (1940–1987) | one cause for the welfare state, peacekeeping credited to NATO, the points system judging origin, the Charter before 1982 | `soc9-postwar-canada-trainer-v1` | `?debug=1` |
+
+Left on paper on purpose: residential schools and the Sixties Scoop (Post-War §3). They need discussion, not a tap-to-sort drill; the Post-War tests check that neither appears. Also left on paper: every "evaluate" and "who did not share in the benefits" question.
+Icons: no flag emoji (Windows shows letters) and nothing newer than Unicode 13. `test-soc.js` checks both, plus no repeated cards, two or more cards per answer, and cues of six words or fewer.
+
 ### Older Math 9 trainers (superseded, not linked)
 
 | File | Course · unit | Follows | What the student does | Simplifications | Save key | Test hook |
@@ -100,7 +117,7 @@ Every STEAM trainer step names the page of the notes or journal it matches (its 
 1. **Shared with games.** `_games-context.md` build rules 1 (one HTML file), 2 (no CDN; a vendored library is pinned, with its licence), 8 (site fit) and 9 (cheap motion) apply as written. The Python Trainer is the one vendored case: Skulpt in `public/vendor/skulpt/` (MIT).
 2. **Name and place.**
    - Sims are named `[subject]-[topic]-sim-v[N].html` and trainers `[subject]-[unit]-trainer-v[N].html`.
-   - Science and STEAM files go in `public/materials/`. Math 9 files go in `public/materials/math-9/practice/`.
+   - Science, Social and STEAM files go in `public/materials/`. Math 9 files go in `public/materials/math-9/practice/`.
    - A significant rework is a new version file. The old file stays.
 3. **Header comment.** Put it at the top of the `<style>` block or the first `<script>`. It gives:
    - the course, unit and outcome codes;
@@ -112,8 +129,9 @@ Every STEAM trainer step names the page of the notes or journal it matches (its 
 4. **Model apart from page.** The model goes in its own part of the script with no DOM calls (games build rule 5).
 5. **Test hook.** `?debug=1` puts the model on `window` and turns saving off (games build rule 6). It also skips the first-visit popups and tutorial, and turns off tweens, so scripted checks are exact. Every new build needs one. The Fraction and Pythagorean sims and the STEAM trainers do not have it yet.
 6. **Save only what helps a student come back.** That means finished missions, finished steps, and whether the tour was seen. Use a versioned key, check its shape on load, and start fresh if it does not fit. When a new version should keep progress, read the old key once (Plant Lab does this).
-7. **Narrow trainers are stitched from one shell.** The exception to "the HTML is the source": the narrow trainers (Math 9 and Science 7) are built by `scripts/drill/build.sh` from parts in `scripts/drill/`. Edit the parts, never the HTML.
-   - `pages.sh` lists each page's key, file name, output folder (`dir`: Science 7 goes flat in `public/materials/`) and extra shared parts (`libs`: Science 7 adds `sci.js` after `shell.js`).
+7. **Narrow trainers are stitched from one shell.** The exception to "the HTML is the source": the narrow trainers (Math 9, Science 7 and Social 9) are built by `scripts/drill/build.sh` from parts in `scripts/drill/`. Edit the parts, never the HTML.
+   - `pages.sh` lists each page's key, file name, output folder (`dir`: Science 7 and Social 9 go flat in `public/materials/`), extra shared parts (`libs`: Science 7 adds `sci.js` after `shell.js`; Social 9 adds `sci.js soc.js`) and extra test parts (`tlibs`: Social 9 adds `test-soc.js`).
+   - `shot.sh` takes `item=<json>` to draw one given item (for example two events a week apart).
    - Shared by every page: `shell-css.html` (look and layout), `kit.js` (exact fractions, seeded random), `shell.js` (tabs, rounds, checking, feedback, notes link, drawing helpers), `tail.html`.
    - Per page: `top-<p>.html` (title and header comment), `model-<p>.js` (generators and checkers, no DOM), `view-<p>.js` (pictures and the tab list).
    - A fix to the shell rebuilds every page with `sh scripts/drill/build.sh`. Test with `sh scripts/drill/test.sh` (prints failures only).
@@ -233,6 +251,7 @@ Also:
 | Science 7 | `src/data/science7.ts` (`type: 'interactive'`) and the doc list in `src/pages/science7/view/[unit]/[doc].astro` |
 | Math 9 | `src/data/math9.ts`: `extras.unshift({ label, path: 'practice/…', type: 'interactive' })` on the topic, so it is first under Extra help |
 | STEAM | `trainer(…)` in `src/data/steam.ts` and the doc list in `src/pages/steam/view/[grade]/[doc].astro` |
+| Social 9 | the `trainers` record in `src/data/social9.ts` (a "Practice after the lesson" section, `type: 'interactive'`) |
 
 Then add a row to the tables above and an entry to `_status.md` (what it does, what was tested, what was not). Push to `master` and check the Actions run.
 
@@ -244,6 +263,7 @@ Then add a row to the tables above and an entry to `_status.md` (what it does, w
   - Done for all 11 topics (2026-10-29): Algebra, Number, Measurement & Geometry, Statistics & Probability.
   - Correlation vs causation needs reading, so it stays on paper. Word problems now have the PAT Word Problems trainer.
 - **Science 7 trainers (2026-10-29):** all five units done. Emoji icons look different on each device (Chromebook, Windows, iPad), so a picture may not match its label exactly; the label always names it. No teacher read-through yet.
+- **Social 9 trainers (2026-11-03):** Time and Place units 1–4 done. Still to build: Modern Economy, System of Government, Evolving Citizenship. Facts beyond the notes (a few Alberta firsts, the 1980 Quebec referendum, the Veterans Charter) need a teacher check. The shared weighting test is borderline on 10-card banks and fails about one run in four.
 - **Narrow trainers:** the graph taps (LR3 Graph it, LE4 Graph it) have no keyboard route yet. The Monomial × answer row wraps onto two lines in the 330 px panel; it still fits without scrolling.
 - **Not on the new layout and look yet (rules 14–17):** the Science 7 sims and the STEAM trainers. (The Fraction and Pythagorean sims are replaced and unlinked.)
 - The Fraction and Pythagorean sims and the STEAM trainers have no `?debug=1` hook. No sim or trainer has a teacher report.

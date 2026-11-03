@@ -21,3 +21,15 @@ export const social9: CourseManifest = {
 };
 
 social9.units[0].extras.unshift({ heading: 'Class slides', items: [{ label: 'Class Slides', doc: 'soc9-urbanization-industry-slides-v1', type: 'slides' }] });
+
+// Narrow concept trainers: one per unit, practice after the lesson. Rules: _sims-context.md (rules 19–25).
+// To add one: put the HTML in public/materials/soc9-<slug>-trainer-v1.html and add a line here.
+const trainers: Record<string, string> = {
+  'urbanization-industry': 'Urbanization Trainer (push or pull, displaced persons, industries, the oil–city loop, environmental impacts)',
+  'independence-democratic-rights': 'Independence Trainer (Balfour or Westminster, why it changed, colony or nation, vote or office, the Persons Case, timeline, key words)',
+  'canada-in-wwii': 'Second World War Trainer (1914 or 1939, timeline, Force 136 and code talkers, evidence, key words)',
+  'postwar-canada': 'Post-War Canada Trainer (welfare state, social programs, NATO NORAD Korea Suez, the points system, Quebec or the West, 1982, timeline)',
+};
+for (const u of social9.units) {
+  if (trainers[u.slug]) u.extras.push({ heading: 'Practice after the lesson', items: [{ label: trainers[u.slug], doc: `soc9-${u.slug}-trainer-v1`, type: 'interactive' }] });
+}
