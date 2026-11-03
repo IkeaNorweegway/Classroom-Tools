@@ -1,5 +1,5 @@
 # Page list for build.sh, test.sh and shot.sh: short key -> published file name, output folder, extra shared parts.
-PAGES="lr le po pe rn sr cg me si st pr pat pq eco pla hea str ear urb ind ww2 pwc mec gov"
+PAGES="lr le po pe rn sr cg me si st pr pat pq eco pla hea str ear urb ind ww2 pwc mec gov cit"
 name() { case $1 in
   lr) echo math9-linear-relations-trainer-v1;; le) echo math9-linear-equations-trainer-v2;; po) echo math9-polynomials-trainer-v2;;
   pe) echo math9-powers-exponents-trainer-v1;; rn) echo math9-rational-numbers-trainer-v1;; sr) echo math9-square-roots-trainer-v1;;
@@ -10,6 +10,7 @@ name() { case $1 in
   urb) echo soc9-urbanization-industry-trainer-v1;; ind) echo soc9-independence-democratic-rights-trainer-v1;;
   ww2) echo soc9-canada-in-wwii-trainer-v1;; pwc) echo soc9-postwar-canada-trainer-v1;;
   mec) echo soc9-modern-economy-trainer-v1;; gov) echo soc9-system-of-government-trainer-v1;;
+  cit) echo soc9-evolving-citizenship-trainer-v1;;
 esac; }
 # Science 7 and Social 9 pages go flat in public/materials and add the science kit (icon cards, arrows, sorting bins).
 dir() { case $1 in eco|pla|hea|str|ear|urb|ind|ww2|pwc|mec|gov|cit) echo ../../public/materials;; *) echo ../../public/materials/math-9/practice;; esac; }

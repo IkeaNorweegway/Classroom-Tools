@@ -31,6 +31,7 @@ const trainers: Record<string, string> = {
   'postwar-canada': 'Post-War Canada Trainer (welfare state, social programs, NATO NORAD Korea Suez, the points system, Quebec or the West, 1982, timeline)',
   'modern-economy': 'Modern Economy Trainer (the downward spiral, causes, government tools, deficit spending, sectors, free trade, timeline)',
   'system-of-government': 'Government Trainer (parts of Parliament, responsible government, the bill path, shortcuts, federal or provincial, courts, key words)',
+  'evolving-citizenship': 'Citizenship Trainer (citizenship status, who was shut out of the vote, timeline, Charter rights, true or false, rights and responsibilities, key words)',
 };
 for (const u of social9.units) {
   if (trainers[u.slug]) u.extras.push({ heading: 'Practice after the lesson', items: [{ label: trainers[u.slug], doc: `soc9-${u.slug}-trainer-v1`, type: 'interactive' }] });

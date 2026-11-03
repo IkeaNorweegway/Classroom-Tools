@@ -265,7 +265,7 @@ Then add a row to the tables above and an entry to `_status.md` (what it does, w
   - Done for all 11 topics (2026-10-29): Algebra, Number, Measurement & Geometry, Statistics & Probability.
   - Correlation vs causation needs reading, so it stays on paper. Word problems now have the PAT Word Problems trainer.
 - **Science 7 trainers (2026-10-29):** all five units done. Emoji icons look different on each device (Chromebook, Windows, iPad), so a picture may not match its label exactly; the label always names it. No teacher read-through yet.
-- **Social 9 trainers (2026-11-03):** Time and Place (units 1–4) and Systems (5–6) done. Still to build: Evolving Citizenship. Facts beyond the notes (a few Alberta firsts, the 1980 Quebec referendum, the Veterans Charter) need a teacher check. The shared weighting test is borderline on 10-card banks and fails about one run in four.
+- **Social 9 trainers (2026-11-03):** all three batches done: Time and Place (units 1–4), Systems (5–6) and Evolving Citizenship (7; 7 tabs, the Charter tab uses a 2-column choice grid for five groups).  Facts beyond the notes (a few Alberta firsts, the 1980 Quebec referendum, the Veterans Charter) need a teacher check. The shared weighting test is borderline on 10-card banks and fails about one run in four.
 - **Narrow trainers:** the graph taps (LR3 Graph it, LE4 Graph it) have no keyboard route yet. The Monomial × answer row wraps onto two lines in the 330 px panel; it still fits without scrolling.
 - **Not on the new layout and look yet (rules 14–17):** the Science 7 sims and the STEAM trainers. (The Fraction and Pythagorean sims are replaced and unlinked.)
 - The Fraction and Pythagorean sims and the STEAM trainers have no `?debug=1` hook. No sim or trainer has a teacher report.
