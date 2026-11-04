@@ -129,7 +129,7 @@ my $head = <<"HTML";
 \@font-face { font-family: 'Fraunces'; font-weight: 100 900; src: url('$fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations'); }
 :root { --accent: #2f6f8f; --accent-light: #e6f0f4; --accent-mid: #9cc3d3; }
 $css
-body { margin: 12px; background: #fff; }
+body { margin: 12px; background: #fff; max-width: none !important; width: auto !important; padding: 0 !important; }
 .g-item { border-bottom: 1px solid #ccc; padding: 6px 0 10px; break-inside: avoid; }
 .g-meta { font: 12px/1.3 monospace; color: #555; margin-bottom: 4px; }
 .g-meta b { color: #000; }
