@@ -823,7 +823,9 @@ sub choices_html {
 sub test_item_html {
     my ($label, $stem, $lines, $code, $marks, $key, $path, %o) = @_;
     my (@ch, @rest);
-    for (@$lines) { if (/^\s*-\s+([A-D])\)\s+(.*)$/) { push @ch, [$1, $2]; } else { push @rest, $_; } }
+    my $has_ch = grep { /^\s*-\s+[A-D]\)\s/ } @$lines;
+    my @pre;   # @viz lines written before the first choice stay above the choices
+    for (@$lines) { if (/^\s*-\s+([A-D])\)\s+(.*)$/) { push @ch, [$1, $2]; } elsif ($has_ch && !@ch && /^\s*\@viz\s/) { push @pre, $_; } else { push @rest, $_; } }
     my ($correct) = map { /^\s*=>\s*\*\*([A-D])\.\*\*/ ? $1 : () } @rest;
     my ($intro, $parts) = split_parts($stem);
     my $main = '<div class="t-stem">' . inline($intro, $key) . '</div>';
@@ -835,7 +837,8 @@ sub test_item_html {
                             : '<div class="sp-col">' . join('', map { $cell->($_) } @$parts) . '</div>';
     }
     my $body = body_html(\@rest, $key, $path);
-    # the picture or table goes before the choices; lines, boxes and answers after
+    # the picture goes before the choices; lines, boxes and answers after
+    $main .= "\n" . body_html(\@pre, $key, $path) if @pre;
     $main .= "\n" . (@ch ? choices_html(\@ch, $correct, $key) . "\n" : '') . $body;
     my $num = $o{sub} ? "($o{sub})" : "$label.";
     return qq{<div class="t-item" id="q$o{id}">\n<span class="t-num">$num</span>\n<div class="t-main">$main</div>\n}

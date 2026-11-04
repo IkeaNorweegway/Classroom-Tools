@@ -253,13 +253,17 @@ sub draw_ttrange {
     my $b = '';
     $b .= T(20, 18, $a->{title}, cls => 'dg-title') if $a->{title};
     $b .= arrow($X->($min) - 4, $y, $X->($max) + 18, $y, 'plain') . arrow($X->($max) + 4, $y, $X->($min) - 18, $y, 'plain');
-    for my $v ($min .. $max) { $b .= line($X->($v), $y - 5, $X->($v), $y + 5, 'dg-line') . T($X->($v), $y + 22, fmt($v), anchor => 'middle', cls => 'dg-label-sm'); }
+    my $step = $cell >= 22 ? 1 : int(24 / $cell) + ($cell * int(24 / $cell) < 24 ? 1 : 0);   # thin the numbers when ticks are close
+    for my $v ($min .. $max) { $b .= line($X->($v), $y - 5, $X->($v), $y + 5, 'dg-line') . (($v - $min) % $step == 0 ? T($X->($v), $y + 22, fmt($v), anchor => 'middle', cls => 'dg-label-sm') : ''); }
     if ($show && defined $lo && defined $hi) {
         $b .= rect($X->($lo), $y - 3, $X->($hi) - $X->($lo), 6, 'dg-shade');
         $b .= circ($X->($_), $y, 6, 'dg-fill-soft') . sprintf('<circle cx="%.1f" cy="%.1f" r="6" class="dg-accent"/>', $X->($_), $y) for ($lo, $hi);
     }
     my $H = $y + 32;
-    if (defined $a->{label}) { $b .= T(($X->($min) + $X->($max)) / 2, $H + 8, $a->{label}, anchor => 'middle', cls => 'dg-math'); $H += 18; }
+    if (defined $a->{label}) {
+        (my $lab = $a->{label}) =~ s/ /\x{00A0}/g;   # SVG collapses plain spaces, which pushes the blank boxes out of place
+        $b .= T(($X->($min) + $X->($max)) / 2, $H + 14, $lab, anchor => 'middle', cls => 'dg-math'); $H += 24;
+    }
     return (svg($X->($max) + 40, $H, 'Number line from ' . fmt($min) . ' to ' . fmt($max) . ($show && defined $lo ? ', open dots at ' . fmt($lo) . ' and ' . fmt($hi) . ' with the part between shaded' : '') . '. ' . plain($a->{label} // ''), $b));
 }
 

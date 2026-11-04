@@ -114,6 +114,9 @@ sub draw_sapnet {
     my $top = $a->{title} ? 26 : 10;
     my ($x0, $y0) = (14 + $S2, $top + $S);
     my $b = sa_title($a, 10);
+    # a size above the default is shown shrunk to fit the page, so grow the labels with it
+    my $LF = defined $a->{size} && $a->{size} > 260 ? 11 * $a->{size} / 260 : 0;
+    my $big = sub { my $t = shift; $t =~ s/<text /<text style="font-size:${LF}px" /g if $LF; $t };
     $b .= rect($x0, $y0, $B, $Wd, 'dg-fill-sun') . rect($x0, $y0, $B, $Wd, 'dg-outline');
     my @tri = (
         [$x0, $y0, $x0 + $B, $y0, $x0 + $B / 2, $y0 - $S],
@@ -124,13 +127,14 @@ sub draw_sapnet {
     for my $t (@tri) { $b .= poly('dg-fill-accent', @$t) . poly('dg-outline', @$t); }
     # slant height on the top triangle, dashed
     $b .= line($x0 + $B / 2, $y0, $x0 + $B / 2, $y0 - $S, 'dg-dashed') if defined $a->{s};
-    $b .= T($x0 + $B / 2 + 5, $y0 - $S * 0.5, $a->{s}, cls => 'dg-label-accent') if defined $a->{s};
+    # slant labels sit just outside the slanted edge, off the dashed line
+    $b .= $big->(T($x0 + $B * 0.75 + 6, $y0 - $S * 0.5 + 4, $a->{s}, cls => 'dg-label-accent')) if defined $a->{s};
     if (defined $a->{s2}) {
         $b .= line($x0 + $B, $y0 + $Wd / 2, $x0 + $B + $S2, $y0 + $Wd / 2, 'dg-dashed');
-        $b .= T($x0 + $B + $S2 * 0.62, $y0 + $Wd / 2 - 5, $a->{s2}, anchor => 'middle', cls => 'dg-label-accent');
+        $b .= $big->(T($x0 + $B + $S2 * 0.27, $y0 + $Wd / 2 - 6, $a->{s2}, anchor => 'middle', cls => 'dg-label-accent'));
     }
-    $b .= T($x0 + $B / 2, $y0 + 16, $a->{b}, anchor => 'middle', cls => 'dg-label-accent') if defined $a->{b};
-    $b .= T($x0 + 5, $y0 + $Wd / 2 + 4, $a->{w}, cls => 'dg-label-accent') if defined $a->{w};
+    $b .= $big->(T($x0 + $B / 2, $y0 + ($LF || 11) + 5, $a->{b}, anchor => 'middle', cls => 'dg-label-accent')) if defined $a->{b};
+    $b .= $big->(T($x0 + 5, $y0 + $Wd / 2 + 4, $a->{w}, cls => 'dg-label-accent')) if defined $a->{w};
     my $sh = defined $a->{s} ? $B * 0.2 : 0;
     my $sh2 = defined $a->{s2} ? 15 : 0;
     my @c = ([$x0 + $B / 2, $y0 + $Wd / 2 + 14], [$x0 + $B / 2 - $sh, $y0 - $S * 0.18], [$x0 + $B + $S2 * 0.3, $y0 + $Wd / 2 + 4 + $sh2],
@@ -176,6 +180,8 @@ sub draw_satnet {
     my $top = ($a->{title} ? 26 : 10) + 14;
     my ($x0, $y0) = (14, $top + $TH);
     my $b = sa_title($a, 10);
+    my $LF = defined $a->{size} && $a->{size} > 300 ? 11 * $a->{size} / 300 : 0;
+    my $big = sub { my $t = shift; $t =~ s/<text /<text style="font-size:${LF}px" /g if $LF; $t };
     my $x = $x0;
     my @rc;
     for my $w ($A, $Bw, $Cw) {
@@ -188,16 +194,16 @@ sub draw_satnet {
     $b .= poly('dg-fill-sun', @t1) . poly('dg-outline', @t1) . poly('dg-fill-sun', @t2) . poly('dg-outline', @t2);
     if (defined $a->{th}) {
         $b .= line($mx + $PX, $y0, $mx + $PX, $y0 - $TH, 'dg-dashed');
-        $b .= T($mx + $PX + 4, $y0 - $TH * 0.3, $a->{th}, cls => 'dg-label-accent');
+        $b .= $big->(T($mx + $PX + 5, $y0 - $TH * 0.18, $a->{th}, cls => 'dg-label-accent'));
     }
-    $b .= T($rc[0], $y0 - 6, $a->{la}, anchor => 'middle', cls => 'dg-label-accent') if defined $a->{la};
-    $b .= T($rc[2], $y0 - 6, $a->{lc}, anchor => 'middle', cls => 'dg-label-accent') if defined $a->{lc};
-    $b .= T($rc[1], $y0 + 16, $a->{lb}, anchor => 'middle', cls => 'dg-label-accent') if defined $a->{lb};
-    $b .= T($x + 6, $y0 + $L / 2 + 4, $a->{l}, cls => 'dg-label-accent') if defined $a->{l};
+    $b .= $big->(T($rc[0], $y0 - 6, $a->{la}, anchor => 'middle', cls => 'dg-label-accent')) if defined $a->{la};
+    $b .= $big->(T($rc[2], $y0 - 6, $a->{lc}, anchor => 'middle', cls => 'dg-label-accent')) if defined $a->{lc};
+    $b .= $big->(T($rc[1], $y0 + 16, $a->{lb}, anchor => 'middle', cls => 'dg-label-accent')) if defined $a->{lb};
+    $b .= $big->(T($x + 6, $y0 + $L / 2 + 4, $a->{l}, cls => 'dg-label-accent')) if defined $a->{l};
     for my $i (1 .. 3) { $b .= T($rc[$i - 1], $y0 + $L / 2 + 4, $a->{"n$i"}, anchor => 'middle', cls => 'dg-label-sm') if defined $a->{"n$i"}; }
     $b .= T($mx + ($Bw + $PX) / 3 - ($a->{th} ? 5 : 0), $y0 - $TH / 4 + 4, $a->{n4}, anchor => ($a->{th} ? 'end' : 'middle'), cls => 'dg-label-sm') if defined $a->{n4};
     $b .= T($mx + $PX, $y0 + $L + $TH * 0.55, $a->{n5}, anchor => 'middle', cls => 'dg-label-sm') if defined $a->{n5};
-    my $W = $x + 20 + max(20, tw(plain($a->{l} // ''), 11));
+    my $W = $x + 20 + max(20, tw(plain($a->{l} // ''), $LF || 11));
     return (svg($W, $y0 + $L + $TH + 12, 'Net of a triangular prism: three rectangles in a row with a triangle on each end of the middle one.', $b));
 }
 
