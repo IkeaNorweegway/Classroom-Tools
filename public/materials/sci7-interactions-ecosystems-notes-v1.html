@@ -334,9 +334,16 @@
     }
     .section-break { page-break-before: always; }
     h2.section-title { page-break-after: avoid; }
-      .connection, .vocab-wrap, svg, tr, .retrieval { break-inside: avoid; page-break-inside: avoid; }
+      .connection, svg, tr { break-inside: avoid; page-break-inside: avoid; }
+    thead { display: table-header-group; }
+    /* Retrieval boxes may split across pages; each question, line and the self-check stay whole */
+    .retrieval { break-inside: auto; page-break-inside: auto; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+    .retrieval li, .retrieval .al, .retrieval p { break-inside: avoid; page-break-inside: avoid; }
+    .retrieval .r-label, .retrieval ol > p:first-child { break-after: avoid; page-break-after: avoid; }
+    .retrieval ol > p:last-child { break-before: avoid; page-break-before: avoid; }
+    .retrieval li:has(+ p:last-child) { break-after: avoid; page-break-after: avoid; }
     h1, h2, h3, .section-title { break-after: avoid; page-break-after: avoid; }
-    p:has(+ .vocab-wrap), p:has(+ .connection), p:has(+ .retrieval),
+    p:has(+ .vocab-wrap), p:has(+ .connection),
     p:has(+ .svg-wrap), p:has(+ ul), p:has(+ .synthesis-box) {
       break-after: avoid; page-break-after: avoid;
     }
