@@ -50,6 +50,7 @@ sub draw_cptree {
         my ($px, $py) = ($xa + $f * ($xb - $xa), $ya + $f * ($yb - $ya));
         my $dy = $yb < $ya ? -5 : $yb > $ya ? 13 : -5;
         $dy = -6 if abs($yb - $ya) < 6;
+        $dy -= 9 if $dy < 0 && $p =~ /\[\[/;   # a blank box needs more room than text
         return T($px, $py + $dy, $p, anchor => 'middle', cls => 'dg-label-sm');
     };
     my $k = 0;

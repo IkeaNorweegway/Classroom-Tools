@@ -1307,7 +1307,7 @@ sub draw_tree {
     return (svg($x3 + 70, $H, 'Tree diagram. First: ' . join(', ', map { plain($_) } @f) . '. Second: ' . join(', ', map { plain($_) } @s) . ". $n outcomes.", $b));
 }
 
-my %COLOUR = (red => 'dg-fill-hot', blue => 'dg-fill-cold', green => 'dg-fill-plant', yellow => 'dg-fill-sun', orange => 'dg-fill-earth', purple => 'dg-fill-accent');
+my %COLOUR = (red => 'dg-fill-hot', blue => 'dg-fill-cold', green => 'dg-fill-plant', yellow => 'dg-fill-sun', gold => 'dg-fill-sun', orange => 'dg-fill-earth', purple => 'dg-fill-accent');
 
 sub draw_spinner {
     my ($a) = @_;
@@ -3012,6 +3012,7 @@ sub draw_spin {
     my $tot = sum(@w) || 1;
     my $S = $a->{size} // 150;
     my $r = $S / 2 - 6;
+    my $lf = $S < 120 ? 0.56 : 0.6;   # small spinners: labels sit nearer the centre so they stay inside the part
     my $mt = defined $a->{title} ? 28 : 4;
     my $W = max($S + 8, tw(plain($a->{label} // ''), 11) + 16, tw($a->{title} // '', 13) + 16);
     my ($cx, $cy) = ($W / 2, $mt + $S / 2);
@@ -3031,10 +3032,10 @@ sub draw_spin {
         }
         if ($a->{guides} && $w[$i] > 1 && $w[$i] == int($w[$i])) {
             # one label in each equal piece
-            for my $g (0 .. $w[$i] - 1) { my $m = $ang + ($g + 0.5) * 2 * $PI / $tot; push @lab, [$cx + $r * 0.6 * cos($m), $cy + $r * 0.6 * sin($m) + 4, $sec[$i][0]]; }
+            for my $g (0 .. $w[$i] - 1) { my $m = $ang + ($g + 0.5) * 2 * $PI / $tot; push @lab, [$cx + $r * $lf * cos($m), $cy + $r * $lf * sin($m) + 4, $sec[$i][0]]; }
         } else {
             my $mid = ($ang + $a2) / 2;
-            push @lab, [$cx + $r * 0.6 * cos($mid), $cy + $r * 0.6 * sin($mid) + 4, $sec[$i][0]];
+            push @lab, [$cx + $r * $lf * cos($mid), $cy + $r * $lf * sin($mid) + 4, $sec[$i][0]];
         }
         $ang = $a2;
     }

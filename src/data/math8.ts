@@ -65,7 +65,7 @@ export const strands: Strand[] = [
  * Topics with a posted practice test (tests/<slug>/math8-<slug>-practice-test-v1 and its key).
  * Unit tests are teacher only, kept out of the repo, and never listed here.
  */
-const practiceTests = new Set(['rational-numbers', 'roots-irrationals', 'proportional-reasoning', 'polynomials', 'solving-equations', 'inequalities', 'linear-functions', 'similarity-dilations', 'triangle-theorems', 'surface-area']);
+const practiceTests = new Set(['rational-numbers', 'roots-irrationals', 'proportional-reasoning', 'polynomials', 'solving-equations', 'inequalities', 'linear-functions', 'similarity-dilations', 'triangle-theorems', 'surface-area', 'distributions', 'compound-probability']);
 
 /** Every topic has the same set: notes, concepts, core, challenge, exits, quiz, keys, teacher notes; practice test and key where one is posted. */
 function topic(slug: string, label: string, strand: StrandSlug): Topic {
