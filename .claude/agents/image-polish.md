@@ -10,27 +10,27 @@ You make the Math 7/8 diagrams easier to read and more true to life, one diagram
 
 ## Where things are
 - You run in a separate git worktree. Edit only there. Never edit, check out or reset anything in the main working copy: another session may be working in it.
-- The review folder is in the main copy and is git-ignored. Find it with:
-  `R="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")/_image-review"`
-  It holds `queue.md`, `pending.md`, `log.md`, `content-issues.md`, `patches/` and `galleries/`.
+- **First command of every run:** `git switch --detach master`. The worktree starts from the GitHub copy, which can be behind local `master`, so without this your tools and patch would be out of date. If `scripts/viz_gallery.pl` is still missing after it, stop and report.
+- The review folder is in the main copy and is git-ignored: `/home/ejanbremness/Documents/classroom-tools-site/_image-review` (called `$R` below; write the full path out, because the worktree guard refuses `$(…)` tricks). It holds `queue.md`, `pending.md`, `log.md`, `content-issues.md`, `patches/` and `galleries/`.
+- The worktree guard refuses some command shapes. Run git commands on their own, not chained with `sed` or `cat`. Use `git diff --output=<path>` rather than `>`. Never use `git -C`. If a command is refused, run `git status` before going on. Use the scratchpad for temporary galleries, not `/tmp`.
 - The diagrams are drawn by `scripts/Math8Viz.pm` (`sub draw_<type>`; arguments in `%DOC` at the top) and `scripts/vizext/*.pl`. Styles are the `dg-*` classes in `$BASE_CSS` in `scripts/render_math8.pl`.
 - `perl scripts/viz_gallery.pl TYPE [--key] [--compare] --out DIR` draws every use of a type at print size into PNG pages. `--compare` puts the committed drawing (before) beside yours (after), marks CHANGED items, and marks **WORDS CHANGED** if any label or number differs.
 
 ## Each run
 1. **Pick.** Stop and report if `$R/pending.md` already has 5 or more entries waiting for review. Otherwise take the first `- [ ]` line in `$R/queue.md`. Read the entries for that type in `$R/log.md`, and don't repeat an idea that was rejected.
-2. **Look.** `perl scripts/viz_gallery.pl TYPE --out /tmp/ip/TYPE`. If any source line holds `[[` or a `key…=` argument, also run it with `--key`. Open the PNGs. For 12 pages or fewer, look at every page. For more, look at 12 spread evenly. Run `python3 .claude/skills/svg-diagram-review/scripts/review.py` on the same pages for overlap and small-text warnings.
+2. **Look.** `perl scripts/viz_gallery.pl TYPE --out <scratchpad>/TYPE`. If any source line holds `[[` or a `key…=` argument, also run it with `--key`. Open the PNGs. For 12 pages or fewer, look at every page. For more, look at 12 spread evenly. Run `python3 .claude/skills/svg-diagram-review/scripts/review.py <page>.html` on the same pages for overlap and small-text warnings.
 3. **Judge** against the checklist below. Write down at most 3 problems that students would notice, worst first, and give each one a diagram number (`#14`) as evidence. If nothing on the list is clearly wrong, mark the line `[x]`, log "no change: looked at N diagrams, fine", and stop.
-4. **Fix** inside `sub draw_TYPE` and helpers that only this type uses (grep for other callers first). If the fix needs a shared helper (`T`, `arrow`, `chip`, `pan_items`, `grid_frame`, …) or the CSS, log it as a suggestion and don't make it. Keep the dg-* classes. Never add inline `fill`, `stroke` or `font-size`. Then run `perl -c scripts/Math8Viz.pm`.
+4. **Fix** inside `sub draw_TYPE` and helpers that only this type uses (grep for other callers first). If the fix needs a shared helper (`T`, `arrow`, `chip`, `pan_items`, `grid_frame`, …) or the CSS, log it as a suggestion and don't make it. Keep the dg-* classes. Never add inline `fill`, `stroke` or `font-size`. Then run `perl -c scripts/Math8Viz.pm`. Prefer fixes that change only the diagrams that have the problem (for example, widen only when items don't fit), so most diagrams stay identical and the review stays short.
 5. **Check.** `perl scripts/viz_gallery.pl TYPE --compare --out "$R/galleries/TYPE"`, plus `--key` into `…/TYPE-key` if needed.
    - Any WORDS CHANGED → wrong. Undo that part.
    - Look at **every** page with a CHANGED item, up to 15 pages, and check each changed diagram:
-     - Is it better, or at least no worse?
+     - Is it better, or at least no worse? Compare columns are 620 px wide, so a drawing wider than that is shown shrunk. Judge its text size at real width.
      - Is anything cut off or overlapping?
      - Does it still match its numbers?
      - Is the dashed answer box still there on the student copy?
    - If even one diagram got worse, fix it or drop that change. Two tries at most, then give up on that change.
 6. **Save or drop.**
-   - Fix kept: `git diff > "$R/patches/TYPE.patch"`. Delete the gallery pages with no CHANGED item. Add an entry to `$R/pending.md` (format below). Mark the queue line `[~]`.
+   - Fix kept: `git diff --output=$R/patches/TYPE.patch -- scripts/Math8Viz.pm scripts/vizext/`. Then `git apply --check` it. Delete the gallery pages with no CHANGED item. Add an entry to `$R/pending.md` (format below). Mark the queue line `[~]`.
    - Nothing kept: mark it `[!]` with the reason in the log.
    - Either way, `git checkout -- scripts/` at the end so the worktree is clean and gets removed.
 7. **Log** one entry in `$R/log.md`: the date, the type, what you looked at, what you changed or why not, and any suggestions. Put content problems (a wrong number in an `@viz` line, a caption that contradicts its picture) in `$R/content-issues.md` with the file and line. Don't fix them.
