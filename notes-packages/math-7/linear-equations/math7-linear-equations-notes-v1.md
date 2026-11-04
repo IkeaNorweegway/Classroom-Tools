@@ -165,7 +165,7 @@ The new equation is an **equivalent equation**. It has the same solution.
 ::: misconception
 WRONG: "Do it to one side only. 2x + 3 = 11, so 2x = 11."
 WHY: The left side lost 3 blocks. The right side did not. Now the right side is heavier.
-@viz balance left="2x" right="+11" text="2x = 11 is not level" caption="3 blocks came off the left only."
+@viz balance left="2x" right="+11" text="2x = 11 is not level" tilt=right caption="3 blocks came off the left only."
 RIGHT: Take 3 from both sides. 2x + 3 − 3 = 11 − 3, so 2x = 8.
 :::
 

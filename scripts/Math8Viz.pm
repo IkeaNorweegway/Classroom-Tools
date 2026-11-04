@@ -31,7 +31,7 @@ our %DOC = (
     tape       => 'parts="3:juice;5:water" values="10" total="…" (ratio tape diagram)',
     dnl        => 'top="0,3,6" bottom="0,2,4" toplabel bottomlabel arrow="1,3,×3" (double number line)',
     percentbar => 'percent=25 top="0%,25%,…" bottom="0,20,…" toplabel bottomlabel',
-    balance    => 'left="2x;+3" right="+11" (terms separated by ;  x-bags, + and − blocks)',
+    balance    => 'left="2x;+3" right="+11" (terms separated by ;  x-bags, + and − blocks) tilt=left|right (beam tips down on that side, for a scale that is not level)',
     pattern    => 'start=1 add=2 figures=3 last="?" (growing pattern; start column + groups of add)',
     coord      => 'xmin xmax ymin ymax xstep ystep xevery yevery xlabel ylabel points="x,y:label;…" line=1 dashed=1 width vline=3 open="x,y;…"',
     transform  => 'shape="1,1;4,1;1,3" move="translate 3,-4 | reflect x | reflect y | rotate 90 | rotate 180 [then …]" names="A,B,C" image=key|show|none range=6',
@@ -649,6 +649,7 @@ sub draw_balance {
     my ($lx, $rx, $py) = (110, 310, 92);
     my $b = '';
     $b .= poly('dg-fill-soft', 210, $py, 192, $py + 52, 228, $py + 52);
+    my $stand = $b; $b = '';   # beam, pans and blocks: drawn separately so tilt= can rotate them on the fulcrum
     $b .= line(60, $py, 360, $py, 'dg-arrow plain');
     for my $cx ($lx, $rx) {
         $b .= line($cx, $py, $cx - 34, $py - 26, 'dg-line') . line($cx, $py, $cx + 34, $py - 26, 'dg-line');
@@ -656,12 +657,15 @@ sub draw_balance {
     }
     $b .= pan_items($a->{left}, $lx, $py - 28);
     $b .= pan_items($a->{right}, $rx, $py - 28);
+    my $tilt = lc($a->{tilt} // '');
+    $b = $tilt eq 'right' ? qq{<g transform="rotate(6 210 $py)">$b</g>} : $tilt eq 'left' ? qq{<g transform="rotate(-6 210 $py)">$b</g>} : $b;
+    $b = $stand . $b;
     my $eq = $a->{text} // do {
         my $f = sub { my $s = join ' + ', map { s/^\+//r } list($_[0], qr/\s*;\s*/); $s =~ s/\+ -/− /g; $s =~ s/-/−/g; $s };
         $f->($a->{left}) . ' = ' . $f->($a->{right});
     };
     $b .= T(210, $H - 6, $eq, anchor => 'middle', cls => 'dg-math');
-    return (svg($W, $H, 'Balance scale: ' . plain($eq), $b));
+    return (svg($W, $H, 'Balance scale: ' . plain($eq) . ($tilt =~ /^(left|right)$/ ? ", tipped down on the $tilt" : ''), $b));
 }
 
 sub draw_scale { my ($a) = @_; return draw_balance($a); }
