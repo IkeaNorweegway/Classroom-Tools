@@ -2,7 +2,10 @@
 // Print support for the material viewers. Adds a Print button to the back bar,
 // sends Ctrl+P to the material (not the viewer shell), and adds "Page X of Y"
 // at the bottom of every printed page (Chrome/Edge 131+; other browsers print
-// without it). Skips sims and trainers (back bar has the "app" class) and
+// without it). Chrome draws its own header (date + title) on any page whose top
+// page margin has room, so the injected CSS sets the top page margin to 0 and puts
+// the material's own top margin back as padding on html (box-decoration-break:
+// clone repeats it on every printed page). Skips sims and trainers (back bar has the "app" class) and
 // materials that print with no page margin (posters, slide decks). A viewer can
 // also opt a page out with data-no-print on the back bar (used for games).
 ---
@@ -21,17 +24,26 @@
     var bar = document.querySelector('.back-bar');
     if (!frame || !bar || bar.classList.contains('app') || bar.hasAttribute('data-no-print')) return;
 
-    var PAGE_CSS = '@page { @bottom-center { content: "Page " counter(page) " of " counter(pages);' +
-      ' font: 9pt system-ui, sans-serif; color: #6b665d; } }';
+    // Top page margin is 0 so Chrome has no room for its header; the material's own
+    // top margin (read from its @page rule) comes back as cloned padding on html.
+    function pageCss(top) {
+      return '@page { margin-top: 0; @bottom-center { content: "Page " counter(page) " of " counter(pages);' +
+        ' font: 12pt system-ui, sans-serif; color: #3d3a35; } }' +
+        '@media print { html { padding-top: ' + top + '; box-decoration-break: clone;' +
+        ' -webkit-box-decoration-break: clone; } }';
+    }
 
-    // True when the material sets a zero bottom page margin (no room for a number).
-    function noBottomMargin(rules) {
+    // Reads the material's @page rules (no @page rule: Chrome's default margin, 0.4in): info.zero is true when the bottom margin is 0
+    // (no room for a number); info.top is the top margin to put back.
+    function scanPage(rules, info) {
       for (var i = 0; i < rules.length; i++) {
         var r = rules[i];
-        if (r.type === 6 && r.style.marginBottom !== '' && parseFloat(r.style.marginBottom) === 0) return true;
-        if (r.cssRules && noBottomMargin(r.cssRules)) return true;
+        if (r.type === 6) {
+          if (r.style.marginBottom !== '' && parseFloat(r.style.marginBottom) === 0) info.zero = true;
+          if (r.style.marginTop !== '' && !r.selectorText) info.top = r.style.marginTop;
+        }
+        if (r.cssRules) scanPage(r.cssRules, info);
       }
-      return false;
     }
 
     function onKey(e) {
@@ -45,13 +57,13 @@
       var doc;
       try { doc = frame.contentDocument; } catch (e) { return; }
       if (!doc || !doc.head || doc.getElementById('site-page-numbers')) return;
-      var skip = false;
-      for (var i = 0; i < doc.styleSheets.length && !skip; i++) {
-        try { skip = noBottomMargin(doc.styleSheets[i].cssRules); } catch (e) {}
+      var info = { zero: false, top: '0.4in' };
+      for (var i = 0; i < doc.styleSheets.length; i++) {
+        try { scanPage(doc.styleSheets[i].cssRules, info); } catch (e) {}
       }
       var s = doc.createElement('style');
       s.id = 'site-page-numbers';
-      if (!skip) s.textContent = PAGE_CSS;
+      if (!info.zero) s.textContent = pageCss(info.top);
       doc.head.appendChild(s);
       doc.addEventListener('keydown', onKey);
     }
