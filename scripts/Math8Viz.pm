@@ -640,31 +640,40 @@ sub pan_items {
         $out .= T($ux + 6, $uy + 10, '−', anchor => 'middle', cls => 'dg-label-sm') if $u->[1] < 0;
         $i++;
     }
-    return $out;
+    return wantarray ? ($out, $total) : $out;
 }
 
 sub draw_balance {
     my ($a) = @_;
-    my ($W, $H) = (420, 170);
-    my ($lx, $rx, $py) = (110, 310, 92);
+    my $H = 170;
+    my $py = 92;
+    # Both pans are as wide as the fuller side needs (at least 124), so nothing runs past a pan.
+    my $need = max((pan_items($a->{left}, 0, 0))[1] // 0, (pan_items($a->{right}, 0, 0))[1] // 0);
+    my $h = max(62, ceil($need / 2) + 4);
+    my $m = max(8, 48 - 2 * ($h - 62));
+    my $g = max(44, 76 - 2 * ($h - 62));
+    my $W = 2 * ($m + 2 * $h) + $g;
+    my $mid = $W / 2;
+    my ($lx, $rx) = ($mid - $g / 2 - $h, $mid + $g / 2 + $h);
+    my $hang = 34 * $h / 62;
     my $b = '';
-    $b .= poly('dg-fill-soft', 210, $py, 192, $py + 52, 228, $py + 52);
+    $b .= poly('dg-fill-soft', $mid, $py, $mid - 18, $py + 52, $mid + 18, $py + 52);
     my $stand = $b; $b = '';   # beam, pans and blocks: drawn separately so tilt= can rotate them on the fulcrum
-    $b .= line(60, $py, 360, $py, 'dg-arrow plain');
+    $b .= line($lx - 50, $py, $rx + 50, $py, 'dg-arrow plain');
     for my $cx ($lx, $rx) {
-        $b .= line($cx, $py, $cx - 34, $py - 26, 'dg-line') . line($cx, $py, $cx + 34, $py - 26, 'dg-line');
-        $b .= line($cx - 62, $py - 26, $cx + 62, $py - 26, 'dg-arrow plain');
+        $b .= line($cx, $py, $cx - $hang, $py - 26, 'dg-line') . line($cx, $py, $cx + $hang, $py - 26, 'dg-line');
+        $b .= line($cx - $h, $py - 26, $cx + $h, $py - 26, 'dg-arrow plain');
     }
-    $b .= pan_items($a->{left}, $lx, $py - 28);
-    $b .= pan_items($a->{right}, $rx, $py - 28);
+    $b .= scalar pan_items($a->{left}, $lx, $py - 28);
+    $b .= scalar pan_items($a->{right}, $rx, $py - 28);
     my $tilt = lc($a->{tilt} // '');
-    $b = $tilt eq 'right' ? qq{<g transform="rotate(6 210 $py)">$b</g>} : $tilt eq 'left' ? qq{<g transform="rotate(-6 210 $py)">$b</g>} : $b;
+    $b = $tilt eq 'right' ? qq{<g transform="rotate(6 $mid $py)">$b</g>} : $tilt eq 'left' ? qq{<g transform="rotate(-6 $mid $py)">$b</g>} : $b;
     $b = $stand . $b;
     my $eq = $a->{text} // do {
         my $f = sub { my $s = join ' + ', map { s/^\+//r } list($_[0], qr/\s*;\s*/); $s =~ s/\+ -/− /g; $s =~ s/-/−/g; $s };
         $f->($a->{left}) . ' = ' . $f->($a->{right});
     };
-    $b .= T(210, $H - 6, $eq, anchor => 'middle', cls => 'dg-math');
+    $b .= T($mid, $H - 6, $eq, anchor => 'middle', cls => 'dg-math');
     return (svg($W, $H, 'Balance scale: ' . plain($eq) . ($tilt =~ /^(left|right)$/ ? ", tipped down on the $tilt" : ''), $b));
 }
 
