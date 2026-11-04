@@ -63,6 +63,7 @@ All rendering and all site page work goes to the **`render-and-site`** agent (`.
 | Rendering, Astro pages, `src/data`, nav, links, site build | `render-and-site` | Sonnet, medium |
 | Bulk restyles and sweeps: "make all X look like Y", CSS or font rollouts, wiring a component into every viewer, section ids, link fixes; HTML polish on interactives and media pipeline steps once the design or script is set | `sweep` | Sonnet, medium |
 | Read-only checks: screenshots, layout at 1366×768, svg-audit, diagram vs text, key vs question, headless playtests | `checker` | Sonnet, low |
+| Ongoing diagram polish (Math 7/8 `@viz` types, readability and realism), one type per run in its own worktree; fixes wait in `_image-review/pending.md` for "approve TYPE" / "reject TYPE: why" (steps at the bottom of the agent file). Start with `/loop Run the image-polish agent on the next type in _image-review/queue.md` | `image-polish` | Sonnet, medium |
 | Finding things: "where is…", "what's unmerged", file searches | `Explore` | low |
 | Quick questions (git, tools, "what is…") | Main session; suggest `/model sonnet` and `/effort low` | Sonnet, low |
 | `max` effort, `/code-review ultra` | Only when the user asks | — |

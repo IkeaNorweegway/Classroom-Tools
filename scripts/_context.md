@@ -52,4 +52,5 @@ Note the version mismatch in `render_sci7_workbooks.py`: it reads the `v2` markd
 | `.claude/scripts/teachernotes-to-html.py` | Math 9 teacher notes `.md` → self-contained HTML, written beside the `.md` (Python) |
 | `scripts/convert_v1_to_v2.py` | One-off conversion of Math 9 teacher notes HTML from v1 to v2. Already run; old Linux paths. |
 | `.claude/skills/svg-audit/`, `.claude/skills/svg-diagram-review/` | Diagram checks for HTML notes packages |
+| `scripts/viz_gallery.pl` | Draws every `@viz` use of one Math 7/8 diagram type at print size into PNG pages (`--key` for answer-key copies, `--compare` for committed-vs-working side by side, flags any change to labels or numbers; `--list` counts every type). Writes outside the repo only. Used by the `image-polish` agent |
 | `.claude/skills/workspace-audit/scripts/audit.ps1` | Read-only structure audit: naming, placement, broken context references, old versions, duplicates, context size (PowerShell, runs here) |
