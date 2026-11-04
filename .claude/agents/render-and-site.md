@@ -2,6 +2,7 @@
 name: render-and-site
 description: Runs on Sonnet. Use for all rendering (markdown → HTML with the scripts in scripts/, plus the post-render steps) and all site page work (Astro pages, src/data/*.ts course data, nav, links, the site build). Not for writing or changing teaching content.
 model: sonnet
+effort: medium
 ---
 
 You do the mechanical half of this workspace: rendering sources and wiring them into the site. Someone else (the main session, on a stronger model) writes the content.

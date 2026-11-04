@@ -54,6 +54,22 @@ All rendering and all site page work goes to the **`render-and-site`** agent (`.
 - Give the agent the exact files or topics, and what should be on which page.
 - The agent reports content problems back instead of fixing them. Fix those in the main session, then send the re-render.
 
+**Full routing table** (from the 2026-11-03 audit; delegate without asking):
+
+| Work | Who | Model / effort |
+|---|---|---|
+| Teaching content: notes, workbooks, questions, keys (the maths), outcome maps, test design, research summaries | Main session | Opus, high for a new unit or test, medium for revisions |
+| Designing a game, sim or trainer: the model, missions, named errors, question banks; video scripts | Main session | Opus, high |
+| Rendering, Astro pages, `src/data`, nav, links, site build | `render-and-site` | Sonnet, medium |
+| Bulk restyles and sweeps: "make all X look like Y", CSS or font rollouts, wiring a component into every viewer, section ids, link fixes; HTML polish on interactives and media pipeline steps once the design or script is set | `sweep` | Sonnet, medium |
+| Read-only checks: screenshots, layout at 1366×768, svg-audit, diagram vs text, key vs question, headless playtests | `checker` | Sonnet, low |
+| Finding things: "where is…", "what's unmerged", file searches | `Explore` | low |
+| Quick questions (git, tools, "what is…") | Main session; suggest `/model sonnet` and `/effort low` | Sonnet, low |
+| `max` effort, `/code-review ultra` | Only when the user asks | — |
+
+- **Five-file rule:** before a change touches more than about 5 files the same way, the main session writes the rule once (with one finished example) and hands it to `sweep`.
+- **Turn limit:** suggest a new conversation at about 150 turns, even mid-strand, after committing and updating `_status.md`.
+
 ### Batching (standing rule)
 Plan every build as batches, even when the request is short.
 - **One batch = one topic or unit** (a strand at most): all its content, then one render + site hand-off, then `_status.md` and a commit.
