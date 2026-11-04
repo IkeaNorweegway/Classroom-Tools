@@ -314,16 +314,20 @@ PICS.rug = (A, it, V) => {
   if (!after(V)) return;
   panel(A, 530, 120, [['room: ' + it.L + ' × ' + it.W + ' = ' + it.L * it.W, C.blue], [it.p + '% of ' + it.L * it.W + ' = ' + it.area, C.yellow], done(V) ? ['√' + it.area + ' = ' + it.side + ' m', C.green] : null], 52, 20);
 };
-// Unit cubes in an isometric view; faces that touch another cube are not drawn.
+// Unit cubes seen from the front-right and above. Not true isometric: looking straight down a cube's
+// diagonal stacks the cross's front arms over its back arms and it reads as a hexagon. Faces that touch another cube are not drawn.
 PICS.cubes = (A, it, V) => {
   const cubes = it.shape === 'cross' ? [[1, 1, 0], [0, 1, 1], [1, 0, 1], [1, 1, 1], [2, 1, 1], [1, 2, 1], [1, 1, 2]] : [[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3]];
-  const has = (x, y, z) => cubes.some(c => c[0] === x && c[1] === y && c[2] === z), s = 46;
-  const P = (x, y, z) => [(x - y) * s * .866, (x + y) * s * .5 - z * s];
-  const all = []; cubes.forEach(([x, y, z]) => { for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) for (let k = 0; k < 2; k++) all.push(P(x + i, y + j, z + k)); });
+  const has = (x, y, z) => cubes.some(c => c[0] === x && c[1] === y && c[2] === z);
+  const th = 30 * Math.PI / 180, ph = 25 * Math.PI / 180, ct = Math.cos(th), st = Math.sin(th), cp = Math.cos(ph), sp = Math.sin(ph);
+  const P0 = (x, y, z) => [y * ct - x * st, sp * (x * ct + y * st) - z * cp];   // screen x, screen y (down)
+  const depth = ([x, y, z]) => cp * (x * ct + y * st) + sp * z;                 // larger = nearer the viewer
+  const all = []; cubes.forEach(([x, y, z]) => { for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) for (let k = 0; k < 2; k++) all.push(P0(x + i, y + j, z + k)); });
   const mnx = Math.min(...all.map(p => p[0])), mxx = Math.max(...all.map(p => p[0])), mny = Math.min(...all.map(p => p[1])), mxy = Math.max(...all.map(p => p[1]));
-  const ox = 215 - (mnx + mxx) / 2, oy = 215 - (mny + mxy) / 2, pt = (x, y, z) => { const p = P(x, y, z); return (p[0] + ox) + ',' + (p[1] + oy); };
+  const s = Math.min(70, 380 / (mxx - mnx), 330 / (mxy - mny));
+  const ox = 230 - s * (mnx + mxx) / 2, oy = 225 - s * (mny + mxy) / 2, pt = (x, y, z) => { const p = P0(x, y, z); return (p[0] * s + ox) + ',' + (p[1] * s + oy); };
   const face = (pts, fill) => A.el('polygon', { points: pts.map(p => pt(...p)).join(' '), fill, stroke: C.blue, 'stroke-width': 1.6, 'stroke-linejoin': 'round' }, A.svg);
-  cubes.slice().sort((a, b) => (a[0] + a[1] + a[2]) - (b[0] + b[1] + b[2])).forEach(([x, y, z]) => {
+  cubes.slice().sort((a, b) => depth(a) - depth(b)).forEach(([x, y, z]) => {
     if (!has(x, y, z + 1)) face([[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]], '#2b5f6c');
     if (!has(x + 1, y, z)) face([[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]], '#1d4550');
     if (!has(x, y + 1, z)) face([[x, y + 1, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]], '#163640');
