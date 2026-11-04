@@ -3,7 +3,8 @@
 // sends Ctrl+P to the material (not the viewer shell), and adds "Page X of Y"
 // at the bottom of every printed page (Chrome/Edge 131+; other browsers print
 // without it). Skips sims and trainers (back bar has the "app" class) and
-// materials that print with no page margin (posters, slide decks).
+// materials that print with no page margin (posters, slide decks). A viewer can
+// also opt a page out with data-no-print on the back bar (used for games).
 ---
 <style is:global>
   .back-bar.has-print { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
@@ -18,7 +19,7 @@
   (function () {
     var frame = document.querySelector('.doc-frame');
     var bar = document.querySelector('.back-bar');
-    if (!frame || !bar || bar.classList.contains('app')) return;
+    if (!frame || !bar || bar.classList.contains('app') || bar.hasAttribute('data-no-print')) return;
 
     var PAGE_CSS = '@page { @bottom-center { content: "Page " counter(page) " of " counter(pages);' +
       ' font: 9pt system-ui, sans-serif; color: #6b665d; } }';

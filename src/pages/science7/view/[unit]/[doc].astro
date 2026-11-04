@@ -1,5 +1,6 @@
 ---
 import Nav from '../../../../components/Nav.astro';
+import PrintSupport from '../../../../components/PrintSupport.astro';
 import { science7 as manifest } from '../../../../data/science7';
 import { unitDocs } from '../../../../data/manifest';
 import { existsSync } from 'node:fs';
@@ -119,6 +120,7 @@ const backLabel = isHome ? '← Parent guide' : `← ${unitLabels[unit] ?? 'Scie
 const fileUrl = `${base}materials/${doc}.html`;
 // Simulations and trainers fill the window: no site nav, a slim back bar, a full-screen button.
 const isApp = /-(sim|trainer)-v\d+$/.test(doc!);
+const isGame = /-game-v\d+$/.test(doc!);
 ---
 
 <!doctype html>
@@ -176,7 +178,7 @@ const isApp = /-(sim|trainer)-v\d+$/.test(doc!);
         <Nav course="science7" />
       </div>
     )}
-    <div class:list={['back-bar', { app: isApp }]}>
+    <div class:list={['back-bar', { app: isApp }]} data-no-print={isGame ? '' : undefined}>
       <a href={backHref}>{backLabel}</a>
       {isApp && <button type="button" id="fs-btn" class="fs-btn">⛶ Full screen</button>}
     </div>
@@ -187,6 +189,7 @@ const isApp = /-(sim|trainer)-v\d+$/.test(doc!);
       allowfullscreen
     />
   </div>
+  <PrintSupport />
   <script is:inline>
     var fsBtn = document.getElementById('fs-btn');
     if (fsBtn) fsBtn.addEventListener('click', function () {

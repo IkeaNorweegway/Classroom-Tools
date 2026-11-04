@@ -1,5 +1,6 @@
 ---
 import Nav from '../../../../components/Nav.astro';
+import PrintSupport from '../../../../components/PrintSupport.astro';
 import { cefl as manifest, splitSlug } from '../../../../data/cefl';
 import { unitDocs } from '../../../../data/manifest';
 import { existsSync } from 'node:fs';
@@ -25,6 +26,7 @@ const grade = splitSlug(unit!).grade;
 const backHref = isGuide ? `${base}cefl/teacher#${unit}` : `${base}${manifest.studentHref(unit!)}`;
 const backLabel = isGuide ? '← Teacher hub' : `← Grade ${grade} ${u?.label ?? ''}`;
 const fileUrl = `${base}materials/cefl/${doc}.html`;
+const isGame = /-game-v\d+$/.test(doc!);
 ---
 
 <!doctype html>
@@ -77,7 +79,7 @@ const fileUrl = `${base}materials/cefl/${doc}.html`;
     <div class="viewer-nav">
       <Nav course="cefl" audience={isGuide ? 'teacher' : undefined} />
     </div>
-    <div class="back-bar">
+    <div class="back-bar" data-no-print={isGame ? '' : undefined}>
       <a href={backHref}>{backLabel}</a>
     </div>
     <iframe
@@ -86,6 +88,7 @@ const fileUrl = `${base}materials/cefl/${doc}.html`;
       title={doc}
     />
   </div>
+  <PrintSupport />
   <script is:inline>
     // Pass a section id (#s3) on to the document, so a link can open one notes section.
     (function () {
