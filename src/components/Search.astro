@@ -1,0 +1,220 @@
+---
+// Site search. `nav`: an icon button in the top bar (wide screens) and the
+// search panel it opens (press / or Ctrl+K). `trigger`: another button that
+// opens the same panel, for the subject row on small screens, where the top
+// bar is full. `inline`: a full-width box with a results dropdown,
+// for the home page and the parent hub. Both read /search-index.json
+// (src/pages/search-index.json.ts) the first time they are used.
+interface Props {
+  variant?: 'nav' | 'trigger' | 'inline';
+  /** Teacher view's dark nav. */
+  dark?: boolean;
+  placeholder?: string;
+}
+const { variant = 'nav', dark = false, placeholder = 'Search a topic or word, like slope or photosynthesis' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const id = `search-${variant}`;
+
+const icon = '<circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 4.5 4.5"/>';
+---
+
+{variant === 'trigger' ? (
+  <button
+    type="button"
+    data-search-open
+    aria-haspopup="dialog"
+    class={`search-btn search-btn--trigger ${dark ? 'search-btn--dark' : ''}`}
+  >
+    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" set:html={icon} />
+    Search
+  </button>
+) : variant === 'nav' ? (
+  <div data-search data-variant="nav" data-base={base}>
+    <button
+      type="button"
+      data-search-open
+      aria-haspopup="dialog"
+      aria-label="Search"
+      title="Search (press /)"
+      class={`search-btn search-btn--icon hidden lg:inline-flex ${dark ? 'search-btn--dark' : ''}`}
+    >
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" set:html={icon} />
+    </button>
+    <dialog class="search-dialog" aria-label="Search the site">
+      <div class="search-panel">
+        <div class="search-field">
+          <svg class="h-5 w-5 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" set:html={icon} />
+          <input
+            type="search"
+            data-search-input
+            placeholder={placeholder}
+            aria-label="Search"
+            aria-controls={`${id}-results`}
+            autocomplete="off"
+            spellcheck="false"
+            enterkeyhint="go"
+          />
+          <button type="button" data-search-close class="search-close">Esc</button>
+        </div>
+        <div id={`${id}-results`} data-search-results class="search-results" aria-live="polite"></div>
+      </div>
+    </dialog>
+  </div>
+) : (
+  <div data-search data-variant="inline" data-base={base} class="search-inline">
+    <div class="search-field search-field--inline">
+      <svg class="h-5 w-5 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" set:html={icon} />
+      <input
+        type="search"
+        data-search-input
+        placeholder={placeholder}
+        aria-label="Search"
+        aria-controls={`${id}-results`}
+        autocomplete="off"
+        spellcheck="false"
+        enterkeyhint="go"
+      />
+    </div>
+    <div id={`${id}-results`} data-search-results class="search-results search-dropdown" aria-live="polite" hidden></div>
+  </div>
+)}
+
+<script>
+  import { initSearch } from './search-ui.js';
+  initSearch();
+</script>
+
+<style is:global>
+  /* Nav buttons: match the audience switch's soft pill. Display is left to
+     the utility classes (hidden lg:inline-flex) so breakpoints win. */
+  .search-btn {
+    align-items: center;
+    gap: 0.4rem;
+    height: 2.125rem;
+    padding: 0 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: rgb(84 79 71);
+    background: rgb(31 29 26 / 0.05);
+    box-shadow: inset 0 0 0 1px rgb(31 29 26 / 0.06);
+    transition: color 200ms, background-color 200ms;
+  }
+  .search-btn:hover { color: rgb(31 29 26); background: rgb(31 29 26 / 0.08); }
+  .search-btn--dark { color: rgb(210 206 196); background: rgb(255 255 255 / 0.08); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1); }
+  .search-btn--dark:hover { color: white; background: rgb(255 255 255 / 0.14); }
+  .search-btn--icon { width: 2.125rem; justify-content: center; padding: 0; }
+  .search-btn--trigger { display: inline-flex; height: 1.875rem; padding: 0 0.75rem; }
+
+  /* Panel: a raised card near the top of the screen. */
+  .search-dialog {
+    width: min(40rem, calc(100vw - 1.5rem));
+    max-width: none;
+    max-height: none;
+    margin: 8vh auto auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+  }
+  .search-dialog::backdrop { background: rgb(31 29 26 / 0.35); backdrop-filter: blur(2px); }
+  .search-panel {
+    border-radius: 1rem;
+    background: rgb(var(--surface));
+    box-shadow: 0 0 0 1px rgb(var(--ink) / 0.08), 0 24px 48px -16px rgb(var(--ink) / 0.4);
+    overflow: hidden;
+    color: rgb(31 29 26);
+  }
+  .search-field {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgb(var(--ink) / 0.08);
+  }
+  .search-field input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    font-size: 1.0625rem;
+    color: rgb(31 29 26);
+    outline: none;
+  }
+  .search-field input::placeholder { color: rgb(140 134 124); }
+  .search-field input::-webkit-search-cancel-button { display: none; }
+  .search-close {
+    border-radius: 0.4rem;
+    padding: 0.15rem 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgb(84 79 71);
+    box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.15);
+  }
+  .search-results { max-height: min(62vh, 32rem); overflow-y: auto; padding: 0.5rem; }
+
+  /* Inline box (home page, parent hub). */
+  .search-inline { position: relative; }
+  .search-field--inline {
+    border: 0;
+    border-radius: 0.875rem;
+    background: white;
+    box-shadow: 0 0 0 1px rgb(var(--ink) / 0.1), 0 1px 2px rgb(var(--ink) / 0.06);
+  }
+  .search-field--inline:focus-within { box-shadow: 0 0 0 2px rgb(var(--ink) / 0.35); }
+  .search-dropdown {
+    position: absolute;
+    z-index: 30;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    right: 0;
+    border-radius: 1rem;
+    background: rgb(var(--surface));
+    box-shadow: 0 0 0 1px rgb(var(--ink) / 0.08), 0 20px 40px -16px rgb(var(--ink) / 0.35);
+  }
+
+  /* Results. Each row carries its course's data-course, so its dot and
+     hover tint show that course's accent. */
+  .sr-group + .sr-group { margin-top: 0.5rem; }
+  .sr-heading {
+    padding: 0.5rem 0.625rem 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgb(120 114 104);
+  }
+  .sr-item { display: flex; align-items: center; gap: 0.25rem; border-radius: 0.625rem; }
+  .sr-item:hover, .sr-item:focus-within { background: rgb(var(--accent-soft)); }
+  .sr-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    padding: 0.5rem 0.625rem;
+    border-radius: 0.625rem;
+    outline-offset: -2px;
+  }
+  .sr-dot { margin-top: 0.4rem; height: 0.5rem; width: 0.5rem; flex-shrink: 0; border-radius: 9999px; background: rgb(var(--accent)); }
+  .sr-body { min-width: 0; display: flex; flex-direction: column; }
+  .sr-label { font-size: 0.9375rem; font-weight: 600; color: rgb(31 29 26); }
+  .sr-meta { font-size: 0.8125rem; color: rgb(110 104 95); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sr-side {
+    flex-shrink: 0;
+    margin-right: 0.375rem;
+    border-radius: 9999px;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgb(var(--accent-ink));
+    box-shadow: inset 0 0 0 1px rgb(var(--accent) / 0.35);
+    white-space: nowrap;
+  }
+  .sr-side:hover { background: white; }
+  .sr-note { padding: 0.75rem 0.625rem; font-size: 0.875rem; color: rgb(110 104 95); }
+  .sr-suggest { padding: 0.5rem 0.625rem; font-size: 0.9375rem; color: rgb(84 79 71); }
+  .sr-suggest-btn { font-weight: 700; color: rgb(31 29 26); text-decoration: underline; text-underline-offset: 3px; }
+  @media (max-width: 480px) {
+    .sr-side { display: none; }
+  }
+</style>

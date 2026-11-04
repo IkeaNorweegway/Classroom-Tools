@@ -1,5 +1,5 @@
 # Project Status
-*Last updated: 2026-11-01*
+*Last updated: 2026-11-03*
 
 Current state only, one line per item. Keep it under 130 lines: put session detail in the commit message, and move finished build or test logs to `_status-archive.md`. The archive's **2026-11-01 snapshot** has the full detail behind every line here: test logs, file lists, and the exact facts to check before printing.
 
@@ -18,11 +18,19 @@ Current state only, one line per item. Keep it under 130 lines: put session deta
 
 ## In progress
 
-- **Math 8 rebuilt on the June 2026 draft** (branch `section-ids`, not on `master` yet): 12 new topics with the full suite, 4 strand workbooks (v2), new `_courses/math-8/_context.md`. The 2016 context is kept as `_context-2016.md`, and the old 2016 materials are kept, unlinked (including the 2016 practice tests and unit tests, which have no draft version yet). Waiting for the teacher read-through and a merge. Facts to confirm: Alberta minimum wage, licence ages, Calaway Park height limits (Inequalities); guiding questions are written from the outcome stems; made-up data is listed in each teacher notes file.
+- **Math 8 rebuilt on the June 2026 draft** (on `master` since 2026-11-01): 12 new topics with the full suite, 4 strand workbooks (v2), new `_courses/math-8/_context.md`. The 2016 context is kept as `_context-2016.md`, and the old 2016 materials are kept, unlinked (including the 2016 practice tests and unit tests, which have no draft version yet). Waiting for the teacher read-through. Facts to confirm: Alberta minimum wage, licence ages, Calaway Park height limits (Inequalities); guiding questions are written from the outcome stems; made-up data is listed in each teacher notes file.
 - **Math 8 (draft) tests:** Number strand done (Rational Numbers, Square Roots & Irrational Numbers, Proportional Reasoning): a 40-mark, 60-minute practice test + key on each topic page, and a 30-mark, 40-minute teacher-only unit test + key (HTML and PDF beside the source, git-ignored; upload the PDFs to Drive, Teacher Materials › Grade 8 › Mathematics, Tests and Answer Keys). Source format: top of `scripts/render_math8.pl` (unit tests render only when named, and only if git-ignored). Next: Algebra & Functions, then Geometry & Measurement, then Statistics & Probability. Made-up data is listed in each source's comment.
-- **Math 7** (branch `section-ids`, not on `master` yet): built, waiting for the teacher read-through and a merge.
+- **Math 7** (on `master` since 2026-11-01): built, waiting for the teacher read-through.
+- **Social 9 trainers** (narrow format, `scripts/drill/`, new shared `soc.js`): all three batches done 2026-11-03: Urbanization, Independence, WWII, Post-War, Modern Economy, Government, Evolving Citizenship (`soc9-<unit>-trainer-v1.html`). Site page not yet built or checked (no Node on Windows). Tested: model and UI checks pass in headless Chrome, plus layout at 1366, 1000 and 1280×600; screenshots checked. Not tested: students, touch screens, Chromebooks. Teacher check: facts beyond the notes (Alberta 1916 vote, McKinney 1917, Macphail 1921, Wilson 1930, Quebec 1940 and 1980, the Veterans Charter, the Meech Lake year 1987). The Citizenship trainer leaves out the amending formula (the notes misstate it). Residential schools and the Sixties Scoop are left on paper on purpose.
 
 ---
+
+
+### Merged from master (2026-10-29 to 30; details in those commit messages)
+- **Site search:** nav search button (`/` opens it) and search boxes on the home page and `/parents`; finds units, notes section titles, vocabulary, sims, games and practice.
+- **Math 9 narrow trainers** replace the broad Algebra sim and trainers, one per topic, in `scripts/drill/`; missed question types come back more often.
+- **Math 9 PAT prep:** a PAT Word Problems trainer and a PAT Questions trainer (47 released items, 2013/2015/2019) with a picture for every word problem. Teacher read of the shortened stems still to do.
+- **Science 7:** a concept trainer for every unit.
 
 ## Open items
 
@@ -74,8 +82,8 @@ Current state only, one line per item. Keep it under 130 lines: put session deta
 |---|---|---|
 | Grade 6 Science | site ✓ | 6 units + year review: notes, workbook, teacher notes, workbook key (EN, EF, FR). Forces exits, project brief, sub plan |
 | Grade 7 Science | site ✓ | 5 units, full suite (notes + key v2, workbook + key, exits, quiz, test, teacher guide). Plants extras: Plant Hunt, Lily Lab, organizers, 3 games and 2 sims (v2). The site workbook HTML is newer than its v2 markdown, so don't re-render it. No FR/EF |
-| Math 7 | built, not merged | 12 topics, June 2026 draft. Per topic: notes + key, concept sheet, Core/Challenge + keys, exits, quiz, teacher notes, 2 home sheets, prereq practice. 4 strand workbooks + keys. Renders with `render_math8.pl` |
-| Math 8 | site ✓ (2016); draft rebuild built, not merged | Draft: 12 topics (Rational Numbers … Independent & Dependent Events), same suite as Math 7, 4 strand workbooks v2. New diagram types in `scripts/vizext/<slug>.pl`. 2016: full suite, practice tests, unit tests (teacher only, Drive), workbooks v1, kept unlinked |
+| Math 7 | site ✓ (draft) | 12 topics, June 2026 draft. Per topic: notes + key, concept sheet, Core/Challenge + keys, exits, quiz, teacher notes, 2 home sheets, prereq practice. 4 strand workbooks + keys. Renders with `render_math8.pl` |
+| Math 8 | site ✓ (draft rebuild; 2016 files unlinked) | Draft: 12 topics (Rational Numbers … Independent & Dependent Events), same suite as Math 7, 4 strand workbooks v2. New diagram types in `scripts/vizext/<slug>.pl`. 2016: full suite, practice tests, unit tests (teacher only, Drive), workbooks v1, kept unlinked |
 | Math 9 | site ✓ | 11 topics: notes + key, teacher notes, concept sheet, Core/Challenge + keys, poster, exits, 4 strand workbooks, practice tests, unit tests (Drive), 4 inquiry projects. Sims: Fraction v2, Pythagorean, Linear Relations, Equations and Polynomials trainers. No quizzes |
 | Grade 5 ELA | site ✓ | 6 genre units (170 lessons), editions A/B/C, regions map. Render with `render_ela5.pl` |
 | Grade 7 Social | site ✓ | 5 units, full suite. Source and HTML match, so edit the markdown and re-render |
@@ -87,7 +95,6 @@ Current state only, one line per item. Keep it under 130 lines: put session deta
 | PhysEd 5–6, 7–9 | context only | 7 units each; nothing built |
 
 ### Next up
-- Teacher read-through of Math 7 and Math 8, then merge `section-ids` (Math 7 + Math 8) to `master`.
+- Teacher read-through of Math 7 and Math 8 (merged to `master` 2026-11-01).
 - Math 8 (draft): practice tests and unit tests for Algebra & Functions, Geometry & Measurement, Statistics & Probability (Number is done).
-- Math 9 sims: Number batch (Powers trainer; widen the Fraction and Pythagorean sims), then Measurement & Geometry, then Statistics & Probability.
 - Math 9 answer keys follow `research/answer-key-design-research.md` (full solutions for Core, partial for Challenge, faded in workbooks).
