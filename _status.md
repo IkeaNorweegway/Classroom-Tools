@@ -96,5 +96,5 @@ Current state only, one line per item. Keep it under 130 lines: put session deta
 
 ### Next up
 - Teacher read-through of Math 7 and Math 8 (merged to `master` 2026-11-01).
-- Math 8 (draft): practice tests and unit tests for Algebra & Functions, Geometry & Measurement, Statistics & Probability (Number is done).
+- Math 8 (draft): practice tests and unit tests for Geometry & Measurement, then Statistics & Probability (Number and Algebra & Functions are done).
 - Math 9 answer keys follow `research/answer-key-design-research.md` (full solutions for Core, partial for Challenge, faded in workbooks).
