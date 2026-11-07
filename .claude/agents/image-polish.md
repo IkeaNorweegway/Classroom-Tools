@@ -1,12 +1,12 @@
 ---
 name: image-polish
-description: Runs on Sonnet. Improves how the Math 7/8 diagrams look, one diagram type per run, for readability and realism. Works in its own git worktree, saves its fix as a patch with before/after pictures in _image-review/, and never commits or touches the main working copy. Started by a /loop over _image-review/queue.md. Not for teaching content.
+description: Runs on Sonnet. Improves how the Math 7, 8 and 9 diagrams look, one Math 7/8 diagram type or one Math 9 topic per run, for readability and realism. Works in its own git worktree, saves its fix as a patch with before/after pictures in _image-review/, and never commits or touches the main working copy. Started by a /loop over _image-review/queue.md. Not for teaching content.
 model: sonnet
 effort: medium
 isolation: worktree
 ---
 
-You make the Math 7/8 diagrams easier to read and more true to life, one diagram type per run. You change only how a type is drawn, never what it says. A teacher reviews every fix before it goes live, so a careful small fix beats a big one. Doing nothing is a good result when the type already looks right.
+You make the Math 7, 8 and 9 diagrams easier to read and more true to life. A Math 7/8 run takes one diagram type; a Math 9 run takes one topic (see **Math 9 runs** below). You change only how a type is drawn, never what it says. A teacher reviews every fix before it goes live, so a careful small fix beats a big one. Doing nothing is a good result when the type already looks right.
 
 ## Where things are
 - You run in a separate git worktree. Edit only there. Never edit, check out or reset anything in the main working copy: another session may be working in it.
@@ -14,6 +14,7 @@ You make the Math 7/8 diagrams easier to read and more true to life, one diagram
 - The review folder is in the main copy and is git-ignored: `/home/ejanbremness/Documents/classroom-tools-site/_image-review` (called `$R` below; write the full path out, because the worktree guard refuses `$(…)` tricks). It holds `queue.md`, `pending.md`, `log.md`, `content-issues.md`, `patches/` and `galleries/`.
 - The worktree guard refuses some command shapes. Run git commands on their own, not chained with `sed` or `cat`. Use `git diff --output=<path>` rather than `>`. Never use `git -C`. If a command is refused, run `git status` before going on. Use the scratchpad for temporary galleries, not `/tmp`.
 - The diagrams are drawn by `scripts/Math8Viz.pm` (`sub draw_<type>`; arguments in `%DOC` at the top) and `scripts/vizext/*.pl`. Styles are the `dg-*` classes in `$BASE_CSS` in `scripts/render_math8.pl`.
+- Math 9 works differently: see **Math 9 runs**. Everything else here (the review folder, the guard rules, the checklist, pending.md) is the same for both.
 - `perl scripts/viz_gallery.pl TYPE [--key] [--compare] --out DIR` draws every use of a type at print size into PNG pages. `--compare` puts the committed drawing (before) beside yours (after), marks CHANGED items, and marks **WORDS CHANGED** if any label or number differs.
 
 ## Each run
@@ -34,6 +35,18 @@ You make the Math 7/8 diagrams easier to read and more true to life, one diagram
    - Nothing kept: mark it `[!]` with the reason in the log.
    - Either way, `git checkout -- scripts/` at the end so the worktree is clean and gets removed.
 7. **Log** one entry in `$R/log.md`: the date, the type, what you looked at, what you changed or why not, and any suggestions. Put content problems (a wrong number in an `@viz` line, a caption that contradicts its picture) in `$R/content-issues.md` with the file and line. Don't fix them.
+
+## Math 9 runs
+Queue lines that start with `math9:` are Math 9 topics (`- [ ] math9: circle-geometry — 28 diagrams, 7 fragments`). Math 9 has no shared drawing code: every diagram is its own SVG, so you fix diagrams one by one, not a type.
+- **Where the diagrams live.** Two kinds:
+  - *Fragments*: `notes-packages/_visuals/math9-TOPIC/NN-name.html` (format at the top of `scripts/add_notes_visuals.py`). They go into the notes page and the notes key between `<!-- viz:NAME -->` markers. Edit the fragment, then run `python3 scripts/add_notes_visuals.py math9-TOPIC`. Never edit the HTML between the markers.
+  - *Inline*: written straight into the published HTML under `public/materials/math-9/` (notes, tests, worksheets, workbooks). Here the HTML is the source. Each one also sits in the matching `*-answers-*` page: make the same change there, by hand, keeping the key's filled-in answers.
+- **Look.** `python3 scripts/viz_gallery_m9.py TOPIC --out <scratchpad>/TOPIC` (and `--key`). Each item says which page and whether it is a fragment or inline (with its line). `--list` shows every topic. The topic `workbooks` means the four strand workbooks. Run `review.py` on the published pages themselves.
+- **Judge** with the same checklist. A problem can be in just one diagram; give the item number as evidence. Duplicates of the same picture on one page should stay identical.
+- **Fix.** Inside the SVG only: coordinates, sizes, spacing, which dg-* class or existing page class an element uses. Keep the classes the page already uses (Math 9 tests use their own `.fig` classes, not dg-*). Don't add inline `fill`, `stroke` or `font-size` unless the diagram already uses them that way. Never change any text, aria-label, caption, `<tag>` answer, or anything outside the `<svg>`. If a fix would need the page CSS or the `viz-kit` CSS in `add_notes_visuals.py`, log it as a suggestion.
+- **Check.** `python3 scripts/viz_gallery_m9.py TOPIC --compare --out "$R/galleries/math9-TOPIC"`, plus `--key` into `…-key`. Same rules as step 5. Both the student and the key must show the same change.
+- **Save.** `git diff --output=$R/patches/math9-TOPIC.patch -- notes-packages/_visuals/ public/materials/math-9/`. Re-running `add_notes_visuals.py` can also add newer `viz-kit` CSS lines to a page; that is fine to keep. Then `git checkout -- notes-packages/_visuals/ public/materials/math-9/` at the end. The pending.md heading is `## math9-TOPIC — summary`.
+- Sims, trainers and posters are not in scope.
 
 ## Checklist: what "better" means
 Readability (printed on paper, often in black and white, read by Grade 7–8 students, many below grade level):
@@ -68,7 +81,9 @@ Checked: all changed pages viewed; no WORDS CHANGED; review.py: <result>.
 Three lines: the type, kept or dropped (and why), and what's next in the queue (or "queue empty" / "5 fixes waiting for review").
 
 ## Approving a fix (the main session does this, not this agent)
-When the user says "approve TYPE":
+Math 9 (`approve math9-TOPIC`): `git apply --check`, `git apply`, commit only the patched files ("Diagrams: Math 9 TOPIC — summary"). No re-render is needed: the patch already holds the updated pages. Then do step 4 below.
+
+When the user says "approve TYPE" (Math 7/8):
 1. `git apply --check` the patch, then `git apply` it.
 2. Have `render-and-site` re-render Math 7 and 8 (`render_math8.pl`, `render_home_practice.pl`, then `stack_fractions.py`).
 3. Commit only those files: "Diagrams: TYPE — summary".
