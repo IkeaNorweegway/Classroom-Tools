@@ -21,7 +21,7 @@ Grade 8 has no 8N2 or 8N4 (integer, fraction and decimal operations are applied 
 
 ## Reading level and pictures
 
-Same rules as Math 7 (`_courses/math-7/_context.md`): F&P N–P, 6–12-word sentences, everyday instruction words, math words bold with a picture; 3+ diagrams per notes section, a diagram on half the Core questions and a third of the Challenge questions, one per exit ticket, three per home sheet. Diagrams from `scripts/Math8Viz.pm`.
+Same rules as Math 7 (`_courses/math-7/_context.md`): F&P N–P, 6–12-word sentences, everyday instruction words, math words bold with a picture; 3+ diagrams per notes section, a diagram on half the Core questions and a third of the Challenge questions, one per exit ticket, three per home sheet. Diagrams from `scripts/Math8Viz.pm`; hand-drawn (`::: html`) when no type shows the idea clearly (rule in `_courses/math-9/_context.md`, "Diagrams").
 
 ---
 

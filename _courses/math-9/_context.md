@@ -120,6 +120,14 @@ After every worked example, include a self-explanation prompt: "Explain what hap
 **Alberta contexts:**
 Anchor problems use recognizable Alberta settings: Fort McMurray, Banff, Edmonton, Calgary, canola fields, pipeline, hockey rinks, oil sands. These are not cosmetic — contexts should be genuine (removing the context makes the math problem incoherent) rather than pseudo-context (the scenario is decorative and students ignore it).
 
+**Diagrams: library first, hand-drawn when the library falls short (from 2026-11-07):**
+Notes diagrams are fragment files in `notes-packages/_visuals/math9-<topic>/`. A fragment body is either `@viz` lines (drawn by the Math 7/8 library, `scripts/Math8Viz.pm` + `scripts/vizext/`; several lines sit side by side) or a hand-drawn SVG. Choose in this order:
+1. **A library type** that shows the idea as clearly as a hand drawing would. An extra option on an existing type counts.
+2. **A new library type** (a file in `scripts/vizext/`) when the same kind of picture will be needed about 3 or more times, in any course.
+3. **Hand-drawn SVG** for one-offs and for what the library draws worse: sketches with no scale, cause-and-effect or concept diagrams, real-world scenes, unusual layouts. Use `dg-*` classes, `<tag>` blanks, and run svg-audit.
+
+Never switch a diagram to the library unless the library version is at least as clear: compare with `scripts/viz_gallery_m9.py TOPIC --compare`. Hand-drawn is a normal choice, not a failure; the same checks (galleries, checker, image-polish) cover both. Trial: Statistics (`scatter` type; 01 and 03 stay hand-drawn).
+
 ---
 
 ## Inquiry Projects

@@ -17,6 +17,13 @@ Each visual is one fragment file in notes-packages/_visuals/<unit>/NN-name.html:
       <mapbase name="europe-canada" x="0" y="0"/>   land layer from notes-packages/_visuals/_maps/ (scripts/build_social_maps.py)
     </svg>
 
+A body may instead be one or more `@viz` lines (Math 7/8/9 diagram library, scripts/Math8Viz.pm and
+scripts/vizext/*.pl, drawn through scripts/viz_line.pl). Header needs no tikz line (the library writes its
+own comment). One line gives one figure; several lines sit side by side in a `viz-row`. `[[x]]` in a
+label is a dashed blank in the student copy and green text in the key:
+
+    @viz scatter xmin=0 xmax=10 ymin=0 ymax=10 points="1,2;3,4" outlier="7,2:[[outlier]]"
+
 Student notes get empty dashed tag boxes; the answer key gets the same box with the answer in green.
 If the anchor is not in the answer key, the figure goes right after that section's <h2> line.
 
@@ -31,6 +38,7 @@ Usage:
 import html
 import math
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -70,6 +78,9 @@ CSS = CSS_START + """
         --viz-plant: #15803d; --viz-water: #0369a1; --viz-earth: #92400e; --viz-sun: #ca8a04; --viz-key: #15803d; }
 .viz { margin: 1rem auto 1.25rem; text-align: center; break-inside: avoid; page-break-inside: avoid; }
 .viz svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.viz-row { display: flex; justify-content: center; align-items: flex-start; gap: 1.25rem; flex-wrap: wrap; }
+.viz-row svg { margin: 0; }
+svg .dg-shade       { fill: var(--dg-accent); fill-opacity: .42; stroke: none; }
 .viz figcaption { font-size: 0.8rem; line-height: 1.4; color: #544f47; margin: 0.4rem auto 0; max-width: 40rem; font-style: italic; }
 svg .dg-boundary, svg .dg-line, svg .dg-accent, svg .dg-dashed, svg .dg-right-angle, svg .dg-construction { vector-effect: non-scaling-stroke; }
 svg .dg-boundary    { stroke: var(--dg-stroke, #3f3b35); fill: var(--dg-fill, #faf9f6); stroke-width: var(--dg-sw, 1.5px); }
@@ -157,6 +168,7 @@ def parse_fragment(path):
             sys.exit(f"{path}: header needs '{key}'")
     meta["id"] = path.stem.split("-", 1)[1] if re.match(r"\d+-", path.stem) else path.stem
     meta["svg"] = m.group(2).strip()
+    meta["lib"] = meta["svg"].startswith("@viz")
     meta["file"] = path
     return meta
 
@@ -221,7 +233,25 @@ def expand(svg, answer_key):
     return new + svg[head.end():]
 
 
+def draw_library(meta, answer_key):
+    """Draw a fragment made of @viz lines with Math8Viz (via viz_line.pl)."""
+    cmd = ["perl", str(ROOT / "scripts" / "viz_line.pl")] + (["--key"] if answer_key else [])
+    lines = "\n".join(l.strip() for l in meta["svg"].splitlines() if l.strip()) + "\n"
+    r = subprocess.run(cmd, input=lines.encode("utf-8"), capture_output=True)
+    if r.returncode != 0:
+        sys.exit(f"{meta['file'].name}: viz_line.pl failed:\n{r.stderr.decode('utf-8', 'replace')}")
+    svgs = [x.strip() for x in r.stdout.decode("utf-8").split("<!--viz-split-->") if x.strip()]
+    if len(svgs) == 1:
+        return svgs[0]
+    return '<div class="viz-row">\n' + "\n".join(svgs) + "\n</div>"
+
+
 def figure(meta, answer_key):
+    if meta.get("lib"):
+        svg = draw_library(meta, answer_key)
+        cap = meta["caption"]
+        return (f'<!-- viz:{meta["id"]} -->\n<figure class="viz">\n{svg}\n'
+                f'<figcaption>{cap}</figcaption>\n</figure>\n<!-- /viz:{meta["id"]} -->\n')
     svg = expand(meta["svg"], answer_key)
     tikz = meta.get("tikz", f"custom | {meta['id']}")
     cap = meta["caption"]
