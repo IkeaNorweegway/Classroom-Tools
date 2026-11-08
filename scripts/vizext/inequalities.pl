@@ -8,6 +8,8 @@ use POSIX qw(floor ceil);
 $DOC{iqline} = 'value=3 dir=right|left closed=0|1 min=-2 max=8 step=1 every label="x > 3" (above the boundary; may hold [[…]]) blank=dot|dir|1 (student copy hides the dot type, the ray, or both; the key shows them) whole=1 (dots at whole numbers only, then …) marks="2:✓;5:✗" (test values: a small dot and a label under the line) nodot=1 width=520 (inequality on a number line)';
 $DOC{iqsign} = 'kind=speed|height|limit value="110" top="MAXIMUM" unit="km/h" (limit: a plain sign, e.g. top="ELEVATOR" value="1000 kg" unit="MAXIMUM LOAD") caption (a road sign, a ride height marker or a posted limit)';
 
+sub _iq_by_value { my @m = @_; my @i = (0 .. $#m); return sort { (num($m[$a][0]) // 0) <=> (num($m[$b][0]) // 0) } @i; }
+
 sub draw_iqline {
     my ($a) = @_;
     my ($min, $max) = ($a->{min} // -2, $a->{max} // 8);
@@ -65,15 +67,27 @@ sub draw_iqline {
         }
     }
     $b .= T($bx, $y - 18, $a->{label}, anchor => 'middle', cls => 'dg-math') if defined $a->{label} && $a->{label} ne '';
-    # test values
-    for my $p (@marks) {
+    # test values (a label that would touch its neighbour drops to a second row)
+    my %row;
+    my $rows = 1;
+    my ($lastx, $lastrow) = (-1e9, 1);
+    for my $i (_iq_by_value(@marks)) {
+        my $t = num($marks[$i][0]); next unless defined $t;
+        my $x = $X->($t);
+        $row{$i} = ($x - $lastx < 34 && $lastrow == 0) ? 1 : 0;
+        $rows = 2 if $row{$i};
+        ($lastx, $lastrow) = ($x, $row{$i});
+    }
+    for my $i (0 .. $#marks) {
+        my $p = $marks[$i];
         my $t = num($p->[0]); next unless defined $t;
         my $x = $X->($t);
+        my $dy = ($row{$i} // 0) * 16;
         $b .= circ($x, $y, 3.5, 'dg-point') if abs($t - $v) > 1e-9;
-        $b .= line($x, $y + 30, $x, $y + 34, 'dg-line');
-        $b .= T($x, $y + 48, $p->[1] // '', anchor => 'middle', cls => 'dg-label-accent');
+        $b .= line($x, $y + 30, $x, $y + 34 + $dy, 'dg-line');
+        $b .= T($x, $y + 48 + $dy, $p->[1] // '', anchor => 'middle', cls => 'dg-label-accent');
     }
-    my $H = $y + (@marks ? 56 : 34);
+    my $H = $y + (@marks ? 56 + ($rows - 1) * 16 : 34);
     my $aria = 'Number line: ' . ($a->{label} ? plain($a->{label}) . ', ' : '')
         . ($hide_dot ? 'blank dot at ' : ($closed ? 'closed dot at ' : 'open dot at ')) . fmt($v)
         . ($hide_dir ? ', direction blank' : ($a->{whole} ? ', whole-number dots to the ' : ', ray to the ') . ($dir > 0 ? 'right' : 'left'))

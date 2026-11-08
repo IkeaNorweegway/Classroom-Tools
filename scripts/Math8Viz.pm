@@ -1392,6 +1392,20 @@ sub wrap2 {
     return ($l1, $l2);
 }
 
+sub flow_wrap {
+    my ($s, $max) = @_;
+    my $len = sub { my $x = shift; $x =~ s/\[\[(.*?)\]\]/'x' x (length($1) + 3)/ge; return length $x; };
+    return ($s) if $len->($s) <= $max;
+    my @w = $s =~ /(\[\[.*?\]\]\S*|\S+)/g;
+    my @l = ('');
+    for my $w (@w) {
+        if ($l[-1] eq '') { $l[-1] = $w }
+        elsif ($len->("$l[-1] $w") <= $max) { $l[-1] .= " $w" }
+        else { push @l, $w }
+    }
+    return @l;
+}
+
 sub draw_flow {
     my ($a) = @_;
     my @st = split /\s*\|\s*/, $a->{steps} // '';
@@ -1400,18 +1414,26 @@ sub draw_flow {
     my $gap = 22;
     my $bw = ($W - 20 - ($n - 1) * $gap) / $n;
     my $maxc = int($bw / 7.2);
+    my @wr = map { my @l = flow_wrap($_, $maxc); @l = flow_wrap($_, $maxc + 2) if @l > 2 && flow_wrap($_, $maxc + 2) <= 2; [@l] } @st;
+    my $nl = 1;
+    for my $w (@wr) { $nl = @$w if @$w > $nl; }
+    my $bh = $nl > 2 ? 18 * $nl + 26 : 64;    # tall boxes only when a step needs 3+ lines
     my $b = '';
     for my $i (0 .. $n - 1) {
         my $x = 10 + $i * ($bw + $gap);
-        $b .= rect($x, 22, $bw, 64, 'dg-fill-soft', 8) . rect($x, 22, $bw, 64, 'dg-outline', 8);
+        $b .= rect($x, 22, $bw, $bh, 'dg-fill-soft', 8) . rect($x, 22, $bw, $bh, 'dg-outline', 8);
         $b .= circ($x + $bw / 2, 22, 12, 'dg-solid-accent');
         $b .= T($x + $bw / 2, 27, $i + 1, anchor => 'middle', cls => 'dg-label-white');
-        my @l = wrap2($st[$i], $maxc);
-        if (@l == 1) { $b .= T($x + $bw / 2, 62, $l[0], anchor => 'middle'); }
+        my @l = @{ $wr[$i] };
+        if ($nl > 2) {
+            my $y0 = 22 + $bh / 2 + 5 - 8 * (@l - 1);
+            $b .= T($x + $bw / 2, $y0 + 16 * $_, $l[$_], anchor => 'middle') for 0 .. $#l;
+        }
+        elsif (@l == 1) { $b .= T($x + $bw / 2, 62, $l[0], anchor => 'middle'); }
         else { $b .= T($x + $bw / 2, 54, $l[0], anchor => 'middle') . T($x + $bw / 2, 70, $l[1], anchor => 'middle'); }
-        $b .= arrow($x + $bw + 3, 54, $x + $bw + $gap - 3, 54, 'accent') if $i < $n - 1;
+        $b .= arrow($x + $bw + 3, 22 + $bh / 2, $x + $bw + $gap - 3, 22 + $bh / 2, 'accent') if $i < $n - 1;
     }
-    return (svg($W, 96, 'Steps: ' . join(', then ', map { plain($_) } @st), $b));
+    return (svg($W, $bh + 32, 'Steps: ' . join(', then ', map { plain($_) } @st), $b));
 }
 
 sub draw_receipt {
