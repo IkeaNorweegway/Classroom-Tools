@@ -878,12 +878,17 @@ func _animate_day(res: Dictionary, cfg: Dictionary, L: Dictionary) -> void:
 	tick.queue_free()
 
 
+# "1 muffin", "3 muffins". A product without unit_one uses unit for both.
+func _count(pr: Dictionary, n: int) -> String:
+	return "%d %s" % [n, pr.get("unit_one", pr.unit) if n == 1 else pr.unit]
+
+
 func _ledger_rows(res: Dictionary, hide_profit: bool) -> Array:
 	var cfg: Dictionary = D.shop_cfg
 	var rows := []
 	var sold := []
 	for k in cfg.products:
-		sold.append("%d %s" % [int(res.by[k].sold), cfg.products[k].unit])
+		sold.append(_count(cfg.products[k], int(res.by[k].sold)))
 	rows.append(["Sales (%s)" % ", ".join(sold), Money.fmt(res.sales)])
 	rows.append(["Stock bought today", "− " + Money.fmt(res.bought)])
 	var wl := "Wages"
@@ -912,7 +917,7 @@ func ledger_table(body: VBoxContainer, res: Dictionary, hide_profit := false) ->
 	var cfg: Dictionary = D.shop_cfg
 	var waste := []
 	for k in res.waste:
-		waste.append("%d %s" % [int(res.waste[k]), cfg.products[k].unit])
+		waste.append(_count(cfg.products[k], int(res.waste[k])))
 	var lines := "[b]%d[/b] people came in and [b]%d[/b] bought something. Left without buying: [b]%d[/b] sold out, [b]%d[/b] line too long, [b]%d[/b] price too high." % [
 		int(res.walkins), int(res.served), int(res.lost.soldout), int(res.lost.line), int(res.lost.price)]
 	if waste.size():

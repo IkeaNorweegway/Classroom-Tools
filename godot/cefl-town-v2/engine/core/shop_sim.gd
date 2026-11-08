@@ -3,7 +3,7 @@
 # cfg = {
 #   rent (cents a day), open: [first hour, hour after the last],
 #   traffic: walk-ins per open hour at reputation 50,
-#   products: { id: { name, icon, pack_size, pack_cost, ref (the price customers expect), perishable, rep_each,
+#   products: { id: { name, icon, unit, unit_one (singular, optional), pack_size, pack_cost, ref (the price customers expect), perishable, rep_each,
 #                     mix: [weight per open hour], grades: { cheap: { pack_cost, rep_each, label } } } },
 #   staff: { id: { name, per_hour, wage (cents an hour), shifts: { name: [from hour, to hour] } } },
 #   you_per_hour, elasticity, rep_per_line, rep_per_soldout, rep_scale

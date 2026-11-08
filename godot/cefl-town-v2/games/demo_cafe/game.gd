@@ -75,7 +75,7 @@ func maps() -> Dictionary:
 			"props": [
 				{"k": "counter", "x": 4, "y": 3, "w": 4, "color": "#5d6370"},
 				{"k": "shelf", "x": 1, "y": 2, "w": 2}, {"k": "shelf", "x": 9, "y": 2, "w": 2},
-				{"k": "pallet", "x": 8, "y": 5, "w": 2}, {"k": "crate", "x": 2, "y": 5, "color": "#e2574c"}, {"k": "crate", "x": 2, "y": 6, "color": "#f2a93b"},
+				{"k": "pallet", "x": 8, "y": 5, "w": 2}, {"k": "crate", "x": 1, "y": 5, "color": "#e2574c"}, {"k": "crate", "x": 1, "y": 6, "color": "#f2a93b"},
 				{"k": "crate", "x": 10, "y": 6}, {"k": "board", "x": 1, "y": 4, "id": "price_list", "label": "Price list"},
 			],
 		},
@@ -180,7 +180,8 @@ func d1_meet_rosa(T) -> void:
 	await T.goal("Talk to Rosa outside her café.", "person:rosa")
 	await T.say("rosa", ["{name}! Thank goodness. My sister needs me for three days, and the café can't just close.",
 		"Will you run it? You decide what to order, what to charge and when Dev works. The money in the till is yours to use.",
-		"Rent is $60 a day, whether we sell a thing or not. Dev earns $15 an hour. Stock comes from Mr. Lin's wholesale, across the street."])
+		"Rent is $60 a day, whether we sell a thing or not. Dev earns $15 an hour.",
+		"Mr. Lin's wholesale, across the street, is where your stock comes from."])
 	var i: int = await T.choose("rosa", "One question before I go. What matters most to you?", ["Keeping the regulars happy.", "Making as much money as I can."])
 	if i == 0:
 		T.remember("rosa", "You told her the regulars matter most.", 1)
