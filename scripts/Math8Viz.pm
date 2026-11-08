@@ -222,10 +222,27 @@ sub draw_numberline {
     push @pts, items($a->{keypoints}) if $KEY;   # keypoints: shown in the answer key only
     my $up = @jumps ? 58 : 0;
     my $y = 52 + $up;
-    my $X = sub { $m + ($_[0] - $min) / (($max - $min) || 1) * ($W - 2 * $m) };
     my $nticks = ($max - $min) / $step;
     my $every = $a->{every} // ($nticks <= 12 ? $step : $nticks <= 24 ? 2 * $step : $nticks <= 60 ? 5 * $step : 10 * $step);
     my %custom = map { (num($_->[0]) // 0) . '' => $_->[1] } items($a->{ticklabels});
+    {   # widen only when the tick labels would run into each other
+        my (@lv, $lw);
+        if (%custom) { @lv = sort { $Math8Viz::a <=> $Math8Viz::b } keys %custom; $lw = max(map { tw(plain($_), 13) } values %custom); }
+        else {
+            for (my $i = 0; $i <= $nticks + 1e-9; $i++) {
+                my $v = $min + $i * $step;
+                next unless abs(($v - $min) / $every - floor(($v - $min) / $every + 1e-9)) < 1e-6;
+                push @lv, $v; $lw = max($lw // 0, tw(fmt($v), 13));
+            }
+        }
+        my $dv = 1e9;
+        for my $i (1 .. $#lv) { my $d = $lv[$i] - $lv[$i - 1]; $dv = $d if $d > 1e-9 && $d < $dv; }
+        if (@lv > 1 && $dv < 1e9) {
+            my $need = 2 * $m + ($max - $min) / $dv * ($lw + 8);
+            $W = ceil($need) if $need > $W;
+        }
+    }
+    my $X = sub { $m + ($_[0] - $min) / (($max - $min) || 1) * ($W - 2 * $m) };
     my $b = '';
     $b .= line($m - 18, $y, $W - $m + 18, $y, 'dg-line');
     $b .= poly('dg-head plain', $m - 24, $y, $m - 14, $y - 5, $m - 14, $y + 5);
@@ -1788,12 +1805,23 @@ sub poly_one {
             my $cross = $u[0][0] * $u[1][1] - $u[0][1] * $u[1][0];
             $b .= sprintf('<path d="M%.1f,%.1f A%.1f,%.1f 0 0 %d %.1f,%.1f" class="dg-accent"/>', $sx, $sy, $r, $r, $cross > 0 ? 1 : 0, $ex, $ey);
         }
-        $b .= T($V->[0] + $bx * 30, $V->[1] + $by * 30 + 4, $an[$i], anchor => 'middle', cls => 'dg-label-sm') if defined $an[$i] && $an[$i] ne '';
+        my $ad = 30;   # angle label distance: further out in narrow corners, nearer the incentre in small triangles
+        if ($n == 3) {
+            my @e = map { sqrt(($s[($_ + 1) % 3][0] - $s[$_][0]) ** 2 + ($s[($_ + 1) % 3][1] - $s[$_][1]) ** 2) } 0 .. 2;
+            my $sp = ($e[0] + $e[1] + $e[2]) / 2;
+            my $ar2 = abs(($s[1][0] - $s[0][0]) * ($s[2][1] - $s[0][1]) - ($s[2][0] - $s[0][0]) * ($s[1][1] - $s[0][1])) / 2;
+            my $sh = sqrt(max(0, 1 - ($bl / 2) ** 2)) || 0.01;
+            my $di = ($ar2 / $sp) / $sh;
+            $ad = 11 / $sh if $sh * $ad < 11;
+            $ad = min($ad, max(17, 0.9 * $di)) if $ad > 17;
+        }
+        $b .= T($V->[0] + $bx * $ad, $V->[1] + $by * $ad + 4, $an[$i], anchor => 'middle', cls => 'dg-label-sm') if defined $an[$i] && $an[$i] ne '';
         $b .= T($V->[0] - $bx * 13, $V->[1] - $by * 13 + 5, $nm[$i], anchor => 'middle', cls => 'dg-label') if defined $nm[$i];
     }
     my $w = (max(map { $_->[0] } @p) - $minx) * $u;
     my $h = ($maxy - min(map { $_->[1] } @p)) * $u;
-    $b .= T($ox + $w / 2, $oy + $h + 34, $a->{"cap$sfx"}, anchor => 'middle', cls => 'dg-label') if defined $a->{"cap$sfx"};
+    my $capdy = (join(';', $a->{sides} // '', $a->{sides2} // '') =~ /\[\[/) ? 46 : 34;   # clear the dashed answer box under the bottom side
+    $b .= T($ox + $w / 2, $oy + $h + $capdy, $a->{"cap$sfx"}, anchor => 'middle', cls => 'dg-label') if defined $a->{"cap$sfx"};
     my $aria = 'Polygon' . (@nm ? ' ' . join('', @nm) : '') . (grep { $_ } @tk ? ', equal sides marked with matching ticks' : '') . (grep { $_ } @ar ? ', equal angles marked with matching arcs' : '');
     return ($b, $w, $h, $aria);
 }
@@ -2596,9 +2624,45 @@ sub draw_solid {
     $b .= $poly2->($fc, $faces[$_][0]) for @vb;
     $b .= $poly2->($fc, $faces[$_][0], ' style="stroke-dasharray:5 3"') for ($a->{ghost} // 1) ? @hb : ();
     my $cent = sub { my @q = map { [$P->($_)] } @{ $faces[$_[0]][0] }; return (sum(map { $_->[0] } @q) / @q, sum(map { $_->[1] } @q) / @q); };
+    # nudge a face label to the spot inside its face where it crosses the fewest edges (centroid when it is already clear)
+    my @segs = map { [$P->($_->[0]), $P->($_->[1])] } @edges;
+    my $segx = sub {   # does segment s cross rectangle r?
+        my ($sg, $x1, $y1, $x2, $y2) = @_;
+        my ($ax, $ay, $bx, $by) = @$sg;
+        return 0 if max($ax, $bx) < $x1 || min($ax, $bx) > $x2 || max($ay, $by) < $y1 || min($ay, $by) > $y2;
+        my ($dx, $dy) = ($bx - $ax, $by - $ay);
+        my $side = sub { my ($px, $py) = @_; return $dx * ($py - $ay) - $dy * ($px - $ax); };
+        my @v = map { $side->(@$_) } ([$x1, $y1], [$x2, $y1], [$x1, $y2], [$x2, $y2]);
+        return (min(@v) <= 0 && max(@v) >= 0) ? 1 : 0;
+    };
+    my $inpoly = sub {
+        my ($px, $py, $q) = @_; my $in = 0;
+        for my $i (0 .. $#$q) { my ($u, $w) = ($q->[$i], $q->[($i + 1) % @$q]);
+            $in = !$in if (($u->[1] > $py) != ($w->[1] > $py)) && ($px < ($w->[0] - $u->[0]) * ($py - $u->[1]) / (($w->[1] - $u->[1]) || 1e-9) + $u->[0]); }
+        return $in;
+    };
+    my $place = sub {
+        my ($k, $x, $y, $t, $cls) = @_;   # y is the baseline the label would use at (x, y)
+        return ($x, $y) unless defined $t && $t ne '';
+        $cls ||= 'dg-label-accent';
+        my $w = tw(plain($t), $FS{$cls} || 12) + ($t =~ /\[\[/ ? 22 : 0);
+        my @q = map { [$P->($_)] } @{ $faces[$k][0] };
+        my $cost = sub {
+            my ($px, $py) = @_; my ($x1, $y1, $x2, $y2) = ($px - $w / 2 - 1, $py - 11, $px + $w / 2 + 1, $py + 4);
+            my $out = grep { !$inpoly->(@$_, \@q) } [$x1, $y1], [$x2, $y1], [$x1, $y2], [$x2, $y2];
+            return 1000 * $out + 10 * (grep { $segx->($_, $x1, $y1, $x2, $y2) } @segs);
+        };
+        return ($x, $y) if $cost->($x, $y) == 0;
+        my ($bx, $by, $bc) = ($x, $y, 1000);   # only move when a spot fully inside the face is found
+        for my $dy (0, -6, 6, -12, 12, -18, 18) { for my $dx (0, -8, 8, -16, 16, -24, 24, -32, 32, -44, 44) {
+            my $c = $cost->($x + $dx, $y + $dy) + 0.01 * (abs($dx) + abs($dy));
+            ($bx, $by, $bc) = ($x + $dx, $y + $dy, $c) if $c < $bc - 1e-9 && $c < 1000;
+        } }
+        return ($bx, $by);
+    };
     my $bshift = 0;   # keep the base label off the triangle's height line
     if ($kind eq 'tri' && (defined $a->{th} || $a->{showth})) { my ($x1) = $P->($to3->(0, 0)); my ($x2) = $P->($to3->($poly[1][0], 0)); $bshift = ($a->{right} ? 0.14 : -0.2) * abs($x2 - $x1); }
-    for my $k (@vb, ($a->{both} ? @hb : ())) { my ($x, $y) = $cent->($k); $b .= $lab->($x + $bshift, $y + 4, $a->{blabel}, 'middle'); }
+    for my $k (@vb, ($a->{both} ? @hb : ())) { my ($x, $y) = $cent->($k); ($x, $y) = $place->($k, $x + $bshift, $y + 4, $a->{blabel}); $b .= $lab->($x, $y, $a->{blabel}, 'middle'); }
     if (defined $a->{lateral}) {
         my ($best, $ba) = (undef, -1);
         for my $k (2 .. $#faces) {
@@ -2607,7 +2671,7 @@ sub draw_solid {
             for my $i (0 .. $#q) { my $j = ($i + 1) % @q; $ar += $q[$i][0] * $q[$j][1] - $q[$j][0] * $q[$i][1]; }
             ($best, $ba) = ($k, abs($ar)) if abs($ar) > $ba;
         }
-        if (defined $best) { my ($x, $y) = $cent->($best); $b .= $lab->($x, $y + 4, $a->{lateral}, 'middle', 'dg-label-sm'); }
+        if (defined $best) { my ($x, $y) = $cent->($best); ($x, $y) = $place->($best, $x, $y + 4, $a->{lateral}, 'dg-label-sm'); $b .= $lab->($x, $y, $a->{lateral}, 'middle', 'dg-label-sm'); }
     }
     my $first = sub { for (@_) { return $_ if $evis->($_); } return $_[0]; };
     if ($kind eq 'box') {
@@ -2712,7 +2776,9 @@ sub solid_cyl {
         $b .= $lab->($a->{diameter} ? $cx : $cx - $R * 0.45, $by, $a->{blabel}, 'middle');
         $b .= $lab->($cx, $bot + 5, $a->{blabel}, 'middle') if $a->{both};
         $b .= $lab->($cx + $R + 8, ($top + $bot) / 2 + 4, $a->{h}, 'start');
-        $b .= $lab->($cx, ($top + $bot) / 2 + $e + 4, $a->{lateral}, 'middle', 'dg-label-sm');
+        my $ly = ($top + $bot) / 2 + $e + 4;
+        $ly = ($top + $e + $bot - $e) / 2 + 4 if $Hh - 2 * $e >= 24;   # centre it in the clear band between the two ellipse arcs
+        $b .= $lab->($cx, $ly, $a->{lateral}, 'middle', 'dg-label-sm');
         if ($a->{ground}) { $b .= line($bb[0] - 14, $bot + $e + 1, $bb[2] + 14, $bot + $e + 1, 'dg-line'); $grow->($bb[0] - 14, $bot + $e, $bb[2] + 14, $bot + $e + 2); }
     }
     my ($ox, $oy) = (10 - $bb[0], 10 - $bb[1]);
