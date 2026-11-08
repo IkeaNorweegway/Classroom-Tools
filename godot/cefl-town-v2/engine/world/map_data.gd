@@ -1,6 +1,7 @@
 # One map, built from a game's plain dictionary. No nodes.
 #
-# Outdoor map:  { name, w, h, base: "grass", fill: [[kind, x, y, w, h], …], road_lines: [row, …],
+# Outdoor map:  { name, w, h, base: "grass", fill: [[kind, x, y, w, h], …], ground?: [kind per tile], road_lines: [row, …],
+#                 draws?: [{ kind, x, y, w, h }] (fountain, bridge, field), districts?: [{ name, x, y, w, h }],
 #                 buildings: [{ id, x, y, w, h, door (column), to (room map id), sign, wall, roof, awning, … }],
 #                 props: [{ k, x, y, w?, h?, id?, label?, solid? }], links: [{ x, y, w?, h?, to, at: [x, y], dir }],
 #                 spots: { id: { x, y, label } } }
@@ -50,6 +51,10 @@ func _init(map_id: String, d: Dictionary) -> void:
 			for x in range(int(f[1]), int(f[1]) + int(f[3])):
 				if _in(x, y):
 					ground[y * w + x] = f[0]
+	if d.has("ground"):   # a whole grid of kinds, one per tile, row by row (bigger towns are built this way)
+		var g: Array = d.ground
+		for i in mini(g.size(), w * h):
+			ground[i] = g[i]
 	for r in d.get("road_lines", []):
 		road_lines[int(r)] = true
 	if not outdoor:

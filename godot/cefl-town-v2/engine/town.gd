@@ -23,9 +23,10 @@ const Story = preload("res://engine/core/story.gd")
 const Sim = preload("res://engine/core/shop_sim.gd")
 const Money = preload("res://engine/core/money.gd")
 const MapData = preload("res://engine/world/map_data.gd")
-const World = preload("res://engine/world/world.gd")
+const World = preload("res://engine/world3d/world3d.gd")
 const UIScript = preload("res://engine/ui/ui.gd")
 const Art = preload("res://engine/world/art.gd")
+const TownMap = preload("res://engine/ui/town_map.gd")
 
 signal _goal_hit(target: String)
 signal _ui_done(value)
@@ -82,6 +83,9 @@ func start(def) -> void:
 	world.interacted.connect(_on_interact)
 	world.link_stepped.connect(_on_link)
 	world.room_exit.connect(_on_room_exit)
+	world.moved.connect(_on_moved)
+	if _map_view() != null:
+		ui.add_hud_button("Map", open_town_map)
 	ui.add_hud_button("Bag", open_bag)
 	ui.add_hud_button("Journal", open_journal)
 	ui.add_hud_button("Menu", open_menu)
@@ -176,8 +180,13 @@ func _run_steps() -> void:
 		G.si = int(G.si) + 1
 		save()
 	G.done = true
+	if args.has("go"):   # test option go=map,x,y[,zoom]: stand there once the steps are done (screenshots)
+		var v: PackedStringArray = str(args.go).split(",")
+		go(v[0], int(v[1]), int(v[2]), "down")
+		if v.size() > 3:
+			world.zoom = float(v[3])
 	finished = true
-	goal_text = "You finished! Open the Menu for your report."
+	goal_text = str(D.done_goal) if "done_goal" in D else "You finished! Open the Menu for your report."
 	goal_target = ""
 	_refresh()
 	save()
@@ -237,6 +246,7 @@ func _notification(what: int) -> void:
 # ── Maps and people ──
 func _enter(id: String, at: Vector2i, dir: String, fade := true) -> void:
 	world.load_map(maps[id], at, dir)
+	_on_moved()
 	if fade and not reduce_motion and auto == "":
 		var r := ColorRect.new()
 		r.color = Color(0.12, 0.1, 0.08, 0.7)
@@ -249,6 +259,68 @@ func _enter(id: String, at: Vector2i, dir: String, fade := true) -> void:
 	_refresh()
 	save()
 	_goal_hit.emit("map:" + id)
+
+
+# ── Districts and the Town Map ──
+var _district := ""
+
+## A banner names the district when you walk into a new one (maps with "districts").
+func _on_moved() -> void:
+	if world.map == null or not world.map.outdoor:
+		_district = ""
+		return
+	var name := ""
+	for d in world.map.def.get("districts", []):
+		var t: Vector2i = world.me.tile
+		if t.x >= int(d.x) and t.y >= int(d.y) and t.x < int(d.x) + int(d.w) and t.y < int(d.y) + int(d.h):
+			name = d.name
+			break
+	if name != _district:
+		_district = name
+		if name != "" and auto == "":
+			ui.banner(world.map.name, name)
+
+
+## The outdoor map with districts that the Town Map shows (null when the game has none).
+func _map_view() -> MapData:
+	for id in maps:
+		if maps[id].outdoor and maps[id].def.has("districts"):
+			return maps[id]
+	return null
+
+
+func open_town_map() -> void:
+	if ui.open > 0 or G.is_empty() or running_day:
+		return
+	var m := _map_view()
+	if m == null:
+		return
+	var view = TownMap.new(m, ui.font)
+	if world.map == m:
+		view.you = world.me.tile
+	else:
+		var od = m.outside_door(world.map.id)
+		if od != null:
+			view.you = od.at
+			view.here = world.map.id
+	var place = _target_place(goal_target) if goal_target != "" else null
+	if place != null:
+		if place.map == m.id:
+			view.goal = place.tile
+		else:
+			var od2 = m.outside_door(place.map)
+			if od2 != null:
+				view.goal = od2.at
+	var where_txt: String = _district if world.map == m and _district != "" else (world.map.name if world.map != m else m.name)
+	await panel("Town Map", func(body):
+		body.add_child(ui.label("You are here: %s. The gold diamond is your goal." % where_txt if view.goal != null else "You are here: %s." % where_txt, "Muted"))
+		body.add_child(view), [["Close", "close", true]], m.name, true)
+
+
+func _unhandled_input(ev: InputEvent) -> void:
+	if ev is InputEventKey and ev.pressed and not ev.echo and ev.keycode == KEY_M and ui.open == 0 and not G.is_empty():
+		open_town_map()
+		get_viewport().set_input_as_handled()
 
 
 func go(id: String, x: int, y: int, dir := "down") -> void:
