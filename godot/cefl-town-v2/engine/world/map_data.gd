@@ -71,10 +71,11 @@ func _init(map_id: String, d: Dictionary) -> void:
 		for y in range(int(b.y), int(b.y) + int(b.h)):
 			for x in range(int(b.x), int(b.x) + int(b.w)):
 				_solid(x, y)
-		var door := Vector2i(int(b.get("door", int(b.x) + int(b.w) / 2)), int(b.y) + int(b.h) - 1)
+		var north: bool = b.get("face", "s") == "n"   # face "n": the front (and the door) is on the top row
+		var door := Vector2i(int(b.get("door", int(b.x) + int(b.w) / 2)), int(b.y) if north else int(b.y) + int(b.h) - 1)
 		if b.has("to"):
 			solid[door.y * w + door.x] = 0
-			links[door] = {"to": b.to, "at": null, "dir": "up", "door_of": b.get("id", "")}
+			links[door] = {"to": b.to, "at": null, "dir": "up", "door_of": b.get("id", ""), "face": "n" if north else "s"}
 	for p in d.get("props", []):
 		props.append(p)
 		var is_solid: bool = p.get("solid", Art.SOLID.get(p.k, false))
@@ -109,7 +110,7 @@ func _solid(x: int, y: int) -> void:
 
 
 func blocked(x: int, y: int) -> bool:
-	return not _in(x, y) or solid[y * w + x] == 1 or ground[y * w + x] == "water"
+	return not _in(x, y) or solid[y * w + x] == 1 or ground[y * w + x] in ["water", "pond"]
 
 
 func kind_at(x: int, y: int) -> String:
@@ -125,9 +126,11 @@ func thing_at(x: int, y: int) -> String:
 	return ""
 
 
-## Where you stand outside after leaving room_id (one tile below its building's door).
+## Where you stand outside after leaving room_id (the tile in front of its building's door).
 func outside_door(room_id: String) -> Variant:
 	for p in links:
 		if links[p].to == room_id and links[p].at == null:
+			if links[p].get("face", "s") == "n":
+				return {"at": Vector2i(p.x, p.y - 1), "dir": "up"}
 			return {"at": Vector2i(p.x, p.y + 1), "dir": "down"}
 	return null

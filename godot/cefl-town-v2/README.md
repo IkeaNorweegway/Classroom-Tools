@@ -3,7 +3,7 @@
 The engine for CEFL Town games that are bigger than the v1 town: a business sim (orders, prices, staff, a business day you watch play out) and a world with more story (several maps, people who move with the day, choices people remember, a Journal). Built in Godot 4.7.2 from text files only; no art files (everything is drawn in code, low-poly 3D with flat-shaded faces).
 
 Two games run on it:
-- **CEFL Town** (`games/cefl_town/`, the default): the v1 town rebuilt in 3D, tile for tile (78 × 58, 26 buildings with rooms, the 13 base townspeople, signs, districts, the Town Map). No mission yet; Payday moves in next.
+- **CEFL Town** (`games/cefl_town/`, the default): five areas of 60 × 45 tiles, laid out like a plus sign: **Downtown** in the middle, **College Campus** north, **School Grounds** west, **Shopping District** east, **Neighbourhoods** south. Realistic streets (sidewalks, parking lane, two traffic lanes, bike lane), crossings with lights, moving traffic that stops at red lights and for you, people strolling, parked cars, patios, a duck pond. All 26 v1 buildings and 13 townspeople keep their names; every building has its 9 × 7 room. Walking off the end of a street fades into the next area; a big arch at each crossing names the area ahead, and the first 12 tiles of the next area show past the edge. No mission yet; Payday moves in next.
 - **Rosa's Corner Café** (`games/demo_cafe/`, CEFL 9-EX1, sample numbers): the engine demo. Open it with `game=demo` (`?game=demo` on the web).
 
 Neither is linked from the site yet.
@@ -20,14 +20,16 @@ Neither is linked from the site yet.
 | `engine/world/art.gd` | 2D drawing still used by the interface: portraits, speech bubbles, product icons, the colour swatches on the character screen. |
 | `engine/world/map_data.gd` | A map built from a game's dictionary (format at the top of the file). A map can give its ground as rect fills or as a whole grid (`ground`), plus `draws` (fountain, bridge, field) and `districts`. |
 | `engine/world3d/art3d.gd` | All 3D drawing: ground tiles with curbs and markings, six building styles that size themselves to any footprint (civic, campus, glass, shop, industry, house), every prop, rooms, people (built once per look). |
-| `engine/world3d/world3d.gd` | The map on screen: walking tile by tile (keys, or tap to walk with `AStarGrid2D`), doors and edge links, people, the gold goal marker and the edge arrow, the follow camera (mouse wheel zooms), sections built and freed as you walk, see-through buildings, customers walking during a business day. |
+| `engine/world3d/world3d.gd` | The map on screen: walking tile by tile (keys, or tap to walk with `AStarGrid2D`), doors and edge links, people, the gold goal marker and the edge arrow, the follow camera (mouse wheel zooms), sections built and freed as you walk, the start of each neighbouring area shown past its edge, see-through buildings, traffic and traffic lights, strollers, ducks, customers walking during a business day. A map can carry `traffic` and `walkers` (format above `_setup_life`). |
 | `engine/ui/town_map.gd` | The Town Map (M, or Map in the top bar): the outdoor map from above, buildings, districts, you and your goal. |
 | `engine/ui/ui.gd` | Theme (CEFL ochre, Atkinson Hyperlegible Next), top bar, dialogue box with portraits, panels, title cards, toasts, confetti. |
 | `engine/town.gd` | The runtime (autoload `Town`): the game API, story steps, goals across maps, saves, shop screens, Bag, Journal, Menu, report, title and character screens, the test player. The API is listed at the top of the file. |
 | `games/demo_cafe/model.gd` | The demo's numbers (no nodes). |
 | `games/demo_cafe/game.gd` | The demo: maps, people and where they are each day, story steps, free talk, report. |
-| `games/cefl_town/town_v1.gd` | The v1 town (`public/materials/cefl/town/world.js`) ported: same buildings, paths, river, decor and fixed tree scatter; 9 × 7 rooms; the base townspeople with v2 looks. |
-| `games/cefl_town/game.gd` | CEFL Town: a welcome, then free roam. Greetings for everyone, signs to read. |
+| `games/cefl_town/area_kit.gd` | Builds one area: streets and crossings (lanes, lights, stop lines), buildings (`face: "n"` fronts the street above), street furniture, parked cars, traffic, walkers, edge links and the gate arch. Main Street (rows 18–25) and the Avenue (columns 26–33) line up across areas. |
+| `games/cefl_town/areas.gd` | The five areas, each a short plan written with the kit. |
+| `games/cefl_town/town_v1.gd` | What carries over from v1: the 26 buildings, their room furniture, the base townspeople with v2 looks. |
+| `games/cefl_town/game.gd` | CEFL Town: where everyone stands, a welcome, then free roam. Greetings for everyone, signs to read. |
 | `tests/test_model.gd` | Bots play the demo model on 400 seeds. |
 | `tests/test_nav.gd` | From the start: every door, doorstep, thing and person can be reached, and every room has a way out (`-- game=town` or `game=demo`). |
 | `tests/perf_walk.gd` | Walks across the whole town in a window and reports frames per second, the slowest frame, and sections built and freed. |

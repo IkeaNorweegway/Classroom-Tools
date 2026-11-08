@@ -20,8 +20,42 @@ func _initialize() -> void:
 	for id in defs:
 		maps[id] = MapData.new(id, defs[id])
 	var people: Dictionary = D.people()
-	var start: MapData = maps[D.start_map]
-	var reach := _bfs(start, D.start_at, people, D)
+	var checked := 0
+	var reach := {}
+	# every outdoor area: walk from where you arrive (the start, or the first edge link into it)
+	for oid in maps:
+		var om: MapData = maps[oid]
+		if not om.outdoor:
+			continue
+		var from: Vector2i = D.start_at if oid == D.start_map else Vector2i(-1, -1)
+		if from.x < 0:
+			for mid in maps:
+				for p in maps[mid].links:
+					var l: Dictionary = maps[mid].links[p]
+					if l.to == oid and l.at != null:
+						from = l.at
+						checked += 1
+						if om.blocked(from.x, from.y):
+							fails.append("%s: arriving from %s at %s, the tile is blocked" % [oid, mid, from])
+		if from.x < 0:
+			fails.append("%s: no way in" % oid)
+			continue
+		var r := _bfs(om, from, people, D)
+		if oid == D.start_map:
+			reach = r
+		_check_area(om, r, people, D, maps)
+		checked += om.links.size() + om.things.size()
+	var uniq := {}
+	for f in fails:
+		uniq[f] = true
+	fails = uniq.keys()
+	print("NAV %s: %d checks, %d reachable tiles from the start, %d problems" % [which, checked, reach.size(), fails.size()])
+	for f in fails:
+		print("  ✗ ", f)
+	quit(1 if fails.size() else 0)
+
+
+func _check_area(start: MapData, reach: Dictionary, people: Dictionary, D, maps: Dictionary) -> void:
 	var checked := 0
 	# every door (and the doorstep in front of it) on the start map
 	for p in start.links:
@@ -29,7 +63,8 @@ func _initialize() -> void:
 		checked += 1
 		if not _near(reach, p):
 			fails.append("%s: can't reach the door to %s at %s" % [start.id, l.to, p])
-		if l.at == null and start.blocked(p.x, p.y + 1):
+		var step_y: int = p.y - 1 if l.get("face", "s") == "n" else p.y + 1
+		if l.at == null and start.blocked(p.x, step_y):
 			fails.append("%s: the doorstep below %s's door is blocked" % [start.id, l.to])
 	# every thing with an id
 	for k in start.things:
@@ -56,6 +91,8 @@ func _initialize() -> void:
 		if w.map == start.id:
 			if not _near(reach, at):
 				fails.append("can't reach %s on %s" % [pid, w.map])
+		elif maps[w.map].outdoor:
+			continue
 		else:
 			var r2 := _bfs(m, m.arrive, people, D, w.map)
 			if not _near(r2, at):
@@ -80,10 +117,6 @@ func _initialize() -> void:
 					any = true
 			if not any:
 				fails.append("%s: no door leads here" % id)
-	print("NAV %s: %d checks, %d reachable tiles from the start, %d problems" % [which, checked, reach.size(), fails.size()])
-	for f in fails:
-		print("  ✗ ", f)
-	quit(1 if fails.size() else 0)
 
 
 func _blocked_by_person(m: MapData, p: Vector2i, people: Dictionary, D, map_id: String) -> bool:

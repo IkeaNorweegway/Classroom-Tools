@@ -5,6 +5,7 @@
 extends RefCounted
 
 const Town1 = preload("res://games/cefl_town/town_v1.gd")
+const Areas = preload("res://games/cefl_town/areas.gd")
 const Story = preload("res://engine/core/story.gd")
 
 var id := "cefl-town"
@@ -12,17 +13,30 @@ var title := "CEFL Town"
 var unit_label := "CEFL Town v2 · Grades 7–9"
 var i_can := "I can find my way around town: the Job Centre, the bank, Service Canada, Town Hall and the shops."
 var blurb := "The town from every CEFL mission, now in 3D. Walk the streets, step inside the buildings and meet the people you will work with. Missions move in next."
-var start_map := "town"
-var start_at := Vector2i(43, 47)   # outside Home
+var start_map := "neighbourhoods"
+var start_at := Vector2i(38, 27)   # outside Home, on River Walk
 var done_goal := "Explore the town. Press M for the Town Map."
 var _maps := {}
 
 
 func maps() -> Dictionary:
 	if _maps.is_empty():
-		_maps = Town1.maps()
-		start_at = Vector2i(int(_maps.town.spots.home.x), int(_maps.town.spots.home.y))
+		_maps = Areas.all()
+		for b in Town1.BUILDINGS:
+			_maps[b.id] = Town1.build_room(b)
+		var h: Dictionary = _maps.neighbourhoods.spots.home
+		start_at = Vector2i(int(h.x), int(h.y))
 	return _maps
+
+
+## Where the townspeople who are out and about stand, in the five areas (people indoors keep v1's spots).
+const OUTSIDE := {
+	"avery": {"map": "campus", "x": 22, "y": 25, "dir": "down"},
+	"dev": {"map": "shopping", "x": 26, "y": 25, "dir": "down"},
+	"rosa": {"map": "neighbourhoods", "x": 50, "y": 28, "dir": "down"},
+	"worker": {"map": "shopping", "x": 46, "y": 36, "dir": "left"},
+	"vendor": {"map": "downtown", "x": 37, "y": 29, "dir": "down"},
+}
 
 
 func people() -> Dictionary:
@@ -30,6 +44,8 @@ func people() -> Dictionary:
 
 
 func where(pid: String, S: Dictionary) -> Variant:
+	if OUTSIDE.has(pid):
+		return OUTSIDE[pid]
 	var p: Dictionary = Town1.PEOPLE.get(pid, {})
 	if p.is_empty():
 		return null
@@ -69,6 +85,7 @@ func welcome(T) -> void:
 	if not T.has("key"):
 		T.give("key")
 	await T.say("", ["This is the town from every CEFL mission. Home is right behind you, on River Walk.",
+		"Town has five areas: Downtown in the middle, the College Campus to the north, the School grounds to the west, the Shopping district to the east and the Neighbourhoods here in the south. Walk off the end of a street to go to the next one.",
 		"Walk with the arrow keys or WASD, or tap where you want to go. Space or E talks to whoever is in front of you.",
 		"Press M for the Town Map. Signs at the corners tell you what is down each street."])
 	await T.goal("Visit Ms. Okafor at the Job Centre on Main Street.", "person:okafor")
@@ -86,21 +103,21 @@ func talk(pid: String, T) -> void:
 		"nurse": ["I'm Nurse Kaur. Long shifts here at the hospital.", "Twelve hours on, then three days off. You get used to it."],
 		"mayor": ["Councillor Wright. Town Hall is open to everyone.", "Council meets here, and so do the town's big events."],
 		"librarian": ["Welcome to the library! I'm Mx. Lin.", "Books, computers and quiet. Career guides are on the left."],
-		"avery": ["Hey, neighbour! I'm Avery.", "The Sports Field is just up College Walk if you need a run."],
-		"dev": ["Hi! I'm Dev. I'm saving up for a phone, so CellPoint is my favourite window.", "Saving is hard when everything is right there."],
+		"avery": ["Hey, neighbour! I'm Avery.", "I take classes at the University. The Polytechnic's open house is next week, if you're curious."],
+		"dev": ["Hi! I'm Dev. I'm saving up for a phone, so CellPoint is my favourite window.", "Saving is hard when the whole of Market Lane is right there."],
 		"rosa": ["Hello, love! I'm Rosa, from across the street.", "If you ever need a hand with money, my door's open. I've learned a few things the hard way."],
-		"worker": ["Mo. I build things.", "Hard hat on, boots on, every day. Safety first, then the work."],
+		"worker": ["Mo. I load trucks at Prairie Parcel.", "Hard hat on, boots on, every day. Safety first, then the work."],
 		"vendor": ["Pat's stall! Fresh from the farms, every day.", "Help out around town and you can buy things for your home here. Coming soon."],
 	}
 	await T.say(pid, lines.get(pid, ["Hello!"]))
 
 
 func use(thing: String, T) -> void:
-	var town: Dictionary = maps().town
-	for p in town.props:
-		if p.get("id", "") == thing and p.has("text"):
-			await T.say("", str(p.text))
-			return
+	for mid in maps():
+		for p in maps()[mid].get("props", []):
+			if p.get("id", "") == thing and p.has("text"):
+				await T.say("", str(p.text))
+				return
 	match thing:
 		"plan_wall":
 			await T.say("", "Your My Plan wall. A page goes up here each time you finish a mission.")

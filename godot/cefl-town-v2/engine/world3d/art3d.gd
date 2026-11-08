@@ -18,10 +18,10 @@ const C := {
 	"glass": Color("#5d7891"), "glass_hi": Color("#8faabd"), "frame": Color("#f1e8d8"),
 	"water": Color("#79aab3"), "water_hi": Color("#9cc3c6"), "stone": Color("#cfc6b5"),
 	"path": Color("#d9c7a3"), "plaza": Color("#d6ccb8"), "plaza_jt": Color("#c5baa4"), "sand": Color("#e2d2ac"), "soil": Color("#7a5a44"),
-	"brick_red": Color("#b8725c"), "brick_orange": Color("#cf9566"), "tile": Color("#e7dfcf"), "tile_jt": Color("#d6ccb8"),
+	"bike": Color("#7f9a86"), "brick_red": Color("#b8725c"), "brick_orange": Color("#cf9566"), "tile": Color("#e7dfcf"), "tile_jt": Color("#d6ccb8"),
 }
 ## Ground height per kind (people stand on it).
-const HEIGHT := {"road": 0.0, "line": 0.0, "cross_h": 0.0, "cross_v": 0.0, "grass": 0.05, "lawn": 0.05, "path": 0.07,
+const HEIGHT := {"road": 0.0, "line": 0.0, "dash_s": 0.0, "dash_e": 0.0, "bike": 0.0, "bike_v": 0.0, "lot": 0.0, "pond": 0.05, "cross_h": 0.0, "cross_v": 0.0, "grass": 0.05, "lawn": 0.05, "path": 0.07,
 	"walk": 0.14, "plaza": 0.14, "water": -0.25, "wood": 0.0, "tile": 0.0, "carpet": 0.0, "sand": 0.06}
 const PERSON_SCALE := 0.9
 
@@ -36,11 +36,14 @@ var _part_keep := []
 var font: Font
 ## How many faces round things get. The mock-up used 2.8; 1.3 keeps a big town light on a Chromebook.
 var detail := 1.3
+var viewer := ""      # the map you are on (a gate's sign names the area on the far side of it from here)
 var trees := []       # [node, phase]
 var jets := []        # [node, phase]
 var curtains := []    # [node, phase]
 var ripples := []     # [node, phase]
 var labels := []      # Label3D signs (hidden with the section)
+var lit := []         # [node, "ew_red" | "ew_green" | "ns_red" | "ns_green"]: traffic lamps the world switches
+var ducks := []       # [node, angle, speed, rx, rz, centre (Vector3)]
 var bldgs := []       # { id, nodes: [MeshInstance3D], labels: [Label3D], box: AABB } — each building is its own piece, so it can fade
 
 
@@ -270,7 +273,7 @@ func _tile(m: MapData, x: int, y: int) -> void:
 	var col: Color
 	match k:
 		"grass": col = C.grass.lerp(C.grass_dk, 0.5 if n < 0.25 else 0.0).lightened(0.03 if n > 0.85 else 0.0)
-		"lawn": col = C.lawn if (x + y) % 2 == 0 else C.lawn.darkened(0.05)
+		"lawn": col = C.lawn if (y / 2) % 2 == 0 else C.lawn.darkened(0.025)   # mowing stripes
 		"walk": col = C.walk
 		"plaza": col = C.plaza
 		"path": col = C.path.darkened(0.04 * n)
@@ -278,6 +281,7 @@ func _tile(m: MapData, x: int, y: int) -> void:
 		"sand": col = C.sand
 		"wood": col = C.floor_wood.darkened(0.05 * float(y % 2))
 		"tile", "carpet": col = C.tile
+		"pond": col = C.grass
 		_: col = C.road
 	if k == "water":
 		flat(x0, z0, x1, z1, -0.12, C.water.lerp(C.water_hi, 0.25 * n))
@@ -310,6 +314,18 @@ func _tile(m: MapData, x: int, y: int) -> void:
 		"line":
 			if x % 2 == 0:
 				flat(x0 + 0.15, z0 + 0.46, x1 - 0.15, z0 + 0.54, 0.01, C.line)
+		"dash_s":   # centre line of an east–west street, along the tile's south edge
+			if x % 2 == 0:
+				flat(x0 + 0.15, z1 - 0.04, x1 - 0.15, z1 + 0.04, 0.01, C.line)
+		"dash_e":   # centre line of a north–south street, along the tile's east edge
+			if y % 2 == 0:
+				flat(x1 - 0.04, z0 + 0.15, x1 + 0.04, z1 - 0.15, 0.01, C.line)
+		"bike":
+			flat(x0, z0 + 0.06, x1, z1 - 0.06, 0.008, C.bike)
+		"bike_v":
+			flat(x0 + 0.06, z0, x1 - 0.06, z1, 0.008, C.bike)
+		"lot":   # a parking bay: a painted line on its west edge
+			flat(x0 + 0.02, z0 + 0.1, x0 + 0.07, z1 - 0.1, 0.01, C.line)
 		"cross_h":   # stripes across the road, running along z
 			for i in 2:
 				flat(x0 + 0.12 + i * 0.5, z0 + 0.05, x0 + 0.34 + i * 0.5, z1 - 0.05, 0.01, C.line)
@@ -357,8 +373,12 @@ func building(b: Dictionary) -> void:
 
 func _building_body(b: Dictionary) -> void:
 	var W := float(b.w); var D := float(b.h)
-	xf = Transform3D(Basis.IDENTITY, Vector3(float(b.x), 0, float(b.y)))
 	var door := float(b.get("door", int(b.x) + int(b.w) / 2)) - float(b.x) + 0.5
+	if b.get("face", "s") == "n":   # turned round: the front faces north
+		xf = Transform3D(Basis(Vector3.UP, PI), Vector3(float(b.x) + W, 0, float(b.y) + D))
+		door = W - door
+	else:
+		xf = Transform3D(Basis.IDENTITY, Vector3(float(b.x), 0, float(b.y)))
 	var style: String = b.get("style", "shop")
 	var H: float = b.get("height", _height(b))
 	match style:
@@ -779,6 +799,76 @@ func prop(p: Dictionary, ground_h := 0.0) -> void:
 			for sx in [-0.38, 0.33]:
 				box(c + Vector3(sx, 0, -0.45), Vector3(0.05, 0.5, 0.05), C.wood_dk)
 				box(c + Vector3(sx, 0, 0.4), Vector3(0.05, 0.5, 0.05), C.wood_dk)
+		"car":   # parked; yaw 0 faces east (+x)
+			_car_body(c, Color(p.get("color", "#9fb0bf")), float(p.get("yaw", 0.0)), int(p.get("v", -1)))
+		"truck":
+			_truck(c, float(p.get("yaw", 0.0)), str(p.get("style", "lin")), str(p.get("company", "")), str(p.get("color", "")))
+		"bus_shelter":
+			_bus_shelter(Vector3(float(p.x), ground_h, float(p.y) - 0.3))
+		"bike_rack":
+			_bike_rack(Vector3(float(p.x) + 0.05, ground_h, float(p.y) + 0.25))
+		"signal":   # traffic light on a corner; dir is where its arm reaches (over the road)
+			_signal(c, Vector3(float(p.get("dx", 1)), 0, float(p.get("dz", 0))))
+		"string_lights":
+			var b2 := Vector3(float(p.x2) + 0.5, ground_h, float(p.y2) + 0.5)
+			cyl(c, 0.03, 2.3, C.metal, 4)
+			cyl(b2, 0.03, 2.3, C.metal, 4)
+			_string_lights(c + Vector3(0, 2.3, 0), b2 + Vector3(0, 2.3, 0), 0.25)
+		"street_tree":
+			box(c + Vector3(-0.34, 0, -0.34), Vector3(0.68, 0.18, 0.68), C.concrete, C.soil)
+			_tree(c + Vector3(0, 0.18, 0), k, int(p.get("v", k)))
+		"patio":   # a café table, two chairs and a parasol
+			cyl(c, 0.04, 0.55, C.metal, 5)
+			cyl(c + Vector3(0, 0.55, 0), 0.3, 0.04, Color("#e9e0cf"), 8)
+			for sd in [-1.0, 1.0]:
+				box(c + Vector3(sd * 0.42 - 0.12, 0, -0.12), Vector3(0.24, 0.3, 0.24), C.wood_dk)
+				box(c + Vector3(sd * 0.42 - 0.12 + (0.18 if sd > 0 else 0.0), 0.3, -0.12), Vector3(0.06, 0.32, 0.24), C.wood_dk)
+			cyl(c + Vector3(0, 0.55, 0), 0.025, 1.4, C.wood_dk, 4)
+			cone(c + Vector3(0, 1.7, 0), 0.68, 0.3, Color(p.get("color", "#b25c47")), 8, true)
+		"planter_box":
+			box(Vector3(float(p.x) + 0.05, ground_h, c.z - 0.18), Vector3(w - 0.1, 0.36, 0.36), C.wood_dk, C.soil)
+			for q in int(w / 0.33):
+				blob(Vector3(float(p.x) + 0.2 + q * 0.33, ground_h + 0.45, c.z), Vector3(0.17, 0.14, 0.13), C.leaf2 if q % 3 else Color("#d9a0a8"), q + k, 5, 2, 0.15)
+		"bollard":
+			cyl(c, 0.08, 0.55, C.metal, 6)
+			cyl(c + Vector3(0, 0.5, 0), 0.09, 0.05, Color("#d9b44a"), 6)
+		"flagpole":
+			cyl(c, 0.05, 4.2, C.metal_lt, 6)
+			part_begin()
+			box(Vector3(0.0, 3.4, -0.01), Vector3(0.9, 0.55, 0.02), Color("#d9534a"))
+			box(Vector3(0.28, 3.42, -0.012), Vector3(0.34, 0.51, 0.024), Color("#f3efe6"))
+			trees.append([part_end(c), 0.3])
+		"garden_bed":
+			box(Vector3(float(p.x) + 0.08, ground_h, float(p.y) + 0.12), Vector3(w - 0.16, 0.32, d - 0.24), C.wood, C.soil)
+			for i in int(w * 2.0):
+				for j in maxi(1, int(d * 1.5)):
+					blob(Vector3(float(p.x) + 0.3 + i * 0.48, ground_h + 0.42, float(p.y) + 0.35 + j * 0.5), Vector3(0.16, 0.13, 0.16), [C.leaf2, C.leaf, Color("#c9675a")][(i + j + k) % 3], k + i * 7 + j, 5, 2, 0.2)
+		"shed":
+			box(Vector3(float(p.x) + 0.1, ground_h, float(p.y) + 0.1), Vector3(w - 0.2, 1.5, d - 0.2), Color("#8a6a4a"), Color("#6e5038"))
+			box(c + Vector3(-0.3, 0, d / 2 - 0.12), Vector3(0.6, 1.2, 0.04), Color("#6e5038"))
+		"playground":   # a slide tower and swings on a sand square (w × h tiles)
+			box(Vector3(float(p.x) + 0.1, ground_h, float(p.y) + 0.1), Vector3(w - 0.2, 0.03, d - 0.2), Color("#c9b48c"), C.sand)
+			var pg := Vector3(float(p.x) + 1.0, ground_h, float(p.y) + 1.0)
+			box(pg + Vector3(-0.45, 0.03, -0.45), Vector3(0.9, 1.0, 0.9), Color("#d79a6a"), Color("#c7875a"))
+			for dd in [Vector3(-0.45, 0, -0.45), Vector3(0.39, 0, -0.45), Vector3(-0.45, 0, 0.39), Vector3(0.39, 0, 0.39)]:
+				box(pg + dd, Vector3(0.06, 1.7, 0.06), Color("#5f7f9a"))
+			cone(pg + Vector3(0, 1.7, 0), 0.68, 0.45, Color("#c47b6a"), 4, false)
+			quad(pg + Vector3(0.45, 1.03, -0.3), pg + Vector3(0.45, 1.03, 0.3), pg + Vector3(1.6, 0.06, 0.3), pg + Vector3(1.6, 0.06, -0.3), Color("#e0b85c"), Vector3(1, 1, 0))
+			if w >= 4:
+				var sw := Vector3(float(p.x) + w - 1.6, ground_h, float(p.y) + d - 0.8)
+				for x in [0.0, 1.3]:
+					box(sw + Vector3(x, 0, 0), Vector3(0.07, 1.6, 0.07), Color("#5f7f9a"))
+				box(sw + Vector3(0, 1.6, 0), Vector3(1.37, 0.07, 0.07), Color("#5f7f9a"))
+				for x in [0.35, 0.95]:
+					part_begin()
+					box(Vector3(-0.09, -1.15, -0.01), Vector3(0.02, 1.15, 0.02), C.metal)
+					box(Vector3(0.09, -1.15, -0.01), Vector3(0.02, 1.15, 0.02), C.metal)
+					box(Vector3(-0.11, -1.18, -0.1), Vector3(0.24, 0.04, 0.2), Color("#c47b6a"))
+					trees.append([part_end(sw + Vector3(x + 0.09, 1.6, 0.03)), x * 3.0])
+		"gate":   # a big arch over a street where one area meets the next; posts are separate solid "gate_post" props
+			_gate(p, ground_h)
+		"gate_post":
+			pass
 		"rug":
 			flat(float(p.x) + 0.08, float(p.y) + 0.08, float(p.x) + w - 0.08, float(p.y) + d - 0.08, ground_h + 0.012, Color(p.get("color", "#b85a4a")))
 			flat(float(p.x) + 0.18, float(p.y) + 0.18, float(p.x) + w - 0.18, float(p.y) + d - 0.18, ground_h + 0.014, Color(p.get("color", "#b85a4a")).lightened(0.15))
@@ -913,6 +1003,22 @@ func draw_extra(d: Dictionary) -> void:
 			disc(c + Vector3(0, 0.3, 0), w / 2.0 - 0.1, C.stone.lightened(0.05), 16, w / 2.0 - 0.32)
 			disc(c + Vector3(0, 0.05, 0), w / 2.0 - 0.3, C.water.lerp(C.water_hi, 0.3), 16)
 			_fountain(c, 0.05)
+		"pond":   # an oval pond with a stone rim, a fountain and ducks, over "pond" tiles (which block walking)
+			var pc := Vector3(x + w / 2.0, 0.05, y + h / 2.0)
+			var rx := w / 2.0 - 0.1; var rz := h / 2.0 - 0.1
+			var seg := 28
+			for j in seg:
+				var u0 := TAU * j / seg; var u1 := TAU * (j + 1) / seg
+				var a0 := Vector3(cos(u0) * rx, 0, sin(u0) * rz); var a1 := Vector3(cos(u1) * rx, 0, sin(u1) * rz)
+				tri(pc + Vector3(0, 0.02, 0), pc + a0 * 0.9 + Vector3(0, 0.02, 0), pc + a1 * 0.9 + Vector3(0, 0.02, 0), C.water.lerp(C.water_hi, 0.2), Vector3.UP)
+				quad(pc + a0 * 0.9 + Vector3(0, 0.12, 0), pc + a1 * 0.9 + Vector3(0, 0.12, 0), pc + a1 + Vector3(0, 0.12, 0), pc + a0 + Vector3(0, 0.12, 0), C.stone, Vector3.UP)
+				quad(pc + a0 + Vector3(0, -0.02, 0), pc + a1 + Vector3(0, -0.02, 0), pc + a1 + Vector3(0, 0.12, 0), pc + a0 + Vector3(0, 0.12, 0), C.stone.darkened(0.15), (a0 + a1) / 2.0)
+			for q in 5:
+				disc(pc + Vector3(cos(q * 1.3) * rx * 0.55, 0.03, sin(q * 1.3) * rz * 0.5), 0.14, C.leaf2, 6)
+			_fountain(pc, 0.02)
+			for kk in 3:
+				var dn := _duck(kk)
+				ducks.append([dn, TAU * kk / 3.0 + 0.4, (0.13 if kk != 1 else -0.1), rx * 0.62 + kk * 0.1, rz * 0.6 + kk * 0.06, pc + Vector3(0, 0.03, 0)])
 		"bridge":
 			var deck := 0.2
 			box(Vector3(x - 0.15, -0.1, y - 0.2), Vector3(w + 0.3, deck + 0.1, h + 0.4), C.wood if w <= 2 else C.concrete, C.wood.lightened(0.05) if w <= 2 else C.road)
@@ -1033,3 +1139,337 @@ static func person_mesh(look: Dictionary) -> ArrayMesh:
 	b.free()
 	_person_cache[key] = mesh
 	return mesh
+
+
+# ── Vehicles, street furniture and park pieces from the street mock-up (moved here as they were) ──
+
+
+## A side profile (x along the car, y up; convex, listed in order) pushed out across z, with bevelled edges.
+func extrude(prof: Array, half_w: float, bevel: float, col: Color, cap: Color) -> void:
+	var n := prof.size()
+	var cen := Vector2.ZERO
+	for q in prof: cen += q
+	cen /= n
+	var inner := []
+	for q in prof:
+		var v: Vector2 = q
+		inner.append(v + (cen - v).normalized() * bevel)
+	var zo := half_w - bevel
+	for k in n:
+		var a: Vector2 = prof[k]; var b: Vector2 = prof[(k + 1) % n]
+		var ia: Vector2 = inner[k]; var ib: Vector2 = inner[(k + 1) % n]
+		var e := b - a
+		var o2 := Vector2(e.y, -e.x).normalized()
+		if o2.dot((a + b) / 2.0 - cen) < 0: o2 = -o2
+		var o := Vector3(o2.x, o2.y, 0)
+		quad(Vector3(a.x, a.y, -zo), Vector3(b.x, b.y, -zo), Vector3(b.x, b.y, zo), Vector3(a.x, a.y, zo), col, o)
+		for sgn in [-1.0, 1.0]:
+			quad(Vector3(a.x, a.y, zo * sgn), Vector3(b.x, b.y, zo * sgn), Vector3(ib.x, ib.y, half_w * sgn), Vector3(ia.x, ia.y, half_w * sgn), col, o + Vector3(0, 0, sgn))
+			tri(Vector3(cen.x, cen.y, half_w * sgn), Vector3(ia.x, ia.y, half_w * sgn), Vector3(ib.x, ib.y, half_w * sgn), cap, Vector3(0, 0, sgn))
+
+
+## A wheel: tyre, hubcap and hub, its axle along z. Built so its closed face looks outward on either side.
+func _wheel(c: Vector3, side: float, r := 0.17, w := 0.14) -> void:
+	var keep := xf
+	xf = xf * Transform3D(Basis(Vector3.RIGHT, PI / 2.0 * side), c)
+	# local +y now points out of the car's side
+	cyl(Vector3(0, -w / 2.0, 0), r, w, Color("#26282b"), 10)
+	cyl(Vector3(0, 0.0, 0), r * 0.6, w / 2.0 + 0.005, Color("#b9bcbf"), 8)
+	cyl(Vector3(0, 0.005, 0), r * 0.24, w / 2.0 + 0.005, Color("#7d8185"), 6)
+	for k in 5:   # wheel nuts
+		var a := TAU * k / 5.0
+		box(Vector3(cos(a) * r * 0.38 - 0.01, w / 2.0 + 0.004, sin(a) * r * 0.38 - 0.01), Vector3(0.02, 0.012, 0.02), Color("#55595d"))
+	xf = keep
+
+
+func _car_body(p: Vector3, col: Color, yaw: float, kind_ := -1) -> void:
+	var keep := xf
+	xf = Transform3D(Basis(Vector3.UP, yaw), p)
+	var kind := int(absf(p.x * 7.0 + p.z * 3.0)) % 3 if kind_ < 0 else kind_
+	var dk := col.darkened(0.3)
+	var glass := Color("#3f4b57"); var glass_hi := Color("#6f8396")
+	var trim := Color("#2c2f33"); var chrome := Color("#c9ccce")
+	var hw := 0.38
+	# body: rounded nose, hood, boot (front is +x)
+	var body := [Vector2(-0.88, 0.2), Vector2(0.86, 0.2), Vector2(0.9, 0.3), Vector2(0.86, 0.44), Vector2(0.45, 0.52), Vector2(-0.6, 0.53), Vector2(-0.86, 0.48), Vector2(-0.9, 0.34)]
+	if kind == 1:   # hatchback: short, upright tail
+		body = [Vector2(-0.74, 0.2), Vector2(0.84, 0.2), Vector2(0.88, 0.3), Vector2(0.84, 0.44), Vector2(0.45, 0.52), Vector2(-0.7, 0.54), Vector2(-0.78, 0.36)]
+	elif kind == 2:   # small van: tall box with a short nose
+		body = [Vector2(-0.9, 0.2), Vector2(0.88, 0.2), Vector2(0.92, 0.32), Vector2(0.86, 0.5), Vector2(0.55, 0.58), Vector2(-0.9, 0.6)]
+	extrude(body, hw, 0.05, col, col.darkened(0.06))
+	# cabin: glass house with a body-coloured roof
+	var cab := [Vector2(-0.5, 0.52), Vector2(0.45, 0.52), Vector2(0.2, 0.82), Vector2(-0.38, 0.82)]
+	if kind == 1:
+		cab = [Vector2(-0.7, 0.53), Vector2(0.45, 0.52), Vector2(0.18, 0.82), Vector2(-0.64, 0.82)]
+	elif kind == 2:
+		cab = [Vector2(-0.88, 0.59), Vector2(0.55, 0.58), Vector2(0.3, 0.95), Vector2(-0.86, 0.96)]
+	extrude(cab, hw - 0.05, 0.03, glass, glass)
+	var rt: float = cab[2].y
+	var roof := [Vector2(cab[3].x - 0.01, rt - 0.02), Vector2(cab[2].x + 0.01, rt - 0.02), Vector2(cab[2].x - 0.02, rt + 0.04), Vector2(cab[3].x + 0.02, rt + 0.04)]
+	extrude(roof, hw - 0.04, 0.02, col.lightened(0.05), col)
+	# pillars between the side windows, a highlight on the windscreen
+	var mid: float = (cab[0].x + cab[1].x) / 2.0 - 0.05
+	for sgn in [-1.0, 1.0]:
+		var z: float = (hw - 0.05) * sgn + 0.005 * sgn
+		quad(Vector3(mid - 0.03, cab[0].y, z), Vector3(mid + 0.03, cab[0].y, z), Vector3(mid + 0.03, rt, z), Vector3(mid - 0.03, rt, z), col, Vector3(0, 0, sgn))
+		if kind == 2:
+			quad(Vector3(-0.45, cab[0].y, z), Vector3(-0.39, cab[0].y, z), Vector3(-0.39, rt, z), Vector3(-0.45, rt, z), col, Vector3(0, 0, sgn))
+		# door seams and handles
+		var zs: float = hw * sgn + 0.004 * sgn
+		for sx in [mid, cab[0].x + 0.05]:
+			quad(Vector3(sx - 0.008, 0.24, zs), Vector3(sx + 0.008, 0.24, zs), Vector3(sx + 0.008, 0.5, zs), Vector3(sx - 0.008, 0.5, zs), dk, Vector3(0, 0, sgn))
+		for hx in [mid + 0.12, mid - 0.2]:
+			quad(Vector3(hx - 0.04, 0.44, zs), Vector3(hx + 0.04, 0.44, zs), Vector3(hx + 0.04, 0.46, zs), Vector3(hx - 0.04, 0.46, zs), chrome, Vector3(0, 0, sgn))
+		# mirror
+		box(Vector3(cab[1].x - 0.1, 0.52, (hw - 0.02) * sgn - (0.06 if sgn < 0 else 0.0)), Vector3(0.08, 0.06, 0.06), dk)
+		# dark wheel arches
+		for wx in [-0.55, 0.55]:
+			var zz: float = hw * sgn + 0.002 * sgn
+			var arch := []
+			for k in 7:
+				var a := PI * k / 6.0
+				arch.append(Vector3(wx + cos(a) * 0.22, 0.2 + sin(a) * 0.2, zz))
+			for k in 6:
+				quad(arch[k], arch[k + 1], Vector3(arch[k + 1].x, 0.2, zz), Vector3(arch[k].x, 0.2, zz), trim, Vector3(0, 0, sgn))
+	var wsx: float = (cab[1].x + cab[2].x) / 2.0
+	var wsy: float = (cab[1].y + cab[2].y) / 2.0
+	quad(Vector3(wsx - 0.04, wsy - 0.05, -0.15), Vector3(wsx + 0.03, wsy - 0.1, -0.05), Vector3(wsx + 0.03, wsy - 0.1, 0.0), Vector3(wsx - 0.04, wsy - 0.05, -0.1), glass_hi, Vector3(1, 1, 0))
+	# wheels
+	for wx in [-0.55, 0.55]:
+		_wheel(Vector3(wx, 0.17, -hw + 0.03), -1.0)
+		_wheel(Vector3(wx, 0.17, hw - 0.03), 1.0)
+	# bumpers, grille, plates
+	var fx: float = body[2].x
+	var bx: float = body[body.size() - 1].x if kind != 2 else -0.9
+	box(Vector3(fx - 0.06, 0.18, -hw + 0.02), Vector3(0.1, 0.1, hw * 2 - 0.04), trim)
+	box(Vector3(bx - 0.04, 0.18, -hw + 0.02), Vector3(0.1, 0.1, hw * 2 - 0.04), trim)
+	box(Vector3(fx - 0.03, 0.29, -0.16), Vector3(0.04, 0.08, 0.32), trim)
+	box(Vector3(fx + 0.01, 0.2, -0.08), Vector3(0.02, 0.06, 0.16), Color("#f2efe4"))
+	box(Vector3(bx - 0.05, 0.3, -0.08), Vector3(0.02, 0.06, 0.16), Color("#f2efe4"))
+	# lights glow softly
+	glow_on()
+	for z in [-0.3, 0.2]:
+		box(Vector3(fx - 0.04, 0.33, z), Vector3(0.04, 0.06, 0.1), Color("#fff3d6"))
+		box(Vector3(bx - 0.03, 0.36, z), Vector3(0.04, 0.06, 0.1), Color("#c85a4e"))
+	glow_off()
+	xf = keep
+
+
+## A big box truck: cab with a sloped windscreen, mirrors, grille and steps; a ribbed cargo box with a
+## roll-up back door and the company's name on both sides; tandem rear wheels and mud flaps. Front is +x.
+func _truck(p: Vector3, yaw := 0.0, style := "lin", company := "", colour := "") -> void:
+	var keep := xf
+	xf = Transform3D(Basis(Vector3.UP, yaw), p)
+	var body := Color("#e8e2d6"); var cab := Color("#2f4350"); var stripe := Color("#2f4350"); var name_ := "Lin's Wholesale"
+	if style == "produce":
+		body = Color("#eef0ea"); cab = Color("#5d7f52"); stripe = Color("#8fb36b"); name_ = "Prairie Produce"
+	if company != "":
+		name_ = company
+	if colour != "":
+		cab = Color(colour); stripe = Color(colour)
+	var dark := Color("#26282b"); var trim := Color("#3a3e42"); var glass := Color("#3f4b57"); var chrome := Color("#c9ccce")
+	var hw := 0.46
+	# chassis, fuel tank, steps
+	box(Vector3(-1.75, 0.22, -0.3), Vector3(3.3, 0.13, 0.6), dark)
+	var tk := xf
+	xf = xf * Transform3D(Basis(Vector3.BACK, PI / 2.0), Vector3(0.3, 0.33, -0.36))
+	cyl(Vector3(0, -0.28, 0), 0.11, 0.56, chrome.darkened(0.15), 10)
+	xf = tk
+	box(Vector3(0.75, 0.2, hw - 0.02), Vector3(0.3, 0.05, 0.1), trim)
+	box(Vector3(0.75, 0.2, -hw - 0.08), Vector3(0.3, 0.05, 0.1), trim)
+	# cargo box with ribs, rails and a roll-up back door
+	box(Vector3(-1.72, 0.36, -hw), Vector3(2.27, 1.42, hw * 2), body, body.lightened(0.04))
+	var x := -1.6
+	while x < 0.5:
+		for sgn in [-1.0, 1.0]:
+			box(Vector3(x, 0.38, hw * sgn - (0.012 if sgn < 0 else 0.0)), Vector3(0.025, 1.38, 0.012), body.darkened(0.08))
+		x += 0.3
+	for sgn in [-1.0, 1.0]:
+		var zz: float = hw * sgn - (0.02 if sgn < 0 else 0.0)
+		box(Vector3(-1.72, 0.36, zz), Vector3(2.27, 0.06, 0.02), trim)                  # bottom rail
+		box(Vector3(-1.72, 1.72, zz), Vector3(2.27, 0.06, 0.02), body.darkened(0.12))   # top rail
+		box(Vector3(-1.72, 0.95, zz), Vector3(2.27, 0.16, 0.02), stripe)                 # company stripe
+		for k in 6:   # reflector tape
+			box(Vector3(-1.6 + k * 0.38, 0.44, zz), Vector3(0.18, 0.04, 0.02), Color("#c85a4e") if k % 2 else Color("#f2efe4"))
+	box(Vector3(-1.74, 0.4, -hw + 0.06), Vector3(0.03, 1.3, hw * 2 - 0.12), body.darkened(0.06))   # back door
+	var y := 0.48
+	while y < 1.66:
+		box(Vector3(-1.755, y, -hw + 0.08), Vector3(0.02, 0.015, hw * 2 - 0.16), body.darkened(0.16))
+		y += 0.1
+	box(Vector3(-1.77, 0.5, -0.06), Vector3(0.03, 0.05, 0.12), chrome)   # handle
+	box(Vector3(-1.77, 0.38, -0.12), Vector3(0.02, 0.07, 0.24), Color("#f2efe4"))   # plate
+	if style == "produce":   # fridge unit on the front of the box
+		box(Vector3(0.55, 1.22, -0.3), Vector3(0.16, 0.5, 0.6), Color("#d8dcd6"))
+		for k in 4:
+			box(Vector3(0.71, 1.28 + k * 0.1, -0.24), Vector3(0.01, 0.04, 0.48), trim)
+	# cab: lower body, glass house, roof with an air deflector
+	extrude([Vector2(0.6, 0.34), Vector2(1.55, 0.34), Vector2(1.58, 0.5), Vector2(1.55, 0.95), Vector2(0.6, 0.95)], hw - 0.02, 0.04, cab, cab.darkened(0.08))
+	extrude([Vector2(0.62, 0.94), Vector2(1.52, 0.94), Vector2(1.38, 1.36), Vector2(0.64, 1.36)], hw - 0.06, 0.03, glass, glass)
+	extrude([Vector2(0.62, 1.34), Vector2(1.4, 1.34), Vector2(1.36, 1.42), Vector2(0.64, 1.42)], hw - 0.04, 0.02, cab.lightened(0.06), cab)
+	extrude([Vector2(0.66, 1.42), Vector2(1.2, 1.42), Vector2(0.72, 1.7), Vector2(0.66, 1.7)], hw - 0.08, 0.03, cab, cab.darkened(0.06))
+	for sgn in [-1.0, 1.0]:
+		var zg: float = (hw - 0.06) * sgn + 0.006 * sgn
+		quad(Vector3(1.0, 0.94, zg), Vector3(1.06, 0.94, zg), Vector3(1.06, 1.36, zg), Vector3(1.0, 1.36, zg), cab, Vector3(0, 0, sgn))   # B pillar
+		var zc: float = (hw - 0.02) * sgn + 0.005 * sgn
+		quad(Vector3(1.02, 0.36, zc), Vector3(1.035, 0.36, zc), Vector3(1.035, 0.94, zc), Vector3(1.02, 0.94, zc), cab.darkened(0.3), Vector3(0, 0, sgn))   # door seam
+		quad(Vector3(0.85, 0.8, zc), Vector3(0.95, 0.8, zc), Vector3(0.95, 0.83, zc), Vector3(0.85, 0.83, zc), chrome, Vector3(0, 0, sgn))   # handle
+		# mirror on an arm
+		var zm: float = (hw + 0.06) * sgn
+		box(Vector3(1.42, 1.08, minf(zm, hw * sgn)), Vector3(0.03, 0.03, 0.08), trim)
+		box(Vector3(1.4, 0.95, zm - 0.02), Vector3(0.05, 0.28, 0.06), dark)
+	box(Vector3(1.55, 0.42, -0.3), Vector3(0.05, 0.4, 0.6), trim)          # grille
+	for k in 5:
+		box(Vector3(1.6, 0.46 + k * 0.07, -0.28), Vector3(0.01, 0.02, 0.56), chrome.darkened(0.2))
+	box(Vector3(1.55, 0.22, -hw + 0.02), Vector3(0.1, 0.14, hw * 2 - 0.04), chrome.darkened(0.25))   # bumper
+	box(Vector3(-1.8, 0.24, -hw + 0.04), Vector3(0.08, 0.1, hw * 2 - 0.08), dark)   # rear bumper
+	glow_on()
+	for z in [-0.36, 0.24]:
+		box(Vector3(1.58, 0.56, z), Vector3(0.03, 0.08, 0.12), Color("#fff3d6"))
+		box(Vector3(-1.76, 0.5, z), Vector3(0.03, 0.08, 0.12), Color("#c85a4e"))
+	for k in 3:   # roof marker lights
+		box(Vector3(1.38, 1.42, -0.12 + k * 0.1), Vector3(0.04, 0.03, 0.04), Color("#f2b35c"))
+	glow_off()
+	# wheels: one front pair, tandem rear pairs, mud flaps
+	for wx in [1.18, -0.82, -1.28]:
+		_wheel(Vector3(wx, 0.22, -hw + 0.04), -1.0, 0.22, 0.16)
+		_wheel(Vector3(wx, 0.22, hw - 0.04), 1.0, 0.22, 0.16)
+	for sgn in [-1.0, 1.0]:
+		box(Vector3(-1.56, 0.06, hw * sgn - (0.12 if sgn > 0 else 0.0)), Vector3(0.02, 0.26, 0.12), dark)
+	xf = keep
+	# the company name on both sides of the box
+	for sgn in [-1.0, 1.0]:
+		var l := Label3D.new()
+		l.text = name_
+		l.font = font
+		l.font_size = 56
+		l.pixel_size = 0.0042
+		l.modulate = stripe.darkened(0.2) if style == "lin" else Color("#4c6d42")
+		l.outline_size = 0
+		l.shaded = true
+		var local := Vector3(-0.58, 1.38, (hw + 0.012) * sgn)
+		l.position = Transform3D(Basis(Vector3.UP, yaw), p) * local
+		l.rotation.y = yaw + (0.0 if sgn > 0 else PI)
+		add_child(l)
+	var ext := Vector2(3.45, 1.2)
+	if absf(sin(yaw)) > 0.5: ext = Vector2(1.2, 3.45)
+
+
+func _bus_shelter(p: Vector3) -> void:
+	var w := 2.4
+	box(Vector3(p.x, p.y, p.z + 0.1), Vector3(w, 0.06, 1.4), C.concrete)
+	for x in [p.x + 0.05, p.x + w - 0.1]:
+		box(Vector3(x, p.y, p.z + 1.3), Vector3(0.06, 2.1, 0.06), C.metal)
+	box(Vector3(p.x + 0.05, p.y, p.z + 1.42), Vector3(w - 0.1, 1.9, 0.04), Color("#b9c8cc"))   # back panel (frosted)
+	box(Vector3(p.x - 0.05, p.y + 2.1, p.z + 0.3), Vector3(w + 0.1, 0.08, 1.3), Color("#5a6a70"), Color("#6c7c82"))
+	box(Vector3(p.x + 0.3, p.y + 0.42, p.z + 1.05), Vector3(1.6, 0.06, 0.32), C.wood)
+	glow_on()
+	box(Vector3(p.x + w - 0.08, p.y + 0.5, p.z + 0.45), Vector3(0.05, 1.2, 0.8), Color("#efe0c0"))   # lit map panel
+	glow_off()
+	box(Vector3(p.x - 0.3, p.y, p.z + 0.1), Vector3(0.06, 2.4, 0.06), C.metal)
+	box(Vector3(p.x - 0.5, p.y + 2.0, p.z + 0.08), Vector3(0.45, 0.45, 0.04), Color("#4f7ba3"))   # bus stop flag
+
+
+func _bike_rack(p: Vector3) -> void:
+	for i in 3:
+		var x := p.x + i * 0.45
+		box(Vector3(x, p.y, p.z), Vector3(0.04, 0.5, 0.04), C.metal_lt)
+		box(Vector3(x, p.y, p.z + 0.45), Vector3(0.04, 0.5, 0.04), C.metal_lt)
+		box(Vector3(x, p.y + 0.48, p.z), Vector3(0.04, 0.04, 0.49), C.metal_lt)
+	# one parked bike
+	var bx := p.x + 0.25
+	cyl(Vector3(bx, p.y + 0.28, p.z - 0.1), 0.26, 0.04, Color("#2c3134"), 10, -1.0, true)
+
+
+func _signal(p: Vector3, dir: Vector3) -> void:
+	cyl(p, 0.06, 3.0, C.metal, 6)
+	var end := p + dir * 1.8
+	var a := Vector3(minf(p.x, end.x) - 0.04, p.y + 2.9, minf(p.z, end.z) - 0.04)
+	box(a, Vector3(absf(end.x - p.x) + 0.08, 0.07, absf(end.z - p.z) + 0.08), C.metal)
+	var hpos := p + dir * 1.5 + Vector3(0, 2.25, 0)
+	box(hpos - Vector3(0.13, 0, 0.13), Vector3(0.26, 0.65, 0.26), Color("#33383c"))
+	var face := Vector3(-1, 0, 0) if dir.z != 0 else Vector3(0, 0, 1 if dir.x > 0 else -1)
+	var road := "ns" if dir.x != 0 else "ew"   # an arm reaching along x hangs over the north–south street
+	var dim := [Color("#4a3a38"), Color("#5a4e3a"), Color("#3c4a40")]
+	for i in 3:
+		var c := hpos + Vector3(0, 0.52 - i * 0.2, 0) + face * 0.135
+		box(c - Vector3(0.06, 0.06, 0.06), Vector3(0.12, 0.12, 0.12), dim[i])
+		if i == 1: continue
+		part_begin()
+		box(Vector3(-0.065, -0.065, -0.065), Vector3(0.13, 0.13, 0.13), Color("#e0705f") if i == 0 else Color("#8fd6a4"))
+		lit.append([part_end(c, mats().glow), road + ("_red" if i == 0 else "_green")])
+	box(p + Vector3(-0.1, 1.0, -0.1), Vector3(0.2, 0.25, 0.2), Color("#f0e8d0"))   # push-button box
+
+
+func _string_lights(a: Vector3, b: Vector3, sag: float) -> void:
+	var n := 12
+	var prev := a
+	for i in range(1, n + 1):
+		var t := float(i) / n
+		var p := a.lerp(b, t) - Vector3(0, sag * 4.0 * t * (1.0 - t), 0)
+		quad(prev, p, p + Vector3(0, 0.02, 0), prev + Vector3(0, 0.02, 0), Color("#2b2622"), Vector3.BACK)
+		if i < n:
+			glow_on()
+			box(p - Vector3(0.04, 0.09, 0.04), Vector3(0.08, 0.08, 0.08), Color("#ffe0a0"))
+			glow_off()
+		prev = p
+
+
+func _duck(k: int) -> MeshInstance3D:
+	part_begin()
+	var body := Color("#f2efe6") if k != 1 else Color("#9a7a5a")
+	blob(Vector3(0, 0.07, 0), Vector3(0.1, 0.065, 0.15), body, 40 + k, 7, 4, 0.0)
+	blob(Vector3(0, 0.1, -0.12), Vector3(0.05, 0.04, 0.05), body.darkened(0.08), 50 + k, 5, 3, 0.0)   # tail
+	blob(Vector3(0, 0.18, 0.1), Vector3(0.055, 0.055, 0.055), Color("#4f7d5a") if k != 1 else body.darkened(0.1), 60 + k, 6, 3, 0.0)
+	box(Vector3(-0.02, 0.165, 0.15), Vector3(0.04, 0.02, 0.06), Color("#e0a23c"))
+	for sx in [-0.03, 0.025]:
+		box(Vector3(sx, 0.195, 0.135), Vector3(0.012, 0.014, 0.012), Color("#1e1e1e"))
+	return part_end(Vector3.ZERO)
+
+
+## An arch over a street between two areas. p: { x, y, axis "x" (spans along x) | "z", span (tiles), names: { map id: sign text }, color }.
+## The posts stand on the first and last tile; the sign says where you are going from the map you are on.
+func _gate(p: Dictionary, gh: float) -> void:
+	var span := int(p.get("span", 8))
+	var along_x: bool = p.get("axis", "x") == "x"
+	var col := Color(p.get("color", "#9e6d58"))
+	var trim := Color("#efe5d4")
+	var keep := xf
+	# build in a local frame spanning +x from the first post's centre; turn it for gates across east–west streets
+	var o := Vector3(float(p.x) + 0.5, gh, float(p.y) + 0.5)
+	xf = Transform3D(Basis.IDENTITY if along_x else Basis(Vector3.UP, -PI / 2.0), o)
+	var L := float(span - 1)
+	for px in [0.0, L]:
+		box(Vector3(px - 0.42, 0, -0.42), Vector3(0.84, 0.35, 0.84), C.stone.darkened(0.1))
+		box(Vector3(px - 0.34, 0.35, -0.34), Vector3(0.68, 3.5, 0.68), col, col.lightened(0.05))
+		for k in 4:
+			box(Vector3(px - 0.36, 0.7 + k * 0.85, -0.36), Vector3(0.72, 0.06, 0.72), col.darkened(0.15))
+		box(Vector3(px - 0.45, 3.85, -0.45), Vector3(0.9, 0.22, 0.9), trim)
+		cone(Vector3(px, 4.07, 0), 0.5, 0.55, col.darkened(0.2), 4, false)
+		glow_on()
+		box(Vector3(px - 0.12, 3.25, 0.35), Vector3(0.24, 0.3, 0.06), Color("#ffe2a8"))
+		box(Vector3(px - 0.12, 3.25, -0.41), Vector3(0.24, 0.3, 0.06), Color("#ffe2a8"))
+		glow_off()
+	# the arch: a curved band from post to post, rising in the middle
+	var seg := 16
+	var prev := Vector3(0, 3.6, 0)
+	for i in range(1, seg + 1):
+		var t := float(i) / seg
+		var cur := Vector3(L * t, 3.6 + 0.9 * sin(PI * t), 0)
+		var up := Vector3(0, 0.38, 0)
+		quad(prev + Vector3(0, 0, 0.25), cur + Vector3(0, 0, 0.25), cur + up + Vector3(0, 0, 0.25), prev + up + Vector3(0, 0, 0.25), col, Vector3.BACK)
+		quad(prev + Vector3(0, 0, -0.25), cur + Vector3(0, 0, -0.25), cur + up + Vector3(0, 0, -0.25), prev + up + Vector3(0, 0, -0.25), col, Vector3.FORWARD)
+		quad(prev + up + Vector3(0, 0, -0.25), cur + up + Vector3(0, 0, -0.25), cur + up + Vector3(0, 0, 0.25), prev + up + Vector3(0, 0, 0.25), trim, Vector3.UP)
+		quad(prev + Vector3(0, 0, -0.25), cur + Vector3(0, 0, -0.25), cur + Vector3(0, 0, 0.25), prev + Vector3(0, 0, 0.25), col.darkened(0.2), Vector3.DOWN)
+		prev = cur
+	# the sign board hanging under the crown
+	box(Vector3(L / 2 - 1.6, 3.55, -0.08), Vector3(3.2, 0.7, 0.16), Color("#2f3a33"), Color("#2f3a33"))
+	box(Vector3(L / 2 - 1.7, 3.5, -0.06), Vector3(3.4, 0.8, 0.12), trim)
+	var mid: Vector3 = xf * Vector3(L / 2, 0, 0)
+	xf = keep
+	var names: Dictionary = p.get("names", {})
+	var text: String = names.get(viewer, names.values()[0] if names.size() else "")
+	var kick := label3d("NEXT AREA", mid + Vector3(0, 5.25, 0), 34, Color("#f5d27a"), Color("#2b2622"), 0.006, true)
+	kick.no_depth_test = true
+	var big := label3d(text, mid + Vector3(0, 4.75, 0), 64, Color("#fff6e0"), Color("#2b2622"), 0.008, true)
+	big.no_depth_test = true
+	big.outline_size = 14

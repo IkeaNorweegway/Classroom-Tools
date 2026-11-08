@@ -55,7 +55,8 @@ func _draw() -> void:
 		draw_rect(r, col)
 		draw_rect(r, col.darkened(0.35), false, 1.5)
 		var dx := float(b.get("door", b.x)) + 0.5
-		draw_rect(Rect2(o + Vector2(dx - 0.4, b.y + b.h - 0.35) * s, Vector2(0.8, 0.35) * s), col.darkened(0.5))
+		var dy := float(b.y) if b.get("face", "s") == "n" else float(b.y + b.h) - 0.35
+		draw_rect(Rect2(o + Vector2(dx - 0.4, dy) * s, Vector2(0.8, 0.35) * s), col.darkened(0.5))
 		var name := str(b.get("sign", ""))
 		if name != "":
 			_text(name, r.get_center(), maxi(9, int(s * 0.95)), Color("#2b2622"), r.size.x - 4)

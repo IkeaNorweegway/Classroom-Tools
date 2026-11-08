@@ -21,9 +21,10 @@ const DIRS := {"left": Vector2i(-1, 0), "right": Vector2i(1, 0), "up": Vector2i(
 const YAW := {"down": 0.0, "up": PI, "left": -PI / 2.0, "right": PI / 2.0}
 const SECTION := 8
 const KEEP := 12.0                 # free a section once it is this many tiles outside the view
-const BUILDS_PER_FRAME := 1
+const BUILDS_PER_FRAME := 2
 
 var map: MapData
+var all_maps := {}                 # every map by id (Town sets it), so the start of the next area can be shown past an edge
 var font: Font
 var camera: Camera3D
 var me: PersonNode
@@ -52,7 +53,19 @@ var _people_root: Node3D
 var _goal_node: MeshInstance3D
 var _overlay: Overlay
 var _by_section := {}              # Vector2i → { buildings: [], props: [], draws: [] }
+const PREVIEW := 12                # tiles of the next area shown past an edge
+var _previews := []                # { map, rect (its tiles), off (where its tile 0,0 sits here), node }
+var _pqueue := []
 var stats := {"built": 0, "freed": 0}
+# Town life from the map's "traffic" and "walkers" (both optional):
+#   traffic: { lanes: [{ axis "x"|"z", dir ±1, fixed, from, to, road "ew"|"ns", stops: [where a car waits at a red light] }],
+#              cars: [[lane index, start, colour]], phases: [ew green, all red, ns green, all red] in seconds }
+#   walkers: [{ look, pts: [[x, z], …], loop, speed }]  (world units: tile x + 0.5)
+var cars := []                     # { lane, s, v, node }
+var strollers := []                # { node, pts, i, dir, loop, speed }
+var light_phase := 0
+var phase_t := 0.0
+static var _car_meshes := {}
 
 
 class PersonNode extends Node3D:
@@ -247,6 +260,12 @@ func load_map(m: MapData, at: Vector2i, dir: String) -> void:
 		if c != me:
 			c.queue_free()
 	people.clear()
+	for c in cars:
+		if c.node: c.node.queue_free()
+	cars.clear()
+	for w in strollers:
+		w.node.queue_free()
+	strollers.clear()
 	_index(m)
 	_people_root.add_child(me)
 	me.place(at)
@@ -260,7 +279,13 @@ func load_map(m: MapData, at: Vector2i, dir: String) -> void:
 	for y in m.h:
 		for x in m.w:
 			astar.set_point_solid(Vector2i(x, y), m.blocked(x, y))
+	for pv in _previews:
+		if pv.node:
+			pv.node.queue_free()
+	_previews.clear()
+	_pqueue.clear()
 	if m.outdoor:
+		_setup_previews(m)
 		_base = _build_base(m)
 		add_child(_base)
 	else:
@@ -273,6 +298,7 @@ func load_map(m: MapData, at: Vector2i, dir: String) -> void:
 		b.finish()
 		_room_node = b
 		add_child(b)
+	_setup_life(m)
 	_place_camera(true)
 	_cull(true)
 
@@ -297,22 +323,75 @@ func _index(m: MapData) -> void:
 func _build_base(m: MapData) -> Node3D:
 	var b := Art3D.new()
 	var g: Color = Art3D.C.grass
-	b.flat(-60, -60, m.w + 60, 0, 0.04, g)
-	b.flat(-60, m.h, m.w + 60, m.h + 60, 0.04, g)
-	b.flat(-60, 0, 0, m.h, 0.04, g)
-	b.flat(m.w, 0, m.w + 60, m.h, 0.04, g)
-	for i in 70:   # a loose ring of trees beyond the edge
+	b.flat(-60, -60, m.w + 60, 0, -0.03, g)   # a little below the map, so a next area's roads sit on top of it
+	b.flat(-60, m.h, m.w + 60, m.h + 60, -0.03, g)
+	b.flat(-60, 0, 0, m.h, -0.03, g)
+	b.flat(m.w, 0, m.w + 60, m.h, -0.03, g)
+	for i in 70:   # a loose ring of trees beyond the edge (not where the next area shows)
 		var a := TAU * i / 70.0
 		var r := Vector2(m.w, m.h).length() * 0.5 + 4.0 + Art3D._h(i, 5) * 10.0
 		var c := Vector3(m.w / 2.0 + cos(a) * r * 1.05, 0.04, m.h / 2.0 + sin(a) * r * 0.85)
+		var hit := false
+		for pv in _previews:
+			if Rect2(Vector2(pv.rect.position + pv.off), Vector2(pv.rect.size)).grow(6.0).has_point(Vector2(c.x, c.z)):
+				hit = true
+		if hit:
+			continue
 		b.blob(c + Vector3(0, 1.3, 0), Vector3(1.0, 1.2, 1.0), Art3D.C.leaf_dk.lerp(Art3D.C.leaf, Art3D._h(i, 9)), i, 6, 3, 0.2)
 	b.finish()
 	return b
 
 
+## The start of each neighbouring area, laid just past the edge you would walk out by, in strips of SECTION tiles.
+func _setup_previews(m: MapData) -> void:
+	var seen := {}
+	for l in m.def.get("links", []):
+		if not all_maps.has(l.to) or seen.has(l.to):
+			continue
+		seen[l.to] = true
+		var nm: MapData = all_maps[l.to]
+		var side := "e" if int(l.x) == m.w - 1 else "w" if int(l.x) == 0 else "n" if int(l.y) == 0 else "s"
+		var rect: Rect2i; var off: Vector2i
+		match side:
+			"e": rect = Rect2i(0, 0, PREVIEW, nm.h); off = Vector2i(m.w, 0)
+			"w": rect = Rect2i(nm.w - PREVIEW, 0, PREVIEW, nm.h); off = Vector2i(-nm.w, 0)
+			"n": rect = Rect2i(0, nm.h - PREVIEW, nm.w, PREVIEW); off = Vector2i(0, -nm.h)
+			_: rect = Rect2i(0, 0, nm.w, PREVIEW); off = Vector2i(0, m.h)
+		var horiz: bool = side in ["n", "s"]
+		var n := ceili(float(rect.size.x if horiz else rect.size.y) / SECTION)
+		for i in n:
+			var r := Rect2i(rect.position + (Vector2i(i * SECTION, 0) if horiz else Vector2i(0, i * SECTION)), Vector2i(SECTION, rect.size.y) if horiz else Vector2i(rect.size.x, SECTION))
+			r = r.intersection(rect)
+			_previews.append({"map": nm, "rect": r, "off": off, "node": null})
+
+
+func _build_preview(pv: Dictionary) -> void:
+	var nm: MapData = pv.map
+	var b := Art3D.new()
+	b.font = font
+	b.viewer = map.id
+	b.position = Vector3(pv.off.x, 0, pv.off.y)
+	var r: Rect2i = pv.rect
+	b.ground_tiles(nm, r)
+	for d in nm.def.get("draws", []):
+		if r.has_point(Vector2i(int(d.x), int(d.y))):
+			b.draw_extra(d)
+	for bd in nm.buildings:
+		if r.has_point(Vector2i(int(bd.x), int(bd.y))):
+			b.building(bd)
+	for p in nm.props:
+		if r.has_point(Vector2i(int(p.x), int(p.y))):
+			var gh: float = Art3D.HEIGHT.get(nm.ground[int(p.y) * nm.w + int(p.x)], 0.05)
+			b.prop(p, gh)
+	b.finish()
+	add_child(b)
+	pv.node = b
+
+
 func _build_section(k: Vector2i) -> void:
 	var b := Art3D.new()
 	b.font = font
+	b.viewer = map.id
 	b.ground_tiles(map, Rect2i(k.x * SECTION, k.y * SECTION, SECTION, SECTION))
 	var list: Dictionary = _by_section.get(k, {})
 	for d in list.get("draws", []):
@@ -353,9 +432,11 @@ func _cull(now := false) -> void:
 			for kx in range(maxi(k0.x, 0), mini(k1.x, (map.w - 1) / SECTION) + 1):
 				want[Vector2i(kx, ky)] = true
 		_queue.clear()
+		var mine := Vector2(me.tile.x, me.tile.y)
 		for k in want:
 			if not sections.has(k):
-				if now:
+				var r := Rect2(Vector2(k * SECTION), Vector2(SECTION, SECTION))
+				if now and r.grow(4.0).has_point(mine):   # only the squares round you at once; the rest a frame at a time under the fade
 					_build_section(k)
 				else:
 					_queue.append(k)
@@ -369,6 +450,19 @@ func _cull(now := false) -> void:
 				sections[k].queue_free()
 				sections.erase(k)
 				stats.freed += 1
+	for pv in _previews:
+		var wr := Rect2(Vector2(pv.rect.position + pv.off), Vector2(pv.rect.size))
+		if wr.intersects(_view):
+			if pv.node == null and not _pqueue.has(pv):
+				_pqueue.append(pv)
+			if pv.node:
+				pv.node.visible = true
+		elif pv.node:
+			if not wr.intersects(_view.grow(KEEP)):
+				pv.node.queue_free()
+				pv.node = null
+			else:
+				pv.node.visible = false
 	for id in people:
 		var n: PersonNode = people[id]
 		n.visible = _view.has_point(Vector2(n.position.x, n.position.z))
@@ -501,6 +595,11 @@ func _process(delta: float) -> void:
 		if not sections.has(k):
 			_build_section(k)
 			n -= 1
+	if n > 0 and not _pqueue.is_empty():
+		var pv: Dictionary = _pqueue.pop_front()
+		if pv.node == null:
+			_build_preview(pv)
+	_life(delta)
 	_animate(delta)
 	if life_on and not busy:
 		life_timer -= delta
@@ -510,12 +609,126 @@ func _process(delta: float) -> void:
 	_overlay.queue_redraw()
 
 
+# ── Town life: traffic that stops at red lights (and for you), people strolling the sidewalks ──
+func _setup_life(m: MapData) -> void:
+	var tr: Dictionary = m.def.get("traffic", {})
+	for c in tr.get("cars", []):
+		var L: Dictionary = tr.lanes[int(c[0])]
+		cars.append({"lane": int(c[0]), "s": (float(c[1]) - float(L.from)) * float(L.dir), "v": 2.4, "node": null, "col": str(c[2]), "kind": cars.size() % 3})
+	for w in m.def.get("walkers", []):
+		var n := PersonNode.new()
+		n.world = self
+		n.set_look(w.look)
+		_people_root.add_child(n)
+		var pts := []
+		for q in w.pts:
+			pts.append(Vector3(float(q[0]), 0.0, float(q[1])))
+		n.position = pts[0]
+		strollers.append({"node": n, "pts": pts, "i": 0, "dir": 1, "loop": w.get("loop", false), "speed": float(w.get("speed", 1.0)), "phase": randf() * TAU})
+
+
+static func car_mesh(col: String, kind: int) -> ArrayMesh:
+	var key := "%s/%d" % [col, kind]
+	if not _car_meshes.has(key):
+		var b := Art3D.new()
+		b.detail = 1.0
+		b._car_body(Vector3.ZERO, Color(col), 0.0, kind)
+		var mesh := ArrayMesh.new()
+		for pair in [[b.st_main, Art3D.mats().main], [b.st_glow, Art3D.mats().glow]]:
+			var arr: Array = pair[0].commit_to_arrays()
+			if arr[Mesh.ARRAY_VERTEX] != null and not (arr[Mesh.ARRAY_VERTEX] as PackedVector3Array).is_empty():
+				mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+				mesh.surface_set_material(mesh.get_surface_count() - 1, pair[1])
+		b.free()
+		_car_meshes[key] = mesh
+	return _car_meshes[key]
+
+
+func green(road: String) -> bool:
+	return light_phase == (0 if road == "ew" else 2)
+
+
+func _life(dt: float) -> void:
+	var tr: Dictionary = map.def.get("traffic", {})
+	if not tr.is_empty():
+		var ph: Array = tr.get("phases", [14.0, 2.5, 10.0, 2.5])
+		phase_t += dt
+		if phase_t > float(ph[light_phase]):
+			phase_t = 0.0
+			light_phase = (light_phase + 1) % 4
+		var view := _view.grow(3.0)
+		for c in cars:
+			var L: Dictionary = tr.lanes[c.lane]
+			var span: float = absf(float(L.to) - float(L.from))
+			var along: float = float(L.from) + float(c.s) * float(L.dir)
+			var want := 2.4
+			if not green(str(L.road)):   # a red light ahead: stop at its line
+				for st in L.get("stops", []):
+					var ahead: float = (float(st) - along) * float(L.dir)
+					if ahead > 0.0 and ahead < 1.6:
+						want = 0.0
+			for o in cars:                # keep a gap to the car in front
+				if o != c and o.lane == c.lane:
+					var gap: float = fposmod(float(o.s) - float(c.s), span)
+					if gap > 0.0 and gap < 2.3:
+						want = 0.0
+			var me_at := Vector2(me.position.x, me.position.z)   # and stop for anyone on foot in the lane
+			var pos2 := Vector2(along, float(L.fixed)) if L.axis == "x" else Vector2(float(L.fixed), along)
+			var ahead_v := Vector2(float(L.dir), 0) if L.axis == "x" else Vector2(0, float(L.dir))
+			var rel := me_at - pos2
+			if rel.dot(ahead_v) > 0.0 and rel.dot(ahead_v) < 2.0 and absf(rel.dot(Vector2(ahead_v.y, ahead_v.x))) < 0.7:
+				want = 0.0
+			c.v = move_toward(float(c.v), want, dt * (6.0 if want < float(c.v) else 2.5))
+			c.s = fposmod(float(c.s) + float(c.v) * dt, span)
+			along = float(L.from) + float(c.s) * float(L.dir)
+			var at := Vector3(along, 0, float(L.fixed)) if L.axis == "x" else Vector3(float(L.fixed), 0, along)
+			var near := view.has_point(Vector2(at.x, at.z))
+			if near and c.node == null:
+				c.node = MeshInstance3D.new()
+				c.node.mesh = car_mesh(c.col, int(c.kind))
+				c.node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+				c.node.rotation.y = (0.0 if float(L.dir) > 0 else PI) if L.axis == "x" else (-PI / 2.0 if float(L.dir) > 0 else PI / 2.0)
+				add_child(c.node)
+			elif not near and c.node != null:
+				c.node.queue_free()
+				c.node = null
+			if c.node:
+				c.node.position = at
+	for w in strollers:
+		var n: PersonNode = w.node
+		var pts: Array = w.pts
+		var nxt: int = w.i + w.dir
+		if nxt >= pts.size() or nxt < 0:
+			if w.loop:
+				nxt = posmod(nxt, pts.size())
+			else:
+				w.dir = -w.dir
+				nxt = w.i + w.dir
+		var target: Vector3 = pts[nxt]
+		var d: Vector3 = target - Vector3(n.position.x, 0, n.position.z)
+		var step: float = float(w.speed) * dt
+		if d.length() <= step:
+			w.i = nxt
+			n.position = Vector3(target.x, 0, target.z)
+		else:
+			n.position += d.normalized() * step
+		n.position.y = ground_h(floori(n.position.x), floori(n.position.z))
+		if d.length() > 0.01:
+			n.body.rotation.y = atan2(d.x, d.z)
+		n.visible = _view.has_point(Vector2(n.position.x, n.position.z))
+		if n.visible and not reduce_motion:
+			n.body.position.y = absf(sin(clock * 9.0 + float(w.phase))) * 0.04
+
+
 ## A building between the camera and you fades to see-through, so you never lose yourself behind it.
 func _fade_between() -> void:
 	if map == null or not map.outdoor:
 		return
 	var eye := camera.global_position
-	var pts := [me.position + Vector3(0, 0.9, 0), me.position + Vector3(0, 0.2, 0)]
+	var pts := []   # just in front of you (toward the camera), so the building you stand at the door of never counts
+	for hgt in [0.9, 0.3]:
+		var p0: Vector3 = me.position + Vector3(0, hgt, 0)
+		pts.append(p0 + (eye - p0).normalized() * 0.8)
 	for k in sections:
 		var s = sections[k]
 		if not s.visible:
@@ -547,6 +760,14 @@ func _animate(delta: float) -> void:
 		if _room_node:
 			lists.append(_room_node)
 		for s in lists:
+			for l in s.lit:
+				var grp: String = l[1]
+				l[0].visible = green(grp.substr(0, 2)) == grp.ends_with("_green")
+			for dk in s.ducks:
+				dk[1] += dk[2] * delta
+				var a: float = dk[1]
+				dk[0].position = dk[5] + Vector3(cos(a) * dk[3], 0.01 * sin(t * 3.0 + a * 5.0), sin(a) * dk[4])
+				dk[0].rotation.y = atan2(-sin(a) * dk[3] * signf(dk[2]), cos(a) * dk[4] * signf(dk[2]))
 			for tr in s.trees:
 				tr[0].rotation.x = 0.018 * sin(t * 0.8 + tr[1]) + 0.008 * sin(t * 2.1 + tr[1] * 2.0)
 				tr[0].rotation.z = 0.014 * sin(t * 0.65 + tr[1] * 1.7)

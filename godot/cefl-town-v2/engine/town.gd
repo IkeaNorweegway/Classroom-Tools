@@ -74,6 +74,7 @@ func start(def) -> void:
 	add_child(ui)
 	world = World.new()
 	world.font = ui.font
+	world.all_maps = maps
 	add_child(world)
 	move_child(world, 0)
 	reduce_motion = _reduced_motion()
@@ -249,12 +250,13 @@ func _enter(id: String, at: Vector2i, dir: String, fade := true) -> void:
 	_on_moved()
 	if fade and not reduce_motion and auto == "":
 		var r := ColorRect.new()
-		r.color = Color(0.12, 0.1, 0.08, 0.7)
+		r.color = Color(0.12, 0.1, 0.08, 0.8)
 		r.set_anchors_preset(Control.PRESET_FULL_RECT)
 		r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		ui.fx_layer.add_child(r)
 		var tw := create_tween()
-		tw.tween_property(r, "modulate:a", 0.0, 0.22)
+		tw.tween_interval(0.12)                         # the next area builds its first squares under this
+		tw.tween_property(r, "modulate:a", 0.0, 0.3)
 		tw.tween_callback(r.queue_free)
 	_refresh()
 	save()
@@ -281,8 +283,14 @@ func _on_moved() -> void:
 			ui.banner(world.map.name, name)
 
 
-## The outdoor map with districts that the Town Map shows (null when the game has none).
+## The outdoor map the Town Map shows: the one you are on, or the one whose door you came in by (null when none has districts).
 func _map_view() -> MapData:
+	if world != null and world.map != null:
+		if world.map.outdoor and world.map.def.has("districts"):
+			return world.map
+		for id in maps:
+			if maps[id].outdoor and maps[id].outside_door(world.map.id) != null:
+				return maps[id]
 	for id in maps:
 		if maps[id].outdoor and maps[id].def.has("districts"):
 			return maps[id]
@@ -296,28 +304,53 @@ func open_town_map() -> void:
 	if m == null:
 		return
 	var view = TownMap.new(m, ui.font)
-	if world.map == m:
-		view.you = world.me.tile
-	else:
-		var od = m.outside_door(world.map.id)
-		if od != null:
-			view.you = od.at
-			view.here = world.map.id
-	var place = _target_place(goal_target) if goal_target != "" else null
-	if place != null:
-		if place.map == m.id:
-			view.goal = place.tile
+	var info: Label = ui.label("", "Muted")
+	var show := func(mm: MapData) -> void:
+		view.map = mm
+		view.you = Vector2i(-1, -1)
+		view.here = ""
+		view.goal = null
+		if world.map == mm:
+			view.you = world.me.tile
 		else:
-			var od2 = m.outside_door(place.map)
-			if od2 != null:
-				view.goal = od2.at
-	var where_txt: String = _district if world.map == m and _district != "" else (world.map.name if world.map != m else m.name)
+			var od = mm.outside_door(world.map.id)
+			if od != null:
+				view.you = od.at
+				view.here = world.map.id
+		var place = _target_place(goal_target) if goal_target != "" else null
+		if place != null:
+			if place.map == mm.id:
+				view.goal = place.tile
+			else:
+				var od2 = mm.outside_door(place.map)
+				if od2 != null:
+					view.goal = od2.at
+		var bits := [mm.name + "."]
+		if view.you.x >= 0:
+			bits.append("You are here (red).")
+		if view.goal != null:
+			bits.append("Your goal is the gold diamond.")
+		info.text = " ".join(bits)
+		view.queue_redraw()
+	show.call(m)
+	var areas := []
+	for id in maps:
+		if maps[id].outdoor and maps[id].def.has("districts"):
+			areas.append(maps[id])
 	await panel("Town Map", func(body):
-		body.add_child(ui.label("You are here: %s. The gold diamond is your goal." % where_txt if view.goal != null else "You are here: %s." % where_txt, "Muted"))
-		body.add_child(view), [["Close", "close", true]], m.name, true)
+		if areas.size() > 1:
+			var row := HFlowContainer.new()
+			row.add_theme_constant_override("h_separation", 6)
+			for mm in areas:
+				row.add_child(ui.button(mm.name, mm == m, func(): show.call(mm)))
+			body.add_child(row)
+		body.add_child(info)
+		body.add_child(view), [["Close", "close", true]], "CEFL Town", true)
 
 
 func _unhandled_input(ev: InputEvent) -> void:
+	if ui == null:
+		return
 	if ev is InputEventKey and ev.pressed and not ev.echo and ev.keycode == KEY_M and ui.open == 0 and not G.is_empty():
 		open_town_map()
 		get_viewport().set_input_as_handled()
