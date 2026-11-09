@@ -49,12 +49,12 @@ func twists() -> Array:
 	return [
 		{"name": "First shift", "line": "Bea shows you the desk, the stands and the rack. A slow Monday.", "rate": 0.7},
 		{"name": "Tuesday", "line": "A normal day at the desk."},
-		{"name": "Saturday rush", "line": "Sunny Saturday: everyone's bike broke at once.", "rate": 1.2},
+		{"name": "Saturday rush", "line": "Sunny Saturday: everyone's bike broke at once.", "rate": 1.1},
 		{"name": "New price list", "line": "Labour went up $5 on every job today. The price list on the card is new.", "labour": 500},
 		{"name": "Rush jobs", "line": "Some riders pay a $10 rush fee. Put it in the quote (GST too).", "rush": 0.4},
 		{"name": "Club ride", "line": "The cycling club rides tomorrow. Bikes keep coming in.", "rate": 1.15},
 		{"name": "Commuters", "line": "Commuters need their bikes back fast. They wait less.", "pat": 0.8},
-		{"name": "Spring tune-ups", "line": "Spring tune-up season: the busiest day of the year.", "rate": 1.3}]
+		{"name": "Spring tune-ups", "line": "Spring tune-up season: the busiest day of the year.", "rate": 1.15}]
 
 
 func setup(st: Dictionary) -> void:
@@ -70,14 +70,14 @@ func setup(st: Dictionary) -> void:
 func tick(st: Dictionary, dt: float) -> void:
 	st.next = float(st.next) - dt * busy(st) * float(tw(st, "rate", 1.0))
 	if st.next <= 0.0:
-		st.next = (13.0 if not st.real else 11.0) * (0.75 + 0.5 * rnd(st))
+		st.next = (14.0 if not st.real else 12.5) * (0.75 + 0.5 * rnd(st))
 		st.demand = int(st.demand) + 1
 		if _desk_q(st).size() >= QUEUE.size():
 			lose(st, QUEUE[-1], "wait", "The line was out the door. A rider took their bike somewhere else.")
 		else:
 			var keys := REPAIRS.keys()
 			var c := add_cust(st, {"state": "new", "problem": keys[irand(st, 0, keys.size() - 1)], "step": "ticket", "rush": rnd(st) < float(tw(st, "rush", 0.0)),
-				"pat0": (40.0 if not st.real else 32.0) * float(tw(st, "pat", 1.0))})
+				"pat0": (48.0 if not st.real else 32.0) * float(tw(st, "pat", 1.0))})
 			c.pat = c.pat0
 			c.bub = "bike"
 	# repairs
@@ -95,7 +95,7 @@ func tick(st: Dictionary, dt: float) -> void:
 			b.wait = float(b.get("wait", 3.0 + rnd(st) * 4.0)) - dt
 			if float(b.wait) <= 0.0:
 				b.called = true
-				var c := add_cust(st, {"state": "pickup", "tn": tn, "pat0": (40.0 if not st.real else 32.0) * float(tw(st, "pat", 1.0))})
+				var c := add_cust(st, {"state": "pickup", "tn": tn, "pat0": (48.0 if not st.real else 32.0) * float(tw(st, "pat", 1.0))})
 				c.pat = c.pat0
 				c.bub = "t:#%d" % tn
 	for c in _desk_q(st):
@@ -325,7 +325,7 @@ func pending(st: Dictionary) -> int:
 
 func tally(st: Dictionary) -> Array:
 	var waiting: int = st.bikes.keys().filter(func(tn): return st.bikes[tn].at == "desk").size()
-	return [["At the desk", str(_desk_q(st).size())], ["Bikes to place", str(waiting)], ["Holding", ("#%d" % int(st.held)) if int(st.held) else "—"], ["Fixed", str(st.fixed)]]
+	return [["At the desk", str(_desk_q(st).size())], ["To a stand", str(waiting)], ["Holding", ("#%d" % int(st.held)) if int(st.held) else "—"]]
 
 
 func earn_line(st: Dictionary) -> String:

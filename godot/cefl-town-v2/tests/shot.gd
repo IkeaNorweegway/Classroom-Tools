@@ -10,6 +10,7 @@ func _initialize() -> void:
 		args[kv[0]] = kv[1] if kv.size() > 1 else "1"
 	change_scene_to_file("res://main.tscn")
 	await create_timer(float(args.get("wait", "4"))).timeout
-	await RenderingServer.frame_post_draw
+	await process_frame   # frame_post_draw does not always fire on a Wayland window
+	await process_frame
 	root.get_texture().get_image().save_png(args.get("out", "/tmp/shot.png"))
 	quit()

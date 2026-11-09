@@ -44,9 +44,9 @@ func _init() -> void:
 			{"k": "tag", "x": 7, "y": 2, "w": 2, "title": "DAIRY"}, {"k": "tag", "x": 9, "y": 2, "w": 2, "title": "CANS"},
 			{"k": "tag", "x": 11, "y": 4, "h": 2, "title": "STOCK"},
 			{"k": "plant", "x": 1, "y": 7, "solid": true}, {"k": "mat", "x": 6, "y": 7}]}
-	stations = {"till": {"stand": Vector2i(2, 3), "tile": Vector2i(2, 4)}, "produce": {"stand": Vector2i(5, 3), "tile": Vector2i(5, 2)},
+	stations = {"till": {"stand": Vector2i(2, 3), "tile": Vector2i(2, 4)}, "produce": {"stand": Vector2i(6, 3), "tile": Vector2i(6, 2)},
 		"dairy": {"stand": Vector2i(7, 3), "tile": Vector2i(7, 2)}, "cans": {"stand": Vector2i(9, 3), "tile": Vector2i(9, 2)},
-		"stock": {"stand": Vector2i(10, 4), "tile": Vector2i(11, 4)}, "mop": {"stand": Vector2i(10, 7), "tile": Vector2i(11, 7)}}
+		"stock": {"stand": Vector2i(10, 5), "tile": Vector2i(11, 5)}, "mop": {"stand": Vector2i(10, 7), "tile": Vector2i(11, 7)}}
 
 
 func twists() -> Array:

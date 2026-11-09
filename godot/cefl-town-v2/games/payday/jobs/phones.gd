@@ -53,8 +53,8 @@ func twists() -> Array:
 		{"name": "Callers", "line": "Lots of people who call a lot: check whether they need unlimited calling.", "acc": 0.3, "calls": 0.6},
 		{"name": "New phones", "line": "The new phones are out. Some customers pay for a phone over 24 months.", "acc": 0.3, "finance": 0.5},
 		{"name": "Push the big plans", "line": "Mr. Singh wants big plans sold today. Customers still need the right plan.", "acc": 0.3, "push": true},
-		{"name": "Holiday shopping", "line": "Holiday shopping: the store is packed.", "acc": 0.4, "rate": 1.25},
-		{"name": "Back to school", "line": "Back-to-school week: students need plans and cases.", "acc": 0.45, "rate": 1.1}]
+		{"name": "Holiday shopping", "line": "Holiday shopping: the store is packed.", "acc": 0.4, "rate": 1.1},
+		{"name": "Back to school", "line": "Back-to-school week: students need plans and cases.", "acc": 0.45, "rate": 1.0}]
 
 
 func setup(st: Dictionary) -> void:
@@ -70,7 +70,7 @@ func _plan(i: int, calls: bool) -> Dictionary:
 func tick(st: Dictionary, dt: float) -> void:
 	st.next = float(st.next) - dt * busy(st) * float(tw(st, "rate", 1.0))
 	if st.next <= 0.0:
-		st.next = (9.5 if not st.real else 8.2) * (0.75 + 0.5 * rnd(st))
+		st.next = (8.6 if not st.real else 8.2) * (0.75 + 0.5 * rnd(st))
 		st.demand = int(st.demand) + 1
 		if rnd(st) < float(tw(st, "acc", 0.35)) and custs(st, "acc").size() < ACC_SPOTS.size():
 			var c := add_cust(st, {"state": "acc", "phone": irand(st, 0, PHONES.size() - 1), "pat0": 38.0 if not st.real else 30.0})
@@ -277,7 +277,7 @@ func pending(st: Dictionary) -> int:
 
 
 func tally(st: Dictionary) -> Array:
-	return [["At the desk", str(custs(st, "desk").size())], ["At the wall", str(custs(st, "acc").size())], ["To pay", str(custs(st, "pay").size())], ["Commission", cash(st.money)]]
+	return [["Waiting", str(custs(st, "desk").size() + custs(st, "acc").size())], ["To pay", str(custs(st, "pay").size())], ["Commission", cash(st.money)]]
 
 
 func earn_line(st: Dictionary) -> String:

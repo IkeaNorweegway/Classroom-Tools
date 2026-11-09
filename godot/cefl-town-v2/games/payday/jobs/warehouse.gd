@@ -44,9 +44,9 @@ func _init() -> void:
 			{"k": "cart", "x": 3, "y": 7, "id": "cart_e", "label": "East cart", "color": "#2c7a4b", "solid": true},
 			{"k": "dolly", "x": 1, "y": 6, "id": "dolly", "label": "Dolly", "solid": true},
 			{"k": "shelf", "x": 1, "y": 4, "id": "problem", "label": "Problem shelf", "color": "#7a5a3a", "solid": true},
-			{"k": "tag", "x": 7, "y": 2, "title": "PICK UP"}, {"k": "tag", "x": 9, "y": 2, "w": 2, "title": "V·W  TSR·P  KLMNP·C  ABCEGHJ·E", "color": "#6b4510"},
-			{"k": "tag", "x": 11, "y": 3, "title": "WEST", "color": "#2f5f9a"}, {"k": "tag", "x": 11, "y": 5, "title": "PRAIRIES", "color": "#94631a"},
-			{"k": "tag", "x": 9, "y": 7, "title": "CENTRAL", "color": "#8a2f28"}, {"k": "tag", "x": 3, "y": 7, "title": "EAST", "color": "#1f5f3a"},
+			{"k": "tag", "x": 7, "y": 2, "title": "PICK UP"}, {"k": "tag", "x": 9, "y": 2, "w": 2, "title": "ZONE CHART", "color": "#6b4510"},
+			{"k": "tag", "x": 10, "y": 3, "w": 3, "title": "WEST · V", "color": "#2f5f9a"}, {"k": "tag", "x": 10, "y": 5, "w": 3, "title": "PRAIRIES · T S R", "color": "#94631a"},
+			{"k": "tag", "x": 8, "y": 7, "w": 3, "title": "CENTRAL · K L M N P", "color": "#8a2f28"}, {"k": "tag", "x": 2, "y": 7, "w": 3, "title": "EAST · A B C E G H J", "color": "#1f5f3a"},
 			{"k": "tag", "x": 1, "y": 4, "title": "PROBLEM"}, {"k": "pallet", "x": 5, "y": 7, "solid": true}, {"k": "cone", "x": 11, "y": 7}]}
 	stations = {"belt": {"stand": Vector2i(7, 3), "tile": Vector2i(7, 2)}, "cart_w": {"stand": Vector2i(10, 3), "tile": Vector2i(11, 3)},
 		"cart_p": {"stand": Vector2i(10, 5), "tile": Vector2i(11, 5)}, "cart_c": {"stand": Vector2i(9, 6), "tile": Vector2i(9, 7)},
@@ -63,7 +63,7 @@ func twists() -> Array:
 		{"name": "Smudged labels", "line": "The label printer is acting up. Smudged labels go to the problem shelf.", "heavy": 0.2, "smudge": 0.25},
 		{"name": "After the repairs", "line": "The belt was fixed yesterday, and now it runs fast.", "heavy": 0.2, "rate": 1.2},
 		{"name": "Big order", "line": "A big online sale: the belt never stops.", "heavy": 0.25, "rate": 1.15},
-		{"name": "Peak season", "line": "Peak season: everyone is shipping gifts.", "heavy": 0.25, "rate": 1.3}]
+		{"name": "Peak season", "line": "Peak season: everyone is shipping gifts.", "heavy": 0.25, "rate": 1.2}]
 
 
 func setup(st: Dictionary) -> void:
@@ -191,7 +191,7 @@ func pending(st: Dictionary) -> int:
 
 
 func tally(st: Dictionary) -> Array:
-	return [["On the belt", "%d/%d" % [st.belt.size(), BELT_MAX]], ["Holding", (str(st.held.code).substr(0, 3) if not st.held.smudged else "???") if st.held != null else "—"], ["Shipped", str(st.sorted)], ["Dolly", "yes" if st.dolly else "no"]]
+	return [["Belt", "%d/%d" % [st.belt.size(), BELT_MAX]], ["Holding", ((str(st.held.code).substr(0, 3) if not st.held.smudged else "???") if st.held != null else "—") + (" · dolly" if st.dolly else "")], ["Shipped", str(st.sorted)]]
 
 
 func earn_line(st: Dictionary) -> String:

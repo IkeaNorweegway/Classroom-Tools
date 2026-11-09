@@ -7,8 +7,8 @@ extends "res://games/payday/jobs/job.gd"
 
 const TABLES := {
 	"t1": {"tile": Vector2i(2, 3), "seats": 2, "stand": Vector2i(2, 4)}, "t2": {"tile": Vector2i(2, 6), "seats": 2, "stand": Vector2i(2, 5)},
-	"t3": {"tile": Vector2i(5, 3), "seats": 4, "stand": Vector2i(6, 4)}, "t4": {"tile": Vector2i(5, 6), "seats": 4, "stand": Vector2i(6, 5)},
-	"t5": {"tile": Vector2i(8, 3), "seats": 4, "stand": Vector2i(7, 4)}, "t6": {"tile": Vector2i(8, 6), "seats": 2, "stand": Vector2i(8, 5)}}
+	"t3": {"tile": Vector2i(5, 3), "seats": 4, "stand": Vector2i(5, 4)}, "t4": {"tile": Vector2i(5, 6), "seats": 4, "stand": Vector2i(5, 5)},
+	"t5": {"tile": Vector2i(8, 3), "seats": 4, "stand": Vector2i(8, 4)}, "t6": {"tile": Vector2i(8, 6), "seats": 2, "stand": Vector2i(8, 5)}}
 const QUEUE := [Vector2i(7, 7), Vector2i(8, 7), Vector2i(9, 7), Vector2i(10, 7), Vector2i(5, 7), Vector2i(4, 7)]
 const SPILLS := [Vector2i(4, 4), Vector2i(7, 5), Vector2i(3, 5)]
 const TUB := 2
@@ -307,7 +307,7 @@ func pending(st: Dictionary) -> int:
 
 func tally(st: Dictionary) -> Array:
 	var sizes := _door_sizes(st).map(func(n): return str(n))
-	return [["At the door", ", ".join(sizes) if sizes.size() else "nobody"], ["Tub", "%d/%d" % [int(st.tub), TUB]], ["Setups", str(st.setups)], ["Tip-out", cash_w(st.money)]]
+	return [["At the door", ", ".join(sizes) if sizes.size() else "nobody"], ["Tub / setups", "%d/%d · %d" % [int(st.tub), TUB, int(st.setups)]], ["Tip-out", cash_w(st.money)]]
 
 
 func earn_line(st: Dictionary) -> String:

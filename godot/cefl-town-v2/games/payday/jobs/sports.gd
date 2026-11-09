@@ -399,7 +399,7 @@ func pending(st: Dictionary) -> int:
 
 func tally(st: Dictionary) -> Array:
 	var waiting := custs(st, "bench").size() + custs(st, "door").size()
-	return [["Waiting", str(waiting)], ["Boxes", "%d/%d" % [st.carry_boxes.size(), CARRY]], ["Sold", cash_w(st.sales)], ["Commission", cash(st.money)]]
+	return [["Waiting", str(waiting)], ["Boxes", "%d/%d" % [st.carry_boxes.size(), CARRY]], ["Commission", cash(st.money)]]
 
 
 func earn_line(st: Dictionary) -> String:

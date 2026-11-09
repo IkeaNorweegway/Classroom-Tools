@@ -1,201 +1,359 @@
-# Riverbend Clinic (receptionist, salary): Book it right. Patients arrive at the desk. Each one needs a
-# checkup, a vaccine, or a consult. Dr. Chen handles all three; Nurse Patel does checkups and vaccines
-# only. Each shift has 4 emergency slots (⚡) — 2 per provider — kept for urgent walk-in patients. Routine
-# patients go in regular slots; urgent patients go in emergency slots if one is available. On a salary,
-# your pay is fixed; wrong bookings and wasted emergency slots affect the clinic's reputation.
+# Riverbend Clinic (office coordinator, salary): Front desk. Three jobs at once:
+#  · The phone rings: book the caller into the time they ask for on the week's calendar. Never double-book; when the first
+#    choice is full, use their second choice. A call not answered in time goes to voicemail. (Shift 6: one caller describes an
+#    emergency: the only right answer is to tell them to call 911.)
+#  · Patients check in at the window: find them on today's list. Some came on the wrong day, and some names look alike.
+#  · A checked-in patient waits until their chart is in the doctor's tray: take it from the file cabinet (you can carry 3).
 extends "res://games/payday/jobs/job.gd"
 
-const EMERG_MAX := 2  # emergency slots per provider
-const WAIT_Q := [Vector2i(4, 6), Vector2i(6, 6), Vector2i(4, 7), Vector2i(6, 7), Vector2i(2, 6), Vector2i(8, 6)]
-const APPT_LABEL := {"checkup": "a checkup", "vaccine": "a vaccine", "consult": "a consult with the doctor"}
+const DAYS := ["Mon", "Tue", "Wed", "Thu", "Fri"]
+const DAY_NAMES := ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+const NAMES := [["Priya Shah", "Priya Shaw"], ["Daniel Lee", "Danielle Lee"], ["Maria Lopez", "Mario Lopez"], ["Tom Nguyen", "Tam Nguyen"],
+	["Aisha Bello", "Aisha Bell"], ["Ben Clarke", "Ben Clark"], ["Grace Kim", "Grace King"], ["Omar Haddad", "Omar Hadad"],
+	["Lucy Martin", "Lucie Martin"], ["Sam Okoro", "Sam Okafor"], ["Ella Brown", "Ellie Brown"], ["Jon Wong", "John Wong"]]
+const WINDOW_Q := [Vector2i(3, 5), Vector2i(4, 6), Vector2i(3, 6), Vector2i(5, 6), Vector2i(2, 6)]
+const SEATS := [Vector2i(8, 6), Vector2i(9, 6), Vector2i(10, 6), Vector2i(8, 7), Vector2i(10, 7), Vector2i(11, 7)]
+const CARRY := 3
 
 
 func _init() -> void:
 	id = "office"
-	name = "Book it right"
-	place = "Riverbend Clinic · reception"
+	name = "Front desk"
+	place = "Riverbend Clinic · front office"
 	pay = "salary"
-	start = Vector2i(5, 5)
+	start = Vector2i(5, 4)
 	boss_at = Vector2i(1, 7)
 	hour = 9
-	react = {"great": "Perfect bookings all shift. Patients left happy.", "ok": "Mostly smooth. A few wrong slots.", "poor": "Wrong providers, wasted emergency slots. We got complaints."}
-	th = {"gentle": [0.8, 0.7, 0.6, 0.45], "real": [0.78, 0.68, 0.6, 0.45]}
-	controls = ["At the desk: read the patient's type and urgency.",
-		"Consults → Dr. Chen · regular. Checkups and vaccines → Nurse Patel · regular.",
-		"Urgent patients (marked !) → emergency ⚡ slot. When Nurse Patel is away, all patients go to Dr. Chen."]
-	tips = {"provider": "Routine checkups and vaccines go to Nurse Patel. Consults go to Dr. Chen.",
-		"emerg": "Emergency ⚡ slots are for urgent walk-in patients — not routine bookings.",
-		"urgent": "Urgent patients need emergency ⚡ slots while they're available. After that, any slot works.",
-		"wait": "Patients give up if nobody helps them. Keep the desk moving.",
-		"np_out": "When Nurse Patel is away, all routine patients go to Dr. Chen instead."}
-	room_map = {"name": place, "w": 13, "h": 9, "room": {"floor": "tile", "wall": "#e8f0ee", "exit": 6, "windows": [3, 7]},
+	react = {"great": "Not one mistake in the calendar. Wonderful.", "ok": "The schedule held together. Thank you.", "poor": "Two patients showed up for the same time. That can’t happen."}
+	th = {"gentle": [0.8, 0.7, 0.65, 0.5], "real": [0.78, 0.66, 0.65, 0.5]}
+	controls = ["Phone ringing? Answer it and book the time the caller asks for. A slot with × is taken: never double-book.",
+		"At the window, find the patient on today's list before you check them in. Watch for look-alike names.",
+		"Then take their chart from the file cabinet to the doctor's tray, so the doctor can call them in."]
+	tips = {"double": "A slot marked × is taken. Use the caller's second choice.", "slot": "Book exactly the day and time the caller asked for.",
+		"missed": "Answer the phone quickly: after a few rings it goes to voicemail.", "list": "Read the whole name on today's list: Shah and Shaw are different people.",
+		"chart": "Match the chart to the name you checked in.", "wait": "Get charts to the tray: patients can't see the doctor without one.",
+		"urgent": "Chest pain or trouble breathing is an emergency: tell them to call 911 now."}
+	room_map = {"name": place, "w": 13, "h": 9, "room": {"floor": "tile", "wall": "#e8f0f2", "exit": 6, "windows": [9]},
 		"props": [
-			{"k": "shelf", "x": 1, "y": 2, "w": 2, "id": "chairs_a", "label": "Waiting", "color": "#a0b8b0", "solid": true},
-			{"k": "shelf", "x": 4, "y": 2, "w": 2, "id": "chairs_b", "label": "Waiting", "color": "#a0b8b0", "solid": true},
-			{"k": "board", "x": 10, "y": 2, "w": 2, "id": "schedule", "label": "Schedule board", "solid": true},
-			{"k": "counter", "x": 4, "y": 4, "w": 7, "id": "desk", "label": "Reception desk", "color": "#7a9e96", "solid": true},
-			{"k": "register", "x": 10, "y": 4, "id": "phone", "label": "Phone", "solid": true},
-			{"k": "shelf", "x": 1, "y": 5, "id": "filing", "label": "Files", "color": "#6b7f7a", "solid": true},
-			{"k": "plant", "x": 12, "y": 2, "solid": true},
-			{"k": "tag", "x": 4, "y": 4, "w": 7, "title": "RECEPTION"},
-			{"k": "tag", "x": 10, "y": 2, "w": 2, "title": "SCHEDULE", "color": "#2f6b60"},
-			{"k": "cone", "x": 11, "y": 7}]}
-	stations = {"desk": {"stand": Vector2i(6, 5), "tile": Vector2i(6, 4)}}
+			{"k": "counter", "x": 2, "y": 4, "w": 3, "id": "window", "label": "Check-in window", "color": "#8a63c8", "solid": true},
+			{"k": "desk", "x": 6, "y": 2, "id": "phone", "label": "Phone", "solid": true},
+			{"k": "shelf", "x": 1, "y": 2, "w": 2, "id": "files", "label": "File cabinet", "color": "#9aa0a6", "solid": true},
+			{"k": "counter", "x": 11, "y": 3, "id": "tray", "label": "Doctor's tray", "color": "#2e9a9a", "solid": true},
+			{"k": "printer", "x": 9, "y": 2, "solid": true}, {"k": "board", "x": 4, "y": 2, "w": 1, "solid": true},
+			{"k": "tag", "x": 2, "y": 4, "w": 3, "title": "CHECK-IN"}, {"k": "tag", "x": 6, "y": 2, "title": "PHONE"},
+			{"k": "tag", "x": 1, "y": 2, "w": 2, "title": "CHARTS"}, {"k": "tag", "x": 11, "y": 3, "title": "DOCTOR", "color": "#1f6b6b"},
+			{"k": "chair", "x": 8, "y": 6}, {"k": "chair", "x": 9, "y": 6}, {"k": "chair", "x": 10, "y": 6}, {"k": "chair", "x": 8, "y": 7},
+			{"k": "chair", "x": 10, "y": 7}, {"k": "chair", "x": 11, "y": 7}, {"k": "plant", "x": 11, "y": 5, "solid": true}, {"k": "mat", "x": 6, "y": 7}]}
+	stations = {"window": {"stand": Vector2i(3, 3), "tile": Vector2i(3, 4)}, "phone": {"stand": Vector2i(6, 3), "tile": Vector2i(6, 2)},
+		"files": {"stand": Vector2i(2, 3), "tile": Vector2i(1, 2)}, "tray": {"stand": Vector2i(10, 3), "tile": Vector2i(11, 3)}}
 
 
 func twists() -> Array:
 	return [
-		{"name": "First shift", "line": "Dr. Osei shows you the desk. Light morning — mostly checkups.", "rate": 0.6, "consult_rate": 0.0, "urgent_rate": 0.05},
-		{"name": "A normal day", "line": "Routine morning. Mix of checkups, vaccines, and consults.", "consult_rate": 0.25},
-		{"name": "Flu season", "line": "Flu season: lots of vaccine and checkup requests.", "rate": 1.1, "vaccine_rate": 0.55, "consult_rate": 0.1},
-		{"name": "Referral wave", "line": "Several patients referred from other clinics — they all need consults.", "consult_rate": 0.6},
-		{"name": "Walk-in morning", "line": "Walk-in patients keep arriving. Watch how you use those emergency slots.", "urgent_rate": 0.35},
-		{"name": "One provider down", "line": "Nurse Patel called in sick. Dr. Chen is covering everything today.", "np_out": true, "rate": 0.8},
-		{"name": "Busy Friday", "line": "Busy Friday morning. Keep the desk moving.", "rate": 1.2, "consult_rate": 0.3},
-		{"name": "Back to school", "line": "Families booking back-to-school checkups and vaccines.", "rate": 1.15, "vaccine_rate": 0.5}]
+		{"name": "First shift", "line": "Ms. Ahmed shows you the phone, the window and the charts. A quiet morning.", "rate": 0.7, "calls": 0.5},
+		{"name": "A normal day", "line": "Phones, patients and charts. Keep the calendar clean.", "calls": 0.5},
+		{"name": "Flu clinic", "line": "Flu shots today: lots of patients at the window.", "calls": 0.35, "rate": 1.1},
+		{"name": "Busy phones", "line": "Everyone wants an appointment this week. The phone keeps ringing.", "calls": 0.7},
+		{"name": "Second choices", "line": "The week is filling up. Callers give a second choice in case the first is full.", "calls": 0.55, "full": 0.6},
+		{"name": "An urgent call", "line": "Most calls are bookings. If a caller describes an emergency, they need 911, not an appointment.", "calls": 0.5, "urgent": true},
+		{"name": "Look-alike names", "line": "Lots of similar names today. Read today's list carefully.", "calls": 0.45, "alike": 0.6},
+		{"name": "After the long weekend", "line": "Monday after a long weekend: everyone needs the clinic.", "calls": 0.5, "rate": 1.05}]
 
 
 func setup(st: Dictionary) -> void:
-	st.emerg = {"dr": EMERG_MAX, "np": EMERG_MAX}
-	st.booked = 0
 	st.next = 1.0
+	st.slots = _times(st).size()
+	st.cal = []
+	for d in 5:
+		var row := []
+		for t in int(st.slots):
+			row.append(rnd(st) < 0.35)
+		st.cal.append(row)
+	st.ring = null
+	st.ring_next = 4.0
+	st.charts = []
+	st.today = []      # names booked today (the check-in list)
+	st.urgent_done = false
+	st.booked = 0
+
+
+func _new_week(st: Dictionary) -> void:
+	for d in 5:
+		for t in int(st.slots):
+			st.cal[d][t] = rnd(st) < 0.35
+	st.msg = "That week is full. The calendar turns to next week."
+
+
+func _times(st: Dictionary) -> Array:
+	return ["9:00", "11:00", "2:00", "4:00"] if st.real else ["morning", "afternoon"]
+
+
+func _free(st: Dictionary) -> Array:
+	var out := []
+	for d in 5:
+		for t in int(st.slots):
+			if not st.cal[d][t]:
+				out.append([d, t])
+	return out
+
+
+func _slot_name(st: Dictionary, d: int, t: int) -> String:
+	return "%s %s" % [DAY_NAMES[d], ("at " + _times(st)[t]) if st.real else _times(st)[t]]
 
 
 func tick(st: Dictionary, dt: float) -> void:
-	st.next = float(st.next) - dt * busy(st) * float(tw(st, "rate", 1.0))
+	# patients arrive at the window
+	st.next = float(st.next) - dt * busy(st) * float(tw(st, "rate", 1.0)) * (1.0 - float(tw(st, "calls", 0.5)) * 0.5)
 	if st.next <= 0.0:
-		st.next = (9.5 if not st.real else 8.0) * (0.75 + 0.5 * rnd(st))
+		st.next = (9.0 if not st.real else 7.8) * (0.75 + 0.5 * rnd(st))
 		st.demand = int(st.demand) + 1
-		var consult_r := float(tw(st, "consult_rate", 0.25 if st.real else 0.2))
-		var vaccine_r := float(tw(st, "vaccine_rate", 0.3))
-		var t: String
-		if rnd(st) < consult_r:
-			t = "consult"
-		elif rnd(st) < vaccine_r:
-			t = "vaccine"
+		var pair: Array = pick(st, NAMES)
+		var wrong_day := rnd(st) < (0.25 if st.real else 0.15)
+		var alike := rnd(st) < float(tw(st, "alike", 0.25 if st.real else 0.1))
+		# today's list holds this patient (or, for a look-alike, the other name); a wrong-day patient isn't on it
+		var listed: String = pair[1] if alike else pair[0]
+		if not wrong_day:
+			st.today.append(pair[0])
+		elif alike:
+			st.today.append(listed)
+		if st.today.size() > 7:
+			st.today.pop_front()
+		if custs(st, "window").size() >= WINDOW_Q.size():
+			lose(st, WINDOW_Q[-1], "wait", "The waiting line was out the door. A patient left.")
 		else:
-			t = "checkup"
-		var urgent: bool = rnd(st) < float(tw(st, "urgent_rate", 0.1))
-		if custs(st, "wait").size() < WAIT_Q.size():
-			var c := add_cust(st, {"state": "wait", "appt": t, "urgent": urgent, "pat0": 42.0 if not st.real else 34.0})
+			var c := add_cust(st, {"state": "window", "who": pair[0], "booked": not wrong_day, "time": "%d:%s0" % [irand(st, 9, 15) % 12 + 1, ["0", "3"][irand(st, 0, 1)]],
+				"pat0": 36.0 if not st.real else 28.0})
 			c.pat = c.pat0
-			c.bub = "!" if urgent else "q"
-		else:
-			lose(st, WAIT_Q[-1], "wait", "The waiting room was full. A patient left without an appointment.")
+			c.bub = "q"
+	# the phone
+	if st.ring == null:
+		st.ring_next = float(st.ring_next) - dt * busy(st) * float(tw(st, "rate", 1.0))
+		if st.ring_next <= 0.0:
+			st.ring_next = (13.0 if not st.real else 11.0) * (1.6 - float(tw(st, "calls", 0.5))) * (0.75 + 0.5 * rnd(st))
+			st.demand = int(st.demand) + 1
+			if tw(st, "urgent", false) and not st.urgent_done and float(st.t) > 30.0:
+				st.urgent_done = true
+				st.ring = {"urgent": true, "left": 14.0, "talk": false}
+			else:
+				if _free(st).size() < 3:   # the week is full: a new week opens
+					_new_week(st)
+				var free := _free(st)
+				var want: Array = pick(st, free)
+				var first = null
+				if rnd(st) < float(tw(st, "full", 0.3 if st.real else 0.15)):
+					var full := []
+					for d in 5:
+						for t in int(st.slots):
+							if st.cal[d][t]:
+								full.append([d, t])
+					if full.size():
+						first = pick(st, full)
+				st.ring = {"urgent": false, "want": want, "first": first, "left": 14.0 if not st.real else 11.0, "talk": false}
+	else:
+		if not st.ring.talk:
+			st.ring.left = float(st.ring.left) - dt
+			if float(st.ring.left) <= 0.0:
+				st.ring = null
+				lose(st, stations.phone.tile, "missed", "The phone went to voicemail. That caller will try another clinic.")
+	# patients in the waiting room need their chart in the tray
 	for c in st.cust.duplicate():
-		var head: bool = c.state == "wait" and custs(st, "wait").find(c) == 0 and st.at == "desk"
-		c.pat = float(c.pat) - dt * (0.35 if head else 0.85)
-		c.ring = float(c.pat) / float(c.pat0)
-		if c.pat <= 0.0:
-			drop(st, c)
-			lose(st, WAIT_Q[0], "wait", "A patient waited too long and left.")
-	line_up(custs(st, "wait"), WAIT_Q)
+		if c.state in ["window", "seat"]:
+			var head: bool = c.state == "window" and st.at == "window" and custs(st, "window").find(c) == 0
+			c.pat = float(c.pat) - dt * (0.5 if head else 1.0)
+			c.ring = float(c.pat) / float(c.pat0)
+			if c.pat <= 0.0:
+				drop(st, c)
+				lose(st, Vector2i(c.x, c.y), "wait", "A patient waited too long and left without seeing the doctor.")
+	line_up(custs(st, "window"), WINDOW_Q)
+	line_up(custs(st, "seat"), SEATS)
+
+
+func on_at(st: Dictionary, sid: String) -> void:
+	st.at = sid
+	if sid == "phone" and st.ring != null:
+		st.ring.talk = true
+	if sid == "tray" and st.charts.size():
+		for name_ in st.charts.duplicate():
+			var hit = null
+			for c in custs(st, "seat"):
+				if c.who == name_:
+					hit = c
+			st.charts.erase(name_)
+			if hit != null:
+				drop(st, hit)
+				win(st, stations.tray.tile, "+1", "%s's chart is in the tray. The doctor calls them in." % name_)
+			else:
+				oops(st, stations.tray.tile, "chart", "Nobody named %s is waiting. Wrong chart." % name_)
 
 
 func card(st: Dictionary) -> Dictionary:
-	if str(st.at) != "desk":
-		return {}
-	var q := custs(st, "wait")
-	if q.is_empty():
-		return {"title": "Reception desk", "lines": ["No patients waiting."], "opts": []}
-	var c: Dictionary = q[0]
-	var urgent_note: String = " — URGENT" if c.urgent else ""
-	var np_out: bool = tw(st, "np_out", false)
-	var L := ["Patient needs: %s%s." % [APPT_LABEL.get(c.appt, c.appt), urgent_note],
-		"Emergency ⚡ slots left: Dr. Chen %d · %s" % [int(st.emerg.dr), ("away" if np_out else "Nurse Patel %d" % int(st.emerg.np))]]
-	# Four options: provider × slot_type. Exactly one is correct per patient.
-	# Correct: consult→dr·reg, routine→np·reg (or dr·reg if np_out), urgent→matching·emerg
-	var opts := [
-		{"t": "Dr. Chen · regular", "a": "book:dr:reg"},
-		{"t": "Dr. Chen · emergency ⚡ (%d left)" % int(st.emerg.dr), "a": "book:dr:emerg"},
-		{"t": "Nurse Patel · regular%s" % (" (away)" if np_out else ""), "a": "book:np:reg"},
-		{"t": "Nurse Patel · emergency ⚡ (%d left)%s" % [int(st.emerg.np), " (away)" if np_out else ""], "a": "book:np:emerg"}]
-	return {"title": "Reception desk", "lines": L, "opts": opts, "cols": 2}
-
-
-func _correct(st: Dictionary, c: Dictionary) -> String:
-	# Returns the one correct "provider:slot" key for this patient.
-	var np_out: bool = tw(st, "np_out", false)
-	if c.urgent:
-		# Urgent → emergency slot. Provider: consult needs dr, routine needs np (or dr if np_out)
-		var prov: String = "dr" if (c.appt == "consult" or np_out) else "np"
-		if int(st.emerg.get(prov, 0)) > 0:
-			return "%s:emerg" % prov
-		# Emergency slots exhausted — fall back to regular (still the best we can do)
-		return "%s:reg" % prov
-	# Routine: consult→dr, checkup/vaccine→np (or dr if np_out)
-	var prov: String = "dr" if (c.appt == "consult" or np_out) else "np"
-	return "%s:reg" % prov
+	var sid := str(st.at)
+	if sid == "phone":
+		if st.ring == null:
+			return {"title": "Phone", "lines": ["Quiet. For now."], "opts": []}
+		var r: Dictionary = st.ring
+		if r.urgent:
+			return {"title": "Phone · a caller", "lines": ["\"My dad has chest pain and he can't catch his breath. Can he come in today?\""],
+				"opts": [{"t": "Book the first free slot", "a": "urgent:book"}, {"t": "Tell them to call 911 now", "a": "urgent:911"}, {"t": "Put them on hold", "a": "urgent:hold"}], "cols": 1}
+		var L := []
+		if r.first != null:
+			L.append("\"Can I come in %s? Or if that's full, %s.\"" % [_slot_name(st, r.first[0], r.first[1]), _slot_name(st, r.want[0], r.want[1])])
+		else:
+			L.append("\"Can I come in %s?\"" % _slot_name(st, r.want[0], r.want[1]))
+		L.append("The week (× = taken):")
+		var opts := []
+		for t in int(st.slots):
+			for d in 5:
+				var lab := "%s %s" % [DAYS[d], _times(st)[t].substr(0, 4) if not st.real else _times(st)[t]]
+				opts.append({"t": lab + (" ×" if st.cal[d][t] else ""), "a": "book:%d:%d" % [d, t]})
+		return {"title": "Phone · booking", "lines": L, "opts": opts, "cols": 5}
+	if sid == "window":
+		var q := custs(st, "window")
+		if q.is_empty():
+			return {"title": "Check-in window", "lines": ["Nobody waiting."], "opts": []}
+		var c: Dictionary = q[0]
+		var shown: Array = st.today.slice(maxi(0, st.today.size() - 6))
+		return {"title": "Check-in window", "lines": ["\"Hi, I'm %s. I have an appointment today.\"" % c.who, "Today's list: " + ", ".join(shown)],
+			"opts": [{"t": "Check them in", "a": "in"}, {"t": "Not on today's list", "a": "out"}], "cols": 2}
+	if sid == "files":
+		var waiting := custs(st, "seat").map(func(c): return c.who)
+		var names := []
+		for c in custs(st, "seat"):
+			if not c.who in st.charts:
+				names.append(c.who)
+		var opts := []
+		var pool := []
+		for nm in names:
+			pool.append(nm)
+			for pair in NAMES:
+				if pair[0] == nm:
+					pool.append(pair[1])
+		var k := int(st.t) % maxi(1, pool.size())
+		for i in pool.size():
+			var nm: String = pool[(i + k) % pool.size()]
+			opts.append({"t": nm, "a": "chart:" + nm})
+		return {"title": "File cabinet", "lines": ["Waiting for a chart: %s" % (", ".join(names) if names.size() else "nobody"), "In your hands: %d of %d." % [st.charts.size(), CARRY]],
+			"opts": opts.slice(0, 8), "cols": 2}
+	if sid == "tray":
+		return {"title": "Doctor's tray", "lines": ["Put charts here for the doctor."], "opts": []}
+	return {}
 
 
 func act(st: Dictionary, a: String) -> void:
-	if str(st.at) != "desk" or not a.begins_with("book:"):
+	var sid := str(st.at)
+	if sid == "phone" and st.ring != null:
+		var r: Dictionary = st.ring
+		var at: Vector2i = stations.phone.tile
+		if a.begins_with("urgent:") and r.urgent:
+			st.ring = null
+			if a == "urgent:911":
+				win(st, at, "+1", "Right call. Chest pain and trouble breathing need 911, right now.")
+			else:
+				oops(st, at, "urgent", "That was an emergency. The only right answer: call 911 now.", 2)
+			return
+		if a.begins_with("book:") and not r.urgent:
+			var v := a.split(":")
+			var d := int(v[1])
+			var t := int(v[2])
+			if st.cal[d][t]:
+				oops(st, at, "double", "Double-booked! %s was already taken." % _slot_name(st, d, t))
+				return
+			st.ring = null
+			if d != int(r.want[0]) or t != int(r.want[1]):
+				oops(st, at, "slot", "That's not the time they asked for. They'll show up on the wrong day.")
+				st.cal[d][t] = true
+				return
+			st.cal[d][t] = true
+			st.booked = int(st.booked) + 1
+			win(st, at, "+1", "Booked: %s." % _slot_name(st, d, t))
+			if _free(st).size() < 4:   # a new week
+				_new_week(st)
 		return
-	var q := custs(st, "wait")
-	if q.is_empty():
+	if sid == "window":
+		var q := custs(st, "window")
+		if q.is_empty():
+			return
+		var c: Dictionary = q[0]
+		var at: Vector2i = stations.window.tile
+		var on_list: bool = c.who in st.today
+		if a == "in":
+			if on_list:
+				st.today.erase(c.who)
+				c.state = "seat"
+				c.pat = c.pat0 + 10.0
+				c.bub = "t:chart"
+				st.msg = "%s is checked in. Their chart goes to the doctor's tray." % c.who
+			else:
+				drop(st, c)
+				oops(st, at, "list", "%s isn't on today's list. Now there's a mix-up with the doctor's day." % c.who)
+		elif a == "out":
+			drop(st, c)
+			if on_list:
+				oops(st, at, "list", "%s was on today's list! They leave upset." % c.who)
+			else:
+				win(st, at, "+1", "You find their real appointment and rebook them. Good catch.")
 		return
-	var c: Dictionary = q[0]
-	var at: Vector2i = stations.desk.tile
-	var v := a.split(":")
-	var provider: String = v[1]  # "dr" or "np"
-	var slot: String = v[2]      # "reg" or "emerg"
-	var np_out: bool = tw(st, "np_out", false)
-	var key: String = "%s:%s" % [provider, slot]
-	var correct: String = _correct(st, c)
-	# Check emergency slot capacity before accepting
-	if slot == "emerg" and int(st.emerg.get(provider, 0)) <= 0:
-		drop(st, c)
-		oops(st, at, "emerg", "No emergency ⚡ slots left for %s." % ("Dr. Chen" if provider == "dr" else "Nurse Patel"))
-		return
-	if key != correct:
-		drop(st, c)
-		var msg: String
-		if np_out and provider == "np":
-			msg = "Nurse Patel is away today. Book Dr. Chen."
-		elif c.appt == "consult" and provider == "np":
-			msg = "Nurse Patel doesn't handle medical consults. Book Dr. Chen · regular."
-		elif not c.urgent and slot == "emerg":
-			msg = "That ⚡ slot is for urgent walk-ins. Routine patients go in regular slots."
-		elif c.urgent and slot == "reg" and int(st.emerg.get(correct.split(":")[0], 0)) > 0:
-			msg = "Urgent patient — book them in an emergency ⚡ slot while one is available."
-		elif c.appt != "consult" and provider == "dr" and not np_out:
-			msg = "Routine %s patients go to Nurse Patel · regular." % c.appt
-		else:
-			msg = "Wrong slot for this patient."
-		oops(st, at, "wrong", msg)
-		return
-	if slot == "emerg":
-		st.emerg[provider] = int(st.emerg.get(provider, 0)) - 1
-	st.booked = int(st.booked) + 1
-	drop(st, c)
-	var pname: String = "Dr. Chen" if provider == "dr" else "Nurse Patel"
-	var sname: String = "regular" if slot == "reg" else "emergency ⚡"
-	win(st, at, "+1", "Booked: %s, %s slot with %s." % [c.appt, sname, pname])
+	if sid == "files" and a.begins_with("chart:"):
+		if st.charts.size() >= CARRY:
+			st.msg = "Your hands are full. Take these to the tray."
+			return
+		var nm := a.substr(6)
+		if not nm in st.charts:
+			st.charts.append(nm)
+			st.msg = "Chart: %s." % nm
 
 
 func best(st: Dictionary) -> Dictionary:
-	var q := custs(st, "wait")
-	if q.is_empty():
-		return {} if st.me == stations.desk.stand else {"go": "desk"}
-	if st.at != "desk":
-		return {"go": "desk"}
-	var c: Dictionary = q[0]
-	var correct := _correct(st, c)
-	return {"go": "desk", "a": "book:%s" % correct, "think": 1.8}
+	if st.ring != null and (st.ring.talk or float(st.ring.left) < 9.0 or custs(st, "window").is_empty()):
+		if st.at != "phone" or not st.ring.talk:
+			return {"go": "phone", "think": 0.3}
+		var r: Dictionary = st.ring
+		if r.urgent:
+			return {"go": "phone", "a": "urgent:911", "think": 1.5}
+		return {"go": "phone", "a": "book:%d:%d" % [int(r.want[0]), int(r.want[1])], "think": 2.2}
+	if st.charts.size():
+		var seated := custs(st, "seat").map(func(c): return c.who)
+		var need := 0
+		for c in custs(st, "seat"):
+			if not c.who in st.charts:
+				need += 1
+		if need == 0 or st.charts.size() >= CARRY or st.at != "files":
+			return {"go": "tray", "think": 0.3}
+	var q := custs(st, "window")
+	var seat := custs(st, "seat")
+	var urgent_seat: bool = seat.any(func(c): return float(c.pat) < 16.0 and not c.who in st.charts)
+	if q.size() and not urgent_seat:
+		var c: Dictionary = q[0]
+		return {"go": "window", "a": ("in" if c.who in st.today else "out") if st.at == "window" else "", "think": 1.8}
+	for c in seat:
+		if not c.who in st.charts:
+			return {"go": "files", "a": "chart:" + c.who if st.at == "files" else "", "think": 1.0}
+	if q.size():
+		var c: Dictionary = q[0]
+		return {"go": "window", "a": ("in" if c.who in st.today else "out") if st.at == "window" else "", "think": 1.8}
+	if st.ring != null:
+		return {"go": "phone", "think": 0.3}
+	return {}
 
 
 func actions(st: Dictionary) -> Array:
 	return card(st).get("opts", []).map(func(o): return o.a)
 
 
+func marks(st: Dictionary) -> Array:
+	var out := []
+	if st.ring != null and not st.ring.talk:
+		out.append({"x": 6, "y": 2, "bub": "phone", "ring": float(st.ring.left) / (14.0 if not st.real else 11.0)})
+	return out
+
+
 func pending(st: Dictionary) -> int:
-	return st.cust.size()
+	return st.cust.size() + (1 if st.ring != null else 0)
 
 
 func tally(st: Dictionary) -> Array:
-	return [["Waiting", str(custs(st, "wait").size())], ["Booked", str(st.booked)],
-		["Dr. Chen ⚡", str(st.emerg.dr)], ["Nurse Patel ⚡", str(st.emerg.np)]]
+	return [["Window", str(custs(st, "window").size())], ["Need a chart", str(custs(st, "seat").size())], ["Charts", "%d/%d" % [st.charts.size(), CARRY]]]
 
 
 func earn_line(st: Dictionary) -> String:
-	return "You booked %d appointments. A salaried position pays the same every month — your performance shows up at review time and in the clinic's reputation." % int(st.booked)
+	return "%d appointments booked and %d patients seen. On a salary, your pay is the same every payday; careful work counts at your review." % [int(st.booked), int(st.good) - int(st.booked)]
