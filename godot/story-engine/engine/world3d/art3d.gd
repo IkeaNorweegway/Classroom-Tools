@@ -797,6 +797,13 @@ func prop(p: Dictionary, ground_h := 0.0) -> void:
 			glow_off()
 		"fridge":
 			box(c + Vector3(-0.38, 0, -0.3), Vector3(0.76, 1.75, 0.6), Color("#e8eef2"))
+		"wardrobe":   # your closet at home: two wooden doors, round knobs, a drawer below
+			box(c + Vector3(-0.44, 0, -0.32), Vector3(0.88, 1.9, 0.6), C.wood_dk, C.wood)
+			for sx in [-0.42, 0.01]:
+				box(c + Vector3(sx, 0.42, 0.28), Vector3(0.41, 1.38, 0.03), C.wood)
+				box(c + Vector3(sx + (0.33 if sx < 0 else 0.03), 1.05, 0.31), Vector3(0.05, 0.05, 0.04), Color("#e8c23a"))
+			box(c + Vector3(-0.42, 0.08, 0.28), Vector3(0.84, 0.28, 0.03), C.wood)
+			box(c + Vector3(-0.06, 0.2, 0.31), Vector3(0.12, 0.04, 0.03), Color("#e8c23a"))
 		"espresso":
 			box(c + Vector3(-0.25, 1.01, -0.2), Vector3(0.5, 0.42, 0.36), Color("#b9bcbf"), Color("#8c9298"))
 		"register":

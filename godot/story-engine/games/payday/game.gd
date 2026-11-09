@@ -172,10 +172,7 @@ func hud(S: Dictionary) -> Array:
 		{"label": "Paycheque", "value": "%d of %d" % [mini(M.PERIODS, int(run.p) + (1 if int(run.p) < M.PERIODS else 0)), M.PERIODS]}]
 	if int(run.bounces):
 		out.append({"label": "Bounced", "value": str(int(run.bounces)), "warn": true})
-	var wallet := int(_pd(S).get("wallet", 0))
-	if wallet > 0:
-		out.append({"label": "Earned", "value": Money.fmt(wallet)})
-	return out
+	return out   # the Wallet chip comes from the profile (profile_hud)
 
 
 # ── Steps: four chapters, each ending at the soft gate ──
@@ -1372,9 +1369,20 @@ func _next_mail_ch(S: Dictionary) -> int:
 
 func _earn(T, cents: int, msg: String) -> void:
 	var pd := _pd(T.S)
-	pd.wallet = int(pd.get("wallet", 0)) + cents
-	T.toast(msg)
+	pd.wallet = int(pd.get("wallet", 0)) + cents   # what this game earned (the report)
+	Wardrobe.earn(T.P, cents)                       # what you can spend at Pat's stall (the profile)
+	pd.wallet_in_profile = true
+	T.toast(msg + ("" if T.P.has("met_pat") else " Spend it at Pat's stall Downtown."))
 	T.save()
+
+
+## A save from before the shared wallet: move what it earned into the profile, once.
+func on_begin(T) -> void:
+	var pd := _pd(T.S)
+	if not bool(pd.get("wallet_in_profile", false)):
+		pd.wallet_in_profile = true
+		if int(pd.get("wallet", 0)) > 0:
+			Wardrobe.earn(T.P, int(pd.wallet))
 
 
 func _run_news(pid: String, T) -> void:

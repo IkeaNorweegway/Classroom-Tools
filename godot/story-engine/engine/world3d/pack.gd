@@ -165,7 +165,11 @@ static func dress(n: Node, look: Dictionary, xray := false) -> void:
 		if head == "Hair":
 			mi.visible = nm == "Hair_" + style
 		var col := Color.WHITE
-		if SLOT.has(head):
+		if WEAR_GROUPS.has(head):
+			mi.visible = _worn(head, nm.substr(head.length() + 1), look)
+			if head == "Work" and WORK_TINT.has(nm):
+				col = Color(look.get(WORK_TINT[nm], "#4a5a6a"))
+		elif SLOT.has(head):
 			var k: String = SLOT[head]
 			match k:
 				"skin": col = Art3D_._col(look.get("skin", 0), Art3D_.SKIN)
@@ -176,6 +180,29 @@ static func dress(n: Node, look: Dictionary, xray := false) -> void:
 		if "_glow" in nm.to_lower():
 			continue
 		mi.material_override = _tint(col, xray)
+
+
+## The student avatars (town/people, scripts/blender/town_people.py) carry every piece of clothing as its own mesh:
+## Wtop_<id> What_<id> Wshoes_<id> Wextra_<id> Work_<job outfit> Locks_full/Locks_hat. A look's "wear" picks them:
+## { top: "tee", hat: "", shoes: "basic", extra: ["backpack", …] }; its "outfit" (Payday's job) adds Work_<outfit>
+## (the blazer, "suit", replaces your top).
+const WEAR_GROUPS := ["Wtop", "What", "Wshoes", "Wextra", "Work", "Locks"]
+const WORK_TINT := {"Work_apron": "apron", "Work_vest": "vest", "Work_cap": "cap"}
+const WORK_HATS := ["cap", "hardhat"]
+
+
+static func _worn(group: String, id: String, look: Dictionary) -> bool:
+	var wear: Dictionary = look.get("wear", {})
+	var outfit := str(look.get("outfit", ""))
+	var hat := "" if outfit in WORK_HATS else str(wear.get("hat", ""))
+	match group:
+		"Wtop": return outfit != "suit" and id == str(wear.get("top", "tee"))   # the blazer has its own shirt front
+		"What": return id == hat
+		"Wshoes": return id == str(wear.get("shoes", "basic"))
+		"Wextra": return id in wear.get("extra", [])
+		"Work": return id == outfit
+		"Locks": return id == ("hat" if hat != "" or outfit in WORK_HATS else "full")
+	return true
 
 
 static func _tint(col: Color, xray: bool) -> StandardMaterial3D:
