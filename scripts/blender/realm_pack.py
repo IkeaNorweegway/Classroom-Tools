@@ -15,7 +15,7 @@ importlib.reload(kit)
 from kit import Part, shade, clear, export, args
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-OUT = os.path.join(ROOT, "godot", "cefl-town-v2", "assets", "realm", "emberdale")
+OUT = os.path.join(ROOT, "godot", "story-engine", "assets", "realm", "emberdale")
 GRASS_Y, PATH_Y, WATER_Y, GORGE_Y = 0.05, 0.07, -0.25, -4.0
 
 MODELS = {}
@@ -550,6 +550,171 @@ def grain_tower():
     window(p, 0.6, 1.0, D / 2, w=0.35, h=0.45, frame="barn_trim")
     p.cyl(W / 2 - 0.25, 0.3, D / 2 + 0.2, 0.08, H - 0.5, "metal_lt", seg=5)   # spout pipe
     p.done()
+
+
+# Wizard tower pieces. A round wall has SEG faces; face centres sit at 18° + 36°·i (270° faces +z, the front).
+TW_SEG = 10
+TW_STONE = ["#a7abb4", "#9a9ea8", "#b2b5bc", "#8f939d", "#a1a5ae"]
+
+
+def tw_ring(p, y0, h, r0, r1, cols, rng, seg=TW_SEG):
+    """One course of a round wall, radius r0 at the bottom to r1 at the top, each face its own block tone."""
+    pt = lambda r, y, i: (r * math.cos(2 * math.pi * i / seg), y, -r * math.sin(2 * math.pi * i / seg))
+    for i in range(seg):
+        j = (i + 1) % seg
+        p.quad(pt(r0, y0, i), pt(r0, y0, j), pt(r1, y0 + h, j), pt(r1, y0 + h, i), rng.choice(cols), ctr=(0, y0 + h / 2, 0))
+
+
+def tw_window(p, ang, y, r, w=0.34, h=0.62, frame="#7f8591", seg=TW_SEG):
+    """A narrow pointed window on the round wall face at angle ang (degrees; r = the wall's corner radius)."""
+    ap = r * math.cos(math.pi / seg)
+    p.at(0, 0, 0, ang + 90)
+    p.box(-w / 2 - 0.07, y - 0.08, ap - 0.04, w + 0.14, h + 0.08, 0.09, frame)
+    p.prism([(-w / 2 - 0.07, y + h), (w / 2 + 0.07, y + h), (0, y + h + w * 0.55 + 0.07)], ap - 0.04, ap + 0.05, frame)
+    p.box(-w / 2, y, ap + 0.04, w, h, 0.02, "glass")
+    p.prism([(-w / 2, y + h - 0.01), (w / 2, y + h - 0.01), (0, y + h + w * 0.5)], ap + 0.04, ap + 0.06, "glass")
+    p.box(-w / 2 - 0.1, y - 0.12, ap - 0.02, w + 0.2, 0.06, 0.14, frame)   # sill
+    p.reset()
+
+
+@model("wizard_tower", "building", 4, 4,
+       "A wizard's tower (about 12 high): round stone shaft, arched door, balcony with a telescope, half-timbered top "
+       "room, indigo cone roof. Glow parts: Windows_glow, Runes_glow, Lantern_glow, Crystal_glow (spin and bob it)")
+def wizard_tower():
+    p = Part("wizard_tower")
+    rng = random.Random(11)
+    # plinth and front steps
+    p.cyl(0, 0, 0, 1.78, 0.3, "fieldstone_dk", seg=TW_SEG, top_col="fieldstone")
+    p.cbox(0, 0, 1.78, 1.2, 0.2, 0.4, "fieldstone_dk", top="fieldstone")
+    p.cbox(0, 0, 1.9, 1.0, 0.1, 0.25, "fieldstone_dk", top="fieldstone")
+    # lower shaft: 8 courses, a slight taper
+    n1, y, r = 8, 0.3, 1.5
+    for k in range(n1):
+        tw_ring(p, y, 2.7 / n1, r, r - 0.01, TW_STONE, rng)
+        y += 2.7 / n1
+        r -= 0.01
+    p.cyl(0, 3.0, 0, 1.6, 0.18, "#7f8591", seg=TW_SEG, top_col="#8f939d")      # ledge (rune band)
+    # upper shaft
+    n2, y, r = 7, 3.18, 1.36
+    for k in range(n2):
+        tw_ring(p, y, 2.12 / n2, r, r - 0.01, TW_STONE, rng)
+        y += 2.12 / n2
+        r -= 0.01
+    # corbels under the balcony
+    for i in range(TW_SEG):
+        p.at(0, 0, 0, 18 + 36 * i + 90)
+        p.box(-0.12, 5.0, 1.15, 0.24, 0.3, 0.45, "#8f939d")
+        p.box(-0.12, 5.3, 1.15, 0.24, 0.2, 0.7, "#8f939d")
+        p.reset()
+    # balcony floor and railing
+    p.cyl(0, 5.5, 0, 1.98, 0.16, "#7f8591", seg=TW_SEG, top_col="wood_dk", bottom=True)
+    for i in range(TW_SEG):
+        a = math.radians(36 * i)
+        x, z = 1.9 * math.cos(a), -1.9 * math.sin(a)
+        p.cbox(x, 5.66, z, 0.08, 0.5, 0.08, "wood_dk")
+        p.at(0, 0, 0, 18 + 36 * i + 90)
+        L = 2 * 1.9 * math.sin(math.pi / TW_SEG)
+        p.box(-L / 2, 6.1, 1.9 * math.cos(math.pi / TW_SEG) - 0.03, L, 0.07, 0.07, "wood")
+        p.box(-L / 2, 5.85, 1.9 * math.cos(math.pi / TW_SEG) - 0.02, L, 0.04, 0.05, "wood_dk")
+        p.reset()
+    # half-timbered top room
+    for k in range(4):
+        tw_ring(p, 5.66 + 0.4 * k, 0.4, 1.6, 1.6, ["plaster", "plaster", shade("plaster", -0.05)], rng)
+    for i in range(TW_SEG):   # timber posts at the corners, a band top and bottom
+        p.at(0, 0, 0, 36 * i + 90)
+        p.box(-0.06, 5.66, 1.56, 0.12, 1.6, 0.07, "timber")
+        p.reset()
+    p.cyl(0, 5.66, 0, 1.64, 0.1, "timber", seg=TW_SEG, top=False)
+    p.cyl(0, 7.16, 0, 1.64, 0.1, "timber", seg=TW_SEG, top=False)
+    # roof: a flared skirt, then the cone in alternating slate strips, then the finial
+    roof, roof_dk = "#4c4f86", "#3f4274"
+    p.cyl(0, 7.18, 0, 2.05, 0.06, "#2f3150", seg=TW_SEG, top=False, bottom=True)
+    p.cyl(0, 7.24, 0, 2.05, 0.5, roof_dk, seg=TW_SEG, r_top=1.6, top=False)
+    tip = (0, 11.0, 0)
+    for i in range(TW_SEG):
+        a0, a1 = 2 * math.pi * i / TW_SEG, 2 * math.pi * (i + 1) / TW_SEG
+        b0, b1 = (1.6 * math.cos(a0), 7.74, -1.6 * math.sin(a0)), (1.6 * math.cos(a1), 7.74, -1.6 * math.sin(a1))
+        m = lambda q, f: (q[0] * (1 - f), q[1] + (tip[1] - q[1]) * f, q[2] * (1 - f))
+        for s, (f0, f1) in enumerate([(0, 0.35), (0.35, 0.7), (0.7, 1.0)]):
+            col = roof if (i + s) % 2 else roof_dk
+            if f1 < 1:
+                p.quad(m(b0, f0), m(b1, f0), m(b1, f1), m(b0, f1), col, ctr=(0, 8.5, 0))
+            else:
+                p.tri(m(b0, f0), m(b1, f0), tip, col, ctr=(0, 8.5, 0))
+    p.cbox(0.8, 7.9, 0.3, 0.36, 2.3, 0.36, "fieldstone_dk", top="#3a3330")      # chimney through the roof
+    p.cbox(0.8, 10.2, 0.3, 0.46, 0.12, 0.46, "fieldstone")
+    p.cyl(0, 10.85, 0, 0.05, 0.55, "gold_dk", seg=5)
+    p.blob(0, 11.0, 0, 0.12, 0.12, 0.12, "gold", seg=6, rings=3, jit=0)
+    # front door: pointed arch in a stone surround
+    ap = 1.5 * math.cos(math.pi / TW_SEG)
+    p.box(-0.55, 0.3, ap - 0.04, 1.1, 1.55, 0.1, "#7f8591")
+    p.prism([(-0.55, 1.85), (0.55, 1.85), (0, 2.45)], ap - 0.04, ap + 0.06, "#7f8591")
+    p.box(-0.4, 0.3, ap + 0.05, 0.8, 1.5, 0.04, "#5a3d2e")
+    p.prism([(-0.4, 1.8), (0.4, 1.8), (0, 2.25)], ap + 0.05, ap + 0.09, "#5a3d2e")
+    for x in (-0.2, 0.0, 0.2):
+        p.box(x - 0.01, 0.35, ap + 0.09, 0.02, 1.5 + (0.3 if x == 0 else 0.15), 0.01, shade("#5a3d2e", -0.3))
+    for yy in (0.6, 1.5):
+        p.box(-0.4, yy, ap + 0.09, 0.8, 0.06, 0.02, "iron")
+    p.box(0.22, 1.05, ap + 0.1, 0.07, 0.07, 0.05, "gold_dk")
+    # windows up the shaft (a loose spiral) and on the top room
+    tw_window(p, 234, 1.4, 1.48)
+    tw_window(p, 342, 2.0, 1.47)
+    tw_window(p, 306, 3.7, 1.34)
+    tw_window(p, 162, 4.2, 1.33)
+    tw_window(p, 54, 3.5, 1.35)
+    room_win = [270, 198, 342, 126, 54]
+    for a in room_win:
+        tw_window(p, a, 6.05, 1.6, w=0.42, h=0.7, frame="timber")
+    # telescope on the balcony (south-east side), tilted at the sky
+    from mathutils import Matrix, Vector
+    tx, tz = 1.78 * math.cos(math.radians(-35)), -1.78 * math.sin(math.radians(-35))
+    p.cbox(tx, 5.66, tz, 0.08, 0.55, 0.08, "wood_dk")
+    p.xf = Matrix.Translation(Vector((tx, 6.2, tz))) @ Matrix.Rotation(math.radians(-35 + 90), 4, "Y") @ Matrix.Rotation(math.radians(32), 4, "X")
+    p.cyl(0, -0.35, 0, 0.08, 1.0, "#c8a24a", seg=6)
+    p.cyl(0, 0.6, 0, 0.11, 0.12, "#a8842e", seg=6, top_col="glass")
+    p.cyl(0, -0.4, 0, 0.05, 0.08, "#a8842e", seg=6)
+    p.reset()
+    # ivy up the west side, a barrel and crate by the door, the lantern post
+    for k, (ang, yy, s) in enumerate([(200, 0.6, 0.35), (210, 1.1, 0.3), (195, 1.5, 0.28), (215, 1.9, 0.26),
+                                      (205, 2.4, 0.22), (190, 0.4, 0.4), (222, 0.5, 0.32)]):
+        a = math.radians(ang)
+        p.blob(1.5 * math.cos(a), yy, -1.5 * math.sin(a), s, s * 0.9, s, rng.choice(["leaf", "leaf_dk", "hedge"]), seg=6, rings=3, seed=k)
+    p.cyl(-1.05, 0.0, 1.35, 0.22, 0.5, "wood", seg=7, top_col="wood_dk")
+    p.cyl(-1.05, 0.12, 1.35, 0.23, 0.04, "iron", seg=7, top=False)
+    p.cyl(-1.05, 0.36, 1.35, 0.23, 0.04, "iron", seg=7, top=False)
+    p.at(-1.45, 0, 0.95, 20)
+    p.cbox(0, 0, 0, 0.4, 0.38, 0.4, "wood_lt")
+    p.reset()
+    p.cbox(1.05, 0, 1.55, 0.09, 1.4, 0.09, "iron")
+    p.cbox(1.05, 1.4, 1.55, 0.26, 0.05, 0.26, "iron")
+    p.cone(1.05, 1.72, 1.55, 0.2, 0.18, "iron", seg=4, rot=45)
+    p.done()
+
+    # glow parts (unlit): lit room windows, the rune band, the lantern, and the floating crystal
+    g = Part("Windows_glow")
+    for a in room_win:
+        g.at(0, 0, 0, a + 90)
+        ap = 1.6 * math.cos(math.pi / TW_SEG)
+        g.box(-0.18, 6.08, ap + 0.065, 0.36, 0.64, 0.01, "#f3c977")
+        g.reset()
+    g.done()
+    r = Part("Runes_glow")
+    ap = 1.6 * math.cos(math.pi / TW_SEG)
+    for i in range(TW_SEG):
+        r.at(0, 0, 0, 18 + 36 * i + 90)
+        z = ap + 0.012
+        r.quad((-0.09, 3.09, z), (0, 3.02, z), (0.09, 3.09, z), (0, 3.16, z), "#8fd8ff", out=(0, 0, 1))
+        r.quad((-0.3, 3.08, z), (-0.2, 3.08, z), (-0.2, 3.1, z), (-0.3, 3.1, z), "#8fd8ff", out=(0, 0, 1))
+        r.quad((0.2, 3.08, z), (0.3, 3.08, z), (0.3, 3.1, z), (0.2, 3.1, z), "#8fd8ff", out=(0, 0, 1))
+        r.reset()
+    r.done()
+    lg = Part("Lantern_glow")
+    lg.cbox(1.05, 1.45, 1.55, 0.18, 0.27, 0.18, "#f3c977")
+    lg.done()
+    c = Part("Crystal_glow", origin=(0, 11.75, 0))
+    c.cone(0, 11.75, 0, 0.24, 0.45, "#9fe3ff", seg=4)
+    c.cone(0, 11.75, 0, 0.24, -0.35, "#6fc6ef", seg=4)
+    c.done()
 
 
 @model("well", "building", 2, 2, "The village well: round stone wall, posts, small roof, crank and bucket")

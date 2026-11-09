@@ -20,7 +20,7 @@ from kit import Part, Rig, shade, clear, export, args
 from mathutils import Matrix, Vector
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-OUT = os.path.join(ROOT, "godot", "cefl-town-v2", "assets", "realm", "people")
+OUT = os.path.join(ROOT, "godot", "story-engine", "assets", "realm", "people")
 MODELS = {}
 INK = "#2b2622"
 
