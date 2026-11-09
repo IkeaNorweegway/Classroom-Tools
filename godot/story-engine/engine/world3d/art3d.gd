@@ -25,7 +25,9 @@ const HEIGHT := {"road": 0.0, "line": 0.0, "dash_s": 0.0, "dash_e": 0.0, "bike":
 	"walk": 0.14, "plaza": 0.14, "water": -0.25, "wood": 0.0, "tile": 0.0, "carpet": 0.0, "sand": 0.06,
 	# "r_" kinds: ground drawn by Blender pack terrain tiles (a map's "pack" draws), so _tile draws nothing for them
 	"r_grass": 0.05, "r_stubble": 0.05, "r_path": 0.07, "r_ford": -0.18, "r_square": 0.155, "r_far": 0.05, "r_water": -0.25,
-	"r_gorge": 0.05, "r_floor": -3.92, "r_canola": 0.05, "r_ice": -0.1}
+	"r_gorge": 0.05, "r_floor": -3.92, "r_canola": 0.05, "r_ice": -0.1,
+	# chamber floors (engine/chamber.gd): rough cave, laid flagstones, frosted ice, a vault's dressed stone, and a sunk channel
+	"c_rock": 0.0, "c_flag": 0.0, "c_ice": 0.0, "c_vault": 0.0, "c_pit": -0.6}
 const PERSON_SCALE := 0.9
 
 static var _mats := {}
@@ -301,6 +303,11 @@ func _tile(m: MapData, x: int, y: int) -> void:
 		"sand": col = C.sand
 		"wood": col = C.floor_wood.darkened(0.05 * float(y % 2))
 		"tile", "carpet": col = C.tile
+		"c_rock": col = Color("#5b5650").darkened(0.12 * n)
+		"c_flag": col = Color("#7d7468").darkened(0.1 * float((x + y) % 2) + 0.05 * n)
+		"c_ice": col = Color("#55718a").lerp(Color("#62809a"), n)
+		"c_vault": col = Color("#6a6272").darkened(0.08 * float((x + y) % 2))
+		"c_pit": col = Color("#1c1a1e")
 		"pond": col = C.grass
 		_: col = C.road
 	if k == "water":
@@ -352,6 +359,16 @@ func _tile(m: MapData, x: int, y: int) -> void:
 		"cross_v":
 			for i in 2:
 				flat(x0 + 0.05, z0 + 0.12 + i * 0.5, x1 - 0.05, z0 + 0.34 + i * 0.5, 0.01, C.line)
+		"c_flag", "c_vault":   # mortar joints
+			flat(x0 - 0.015, z0, x0 + 0.015, z1, h + 0.002, col.darkened(0.3))
+			flat(x0, z0 - 0.015, x1, z0 + 0.015, h + 0.002, col.darkened(0.3))
+		"c_ice":   # now and then a frost crack, at an angle
+			if n > 0.8:
+				var cx := x0 + 0.25 + 0.5 * _h(x + 1, y); var cz := z0 + 0.25 + 0.5 * _h(x, y + 1)
+				tri(Vector3(cx - 0.22, h + 0.003, cz - 0.1), Vector3(cx + 0.2, h + 0.003, cz + 0.12), Vector3(cx + 0.18, h + 0.003, cz + 0.15), Color("#a9c6dc"), Vector3.UP)
+		"c_rock":
+			if n > 0.7:
+				blob(Vector3(x0 + 0.3 + 0.4 * _h(x, y + 3), h, z0 + 0.3 + 0.4 * _h(x + 5, y)), Vector3(0.12, 0.06, 0.1), Color("#4a4540"), x * 5 + y, 5, 2, 0.3)
 		"path":
 			if n > 0.6:
 				blob(Vector3(x0 + 0.2 + 0.6 * _h(x, y + 7), h, z0 + 0.2 + 0.6 * _h(x + 3, y)), Vector3(0.07, 0.03, 0.06), C.stone.darkened(0.15), x * 7 + y, 5, 2, 0.2)
@@ -1676,3 +1693,56 @@ func _gate(p: Dictionary, gh: float) -> void:
 	var big := label3d(text, mid + Vector3(0, 4.75, 0), 64, Color("#fff6e0"), Color("#2b2622"), 0.008, true)
 	big.no_depth_test = true
 	big.outline_size = 14
+
+
+# ── Puzzle chambers (engine/chamber.gd): a cave, cellar, ice cave or vault, walled close round the floor.
+#    The back wall is tall rough stone; the side walls stand lower and the front wall is a low lip, so the camera sees in.
+#    { chamber: { style: "cave" | "cellar" | "ice" | "vault" }, room: { floor, exit }, lamps: [[x, y, colour?]] (torches) }
+const CHAMBER_STONE := {"cave": "#4e4943", "cellar": "#6a5a4a", "ice": "#8fb1cc", "vault": "#4d4658"}
+
+func chamber_shell(m: MapData) -> void:
+	var W := float(m.w); var Hh := float(m.h)
+	var style: String = str(m.def.chamber.get("style", "cave"))
+	var stone := Color(CHAMBER_STONE.get(style, "#4e4943"))
+	var k := m.id.hash()
+	# back wall: rows 0–1, built from rough blocks so it reads as stone, not plaster
+	for i in int(W):
+		for j in 4:
+			var bh := 0.75 + 0.2 * _h(k + i, j)
+			var c := stone.darkened(0.06 * _h(k, i * 7 + j)).lightened(0.05 * _h(k + 3, i + j))
+			box(Vector3(i - 0.02, j * 0.8, 0.0), Vector3(1.04, bh, 1.6 + 0.12 * _h(k + 9, i * 3 + j)), c.darkened(0.12), c)
+	if style == "cave":   # stalactites along the top of the back wall
+		for i in int(W):
+			if _h(k + 21, i) > 0.45:
+				cone(Vector3(i + 0.5, 3.2, 1.5), 0.18, -0.6 - 0.5 * _h(k, i), stone.darkened(0.2), 5, false)
+	if style == "ice":
+		for i in int(W):
+			if _h(k + 31, i) > 0.5:
+				cone(Vector3(i + 0.5, 3.2, 1.55), 0.14, -0.8 - 0.4 * _h(k, i + 2), Color("#d7ebf8"), 5, false)
+	if style == "cellar":   # beams up the back wall
+		for i in range(0, int(W), 3):
+			box(Vector3(i + 0.3, 0, 1.55), Vector3(0.3, 3.2, 0.2), C.wood_dk, C.wood)
+	if style == "vault":   # a gold rune band
+		glow_on()
+		box(Vector3(0.6, 2.1, 1.62), Vector3(W - 1.2, 0.08, 0.02), Color("#c9a24a"))
+		glow_off()
+	# side walls (rough, about 1.5 high) and the front lip with the way out
+	for y in int(Hh):
+		for side in [0.0, W - 0.7]:
+			var c2 := stone.darkened(0.04 * _h(k + int(side), y))
+			box(Vector3(side - 0.05 * _h(k, y), 0, y), Vector3(0.75, 1.3 + 0.3 * _h(k + 2, y + int(side)), 1.0), c2.darkened(0.15), c2)
+	var ex := float(m.exit_x)
+	box(Vector3(0.6, 0, Hh - 0.55), Vector3(ex - 0.6, 0.4, 0.55), stone.darkened(0.2), stone)
+	box(Vector3(ex + 1.0, 0, Hh - 0.55), Vector3(W - 0.6 - ex - 1.0, 0.4, 0.55), stone.darkened(0.2), stone)
+	# torches where the map put its lamps (on the back wall when the lamp is in rows 0–2, else on a post)
+	for lp in m.def.get("lamps", []):
+		var tx := float(lp[0]) + 0.5; var tz := float(lp[1]) + 0.5
+		if int(lp[1]) <= 2:
+			tz = 1.75
+		else:
+			cyl(Vector3(tx, 0, tz), 0.06, 1.3, C.wood_dk, 5)
+		box(Vector3(tx - 0.08, 1.3, tz - 0.08), Vector3(0.16, 0.12, 0.16), C.metal)
+		glow_on()
+		cone(Vector3(tx, 1.42, tz), 0.11, 0.32, Color(str(lp[2]) if lp.size() > 2 else "#ffb35c"), 5)
+		glow_off()
+	box(Vector3(-8, -0.7, -6), Vector3(W + 16, 0.68, Hh + 14), Color("#0c0b0d"))   # the dark around the chamber

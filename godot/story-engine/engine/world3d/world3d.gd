@@ -47,6 +47,19 @@ var reduce_motion := false
 var top_pad := 104.0
 var zoom := 0.45                   # 0 close … 1 wide (mouse wheel)
 var clock := 0.0
+var cam_hold := false              # a cut scene drives the camera (engine/cutscene.gd); the follow camera waits
+var solid_extra := {}              # Vector2i → piece id: puzzle pieces that block the way (engine/chamber.gd)
+var push_hook := Callable()        # a puzzle chamber: push_hook.call(tile, dir) → true when the piece there moved out of the way
+var env: Environment
+var sun: DirectionalLight3D
+var _mood_lights := []             # lamps a chamber's mood adds (torches); freed with the map
+const MOODS := {   # a map's "mood" (chambers): background, ambient, sun, fog from … to
+	"": {"bg": "#cfd9d4", "amb": "#9a97c6", "amb_e": 0.62, "sun": "#ffe6c6", "sun_e": 0.95, "fog": [38.0, 80.0]},
+	"cave": {"bg": "#0e1116", "amb": "#55607a", "amb_e": 0.5, "sun": "#9fb3d9", "sun_e": 0.35, "fog": [14.0, 34.0]},
+	"cellar": {"bg": "#120e0a", "amb": "#6e5a48", "amb_e": 0.55, "sun": "#ffd9a8", "sun_e": 0.3, "fog": [14.0, 34.0]},
+	"ice": {"bg": "#0b1420", "amb": "#7d9cc4", "amb_e": 0.62, "sun": "#cfe6ff", "sun_e": 0.45, "fog": [14.0, 34.0]},
+	"vault": {"bg": "#0d0b10", "amb": "#5e5470", "amb_e": 0.5, "sun": "#f2d79a", "sun_e": 0.32, "fog": [14.0, 34.0]},
+}
 
 var sections := {}                 # Vector2i → Art3D builder (only the built ones)
 var _queue: Array[Vector2i] = []
@@ -184,13 +197,13 @@ class Overlay extends Node2D:       # bubbles over heads, and an arrow at the sc
 
 
 func _ready() -> void:
-	var sun := DirectionalLight3D.new()
+	sun = DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-42, -38, 0)
 	sun.light_color = Color("#ffe6c6")
 	sun.light_energy = 0.95
 	sun.shadow_enabled = false            # real-time shadows cost the most on a Chromebook
 	add_child(sun)
-	var env := Environment.new()
+	env = Environment.new()
 	env.background_mode = Environment.BG_COLOR
 	env.background_color = Color("#cfd9d4")
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
@@ -331,16 +344,49 @@ func load_map(m: MapData, at: Vector2i, dir: String) -> void:
 	else:
 		var b := Art3D.new()
 		b.font = font
-		b.room_shell(m)
+		if m.def.has("chamber"):
+			b.chamber_shell(m)
+		else:
+			b.room_shell(m)
 		b.ground_tiles(m, Rect2i(0, 0, m.w, m.h))
 		for p in m.props:
 			b.prop(p, ground_h(int(p.x), int(p.y)))
 		b.finish()
 		_room_node = b
 		add_child(b)
+	_set_mood(m)
 	_setup_life(m)
 	_place_camera(true)
 	_cull(true)
+
+
+## Light the map: outdoors and rooms by day; a chamber by its "mood", with its "lamps" ([x, y, colour?]) as small warm lights.
+func _set_mood(m: MapData) -> void:
+	for l in _mood_lights:
+		l.queue_free()
+	_mood_lights.clear()
+	solid_extra.clear()
+	push_hook = Callable()
+	var md: Dictionary = MOODS.get(str(m.def.get("mood", "")), MOODS[""])
+	env.background_color = Color(md.bg)
+	env.fog_light_color = Color(md.bg)
+	env.ambient_light_color = Color(md.amb)
+	env.ambient_light_energy = float(md.amb_e)
+	env.fog_depth_begin = float(md.fog[0])
+	env.fog_depth_end = float(md.fog[1])
+	sun.light_color = Color(md.sun)
+	sun.light_energy = float(md.sun_e)
+	for i in mini(4, m.def.get("lamps", []).size()):   # the Compatibility renderer lights 8 lamps an object at most
+		var lp: Array = m.def.lamps[i]
+		var o := OmniLight3D.new()
+		o.light_color = Color(str(lp[2]) if lp.size() > 2 else "#ffb35c")
+		o.light_energy = 1.6
+		o.omni_range = 5.5
+		o.omni_attenuation = 1.4
+		o.shadow_enabled = false
+		o.position = Vector3(float(lp[0]) + 0.5, 1.6, float(lp[1]) + 0.5)
+		add_child(o)
+		_mood_lights.append(o)
 
 
 ## Which buildings, props and extras belong to which section (by the tile they start on).
@@ -549,7 +595,7 @@ func person_at(p: Vector2i) -> String:
 
 
 func blocked(p: Vector2i) -> bool:
-	return map.blocked(p.x, p.y) or person_at(p) != ""
+	return map.blocked(p.x, p.y) or person_at(p) != "" or solid_extra.has(p)
 
 
 func face(id: String, toward: Vector2i) -> void:
@@ -577,7 +623,7 @@ static func _dir_to(a: Vector2i, b: Vector2i) -> String:
 
 # ── Camera: outdoors it follows you at an angle; a room is framed whole ──
 func _place_camera(snap := false) -> void:
-	if map == null:
+	if map == null or cam_hold:
 		return
 	var target: Vector3
 	var off: Vector3
@@ -587,6 +633,11 @@ func _place_camera(snap := false) -> void:
 		var hx := 4.0 + 6.0 * zoom
 		target.x = clampf(target.x, hx - 4.0, map.w - hx + 4.0)
 		target.z = clampf(target.z, 2.0, map.h + 1.0)
+	elif map.def.has("chamber"):   # a puzzle chamber: close, lower, following you (the room is bigger than the screen)
+		# half way between you and the middle of the chamber, so the back wall (where puzzles keep their lines) stays in view
+		var mid := Vector3(map.w / 2.0, 0.4, map.h / 2.0 - 1.8)
+		target = mid.lerp(me.position + Vector3(0, 0.4, 0), 0.45)
+		off = Vector3(0.0, 9.6, 7.4).lerp(Vector3(0.0, 13.5, 10.0), zoom)
 	else:
 		target = Vector3(map.w / 2.0, 0.4, map.h / 2.0 + 0.4 + room_lift)
 		var span := maxf(map.w, map.h * 1.4) * (1.0 + room_lift * 0.11)
@@ -852,6 +903,8 @@ func try_step(d: String) -> void:
 	me.dir = d
 	me.show_dir()
 	var nxt: Vector2i = me.tile + DIRS[d]
+	if solid_extra.has(nxt) and push_hook.is_valid() and push_hook.call(nxt, d):
+		return   # you pushed a piece; you stay put this step, so a push is one deliberate move
 	if not blocked(nxt) or _is_link(nxt):
 		_start_step(nxt)
 
@@ -901,6 +954,8 @@ func finish_step() -> void:
 func walk_to(target: Vector2i, then := Callable()) -> bool:
 	for id in people:
 		astar.set_point_solid(people[id].tile, true)
+	for p in solid_extra:
+		astar.set_point_solid(p, true)
 	var end := target
 	if not astar.is_in_boundsv(end):
 		return false
@@ -912,6 +967,8 @@ func walk_to(target: Vector2i, then := Callable()) -> bool:
 	astar.set_point_solid(end, was_solid)
 	for id in people:
 		astar.set_point_solid(people[id].tile, map.blocked(people[id].tile.x, people[id].tile.y))
+	for p in solid_extra:
+		astar.set_point_solid(p, map.blocked(p.x, p.y))
 	if pts.is_empty():
 		return false
 	path.clear()
@@ -998,7 +1055,7 @@ func tile_at_screen(sp: Vector2) -> Vector2i:
 func _unhandled_input(ev: InputEvent) -> void:
 	if map == null:
 		return
-	if ev is InputEventMouseButton and ev.pressed and ev.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN] and map.outdoor:
+	if ev is InputEventMouseButton and ev.pressed and ev.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN] and (map.outdoor or map.def.has("chamber")):
 		zoom = clampf(zoom + (-0.08 if ev.button_index == MOUSE_BUTTON_WHEEL_UP else 0.08), 0.0, 1.0)
 		get_viewport().set_input_as_handled()
 		return
