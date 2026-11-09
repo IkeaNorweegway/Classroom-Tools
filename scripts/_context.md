@@ -47,6 +47,8 @@ Note the version mismatch in `render_sci7_workbooks.py`: it reads the `v2` markd
 
 ---
 
+- `blender/` — Blender model packs for the Godot games (`kit.py` shapes and palette, `realm_pack.py` the Emberdale pack, `contact_sheet.py` and `showcase.py` for checking). Rules in `_games-context.md` (Blender model packs).
+
 ## Scripts elsewhere
 
 | Script | What it does |

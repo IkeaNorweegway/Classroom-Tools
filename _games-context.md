@@ -24,7 +24,7 @@ All are in `public/materials/`. They have no markdown source: the HTML file is t
 
 The v1 file of each game is kept so old links work. Nothing links to them.
 
-**Planned:** *The Measure of the Realm*, a year-long Math 9 fantasy quest (all 11 topics, one chapter each) on the CEFL Town v2 engine. Story: `_courses/math-9/realm-game/math9-realm-story-v1.md`; Chapter 1 design (the pilot): `math9-realm-ch1-design-v1.md` in the same folder. Nothing built yet.
+**Planned:** *The Measure of the Realm*, a year-long Math 9 fantasy quest (all 11 topics, one chapter each) on the CEFL Town v2 engine. Story: `_courses/math-9/realm-game/math9-realm-story-v1.md`; Chapter 1 design (the pilot): `math9-realm-ch1-design-v1.md` in the same folder. Art: the Emberdale Blender pack (below, under the v2 engine); the game itself isn't built yet.
 
 ---
 
@@ -62,6 +62,13 @@ Started 2026-11-08 for games bigger than the v1 town: a **business sim** (orders
 **Tested 2026-11-08:** model bots; the whole game by the test player (right, second-try and wrong, Gentle and Real, several seeds, all 14 steps); save, stop and resume gives the same result as an unbroken run; web build in headless Chrome at 1340×840 and 600×420 (title, character, town, tap to walk, number keys for choices, order, plan, business day, ledger and profit check, Journal, report). **Not tested:** the report download in a real browser, touch screens, school Chromebooks (frame rate and the 10 MB load), screen readers (Godot draws to a canvas, so the page has no text for one: a known limit of this engine), students.
 
 ---
+
+**Blender model packs (added 2026-11-09, first used by Realm).** For games that need more art than `art3d.gd` should hold. Each pack is a Python script run by Blender (installed as a Flatpak): `scripts/blender/realm_pack.py` builds every model as a `.glb` in `godot/cefl-town-v2/assets/<game>/<pack>/` with a `pack.json` (kind, footprint, height, triangles, a note). Shapes and the palette are in `scripts/blender/kit.py`; the look is the town's (flat-shaded, one colour per face, no textures). Units: 1 = 1 tile, footprint centred on the origin, door facing +z. In Godot, `engine/world3d/pack.gd` places a model and gives it the town's materials (`Pack.place`, `Pack.part` for moving parts, `Pack.tint`). Mesh names say what a part is: `*_glow` is unlit, `*_water` is see-through, and `Wheel`, `*_Crown` and `Rune_glow` are parts a game moves or recolours. Turning: `yaw 90` turns a model's +z face to +x.
+- Build: `flatpak run org.blender.Blender -b --python scripts/blender/realm_pack.py -- [only=a,b]`, then `godot --headless --path godot/cefl-town-v2 --import`.
+- Check by eye: `scripts/blender/contact_sheet.py -- dir=…` (one picture per model); `tests/pack_preview.gd -- out=…` (a small village in the town's light and camera); `scripts/blender/showcase.py` opens every model in a Blender window.
+- Colour: kit colours are sRGB bytes, glTF stores them linear, so `pack.gd` reads them with `vertex_color_is_srgb = false`. Don't add a second conversion.
+- Change the script, not the `.glb`: the files are rebuilt from it. The town's export leaves out `assets/realm/` (about 1.4 MB for Emberdale); Realm's own export will include it.
+- **Emberdale pack** (Chapter 1, 62 models): 17 terrain tiles of one sketch cell (grass, stubble, canola, paths, river, bank, ford, gorge walls and corners, gorge floor, waterfall, far bank, market square); 14 buildings (Hesper's cottage, three village houses, the mill with a turning wheel, the barn, a grain elevator, the well, the Highstead gate arch, the grain-share rune stone, the sheep fold, the root cellar, a market stall, the broken bridge); 31 props (fences, walls, hay, sacks, barrels, carts, trees, rocks, signpost, lantern, scarecrow, hen coop, the sigil spot, a sheep and a hen). Characters come in batch 2.
 
 ## CEFL Town (all CEFL missions)
 
