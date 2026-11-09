@@ -3,7 +3,7 @@
 
 **What this is:** the story for a year-long Math 9 game. A student-made apprentice learns magic from a council of wizards, sorcerers and witches, earns powers by solving maths problems for the people of the realm, and saves the realm from a mage who sells shortcuts instead of understanding.
 
-**Format decided:** whole year, all 11 Math 9 topics, one chapter per topic. A 3D walkable world built on the Godot engine of CEFL Town v2 (`godot/cefl-town-v2/`, rules in `_games-context.md`). The student creates the hero.
+**Format decided:** whole year, all 11 Math 9 topics, one chapter per topic. A 3D walkable world built on the story engine, the Godot engine shared with CEFL Town (`godot/story-engine/`, rules in `_games-context.md`). The student creates the hero.
 
 **Read with:** `_courses/math-9/_context.md` (depth ceilings, misconceptions, sequence) and `_games-context.md` (build, design and test rules).
 
@@ -33,13 +33,28 @@ The student names the apprentice and picks their look and pronouns. The story ca
 
 **Their arc:** from "I'm not a maths person, I just guess" to someone who asks *why* before they act. The hero earns power by helping people, and the last choice of the game is about whether understanding can be taught even to Morvane.
 
+**Body and clothes (decided 2026-11-09).** The student picks a **male or female body**, skin, hair colour and hair style, but **not clothes**. Clothes are **earned** as the apprentice moves through the world, and each piece has its own fixed colours. Both bodies wear the same pieces. Hats are pointed witch's or wizard's hats (the female hero is a witch apprentice; the male hero is a wizard apprentice).
+
+| When | Earned | Piece |
+|---|---|---|
+| Start (prologue) | farm clothes | linen shirt, brown skirt or trousers, work boots, no hat |
+| End of the prologue (Orrin takes the apprentice on) | Novice hat | patched brown felt, crooked tip |
+| Chapter 1 start (Hesper) | Novice robe | grey-green robe, rope belt |
+| Region done: Emberdale (Ch 3) | Emberdale hat | canola-gold band, wheat sprig, frost-blue tip |
+| Region done: Riverholm (Ch 6) | Riverholm hat | deep teal, river-bronze band and buckle |
+| Act III end: raised to **Adept** | Adept robe + Greystone hat | plum robe with silver trim; slate-grey hat with a silver star |
+| Region done: the Bonelands (Ch 11) | Bonelands hat | dusk-red with a striped hoodoo band and a bone charm |
+| Finale: raised to **Warden** | Warden robe + Warden hat | midnight-blue, gold Measure lines |
+
+The player can switch back to any hat or robe they have earned (at home, or Hesper's cottage). **The familiar:** a small black cat with gold eyes turns up at Hesper's cottage in Chapter 1 and follows the apprentice from then on; the student names it.
+
 ---
 
 ## 3. The mentors
 
 | Mentor | Kind | Where | Teaches | Personality and voice |
 |---|---|---|---|---|
-| **Archmage Orrin Vael** | Wizard; the hero's own master | Travels with the hero (Acts I–II); a voice after | Ties the strands together | Old, patient, dry humour. Answers a question with a better question. "Good. Now tell me *why* it worked." |
+| **Archmage Orrin Vael** | Wizard; the hero's own master | Home: his tower on the north bank above the Brindle Ford gorge, empty for years. Travels with the hero (Acts I–II); a voice after | Ties the strands together | Old, patient, dry humour. Answers a question with a better question. "Good. Now tell me *why* it worked." |
 | **Hesper Marrow** | Hedge-witch of Emberdale | Her cottage above Brindle Ford | Number (Ch 1–3) | Warm and practical; keeps hens and the balance of warm and cold. "Fractions are just fair shares. Nobody likes an unfair share." |
 | **Taddeus Quill** | Sorcerer, Keeper of the Great Scales | The Scale-Hall of Riverholm | Algebra (Ch 4–6) | Precise, fussy about neat work, secretly kind. "Whatever you do to one side, you do to the other. *Always.*" |
 | **Ilsabet Thorne** | Sorceress, the Ringwarden | The Observatory of Greystone | Shape & Space (Ch 7–9) | Stern, few words, measures everything twice. "Show me. Then I'll believe you." |
@@ -73,6 +88,8 @@ Each chapter is one Math 9 topic. It opens after the class starts that topic and
 Harvest night in Brindle Ford. The village crosses the gorge bridge to the market at Highstead. The apprentice sees gold lines flicker along the cables, then snap. The bridge falls (no one dies; Pell is left dangling on the far side and is pulled up by rope).
 
 An old traveller in a grey-blue coat was watching: **Orrin Vael**. He asks the apprentice what they saw. They describe the lines. Orrin goes quiet, then: "Then you can learn. Few can." He takes them to Hesper Marrow to begin.
+
+**Orrin's tower.** On the north bank above the gorge stands a stone tower the village calls "the old Warden's tower". Nobody remembers its door open. It is Orrin's: he has come home after many years away, and from harvest night its windows are lit and the crystal on its roof glows. In Chapter 1 the door stays locked. *(Open for later: the tower could open after Orrin is lost in Act II, as a place to remember him, read his notebook and keep the cracked staff.)*
 
 Orrin keeps one thing from the apprentice: he saw a strange carving on the broken bridge cable.
 
@@ -284,7 +301,7 @@ A tower of four floors, one per region, built from the materials of all four (fr
 
 ## 12. Notes for the 3D build (later)
 
-- **Engine:** CEFL Town v2 (`godot/cefl-town-v2/`). These carry over as they are: tile-by-tile walking, areas joined by edges and gates, `T.say`, `T.choose`, `T.ask` (first-try recording), `T.goal`, `T.box` (custom panels with a test-player `solve`), memory (`T.remember`, `T.knows`, `T.trust`) for Sefa and the final choice, the soft gate (start a chapter now or explore first), and `?debug=1`.
+- **Engine:** the story engine (`godot/story-engine/`, shared with CEFL Town). These carry over as they are: tile-by-tile walking, areas joined by edges and gates, `T.say`, `T.choose`, `T.ask` (first-try recording), `T.goal`, `T.box` (custom panels with a test-player `solve`), memory (`T.remember`, `T.knows`, `T.trust`) for Sefa and the final choice, the soft gate (start a chapter now or explore first), and `?debug=1`.
 - **New work:** fantasy art in `art3d.gd` (stone cottages, grain towers, canal locks, cliff stairs, hoodoos, bones), terrain that isn't a street grid, and a **sigil system** (a sigil marks a tile or object as passable or usable).
 - **One region = one or more 60 × 45 areas**, with a gate arch (a stone arch with the region's name) like the town's.
 - **Each false rune is a `T.box` panel:** predict → test → explain, with the misconception as one tempting option. It can be lost.

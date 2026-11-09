@@ -8,6 +8,10 @@
 # fixed in the quests (games/realm/ch1.gd) and seeded per visit at the sigil spots. Maps: games/realm/maps.gd (Emberdale pack).
 # Simplifications: harvest night is drawn in daylight; Pell waits beside each quest instead of following step by step.
 # People are the rigged people pack: the cast have their own models; you and the extras use the tintable hero model.
+# Second looks (design §8.1): after the sigil, each giver whose pip was missed shows a gold "?" and offers the check again with
+# fresh numbers (variants A, B, C in ch1.gd). Test options: the test player takes them at the chapter end (looks=wrong,right is
+# the plan per giver, cycling to its last entry; looks=0 skips them); looks_unlock=ring|day picks how a lock is opened (default:
+# alternate); day_offset=N fakes "N days later" for the lock date (also on the web: ?debug=1&day_offset=1).
 extends RefCounted
 
 const Ch1 = preload("res://games/realm/ch1.gd")
@@ -32,6 +36,7 @@ var shop_cfg := {}
 var shop_layout := {}
 
 var _free_roam := false
+var _day_offset := 0   # test hook: days added to today's date (second-look locks)
 
 const TOPIC := {2: ["adding and subtracting", "Section 2"], 3: ["multiplying", "Section 3"], 4: ["dividing", "Section 4"], 5: ["the order of operations", "Section 5"]}
 const QUEST_OF := {"lesson": "lesson", "well": "well", "ledger": "ledger", "cold_snap": "snap", "harvest": "harvest", "recipe": "recipe"}
@@ -75,7 +80,26 @@ func people() -> Dictionary:
 
 
 func new_game(S: Dictionary) -> void:
-	S.rn = {"gate_wait": -1, "rune_stage": 1, "rune_losses": 0, "spot_visits": {}, "spot_pips": 0, "spot_first": 0, "spots_used": {}}
+	S.rn = {"gate_wait": -1, "rune_stage": 1, "rune_losses": 0, "spot_visits": {}, "spot_pips": 0, "spot_first": 0, "spots_used": {},
+		"rings_right": 0, "looks": {}}
+
+
+func on_begin(T) -> void:
+	_day_offset = int(T.args.get("day_offset", "0")) if T.debug else 0
+
+
+## Today's local date, "YYYY-MM-DD" (plus the test hook's offset). A second look missed today stays locked until a later date.
+func today() -> String:
+	var u := Time.get_unix_time_from_datetime_dict(Time.get_datetime_dict_from_system()) + 86400 * _day_offset
+	return Time.get_date_string_from_unix_time(u)
+
+
+## The pip key whose second look this person gives, or "".
+func _look_key(pid: String) -> String:
+	for k in Ch1.LOOK_GIVER:
+		if Ch1.LOOK_GIVER[k] == pid:
+			return k
+	return ""
 
 
 func validate(S: Dictionary) -> bool:
@@ -180,6 +204,9 @@ func nav_flags() -> Array:
 func bubble(pid: String, S: Dictionary) -> String:
 	if _free_roam and pid == "hesper":
 		return "talk"
+	var k := _look_key(pid)
+	if k != "" and Ch1.look_open(S, k, today()):
+		return "q_gold"   # a second look is waiting
 	return ""
 
 
@@ -210,7 +237,8 @@ func journal(S: Dictionary) -> Array:
 	if S.flags.get("sigil", false):
 		var n := Ch1.pips(S)
 		out.append(["THE BALANCE SIGIL", "Charge %s (%d of 5). First-try answers charge it; so does each gold ring solved on the first try. %s" % [
-			Ch1.pip_text(n), n, "Four pips open Hesper's root cellar." if not S.flags.get("sigil_cellar", false) else "The root cellar is open."]])
+			Ch1.pip_text(n), n, "All five pips open Hesper's root cellar." if not S.flags.get("sigil_cellar", false) else "The root cellar is open."]])
+		out.append(["SECOND LOOKS", "Missed a pip? A gold ? over someone you helped means a second look: the same skill, new numbers. Right first time wins the pip back."])
 	return out
 
 
@@ -407,6 +435,17 @@ func cold_snap(T) -> void:
 	T.set_flag("lambs_in", true)
 	T.rebuild_maps()
 	await T.say("", ["You and Pell walk the lambs in, the flock bumping along behind you. Rowan shuts the gate on the last one."])
+	# Check 3 · the feed (cross-cancelling, notes Section 3). Not a pip check; on the report under RN3.
+	await T.say("rowan", ["There are 6/5 sacks of oats here in the barn.", "The lambs get 4/9 of it tonight. How much is that?"])
+	await T.say("", "Pell grabs a bit of charcoal and works it out on the barn wall.")
+	await T.say("pell", "4 and 6 both go by 2, so cross them out: 2/9 × 3/5 = 6/45 = 2/15. Easy.")
+	await T.ask("hesper", Ch1.ASK_CANCEL, "rn3_cancel_why", "RN3 · Is Pell's cancelling allowed?")
+	await T.frac({"key": "rn3_cancel", "label": "RN3 · The feed: 4/9 × 6/5", "title": "The feed", "kicker": "Quest · RN3",
+		"prompt": "The lambs get 4/9 of 6/5 sacks. The feed = [b]4/9 × 6/5[/b] = ? of a sack", "answer": Ch1.cancel(), "hint_btn": _hint(),
+		"hint": "Hesper: \"Look for a top and a bottom that share a factor. 6 is on top, 9 is on the bottom.\"",
+		"why": "6 and 9 share 3: 4/3 × 2/5 = 8/15. Check: 4 × 6 = 24, 9 × 5 = 45, and 24/45 = 8/15.",
+		"traps": [["2/15", "That's Pell's answer: you cancelled two tops (4 and 6). Cancel a top with a bottom: 6 and 9 share 3."]], "bot_wrong": "2/15"})
+	await T.say("", "You and Pell tip 8/15 of a sack into the trough. The lambs push in to eat.")
 	await T.say("rowan", "Snug as anything. Hesper chose a good apprentice.")
 	await _praise(T, tier)
 	T.remember("rowan", "You got his lambs in before the cold snap.", 2)
@@ -626,8 +665,11 @@ func sigil(T) -> void:
 	T.banner("A sigil drawn in gold", "Balance")
 	T.confetti()
 	var n := Ch1.pips(T.S)
-	await T.say("hesper", ["Its charge is %s: one pip for every quest you got right the first time. Four pips open my old root cellar. Don't ask what's in it." % Ch1.pip_text(n),
+	await T.say("hesper", ["Its charge is %s: one pip for every quest you got right the first time." % Ch1.pip_text(n),
+		"All five pips open my old root cellar. Don't ask what's in it.",
 		"Each gold ring you solve on the first try charges it a little more."])
+	if Ch1.first_pips(T.S) < 5:
+		await T.say("hesper", ["Missed a pip? Look for a gold ? over anyone you helped.", "That's a second look: the same skill with new numbers. Right first time wins the pip back."])
 	T.log_line("Earned the Balance sigil. Charge %s." % Ch1.pip_text(n))
 
 
@@ -661,6 +703,89 @@ func chapter_end(T) -> void:
 	T.banner("Chapter 1 complete", "The Spark")
 	T.confetti()
 	await T.say("", "Open the Menu and download your report for your teacher.")
+	if T.auto != "" and str(T.args.get("looks", "")) != "0":
+		await _auto_looks(T)
+
+
+## The test player's second looks: visit every giver with a missed pip; plan (looks=wrong,right) is the how for each giver's
+## 1st, 2nd… look. A lock is opened with a gold ring or a faked later day (looks_unlock=ring|day; default: alternate), and the
+## lock is checked first: a miss must keep the giver closed until then. Problems print as LOOK-PROBLEM.
+func _auto_looks(T) -> void:
+	var S: Dictionary = T.S
+	var plan: PackedStringArray = str(T.args.get("looks", "wrong,right")).split(",")
+	var keep: String = T.auto
+	var unlocks := 0
+	for _round in 8:
+		var any := false
+		for key in Ch1.PIP_KEYS:
+			if not Ch1.look_missed(S, key) or Ch1.look_passed(S, key):
+				continue
+			any = true
+			if not Ch1.look_open(S, key, today()):
+				var how: String = str(T.args.get("looks_unlock", "ring" if unlocks % 2 == 0 else "day"))
+				unlocks += 1
+				if how == "ring":
+					T.auto = "second"   # solve a gold ring (right on the second try)
+					await _spot(T, "spot_pond", false)
+					T.auto = keep
+				else:
+					_day_offset += 1
+				T.refresh()
+				if not Ch1.look_open(S, key, today()):
+					print("LOOK-PROBLEM %s still locked after a %s" % [key, how])
+					continue
+			var n: int = (S.rn.get("looks", {}).get(key, {}).get("tries", []) as Array).size()
+			await T.goal("A gold ? over %s: a second look." % T.people_def[Ch1.LOOK_GIVER[key]].name, "person:" + Ch1.LOOK_GIVER[key])
+			T.auto = plan[mini(n, plan.size() - 1)].strip_edges()
+			await _second_look(T, key, false)
+			T.auto = keep
+			if not Ch1.look_passed(S, key) and Ch1.look_open(S, key, today()):
+				print("LOOK-PROBLEM %s open again straight after a miss" % key)
+		if not any:
+			break
+	if T.args.has("spots") and not T.flag("sigil_cellar", false):   # with every pip back, the cellar should open now
+		await _spot(T, "spot_cellar", false)
+	T.set_goal_text(str(done_goal))
+
+
+## A second look with this giver (design §8.1): the pip check again with the next variant's numbers.
+func _second_look(T, key: String, offer := true) -> void:
+	var S: Dictionary = T.S
+	var giver: String = Ch1.LOOK_GIVER[key]
+	var v := Ch1.look_variant(S, key)
+	var c := Ch1.look_check(key, v)
+	var ans := Ch1.look_answer(key, v)
+	var traps := Ch1.look_traps(key, v)
+	if offer and await T.choose(giver, "Back again, {name}? I've another one like it, with new numbers. A second look?", ["Yes, a second look", "Not now"]) != 0:
+		return
+	await T.say(giver, c.say)
+	var o := {"key": "look_" + key, "record": false, "title": "Second look", "kicker": "%s · %s · variant %s" % [Ch1.LOOK_NAME[key], Ch1.LOOK_CODE[key], v],
+		"prompt": c.prompt, "answer": ans, "hint_btn": _hint(), "hint": c.hint, "why": c.why, "traps": traps,
+		"bot_wrong": str(traps[0][0]).replace("−", "-")}
+	if c.has("unit"):
+		o.unit = c.unit
+	if c.get("as_dec", false):
+		o.as_dec = true
+	if key == "rn4_harvest":
+		var cart := Ch1.look_cart(v)
+		o.judge = func(x): return "Less than the cart you started with? Dividing by a share less than 1 gives more shares, not fewer." if Frac.lt(x, cart) else ""
+		if T.mode() == "gentle" and c.has("bar"):
+			o.show = Pn.bar(T, int(c.bar[0]), int(c.bar[1]), str(c.bar[2]))
+	var tier: String = await T.frac(o)
+	if c.has("ask"):
+		await T.ask(giver, c.ask)
+	Ch1.look_result(S, key, v, tier, today())
+	T.save()
+	if tier == "first":
+		T.confetti()
+		await T.say("", "The Balance sigil on your hand glows. One pip back: %s." % Ch1.pip_text(Ch1.pips(S)))
+		await T.say("pell", "See? Same skill, new numbers, and you nailed it.")
+		T.log_line("Second look with %s (variant %s): right the first time. A pip back." % [T.people_def[giver].name, v])
+	else:
+		if tier == "second":   # the panel shows the why line only after the last try
+			await T.say("", c.why)
+		await T.say(giver, "Come back after you've worked a gold ring, or tomorrow.")
+	T.refresh()
 
 
 ## A Balance spot. story: the mill wheel step (cannot be left).
@@ -669,7 +794,8 @@ func _spot(T, sid: String, story: bool) -> void:
 	var sp: Dictionary = Ch1.SPOTS[sid]
 	var solved := bool(T.flag(sp.flag, false))
 	if sid == "spot_cellar" and not solved and Ch1.pips(S) < Ch1.CELLAR_PIPS:
-		await T.say("", "The frost on the cellar door is old and deep. Balance needs a charge of %s to reach it; yours is %s.\nEach gold ring solved on the first try adds a pip." % [Ch1.pip_text(Ch1.CELLAR_PIPS), Ch1.pip_text(Ch1.pips(S))])
+		await T.say("", ["The frost on the cellar door is old and deep. Balance needs all five pips, %s, to reach it; yours is %s." % [Ch1.pip_text(Ch1.CELLAR_PIPS), Ch1.pip_text(Ch1.pips(S))],
+			"Each gold ring solved on the first try adds a pip. So does a second look (a gold ? over someone you helped) right the first time."])
 		return
 	if solved and not story and T.auto == "":
 		if await T.choose("", "%s already holds. Practise Balance here anyway?" % sp.what.capitalize(), ["Practise", "Leave it"]) != 0:
@@ -682,13 +808,17 @@ func _spot(T, sid: String, story: bool) -> void:
 	var ans: Array = nums.answer
 	var lo := floorf(minf(Frac.to_float(cur), Frac.to_float(tgt))) - 1.0
 	var hi := ceilf(maxf(Frac.to_float(cur), Frac.to_float(tgt))) + 1.0
+	var wrongs := [0]
 	var tier: String = await T.frac({"key": "spot_" + sid, "record": false, "tries": 3, "as_dec": true, "title": "Balance", "kicker": sp.what.capitalize(),
+		"on_wrong": func(_v): wrongs[0] += 1,
 		"show": func(body): body.add_child(Pn.frost_line(T, lo, hi, 1, [{"v": Frac.to_float(cur), "label": "now " + Frac.dec_text(cur), "col": Color("#6b665d")},
 			{"v": Frac.to_float(tgt), "label": "target " + Frac.dec_text(tgt), "col": Color("#d99a1e"), "below": true}])),
 		"prompt": "Now: [b]%s °C[/b]. Target (%s): [b]%s °C[/b].\nWhat exact change do you cast? (target − now)" % [Frac.dec_text(cur), sp.target_text, Frac.dec_text(tgt)],
 		"answer": ans, "unit": "°C", "hint_btn": _hint(), "hint": "Hesper: \"Change = target − now. Count from now to the target on the frost line.\"",
 		"why": "Change = %s − (%s) = %s." % [Frac.dec_text(tgt), Frac.dec_text(cur), Frac.dec_text(ans)],
 		"judge": func(v): return Ch1.spot_judge(sp.kind, ans, v)})
+	if wrongs[0] < 3:   # right at any try: opens a second look locked by a miss
+		S.rn.rings_right = int(S.rn.get("rings_right", 0)) + 1
 	if tier == "first":
 		S.rn.spot_first = int(S.rn.get("spot_first", 0)) + 1
 		if Ch1.pips(S) < 5:
@@ -712,6 +842,10 @@ func _spot(T, sid: String, story: bool) -> void:
 # ── Free talk and things ──
 func talk(pid: String, T) -> void:
 	var f: Dictionary = T.S.flags
+	var lk := _look_key(pid)
+	if lk != "" and Ch1.look_open(T.S, lk, today()):
+		await _second_look(T, lk)
+		return
 	match pid:
 		"hesper":
 			if not f.get("met_hesper", false):
@@ -805,8 +939,18 @@ func report(S: Dictionary) -> Array:
 		var used := []
 		for sid in S.rn.spots_used:
 			used.append("%s ×%d" % [Ch1.SPOTS[sid].what, int(S.rn.spots_used[sid])])
-		out.append({"title": "The Balance sigil", "rows": [["Charge", "%s (%d of 5)" % [Ch1.pip_text(Ch1.pips(S)), Ch1.pips(S)]],
-			["Gold rings used", ", ".join(used) if used.size() else "none yet"], ["Solved on the first try", str(int(S.rn.get("spot_first", 0)))]]})
+		var looks := []
+		var tried := 0
+		for k in Ch1.PIP_KEYS:
+			var t := Ch1.look_text(S, k)
+			if t != "":
+				tried += (S.rn.looks[k].tries as Array).size()
+				looks.append("%s: %s" % [Ch1.LOOK_NAME[k], t])
+		var srows := [["Charge", "%s (%d of 5)" % [Ch1.pip_text(Ch1.pips(S)), Ch1.pips(S)]],
+			["Where the pips came from", "%d from first tries, %d from gold rings, %d from second looks" % [Ch1.first_pips(S), int(S.rn.get("spot_pips", 0)), Ch1.look_pips(S)]],
+			["Gold rings used", ", ".join(used) if used.size() else "none yet"], ["Solved on the first try", str(int(S.rn.get("spot_first", 0)))],
+			["Second looks", ("%d tried, %d passed. " % [tried, Ch1.look_pips(S)] + "; ".join(looks)) if looks.size() else "none yet"]]
+		out.append({"title": "The Balance sigil", "rows": srows})
 	return out
 
 
@@ -815,6 +959,12 @@ func summary(S: Dictionary) -> Dictionary:
 	for k in S.answers:
 		if S.answers[k].tier == "first":
 			firsts += 1
-	return {"pips": Ch1.pips(S), "rune_losses": int(S.rn.rune_losses), "rune_broken": S.flags.get("rune_broken", false), "firsts": firsts,
+	var looks := {}
+	for k in S.rn.get("looks", {}):
+		var tl := []
+		for t in S.rn.looks[k].tries:
+			tl.append("%s:%s" % [t.v, t.tier])
+		looks[k] = ",".join(tl)
+	return {"pips": Ch1.pips(S), "pips_from": [Ch1.first_pips(S), int(S.rn.get("spot_pips", 0)), Ch1.look_pips(S)], "looks": looks, "rune_losses": int(S.rn.rune_losses), "rune_broken": S.flags.get("rune_broken", false), "firsts": firsts,
 		"sigils": [S.flags.get("sigil_pond", false), S.flags.get("sigil_wheel", false), S.flags.get("sigil_gate", false), S.flags.get("sigil_cellar", false)],
 		"items": S.inv.keys()}

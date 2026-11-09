@@ -4,7 +4,7 @@
 
 > **Gate (games):** Outcomes: RN1–RN5. Model: a step-based story; every check is an exact rational answer (equivalent forms accepted); the rune breaks only when the prediction, test and fix are right. Turn-based. Test hook included (`?debug=1`, `auto=right|second|wrong`, a `solve` on every panel).
 
-**Read with:** `notes-packages/math-9/rational-numbers/math9-rational-numbers-notes-v1.md` (every quest matches one section), `_courses/math-9/_context.md` (depth ceiling: no complex fractions), `_games-context.md` (CEFL Town v2 engine rules).
+**Read with:** `notes-packages/math-9/rational-numbers/math9-rational-numbers-notes-v1.md` (every quest matches one section), `_courses/math-9/_context.md` (depth ceiling: no complex fractions), `_games-context.md` (story engine rules).
 
 **I can** (under the title): *I can compare, add, subtract, multiply and divide rational numbers, use the order of operations, and explain why my answer makes sense.*
 
@@ -137,7 +137,13 @@ Then a **`T.typed`** (id `rn1_pell`, at least 30 characters): *"Explain to Pell,
 - **Check 2** (`T.frac`, key `rn3_back`): going back 3 hours: (−⅔) × (−3) = **+2**, so it was **2 °C**. Then a `T.ask` for the meaning: "Why is a negative times a negative positive here?" Right: "Going back in time on a falling temperature means it was higher, so the change is positive." Wrong: "Two negatives always cancel, so it doesn't matter"; "It should be −2 because it's been getting colder."
 - **Hint:** "Write 4½ as an improper fraction. Then count the negatives."
 - **Why:** "(−2⁄3) × (9⁄2) = −18⁄6 = −3. One negative factor gives a negative product."
-- **Payoff:** you and Pell herd the lambs in (a short walk with the flock following).
+- **Check 3 · the feed (cross-cancelling, notes Section 3; added 2026-11-09):** in the barn Rowan has **6⁄5 sacks** of oats; the lambs get **4⁄9** of it tonight. Pell works it on the barn wall: *"4 and 6 both go by 2, so cross them out: 2⁄9 × 3⁄5 = 6⁄45 = 2⁄15. Easy."*
+  - `T.ask` (key `rn3_cancel_why`): "Is Pell's cancelling allowed?" Right: "**No. He cancelled two tops. You can only cancel a top with a bottom, like the 6 and the 9.**" Wrong: "Yes, any two numbers that share a factor can be cancelled" (Pell's error; feedback: "Cancelling divides the top and the bottom of the answer by the same number. Cancelling two tops divides the top twice."); "No, you can never cancel before you multiply" (feedback: "You can; it's a shortcut. It just has to be a top with a bottom.").
+  - `T.frac` (key `rn3_cancel`): the feed = 4⁄9 × 6⁄5 = **8⁄15** of a sack (accepts 24⁄45 with the simplest-form nudge). Typed **2⁄15** gets the named error: "That's Pell's answer: you cancelled two tops (4 and 6). Cancel a top with a bottom: 6 and 9 share 3."
+  - **Hint:** "Look for a top and a bottom that share a factor. 6 is on top, 9 is on the bottom."
+  - **Why:** "6 and 9 share 3: 4⁄3 × 2⁄5 = 8⁄15. Check: 4 × 6 = 24, 9 × 5 = 45, and 24⁄45 = 8⁄15."
+  - Not a pip check (the pip stays on `rn3_snap`); it is on the report under RN3.
+- **Payoff:** you and Pell herd the lambs in (a short walk with the flock following), then feed them.
 
 ### 6.4 Sharing the harvest (RN4) — Reeve Odile Marsh
 - **Problem:** **¾ of a cart** of grain is left in the common barn. Each family's winter share is **⅛ of a cart**. How many families get a share?
@@ -206,7 +212,32 @@ Gale Harrow: *"The stone has always been right. Who are we to argue with the sto
 - After 3 wrong tries the answer is shown, and the spot works anyway (progress is never locked).
 - Numbers are **seeded per spot and visit**, so each spot is fresh RN2 practice. Later chapters ask for Balance spots on purpose (spaced practice).
 
-**Charge** *(decided here; flagged in §12)*. The sigil **always works** once earned. Its **charge** is the number of quests (main check) right on the first try, 0–5, shown as five pips in the Journal and the report. **4 or more** pips opens one optional secret: Hesper's iced root cellar (Pell's lost slingshot and a page of Orrin's old notebook, a story hook). A student below 4 can earn pips back: each sigil spot solved on the first try adds one, up to 5.
+**Charge** *(teacher decision 2026-11-09: 5 of 5)*. The sigil **always works** once earned. Its **charge** is the number of quests (main check) right on the first try, 0–5, shown as five pips in the Journal and the report. **All 5 pips** open one optional secret: Hesper's iced root cellar (Pell's lost slingshot and a page of Orrin's old notebook, a story hook). A student below 5 earns pips back two ways, up to 5 in all:
+1. **Gold rings:** each sigil spot solved on the first try adds one (as before).
+2. **Second looks** (§8.1): a fresh-number redo of a missed quest, right on the first try.
+
+### 8.1 Second looks (recharging a missed pip)
+
+**Why:** a missed first try shouldn't lock the secret, but re-entering the same answer teaches nothing. A second look is the same skill with new numbers, after a gap (retrieval with spacing).
+
+- **When it opens:** the morning after the rune (once the sigil is earned). Every quest giver whose pip was missed shows a gold "?" and offers a second look: Marta (well), Abel (ledger), Rowan (snap), Odile (harvest), Hesper (recipe).
+- **The task:** the quest's pip check again with the next unused variant below (A, then B, then C, then back to A). Same panel, hint, named errors and *why* line pattern as the original, with the variant's numbers.
+- **Right on the first try:** one pip back (a short Pell line and the sigil glows), and that giver's "?" goes away.
+- **Wrong:** the *why* line with the variant's numbers, then the giver says "Come back after you've worked a gold ring, or tomorrow." The next second look with that giver opens after **either** one more gold ring is solved (right at any try) **or** a later real day (the save stores the date of the miss). No guess-spamming, and spacing is built in.
+- **Never blocks the story:** second looks are optional; the chapter ends without them.
+- **Report:** the original first-try result stays as it was (the teacher still sees the first miss). A recharged pip shows as "recharged on a second look (variant B, try 1)".
+
+**Variants (all worked by hand):**
+
+| Quest (pip key) | A | B | C |
+|---|---|---|---|
+| Well `rn2_well` | Trough at −8.25 °C, chinook +11.5 → **3.25 °C**, thaws | −15.5 °C, chinook +9.75 → **−5.75 °C**, stays frozen (ask: thaw? **No**) | −6.4 °C, chinook +10.15 → **3.75 °C**, thaws |
+| Ledger `rn2_ledger` (net) | +¾ + ⅚ − ⅔ − ½ = 9 + 10 − 8 − 6 twelfths = **5⁄12** | +⅖ + ½ − ¾ − 3⁄10 = 8 + 10 − 15 − 6 twentieths = **−3⁄20** | +⅝ − ⅓ − ¾ + ⅙ = 15 − 8 − 18 + 4 twenty-fourths = **−7⁄24** |
+| Snap `rn3_snap` | drops ¾ °C an hour for 2⅔ h: (−¾)(8⁄3) = **−2** | drops ⅚ °C an hour for 3⅗ h: (−⅚)(18⁄5) = **−3** | drops 4⁄9 °C an hour for 6¾ h: (−4⁄9)(27⁄4) = **−3** |
+| Harvest `rn4_harvest` | ⅚ cart, shares of 1⁄12: **10** | ⅘ cart, shares of 1⁄10: **8** | 2¼ carts, shares of ¾: 9⁄4 × 4⁄3 = **3** |
+| Recipe `rn5_recipe` | (−½ + 2)² × (−4⁄9) + ⅔ = 9⁄4 × (−4⁄9) + ⅔ = **−⅓** (melting branch: (−⅔)² + ⅔ = 10⁄9) | (¼ − 1)² × (−16⁄9) + ¾ = 9⁄16 × (−16⁄9) + ¾ = **−¼** (melting: (4⁄3)² + ¾ = 91⁄36) | (−⅖ + 1)² × (−25⁄9) + ⅓ = 9⁄25 × (−25⁄9) + ⅓ = **−⅔** (melting: (−5⁄3)² + ⅓ = 28⁄9) |
+
+Named errors for the variants follow the originals: sign of the larger size (well), bigger denominator means bigger debt and add-tops-and-bottoms (ledger), forgetting the negative (snap: the positive size), "dividing makes it smaller" (harvest: an answer below the cart amount), squaring after multiplying (recipe: the melting value).
 
 **Places Balance opens:**
 
@@ -214,7 +245,7 @@ Gale Harrow: *"The stone has always been right. Who are we to argue with the sto
 |---|---|---|---|---|
 | ✶ The mill pond | Brindle Ford (5, 8) | Freeze | Shortcut from the village to the shepherd's fold | Ch 2 vine-climb on the far side |
 | ✶ The mill wheel | Brindle Ford (17, 10) | Thaw | First use (the `mill_wheel` step): the wheel turns, Abel grinds the Highstead grain | Ch 2 hollow-moth quest is at the mill |
-| ✶ Hesper's root cellar | Brindle Ford (6, 19) | Thaw (needs 4 pips) | The secret | — |
+| ✶ Hesper's root cellar | Brindle Ford (6, 19) | Thaw (needs 5 pips) | The secret | — |
 | ✶ The tower-yard gate | Highstead (19, 5) | Thaw | The grain-tower yard | Ch 2 seed vault is in this yard |
 
 (Coordinates in sketch cells; each cell is 2 × 2 tiles.)
@@ -294,6 +325,7 @@ HIGHSTEAD
 - Water, the gorge and the broken bridge are blocked.
 - The ford and the market square are walkable.
 - Hesper's cottage, the mill, the barn and Abel's house open into 9 × 7 rooms, as in the town.
+- **Orrin's tower** (added 2026-11-09, not in the sketch above): Brindle Ford tiles x 42–45, y 14–17, on the north bank above the gorge, door at (43, 18) with a short footpath west. Dark until `met_orrin`, then lit with a breathing crystal. Locked in Chapter 1; using the door gives one line that changes with the story (before Orrin, after Orrin, after the rune). Model: `wizard_tower` in the Emberdale pack.
 
 **Looks:** prairie, not a street grid. Gentle rises, with Hesper's cottage on the highest one. Canola stubble in gold rows, a chinook arch in the west sky, the gorge in red-brown striped rock. It is low-poly and flat-shaded like the town, with no real-time shadows.
 
@@ -303,10 +335,10 @@ HIGHSTEAD
 
 | Row | From |
 |---|---|
-| First try by code: RN1 (lesson, ledger order), RN2 (well, ledger net, rune fixes), RN3 (snap, back), RN4 (predict, harvest, second barn), RN5 (order, recipe) | `Story.record` keys above |
+| First try by code: RN1 (lesson, ledger order), RN2 (well, ledger net, rune fixes), RN3 (snap, back, cross-cancel), RN4 (predict, harvest, second barn), RN5 (order, recipe) | `Story.record` keys above |
 | "In my own words": the explanation to Pell and the rune explanation for Gale | `T.typed` ids `rn1_pell`, `rune_why` |
 | The rune: predicted right? broke on the first attempt or after a flare? | rune stages |
-| Balance charge (0–5 pips), sigil spots solved | sigil state |
+| Balance charge (0–5 pips): how many from first tries, gold rings and second looks; sigil spots solved; second looks tried and passed | sigil state |
 | Mode (Gentle or Real), time played | engine |
 
 A teacher reading the RN rows sees which notes section each student needs again.
@@ -327,7 +359,7 @@ A teacher reading the RN rows sees which notes section each student needs again.
 
 ## 12. What the build needs (next batch)
 
-**Reuse from the engine** (`godot/cefl-town-v2/engine/town.gd`):
+**Reuse from the engine** (`godot/story-engine/engine/town.gd`):
 - `T.say`, `T.choose`, `T.ask`, `T.typed`, `T.box`, `T.goal`, `T.banner`, `T.confetti`.
 - Memory: `T.remember` / `T.knows` (Sefa sightings, the final choice later).
 - `Story.record`.
@@ -360,7 +392,7 @@ A teacher reading the RN rows sees which notes section each student needs again.
 
 ## 13. Open points
 
-- **The charge rule** (§8): 4 of 5 for the secret, pips back from sigil spots. Easy to change; it touches nothing else.
-- **Quest numbers are fixed** in the pilot (only the sigil spots are seeded). A replayable "Hesper's chores" board with seeded versions of the five quests could follow if students want more practice.
+- **The charge rule** (§8): decided 2026-11-09, 5 of 5 for the secret, pips back from gold rings and second looks (§8.1).
+- **Quest numbers are fixed** for the first try (the sigil spots are seeded, and second looks use three hand-checked variants per quest, §8.1). A replayable "Hesper's chores" board with seeded versions of the five quests could follow if students want more practice.
 - **Strand-order fallback** (from the bible): if Number isn't taught first, Chapter 1 still stands alone, since it needs no earlier sigil.
 - **Pell's slingshot and Orrin's notebook page** (the secret) need a payoff later; the notebook page could be a hint about Morvane in Chapter 3.

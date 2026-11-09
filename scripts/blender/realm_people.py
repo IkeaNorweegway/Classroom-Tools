@@ -350,9 +350,10 @@ def human(name, look, slots=False):
     return rig
 
 
-def human_clips(rig, robe=False, float_=False):
-    """idle, walk, talk, cast, cheer (the Hollow: idle, walk, cast — gliding, no steps)."""
-    lg = 0.55 if robe else 1.0
+def human_clips(rig, robe=False, float_=False, lg=None):
+    """idle, walk, talk, cast, cheer (the Hollow: idle, walk, cast — gliding, no steps). lg scales the leg swing
+    (default 0.55 in a robe, else 1)."""
+    lg = lg if lg is not None else 0.55 if robe else 1.0
     if float_:
         rig.anim("idle", [(1, {"hips": {"r": (0, 0, 2), "t": (0, 0.03, 0)}, "arm_L": (0, 0, 6), "arm_R": (0, 0, -6)}),
                           (25, {"hips": {"r": (0, 0, -2), "t": (0, 0.06, 0)}, "arm_L": (0, 0, 9), "arm_R": (0, 0, -9), "head": (4, 8, 0)}),
@@ -464,6 +465,338 @@ def sefa():
 def hollow():
     human("hollow", {"K": 1.06, "top": "#8c9096", "trim": "#6a6d72", "robe": True, "ragged": True, "cloak": "#7d8085",
                      "hat": "hood", "face": False})
+
+
+# ─────────────────────────────── the chosen heroes ───────────────────────────────
+# hero_f (witch apprentice) and hero_m (wizard apprentice): the player picks the body, skin, hair colour and hair
+# style; clothes are earned and keep their own colours. Meshes (Pack.dress shows the right ones):
+#   Skin, Hair_<style>   white, tinted from the look (skin, hair, hair_style)
+#   Glasses              shown if the look asks; Fixed: eyes, mouth, satchel (never tinted)
+#   Wtop_<id>            farm novice adept warden: the top and whatever covers the legs (skirt, trousers, stockings)
+#   What_<id>            novice emberdale riverholm greystone bonelands warden (none: hat "")
+#   Wshoes_work          brown work boots
+# A look: {"model": "realm/people/hero_f", "skin": 3, "hair": 2, "hair_style": 2,
+#          "wear": {"top": "farm", "hat": "", "shoes": "work"}}. Every hat covers every hair style above its brim.
+HEROES = {"hero_f": {"K": 0.96, "W": 0.94, "female": True,
+                     "note": "Witch apprentice (female body): tinted skin and six hair styles; earned robes and pointed hats"},
+          "hero_m": {"K": 1.0, "W": 1.0, "female": False,
+                     "note": "Wizard apprentice (male body): tinted skin and six hair styles; earned robes and pointed hats"}}
+HERO_TOPS = ["farm", "novice", "adept", "warden"]
+HERO_HATS = ["novice", "emberdale", "riverholm", "greystone", "bonelands", "warden"]
+HERO_SHOES = ["work"]
+HAIR_STYLES = ["short", "long", "bun", "curly", "shaved", "braids"]
+HAT_Y, HAT_Z = 0.965, -0.02          # brim height and the crown's centre (the hair sits a little back)
+STOCKING = "#4e4743"
+
+
+def M(x=0, y=0, z=0, yaw=0.0, pitch=0.0, roll=0.0):
+    return (Matrix.Translation(Vector((x, y, z))) @ Matrix.Rotation(math.radians(yaw), 4, "Y")
+            @ Matrix.Rotation(math.radians(pitch), 4, "X") @ Matrix.Rotation(math.radians(roll), 4, "Z"))
+
+
+def along(a, b):
+    """A transform whose local +y runs from point a to point b (draw a cyl of height |b - a| at the origin)."""
+    a, b = Vector(a), Vector(b)
+    return Matrix.Translation(a) @ Vector((0, 1, 0)).rotation_difference(b - a).to_matrix().to_4x4(), (b - a).length
+
+
+class Slots:
+    """Parts by name, each bound to bones as it is drawn (scaled by K)."""
+
+    def __init__(self, rig, K):
+        self.rig, self.K, self.parts = rig, K, {}
+
+    def q(self, name, bone, at=None):
+        if name not in self.parts:
+            self.parts[name] = Part(name)
+        p = self.parts[name]
+        p.xf = Matrix.Scale(self.K, 4) @ (at if at is not None else Matrix.Identity(4))
+        p.bone(bone)
+        return p
+
+    def done(self):
+        for p in self.parts.values():
+            p.done(self.rig)
+
+
+def cone_line(q, u, y0, r0, y1, r1, c, w=0.014, off=0.005, cz=0.0):
+    """A thin strip lying on a cone (or cylinder) from (y0, r0) to (y1, r1), at angle u (degrees; 270 = the front)."""
+    a = math.radians(u)
+    ox, oz = math.cos(a), -math.sin(a)          # outward
+    tx, tz = -oz, ox                            # along the surface, sideways
+    p = lambda y, r, s: (ox * (r + off) + tx * s * w / 2, y, cz + oz * (r + off) + tz * s * w / 2)
+    q.quad(p(y0, r0, -1), p(y0, r0, 1), p(y1, r1, 1), p(y1, r1, -1), c, out=(ox, 0, oz))
+
+
+def hero_body(S, W, female):
+    """Skin (tinted), the face (Fixed), glasses and the satchel. The skin torso and legs sit inside every top."""
+    for side, sx in (("L", 1), ("R", -1)):
+        x = sx * 0.09
+        S.q("Skin", "thigh_" + side).cyl(x, 0.24, 0, 0.058, 0.22, "#ffffff", seg=6)
+        S.q("Skin", "shin_" + side).cyl(x, 0.03, 0, 0.052, 0.21, "#ffffff", seg=6, bottom=True)
+        xa = sx * 0.235 * W
+        S.q("Skin", "arm_" + side).cyl(xa, 0.48, 0, 0.042, 0.2, "#ffffff", seg=6)
+        q = S.q("Skin", "fore_" + side)
+        q.cyl(xa, 0.33, 0, 0.04, 0.15, "#ffffff", seg=6, top=False)
+        q.blob(xa, 0.285, 0.005, 0.05, 0.055, 0.05, "#ffffff", seg=6, rings=3, jit=0.05, seed=3)
+    S.q("Skin", "hips").cyl(0, 0.34, 0, 0.15 * W, 0.14, "#ffffff", seg=8, bottom=True)
+    S.q("Skin", "chest").cyl(0, 0.46, 0, 0.15 * W, 0.25, "#ffffff", seg=8, r_top=0.16 * W)
+    q = S.q("Skin", "head")
+    q.cyl(0, 0.69, 0, 0.062, 0.1, "#ffffff", seg=6)
+    q.blob(0, 0.88, 0, 0.17, 0.18, 0.168, "#ffffff", seg=8, rings=5, jit=0.03, seed=2)
+    q.box(-0.02, 0.825, 0.155, 0.04, 0.05, 0.03, "#e4e4e4")                         # nose
+    for sx in (-1, 1):
+        q.box(sx * 0.17 - 0.015, 0.85, -0.02, 0.03, 0.06, 0.05, "#ececec")           # ears
+    q = S.q("Fixed", "head")
+    for sx in (-1, 1):
+        q.box(sx * 0.062 - 0.02, 0.865, 0.148, 0.04, 0.05, 0.03, INK)                # eyes
+        q.box(sx * 0.062 - 0.006, 0.89, 0.172, 0.013, 0.013, 0.01, "#ffffff")         # glint
+        if female:
+            q.box(sx * 0.062 + sx * 0.018 - 0.006, 0.91, 0.15, 0.012, 0.016, 0.025, INK)   # lashes at the outer corner
+    q.box(-0.035, 0.78, 0.15, 0.07, 0.015, 0.02, "#9a6a5a")                         # mouth
+    q = S.q("Glasses", "head")
+    for sx in (-1, 1):
+        q.box(sx * 0.062 - 0.04, 0.85, 0.172, 0.08, 0.07, 0.01, "#2b2622")
+        q.box(sx * 0.062 - 0.03, 0.86, 0.176, 0.06, 0.05, 0.008, "#9cc3d6")
+    q.box(-0.025, 0.875, 0.172, 0.05, 0.015, 0.01, "#2b2622")
+    # the satchel rides on the back of the left hip (clear of the swinging arm and every robe); the strap runs over
+    # the right shoulder, outside every top
+    q = S.q("Fixed", "hips")
+    q.box(0.02, 0.3, -0.34, 0.15, 0.15, 0.08, "wood_dk", top=shade("wood_dk", 0.1))
+    q.box(0.02, 0.4, -0.345, 0.15, 0.055, 0.01, shade("wood_dk", 0.12))             # flap
+    q.box(0.08, 0.37, -0.348, 0.03, 0.035, 0.006, "gold_dk")                        # clasp
+    zf = 0.214 * W + 0.006
+    q = S.q("Fixed", "chest")
+    q.quad((-0.17 * W, 0.71, zf - 0.02), (-0.1 * W, 0.725, zf - 0.01), (0.17 * W, 0.475, zf), (0.1 * W, 0.46, zf), "wood_dk", out=(0, 0, 1))
+    q.quad((-0.1 * W, 0.725, -zf + 0.01), (-0.17 * W, 0.71, -zf + 0.02), (0.06, 0.45, -zf), (0.13, 0.46, -zf), "wood_dk", out=(0, 0, -1))
+    q.box(-0.17 * W, 0.732, -0.2 * W, 0.07 * W, 0.022, 0.4 * W, "wood_dk")          # over the shoulder
+
+
+def hero_hair(S):
+    """Six white hair styles. Above the hat brim every style stays inside the hat's crown; braids, a long fall,
+    the low bun and curls show below the brim."""
+    hc = "#ffffff"
+    for st in HAIR_STYLES:
+        q = S.q("Hair_" + st, "head")
+        if st == "shaved":
+            q.blob(0, 0.92, -0.02, 0.176, 0.125, 0.174, "#e6e6e6", seg=8, rings=4, jit=0.02, seed=5)
+            continue
+        if st == "curly":
+            q.blob(0, 0.95, -0.02, 0.196, 0.15, 0.19, hc, seg=9, rings=5, jit=0.1, seed=7)
+            q.blob(0, 0.85, -0.1, 0.19, 0.1, 0.12, hc, seg=8, rings=4, jit=0.18, seed=17)   # curls at the nape
+            continue
+        q.blob(0, 0.945, -0.03, 0.186, 0.13, 0.18, hc, seg=8, rings=4, jit=0.06, seed=6)
+        q.box(-0.12, 0.965, 0.09, 0.24, 0.045, 0.07, "#f0f0f0")                    # fringe
+        if st == "long":
+            q.box(-0.18, 0.6, -0.17, 0.36, 0.34, 0.1, hc)
+            for sx in (-1, 1):
+                q.box(sx * 0.17 - 0.035, 0.64, -0.1, 0.07, 0.29, 0.14, "#f0f0f0")
+        elif st == "bun":   # a low bun at the back of the head, under any brim
+            q.blob(0, 0.885, -0.19, 0.085, 0.08, 0.075, hc, seg=7, rings=4, jit=0.05, seed=8)
+            q.cyl(0, 0.875, -0.15, 0.05, 0.03, "#e0e0e0", seg=6, rot=15)
+        elif st == "braids":
+            for sx in (-1, 1):
+                for i in range(4):
+                    q.cbox(sx * 0.15, 0.78 - i * 0.07, 0.04 + i * 0.012, 0.055 - i * 0.004, 0.065, 0.055, "#f2f2f2" if i % 2 else hc)
+                q.cbox(sx * 0.15, 0.5, 0.085, 0.035, 0.04, 0.035, "#d8d8d8")
+
+
+def hero_legs(S, name, thigh, shin, c, hem=0.07, cuff=None):
+    """Trouser legs or stockings: a tube on each thigh and shin."""
+    for side, sx in (("L", 1), ("R", -1)):
+        x = sx * 0.09
+        S.q(name, "thigh_" + side).cyl(x, 0.23, 0, thigh, 0.24, c, seg=6)
+        q = S.q(name, "shin_" + side)
+        q.cyl(x, hem, 0, shin, 0.24 - hem + 0.01, c, seg=6, r_top=thigh * 0.96)
+        if cuff:
+            q.cyl(x, hem, 0, shin + 0.004, 0.03, cuff, seg=6, top=False)
+
+
+def hero_torso(S, name, c, W, r_lo, r_hi, lo=0.44):
+    q = S.q(name, "chest")
+    q.cyl(0, lo, 0, r_lo * W, 0.7 - lo, c, seg=8, r_top=r_hi * W, top=False)
+    q.cyl(0, 0.7, 0, r_hi * W, 0.05, shade(c, 0.05), seg=8, r_top=0.12, top=True)
+
+
+def hero_sleeves(S, name, c, W, bell=False, cuff=None):
+    for side, sx in (("L", 1), ("R", -1)):
+        x = sx * 0.235 * W
+        S.q(name, "arm_" + side).cyl(x, 0.47, 0, 0.058, 0.25, c, seg=6, r_top=0.068)
+        q = S.q(name, "fore_" + side)
+        if bell:
+            q.cyl(x, 0.31, 0, 0.082, 0.17, c, seg=7, r_top=0.058, top=False, bottom=False)
+            q.cyl(x, 0.305, 0, 0.086, 0.035, cuff or shade(c, -0.15), seg=7, top=False)
+            q.cyl(x, 0.33, 0, 0.07, 0.01, shade(c, -0.35), seg=7, top=True)     # the dark inside of the bell
+        else:
+            q.cyl(x, 0.33, 0, 0.052, 0.16, c, seg=6, r_top=0.058, top=False)
+            q.cyl(x, 0.325, 0, 0.058, 0.04, cuff or shade(c, -0.1), seg=6)
+
+
+ROBE_TOP, ROBE_HEM = 0.5, 0.065
+
+
+def robe_r(y, W):
+    """The robe skirt's radius at height y: it flares from the waist to the hem."""
+    return (0.31 + (0.19 - 0.31) * (y - ROBE_HEM) / (ROBE_TOP - ROBE_HEM)) * W
+
+
+def hero_robe(S, name, c, W, trim, sash, clasp):
+    hero_torso(S, name, c, W, 0.18, 0.205)
+    q = S.q(name, "hips")
+    q.cyl(0, ROBE_HEM, 0, robe_r(ROBE_HEM, W), ROBE_TOP - ROBE_HEM, c, seg=8, r_top=robe_r(ROBE_TOP, W), top=False, bottom=True)
+    q.cyl(0, ROBE_HEM, 0, robe_r(ROBE_HEM, W) + 0.005, 0.04, trim, seg=8, r_top=robe_r(ROBE_HEM + 0.04, W) + 0.005, top=False)
+    q.cyl(0, 0.445, 0, robe_r(0.445, W) + 0.012, 0.045, sash, seg=8, r_top=robe_r(0.49, W) + 0.012, top=False)   # belt
+    q.box(-0.025, 0.443, robe_r(0.445, W) + 0.004, 0.05, 0.05, 0.022, clasp)
+    q = S.q(name, "chest")
+    q.cyl(0, 0.685, 0, 0.21 * W, 0.04, trim, seg=8, r_top=0.15, top=False)          # collar
+    q.prism([(-0.055, 0.7), (0.055, 0.7), (0.0, 0.6)], 0.2 * W - 0.012, 0.2 * W + 0.004, shade(c, -0.25))   # V at the neck
+    hero_sleeves(S, name, c, W, bell=True, cuff=trim)
+    hero_legs(S, name, 0.066, 0.058, STOCKING)
+
+
+def hero_clothes(S, W, female):
+    # ── Wtop_farm: cream linen shirt; a brown skirt to mid-calf (f) or brown trousers (m); leather belt ──
+    linen, brown = "#e6dcc6", "#6e5038"
+    hero_torso(S, "Wtop_farm", linen, W, 0.17, 0.198)
+    q = S.q("Wtop_farm", "chest")
+    for sx in (-1, 1):   # open collar
+        q.prism([(sx * 0.0, 0.7), (sx * 0.075, 0.71), (sx * 0.03, 0.64)][::sx], 0.19 * W - 0.01, 0.2 * W + 0.006, shade(linen, -0.06))
+    q.box(-0.004, 0.6, 0.192 * W, 0.008, 0.08, 0.012, "#8a6a4a")                     # lacing
+    hero_sleeves(S, "Wtop_farm", linen, W, cuff=shade(linen, -0.08))
+    q = S.q("Wtop_farm", "hips")
+    if female:
+        q.cyl(0, 0.17, 0, 0.27 * W, 0.32, brown, seg=8, r_top=0.172 * W, top=False, bottom=True)
+        q.cyl(0, 0.17, 0, 0.274 * W, 0.03, shade(brown, -0.18), seg=8, r_top=0.27 * W, top=False)
+        hero_legs(S, "Wtop_farm", 0.064, 0.058, STOCKING)
+    else:
+        q.cyl(0, 0.34, 0, 0.17 * W, 0.14, brown, seg=8, bottom=True)
+        hero_legs(S, "Wtop_farm", 0.077, 0.069, brown, hem=0.08, cuff=shade(brown, -0.12))
+    q.cyl(0, 0.44, 0, 0.18 * W, 0.042, "#3b2a20", seg=8, top=False)                  # belt
+    q.box(-0.028, 0.436, 0.172 * W, 0.056, 0.05, 0.022, "gold_dk")
+    # ── the robes ──
+    hero_robe(S, "Wtop_novice", "#7d8a6e", W, trim=shade("#7d8a6e", -0.18), sash="rope", clasp=shade("rope", -0.15))
+    q = S.q("Wtop_novice", "hips")
+    for x, k in ((0.05, 0), (0.085, 1)):   # the rope's knotted ends hang down the front
+        yb = 0.27 - 0.04 * k
+        q.quad((x - 0.012, yb, robe_r(yb, W) * 0.98 + 0.012), (x + 0.012, yb, robe_r(yb, W) * 0.98 + 0.012),
+               (x + 0.012, 0.445, robe_r(0.445, W) + 0.02), (x - 0.012, 0.445, robe_r(0.445, W) + 0.02), "rope", out=(0, 0, 1))
+        q.cbox(x, yb - 0.02, robe_r(yb, W) * 0.98 + 0.012, 0.03, 0.03, 0.03, shade("rope", -0.12))
+    q.blob(0.06, 0.455, robe_r(0.455, W) + 0.02, 0.03, 0.028, 0.02, shade("rope", 0.1), seg=6, rings=3, jit=0.1, seed=41)   # knot
+    hero_robe(S, "Wtop_adept", "#5e3a64", W, trim="#cfd4da", sash=shade("#5e3a64", -0.3), clasp="#cfd4da")
+    blue, gold = "#22305a", "gold"
+    hero_robe(S, "Wtop_warden", blue, W, trim=gold, sash=shade(blue, -0.35), clasp=gold)
+    q = S.q("Wtop_warden", "hips")
+    for u in (225, 270, 315):    # the Measure: straight gold lines down the front (on the robe's edges)
+        cone_line(q, u, ROBE_HEM + 0.04, robe_r(ROBE_HEM + 0.04, W), 0.445, robe_r(0.445, W), gold, w=0.012, off=0.004)
+    q = S.q("Wtop_warden", "chest")
+    for u in (225, 315):
+        cone_line(q, u, 0.45, 0.18 * W + 0.0012, 0.685, 0.205 * W - 0.001, gold, w=0.012, off=0.004)
+
+    # ── Wshoes_work ──
+    boot = "#6b4a32"
+    for side, sx in (("L", 1), ("R", -1)):
+        x = sx * 0.09
+        q = S.q("Wshoes_work", "shin_" + side)
+        q.box(x - 0.066, 0.022, -0.068, 0.132, 0.085, 0.205, boot, top=shade(boot, 0.1))
+        q.box(x - 0.07, 0, -0.074, 0.14, 0.024, 0.216, "#33281f")
+        q.cyl(x, 0.08, 0, 0.077, 0.09, boot, seg=6, top_col=shade(boot, -0.2))
+        q.box(x - 0.025, 0.105, 0.055, 0.05, 0.012, 0.075, "#c9a65e")                  # laces
+
+    # ── hats ──
+    def hat(nm, c, band, tall=1.0, tip_col=None, bend=(-12, 0), brim_col=None):
+        q = S.q(nm, "head")
+        y, z = HAT_Y, HAT_Z
+        q.cyl(0, y, z, 0.35, 0.022, brim_col or shade(c, -0.12), seg=12, top_col=c, bottom=True)
+        q.cyl(0, y + 0.022, z, 0.245, 0.13 * tall, c, seg=10, r_top=0.2, top=False)
+        q.cyl(0, y + 0.022 + 0.13 * tall, z, 0.2, 0.18 * tall, shade(c, 0.04), seg=10, r_top=0.115, top=False)
+        if band:
+            q.cyl(0, y + 0.02, z, 0.25, 0.05, band, seg=10, r_top=0.25 - 0.045 * 0.05 / (0.13 * tall), top=False)
+        yt = y + 0.022 + 0.31 * tall
+        q = S.q(nm, "head", M(0, yt, z, pitch=bend[0], roll=bend[1]))
+        q.cyl(0, -0.01, 0, 0.115, 0.1 * tall, shade(c, 0.02), seg=10, r_top=0.07, top=False)
+        q = S.q(nm, "head", M(0, yt, z, pitch=bend[0], roll=bend[1]) @ M(0, 0.09 * tall, 0, pitch=bend[0] * 0.9, roll=bend[1]))
+        q.cone(0, -0.005, 0, 0.072, 0.15 * tall, tip_col or c, seg=10)
+        return y, z
+
+    def on_crown(nm, u, dy, tall=1.0):
+        """A transform onto the crown's lower part at angle u (270 = the front), dy above the brim, facing out."""
+        r = 0.245 + (0.2 - 0.245) * dy / (0.13 * tall)
+        r *= math.cos(math.radians(18)) / math.cos(math.radians((u % 36) - 18))   # onto the 10-sided crown's face
+        a = math.radians(u)
+        slope = math.degrees(math.atan2(0.045, 0.13 * tall))
+        return M(math.cos(a) * (r + 0.004), HAT_Y + 0.022 + dy, HAT_Z - math.sin(a) * (r + 0.004), yaw=u - 270) @ M(pitch=-slope)
+
+    # novice: patched brown felt, a crooked tip
+    felt = "#7a5a3e"
+    hat("What_novice", felt, None, bend=(-40, 28))
+    for u, dy, col, s in ((240, 0.03, "#8f7a52", 0.07), (320, 0.07, "#5f6a4a", 0.055)):
+        q = S.q("What_novice", "head", on_crown("What_novice", u, dy))
+        q.box(-s / 2, 0, -0.004, s, s, 0.008, col)
+        for k in range(3):   # stitches
+            q.box(-s / 2 + 0.008 + k * (s - 0.02) / 2, s - 0.008, 0.004, 0.006, 0.006, 0.004, "#efe6d6")
+    # emberdale: canola-gold band, a wheat sprig, a frost-blue tip
+    hat("What_emberdale", "#5a4632", "canola", tip_col="#bcd8ea")
+    q = S.q("What_emberdale", "head", on_crown("What_emberdale", 300, 0.02) @ M(pitch=8, roll=-25))
+    q.box(-0.006, 0, 0.004, 0.012, 0.14, 0.008, "#b8933e")
+    for i in range(4):
+        for sx in (-1, 1):
+            q.box(sx * 0.012 - 0.008, 0.07 + i * 0.022, 0.006, 0.016, 0.02, 0.01, "wheat")
+    q.box(-0.008, 0.155, 0.006, 0.016, 0.03, 0.01, "wheat")
+    # riverholm: deep teal, a river-bronze band and buckle
+    bronze = "#a8743a"
+    hat("What_riverholm", "#1f5c63", bronze, bend=(-18, 0))
+    q = S.q("What_riverholm", "head", on_crown("What_riverholm", 270, 0.008))
+    q.box(-0.035, 0, 0.0, 0.07, 0.05, 0.012, shade(bronze, 0.25))
+    q.box(-0.022, 0.012, 0.006, 0.044, 0.026, 0.01, "#1f5c63")
+    # greystone: slate grey with a silver star
+    hat("What_greystone", "#5e6670", "#454c55", bend=(-15, 0))
+    q = S.q("What_greystone", "head", on_crown("What_greystone", 270, 0.07))
+    pts = [(0.045 * (1 if k % 2 == 0 else 0.42) * math.sin(math.pi * k / 5), 0.045 * (1 if k % 2 == 0 else 0.42) * math.cos(math.pi * k / 5)) for k in range(10)]
+    for k in range(10):
+        q.tri((0, 0, 0.006), (pts[k][0], pts[k][1], 0.006), (pts[(k + 1) % 10][0], pts[(k + 1) % 10][1], 0.006), "#e3e7ec", out=(0, 0, 1))
+    # bonelands: dusk-red, a striped hoodoo band, a small bone charm
+    dusk = "#8e3b36"
+    hat("What_bonelands", dusk, None, bend=(-26, -8))
+    q = S.q("What_bonelands", "head")
+    for i, col in enumerate(("rock_red", "#e9dfcb", "#c98d3a", "#e9dfcb")):
+        y0 = HAT_Y + 0.022 + i * 0.016
+        q.cyl(0, y0, HAT_Z, 0.249 - i * 0.0055, 0.016, col, seg=10, r_top=0.249 - (i + 1) * 0.0055, top=False)
+    a = math.radians(300)   # a bone charm hangs from the brim's edge, front right
+    q = S.q("What_bonelands", "head", M(math.cos(a) * 0.33, HAT_Y, HAT_Z - math.sin(a) * 0.33, yaw=30))
+    q.box(-0.003, -0.035, -0.003, 0.006, 0.035, 0.006, "#3b2a20")                       # cord
+    q.box(-0.007, -0.1, -0.007, 0.014, 0.065, 0.014, "#f1ece2")                         # the bone
+    for yy in (-0.106, -0.042):
+        for sx in (-1, 1):
+            q.box(sx * 0.01 - 0.007, yy, -0.008, 0.014, 0.014, 0.016, "#f1ece2")
+    # warden: taller, midnight blue, gold Measure lines
+    hat("What_warden", blue, gold, tall=1.3, bend=(-14, 0), brim_col=gold)
+    q = S.q("What_warden", "head")
+    for u in (216, 252, 288, 324, 72, 144):   # on the crown's edges
+        cone_line(q, u, HAT_Y + 0.07, 0.245 - 0.045 * 0.048 / 0.169, HAT_Y + 0.022 + 0.169, 0.2, gold, w=0.012, off=0.004, cz=HAT_Z)
+        cone_line(q, u, HAT_Y + 0.022 + 0.169, 0.2, HAT_Y + 0.022 + 0.169 + 0.234, 0.115, gold, w=0.01, off=0.004, cz=HAT_Z)
+
+
+def hero_model(name):
+    h = HEROES[name]
+    K, W = h["K"], h["W"]
+    rig = Rig(name + "_rig", bones_human(K, W))
+    S = Slots(rig, K)
+    hero_body(S, W, h["female"])
+    hero_hair(S)
+    hero_clothes(S, W, h["female"])
+    S.done()
+    human_clips(rig, lg=0.7)   # one walk for every top: the legs stay inside a robe's hem
+    return rig
+
+
+@model("hero_f", "person", HEROES["hero_f"]["note"])
+def hero_f():
+    return hero_model("hero_f")
+
+
+@model("hero_m", "person", HEROES["hero_m"]["note"])
+def hero_m():
+    return hero_model("hero_m")
 
 
 # ─────────────────────────────── animals ───────────────────────────────
@@ -638,7 +971,9 @@ def main():
         anims = [t.name for t in rig_ob.animation_data.nla_tracks]
         export(os.path.join(out, name + ".glb"))
         manifest["models"][name] = {"kind": m["kind"], "w": round(w, 2), "d": round(d, 2), "h": round(hi, 2), "tris": tris,
-                                    "anims": anims, "slots": sorted(ob.name for ob in meshes) if name == "hero" else [], "note": m["note"]}
+                                    "anims": anims, "slots": sorted(ob.name for ob in meshes) if name.startswith("hero") else [], "note": m["note"]}
+        if name in HEROES:
+            manifest["models"][name]["wear"] = {"top": HERO_TOPS, "hat": HERO_HATS, "shoes": HERO_SHOES}
         print("built %-8s %-7s h=%.2f  tris=%-5d %s" % (name, m["kind"], hi, tris, ",".join(anims)))
     with open(mpath, "w") as f:
         json.dump(manifest, f, indent=1)
