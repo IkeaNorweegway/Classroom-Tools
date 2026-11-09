@@ -172,6 +172,8 @@ func new_game(nm: String, look: Dictionary, mode: String) -> void:
 
 func _begin() -> void:
 	ui.hud.visible = true
+	if D.has_method("on_begin"):   # e.g. move old saves' data into the profile
+		D.on_begin(self)
 	if D.has_method("maps_for"):
 		_build_maps()
 	refresh_look()

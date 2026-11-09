@@ -537,6 +537,9 @@ static func bubble(ci: CanvasItem, kind: String, x: float, y: float, ring := -1.
 		"q":      # a question
 			var f2: Font = ThemeDB.fallback_font
 			ci.draw_string(f2, Vector2(x - 3.5, y + 3.5), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, ink)
+		"q_gold": # a question in gold (Realm: a second look is waiting)
+			var f3: Font = ThemeDB.fallback_font
+			ci.draw_string(f3, Vector2(x - 3.5, y + 3.5), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("#b88000"))
 		"parcel":
 			rr(ci, x - 6, y - 7, 12, 10, 1, Color("#c8a77a"))
 			rect(ci, x - 1, y - 7, 2, 10, Color("#e8dcc4"))
