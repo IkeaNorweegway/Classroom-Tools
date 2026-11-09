@@ -351,6 +351,476 @@ def t_square():
     p.done()
 
 
+# ─────────────────────────────── Realm forest set (2026-11-09) ───────────────────────────────
+# A dark, cramped enchanted forest at permanent dusk. Deep blue-greens, dark bark, and a few luminous "*_glow" parts.
+from mathutils import Vector
+
+FS = "Realm forest set, 2026-11-09. "
+
+
+def limb(p, a, b, ra, rb, c, seg=4, rot=0.4):
+    """A tapered prism from point a to point b (radius ra to rb; rb = 0 makes a point). Branches, roots, posts."""
+    a, b = Vector(a), Vector(b)
+    d = (b - a).normalized()
+    ref = Vector((0, 1, 0)) if abs(d.y) < 0.9 else Vector((1, 0, 0))
+    u = d.cross(ref).normalized()
+    v = d.cross(u)
+    ring = lambda ctr, r: [tuple(ctr + (u * math.cos(2 * math.pi * i / seg + rot) + v * math.sin(2 * math.pi * i / seg + rot)) * r) for i in range(seg)]
+    lo, hi = ring(a, ra), ring(b, rb)
+    for i in range(seg):
+        j = (i + 1) % seg
+        f = (Vector(lo[i]) + Vector(lo[j]) + Vector(hi[i]) + Vector(hi[j])) / 4
+        ctr = tuple(a + d * (f - a).dot(d))
+        if rb > 0:
+            p.quad(lo[i], lo[j], hi[j], hi[i], c, ctr)
+        else:
+            p.tri(lo[i], lo[j], tuple(b), c, ctr)
+
+
+def litter(p, n, w, d, y, seed, cols, size=(0.06, 0.13)):
+    """Flat fallen leaves: small turned quads lying on the ground."""
+    rng = random.Random(seed)
+    for _ in range(n):
+        x, z = rng.uniform(-w / 2 + 0.1, w / 2 - 0.1), rng.uniform(-d / 2 + 0.1, d / 2 - 0.1)
+        s, t = rng.uniform(*size), rng.uniform(0, math.pi)
+        c, sn = math.cos(t), math.sin(t)
+        pts = [(x + c * s - sn * s * 0.6, y + 0.004, z + sn * s + c * s * 0.6), (x + c * s + sn * s * 0.6, y + 0.004, z + sn * s - c * s * 0.6),
+               (x - c * s + sn * s * 0.6, y + 0.004, z - sn * s - c * s * 0.6), (x - c * s - sn * s * 0.6, y + 0.004, z - sn * s + c * s * 0.6)]
+        p.face(pts, rng.choice(cols), out=(0, 1, 0))
+
+
+def ground1(p, col, edge=None):
+    """A 1 x 1 ground tile, top at GRASS_Y, solid underneath."""
+    p.box(-0.5, GRASS_Y - 0.3, -0.5, 1, 0.3, 1, edge or shade(col, -0.35), top=col)
+
+
+def moss_patch(p, x, y, z, r, col="moss", seed=0):
+    p.blob(x, y, z, r, r * 0.35, r * 0.8, col, seg=5, rings=2, jit=0.1, seed=seed)
+
+
+def mushroom(p, x, y, z, h, r, stem="#d8d2c0", cap="#cfc6b0"):
+    p.cyl(x, y, z, r * 0.3, h, stem, seg=3, top=False)
+    p.cone(x, y + h * 0.85, z, r, h * 0.55, cap, seg=5)
+
+
+# ── terrain tiles, 1 x 1 ──
+
+def floor_tile(name, seed, mush=0):
+    p = Part(name)
+    ground1(p, "moss_dk")
+    rng = random.Random(seed)
+    litter(p, 8 - mush * 2, 1, 1, GRASS_Y, seed, ["bark", "bark_dk", "#4d4a30", "leafy", "moss"])
+    for i in range(2 - (1 if mush else 0)):
+        a = rng.uniform(0, 180)
+        p.at(rng.uniform(-0.25, 0.25), 0, rng.uniform(-0.25, 0.25), yaw=a)
+        p.cbox(0, GRASS_Y, 0, rng.uniform(0.35, 0.5), 0.05, 0.07, "bark_dk", top="bark")
+    p.reset()
+    for i in range(4 - 2 * (1 if mush else 0)):
+        p.cone(rng.uniform(-0.4, 0.4), GRASS_Y, rng.uniform(-0.4, 0.4), 0.07, rng.uniform(0.07, 0.13), rng.choice(["moss", "leafy"]), seg=3, rot=rng.uniform(0, 120))
+    for i in range(mush):
+        mushroom(p, rng.uniform(-0.3, 0.3), GRASS_Y, rng.uniform(-0.3, 0.3), 0.07, 0.05, cap=rng.choice(["#cfc6b0", "#bdb8a8"]))
+    p.done()
+
+
+@model("f_floor", "terrain", 1, 1, FS + "Forest floor: dark moss, leaf litter, a root or two")
+def f_floor():
+    floor_tile("f_floor", 3)
+
+
+@model("f_floor_b", "terrain", 1, 1, FS + "Forest floor variant with a few tiny pale mushrooms")
+def f_floor_b():
+    floor_tile("f_floor_b", 8, mush=2)
+
+
+def clear_tile(name, seed, flowers=0):
+    p = Part(name)
+    ground1(p, "clear_grass")
+    rng = random.Random(seed)
+    for i in range(4 if flowers else 6):
+        p.cone(rng.uniform(-0.4, 0.4), GRASS_Y, rng.uniform(-0.4, 0.4), rng.uniform(0.05, 0.08), rng.uniform(0.1, 0.2),
+               rng.choice(["clear_grass_dk", "#5a7c52", "leafy"]), seg=3, rot=rng.uniform(0, 120))
+    for i in range(flowers):
+        x, z = rng.uniform(-0.35, 0.35), rng.uniform(-0.35, 0.35)
+        p.cone(x, GRASS_Y, z, 0.012, 0.13, "leafy", seg=3)
+        p.blob(x, GRASS_Y + 0.15, z, 0.035, 0.03, 0.035, rng.choice(["glow_violet", "#a98ae0"]), seg=4, rings=2, jit=0)
+    p.done()
+
+
+@model("f_clear", "terrain", 1, 1, FS + "Clearing grass: darker and bluer than the prairie, a few tufts")
+def f_clear():
+    clear_tile("f_clear", 5)
+
+
+@model("f_clear_b", "terrain", 1, 1, FS + "Clearing grass with tiny violet flowers")
+def f_clear_b():
+    clear_tile("f_clear_b", 9, flowers=3)
+
+
+@model("f_path_core", "terrain", 1, 1, FS + "Centre of a narrow dirt path, a 0.62 patch at PATH_Y with no ground under it (draw over f_clear or f_floor)")
+def f_path_core():
+    p = Part("f_path_core")
+    rng = random.Random(4)
+    h, y = 0.31, PATH_Y
+    ch = [rng.uniform(0.03, 0.09) for _ in range(4)]
+    pts = [(-h + ch[0], -h), (h - ch[1], -h), (h, -h + ch[1]), (h, h - ch[2]), (h - ch[2], h), (-h + ch[3], h), (-h, h - ch[3]), (-h, -h + ch[0])]
+    for i in range(8):
+        a, b = pts[i], pts[(i + 1) % 8]
+        p.tri((0, y, 0), (b[0], y, b[1]), (a[0], y, a[1]), "path_dk" if i % 2 else "path_dk2", out=(0, 1, 0))
+        p.quad((a[0], y - 0.03, a[1]), (b[0], y - 0.03, b[1]), (b[0], y, b[1]), (a[0], y, a[1]), "path_dk2", ctr=(0, y - 0.02, 0))
+    p.blob(-0.12, y, 0.08, 0.04, 0.025, 0.035, "#8a8478", seg=5, rings=2, jit=0.1, seed=1)
+    p.blob(0.14, y, -0.1, 0.03, 0.02, 0.03, "#7a756a", seg=4, rings=2, jit=0.1, seed=2)
+    p.done()
+
+
+@model("f_path_arm", "terrain", 1, 1, FS + "Path arm from the core (z = +0.31) to the tile edge (z = +0.5); turn with yaw. No ground under it")
+def f_path_arm():
+    p = Part("f_path_arm")
+    y = PATH_Y
+    p.box(-0.31, y - 0.03, 0.31, 0.62, 0.03, 0.19, "path_dk2", top="path_dk")
+    p.box(-0.1, y, 0.31, 0.12, 0.003, 0.19, "path_dk2")
+    p.blob(0.17, y, 0.4, 0.03, 0.02, 0.03, "#8a8478", seg=4, rings=2, jit=0.1, seed=3)
+    p.done()
+
+
+# ── forest fill ──
+
+def fir(p, x, z, h, rb, cols, rng, tiers=4, seg=7, trunk="bark_dk", y0=0.0):
+    p.cyl(x, y0, z, 0.1 * min(1.4, h / 4), h * 0.4, trunk, seg=5, r_top=0.05, top=False)
+    for i in range(tiers):
+        yb = y0 + h * (0.17 + 0.58 * i / tiers)
+        ht = (y0 + h - yb) * (1.0 if i == tiers - 1 else 0.62)
+        p.cone(x, yb, z, rb * (1 - 0.8 * i / tiers), ht, cols[(i + int(x * 7)) % len(cols)], seg=seg, rot=rng.uniform(0, 60))
+
+
+def roots(p, x, z, r, n, rng, col="bark_dk"):
+    a0 = rng.uniform(0, 6)
+    for i in range(n):
+        a = a0 + 2 * math.pi * i / n + rng.uniform(-0.3, 0.3)
+        L = rng.uniform(0.3, 0.5)
+        limb(p, (x + r * 0.6 * math.cos(a), 0.2, z + r * 0.6 * math.sin(a)), (x + (r + L) * math.cos(a), 0.0, z + (r + L) * math.sin(a)), 0.09, 0.03, col, seg=3)
+
+
+def broad(p, x, z, h, r, cols, rng, seg=7):
+    limb(p, (x, 0, z), (x + rng.uniform(-0.05, 0.05), h * 0.65, z), 0.14, 0.09, "bark_dk", seg=5)
+    p.blob(x, h * 0.78, z, r, r * 0.62, r, cols[0], seg=seg, rings=3, jit=0.12, seed=int(x * 10 + z * 3) & 255)
+    p.blob(x + r * 0.3, h * 0.66, z - r * 0.2, r * 0.7, r * 0.45, r * 0.7, cols[1 % len(cols)], seg=6, rings=3, jit=0.1, seed=int(z * 7) & 255)
+
+
+def forest2(name, seed, nfir, spots, hs):
+    p = Part(name)
+    rng = random.Random(seed)
+    p.box(-0.95, 0, -0.95, 1.9, 0.1, 1.9, "moss_dk", top="moss")
+    cols = [["fir", "fir2", "fir_dk"], ["fir_dk", "fir", "fir2"], ["fir2", "fir_dk", "fir"]][seed % 3]
+    for i, (x, z) in enumerate(spots[:nfir]):
+        fir(p, x, z, hs[i], rng.uniform(0.62, 0.72), cols, rng)
+        roots(p, x, z, 0.1, 2, rng)
+    bx, bz = spots[nfir]
+    broad(p, bx, bz, 4.1, 0.85, ["leafy", "fir2"], rng, seg=8)
+    roots(p, bx, bz, 0.14, 3, rng)
+    for i in range(5):
+        moss_patch(p, rng.uniform(-0.8, 0.8), 0.08, rng.uniform(-0.8, 0.8), rng.uniform(0.12, 0.2), rng.choice(["moss", "leafy"]), seed=i + seed)
+    p.done()
+
+
+@model("forest_2", "prop", 2, 2, FS + "Dense 2x2 forest clump: four dark firs and a broad crown, closed canopy 3.5-4.5 high")
+def forest_2():
+    forest2("forest_2", 1, 4, [(-0.5, -0.5), (0.5, -0.45), (-0.45, 0.5), (0.5, 0.5), (0.0, 0.0)], [4.0, 4.4, 3.6, 4.2])
+
+
+@model("forest_2b", "prop", 2, 2, FS + "Forest clump variant b")
+def forest_2b():
+    forest2("forest_2b", 2, 3, [(-0.5, 0.45), (0.55, -0.5), (0.0, 0.1), (-0.35, -0.5)], [4.5, 3.8, 4.1])
+
+
+@model("forest_2c", "prop", 2, 2, FS + "Forest clump variant c")
+def forest_2c():
+    forest2("forest_2c", 3, 4, [(-0.55, -0.4), (0.4, -0.55), (-0.3, 0.55), (0.55, 0.35), (0.05, -0.05)], [3.7, 4.3, 4.0, 3.5])
+
+
+def forest4(name, seed):
+    p = Part(name)
+    rng = random.Random(seed)
+    p.box(-1.95, 0, -1.95, 3.9, 0.1, 3.9, "moss_dk", top="moss")
+    cols = ["fir", "fir2", "fir_dk"]
+    cells = [(i, j) for i in (-1, 0, 1) for j in (-1, 0, 1)]
+    rng.shuffle(cells)
+    for n, (i, j) in enumerate(cells):
+        x, z = i * 1.2 + rng.uniform(-0.2, 0.2), j * 1.2 + rng.uniform(-0.2, 0.2)
+        if n < 2:
+            broad(p, x, z, 4.6, 0.9, ["leafy", "fir2"], rng)
+        elif n < 4:
+            fir(p, x, z, rng.uniform(5.8, 6.2), 0.85, cols, rng, tiers=5, seg=6)
+        else:
+            fir(p, x, z, rng.uniform(4.0, 5.2), 0.85, cols, rng, tiers=4, seg=6)
+        roots(p, x, z, 0.1, 2, rng)
+    for k in range(5):
+        moss_patch(p, rng.uniform(-1.7, 1.7), 0.08, rng.uniform(-1.7, 1.7), rng.uniform(0.15, 0.25), "moss", seed=k + seed)
+    p.done()
+
+
+@model("forest_4", "prop", 4, 4, FS + "A 4x4 mass of nine trees, closed canopy 4-6 high with a couple of taller spires (one merged model)")
+def forest_4():
+    forest4("forest_4", 11)
+
+
+@model("forest_4b", "prop", 4, 4, FS + "4x4 forest mass, variant b")
+def forest_4b():
+    forest4("forest_4b", 23)
+
+
+# ── single trees ──
+
+@model("tree_fir_dark", "prop", 1, 1, FS + "A narrow dark fir, about 3.5 high")
+def tree_fir_dark():
+    p = Part("tree_fir_dark")
+    rng = random.Random(2)
+    fir(p, 0, 0, 3.5, 0.45, ["fir", "fir2", "fir_dk"], rng, tiers=5)
+    roots(p, 0, 0, 0.1, 3, rng)
+    moss_patch(p, 0.1, 0.05, 0.1, 0.15, "moss", seed=2)
+    p.done()
+
+
+@model("tree_oak_old", "prop", 2, 2, FS + "A gnarled old oak about 4 high, mossy trunk ('tree_oak_old_Crown' sways)")
+def tree_oak_old():
+    p = Part("tree_oak_old")
+    rng = random.Random(6)
+    limb(p, (0, 0, 0), (0.06, 0.9, 0.02), 0.34, 0.26, "bark_dk", seg=6)
+    limb(p, (0.06, 0.9, 0.02), (-0.04, 1.8, 0.06), 0.26, 0.2, "moss", seg=6)
+    limb(p, (-0.04, 1.8, 0.06), (0.05, 2.5, 0), 0.2, 0.16, "bark", seg=6)
+    limb(p, (0, 2.0, 0), (0.6, 2.7, 0.2), 0.1, 0.05, "bark_dk", seg=4)
+    limb(p, (0, 2.1, 0), (-0.6, 2.8, -0.2), 0.1, 0.05, "bark_dk", seg=4)
+    roots(p, 0, 0, 0.3, 5, rng)
+    p.at(0, 0, 0).reset()
+    moss_patch(p, 0.2, 0.12, 0.3, 0.22, "moss", seed=1)
+    p.done()
+    c = Part("tree_oak_old_Crown", origin=(0, 2.5, 0))
+    c.blob(0, 3.3, 0, 1.0, 0.75, 1.0, "leafy", seg=8, rings=4, jit=0.12, seed=6)
+    for (x, y, z, r, col) in [(-0.7, 3.1, 0.2, 0.55, "fir2"), (0.65, 3.2, -0.3, 0.6, "leafy"), (0.1, 3.0, 0.7, 0.5, "fir2")]:
+        c.blob(x, y, z, r, r * 0.7, r, col, seg=6, rings=3, jit=0.1, seed=int(x * 9))
+    c.done()
+
+
+@model("tree_dead", "prop", 1, 1, FS + "A twisted bare tree, pale grey-brown, about 3 high")
+def tree_dead():
+    p = Part("tree_dead")
+    rng = random.Random(7)
+    pale, pale2 = "#8a8178", "#766d63"
+    pts = [(0, 0, 0), (0.05, 0.9, 0.02), (-0.1, 1.7, 0.1), (0.08, 2.5, 0.0)]
+    rs = [0.16, 0.11, 0.07, 0.03]
+    for i in range(3):
+        limb(p, pts[i], pts[i + 1], rs[i], rs[i + 1], pale if i % 2 == 0 else pale2, seg=4)
+    for (a, ang, L, y) in [(0, 0.5, 0.7, 1.2), (1, 3.2, 0.8, 1.6), (2, 1.8, 0.6, 2.2), (0, 4.6, 0.6, 0.9), (1, 5.4, 0.55, 2.0)]:
+        base = Vector(pts[a]).lerp(Vector(pts[a + 1]), 0.5)
+        base.y = y
+        tip = base + Vector((math.cos(ang) * L, rng.uniform(0.35, 0.55), math.sin(ang) * L))
+        limb(p, tuple(base), tuple(tip), 0.04, 0.0, pale2, seg=3)
+        mid = Vector(base).lerp(tip, 0.6)
+        limb(p, tuple(mid), tuple(mid + Vector((math.cos(ang + 0.9) * 0.3, 0.25, math.sin(ang + 0.9) * 0.3))), 0.02, 0.0, pale, seg=3)
+    roots(p, 0, 0, 0.12, 3, rng, col=pale2)
+    p.done()
+
+
+@model("tree_ancient", "prop", 4, 4, FS + "The huge old landmark tree, about 7 high: thick trunk, roots, hanging lichen; teal moss patches on the trunk are 'Moss_glow'")
+def tree_ancient():
+    p = Part("tree_ancient")
+    rng = random.Random(12)
+    R0, R1, H = 0.95, 0.72, 4.4
+    p.cyl(0, 0, 0, R0, H, "bark", seg=8, r_top=R1, top=False, rot=0)
+    p.cyl(0, 0, 0, R0 * 1.01, 1.3, "bark_dk", seg=8, r_top=R0 * 0.88, top=False, rot=0)
+    for i in range(5):
+        a = 2 * math.pi * i / 5 + 0.4
+        limb(p, (0.7 * math.cos(a), 1.0, 0.7 * math.sin(a)), (1.85 * math.cos(a), 0.0, 1.85 * math.sin(a)), 0.3, 0.07, "bark_dk" if i % 2 else "bark", seg=4)
+    for (x, y, z, r, col) in [(0, 5.5, 0, 1.55, "fir"), (-1.1, 5.0, 0.5, 1.0, "fir2"), (1.1, 5.1, -0.4, 1.0, "fir_dk"), (0.3, 6.1, 0.5, 0.95, "fir2"), (-0.2, 4.8, -1.0, 0.8, "fir")]:
+        p.blob(x, y, z, r, r * 0.75, r, col, seg=7, rings=3, jit=0.1, seed=int(x * 5 + 9))
+    moss_patch(p, 0.9, 0.1, 0.8, 0.3, "moss", seed=3)
+    for i in range(10):   # hanging lichen strands under the crown
+        a = rng.uniform(0, 2 * math.pi)
+        r = rng.uniform(0.7, 1.4)
+        x, z, L = r * math.cos(a), r * math.sin(a), rng.uniform(0.5, 1.1)
+        p.tri((x - 0.05, 4.7, z), (x + 0.05, 4.7, z), (x, 4.7 - L, z), "#c3cdbd", out=(0, 0, 1))
+        p.tri((x + 0.05, 4.7, z), (x - 0.05, 4.7, z), (x, 4.7 - L, z), "#c3cdbd", out=(0, 0, -1))
+    p.done()
+    g = Part("Moss_glow")
+    for (y, face) in [(1.8, 1), (2.7, 3), (3.5, 6), (2.2, 5)]:
+        r = R0 + (R1 - R0) * y / H
+        ang = math.pi * 2 * (face + 0.5) / 8
+        ap = r * math.cos(math.pi / 8) + 0.025
+        n = Vector((math.cos(ang), 0, -math.sin(ang)))
+        t = Vector((math.sin(ang), 0, math.cos(ang)))
+        c0 = n * ap
+        w, hh = rng.uniform(0.2, 0.28), rng.uniform(0.18, 0.26)
+        pts = [c0 + t * -w + Vector((0, y - hh, 0)), c0 + t * w * 0.8 + Vector((0, y - hh * 0.7, 0)), c0 + t * w + Vector((0, y + hh * 0.6, 0)), c0 + t * -w * 0.6 + Vector((0, y + hh, 0))]
+        g.face([tuple(q) for q in pts], rng.choice(["glow_teal", "#6fe0c8"]), out=tuple(n))
+    g.done()
+
+
+# ── forest-edge undergrowth (all low) ──
+
+@model("fern_clump", "prop", 1, 1, FS + "A clump of ferns, under 0.6 high")
+def fern_clump():
+    p = Part("fern_clump")
+    rng = random.Random(4)
+    p.blob(0, 0.04, 0, 0.3, 0.06, 0.3, "moss_dk", seg=6, rings=2, jit=0.1, seed=1)
+    for i in range(10):
+        a = 2 * math.pi * i / 10 + rng.uniform(-0.2, 0.2)
+        L, hgt = rng.uniform(0.32, 0.45), rng.uniform(0.32, 0.55)
+        wd = 0.09
+        b = (0.04 * math.cos(a), 0.06, 0.04 * math.sin(a))
+        t = (L * math.cos(a), hgt, L * math.sin(a))
+        m = (0.5 * L * math.cos(a), hgt * 0.9 + 0.04, 0.5 * L * math.sin(a))
+        sx, sz = -math.sin(a) * wd, math.cos(a) * wd
+        col = rng.choice(["moss", "leafy", "fir2", "#3a6b46"])
+        p.tri(b, t, (m[0] + sx, m[1] - 0.08, m[2] + sz), col, ctr=(b[0], 0.0, b[2]))
+        p.tri(b, (m[0] - sx, m[1] - 0.08, m[2] - sz), t, shade(col, -0.12), ctr=(b[0], 0.0, b[2]))
+    p.done()
+
+
+@model("bramble", "prop", 1, 1, FS + "A dark thorny tangle with a few red berries, under 0.8 high")
+def bramble():
+    p = Part("bramble")
+    rng = random.Random(5)
+    for i in range(9):
+        a = rng.uniform(0, 2 * math.pi)
+        a2 = a + rng.uniform(-1.2, 1.2)
+        top = rng.uniform(0.35, 0.75)
+        b = (0.08 * math.cos(a), 0.0, 0.08 * math.sin(a))
+        m = (0.28 * math.cos(a2), top, 0.28 * math.sin(a2))
+        t = (0.42 * math.cos(a2 + 0.5), top * 0.5, 0.42 * math.sin(a2 + 0.5))
+        limb(p, b, m, 0.035, 0.025, rng.choice(["#2a2420", "bark_dk"]), seg=3)
+        limb(p, m, t, 0.025, 0.0, "#2a2420", seg=3)
+    for i in range(3):
+        a = rng.uniform(0, 6)
+        p.blob(0.25 * math.cos(a), rng.uniform(0.3, 0.5), 0.25 * math.sin(a), 0.14, 0.08, 0.14, rng.choice(["fir2", "leafy"]), seg=5, rings=2, jit=0.1, seed=i)
+    for i in range(5):
+        a, r = rng.uniform(0, 6.28), rng.uniform(0.12, 0.32)
+        p.blob(r * math.cos(a), rng.uniform(0.25, 0.6), r * math.sin(a), 0.04, 0.04, 0.04, "#b8323a", seg=4, rings=2, jit=0)
+    p.done()
+
+
+@model("mossy_log", "prop", 2, 1, FS + "A fallen mossy log lying along x, about 0.5 high")
+def mossy_log():
+    p = Part("mossy_log")
+    limb(p, (-0.9, 0.24, 0), (0.9, 0.26, 0.02), 0.24, 0.21, "bark_dk", seg=6)
+    limb(p, (0.25, 0.4, -0.1), (0.5, 0.55, -0.3), 0.05, 0.0, "bark_dk", seg=3)
+    p.face([(0.9, 0.26 + 0.21 * math.sin(2 * math.pi * i / 6 + 0.4), 0.02 + 0.21 * math.cos(2 * math.pi * i / 6 + 0.4)) for i in range(6)], "#7a6a52", out=(1, 0, 0))
+    p.face([(-0.9, 0.24 + 0.24 * math.sin(2 * math.pi * i / 6 + 0.4), 0 + 0.24 * math.cos(2 * math.pi * i / 6 + 0.4)) for i in range(6)], "#7a6a52", out=(-1, 0, 0))
+    for (x, z, r) in [(-0.4, 0.0, 0.25), (0.15, 0.02, 0.22), (0.6, 0.0, 0.18)]:
+        moss_patch(p, x, 0.44, z, r, "moss", seed=int(x * 9))
+    moss_patch(p, -0.1, 0.03, 0.25, 0.2, "moss_dk", seed=2)
+    p.done()
+
+
+@model("stump", "prop", 1, 1, FS + "A cut stump with roots and moss, about 0.4 high")
+def stump():
+    p = Part("stump")
+    rng = random.Random(3)
+    p.cyl(0, 0, 0, 0.3, 0.38, "bark_dk", seg=7, r_top=0.26, top_col="#8a7358")
+    p.cyl(0, 0.385, 0, 0.12, 0.01, "#6e5a44", seg=7)
+    roots(p, 0, 0, 0.28, 4, rng)
+    moss_patch(p, -0.12, 0.38, 0.1, 0.12, "moss", seed=4)
+    moss_patch(p, 0.2, 0.05, 0.25, 0.14, "moss_dk", seed=5)
+    p.done()
+
+
+@model("rock_moss", "prop", 1, 1, FS + "A mossy boulder pair, about 0.5 high")
+def rock_moss():
+    p = Part("rock_moss")
+    p.blob(-0.05, 0.22, 0, 0.38, 0.28, 0.32, "#59636a", seg=6, rings=3, jit=0.14, seed=3, flat_bottom=True)
+    p.blob(0.3, 0.12, 0.2, 0.2, 0.15, 0.18, "#4b555c", seg=6, rings=3, jit=0.12, seed=4, flat_bottom=True)
+    moss_patch(p, -0.1, 0.42, -0.02, 0.26, "moss", seed=1)
+    moss_patch(p, 0.3, 0.24, 0.2, 0.12, "leafy", seed=2)
+    p.done()
+
+
+@model("glow_mushrooms", "prop", 1, 1, FS + "Five mushrooms on a root; the caps are 'Caps_glow' (teal and cyan, unlit)")
+def glow_mushrooms():
+    p = Part("glow_mushrooms")
+    limb(p, (-0.4, 0.05, 0.1), (0.1, 0.1, -0.05), 0.09, 0.07, "bark_dk", seg=4)
+    limb(p, (0.1, 0.1, -0.05), (0.42, 0.0, 0.1), 0.07, 0.03, "bark_dk", seg=4)
+    moss_patch(p, 0.0, 0.05, 0.1, 0.25, "moss_dk", seed=1)
+    spots = [(-0.3, 0.1, 0.34, 0.12), (-0.1, 0.0, 0.5, 0.15), (0.12, -0.1, 0.38, 0.13), (0.3, 0.1, 0.26, 0.1), (0.05, 0.15, 0.2, 0.09)]
+    for (x, z, h, r) in spots:
+        p.cyl(x, 0.07, z, r * 0.22, h, "#dfe8dc", seg=4, top=False)
+    p.done()
+    g = Part("Caps_glow")
+    for i, (x, z, h, r) in enumerate(spots):
+        g.cone(x, 0.07 + h * 0.8, z, r, h * 0.45, ["glow_teal", "glow_cyan"][i % 2], seg=6)
+    g.done()
+
+
+@model("glow_flowers", "prop", 1, 1, FS + "A patch of bell flowers; the heads are 'Bells_glow' (violet, unlit)")
+def glow_flowers():
+    p = Part("glow_flowers")
+    rng = random.Random(9)
+    moss_patch(p, 0, 0.04, 0, 0.35, "moss_dk", seed=3)
+    pos = []
+    for i in range(7):
+        x, z, h = rng.uniform(-0.3, 0.3), rng.uniform(-0.3, 0.3), rng.uniform(0.3, 0.55)
+        pos.append((x, z, h))
+        p.cone(x, 0.05, z, 0.025, h, "leafy", seg=3)
+    for i in range(3):
+        a = rng.uniform(0, 6)
+        p.cone(0.15 * math.cos(a), 0.05, 0.15 * math.sin(a), 0.1, 0.18, "fir2", seg=3, rot=a * 40)
+    p.done()
+    g = Part("Bells_glow")
+    for (x, z, h) in pos:
+        g.cyl(x, 0.05 + h - 0.1, z, 0.06, 0.1, "glow_violet", seg=5, r_top=0.02, top=False)
+    g.done()
+
+
+# ── luminous set pieces ──
+
+@model("wisp_lantern", "prop", 1, 1, FS + "A crooked dark post with a hanging glass lantern, about 2 high; the light is 'Light_glow' (amber)")
+def wisp_lantern():
+    p = Part("wisp_lantern")
+    limb(p, (0, 0, 0), (-0.06, 0.9, 0), 0.1, 0.08, "bark_dk", seg=4)
+    limb(p, (-0.06, 0.9, 0), (0.06, 1.7, 0.02), 0.08, 0.06, "bark", seg=4)
+    limb(p, (0.06, 1.7, 0.02), (0.4, 1.95, 0.0), 0.06, 0.03, "bark_dk", seg=4)
+    limb(p, (0.4, 1.95, 0), (0.4, 1.68, 0), 0.012, 0.012, "iron", seg=3)
+    p.cone(0.4, 1.62, 0, 0.16, 0.08, "iron", seg=4, rot=45)
+    p.cbox(0.4, 1.28, 0, 0.2, 0.03, 0.2, "iron")
+    for sx in (-1, 1):
+        for sz in (-1, 1):
+            p.cbox(0.4 + sx * 0.085, 1.31, sz * 0.085, 0.025, 0.31, 0.025, "iron")
+    roots(p, 0, 0, 0.08, 3, random.Random(2))
+    moss_patch(p, 0.1, 0.05, 0.1, 0.2, "moss", seed=6)
+    p.done()
+    g = Part("Light_glow")
+    g.cbox(0.4, 1.34, 0, 0.12, 0.24, 0.12, "glow_amber")
+    g.done()
+
+
+@model("rune_stone_small", "prop", 1, 1, FS + "A mossy standing stone, about 1.4 high; carved lines are 'Rune_glow' (teal)")
+def rune_stone_small():
+    p = Part("rune_stone_small")
+    p.prism([(-0.3, 0.1), (0.3, 0.1), (0.26, 1.2), (0.1, 1.42), (-0.18, 1.36), (-0.28, 1.1)], -0.15, 0.15, "#4f5a64", cap="#5d6670")
+    p.blob(0, 0.08, 0, 0.42, 0.14, 0.38, "moss_dk", seg=6, rings=2, jit=0.1, seed=2)
+    moss_patch(p, -0.05, 1.38, 0, 0.16, "moss", seed=3)
+    moss_patch(p, 0.2, 0.2, 0.15, 0.14, "leafy", seed=4)
+    p.done()
+    r = Part("Rune_glow")
+    z = 0.155
+    for (x0, y0, x1, y1) in [(-0.14, 0.4, 0.14, 0.44), (-0.14, 1.12, 0.1, 1.16), (-0.14, 0.4, -0.1, 1.16), (0.1, 0.4, 0.14, 1.0),
+                              (-0.05, 0.62, 0.05, 0.66), (-0.05, 0.84, 0.05, 0.88)]:
+        r.quad((x0, y0, z), (x1, y0, z), (x1, y1, z), (x0, y1, z), "glow_teal", out=(0, 0, 1))
+    r.done()
+
+
+@model("firefly_bush", "prop", 1, 1, FS + "A low dark bush with eight tiny glowing dots ('Flies_glow', warm yellow-green)")
+def firefly_bush():
+    p = Part("firefly_bush")
+    p.blob(0, 0.26, 0, 0.42, 0.3, 0.38, "fir2", seg=7, rings=3, jit=0.12, seed=7, flat_bottom=True)
+    p.blob(0.25, 0.2, 0.15, 0.26, 0.2, 0.24, "leafy", seg=6, rings=3, jit=0.1, seed=8, flat_bottom=True)
+    p.blob(-0.25, 0.18, -0.12, 0.24, 0.18, 0.22, "fir", seg=6, rings=3, jit=0.1, seed=9, flat_bottom=True)
+    p.done()
+    g = Part("Flies_glow")
+    rng = random.Random(3)
+    for i in range(8):
+        a, r = rng.uniform(0, 6.28), rng.uniform(0.15, 0.5)
+        g.blob(r * math.cos(a), rng.uniform(0.2, 0.75), r * math.sin(a), 0.03, 0.03, 0.03, rng.choice(["#e8f27a", "#d2ee6a", "#f6e26a"]), seg=4, rings=2, jit=0)
+    g.done()
+
+
 # ─────────────────────────────── buildings ───────────────────────────────
 
 @model("cottage_hesper", "building", 6, 4, "Hesper's stone cottage on the rise: thatch, herb boxes, chimney (door +z, at x = -0.6)")
