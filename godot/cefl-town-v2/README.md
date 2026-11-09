@@ -2,8 +2,9 @@
 
 The engine for CEFL Town games that are bigger than the v1 town: a business sim (orders, prices, staff, a business day you watch play out) and a world with more story (several maps, people who move with the day, choices people remember, a Journal). Built in Godot 4.7.2 from text files only; no art files (everything is drawn in code, low-poly 3D with flat-shaded faces).
 
-Two games run on it:
-- **CEFL Town** (`games/cefl_town/`, the default): five areas of 60 × 45 tiles, laid out like a plus sign: **Downtown** in the middle, **College Campus** north, **School Grounds** west, **Shopping District** east, **Neighbourhoods** south. Realistic streets (sidewalks, parking lane, two traffic lanes, bike lane), crossings with lights, moving traffic that stops at red lights and for you, people strolling, parked cars, patios, a duck pond. All 26 v1 buildings and 13 townspeople keep their names; every building has its 9 × 7 room. Walking off the end of a street fades into the next area; a big arch at each crossing names the area ahead, and the first 12 tiles of the next area show past the edge. No mission yet; Payday moves in next.
+Three games run on it:
+- **CEFL Town** (`games/cefl_town/`, the default): five areas of 60 × 45 tiles, laid out like a plus sign: **Downtown** in the middle, **College Campus** north, **School Grounds** west, **Shopping District** east, **Neighbourhoods** south. Realistic streets (sidewalks, parking lane, two traffic lanes, bike lane), crossings with lights, moving traffic that stops at red lights and for you, people strolling, parked cars, patios, a duck pond. All 26 v1 buildings and 13 townspeople keep their names; every building has its 9 × 7 room. Walking off the end of a street fades into the next area; a big arch at each crossing names the area ahead, and the first 12 tiles of the next area show past the edge. With no mission: walk around and meet people.
+- **Payday** (`games/payday/`, CEFL 7-IT, `game=payday`): the first v1 mission on the five-area town. It extends the CEFL Town game, so the maps and people are the same. The pay model is v1's, checked cent for cent against the v1 JavaScript. All four chapters, the soft gate between them, the Pay-O-Matic mystery and the report. Not yet: the nine job games (every shift counts as steady), help requests, news, Town Mail and the wallet.
 - **Rosa's Corner Café** (`games/demo_cafe/`, CEFL 9-EX1, sample numbers): the engine demo. Open it with `game=demo` (`?game=demo` on the web).
 
 Neither is linked from the site yet.
@@ -29,16 +30,21 @@ Neither is linked from the site yet.
 | `games/cefl_town/area_kit.gd` | Builds one area: streets and crossings (lanes, lights, stop lines), buildings (`face: "n"` fronts the street above), street furniture, parked cars, traffic, walkers, edge links and the gate arch. Main Street (rows 18–25) and the Avenue (columns 26–33) line up across areas. |
 | `games/cefl_town/areas.gd` | The five areas, each a short plan written with the kit. |
 | `games/cefl_town/town_v1.gd` | What carries over from v1: the 26 buildings, their room furniture, the base townspeople with v2 looks. |
+| `games/payday/model.gd` | Payday's pay model (no nodes): Pay Card, EI, CPP, the workers and jobs, a run of 8 paycheques, the boss's mistakes, the mystery's clue stubs, the careful planner the bots use. A run is a plain Dictionary. |
+| `games/payday/text.gd` | Payday's words from v1: situations, the nine bosses (voice, room, outfit), the questions with their misconception-based wrong choices, "What would help?", Sam's puns. |
+| `games/payday/panels.gd` | Payday's panels on `T.box`: typed stub lines, sign or dispute, pick-the-right-option cards (Town Hall proof, Pay-O-Matic's settings), the payday plan, two weeks of shifts, the first stub, the deposit, the job board, the tax dial. Every one has a test-player move. |
+| `games/payday/game.gd` | Payday: where people stand at each stage, the 49 steps in four chapters, the soft gate, Real-mode replay, idle talk, the Bag (Pay Card, Project Checker, stubs, Deduction Map, Case notes…), the report. |
 | `games/cefl_town/game.gd` | CEFL Town: where everyone stands, a welcome, then free roam. Greetings for everyone, signs to read. |
 | `tests/test_model.gd` | Bots play the demo model on 400 seeds. |
-| `tests/test_nav.gd` | From the start: every door, doorstep, thing and person can be reached, and every room has a way out (`-- game=town` or `game=demo`). |
+| `tests/test_payday.gd` | Payday's model: the Pay Card matches its formula, every boss mistake is worth $5, and bots on 1,800 runs (a careful planner always wins, even with every shift poor; doing nothing never does; planning from gross pay never does at 19 or 24). `-- dump=FILE` writes the grid that `tests/payday/compare.sh` checks against v1 (`tests/payday/v1_ref.cjs` runs v1's own model in Node). |
+| `tests/test_nav.gd` | From the start: every door, doorstep, thing and person can be reached, and every room has a way out (`-- game=town`, `demo` or `payday`). A game whose people move with the story lists the states to check in `nav_states()`. |
 | `tests/perf_walk.gd` | Walks across the whole town in a window and reports frames per second, the slowest frame, and sections built and freed. |
 | `tests/shot.gd` | Runs the game and saves a screenshot (`go=map,x,y[,zoom]` puts you anywhere once the steps are done). |
 | `main.gd` | Picks the game: `game=town` (default) or `game=demo`. |
 
 ## Making a new game
 
-Copy `games/demo_cafe/` to `games/<name>/`, change `main.gd` to point at it, and add an export preset (or change the existing one's `export_path`). A game script gives `maps()`, `people()`, `where(id, S)`, `steps()` (method names run in order; each must be safe to run again from its start, so guard model changes with a flag), `talk(id, T)`, `use(id, T)`, `bubble(id, S)`, `items()`, `hud(S)`, `report(S)`, and for a shop game `shop_cfg`, `shop_layout`, `bot_order(S)`, `bot_plan(S)`. A step reads like a script:
+A CEFL mission extends `games/cefl_town/game.gd` (as Payday does) so it keeps the town; a game with its own maps copies `games/demo_cafe/`. Copy `games/demo_cafe/` to `games/<name>/`, change `main.gd` to point at it, and add an export preset (or change the existing one's `export_path`). A game script gives `maps()`, `people()`, `where(id, S)`, `steps()` (method names run in order; each must be safe to run again from its start, so guard model changes with a flag), `talk(id, T)`, `use(id, T)`, `bubble(id, S)`, `items()`, `hud(S)`, `report(S)`, and for a shop game `shop_cfg`, `shop_layout`, `bot_order(S)`, `bot_plan(S)`. Optional: `bag(S)` (Bag items with a view), `my_look(S, look)` (a job outfit), `log_unit` ("Paycheque" instead of "Day"), `nav_states()`. A step name may carry an argument: `"plan:3"` calls `plan(T, "3")`. Besides `T.say`, `T.choose`, `T.goal`, `T.calc` and `T.typed`, a step can use `T.ask` (a question with feedback, recorded) and `T.box` (the game's own panel, with a test-player move). A step reads like a script:
 
 ```gdscript
 func d1_order(T) -> void:
@@ -52,6 +58,9 @@ func d1_order(T) -> void:
 ```sh
 godot --headless --path godot/cefl-town-v2 -s res://tests/test_model.gd          # model bots
 godot --headless --path godot/cefl-town-v2 -- game=demo debug=1 auto=right quit=1 seed=7   # plays the café demo, prints AUTO-RESULT
+godot --headless --path godot/cefl-town-v2 -s res://tests/test_payday.gd                 # Payday's model bots
+godot/cefl-town-v2/tests/payday/compare.sh                                              # Payday's model against v1, cent for cent (needs node)
+godot --headless --path godot/cefl-town-v2 -- game=payday debug=1 auto=second quit=1 seed=21   # plays all four chapters of Payday
 godot --headless --path godot/cefl-town-v2 -s res://tests/test_nav.gd -- game=town      # can you walk everywhere?
 godot --path godot/cefl-town-v2 --resolution 1366x768 -s res://tests/perf_walk.gd -- debug=1 auto=right   # frame rate on a walk across town
 scripts/playtest_town2.sh OUTDIR "auto=right seed=7" "auto=wrong seed=3 pick=rand"  # play-through probe: transcript, walking check on every map, OUTDIR/digest.md

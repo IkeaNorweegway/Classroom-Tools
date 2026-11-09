@@ -6,6 +6,10 @@
 #   await T.goal(text, target)                     target: "person:id" | "thing:id" | "map:id". The gold arrow points the way.
 #   var tier = await T.calc({ key, label, prompt, answer, hint, show })   typed amount, checked to ±2¢ → "first" | "second" | "later"
 #   var text = await T.typed({ id, prompt, min })  written reasoning, kept for the report
+#   var r = await T.ask(who, { text, opts: [[text, right?, feedback], …] }, key, label)   shuffled; a wrong pick explains and the
+#                                                  student tries again → { tier: "first" | "second" | "later", first: bool, picks }
+#   var v = await T.box(kind, title, build(p, done), solve(how), kicker, wide)   a game's own panel: build fills p.body / p.foot and
+#                                                  calls done.call(value); solve is the test player's move (called until done)
 #   var v = await T.panel(title, build(body), [[label, value, primary?]])
 #   await T.shop_order(title, note) · await T.shop_plan(note) · var res = await T.shop_run(event) · await T.ledger(res)
 #   T.give / take / has · T.flag / set_flag · T.remember / knows / trust · T.log_line · T.advance / set_time · T.go(map, x, y, dir)
@@ -14,6 +18,9 @@
 # The game defines: id, title, unit_label, i_can, start_map, start_at, maps(), people(), where(id, S), talk(id, T), use(id, T),
 # bubble(id, S), new_game(S), steps() (method names, run in order; each must be safe to run again from its start),
 # hud(S), items(), report(S), shop_cfg, shop_layout, and for the test player bot_order(S) and bot_plan(S).
+# Optional: bag(S) → [{ name, about, view: Callable(body) }] (the Bag lists these instead of items, and opens a view);
+# my_look(S, look) → the look to draw you with (a job outfit); log_unit ("Day" by default) names the rows of "What I decided".
+# A step name may carry an argument after a colon ("plan:3" calls plan(T, "3")).
 #
 # Test hook: ?debug=1 on the web, or `-- debug=1` on the command line: saves stay in memory (add save=1 to keep them).
 # auto=right|second|wrong plays the whole game by itself; quit=1 ends the program when it finishes and prints a summary.
@@ -157,7 +164,7 @@ func new_game(nm: String, look: Dictionary, mode: String) -> void:
 
 func _begin() -> void:
 	ui.hud.visible = true
-	world.set_my_look(P.look)
+	refresh_look()
 	_enter(G.map, Vector2i(int(G.x), int(G.y)), G.get("dir", "down"), false)
 	save()
 	if not G.tut and auto == "":
@@ -177,7 +184,11 @@ func _run_steps() -> void:
 			print("STOPPED-AT %s day=%d cash=%d days=%d" % [steps[int(G.si)], int(S.day), int(S.cash), S.days.size()])
 			get_tree().quit()
 			return
-		await D.call(steps[int(G.si)], self)
+		var sp: PackedStringArray = str(steps[int(G.si)]).split(":", true, 1)
+		if sp.size() > 1:
+			await D.call(sp[0], self, sp[1])
+		else:
+			await D.call(sp[0], self)
 		G.si = int(G.si) + 1
 		save()
 	G.done = true
@@ -655,7 +666,7 @@ func typed(o: Dictionary) -> String:
 	upd.call()
 	box.call_deferred("grab_focus")
 	cur = {"kind": "typed", "solve": func(_h):
-		box.text = "Test player: hiring Dev for the market morning mattered most, because the line was too long without him."
+		box.text = str(o.get("bot", "Test player: a written answer for the report, long enough to save."))
 		upd.call()
 		save_b.pressed.emit()}
 	var text: String = await _ui_done
@@ -694,6 +705,80 @@ func toast(text: String, good := true) -> void: ui.toast(text, good)
 func confetti() -> void: ui.confetti()
 func mode() -> String: return G.mode
 func player_name() -> String: return P.name
+
+
+## Redraws you (after a game changes your outfit).
+func refresh_look() -> void:
+	world.set_my_look(D.my_look(S, P.look) if D.has_method("my_look") and not G.is_empty() else P.look)
+
+
+func refresh() -> void:
+	_refresh()
+
+
+## A multiple-choice question. q.opts = [[text, right (bool or 1/0), feedback], …], shown in a shuffled order. A wrong pick
+## shows its feedback and the student picks again; the first pick is recorded under key (no key: not recorded).
+func ask(who: String, q: Dictionary, key := "", label := "") -> Dictionary:
+	var order := range(q.opts.size())
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(str(S.seed) + key + q.text)
+	for i in range(order.size() - 1, 0, -1):
+		var j := rng.randi_range(0, i)
+		var t = order[i]
+		order[i] = order[j]
+		order[j] = t
+	var left: Array = order.duplicate()
+	var picks := 0
+	var first := false
+	while true:
+		var shown := []
+		var best := 0
+		for i in left.size():
+			shown.append(q.opts[left[i]][0])
+			if bool(q.opts[left[i]][1]):
+				best = i
+		var wrong_i := 0 if best != 0 else mini(1, left.size() - 1)
+		var sp := _speaker(who)
+		ui.show_say(sp[0], sp[1], fill(q.text), shown)
+		if people_def.has(who):
+			world.face(who, world.me.tile)
+		var cnt := picks
+		cur = {"kind": "ask", "solve": func(how): ui.choice_made.emit(best if how == "right" or (how == "second" and cnt >= 1) else wrong_i)}
+		var i: int = await ui.choice_made
+		cur = null
+		ui.hide_say()
+		var o: Array = q.opts[left[i]]
+		picks += 1
+		if picks == 1:
+			first = bool(o[1])
+		if bool(o[1]):
+			if str(o[2]) != "":
+				await say(who, str(o[2]))
+			break
+		await say(who, str(o[2]) if str(o[2]) != "" else "Not quite. Try again.")
+		left.remove_at(i)
+	var tier: String = "first" if picks == 1 else ("second" if picks == 2 else "later")
+	if key != "":
+		record(key, label if label != "" else q.text, tier)
+	return {"tier": tier, "first": first, "picks": picks}
+
+
+## A game's own panel. build(p, done): p = { body, foot, card }; done.call(value) closes it and returns value.
+## solve(how) is the test player's next move; it is called every other frame until the panel is done.
+func box(kind: String, title: String, build: Callable, solve: Callable, kicker := "", wide := false) -> Variant:
+	var p: Dictionary = ui.open_panel(title, kicker, wide)
+	var st := {"done": false}
+	var done := func(v = null):
+		if not st.done:
+			st.done = true
+			_ui_done.emit(v)
+	build.call(p, done)
+	cur = {"kind": kind, "solve": solve}
+	var res = await _ui_done
+	cur = null
+	ui.close_panel(p)
+	save()
+	return res
 
 
 # ── The shop ──
@@ -1040,6 +1125,26 @@ func ledger(res: Dictionary, title := "") -> void:
 func open_bag() -> void:
 	if ui.open > 0 or G.is_empty():
 		return
+	if D.has_method("bag"):
+		while true:
+			var list: Array = D.bag(S)
+			var pick = await panel("Your Bag", func(body):
+				if list.is_empty():
+					body.add_child(ui.label("Nothing yet.", "Muted"))
+				for i in list.size():
+					var it: Dictionary = list[i]
+					var row: HBoxContainer = ui.hbox(10)
+					var txt: RichTextLabel = ui.rich("[b]%s[/b]\n%s" % [it.name, it.get("about", "")])
+					txt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+					row.add_child(txt)
+					if it.has("view"):
+						row.add_child(ui.button("Open", false, func(): _ui_done.emit(i)))
+					body.add_child(row), [["Close", -1, true]])
+			if int(pick) < 0:
+				return
+			var it2: Dictionary = list[int(pick)]
+			if await panel(it2.name, func(body): it2.view.call(body), [["Back to the Bag", true, true], ["Close", false]], "Your Bag", bool(it2.get("wide", false))) != true:
+				return
 	await panel("Your Bag", func(body):
 		var items: Dictionary = D.items()
 		if S.inv.is_empty():
@@ -1078,7 +1183,7 @@ func open_journal() -> void:
 		body.add_child(ui.label("STORY SO FAR", "Kicker"))
 		var log_txt := ""
 		for l in S.log:
-			log_txt += "Day %d: %s\n" % [int(l.day), l.text]
+			log_txt += "%s %d: %s\n" % [_log_unit(), int(l.day), l.text]
 		body.add_child(ui.label(log_txt.strip_edges() if log_txt != "" else "It starts today.")), [["Close", true, true]], "", true)
 
 
@@ -1132,10 +1237,14 @@ func report_sections() -> Array:
 		out.append({"title": "In my own words", "text": "%s\n\n%s" % [S.typed[k].prompt, S.typed[k].text]})
 	var log_rows := []
 	for l in S.log:
-		log_rows.append(["Day %d" % int(l.day), l.text])
+		log_rows.append(["%s %d" % [_log_unit(), int(l.day)], l.text])
 	if log_rows.size():
 		out.append({"title": "What I decided", "rows": log_rows})
 	return out
+
+
+func _log_unit() -> String:
+	return str(D.log_unit) if "log_unit" in D else "Day"
 
 
 func open_report() -> void:

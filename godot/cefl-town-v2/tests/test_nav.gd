@@ -4,7 +4,7 @@
 extends SceneTree
 
 const MapData = preload("res://engine/world/map_data.gd")
-const GAMES := {"town": "res://games/cefl_town/game.gd", "demo": "res://games/demo_cafe/game.gd"}
+const GAMES := {"town": "res://games/cefl_town/game.gd", "demo": "res://games/demo_cafe/game.gd", "payday": "res://games/payday/game.gd"}
 
 var fails := []
 
@@ -79,10 +79,20 @@ func _check_area(start: MapData, reach: Dictionary, people: Dictionary, D, maps:
 			fails.append("%s: can't reach %s" % [start.id, k])
 	# every person, on whatever map they stand
 	var S := {"day": 1, "flags": {}, "mem": {}, "shop": null, "days": [], "cash": 0}
-	for pid in people:
-		var w = D.where(pid, S)
-		if w == null:
-			continue
+	var states := [S]
+	if D.has_method("nav_states"):   # a game whose people move with the story lists the states worth checking
+		states += D.nav_states()
+	var placed := []
+	var seen := {}
+	for SS in states:
+		for pid in people:
+			var w = D.where(pid, SS)
+			if w != null and not seen.has("%s %s %s %s" % [pid, w.map, w.x, w.y]):
+				seen["%s %s %s %s" % [pid, w.map, w.x, w.y]] = true
+				placed.append([pid, w])
+	for pw in placed:
+		var pid: String = pw[0]
+		var w = pw[1]
 		checked += 1
 		var m: MapData = maps[w.map]
 		var at := Vector2i(int(w.x), int(w.y))
