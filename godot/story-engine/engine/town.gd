@@ -13,6 +13,8 @@
 #   var v = await T.panel(title, build(body), [[label, value, primary?]])
 #   await T.shop_order(title, note) · await T.shop_plan(note) · var res = await T.shop_run(event) · await T.ledger(res)
 #   var st = await T.live_shift(job, { seed, real, p, boss, boss_at, hour })   a job's live shift on its work floor (engine/live_shift.gd)
+#   await T.scene(id, shots)                       a cut scene: camera moves, captions, story changes (engine/cutscene.gd)
+#   var r = await T.puzzle(cfg)                    a walk-in puzzle in a chamber map (engine/chamber.gd) → like T.ask's result
 #   T.give / take / has · T.flag / set_flag · T.remember / knows / trust · T.log_line · T.advance / set_time · T.go(map, x, y, dir)
 #   T.banner(kicker, title) · T.toast(text) · T.confetti() · T.save()
 #
@@ -37,6 +39,8 @@ const Art = preload("res://engine/world/art.gd")
 const TownMap = preload("res://engine/ui/town_map.gd")
 const LiveShift = preload("res://engine/live_shift.gd")
 const Frac = preload("res://engine/core/frac.gd")
+const Cutscene = preload("res://engine/cutscene.gd")
+const Chamber = preload("res://engine/chamber.gd")
 const PRONOUNS := {"they": ["they", "them", "their"], "she": ["she", "her", "her"], "he": ["he", "him", "his"]}
 
 signal _goal_hit(target: String)
@@ -65,6 +69,8 @@ var finished := false
 var reduce_motion := false
 var people_def := {}
 var live                               # the live-shift runner (engine/live_shift.gd)
+var cutscene                           # the cut-scene runner (engine/cutscene.gd)
+var chamber                            # the puzzle-chamber runner (engine/chamber.gd)
 var _auto_wait := 0
 var _hold_seen := 0
 
@@ -100,6 +106,12 @@ func start(def) -> void:
 	live = LiveShift.new()
 	live.T = self
 	add_child(live)
+	cutscene = Cutscene.new()
+	cutscene.T = self
+	add_child(cutscene)
+	chamber = Chamber.new()
+	chamber.T = self
+	add_child(chamber)
 	if _map_view() != null:
 		ui.add_hud_button("Map", open_town_map)
 	ui.add_hud_button("Bag", open_bag)
@@ -226,6 +238,8 @@ func rebuild_maps() -> void:
 	_build_maps()
 	if world.map != null:
 		world.load_map(maps[world.map.id], world.me.tile, world.me.dir)
+		if chamber != null and chamber.active:
+			chamber._build()
 		_refresh()
 
 
@@ -287,6 +301,8 @@ func _notification(what: int) -> void:
 
 # ── Maps and people ──
 func _enter(id: String, at: Vector2i, dir: String, fade := true) -> void:
+	if chamber != null and not chamber.active:
+		chamber.clear()   # a finished puzzle's pieces go with the chamber you leave
 	world.load_map(maps[id], at, dir)
 	_on_moved()
 	if fade and not reduce_motion and auto == "":
@@ -446,6 +462,8 @@ func _process(_dt: float) -> void:
 func _on_interact(kind: String, id: String) -> void:
 	if live != null and live.active:
 		live.on_interact(kind, id)
+		return
+	if chamber != null and chamber.on_interact(kind, id):
 		return
 	if ui.open > 0 or busy_talk or running_day:
 		return
@@ -930,6 +948,18 @@ func box(kind: String, title: String, build: Callable, solve: Callable, kicker :
 	ui.close_panel(p)
 	save()
 	return res
+
+
+## A cut scene (engine/cutscene.gd). Its `do` steps always run, so skipping never changes the story.
+func scene(id: String, shots: Array, replay := false) -> void:
+	_trace("scene " + id)
+	await cutscene.play(id, shots, replay)
+
+
+## A walk-in puzzle in a chamber (engine/chamber.gd). Returns { tier, first, picks, worked }.
+func puzzle(cfg: Dictionary) -> Dictionary:
+	_trace("puzzle " + str(cfg.id))
+	return await chamber.run(cfg)
 
 
 ## A live shift on a job's own work floor (engine/live_shift.gd). o = { seed, real, p, boss: { id, look }, boss_at, hour }.

@@ -2,7 +2,7 @@
 # game=payday runs Payday (CEFL 7 Income and Tax); otherwise CEFL Town. To make a new game, write games/<name>/game.gd and add it here.
 extends Node
 
-const GAMES := {"town": "res://games/cefl_town/game.gd", "demo": "res://games/demo_cafe/game.gd", "payday": "res://games/payday/game.gd", "realm": "res://games/realm/game.gd"}
+const GAMES := {"town": "res://games/cefl_town/game.gd", "demo": "res://games/demo_cafe/game.gd", "payday": "res://games/payday/game.gd", "realm": "res://games/realm/game.gd", "lab": "res://games/lab/game.gd"}
 
 
 func _ready() -> void:
