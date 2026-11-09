@@ -89,9 +89,10 @@ Orrin keeps one thing from the apprentice: he saw a strange carving on the broke
 **Codes:** RN1–RN5.
 
 - **Lesson:** Hesper's hens and her "warm-and-cold jar": numbers above and below zero, fractions and decimals of a degree, on a number line drawn in frost on her window.
-- **Help quests:**
+- **Help quests** (one per notes section; full design in `math9-realm-ch1-design-v1.md`):
   - **The frozen well** (RN2): the well is at −12.5 °C; the coming chinook will raise it by 18.75 °C. Will it thaw? By how much?
-  - **The miller's ledger** (RN2, RN3): the miller owes and is owed in quarters and thirds of a silver; sort the debts and find what he really has.
+  - **The miller's ledger** (RN1, RN2): the miller owes and is owed in halves, thirds, quarters and sixths of a silver; order the debts and find what he really has.
+  - **The cold snap** (RN3): the temperature falls ⅔ °C an hour for 4½ hours; do the lambs need the barn? And how warm was it three hours ago?
   - **Sharing the harvest** (RN4): ¾ of a cart of grain shared among families each taking ⅛ of a cart. How many families? (Dividing by a fraction gives more, not less.)
   - **The frost recipe** (RN5): Hesper's frost-ward recipe is a chain of operations with negatives; get the order right or the ward melts.
 - **False rune:** carved on the **grain-share stone** at Highstead: *½ + ⅓ = 2⁄5*. Families are being shorted. The hero predicts whether two shares add to more or less than ½ (they must be more, so 2⁄5 can't be right), tests with a pie of grain, and fixes the stone.
@@ -300,4 +301,4 @@ A tower of four floors, one per region, built from the materials of all four (fr
 - **Length:** 11 chapters of 3–4 quests each is a large build. Build Chapter 1 first as the pilot, then a chapter per batch.
 - **Originality check:** names, places and plot are original; only the archetypes (old mentor, fallen student, lost master, quest across a realm) are shared with Lord of the Rings and Star Wars.
 
-**Next step:** design Chapter 1 (Rational numbers) in full: quest numbers and answers, the false-rune panel, the Balance sigil's paths, and the first area of Emberdale.
+**Next step:** Chapter 1 is designed (`math9-realm-ch1-design-v1.md`). Build it as the pilot.

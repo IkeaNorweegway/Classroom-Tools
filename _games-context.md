@@ -24,7 +24,7 @@ All are in `public/materials/`. They have no markdown source: the HTML file is t
 
 The v1 file of each game is kept so old links work. Nothing links to them.
 
-**Planned:** *The Measure of the Realm*, a year-long Math 9 fantasy quest (all 11 topics, one chapter each) on the CEFL Town v2 engine. Story only so far: `_courses/math-9/realm-game/math9-realm-story-v1.md`.
+**Planned:** *The Measure of the Realm*, a year-long Math 9 fantasy quest (all 11 topics, one chapter each) on the CEFL Town v2 engine. Story: `_courses/math-9/realm-game/math9-realm-story-v1.md`; Chapter 1 design (the pilot): `math9-realm-ch1-design-v1.md` in the same folder. Nothing built yet.
 
 ---
 
