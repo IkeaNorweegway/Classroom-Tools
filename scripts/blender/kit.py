@@ -63,6 +63,18 @@ class Part:
         self.col = self.bm.loops.layers.color.new("Color")
         self.xf = Matrix.Identity(4)       # Godot-space transform applied to every point (turn a piece, then draw)
         self.rng = random.Random(name)
+        self.dl = None                     # deform layer: every new vertex is bound 100% to the current bone
+        self.groups = []
+        self.cur = -1
+
+    def bone(self, name):
+        """Bind the faces drawn from now on to this bone of a Rig (rigid skinning: one bone per vertex)."""
+        if self.dl is None:
+            self.dl = self.bm.verts.layers.deform.verify()
+        if name not in self.groups:
+            self.groups.append(name)
+        self.cur = self.groups.index(name)
+        return self
 
     # ── transforms ──
     def at(self, x=0, y=0, z=0, yaw=0.0):
@@ -93,6 +105,9 @@ class Part:
             if n.dot(d) < 0:
                 pts = list(reversed(pts))
         vs = [self.bm.verts.new(self._p(p)) for p in pts]
+        if self.cur >= 0:
+            for v in vs:
+                v[self.dl][self.cur] = 1.0
         try:
             f = self.bm.faces.new(vs)
         except ValueError:
@@ -247,7 +262,8 @@ class Part:
             row += 1
         self.xf = save
 
-    def done(self):
+    def done(self, rig=None):
+        """Make the object. Give the Rig if the part was drawn with bone(): it is parented and deformed by it."""
         me = bpy.data.meshes.new(self.name)
         self.bm.to_mesh(me)
         self.bm.free()
@@ -257,7 +273,89 @@ class Part:
         ob = bpy.data.objects.new(self.name, me)
         ob.location = G(*self.origin)
         bpy.context.scene.collection.objects.link(ob)
+        for g in self.groups:
+            ob.vertex_groups.new(name=g)
+        if rig is not None:
+            ob.parent = rig.ob
+            mod = ob.modifiers.new("Armature", "ARMATURE")
+            mod.object = rig.ob
         return ob
+
+
+class Rig:
+    """An armature for a character or animal. Bones are (name, parent, head, tail) in Godot coords.
+
+    Poses are written in the world's own axes, not each bone's: a pose maps a bone to (rx, ry, rz), degrees about the
+    Godot x, y and z axes through the bone's head (applied x, then y, then z), or to {"r": (…), "t": (x, y, z)} to move
+    it too. A child turns with its parent, so a shin's angle adds to its thigh's. Signs, for a model facing +z:
+    rx < 0 swings a hanging limb forward (+z); rx > 0 nods an upright head forward and tips a forward-pointing
+    snout or body down; rz > 0 swings a hanging limb toward +x.
+    """
+
+    def __init__(self, name, bones):
+        arm = bpy.data.armatures.new(name)
+        ob = bpy.data.objects.new(name, arm)
+        bpy.context.scene.collection.objects.link(ob)
+        bpy.context.view_layer.objects.active = ob
+        ob.select_set(True)
+        bpy.ops.object.mode_set(mode="EDIT")
+        for n, par, h, t in bones:
+            b = arm.edit_bones.new(n)
+            b.head, b.tail, b.roll = G(*h), G(*t), 0.0
+            if par:
+                b.parent = arm.edit_bones[par]
+                b.use_connect = False
+        bpy.ops.object.mode_set(mode="OBJECT")
+        self.ob = ob
+        self.names = [b[0] for b in bones]
+        for pb in ob.pose.bones:
+            pb.rotation_mode = "QUATERNION"
+        self.anims = []
+
+    def _basis(self, bone, r, t):
+        rx, ry, rz = (math.radians(a) for a in r)
+        R = (Matrix.Rotation(rz, 3, G(0, 0, 1)) @ Matrix.Rotation(ry, 3, G(0, 1, 0)) @ Matrix.Rotation(rx, 3, G(1, 0, 0)))
+        B = self.ob.data.bones[bone].matrix_local.to_3x3()
+        q = (B.inverted() @ R @ B).to_quaternion()
+        loc = B.inverted() @ G(*t)
+        return q, loc
+
+    def pose(self, p):
+        """Set a pose now (for pictures). p: {bone: (rx, ry, rz) or {"r": …, "t": …}}; other bones go to rest."""
+        for n in self.names:
+            v = p.get(n, (0, 0, 0))
+            r, t = (v.get("r", (0, 0, 0)), v.get("t", (0, 0, 0))) if isinstance(v, dict) else (v, (0, 0, 0))
+            q, loc = self._basis(n, r, t)
+            pb = self.ob.pose.bones[n]
+            pb.rotation_quaternion, pb.location = q, loc
+
+    def anim(self, name, keys, fps=24):
+        """One looping action: keys is [(frame, pose), …]; every bone is keyed at every frame (unnamed = rest), so a
+        clip never keeps a pose left over from another. Give the last frame the first frame's pose for a clean loop."""
+        ad = self.ob.animation_data_create()
+        act = bpy.data.actions.new(name)
+        ad.action = act
+        for f, p in keys:
+            self.pose(p)
+            for n in self.names:
+                pb = self.ob.pose.bones[n]
+                pb.keyframe_insert("rotation_quaternion", frame=f)
+                pb.keyframe_insert("location", frame=f)
+        tr = ad.nla_tracks.new()
+        tr.name = name
+        tr.strips.new(name, int(keys[0][0]), act)
+        tr.mute = True
+        ad.action = None
+        self.anims.append(name)
+        self.pose({})
+        return act
+
+    def show(self, name, frame):
+        """Pose the rig as `name` looks at `frame` (for pictures): unmute that clip only."""
+        ad = self.ob.animation_data
+        for tr in ad.nla_tracks:
+            tr.mute = tr.name != name
+        bpy.context.scene.frame_set(int(frame))
 
 
 def clear():

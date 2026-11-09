@@ -9,6 +9,7 @@ extends Node3D
 
 const Art = preload("res://engine/world/art.gd")
 const Art3D = preload("res://engine/world3d/art3d.gd")
+const Pack = preload("res://engine/world3d/pack.gd")
 const MapData = preload("res://engine/world/map_data.gd")
 
 signal interacted(kind: String, id: String)
@@ -85,6 +86,8 @@ class PersonNode extends Node3D:
 	var bubble := ""
 	var ring := -1.0                 # patience left (0–1) drawn round the bubble; −1 = none
 	var body: MeshInstance3D
+	var rig: Node3D                  # a rigged pack model (look.model = "realm/people/hero"), used instead of body
+	var action := "idle"             # the clip a rigged person plays standing still (talk, cast, cheer …)
 	var world
 	static var skin: StandardMaterial3D
 	func _init() -> void:
@@ -99,6 +102,17 @@ class PersonNode extends Node3D:
 		add_child(body)
 	func set_look(l: Dictionary) -> void:
 		look = l
+		if rig:
+			rig.queue_free()
+			rig = null
+		if l.has("model"):
+			var m: String = l.model
+			rig = Pack.person(m.get_base_dir(), m.get_file(), l, true)
+			add_child(rig)
+			body.visible = false
+			show_dir()
+			return
+		body.visible = true
 		body.mesh = Art3D.person_mesh(l)
 	func place(p: Vector2i) -> void:
 		tile = p
@@ -107,8 +121,14 @@ class PersonNode extends Node3D:
 		position = world.tile_pos(p)
 	func show_dir() -> void:
 		body.rotation.y = YAW.get(dir, 0.0)
+		if rig:
+			rig.rotation.y = body.rotation.y
 	## While walking: a little bounce and lean.
 	func pose(walking: bool, clk: float) -> void:
+		if rig:   # the clips do the bounce; the walk clip covers about a tile a stride, so speed it to the step time
+			rig.position.y = hop * 0.02
+			Pack.play(rig, "walk" if walking else action, 0.5 / WALK_TIME if walking else 1.0)
+			return
 		var bob := absf(sin(clk * 18.0)) * 0.05 if walking else 0.0
 		body.position.y = bob + hop * 0.02
 		body.rotation.z = (sin(clk * 18.0) * 0.06) if walking else 0.0
