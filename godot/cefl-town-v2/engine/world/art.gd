@@ -482,6 +482,13 @@ static func bubble(ci: CanvasItem, kind: String, x: float, y: float, ring := -1.
 			circ(ci, x - 2.4, y - 3.5, 2.8, Color("#e2574c"))
 			circ(ci, x + 2.4, y - 3.5, 2.8, Color("#e2574c"))
 			ci.draw_colored_polygon(PackedVector2Array([Vector2(x - 5.1, y - 2.6), Vector2(x + 5.1, y - 2.6), Vector2(x, y + 3)]), Color("#e2574c"))
+		"$":
+			var f_dol: Font = ThemeDB.fallback_font
+			var tw_dol := f_dol.get_string_size("$", HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x
+			ci.draw_string(f_dol, Vector2(x - tw_dol / 2.0, y + 3.5), "$", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#b88000"))
+		"news":
+			for i in 3:
+				circ(ci, x - 5 + i * 5, y - 1.5, 1.6, Color("#3f6fb0"))
 		"cash":   # a green bill
 			rr(ci, x - 7, y - 6, 14, 9, 1.5, Color("#5aa86c"))
 			circ(ci, x, y - 1.5, 2.4, Color("#d9efd9"))

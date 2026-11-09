@@ -135,7 +135,8 @@ func nav_states() -> Array:
 func new_game(S: Dictionary) -> void:
 	S.pd = {"v": 1, "sit": "", "run": {}, "ch": 0, "plan": 0, "asks": {}, "last_ask": -9, "pending_ask": "", "letters": [], "signs": {},
 		"stamps": {}, "errs": {}, "story": {}, "scene": "", "finished": false, "win": false, "pun": 0, "checks": [], "gate_wait": -1,
-		"card": false, "ad": false, "map_given": false, "stamp_phase": false, "clue_friend": ""}
+		"card": false, "ad": false, "map_given": false, "stamp_phase": false, "clue_friend": "",
+		"wallet": 0, "help_done": {}, "news_seen": [], "mail_shown": {}}
 
 
 func validate(S: Dictionary) -> bool:
@@ -171,6 +172,9 @@ func hud(S: Dictionary) -> Array:
 		{"label": "Paycheque", "value": "%d of %d" % [mini(M.PERIODS, int(run.p) + (1 if int(run.p) < M.PERIODS else 0)), M.PERIODS]}]
 	if int(run.bounces):
 		out.append({"label": "Bounced", "value": str(int(run.bounces)), "warn": true})
+	var wallet := int(_pd(S).get("wallet", 0))
+	if wallet > 0:
+		out.append({"label": "Earned", "value": Money.fmt(wallet)})
 	return out
 
 
@@ -211,11 +215,20 @@ func gate(T, n: String) -> void:
 			return
 		pd.gate_wait = ch
 		T.save()
+	_free_roam = true
+	if _mail_btn == null:
+		_mail_btn = T.ui.add_hud_button("Mail", func(): _open_mail(T))
+	_mail_btn.visible = _mail_available(T.S)
 	while true:
 		await T.goal("Chapter %d waits for %s of your project. When you're ready, talk to Ms. Okafor at the Job Centre." % [ch + 1, CHAPTERS[ch - 1].step], "person:okafor")
+		if _mail_btn != null:
+			_mail_btn.visible = _mail_available(T.S)
 		if await T.choose("okafor", "Hey, hey! Ready for Chapter %d: %s?" % [ch + 1, CHAPTERS[ch].name], ["Yes, let's go!", "Not yet"]) == 0:
 			break
 		await T.say("okafor", "No rush. Come back when your project step is done.")
+	_free_roam = false
+	if _mail_btn != null:
+		_mail_btn.visible = false
 	pd.gate_wait = -1
 
 
@@ -905,9 +918,23 @@ func finale(T) -> void:
 
 
 # ── Talking and things ──
+func bubble(pid: String, S: Dictionary) -> String:
+	if _free_roam:
+		if _has_help(pid, S): return "$"
+		if _has_news(pid, S): return "news"
+	return super.bubble(pid, S)
+
+
 func talk(pid: String, T) -> void:
 	var S: Dictionary = T.S
 	var pd := _pd(S)
+	if _free_roam:
+		if _has_help(pid, S):
+			await _run_help(pid, T)
+			return
+		if _has_news(pid, S):
+			await _run_news(pid, T)
+			return
 	if bool(pd.get("stamp_phase", false)) and pid in ["jas", "grandpa", "nurse"] and not pd.stamps.has(pid):   # a stamp visit out of order still counts
 		await _stamp_visit(T, pid)
 		T.set_goal_text("Where do your deductions go? %d of 3 stamps. Keep going." % pd.stamps.size())
@@ -991,7 +1018,19 @@ func use(thing: String, T) -> void:
 					bits.append("%s %s" % [b[1], Money.fmt_w(b[2])])
 				await T.say("", "Bills on the fridge: " + ", ".join(bits) + ".")
 		"table":
-			await T.say("", "The kitchen table. This is where you plan payday.")
+			if run.is_empty():
+				await T.say("", "The kitchen table. This is where you plan payday.")
+			else:
+				var W: Dictionary = M.WORKERS[run.worker]
+				var wallet := int(pd.get("wallet", 0))
+				var lines := ["Jar: %s of %s" % [Money.fmt(run.jar), Money.fmt_w(W.goal)],
+					"Bank: %s" % Money.fmt(run.bank)]
+				if wallet > 0:
+					lines.append("Earned helping neighbours: %s" % Money.fmt(wallet))
+				lines.append("Bills: " + ", ".join(W.bills.map(func(b): return "%s %s" % [b[1], Money.fmt_w(b[2])])) + ".")
+				await T.say("", lines)
+		"plan_wall":
+			await _show_plan_wall(T)
 		"jobboard":
 			await T.say("", "You already work at %s." % M.JOBS[run.job].biz if str(run.get("job", "")) != "" else "Job postings. One of these could be yours!")
 		_:
@@ -1199,3 +1238,521 @@ func summary(S: Dictionary) -> Dictionary:
 	var run: Dictionary = pd.get("run", {})
 	return {"sit": pd.get("sit", ""), "job": run.get("job", ""), "p": int(run.get("p", 0)), "jar": int(run.get("jar", 0)), "bank": int(run.get("bank", 0)),
 		"bounces": int(run.get("bounces", 0)), "win": pd.get("finished", false) and pd.get("win", false), "signs": pd.get("signs", {}), "hero": _story(S).has("hero")}
+
+
+# ═══════════════════════════════════════════════════════════════
+# Between-lesson features: help requests, gossip/news, Town Mail
+# ═══════════════════════════════════════════════════════════════
+
+var _free_roam := false
+var _mail_btn = null
+var _mail_busy := false
+
+
+const GOSSIP := [
+	{"id": "g-lin-0",   "who": "librarian", "after": -1, "lines": ["Someone keeps borrowing the same three books.", "\"Apps for Beginners\", \"Apps for Beginners 2\", and \"Math Is Optional\". Hmm."]},
+	{"id": "g-gp-0",    "who": "grandpa",   "after": -1, "lines": ["In my day, pay came in an envelope. Cash!", "You counted it right there at work. If it was short, you said so."]},
+	{"id": "g-avery-0", "who": "avery",     "after": -1, "lines": ["Have you met Mrs. Novak's nephew, Milo? He builds apps.", "He says he's going to be rich by Tuesday."]},
+	{"id": "g-dev-1",   "who": "dev",       "after": 0,  "lines": ["My buddy works on commission at CellPoint.", "Slow month, tiny cheque. He eats a lot of noodles."]},
+	{"id": "g-rosa-1",  "who": "rosa",      "after": 0,  "lines": ["I had a salary job once. Same pay every two weeks.", "Boring? Maybe. But I could plan with it."]},
+	{"id": "g-mo-1",    "who": "worker",    "after": 0,  "lines": ["I'm paid by the hour. Rain day? No work, no pay.", "So I check the weather like it's my job. Because it is."]},
+	{"id": "g-mo-1b",   "who": "worker",    "after": 0,  "lines": ["My boss is still testing that pay app on our crew.", "It's fast. Is it right? Nobody on the crew can tell."]},
+	{"id": "g-mayor-1", "who": "mayor",     "after": 0,  "lines": ["A young man named Milo came to council with an app that \"does all the pay math\".", "He was very... confident."]},
+	{"id": "g-lin-2",   "who": "librarian", "after": 1,  "lines": ["Milo returned \"Math Is Optional\". Two weeks late.", "I said the fine was $1.50. He said it should be $1.05. It was $1.50."]},
+	{"id": "g-mo-2",    "who": "worker",    "after": 1,  "lines": ["I write my hours on a notepad now. Old school.", "Pay-O-Matic says nobody worked Tuesday. We poured concrete Tuesday!"]},
+	{"id": "g-avery-2", "who": "avery",     "after": 1,  "lines": ["Every boss in town has Pay-O-Matic now.", "Mine calls it \"the robot\". She says please and thank you to it."]},
+	{"id": "g-sam-2",   "who": "sam",       "after": 1,  "lines": ["Three people asked me this week why their pay was short.", "I said, \"Check your stub.\" They said, \"How?\""]},
+	{"id": "g-jas-3",   "who": "jas",       "after": 2,  "lines": ["I'm on EI for now. I read every letter from Service Canada.", "Every. Single. Line. You taught me that."]},
+	{"id": "g-gp-3",    "who": "grandpa",   "after": 2,  "lines": ["That Milo came back. He asked me about CPP again.", "He wrote it on his other hand this time. Progress?"]},
+	{"id": "g-mayor-3", "who": "mayor",     "after": 2,  "lines": ["Fourteen complaints about Pay-O-Matic this week. Fourteen!", "But a complaint is not proof. Council needs to know what is wrong."]},
+	{"id": "g-dev-3",   "who": "dev",       "after": 2,  "lines": ["My boss says Pay-O-Matic rounds \"in a creative way\".", "That's not a thing. Right?"]},
+	{"id": "g-avery-4", "who": "avery",     "after": 3,  "lines": ["Pay-O-Matic 3001 is out.", "Milo says it \"finally knows CPP starts at 18\". He says you taught it."]},
+	{"id": "g-lin-4",   "who": "librarian", "after": 3,  "lines": ["Milo is borrowing real math books now.", "And he returned them on time. I almost cried."]},
+	{"id": "g-milo-4",  "who": "milo",      "after": 3,  "lines": ["I'm writing a book. \"Math Is NOT Optional.\"", "Chapter 1 is about you, {name}. I checked the spelling twice."]},
+	{"id": "g-mayor-4", "who": "mayor",     "after": 3,  "lines": ["The {name} Rule is working. A person checks every Pay-O-Matic stub.", "Zero complaints this week. Zero!"]},
+]
+
+
+const HELPS := [
+	{"id": "avery-offers", "who": "avery",   "after": 0, "pay": 600,  "ask": "I got two job offers! Can you work out what each one pays?"},
+	{"id": "mo-gross",     "who": "worker",  "after": 0, "pay": 600,  "ask": "Pay math is not my thing. Can you check a job's pay for me?"},
+	{"id": "dev-stub",     "who": "dev",     "after": 1, "pay": 1000, "ask": "My stub only shows the gross pay. Can you fill in the rest?"},
+	{"id": "rosa-stub",    "who": "rosa",    "after": 1, "pay": 1000, "ask": "Can you fill in my cousin's pay stub? It got a little... juicy."},
+	{"id": "jas-why",      "who": "jas",     "after": 2, "pay": 500,  "ask": "Can I ask you a money question?"},
+	{"id": "grandpa-why",  "who": "grandpa", "after": 2, "pay": 500,  "ask": "You're smart with money now. Can I ask you something?"},
+	{"id": "avery-pom",    "who": "avery",   "after": 2, "pay": 1200, "ask": "Pay-O-Matic made my stub. Can you check it before I sign?"},
+	{"id": "dev-pom",      "who": "dev",     "after": 2, "pay": 1200, "ask": "Can you check my Pay-O-Matic stub? I don't trust it."},
+	{"id": "rosa-pom",     "who": "rosa",    "after": 2, "pay": 1200, "ask": "Pay-O-Matic did my stub. Two eyes are good. Four are better. Check it?"},
+	{"id": "mo-pom",       "who": "worker",  "after": 2, "pay": 1200, "ask": "Pay-O-Matic says something about my hours. Can you check my stub?"},
+]
+
+
+const HELP_JOBS := {
+	"avery":  {"biz": "Valley Market",      "type": "wage",       "rates": [1300, 1350, 1400], "h": [20, 24, 28, 32], "ages": [16, 17]},
+	"dev":    {"biz": "CellPoint",          "type": "commission", "rates": [1500, 1600], "h": [64, 72, 80], "ages": [19, 20], "pct": 0.04, "sales": [300000, 900000]},
+	"rosa":   {"biz": "Riverbend Clinic",   "type": "salary",     "yearlies": [4160000, 4420000, 4680000, 5200000], "ages": [24, 25]},
+	"worker": {"biz": "Northgate Builders", "type": "wage",       "rates": [2200, 2400, 2600], "h": [56, 64, 72, 80], "ages": [31, 38, 45]},
+}
+
+
+const WHY_GRANDPA := [
+	{"id": "cpp16", "label": "Does CPP come off at 16?", "text": "My granddaughter is 16. She just got her first job! Will CPP come off her pay?",
+		"opts": [["No. CPP starts at 18. EI comes off at any age.", true, "That's it! She'll see CPP on her stub after she turns 18."],
+			["Yes. Everyone who works pays CPP.", false, "Not at 16. CPP starts at 18."],
+			["No. Nothing comes off pay until you are 18.", false, "EI comes off at any age. Only CPP waits until 18."]]},
+	{"id": "roof", "label": "What pays for schools", "text": "The school down the street got a new roof. Who paid for it?",
+		"opts": [["Everyone, through taxes. Income tax and other taxes pay for schools, roads and hospitals.", true, "Right! About 13% of what Alberta spends goes to schools (2026)."],
+			["CPP. It pays for things in town.", false, "CPP is for when you retire. Schools run on taxes."],
+			["EI. It fixes buildings.", false, "EI is for people who lost a job. Not for roofs."]]},
+	{"id": "cppGo", "label": "Where CPP goes", "text": "CPP comes off your pay. Where does that money go?",
+		"opts": [["Into the Canada Pension Plan. It pays you back every month after you retire.", true, "Yes! Just like it pays me now."],
+			["To your boss, to pay for your uniform.", false, "Your boss sends it on to the Canada Pension Plan. It's yours, for later."],
+			["Into a jar at the bank that you can open anytime.", false, "You get it back after you retire, not anytime."]]},
+]
+
+
+const WHY_JAS := [
+	{"id": "eiWho", "label": "Which deduction helps after a layoff", "text": "My buddy got laid off from the warehouse. Which deduction helps him now?",
+		"opts": [["EI. He paid into it from every paycheque, so it pays him while he looks for work.", true, "Yep. Same as me right now."],
+			["CPP. It pays people who lose their job.", false, "CPP is for after you retire."],
+			["Income tax. The government sends it to anyone who asks.", false, "Not tax, and not anyone. EI is for people who worked and lost a job."]]},
+	{"id": "taxfree", "label": "Why $0 income tax", "text": "I earn about $9,000 a year at my part-time job. Why is my income tax $0?",
+		"opts": [["You earn less than the tax-free amounts: $16,452 for Canada and $22,769 for Alberta.", true, "Ohh. So it's about how much, not how old."],
+			["Because you are young. Young people don't pay income tax.", false, "Age doesn't matter. How much you earn in a year does."],
+			["Part-time jobs are never taxed.", false, "Part-time pay is taxed too, once you earn more than the tax-free amount."]]},
+	{"id": "grossNet", "label": "Gross pay vs. take-home pay", "text": "My new job pays $16 an hour. I worked 30 hours. So $480 lands in my bank, right?",
+		"opts": [["Less than $480 lands. $480 is gross pay. EI comes off first, and maybe CPP and income tax.", true, "Good thing I asked before I spent it all."],
+			["Yes. $480 is your take-home pay.", false, "$480 is gross pay. Deductions come off before it lands."],
+			["No. The bank keeps part of it as a fee.", false, "The bank doesn't take deductions. EI, CPP and tax come off before the money gets there."]]},
+	{"id": "extra", "label": "More hours: more or less take-home?", "text": "My boss offered me 4 more hours. Will the extra tax make me take home less?",
+		"opts": [["No. A little more tax comes off, but I keep most of the extra pay.", true, "Sweet. I'm taking the hours."],
+			["Yes. More pay means more tax, so I lose money.", false, "Lots of people think that! Tax takes only part of each extra dollar."],
+			["It stays the same. Tax takes all the extra pay.", false, "Tax takes a bite, not the whole thing."]]},
+]
+
+
+func _next_help(pid: String, S: Dictionary) -> Dictionary:
+	var pd := _pd(S)
+	var ch := int(pd.get("ch", 0))
+	var done: Dictionary = pd.get("help_done", {})
+	for h in HELPS:
+		if str(h.who) == pid and int(h.after) <= ch and not done.has(str(h.id)):
+			return h
+	return {}
+
+
+func _has_help(pid: String, S: Dictionary) -> bool:
+	return not _next_help(pid, S).is_empty()
+
+
+func _has_news(pid: String, S: Dictionary) -> bool:
+	var pd := _pd(S)
+	var ch := int(pd.get("ch", 0))
+	var seen: Array = pd.get("news_seen", [])
+	for g in GOSSIP:
+		if str(g.who) == pid and int(g.after) <= ch and not seen.has(str(g.id)):
+			return true
+	return false
+
+
+func _mail_available(S: Dictionary) -> bool:
+	var pd := _pd(S)
+	return int(pd.get("ch", 0)) > 0 and _next_mail_ch(S) >= 0
+
+
+func _next_mail_ch(S: Dictionary) -> int:
+	var pd := _pd(S)
+	var ch := int(pd.get("ch", 0))
+	var shown: Dictionary = pd.get("mail_shown", {})
+	for c in range(1, ch + 1):
+		if not shown.has(str(c)):
+			return c
+	return -1
+
+
+func _earn(T, cents: int, msg: String) -> void:
+	var pd := _pd(T.S)
+	pd.wallet = int(pd.get("wallet", 0)) + cents
+	T.toast(msg)
+	T.save()
+
+
+func _run_news(pid: String, T) -> void:
+	var pd := _pd(T.S)
+	var ch := int(pd.get("ch", 0))
+	var seen: Array = pd.get("news_seen", [])
+	var nm: String = T.player_name()
+	for g in GOSSIP:
+		if str(g.who) == pid and int(g.after) <= ch and not seen.has(str(g.id)):
+			var lines: Array = g.lines.map(func(l): return l.replace("{name}", nm))
+			await T.say(pid, lines)
+			seen.append(str(g.id))
+			pd.news_seen = seen
+			T.save()
+			return
+
+
+func _run_help(pid: String, T) -> void:
+	var S: Dictionary = T.S
+	var h: Dictionary = _next_help(pid, S)
+	if h.is_empty():
+		return
+	if await T.choose(pid, h.ask, ["Sure!", "Not right now"]) != 0:
+		return
+	var seed := int(_pd(S).get("ch", 0)) * 97 + HELPS.find(h) * 13 + 7
+	var tier: String = ""
+	match str(h.id):
+		"avery-offers":
+			tier = await _help_avery_offers(T, seed)
+		"mo-gross":
+			tier = await _help_mo_gross(T, seed)
+		"dev-stub":
+			tier = await _help_stub(T, "dev", seed, false)
+		"rosa-stub":
+			tier = await _help_stub(T, "rosa", seed, true)
+		"jas-why":
+			tier = await _help_why(T, "jas", seed)
+		"grandpa-why":
+			tier = await _help_why(T, "grandpa", seed)
+		"avery-pom":
+			tier = await _help_pom(T, "avery", seed)
+		"dev-pom":
+			tier = await _help_pom(T, "dev", seed)
+		"rosa-pom":
+			tier = await _help_pom(T, "rosa", seed)
+		"mo-pom":
+			tier = await _help_pom(T, "worker", seed)
+	if tier != "":
+		var pay := int(h.pay) if tier == "first" else (int(h.pay) / 2 if tier == "second" else 0)
+		var pd := _pd(S)
+		pd.help_done[str(h.id)] = tier
+		if pay > 0:
+			_earn(T, pay, "Earned %s helping %s." % [Money.fmt(pay), T.people_def.get(pid, {}).get("name", pid)])
+		T.save()
+
+
+func _pick_of(r: Dictionary, arr: Array):
+	return arr[int(M.rnd(r) * arr.size()) % arr.size()]
+
+
+func _step_in(r: Dictionary, lo: int, hi: int, step: int) -> int:
+	var n := int((hi - lo) / step) + 1
+	return lo + int(M.rnd(r) * n) % n * step
+
+
+func _gross_task(seed: int) -> Dictionary:
+	var r := M.rng(seed * 13 + 5)
+	M.rnd(r)
+	var kinds := ["wage", "salary", "commission", "tips"]
+	var kind: String = _pick_of(r, kinds)
+	var t := {"kind": kind, "rate": 0, "hours": 0, "yearly": 0, "pct": 0.0, "sales": 0, "tips": 0}
+	if kind == "salary":
+		t.yearly = _step_in(r, 3000000, 5200000, 50000)
+	else:
+		t.rate = _step_in(r, 1500, 2600, 25) if kind == "wage" else _step_in(r, 1500, 1700, 25)
+		var wage_hours := [16, 20, 24, 30, 36, 40, 60, 64, 72, 80]
+		var other_hours := [12, 16, 20, 24, 30]
+		t.hours = _pick_of(r, wage_hours if kind == "wage" else other_hours)
+		if kind == "commission":
+			t.pct = _pick_of(r, [0.02, 0.03, 0.04, 0.05])
+			t.sales = _step_in(r, 150000, 1200000, 5000)
+		if kind == "tips":
+			t.tips = _step_in(r, 4000, 22000, 100)
+	t.ans = M.jr(float(t.yearly) / 26.0) if kind == "salary" else int(t.hours) * int(t.rate) + M.jr(float(t.sales) * float(t.pct)) + int(t.tips)
+	return t
+
+
+func _gross_text(t: Dictionary) -> String:
+	var s := ""
+	match t.kind:
+		"salary":
+			s = "%s a year salary" % Money.fmt_w(int(t.yearly))
+		"wage":
+			s = "%d hours at %s an hour (wage)" % [int(t.hours), Money.fmt(int(t.rate))]
+		"commission":
+			s = "%d hours at %s an hour, plus %d%% of %s in sales" % [int(t.hours), Money.fmt(int(t.rate)), roundi(float(t.pct) * 100), Money.fmt_w(int(t.sales))]
+		"tips":
+			s = "%d hours at %s an hour, plus %s in tips" % [int(t.hours), Money.fmt(int(t.rate)), Money.fmt_w(int(t.tips))]
+	return s
+
+
+func _gross_hint(t: Dictionary) -> String:
+	match t.kind:
+		"salary":
+			return "Yearly salary ÷ 26."
+		"commission":
+			return "Hours × wage, plus %d%% of the sales (sales × %s)." % [roundi(float(t.pct) * 100), str(t.pct)]
+		"tips":
+			return "Hours × wage, then add the tips."
+	return "Hours × wage."
+
+
+func _stub_task(seed: int, minor: bool) -> Dictionary:
+	var r := M.rng(seed * 17 + 11)
+	M.rnd(r)
+	var minor_ages := [16, 17]
+	var adult_ages := [18, 19, 20, 22, 25, 29, 34, 41]
+	var age: int = _pick_of(r, minor_ages if minor else adult_ages)
+	var lo := 24000 if minor else 60000
+	var hi := 95000 if minor else 219000
+	var g: int = _step_in(r, lo, hi, 1)
+	if g % 50 == 0:
+		g += 1
+	return {"age": age, "gross": g, "stub": M.stub_of(g, age)}
+
+
+func _pom_task(seed: int, who: String) -> Dictionary:
+	var r := M.rng(seed * 19 + 7)
+	M.rnd(r)
+	var J: Dictionary = HELP_JOBS[who]
+	var t := {"who": who, "biz": J.biz, "type": J.type,
+		"age": _pick_of(r, J.ages),
+		"rate": _pick_of(r, J.rates) if J.has("rates") else 0,
+		"hours": _pick_of(r, J.h) if J.has("h") else 0,
+		"pct": float(J.get("pct", 0)),
+		"sales": _step_in(r, int(J.sales[0]), int(J.sales[1]), 1000) if J.has("sales") else 0,
+		"yearly": _pick_of(r, J.yearlies) if J.has("yearlies") else 0}
+	var k := _pom_kinds(t)
+	t.kind = ("" if M.rnd(r) < 0.25 or k.is_empty() else k[int(M.rnd(r) * k.size()) % k.size()])
+	t.right = M.pom_stub(t, "")
+	t.printed = M.pom_stub(t, t.kind)
+	return t
+
+
+func _pom_kinds(t: Dictionary) -> Array:
+	var right: Dictionary = M.pom_stub(t, "")
+	var k := []
+	if t.type in ["wage", "commission"]:
+		k.append("hours")
+	if t.type == "commission":
+		k.append("commission")
+	if int(t.age) < 18:
+		k.append("cppMinor")
+	else:
+		k.append("cppExempt")
+		if int(right.gross) >= 50000:
+			k.append("ei")
+	if int(right.gross) >= 70000:
+		k.append("taxRow")
+	return k.filter(func(x): return int(right.net) - int(M.pom_stub(t, x).net) >= 500)
+
+
+func _pom_facts(t: Dictionary) -> String:
+	if t.type == "given":
+		return "Age %d. Only the deductions can be wrong on this one." % int(t.age)
+	if t.type == "salary":
+		return "Salary %s a year · age %d" % [Money.fmt_w(int(t.yearly)), int(t.age)]
+	var s := "Timesheet: %d hours at %s an hour" % [int(t.hours), Money.fmt(int(t.rate))]
+	if t.type == "commission":
+		s += " · sales %s (%d%% commission)" % [Money.fmt_w(int(t.sales)), roundi(float(t.pct) * 100)]
+	return s + " · age %d" % int(t.age)
+
+
+func _help_avery_offers(T, seed: int) -> String:
+	var a := _gross_task(seed)
+	var b := _gross_task(seed + 1)
+	if seed % 2 != 0 and b.kind == "wage":
+		b = _gross_task(seed + 2)
+	var tier_a: String = await T.calc({"key": "help-offers-a", "label": "Help: two job offers (Offer A)", "title": "Help Avery: two job offers",
+		"prompt": "Avery: \"Which one pays more? Work out the pay for two weeks for each.\"\n\nOffer A: %s." % _gross_text(a),
+		"answer": int(a.ans), "hint": _gross_hint(a)})
+	var tier_b: String = await T.calc({"key": "help-offers-b", "label": "Help: two job offers (Offer B)", "title": "Help Avery: two job offers",
+		"prompt": "Offer B: %s." % _gross_text(b),
+		"answer": int(b.ans), "hint": _gross_hint(b)})
+	var winner := "A" if int(a.ans) >= int(b.ans) else "B"
+	await T.say("avery", ["So Offer %s pays more. Thanks!" % winner,
+		"But %s. Big choice." % ("tips change every shift. I can't count on them. Hmm" if b.kind == "tips" else "commission goes up and down with sales. Hmm")])
+	var tiers := ["first", "second", "later"]
+	return tiers[maxi(tiers.find(tier_a), tiers.find(tier_b))]
+
+
+func _help_mo_gross(T, seed: int) -> String:
+	var t := _gross_task(seed)
+	var tier: String = await T.calc({"key": "help-mo-gross", "label": "Help: check gross pay", "title": "Help Mo: check the pay",
+		"prompt": "Mo: \"Here's my nephew's new job. What does it pay for two weeks? He thinks it's a fortune.\"\n\nThe job: %s." % _gross_text(t),
+		"answer": int(t.ans), "hint": _gross_hint(t)})
+	if tier != "":
+		await T.say("worker", "Not bad! Gross, though. Stuff comes off. I keep telling him." if int(t.ans) >= 150000 else "Ha! Not quite a fortune. Don't tell him I said that.")
+	return tier
+
+
+func _help_stub(T, pid: String, seed: int, minor: bool) -> String:
+	var t := _stub_task(seed, minor)
+	var st: Dictionary = t.stub
+	var biz := "Valley Market" if minor else "Prairie Parcel"
+	var ask_line := "Rosa: \"My cousin spilled juice on her first pay stub. Only the gross pay and her age are left. Can you fill in the rest?\"" if minor else "Dev: \"Pay-O-Matic was down, so my stub only shows the gross pay. Can you work out the rest before I budget?\""
+	var intro := "%s\n\n[b]Gross pay:[/b] %s · Age %d" % [ask_line, Money.fmt(int(t.gross)), int(t.age)]
+	var tier: String = await P.lines(T, {"kind": "help-stub", "title": "Help %s: fill in the stub" % (pid.capitalize()), "kicker": biz, "card": true, "wide": true,
+		"intro": intro,
+		"doc": biz, "doc_right": "Age %d" % int(t.age),
+		"fields": P.stub_fields(st, "", false),
+		"key": "help-stub-%s" % pid, "label": "Help: fill in a stub (%s)" % ("under 18" if minor else "adult"),
+		"check": "Check my numbers", "go": "Done"})
+	if tier != "":
+		await T.say(pid, "No CPP until 18! She'll be happy about that. For now." if minor else "So that's what really lands. Okay. Budget time.")
+	return tier
+
+
+func _help_why(T, pid: String, seed: int) -> String:
+	var pool := WHY_JAS if pid == "jas" else WHY_GRANDPA
+	var q: Dictionary = pool[seed % pool.size()]
+	var r: Dictionary = await T.ask(pid, q, "help-why-%s" % pid, q.label)
+	return str(r.get("tier", "later"))
+
+
+func _help_pom(T, pid: String, seed: int) -> String:
+	var t := _pom_task(seed, pid)
+	var name: String = T.people_def.get(pid, {}).get("name", pid)
+	var st: Dictionary = t.printed
+	var right: Dictionary = t.right
+	var pom_res: Dictionary = await P.sign(T, {
+		"title": "Help %s: check a Pay-O-Matic stub" % name,
+		"kicker": str(t.biz),
+		"intro": "%s got this stub from Pay-O-Matic 3000. Check every line before it gets signed." % name,
+		"facts": _pom_facts(t), "biz": str(t.biz),
+		"right_head": "Age %d" % int(t.age),
+		"rows": P.sign_rows(str(t.type), st, float(t.pct), int(t.yearly)),
+		"root": str(st.get("root", "")),
+		"explain": func(k): return P.explain(k, st, right, float(t.pct), int(t.yearly)),
+		"follows": P.follows(str(st.get("root", ""))),
+		"key": "help-pom-%s" % pid, "label": "Help: check a Pay-O-Matic stub (%s)" % name,
+		"go": "Sign it",
+		"caught_line": "Caught it! The %s line was wrong. Fixed, the stub pays %s." % [str(st.get("root", "")), Money.fmt(int(right.net))],
+		"ok_line": "Every line checks out. It's right.",
+		"signed_line": "Signed. %s" % ("It was right." if str(t.kind) == "" else "One line was wrong.")})
+	var tier: String = str(pom_res.get("tier", "later"))
+	if str(t.kind) != "":
+		await T.say(pid, ["Ugh. Pay-O-Matic got me again." if tier == "later" else "You caught it! I'm telling my boss right now."])
+	else:
+		await T.say(pid, "All good? Phew. I'll sign it.")
+	return tier
+
+
+func _open_mail(T) -> void:
+	if _mail_busy or T.busy_talk:
+		return
+	_mail_busy = true
+	_do_mail_coro(T)
+
+
+func _do_mail_coro(T) -> void:
+	T.busy_talk = true
+	var ch := _next_mail_ch(T.S)
+	if ch >= 0:
+		await _do_mail(T, ch)
+	T.busy_talk = false
+	_mail_busy = false
+	if _mail_btn != null:
+		_mail_btn.visible = _mail_available(T.S)
+
+
+func _do_mail(T, ch: int) -> void:
+	var pd := _pd(T.S)
+	var seed := int(pd.get("ch", 0)) * 31 + ch * 7 + 3
+	var kind := _mail_kind(seed, ch - 1)
+	await T.say("", "A letter from Ms. Okafor.")
+	var tier: String = ""
+	match kind:
+		"gross":  tier = await _mail_gross(T, seed)
+		"tax":    tier = await _mail_tax(T, seed)
+		"ei":     tier = await _mail_ei(T, seed)
+		"where":  tier = await _mail_where(T, seed)
+		"wrong":  tier = await _mail_wrong(T, seed)
+	var pay := 500 if tier == "first" else (250 if tier == "second" else 0)
+	pd.mail_shown[str(ch)] = {"kind": kind, "tier": tier}
+	if pay > 0:
+		_earn(T, pay, "Town Mail: earned %s." % Money.fmt(pay))
+	else:
+		T.save()
+
+
+func _mail_kind(seed: int, last: int) -> String:
+	var k := ["gross"]
+	if last >= 1:
+		k.append_array(["tax", "ei"])
+	if last >= 2:
+		k.append_array(["where", "wrong"])
+	var r := M.rng(seed * 23 + 3)
+	return k[int(M.rnd(r) * k.size()) % k.size()]
+
+
+func _mail_gross(T, seed: int) -> String:
+	var t := _gross_task(seed)
+	return await T.calc({"key": "mail-gross-%d" % seed, "label": "Town Mail: gross pay",
+		"title": "Town Mail", "kicker": "Ms. Okafor",
+		"prompt": "\"A quick one! A job pays %s. What is the pay for two weeks?\"" % _gross_text(t),
+		"answer": int(t.ans), "hint": _gross_hint(t)})
+
+
+func _mail_tax(T, seed: int) -> String:
+	var t := _stub_task(seed, false)
+	var st: Dictionary = t.stub
+	return await T.calc({"key": "mail-tax-%d" % seed, "label": "Town Mail: income tax",
+		"title": "Town Mail", "kicker": "Ms. Okafor",
+		"prompt": "\"My friend's gross pay is %s this time. How much income tax comes off?\"" % Money.fmt(int(t.gross)),
+		"answer": int(st.tax), "hint": "Find the Pay Card row nearest the gross pay."})
+
+
+func _mail_ei(T, seed: int) -> String:
+	var t := _stub_task(seed, false)
+	var st: Dictionary = t.stub
+	return await T.calc({"key": "mail-ei-%d" % seed, "label": "Town Mail: EI",
+		"title": "Town Mail", "kicker": "Ms. Okafor",
+		"prompt": "\"My friend's gross pay is %s this time. How much EI comes off?\"" % Money.fmt(int(t.gross)),
+		"answer": int(st.ei), "hint": "Gross pay × 0.0163."})
+
+
+func _mail_where(T, seed: int) -> String:
+	var pool: Array = WHY_GRANDPA + WHY_JAS
+	var q: Dictionary = pool[seed % pool.size()]
+	await T.say("okafor", "She has a question for you.")
+	var r: Dictionary = await T.ask("okafor", q, "mail-where-%d" % seed, q.label)
+	return str(r.get("tier", "later"))
+
+
+func _mail_wrong(T, seed: int) -> String:
+	var r := M.rng(seed * 29 + 1)
+	M.rnd(r)
+	var ages := [16, 17, 19, 23, 30]
+	var age: int = _pick_of(r, ages)
+	var gross: int = _step_in(r, 70000, 219000, 1)
+	if gross % 50 == 0:
+		gross += 1
+	var t := {"who": null, "biz": "Pay-O-Matic 3000 test stub", "type": "given", "age": age, "gross": gross,
+		"rate": 0, "hours": 0, "pct": 0.0, "sales": 0, "yearly": 0}
+	var k := _pom_kinds(t)
+	t.kind = k[int(M.rnd(r) * k.size()) % k.size()] if k.size() > 0 else ""
+	t.right = M.pom_stub(t, "")
+	t.printed = M.pom_stub(t, str(t.kind))
+	var st: Dictionary = t.printed
+	var right: Dictionary = t.right
+	var mail_res: Dictionary = await P.sign(T, {
+		"title": "Town Mail", "kicker": "Ms. Okafor",
+		"intro": "\"Pay-O-Matic made this test stub. One deduction is wrong. Which one?\"",
+		"facts": _pom_facts(t), "biz": str(t.biz),
+		"right_head": "Age %d" % int(t.age),
+		"rows": P.sign_rows("given", st, 0.0, 0),
+		"root": str(st.get("root", "")),
+		"explain": func(k2): return P.explain(k2, st, right, 0.0, 0),
+		"follows": P.follows(str(st.get("root", ""))),
+		"key": "mail-wrong-%d" % seed, "label": "Town Mail: find the wrong deduction",
+		"go": "Done",
+		"caught_line": "Caught it! The %s line was wrong. Fixed, the stub pays %s." % [str(st.get("root", "")), Money.fmt(int(right.net))],
+		"ok_line": "Every line checks out.",
+		"signed_line": "Signed. One line was wrong — check again next time."})
+	return str(mail_res.get("tier", "later"))
+
+
+func _show_plan_wall(T) -> void:
+	var pd := _pd(T.S)
+	var run: Dictionary = pd.get("run", {})
+	if run.is_empty():
+		await T.say("", "The plan wall. When you start working, your plan goes here.")
+		return
+	var W: Dictionary = M.WORKERS[run.worker]
+	var lines := ["My plan: save %s for %s." % [Money.fmt_w(W.goal), W.goal_label],
+		"Jar so far: %s of %s." % [Money.fmt(run.jar), Money.fmt_w(W.goal)]]
+	var wallet := int(pd.get("wallet", 0))
+	if wallet > 0:
+		lines.append("Earned from neighbours: %s." % Money.fmt(wallet))
+	await T.say("", lines)
