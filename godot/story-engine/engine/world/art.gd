@@ -319,7 +319,7 @@ static func prop(ci: CanvasItem, p: Dictionary) -> void:
 			rect(ci, 7, 5, 12, 2, Color("#5a3a22"))
 
 
-# ── People. look = { skin, hair, hair_style (0 short, 1 long, 2 bun, 3 curly, 4 shaved), shirt, pants,
+# ── People. look = { skin, hair, hair_style (0 short, 1 long, 2 bun, 3 curly, 4 shaved, 5 bear: ears and a muzzle), shirt, pants,
 #    outfit ("apron" | "vest" | "cap" | ""), apron, cap } — numbers index the lists above, or colour strings.
 #    dir: "down" | "up" | "left" | "right"; step: 0 standing, 1 or 2 walking. Local coordinates: the tile's top-left. ──
 static func _col(v, list: Array) -> Color:
@@ -335,6 +335,15 @@ static func colours(look: Dictionary) -> Dictionary:
 
 static func _hair(ci: CanvasItem, c: Dictionary, style: int, dir: String, cx: float, cy: float, r: float) -> void:
 	var back := dir == "up"
+	if style == 5:   # the teddy bear: round ears, and a cream muzzle with a nose when facing you
+		for sx in [-1.0, 1.0]:
+			circ(ci, cx + sx * r * 0.78, cy - r * 0.78, r * 0.42, c.hair)
+			circ(ci, cx + sx * r * 0.78, cy - r * 0.78, r * 0.22, Color("#ead2a8"))
+		if not back:
+			var off := -2.0 if dir == "left" else (2.0 if dir == "right" else 0.0)
+			ell(ci, cx + off, cy + r * 0.4, r * 0.42, r * 0.32, Color("#ead2a8"))
+			circ(ci, cx + off, cy + r * 0.25, r * 0.15, PAL.ink)
+		return
 	if style == 4:
 		if back:
 			circ(ci, cx, cy, r, shade(c.hair, 0.35))

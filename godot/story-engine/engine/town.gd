@@ -41,6 +41,7 @@ const LiveShift = preload("res://engine/live_shift.gd")
 const Frac = preload("res://engine/core/frac.gd")
 const Cutscene = preload("res://engine/cutscene.gd")
 const Chamber = preload("res://engine/chamber.gd")
+const ModelView = preload("res://engine/ui/model_view.gd")
 const PRONOUNS := {"they": ["they", "them", "their"], "she": ["she", "her", "her"], "he": ["he", "him", "his"]}
 
 signal _goal_hit(target: String)
@@ -446,7 +447,7 @@ func _refresh() -> void:
 			list.append({"id": id, "x": int(w.x), "y": int(w.y), "dir": w.get("dir", "down"), "look": people_def[id].look, "bubble": b})
 	world.set_people(list)
 	world.set_goal(_goal_tile())
-	ui.set_hud(D.hud(S), goal_text)
+	ui.set_hud(D.hud(S) + (D.profile_hud(P) if D.has_method("profile_hud") else []), goal_text)
 
 
 func _process(_dt: float) -> void:
@@ -566,7 +567,7 @@ func _goal_tile() -> Variant:
 # ── Talking ──
 func _speaker(who: String) -> Array:
 	if who == "you":
-		return [P.name, P.look]
+		return [P.name, base_look()]
 	if people_def.has(who):
 		return [people_def[who].name, people_def[who].look]
 	return ["", {}]
@@ -876,9 +877,14 @@ func mode() -> String: return G.mode
 func player_name() -> String: return P.name
 
 
-## Redraws you (after a game changes your outfit).
+## Your own look before any job outfit: the game's avatar (D.base_look(P), e.g. the student and what you wear) or P.look.
+func base_look() -> Dictionary:
+	return D.base_look(P) if D.has_method("base_look") else P.look
+
+
+## Redraws you (after a game changes your outfit, or you change clothes).
 func refresh_look() -> void:
-	world.set_my_look(D.my_look(S, P.look) if D.has_method("my_look") and not G.is_empty() else P.look)
+	world.set_my_look(D.my_look(S, base_look()) if D.has_method("my_look") and not G.is_empty() else base_look())
 
 
 func refresh() -> void:
@@ -1501,6 +1507,9 @@ func _show_title(saved) -> void:
 
 
 func _avatar_screen() -> void:
+	if "avatar_bodies" in D:
+		_avatar_pick()
+		return
 	var look: Dictionary = P.look.duplicate()
 	var st := {"mode": "gentle"}
 	var p: Dictionary = ui.open_panel(str(D.avatar_title) if "avatar_title" in D else "Make your character", "New game", true)
@@ -1597,6 +1606,73 @@ func _avatar_screen() -> void:
 	if st.has("pron"):
 		P.pron = st.pron
 	new_game(name_f.text.strip_edges(), look, st.mode)
+
+
+## Pick a body (the game's avatar_bodies: { id: { label, … } }), shown as the real 3D model, plus your name and the mode.
+## The game gives avatar_look(P, id) for each preview and set_body(P, id) to store the choice in the profile.
+func _avatar_pick() -> void:
+	var st := {"mode": "gentle", "body": str(D.body_of(P))}
+	var p: Dictionary = ui.open_panel(str(D.avatar_title) if "avatar_title" in D else "Make your character", "New game", true)
+	var body: VBoxContainer = p.body
+	body.add_child(ui.label("Who are you?", "Strong"))
+	var cards := HFlowContainer.new()
+	cards.add_theme_constant_override("h_separation", 12)
+	cards.alignment = FlowContainer.ALIGNMENT_CENTER
+	var group := ButtonGroup.new()
+	for id in D.avatar_bodies:
+		var bid: String = id
+		var card := Button.new()
+		card.toggle_mode = true
+		card.button_group = group
+		card.custom_minimum_size = Vector2(150, 200)
+		card.tooltip_text = str(D.avatar_bodies[id].label)
+		var col: VBoxContainer = ui.vbox(4)
+		col.set_anchors_preset(Control.PRESET_FULL_RECT)
+		col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		col.add_child(ModelView.make(D.avatar_look(P, id), Vector2(140, 160), ui.reduce_motion))
+		var lab: Label = ui.label(str(D.avatar_bodies[id].label), "Strong", false)
+		lab.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lab.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		col.add_child(lab)
+		card.add_child(col)
+		card.button_pressed = bid == st.body
+		card.pressed.connect(func(): st.body = bid)
+		cards.add_child(card)
+	body.add_child(cards)
+	body.add_child(ui.label("Your first name", "Strong"))
+	var name_f := LineEdit.new()
+	name_f.text = P.name
+	name_f.max_length = 16
+	name_f.placeholder_text = "First name"
+	name_f.custom_minimum_size = Vector2(0, 48)
+	body.add_child(name_f)
+	body.add_child(ui.label("How do you want to play?", "Strong"))
+	var mflow := HFlowContainer.new()
+	mflow.add_theme_constant_override("h_separation", 8)
+	var mg := ButtonGroup.new()
+	for m in [["gentle", "Gentle: hints after a wrong try, and 3 tries"], ["real", "Real: no hints, and 2 tries"]]:
+		var b: Button = ui.button(m[1])
+		b.toggle_mode = true
+		b.button_group = mg
+		b.button_pressed = m[0] == "gentle"
+		var mv: String = m[0]
+		b.pressed.connect(func(): st.mode = mv)
+		mflow.add_child(b)
+	body.add_child(mflow)
+	var go_b: Button = ui.button("Start", true)
+	p.foot.add_child(go_b)
+	var upd := func(_t = ""): go_b.disabled = name_f.text.strip_edges() == ""
+	name_f.text_changed.connect(upd)
+	name_f.text_submitted.connect(func(_t): if not go_b.disabled: _ui_done.emit(true))
+	upd.call()
+	go_b.pressed.connect(func(): _ui_done.emit(true))
+	name_f.call_deferred("grab_focus")
+	cur = {"kind": "avatar", "solve": func(_h): name_f.text = "Sam"; _ui_done.emit(true)}
+	await _ui_done
+	cur = null
+	ui.close_panel(p)
+	D.set_body(P, st.body)
+	new_game(name_f.text.strip_edges(), P.look, st.mode)
 
 
 # ── The test player ──

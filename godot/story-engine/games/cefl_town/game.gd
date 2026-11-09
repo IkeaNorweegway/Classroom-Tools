@@ -7,6 +7,7 @@ extends RefCounted
 const Town1 = preload("res://games/cefl_town/town_v1.gd")
 const Areas = preload("res://games/cefl_town/areas.gd")
 const Story = preload("res://engine/core/story.gd")
+const Wardrobe = preload("res://games/cefl_town/wardrobe.gd")
 
 var id := "cefl-town"
 var title := "CEFL Town"
@@ -17,6 +18,8 @@ var start_map := "neighbourhoods"
 var start_at := Vector2i(38, 27)   # outside Home, on River Walk
 var done_goal := "Explore the town. Press M for the Town Map."
 var _maps := {}
+var avatar_title := "Pick your student"
+var avatar_bodies := Wardrobe.BODIES
 
 
 func maps() -> Dictionary:
@@ -24,6 +27,7 @@ func maps() -> Dictionary:
 		_maps = Areas.all()
 		for b in Town1.BUILDINGS:
 			_maps[b.id] = Town1.build_room(b)
+		_maps.home.props.append({"k": "wardrobe", "x": 3, "y": 1, "id": "closet", "label": "Your closet", "solid": true})
 		var h: Dictionary = _maps.neighbourhoods.spots.home
 		start_at = Vector2i(int(h.x), int(h.y))
 	return _maps
@@ -37,6 +41,32 @@ const OUTSIDE := {
 	"worker": {"map": "shopping", "x": 46, "y": 36, "dir": "left"},
 	"vendor": {"map": "downtown", "x": 37, "y": 29, "dir": "down"},
 }
+
+
+# ── You: the student you picked, and what you wear (games/cefl_town/wardrobe.gd) ──
+func base_look(P: Dictionary) -> Dictionary:
+	return Wardrobe.my_look(P)
+
+
+func body_of(P: Dictionary) -> String:
+	Wardrobe.fill(P)
+	return str(P.student.body)
+
+
+func avatar_look(P: Dictionary, body: String) -> Dictionary:
+	Wardrobe.fill(P)
+	return Wardrobe.look_of(body, P.student.wear)
+
+
+func set_body(P: Dictionary, body: String) -> void:
+	Wardrobe.fill(P)
+	P.student.body = body
+
+
+func profile_hud(P: Dictionary) -> Array:
+	if int(P.get("wallet", 0)) > 0 or not (P.get("owned", []) as Array).is_empty():
+		return [{"label": "Wallet", "value": Wardrobe.Money.fmt(int(P.wallet))}]
+	return []
 
 
 func people() -> Dictionary:
@@ -107,8 +137,16 @@ func talk(pid: String, T) -> void:
 		"dev": ["Hi! I'm Dev. I'm saving up for a phone, so CellPoint is my favourite window.", "Saving is hard when the whole of Market Lane is right there."],
 		"rosa": ["Hello, love! I'm Rosa, from across the street.", "If you ever need a hand with money, my door's open. I've learned a few things the hard way."],
 		"worker": ["Mo. I load trucks at Prairie Parcel.", "Hard hat on, boots on, every day. Safety first, then the work."],
-		"vendor": ["Pat's stall! Fresh from the farms, every day.", "Help out around town and you can buy things for your home here. Coming soon."],
 	}
+	if pid == "vendor":
+		Wardrobe.fill(T.P)
+		var first: bool = not T.P.has("met_pat")
+		T.P.met_pat = true
+		await T.say(pid, ["Pat's stall! Hoodies, hats, shoes, the lot." if first else "Back again? Have a look.",
+			"Everything's for your closet at home. Try it on first: once it's bought, it's yours." if first
+			else ("You've got %s to spend." % Wardrobe.Money.fmt(int(T.P.wallet)) if int(T.P.wallet) > 0 else "Help out around town and you'll have money to spend.")])
+		await Wardrobe.stall(T)
+		return
 	await T.say(pid, lines.get(pid, ["Hello!"]))
 
 
@@ -119,6 +157,8 @@ func use(thing: String, T) -> void:
 				await T.say("", str(p.text))
 				return
 	match thing:
+		"closet":
+			await Wardrobe.closet(T)
 		"plan_wall":
 			await T.say("", "Your My Plan wall. A page goes up here each time you finish a mission.")
 		_:
