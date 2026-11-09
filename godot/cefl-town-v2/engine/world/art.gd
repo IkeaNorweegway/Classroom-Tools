@@ -22,7 +22,9 @@ const HAIR_STYLES := ["Short", "Long", "Bun", "Curly", "Shaved"]
 
 ## Things you cannot walk through.
 const SOLID := {"tree": true, "bush": true, "bench": true, "lamp": true, "counter": true, "shelf": true, "table": true, "plant": true,
-	"fridge": true, "crate": true, "pallet": true, "stall": true, "board": true, "fountain": true, "sofa": true, "bed": true, "sign": true, "phone": true}
+	"fridge": true, "crate": true, "pallet": true, "stall": true, "board": true, "fountain": true, "sofa": true, "bed": true, "sign": true, "phone": true,
+	"mop": true, "belt": true, "cart": true, "bike": true, "breaker": true, "toolbox": true, "ladder": true, "sink": true, "display": true, "host": true,
+	"dolly": true, "printer": true}
 
 
 # ── Shape helpers ──
@@ -439,17 +441,31 @@ static func head(ci: CanvasItem, look: Dictionary, cx: float, cy: float, r: floa
 
 
 ## A speech bubble over a head. kind: "goal" | "talk" | "soldout" | "line" | "price" | "happy"
-static func bubble(ci: CanvasItem, kind: String, x: float, y: float) -> void:
-	rr(ci, x - 10, y - 10, 20, 17, 6, PAL.cream)
-	ci.draw_colored_polygon(PackedVector2Array([Vector2(x - 3, y + 7), Vector2(x, y + 11), Vector2(x + 3, y + 7)]), PAL.cream)
+## A speech bubble over someone. ring (0–1) is patience left: an arc round the bubble that shrinks, green → amber → red
+## (the arc's length carries the meaning; the colour only repeats it). kind "t:9" writes a short text (a size, a zone).
+static func bubble(ci: CanvasItem, kind: String, x: float, y: float, ring := -1.0) -> void:
 	var red := Color("#b42318")
+	var ink := PAL.ink
+	var wide := kind.begins_with("t:") and kind.length() > 4
+	var bw := 20.0 + (float(kind.length() - 3) * 7.0 if wide else 0.0)
+	if ring >= 0.0:
+		var rc := Color("#2c7a4b") if ring > 0.5 else (Color("#c98a12") if ring > 0.25 else red)
+		ci.draw_arc(Vector2(x, y - 1.5), 15.0 + bw * 0.12, -PI / 2.0, -PI / 2.0 + TAU * clampf(ring, 0.0, 1.0), 28, rc, 3.2, true)
+	rr(ci, x - bw / 2.0, y - 10, bw, 17, 6, PAL.cream)
+	ci.draw_colored_polygon(PackedVector2Array([Vector2(x - 3, y + 7), Vector2(x, y + 11), Vector2(x + 3, y + 7)]), PAL.cream)
+	if kind.begins_with("t:"):
+		var f: Font = ThemeDB.fallback_font
+		var t := kind.substr(2)
+		var tw := f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x
+		ci.draw_string(f, Vector2(x - tw / 2.0, y + 3.5), t, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, ink)
+		return
 	match kind:
 		"goal":
 			rr(ci, x - 1.6, y - 7, 3.2, 8, 1.5, Color("#94631a"))
 			circ(ci, x, y + 3.5, 1.8, Color("#94631a"))
 		"talk":
 			for i in 3:
-				circ(ci, x - 5 + i * 5, y - 1.5, 1.6, PAL.ink)
+				circ(ci, x - 5 + i * 5, y - 1.5, 1.6, ink)
 		"soldout":
 			ci.draw_line(Vector2(x - 4, y - 6), Vector2(x + 4, y + 2), red, 2.2, true)
 			ci.draw_line(Vector2(x + 4, y - 6), Vector2(x - 4, y + 2), red, 2.2, true)
@@ -466,6 +482,60 @@ static func bubble(ci: CanvasItem, kind: String, x: float, y: float) -> void:
 			circ(ci, x - 2.4, y - 3.5, 2.8, Color("#e2574c"))
 			circ(ci, x + 2.4, y - 3.5, 2.8, Color("#e2574c"))
 			ci.draw_colored_polygon(PackedVector2Array([Vector2(x - 5.1, y - 2.6), Vector2(x + 5.1, y - 2.6), Vector2(x, y + 3)]), Color("#e2574c"))
+		"cash":   # a green bill
+			rr(ci, x - 7, y - 6, 14, 9, 1.5, Color("#5aa86c"))
+			circ(ci, x, y - 1.5, 2.4, Color("#d9efd9"))
+		"card":   # a bank card
+			rr(ci, x - 7, y - 6, 14, 9, 1.5, Color("#3f6fb0"))
+			rect(ci, x - 7, y - 4, 14, 2, Color("#1f2a3c"))
+			rect(ci, x - 5, y, 4, 1.6, Color("#e8c23a"))
+		"box":    # an empty shelf: a crate
+			rr(ci, x - 6, y - 6, 12, 9, 1, Color("#c8a77a"))
+			ci.draw_line(Vector2(x - 6, y - 3), Vector2(x + 6, y - 3), Color("#94631a"), 1.2, true)
+		"drop":   # a spill
+			ci.draw_colored_polygon(PackedVector2Array([Vector2(x, y - 8), Vector2(x + 4.5, y - 1), Vector2(x, y + 3), Vector2(x - 4.5, y - 1)]), Color("#3f8fd2"))
+		"dish":   # a dirty plate
+			circ(ci, x, y - 1.5, 6.5, Color("#f3efe6"))
+			ci.draw_arc(Vector2(x, y - 1.5), 6.5, 0, TAU, 16, Color("#8a8580"), 1.2, true)
+			circ(ci, x + 1.5, y - 2.5, 2.2, Color("#a0622c"))
+		"seat":   # waiting for a table
+			rect(ci, x - 5, y - 2, 10, 2, Color("#6e5038"))
+			rect(ci, x - 5, y - 8, 2, 8, Color("#6e5038"))
+			rect(ci, x - 4.5, y, 1.6, 3, Color("#6e5038"))
+			rect(ci, x + 3, y, 1.6, 3, Color("#6e5038"))
+		"set":    # a table set and ready
+			circ(ci, x, y - 1.5, 5, Color("#f3efe6"))
+			ci.draw_arc(Vector2(x, y - 1.5), 5, 0, TAU, 16, Color("#2c7a4b"), 1.4, true)
+			rect(ci, x - 8, y - 5, 1.4, 8, Color("#8a8580"))
+			rect(ci, x + 6.6, y - 5, 1.4, 8, Color("#8a8580"))
+		"phone":  # a ringing phone
+			ci.draw_arc(Vector2(x, y - 1.5), 5.5, PI * 0.15, PI * 0.85, 10, ink, 3.0, true)
+			ci.draw_line(Vector2(x - 7, y - 6), Vector2(x - 9, y - 8), red, 1.4, true)
+			ci.draw_line(Vector2(x + 7, y - 6), Vector2(x + 9, y - 8), red, 1.4, true)
+		"bolt":   # power or a job to wire
+			ci.draw_colored_polygon(PackedVector2Array([Vector2(x + 1, y - 8), Vector2(x - 4, y), Vector2(x, y), Vector2(x - 1, y + 4), Vector2(x + 4, y - 3), Vector2(x, y - 3)]), Color("#e8a21a"))
+		"wrench":
+			ci.draw_line(Vector2(x - 5, y + 2), Vector2(x + 3, y - 5), Color("#6b665d"), 2.6, true)
+			ci.draw_arc(Vector2(x + 3.5, y - 5.5), 2.6, -PI * 0.2, PI * 1.2, 8, Color("#6b665d"), 2.0, true)
+		"bike":
+			ci.draw_arc(Vector2(x - 4.5, y), 3.2, 0, TAU, 10, ink, 1.4, true)
+			ci.draw_arc(Vector2(x + 4.5, y), 3.2, 0, TAU, 10, ink, 1.4, true)
+			ci.draw_polyline(PackedVector2Array([Vector2(x - 4.5, y), Vector2(x - 1, y - 5), Vector2(x + 3, y - 5), Vector2(x + 4.5, y), Vector2(x, y)]), Color("#3f8fd2"), 1.4, true)
+		"done":   # a check mark
+			ci.draw_polyline(PackedVector2Array([Vector2(x - 5, y - 2), Vector2(x - 1.5, y + 1.5), Vector2(x + 5.5, y - 6)]), Color("#2c7a4b"), 2.6, true)
+		"warn":   # something is wrong
+			ci.draw_colored_polygon(PackedVector2Array([Vector2(x, y - 8), Vector2(x + 6, y + 3), Vector2(x - 6, y + 3)]), Color("#e8a21a"))
+			rect(ci, x - 0.8, y - 4.5, 1.6, 4.5, ink)
+			circ(ci, x, y + 1.3, 0.9, ink)
+		"q":      # a question
+			var f2: Font = ThemeDB.fallback_font
+			ci.draw_string(f2, Vector2(x - 3.5, y + 3.5), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, ink)
+		"parcel":
+			rr(ci, x - 6, y - 7, 12, 10, 1, Color("#c8a77a"))
+			rect(ci, x - 1, y - 7, 2, 10, Color("#e8dcc4"))
+		"sofa":
+			rect(ci, x - 7, y - 3, 14, 5, Color("#6b7fa6"))
+			rect(ci, x - 7, y - 7, 14, 4, Color("#56688c"))
 
 
 ## Small product pictures for panels (no emoji: web exports cannot fall back to system fonts).

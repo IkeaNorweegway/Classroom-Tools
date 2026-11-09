@@ -30,6 +30,10 @@ var camera: Camera3D
 var me: PersonNode
 var people := {}
 var walkers := {}                  # business-day customers: drawn, never block, never in set_people
+var exit_locked := false           # a live shift: the room's way out is closed until the shift ends
+var room_lift := 0.0               # a live shift: frame a room this many tiles higher on screen, clear of the work card
+var live_marks := []               # a live shift: [{ pos: Vector3, bub, ring }] bubbles over stations and floor tiles
+var live_pops := []                # a live shift: [{ pos: Vector3, text, good, t }] words that float up and fade
 var astar := AStarGrid2D.new()
 var path: Array[Vector2i] = []
 var on_arrive := Callable()
@@ -79,6 +83,7 @@ class PersonNode extends Node3D:
 	var from := Vector2i.ZERO
 	var t := 1.0
 	var bubble := ""
+	var ring := -1.0                 # patience left (0–1) drawn round the bubble; −1 = none
 	var body: MeshInstance3D
 	var world
 	static var skin: StandardMaterial3D
@@ -123,7 +128,22 @@ class Overlay extends Node2D:       # bubbles over heads, and an arrow at the sc
 			if cam.is_position_behind(head):
 				continue
 			var p := cam.unproject_position(head)
-			Art.bubble(self, n.bubble, p.x, p.y)
+			Art.bubble(self, n.bubble, p.x, p.y, n.ring)
+		for m in world.live_marks:
+			if cam.is_position_behind(m.pos):
+				continue
+			var mp := cam.unproject_position(m.pos)
+			Art.bubble(self, m.bub, mp.x, mp.y, float(m.get("ring", -1.0)))
+		for q in world.live_pops:
+			if cam.is_position_behind(q.pos):
+				continue
+			var a: float = clampf(1.0 - float(q.t) / 1.1, 0.0, 1.0)
+			var qp := cam.unproject_position(q.pos) + Vector2(0, -34.0 * float(q.t))
+			var f: Font = world.font if world.font else ThemeDB.fallback_font
+			var col := Color("#2c7a4b") if q.good else Color("#b42318")
+			var tw := f.get_string_size(q.text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x
+			draw_string_outline(f, qp - Vector2(tw / 2.0, 0), q.text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, 5, Color(1, 1, 1, a))
+			draw_string(f, qp - Vector2(tw / 2.0, 0), q.text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color(col, a))
 		var g = world.goal_tile
 		if g == null:
 			return
@@ -548,8 +568,8 @@ func _place_camera(snap := false) -> void:
 		target.x = clampf(target.x, hx - 4.0, map.w - hx + 4.0)
 		target.z = clampf(target.z, 2.0, map.h + 1.0)
 	else:
-		target = Vector3(map.w / 2.0, 0.4, map.h / 2.0 + 0.4)
-		var span := maxf(map.w, map.h * 1.4)
+		target = Vector3(map.w / 2.0, 0.4, map.h / 2.0 + 0.4 + room_lift)
+		var span := maxf(map.w, map.h * 1.4) * (1.0 + room_lift * 0.11)
 		off = Vector3(0, span * 0.95, span * 0.95)
 	var want := target + off
 	camera.position = want if snap else camera.position.lerp(want, minf(1.0, get_process_delta_time() * 6.0))
@@ -812,7 +832,7 @@ func try_step(d: String) -> void:
 
 
 func _is_link(p: Vector2i) -> bool:
-	return map.links.has(p) or (not map.outdoor and p == Vector2i(map.exit_x, map.h - 1))
+	return map.links.has(p) or (not map.outdoor and not exit_locked and p == Vector2i(map.exit_x, map.h - 1))
 
 
 func _start_step(nxt: Vector2i) -> void:
@@ -831,7 +851,7 @@ func _arrived() -> void:
 		path.clear()
 		link_stepped.emit(map.links[me.tile])
 		return
-	if not map.outdoor and me.tile == Vector2i(map.exit_x, map.h - 1):
+	if not map.outdoor and not exit_locked and me.tile == Vector2i(map.exit_x, map.h - 1):
 		path.clear()
 		room_exit.emit()
 		return

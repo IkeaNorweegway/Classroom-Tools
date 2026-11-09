@@ -789,6 +789,77 @@ func prop(p: Dictionary, ground_h := 0.0) -> void:
 		"phone":
 			box(c + Vector3(-0.15, 0, -0.1), Vector3(0.3, 1.1, 0.2), C.metal)
 			box(c + Vector3(-0.12, 1.1, -0.1), Vector3(0.24, 0.3, 0.2), Color("#c0463c"))
+		# ── Work floors for Payday's live shifts ──
+		"tag":   # a sign hanging over a station, on two cords
+			var tw_ := minf(w, 2.2) * 0.86
+			var tz := float(p.y) + d / 2.0 + 0.42
+			sign_board(c.x, ground_h + 2.02, tw_, 0.34, tz, Color(p.get("color", "#2f3a3a")), str(p.get("title", "")), Color("#f5ecd8"), 52)
+			for sx in [-tw_ / 2.0 + 0.12, tw_ / 2.0 - 0.14]:
+				box(Vector3(c.x + sx, ground_h + 2.36, tz + 0.02), Vector3(0.02, 0.3, 0.02), Color("#3d3833"))
+		"mop":
+			cyl(c + Vector3(0, 0, 0), 0.22, 0.34, Color("#e8c23a"), 8)
+			cyl(c + Vector3(0, 0.3, 0), 0.19, 0.02, Color("#5b8fb8"), 8)
+			box(c + Vector3(0.05, 0.2, -0.02), Vector3(0.04, 1.3, 0.04), C.wood)
+			blob(c + Vector3(0.07, 0.36, 0.0), Vector3(0.12, 0.08, 0.12), Color("#e6e0d4"), k, 5, 2, 0.2)
+		"belt":   # a conveyor along x: frame, dark belt, rollers showing at the ends
+			box(Vector3(float(p.x) + 0.04, ground_h, float(p.y) + 0.18), Vector3(w - 0.08, 0.62, 0.64), C.metal)
+			box(Vector3(float(p.x) + 0.02, ground_h + 0.62, float(p.y) + 0.14), Vector3(w - 0.04, 0.08, 0.72), Color("#2f3236"))
+			for i in int(w * 2.0):
+				cyl(Vector3(float(p.x) + 0.25 + i * 0.5, ground_h + 0.0, float(p.y) + 0.22), 0.03, 0.6, C.metal.darkened(0.2), 4)
+		"cart":   # a roll cage for one loading door
+			box(c + Vector3(-0.38, 0.08, -0.34), Vector3(0.76, 0.06, 0.68), Color(p.get("color", "#5d6370")))
+			for q in [[-0.38, -0.34], [0.34, -0.34], [-0.38, 0.3], [0.34, 0.3]]:
+				box(c + Vector3(q[0], 0.08, q[1]), Vector3(0.04, 1.1, 0.04), Color(p.get("color", "#5d6370")))
+			for hy in [0.5, 0.9]:
+				box(c + Vector3(-0.38, hy, -0.34), Vector3(0.76, 0.03, 0.03), Color(p.get("color", "#5d6370")))
+			for wq in [[-0.3, -0.26], [0.26, -0.26], [-0.3, 0.22], [0.26, 0.22]]:
+				cyl(c + Vector3(wq[0], 0.0, wq[1]), 0.06, 0.08, Color("#2f3236"), 6)
+		"bike":   # a bike up on a repair stand
+			var bc := Color(p.get("color", "#3f8fd2"))
+			box(c + Vector3(-0.03, 0, -0.03), Vector3(0.06, 0.95, 0.06), C.metal)
+			box(c + Vector3(-0.25, 0, -0.2), Vector3(0.5, 0.04, 0.4), C.metal.darkened(0.2))
+			for sx in [-0.4, 0.4]:
+				cyl(c + Vector3(sx, 0.62, 0.0), 0.3, 0.04, Color("#2f3236"), 10)
+			box(c + Vector3(-0.4, 0.92, -0.02), Vector3(0.8, 0.05, 0.05), bc)
+			box(c + Vector3(-0.1, 0.92, -0.02), Vector3(0.05, 0.3, 0.05), bc)
+		"breaker":   # an electrical panel on the wall, door open
+			box(c + Vector3(-0.32, 0.7, -0.45), Vector3(0.64, 0.9, 0.14), Color("#9aa0a6"), Color("#b4b9be"))
+			for i in 6:
+				box(c + Vector3(-0.2 + (i % 2) * 0.22, 0.85 + (i / 2) * 0.22, -0.31), Vector3(0.16, 0.08, 0.03), Color("#2f3236"))
+		"jbox":   # a work spot: an open box in the wall with wires out
+			box(c + Vector3(-0.14, 0.45, -0.48), Vector3(0.28, 0.36, 0.06), Color("#5b6f8a"))
+			for i in 3:
+				box(c + Vector3(-0.08 + i * 0.07, 0.38, -0.44), Vector3(0.025, 0.1, 0.12), [Color("#1f1f24"), Color("#f4f1ea"), Color("#c98a4a")][i])
+		"toolbox":
+			box(c + Vector3(-0.32, 0, -0.2), Vector3(0.64, 0.36, 0.4), Color("#c0463c"), Color("#d4574c"))
+			box(c + Vector3(-0.14, 0.36, -0.04), Vector3(0.28, 0.08, 0.06), Color("#2f3236"))
+		"ladder":
+			for sx in [-0.22, 0.18]:
+				box(c + Vector3(sx, 0, -0.1), Vector3(0.05, 1.6, 0.05), Color("#e8a21a"))
+			for i in 5:
+				box(c + Vector3(-0.22, 0.25 + i * 0.3, -0.1), Vector3(0.45, 0.04, 0.05), Color("#e8a21a"))
+		"sink":   # a steel counter with a deep sink
+			box(Vector3(float(p.x) + 0.04, ground_h, float(p.y) + 0.12), Vector3(w - 0.08, 0.9, d - 0.24), Color("#b9bcbf"), Color("#d2d5d8"))
+			box(Vector3(float(p.x) + w / 2.0 - 0.3, ground_h + 0.9, float(p.y) + 0.25), Vector3(0.6, 0.02, 0.4), Color("#7d8288"))
+			box(Vector3(float(p.x) + w / 2.0 - 0.03, ground_h + 0.9, float(p.y) + 0.16), Vector3(0.06, 0.4, 0.06), C.metal)
+		"display":   # a low table of phones that glow
+			box(Vector3(float(p.x) + 0.08, ground_h, float(p.y) + 0.15), Vector3(w - 0.16, 0.8, d - 0.3), Color("#e9eef2"), Color("#f6f8fa"))
+			glow_on()
+			for i in int(w * 2.0):
+				box(Vector3(float(p.x) + 0.22 + i * 0.5, ground_h + 0.8, float(p.y) + 0.4), Vector3(0.14, 0.02, 0.24), Color("#7fc8e8"))
+			glow_off()
+		"host":   # a host stand or podium
+			box(c + Vector3(-0.25, 0, -0.2), Vector3(0.5, 1.0, 0.4), C.wood_dk, C.wood)
+			box(c + Vector3(-0.28, 1.0, -0.24), Vector3(0.56, 0.05, 0.46), C.wood)
+		"dolly":   # a hand truck
+			box(c + Vector3(-0.2, 0.0, -0.05), Vector3(0.4, 0.04, 0.3), C.metal)
+			for sx in [-0.2, 0.16]:
+				box(c + Vector3(sx, 0.0, -0.08), Vector3(0.04, 1.2, 0.04), Color("#c0463c"))
+			cyl(c + Vector3(-0.22, 0.0, -0.12), 0.1, 0.06, Color("#2f3236"), 8)
+			cyl(c + Vector3(0.22, 0.0, -0.12), 0.1, 0.06, Color("#2f3236"), 8)
+		"printer":
+			box(c + Vector3(-0.28, 0.62, -0.22), Vector3(0.56, 0.28, 0.44), Color("#e9eef2"), Color("#f6f8fa"))
+			box(c + Vector3(-0.3, 0, -0.24), Vector3(0.6, 0.62, 0.48), C.wood_dk)
 		"sofa", "bed":
 			box(c + Vector3(-w / 2 + 0.05, 0, -d / 2 + 0.1), Vector3(w - 0.1, 0.42, d - 0.2), Color(p.get("color", "#6b7fa6")))
 			box(c + Vector3(-w / 2 + 0.05, 0.42, -d / 2 + 0.1), Vector3(w - 0.1, 0.4, 0.18), Color(p.get("color", "#6b7fa6")).darkened(0.1))
@@ -1058,7 +1129,7 @@ func room_shell(m: MapData) -> void:
 	var ex := float(m.exit_x)
 	box(Vector3(0.6, 0, Hh - 0.55), Vector3(ex - 0.6, 0.45, 0.55), wall.darkened(0.15), wall.darkened(0.05))
 	box(Vector3(ex + 1.0, 0, Hh - 0.55), Vector3(W - 0.6 - ex - 1.0, 0.45, 0.55), wall.darkened(0.15), wall.darkened(0.05))
-	box(Vector3(-2, -0.3, -2), Vector3(W + 4, 0.28, Hh + 4), Color("#3d3833"))   # the dark around the room
+	box(Vector3(-8, -0.3, -6), Vector3(W + 16, 0.28, Hh + 14), Color("#3d3833"))   # the dark around the room
 
 
 # ── People: low-poly figures in each person's own colours. Built once per look, then shared. ──

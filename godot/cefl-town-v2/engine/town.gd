@@ -12,6 +12,7 @@
 #                                                  calls done.call(value); solve is the test player's move (called until done)
 #   var v = await T.panel(title, build(body), [[label, value, primary?]])
 #   await T.shop_order(title, note) · await T.shop_plan(note) · var res = await T.shop_run(event) · await T.ledger(res)
+#   var st = await T.live_shift(job, { seed, real, p, boss, boss_at, hour })   a job's live shift on its work floor (engine/live_shift.gd)
 #   T.give / take / has · T.flag / set_flag · T.remember / knows / trust · T.log_line · T.advance / set_time · T.go(map, x, y, dir)
 #   T.banner(kicker, title) · T.toast(text) · T.confetti() · T.save()
 #
@@ -34,6 +35,7 @@ const World = preload("res://engine/world3d/world3d.gd")
 const UIScript = preload("res://engine/ui/ui.gd")
 const Art = preload("res://engine/world/art.gd")
 const TownMap = preload("res://engine/ui/town_map.gd")
+const LiveShift = preload("res://engine/live_shift.gd")
 
 signal _goal_hit(target: String)
 signal _ui_done(value)
@@ -60,6 +62,7 @@ var running_day := false
 var finished := false
 var reduce_motion := false
 var people_def := {}
+var live                               # the live-shift runner (engine/live_shift.gd)
 var _auto_wait := 0
 var _hold_seen := 0
 
@@ -92,6 +95,9 @@ func start(def) -> void:
 	world.link_stepped.connect(_on_link)
 	world.room_exit.connect(_on_room_exit)
 	world.moved.connect(_on_moved)
+	live = LiveShift.new()
+	live.T = self
+	add_child(live)
 	if _map_view() != null:
 		ui.add_hud_button("Map", open_town_map)
 	ui.add_hud_button("Bag", open_bag)
@@ -239,7 +245,7 @@ func _valid_game(g) -> bool:
 
 
 func save() -> void:
-	if G.is_empty() or running_day or world.map == null:
+	if G.is_empty() or running_day or world.map == null or (live != null and live.active):
 		return
 	G.map = world.map.id
 	G.x = world.me.tile.x
@@ -390,7 +396,7 @@ func _on_room_exit() -> void:
 
 ## Everyone on this map, with bubbles; the gold marker; the top bar.
 func _refresh() -> void:
-	if world.map == null or G.is_empty():
+	if world.map == null or G.is_empty() or (live != null and live.active):
 		return
 	var list := []
 	for id in people_def:
@@ -412,6 +418,9 @@ func _process(_dt: float) -> void:
 
 
 func _on_interact(kind: String, id: String) -> void:
+	if live != null and live.active:
+		live.on_interact(kind, id)
+		return
 	if ui.open > 0 or busy_talk or running_day:
 		return
 	var t := kind + ":" + id
@@ -779,6 +788,13 @@ func box(kind: String, title: String, build: Callable, solve: Callable, kicker :
 	ui.close_panel(p)
 	save()
 	return res
+
+
+## A live shift on a job's own work floor (engine/live_shift.gd). o = { seed, real, p, boss: { id, look }, boss_at, hour }.
+## Returns the job's final state (job.tier(st), st.good, st.why…). The caller moves you back afterwards.
+func live_shift(job, o: Dictionary) -> Dictionary:
+	_trace("live " + str(job.id))
+	return await live.run(job, o)
 
 
 # ── The shop ──

@@ -7,8 +7,9 @@
 # town names its new rule after you (Ch 4). The story never touches the pay model, so it cannot change who wins.
 # Win = the goal jar is full after paycheque 8 and the bank is not overdrawn. In Real mode, two bounced payments from
 # paycheque 3 on end the chapter (replay it, or switch to Gentle).
-# Not yet in v2 (batch 2 of the port): the nine job games (every shift counts as "steady", as v1 without them), help requests,
-# news, Town Mail and the wallet, the home letter and goal item, the My Plan wall page.
+# Every shift is a live shift on the job's own work floor (games/payday/jobs/<job>.gd on engine/live_shift.gd): about two
+# minutes, a new twist each paycheque; great / ok / poor feeds perf_of (more or fewer hours, raises), as v1's job games did.
+# Not yet in v2 (batch 2b): help requests, news, Town Mail and the wallet, the home letter and goal item, the My Plan wall page.
 extends "res://games/cefl_town/game.gd"
 
 const M = preload("res://games/payday/model.gd")
@@ -175,6 +176,8 @@ func hud(S: Dictionary) -> Array:
 
 # ── Steps: four chapters, each ending at the soft gate ──
 func steps() -> Array:
+	if Town.debug and Town.args.has("shift_only"):   # test option shift_only=job:p[:n] plays n shifts of one job, from paycheque p
+		return ["solo"]
 	var a := ["chapter:0", "meet", "board", "paytype"]
 	a += _period(1) + _period(2) + ["light", "end1", "gate:1"]
 	a += ["chapter:1", "start2"] + _period(3) + ["mostub"] + _period(4) + ["why", "gate:2"]
@@ -319,7 +322,10 @@ func shift(T, ps: String) -> void:
 	if p == 1:
 		await T.say(b, w.hi)
 	if not run.shifts.has(str(p)):
-		run.shifts[str(p)] = "ok"   # the job games come in batch 2: every shift is steady, as in v1 without them
+		var t: String = await _work(T, p)
+		run.shifts[str(p)] = t     # stored before anyone reacts, so a reload never replays the shift
+		T.save()
+		await _shift_news(T, p)
 	await P.shifts(T, T.S, p)
 	T.banner("Payday", "Paycheque %d of 8" % p)
 	if p >= 5 and p <= 7:
@@ -333,6 +339,147 @@ func shift(T, ps: String) -> void:
 	else:
 		await T.say(b, [w.pay, "Here’s your first paycheque. Take it to the bank!"] if p == 1 else ([w.pay, "Pay-O-Matic 3001 made this one. I hear you fixed it. Thank you!"] if p == 8 and _story(T.S).has("fixed") else [w.pay]))
 	_toast_bag(T, "Pay stub %d" % p)
+
+
+# ── The live shift at every paycheque (games/payday/jobs/*.gd on engine/live_shift.gd) ──
+var _jobs := {}
+
+func job_model(jk: String):
+	if not _jobs.has(jk):
+		_jobs[jk] = load("res://games/payday/jobs/%s.gd" % jk).new()
+	return _jobs[jk]
+
+
+## What a result means for the next paycheque (v1's words).
+func _tier_text(j: Dictionary, p: int) -> Dictionary:
+	if p >= M.PERIODS:
+		return {"great": "Your boss will write you a good reference.", "ok": "Your boss thanks you for all your shifts.", "poor": "Not the last shift you wanted."}
+	if j.type == "salary":
+		return {"great": "A step toward a raise at your review.", "ok": "Your boss is happy with steady work.", "poor": "Your boss will put a warning in your file."}
+	return {"great": "More hours next paycheque, and a step toward a raise.", "ok": "Same hours next paycheque.", "poor": "Fewer hours next paycheque."}
+
+
+const TIER_WORD := {"great": "Great", "ok": "Steady", "poor": "Rough", "skip": "Skipped"}
+
+## The shift itself → "great" | "ok" | "poor" | "skip". shift=great|ok|poor|skip (or a list, one per paycheque) skips the play.
+func _work(T, p: int) -> String:
+	var pd: Dictionary = T.S.pd
+	var run: Dictionary = pd.run
+	var j: Dictionary = M.JOBS[run.job]
+	var J = job_model(str(run.job))
+	var tw: Dictionary = J.twists()[p - 1]
+	var tt := _tier_text(j, p)
+	var forced := ""
+	if T.args.has("shift") and str(T.args.shift) != "play":
+		var list: PackedStringArray = str(T.args.shift).split(",")
+		forced = list[(p - 1) % list.size()]
+	var hold := {}
+	var go = await T.box("shift_intro", "%s: your shift at %s" % [J.name, j.biz], func(bx, done):
+		hold.done = done
+		var body: VBoxContainer = bx.body
+		body.add_child(T.ui.label("Shift %d of 8 · %s" % [p, tw.name], "Kicker"))
+		body.add_child(T.ui.label(str(tw.line), "Strong"))
+		var lines: Array = J.controls if (p == 1 or T.mode() == "gentle") else [J.controls[0]]
+		for l in lines:
+			body.add_child(T.ui.label("• " + str(l)))
+		body.add_child(T.ui.label("About %d minutes. %s" % [maxi(1, roundi(float(tw.get("len", 120.0)) / 60.0)), "In Gentle mode the clock slows while a work card is open, and a gold arrow shows the most urgent job." if T.mode() == "gentle" else "Real mode: full speed, no arrow."], "Muted"))
+		body.add_child(T.ui.label("Great: %s   Steady: %s   Rough: %s" % [tt.great, tt.ok, tt.poor], "Muted"))
+		bx.foot.add_child(T.ui.button("Skip this shift", false, func(): done.call("skip")))
+		var sb: Button = T.ui.button("Start the shift", true, func(): done.call("start"))
+		bx.foot.add_child(sb)
+		sb.call_deferred("grab_focus"),
+		func(_how): hold.done.call("start"), J.place)
+	if forced != "":
+		go = forced
+	if go != "start":
+		var t: String = go if go in ["great", "ok", "poor", "skip"] else "skip"
+		pd.shift_log = pd.get("shift_log", {})
+		pd.shift_log[str(p)] = {"tier": t, "forced": forced != ""}
+		return t
+	var b: String = "boss_" + str(run.job)
+	var st: Dictionary = await T.live_shift(J, {"seed": int(T.S.seed) * 10 + p, "real": T.mode() == "real", "p": p,
+		"boss": {"id": b, "look": X.WORK[run.job].look}, "boss_at": J.boss_at, "hour": J.hour})
+	var t: String = J.tier(st)
+	pd.shift_log = pd.get("shift_log", {})
+	pd.shift_log[str(p)] = {"tier": t, "good": int(st.good), "bad": int(st.bad), "lost": int(st.lost), "demand": int(st.demand), "why": st.why.duplicate()}
+	T.go(X.WORK[run.job].b, 4, 4, "up")
+	await T.box("shift_end", "Shift over: %s" % TIER_WORD[t], func(bx, done):
+		hold.done = done
+		var body: VBoxContainer = bx.body
+		body.add_child(T.ui.label("%s · shift %d of 8 · %s" % [j.biz, p, tw.name], "Kicker"))
+		var stats := "Done right: %d   ·   Mistakes: %d   ·   Customers or jobs lost: %d" % [int(st.good), int(st.bad), int(st.lost)]
+		body.add_child(T.ui.label(stats, "Strong"))
+		var e: String = J.earn_line(st)
+		if e != "":
+			body.add_child(T.ui.label(e))
+		body.add_child(T.ui.label("%s: %s" % [TIER_WORD[t], tt[t]], "Strong"))
+		var tip: String = J.tip_line(st)
+		if tip != "" and t != "great":
+			body.add_child(T.ui.label("Next time: " + tip, "Muted"))
+		var ok: Button = T.ui.button("Continue", true, func(): done.call(true))
+		bx.foot.add_child(ok)
+		ok.call_deferred("grab_focus"),
+		func(_how): hold.done.call(true), j.biz)
+	return t
+
+
+## The boss reacts, then says what the shift means for the next paycheque (v1's shiftNews).
+func _shift_news(T, p: int) -> void:
+	var run: Dictionary = T.S.pd.run
+	var b: String = "boss_" + str(run.job)
+	var J = job_model(str(run.job))
+	var t := M.shift_of(run, p)
+	var sal: bool = M.JOBS[run.job].type == "salary"
+	var bf := M.perf_of(run, p)
+	var af := M.perf_of(run, p + 1)
+	var L := []
+	L.append("You were here, but you didn’t really work that shift." if t == "skip" else str(J.react[t]))
+	if p >= M.PERIODS:
+		L.append("Last shift, and a great one. I’ll write you a good reference." if t == "great" else ("Thanks for all your shifts." if t == "ok" else "Not your best last shift. Thanks anyway."))
+	else:
+		if int(af.hours) > 0:
+			L.append("Great work earns more hours: %d more on your next paycheque." % int(af.hours))
+		if int(af.hours) < 0:
+			L.append("So I’m giving some of your hours to someone else: %d fewer on your next paycheque." % -int(af.hours))
+		if sal and t == "great" and af.raises == bf.raises:
+			L.append("On a salary, your pay stays the same. But I’m noting this for your review.")
+		if int(af.raises) > int(bf.raises):
+			if sal:
+				var y := int(M.JOBS[run.job].yearly)
+				L.append("Review time! Three great shifts. Your salary goes up %s a year. That’s %s more every paycheque." % [Money.fmt_w(M.RAISE_SALARY),
+					Money.fmt(roundi(float(y + int(af.raises) * M.RAISE_SALARY) / 26.0) - roundi(float(y + int(bf.raises) * M.RAISE_SALARY) / 26.0))])
+			else:
+				L.append("That’s three great shifts. You’ve earned a raise! %s more an hour, starting next paycheque." % Money.fmt(M.RAISE_WAGE))
+		elif t == "great":
+			var left: int = M.MERIT_FOR_RAISE - int(af.merit)
+			L.append("One more great shift, and you’ve earned a raise." if left == 1 else "%d more great shifts, and we’ll talk about a raise." % left)
+		if t == "poor" or t == "skip":
+			L.append(("That’s your second warning. " + ("Your progress toward a raise starts over. " if int(bf.merit) > 0 else "") + "Show me steady work.") if int(af.warns) >= 2
+				else ("This goes in your file as a warning." if sal else "Consider this a warning."))
+	await T.say(b, L)
+
+
+## Test option shift_only=job:p[:n]: straight into the shifts of one job (for screenshots and live-shift checks).
+func solo(T) -> void:
+	var v: PackedStringArray = str(T.args.shift_only).split(":")
+	var jk := v[0]
+	var p0 := int(v[1]) if v.size() > 1 else 1
+	var n := int(v[2]) if v.size() > 2 else 1
+	var wk := ""
+	for w in M.WORKERS:
+		if jk in M.WORKERS[w].jobs:
+			wk = w
+	var pd: Dictionary = T.S.pd
+	pd.sit = wk
+	pd.run = M.new_run(wk, jk, T.S.seed)
+	M.set_job(pd.run, jk)
+	T.refresh_look()
+	T.go(X.WORK[jk].b, 4, 4, "up")
+	for p in range(p0, p0 + n):
+		var t: String = await _work(T, p)
+		pd.run.shifts[str(p)] = t
+		var lg: Dictionary = pd.shift_log.get(str(p), {})
+		print("SHIFT-RESULT job=%s p=%d tier=%s good=%d bad=%d lost=%d demand=%d" % [jk, p, t, int(lg.get("good", 0)), int(lg.get("bad", 0)), int(lg.get("lost", 0)), int(lg.get("demand", 0))])
 
 
 func _timesheet(run: Dictionary, p: int) -> String:
