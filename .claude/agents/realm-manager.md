@@ -59,7 +59,10 @@ The project builds in batches: one batch = one piece of the chapter, all its con
 
 Give each task an owner from the project's routing (CLAUDE.md, "Model routing"):
 - **main session**: anything that changes the story, quest wording, numbers, answers, hints, misconceptions, the design doc, or needs a design decision; new game logic that is mostly teaching.
-- **sweep**: mechanical code work once the design is set (wiring, a probe or test fix, HTML polish, applying one rule in many places).
+- **realm-builder**: Realm game code and maps once the design is set: board fixes, walking and map fixes, panel and report fixes, wiring a chapter from its finished design. Stops at teaching content and at new panel types or engine changes (those need the main session, or Opus).
+- **voxel-people**: people and animals in the voxel pack (`realm/voxpeople`): new cast for a chapter, fixes to a face, hat, held item or pose.
+- **blender-models**: props, buildings and terrain in the Emberdale pack.
+- **sweep**: one rule applied in many places (a rename, a label format, a probe or script fix that is not Realm game code).
 - **render-and-site**: exporting the game, putting it on the site, links and nav.
 - **checker**: screenshots at 1366×768, headless playtests, "does this panel match the design".
 - **playtest**: the nightly play-through, once it covers Realm.

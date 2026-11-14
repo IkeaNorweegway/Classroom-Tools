@@ -286,7 +286,7 @@ def person(name, skin, P=None, eye=INK, mouth=MOUTH):
     return F
 
 
-def hair(F, style, col, tie=None):
+def hair(F, style, col, tie=None, lift=False):
     """short long bun curly shaved braids, or ring (bald on top). Everything a hat must cover stays inside the hat."""
     n = F.neck
     for i in (4, 5, 6, 7):                                   # the back of the head
@@ -303,7 +303,7 @@ def hair(F, style, col, tie=None):
         return
     for i in range(6 if style == "shaved" else 5, 8):        # the top, front
         F.box(HEAD[i][0], n + i, HEAD[i][1], n + i, col, 0)
-    if style != "shaved":
+    if style != "shaved" and not (lift and style == "curly"):
         # the fringe; dark hair keeps clear of the eyes so the two do not run together
         for x in ((-5, -4, 0, 4) if dark(col) and col != "#ffffff" and sum(int(col[i:i + 2], 16) for i in (1, 3, 5)) < 200 else (-5, -4, -3, 0, 3, 4)):
             F.put(x, n + 4, col, 0)
@@ -317,6 +317,18 @@ def hair(F, style, col, tie=None):
         F.box(-1, n + 2, 1, n + 4, col, 2, "head")
         if tie:
             F.box(-1, n + 2, 1, n + 2, tie, 2, "head")
+    elif style == "curly" and lift:                          # a lifted fringe: tufts sit above the eyes, never beside them
+        F.box(-2, n + 8, 2, n + 8, col)
+        for x in (-5, 5):
+            F.put(x, n + 4, col, 0)
+        for x, y in ((-6, n + 4), (6, n + 4), (-5, n + 5), (5, n + 5)):
+            F.put(x, y, col)
+        for x in (-4, 0, 4):
+            F.put(x, n + 5, col, -1)
+        for x in range(-4, 5):
+            for y in range(n + 2, n + 5):
+                if (x + y) % 2 == 0:
+                    F.put(x, y, col, 2)
     elif style == "curly":
         F.box(-2, n + 8, 2, n + 8, col)
         for x, y in ((-6, n + 2), (-6, n + 4), (6, n + 3), (5, n + 4), (-5, n + 5), (5, n + 5)):
@@ -346,8 +358,9 @@ def beard(F, col, long=False):
             F.box(-w, n - 1 - i, w, n - 1 - i, col, -1, "head")
 
 
-def glasses(F, col=INK):
-    n, z, t = F.neck, 1 + 0.15, 0.2
+def glasses(F, col=INK, t=0.2):
+    """Thin round-ish frames (t voxels wide) round each eye; pick a light colour so the eyes show through."""
+    n, z = F.neck, 1 + 0.15
     for x0 in (-3, 2):
         a, b, lo, hi = x0 - t, x0 + 2 + t, n + 2 - t, n + 4 + t
         for q in ((a, lo, b, lo + t), (a, hi - t, b, hi), (a, lo, a + t, hi), (b - t, lo, b, hi)):
@@ -504,7 +517,7 @@ def pell():
     F.put(2, h, GOLD_DK, -1, "spine")
     F.box(F.X0, n - 1, F.X1, n - 1, "#c0392b")               # scarf
     F.box(1, n - 3, 2, n - 2, "#c0392b", 0)
-    hair(F, "curly", "#2b1d14")
+    hair(F, "curly", "#2b1d14", lift=True)
     return F.finish()
 
 
@@ -588,7 +601,7 @@ def odile():
         F.put(x, y, GOLD_DK, 0)
     F.box(-1, n - 4, 0, n - 4, GOLD, 0)
     hair(F, "bun", "#8a3b22")
-    glasses(F, "#4b3a2c")
+    glasses(F, "#9a6a2c", t=0.12)
     return F.finish(lg=0.55)
 
 
@@ -725,7 +738,7 @@ def taddeus():
     F.box(5, n + 6, 5, n + 7, br, -1, "head")
     for x, y in ((6, n + 3), (6, n + 4), (7, n + 5), (7, n + 6)):   # quill
         F.put(x, y, "#f1ece2", 0)
-    glasses(F, GOLD_DK)
+    glasses(F, "#9a6a2c", t=0.12)
     return F.finish(lg=0.55)
 
 
@@ -970,7 +983,7 @@ def sheep_like(name, wool, facec, legc, big):
     for x in range(hx[0], hx[1] + 1):
         for y in range(hy[0], hy[1] + 1):
             for z in range(hz[0], hz[1] + 1):
-                A.put3(x, y, z, w() if (y == hy[1] or z < hz[1] - 1) else facec, "head")
+                A.put3(x, y, z, w() if z < hz[1] else facec, "head")
     for x in (hx[0] - 1, hx[1] + 1):                         # ears
         A.put3(x, hy[1] - 2, hz[0] + 1, facec, "head")
     ex = 1 if big else 0
@@ -984,7 +997,7 @@ def sheep_like(name, wool, facec, legc, big):
     A.build(rig)
     rig.anim("idle", [(1, {}), (25, {"head": (4, 10, 0)}), (49, {"head": (0, -8, 0)}), (73, {})])
     quad_walk(rig, legs, amp=24 if big else 30)
-    gz = lambda yaw: {"head": (50, yaw, 0), "body": {"r": (5, 0, 0)}}
+    gz = lambda yaw: {"head": (16, yaw, 0), "body": {"r": (4, 0, 0), "t": (0, -0.015, 0)}}
     rig.anim("graze", [(1, gz(0)), (9, gz(7)), (17, gz(-7)), (25, gz(0))])
     return rig
 
@@ -1003,24 +1016,23 @@ def lamb():
 def hen():
     A = Vox("hen")
     wh, red, yl = "#f1ece2", "#c0392b", "#e0a83a"
-    A.box3(-2, 3, -3, 2, 7, 3, wh, "body")
-    A.box3(-1, 6, -5, 1, 9, -4, wh, "body")                  # tail
-    A.box3(-1, 9, -5, 1, 10, -5, shade(wh, -0.08), "body")
-    A.box3(-3, 4, -2, -3, 6, 2, shade(wh, -0.08), "body")    # wings
-    A.box3(3, 4, -2, 3, 6, 2, shade(wh, -0.08), "body")
-    A.box3(-1, 7, 3, 1, 10, 5, wh, "head")
-    A.box3(0, 11, 3, 0, 11, 5, red, "head")
-    A.put3(0, 12, 4, red, "head")
-    A.put3(0, 8, 6, yl, "head")
-    A.put3(0, 7, 6, red, "head")
-    A.put3(-1, 9, 5, INK, "head")
-    A.put3(1, 9, 5, INK, "head")
+    A.box3(-2, 2, -3, 2, 5, 3, wh, "body")                   # 10 voxels (0.40) from foot to comb
+    A.box3(-1, 4, -5, 1, 7, -4, wh, "body")                  # tail
+    A.box3(-1, 7, -5, 1, 8, -5, shade(wh, -0.08), "body")
+    A.box3(-3, 3, -2, -3, 4, 2, shade(wh, -0.08), "body")    # wings
+    A.box3(3, 3, -2, 3, 4, 2, shade(wh, -0.08), "body")
+    A.box3(-1, 5, 3, 1, 8, 5, wh, "head")
+    A.box3(0, 9, 3, 0, 9, 5, red, "head")
+    A.put3(0, 6, 6, yl, "head")
+    A.put3(0, 5, 6, red, "head")
+    A.put3(-1, 7, 5, INK, "head")
+    A.put3(1, 7, 5, INK, "head")
     legs = {}
     for nm, x in (("leg_L", 1), ("leg_R", -1)):
-        A.box3(x, 0, 0, x, 2, 0, yl, nm)
+        A.box3(x, 0, 0, x, 1, 0, yl, nm)
         A.put3(x, 0, 1, yl, nm)
-        legs[nm] = (x + 0.5, 3, 0.5)
-    rig = quad_rig("hen", (0, 5, 0), (0, 7, 3), legs)
+        legs[nm] = (x + 0.5, 2, 0.5)
+    rig = quad_rig("hen", (0, 3.5, 0), (0, 5, 3), legs)
     A.build(rig)
     rig.anim("idle", [(1, {}), (13, {"head": (0, 25, 0)}), (25, {"head": (0, 25, 0)}), (31, {"head": (0, -20, 0)}), (49, {})])
     quad_walk(rig, legs, amp=32, bob=0.008)
@@ -1030,9 +1042,9 @@ def hen():
 
 
 def sit_clip(rig, tail=True):
-    st = {"body": {"r": (-28, 0, 0), "t": (0, -0.05, -0.03)}, "leg_BL": (-62, 0, 0), "leg_BR": (-62, 0, 0), "leg_FL": (28, 0, 0),
-          "leg_FR": (28, 0, 0), "head": (14, 0, 0)}
-    rig.anim("sit", [(1, st), (13, dict(st, head=(10, 15, 0))), (25, dict(st, head=(16, -8, 0))), (37, st)])
+    st = {"body": {"r": (-12, 0, 0), "t": (0, -0.04, -0.03)}, "leg_BL": (-52, 0, 0), "leg_BR": (-52, 0, 0), "leg_FL": (12, 0, 0),
+          "leg_FR": (12, 0, 0), "head": (6, 0, 0)}
+    rig.anim("sit", [(1, st), (13, dict(st, head=(4, 15, 0))), (25, dict(st, head=(8, -8, 0))), (37, st)])
 
 
 @model("dog", "animal", "A sheepdog: black and white, ears up, white-tipped tail")

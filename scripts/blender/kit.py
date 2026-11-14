@@ -32,6 +32,7 @@ PAL = {
     "moss": "#3f5a3a", "moss_dk": "#2c4230", "fir": "#24382e", "fir2": "#2e4636", "fir_dk": "#1c2b24",
     "bark": "#4a3a30", "bark_dk": "#33281f", "leafy": "#3d5b3c", "clear_grass": "#4f6e48", "clear_grass_dk": "#435f3e",
     "path_dk": "#7b6a52", "path_dk2": "#6a5a45",
+    "brick": "#a9583f", "brick_dk": "#8a4232", "brick_lt": "#bf7752", "brick_pale": "#d0a17e",
     "glow_teal": "#7ff0d8", "glow_cyan": "#9fe8ff", "glow_violet": "#c9a2ff", "glow_amber": "#ffc46b",
 }
 

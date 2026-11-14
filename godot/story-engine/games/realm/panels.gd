@@ -156,7 +156,11 @@ static func order_line(T, o: Dictionary) -> String:
 		var body: VBoxContainer = p.body
 		body.add_child(ui.rich(T.fill(o.prompt)))
 		var pv := {"p": []}
-		var line := sketch(100, func(c): draw_line(c, ui.font, float(o.lo), float(o.hi), int(o.get("den", 4)), pv.p, 1.0))
+		# Fine ticks (o.den) and the picked cards as points are a hint: Gentle only, after a wrong try. Until then
+		# the line shows quarters at most, so ordering is the student's own work.
+		var helped := func() -> bool: return st.tier != "" or (T.mode() == "gentle" and st.tries > 0)
+		var line := sketch(100, func(c): draw_line(c, ui.font, float(o.lo), float(o.hi), int(o.get("den", 4)) if helped.call() else mini(int(o.get("den", 4)), 4),
+			pv.p if st.tier != "" else (pts(st.picked) if helped.call() else []), 1.0))
 		body.add_child(line)
 		body.add_child(ui.label("Your order, least to greatest:", "Muted"))
 		var mine: Label = ui.label("(tap the cards)", "Strong")
@@ -223,7 +227,7 @@ static func order_line(T, o: Dictionary) -> String:
 					ok = false
 			if ok:
 				_feedback(T, fb, "Right: " + "  <  ".join(st.picked.map(func(s): return Frac.text(Ch1.F(s)))) + ".", true)
-				finish.call(["first", "second", "later"][mini(st.tries, 2)])
+				finish.call(["first", "second", "third"][mini(st.tries, 2)])
 				return
 			st.tries += 1
 			if st.tries >= max_tries:
@@ -325,7 +329,7 @@ static func step_order(T, o: Dictionary) -> String:
 			if st.tier != "":
 				return
 			if st.picked == o.answer:
-				st.tier = ["first", "second", "later"][mini(st.tries, 2)]
+				st.tier = ["first", "second", "third"][mini(st.tries, 2)]
 				_feedback(T, fb, "Right: brackets, then the exponent, then multiply, then add.", true)
 			else:
 				st.tries += 1

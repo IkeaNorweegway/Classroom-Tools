@@ -101,7 +101,7 @@ static func count(S: Dictionary, id: String) -> int:
 	return int(S.inv.get(id, 0))
 
 
-# ── First-try records (the report reads these). tier: "first" | "second" | "later" ──
+# ── First-try records (the report reads these). tier: "first" | "second" | "third" (T.frac and the Realm panels) | "later" ──
 static func record(S: Dictionary, key: String, label: String, tier: String, extra = null) -> void:
 	if not S.answers.has(key):
 		S.answers[key] = {"label": label, "tier": tier, "day": int(S.day), "extra": extra}

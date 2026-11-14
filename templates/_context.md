@@ -20,6 +20,8 @@ Example: `quiz-template.md`
 - `quiz-template.md` — header, outcome map table, instructions, item sections by type, answer key section
 - `test-template.md` — same as quiz with extended response section and rubric block
 - `exit-ticket-template.md` — one ticket per knowledge cluster, 3 questions each, 3–5 minutes, every question mapped to an LO
+- `realm-voxel-character-template.md` — the measured build of the hand-made voxel hero (grid, blocks, bones, colours, clips) and the rules for drawing a new Realm character on it. A reference to follow, not a file to copy; the builder is `scripts/blender/realm_voxel_people.py`
+- `handoff-template.md` — task file for handing mechanical work (sweeps, render-script edits, site wiring) to a cheaper model in Kilo: files, rule, one finished example, do-not list, done checks, Claude's review. Rules for those models: `AGENTS.md`. Filled copies go in `handoffs/` (gitignored)
 - `slides-template/` — a folder, not one file: `deck.json` plus one slide file per layout (cover, guiding question, icon cards, flow diagram, fill-in blanks, statement with map, large visual, reflection). Copy the whole folder. Spec: `slides/_context.md`
 
 Also here: `rubric-phrase-bank.md` (level labels, descriptor rules, student and feedback wording for any rubric), `evidence-design-principles.md` (build-time checklist) and `teacher-notes-format-context.md` (teacher notes format spec).

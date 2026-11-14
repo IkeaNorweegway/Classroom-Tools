@@ -5,6 +5,7 @@
 #
 # Changes from the sketch, so every model has room to work:
 #   - the mill sits one cell higher (rows 7–8), so its door has a doorstep; its wheel turns in a mill race (row 9, cols 16–17);
+#   - a plank footbridge (two spans) crosses the tail of the race at tiles x 32–35, y 19–20, from the mill door to the wheel ring;
 #   - one stone gate arch, on the Highstead side of the Low Road (its sign faces you as you come up from Brindle Ford);
 #   - the waterfalls stand on the gorge wall (Brindle Ford col 24; the north end of the gorge in Highstead, col 25);
 #   - sigil spots sit on ground you can stand on: the pond spot on its south bank (5, 12), the wheel spot east of the race (18, 9);
@@ -13,7 +14,7 @@
 extends RefCounted
 
 const P := "realm/emberdale:"
-const A := "realm/people:"   # rigged animals with looping clips
+const A := "realm/voxpeople:"   # rigged animals with looping clips
 
 # Cell kinds: . grass  : stubble  = road  - footpath  ~ water  p pond (freezes)  f ford  W/E gorge wall (west/east)  G gorge floor
 #             v waterfall on the west wall  N north wall  a/b north-west/north-east corner  V waterfall at the north end
@@ -78,10 +79,25 @@ const DECO := {".": "t_grass", ":": "t_stubble", "=": "t_path", "~": "t_water", 
 	",": "t_far_bank", "q": "t_square"}
 const TURN := {"W": ["t_gorge_edge", 90], "E": ["t_gorge_edge", -90], "N": ["t_gorge_edge", 0], "v": ["t_waterfall", 90],
 	"V": ["t_waterfall", 0], "a": ["t_gorge_corner_out", 0], "b": ["t_gorge_corner_out", -90]}
+# Footpaths: ten winding variants (all join edge to edge) chosen by cell hash, so a path never repeats a tile;
+# corners are rounded turns. The corner model joins its south and east edges, so yaw turns it to the other three.
+const FOOTPATHS := ["t_footpath", "t_footpath_2", "t_footpath_3", "t_footpath_4", "t_footpath_5",
+	"t_footpath_6", "t_footpath_7", "t_footpath_8", "t_footpath_9", "t_footpath_10"]
+const FOOT_CORNERS := ["t_footpath_corner", "t_footpath_corner_b"]
+# Weathered cobblestone paving for the market squares; the variants share a stone layout, so any mix tiles.
+const SQUARES := ["t_cobble", "t_cobble_b", "t_cobble_c"]
 
 
 static func _h(a: int, b: int) -> float:
 	return float(("%d:%d" % [a, b]).hash() & 0xffff) / 65535.0
+
+
+## A deterministic hash well mixed across neighbouring cells (String.hash keeps neighbours too alike, so the
+## footpath variant pick would repeat down a whole run).
+static func _hash2(a: int, b: int) -> int:
+	var h: int = (a * 374761393 + b * 668265263) & 0x7fffffff
+	h = ((h ^ (h >> 13)) * 1274126177) & 0x7fffffff
+	return (h ^ (h >> 16)) & 0x7fffffff
 
 
 ## Ground (a kind per tile) and the pack terrain draws, from a sketch. frozen: pond cells become ice.
@@ -107,12 +123,25 @@ static func _terrain(sk: Array, frozen: bool) -> Dictionary:
 				name = TURN[ch][0]
 				yaw = TURN[ch][1]
 			elif ch == "-":
-				name = "t_footpath"
-				var left := cx > 0 and row[cx - 1] in ["-", "="]
-				var right := cx < row.length() - 1 and row[cx + 1] in ["-", "="]
-				yaw = 90.0 if (left or right) and not (cy > 0 and sk[cy - 1][cx] == "-") else 0.0
+				var n: bool = cy > 0 and sk[cy - 1][cx] in ["-", "="]
+				var s: bool = cy < sk.size() - 1 and sk[cy + 1][cx] in ["-", "="]
+				var w: bool = cx > 0 and row[cx - 1] in ["-", "="]
+				var e: bool = cx < row.length() - 1 and row[cx + 1] in ["-", "="]
+				var vert: bool = n or s
+				var horz: bool = w or e
+				if vert and horz and not (n and s) and not (e and w):   # a turn, not a crossing
+					name = FOOT_CORNERS[_hash2(cx, cy) % FOOT_CORNERS.size()]
+					if s and e: yaw = 0.0
+					elif e and n: yaw = 90.0
+					elif n and w: yaw = 180.0
+					else: yaw = -90.0
+				else:
+					name = FOOTPATHS[_hash2(cx, cy) % FOOTPATHS.size()]
+					yaw = 90.0 if horz else 0.0
 			elif ch == "=":
 				name = "t_path"
+			elif ch == "q":
+				name = SQUARES[_hash2(cx, cy) % SQUARES.size()]
 			else:
 				name = DECO.get(ch, "t_grass")
 				if ch == "." and _h(cx, cy) < 0.18:
@@ -167,6 +196,14 @@ static func _brindle(f: Dictionary, sig: bool) -> Dictionary:
 		draws.append({"kind": "bridge", "x": 48, "y": 26, "w": 6, "h": 2})
 	if f.get("sigil_pond", false):
 		draws.append({"kind": "ice", "x": 6, "y": 18, "w": 10, "h": 6})
+	# The footbridge over the tail of the mill race, just below the wheel (T-025): two 2 × 2 plank spans end to end over
+	# x 32–35, drawn a quarter tile north of rows 19–20 so the deck clears the wheel and lands on both banks. Its tiles
+	# (x 32–35, y 19–20) are walkable, so the wheel ring (36, 18) is 7–8 steps from the mill door; the water draws stay under it.
+	for by in [19, 20]:
+		for bx in range(32, 36):
+			t.ground[by * t.w + bx] = KIND["-"]
+	for bx in [32, 34]:
+		draws.append({"kind": "pack", "pack": P + "footbridge", "x": bx, "y": 18.75, "w": 2, "h": 2, "yaw": 90.0})
 	var b := [
 		{"id": "cottage", "pack": P + "cottage_hesper", "x": 4, "y": 36, "w": 6, "h": 4, "door": 6, "to": "cottage", "sign": "Hesper's cottage"},
 		{"id": "mill", "pack": P + "mill", "x": 30, "y": 14, "w": 6, "h": 4, "door": 31, "to": "mill", "sign": "The mill",
@@ -191,7 +228,7 @@ static func _brindle(f: Dictionary, sig: bool) -> Dictionary:
 	var props := [
 		# the village
 		_prop("signpost", 16, 25), _prop("lantern_post", 21, 25), _prop("lantern_post", 33, 25), _prop("lantern_post", 45, 25),
-		_prop("barrel", 26, 25), _prop("sack_pile", 27, 25), _prop("trough", 34, 34, 2, 1),
+		_prop("barrel", 26, 25), _prop("sack_pile", 26, 26), _prop("trough", 34, 34, 2, 1),
 		_prop("bench", 32, 28, 2, 1), _prop("crate", 44, 28), _prop("cart", 42, 34, 2, 1),
 		_prop("hay_bale", 42, 30), _prop("hay_bale", 43, 31), _prop("fence_rail", 44, 33, 2, 1), _prop("fence_rail", 46, 33, 2, 1, {"ox": 0.0}),
 		# the mill and its yard
@@ -266,7 +303,7 @@ static func _highstead(f: Dictionary, sig: bool) -> Dictionary:
 		{"k": "none", "x": 17, "y": 38, "h": 2, "solid": true}, {"k": "none", "x": 20, "y": 38, "h": 2, "solid": true},
 		_prop("stone_wall_2", 13, 39, 2, 1), _prop("stone_wall_2", 22, 39, 2, 1),
 		# the grain-tower yard: fenced, its gate frozen shut until the Balance sigil thaws it
-		_prop("hay_stack", 40, 8, 2, 2), _prop("sack_pile", 47, 9), _prop("cart", 44, 9, 2, 1),
+		_prop("hay_stack", 40, 4, 2, 2), _prop("sack_pile", 47, 9), _prop("cart", 44, 9, 2, 1),
 		_tree("tree_aspen", 4, 4), _tree("tree_aspen_au", 18, 8), _tree("tree_cottonwood", 4, 34), _tree("tree_spruce", 26, 36),
 		_tree("tree_aspen", 34, 36), _tree("tree_aspen_au", 40, 40), _tree("tree_spruce", 6, 40), _tree("tree_aspen", 44, 16),
 		_tree("tree_aspen_au", 52, 16), _tree("tree_cottonwood", 14, 26), _tree("tree_spruce", 54, 4),
@@ -305,7 +342,7 @@ static func _cottage() -> Dictionary:
 		"props": [
 			{"k": "hearth", "x": 1, "y": 2, "w": 2, "color": "#8c8173", "solid": true}, {"k": "board", "x": 6, "y": 2, "id": "frost_window", "label": "The frost window"},
 			{"k": "shelf", "x": 7, "y": 2}, {"k": "table", "x": 6, "y": 4}, {"k": "rug", "x": 3, "y": 4, "w": 3, "h": 1, "color": "#7a4a5a"},
-			_prop("barrel", 1, 5), _prop("sack", 7, 5), {"k": "plant", "x": 1, "y": 4},
+			_prop("barrel", 1, 5), _prop("sack", 7, 3), {"k": "plant", "x": 1, "y": 3},
 		]}
 
 
@@ -313,7 +350,7 @@ static func _mill_room() -> Dictionary:
 	return {"name": "The mill", "w": 9, "h": 7, "room": {"floor": "wood", "wall": "#ddd2bd", "exit": 4},
 		"props": [
 			{"k": "millstone", "x": 1, "y": 2, "w": 2, "h": 2, "color": "#a49c8e", "solid": true}, {"k": "desk", "x": 6, "y": 2, "id": "ledger", "label": "Abel's ledger", "solid": true},
-			_prop("sack_pile", 7, 3), _prop("sack", 7, 4), _prop("barrel", 1, 5), _prop("sack_pile", 7, 5),
+			_prop("sack_pile", 7, 2), _prop("sack", 7, 4), _prop("barrel", 1, 5), _prop("sack_pile", 7, 5),
 		]}
 
 

@@ -47,7 +47,7 @@ Note the version mismatch in `render_sci7_workbooks.py`: it reads the `v2` markd
 
 ---
 
-- `blender/` — Blender model packs for the Godot games (`kit.py` shapes and palette, `realm_pack.py` the Emberdale pack, `realm_people.py` the Realm people, `town_people.py` the CEFL Town student avatars and their clothes, `contact_sheet.py` and `showcase.py` for checking). Rules in `_games-context.md` (Blender model packs).
+- `blender/` — Blender model packs for the Godot games (`kit.py` shapes and palette, `realm_pack.py` the Emberdale pack, `realm_people.py` the Realm people, `realm_voxel_people.py` the Realm voxel people (template: `templates/realm-voxel-character-template.md`; pictures with `voxel_sheet.py`), `town_people.py` the CEFL Town student avatars and their clothes, `contact_sheet.py` and `showcase.py` for checking). `still_render.py` renders one cutscene shot from an external `.blend` plus the set: a single palette-snapped still, or, when its manifest has a `video` block, an Ogg Theora clip with its own camera move. Its manifests are in `stills/` and `render_still.sh` runs it. Rules in `_games-context.md` (Blender model packs, Cutscene stills and video).
 
 ## Scripts elsewhere
 

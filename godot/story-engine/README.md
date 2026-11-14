@@ -74,6 +74,7 @@ godot --headless --path godot/story-engine -s res://tests/test_jobs.gd          
 godot --path godot/story-engine --resolution 1366x768 -s res://tests/shot.gd -- game=payday debug=1 auto=right shift=play shift_only=grocer:2 park=28 wait=42 out=/abs/shot.png   # one live shift on screen
 godot --headless --path godot/story-engine -s res://tests/test_nav.gd -- game=town      # can you walk everywhere?
 godot --headless --path godot/story-engine -s res://tests/test_chamber.gd -- game=lab debug=1 auto=right hold=puzzle   # puzzle chambers and cut scenes
+godot --headless --path godot/story-engine -- game=realm debug=1 auto=right quit=1   # Realm Chapter 1, self-played
 godot --path godot/story-engine --resolution 1366x768 -s res://tests/shot.gd -- game=lab debug=1 auto=right scene=lab_open wait=3 out=/abs/shot.png   # a cut scene on screen
 godot --path godot/story-engine --resolution 1366x768 -s res://tests/perf_walk.gd -- debug=1 auto=right   # frame rate on a walk across town
 scripts/playtest_town2.sh OUTDIR "auto=right seed=7" "auto=wrong seed=3 pick=rand"  # play-through probe: transcript, walking check on every map, OUTDIR/digest.md

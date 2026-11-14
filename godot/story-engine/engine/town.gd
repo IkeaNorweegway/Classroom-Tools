@@ -709,7 +709,7 @@ func calc(o: Dictionary) -> String:
 ##       shows this button, which shows the hint), why?, show?: Callable(body), unit? ("°C"), traps?: [[value, feedback]],
 ##       judge?: Callable(value) → extra line for a wrong value, on_wrong?: Callable(value), lose? (no answer shown after the
 ##       last try: returns "lost"), tries? (override), record? (false: not in the report), right_line? }
-## → "first" | "second" | "later" (| "lost"). A rounded decimal for a repeating answer says "close" and is not a try.
+## → "first" | "second" | "third" (right on the last Gentle try) | "later" (shown the answer) (| "lost"). A rounded decimal for a repeating answer says "close" and is not a try.
 func frac(o: Dictionary) -> String:
 	var ans: Array = o.answer if o.answer is Array else Frac.parse(str(o.answer))
 	var p: Dictionary = ui.open_panel(o.get("title", "Check your answer"), o.get("kicker", ""))
@@ -760,7 +760,7 @@ func frac(o: Dictionary) -> String:
 			bad.call("Close, but that decimal is rounded. Give it as a fraction.")
 			return
 		if c.ok:
-			st.tier = ["first", "second", "later"][mini(st.tries, 2)]
+			st.tier = ["first", "second", "third"][mini(st.tries, 2)]
 			var line: String = o.get("right_line", "Right: %s." % ans_text)
 			if not c.simplest:
 				line += " (Simplest form: %s.)" % Frac.text(ans)
@@ -850,6 +850,7 @@ func typed(o: Dictionary) -> String:
 func flag(k: String, default = null) -> Variant: return Story.flag(S, k, default)
 func set_flag(k: String, v) -> void: Story.set_flag(S, k, v)
 func remember(who: String, note := "", t := 0) -> void: Story.remember(S, who, note, t)
+
 func knows(who: String, note: String) -> bool: return Story.knows(S, who, note)
 func trust(who: String) -> int: return Story.trust(S, who)
 func log_line(text: String) -> void: Story.log_line(S, text)
@@ -1434,11 +1435,13 @@ func report_sections() -> Array:
 	var rows := []
 	for k in S.answers:
 		var a: Dictionary = S.answers[k]
-		rows.append([a.label, {"first": "Right on the first try", "second": "Right on the second try", "later": "Shown the answer"}.get(a.tier, a.tier)])
+		rows.append([a.label, {"first": "Right on the first try", "second": "Right on the second try", "third": "Right on the third try", "later": "Shown the answer"}.get(a.tier, a.tier)])
 	if rows.size():
 		out.append({"title": "Checked answers", "rows": rows})
 	for k in S.typed:
-		out.append({"title": "In my own words", "text": "%s\n\n%s" % [S.typed[k].prompt, S.typed[k].text]})
+		var plain := RegEx.new()
+		plain.compile("\\[/?[a-z_]+(=[^\\]]*)?\\]")
+		out.append({"title": "In my own words", "text": "%s\n\n%s" % [plain.sub(str(S.typed[k].prompt), "", true), S.typed[k].text]})
 	var log_rows := []
 	for l in S.log:
 		log_rows.append(["%s %d" % [_log_unit(), int(l.day)], l.text])
@@ -1511,12 +1514,15 @@ func _avatar_screen() -> void:
 		_avatar_pick()
 		return
 	var look: Dictionary = P.look.duplicate()
+	var pick_look: bool = not ("avatar_looks" in D) or D.avatar_looks   # false: a set hero, so only name, pronouns and mode
 	var st := {"mode": "gentle"}
 	var p: Dictionary = ui.open_panel(str(D.avatar_title) if "avatar_title" in D else "Make your character", "New game", true)
 	var body: VBoxContainer = p.body
 	var top: HBoxContainer = ui.hbox(16)
-	var preview: Control = ui.pic("portrait", 120, look)
-	top.add_child(preview)
+	var preview: Control = null
+	if pick_look:
+		preview = ui.pic("portrait", 120, look)
+		top.add_child(preview)
 	var col: VBoxContainer = ui.vbox(8)
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	col.add_child(ui.label("Your first name", "Strong"))
@@ -1548,21 +1554,22 @@ func _avatar_screen() -> void:
 			b.pressed.connect(func(): look[key] = i; preview.look = look; preview.queue_redraw())
 			flow.add_child(b)
 		body.add_child(flow)
-	swatches.call("Skin", "skin", Art.SKIN)
-	swatches.call("Hair colour", "hair", Art.HAIR)
-	body.add_child(ui.label("Hair", "Strong"))
-	var hflow := HFlowContainer.new()
-	hflow.add_theme_constant_override("h_separation", 6)
-	var hg := ButtonGroup.new()
-	for i in Art.HAIR_STYLES.size():
-		var b: Button = ui.button(Art.HAIR_STYLES[i])
-		b.toggle_mode = true
-		b.button_group = hg
-		b.button_pressed = int(look.get("hair_style", 0)) == i
-		b.pressed.connect(func(): look.hair_style = i; preview.look = look; preview.queue_redraw())
-		hflow.add_child(b)
-	body.add_child(hflow)
-	swatches.call("Shirt", "shirt", Art.SHIRT)
+	if pick_look:
+		swatches.call("Skin", "skin", Art.SKIN)
+		swatches.call("Hair colour", "hair", Art.HAIR)
+		body.add_child(ui.label("Hair", "Strong"))
+		var hflow := HFlowContainer.new()
+		hflow.add_theme_constant_override("h_separation", 6)
+		var hg := ButtonGroup.new()
+		for i in Art.HAIR_STYLES.size():
+			var b: Button = ui.button(Art.HAIR_STYLES[i])
+			b.toggle_mode = true
+			b.button_group = hg
+			b.button_pressed = int(look.get("hair_style", 0)) == i
+			b.pressed.connect(func(): look.hair_style = i; preview.look = look; preview.queue_redraw())
+			hflow.add_child(b)
+		body.add_child(hflow)
+		swatches.call("Shirt", "shirt", Art.SHIRT)
 	if "pronouns" in D and D.pronouns:   # the story calls you by name or by these
 		st.pron = str(P.get("pron", "they"))
 		body.add_child(ui.label("Pronouns", "Strong"))

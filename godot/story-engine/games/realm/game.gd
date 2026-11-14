@@ -18,7 +18,7 @@ const Ch1 = preload("res://games/realm/ch1.gd")
 const Maps = preload("res://games/realm/maps.gd")
 const Pn = preload("res://games/realm/panels.gd")
 const Frac = preload("res://engine/core/frac.gd")
-const HERO := "realm/people/hero"   # the tintable rigged model (the people pack, scripts/blender/realm_people.py)
+const HERO := "realm/voxpeople/hero"   # the tintable rigged model (the voxel people pack, scripts/blender/realm_voxel_people.py; the first pack is realm/people)
 
 var id := "realm-ch1"
 var title := "The Measure of the Realm"
@@ -27,7 +27,8 @@ var i_can := "I can compare, add, subtract, multiply and divide rational numbers
 var blurb := "On harvest night the gorge bridge falls, and you saw the gold lines that held it snap. An old traveller says that means you can learn. Become Hesper Marrow's apprentice, help Brindle Ford through the first frost, and break a false rune."
 var start_map := "brindle"
 var start_at := Vector2i(12, 27)
-var avatar_title := "Make your apprentice"
+var avatar_title := "Name your apprentice"
+var avatar_looks := false   # the hero is set: no skin, hair or shirt pickers at the start
 var pronouns := true
 var report_file := "realm-ch1"
 var log_unit := "Part"
@@ -61,15 +62,15 @@ func my_look(_S: Dictionary, look: Dictionary) -> Dictionary:
 
 func people() -> Dictionary:
 	return {
-		"hesper": {"name": "Hesper", "role": "hedge-witch of Emberdale, your teacher", "look": {"model": "realm/people/hesper", "skin": 1, "hair": 4, "hair_style": 2, "shirt": "#6e8a5a", "pants": 2, "outfit": "cloak", "cloak": "#5a6e4a"}},
-		"orrin": {"name": "Orrin", "role": "an old traveller in a grey-blue coat", "look": {"model": "realm/people/orrin", "skin": 0, "hair": 4, "hair_style": 1, "shirt": "#5d6a86", "pants": 1, "outfit": "hat", "hat": "#4a5068"}},
-		"pell": {"name": "Pell", "role": "your younger cousin", "look": {"model": "realm/people/pell", "skin": 2, "hair": 2, "hair_style": 3, "shirt": 1, "pants": 2}},
-		"marta": {"name": "Marta Fenn", "role": "the well-keeper", "look": {"model": "realm/people/marta", "skin": 3, "hair": 0, "hair_style": 1, "shirt": "#7a5a8a", "pants": 0, "outfit": "apron", "apron": "#e8dcc4"}},
-		"abel": {"name": "Abel Crane", "role": "the miller", "look": {"model": "realm/people/abel", "skin": 1, "hair": 1, "hair_style": 4, "shirt": 5, "pants": 2, "outfit": "apron", "apron": "#c9b89a"}},
-		"rowan": {"name": "Rowan Tull", "role": "the shepherd", "look": {"model": "realm/people/rowan", "skin": 4, "hair": 0, "hair_style": 0, "shirt": "#8a6a3a", "pants": 2, "outfit": "vest", "vest": "#5a4a3a"}},
-		"odile": {"name": "Reeve Odile Marsh", "role": "the village reeve", "look": {"model": "realm/people/odile", "skin": 5, "hair": 6, "hair_style": 2, "shirt": "#7a2e3a", "pants": 0, "outfit": "cloak", "cloak": "#3a2e4a"}},
-		"gale": {"name": "Gale Harrow", "role": "Highstead's grain-warden", "look": {"model": "realm/people/gale", "skin": 2, "hair": 3, "hair_style": 0, "shirt": "#4a6a8a", "pants": 1, "outfit": "vest", "vest": "#2f3e5c"}},
-		"sefa": {"name": "A grey-cloaked figure", "role": "seen slipping out of Highstead square", "look": {"model": "realm/people/sefa", "skin": 1, "hair": 4, "hair_style": 0, "shirt": "#7d7f84", "pants": 1, "outfit": "hood", "cloak": "#7d7f84"}},
+		"hesper": {"name": "Hesper", "role": "hedge-witch of Emberdale, your teacher", "look": {"model": "realm/voxpeople/hesper", "skin": 1, "hair": 4, "hair_style": 2, "shirt": "#6e8a5a", "pants": 2, "outfit": "cloak", "cloak": "#5a6e4a"}},
+		"orrin": {"name": "Orrin", "role": "an old traveller in a grey-blue coat", "look": {"model": "realm/voxpeople/orrin", "skin": 0, "hair": 4, "hair_style": 1, "shirt": "#5d6a86", "pants": 1, "outfit": "hat", "hat": "#4a5068"}},
+		"pell": {"name": "Pell", "role": "your younger cousin", "look": {"model": "realm/voxpeople/pell", "skin": 2, "hair": 2, "hair_style": 3, "shirt": 1, "pants": 2}},
+		"marta": {"name": "Marta Fenn", "role": "the well-keeper", "look": {"model": "realm/voxpeople/marta", "skin": 3, "hair": 0, "hair_style": 1, "shirt": "#7a5a8a", "pants": 0, "outfit": "apron", "apron": "#e8dcc4"}},
+		"abel": {"name": "Abel Crane", "role": "the miller", "look": {"model": "realm/voxpeople/abel", "skin": 1, "hair": 1, "hair_style": 4, "shirt": 5, "pants": 2, "outfit": "apron", "apron": "#c9b89a"}},
+		"rowan": {"name": "Rowan Tull", "role": "the shepherd", "look": {"model": "realm/voxpeople/rowan", "skin": 4, "hair": 0, "hair_style": 0, "shirt": "#8a6a3a", "pants": 2, "outfit": "vest", "vest": "#5a4a3a"}},
+		"odile": {"name": "Reeve Odile Marsh", "role": "the village reeve", "look": {"model": "realm/voxpeople/odile", "skin": 5, "hair": 6, "hair_style": 2, "shirt": "#7a2e3a", "pants": 0, "outfit": "cloak", "cloak": "#3a2e4a"}},
+		"gale": {"name": "Gale Harrow", "role": "Highstead's grain-warden", "look": {"model": "realm/voxpeople/gale", "skin": 2, "hair": 3, "hair_style": 0, "shirt": "#4a6a8a", "pants": 1, "outfit": "vest", "vest": "#2f3e5c"}},
+		"sefa": {"name": "A grey-cloaked figure", "role": "seen slipping out of Highstead square", "look": {"model": "realm/voxpeople/sefa", "skin": 1, "hair": 4, "hair_style": 0, "shirt": "#7d7f84", "pants": 1, "outfit": "hood", "cloak": "#7d7f84"}},
 		"runner": {"name": "Tam", "role": "a runner from Highstead", "look": {"model": HERO, "skin": 3, "hair": 5, "hair_style": 0, "shirt": 3, "pants": 3}},
 		"fam1": {"name": "Ada", "role": "a Highstead farmer", "look": {"model": HERO, "skin": 0, "hair": 2, "hair_style": 1, "shirt": 1, "pants": 0}},
 		"fam2": {"name": "Bram", "role": "a Highstead farmer", "look": {"model": HERO, "skin": 4, "hair": 0, "hair_style": 4, "shirt": 3, "pants": 2}},
@@ -142,7 +143,7 @@ func where(pid: String, S: Dictionary) -> Variant:
 				"snap":
 					return {"map": "brindle", "x": 10, "y": 12, "dir": "left"}
 				"harvest":
-					return {"map": "barn", "x": 6, "y": 4, "dir": "left"}
+					return {"map": "barn", "x": 5, "y": 4, "dir": "left"}
 				"wheel":
 					return {"map": "brindle", "x": 39, "y": 18, "dir": "left"}
 			return {"map": "brindle", "x": 19, "y": 29, "dir": "down"}
@@ -252,9 +253,14 @@ func _hint() -> String:
 	return "Ask Hesper"
 
 
-func _praise(T, tier: String) -> void:
+## The design's line the first time; after that `said`, which names what the student did right.
+func _praise(T, tier: String, said := "") -> void:
 	if tier == "first":
-		await T.say("hesper" if T.world.map.id == "cottage" else "", "Hesper's voice, in your head: \"Fair shares and true numbers. That's my apprentice.\"" if T.world.map.id != "cottage" else "Fair shares and true numbers. That's my apprentice.")
+		var line := "Fair shares and true numbers. That's my apprentice."
+		if said != "" and T.flag("praised", false):
+			line = said
+		T.set_flag("praised", true)
+		await T.say("hesper" if T.world.map.id == "cottage" else "", line if T.world.map.id == "cottage" else "Hesper's voice, in your head: \"%s\"" % line)
 
 
 # ── The soft gate before each notes section ──
@@ -292,10 +298,13 @@ func prologue(T) -> void:
 		await T.say("pell", "Race you across, {name}! Last one over carries the sacks!")
 		await T.say("", ["Pell runs ahead onto the bridge. Then you see it: thin gold lines glowing along the cables, like threads of light.",
 			"Nobody else looks up. The lines flicker... and snap."])
-		T.set_flag("bridge_fell", true)
-		T.rebuild_maps()
-		T.ui.confetti(30)
-		await T.say("", ["The bridge drops into the gorge with a roar of wood and rope. Pell is clinging to the far edge!"])
+		await T.scene("bridge_fall", [
+			{"do": func(): T.set_flag("bridge_fell", true)},
+			{"do": func(): T.rebuild_maps()},
+			{"do": func(): T.ui.confetti(30)},
+			{"say": "The bridge drops into the gorge with a roar of wood and rope. Pell is clinging to the far edge!"},
+			{"fade": "out", "secs": 0.4},
+		])
 		await T.say("vil1", "Rope! Get a rope across!")
 		await T.say("", ["It takes half the village and a long rope, but they pull Pell back up. Nobody is hurt."])
 		await T.say("pell", "I'm fine! I'm fine. ...Did you see the gold lines? Tell me you saw them too.")
@@ -349,7 +358,7 @@ func lesson(T) -> void:
 		"kicker": "The lesson · RN1", "prompt": "Put these in order on the frost line, [b]least to greatest[/b].",
 		"items": Ch1.lesson_items(), "lo": -1, "hi": 1, "den": 4, "hint": "Hesper: \"Negatives first, the coldest one first. For −3/4 and −1/3, use twelfths: −9/12 and −4/12.\"",
 		"why": "Coldest first: −1, then −3/4 (−9/12) before −1/3 (−4/12), then 0, then 1/2 before 5/6."})
-	await _praise(T, t)
+	await _praise(T, t, "Coldest on the left, warmest on the right. You have the line.")
 	T.give("notes")
 	T.set_flag("lesson_done", true)
 	T.set_flag("quest", "")
@@ -363,7 +372,7 @@ func well(T) -> void:
 	T.set_flag("quest", "well")
 	T.refresh()
 	await T.goal("Marta Fenn, the well-keeper, needs help. Find her at the village well.", "person:marta")
-	await T.say("marta", ["{name}, you're Hesper's new apprentice? Look at my well. Frozen solid. The water's at −12.5 °C.",
+	await T.say("marta", ["{name}, you're Hesper's new apprentice? Look at my well.", "Frozen solid. The water's at −12.5 °C.",
 		"Hesper says the chinook arch in the west will raise it by 18.75 °C tonight. Will it thaw? And what will it read?"])
 	await T.say("pell", "18.75 take away 12.5. Easy.")
 	var tier: String = await T.frac({"key": "rn2_well", "label": "RN2 · The frozen well: −12.5 + 18.75", "title": "The frozen well", "kicker": "Quest · RN2",
@@ -374,7 +383,7 @@ func well(T) -> void:
 	await T.ask("marta", Ch1.ASK_THAW, "rn2_thaw", "RN2 · Will the well thaw?")
 	await T.say("", ["That night the chinook roars down from the west. The frost line on the well melts away.", "In the morning Marta draws a full bucket."])
 	await T.say("marta", "6.25 °C and running. Thank you, {name}.")
-	await _praise(T, tier)
+	await _praise(T, tier, "You watched the signs when you added. That's the whole trick.")
 	T.remember("marta", "You worked out when her well would thaw.", 2)
 	T.set_flag("well_done", true)
 	T.set_flag("quest", "")
@@ -403,7 +412,7 @@ func ledger(T) -> void:
 		"hint_btn": _hint(), "hint": "Hesper: \"Rename every share in twelfths first. Then count what comes in and what goes out.\"",
 		"why": "In twelfths: +6 + 8 − 9 − 10 = −5, so −5/12.", "traps": [["5/12", "Check the sign: does more come in, or go out?"], ["-14/12", "Check your twelfths: 1/2 = 6/12 and 2/3 = 8/12."]]})
 	await T.say("abel", ["−5/12. I'm short 5/12 of a silver. Well, better to know.", "I'll pay Hesper what I can now, and the rest after the next grinding."])
-	await _praise(T, tier)
+	await _praise(T, tier, "You renamed every share before you added. Well done.")
 	T.remember("abel", "You balanced his ledger: he's 5/12 of a silver short.", 2)
 	T.set_flag("ledger_done", true)
 	T.set_flag("quest", "")
@@ -447,7 +456,7 @@ func cold_snap(T) -> void:
 		"traps": [["2/15", "That's Pell's answer: you cancelled two tops (4 and 6). Cancel a top with a bottom: 6 and 9 share 3."]], "bot_wrong": "2/15"})
 	await T.say("", "You and Pell tip 8/15 of a sack into the trough. The lambs push in to eat.")
 	await T.say("rowan", "Snug as anything. Hesper chose a good apprentice.")
-	await _praise(T, tier)
+	await _praise(T, tier, "A negative times a positive, and you kept the sign. Good.")
 	T.remember("rowan", "You got his lambs in before the cold snap.", 2)
 	T.set_flag("snap_done", true)
 	T.set_flag("quest", "")
@@ -478,7 +487,7 @@ func harvest(T) -> void:
 		"hint": "Hesper: \"How many sixths fit in 2/3? Dividing by 1/6 is multiplying by 6.\"", "why": "2/3 = 4/6, and four 1/6 shares fit in it.",
 		"traps": [["1/9", "That multiplies by 1/6. How many sixths fit in 2/3?"]]})
 	await T.say("odile", "Ten families fed through the winter. I'll write it in the reeve's book, with your name beside it.")
-	await _praise(T, tier)
+	await _praise(T, tier, "How many fit: that's all dividing is. You have it.")
 	T.remember("odile", "You worked out the winter shares: 6 families and 4 more.", 2)
 	T.set_flag("harvest_done", true)
 	T.set_flag("quest", "")
@@ -510,8 +519,8 @@ func recipe(T) -> void:
 		T.set_flag("ward_melt_told", true)
 		await T.say("", "For a moment the ward goes warm, and water drips off the hen-house roof. The hens complain loudly.")
 	await T.say("", "The ward settles at −1/2 °C. A fine frost feathers over the hen-house, and stays.")
-	await T.say("hesper", "−1/2. It holds. Every operation, in the right order. That's the whole of this first winter's lessons, {name}.")
-	await _praise(T, tier)
+	await T.say("hesper", ["−1/2. It holds. Every operation, in the right order.", "That's the whole of this first winter's lessons, {name}."])
+	await _praise(T, tier, "Brackets, exponent, multiply, add. Every step in its place.")
 	T.set_flag("recipe_done", true)
 	T.set_flag("quest", "")
 	T.log_line("Set Hesper's frost-ward: −1/2 °C, and it held.")
@@ -529,7 +538,7 @@ func low_road(T) -> void:
 	await T.goal("A runner from Highstead has come to Hesper's cottage. Hear what they have to say.", "person:runner")
 	await T.say("runner", ["I ran the long way round, the bridge being gone. It's the grain-share stone in Highstead square.",
 		"Families coming home from market say their shares were short. All of them. And the stone has never been wrong."])
-	await T.say("hesper", ["The stone has never been wrong, they say. Hm. Go and look, {name}. Take the Low Road north: the long way round, now.",
+	await T.say("hesper", ["The stone has never been wrong, they say. Hm.", "Go and look, {name}. Take the Low Road north: the long way round, now.",
 		"Orrin went that way this morning. He'll meet you at the gate arch."])
 	T.set_flag("runner_done", true)
 	T.set_flag("quest", "")
@@ -553,7 +562,7 @@ func rune(T) -> void:
 		T.refresh()
 	await T.goal("Find Gale Harrow, the grain-warden, by the grain-share stone in the market square.", "person:gale")
 	if not T.flag("sefa_gone", false):
-		await T.say("", ["The stone stands in the middle of the square. Carved on it: \"Each household: 1/2 cart from the north tower + 1/3 cart from the south tower = 2/5 cart.\"",
+		await T.say("", ["The stone stands in the middle of the square.", "Carved on it: \"Each household: 1/2 cart from the north tower + 1/3 cart from the south tower = 2/5 cart.\"",
 			"Families queue beside it with half-empty sacks. Faint grey lines crawl over the carving.",
 			"At the edge of the square, a figure in a grey cloak watches you, then slips away between the stalls."])
 		T.set_flag("sefa_gone", true)
@@ -658,7 +667,7 @@ func sigil(T) -> void:
 	await T.goal("Go back to Hesper's cottage. Orrin is walking with you.", "person:hesper")
 	await T.say("hesper", ["Orrin told me. A false rune, and you broke it. Give me your hand.",
 		"This is Balance. Warm or chill anything by an exact amount, above or below zero.",
-		"At a gold ring, look at what it is now and what it needs to be. The change is target minus now. Exactly, mind: too little and nothing happens, too much and you've done harm."])
+		"At a gold ring, look at what it is now and what it needs to be. The change is target minus now.", "Exactly, mind: too little and nothing happens, too much and you've done harm."])
 	T.set_flag("sigil", true)
 	T.give("sigil")
 	T.rebuild_maps()
@@ -782,7 +791,7 @@ func _second_look(T, key: String, offer := true) -> void:
 		await T.say("pell", "See? Same skill, new numbers, and you nailed it.")
 		T.log_line("Second look with %s (variant %s): right the first time. A pip back." % [T.people_def[giver].name, v])
 	else:
-		if tier == "second":   # the panel shows the why line only after the last try
+		if tier == "second" or tier == "third":   # the panel shows the why line only when it shows the answer
 			await T.say("", c.why)
 		await T.say(giver, "Come back after you've worked a gold ring, or tomorrow.")
 	T.refresh()
@@ -795,7 +804,7 @@ func _spot(T, sid: String, story: bool) -> void:
 	var solved := bool(T.flag(sp.flag, false))
 	if sid == "spot_cellar" and not solved and Ch1.pips(S) < Ch1.CELLAR_PIPS:
 		await T.say("", ["The frost on the cellar door is old and deep. Balance needs all five pips, %s, to reach it; yours is %s." % [Ch1.pip_text(Ch1.CELLAR_PIPS), Ch1.pip_text(Ch1.pips(S))],
-			"Each gold ring solved on the first try adds a pip. So does a second look (a gold ? over someone you helped) right the first time."])
+			"Each gold ring solved on the first try adds a pip.", "So does a second look, right the first time. Look for a gold ? over someone you helped."])
 		return
 	if solved and not story and T.auto == "":
 		if await T.choose("", "%s already holds. Practise Balance here anyway?" % sp.what.capitalize(), ["Practise", "Leave it"]) != 0:
@@ -911,9 +920,17 @@ func use(thing: String, T) -> void:
 
 
 # ── Report and the test player ──
+func _row_name(label: String, key: String) -> String:
+	if label.contains(": "):
+		return label.split(": ", true, 1)[-1]
+	if label.contains("· "):
+		return label.split("· ", true, 1)[-1]
+	return key
+
+
 func report(S: Dictionary) -> Array:
 	var rows := []
-	var word := {"first": "first try", "second": "second try", "later": "shown the answer"}
+	var word := {"first": "first try", "second": "second try", "third": "third try", "later": "shown the answer"}
 	for c in Ch1.CODES:
 		var bits := []
 		var firsts := 0
@@ -923,7 +940,7 @@ func report(S: Dictionary) -> Array:
 				seen += 1
 				if S.answers[k].tier == "first":
 					firsts += 1
-				bits.append("%s: %s" % [S.answers[k].label.split(": ", true, 1)[-1] if S.answers[k].label.contains(": ") else k, word.get(S.answers[k].tier, "")])
+				bits.append("%s: %s" % [_row_name(S.answers[k].label, k), word.get(S.answers[k].tier, "")])
 		rows.append(["%s %s" % [c[0], c[1]], ("%d of %d first try. " % [firsts, seen] + "; ".join(bits)) if seen > 0 else "Not reached yet."])
 	var out := [{"title": "First tries by outcome (notes section)", "rows": rows}]
 	var rune_rows := []

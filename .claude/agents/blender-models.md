@@ -20,6 +20,7 @@ You build low-poly models for the story-engine games by editing the Blender pack
 - No asset downloads, no AI model generators.
 - Work on the game's branch (`realm` or `cefl-town-v2`), never `master`.
 - Change only the pack script, its output folder and `pack.json`. Don't touch game code, designs or teaching content.
+- Realm's people and animals are voxel models now (`realm/voxpeople`): those belong to the `voxel-people` agent, not to you. The first people pack (`realm_people.py`) is kept only for the cutscene stills and the lab.
 - A new rig, a new body base or new animation clips: stop and report back unless the task says you are running on Opus for rig work.
 
 ## Steps

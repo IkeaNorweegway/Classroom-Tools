@@ -153,7 +153,18 @@ def main():
         md.append("- none")
     md.append("")
 
-    md += ["## Map pictures", "", "Key: `#` blocked · `~` water · `.` open · `:` path/walk/plaza · `=` road · `+` door · `>` edge · `E` room exit · `@` you · `T` thing · capital = person's first letter · `?` open but unreachable · `!` problem", ""]
+    gat = {}
+    for d in plays:
+        for e in jl(d / "nav.jsonl"):
+            for fl, n in (e.get("gated") or {}).items():
+                gat[(e.get("map", e["where"]["map"]), fl)] = n
+    if gat:
+        md += ["## Expected (not problems)", ""]
+        for (m, fl), n in sorted(gat.items()):
+            md.append(f"- **{m}**: {n} tiles behind the {fl} gate, unreachable until that sigil is collected (expected)")
+        md.append("")
+
+    md += ["## Map pictures", "", "Key: `#` blocked · `~` water · `.` open · `:` path/walk/plaza · `=` road · `+` door · `>` edge · `E` room exit · `@` you · `T` thing · capital = person's first letter · `?` open but unreachable · `g` unreachable until a sigil opens a gate (expected) · `!` problem", ""]
     shown_maps, shown_pics = set(), set()
     if plays:
         for block in (plays[0] / "maps.txt").read_text().split("\n\n"):

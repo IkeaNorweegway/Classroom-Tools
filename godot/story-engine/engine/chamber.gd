@@ -400,12 +400,10 @@ func _piece_node(pid: String, d: Dictionary) -> Node3D:
 			if str(d.get("style", "")) == "sack":
 				b.blob(Vector3(0, 0.36, 0), Vector3(0.36, 0.36, 0.32), col, pid.hash(), 7, 4, 0.12)
 				b.cyl(Vector3(0, 0.66, 0), 0.08, 0.12, col.darkened(0.2), 5)
+			elif str(d.get("style", "")) == "ice":
+				_ice_block(b, col, pid.hash())
 			else:
 				b.box(Vector3(-0.42, 0, -0.42), Vector3(0.84, 0.72, 0.84), col.darkened(0.12), Color(str(sty[1])))
-				if str(d.get("style", "")) == "ice":
-					b.glow_on()
-					b.box(Vector3(-0.43, 0.70, -0.43), Vector3(0.86, 0.03, 0.86), Color("#f4fbff"))
-					b.glow_off()
 		"plate":
 			b.cyl(Vector3.ZERO, 0.42, 0.05, Color("#6d6458"), 10)
 			b.part_begin()
@@ -481,6 +479,128 @@ func _piece_node(pid: String, d: Dictionary) -> Node3D:
 		l.render_priority = 2
 		labels[pid] = l
 	return b
+
+
+func _ice_block(b: Art3D, col: Color, seed_: int) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_
+	var e := 0.42
+	var t := e - 0.07
+	var bh := 0.06
+	var h := 0.70 + rng.randf_range(0.0, 0.04)
+	var sx := 1 if rng.randi_range(0, 1) == 0 else -1
+	var sz := 1 if rng.randi_range(0, 1) == 0 else -1
+	var chip := 0.12
+	var side := col.darkened(0.12)
+	var bev := col.lightened(0.08)
+	var top_col := Color("#eef7fd")
+	var y0 := 0.12
+	var yb := h - bh
+
+	b.box(Vector3(-e - 0.01, 0, -e - 0.01), Vector3(2.0 * (e + 0.01), 0.12, 2.0 * (e + 0.01)), col.darkened(0.30))
+
+	for n in [Vector3(0, 0, 1), Vector3(0, 0, -1), Vector3(1, 0, 0), Vector3(-1, 0, 0)]:
+		if n.z != 0.0:
+			b.quad(Vector3(-e, y0, n.z * e), Vector3(e, y0, n.z * e), Vector3(e, yb, n.z * e), Vector3(-e, yb, n.z * e), side, n)
+		else:
+			b.quad(Vector3(n.x * e, y0, -e), Vector3(n.x * e, y0, e), Vector3(n.x * e, yb, e), Vector3(n.x * e, yb, -e), side, n)
+
+	for n in [Vector3(0, 0, 1), Vector3(0, 0, -1), Vector3(1, 0, 0), Vector3(-1, 0, 0)]:
+		var inn0: Vector3
+		var inn1: Vector3
+		var out0: Vector3
+		var out1: Vector3
+		if n.z != 0.0:
+			inn0 = Vector3(-t, h, n.z * t)
+			inn1 = Vector3(t, h, n.z * t)
+			out0 = Vector3(-e, yb, n.z * e)
+			out1 = Vector3(e, yb, n.z * e)
+			if n.z == sz:
+				if sx > 0:
+					inn1.x = t - chip
+				else:
+					inn0.x = -t + chip
+		else:
+			inn0 = Vector3(n.x * t, h, -t)
+			inn1 = Vector3(n.x * t, h, t)
+			out0 = Vector3(n.x * e, yb, -e)
+			out1 = Vector3(n.x * e, yb, e)
+			if n.x == sx:
+				if sz > 0:
+					inn1.z = t - chip
+				else:
+					inn0.z = -t + chip
+		b.quad(out0, out1, inn1, inn0, bev, Vector3(n.x * 0.7, 0.7, n.z * 0.7).normalized())
+
+	var ax := Vector3(sx * (t - chip), h, sz * t)
+	var bz := Vector3(sx * t, h, sz * (t - chip))
+	var o := Vector3(sx * e, yb, sz * e)
+	var top_pts: Array[Vector3] = []
+	for c in [Vector2(-t, -t), Vector2(t, -t), Vector2(t, t), Vector2(-t, t)]:
+		if absf(c.x - sx * t) < 0.001 and absf(c.y - sz * t) < 0.001:
+			if sx * sz > 0:
+				top_pts.append(bz)
+				top_pts.append(ax)
+			else:
+				top_pts.append(ax)
+				top_pts.append(bz)
+		else:
+			top_pts.append(Vector3(c.x, h, c.y))
+	for k in range(1, top_pts.size() - 1):
+		b.tri(top_pts[0], top_pts[k], top_pts[k + 1], top_col, Vector3.UP)
+	b.tri(ax, bz, o, col.lightened(0.15), Vector3(sx, 4.0, sz).normalized())
+
+	b.glow_on()
+	var pt := t - 0.02
+	var sc := pt / t
+	var plate_pts: Array[Vector3] = []
+	for p in top_pts:
+		plate_pts.append(Vector3(p.x * sc, h + 0.004, p.z * sc))
+	for k in range(1, plate_pts.size() - 1):
+		b.tri(plate_pts[0], plate_pts[k], plate_pts[k + 1], Color("#f4fbff"), Vector3.UP)
+	var old_detail := b.detail
+	b.detail = 1.0
+	for i in rng.randi_range(2, 3):
+		var r := rng.randf_range(0.04, 0.07)
+		var lx := rng.randf_range(-0.26, 0.26)
+		var lz := rng.randf_range(-0.26, 0.26)
+		var cy := minf(h + 0.004 + r * 0.3, 0.792 - r)
+		b.blob(Vector3(lx, cy, lz), Vector3(r, r, r), Color("#f4fbff"), seed_ + i * 17, 5, 3, 0.25)
+	b.detail = old_detail
+	b.glow_off()
+
+	var crack_col := Color("#5f86a8")
+	var crack := func(on_x: bool, nseg: int) -> void:
+		var px := rng.randf_range(-0.24, 0.24)
+		var py := h - bh - 0.06
+		var drop := rng.randf_range(0.20, 0.40)
+		var pts: Array[Vector2] = [Vector2(px, py)]
+		for k in nseg:
+			px = clampf(px + rng.randf_range(-0.08, 0.08), -0.36, 0.36)
+			py = maxf(py - drop / float(nseg), 0.18)
+			pts.append(Vector2(px, py))
+		for k in nseg:
+			var a2: Vector2 = pts[k]
+			var c2: Vector2 = pts[k + 1]
+			var dd := (c2 - a2).normalized()
+			var pr := Vector2(-dd.y, dd.x) * 0.006
+			if on_x:
+				b.quad(Vector3(e + 0.003, a2.y - pr.y, a2.x - pr.x), Vector3(e + 0.003, c2.y - pr.y, c2.x - pr.x), Vector3(e + 0.003, c2.y + pr.y, c2.x + pr.x), Vector3(e + 0.003, a2.y + pr.y, a2.x + pr.x), crack_col, Vector3.RIGHT)
+			else:
+				b.quad(Vector3(a2.x - pr.x, a2.y - pr.y, e + 0.003), Vector3(c2.x - pr.x, c2.y - pr.y, e + 0.003), Vector3(c2.x + pr.x, c2.y + pr.y, e + 0.003), Vector3(a2.x + pr.x, a2.y + pr.y, e + 0.003), crack_col, Vector3.BACK)
+	crack.call(false, rng.randi_range(2, 3))
+	crack.call(false, rng.randi_range(2, 3))
+	crack.call(true, rng.randi_range(2, 3))
+
+	var bub := col.lightened(0.35)
+	for k in rng.randi_range(3, 4):
+		var bx := rng.randf_range(-0.34, 0.34)
+		var by := rng.randf_range(0.20, 0.56)
+		var hw := 0.0125
+		if k % 2 == 0:
+			b.quad(Vector3(bx - hw, by - hw, e + 0.003), Vector3(bx + hw, by - hw, e + 0.003), Vector3(bx + hw, by + hw, e + 0.003), Vector3(bx - hw, by + hw, e + 0.003), bub, Vector3.BACK)
+		else:
+			b.quad(Vector3(-e - 0.003, by - hw, bx - hw), Vector3(-e - 0.003, by - hw, bx + hw), Vector3(-e - 0.003, by + hw, bx + hw), Vector3(-e - 0.003, by + hw, bx - hw), bub, Vector3.LEFT)
 
 
 ## Move every piece to where st has it; mark solid tiles and things on the map.

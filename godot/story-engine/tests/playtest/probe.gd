@@ -347,8 +347,25 @@ func _check_map(id: String, why: String) -> void:
 		exits.append([p, "door/edge to " + str(m.links[p].to)])
 	if not m.outdoor:
 		exits.append([Vector2i(m.exit_x, m.h - 1), "room exit"])
+	# a far bank may be reached only from the next area (test_nav.gd's rule): an entry cut off from the first entry's side by
+	# arriving from another area is a far bank. It is not checked against the near side's exits, and exits found only there are not
+	# held against the near side's entries.
+	var far := []
+	var near_reach := {}
+	for pe in per_entry:
+		var cut: bool = per_entry.size() > 0 and not per_entry[0][1].has(pe[0][0]) and str(pe[0][1]).begins_with("arriving from")
+		if cut:
+			far.append(pe)
+		else:
+			for k in pe[1]:
+				near_reach[k] = true
 	for x in exits:
+		var far_only := not near_reach.has(x[0])
 		for pe in per_entry:
+			if pe in far:
+				continue
+			if far_only and far.size() > 0:
+				continue
 			if not pe[1].has(x[0]):
 				bad.append("Can't reach the %s %s when %s." % [x[1], x[0], pe[0][1]])
 				marks[x[0]] = "!"
@@ -393,10 +410,16 @@ func _check_map(id: String, why: String) -> void:
 	var stranded := []
 	var stranded_path := []
 	var cut_by_people := []
+	var gated := _gated_tiles(id, entries, ppl, reach)
+	var gated_by := {}
 	for y in m.h:
 		for x in m.w:
 			var p := Vector2i(x, y)
 			if not _free(m, ppl, p) or reach.has(p):
+				continue
+			if gated.has(p):
+				gated_by[gated[p]] = int(gated_by.get(gated[p], 0)) + 1
+				marks[p] = "g"
 				continue
 			if no_people.has(p):
 				cut_by_people.append(p)
@@ -427,10 +450,37 @@ func _check_map(id: String, why: String) -> void:
 				narrow.append([x, y])
 	problems += bad.size()
 	nav.store_line(JSON.stringify({"when": why, "where": _where(), "map": id, "goal": Town.goal_target, "problems": bad,
-		"people": _people_list(ppl), "targets": target_report, "narrow_gaps": narrow, "entries": entries.map(func(e): return [e[0].x, e[0].y, e[1]])}))
+		"gated": gated_by, "people": _people_list(ppl), "targets": target_report, "narrow_gaps": narrow, "entries": entries.map(func(e): return [e[0].x, e[0].y, e[1]])}))
 	nav.flush()
 	if why == "step":
 		_picture(m, ppl, marks)
+
+
+## Tiles you can't reach only because a story flag hasn't been set yet (a sigil-frozen gate). A game that lists nav_flags()
+## names the flags that open ways; for each one not set in this save, rebuild the map with only that flag on and see what you
+## could then reach. Those tiles are expected (not problems) until the flag is set; once it is set, nothing is excused.
+## Returns tile -> flag. A game without maps_for / nav_flags (CEFL Town) gets {}.
+func _gated_tiles(id: String, entries: Array, ppl: Dictionary, reach: Dictionary) -> Dictionary:
+	var out := {}
+	if not Town.D.has_method("maps_for") or not Town.D.has_method("nav_flags"):
+		return out
+	for flag in Town.D.nav_flags():
+		if Town.S.flags.get(flag, false):
+			continue
+		var S2: Dictionary = Town.S.duplicate(true)
+		S2.flags[flag] = true
+		var defs: Dictionary = Town.D.maps_for(S2)
+		if not defs.has(id):
+			continue
+		var m2 := MapData.new(id, defs[id])
+		for e in entries:
+			var at: Vector2i = e[0]
+			if not _free(m2, ppl, at) and not _is_link(m2, at):
+				continue
+			for k in _bfs(m2, ppl, at):
+				if not reach.has(k) and not out.has(k):
+					out[k] = flag
+	return out
 
 
 func _walker_check(m: MapData, ppl: Dictionary, marks: Dictionary) -> Array:

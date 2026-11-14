@@ -12,7 +12,7 @@ import sys, os, math, json, random
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import importlib, kit
 importlib.reload(kit)
-from kit import Part, shade, clear, export, args
+from kit import Part, shade, clear, export, args, PAL
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 OUT = os.path.join(ROOT, "godot", "story-engine", "assets", "realm", "emberdale")
@@ -176,13 +176,210 @@ def t_path_edge():
     p.done()
 
 
-@model("t_footpath", "terrain", 2, 2, "A narrow footpath through grass (runs along z)")
-def t_footpath():
-    p = Part("t_footpath")
+# ── footpaths: a narrow, winding dirt ribbon with ragged grass edges and discoloured earth ──
+# Every variant starts and ends at the middle of the north/south tile edges with the same slope (0), so
+# any two variants (and any corner) join without a step; the game picks one by cell hash to build a path.
+
+def _foot_normals(pts):
+    """A unit normal in plan at every centreline point (averaged at the joints, so strips meet watertight)."""
+    out = []
+    for i in range(len(pts)):
+        if i == 0:
+            t = (pts[1][0] - pts[0][0], pts[1][1] - pts[0][1])
+        elif i == len(pts) - 1:
+            t = (pts[-1][0] - pts[-2][0], pts[-1][1] - pts[-2][1])
+        else:
+            t = (pts[i + 1][0] - pts[i - 1][0], pts[i + 1][1] - pts[i - 1][1])
+        n = math.hypot(t[0], t[1]) or 1.0
+        out.append((t[1] / n, -t[0] / n))
+    return out
+
+
+def _mix(c1, c2, t):
+    """Blend two palette colours or hex strings (t = 0 gives c1)."""
+    h1, h2 = PAL.get(c1, c1).lstrip("#"), PAL.get(c2, c2).lstrip("#")
+    v = [int(int(h1[i:i + 2], 16) * (1 - t) + int(h2[i:i + 2], 16) * t) for i in (0, 2, 4)]
+    return "#%02x%02x%02x" % tuple(v)
+
+
+def _foot_ribbon(p, pts, nor, hw, spec, rng, y=PATH_Y):
+    """The dirt surface: four strips across a mitred ribbon, plus short skirts to the grass.
+    Every tile shares ONE base tone ("path"); only a small per-quad shade jitter varies, and the first and last
+    segment are exactly the base tone, so any two tiles join without a visible colour seam."""
+    frac = (-1.0, -0.34, 0.34, 1.0)
+    verts = [[(x + nx * hw * f, z + nz * hw * f) for f in frac] for (x, z), (nx, nz) in zip(pts, nor)]
+    last = len(pts) - 2
+    for i in range(len(pts) - 1):
+        cx = (pts[i][0] + pts[i + 1][0]) / 2
+        cz = (pts[i][1] + pts[i + 1][1]) / 2
+        end = i in (0, last)
+        for k in range(3):
+            j = 0.0 if end else rng.uniform(-0.035, 0.035)
+            if not end and rng.random() < spec.get("patch", 0.1) * 0.2:   # rare single-quad damp spot, mild
+                j -= 0.06
+            col = shade("path", j - (0.02 if k in (0, 2) else 0.0))
+            p.quad((verts[i][k][0], y, verts[i][k][1]), (verts[i][k + 1][0], y, verts[i][k + 1][1]),
+                   (verts[i + 1][k + 1][0], y, verts[i + 1][k + 1][1]), (verts[i + 1][k][0], y, verts[i + 1][k][1]),
+                   col, out=(0, 1, 0))
+        for k in (0, 3):   # skirts so the 2 cm step down to grass never shows a gap
+            p.quad((verts[i][k][0], y, verts[i][k][1]), (verts[i + 1][k][0], y, verts[i + 1][k][1]),
+                   (verts[i + 1][k][0], GRASS_Y - 0.005, verts[i + 1][k][1]),
+                   (verts[i][k][0], GRASS_Y - 0.005, verts[i][k][1]),
+                   shade("path", -0.3), ctr=(cx, (y + GRASS_Y) / 2, cz))
+
+
+def _foot_dress(p, pts, nor, hw, spec, rng):
+    """Pebbles, spilled earth, grass creeping at the edge, lining tufts and the odd flower."""
+    def pick():
+        i = rng.randrange(len(pts) - 1)
+        u = rng.random()
+        x = pts[i][0] + (pts[i + 1][0] - pts[i][0]) * u
+        z = pts[i][1] + (pts[i + 1][1] - pts[i][1]) * u
+        return x, z, nor[i]
+
+    for _ in range(spec.get("pebbles", 4)):
+        x, z, (nx, nz) = pick()
+        off = rng.uniform(-hw * 0.75, hw * 0.75)
+        x, z = x + nx * off, z + nz * off
+        if abs(x) < 0.96 and abs(z) < 0.96:
+            p.cbox(x, PATH_Y, z, rng.uniform(0.04, 0.09), 0.012, rng.uniform(0.03, 0.07),
+                   rng.choice(("fieldstone", "fieldstone_dk", "sand")))
+
+    for _ in range((spec.get("spill", 3) + 1) // 2):   # a few low, irregular scuffs where feet leave the path
+        x, z, (nx, nz) = pick()
+        side = rng.choice((-1.0, 1.0))
+        off = hw + rng.uniform(0.0, 0.08)
+        x, z = x + nx * off * side, z + nz * off * side
+        if abs(x) < 0.97 and abs(z) < 0.97:
+            r0, n_s, rot = rng.uniform(0.035, 0.075), rng.choice((5, 6)), rng.uniform(0, 6.28)
+            col = _mix("path", "grass", rng.uniform(0.35, 0.65))
+            ring = [(x + r0 * rng.uniform(0.7, 1.25) * math.cos(rot + 2 * math.pi * i / n_s), GRASS_Y + 0.004,
+                     z + r0 * rng.uniform(0.7, 1.25) * math.sin(rot + 2 * math.pi * i / n_s)) for i in range(n_s)]
+            p.face(ring, col, out=(0, 1, 0))
+
+    for _ in range(spec.get("creep", 4)):   # grass leaning over the path edge
+        x, z, (nx, nz) = pick()
+        side = rng.choice((-1.0, 1.0))
+        off = hw - rng.uniform(0.0, 0.05)
+        x, z = x + nx * off * side, z + nz * off * side
+        if abs(x) < 0.98 and abs(z) < 0.98:
+            p.cone(x, PATH_Y - 0.01, z, rng.uniform(0.045, 0.075), rng.uniform(0.07, 0.14),
+                   rng.choice(("grass_dk", "lawn", "leaf2")), seg=3, rot=rng.uniform(0, 120))
+
+    for _ in range(spec.get("lining", 8)):   # the grass lining: tight to both edges, following every bend
+        x, z, (nx, nz) = pick()
+        side = rng.choice((-1.0, 1.0))
+        off = hw + rng.uniform(0.0, 0.09)
+        x, z = x + nx * off * side, z + nz * off * side
+        if abs(x) < 1.02 and abs(z) < 1.02:
+            p.cone(x, GRASS_Y, z, rng.uniform(0.05, 0.09), rng.uniform(0.10, 0.20),
+                   rng.choice(("grass_dk", "lawn", "leaf2", "grass")), seg=3, rot=rng.uniform(0, 120))
+
+    for _ in range(spec.get("tufts", 6)):   # looser tufts further out, so the verge is not a clean line
+        x, z, (nx, nz) = pick()
+        side = rng.choice((-1.0, 1.0))
+        off = hw + rng.uniform(0.09, 0.30)
+        x, z = x + nx * off * side, z + nz * off * side
+        if abs(x) < 1.02 and abs(z) < 1.02:
+            p.cone(x, GRASS_Y, z, rng.uniform(0.045, 0.085), rng.uniform(0.08, 0.17),
+                   rng.choice(("grass_dk", "lawn", "leaf2", "grass")), seg=3, rot=rng.uniform(0, 120))
+
+    for _ in range(spec.get("flowers", 0)):
+        x, z, (nx, nz) = pick()
+        side = rng.choice((-1.0, 1.0))
+        off = hw + rng.uniform(0.06, 0.25)
+        x, z = x + nx * off * side, z + nz * off * side
+        if abs(x) < 0.98 and abs(z) < 0.98:
+            p.cyl(x, GRASS_Y, z, 0.01, 0.14, "leaf_dk", seg=3)
+            p.blob(x, GRASS_Y + 0.16, z, 0.035, 0.03, 0.035,
+                   rng.choice(("#e9e2f0", "#e8c838", "#c98bc4")), seg=4, rings=2, jit=0)
+
+
+def _foot_curve(spec):
+    """North edge (z=-1) to south edge (z=+1). x and slope are 0 at both edges, so tiles always join."""
+    pts = []
+    n = 14
+    for i in range(n + 1):
+        t = i / n
+        s = math.sin(math.pi * t)
+        pts.append((spec["a"] * s * s + spec["b"] * s * s * math.cos(math.pi * t), -1.0 + 2.0 * t))
+    return pts
+
+
+def _foot_corner_curve(r, n_arc=9):
+    """South edge centre to east edge centre: a straight stub, a rounded quarter turn, another stub."""
+    pts = [(0.0, 1.0), (0.0, r)]
+    for i in range(1, n_arc + 1):
+        th = math.pi + (math.pi / 2.0) * i / n_arc
+        pts.append((r + r * math.cos(th), r + r * math.sin(th)))
+    pts.append((1.0, 0.0))
+    return pts
+
+
+def _footpath(name, spec):
+    p = Part(name)
     ground(p, GRASS_Y, "grass")
-    p.box(-0.35, GRASS_Y, -1, 0.7, 0.02, 2, "path")
-    grass_tufts(p, 4, 2, 2, GRASS_Y, 13)
+    rng = random.Random(spec["seed"])
+    pts = _foot_curve(spec)
+    nor = _foot_normals(pts)
+    _foot_ribbon(p, pts, nor, spec["hw"], spec, rng)
+    _foot_dress(p, pts, nor, spec["hw"], spec, rng)
     p.done()
+
+
+def _footcorner(name, spec):
+    p = Part(name)
+    ground(p, GRASS_Y, "grass")
+    rng = random.Random(spec["seed"])
+    pts = _foot_corner_curve(spec["r"])
+    nor = _foot_normals(pts)
+    _foot_ribbon(p, pts, nor, spec["hw"], spec, rng)
+    _foot_dress(p, pts, nor, spec["hw"], spec, rng)
+    p.done()
+
+
+FOOTPATH_SPECS = [
+    ("t_footpath", dict(a=0.14, b=0.03, hw=0.32, seed=51, tones=("path", "sand"), patch=0.10,
+                        pebbles=4, spill=3, creep=4, lining=8, tufts=6, flowers=0,
+                        note="Winding dirt footpath, well trodden")),
+    ("t_footpath_2", dict(a=-0.26, b=0.10, hw=0.32, seed=52, tones=("path", "sand"), patch=0.16, pebbles=5, spill=4, creep=4, lining=8, tufts=7, flowers=0,
+                          note="Winding dirt footpath, S-bend")),
+    ("t_footpath_3", dict(a=0.34, b=-0.12, hw=0.32, seed=53, tones=("path", "path_dk"), patch=0.20,
+                          pebbles=6, spill=5, creep=5, lining=9, tufts=8, flowers=0,
+                          note="Winding dirt footpath, narrow snake")),
+    ("t_footpath_4", dict(a=-0.12, b=0.0, hw=0.32, seed=54, tones=("path", "sand", "path_dk"), patch=0.12, pebbles=6, spill=4, creep=5, lining=7, tufts=6, flowers=2,
+                          note="Worn dirt track with flowers at the verge")),
+    ("t_footpath_5", dict(a=0.06, b=0.16, hw=0.32, seed=55, tones=("sand", "path"), patch=0.14,
+                          pebbles=4, spill=5, creep=4, lining=10, tufts=8, flowers=0,
+                          note="Winding dirt footpath, double wiggle")),
+    ("t_footpath_6", dict(a=-0.42, b=0.04, hw=0.32, seed=56, tones=("path", "path_dk2", "sand"), patch=0.18,
+                          pebbles=7, spill=6, creep=5, lining=9, tufts=9, flowers=0,
+                          note="Footpath swinging far west, stony at the edges")),
+    ("t_footpath_7", dict(a=0.24, b=0.12, hw=0.32, seed=57, tones=("sand", "path"), patch=0.10, pebbles=5, spill=3, creep=4, lining=8, tufts=7, flowers=3,
+                          note="Footpath with wildflowers at the verge")),
+    ("t_footpath_8", dict(a=-0.06, b=-0.18, hw=0.32, seed=58, tones=("path", "path_dk"), patch=0.18,
+                          pebbles=6, spill=6, creep=5, lining=9, tufts=8, flowers=0,
+                          note="Footpath with a slow S")),
+    ("t_footpath_9", dict(a=0.44, b=0.0, hw=0.32, seed=59, tones=("path", "sand"), patch=0.14,
+                          pebbles=5, spill=4, creep=4, lining=10, tufts=8, flowers=0,
+                          note="Footpath with one strong bend")),
+    ("t_footpath_10", dict(a=0.10, b=0.08, hw=0.32, seed=60, tones=("path", "sand", "path_dk"), patch=0.16,
+                           pebbles=9, spill=8, creep=5, lining=10, tufts=9, flowers=1,
+                           note="Scruffy, stony footpath with spilled edges")),
+]
+
+CORNER_SPECS = [
+    ("t_footpath_corner", dict(r=0.52, hw=0.32, seed=71, tones=("path", "sand"), patch=0.12,
+                               pebbles=6, spill=4, creep=5, lining=10, tufts=8, flowers=0,
+                               note="Footpath corner, rounded turn (joins south and east edges; turn with yaw)")),
+    ("t_footpath_corner_b", dict(r=0.68, hw=0.32, seed=72, tones=("path", "path_dk", "sand"), patch=0.18, pebbles=7, spill=5, creep=5, lining=10, tufts=8, flowers=1,
+                                 note="Footpath corner, wide rounded turn (joins south and east; turn with yaw)")),
+]
+
+for _name, _spec in FOOTPATH_SPECS:
+    model(_name, "terrain", 2, 2, _spec["note"])(lambda name=_name, spec=_spec: _footpath(name, spec))
+for _name, _spec in CORNER_SPECS:
+    model(_name, "terrain", 2, 2, _spec["note"])(lambda name=_name, spec=_spec: _footcorner(name, spec))
 
 
 @model("t_water", "terrain", 2, 2, "River water (blocks walking)")
@@ -339,16 +536,81 @@ def t_far_bank():
     p.done()
 
 
-@model("t_square", "terrain", 2, 2, "Highstead market square: worn flagstones (walkable)")
-def t_square():
-    p = Part("t_square")
+def brick_square(name, seed, tones):
+    """Freshly laid brick paving in running bond: crisp joints, every brick whole."""
+    p = Part(name)
     p.box(-1, 0.14 - 0.3, -1, 2, 0.3, 2, "fieldstone_dk", top="mortar")
-    rng = random.Random(12)
-    for i in range(4):
-        for k in range(4):
-            jt = rng.uniform(-0.02, 0.02)
-            p.box(-0.97 + k * 0.5, 0.14, -0.97 + i * 0.5 + jt, 0.44, 0.015, 0.44, rng.choice(["stone", "fieldstone", shade("stone", -0.06)]))
+    rng = random.Random(seed)
+    bw, bh, gap = 0.44, 0.22, 0.025
+    for row in range(9):
+        z0 = -1 + row * bh
+        x = -1 - (bw / 2 if row % 2 else 0.0)   # running bond: alternate rows are offset by half a brick
+        while x < 1:
+            x0, x1 = max(-1.0, x), min(1.0, x + bw - gap)
+            if x1 - x0 > 0.07:
+                col = rng.choice(tones)
+                p.box(x0 + 0.004, 0.14, z0 + 0.004, x1 - x0 - 0.008, 0.015, bh - gap - 0.008,
+                      col, top=shade(col, rng.choice((-0.02, 0.02, 0.03))))
+            x += bw
     p.done()
+
+
+@model("t_square", "terrain", 2, 2, "Market square: freshly laid red brick paving (walkable)")
+def t_square():
+    brick_square("t_square", 12, ("brick", "brick", "brick_dk", "brick_lt"))
+
+
+@model("t_square_b", "terrain", 2, 2, "Market square: freshly laid buff brick paving (walkable)")
+def t_square_b():
+    brick_square("t_square_b", 23, ("brick_pale", "sand", "brick_lt"))
+
+
+@model("t_square_c", "terrain", 2, 2, "Market square: freshly laid mixed red and buff brick paving (walkable)")
+def t_square_c():
+    brick_square("t_square_c", 34, ("brick", "brick_lt", "brick_pale", "brick_dk"))
+
+
+def cobble_square(name, seed, tones, moss=10, weeds=6):
+    """Weathered cobblestones packed on a sand bed: domed stones, a few missing, moss and weeds in the joints."""
+    p = Part(name)
+    p.box(-1, 0.12 - 0.3, -1, 2, 0.3, 2, "sand", top=shade("soil", -0.2))
+    rng = random.Random(seed)
+    n = 8
+    sp = 2.0 / n
+    for i in range(n):
+        for j in range(n):
+            fixed = random.Random(100 + i * 31 + j)   # stone positions are shared, so any mix of variants tiles
+            r = fixed.uniform(0.12, 0.145)
+            cx = -1 + (i + 0.5) * sp + fixed.uniform(-0.018, 0.018)
+            cz = -1 + (j + 0.5) * sp + fixed.uniform(-0.018, 0.018)
+            if rng.random() < 0.045:   # a missing stone: the sand bed shows
+                continue
+            col = rng.choice(tones)
+            ry = rng.uniform(0.018, 0.028)
+            p.blob(cx, 0.12 + 0.35 * ry, cz, r, ry, r * fixed.uniform(0.85, 1.0), col,
+                   seg=rng.choice((5, 6)), rings=2, jit=0.06, seed=100 + i * 31 + j, flat_bottom=True)
+    for _ in range(moss):
+        moss_patch(p, rng.uniform(-0.95, 0.95), 0.15, rng.uniform(-0.95, 0.95), rng.uniform(0.04, 0.09),
+                   seed=rng.randint(0, 99))
+    for _ in range(weeds):
+        p.cone(rng.uniform(-0.95, 0.95), 0.145, rng.uniform(-0.95, 0.95), rng.uniform(0.04, 0.06),
+               rng.uniform(0.07, 0.16), rng.choice(("grass_dk", "lawn", "leaf2")), seg=3, rot=rng.uniform(0, 120))
+    p.done()
+
+
+@model("t_cobble", "terrain", 2, 2, "Market square: weathered grey cobblestones, mossy joints (walkable)")
+def t_cobble():
+    cobble_square("t_cobble", 41, ("fieldstone", "fieldstone_dk", "stone", "#b0a693"), moss=8, weeds=4)
+
+
+@model("t_cobble_b", "terrain", 2, 2, "Market square: weathered warm-toned cobblestones (walkable)")
+def t_cobble_b():
+    cobble_square("t_cobble_b", 52, ("rock_tan", "stone", "sand", "#c2a98c"), moss=6, weeds=5)
+
+
+@model("t_cobble_c", "terrain", 2, 2, "Market square: weathered dark cobblestones, more moss and weeds (walkable)")
+def t_cobble_c():
+    cobble_square("t_cobble_c", 63, ("fieldstone_dk", "rock_dk", "fieldstone", "#8f8578"), moss=12, weeds=7)
 
 
 # ─────────────────────────────── Realm forest set (2026-11-09) ───────────────────────────────
@@ -1343,6 +1605,26 @@ def bridge_broken():
     p.done()
 
 
+@model("footbridge", "building", 2, 2, "Small plank footbridge over the 2-tile mill race: deck low (top 0.09, just over the bank), low rails both sides. Origin centre, yaw 0 crosses north-south (z); yaw 90 for east-west")
+def footbridge():
+    p = Part("footbridge")
+    top = 0.09
+    for sx in (-0.62, 0.62):   # two beam stringers, resting on the banks, with a little sag below the deck
+        p.box(sx - 0.09, WATER_Y + 0.12, -1.18, 0.18, top - 0.05 - (WATER_Y + 0.12), 2.36, "wood_dk", top="trunk")
+        p.box(sx - 0.1, GRASS_Y - 0.1, -1.3, 0.2, 0.14, 0.3, "fieldstone_dk", top="fieldstone")   # sill stones on the banks
+        p.box(sx - 0.1, GRASS_Y - 0.1, 1.0, 0.2, 0.14, 0.3, "fieldstone_dk", top="fieldstone")
+    n = 9
+    pl = 2.4 / n
+    for k in range(n):   # planks across the deck, slightly uneven
+        z = -1.2 + k * pl
+        p.box(-0.8 - (k % 3) * 0.02, top - 0.05, z + 0.01, 1.6 + (k % 3) * 0.04, 0.05, pl - 0.03, ("wood", "wood_lt", "wood")[k % 3])
+    for sx in (-0.78, 0.78):   # low rails: posts + one rail
+        for z in (-1.1, -0.37, 0.37, 1.1):
+            p.cbox(sx, top - 0.05, z, 0.06, 0.38, 0.06, "wood_dk", top="wood")
+        p.box(sx - 0.03, top + 0.26, -1.14, 0.06, 0.05, 2.28, "wood")
+    p.done()
+
+
 # ─────────────────────────────── props ───────────────────────────────
 
 @model("fence_rail", "prop", 2, 1, "Split-rail fence, 2 long along x (posts at both ends)")
@@ -1484,9 +1766,16 @@ def woodpile():
     p.done()
 
 
-def tree(name, crown_cols, trunk_h=1.4, r=0.85, seed=0, pine=False):
+def tree(name, crown_cols, trunk_h=1.4, r=0.85, seed=0, pine=False, trunk_col="trunk", trunk_r=0.13, flecks=0):
     p = Part(name)
-    p.cyl(0, 0, 0, 0.13, trunk_h + 0.3, "trunk", seg=5, r_top=0.08)
+    p.cyl(0, 0, 0, trunk_r, trunk_h + 0.3, trunk_col, seg=5, r_top=trunk_r * 0.62)
+    if flecks:   # birch bark: short dark dashes on the pale trunk
+        rng = random.Random(seed + 40)
+        for _ in range(flecks):
+            a = rng.uniform(0, 2 * math.pi)
+            h = rng.uniform(0.25, trunk_h)
+            rr = trunk_r * (1.0 - 0.38 * h / (trunk_h + 0.3))
+            p.cbox(math.cos(a) * rr, h, math.sin(a) * rr, 0.045, 0.06, 0.03, "#4a443c")
     p.done()
     c = Part(name + "_Crown", origin=(0, trunk_h, 0))
     if pine:
@@ -1527,6 +1816,124 @@ def bush():
     rng = random.Random(5)
     for _ in range(4):
         p.blob(rng.uniform(-0.3, 0.3), rng.uniform(0.35, 0.5), rng.uniform(0.1, 0.35), 0.05, 0.04, 0.05, "#d77a92", seg=4, rings=2, jit=0)
+    p.done()
+
+
+# ── more town trees and bushes ──
+
+@model("tree_elm", "prop", 2, 2, "A tall elm, the biggest of the village trees (about 4.7 high; 'tree_elm_Crown' sways)")
+def tree_elm():
+    tree("tree_elm", ["leaf", "leaf2", "leaf_dk"], trunk_h=2.5, r=1.15, seed=11, trunk_r=0.22)
+
+
+@model("tree_maple", "prop", 2, 2, "A broad maple in autumn colour ('tree_maple_Crown' sways)")
+def tree_maple():
+    tree("tree_maple", ["leaf_au", "#d27a3f", "#b9542f"], trunk_h=1.8, r=1.2, seed=12, trunk_r=0.16)
+
+
+@model("tree_birch", "prop", 2, 2, "A slim birch with a pale, flecked trunk ('tree_birch_Crown' sways)")
+def tree_birch():
+    tree("tree_birch", ["#8fb46a", "#a4c078", "#7fa05e"], trunk_h=2.3, r=0.62, seed=13,
+         trunk_col="#d9d4c6", trunk_r=0.09, flecks=12)
+
+
+@model("tree_willow", "prop", 2, 2, "A weeping willow, long pale-green strands hanging from a leaning crown ('tree_willow_Crown' sways)")
+def tree_willow():
+    p = Part("tree_willow")
+    rng = random.Random(21)
+    limb(p, (0, 0, 0), (0.15, 1.4, 0.05), 0.19, 0.13, "trunk", seg=5)
+    limb(p, (0.15, 1.4, 0.05), (0.38, 2.15, 0.0), 0.13, 0.09, "trunk", seg=5)
+    limb(p, (0.2, 1.6, 0.05), (-0.45, 2.0, 0.2), 0.07, 0.04, "trunk", seg=4)
+    roots(p, 0, 0, 0.22, 4, rng, col="trunk")
+    p.done()
+    c = Part("tree_willow_Crown", origin=(0, 2.1, 0))
+    greens = ["#b4d07c", "#a7c872", "#c2d98a", "#9dc06c"]
+    # a lumpy, leaning crown made of a few uneven lobes
+    for (x, y, z, rx, ry, rz) in [(0.45, 2.5, 0.0, 0.95, 0.4, 0.8), (-0.25, 2.4, 0.3, 0.6, 0.3, 0.55),
+                                  (0.15, 2.35, -0.5, 0.55, 0.28, 0.5), (1.05, 2.35, 0.2, 0.5, 0.26, 0.5)]:
+        c.blob(x, y, z, rx, ry, rz, rng.choice(greens), seg=6, rings=3, jit=0.14, seed=rng.randint(0, 99))
+    # many thin hanging strands of varied length, reaching almost to the ground
+    for i in range(34):
+        a = 2 * math.pi * i / 34 + rng.uniform(-0.15, 0.15)
+        rr = rng.uniform(0.55, 1.25)
+        x, z = 0.4 + math.cos(a) * rr, math.sin(a) * rr * 0.9
+        top = 2.45 + rng.uniform(-0.12, 0.05)
+        bottom = rng.choice((0.25, 0.4, 0.6, 0.85, 1.1, 1.4))
+        sway = rng.uniform(-0.05, 0.1)
+        limb(c, (x, top, z), (x * 1.1 + sway, bottom + 0.0, z * 1.1 + sway), 0.085, 0.02,
+             rng.choice(greens), seg=3)
+    c.done()
+
+
+@model("tree_orchard", "prop", 1, 1, "A small orchard tree with red apples ('tree_orchard_Crown' sways)")
+def tree_orchard():
+    p = Part("tree_orchard")
+    p.cyl(0, 0, 0, 0.09, 1.0, "trunk", seg=5, r_top=0.06)
+    p.done()
+    c = Part("tree_orchard_Crown", origin=(0, 1.0, 0))
+    rng = random.Random(31)
+    c.blob(0, 1.35, 0, 0.52, 0.42, 0.52, "leaf", seg=7, rings=3, jit=0.12, seed=31)
+    for k in range(3):
+        a = 2 * math.pi * k / 3
+        c.blob(math.cos(a) * 0.3, 1.35 + rng.uniform(-0.1, 0.15), math.sin(a) * 0.3, 0.3, 0.25, 0.3,
+               "leaf2", seg=6, rings=3, seed=31 + k)
+    for _ in range(7):
+        a, rr = rng.uniform(0, 2 * math.pi), rng.uniform(0.25, 0.5)
+        c.blob(math.cos(a) * rr, rng.uniform(1.15, 1.6), math.sin(a) * rr, 0.045, 0.045, 0.045,
+               "#b8443f", seg=4, rings=2, jit=0)
+    c.done()
+
+
+def _on_blob(rng, cx, cy, cz, rx, ry, rz, lo=0.15):
+    """A random point on the upper surface of an ellipsoid (for blossoms and berries)."""
+    th = rng.uniform(0, 2 * math.pi)
+    y = rng.uniform(lo, 1.0)
+    r = math.sqrt(1 - y * y)
+    return cx + rx * r * math.cos(th) * 1.02, cy + ry * y, cz + rz * r * math.sin(th) * 1.02
+
+
+@model("bush_hedge", "prop", 1, 1, "A clipped box hedge, flat-topped and dense")
+def bush_hedge():
+    p = Part("bush_hedge")
+    p.box(-0.42, 0.0, -0.3, 0.84, 0.52, 0.6, "hedge", top=shade("hedge", 0.14), bottom=False)
+    p.box(-0.32, 0.52, -0.2, 0.64, 0.05, 0.4, shade("hedge", 0.08))
+    p.done()
+
+
+@model("bush_blossom", "prop", 1, 1, "A rounded bush covered in pink and white blossom")
+def bush_blossom():
+    p = Part("bush_blossom")
+    p.blob(0, 0.3, 0, 0.46, 0.34, 0.42, "leaf_dk", seg=7, rings=3, jit=0.1, seed=42, flat_bottom=True)
+    rng = random.Random(42)
+    for _ in range(30):
+        x, y, z = _on_blob(rng, 0, 0.3, 0, 0.46, 0.34, 0.42, lo=0.0)
+        p.blob(x, y, z, 0.075, 0.06, 0.075, rng.choice(["#f7eef3", "#f0b8cc", "#e98fb0", "#f5eef2"]), seg=4, rings=2, jit=0)
+    p.done()
+
+
+@model("bush_berry", "prop", 1, 1, "A dark-leaved bush with clusters of red berries")
+def bush_berry():
+    p = Part("bush_berry")
+    p.blob(0, 0.26, 0, 0.44, 0.3, 0.4, "#35532f", seg=7, rings=3, jit=0.12, seed=43, flat_bottom=True)
+    rng = random.Random(43)
+    for _ in range(7):   # clusters of three
+        x, y, z = _on_blob(rng, 0, 0.26, 0, 0.44, 0.3, 0.4, lo=0.1)
+        for _k in range(3):
+            p.blob(x + rng.uniform(-0.05, 0.05), y + rng.uniform(-0.03, 0.05), z + rng.uniform(-0.05, 0.05),
+                   0.055, 0.055, 0.055, rng.choice(["#d0302b", "#c22a2a"]), seg=4, rings=2, jit=0)
+    p.done()
+
+
+@model("bush_large", "prop", 2, 2, "A big, many-lobed, light-green shrub, about 1.3 high")
+def bush_large():
+    p = Part("bush_large")
+    rng = random.Random(44)
+    p.blob(0, 0.55, 0, 0.8, 0.65, 0.75, "#86ae5d", seg=8, rings=4, jit=0.1, seed=44, flat_bottom=True)
+    for k in range(6):
+        a = 2 * math.pi * k / 6 + 0.3
+        p.blob(math.cos(a) * 0.62, 0.5 + rng.uniform(-0.05, 0.3), math.sin(a) * 0.6, 0.45, 0.42 + rng.uniform(0, 0.15), 0.45,
+               rng.choice(["#98be6c", "#7fa85a", "#a8c97a"]), seg=6, rings=3, jit=0.1, seed=44 + k, flat_bottom=True)
+    p.blob(0.05, 1.0, 0, 0.5, 0.4, 0.5, "#a8c97a", seg=6, rings=3, jit=0.1, seed=50)
     p.done()
 
 

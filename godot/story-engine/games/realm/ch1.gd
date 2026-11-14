@@ -357,7 +357,7 @@ static func look_pips(S: Dictionary) -> int:
 
 ## The report's words for one giver's second looks, e.g. "variant A: shown the answer; recharged on a second look (variant B, try 1)".
 static func look_text(S: Dictionary, key: String) -> String:
-	var word := {"second": "right on the second try", "later": "not right on the first try"}
+	var word := {"second": "right on the second try", "third": "right on the third try", "later": "not right on the first try"}
 	var bits := []
 	for t in _looks(S).get(key, {}).get("tries", []):
 		bits.append("recharged on a second look (variant %s, try 1)" % t.v if str(t.tier) == "first" else "variant %s: %s" % [t.v, word.get(str(t.tier), str(t.tier))])
