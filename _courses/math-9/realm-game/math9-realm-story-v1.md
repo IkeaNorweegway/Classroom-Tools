@@ -46,7 +46,7 @@ The student names the apprentice and picks their look and pronouns. The story ca
 | Region done: the Bonelands (Ch 11) | Bonelands hat | dusk-red with a striped hoodoo band and a bone charm |
 | Finale: raised to **Warden** | Warden robe + Warden hat | midnight-blue, gold Measure lines |
 
-The player can switch back to any hat or robe they have earned (at home, or Hesper's cottage). **The familiar:** a small black cat with gold eyes turns up at Hesper's cottage in Chapter 1 and follows the apprentice from then on; the student names it.
+The player can switch back to any hat or robe they have earned (at home, or Hesper's cottage). **The familiar:** a small black cat with gold eyes turns up in Chapter 2 (rescued with the first Growth vine) and follows the apprentice from then on; the student names it.
 
 ---
 
@@ -119,14 +119,16 @@ Orrin keeps one thing from the apprentice: he saw a strange carving on the broke
 *Make things double, triple or shrink by powers.*
 **Codes:** PE1–PE7.
 
-- **Lesson:** Hesper plants one spell-seed that splits in two every night. Repeated multiplication as a power; the laws as shortcuts *you can explain*.
-- **Help quests:**
-  - **The blight cure** (PE1, PE3): a cure-moss doubles each day; how many patches after 6 days? After 3 more?
+- **Lesson** (PE1): Hesper plants one spell-seed that splits in two every night. Repeated multiplication as a power; her turnabout charm (base −2) for negative bases and brackets.
+- **Help quests** (one per notes section; full design in `math9-realm-ch2-design-v1.md`):
+  - **The moss tally** (PE2): a cure-moss triples each day; walk the tally board back to day 0. One patch, not none.
+  - **The blight cure** (PE3): a cure-moss doubles each day; 6 days, then 3 more. Enough for 500 blighted spots?
+  - **Hollow-moths at the mill** (PE4): 3⁷ moths, and a smoke pot clears 3⁴. How many pots?
+  - **The nests in the well-house** (PE5): the swarm grows 3² times a night for 4 nights.
+  - **Pell's spell jar** (PE6): (2 × 3)² pots against Pell's 2 × 3² seeds; he guesses they're the same.
   - **The boulder on the road** (PE7): shrink a boulder to 2⁻³ of its size. Is that bigger or smaller? (1⁄8; a negative exponent is a reciprocal, not a negative.)
-  - **Hollow-moths** (PE4, PE5): moths spread by powers of 3; compare two swarms with quotient and power-of-a-power laws.
-  - **Pell's spell jar** (PE6): (2 × 3)² seeds against 2 × 3²; Pell guesses they're the same.
-- **False rune:** on the **seed vault** door: *3⁰ = 0* and *a negative exponent makes a negative*. The vault holds next year's seed and won't open. The hero uses the division pattern (3³ ÷ 3³) to show 3⁰ = 1 and opens it.
-- **Sigil opens:** shrink to fit through small gaps; grow vines to climb.
+- **False rune:** on the **seed vault** door at Highstead: *3⁰ = 0* and *3⁻¹ = −3*. The vault holds next year's seed and won't open. The hero walks the dividing pattern down (3 ÷ 3 = 1, then ⅓, 1⁄9), checks it with 3³ ÷ 3³, and opens it.
+- **Sigil opens:** shrink to fit through small gaps; grow vines to climb. The first vine rescues a small black cat, the familiar (moved here from Chapter 1).
 
 ### Chapter 3 — Square roots & the Pythagorean theorem · Sigil: **Bridgecraft**
 *Span any gap with a beam or rope of exact length.*
