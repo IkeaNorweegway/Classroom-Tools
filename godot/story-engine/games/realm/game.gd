@@ -916,7 +916,7 @@ func _second_look(T, key: String, offer := true) -> void:
 		T.confetti()
 		await T.say("", "The Balance sigil on your hand glows. One pip back: %s." % Ch1.pip_text(Ch1.pips(S)))
 		await T.say("pell", "See? Same skill, new numbers, and you nailed it.")
-		T.log_line("Second look with %s (variant %s): right the first time. A pip back." % [T.people_def[giver].name, v])
+		T.log_line("Second look with %s (variant %s): right the first time. A pip back." % [T.people_def[giver].name, v], "Second look")
 	else:
 		if tier == "second" or tier == "third":   # the panel shows the why line only when it shows the answer
 			await T.say("", c.why)
@@ -966,7 +966,7 @@ func _spot(T, sid: String, story: bool) -> void:
 		T.set_flag(sp.flag, true)
 		T.rebuild_maps()
 		await T.say("", sp.done)
-		T.log_line("Balance: %s (change %s °C)." % [sp.what, Frac.dec_text(ans)])
+		T.log_line("Balance: %s (change %s °C)." % [sp.what, Frac.dec_text(ans)], "" if story else "A gold ring")
 		if sid == "spot_cellar":
 			T.give("slingshot")
 			T.give("page")
@@ -1137,6 +1137,26 @@ const QUEST2 := {"lesson2": ["The spell-seed", "The lesson · PE1"], "tally": ["
 	"moths": ["Hollow-moths at the mill", "Quest · PE4"], "nests": ["The nests in the well-house", "Quest · PE5"], "jar": ["Pell's spell jar", "Quest · PE6"],
 	"boulder": ["The boulder on the road", "Quest · PE7"], "vault": ["The seed vault", "The seed vault"]}
 const TIER_ORDER := ["first", "second", "third", "later"]
+
+## The name each story step gives its "What I decided" rows (the quest panel titles and the designs' section names).
+## Lines written outside a step (second looks, gold rings, Orrin's window) pass their own label.
+const STEP_NAME := {"prologue": "The night the bridge fell", "meet_hesper": "Meeting Hesper", "lesson": "Hesper's lesson",
+	"well": "The frozen well", "ledger": "The miller's ledger", "cold_snap": "The cold snap", "harvest": "Sharing the harvest",
+	"recipe": "The frost recipe", "low_road": "The runner from Highstead", "rune": "The false rune", "sigil": "The Balance sigil",
+	"mill_wheel": "The mill wheel", "chapter_end": "End of Chapter 1",
+	"ch2_recap": "Hesper's recap", "ch2_open": "Opening", "sigil2": "The Growth sigil", "vine": "The first vine", "chapter_end2": "End of Chapter 2"}
+
+
+## The engine's hook: the scene in play names the log line ("" → the engine's "Part N").
+func log_label(T) -> String:
+	var st: Array = steps()
+	var si := int(T.G.get("si", -1))
+	if si < 0 or si >= st.size():
+		return ""
+	var n := str(st[si]).split(":")[0]
+	if QUEST2.has(n):
+		return str(QUEST2[n][0])
+	return str(STEP_NAME.get(n, ""))
 
 
 func _look_key2(pid: String) -> String:
@@ -1816,7 +1836,7 @@ func _gspot(T, sid: String, story: bool) -> void:
 					"A desk. Two charcoal rubbings of carved stone, side by side: the grain-share rune and the vault rune.", "And a small painting of a young apprentice in Warden's grey, hung with its face turned to the wall."])
 				T.remember("orrin", "In Orrin's tower: rubbings of the two runes, and a painting turned to the wall.")
 				T.set_flag("orrin_painting", true)
-				T.log_line("In Orrin's tower: rubbings of the two runes, and a painting turned to the wall.")
+				T.log_line("In Orrin's tower: rubbings of the two runes, and a painting turned to the wall.", "Orrin's window")
 	else:
 		await T.say("", "The sigil hums. %s holds." % sp.what)
 	T.save()
@@ -1848,7 +1868,7 @@ func _second_look2(T, key: String, offer := true) -> void:
 		T.confetti()
 		await T.say("", "The Growth sigil on your hand glows. One pip back: %s." % Ch2.pip_text(Ch2.pips(S)))
 		await T.say("pell", "See? Same skill, new numbers, and you nailed it.")
-		T.log_line("Second look with %s (variant %s): right the first time. A pip back." % [T.people_def[giver].name, v])
+		T.log_line("Second look with %s (variant %s): right the first time. A pip back." % [T.people_def[giver].name, v], "Second look")
 	else:
 		await T.say(giver, "Come back after you've worked a gold ring, or tomorrow.")
 	T.refresh()

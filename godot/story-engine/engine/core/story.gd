@@ -79,8 +79,12 @@ static func met(S: Dictionary, who: String) -> bool:
 	return S.mem.has(who) and bool(S.mem[who].met)
 
 
-static func log_line(S: Dictionary, text: String) -> void:
-	S.log.append({"day": int(S.day), "text": text})
+## label (optional): the row's name in the report and the Journal ("The moss tally"); with none the row reads "Day N".
+static func log_line(S: Dictionary, text: String, label := "") -> void:
+	var e := {"day": int(S.day), "text": text}
+	if label != "":
+		e.label = label
+	S.log.append(e)
 
 
 # ── Bag ──

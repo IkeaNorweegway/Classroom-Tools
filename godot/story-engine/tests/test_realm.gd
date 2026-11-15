@@ -4,6 +4,7 @@
 # Chapter 2 (_chapter2): every answer against its design (worked with exact fractions), the questions, every named error and
 # power-card trap, the pattern boards, every second-look variant, the Growth spots on many seeds, the six-pip charge, the lock,
 # the report labels and filter, the chapter picker, and a Chapter 2 save.
+# _log_names: "What I decided" rows carry the scene's name (a Chapter 2 auto=right play, run as a second program); old saves read "Part N".
 #   godot --headless --path godot/story-engine -s res://tests/test_realm.gd
 extends SceneTree
 
@@ -240,6 +241,7 @@ func _initialize() -> void:
 	ok(G.summary(O2).pips == 0, "old save: summary builds")
 
 	var n_grow := await _chapter2()
+	_log_names()
 	print("REALM %d checks (%d spot draws, %d Growth draws), %d problems" % [checks, n_spots, n_grow, fails.size()])
 	for f in fails:
 		print("  ✗ ", f)
@@ -488,3 +490,50 @@ func _chapter2() -> int:
 	ok(G.title_buttons({"done": false, "S": {"chapter": 2, "flags": {}}}, [1, 2]) == [1, 2], "title in Chapter 2: unchanged")
 	ok((await G.title_pick("ch2", g1, false)) == g1 and int(g1.S.want_ch) == 2, "title pick: go on with the same save")
 	return n_draws
+
+
+## The report's "What I decided" rows: each log line carries the name of the quest or scene it came from (T-043).
+func _log_names() -> void:
+	const Story = preload("res://engine/core/story.gd")
+	var L := {"day": 2, "log": []}
+	Story.log_line(L, "a")
+	Story.log_line(L, "b", "The moss tally")
+	ok(not L.log[0].has("label") and L.log[1].label == "The moss tally", "log: a label is stored only when given")
+	var G = load("res://games/realm/game.gd").new()
+	var T = load("res://engine/town.gd").new()
+	T.D = G
+	ok(T._log_name({"day": 3, "text": "old"}) == "Part 3", "log: an old Realm line with no label reads Part 3")
+	ok(T._log_name({"day": 3, "text": "x", "label": "The seed vault"}) == "The seed vault", "log: a label names the row")
+	T.D = RefCounted.new()
+	ok(T._log_name({"day": 4, "text": "x"}) == "Day 4", "log: a game with no log_unit and no label reads Day 4")
+	T.free()
+	for st in G.steps():
+		var n := str(st).split(":")[0]
+		ok(n.begins_with("gate") or G.STEP_NAME.has(n) or G.QUEST2.has(n), "log: step %s has a name" % n)
+	G._chapter = 2
+	for st in G.steps():
+		var n := str(st).split(":")[0]
+		ok(n.begins_with("gate") or G.STEP_NAME.has(n) or G.QUEST2.has(n), "log: step %s has a name" % n)
+	# a Chapter 2 auto=right play: every row of "What I decided" has a quest or scene name, none "Part N"
+	var path := ProjectSettings.globalize_path("user://test_realm_ch2_report.html")
+	DirAccess.remove_absolute(path)
+	var out := []
+	OS.execute(OS.get_executable_path(), ["--headless", "--path", ProjectSettings.globalize_path("res://"), "--", "game=realm", "debug=1",
+		"chapter=2", "auto=right", "quit=1", "report=" + path], out, true)
+	var html := FileAccess.get_file_as_string(path)
+	ok(html != "" and not str(out).contains("SCRIPT ERROR"), "log: the Chapter 2 play ran and wrote its report")
+	var at := html.find("<h2>What I decided</h2>")
+	ok(at >= 0, "log: the Chapter 2 report has What I decided")
+	var rx := RegEx.new()
+	rx.compile("<tr><td><b>(.*?)</b></td>")
+	var names := []
+	for m in rx.search_all(html.substr(at)):
+		names.append(m.get_string(1).xml_unescape())
+	var known := ["Hesper's recap", "Opening", "Second look", "A gold ring", "Orrin's window"]
+	known.append_array(G.STEP_NAME.values())
+	for q in G.QUEST2:
+		known.append(G.QUEST2[q][0])
+	ok(names.size() >= 10, "log: the Chapter 2 play logged %d lines" % names.size())
+	for nm in names:
+		ok(not nm.begins_with("Part ") and known.has(nm), "log: row named \"%s\"" % nm)
+	DirAccess.remove_absolute(path)

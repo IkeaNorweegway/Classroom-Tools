@@ -22,11 +22,13 @@
 # bubble(id, S), new_game(S), steps() (method names, run in order; each must be safe to run again from its start),
 # hud(S), items(), report(S), shop_cfg, shop_layout, and for the test player bot_order(S) and bot_plan(S).
 # Optional: bag(S) → [{ name, about, view: Callable(body) }] (the Bag lists these instead of items, and opens a view);
-# my_look(S, look) → the look to draw you with (a job outfit); log_unit ("Day" by default) names the rows of "What I decided".
+# my_look(S, look) → the look to draw you with (a job outfit); log_unit ("Day" by default) names the rows of "What I decided";
+# log_label(T) → the name of the scene in play, stored on each log line written without its own label (T.log_line(text, label)).
 # A step name may carry an argument after a colon ("plan:3" calls plan(T, "3")).
 #
 # Test hook: ?debug=1 on the web, or `-- debug=1` on the command line: saves stay in memory (add save=1 to keep them).
-# auto=right|second|wrong plays the whole game by itself; quit=1 ends the program when it finishes and prints a summary.
+# auto=right|second|wrong plays the whole game by itself; quit=1 ends the program when it finishes and prints a summary;
+# report=<file> also writes the report (the downloaded HTML) to that file when the auto play ends.
 extends Node
 
 const Story = preload("res://engine/core/story.gd")
@@ -855,7 +857,11 @@ func remember(who: String, note := "", t := 0) -> void: Story.remember(S, who, n
 
 func knows(who: String, note: String) -> bool: return Story.knows(S, who, note)
 func trust(who: String) -> int: return Story.trust(S, who)
-func log_line(text: String) -> void: Story.log_line(S, text)
+## label: the row's name (optional). With none, a game's log_label(T) names it from the scene in play; with neither, "Day N".
+func log_line(text: String, label := "") -> void:
+	if label == "" and D.has_method("log_label"):
+		label = str(D.log_label(self))
+	Story.log_line(S, text, label)
 func record(key: String, label: String, tier: String, extra = null) -> void: Story.record(S, key, label, tier, extra)
 func has(id: String) -> bool: return Story.count(S, id) > 0
 func take(id: String, n := 1) -> bool: return Story.take(S, id, n)
@@ -1384,7 +1390,7 @@ func open_journal() -> void:
 		body.add_child(ui.label("STORY SO FAR", "Kicker"))
 		var log_txt := ""
 		for l in S.log:
-			log_txt += "%s %d: %s\n" % [_log_unit(), int(l.day), l.text]
+			log_txt += "%s: %s\n" % [_log_name(l), l.text]
 		body.add_child(ui.label(log_txt.strip_edges() if log_txt != "" else "It starts today.")), [["Close", true, true]], "", true)
 
 
@@ -1453,7 +1459,7 @@ func report_sections() -> Array:
 	for li in S.log.size():
 		var l: Dictionary = S.log[li]
 		if keep.call("log", li):
-			log_rows.append(["%s %d" % [_log_unit(), int(l.day)], l.text])
+			log_rows.append([_log_name(l), l.text])
 	if log_rows.size():
 		out.append({"title": "What I decided", "rows": log_rows})
 	return out
@@ -1461,6 +1467,12 @@ func report_sections() -> Array:
 
 func _log_unit() -> String:
 	return str(D.log_unit) if "log_unit" in D else "Day"
+
+
+## A log row's name: its label if it has one (saves from before labels have none), else "Day N" (or the game's log_unit).
+func _log_name(l: Dictionary) -> String:
+	var lab := str(l.get("label", ""))
+	return lab if lab != "" else "%s %d" % [_log_unit(), int(l.day)]
 
 
 func open_report() -> void:
@@ -1744,5 +1756,10 @@ func _auto_summary() -> void:
 	if D.has_method("summary"):
 		out.merge(D.summary(S))
 	print("AUTO-RESULT " + JSON.stringify(out))
+	if args.get("report", "") != "":
+		var f := FileAccess.open(str(args.report), FileAccess.WRITE)
+		if f != null:
+			f.store_string(report_html())
+			f.close()
 	if args.has("quit"):
 		get_tree().quit()
