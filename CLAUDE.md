@@ -54,22 +54,7 @@ All rendering and all site page work goes to the **`render-and-site`** agent (`.
 - Give the agent the exact files or topics, and what should be on which page.
 - The agent reports content problems back instead of fixing them. Fix those in the main session, then send the re-render.
 
-**Full routing table** (from the 2026-11-03 audit; delegate without asking):
-
-| Work | Who | Model / effort |
-|---|---|---|
-| Teaching content: notes, workbooks, questions, keys (the maths), outcome maps, test design, research summaries | Main session | Opus, high for a new unit or test, medium for revisions |
-| Designing a game, sim or trainer: the model, missions, named errors, question banks; video scripts | Main session | Opus, high |
-| Rendering, Astro pages, `src/data`, nav, links, site build | `render-and-site` | Sonnet, medium |
-| Bulk restyles and sweeps: "make all X look like Y", CSS or font rollouts, wiring a component into every viewer, section ids, link fixes; HTML polish on interactives and media pipeline steps once the design or script is set | `sweep` | Sonnet, medium |
-| Read-only checks: screenshots, layout at 1366×768, svg-audit, diagram vs text, key vs question, headless playtests | `checker` | Sonnet, low |
-| Ongoing diagram polish (Math 7/8 `@viz` types and Math 9 topics, readability and realism), one type or topic per run in its own worktree; fixes wait in `_image-review/pending.md` for "approve TYPE" / "reject TYPE: why" (steps at the bottom of the agent file). Start with `/loop Run the image-polish agent on the next type in _image-review/queue.md` | `image-polish` | Sonnet, medium |
-| Nightly CEFL Town v2 play-through: walkable paths, natural and logical speech, quest flow. Logs suggestions only, never changes the game. Runs at 02:00 from the `cefl-playtest` systemd user timer (`scripts/playtest_nightly.sh`); findings in `_playtest-review/suggestions.md`; turn one down with a line in `_playtest-review/dismissed.md` (`S-004: why`) | `playtest` | Sonnet, medium |
-| Overseeing the Math 9 Realm game: build vs the chapter design, the Realm tests, the maths (answers, misconceptions, RN coverage), and a task board of done / in progress / next with an owner for each task. Report-only, never changes the game. Run by hand ("run the realm manager"); board in `_realm-review/board.md`, issues in `_realm-review/issues.md`; turn one down in `_realm-review/dismissed.md` (`R-004: why`). The main session hands out its next batch | `realm-manager` | Sonnet, medium |
-| Adding or fixing 3D models in an existing Blender pack (props, buildings, clothes, recolours, cast variants on an existing rig) once the main session has listed them | `blender-models` | Sonnet, medium; Opus, high for new rigs, body bases or clips (override the model when starting it). Choosing what to model stays in the main session |
-| Finding things: "where is…", "what's unmerged", file searches | `Explore` | low |
-| Quick questions (git, tools, "what is…") | Main session; suggest `/model sonnet` and `/effort low` | Sonnet, low |
-| `max` effort, `/code-review ultra` | Only when the user asks | — |
+**Full routing table:** `_routing.md` (who does what, model and effort for each agent). Read it before starting an agent on a different model or effort. In short: teaching content and the design of games, sims and trainers stay in the main session; `render-and-site` renders and wires the site; `sweep` does bulk mechanical edits; `checker` does read-only checks; `Explore` finds things; the game and art agents (`image-polish`, `playtest`, `realm-manager`, `realm-builder`, `voxel-people`, `blender-models`) each do the job in their description. Delegate to all of them without asking. `max` effort and `/code-review ultra` only when the user asks.
 
 - **Five-file rule:** before a change touches more than about 5 files the same way, the main session writes the rule once (with one finished example) and hands it to `sweep`.
 - **Turn limit:** suggest a new conversation at about 150 turns, even mid-strand, after committing and updating `_status.md`.
@@ -131,27 +116,7 @@ Materials are organized inside type folders by subject and unit:
 
 ### Course and unit contexts — read these for scope, outcomes, misconceptions
 
-| File | What it contains |
-|---|---|
-| `_courses/grade-6-science/_context.md` | Full course overview: all units, LOs, CS embedding, SM threading, inquiry options |
-| `_courses/grade-6-science/forces/_context.md` | Forces unit: LOs, knowledge clusters, misconceptions, scope boundary |
-| `_courses/grade-6-science/living-systems/_context.md` | Living Systems unit: LOs, knowledge clusters, scope boundary, misconceptions |
-| `_courses/grade-7-science/_context.md` | Science 7 (Alberta 2007 PoS): 5 units, LOs, misconception inventory, depth ceilings |
-| `_courses/grade-7-science/[unit]/_context.md` | Unit-level contexts: interactions-ecosystems, plants-food-fibre, heat-temperature, structures-forces, planet-earth |
-| `_courses/math-7/_context.md` | Math 7 on the **June 2026 draft** curriculum: 12 topics in 4 strands, local codes PN/IN/SC/FD/RP/LE/FN/LA/CI/VO/ST/PB, depth ceilings, misconceptions, reading level (F&P N–P) and picture rules (3+ diagrams per notes section), materials map. Renders with `scripts/render_math8.pl` (it handles both grades) |
-| `_courses/math-8/_context.md` | Math 8 on the **June 2026 draft** (rebuilt 2026-10-31): 12 topics, local codes RN/SR/PR/PO/SE/IQ/LF/SD/TT/SA/DI/CP, depth ceilings, misconceptions; reading and picture rules as Math 7. The 2016-program version is `_context-2016.md` (its files stay unlinked). Render with `scripts/render_math8.pl`; per-topic diagram types live in `scripts/vizext/*.pl` |
-| `_courses/grade-5-ela/_context.md` | Grade 5 ELA (Alberta ELAL K–6, 2023): six genre units, 60-min block, editions A/B/C, local codes TF/OL/VO/CO/WR/CV, error patterns, F&P and Words Their Way use. Does **not** use the math/science formats. Evidence: `research/literacy-reading-writing-research.md`. Render with `scripts/render_ela5.pl` |
-| `_courses/math-9/_context.md` | Math 9: 11 topics, depth ceilings, misconception inventory, recommended sequence |
-| `_courses/grade-7-social/_context.md` | Social 7 (draft 7–9 curriculum): 5 units, verbatim K/U/S, local codes SB/CG/BE/IM/AF, misconceptions, sensitive-content notes. Materials render with `scripts/render_social.pl` |
-| `_courses/grade-8-social/_context.md` | Social 8 (draft 7–9 curriculum): 4 units, outcomes, misconceptions |
-| `_courses/cefl/_context.md` | CEFL 7–9 (draft 2026 curriculum): project-based; 5 units × 3 grades, unit rhythm, mini-workbook and project specs, local outcome codes |
-| `_courses/esports/_context.md` | eSports club course design: domains, 9-week season, source PDFs |
-| `_courses/phys-ed-56/_context.md` | PEW Grades 5–6: organizing ideas, KUSP framework, activity categories, misconceptions |
-| `_courses/phys-ed-56/[unit]/_context.md` | Unit-level contexts: invasion-games, net-wall, target, striking-fielding, dance, gymnastics, fitness |
-| `_courses/phys-ed-79/_context.md` | PEW Grades 7–9: organizing ideas, KUSP framework, activity categories, misconceptions |
-| `_courses/phys-ed-79/[unit]/_context.md` | Unit-level contexts: invasion-games, net-wall, target, striking-fielding, dance, gymnastics, fitness |
-| `steam/_context.md` | STEAM Grades 5–9 course overview: equipment map, unit archetype, Art & Media Strand, Open Items — see the exception note above, this course lives outside the type-folder structure |
-| `steam/grade-[5–9]/_context.md` | Per-grade STEAM year plan: 4 units each with goals, vocabulary, activities, constraints, LOs, misconceptions |
+Every course has `_courses/[course]/_context.md`, and most units have `_courses/[course]/[unit]/_context.md`. STEAM is the exception: `steam/_context.md` and `steam/grade-[N]/_context.md`. **`_courses/_index.md`** lists every one with its curriculum version, local outcome codes and render script. Read it when a request names a course that the routing table below does not cover.
 
 ---
 
@@ -177,6 +142,7 @@ Materials are organized inside type folders by subject and unit:
 | "Build / revise a Math 8 [notes / worksheet / workbook / exits / quiz / teacher notes]" | `_courses/math-8/_context.md` → the type-folder context → the source format at the top of `scripts/render_math8.pl` (diagram types in `scripts/Math8Viz.pm`) | `research/` |
 | "Build / revise a Grade 5 ELA [unit / notebook / reader / anything]" | `_courses/grade-5-ela/_context.md` → `research/literacy-reading-writing-research.md` → the source format at the top of `scripts/render_ela5.pl` | `templates/`, `worksheets/workbooks-context.md`, `notes-packages/_context.md` — ELA uses its own formats |
 | "Build / revise slides" | `slides/_context.md` → the unit's notes package and notes answer key → unit `_context.md` in `_courses/` | `research/`, `tests-quizzes/` |
+| "Hand this off" / "write a handoff for X" | `templates/handoff-template.md` → fill it into `handoffs/[date]-[name].md` for a cheaper model in Kilo; review its diff after | type-folder contexts |
 | "Start a [type] build" | Copy relevant template from `templates/` first, then read artifact context | everything else |
 | "Build/revise a STEAM [unit/grade] [notes/design journal/plan]" | `steam/_context.md` → `steam/grade-[N]/_context.md` | `templates/`, `worksheets/`, `notes-packages/`, `_courses/` — STEAM doesn't use the standard templates (see `steam/grade-5/` for the established simplified-notes + design-journal format) |
 

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sand Board</title>
+<style>
+:root{
+  --ink:#22305a; --cream:#d6f0ff; --paper:#ffffff;
+  --boulder:#c9b8ff; --stone:#86d4ff; --sand:#ffdf6e; --done:#93e6c3; --pink:#ff9db8;
+  --muted:#5b6690;
+}
+*{box-sizing:border-box}
+html{background:var(--cream)}
+body{
+  margin:0; color:var(--ink); min-height:100vh;
+  font:16px/1.45 "Trebuchet MS","Segoe UI",system-ui,sans-serif;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.85) 18%, transparent 19%) 0 0/22px 22px,
+    var(--cream);
+}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 20px 60px}
+h1,h2,h3{font-family:"Arial Black","Segoe UI Black",Impact,system-ui,sans-serif;font-weight:900;letter-spacing:.2px;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+
+/* header */
+header{
+  position:relative; overflow:hidden;
+  background:var(--sand); border:3px solid var(--ink); border-radius:18px; box-shadow:6px 6px 0 var(--ink);
+  padding:18px 22px; display:flex; flex-wrap:wrap; gap:14px 24px; align-items:center; justify-content:space-between;
+}
+header::before{ /* halftone burst */
+  content:""; position:absolute; right:-40px; top:-60px; width:300px; height:300px; border-radius:50%;
+  background:radial-gradient(circle, var(--pink) 28%, transparent 30%) 0 0/16px 16px;
+  -webkit-mask:radial-gradient(circle, #000 20%, transparent 70%); mask:radial-gradient(circle, #000 20%, transparent 70%);
+  opacity:.8; pointer-events:none;
+}
+header>*{position:relative}
+h1{font-size:2.1rem;line-height:1}
+.sub{margin:4px 0 0;color:var(--ink);font-weight:600}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{
+  display:flex;align-items:center;gap:8px;cursor:pointer;
+  background:var(--paper); border:3px solid var(--ink); border-radius:999px; padding:7px 16px 7px 10px;
+  font-weight:800; box-shadow:3px 3px 0 var(--ink);
+}
+.tab[aria-pressed=true]{background:var(--ink);color:var(--paper);box-shadow:none;transform:translate(3px,3px)}
+.tab svg{width:26px;height:26px}
+.tab .n{font-weight:700;opacity:.8}
+
+/* add bar */
+.addbar{display:flex;gap:10px;margin:22px 0 12px;flex-wrap:wrap}
+.addbar input{
+  flex:1 1 320px; min-width:0; background:var(--paper); border:3px solid var(--ink); border-radius:14px;
+  padding:12px 16px; box-shadow:4px 4px 0 var(--ink);
+}
+.btn{
+  cursor:pointer; background:var(--pink); border:3px solid var(--ink); border-radius:14px;
+  padding:10px 18px; font-weight:800; box-shadow:4px 4px 0 var(--ink);
+}
+.btn.alt{background:var(--paper)}
+.btn:hover{transform:translate(-1px,-1px)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+
+/* filter chips */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+.chip{
+  cursor:pointer;border:2.5px solid var(--ink);border-radius:999px;background:var(--paper);
+  padding:3px 13px;font-weight:700;font-size:.9rem;
+}
+.chip[aria-pressed=true]{background:var(--boulder);box-shadow:2px 2px 0 var(--ink)}
+
+/* groups and cards */
+.group{margin:0 0 26px}
+.ghead{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.ghead h2{font-size:1.15rem}
+.ghead .tag{font-size:.82rem;font-weight:700;color:var(--muted)}
+.pill{width:16px;height:16px;border:2.5px solid var(--ink);border-radius:50%;background:var(--boulder);flex:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+.card{
+  position:relative;background:var(--paper);border:3px solid var(--ink);border-radius:16px;
+  box-shadow:5px 5px 0 var(--ink);padding:12px 14px 12px 14px;display:flex;gap:12px;align-items:flex-start;
+}
+.card.sand{background:linear-gradient(var(--paper),var(--paper)) padding-box;border-left:12px solid var(--sand)}
+.card.stone{border-left:12px solid var(--stone)}
+.card.boulder{border-left:12px solid var(--boulder)}
+.card.doing{background:#fff3c4}
+.card.done{background:#eefaf4;box-shadow:3px 3px 0 var(--ink)}
+.card.done .title{text-decoration:line-through;text-decoration-thickness:2px}
+.status{
+  flex:none;width:34px;height:34px;border-radius:50%;border:3px solid var(--ink);background:var(--paper);
+  cursor:pointer;display:grid;place-items:center;padding:0;margin-top:1px;
+}
+.status[data-s=doing]{background:linear-gradient(90deg,var(--sand) 50%,var(--paper) 50%)}
+.status[data-s=done]{background:var(--done)}
+.status svg{width:18px;height:18px;display:none}
+.status[data-s=done] svg{display:block}
+.body{min-width:0;flex:1}
+.title{font-weight:800;font-size:1.02rem;line-height:1.3;overflow-wrap:anywhere}
+.detail{margin:4px 0 0;color:var(--muted);font-size:.9rem;overflow-wrap:anywhere}
+.crumb{font-size:.78rem;font-weight:700;color:var(--muted);margin-top:6px}
+.tools{display:flex;gap:4px;flex:none}
+.ibtn{margin:6px 0 0 -6px;font-size:.8rem;background:none;border:2px solid transparent;border-radius:8px;cursor:pointer;padding:2px 6px;font-weight:800;color:var(--muted)}
+.ibtn:hover{border-color:var(--ink);color:var(--ink);background:var(--paper)}
+
+/* progress bars */
+.bar{display:flex;height:16px;border:2.5px solid var(--ink);border-radius:999px;overflow:hidden;background:var(--paper);margin-top:8px}
+.bar i{display:block;height:100%}
+.bar .d{background:var(--done)}
+.bar .w{background:var(--sand);background-image:radial-gradient(rgba(34,48,90,.35) 20%,transparent 22%);background-size:6px 6px}
+.mini{height:11px;margin-top:6px}
+
+/* progress panel */
+.progress{margin-top:34px;background:var(--paper);border:3px solid var(--ink);border-radius:18px;box-shadow:6px 6px 0 var(--ink);padding:18px 20px}
+.progress h2{font-size:1.25rem;margin-bottom:4px}
+.progress .hint{margin:0 0 14px;color:var(--muted);font-size:.9rem}
+.prow{display:grid;grid-template-columns:minmax(180px,300px) 1fr 64px;gap:6px 16px;align-items:center;padding:9px 0;border-top:2px dashed rgba(34,48,90,.25)}
+.prow:first-of-type{border-top:0}
+.prow button.name{all:unset;cursor:pointer;font-weight:800}
+.prow button.name:hover{text-decoration:underline}
+.prow .bar{margin:0}
+.prow .pct{font-weight:900;text-align:right}
+.prow .counts{grid-column:1/-1;font-size:.82rem;color:var(--muted);font-weight:600}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.82rem;font-weight:700;margin-top:12px}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border:2px solid var(--ink);border-radius:50%;margin-right:6px;vertical-align:-2px}
+.legend .ld::before{background:var(--done)}.legend .lw::before{background:var(--sand)}.legend .lt::before{background:var(--paper)}
+
+details.donebox{margin-top:26px}
+details.donebox summary{cursor:pointer;font-family:"Arial Black",system-ui,sans-serif;font-weight:900;font-size:1.05rem;padding:6px 0}
+.empty{padding:26px;text-align:center;border:3px dashed var(--ink);border-radius:16px;background:var(--paper);font-weight:700}
+
+/* dialog */
+dialog{border:3px solid var(--ink);border-radius:18px;box-shadow:8px 8px 0 var(--ink);padding:0;background:var(--paper);color:var(--ink);width:min(520px,92vw)}
+dialog::backdrop{background:rgba(34,48,90,.35)}
+form.dlg{padding:20px;display:grid;gap:12px}
+form.dlg h2{font-size:1.3rem}
+label{font-weight:800;font-size:.9rem;display:grid;gap:4px}
+form.dlg input,form.dlg select,form.dlg textarea{border:2.5px solid var(--ink);border-radius:10px;padding:8px 10px;background:#fff;width:100%}
+textarea{min-height:76px;resize:vertical}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>label{flex:1 1 150px}
+.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:4px}
+
+#err{display:none;margin:20px 0;padding:18px;border:3px solid var(--ink);border-radius:16px;background:var(--pink);font-weight:700;box-shadow:5px 5px 0 var(--ink)}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:8px 18px;border-radius:999px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .25s}
+#toast.on{opacity:1}
+@media (max-width:640px){.prow{grid-template-columns:1fr 54px}.prow .bar{grid-column:1/-1;order:3}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* crew panel */
+.crew{margin-top:34px}
+.crew h2{font-size:1.25rem;margin:0 0 6px}
+.crew .lede{background:var(--paper);border:3px solid var(--ink);border-radius:18px;box-shadow:6px 6px 0 var(--ink);padding:16px 20px;margin:0 0 22px;max-width:75ch}
+.crew .lede p{margin:0;line-height:1.55}
+.crew .lede h2{margin-bottom:6px}
+.crew h3{font-size:1.05rem;margin:22px 0 8px}
+.crew .pillrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.crew .badge{font-size:.74rem;font-weight:800;border:2px solid var(--ink);border-radius:999px;padding:1px 9px;background:var(--paper)}
+.crew .skill{display:grid;gap:12px}
+.crew .boul{background:var(--paper);border:3px solid var(--ink);border-left:12px solid var(--boulder);border-radius:16px;box-shadow:5px 5px 0 var(--ink);padding:12px 16px}
+.crew .boul>.t{font-weight:900;font-size:1.05rem}
+.crew .boul>.d{color:var(--muted);font-size:.9rem;margin:2px 0 10px}
+.crew .ston{border-left:8px solid var(--stone);margin:8px 0 0 10px;padding:4px 0 4px 12px}
+.crew .ston>.t{font-weight:800}
+.crew .ston>.d{color:var(--muted);font-size:.85rem}
+.crew .sands{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px 14px;margin:6px 0 0}
+.crew .snd{border-left:6px solid var(--sand);padding-left:8px;font-size:.88rem;line-height:1.35}
+.crew .snd b{font-weight:800}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Sand Board</h1>
+      <p class="sub">Boulders are the big goals, stones the chunks, sand the things to do today.</p>
+    </div>
+    <div class="tabs" role="group" aria-label="View" id="tabs"></div>
+  </header>
+
+  <div id="err">Can't reach the board's saver. Start it from the project folder with <code>python3 taskboard/serve.py</code>, then open <code>http://127.0.0.1:8765</code>.</div>
+
+  <form class="addbar" id="quick">
+    <input id="quickText" placeholder="Add a grain of sand… (Enter)" aria-label="New task title" autocomplete="off">
+    <button class="btn" type="submit">Add</button>
+    <button class="btn alt" type="button" id="moreBtn">Add with details…</button>
+  </form>
+
+  <div class="chips" id="chips" aria-label="Filter by boulder"></div>
+
+  <main id="main"></main>
+
+  <section class="progress" aria-labelledby="ph">
+    <h2 id="ph">How far along each boulder is</h2>
+    <p class="hint">Finished items leave the board but still count here. Click a name to filter above.</p>
+    <div id="prog"></div>
+    <div class="legend"><span class="ld">Done</span><span class="lt">To do</span></div>
+  </section>
+
+  <section class="crew" id="crew" aria-labelledby="ch">
+    <div class="lede">
+      <h2 id="ch">How the project is going</h2>
+      <p>Math 7 and Math 8 (on the June 2026 draft) are built and published, and are waiting for your teacher read-through, as are the Grade 5 ELA, Social 7 and Science 7 sets. The CEFL Town v2 game has its town and Payday jobs finished, and the student avatar and Pat's stall are the stone in progress. The Math 9 Realm game has its story bible and Chapter 1 designed, with Chapter 1 as the next build, and a separate pixel-art version (Realm v2) is at the design stage. The main session writes all teaching content and designs the games, while specialist agents (all on Sonnet) render, build the site, polish, check and playtest. Work is done in batches of one topic: content first, then one hand-off to render and wire up the site, then <code>_status.md</code> and a commit.</p>
+    </div>
+
+    <h2>The crew: agents and their jobs</h2>
+    <p class="hint" style="color:var(--muted);margin:0 0 12px;font-size:.9rem">The main session (Opus) writes teaching content and designs games, sims and trainers. Everything else goes to one of these.</p>
+    <div class="grid" id="agents"></div>
+
+    <h2 style="margin-top:34px">Skills: boulders, stones and sand</h2>
+    <p class="hint" style="color:var(--muted);margin:0 0 12px;font-size:.9rem">Boulders are the goals a skill set serves, stones are the stages of the work, sand is the single skill to reach for.</p>
+    <div class="skill" id="skills"></div>
+  </section>
+
+</div>
+
+<dialog id="dlg">
+  <form class="dlg" method="dialog" id="form">
+    <h2 id="dlgTitle">Add a task</h2>
+    <label>Title<input id="fTitle" required maxlength="140"></label>
+    <label>Detail <textarea id="fDetail" maxlength="600" placeholder="A sentence or two: what, where, what counts as done."></textarea></label>
+    <div class="row">
+      <label>Size<select id="fLevel">
+        <option value="sand">Sand (small, doable today)</option>
+        <option value="stone">Stone (a chunk of work)</option>
+        <option value="boulder">Boulder (a big goal)</option>
+      </select></label>
+      <label>Belongs to<select id="fParent"></select></label>
+    </div>
+    <div class="actions">
+      <button class="btn alt" type="button" id="fCancel">Cancel</button>
+      <button class="btn" type="submit" id="fSave">Save</button>
+    </div>
+  </form>
+</dialog>
+<div id="toast" role="status"></div>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const LEVELS = ["sand","stone","boulder"];
+const LABEL = {sand:"Sand",stone:"Stones",boulder:"Boulders"};
+const ICON = {
+  boulder:'<svg viewBox="0 0 32 32"><path d="M4 26 C2 14 10 5 18 6 C27 7 31 16 28 26 Z" fill="#c9b8ff" stroke="#22305a" stroke-width="2.5" stroke-linejoin="round"/><circle cx="13" cy="14" r="1.6" fill="#22305a" opacity=".4"/><circle cx="19" cy="18" r="1.6" fill="#22305a" opacity=".4"/></svg>',
+  stone:'<svg viewBox="0 0 32 32"><ellipse cx="16" cy="19" rx="12" ry="8" fill="#86d4ff" stroke="#22305a" stroke-width="2.5"/><circle cx="12" cy="17" r="1.4" fill="#22305a" opacity=".4"/></svg>',
+  sand:'<svg viewBox="0 0 32 32"><g fill="#ffdf6e" stroke="#22305a" stroke-width="2"><circle cx="9" cy="21" r="3.2"/><circle cx="18" cy="23" r="3.2"/><circle cx="24" cy="17" r="3.2"/><circle cx="15" cy="14" r="3.2"/></g></svg>'
+};
+const CHECK = '<svg viewBox="0 0 20 20"><path d="M3 10.5l4.5 4.5L17 5" fill="none" stroke="#22305a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+let items = [];
+let view = localStorage.getItem("sb.view") || "sand";
+let focus = localStorage.getItem("sb.focus") || "";   // boulder id or ""
+let editing = null;
+let saveTimer = null;
+
+/* ---------- data ---------- */
+const byId = id => items.find(x => x.id === id);
+const kids = id => items.filter(x => x.parent === id);
+function leaves(id){
+  const k = kids(id);
+  return k.length ? k.flatMap(c => leaves(c.id)) : [byId(id)];
+}
+const isOpen = x => leaves(x.id).some(l => l.status !== "done");
+function boulderOf(x){ while(x && x.parent) x = byId(x.parent); return x; }
+function allowedParents(level){
+  if (level === "boulder") return [];
+  if (level === "stone") return items.filter(x => x.level === "boulder");
+  return items.filter(x => x.level !== "sand");
+}
+const uid = () => "n" + Date.now().toString(36) + Math.random().toString(36).slice(2,5);
+const today = () => new Date().toISOString().slice(0,10);
+
+async function load(){
+  try{
+    const r = await fetch("/api/tasks",{cache:"no-store"});
+    if(!r.ok) throw 0;
+    items = (await r.json()).items || [];
+    $("#err").style.display = "none";
+  }catch(e){ $("#err").style.display = "block"; }
+  render();
+}
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    try{
+      const r = await fetch("/api/tasks",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({items})});
+      if(!r.ok) throw 0;
+      toast("Saved");
+    }catch(e){ $("#err").style.display = "block"; toast("Not saved: server not running"); }
+  }, 250);
+}
+function toast(t){ const el=$("#toast"); el.textContent=t; el.classList.add("on"); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove("on"),1400); }
+
+/* ---------- render ---------- */
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function bar(id, mini){
+  const L = leaves(id), n = L.length || 1;
+  const d = L.filter(x=>x.status==="done").length, w = L.filter(x=>x.status==="doing").length;
+  const b = el("div","bar"+(mini?" mini":""));
+  b.innerHTML = `<i class="d" style="width:${d/n*100}%"></i><i class="w" style="width:${w/n*100}%"></i>`;
+  return {node:b, d, w, n, pct:Math.round(d/n*100)};
+}
+
+function card(x, showBoulder){
+  const c = el("div",`card ${x.level}`);
+  const body = el("div","body");
+  body.append(el("div","title",esc(x.title)));
+  if (x.detail) body.append(el("p","detail",esc(x.detail)));
+  if (x.level !== "boulder"){
+    const p = byId(x.parent), b = boulderOf(x);
+    const trail = [showBoulder && b && b.id!==x.id ? b.title : null, p && p!==b ? p.title : null].filter(Boolean).join("  ›  ");
+    if (trail) body.append(el("div","crumb",esc(trail)));
+  }
+  if (x.level !== "sand" && kids(x.id).length){
+    const p = bar(x.id,true);
+    body.append(p.node, el("div","crumb",`${p.d} of ${p.n} done`));
+  }
+  const ed = el("button","ibtn","Edit"); ed.onclick = () => openDlg(x);
+  ed.setAttribute("aria-label","Edit: "+x.title);
+  body.append(ed);
+  c.append(body);
+  return c;
+}
+
+function visible(x){ return !focus || (boulderOf(x) && boulderOf(x).id === focus); }
+
+function render(){
+  // tabs
+  const tabs = $("#tabs"); tabs.innerHTML = "";
+  for (const l of LEVELS){
+    const open = items.filter(x=>x.level===l && isOpen(x)).length;
+    const b = el("button","tab",`${ICON[l]}<span>${LABEL[l]}</span><span class="n">${open}</span>`);
+    b.setAttribute("aria-pressed", view===l);
+    b.onclick = () => { view=l; localStorage.setItem("sb.view",l); render(); };
+    tabs.append(b);
+  }
+  // chips
+  const chips = $("#chips"); chips.innerHTML = "";
+  const all = el("button","chip","All boulders"); all.setAttribute("aria-pressed",!focus);
+  all.onclick = () => setFocus(""); chips.append(all);
+  for (const b of items.filter(x=>x.level==="boulder")){
+    const c = el("button","chip",esc(b.title)); c.setAttribute("aria-pressed",focus===b.id);
+    c.onclick = () => setFocus(focus===b.id ? "" : b.id); chips.append(c);
+  }
+  if (focus && !byId(focus)) setFocus("");
+  $("#quickText").placeholder = `Add a ${view==="sand"?"grain of sand":view==="stone"?"stone":"boulder"}… (Enter)`;
+
+  // main
+  const main = $("#main"); main.innerHTML = "";
+  const open = items.filter(x => x.level===view && isOpen(x) && visible(x));
+  if (!open.length){
+    main.append(el("div","empty", view==="sand" ? "No open sand here. Add a grain above, or pick another boulder." : `Nothing open at this size. Add one above.`));
+  } else if (view === "boulder"){
+    const g = el("div","grid"); open.forEach(x=>g.append(card(x))); main.append(g);
+  } else {
+    // group by boulder (sand: also by stone)
+    const groups = new Map();
+    for (const x of open){
+      const b = boulderOf(x), key = b ? b.id : "";
+      if(!groups.has(key)) groups.set(key,[]);
+      groups.get(key).push(x);
+    }
+    const order = ["", ...items.filter(x=>x.level==="boulder").map(x=>x.id)];
+    for (const key of order){
+      const list = groups.get(key); if(!list) continue;
+            const b = byId(key);
+      const g = el("section","group");
+      const h = el("div","ghead",`<span class="pill"></span><h2>${b?esc(b.title):"Loose sand"}</h2><span class="tag">${list.length} open</span>`);
+      g.append(h);
+      const grid = el("div","grid"); list.forEach(x=>grid.append(card(x))); g.append(grid);
+      main.append(g);
+    }
+  }
+
+  // progress
+  const prog = $("#prog"); prog.innerHTML = "";
+  for (const b of items.filter(x=>x.level==="boulder")){
+    const p = bar(b.id);
+    const row = el("div","prow");
+    const name = el("button","name",esc(b.title)); name.onclick = () => { setFocus(b.id); window.scrollTo({top:0,behavior:"smooth"}); };
+    const stones = kids(b.id).filter(k=>k.level==="stone");
+    const stonesDone = stones.filter(s=>leaves(s.id).every(l=>l.status==="done")).length;
+    row.append(name, p.node, el("div","pct",p.pct+"%"),
+      el("div","counts",`${stones.length ? stonesDone+" of "+stones.length+" stones done · ":""}${p.d} of ${p.n} pieces done`));
+    prog.append(row);
+  }
+  if(!prog.children.length) prog.append(el("div","empty","No boulders yet."));
+
+}
+function setFocus(id){ focus=id; localStorage.setItem("sb.focus",id); render(); }
+
+/* ---------- add / edit ---------- */
+function fillParents(level, sel){
+  const p = $("#fParent"); p.innerHTML = "";
+  if (level === "boulder"){ p.append(new Option("(top level)","")); p.disabled = true; return; }
+  p.disabled = false;
+  if (level === "sand") p.append(new Option("(loose sand)",""));
+  for (const x of allowedParents(level)){
+    if (editing && (x.id===editing.id)) continue;
+    p.append(new Option((x.level==="stone" ? "   Stone: " : "Boulder: ") + x.title, x.id));
+  }
+  p.value = sel || "";
+  if (p.value !== (sel||"")) p.value = "";
+}
+$("#fLevel").onchange = e => fillParents(e.target.value, "");
+function openDlg(x, preset){
+  editing = x || null;
+  $("#dlgTitle").textContent = x ? "Edit task" : "Add a task";
+  $("#fTitle").value = x ? x.title : (preset?.title || "");
+  $("#fDetail").value = x ? x.detail : "";
+  $("#fLevel").value = x ? x.level : view;
+    fillParents($("#fLevel").value, x ? x.parent : (focus || ""));
+  document.querySelectorAll("#fDelete,#fFinish").forEach(n=>n.remove());
+  if (x){
+    const f = el("button","btn","Finished: remove from board"); f.type="button"; f.id="fFinish";
+    f.onclick = () => {
+      const n = kids(x.id).length;
+      if (n && !confirm(`Mark "${x.title}" and everything under it as finished?`)) return;
+      const t = today(); (function walk(i){ i.status="done"; i.done=t; kids(i.id).forEach(walk); })(x);
+      save(); $("#dlg").close(); render(); toast("Finished: off the board");
+    };
+    $("#fCancel").before(f);
+    const d = el("button","btn alt","Delete"); d.type="button"; d.id="fDelete";
+    d.onclick = () => {
+      const n = kids(x.id).length;
+      if (!confirm(n ? `Delete "${x.title}" and its ${n} sub-item(s)?` : `Delete "${x.title}"?`)) return;
+      const gone = new Set(); (function walk(id){ gone.add(id); kids(id).forEach(k=>walk(k.id)); })(x.id);
+      items = items.filter(i=>!gone.has(i.id)); save(); $("#dlg").close(); render();
+    };
+    $("#fCancel").before(d);
+  }
+  $("#dlg").showModal(); $("#fTitle").focus();
+}
+$("#fCancel").onclick = () => $("#dlg").close();
+$("#form").onsubmit = () => {
+  const title = $("#fTitle").value.trim(); if(!title) return;
+  const level = $("#fLevel").value, parent = $("#fParent").value || null, status = editing ? editing.status : "todo";
+  const detail = $("#fDetail").value.trim();
+  if (editing){
+    if (editing.level !== level){ kids(editing.id).forEach(k=>k.parent = editing.parent); }
+    Object.assign(editing,{title,detail,level,parent: level==="boulder"?null:parent,status});
+    editing.done = status==="done" ? (editing.done||today()) : null;
+  } else {
+    items.push({id:uid(),level,title,detail,parent: level==="boulder"?null:parent,status,created:today(),done:status==="done"?today():null});
+  }
+  save(); render();
+};
+$("#moreBtn").onclick = () => { const t=$("#quickText").value.trim(); $("#quickText").value=""; openDlg(null,{title:t}); };
+$("#quick").onsubmit = e => {
+  e.preventDefault();
+  const t = $("#quickText").value.trim(); if(!t) return;
+  const parent = view==="boulder" ? null : (focus || null);
+  items.push({id:uid(),level:view,title:t,detail:"",parent,status:"todo",created:today(),done:null});
+  $("#quickText").value = ""; save(); render();
+};
+document.addEventListener("keydown", e => {
+  if (e.key==="/" && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && !$("#dlg").open){ e.preventDefault(); $("#quickText").focus(); }
+});
+/* ---------- crew: agents and skills (read-only) ---------- */
+const AGENTS = [
+  {n:"render-and-site", m:"Sonnet · medium", j:"Renders markdown to HTML/PDF with the scripts in scripts/, then does all site work: Astro pages, src/data, nav, links and the site build.", no:"Never changes teaching content; reports problems back."},
+  {n:"sweep", m:"Sonnet · medium", j:"Bulk mechanical edits: one rule across many files, such as restyles, CSS or font rollouts, section ids and link fixes, HTML polish on games and trainers, and media pipeline steps.", no:"Needs the rule and one finished example first."},
+  {n:"checker", m:"Sonnet · low", j:"Read-only checks: screenshots and layout at 1366×768, SVG audits, diagram vs text, key vs question, broken links and headless playtests.", no:"Reports problems; never fixes them."},
+  {n:"image-polish", m:"Sonnet · medium", j:"Improves Math 7, 8 and 9 diagrams, one type or topic per run in its own worktree. Fixes wait in _image-review/pending.md for your approve or reject.", no:"Never commits or touches the main copy."},
+  {n:"blender-models", m:"Sonnet · medium (Opus for rigs)", j:"Adds and fixes 3D models in an existing Blender pack for CEFL Town v2 and Realm: props, buildings, terrain, clothes and recolours; builds the .glb files and imports them into Godot.", no:"You decide what to model; no new art styles or game code."},
+  {n:"playtest", m:"Sonnet · medium", j:"Plays CEFL Town v2 each night at 02:00: checks paths are walkable, speech is natural, goals make sense. Logs to _playtest-review/suggestions.md.", no:"Never changes the game."},
+  {n:"realm-manager", m:"Sonnet · medium", j:"Oversees the Math 9 Realm game: build vs chapter design, runs the Realm tests, checks the maths, keeps the task board and says which agent owns each next task.", no:"Report-only; run by hand."}
+];
+const SKILLS = [
+  {t:"Ship a page that looks right", d:"Site pages, trainers, game menus and printed handouts.", stones:[
+    {t:"Plan", d:"Before any code.", sand:[["shape","Design brief from a short discovery interview."]]},
+    {t:"Build", d:"First version.", sand:[["impeccable","Distinctive, polished interface; 'craft' shapes then builds."],["layout","Spacing, rhythm and hierarchy."],["typeset","Fonts, sizes and readability."],["colorize","Adds colour to flat designs."],["canvas-design","Static posters and visual art (PNG/PDF)."]]},
+    {t:"Refine", d:"Turn the dial up or down.", sand:[["bolder","Bland to striking."],["quieter","Loud to calm."],["distill","Strip to the essentials."],["delight","Small moments of personality."],["animate","Purposeful motion."],["overdrive","Ambitious effects, shaders, physics."],["polish","Final alignment and consistency pass."]]},
+    {t:"Check", d:"Before it goes to students.", sand:[["critique","UX review with scoring."],["audit","Accessibility, performance, responsive, theming."],["harden","Edge cases, empty and error states."],["adapt","Other screens and devices (Chromebooks, 1366×768)."],["optimize","Speed, bundle size, smoothness."],["animation-performance","Fix janky animation."],["clarify","Plain-language labels and instructions."]]}
+  ]},
+  {t:"Diagrams that are correct", d:"Math and Science notes, workbooks and keys.", stones:[
+    {t:"Draw", d:"Make it.", sand:[["svg-precision","Valid, renderable SVG for diagrams and charts."]]},
+    {t:"Check", d:"Prove it.", sand:[["svg-audit","dg-* class compliance in notes HTML."],["svg-diagram-review","Renders each SVG and checks legibility and geometry."]]},
+    {t:"Print", d:"Hand it out.", sand:[["latex-pdf","Print-quality notes PDFs with LaTeX and TikZ."]]}
+  ]},
+  {t:"Keep the workspace healthy", d:"A public repo that stays small and tidy.", stones:[
+    {t:"Review", d:"Look at what changed.", sand:[["code-review","Bugs in the current diff or a PR."],["simplify","Reuse and cleanup of changed code."],["security-review","Security pass on pending changes."]]},
+    {t:"Tidy", d:"Weekly or after a big build.", sand:[["workspace-audit","File-structure drift, stale links, bloated context files."],["fewer-permission-prompts","Allowlist common read-only commands."]]},
+    {t:"Repeat", d:"Hands-off running.", sand:[["loop","Re-run a task on an interval, e.g. the image-polish queue."],["schedule","Cloud agents on a cron."]]}
+  ]}
+];
+(function(){
+  const ag = $("#agents");
+  for (const a of AGENTS){
+    const c = el("div","card stone");
+    c.append(el("div","body",`<div class="title">${esc(a.n)}</div><p class="detail">${esc(a.j)}</p><div class="pillrow"><span class="badge">${esc(a.m)}</span></div><div class="crumb">${esc(a.no)}</div>`));
+    ag.append(c);
+  }
+  const sk = $("#skills");
+  for (const b of SKILLS){
+    const bo = el("div","boul",`<div class="t">${esc(b.t)}</div><div class="d">${esc(b.d)}</div>`);
+    for (const st of b.stones){
+      const s = el("div","ston",`<div class="t">${esc(st.t)}</div><div class="d">${esc(st.d)}</div>`);
+      const g = el("div","sands");
+      for (const [n,u] of st.sand) g.append(el("div","snd",`<b>${esc(n)}</b>: ${esc(u)}`));
+      s.append(g); bo.append(s);
+    }
+    sk.append(bo);
+  }
+})();
+
+load();
+</script>
+</body>
+</html>
