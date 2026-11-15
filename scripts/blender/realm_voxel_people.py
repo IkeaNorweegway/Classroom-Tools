@@ -565,6 +565,31 @@ def abel():
     return F.finish(hold="L")
 
 
+@model("bram", "person", "Bram Ostler, carter: broad (12-wide body), tan weathered face, short grey beard, flat brown cap, oatmeal shirt with rolled sleeves, green waistcoat, a carter's whip in the right hand")
+def bram():
+    skin, shirt, vest, cap = "#c28a5c", "#d9cdb0", "#3f6a45", "#6a4a32"
+    F = person("bram", skin, {"bw": 12})
+    n, h = F.neck, F.hip
+    trousers(F, "#6b5238", "#3e2f22")
+    F.box(F.X0, h, F.X1, n - 1, shirt)
+    sleeves(F, shirt, cuff="#b8aa88", skin=skin, roll=True)
+    F.box(F.X0 + 1, h, F.X1 - 1, n - 2, vest, (0, 1))              # waistcoat, front and back
+    F.box(-1, h + 1, 0, n - 2, shirt, 0)                            # open front showing the shirt
+    F.box(-1, n - 1, 0, n - 1, shirt, 0)
+    for y in range(h + 1, n - 3, 2):
+        F.front(-1, y, "#c9a24a")
+    F.box(F.X0, h, F.X1, h, "#3e2f22", 1)                          # belt line at the back
+    hair(F, "short", "#8f8c86")
+    beard(F, "#a9a6a0")
+    for i in (5, 6, 7):                                             # flat cap with a peak
+        F.box(HEAD[i][0], n + i, HEAD[i][1], n + i, cap)
+    F.box(-4, n + 5, 4, n + 5, shade(cap, -0.15), -1, "head")
+    x = F.X0 - F.aw - 1                                             # the whip: a thin stick held in the right hand
+    F.box(x, F.wrist - 1, x, F.wrist + 12, "#7a5636", 0, "spine")
+    F.box(x, F.wrist, x, F.wrist + 3, "#4b3a2c", 0, "spine")
+    return F.finish(hold="R")
+
+
 def crook(F):
     x, y = staff(F, "#8a6a4a", y1=F.neck + 7)
     F.box(x, y, x + 2, y, "#8a6a4a", 0, "spine")
@@ -1101,6 +1126,60 @@ def cat():
     rig.anim("idle", [(1, {"tail": (0, 0, 12)}), (19, {"tail": (0, 0, -12), "head": (0, -12, 0)}), (37, {"tail": (0, 0, 12)})])
     quad_walk(rig, legs, amp=34, bob=0.008, tail=True)
     sit_clip(rig)
+    return rig
+
+
+@model("horse", "animal", "A heavy cart horse: chestnut, dark mane and tail, pale blaze, feathered pale lower legs, leather collar (about 1.64 high at the ears)")
+def horse():
+    A = Vox("horse")
+    ch, mane, pale, hoof = "#8a4a26", "#3a2418", "#e8dcc4", "#2e2420"
+    leather, nose = "#3a2a1e", "#6e3a1e"
+    rng = random.Random("horse")
+    c = lambda: ch if rng.random() < 0.8 else shade(ch, -0.06)
+    for x in range(-4, 5):                                          # the barrel
+        for y in range(15, 27):
+            for z in range(-11, 9):
+                A.put3(x, y, z, c(), "body")
+    for y in range(27, 37):                                         # the neck, leaning forward
+        z0 = 4 + (y - 27) // 3
+        for x in range(-2, 3):
+            for z in range(z0, z0 + 5):
+                A.put3(x, y, z, c(), "head")
+        for x in (-1, 0, 1):
+            A.box3(x, y, z0 - 2, x, y, z0 - 1, mane, "head")        # the mane
+    A.box3(-2, 33, 9, 2, 39, 13, ch, "head")                        # the head
+    A.box3(-2, 31, 14, 2, 35, 16, nose, "head")                     # the muzzle
+    A.box3(-1, 36, 7, 1, 36, 8, mane, "head")
+    A.box3(0, 40, 9, 0, 40, 10, mane, "head")                       # forelock
+    for x in (-2, 2):
+        A.put3(x, 40, 9, ch, "head")                                # ears
+        A.put3(x, 37, 11, INK, "head")                              # eyes
+    A.box3(0, 33, 13, 0, 39, 13, pale, "head")                      # blaze down the face
+    A.box3(0, 39, 9, 0, 39, 12, pale, "head")
+    A.box3(0, 33, 14, 0, 35, 14, pale, "head")
+    A.box3(-1, 31, 16, 1, 32, 16, "#f0d8c8", "head")        # a pale lip
+    for x in (-2, 2):
+        A.put3(x, 34, 16, INK, "head")                              # nostrils
+    A.box3(-3, 27, 3, 3, 30, 10, leather, "head")                   # the collar
+    A.box3(-2, 27, 4, 2, 30, 9, leather, "head")
+    for x in (-3, 3):
+        A.put3(x, 29, 6, GOLD, "head")
+    legs = {}
+    for nm, x0, z0 in (("leg_FL", 1, 4), ("leg_FR", -4, 4), ("leg_BL", 1, -10), ("leg_BR", -4, -10)):
+        A.box3(x0, 5, z0, x0 + 3, 14, z0 + 3, ch, nm)
+        A.box3(x0, 1, z0, x0 + 3, 4, z0 + 3, pale, nm)              # pale feathered lower leg, a cell proud all round
+        A.box3(x0 - 1 if x0 < 0 else x0, 1, z0 - 1, x0 + 3 if x0 < 0 else x0 + 4, 3, z0 + 4, pale, nm)
+        A.box3(x0, 0, z0, x0 + 3, 0, z0 + 3, hoof, nm)
+        legs[nm] = (x0 + 2, 15, z0 + 2)
+    A.box3(0, 22, -12, 0, 25, -12, mane, "tail")                    # the dock and the tail
+    A.box3(-1, 11, -13, 1, 21, -13, mane, "tail")
+    rig = quad_rig("horse", (0, 20.5, -1), (0, 28, 5), legs, tail=(0.5, 25, -11))
+    A.build(rig)
+    hd = lambda a, y: {"head": (a, y, 0)}
+    rig.anim("idle", [(1, {"head": (0, 0, 0), "tail": (0, 0, 10)}), (13, {"head": (7, 6, 0), "tail": (0, 0, -10)}),
+                      (25, {"head": (0, 0, 0), "tail": (0, 0, 10)}), (37, {"head": (5, -6, 0), "tail": (0, 0, -6)}),
+                      (49, {"head": (0, 0, 0), "tail": (0, 0, 10)})])
+    quad_walk(rig, legs, amp=20, bob=0.015, tail=True)
     return rig
 
 

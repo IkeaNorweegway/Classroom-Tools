@@ -128,7 +128,7 @@ A character is the hero's layout with different row counts; the voxel stays 0.04
 | Old and small | 4 | 4 | 8 | 7 | 5 | 8 | 24 | wenna |
 | Child | 4 | 3 | 7 | 6 | 4 | 8 | 22 | pell |
 
-\* Abel's body is 10 wide (heavy-set); his arms move out one column each side.
+\* Abel's body is 10 wide (heavy-set); his arms move out one column each side. Bram (standard rows) is 12 wide, the broadest. Animals are solid voxel bodies on the `quad_rig` (body, head, four legs, tail); the cart `horse` is 42 voxels high at the ears, with 4 × 4 legs and clips idle and walk only.
 
 ## 6. Extra layers
 

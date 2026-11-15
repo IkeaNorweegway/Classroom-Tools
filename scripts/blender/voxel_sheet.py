@@ -86,7 +86,7 @@ for name, m in M.MODELS.items():
         sc.camera = cam
         tracks = [t.name for t in rig.animation_data.nla_tracks]
         other = [t for t in tracks if t not in ("idle", "walk")]
-        pick = other[(len(rows)) % len(other)]
+        pick = other[(len(rows)) % len(other)] if other else "walk"
         game = (0.5, -1.0, 0.75)
         side = m["kind"] == "animal"
         shots = [((1, 0, 0.05) if side else (0, -1, 0.02), "idle", 1, True), ((0, -1, 0.02) if side else (0, 1, 0.02), "idle", 1, True),

@@ -2084,6 +2084,361 @@ def hen():
     p.done()
 
 
+# ─────────────────────────────── Chapter 2 props (T-031, 2026-11-14) ───────────────────────────────
+# Design: _courses/math-9/realm-game/math9-realm-ch2-design-v1.md §7-§9. Existing names kept as they were: the old
+# 'boulder' (2.2 blob, 0.9 high) and 'cart' (two-wheeled hand cart) stay; the new ones are boulder_big and cart_farm.
+CH2 = "Chapter 2, 2026-11-14. "
+BRONZE, BRONZE_DK, BRONZE_LT = "#b88a44", "#8a6430", "#d9b068"
+
+
+def _ngon(cx, cy, r, n, rot=0.0):
+    """A convex polygon profile, counter-clockwise seen from +z (for Part.prism)."""
+    return [(cx + r * math.cos(rot + 2 * math.pi * i / n), cy + r * math.sin(rot + 2 * math.pi * i / n)) for i in range(n)]
+
+
+def _leaf2(p, pts, col):
+    """A leaf or petal drawn from both sides, so it shows from any angle."""
+    p.face(pts, col)
+    p.face(list(reversed(pts)), shade(col, -0.12))
+
+
+def _sack_at(p, x, y, z, s=0.8, col="sack"):
+    p.cyl(x, y, z, 0.2 * s, 0.42 * s, col, seg=7, r_top=0.15 * s)
+    p.cyl(x, y + 0.42 * s, z, 0.09 * s, 0.1 * s, col, seg=6, r_top=0.12 * s)
+    p.cyl(x, y + 0.44 * s, z, 0.1 * s, 0.03 * s, "rope", seg=6)
+
+
+def _blocks(p, x0, x1, y0, y1, z0, z1, rng, cw=0.55, ch=0.34, stagger=True):
+    """A dressed-stone face: courses of blocks in grey tones. The back (z0) stays flat; fronts vary a hair."""
+    y, row = y0, 0
+    while y < y1 - 0.01:
+        h = min(ch, y1 - y)
+        x = x0 - (cw * 0.45 if (row % 2 and stagger) else 0)
+        while x < x1 - 0.01:
+            w = cw * rng.uniform(0.8, 1.3)
+            a, b = max(x0, x), min(x1, x + w)
+            if x1 - b < 0.12:
+                b = x1
+            if b - a > 0.05:
+                p.box(a + 0.008, y + 0.008, z0, b - a - 0.016, h - 0.016, (z1 - z0) + rng.uniform(-0.02, 0.0), rng.choice(TW_STONE))
+            x = b if b > x + 0.01 else x + w
+        y += ch
+        row += 1
+
+
+@model("vault_door", "building", 5, 1,
+       CH2 + "The seed vault door, set in a grey stone frame with a flat back (stand it against a bank, door +z). Frame 4.8 wide, "
+       "2.45 high, 1 deep; opening 2 wide x 1.9 high. Child parts: 'Door' (the slab, pivot at its left hinge edge x=-1, y=0, so it "
+       "slides along x or swings about y), 'Dial' (bronze dial on the right pier, pivot at its centre, spins about z, raised "
+       "pointer), 'Pan' (bronze scale pan on three chains, pivot at the hang point on the left pier's arm). With 'Door' hidden the "
+       "opening shows a dark recess and a rack with three seed sacks.")
+def vault_door():
+    rng = random.Random(21)
+    p = Part("vault_door")
+    # piers, jambs, lintel
+    _blocks(p, -2.4, -1.5, 0, 2.3, -0.5, 0.5, rng, cw=0.45)
+    _blocks(p, 1.5, 2.4, 0, 2.3, -0.5, 0.5, rng, cw=0.45)
+    _blocks(p, -1.5, -1.0, 0, 1.9, -0.5, 0.5, rng, cw=0.5)
+    _blocks(p, 1.0, 1.5, 0, 1.9, -0.5, 0.5, rng, cw=0.5)
+    _blocks(p, -1.5, 1.5, 1.9, 2.3, -0.5, 0.5, rng, cw=0.6, ch=0.4)
+    p.box(-1.05, 1.82, 0.5, 2.1, 0.1, 0.05, "#7f8591")              # lintel drip course
+    p.box(-2.55, 2.3, -0.5, 5.1, 0.13, 1.1, "#8f939d", top="#a1a5ae")  # cap slab
+    p.box(-1.1, 0.0, 0.18, 2.2, 0.07, 0.7, "fieldstone_dk", top="fieldstone")   # threshold step
+    # the recess behind the door
+    p.quad((-1, 0.03, -0.46), (1, 0.03, -0.46), (1, 1.9, -0.46), (-1, 1.9, -0.46), "#23262b", out=(0, 0, 1))
+    p.quad((-1, 0.03, 0.5), (1, 0.03, 0.5), (1, 0.03, -0.5), (-1, 0.03, -0.5), "#3b342d", out=(0, 1, 0))
+    p.quad((-1, 1.9, -0.5), (1, 1.9, -0.5), (1, 1.9, 0.5), (-1, 1.9, 0.5), "#1c1f23", out=(0, -1, 0))
+    for sx in (-0.88, 0.88):   # rack: four posts, three shelves, three seed sacks
+        for z in (-0.42, -0.12):
+            p.cbox(sx, 0.03, z, 0.06, 1.65, 0.06, "wood_dk")
+    for y in (0.4, 0.95, 1.5):
+        p.box(-0.9, y, -0.44, 1.8, 0.05, 0.34, "wood")
+    _sack_at(p, -0.5, 0.45, -0.27, 0.75)
+    _sack_at(p, 0.15, 0.45, -0.27, 0.75, "#c3ae88")
+    _sack_at(p, -0.1, 1.0, -0.27, 0.75)
+    # a keeper's iron lamp hook and a dark stone beside the dial (six faint rows, no text)
+    p.box(1.62, 0.25, 0.5, 0.66, 0.68, 0.04, "#7f8591")
+    for i in range(6):
+        p.box(1.68, 0.3 + i * 0.1, 0.54, 0.54, 0.02, 0.012, "#5d626b")
+    # the pan's bracket on the left pier: arm out of the wall and a diagonal brace
+    p.box(-2.0, 1.95, 0.5, 0.1, 0.1, 0.42, "iron")
+    limb(p, (-1.95, 1.45, 0.5), (-1.95, 1.97, 0.88), 0.04, 0.035, "iron", seg=4)
+    p.done()
+
+    # Door: pivot at the left hinge edge (x = -1, y = 0, z = 0.05)
+    d = Part("Door", origin=(-1.0, 0.0, 0.05))
+    d.box(-0.99, 0.0, -0.1, 1.98, 1.9, 0.3, "#8f939d", top="#a1a5ae")
+    for k, x in enumerate((-0.5, 0.0, 0.5)):   # plank seams
+        d.box(x - 0.012, 0.05, 0.2, 0.024, 1.8, 0.012, "#6a6e77")
+    for y in (0.35, 0.95, 1.55):   # iron bands with studs
+        d.box(-0.99, y, 0.2, 1.98, 0.13, 0.03, "iron")
+        for x in (-0.85, -0.45, 0.0, 0.45, 0.85):
+            d.box(x - 0.035, y + 0.035, 0.23, 0.07, 0.07, 0.03, "metal_lt")
+    d.cyl(0.7, 0.88, 0.2, 0.12, 0.06, "iron", seg=8, top_col="#5b5651")   # iron pull plate
+    d.cyl(0.7, 0.9, 0.26, 0.05, 0.05, "metal_lt", seg=6)
+    d.done()
+
+    # Dial: pivot at its centre (1.95, 1.4), axis along z
+    cx, cy, z0 = 1.95, 1.4, 0.5
+    q = Part("Dial", origin=(cx, cy, z0))
+    q.prism(_ngon(cx, cy, 0.42, 12, math.radians(15)), z0, z0 + 0.1, BRONZE_DK, cap=BRONZE_DK)
+    q.prism(_ngon(cx, cy, 0.36, 12, math.radians(15)), z0 + 0.1, z0 + 0.13, BRONZE, cap=BRONZE)
+    for i in range(12):   # tick marks
+        a = 2 * math.pi * i / 12
+        ca, sa = math.cos(a), math.sin(a)
+        r0, r1, hw = (0.27, 0.34, 0.022) if i % 3 else (0.25, 0.35, 0.03)
+        q.quad((cx + ca * r0 + sa * hw, cy + sa * r0 - ca * hw, z0 + 0.135), (cx + ca * r1 + sa * hw, cy + sa * r1 - ca * hw, z0 + 0.135),
+               (cx + ca * r1 - sa * hw, cy + sa * r1 + ca * hw, z0 + 0.135), (cx + ca * r0 - sa * hw, cy + sa * r0 + ca * hw, z0 + 0.135),
+               "#4a3a22", out=(0, 0, 1))
+    q.prism([(cx - 0.05, cy - 0.1), (cx + 0.05, cy - 0.1), (cx + 0.045, cy + 0.26), (cx, cy + 0.34), (cx - 0.045, cy + 0.26)],
+            z0 + 0.13, z0 + 0.19, BRONZE_LT, cap="#f0cf86")   # raised pointer (points up at rest)
+    q.prism(_ngon(cx, cy, 0.09, 8), z0 + 0.13, z0 + 0.22, BRONZE_LT, cap="#f0cf86")   # hub boss
+    q.done()
+
+    # Pan: pivot at the hang point on the arm
+    hx, hy, hz = -1.95, 1.93, 0.88
+    n = Part("Pan", origin=(hx, hy, hz))
+    n.cyl(hx, 1.0, hz, 0.2, 0.1, BRONZE_DK, seg=8, r_top=0.34, top=False)
+    n.cyl(hx, 1.1, hz, 0.34, 0.025, BRONZE, seg=8, r_top=0.36, top_col=BRONZE_LT)
+    n.cyl(hx, 1.0, hz, 0.2, 0.01, BRONZE_DK, seg=8, top=False, bottom=True)
+    for i in range(3):   # three chains from the hang ring to the rim
+        a = 2 * math.pi * i / 3 + 0.5
+        limb(n, (hx, hy, hz), (hx + 0.33 * math.cos(a), 1.13, hz - 0.33 * math.sin(a)), 0.014, 0.014, "#6b6258", seg=3)
+    n.cyl(hx, hy - 0.03, hz, 0.05, 0.06, "iron", seg=6)   # the hang ring
+    n.done()
+
+
+def _boulder(name, s, seed):
+    p = Part(name)
+    p.blob(0, 0.0, 0, 1.0 * s, 1.25 * s, 0.95 * s, "#8c8376", seg=9, rings=5, jit=0.14, seed=seed, flat_bottom=True)
+    p.blob(-0.55 * s, 0, 0.4 * s, 0.6 * s, 0.7 * s, 0.55 * s, "#9a9082", seg=7, rings=3, jit=0.18, seed=seed + 1, flat_bottom=True)
+    p.blob(0.6 * s, 0, -0.3 * s, 0.55 * s, 0.6 * s, 0.5 * s, "#7a7166", seg=7, rings=3, jit=0.18, seed=seed + 2, flat_bottom=True)
+    p.blob(0.0 * s, 0.0, -0.55 * s, 0.5 * s, 0.8 * s, 0.4 * s, "#82796d", seg=6, rings=3, jit=0.18, seed=seed + 3, flat_bottom=True)
+    p.done()
+
+
+@model("boulder_big", "prop", 2, 2, CH2 + "A big rough grey-brown rock filling 2 x 2 tiles, about 1.25 high (taller than a person); blocks the Low Road. The pack's old 'boulder' is 0.9 high and stays.")
+def boulder_big():
+    _boulder("boulder_big", 1.0, 31)
+
+
+@model("boulder_small", "prop", 1, 1, CH2 + "The same rock at 0.4 scale (about 0.8 wide, 0.5 high), for the road verge.")
+def boulder_small():
+    _boulder("boulder_small", 0.4, 31)
+
+
+@model("cart_farm", "prop", 2, 1,
+       CH2 + "A four-wheeled wooden farm cart with two shafts out to +x for one horse, loaded with five seed sacks; about 2 long (x -0.8..1.2), bed 0.45 up. The pack's old 'cart' is a two-wheeled hand cart with no shafts and stays.")
+def cart_farm():
+    import mathutils
+    p = Part("cart_farm")
+    p.box(-0.8, 0.42, -0.4, 1.4, 0.07, 0.8, "wood", top="wood_lt")
+    for z in (-0.43, 0.39):
+        p.box(-0.8, 0.49, z, 1.4, 0.25, 0.04, "wood_lt")
+    p.box(-0.84, 0.49, -0.43, 0.04, 0.25, 0.86, "wood_lt")   # tailboard
+    p.box(0.6, 0.49, -0.43, 0.04, 0.25, 0.86, "wood_lt")     # front board
+    for x in (-0.55, 0.3):   # axles and bolsters
+        p.box(x - 0.03, 0.3, -0.5, 0.06, 0.06, 1.0, "wood_dk")
+        p.box(x - 0.08, 0.36, -0.36, 0.16, 0.06, 0.72, "wood_dk")
+    for x, r in ((-0.55, 0.32), (0.3, 0.26)):
+        for z in (-0.47, 0.47):
+            p.xf = mathutils.Matrix.Translation((x, r, z)) @ mathutils.Matrix.Rotation(math.radians(90), 4, "X")
+            p.cyl(0, -0.04, 0, r, 0.08, "wood_dk", seg=10, top_col="wood", bottom=True)
+            p.box(-r, -0.045, -0.025, 2 * r, 0.09, 0.05, "wood_dk")    # spokes
+            p.box(-0.025, -0.045, -r, 0.05, 0.09, 2 * r, "wood_dk")
+            p.cyl(0, -0.07, 0, 0.07, 0.14, "iron", seg=6)
+            p.reset()
+    for z in (-0.2, 0.2):   # shafts
+        limb(p, (0.3, 0.45, z), (1.2, 0.6, z * 0.9), 0.035, 0.03, "wood_dk", seg=4)
+    p.box(1.1, 0.56, -0.22, 0.05, 0.05, 0.44, "wood_dk")   # swingletree
+    p.box(-0.78, 0.3, -0.1, 0.4, 0.05, 0.2, "wood_dk")     # rear brace
+    for (x, z) in ((-0.55, -0.18), (-0.2, -0.18), (0.15, -0.18), (-0.45, 0.18), (-0.05, 0.18)):
+        _sack_at(p, x, 0.49, z, 0.82)
+    p.done()
+
+
+@model("tally_board", "prop", 2, 1, CH2 + "A standing notice board on two posts, 1.25 high, 1.5 wide: pale chalk face with five faint horizontal rows (no text; the game can put Label3D on it), chalk ledge. Face +z.")
+def tally_board():
+    p = Part("tally_board")
+    for x in (-0.65, 0.65):
+        p.cbox(x, 0, 0, 0.1, 1.25, 0.1, "wood_dk", top="wood")
+    p.box(-0.78, 0.5, -0.05, 1.56, 0.75, 0.1, "wood")            # frame
+    p.box(-0.7, 0.57, 0.05, 1.4, 0.61, 0.025, "#e6e2d4")          # chalk face
+    for i in range(5):
+        p.box(-0.64, 0.64 + i * 0.1, 0.075, 1.28, 0.014, 0.004, "#cdc8b8")
+    p.box(-0.5, 0.45, 0.0, 1.0, 0.05, 0.12, "wood_dk")           # ledge
+    p.box(-0.1, 0.5, 0.06, 0.12, 0.025, 0.03, "#f4f1e8")          # chalk stub
+    p.box(-0.82, 1.25, -0.08, 1.64, 0.05, 0.2, "wood_dk", top="wood")   # cap board
+    p.done()
+
+
+@model("vine", "prop", 1, 1,
+       CH2 + "The Growth sigil's climbing vine. Child 'Vine' has its origin on the ground (0,0,0): scale it only on y, 0.05 to 1 (4 high at 1). "
+       "A twisting green stem, a thinner twin, leaves and five green-gold buds. 'vine_base' is a small earth mound with roots that stays put.")
+def vine():
+    b = Part("vine_base")
+    b.blob(0, 0, 0, 0.3, 0.1, 0.3, "#6a4f3a", seg=7, rings=2, jit=0.1, seed=5, flat_bottom=True)
+    for k in range(5):
+        a = 2 * math.pi * k / 5
+        limb(b, (0, 0.05, 0), (0.42 * math.cos(a), 0.01, -0.42 * math.sin(a)), 0.05, 0.015, "#5d6f3b", seg=4)
+    b.done()
+    p = Part("Vine")
+    rng = random.Random(8)
+    H, n = 4.0, 32
+    leaf_cols = ["#5f9a4a", "#76b05a", "#4d8540", "#8cc063"]
+
+    def stem(phase, rad, top, w0, w1, col, step=0.9, leaves=True, buds=0):
+        pts = []
+        for i in range(n + 1):
+            t = i / n
+            if t * H > top:
+                break
+            ang = phase + i * step
+            r = rad * (1 - 0.4 * t) + 0.04 * math.sin(i * 1.3)
+            pts.append((r * math.cos(ang), t * H, -r * math.sin(ang), ang))
+        for i in range(len(pts) - 1):
+            w = w0 + (w1 - w0) * i / n
+            limb(p, pts[i][:3], pts[i + 1][:3], w, w * 0.92, col, seg=4)
+            if leaves and i % 2 == 1 and i > 1:
+                x, y, z, ang = pts[i]
+                ca, sa = math.cos(ang), math.sin(ang)
+                L = 0.5 - 0.14 * (i / n)
+                for sgn in (1,):
+                    tip = (x + ca * L, y + 0.1, z - sa * L)
+                    mid = (x + ca * L * 0.5, y + 0.05, z - sa * L * 0.5)
+                    wv = (-sa * 0.17, 0, -ca * 0.17)
+                    _leaf2(p, [(x, y, z), (mid[0] + wv[0], mid[1], mid[2] + wv[2]), tip, (mid[0] - wv[0], mid[1], mid[2] - wv[2])], rng.choice(leaf_cols))
+        return pts
+
+    A = stem(0.0, 0.16, 4.0, 0.06, 0.022, "#4d7a3f")
+    B = stem(math.pi, 0.15, 3.3, 0.03, 0.014, "#5d8c48", step=0.9, leaves=False)
+    for i in (14, 17, 21, 25, 28):   # buds on short stalks from the twin stem
+        src = B[min(i, len(B) - 1)]
+        ang = src[3]
+        tip = (src[0] + math.cos(ang) * 0.2, src[1] + 0.07, src[2] - math.sin(ang) * 0.2)
+        limb(p, src[:3], tip, 0.012, 0.01, "#5d8c48", seg=3)
+        p.blob(tip[0], tip[1] + 0.04, tip[2], 0.05, 0.07, 0.05, rng.choice(["#c9d65a", "#e2c25a"]), seg=5, rings=3, jit=0.08, seed=i)
+    p.blob(A[-1][0], A[-1][1] + 0.05, A[-1][2], 0.05, 0.08, 0.05, "#e2c25a", seg=5, rings=3, jit=0.06, seed=99)
+    p.done()
+
+
+@model("smoke_pot", "prop", 1, 1,
+       CH2 + "A small clay pot (0.3 high) with a lid pierced by holes, to sit on a beam or the ground. Child 'Smoke' (pivot just above the lid, y = 0.34) is the soft pale-grey puff; hide it to stop the smoke.")
+def smoke_pot():
+    p = Part("smoke_pot")
+    p.cyl(0, 0, 0, 0.1, 0.17, "#a9633c", seg=8, r_top=0.15, top=False)
+    p.cyl(0, 0.17, 0, 0.15, 0.04, "#8f4f31", seg=8, r_top=0.14, top_col="#8f4f31")
+    p.cyl(0, 0.21, 0, 0.13, 0.04, "#b9714a", seg=8, r_top=0.1, top_col="#b9714a")   # lid dome
+    p.cyl(0, 0.25, 0, 0.03, 0.04, "#8f4f31", seg=5, r_top=0.02)                      # lid knob
+    for i in range(6):   # holes
+        a = 2 * math.pi * i / 6
+        p.box(0.085 * math.cos(a) - 0.015, 0.245, -0.085 * math.sin(a) - 0.015, 0.03, 0.006, 0.03, "#2b2420")
+    p.cbox(0.17, 0.12, 0, 0.05, 0.05, 0.04, "#8f4f31")   # little handles
+    p.cbox(-0.17, 0.12, 0, 0.05, 0.05, 0.04, "#8f4f31")
+    p.done()
+    s = Part("Smoke", origin=(0, 0.34, 0))
+    for (x, y, z, r, c, sd) in [(0, 0.4, 0, 0.09, "#d9d9dd", 1), (0.04, 0.52, 0.02, 0.12, "#cfcfd4", 2), (-0.03, 0.66, -0.02, 0.14, "#e2e2e6", 3)]:
+        s.blob(x, y, z, r, r * 0.85, r, c, seg=6, rings=3, jit=0.12, seed=sd)
+    s.done()
+
+
+@model("moth_nest", "prop", 1, 1, CH2 + "A grey papery nest clump about sack size (0.5 wide, 0.4 high) with a flat underside, to sit on a roof or beam; darker specks on it.")
+def moth_nest():
+    p = Part("moth_nest")
+    rng = random.Random(6)
+    cy = 0.35 * 0.2
+    p.blob(0, cy, 0, 0.26, 0.2, 0.22, "#b9b6ad", seg=7, rings=4, jit=0.14, seed=3, flat_bottom=True)
+    p.blob(0.12, cy + 0.1, 0.05, 0.14, 0.12, 0.13, "#c4c1b8", seg=6, rings=3, jit=0.15, seed=4)
+    p.blob(-0.14, cy + 0.04, -0.06, 0.13, 0.11, 0.12, "#a7a49b", seg=6, rings=3, jit=0.15, seed=5)
+    for k in range(9):   # specks
+        a, v = rng.uniform(0, 2 * math.pi), rng.uniform(0.2, 1.2)
+        x, y, z = 0.25 * math.sin(v) * math.cos(a), cy + 0.2 * math.cos(v), -0.21 * math.sin(v) * math.sin(a)
+        p.blob(x, y, z, 0.022, 0.016, 0.022, "#4f4c46", seg=4, rings=2, jit=0)
+    p.done()
+
+
+def _seed_pot(name, sprout):
+    p = Part(name)
+    p.cyl(0, 0, 0, 0.1, 0.17, "#b9683f", seg=8, r_top=0.125, top=False)
+    p.cyl(0, 0.17, 0, 0.14, 0.05, "#a5593a", seg=8, r_top=0.14, top_col="#7a5a44", bottom=False)   # rim
+    p.cyl(0, 0.2, 0, 0.115, 0.01, "#3b2a20", seg=8, top_col="#3b2a20")                              # dark soil
+    if sprout:
+        limb(p, (0, 0.2, 0), (0.01, 0.36, 0), 0.012, 0.01, "#5f9a4a", seg=3)
+        for sgn in (-1, 1):
+            _leaf2(p, [(0.01, 0.34, 0), (0.07 * sgn, 0.37, 0.03), (0.14 * sgn, 0.39, 0), (0.07 * sgn, 0.38, -0.03)], "#7fba5a")
+        p.cone(0.01, 0.35, 0, 0.025, 0.06, "#8cc063", seg=3)
+    p.done()
+
+
+@model("seed_pot", "prop", 0.5, 0.5, CH2 + "A small terracotta pot, dark soil, one green sprout; 0.28 wide, 0.4 high, made for a 0.5 pitch (a 6 x 6 square fits a 3 x 3 bed).")
+def seed_pot():
+    _seed_pot("seed_pot", True)
+
+
+@model("seed_pot_empty", "prop", 0.5, 0.5, CH2 + "The seed pot with soil and no sprout (0.2 high).")
+def seed_pot_empty():
+    _seed_pot("seed_pot_empty", False)
+
+
+@model("growth_marker", "prop", 2, 2, CH2 + "A place the Growth sigil opens: the same stone disc as 'sigil_spot' with a green-gold six-pointed star and ring in 'growth_marker_glow' (unlit; pulse it).")
+def growth_marker():
+    p = Part("growth_marker")
+    p.cyl(0, 0, 0, 0.9, 0.06, "fieldstone_dk", seg=12, top_col="stone")
+    p.done()
+    g = Part("growth_marker_glow")
+    y = 0.065
+    n = 16
+    for i in range(n):   # outer ring
+        a0, a1 = 2 * math.pi * i / n, 2 * math.pi * (i + 1) / n
+        o0, o1 = (0.8 * math.cos(a0), -0.8 * math.sin(a0)), (0.8 * math.cos(a1), -0.8 * math.sin(a1))
+        i0, i1 = (0.7 * math.cos(a0), -0.7 * math.sin(a0)), (0.7 * math.cos(a1), -0.7 * math.sin(a1))
+        g.quad((o0[0], y, o0[1]), (o1[0], y, o1[1]), (i1[0], y, i1[1]), (i0[0], y, i0[1]), "#c8d85a", out=(0, 1, 0))
+    R, r = 0.6, 0.6 / math.sqrt(3)   # a six-pointed star: 12 points alternating outer and inner
+    pts = [((R if i % 2 == 0 else r) * math.cos(math.pi / 2 + math.pi * i / 6), -(R if i % 2 == 0 else r) * math.sin(math.pi / 2 + math.pi * i / 6)) for i in range(12)]
+    for i in range(12):
+        a, b = pts[i], pts[(i + 1) % 12]
+        g.tri((0, y, 0), (a[0], y, a[1]), (b[0], y, b[1]), "#e2c25a" if i % 2 else "#a8cf4f", out=(0, 1, 0))
+    g.done()
+
+
+def _patch(name, cols, seed, tufts=None):
+    rng = random.Random(seed)
+    p = Part(name)
+    n = 11
+    top, low = 0.095, 0.07
+    pts = []
+    for i in range(n):
+        a = 2 * math.pi * i / n
+        r = rng.choice([0.3, 0.38, 0.5, 0.55, 0.42])
+        pts.append((r * math.cos(a) * 1.05, -r * math.sin(a) * 0.9))
+    for i in range(n):   # fan from a centre, each triangle its own tone
+        a, b = pts[i], pts[(i + 1) % n]
+        p.tri((0, top, 0), (a[0], top, a[1]), (b[0], top, b[1]), cols[(i + seed) % len(cols)], out=(0, 1, 0))
+        p.quad((a[0], low, a[1]), (b[0], low, b[1]), (b[0], top, b[1]), (a[0], top, a[1]), shade(cols[0], -0.3), (0, 0.08, 0))
+    for k in range(3):   # satellite flecks
+        a = rng.uniform(0, 2 * math.pi)
+        cx, cz = 0.58 * math.cos(a), -0.52 * math.sin(a)
+        s = rng.uniform(0.07, 0.1)
+        p.face([(cx - s, top - 0.004, cz - s * 0.6), (cx - s * 0.5, top - 0.004, cz + s), (cx + s, top - 0.004, cz + s * 0.4), (cx + s * 0.6, top - 0.004, cz - s)],
+               cols[k % len(cols)], out=(0, 1, 0))
+    if tufts:
+        t = tufts
+        for k in range(t["n"]):
+            a, rr = rng.uniform(0, 2 * math.pi), rng.uniform(0.05, 0.4)
+            p.cone(rr * math.cos(a), top, -rr * math.sin(a), 0.035, rng.uniform(0.04, 0.06), t["col"], seg=3, rot=rng.uniform(0, 120))
+    p.done()
+
+
+@model("blight_patch", "prop", 1, 1, CH2 + "A flat irregular patch of grey blighted ground, about 1 tile across and 0.1 high (top 0.095, over path height), walkable. Same shape as moss_patch.")
+def blight_patch():
+    _patch("blight_patch", ["#8d8d90", "#7c7c80", "#9a9a9c", "#6f6f74"], 12)
+
+
+@model("moss_patch", "prop", 1, 1, CH2 + "The blight patch in fresh green moss (same shape), 0.1 high, a few low tufts.")
+def moss_patch_model():
+    _patch("moss_patch", ["#6aa84f", "#5b9a48", "#7cb85c", "#8cc063"], 12, tufts={"n": 6, "col": "#86bf5a"})
+
+
 # ─────────────────────────────── build ───────────────────────────────
 
 def main():

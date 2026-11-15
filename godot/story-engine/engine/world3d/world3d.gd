@@ -31,6 +31,7 @@ var camera: Camera3D
 var me: PersonNode
 var people := {}
 var walkers := {}                  # business-day customers: drawn, never block, never in set_people
+var follower: PersonNode           # a companion that walks one tile behind you (set_follower); never blocks, not in people
 var exit_locked := false           # a live shift: the room's way out is closed until the shift ends
 var room_lift := 0.0               # a live shift: frame a room this many tiles higher on screen, clear of the work card
 var live_marks := []               # a live shift: [{ pos: Vector3, bub, ring }] bubbles over stations and floor tiles
@@ -310,7 +311,7 @@ func load_map(m: MapData, at: Vector2i, dir: String) -> void:
 		_base = null
 	for c in _people_root.get_children():
 		_people_root.remove_child(c)
-		if c != me:
+		if c != me and c != follower:
 			c.queue_free()
 	people.clear()
 	for c in cars:
@@ -324,6 +325,9 @@ func load_map(m: MapData, at: Vector2i, dir: String) -> void:
 	me.place(at)
 	me.dir = dir
 	me.show_dir()
+	if follower:
+		_people_root.add_child(follower)
+		_place_follower()
 	path.clear()
 	on_arrive = Callable()
 	astar.region = Rect2i(0, 0, m.w, m.h)
@@ -587,6 +591,40 @@ func set_my_look(look: Dictionary) -> void:
 	me.set_look(look)
 
 
+## A companion that walks one tile behind you (Realm: the cat). An empty look takes it away.
+func set_follower(look: Dictionary) -> void:
+	if look.is_empty():
+		if follower:
+			follower.queue_free()
+			follower = null
+		return
+	if follower == null:
+		follower = PersonNode.new()
+		follower.world = self
+		follower.id = "_follower"
+		if _people_root:
+			_people_root.add_child(follower)
+		follower.set_look(look)
+		_place_follower()
+	elif follower.look != look:
+		follower.set_look(look)
+
+
+## Put the follower on a free tile beside you (behind you if it can), facing the way you face.
+func _place_follower() -> void:
+	if follower == null or me == null or map == null:
+		return
+	var at: Vector2i = me.tile
+	for d in [-DIRS.get(me.dir, Vector2i.DOWN), Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		var p: Vector2i = me.tile + d
+		if p.x >= 0 and p.y >= 0 and p.x < map.w and p.y < map.h and not blocked(p):
+			at = p
+			break
+	follower.place(at)
+	follower.dir = me.dir
+	follower.show_dir()
+
+
 func person_at(p: Vector2i) -> String:
 	for id in people:
 		if people[id].tile == p:
@@ -658,10 +696,15 @@ func _process(delta: float) -> void:
 		me.t = minf(1.0, me.t + delta / WALK_TIME)
 		me.position = tile_pos(me.from).lerp(tile_pos(me.tile), me.t)
 		me.pose(true, clock)
+		if follower:
+			follower.position = tile_pos(follower.from).lerp(tile_pos(follower.tile), me.t)
+			follower.pose(follower.from != follower.tile, clock)
 		if me.t >= 1.0:
 			_arrived()
 	else:
 		me.pose(false, clock)
+		if follower:
+			follower.pose(false, clock)
 	if me.t >= 1.0 and input_enabled:
 		var d := _held_dir()
 		if d != "":
@@ -919,6 +962,12 @@ func _start_step(nxt: Vector2i) -> void:
 	me.from = me.tile
 	me.tile = nxt
 	me.t = 0.0
+	if follower:   # it steps onto the tile you just left
+		follower.from = follower.tile
+		follower.tile = me.from
+		if follower.from != follower.tile:
+			follower.dir = _dir_to(follower.from, follower.tile)
+			follower.show_dir()
 
 
 func _arrived() -> void:

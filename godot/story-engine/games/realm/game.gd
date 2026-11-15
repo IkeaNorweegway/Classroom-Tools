@@ -12,9 +12,18 @@
 # fresh numbers (variants A, B, C in ch1.gd). Test options: the test player takes them at the chapter end (looks=wrong,right is
 # the plan per giver, cycling to its last entry; looks=0 skips them); looks_unlock=ring|day picks how a lock is opened (default:
 # alternate); day_offset=N fakes "N days later" for the lock date (also on the web: ?debug=1&day_offset=1).
+#
+# Chapter 2, "The Blight" (Powers and exponents, PE1–PE7; design math9-realm-ch2-design-v1.md, script math9-realm-ch2-script-v1.md):
+# the steps are at the end of this file (ch2_recap … chapter_end2), the numbers in games/realm/ch2.gd. One save holds both
+# chapters (S.chapter, absent = 1; Chapter 2's state in S.pe as Chapter 1's is in S.rn), so an old Chapter 1 save loads as it
+# was. The title offers Chapter 2 once Chapter 1 is done ("Go on to Chapter 2"), and with no save "Start at Chapter 2": Hesper's
+# recap, the Balance sigil lent (flag balance_lent: no Balance pips, the cellar stays shut). Test options: chapter=2 (a new game
+# starts at Chapter 2; with resume=1 a finished Chapter 1 save goes on to Chapter 2), rune_stop=1|2|3|3b at the vault too,
+# spots=1 (every Growth spot once at the chapter end), looks=… and looks_unlock=… as Chapter 1.
 extends RefCounted
 
 const Ch1 = preload("res://games/realm/ch1.gd")
+const Ch2 = preload("res://games/realm/ch2.gd")
 const Maps = preload("res://games/realm/maps.gd")
 const Pn = preload("res://games/realm/panels.gd")
 const Frac = preload("res://engine/core/frac.gd")
@@ -38,6 +47,14 @@ var shop_layout := {}
 
 var _free_roam := false
 var _day_offset := 0   # test hook: days added to today's date (second-look locks)
+var _chapter := 1      # the chapter in play (S.chapter), set when a game begins
+var _want_chapter := 1 # the chapter a new game starts at (the title's "Start at Chapter 2")
+const CH1_LABEL := "Math 9 · Chapter 1: The Spark · Rational numbers (RN1–RN5)"
+const CH1_I_CAN := "I can compare, add, subtract, multiply and divide rational numbers, use the order of operations, and explain why my answer makes sense."
+const CH2_LABEL := "Math 9 · Chapter 2: The Blight · Powers and exponents (PE1–PE7)"
+const CH2_I_CAN := "I can write and evaluate powers, use the exponent laws and explain why each one works, and say what a zero or a negative exponent means."
+const TOPIC2 := {2: ["the zero exponent", "Section 2"], 3: ["product of powers", "Section 3"], 4: ["quotient of powers", "Section 4"],
+	5: ["power of a power", "Section 5"], 6: ["power of a product and quotient", "Section 6"], 7: ["negative exponents", "Section 7"]}
 
 const TOPIC := {2: ["adding and subtracting", "Section 2"], 3: ["multiplying", "Section 3"], 4: ["dividing", "Section 4"], 5: ["the order of operations", "Section 5"]}
 const QUEST_OF := {"lesson": "lesson", "well": "well", "ledger": "ledger", "cold_snap": "snap", "harvest": "harvest", "recipe": "recipe"}
@@ -49,7 +66,11 @@ func maps() -> Dictionary:
 
 
 func maps_for(S: Dictionary) -> Dictionary:
-	return Maps.build(S.flags)
+	if not S.flags.get("ch2", false):
+		return Maps.build(S.flags)
+	var f: Dictionary = S.flags.duplicate()
+	f["_pips_full"] = S.has("answers") and S.has("pe") and Ch2.pips(S) >= Ch2.PIPS   # Orrin's window star lights with all six pips
+	return Maps.build(f)
 
 
 # ── People ──
@@ -73,20 +94,81 @@ func people() -> Dictionary:
 		"sefa": {"name": "A grey-cloaked figure", "role": "seen slipping out of Highstead square", "look": {"model": "realm/voxpeople/sefa", "skin": 1, "hair": 4, "hair_style": 0, "shirt": "#7d7f84", "pants": 1, "outfit": "hood", "cloak": "#7d7f84"}},
 		"runner": {"name": "Tam", "role": "a runner from Highstead", "look": {"model": HERO, "skin": 3, "hair": 5, "hair_style": 0, "shirt": 3, "pants": 3}},
 		"fam1": {"name": "Ada", "role": "a Highstead farmer", "look": {"model": HERO, "skin": 0, "hair": 2, "hair_style": 1, "shirt": 1, "pants": 0}},
-		"fam2": {"name": "Bram", "role": "a Highstead farmer", "look": {"model": HERO, "skin": 4, "hair": 0, "hair_style": 4, "shirt": 3, "pants": 2}},
+		"fam2": {"name": "Tobin", "role": "a Highstead farmer", "look": {"model": HERO, "skin": 4, "hair": 0, "hair_style": 4, "shirt": 3, "pants": 2}},
 		"fam3": {"name": "Wren", "role": "a Highstead farmer", "look": {"model": HERO, "skin": 2, "hair": 1, "hair_style": 2, "shirt": 7, "pants": 4}},
 		"vil1": {"name": "Jory", "role": "a Brindle Ford villager", "look": {"model": HERO, "skin": 1, "hair": 3, "hair_style": 0, "shirt": 0, "pants": 0}},
 		"vil2": {"name": "Nell", "role": "a Brindle Ford villager", "look": {"model": HERO, "skin": 5, "hair": 0, "hair_style": 2, "shirt": 4, "pants": 1}},
+
+		"bram": {"name": "Bram Ostler", "role": "a carter", "look": {"model": "realm/voxpeople/bram"}},
 	}
 
 
 func new_game(S: Dictionary) -> void:
 	S.rn = {"gate_wait": -1, "rune_stage": 1, "rune_losses": 0, "spot_visits": {}, "spot_pips": 0, "spot_first": 0, "spots_used": {},
 		"rings_right": 0, "looks": {}}
+	if _want_chapter == 2:
+		S.want_ch = 2
 
 
 func on_begin(T) -> void:
 	_day_offset = int(T.args.get("day_offset", "0")) if T.debug else 0
+	var S: Dictionary = T.S
+	if T.args.get("chapter", "") == "2" and int(S.get("chapter", 1)) != 2:
+		S.want_ch = 2
+	if int(S.get("want_ch", 1)) == 2 and int(S.get("chapter", 1)) != 2:
+		if T.G.get("done", false):
+			_start_ch2(T, false)          # Chapter 1 finished: go on with the same apprentice
+		elif int(T.G.si) == 0:
+			_start_ch2(T, true)           # a new game that starts here: Hesper's recap and a lent sigil
+	S.erase("want_ch")
+	_chapter = int(S.get("chapter", 1))
+	unit_label = CH2_LABEL if _chapter == 2 else CH1_LABEL
+	i_can = CH2_I_CAN if _chapter == 2 else CH1_I_CAN
+	report_file = "realm-ch2" if _chapter == 2 else "realm-ch1"
+	done_goal = "Open the Menu and download your report for your teacher." if _chapter == 2 else "Chapter 1 is done. Use the Balance sigil at the gold rings, or open the Menu for your report."
+
+
+## Chapter 2 begins on this save. lent: no Chapter 1 save, so the world is set as Chapter 1 left it and Balance is lent.
+func _start_ch2(T, lent: bool) -> void:
+	var S: Dictionary = T.S
+	S.chapter = 2
+	S.pe = {"gate_wait": -1, "rune_stage": 1, "rune_losses": 0, "spot_visits": {}, "spot_pips": 0, "spot_first": 0, "spots_used": {},
+		"rings_right": 0, "looks": {}, "balance_used": {}, "log_from": S.log.size()}
+	S.flags.ch2 = true
+	S.flags.quest = ""
+	if lent:
+		for k in ["bridge_fell", "met_orrin", "met_hesper", "lesson_done", "rune_broken", "rune_over", "sefa_gone", "runner_done", "met_at_arch",
+				"sigil", "sigil_wheel", "wheel_done", "wheel_scene", "lambs_in", "balance_lent"]:
+			S.flags[k] = true
+		S.inv["sigil"] = 1
+	T.G.si = 0
+	T.G.done = false
+
+
+## The title's chapter choices: Chapter 2 once Chapter 1 is done; with no save, a choice of where to start.
+func title_buttons(saved, btns: Array) -> Array:
+	if saved == null:
+		return [["Start at Chapter 1", "new", true], ["Start at Chapter 2", "game:ch2new"]]
+	var gS: Dictionary = saved.S
+	if int(gS.get("chapter", 1)) != 2 and saved.get("done", false):
+		return [["Continue", "continue", true], ["Go on to Chapter 2", "game:ch2"], ["New game", "new"]]
+	return btns
+
+
+func title_pick(v: String, saved):
+	if v == "ch2" and saved != null:
+		saved.S.want_ch = 2
+		return saved
+	_want_chapter = 2
+	return null
+
+
+func steps() -> Array:
+	if _chapter == 2:
+		return ["ch2_recap", "ch2_open", "lesson2", "gate2:2", "tally", "gate2:3", "cure", "gate2:4", "moths", "gate2:5", "nests", "gate2:6",
+			"jar", "gate2:7", "boulder", "vault", "sigil2", "vine", "chapter_end2"]
+	return ["prologue", "meet_hesper", "lesson", "gate:2", "well", "ledger", "gate:3", "cold_snap", "gate:4", "harvest", "gate:5",
+		"recipe", "low_road", "rune", "sigil", "mill_wheel", "chapter_end"]
 
 
 ## Today's local date, "YYYY-MM-DD" (plus the test hook's offset). A second look missed today stays locked until a later date.
@@ -104,7 +186,8 @@ func _look_key(pid: String) -> String:
 
 
 func validate(S: Dictionary) -> bool:
-	return S.has("rn") and S.rn is Dictionary and S.rn.has("rune_stage") and S.rn.has("spot_visits")
+	return S.has("rn") and S.rn is Dictionary and S.rn.has("rune_stage") and S.rn.has("spot_visits") \
+		and (int(S.get("chapter", 1)) != 2 or (S.get("pe") is Dictionary and S.pe.has("rune_stage")))
 
 
 ## The quest Pell is waiting at (he tags along to each one).
@@ -114,6 +197,10 @@ func _quest(S: Dictionary) -> String:
 
 func where(pid: String, S: Dictionary) -> Variant:
 	var f: Dictionary = S.flags
+	if f.get("ch2", false) and pid in ["hesper", "orrin", "pell", "odile", "gale", "sefa", "bram", "runner"]:
+		return _where2(pid, S)
+	if pid == "bram":
+		return null
 	var fell := bool(f.get("bridge_fell", false))
 	match pid:
 		"hesper":
@@ -194,17 +281,39 @@ func nav_states() -> Array:
 		var S2 := base.duplicate(true)
 		S2.flags = fl
 		out.append(S2)
+	return out + nav_states2()
+
+
+## Chapter 2's states: each quest, the boulder in place and shrunk, the vault shut and open, the Growth spots unsolved and solved.
+func nav_states2() -> Array:
+	var out := []
+	var after1 := {"bridge_fell": true, "met_orrin": true, "met_hesper": true, "rune_broken": true, "rune_over": true, "sigil": true, "sigil_wheel": true,
+		"wheel_scene": true, "lambs_in": true, "ch2": true}
+	for extra in [{"quest": "lesson2"}, {"quest": "tally"}, {"quest": "cure"}, {"quest": "moths", "cure_done": true}, {"quest": "nests"},
+			{"quest": "jar", "moths_done": true, "nests_done": true}, {"quest": "boulder", "boulder_here": true},
+			{"boulder_here": true, "boulder_done": true, "quest": "vault", "at_vault": true, "sigil_gate": true},
+			{"boulder_here": true, "boulder_done": true, "at_vault": true, "sigil_gate": true, "rune2_broken": true, "sefa2_gone": true, "quest": "sigil2"},
+			{"boulder_here": true, "boulder_done": true, "rune2_broken": true, "sigil2": true, "sigil_gate": true, "quest": "vine"},
+			{"boulder_here": true, "boulder_done": true, "rune2_broken": true, "sigil2": true, "sigil_pond": true, "sigil_gate": true, "cat": true,
+				"growth_ledge": true, "growth_hedge": true, "growth_vault": true, "growth_window": true, "_pips_full": true}]:
+		var f := after1.duplicate()
+		f.merge(extra, true)
+		out.append({"day": 1, "flags": f, "mem": {}, "shop": null, "days": [], "cash": 0, "rn": {}})
 	return out
 
 
 ## Flags the nav test also turns on together (every sigil solved, the lambs in).
 func nav_flags() -> Array:
-	return ["sigil", "sigil_pond", "sigil_wheel", "sigil_gate", "sigil_cellar", "lambs_in", "bridge_fell", "rune_broken"]
+	return ["sigil", "sigil_pond", "sigil_wheel", "sigil_gate", "sigil_cellar", "lambs_in", "bridge_fell", "rune_broken",
+		"ch2", "sigil2", "boulder_here", "boulder_done", "rune2_broken", "growth_ledge", "growth_hedge", "growth_vault", "growth_window", "cat"]
 
 
 func bubble(pid: String, S: Dictionary) -> String:
 	if _free_roam and pid == "hesper":
 		return "talk"
+	if S.flags.get("ch2", false):
+		var k2 := _look_key2(pid)
+		return "q_gold" if k2 != "" and Ch2.look_open(S, k2, today()) else ""
 	var k := _look_key(pid)
 	if k != "" and Ch1.look_open(S, k, today()):
 		return "q_gold"   # a second look is waiting
@@ -216,12 +325,16 @@ func items() -> Dictionary:
 		"notes": {"name": "Hesper's frost-line notes", "about": "Cold on the left, warm on the right. The greater number is always further right: −1/4 > −3/4. One point can have three names: −3/4 = 3/(−4) = −(3/4)."},
 		"chip": {"name": "A chip of the false rune", "about": "Orrin asked you to keep it. The grey lines on it have gone still."},
 		"sigil": {"name": "The Balance sigil", "about": "Warm or chill anything by an exact amount, above or below zero. At a gold ring, type the exact change: target − now."},
+		"chip2": {"name": "A chip of the vault stone", "about": "Cut by the same hand as the grain-share rune, Orrin says. He told you to keep them together."},
+		"growth": {"name": "The Growth sigil", "about": "At a green-gold star: choose the exponent. Positive grows, negative shrinks, 0 changes nothing."},
 		"slingshot": {"name": "Pell's slingshot", "about": "Lost last winter. It was in Hesper's root cellar, of all places."},
 		"page": {"name": "A page of Orrin's old notebook", "about": "In faded ink: \"M. asks why we bother with why. I had no good answer today.\""},
 	}
 
 
 func hud(S: Dictionary) -> Array:
+	if S.flags.get("ch2", false):
+		return _hud2(S)
 	var out := [{"label": "Chapter 1", "value": "The Spark"}]
 	var done := 0
 	for k in ["well_done", "ledger_done", "snap_done", "harvest_done", "recipe_done"]:
@@ -234,6 +347,8 @@ func hud(S: Dictionary) -> Array:
 
 
 func journal(S: Dictionary) -> Array:
+	if S.flags.get("ch2", false):
+		return _journal2(S)
 	var out := []
 	if S.flags.get("sigil", false):
 		var n := Ch1.pips(S)
@@ -241,11 +356,6 @@ func journal(S: Dictionary) -> Array:
 			Ch1.pip_text(n), n, "All five pips open Hesper's root cellar." if not S.flags.get("sigil_cellar", false) else "The root cellar is open."]])
 		out.append(["SECOND LOOKS", "Missed a pip? A gold ? over someone you helped means a second look: the same skill, new numbers. Right first time wins the pip back."])
 	return out
-
-
-func steps() -> Array:
-	return ["prologue", "meet_hesper", "lesson", "gate:2", "well", "ledger", "gate:3", "cold_snap", "gate:4", "harvest", "gate:5",
-		"recipe", "low_road", "rune", "sigil", "mill_wheel", "chapter_end"]
 
 
 ## A wrong try's hint button, and Hesper's line after a first-try right answer.
@@ -265,17 +375,25 @@ func _praise(T, tier: String, said := "") -> void:
 
 # ── The soft gate before each notes section ──
 func gate(T, n: String) -> void:
+	await _gate(T, n, TOPIC, "Chapter 1", T.S.rn)
+
+
+func gate2(T, n: String) -> void:
+	await _gate(T, n, TOPIC2, "Chapter 2", T.S.pe)
+
+
+## R holds gate_wait (S.rn in Chapter 1, S.pe in Chapter 2).
+func _gate(T, n: String, topics: Dictionary, kicker: String, R: Dictionary) -> void:
 	var nxt := int(n)
-	var S: Dictionary = T.S
-	var tp: Array = TOPIC[nxt]
-	if int(S.rn.gate_wait) != nxt:
+	var tp: Array = topics[nxt]
+	if int(R.gate_wait) != nxt:
 		var v = await T.panel("Next lesson: %s" % tp[0], func(body):
 			body.add_child(T.ui.rich("Hesper says the next lesson is about [b]%s[/b] (notes %s). Learned it in class yet?" % [tp[0], tp[1]]))
 			body.add_child(T.ui.label("You can start it now, or look around Brindle Ford first. Talking to Hesper starts it.", "Muted")),
-			[["Start it now", "go", true], ["Not yet: look around Brindle Ford", "later"]], "Chapter 1")
+			[["Start it now", "go", true], ["Not yet: look around Brindle Ford", "later"]], kicker)
 		if v == "go":
 			return
-		S.rn.gate_wait = nxt
+		R.gate_wait = nxt
 		T.save()
 	_free_roam = true
 	T.refresh()
@@ -285,7 +403,7 @@ func gate(T, n: String) -> void:
 			break
 		await T.say("hesper", "Then go and see how the village is getting on. I'll be here.")
 	_free_roam = false
-	S.rn.gate_wait = -1
+	R.gate_wait = -1
 	T.refresh()
 
 
@@ -802,7 +920,7 @@ func _spot(T, sid: String, story: bool) -> void:
 	var S: Dictionary = T.S
 	var sp: Dictionary = Ch1.SPOTS[sid]
 	var solved := bool(T.flag(sp.flag, false))
-	if sid == "spot_cellar" and not solved and Ch1.pips(S) < Ch1.CELLAR_PIPS:
+	if sid == "spot_cellar" and not solved and (Ch1.pips(S) < Ch1.CELLAR_PIPS or T.flag("balance_lent", false)):
 		await T.say("", ["The frost on the cellar door is old and deep. Balance needs all five pips, %s, to reach it; yours is %s." % [Ch1.pip_text(Ch1.CELLAR_PIPS), Ch1.pip_text(Ch1.pips(S))],
 			"Each gold ring solved on the first try adds a pip.", "So does a second look, right the first time. Look for a gold ? over someone you helped."])
 		return
@@ -830,9 +948,11 @@ func _spot(T, sid: String, story: bool) -> void:
 		S.rn.rings_right = int(S.rn.get("rings_right", 0)) + 1
 	if tier == "first":
 		S.rn.spot_first = int(S.rn.get("spot_first", 0)) + 1
-		if Ch1.pips(S) < 5:
+		if Ch1.pips(S) < 5 and not T.flag("balance_lent", false):   # a lent sigil charges nothing (Ch 2 design §2)
 			S.rn.spot_pips = int(S.rn.spot_pips) + 1
 	S.rn.spots_used[sid] = int(S.rn.spots_used.get(sid, 0)) + 1
+	if S.has("pe") and S.flags.get("ch2", false):   # Balance spots used in Chapter 2, for its report
+		S.pe.balance_used[sid] = int(S.pe.balance_used.get(sid, 0)) + 1
 	if not solved:
 		T.set_flag(sp.flag, true)
 		T.rebuild_maps()
@@ -851,10 +971,19 @@ func _spot(T, sid: String, story: bool) -> void:
 # ── Free talk and things ──
 func talk(pid: String, T) -> void:
 	var f: Dictionary = T.S.flags
+	if f.get("ch2", false):
+		await _talk2(pid, T)
+		return
 	var lk := _look_key(pid)
 	if lk != "" and Ch1.look_open(T.S, lk, today()):
 		await _second_look(T, lk)
 		return
+	await _talk_lines(pid, T)
+
+
+## The people's everyday lines (Chapter 1's; Chapter 2 falls back to them).
+func _talk_lines(pid: String, T) -> void:
+	var f: Dictionary = T.S.flags
 	match pid:
 		"hesper":
 			if not f.get("met_hesper", false):
@@ -917,6 +1046,8 @@ func use(thing: String, T) -> void:
 			await T.say("", "The broken bridge. Across the gorge, the far end hangs down the cliff." if f.get("bridge_fell", false) else "The old rope bridge to the far bank.")
 		"spot_pond", "spot_wheel", "spot_gate", "spot_cellar":
 			await _spot(T, thing, false)
+		"growth_ledge", "growth_hedge", "growth_vault", "growth_window":
+			await _gspot(T, thing, false)
 
 
 # ── Report and the test player ──
@@ -929,6 +1060,8 @@ func _row_name(label: String, key: String) -> String:
 
 
 func report(S: Dictionary) -> Array:
+	if S.flags.get("ch2", false):
+		return _report2(S)
 	var rows := []
 	var word := {"first": "first try", "second": "second try", "third": "third try", "later": "shown the answer"}
 	for c in Ch1.CODES:
@@ -972,6 +1105,8 @@ func report(S: Dictionary) -> Array:
 
 
 func summary(S: Dictionary) -> Dictionary:
+	if S.flags.get("ch2", false):
+		return _summary2(S)
 	var firsts := 0
 	for k in S.answers:
 		if S.answers[k].tier == "first":
@@ -985,3 +1120,844 @@ func summary(S: Dictionary) -> Dictionary:
 	return {"pips": Ch1.pips(S), "pips_from": [Ch1.first_pips(S), int(S.rn.get("spot_pips", 0)), Ch1.look_pips(S)], "looks": looks, "rune_losses": int(S.rn.rune_losses), "rune_broken": S.flags.get("rune_broken", false), "firsts": firsts,
 		"sigils": [S.flags.get("sigil_pond", false), S.flags.get("sigil_wheel", false), S.flags.get("sigil_gate", false), S.flags.get("sigil_cellar", false)],
 		"items": S.inv.keys()}
+
+
+# ════════ Chapter 2: "The Blight" (Powers and exponents, PE1–PE7) ════════
+# Lines are the script's (math9-realm-ch2-script-v1.md), checks and their words the design's (math9-realm-ch2-design-v1.md).
+const QUEST2 := {"lesson2": ["The spell-seed", "The lesson · PE1"], "tally": ["The moss tally", "Quest · PE2"], "cure": ["The blight cure", "Quest · PE3"],
+	"moths": ["Hollow-moths at the mill", "Quest · PE4"], "nests": ["The nests in the well-house", "Quest · PE5"], "jar": ["Pell's spell jar", "Quest · PE6"],
+	"boulder": ["The boulder on the road", "Quest · PE7"], "vault": ["The seed vault", "The seed vault"]}
+const TIER_ORDER := ["first", "second", "third", "later"]
+
+
+func _look_key2(pid: String) -> String:
+	for k in Ch2.LOOK_GIVER:
+		if Ch2.LOOK_GIVER[k] == pid:
+			return k
+	return ""
+
+
+## The cat walks behind you once it has come down the first vine.
+func follower(S: Dictionary) -> Dictionary:
+	return {"model": "realm/voxpeople/cat"} if S.flags.get("cat", false) else {}
+
+
+## The engine's report lists only the chapter in play (answers, typed and log lines). Chapter 2's typed answers are in its own
+## "In my own words" rows, so the engine's copy is left out.
+func report_keep(S: Dictionary, kind: String, k) -> bool:
+	var ch2: bool = S.flags.get("ch2", false)
+	var from := int(S.get("pe", {}).get("log_from", 0)) if S.has("pe") else 1 << 30
+	match kind:
+		"answer":
+			return Ch2.keys().has(str(k)) == ch2
+		"typed":
+			return not ch2 and not Ch2.keys().has(str(k))
+		"log":
+			return (int(k) >= from) == ch2
+	return true
+
+
+func _cat(T) -> String:
+	return str(T.S.flags.get("cat_name", "Soot"))
+
+
+func _c(T, t: String) -> String:
+	return t.replace("{cat}", _cat(T))
+
+
+## Hesper speaking from afar (as Chapter 1's off-map line).
+func _voice(T, line: String) -> void:
+	await T.say("", "Hesper's voice, in your head: \"%s\"" % line)
+
+
+## The design's line the first time; after that the quest's own line (script), as Chapter 1's _praise.
+func _praise2(T, tier: String, quest: String) -> void:
+	if tier == "first":
+		var line := "That's it. And you could tell me why, which is the part that counts."
+		if T.flag("praised2", false):
+			line = str(Ch2.PRAISE[quest])
+		T.set_flag("praised2", true)
+		if T.world.map.id == "cottage":
+			await T.say("hesper", line)
+		else:
+			await _voice(T, line)
+
+
+func _worse(a: String, b: String) -> String:
+	return a if TIER_ORDER.find(a) >= TIER_ORDER.find(b) else b
+
+
+func _hint2(quest: String) -> String:
+	return Ch2.HINT_LESSON if quest == "lesson2" else str(Ch2.HINT.get(quest, ""))
+
+
+## A typed value check in Chapter 2: its label, named errors and the quest's hint come from ch2.gd.
+func _f2(T, key: String, quest: String, prompt: String, answer: Array, extra := {}) -> String:
+	var q: Array = QUEST2[quest]
+	var o := {"key": key, "label": Ch2.label(key) if Ch2.LABEL.has(key) else key, "title": q[0], "kicker": q[1], "prompt": prompt, "answer": answer,
+		"hint_btn": _hint(), "traps": Ch2.TRAPS.get(key, [])}
+	if _hint2(quest) != "":
+		o.hint = _hint2(quest)
+	if Ch2.TRAPS.has(key):
+		o.bot_wrong = str(Ch2.TRAPS[key][0][0]).replace("−", "-")
+	o.merge(extra, true)
+	return await T.frac(o)
+
+
+## A power-card check in Chapter 2. Returns the card's { tier, typed }.
+func _card2(T, key: String, quest: String, prompt: String, cards: Array, extra := {}) -> Dictionary:
+	var q: Array = QUEST2[quest]
+	var o := {"key": key, "label": Ch2.label(key) if Ch2.LABEL.has(key) else key, "title": q[0], "kicker": q[1], "prompt": prompt, "cards": cards,
+		"hint_btn": _hint()}
+	if _hint2(quest) != "":
+		o.hint = _hint2(quest)
+	o.merge(extra, true)
+	return await Pn.power_card(T, o)
+
+
+func _where2(pid: String, S: Dictionary) -> Variant:
+	var f: Dictionary = S.flags
+	var q := str(f.get("quest", ""))
+	match pid:
+		"hesper":
+			if q in ["jar", "sigil2"]:   # at her seed bed beside the cottage
+				return {"map": "brindle", "x": 18, "y": 37, "dir": "up"}
+			return {"map": "cottage", "x": 4, "y": 3, "dir": "down"}
+		"orrin":
+			if f.get("rune2_broken", false):
+				return {"map": "cottage", "x": 6, "y": 3, "dir": "left"}
+			if f.get("boulder_done", false):   # he walks on with you to the vault (east of the door, clear of the pan)
+				return {"map": "highstead", "x": 46, "y": 9, "dir": "left"}
+			if f.get("boulder_here", false):
+				return {"map": "highstead", "x": 17, "y": 33, "dir": "right"}
+			return null
+		"pell":
+			match q:
+				"lesson2":
+					return {"map": "cottage", "x": 2, "y": 3, "dir": "down"}
+				"tally":
+					return {"map": "brindle", "x": 33, "y": 36, "dir": "right"}
+				"cure":
+					return {"map": "brindle", "x": 10, "y": 12, "dir": "left"}
+				"moths":
+					return {"map": "mill", "x": 3, "y": 4, "dir": "right"}
+				"nests":
+					return {"map": "brindle", "x": 27, "y": 30, "dir": "left"}
+				"jar":
+					return {"map": "brindle", "x": 16, "y": 35, "dir": "right"}
+				"vine":
+					return {"map": "brindle", "x": 13, "y": 24, "dir": "left"}
+			return {"map": "brindle", "x": 19, "y": 29, "dir": "down"}
+		"odile":
+			return {"map": "brindle", "x": 36, "y": 36, "dir": "left"}
+		"abel":
+			return {"map": "mill", "x": 4, "y": 3, "dir": "down"}
+		"gale":
+			if f.get("at_vault", false):
+				return {"map": "highstead", "x": 39, "y": 8, "dir": "right"}
+			return {"map": "highstead", "x": 32, "y": 21, "dir": "left"}
+		"sefa":
+			if f.get("at_vault", false) and not f.get("sefa2_gone", false):
+				return {"map": "highstead", "x": 48, "y": 11, "dir": "up"}
+			return null
+		"bram":
+			if f.get("boulder_done", false):   # by his cart outside the common barn, for his second look
+				return {"map": "brindle", "x": 39, "y": 36, "dir": "left"}
+			if f.get("boulder_here", false):
+				return {"map": "highstead", "x": 20, "y": 34, "dir": "left"}
+			return null
+	return null
+
+
+func _hud2(S: Dictionary) -> Array:
+	var out := [{"label": "Chapter 2", "value": "The Blight"}]
+	var done := 0
+	for k in ["tally_done", "cure_done", "moths_done", "nests_done", "jar_done", "boulder_done"]:
+		if S.flags.get(k, false):
+			done += 1
+	out.append({"label": "Quests", "value": "%d of 6" % done})
+	if S.flags.get("sigil2", false):
+		out.append({"label": "Growth", "value": Ch2.pip_text(Ch2.pips(S))})
+	return out
+
+
+func _journal2(S: Dictionary) -> Array:
+	var out := []
+	if S.flags.get("sigil2", false):
+		var n := Ch2.pips(S)
+		out.append(["THE GROWTH SIGIL", "Charge %s (%d of 6). First-try answers charge it; so does each green-gold star solved on the first try. %s" % [
+			Ch2.pip_text(n), n, "All six pips reach Orrin's window." if not S.flags.get("growth_window", false) else "You have looked in at Orrin's window."]])
+		out.append(["SECOND LOOKS", "Missed a pip? A gold ? over someone you helped means a second look: the same skill, new numbers. Right first time wins the pip back."])
+	if S.flags.get("balance_lent", false):
+		out.append(["THE BALANCE SIGIL", "Lent by Hesper. Balance freezes and thaws by adding and taking away."])
+	return out
+
+
+# ── 0. Starting here with no Chapter 1 save ──
+func ch2_recap(T) -> void:
+	if not T.flag("balance_lent", false) or T.flag("recap_done", false):
+		return
+	await T.say("", "Brindle Ford, late in the harvest. You are {name}, apprentice to the hedge-witch Hesper Marrow.")
+	await T.say("hesper", ["Three lines, since you slept through the first part. The old magic is coming undone: bridges, wells, the grain-share stone.",
+		"You can see the gold lines of it, and you mended that stone with true fractions. Orrin Vael, a Warden, is watching you.",
+		"I've lent you the Balance sigil until you earn your own. Now, up. Something is wrong in the north field."])
+	T.remember("hesper", "She took you on as her apprentice.", 2)
+	T.log_line("Hesper lent me the Balance sigil. Balance freezes and thaws by adding and taking away.")
+	T.set_flag("recap_done", true)
+
+
+# ── 1. Opening: grey on the stubble ──
+func ch2_open(T) -> void:
+	if T.flag("ch2_opened", false):
+		return
+	T.banner("Chapter 2", "The Blight")
+	await T.say("", "A few weeks after the grain-share stone. The mornings have turned sharp.")
+	await T.say("pell", ["{name}! {name}, come and look! The stubble in the north field's gone grey. All of it. Overnight!",
+		"And there are moths on the grain sacks. Grey ones. They don't fly off when you wave at them."])
+	await T.say("", "Hesper walks out to the field edge and snaps off a stalk. It crumbles like ash.")
+	await T.say("hesper", ["Blight.", "It spreads the way everything living spreads: not a bit more each day, but so many [b]times[/b] more."])
+	await T.say("pell", "Can you stop it?")
+	await T.say("hesper", ["I have one answer. Cure-moss. It eats blight, and it spreads the same way the blight does.",
+		"And we will need clean seed from the Highstead vault before the snow.", "One thing at a time. First you learn how growing is counted."])
+	T.log_line("Blight in the north field and grey moths in the barn. Hesper says it spreads by multiplying.")
+	T.set_flag("ch2_opened", true)
+
+
+# ── 2. The lesson: the spell-seed (PE1) ──
+func lesson2(T) -> void:
+	if T.flag("lesson2_done", false):
+		return
+	T.set_flag("quest", "lesson2")
+	T.refresh()
+	await T.goal("Go to Hesper's cottage. She has something on the windowsill.", "map:cottage")
+	await T.say("hesper", "One spell-seed, in one pot. It splits in two every night. Watch.")
+	await Pn.seed_example(T)
+	await T.say("hesper", ["After five nights: 2 × 2 × 2 × 2 × 2. Too long to write, so we write 2⁵.",
+		"The 2 is the [b]base[/b], the thing that repeats. The 5 is the [b]exponent[/b]: how many 2s.", "2⁵ is 32 seeds."])
+	await T.say("pell", "2⁵. Two fives. Ten.")
+	await T.say("hesper", "{name}? Is he right?")
+	await T.ask("hesper", Ch2.ASK_LESSON, "pe1_lesson", Ch2.label("pe1_lesson"))
+	var t := await _f2(T, "pe1_seeds", "lesson2", "One more night on the sill. How many seeds after six nights?", Ch2.seeds(), {"why": Ch2.WHY_LESSON.pe1_seeds})
+	await _praise2(T, t, "lesson2")
+	await T.say("hesper", ["Now the hen-house. My turnabout charm airs it: warm to cold and back, twice as strong each turn.",
+		"Every turn multiplies by −2. Start from 1: −2, then 4, then −8, then 16."])
+	await T.say("pell", "Five turns… 32. The negatives cancel.")
+	await _f2(T, "pe1_turn", "lesson2", "Do they all? {name}, what is [b](−2)⁵[/b]?", Ch2.turn(), {"why": Ch2.WHY_LESSON.pe1_turn})
+	await T.say("", "Pell chalks four turns on the hen-house door: −2⁴. \"Sixteen,\" he says.")
+	await _f2(T, "pe1_brackets", "lesson2", "Read what he wrote, not what he meant. As Pell wrote it, with no brackets, what is [b]−2⁴[/b]?", Ch2.brackets(), {"why": Ch2.WHY_LESSON.pe1_brackets})
+	await T.say("pell", "But I meant the other one!")
+	await T.say("hesper", "Then write the other one. {name}, tell him the difference.")
+	if not T.S.typed.has("pe1_pell"):
+		await T.typed({"id": "pe1_pell", "title": "Explain it to Pell", "kicker": "In your own words", "min": 30,
+			"prompt": "Explain to Pell, in your own words, why [b]−2⁴[/b] and [b](−2)⁴[/b] are different.",
+			"bot": "Test player: in −2⁴ only the 2 is the base, so it is −16; in (−2)⁴ the base is −2, so it is 16."})
+	await T.say("hesper", ["Good. Base, exponent, and mind your brackets. That's the whole of counting growth.",
+		"Odile is at the common barn with a tally board she can't finish. Start there, when your notes are ready."])
+	T.log_line("A power: the base repeats, the exponent counts how many. 2⁵ = 32. (−2)⁴ = 16 but −2⁴ = −16.")
+	T.set_flag("lesson2_done", true)
+	T.set_flag("quest", "")
+
+
+# ── 4. The moss tally (PE2) ──
+func tally(T) -> void:
+	if T.flag("tally_done", false):
+		return
+	T.set_flag("quest", "tally")
+	T.refresh()
+	await T.goal("Find Reeve Odile at the tally board outside the common barn.", "person:odile")
+	await T.say("odile", ["{name}. Good. Hesper's cure-moss on the common field triples every day, and the village wants it written down.",
+		"I have day 4 and day 3. Eighty-one patches, then twenty-seven. I need the rest, back to the day she planted it."])
+	await T.say("pell", "Day 0? Nought days, nought moss. Write a zero.")
+	await T.say("odile", "That's what I'd have put. But Hesper planted [i]something[/i].")
+	await Pn.pattern(T, {"title": "The tally board", "kicker": "Quest · PE2", "prompt": "Odile's board, newest first.", "base": 3, "rows": Ch2.TALLY_ROWS,
+		"hint": Ch2.HINT.tally, "hint_btn": _hint()})
+	await T.say("odile", "Nine, then three. And each one a third of the row above. Go on. Day 0.")
+	var t := await _f2(T, "pe2_day0", "tally", "[b]Day 0[/b], which is 3⁰ = ?", Ch2.day0(), {"why": Ch2.WHY.tally})
+	await _f2(T, "pe2_other", "tally", "Rowan's pasture gets a different moss. It grows five times a day. How much on its day 0?", Ch2.other_moss())
+	await T.say("odile", "The same again. Why?")
+	await T.ask("odile", Ch2.ASK_TALLY_WHY, "pe2_why", Ch2.label("pe2_why"))
+	await T.say("", "Odile chalks in the last row: 1 patch, H. Marrow.")
+	await T.say("odile", "One patch. And in four days it's eighty-one. I'd like my hens to do that.")
+	await _praise2(T, t, "tally")
+	T.remember("odile", "", 2)
+	T.log_line("Any base to the exponent 0 is 1. Each day back divides by the base, and the base ÷ itself is 1.")
+	T.set_flag("tally_done", true)
+	T.set_flag("quest", "")
+
+
+# ── 5. The blight cure (PE3) ──
+func cure(T) -> void:
+	if T.flag("cure_done", false):
+		return
+	T.set_flag("quest", "cure")
+	T.refresh()
+	await T.goal("Rowan Tull is at the fold's pasture. The blight has reached the grass.", "person:rowan")
+	await T.say("rowan", ["About five hundred grey spots, near as I can count. The lambs won't touch the grass.",
+		"I put down one patch of Hesper's moss. It doubles every day, and it's had six days.", "Hesper says the frost comes in three more. Will there be enough patches by then?"])
+	await T.say("pell", "Six days, then three more. Two to the… eighteen? Six times three.")
+	await T.say("rowan", "Eighteen what?")
+	var r := await _card2(T, "pe3_cure", "cure", "Write the six days and the three days as one power of 2.", [Ch2.CARD_CURE], {"why": Ch2.WHY.cure})
+	await T.say("rowan", "And in plain patches?")
+	await _f2(T, "pe3_value", "cure", "[b]2⁹[/b] = ? patches", Ch2.cure_value(), {"why": Ch2.WHY.cure})
+	await T.ask("rowan", Ch2.ASK_CURE_ENOUGH)
+	await T.say("rowan", ["Just. I'll take just.", "One more. My far bed has 2³ rows, with 3² patches in each row."])
+	await T.say("pell", "2³ × 3². Same trick: 6⁵!")
+	await T.ask("rowan", Ch2.ASK_BASES, "pe3_bases", Ch2.label("pe3_bases"))
+	T.set_flag("cure_done", true)
+	T.rebuild_maps()
+	await T.say("", "Three days on, green moss has spread over the grey. Rowan opens the fold gate.")
+	await T.say("rowan", "Five hundred and twelve. I counted. Go on, girls, eat.")
+	await T.say("", "The lambs go back on the grass.")
+	await _praise2(T, str(r.tier), "cure")
+	T.remember("rowan", "", 2)
+	T.log_line("Same base, multiplying: add the exponents. 2⁶ × 2³ = 2⁹. Different bases: work each power out.")
+	T.set_flag("quest", "")
+
+
+# ── 6. Hollow-moths at the mill (PE4) ──
+func moths(T) -> void:
+	if T.flag("moths_done", false):
+		return
+	T.set_flag("quest", "moths")
+	T.refresh()
+	await T.goal("Abel Crane wants you in the mill loft. Bring Hesper's moth-smoke.", "person:abel")
+	await T.say("abel", ["Up here. Mind the third step.", "Look at them. Grey as ash and they don't mind the light. They weren't here before that grey-cloak came through."])
+	await _voice(T, "I counted them by threes. The loft holds 3⁷ moths. One pot of my smoke clears 3⁴.")
+	await T.say("abel", "So how many pots do I light?")
+	await T.say("pell", "Seven divided by four doesn't even go. So… three to the eleven?")
+	var r := await _card2(T, "pe4_moths", "moths", "So how many pots do I light?", [Ch2.CARD_MOTHS], {"why": Ch2.WHY.moths})
+	await _f2(T, "pe4_pots", "moths", "And in pots a miller can count? [b]3³[/b] = ?", Ch2.pots(), {"why": Ch2.WHY.moths})
+	await T.say("abel", "The grain nook's smaller. Hesper made it 3⁴ moths in there.")
+	var a := await _card2(T, "pe4_equal", "moths", "Pots for the nook:", [Ch2.CARD_NOOK], {"record": false})
+	var b := await _f2(T, "pe4_equal", "moths", "How many pots is that? [b]3⁰[/b] = ?", Ch2.nook(), {"record": false})
+	T.record("pe4_equal", Ch2.label("pe4_equal"), _worse(str(a.tier), b))   # the card and the value, one row
+	await T.say("abel", "Subtracting, for a dividing sum. Why does that work?")
+	await T.ask("abel", Ch2.ASK_MOTHS_WHY, "pe4_why", Ch2.label("pe4_why"))
+	T.set_flag("moths_done", true)
+	T.rebuild_maps()
+	await T.say("", "Twenty-seven smoke pots, lit along the loft beams. The moths pour out of the window in a long grey ribbon.")
+	await T.say("abel", "Good riddance. Though I'd like to know where they're going.")
+	await _praise2(T, str(r.tier), "moths")
+	T.remember("abel", "", 2)
+	T.log_line("Same base, dividing: subtract the exponents. 3⁷ ÷ 3⁴ = 3³. And 3⁴ ÷ 3⁴ = 3⁰ = 1.")
+	T.set_flag("quest", "")
+
+
+# ── 7. The nests in the well-house (PE5) ──
+func nests(T) -> void:
+	if T.flag("nests_done", false):
+		return
+	T.set_flag("quest", "nests")
+	T.refresh()
+	await T.goal("Marta Fenn says the moths from the mill are in her well-house roof.", "person:marta")
+	await T.say("marta", ["{name}! They've nested. Up there, in the roof, grey lumps like wet paper.",
+		"I can't light smoke by the well for four nights. The water's being drawn for the whole village."])
+	await _voice(T, "I watched one nest. They hatch twice a night, and each hatching triples them. So the swarm grows 3² times every night.")
+	await T.say("marta", "Four nights of that. How many times bigger?")
+	await T.say("pell", "Three squared, four times over. Two and four… 3⁶.")
+	var r := await _card2(T, "pe5_nest", "nests", "Four nights of that. How many times bigger?", [Ch2.CARD_NEST], {"why": Ch2.WHY.nests})
+	await _card2(T, "pe5_pair", "nests", "Abel has sent his slate over with two sums on it: 3² × 3⁴, two swarms multiplied, and (3²)⁴, one swarm for four nights.",
+		Ch2.CARD_PAIR, {"pair_line": Ch2.PAIR_SWAPPED, "bot_wrong": [Ch2.CARD_PAIR[1].answer, Ch2.CARD_PAIR[0].answer]})
+	await T.ask("hesper", Ch2.ASK_SAME, "pe5_same", Ch2.label("pe5_same"))
+	T.set_flag("nests_done", true)
+	T.rebuild_maps()
+	await T.say("", "You tell Marta: 3⁸. Six thousand five hundred and sixty-one times bigger.")
+	await T.say("marta", "Six thousand times? Then we don't wait.")
+	await T.say("", "She and Pell carry the well bucket out, and the roof is smoked that evening.")
+	await _praise2(T, str(r.tier), "nests")
+	T.remember("marta", "", 2)
+	T.log_line("A power of a power: multiply the exponents. (3²)⁴ = 3⁸. Not the same as 3² × 3⁴ = 3⁶.")
+	T.set_flag("quest", "")
+
+
+# ── 8. Pell's spell jar (PE6) ──
+func jar(T) -> void:
+	if T.flag("jar_done", false):
+		return
+	T.set_flag("quest", "jar")
+	T.refresh()
+	await T.goal("Pell is at Hesper's seed bed with a jar, looking pleased.", "person:pell")
+	await T.say("pell", ["Done! Hesper wanted the square bed filled for the winter herbs. Each side is 2 trays of 3 pots.",
+		"So I fetched 2 × 3² seeds. Bed's full. Well. It will be."])
+	await T.ask("hesper", Ch2.ASK_JAR, "pe6_predict", Ch2.label("pe6_predict"))
+	var t := await _f2(T, "pe6_jar", "jar", "Then how many pots are in the bed? [b](2 × 3)²[/b] = ?", Ch2.jar(), {"why": Ch2.WHY.jar})
+	await T.say("", "Pell counts his jar twice. Eighteen. He is 18 seeds short.")
+	await _card2(T, "pe6_coef", "jar", "My seed crates are cubes, 2x hands along each edge, where x is the pot size. The volume?", [Ch2.CARD_CRATE])
+	await _f2(T, "pe6_quot", "jar", "The small bed by the door is square too, ⅔ of a pace on each side. What fraction of a square pace is that?", Ch2.small_bed())
+	await T.say("pell", "Fine. A new bed, then. 3 + 4 pots on a side. That's 3² + 4² pots.")
+	await T.ask("hesper", Ch2.ASK_SUM, "pe6_sum", Ch2.label("pe6_sum"))
+	await T.say("pell", "Forty-nine. Not twenty-five.")
+	await T.say("hesper", "Go and fetch the other eighteen for the first bed before you plan a second.")
+	await T.say("", "Pell goes, counting on his fingers.")
+	await _praise2(T, t, "jar")
+	T.log_line("An exponent on brackets goes to every factor: (2 × 3)² = 2² × 3². It does not spread over + or −.")
+	T.set_flag("jar_done", true)
+	T.set_flag("quest", "")
+
+
+# ── 9. The boulder on the road (PE7) ──
+func boulder(T) -> void:
+	if T.flag("boulder_done", false):
+		return
+	T.set_flag("quest", "boulder")
+	if not T.flag("boulder_here", false):
+		await T.say("hesper", ["The beds are ready and the seed isn't. Take the Low Road to Highstead and ask Gale Harrow for vault seed.",
+			"There's been a rock-fall on the road, I hear. Take this."])
+		await T.say("", "She ties a tag to your wrist. On it, in her small hand: 2⁻³.")
+		T.set_flag("boulder_here", true)
+		T.rebuild_maps()
+	T.refresh()
+	await T.goal("Take the Low Road toward Highstead.", "person:bram")
+	await T.say("", "A boulder taller than you are sits square across the Low Road. A loaded seed cart waits behind a patient horse. Orrin Vael is sitting on the boulder.")
+	await T.say("bram", ["Bram Ostler, carter. Seed for the Ford, if I could get it there. Came down from the gorge edge in the night.",
+		"What's that on your wrist? Minus three? You'll make it [i]minus[/i] a boulder? What's that, a hole?"])
+	await T.ask("orrin", Ch2.ASK_BOULDER, "pe7_predict", Ch2.label("pe7_predict"))
+	await Pn.pattern(T, {"title": "The boulder on the road", "kicker": "Quest · PE7", "prompt": "Show the carter. Start from what he knows.", "base": 2,
+		"rows": Ch2.BOARD_ROWS, "hint": Ch2.HINT.boulder, "hint_btn": _hint(), "bot_wrong": {3: "0", 4: "-2", 5: "-4"}})
+	var t := await _f2(T, "pe7_boulder", "boulder", "[b]2⁻³[/b] = ?", Ch2.boulder(), {"why": Ch2.WHY.boulder})
+	await T.say("bram", "It weighs ninety-six stone if it weighs a pound. What's an eighth of that?")
+	await _f2(T, "pe7_weight", "boulder", "[b]96 × ⅛[/b] = ? stone", Ch2.weight())
+	await T.say("bram", "Twelve stone. Old Bess can drag fifteen.")
+	var q: Dictionary = await T.ask("orrin", Ch2.ASK_NEGBASE)
+	var v := await _f2(T, "pe7_negbase", "boulder", "Then what is [b](−2)⁻³[/b]?", Ch2.negbase(), {"record": false})
+	T.record("pe7_negbase", Ch2.label("pe7_negbase"), _worse(str(q.tier), v))   # the question and the value, one row
+	await T.say("", "You cast the charm. The boulder folds in on itself, halving, halving, halving, to the size of a hay bale.")
+	T.set_flag("boulder_done", true)
+	T.rebuild_maps()
+	await T.say("", "Bram's horse drags it onto the verge. The cart rolls through.")
+	await T.say("bram", "A hole, I said. Shows what I know. Good day to you, apprentice.")
+	await T.say("orrin", "I'm for Highstead too. Walk with me.")
+	await _praise2(T, t, "boulder")
+	T.remember("bram", "", 2)
+	T.log_line("A negative exponent is 1 over the power: 2⁻³ = 1⁄2³ = ⅛. Small and positive, not negative.")
+	T.set_flag("quest", "")
+
+
+# ── 10. The seed vault: the false rune (PE2 + PE7) ──
+func vault(T) -> void:
+	if T.flag("rune2_broken", false):
+		return
+	var R: Dictionary = T.S.pe
+	var goal := "Go on to Highstead. Gale Harrow keeps the seed vault in the grain-tower yard."
+	T.set_flag("quest", "vault")
+	T.set_flag("at_vault", true)
+	T.refresh()
+	if not T.flag("sigil_gate", false):   # the tower-yard gate is still frozen: thaw it with Balance on the way in
+		await T.goal(goal, "thing:spot_gate")
+		await T.say("", "The gate to the tower yard is frozen shut. There's a gold ring in front of it.")
+		await _spot(T, "spot_gate", true)
+	await T.goal(goal, "person:gale")
+	if not T.flag("vault_told", false):
+		await T.say("gale", ["Hesper's apprentice. And a Warden. You'll want seed, and I can't give you any.",
+			"The vault has a weighing lock. Every season the dial steps down one, and I put its value on the pan in seed-weights.",
+			"The stone says nought. So I put nothing on the pan, and the door won't move.", "Next season it says minus three. How do I weigh out minus three?"])
+		await T.say("", "Grey lines crawl over the last three lines of the stone. At the yard fence, a figure in a grey cloak is watching.")
+		T.set_flag("vault_told", true)
+	while not T.flag("rune2_broken", false):
+		var stage := int(R.rune_stage)
+		if _test_stop2(T, "%d%s" % [stage, "b" if int(R.rune_losses) > 0 else ""]):
+			await T.get_tree().create_timer(3600).timeout   # never returns before the program quits
+		if stage == 1:
+			await T.ask("orrin", Ch2.ASK_RUNE_PREDICT, "rune2_predict", Ch2.label("rune2_predict"))
+			R.rune_stage = 2
+			T.save()
+		elif stage == 2:
+			await _rune2_test(T)
+			R.rune_stage = 3
+			T.save()
+		else:
+			if await _rune2_fix(T):
+				break
+			R.rune_losses = int(R.rune_losses) + 1
+			T.save()
+			await T.say("", "The grey lines thicken. The pan swings empty and the stone goes cold under your hand.")
+			if int(R.rune_losses) >= 2:
+				await _rune2_worked(T)
+				break
+			await T.say("orrin", "What do you do to get from one line to the next?")
+	await _rune2_breaks(T)
+
+
+## Test option rune_stop=1|2|3|3b at the vault (as Chapter 1's rune): save and quit at that stage.
+func _test_stop2(T, at: String) -> bool:
+	if T.args.get("rune_stop", "") != at:
+		return false
+	T.save()
+	print("STOPPED-AT rune2:%s losses=%d" % [at, int(T.S.pe.rune_losses)])
+	T.get_tree().quit()
+	return true
+
+
+## Stage 2: the dividing ladder with the pan, then the second route (3³ ÷ 3³ and its exponent). Steps, not recorded.
+func _rune2_test(T) -> void:
+	await Pn.pattern(T, {"title": "The dividing ladder", "kicker": "The seed vault · Stage 2", "prompt": "Now test it. One rung at a time, and watch the pan.",
+		"base": 3, "rows": Ch2.RUNE_ROWS, "stone": Ch2.RUNE_STONE, "pan": true, "bot_wrong": {3: "0", 4: "-3", 5: "-9"}})
+	await T.frac({"key": "rune2_route", "record": false, "title": "The dividing ladder", "kicker": "The seed vault · Stage 2",
+		"prompt": "Another way to the same place. What is [b]3³ ÷ 3³[/b]?", "answer": Ch2.route2()})
+	await Pn.power_card(T, {"record": false, "title": "The dividing ladder", "kicker": "The seed vault · Stage 2",
+		"prompt": "And by the quotient law, what is its exponent?", "cards": [Ch2.CARD_ROUTE2]})
+	await T.say("", "With one weight on the pan, the lock tips a hair.")
+
+
+## Stage 3: explain, the plain words for the vault book, then the two fixes. True when all four lines are cut right.
+func _rune2_fix(T) -> bool:
+	await T.ask("orrin", Ch2.ASK_RUNE_EXPLAIN, "rune2_explain", Ch2.label("rune2_explain"))
+	if not T.S.typed.has("rune2_why"):
+		await T.say("gale", "I'll want it in plain words for the vault book. Why is 3⁰ equal to 1 and not 0?")
+		await T.typed({"id": "rune2_why", "title": "For the vault book", "kicker": "In your own words", "min": 40,
+			"prompt": "Gale wants it in plain words for the vault book. Why is [b]3⁰[/b] equal to 1 and not 0?",
+			"bot": "Test player: each line down divides by 3, and 3 ÷ 3 is 1, so 3⁰ is 1. Nought would break the pattern."})
+	await T.say("orrin", "Now cut the true lines.")
+	var fx := Ch2.fixes()
+	for k in ["pe2_rune_fix", "pe7_rune_fix", "pe2_rune_fix2", "pe7_rune_fix2"]:
+		if k == "pe2_rune_fix2":
+			await T.say("", "The outer stone settles. Inside the arch there is a second stone, in fours: 4⁰ = 0 · 4⁻² = −16.")
+		var what: String = {"pe2_rune_fix": "3⁰", "pe7_rune_fix": "3⁻²", "pe2_rune_fix2": "4⁰", "pe7_rune_fix2": "4⁻²"}[k]
+		var t: String = await T.frac({"key": k, "label": Ch2.label(k), "title": "The seed vault", "kicker": "The seed vault · Fix", "lose": true,
+			"prompt": "[b]%s[/b] = ?" % what, "answer": fx[k], "traps": Ch2.FIX_TRAPS[k], "hint_btn": _hint(), "hint": Ch2.FIX_HINT, "why": Ch2.FIX_WHY[k],
+			"bot_wrong": {"pe2_rune_fix": "0", "pe7_rune_fix": "-9", "pe2_rune_fix2": "0", "pe7_rune_fix2": "-16"}[k]})
+		if t == "lost":
+			return false
+	return true
+
+
+## After a second flare: Hesper's worked ladder, and the fixes recorded as shown.
+func _rune2_worked(T) -> void:
+	await _voice(T, "Slowly, with me. 27, 9, 3: each is the one above divided by 3. Then 1. Then ⅓. Then 1⁄9.")
+	await T.say("", "The lines come right under your hand as she says them.")
+	for k in Ch2.fixes():
+		T.record(k, Ch2.label(k), "later")
+
+
+func _rune2_breaks(T) -> void:
+	var R: Dictionary = T.S.pe
+	if not T.flag("rune2_broken", false):
+		T.set_flag("rune2_broken", true)
+		R.rune_result = "first attempt" if int(R.rune_losses) == 0 else ("after %d flare%s" % [R.rune_losses, "" if int(R.rune_losses) == 1 else "s"])
+		T.rebuild_maps()
+		T.ui.confetti(70)
+		T.banner("The false rune breaks", "3⁰ = 1")
+	await T.say("", "The carving cracks with a gold flash and cuts itself again: 1, ⅓, 1⁄9.")
+	await T.say("", "Gale sets one weight on the pan. The door swings in on racks of seed sacks.")
+	await T.say("gale", "One. All this for one.")
+	await T.say("orrin", "It usually is.")
+	await T.say("", "Orrin picks a chip of stone from under the dial and holds it beside the chip from the grain-share stone.")
+	await T.say("orrin", "Same hand.")
+	await T.say("", "He says no more, and hands the new chip to you. \"Keep them together.\"")
+	if not T.has("chip2"):
+		T.give("chip2")
+	if not T.flag("sefa2_gone", false):
+		await T.say("", "The figure at the fence has not run. They are looking at the open door.")
+		var i: int = await T.choose("", "", ["Call out: \"Wait. Did you carve this?\"", "Hold up a chip of the stone and say nothing", "Let them go."])
+		var pick: String = ["call", "chip", "go"][i]
+		T.set_flag("sefa_ch2", pick)
+		await T.say("", {"call": "The figure stops for one breath, half turned. Then the grey cloak is gone between the towers.",
+			"chip": "The figure looks at the chip in your hand for a long moment. Then the grey cloak is gone between the towers.",
+			"go": "You watch the grey cloak go, between the towers and out of sight."}[pick])
+		T.set_flag("sefa2_gone", true)
+		T.refresh()
+	await T.say("gale", "Take two sacks. Tell Hesper the vault owes her.")
+	if not T.flag("rune2_logged", false):
+		T.set_flag("rune2_logged", true)
+		T.log_line("The vault stone said 3⁰ = 0 and 3⁻¹ = −3. True lines: 1, ⅓, 1⁄9. Each step down divides by 3.")
+		if str(T.flag("sefa_ch2", "")) in ["call", "chip"]:
+			T.log_line("The grey-cloak saw me see them.")
+	T.remember("gale", "", 2)
+	T.remember("orrin", "", 2)
+	T.set_flag("quest", "")
+
+
+# ── 11. The Growth sigil ──
+func sigil2(T) -> void:
+	if T.flag("sigil2", false):
+		return
+	T.set_flag("quest", "sigil2")
+	T.refresh()
+	await T.goal("Carry the vault seed home to Hesper's seed bed.", "person:hesper")
+	await T.say("hesper", "Vault seed. Put the first one in yourself. Go on.")
+	await T.say("", "You press the seed into the pot. Green-gold light runs up your arm and settles on the back of your other hand.")
+	T.set_flag("sigil2", true)
+	T.give("growth")
+	T.rebuild_maps()
+	T.banner("The Growth sigil", "Make things double, triple or shrink by powers.")
+	T.confetti()
+	await T.say("hesper", ["Growth. Name a base and an exponent, and a living thing will follow it. Up for growing, below nought for shrinking.",
+		"Nought changes nothing, as you know better than the vault stone did.", "There are green-gold stars where it's wanted. Mind you count before you cast."])
+	await T.say("hesper", "Your Growth is charged %s. There are green-gold stars by the fold hedge and in the tower yard at Highstead, if you want the practice." % Ch2.pip_text(Ch2.pips(T.S)))
+	if Ch2.first_pips(T.S) < Ch2.PIPS:
+		await T.say("hesper", ["Missed a pip? Look for a gold ? over anyone you helped.", "That's a second look: the same skill with new numbers. Right first time wins the pip back."])
+	T.log_line("I have the Growth sigil. At a green-gold star: choose the exponent. Positive grows, negative shrinks, 0 changes nothing.")
+	T.set_flag("quest", "")
+
+
+# ── 12. First use and the cat ──
+func vine(T) -> void:
+	if T.flag("cat", false):
+		return
+	T.set_flag("quest", "vine")
+	T.refresh()
+	if not T.flag("vine_told", false):
+		await T.say("", "The next morning.")
+		await T.say("pell", "{name}! There's a cat crying on the ledge over the mill pond. It's been there all night. Nobody can reach it.")
+		T.set_flag("vine_told", true)
+	var goal := "Cross the mill pond and reach the ledge on the far side."
+	if not T.flag("sigil_pond", false):
+		await T.goal(goal, "thing:spot_pond")
+		await _spot(T, "spot_pond", true)
+	await T.goal(goal, "thing:growth_ledge")
+	if not T.flag("growth_ledge", false):
+		await _gspot(T, "growth_ledge", true)
+	await T.say("", ["The vine climbs the rock, doubling and doubling, and curls over the ledge.",
+		"Before you can set a foot on it, a small black cat with gold eyes walks down the vine by itself and sits on your boots."])
+	await T.say("pell", "It likes you. You have to name it. Those are the rules.")
+	var nm := await Pn.name_box(T, "Name the cat", "Soot")
+	T.set_flag("cat_name", nm)
+	T.set_flag("cat", true)
+	T.rebuild_maps()
+	T.refresh()
+	await T.say("", _c(T, "{cat} follows you home, as if this had always been the plan."))
+	T.log_line(_c(T, "A cat came down my first vine. {cat} follows me now."))
+	T.set_flag("quest", "")
+
+
+# ── 13. Chapter end ──
+func chapter_end2(T) -> void:
+	if T.args.has("spots"):   # test option: use every Growth spot once
+		for sid in ["growth_hedge", "growth_vault", "growth_window"]:
+			await _gspot(T, sid, false)
+	if T.flag("ch2_done", false):
+		return
+	await T.goal("Walk home to Hesper's cottage.", "map:cottage")
+	await T.say("hesper", "The field is green, the loft is clear, and there's seed in the ground. Not a bad month's work, {name}.")
+	await T.say("orrin", ["Two stones, one hand. And whoever carves them wants us to see the gorge.",
+		"The top of the bank above the vault looks over the broken bridge. When you can grow a vine that high, look."])
+	await T.say("hesper", "That's for another day. Tonight, soup.")
+	T.set_flag("ch2_done", true)
+	T.banner("Chapter 2 complete", "The Blight")
+	T.confetti()
+	await T.say("", "End of Chapter 2: The Blight.")
+	await T.say("", "Open the Menu and download your report for your teacher.")
+	if T.auto != "" and str(T.args.get("looks", "")) != "0":
+		await _auto_looks2(T)
+
+
+## A Growth spot (design §8): a base, where things stand, what is needed; the student types the exponent on a power card.
+## story: the vine step's first use (fixed numbers: 1 hand doubling to 32). Three tries, then Hesper says it and it works anyway.
+func _gspot(T, sid: String, story: bool) -> void:
+	var S: Dictionary = T.S
+	var R: Dictionary = S.pe
+	var sp: Dictionary = Ch2.SPOTS[sid]
+	var solved := bool(T.flag(sp.flag, false))
+	if sid == "growth_window" and not solved and Ch2.pips(S) < Ch2.PIPS:
+		await T.say("", "A green-gold star, faint, high on the tower's west wall. Your Growth isn't charged enough to reach it.")
+		return
+	if solved and not story and T.auto == "":
+		if await T.choose("", "%s already holds. Practise Growth here anyway?" % sp.what, ["Practise", "Leave it"]) != 0:
+			return
+	var visit := int(R.spot_visits.get(sid, 0))
+	R.spot_visits[sid] = visit + 1
+	var nums: Dictionary = Ch2.first_vine() if story and sid == "growth_ledge" else Ch2.spot_numbers(sid, visit, int(S.seed))
+	var a := int(nums.answer)
+	var sg := 1 if a > 0 else -1
+	var card := {"expr": "", "base": str(int(nums.b)), "answer": a, "traps": []}
+	var r: Dictionary = await Pn.power_card(T, {"record": false, "tries": 3, "title": "Growth", "kicker": sp.what, "prompt": Ch2.spot_prompt(nums), "cards": [card],
+		"judge": func(_i, k, _cf): return Ch2.spot_judge(nums, k), "reveal": Ch2.spot_reveal(nums), "bot_wrong": [a - sg if absi(a) > 1 else a + sg]})
+	var tier := str(r.tier)
+	if tier != "later":   # right at any try: opens a second look locked by a miss
+		R.rings_right = int(R.get("rings_right", 0)) + 1
+	if tier == "first":
+		R.spot_first = int(R.get("spot_first", 0)) + 1
+		if Ch2.pips(S) < Ch2.PIPS:
+			R.spot_pips = int(R.spot_pips) + 1
+	R.spots_used[sid] = int(R.spots_used.get(sid, 0)) + 1
+	if not solved:
+		T.set_flag(sp.flag, true)
+		T.rebuild_maps()
+		match sid:
+			"growth_hedge":
+				await T.say("", "You come out by the Low Road, the size of yourself again, with a leaf in your hair.")
+				if T.world.map.id == "brindle":
+					T.go("brindle", 17, 7, "right")
+			"growth_vault":
+				await T.say("", "From the top of the bank you can see the far end of the broken bridge, and gold lines still moving on its cables.")
+			"growth_window":
+				await T.say("", ["The vine carries you to the window ledge. The door below is locked, but the shutter is open.",
+					"A desk. Two charcoal rubbings of carved stone, side by side: the grain-share rune and the vault rune.", "And a small painting of a young apprentice in Warden's grey, hung with its face turned to the wall."])
+				T.remember("orrin", "In Orrin's tower: rubbings of the two runes, and a painting turned to the wall.")
+				T.set_flag("orrin_painting", true)
+				T.log_line("In Orrin's tower: rubbings of the two runes, and a painting turned to the wall.")
+	else:
+		await T.say("", "The sigil hums. %s holds." % sp.what)
+	T.save()
+
+
+## A second look with this giver (design §8.1): the pip check again with the next variant's numbers.
+func _second_look2(T, key: String, offer := true) -> void:
+	var S: Dictionary = T.S
+	var giver: String = Ch2.LOOK_GIVER[key]
+	var v := Ch2.look_variant(S, key)
+	if offer and await T.choose(giver, "Back again, {name}? I've another one like it, with new numbers. A second look?", ["Yes, a second look", "Not now"]) != 0:
+		return
+	var traps := Ch2.look_traps(key, v)
+	var kicker := "%s · %s · variant %s" % [Ch2.LOOK_NAME[key], Ch2.code_of(key), v]
+	var quest: String = Ch2.LOOK_QUEST[key]
+	var help := {"hint_btn": _hint(), "hint": Ch2.HINT[quest], "why": Ch2.WHY[quest]}   # the quest's hint and why line (script)
+	var tier: String
+	if Ch2.LOOK_CARD.has(key):
+		var c := Ch2.look_card(key, v)
+		var r: Dictionary = await Pn.power_card(T, {"record": false, "title": "Second look", "kicker": kicker, "prompt": Ch2.LOOK_PROMPT[key + v],
+			"cards": [{"expr": c.expr, "base": c.base, "answer": c.answer, "traps": traps}], "hint_btn": help.hint_btn, "hint": help.hint, "why": help.why})
+		tier = str(r.tier)
+	else:
+		tier = await T.frac({"key": "look_" + key, "record": false, "title": "Second look", "kicker": kicker, "prompt": Ch2.LOOK_PROMPT[key + v],
+			"answer": Ch2.look_answer(key, v), "traps": traps, "bot_wrong": str(traps[0][0]).replace("−", "-"), "hint_btn": help.hint_btn, "hint": help.hint, "why": help.why})
+	Ch2.look_result(S, key, v, tier, today())
+	T.save()
+	if tier == "first":
+		T.confetti()
+		await T.say("", "The Growth sigil on your hand glows. One pip back: %s." % Ch2.pip_text(Ch2.pips(S)))
+		await T.say("pell", "See? Same skill, new numbers, and you nailed it.")
+		T.log_line("Second look with %s (variant %s): right the first time. A pip back." % [T.people_def[giver].name, v])
+	else:
+		await T.say(giver, "Come back after you've worked a gold ring, or tomorrow.")
+	T.refresh()
+
+
+## The test player's second looks in Chapter 2 (as Chapter 1's _auto_looks; a lock opens with a Growth spot or a later day).
+func _auto_looks2(T) -> void:
+	var S: Dictionary = T.S
+	var plan: PackedStringArray = str(T.args.get("looks", "wrong,right")).split(",")
+	var keep: String = T.auto
+	var unlocks := 0
+	for _round in 8:
+		var any := false
+		for key in Ch2.PIP_KEYS:
+			if not Ch2.look_missed(S, key) or Ch2.look_passed(S, key):
+				continue
+			any = true
+			if not Ch2.look_open(S, key, today()):
+				var how: String = str(T.args.get("looks_unlock", "ring" if unlocks % 2 == 0 else "day"))
+				unlocks += 1
+				if how == "ring":
+					T.auto = "second"
+					await _gspot(T, "growth_hedge", false)
+					T.auto = keep
+				else:
+					_day_offset += 1
+				T.refresh()
+				if not Ch2.look_open(S, key, today()):
+					print("LOOK-PROBLEM %s still locked after a %s" % [key, how])
+					continue
+			var n: int = (S.pe.get("looks", {}).get(key, {}).get("tries", []) as Array).size()
+			await T.goal("A gold ? over %s: a second look." % T.people_def[Ch2.LOOK_GIVER[key]].name, "person:" + Ch2.LOOK_GIVER[key])
+			T.auto = plan[mini(n, plan.size() - 1)].strip_edges()
+			await _second_look2(T, key, false)
+			T.auto = keep
+			if not Ch2.look_passed(S, key) and Ch2.look_open(S, key, today()):
+				print("LOOK-PROBLEM %s open again straight after a miss" % key)
+		if not any:
+			break
+	if T.args.has("spots") and not T.flag("growth_window", false):   # with every pip back, the window should open now
+		await _gspot(T, "growth_window", false)
+	T.set_goal_text(str(done_goal))
+
+
+func _talk2(pid: String, T) -> void:
+	var lk := _look_key2(pid)
+	if lk != "" and Ch2.look_open(T.S, lk, today()):
+		await _second_look2(T, lk)
+		return
+	match pid:
+		"hesper":
+			if T.flag("tally_done", false) and not T.flag("hesper_nought", false):   # once, after the tally
+				T.set_flag("hesper_nought", true)
+				await T.say("hesper", "Nought to the nought? Nothing can't triple. Zero isn't a base I'd plant.")
+			else:
+				await T.say("hesper", "Write it out the long way first. How many of them are you multiplying?")
+		"bram":
+			await T.say("bram", "A hole, I said. Shows what I know. Good day to you, apprentice.")
+		_:
+			await _talk_lines(pid, T)
+
+
+func _report2(S: Dictionary) -> Array:
+	var word := {"first": "first try", "second": "second try", "third": "third try", "later": "shown the answer"}
+	var rows := []
+	for c in Ch2.CODES:
+		var bits := []
+		var firsts := 0
+		var seen := 0
+		for k in c[2]:
+			if S.answers.has(k):
+				seen += 1
+				if S.answers[k].tier == "first":
+					firsts += 1
+				var nm: String = str(Ch2.LABEL[k])
+				if k.contains("rune_fix"):   # the pair label names both lines; say which one this is
+					nm = "the vault stone, " + {"pe2_rune_fix": "3⁰", "pe7_rune_fix": "3⁻²", "pe2_rune_fix2": "4⁰", "pe7_rune_fix2": "4⁻²"}[k]
+				bits.append("%s: %s" % [nm, word.get(S.answers[k].tier, "")])
+		rows.append(["%s %s" % [c[0], c[1]], ("%d of %d first try. " % [firsts, seen] + "; ".join(bits)) if seen > 0 else "Not reached yet."])
+	var out := [{"title": "First tries by outcome (notes section)", "rows": rows}]
+	var own := []
+	for k in Ch2.TYPED_LABEL:
+		if S.typed.has(k):
+			own.append([Ch2.TYPED_LABEL[k], str(S.typed[k].text)])
+	if own.size():
+		out.append({"title": "In my own words", "rows": own})
+	var R: Dictionary = S.get("pe", {})
+	var rune := []
+	for k in ["rune2_predict", "rune2_explain"]:
+		if S.answers.has(k):
+			rune.append([Ch2.LABEL[k], word.get(S.answers[k].tier, "")])
+	for pr in [["pe2_rune_fix", "pe7_rune_fix", "3⁰", "3⁻²"], ["pe2_rune_fix2", "pe7_rune_fix2", "4⁰", "4⁻²"]]:
+		if S.answers.has(pr[0]):
+			rune.append([Ch2.LABEL[pr[0]], "%s: %s; %s: %s" % [pr[2], word.get(S.answers[pr[0]].tier, ""), pr[3], word.get(S.answers.get(pr[1], {}).get("tier", ""), "not reached")]])
+	if S.flags.get("rune2_broken", false):
+		rune.append(["Broke the rune", str(R.get("rune_result", ""))])
+	elif S.flags.get("at_vault", false):
+		rune.append(["Broke the rune", "Not yet (%d flares so far)" % int(R.get("rune_losses", 0))])
+	if rune.size():
+		out.append({"title": "The false rune", "rows": rune})
+	if S.flags.get("sigil2", false):
+		var used := []
+		for sid in R.get("spots_used", {}):
+			used.append("%s ×%d" % [Ch2.SPOTS[sid].what, int(R.spots_used[sid])])
+		var looks := []
+		var tried := 0
+		for k in Ch2.PIP_KEYS:
+			var t := Ch2.look_text(S, k)
+			if t != "":
+				tried += (R.looks[k].tries as Array).size()
+				looks.append("%s: %s" % [Ch2.LOOK_NAME[k], t])
+		var n := Ch2.pips(S)
+		out.append({"title": "The Growth sigil", "rows": [["Growth charge: %d of 6" % n, Ch2.pip_text(n)],
+			["Where the pips came from", "%d from first tries, %d from gold rings, %d from second looks" % [Ch2.first_pips(S), int(R.get("spot_pips", 0)), Ch2.look_pips(S)]],
+			["Growth spots used", ", ".join(used) if used.size() else "none yet"], ["Solved on the first try", str(int(R.get("spot_first", 0)))],
+			["Second looks", ("%d tried, %d passed. " % [tried, Ch2.look_pips(S)] + "; ".join(looks)) if looks.size() else "none yet"]]})
+	var bal := []
+	for sid in R.get("balance_used", {}):
+		bal.append("%s ×%d" % [Ch1.SPOTS[sid].what, int(R.balance_used[sid])])
+	out.append({"title": "The Balance sigil", "rows": [["Balance spots solved in this chapter", ", ".join(bal) if bal.size() else "none yet"]]})
+	return out
+
+
+func _summary2(S: Dictionary) -> Dictionary:
+	var firsts := 0
+	for k in S.answers:
+		if Ch2.keys().has(k) and S.answers[k].tier == "first":
+			firsts += 1
+	var R: Dictionary = S.pe
+	var looks := {}
+	for k in R.get("looks", {}):
+		var tl := []
+		for t in R.looks[k].tries:
+			tl.append("%s:%s" % [t.v, t.tier])
+		looks[k] = ",".join(tl)
+	var ans := 0
+	for k in S.answers:
+		if Ch2.keys().has(k):
+			ans += 1
+	return {"chapter": 2, "ch2_answers": ans, "pips": Ch2.pips(S), "pips_from": [Ch2.first_pips(S), int(R.get("spot_pips", 0)), Ch2.look_pips(S)], "looks": looks,
+		"rune_losses": int(R.rune_losses), "rune_broken": S.flags.get("rune2_broken", false), "firsts": firsts, "lent": S.flags.get("balance_lent", false),
+		"growth": [S.flags.get("growth_ledge", false), S.flags.get("growth_hedge", false), S.flags.get("growth_vault", false), S.flags.get("growth_window", false)],
+		"cat": str(S.flags.get("cat_name", "")), "sefa": str(S.flags.get("sefa_ch2", "")), "painting": S.flags.get("orrin_painting", false), "items": S.inv.keys()}

@@ -1,6 +1,6 @@
 # The Measure of the Realm — Chapter 2 Design v1
 ## "The Blight" · Powers and exponents · Sigil: Growth
-*The design only; not built. Written 2026-11-14. Story: `math9-realm-story-v1.md`, §6. Same shape as `math9-realm-ch1-design-v1.md`; anything not said here works as in Chapter 1.*
+*Built 2026-11-14 (board T-029); the story lines and later fixes are in `math9-realm-ch2-script-v1.md`. Written 2026-11-14. Story: `math9-realm-story-v1.md`, §6. Same shape as `math9-realm-ch1-design-v1.md`; anything not said here works as in Chapter 1.*
 
 > **Gate (games):** Outcomes: PE1–PE7. Model: a step-based story; every check is an exact value (an integer or a fraction, equivalent forms accepted) or an exact exponent on a given base; the rune breaks only when the prediction, test and fix are right. Turn-based. Test hook included (`?debug=1`, `auto=right|second|wrong`, a `solve` on every panel).
 
@@ -178,7 +178,7 @@ Two input kinds are used below:
 - **Predict** (`T.ask`, key `pe6_predict`): *"Is (2 × 3)² the same as 2 × 3²?"* Right: "**No. In (2 × 3)² the square covers the 2 and the 3. In 2 × 3² only the 3 is squared.**" Wrong: "Yes, the brackets don't change a multiplication"; "Yes, both are 2 × 3 × 2".
 - **Check 1** (`T.frac`, key `pe6_jar`, the pip): pots in the bed, (2 × 3)²: **36**. Named error 18: "That's Pell's jar, 2 × 3². The bed is 6 by 6." Named error 12: "That's 6 × 2. Squaring means 6 × 6." Then one line: Pell is **18 seeds short**.
 - **Check 2** (power card with a number in front, key `pe6_coef`): Hesper's seed crates are cubes, **2x** hands along each edge, where x is the pot size. The crate's volume: (2x)³ = **8x³**. Named error 2 in front: "The exponent belongs to the 2 as well. (2x)(2x)(2x)." Named error 6 in front: "2³ is 2 × 2 × 2, not 2 × 3."
-- **Check 3** (`T.frac`, key `pe6_quot`): a small square bed is **⅔ of a pace** on each side. What fraction of a square pace does it cover? (⅔)² = **4⁄9**. Named error 4⁄3: "You squared the top only." Named error 2⁄9: "You squared the bottom only." Named error 4⁄6: "That's doubling. Squaring is ⅔ × ⅔."
+- **Check 3** (`T.frac`, key `pe6_quot`): a small square bed is **⅔ of a pace** on each side. What fraction of a square pace does it cover? (⅔)² = **4⁄9**. Named error 4⁄3: "You squared the top only." Named error 2⁄9: "You squared the bottom only." Named error ⅔ (or 4⁄6): "That's the side, not the square. Multiply ⅔ by ⅔."
 - **Check 4** (`T.ask`, key `pe6_sum`): Pell, trying again: "A bed with 3 + 4 pots on a side. That's 3² + 4² pots." Right: "**No. (3 + 4)² = 7² = 49, and 3² + 4² is only 25. An exponent spreads over × and ÷, not over + and −.**" Wrong: "Yes, the exponent goes to each number in the brackets"; "No, it's 3² × 4² = 144".
 - **Hint:** "Draw the bed. How many pots along one side? Then how many rows?"
 - **Why:** "(2 × 3)² = (2 × 3) × (2 × 3) = 2² × 3² = 4 × 9 = 36."

@@ -1213,11 +1213,21 @@ func _pack_node(d: Dictionary, pos: Vector3) -> Node3D:
 	if d.get("sway", false):
 		for c in n.find_children("*_Crown", "", true, false):
 			trees.append([c, _h(int(pos.x), int(pos.z)) * TAU])
+	var parts: Dictionary = d.get("parts", {})   # named parts set by the story: { name: { hide, scale: [x, y, z], turn: [x, y, z] degrees } }
+	for part in parts:
+		var pn = _pack().part(n, part)
+		if pn:
+			var o: Dictionary = parts[part]
+			pn.visible = not o.get("hide", false)
+			if o.has("scale"):
+				pn.scale = Vector3(float(o.scale[0]), float(o.scale[1]), float(o.scale[2]))
+			if o.has("turn"):
+				pn.rotation_degrees += Vector3(float(o.turn[0]), float(o.turn[1]), float(o.turn[2]))
 	return n
 
 
 func _pack_prop(p: Dictionary, c: Vector3) -> void:
-	var at := c + Vector3(float(p.get("ox", 0.0)), 0, float(p.get("oz", 0.0)))
+	var at := c + Vector3(float(p.get("ox", 0.0)), float(p.get("oy", 0.0)), float(p.get("oz", 0.0)))
 	if p.has("anim"):   # a rigged model playing a looping clip (a grazing sheep, a pecking hen)
 		var sp2: PackedStringArray = str(p.pack).split(":")
 		var r: Node3D = _pack().person(sp2[0], sp2[1])
@@ -1225,7 +1235,7 @@ func _pack_prop(p: Dictionary, c: Vector3) -> void:
 		r.rotation.y = deg_to_rad(float(p.get("yaw", 0.0)))
 		add_child(r)
 		_pack().play(r, str(p.anim))
-	elif p.get("node", false) or p.has("tint") or p.has("spin") or p.has("pulse") or p.get("sway", false):
+	elif p.get("node", false) or p.has("tint") or p.has("spin") or p.has("pulse") or p.get("sway", false) or p.has("parts"):
 		_pack_node(p, at)
 	else:
 		var sp: PackedStringArray = str(p.pack).split(":")

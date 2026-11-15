@@ -446,6 +446,8 @@ func _refresh() -> void:
 			var b := "goal" if goal_target == "person:" + id else str(D.bubble(id, S))
 			list.append({"id": id, "x": int(w.x), "y": int(w.y), "dir": w.get("dir", "down"), "look": people_def[id].look, "bubble": b})
 	world.set_people(list)
+	if D.has_method("follower"):   # a companion that walks behind you (Realm: the cat): its look, or {} for none
+		world.set_follower(D.follower(S))
 	world.set_goal(_goal_tile())
 	ui.set_hud(D.hud(S) + (D.profile_hud(P) if D.has_method("profile_hud") else []), goal_text)
 
@@ -1433,18 +1435,25 @@ func played_text() -> String:
 func report_sections() -> Array:
 	var out: Array = D.report(S)
 	var rows := []
+	var keep := func(kind: String, k) -> bool: return not D.has_method("report_keep") or D.report_keep(S, kind, k)   # a game with chapters reports the one in play
 	for k in S.answers:
+		if not keep.call("answer", k):
+			continue
 		var a: Dictionary = S.answers[k]
 		rows.append([a.label, {"first": "Right on the first try", "second": "Right on the second try", "third": "Right on the third try", "later": "Shown the answer"}.get(a.tier, a.tier)])
 	if rows.size():
 		out.append({"title": "Checked answers", "rows": rows})
 	for k in S.typed:
+		if not keep.call("typed", k):
+			continue
 		var plain := RegEx.new()
 		plain.compile("\\[/?[a-z_]+(=[^\\]]*)?\\]")
 		out.append({"title": "In my own words", "text": "%s\n\n%s" % [plain.sub(str(S.typed[k].prompt), "", true), S.typed[k].text]})
 	var log_rows := []
-	for l in S.log:
-		log_rows.append(["%s %d" % [_log_unit(), int(l.day)], l.text])
+	for li in S.log.size():
+		var l: Dictionary = S.log[li]
+		if keep.call("log", li):
+			log_rows.append(["%s %d" % [_log_unit(), int(l.day)], l.text])
 	if log_rows.size():
 		out.append({"title": "What I decided", "rows": log_rows})
 	return out
@@ -1493,13 +1502,25 @@ func report_html() -> String:
 
 
 func _show_title(saved) -> void:
+	var btns: Array = [["Continue", "continue", true], ["New game", "new"]] if saved != null else [["Start", "new", true]]
+	if D.has_method("title_buttons"):   # a game's own choices on the title card (Realm: its chapters), values "game:…"
+		btns = D.title_buttons(saved, btns)
 	var v = await panel(D.title, func(body):
 		body.add_child(ui.label(D.i_can, "Strong"))
-		body.add_child(ui.label(D.blurb, "")), ([["Continue", "continue", true], ["New game", "new"]] if saved != null else [["Start", "new", true]]), D.unit_label, false)
+		body.add_child(ui.label(D.blurb, "")), btns, D.unit_label, false)
 	if v == "continue":
 		G = saved
 		G.si = int(G.si)
 		_begin()
+		return
+	if v is String and v.begins_with("game:"):   # the game returns the save to play on, or null to make a new character
+		var g = D.title_pick(v.substr(5), saved)
+		if g != null:
+			G = g
+			G.si = int(G.si)
+			_begin()
+			return
+		_avatar_screen()
 		return
 	if saved != null:
 		var sure = await panel("Start a new game?", func(b): b.add_child(ui.label("Your saved game on this browser will be replaced.")), [["Start new", true, true], ["Go back", false]])

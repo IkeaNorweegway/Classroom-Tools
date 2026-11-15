@@ -11,6 +11,21 @@
 #   - sigil spots sit on ground you can stand on: the pond spot on its south bank (5, 12), the wheel spot east of the race (18, 9);
 #   - each area is 23 cells (46 tiles) tall, as the sketch is;
 #   - Orrin's tower (not in the sketch) stands on the north bank at tiles 42–45 × 14–17, with a footpath west from its door.
+#
+# Chapter 2 (design math9-realm-ch2-design-v1.md §8–9; only when the flag "ch2" is on, so Chapter 1's maps are unchanged):
+#   - Brindle Ford: grey blight patches on the north field and the pasture (green moss after cure_done); the tally board outside
+#     the common barn (34–35, 36); Hesper's seed bed, a 6 × 6 square of pots on 3 × 3 tiles (17–19, 34–36); nests on the well
+#     roof until nests_done; a clipped hedge between the fold and the Low Road (x 16, y 0–11) with the Growth gap at (16, 7–8),
+#     open once growth_hedge; the pond ledge, a big rock on the north bank of the pond (6–7, 16–17) with the cat on it until the
+#     cat comes down; after boulder_done, Bram's farm cart (40–41, 36) and the horse (42, 36) outside the barn.
+#   - Growth spots (green-gold stars, after sigil2): the pond ledge (8, 16), the hedge gap (14, 7), Orrin's window (40, 15) by the
+#     tower's west wall, the vault vine (46, 8) in the tower yard. Each spot's vine shows grown once its flag is on.
+#   - Highstead: the seed vault door (5 × 1) at the foot of the middle grain tower (41–45, 8); there is no bank in the yard, so it
+#     stands against the tower (one tile east of centre, so the strip under the hay stack, 40–41 × 6–7, is not sealed off). The yard cart and a sack pile move east to clear the door and the vault vine. The boulder (2 × 2)
+#     sits on the road just south of the Highstead ford (18–19, 32–33), the only way from the Low Road into Highstead, so there is
+#     no way round; Bram's cart, the horse, Bram and Orrin stand beside it. After boulder_done a small rock sits on the verge.
+#   - The mill room: smoke pots along the back wall after moths_done.
+# A model missing from the pack falls back to an existing one (_m).
 extends RefCounted
 
 const P := "realm/emberdale:"
@@ -150,8 +165,19 @@ static func _terrain(sk: Array, frozen: bool) -> Dictionary:
 	return {"w": W, "h": H, "ground": ground, "draws": draws}
 
 
+## A pack model's name, or the fallback when the pack hasn't got it (Chapter 2's props were added to the pack late).
+const FALLBACK := {"boulder_big": "boulder", "boulder_small": "rock_b", "cart_farm": "cart", "tally_board": "signpost", "vine": "bush",
+	"smoke_pot": "barrel", "moth_nest": "sack", "seed_pot": "herb_bed", "seed_pot_empty": "herb_bed", "blight_patch": "rock_a",
+	"moss_patch": "bush", "growth_marker": "sigil_spot", "vault_door": "rune_stone"}
+static var _have := {}
+static func _m(name: String) -> String:
+	if not _have.has(name):
+		_have[name] = ResourceLoader.exists("res://assets/realm/emberdale/%s.glb" % name)
+	return name if _have[name] or not FALLBACK.has(name) else FALLBACK[name]
+
+
 static func _prop(name: String, x: int, y: int, w := 1, h := 1, extra := {}) -> Dictionary:
-	var d := {"k": "pack", "pack": P + name, "x": x, "y": y, "w": w, "h": h, "solid": true}
+	var d := {"k": "pack", "pack": P + _m(name), "x": x, "y": y, "w": w, "h": h, "solid": true}
 	d.merge(extra, true)
 	return d
 
@@ -175,13 +201,31 @@ static func _spot(id: String, label: String, x: int, y: int, lit: bool) -> Dicti
 	return d
 
 
+## A Growth spot: a green-gold star on the ground (walkable). lit: pulsing; otherwise dimmed (solved, or out of reach).
+static func _gspot(id: String, label: String, x: int, y: int, lit: bool) -> Dictionary:
+	var d := {"k": "pack", "pack": P + _m("growth_marker"), "x": x, "y": y, "w": 2, "h": 2, "solid": false, "id": id, "label": label}
+	var glow := "growth_marker_glow" if _m("growth_marker") == "growth_marker" else "sigil_spot_glow"
+	if lit:
+		d.pulse = glow
+	else:
+		d.tint = {glow: "#6f7a5a"}
+	return d
+
+
+## A Growth vine at a spot: its "Vine" part scaled in height (0.05 just the root mound … 1 full, 4.13 tiles).
+static func _vine(x: int, y: int, h: float, extra := {}) -> Dictionary:
+	var d := _prop("vine", x, y, 1, 1, {"solid": false, "parts": {"Vine": {"scale": [1.0, clampf(h, 0.05, 1.0), 1.0]}}})
+	d.merge(extra, true)
+	return d
+
+
 static func build(f: Dictionary) -> Dictionary:
 	var sig := bool(f.get("sigil", false))
 	return {
 		"brindle": _brindle(f, sig),
 		"highstead": _highstead(f, sig),
 		"cottage": _cottage(),
-		"mill": _mill_room(),
+		"mill": _mill_room(f),
 		"barn": _barn(),
 		"abel_house": _abel_house(),
 	}
@@ -250,15 +294,18 @@ static func _brindle(f: Dictionary, sig: bool) -> Dictionary:
 		_prop("rock_b", 56, 32), _prop("rock_a", 55, 38), _prop("boulder", 54, 32, 2, 2),
 		# sheep: in the fold once the lambs are in, out on the grass before
 	]
-	for s in ([[6, 8], [9, 7], [11, 9], [7, 10]] if f.get("lambs_in", false) else [[20, 15], [22, 13], [24, 15], [26, 13]]):
+	var penned: bool = bool(f.get("lambs_in", false)) and not (f.get("ch2", false) and f.get("cure_done", false))   # Ch 2: back on the grass after the cure
+	for s in ([[6, 8], [9, 7], [11, 9], [7, 10]] if penned else [[20, 15], [22, 13], [24, 15], [26, 13]]):
 		props.append(_beast("sheep", s[0], s[1], "graze" if (s[0] + s[1]) % 2 == 0 else "idle", _h(s[0], s[1]) * 360.0))
 	# a lamb with the flock, and Rowan's dog sitting by him at the fold
-	var lb: Array = [8, 9] if f.get("lambs_in", false) else [21, 14]
+	var lb: Array = [8, 9] if penned else [21, 14]
 	props.append(_beast("lamb", lb[0], lb[1], "idle", _h(lb[0], lb[1]) * 360.0))
 	props.append(_beast("dog", 9, 14, "sit", 200.0))
 	# the prologue crowd's spot, the sigil spots
 	props.append({"k": "none", "x": 47, "y": 27, "solid": false, "id": "bridge", "label": "The gorge bridge"})
 	props.append({"k": "none", "x": 43, "y": 18, "solid": false, "id": "tower_door", "label": "Orrin's tower"})
+	if f.get("ch2", false):
+		_brindle_ch2(f, props, draws)
 	if sig:
 		props.append(_spot("spot_pond", "The mill pond", 10, 24, not f.get("sigil_pond", false)))
 		props.append(_spot("spot_wheel", "The mill wheel", 36, 18, not f.get("sigil_wheel", false)))
@@ -277,6 +324,42 @@ static func _brindle(f: Dictionary, sig: bool) -> Dictionary:
 			{"x": 56, "y": 0, "w": 2, "to": "highstead", "at": [56, 44], "dir": "up"},
 		],
 	}
+
+
+## Chapter 2's things in Brindle Ford (see the header).
+static func _brindle_ch2(f: Dictionary, props: Array, draws: Array) -> void:
+	var cured := bool(f.get("cure_done", false))
+	for pt in [[24, 5], [28, 7], [33, 5], [37, 9], [30, 10], [26, 9], [39, 6], [17, 13], [20, 17], [23, 16], [26, 17], [15, 15]]:
+		props.append(_prop("moss_patch" if cured else "blight_patch", pt[0], pt[1], 1, 1, {"solid": false, "yaw": _h(pt[0], pt[1]) * 360.0}))
+	props.append(_prop("tally_board", 34, 36, 2, 1))
+	# Hesper's seed bed: 36 pots at a half-tile pitch on 3 × 3 tiles, empty until the vault seed is planted
+	var pot := "seed_pot" if f.get("sigil2", false) else "seed_pot_empty"
+	for j in 6:
+		for i in 6:
+			draws.append({"kind": "pack", "pack": P + _m(pot), "x": 17.0 + i * 0.5, "y": 34.0 + j * 0.5, "w": 0.5, "h": 0.5})
+	props.append({"k": "none", "x": 17, "y": 34, "w": 3, "h": 3, "solid": true})
+	if not f.get("nests_done", false):
+		props.append(_prop("moth_nest", 26, 28, 1, 1, {"solid": false, "oy": 2.15, "ox": 0.35, "oz": 0.4}))
+		props.append(_prop("moth_nest", 27, 29, 1, 1, {"solid": false, "oy": 2.1, "ox": -0.3, "oz": -0.35, "yaw": 70.0}))
+	# the hedge between the fold and the Low Road; the Growth gap at (16, 7–8)
+	for y in 12:
+		if not (f.get("growth_hedge", false) and (y == 7 or y == 8)):
+			props.append(_prop("bush_hedge", 16, y))
+	# the pond ledge: a big rock on the pond's north bank, the cat on top until it comes down the first vine
+	props.append(_prop("boulder_big", 6, 16, 2, 2))
+	if not f.get("cat", false):
+		props.append({"k": "pack", "pack": A + "cat", "x": 6, "y": 16, "w": 1, "h": 1, "solid": false, "anim": "sit", "yaw": 160.0, "oy": 1.2, "ox": 0.5, "oz": 0.4})
+	if f.get("growth_ledge", false):
+		props.append(_vine(8, 16, 0.4, {"ox": -0.45}))
+	if f.get("growth_window", false):
+		props.append(_vine(41, 15, 1.0, {"ox": 0.45}))
+	if f.get("boulder_done", false):   # Bram stands by his cart outside the common barn
+		props.append(_prop("cart_farm", 40, 36, 2, 1))
+		props.append(_beast("horse", 42, 36, "idle", 90.0))
+	if f.get("sigil2", false):
+		props.append(_gspot("growth_ledge", "The pond ledge", 8, 16, not f.get("growth_ledge", false)))
+		props.append(_gspot("growth_hedge", "The hedge gap", 14, 7, not f.get("growth_hedge", false)))
+		props.append(_gspot("growth_window", "Orrin's window", 40, 15, not f.get("growth_window", false) and f.get("_pips_full", false)))
 
 
 static func _highstead(f: Dictionary, sig: bool) -> Dictionary:
@@ -303,7 +386,7 @@ static func _highstead(f: Dictionary, sig: bool) -> Dictionary:
 		{"k": "none", "x": 17, "y": 38, "h": 2, "solid": true}, {"k": "none", "x": 20, "y": 38, "h": 2, "solid": true},
 		_prop("stone_wall_2", 13, 39, 2, 1), _prop("stone_wall_2", 22, 39, 2, 1),
 		# the grain-tower yard: fenced, its gate frozen shut until the Balance sigil thaws it
-		_prop("hay_stack", 40, 4, 2, 2), _prop("sack_pile", 47, 9), _prop("cart", 44, 9, 2, 1),
+		_prop("hay_stack", 40, 4, 2, 2),
 		_tree("tree_aspen", 4, 4), _tree("tree_aspen_au", 18, 8), _tree("tree_cottonwood", 4, 34), _tree("tree_spruce", 26, 36),
 		_tree("tree_aspen", 34, 36), _tree("tree_aspen_au", 40, 40), _tree("tree_spruce", 6, 40), _tree("tree_aspen", 44, 16),
 		_tree("tree_aspen_au", 52, 16), _tree("tree_cottonwood", 14, 26), _tree("tree_spruce", 54, 4),
@@ -316,6 +399,22 @@ static func _highstead(f: Dictionary, sig: bool) -> Dictionary:
 	for y in range(4, 10, 2):
 		props.append(_prop("fence_rail", 34, y, 1, 2, {"yaw": 90}))
 		props.append(_prop("fence_rail", 53, y, 1, 2, {"yaw": 90}))
+	var ch2 := bool(f.get("ch2", false))
+	if ch2:   # the yard cart and a sack pile move east, clear of the vault door and the vault vine
+		props.append_array([_prop("sack_pile", 52, 9), _prop("cart", 49, 9, 2, 1)])
+		var open := bool(f.get("rune2_broken", false))
+		props.append(_prop("vault_door", 41, 8, 5, 1, {"parts": {"Door": {"turn": [0.0, -100.0, 0.0]} if open else {}, "Pan": {"turn": [0.0, 0.0, 6.0]} if open else {}}}))
+		props.append(_vine(46, 7, 1.0 if f.get("growth_vault", false) else 0.05))
+		if f.get("sigil2", false):
+			props.append(_gspot("growth_vault", "The vault vine", 46, 8, not f.get("growth_vault", false)))
+		if f.get("boulder_here", false) and not f.get("boulder_done", false):
+			props.append(_prop("boulder_big", 18, 32, 2, 2))
+			props.append(_prop("cart_farm", 18, 35, 1, 2, {"yaw": 90.0}))
+			props.append(_beast("horse", 18, 34, "idle", 180.0))
+		elif f.get("boulder_done", false):
+			props.append(_prop("boulder_small", 16, 32))
+	else:
+		props.append_array([_prop("sack_pile", 47, 9), _prop("cart", 44, 9, 2, 1)])
 	if not f.get("sigil_gate", false):
 		props.append(_prop("fence_gate", 38, 10, 2, 1, {"id": "yard_gate", "label": "The tower-yard gate (frozen shut)"}))
 	props.append({"k": "none", "x": 29, "y": 22, "solid": false, "id": "stone_front", "label": "The grain-share stone"})
@@ -346,12 +445,15 @@ static func _cottage() -> Dictionary:
 		]}
 
 
-static func _mill_room() -> Dictionary:
-	return {"name": "The mill", "w": 9, "h": 7, "room": {"floor": "wood", "wall": "#ddd2bd", "exit": 4},
-		"props": [
-			{"k": "millstone", "x": 1, "y": 2, "w": 2, "h": 2, "color": "#a49c8e", "solid": true}, {"k": "desk", "x": 6, "y": 2, "id": "ledger", "label": "Abel's ledger", "solid": true},
-			_prop("sack_pile", 7, 2), _prop("sack", 7, 4), _prop("barrel", 1, 5), _prop("sack_pile", 7, 5),
-		]}
+static func _mill_room(f := {}) -> Dictionary:
+	var props := [
+		{"k": "millstone", "x": 1, "y": 2, "w": 2, "h": 2, "color": "#a49c8e", "solid": true}, {"k": "desk", "x": 6, "y": 2, "id": "ledger", "label": "Abel's ledger", "solid": true},
+		_prop("sack_pile", 7, 2), _prop("sack", 7, 4), _prop("barrel", 1, 5), _prop("sack_pile", 7, 5),
+	]
+	if f.get("ch2", false) and f.get("moths_done", false):   # the smoke pots, lit along the back wall
+		for x in [3, 4, 5]:
+			props.append(_prop("smoke_pot", x, 2))
+	return {"name": "The mill", "w": 9, "h": 7, "room": {"floor": "wood", "wall": "#ddd2bd", "exit": 4}, "props": props}
 
 
 static func _barn() -> Dictionary:

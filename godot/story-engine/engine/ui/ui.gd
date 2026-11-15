@@ -44,6 +44,10 @@ var reduce_motion := false
 func _ready() -> void:
 	layer = 5
 	font = load("res://fonts/atkinson.woff2")
+	# glyphs Atkinson lacks (superscripts ⁰⁴…⁹ ⁻, fractions ⅓ ⅛) come from a small Noto Sans subset (fonts/OFL-noto-sans.txt)
+	var sup = load("res://fonts/realm-sup.ttf")
+	if sup is Font and font is FontFile and not font.fallbacks.has(sup):
+		font.fallbacks = font.fallbacks + [sup]
 	bold = FontVariation.new()
 	bold.base_font = font
 	bold.variation_opentype = {TextServerManager.get_primary_interface().name_to_tag("wght"): 750}
