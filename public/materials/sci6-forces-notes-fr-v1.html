@@ -197,6 +197,62 @@
     h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
     p { orphans: 3; widows: 3; }
 }
+
+/* ─── SVG Diagram Design System (dg-* classes) ─────────── */
+:root {
+  --dg-stroke:    #334155;             /* primary: shapes, lines, point labels */
+  --dg-fill:      #f8fafc;             /* shape interior fill */
+  --dg-accent:    var(--accent, #1d4ed8); /* highlighted elements — inherits unit colour */
+  --dg-secondary: #64748b;             /* secondary / annotation text */
+  --dg-muted:     #94a3b8;             /* faint construction lines */
+  --dg-sw:        1.5px;               /* standard stroke width */
+  --dg-sw-bold:   2.5px;               /* bold stroke (key elements) */
+  --dg-sw-thin:   1.0px;               /* thin stroke (right-angle marks) */
+}
+
+/* Non-scaling strokes: crisp at any size — browser zoom, print, PDF export */
+svg .dg-boundary, svg .dg-line, svg .dg-accent, svg .dg-grid,
+svg .dg-dashed, svg .dg-right-angle, svg .dg-construction {
+  vector-effect: non-scaling-stroke;
+}
+
+svg .dg-boundary    { stroke: var(--dg-stroke);    fill: var(--dg-fill);  stroke-width: var(--dg-sw); }
+svg .dg-line        { stroke: var(--dg-stroke);    fill: none;            stroke-width: var(--dg-sw); }
+svg .dg-accent      { stroke: var(--dg-accent);    fill: none;            stroke-width: var(--dg-sw-bold); }
+svg .dg-dashed      { stroke: var(--dg-secondary); fill: none;            stroke-width: var(--dg-sw); stroke-dasharray: 5 3; }
+svg .dg-right-angle { stroke: var(--dg-stroke);    fill: none;            stroke-width: var(--dg-sw-thin); }
+svg .dg-construction{ stroke: var(--dg-muted);     fill: none;            stroke-width: var(--dg-sw-thin); stroke-dasharray: 2 3; }
+svg .dg-grid        { stroke: var(--dg-muted);     fill: none;            stroke-width: var(--dg-sw-thin); }
+svg .dg-point       { fill: var(--dg-stroke);      stroke: none; }
+svg .dg-point-accent{ fill: var(--dg-accent);      stroke: none; }
+svg .dg-label       { font: 12px/1.3 system-ui, sans-serif; fill: var(--dg-stroke);    stroke: none; }
+svg .dg-label-sm    { font: 11px/1.3 system-ui, sans-serif; fill: var(--dg-secondary); stroke: none; }
+svg .dg-label-accent{ font: 11px/1.3 system-ui, sans-serif; fill: var(--dg-accent);    stroke: none; font-weight: 600; }
+svg .dg-x-1 { fill: #1e293b; }
+svg .dg-x-2 { fill: #64748b; stroke: #1e293b; stroke-width: 1.5; }
+svg .dg-x-3 { fill: white; font-size: 14px; }
+svg .dg-x-4 { stroke: #1e293b; stroke-width: 2.5; }
+svg .dg-x-5 { fill: #1e293b; font-size: 13px; }
+svg .dg-x-6 { fill: #7c3aed; }
+svg .dg-x-7 { fill: #ede9fe; stroke: #7c3aed; stroke-width: 2; }
+svg .dg-x-8 { fill: #1e293b; font-size: 15px; }
+svg .dg-x-9 { stroke: #7c3aed; stroke-width: 2.5; }
+svg .dg-x-10 { fill: #1e293b; font-size: 12px; }
+svg .dg-x-11 { fill: #475569; font-size: 11px; }
+svg .dg-x-12 { fill: #f8fafc; stroke: #7c3aed; stroke-width: 2; }
+svg .dg-x-13 { fill: #1e293b; font-size: 14px; }
+svg .dg-x-14 { fill: #16a34a; font-size: 16px; }
+svg .dg-x-15 { fill: #f8fafc; stroke: #16a34a; stroke-width: 1.5; }
+svg .dg-x-16 { stroke: #16a34a; stroke-width: 2; }
+svg .dg-x-17 { fill: #f0fdf4; stroke: #16a34a; stroke-dasharray: 6,3; stroke-width: 1.5; }
+svg .dg-x-18 { fill: #16a34a; font-size: 12px; }
+svg .dg-x-19 { stroke: #e2e8f0; stroke-width: 1; }
+svg .dg-x-20 { fill: #dc2626; font-size: 16px; }
+svg .dg-x-21 { fill: #f8fafc; stroke: #dc2626; stroke-width: 1.5; }
+svg .dg-x-22 { stroke: #dc2626; stroke-width: 2; }
+svg .dg-x-23 { fill: #fef2f2; stroke: #dc2626; stroke-dasharray: 6,3; stroke-width: 1.5; }
+svg .dg-x-24 { fill: #dc2626; font-size: 12px; }
+svg .dg-x-25 { fill: #fef2f2; stroke: #dc2626; stroke-width: 1.5; }
 </style>
 </head>
 <body>
@@ -270,21 +326,21 @@
 <svg viewBox="0 0 500 80" width="100%" style="max-width:720px; display:block; margin:1rem auto;" font-family="'Segoe UI', system-ui, sans-serif" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <marker id="arrow-right" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#1e293b"/>
+      <polygon points="0 0, 10 3.5, 0 7" class="dg-x-1"/>
     </marker>
     <marker id="arrow-left" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-      <polygon points="10 0, 0 3.5, 10 7" fill="#1e293b"/>
+      <polygon points="10 0, 0 3.5, 10 7" class="dg-x-1"/>
     </marker>
   </defs>
   <!-- Box -->
-  <rect x="200" y="18" width="100" height="44" rx="4" fill="#64748b" stroke="#1e293b" stroke-width="1.5"/>
-  <text x="250" y="46" text-anchor="middle" fill="white" font-size="14" font-weight="600">BOÎTE</text>
+  <rect x="200" y="18" width="100" height="44" rx="4" class="dg-x-2"/>
+  <text x="250" y="46" text-anchor="middle" font-weight="600" class="dg-x-3">BOÎTE</text>
   <!-- Left arrow (20 N) -->
-  <line x1="40" y1="40" x2="195" y2="40" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow-right)"/>
-  <text x="110" y="28" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="600">20 N</text>
+  <line x1="40" y1="40" x2="195" y2="40" marker-end="url(#arrow-right)" class="dg-x-4"/>
+  <text x="110" y="28" text-anchor="middle" font-weight="600" class="dg-x-5">20 N</text>
   <!-- Right arrow (8 N) -->
-  <line x1="460" y1="40" x2="305" y2="40" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow-left)"/>
-  <text x="390" y="28" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="600">8 N</text>
+  <line x1="460" y1="40" x2="305" y2="40" marker-end="url(#arrow-left)" class="dg-x-4"/>
+  <text x="390" y="28" text-anchor="middle" font-weight="600" class="dg-x-5">8 N</text>
 </svg>
 <p>La force de 20 N pousse vers la <span class="b b-sm">&nbsp;</span>. La force de 8 N pousse vers la <span class="b b-sm">&nbsp;</span>. L'effet global est une poussée de <span class="b b-sm">&nbsp;</span> N vers la droite.</p>
 
@@ -377,28 +433,28 @@
 <h4>Diagramme de forces — trois forces sur une boîte</h4>
 <svg viewBox="0 0 720 300" width="100%" style="max-width:720px; display:block; margin:1rem auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', system-ui, sans-serif">
   <defs>
-    <marker id="arrow-fd-u" markerWidth="10" markerHeight="7" refX="5" refY="0" orient="auto"><polygon points="0 7, 5 0, 10 7" fill="#7c3aed"/></marker>
-    <marker id="arrow-fd-d" markerWidth="10" markerHeight="7" refX="5" refY="7" orient="auto"><polygon points="0 0, 5 7, 10 0" fill="#7c3aed"/></marker>
-    <marker id="arrow-fd-l" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" fill="#7c3aed"/></marker>
-    <marker id="arrow-fd-r" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#7c3aed"/></marker>
+    <marker id="arrow-fd-u" markerWidth="10" markerHeight="7" refX="5" refY="0" orient="auto"><polygon points="0 7, 5 0, 10 7" class="dg-x-6"/></marker>
+    <marker id="arrow-fd-d" markerWidth="10" markerHeight="7" refX="5" refY="7" orient="auto"><polygon points="0 0, 5 7, 10 0" class="dg-x-6"/></marker>
+    <marker id="arrow-fd-l" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" class="dg-x-6"/></marker>
+    <marker id="arrow-fd-r" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" class="dg-x-6"/></marker>
   </defs>
   <!-- Center box -->
-  <rect x="300" y="120" width="120" height="60" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
-  <text x="360" y="156" font-size="15" fill="#1e293b" text-anchor="middle" font-weight="700">BOÎTE</text>
+  <rect x="300" y="120" width="120" height="60" rx="6" class="dg-x-7"/>
+  <text x="360" y="156" text-anchor="middle" font-weight="700" class="dg-x-8">BOÎTE</text>
   <!-- Up arrow: Force normale -->
-  <line x1="360" y1="110" x2="360" y2="30" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrow-fd-u)"/>
-  <text x="375" y="48" font-size="12" fill="#1e293b">Force normale</text>
-  <text x="375" y="64" font-size="11" fill="#475569" font-style="italic">(plancher poussant vers le haut)</text>
+  <line x1="360" y1="110" x2="360" y2="30" marker-end="url(#arrow-fd-u)" class="dg-x-9"/>
+  <text x="375" y="48" class="dg-x-10">Force normale</text>
+  <text x="375" y="64" font-style="italic" class="dg-x-11">(plancher poussant vers le haut)</text>
   <!-- Down arrow: Gravité -->
-  <line x1="360" y1="190" x2="360" y2="270" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrow-fd-d)"/>
-  <text x="375" y="258" font-size="12" fill="#1e293b">Gravité</text>
-  <text x="375" y="274" font-size="11" fill="#475569" font-style="italic">(poids vers le bas)</text>
+  <line x1="360" y1="190" x2="360" y2="270" marker-end="url(#arrow-fd-d)" class="dg-x-9"/>
+  <text x="375" y="258" class="dg-x-10">Gravité</text>
+  <text x="375" y="274" font-style="italic" class="dg-x-11">(poids vers le bas)</text>
   <!-- Left arrow: Friction -->
-  <line x1="290" y1="150" x2="160" y2="150" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrow-fd-l)"/>
-  <text x="170" y="142" font-size="12" fill="#1e293b">Friction</text>
+  <line x1="290" y1="150" x2="160" y2="150" marker-end="url(#arrow-fd-l)" class="dg-x-9"/>
+  <text x="170" y="142" class="dg-x-10">Friction</text>
   <!-- Right arrow: Force appliquée -->
-  <line x1="430" y1="150" x2="560" y2="150" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrow-fd-r)"/>
-  <text x="440" y="142" font-size="12" fill="#1e293b">Force appliquée</text>
+  <line x1="430" y1="150" x2="560" y2="150" marker-end="url(#arrow-fd-r)" class="dg-x-9"/>
+  <text x="440" y="142" class="dg-x-10">Force appliquée</text>
 </svg>
 
 <div class="connection">
@@ -472,18 +528,18 @@
 <p>Les particules sont tirées <span class="b b-sm">&nbsp;</span> les unes des autres.</p>
 <svg viewBox="0 0 720 100" width="100%" style="max-width:720px; display:block; margin:1rem auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', system-ui, sans-serif">
   <defs>
-    <marker id="arrow-tens-l" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" fill="#7c3aed"/></marker>
-    <marker id="arrow-tens-r" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#7c3aed"/></marker>
+    <marker id="arrow-tens-l" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" class="dg-x-6"/></marker>
+    <marker id="arrow-tens-r" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" class="dg-x-6"/></marker>
   </defs>
   <!-- Material box -->
-  <rect x="240" y="20" width="240" height="50" rx="6" fill="#f8fafc" stroke="#7c3aed" stroke-width="2"/>
-  <text x="360" y="51" font-size="15" fill="#1e293b" text-anchor="middle" font-weight="600">MATÉRIAU</text>
+  <rect x="240" y="20" width="240" height="50" rx="6" class="dg-x-12"/>
+  <text x="360" y="51" text-anchor="middle" font-weight="600" class="dg-x-8">MATÉRIAU</text>
   <!-- Left arrow pulling outward -->
-  <line x1="230" y1="45" x2="80" y2="45" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrow-tens-l)"/>
-  <text x="80" y="88" font-size="13" fill="#1e293b">Traction</text>
+  <line x1="230" y1="45" x2="80" y2="45" marker-end="url(#arrow-tens-l)" class="dg-x-9"/>
+  <text x="80" y="88" class="dg-x-5">Traction</text>
   <!-- Right arrow pulling outward -->
-  <line x1="490" y1="45" x2="640" y2="45" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrow-tens-r)"/>
-  <text x="570" y="88" font-size="13" fill="#1e293b">Traction</text>
+  <line x1="490" y1="45" x2="640" y2="45" marker-end="url(#arrow-tens-r)" class="dg-x-9"/>
+  <text x="570" y="88" class="dg-x-5">Traction</text>
 </svg>
 <p><em>Exemples : une corde dans un tir à la corde ; un câble de pont suspendu ; un élastique étiré</em></p>
 
@@ -491,18 +547,18 @@
 <p>Les particules sont poussées <span class="b b-sm">&nbsp;</span> les unes vers les autres.</p>
 <svg viewBox="0 0 720 100" width="100%" style="max-width:720px; display:block; margin:1rem auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', system-ui, sans-serif">
   <defs>
-    <marker id="arrow-comp-r" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#7c3aed"/></marker>
-    <marker id="arrow-comp-l" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" fill="#7c3aed"/></marker>
+    <marker id="arrow-comp-r" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" class="dg-x-6"/></marker>
+    <marker id="arrow-comp-l" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" class="dg-x-6"/></marker>
   </defs>
   <!-- Material box -->
-  <rect x="240" y="20" width="240" height="50" rx="6" fill="#f8fafc" stroke="#7c3aed" stroke-width="2"/>
-  <text x="360" y="51" font-size="15" fill="#1e293b" text-anchor="middle" font-weight="600">MATÉRIAU</text>
+  <rect x="240" y="20" width="240" height="50" rx="6" class="dg-x-12"/>
+  <text x="360" y="51" text-anchor="middle" font-weight="600" class="dg-x-8">MATÉRIAU</text>
   <!-- Left arrow pushing right (inward) -->
-  <line x1="80" y1="45" x2="230" y2="45" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrow-comp-r)"/>
-  <text x="80" y="88" font-size="13" fill="#1e293b">Poussée</text>
+  <line x1="80" y1="45" x2="230" y2="45" marker-end="url(#arrow-comp-r)" class="dg-x-9"/>
+  <text x="80" y="88" class="dg-x-5">Poussée</text>
   <!-- Right arrow pushing left (inward) -->
-  <line x1="640" y1="45" x2="490" y2="45" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrow-comp-l)"/>
-  <text x="570" y="88" font-size="13" fill="#1e293b">Poussée</text>
+  <line x1="640" y1="45" x2="490" y2="45" marker-end="url(#arrow-comp-l)" class="dg-x-9"/>
+  <text x="570" y="88" class="dg-x-5">Poussée</text>
 </svg>
 <p><em>Exemples : les pieds d'une chaise quand tu t'assieds ; un ressort écrasé ; un pilier de béton</em></p>
 
@@ -510,19 +566,19 @@
 <p>Des couches de particules glissent dans des directions <span class="b b-md">&nbsp;</span>.</p>
 <svg viewBox="0 0 720 160" width="100%" style="max-width:720px; display:block; margin:1rem auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', system-ui, sans-serif">
   <defs>
-    <marker id="arrow-shear-r" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#7c3aed"/></marker>
-    <marker id="arrow-shear-l" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" fill="#7c3aed"/></marker>
+    <marker id="arrow-shear-r" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" class="dg-x-6"/></marker>
+    <marker id="arrow-shear-l" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" class="dg-x-6"/></marker>
   </defs>
   <!-- Top layer -->
-  <rect x="230" y="20" width="260" height="50" rx="6" fill="#f8fafc" stroke="#7c3aed" stroke-width="2"/>
-  <text x="360" y="51" font-size="14" fill="#1e293b" text-anchor="middle" font-weight="600">COUCHE DU HAUT</text>
+  <rect x="230" y="20" width="260" height="50" rx="6" class="dg-x-12"/>
+  <text x="360" y="51" text-anchor="middle" font-weight="600" class="dg-x-13">COUCHE DU HAUT</text>
   <!-- Arrow pushing top right -->
-  <line x1="100" y1="45" x2="220" y2="45" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrow-shear-r)"/>
+  <line x1="100" y1="45" x2="220" y2="45" marker-end="url(#arrow-shear-r)" class="dg-x-9"/>
   <!-- Bottom layer -->
-  <rect x="230" y="80" width="260" height="50" rx="6" fill="#f8fafc" stroke="#7c3aed" stroke-width="2"/>
-  <text x="360" y="111" font-size="14" fill="#1e293b" text-anchor="middle" font-weight="600">COUCHE DU BAS</text>
+  <rect x="230" y="80" width="260" height="50" rx="6" class="dg-x-12"/>
+  <text x="360" y="111" text-anchor="middle" font-weight="600" class="dg-x-13">COUCHE DU BAS</text>
   <!-- Arrow pushing bottom left -->
-  <line x1="620" y1="105" x2="500" y2="105" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrow-shear-l)"/>
+  <line x1="620" y1="105" x2="500" y2="105" marker-end="url(#arrow-shear-l)" class="dg-x-9"/>
 </svg>
 <p><em>Exemples : des ciseaux qui coupent du papier ; couper du fromage</em></p>
 
@@ -615,64 +671,64 @@
 <h4>Avant / pendant / après — élastique contre plastique</h4>
 <svg viewBox="0 0 720 340" width="100%" style="max-width:720px; display:block; margin:1rem auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', system-ui, sans-serif">
   <!-- Élastique section -->
-  <text x="20" y="28" font-size="16" font-weight="700" fill="#16a34a">ÉLASTIQUE</text>
+  <text x="20" y="28" font-weight="700" class="dg-x-14">ÉLASTIQUE</text>
   <!-- Avant -->
-  <text x="40" y="66" font-size="13" fill="#1e293b">Avant :</text>
-  <rect x="140" y="48" width="180" height="30" rx="4" fill="#f8fafc" stroke="#16a34a" stroke-width="1.5"/>
-  <line x1="156" y1="63" x2="170" y2="63" stroke="#16a34a" stroke-width="2"/>
-  <line x1="182" y1="63" x2="196" y2="63" stroke="#16a34a" stroke-width="2"/>
-  <line x1="208" y1="63" x2="222" y2="63" stroke="#16a34a" stroke-width="2"/>
-  <line x1="234" y1="63" x2="248" y2="63" stroke="#16a34a" stroke-width="2"/>
+  <text x="40" y="66" class="dg-x-5">Avant :</text>
+  <rect x="140" y="48" width="180" height="30" rx="4" class="dg-x-15"/>
+  <line x1="156" y1="63" x2="170" y2="63" class="dg-x-16"/>
+  <line x1="182" y1="63" x2="196" y2="63" class="dg-x-16"/>
+  <line x1="208" y1="63" x2="222" y2="63" class="dg-x-16"/>
+  <line x1="234" y1="63" x2="248" y2="63" class="dg-x-16"/>
   <!-- Pendant -->
-  <text x="40" y="116" font-size="13" fill="#1e293b">Pendant :</text>
-  <rect x="140" y="98" width="260" height="30" rx="4" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="6,3"/>
-  <line x1="156" y1="113" x2="170" y2="113" stroke="#16a34a" stroke-width="2"/>
-  <line x1="188" y1="113" x2="202" y2="113" stroke="#16a34a" stroke-width="2"/>
-  <line x1="220" y1="113" x2="234" y2="113" stroke="#16a34a" stroke-width="2"/>
-  <line x1="252" y1="113" x2="266" y2="113" stroke="#16a34a" stroke-width="2"/>
-  <line x1="284" y1="113" x2="298" y2="113" stroke="#16a34a" stroke-width="2"/>
-  <line x1="316" y1="113" x2="330" y2="113" stroke="#16a34a" stroke-width="2"/>
-  <text x="416" y="118" font-size="12" fill="#16a34a" font-style="italic">← étiré</text>
+  <text x="40" y="116" class="dg-x-5">Pendant :</text>
+  <rect x="140" y="98" width="260" height="30" rx="4" class="dg-x-17"/>
+  <line x1="156" y1="113" x2="170" y2="113" class="dg-x-16"/>
+  <line x1="188" y1="113" x2="202" y2="113" class="dg-x-16"/>
+  <line x1="220" y1="113" x2="234" y2="113" class="dg-x-16"/>
+  <line x1="252" y1="113" x2="266" y2="113" class="dg-x-16"/>
+  <line x1="284" y1="113" x2="298" y2="113" class="dg-x-16"/>
+  <line x1="316" y1="113" x2="330" y2="113" class="dg-x-16"/>
+  <text x="416" y="118" font-style="italic" class="dg-x-18">← étiré</text>
   <!-- Après -->
-  <text x="40" y="166" font-size="13" fill="#1e293b">Après :</text>
-  <rect x="140" y="148" width="180" height="30" rx="4" fill="#f8fafc" stroke="#16a34a" stroke-width="1.5"/>
-  <line x1="156" y1="163" x2="170" y2="163" stroke="#16a34a" stroke-width="2"/>
-  <line x1="182" y1="163" x2="196" y2="163" stroke="#16a34a" stroke-width="2"/>
-  <line x1="208" y1="163" x2="222" y2="163" stroke="#16a34a" stroke-width="2"/>
-  <line x1="234" y1="163" x2="248" y2="163" stroke="#16a34a" stroke-width="2"/>
-  <text x="336" y="168" font-size="12" fill="#16a34a" font-style="italic">← revient comme avant</text>
+  <text x="40" y="166" class="dg-x-5">Après :</text>
+  <rect x="140" y="148" width="180" height="30" rx="4" class="dg-x-15"/>
+  <line x1="156" y1="163" x2="170" y2="163" class="dg-x-16"/>
+  <line x1="182" y1="163" x2="196" y2="163" class="dg-x-16"/>
+  <line x1="208" y1="163" x2="222" y2="163" class="dg-x-16"/>
+  <line x1="234" y1="163" x2="248" y2="163" class="dg-x-16"/>
+  <text x="336" y="168" font-style="italic" class="dg-x-18">← revient comme avant</text>
 
   <!-- Divider -->
-  <line x1="20" y1="200" x2="700" y2="200" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="20" y1="200" x2="700" y2="200" class="dg-x-19"/>
 
   <!-- Plastique section -->
-  <text x="20" y="228" font-size="16" font-weight="700" fill="#dc2626">PLASTIQUE</text>
+  <text x="20" y="228" font-weight="700" class="dg-x-20">PLASTIQUE</text>
   <!-- Avant -->
-  <text x="40" y="266" font-size="13" fill="#1e293b">Avant :</text>
-  <rect x="140" y="248" width="180" height="30" rx="4" fill="#f8fafc" stroke="#dc2626" stroke-width="1.5"/>
-  <line x1="156" y1="263" x2="170" y2="263" stroke="#dc2626" stroke-width="2"/>
-  <line x1="182" y1="263" x2="196" y2="263" stroke="#dc2626" stroke-width="2"/>
-  <line x1="208" y1="263" x2="222" y2="263" stroke="#dc2626" stroke-width="2"/>
-  <line x1="234" y1="263" x2="248" y2="263" stroke="#dc2626" stroke-width="2"/>
+  <text x="40" y="266" class="dg-x-5">Avant :</text>
+  <rect x="140" y="248" width="180" height="30" rx="4" class="dg-x-21"/>
+  <line x1="156" y1="263" x2="170" y2="263" class="dg-x-22"/>
+  <line x1="182" y1="263" x2="196" y2="263" class="dg-x-22"/>
+  <line x1="208" y1="263" x2="222" y2="263" class="dg-x-22"/>
+  <line x1="234" y1="263" x2="248" y2="263" class="dg-x-22"/>
   <!-- Pendant -->
-  <text x="40" y="316" font-size="13" fill="#1e293b">Pendant :</text>
-  <rect x="140" y="298" width="260" height="30" rx="4" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="6,3"/>
-  <line x1="156" y1="313" x2="170" y2="313" stroke="#dc2626" stroke-width="2"/>
-  <line x1="188" y1="313" x2="202" y2="313" stroke="#dc2626" stroke-width="2"/>
-  <line x1="220" y1="313" x2="234" y2="313" stroke="#dc2626" stroke-width="2"/>
-  <line x1="252" y1="313" x2="266" y2="313" stroke="#dc2626" stroke-width="2"/>
-  <line x1="284" y1="313" x2="298" y2="313" stroke="#dc2626" stroke-width="2"/>
-  <line x1="316" y1="313" x2="330" y2="313" stroke="#dc2626" stroke-width="2"/>
-  <text x="416" y="318" font-size="12" fill="#dc2626" font-style="italic">← étiré</text>
+  <text x="40" y="316" class="dg-x-5">Pendant :</text>
+  <rect x="140" y="298" width="260" height="30" rx="4" class="dg-x-23"/>
+  <line x1="156" y1="313" x2="170" y2="313" class="dg-x-22"/>
+  <line x1="188" y1="313" x2="202" y2="313" class="dg-x-22"/>
+  <line x1="220" y1="313" x2="234" y2="313" class="dg-x-22"/>
+  <line x1="252" y1="313" x2="266" y2="313" class="dg-x-22"/>
+  <line x1="284" y1="313" x2="298" y2="313" class="dg-x-22"/>
+  <line x1="316" y1="313" x2="330" y2="313" class="dg-x-22"/>
+  <text x="416" y="318" font-style="italic" class="dg-x-24">← étiré</text>
   <!-- Après -->
-  <text x="40" y="366" font-size="13" fill="#1e293b">Après :</text>
-  <rect x="140" y="348" width="220" height="30" rx="4" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
-  <line x1="156" y1="363" x2="170" y2="363" stroke="#dc2626" stroke-width="2"/>
-  <line x1="186" y1="363" x2="200" y2="363" stroke="#dc2626" stroke-width="2"/>
-  <line x1="216" y1="363" x2="230" y2="363" stroke="#dc2626" stroke-width="2"/>
-  <line x1="246" y1="363" x2="260" y2="363" stroke="#dc2626" stroke-width="2"/>
-  <line x1="276" y1="363" x2="290" y2="363" stroke="#dc2626" stroke-width="2"/>
-  <text x="376" y="368" font-size="12" fill="#dc2626" font-style="italic">← reste plus long : changement permanent</text>
+  <text x="40" y="366" class="dg-x-5">Après :</text>
+  <rect x="140" y="348" width="220" height="30" rx="4" class="dg-x-25"/>
+  <line x1="156" y1="363" x2="170" y2="363" class="dg-x-22"/>
+  <line x1="186" y1="363" x2="200" y2="363" class="dg-x-22"/>
+  <line x1="216" y1="363" x2="230" y2="363" class="dg-x-22"/>
+  <line x1="246" y1="363" x2="260" y2="363" class="dg-x-22"/>
+  <line x1="276" y1="363" x2="290" y2="363" class="dg-x-22"/>
+  <text x="376" y="368" font-style="italic" class="dg-x-24">← reste plus long : changement permanent</text>
 </svg>
 
 <h4>Pourquoi c'est important en ingénierie</h4>
