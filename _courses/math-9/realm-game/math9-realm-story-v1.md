@@ -121,13 +121,13 @@ Orrin keeps one thing from the apprentice: he saw a strange carving on the broke
 
 - **Lesson** (PE1): Hesper plants one spell-seed that splits in two every night. Repeated multiplication as a power; her turnabout charm (base −2) for negative bases and brackets.
 - **Help quests** (one per notes section; full design in `math9-realm-ch2-design-v1.md`):
-  - **The moss tally** (PE2): a cure-moss triples each day; walk the tally board back to day 0. One patch, not none.
+  - **The moss tally** (PE2): a cure-moss triples each day; walk the tally board back to day 0. One patch, not none. A second moss on Abel's slate (25, 5, then day 0) shows the same for base 5.
   - **The blight cure** (PE3): a cure-moss doubles each day; 6 days, then 3 more. Enough for 500 blighted spots?
   - **Hollow-moths at the mill** (PE4): 3⁷ moths, and a smoke pot clears 3⁴. How many pots?
   - **The nests in the well-house** (PE5): the swarm grows 3² times a night for 4 nights.
   - **Pell's spell jar** (PE6): (2 × 3)² pots against Pell's 2 × 3² seeds; he guesses they're the same.
   - **The boulder on the road** (PE7): shrink a boulder to 2⁻³ of its size. Is that bigger or smaller? (1⁄8; a negative exponent is a reciprocal, not a negative.)
-- **False rune:** on the **seed vault** door at Highstead: *3⁰ = 0* and *3⁻¹ = −3*. The vault holds next year's seed and won't open. The hero walks the dividing pattern down (3 ÷ 3 = 1, then ⅓, 1⁄9), checks it with 3³ ÷ 3³, and opens it.
+- **False rune:** on the **seed vault** door at Highstead: *3⁰ = 0* and *3⁻¹ = −3*. The vault holds next year's seed and won't open. The hero walks the dividing pattern down (3 ÷ 3 = 1, then ⅓, 1⁄9), checks it with 3³ ÷ 3³, and opens it. Orrin matches a chip of this stone to the Chapter 1 chip ("Same hand") and gives it to the apprentice, who now carries both.
 - **Sigil opens:** shrink to fit through small gaps; grow vines to climb. The first vine rescues a small black cat, the familiar (moved here from Chapter 1).
 
 ### Chapter 3 — Square roots & the Pythagorean theorem · Sigil: **Bridgecraft**

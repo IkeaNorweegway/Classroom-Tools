@@ -298,3 +298,62 @@ Where the quest giver is not Hesper, it is her voice, as in Chapter 1.
 - Panel wording from the build is confirmed: the titles, the kickers ("Quest · PE3"), "Odile's board, newest first.", "Pots for the nook:", "Day 0, which is 3⁰ = ?", "2⁹ = ? patches", "Type a whole number in each box, like 5 or -3.", the three title buttons, the Growth pip line, and the single rune-fix report labels.
 - The "enough for 500?" question and the ask half of `pe7_negbase` stay unrecorded.
 - Not built, left for later: moth specks in the loft before the smoke.
+
+---
+
+## Wording pass after the manager's check (2026-11-15, board T-036)
+
+These replace the earlier wording wherever it appears.
+
+- **`pe2_other` (R-010, R-014):** the second moss is no longer Rowan's, and the student gets a pattern to read. Odile: "The mill yard gets a different moss. It grows five times a day." / "Abel's slate says Day 2: 25 · Day 1: 5. What goes on day 0?" Panel prompt: "Day 2: 25 · Day 1: 5 · Day 0, which is 5⁰ = ?" Named error 0: "Day 1 is 5. What do you divide by to go back a day?" Named error 5: "That's day 1. One more day back."
+- **`pe2_why` question text (R-010):** "Why do both mosses come to 1 on day 0, whatever they multiply by?" The options and feedback are unchanged.
+- **`pe1_turn` why line (R-012):** "(−2)⁵ = (−2) × (−2) × (−2) × (−2) × (−2) = −32: four pair off, one is left."
+- **`pe5_nest` named error 16 (R-015):** "You raised 2 to the 4. Four lots of two 3s is 4 × 2 = 8 threes."
+- **`pe6_coef` (R-015):** "My seed crates are cubes, 2x hands along each edge, where x is the width of one pot. The volume?"
+- **`pe7_negbase` right option (R-015):** "Only when the base is negative and the exponent is odd, like (−2)⁻³." The wrong options and the follow-up value are unchanged.
+- **`pe5_same` (R-013):** the two plans stay in Hesper's line before the panel; the question text is only "Which plan grows more?"
+- **`pe6_sum` (R-013):** the question text is only "Is Pell right this time?"; right option: "No. (3 + 4)² = 7² = 49, but 3² + 4² = 25. Exponents spread over × and ÷, not + and −."
+- **`rune2_explain` right option (R-013):** "Each step down divides by 3, so 3⁰ = 1, then ⅓, then 1⁄9: small positive fractions, never zero or negative."
+- Any narrator box over about 25 words is split at a sentence break, no words changed.
+- Not changed: the right option is often the longest in a question (R-013). The options are shuffled and the wrong ones are full sentences; left for a later pass.
+
+## After the walked play (2026-11-15, board T-033)
+
+These replace the earlier wording wherever it appears.
+
+- **Boulder arrival** (Orrin stands beside the boulder; two boxes): `""`: "A boulder taller than you are sits square across the Low Road." / `""`: "A loaded seed cart waits behind a patient horse. Orrin Vael stands beside the rock, looking up at the gorge edge."
+- **The mill is one room, not a loft.** Goal: "Abel Crane wants you at the mill. Bring Hesper's moth-smoke." Abel: "In here. Mind the step." Hesper's voice: "I counted them by threes. The mill holds 3⁷ moths. One pot of my smoke clears 3⁴." Payoff: `""`: "You light the pots three at a time until all twenty-seven have burned." / `""`: "The moths pour out of the window in a long grey ribbon." Abel's lines are unchanged. Anywhere else a line says "loft", it says "mill".
+- **Hints for the jar's later checks.** `pe6_coef`: "Write (2x) three times and multiply. How many 2s? How many x's?" Why: "(2x)³ = 2x × 2x × 2x = 2 × 2 × 2 × x × x × x = 8x³." `pe6_quot`: "Squaring means times itself. Multiply ⅔ by ⅔: tops together, bottoms together." Why: "(⅔)² = ⅔ × ⅔ = 4⁄9." `pe6_sum` and `pe6_predict` keep the jar's hint.
+- **Shrunk boulder:** the payoff says "to the size of a hay bale", so the verge rock is drawn about hay-bale size (roughly 1 tile wide, waist high).
+- **Report, "What I decided" rows:** not changed. The rows are quest summaries, labelled "Part N" by the engine; naming them needs an engine change (board T-043).
+
+## Two new checks and the report reminder (2026-11-15, board T-037 and T-040, teacher's choice)
+
+**`pe2_negzero` (PE2, `T.frac`, report label "(−15)⁰").** In the moss tally, straight after `pe2_why` and before the payoff. Not a pip.
+- pell: "What about Hesper's turnabout seeds? Base minus fifteen, exponent nought. That has to be minus one."
+- odile: "Don't look at me. {name}?"
+- Panel prompt: "(−15)⁰ = ?" Answer: **1**.
+- Named error −1: "The brackets make the base −15. One step back from −15 is (−15) ÷ (−15), and that is positive."
+- Named error 0: "(−15)¹ is −15. To go back one step, divide by the base: (−15) ÷ (−15)."
+- Named error −15: "That's (−15)¹. One more step back."
+- Hint: the tally's hint. Why: "(−15)¹ = −15. One step back divides by −15: (−15) ÷ (−15) = 1. Any base but 0 gives 1."
+- After it, pell: "One again. Even for a minus."
+
+**`pe7_flip` (PE7, `T.frac`, report label "(⅓)⁻²").** In the boulder quest, after the typed value of `pe7_negbase` and before the payoff. Not a pip.
+- bram: "While you're at it. Hesper shrank my seed sacks for the road, to a third and a third again."
+- bram: "The tag to undo it says (⅓)⁻². How many times bigger will they get?"
+- pell: "A third, and a minus. So, minus a ninth?"
+- Panel prompt: "(⅓)⁻² = ?" Answer: **9**.
+- Named error 1/9: "That's (⅓)². The minus flips it: 1 over 1⁄9."
+- Named error −1/9: "A negative exponent isn't a negative number. Flip ⅓, then square."
+- Named error −9: "The size is right. The minus means flip, not below zero."
+- Named error 3: "That's the flip. Now square it."
+- Named error 6: "That's 3 × 2. Flip ⅓ to 3, then multiply 3 by itself."
+- Hint: "Hesper: \"A negative exponent means 1 over. What is 1 over ⅓? Then square it.\"" Why: "(⅓)⁻² = 1 ÷ (⅓)² = 1 ÷ 1⁄9 = 9. Or flip first: 3² = 9."
+- After it. `""`: "The sacks swell back to full size on the cart bed." / bram: "Nine times. That's my seed back."
+
+**Report reminder (T-040).** The report stays one chapter at a time.
+- Title, "Go on to Chapter 2": before Chapter 2 starts, one box with two buttons. Text: "From here your report shows Chapter 2 only. If your teacher wants your Chapter 1 report, download it first." Buttons: "Go on to Chapter 2" · "Back".
+- Journal, once Chapter 1 is finished: "Chapter 1 is done. Download your report before you go on to Chapter 2."
+
+**The cat (long box split, words changed slightly):** `""`: "Before you can set a foot on it, a small black cat with gold eyes walks down the vine by itself." / `""`: "It sits on your boots."

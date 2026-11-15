@@ -369,6 +369,14 @@ func _check_map(id: String, why: String) -> void:
 			if not pe[1].has(x[0]):
 				bad.append("Can't reach the %s %s when %s." % [x[1], x[0], pe[0][1]])
 				marks[x[0]] = "!"
+	# what only a still-unset story flag opens (a sigil-frozen gate): expected, not a problem, until the flag is set
+	var gated := _gated_tiles(id, entries, ppl, reach)
+	var gated_by := {}
+	var flag_things := {}   # things that are themselves a flag's spot (a Growth gap): their detour is what the flag shortens
+	if Town.D.has_method("nav_flags"):
+		for fl in Town.D.nav_flags():
+			if not Town.S.flags.get(fl, false):
+				flag_things[fl] = true
 	# people and things: a free tile next to them that you can reach
 	var targets := []
 	for t in ppl:
@@ -393,9 +401,20 @@ func _check_map(id: String, why: String) -> void:
 							best = pe[1][s]
 							straight = absi(s.x - pe[0][0].x) + absi(s.y - pe[0][0].y)
 		target_report[tg[0]] = best
+		var behind := ""   # the flag whose gate the target stands behind
 		if best < 0:
+			for t in tg[1]:
+				for d in DIRS:
+					if gated.has(t + d):
+						behind = gated[t + d]
+		if best < 0 and behind != "":
+			gated_by[behind] = int(gated_by.get(behind, 0)) + 1
+			marks[tg[1][0]] = "g"
+		elif best < 0:
 			bad.append("No reachable tile to stand on next to %s %s." % [tg[0], tg[1][0]])
 			marks[tg[1][0]] = "!"
+		elif best > straight * 2 + 4 and str(tg[0]).begins_with("thing:") and flag_things.has(str(tg[0]).trim_prefix("thing:")):
+			pass   # the gap in the hedge is the shortcut: the long way round is how you go until it opens
 		elif best > straight * 2 + 4:
 			bad.append("Long detour to %s: %d steps for %d in a straight line." % [tg[0], best, straight])
 	# the goal, if it is on this map
@@ -410,8 +429,6 @@ func _check_map(id: String, why: String) -> void:
 	var stranded := []
 	var stranded_path := []
 	var cut_by_people := []
-	var gated := _gated_tiles(id, entries, ppl, reach)
-	var gated_by := {}
 	for y in m.h:
 		for x in m.w:
 			var p := Vector2i(x, y)
@@ -480,6 +497,17 @@ func _gated_tiles(id: String, entries: Array, ppl: Dictionary, reach: Dictionary
 			for k in _bfs(m2, ppl, at):
 				if not reach.has(k) and not out.has(k):
 					out[k] = flag
+	# open ground cut off from you that touches a gated tile belongs to the same gated area (people standing there cut it off)
+	var q := out.keys()
+	var mm: MapData = Town.maps[id]
+	while q.size():
+		var p: Vector2i = q.pop_back()
+		for d in DIRS:
+			var n: Vector2i = p + d
+			if out.has(n) or reach.has(n) or not _free(mm, {}, n):
+				continue
+			out[n] = out[p]
+			q.append(n)
 	return out
 
 

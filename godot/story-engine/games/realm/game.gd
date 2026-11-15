@@ -155,8 +155,15 @@ func title_buttons(saved, btns: Array) -> Array:
 	return btns
 
 
-func title_pick(v: String, saved):
+## Going on to Chapter 2 asks first (the report shows one chapter at a time); "back" sends the engine to the title again.
+## confirm = false: the tests (and the test player, which never sees the title) skip the box.
+func title_pick(v: String, saved, confirm := true):
 	if v == "ch2" and saved != null:
+		if confirm and Town.auto == "":
+			var go = await Town.panel("Go on to Chapter 2", func(b): b.add_child(Town.ui.label("From here your report shows Chapter 2 only. If your teacher wants your Chapter 1 report, download it first.")),
+				[["Go on to Chapter 2", true, true], ["Back", false]])
+			if not go:
+				return "back"
 		saved.S.want_ch = 2
 		return saved
 	_want_chapter = 2
@@ -355,6 +362,8 @@ func journal(S: Dictionary) -> Array:
 		out.append(["THE BALANCE SIGIL", "Charge %s (%d of 5). First-try answers charge it; so does each gold ring solved on the first try. %s" % [
 			Ch1.pip_text(n), n, "All five pips open Hesper's root cellar." if not S.flags.get("sigil_cellar", false) else "The root cellar is open."]])
 		out.append(["SECOND LOOKS", "Missed a pip? A gold ? over someone you helped means a second look: the same skill, new numbers. Right first time wins the pip back."])
+	if S.flags.get("ch1_done", false):
+		out.append(["YOUR REPORT", "Chapter 1 is done. Download your report before you go on to Chapter 2."])
 	return out
 
 
@@ -1166,7 +1175,13 @@ func _c(T, t: String) -> String:
 
 
 ## Hesper speaking from afar (as Chapter 1's off-map line).
-func _voice(T, line: String) -> void:
+func _voice(T, line) -> void:
+	if line is Array:   # a long line in several boxes, split at sentence breaks: the first names the voice, the rest keep the quotes
+		var boxes := []
+		for i in line.size():
+			boxes.append(("Hesper's voice, in your head: \"%s\"" if i == 0 else "\"%s\"") % line[i])
+		await T.say("", boxes)
+		return
 	await T.say("", "Hesper's voice, in your head: \"%s\"" % line)
 
 
@@ -1226,8 +1241,8 @@ func _where2(pid: String, S: Dictionary) -> Variant:
 		"orrin":
 			if f.get("rune2_broken", false):
 				return {"map": "cottage", "x": 6, "y": 3, "dir": "left"}
-			if f.get("boulder_done", false):   # he walks on with you to the vault (east of the door, clear of the pan)
-				return {"map": "highstead", "x": 46, "y": 9, "dir": "left"}
+			if f.get("boulder_done", false):   # he walks on with you to the vault (beside Gale in the open west end of the yard, clear of the one-tile corridor and the hay-stack strip)
+				return {"map": "highstead", "x": 38, "y": 8, "dir": "right"}
 			if f.get("boulder_here", false):
 				return {"map": "highstead", "x": 17, "y": 33, "dir": "right"}
 			return null
@@ -1373,9 +1388,15 @@ func tally(T) -> void:
 		"hint": Ch2.HINT.tally, "hint_btn": _hint()})
 	await T.say("odile", "Nine, then three. And each one a third of the row above. Go on. Day 0.")
 	var t := await _f2(T, "pe2_day0", "tally", "[b]Day 0[/b], which is 3⁰ = ?", Ch2.day0(), {"why": Ch2.WHY.tally})
-	await _f2(T, "pe2_other", "tally", "Rowan's pasture gets a different moss. It grows five times a day. How much on its day 0?", Ch2.other_moss())
+	await T.say("odile", ["The mill yard gets a different moss. It grows five times a day.", "Abel's slate says Day 2: 25 · Day 1: 5. What goes on day 0?"])
+	await _f2(T, "pe2_other", "tally", "Day 2: 25 · Day 1: 5 · Day 0, which is 5⁰ = ?", Ch2.other_moss())
 	await T.say("odile", "The same again. Why?")
 	await T.ask("odile", Ch2.ASK_TALLY_WHY, "pe2_why", Ch2.label("pe2_why"))
+	await T.say("pell", "What about Hesper's turnabout seeds? Base minus fifteen, exponent nought. That has to be minus one.")
+	await T.say("odile", "Don't look at me. {name}?")
+	await _f2(T, "pe2_negzero", "tally", "(−15)⁰ = ?", Ch2.negzero(),
+		{"why": "(−15)¹ = −15. One step back divides by −15: (−15) ÷ (−15) = 1. Any base but 0 gives 1."})
+	await T.say("pell", "One again. Even for a minus.")
 	await T.say("", "Odile chalks in the last row: 1 patch, H. Marrow.")
 	await T.say("odile", "One patch. And in four days it's eighty-one. I'd like my hens to do that.")
 	await _praise2(T, t, "tally")
@@ -1420,9 +1441,9 @@ func moths(T) -> void:
 		return
 	T.set_flag("quest", "moths")
 	T.refresh()
-	await T.goal("Abel Crane wants you in the mill loft. Bring Hesper's moth-smoke.", "person:abel")
-	await T.say("abel", ["Up here. Mind the third step.", "Look at them. Grey as ash and they don't mind the light. They weren't here before that grey-cloak came through."])
-	await _voice(T, "I counted them by threes. The loft holds 3⁷ moths. One pot of my smoke clears 3⁴.")
+	await T.goal("Abel Crane wants you at the mill. Bring Hesper's moth-smoke.", "person:abel")
+	await T.say("abel", ["In here. Mind the step.", "Look at them. Grey as ash and they don't mind the light. They weren't here before that grey-cloak came through."])
+	await _voice(T, "I counted them by threes. The mill holds 3⁷ moths. One pot of my smoke clears 3⁴.")
 	await T.say("abel", "So how many pots do I light?")
 	await T.say("pell", "Seven divided by four doesn't even go. So… three to the eleven?")
 	var r := await _card2(T, "pe4_moths", "moths", "So how many pots do I light?", [Ch2.CARD_MOTHS], {"why": Ch2.WHY.moths})
@@ -1435,7 +1456,7 @@ func moths(T) -> void:
 	await T.ask("abel", Ch2.ASK_MOTHS_WHY, "pe4_why", Ch2.label("pe4_why"))
 	T.set_flag("moths_done", true)
 	T.rebuild_maps()
-	await T.say("", "Twenty-seven smoke pots, lit along the loft beams. The moths pour out of the window in a long grey ribbon.")
+	await T.say("", ["You light the pots three at a time until all twenty-seven have burned.", "The moths pour out of the window in a long grey ribbon."])
 	await T.say("abel", "Good riddance. Though I'd like to know where they're going.")
 	await _praise2(T, str(r.tier), "moths")
 	T.remember("abel", "", 2)
@@ -1452,12 +1473,13 @@ func nests(T) -> void:
 	await T.goal("Marta Fenn says the moths from the mill are in her well-house roof.", "person:marta")
 	await T.say("marta", ["{name}! They've nested. Up there, in the roof, grey lumps like wet paper.",
 		"I can't light smoke by the well for four nights. The water's being drawn for the whole village."])
-	await _voice(T, "I watched one nest. They hatch twice a night, and each hatching triples them. So the swarm grows 3² times every night.")
+	await _voice(T, ["I watched one nest. They hatch twice a night, and each hatching triples them.", "So the swarm grows 3² times every night."])
 	await T.say("marta", "Four nights of that. How many times bigger?")
 	await T.say("pell", "Three squared, four times over. Two and four… 3⁶.")
 	var r := await _card2(T, "pe5_nest", "nests", "Four nights of that. How many times bigger?", [Ch2.CARD_NEST], {"why": Ch2.WHY.nests})
 	await _card2(T, "pe5_pair", "nests", "Abel has sent his slate over with two sums on it: 3² × 3⁴, two swarms multiplied, and (3²)⁴, one swarm for four nights.",
 		Ch2.CARD_PAIR, {"pair_line": Ch2.PAIR_SWAPPED, "bot_wrong": [Ch2.CARD_PAIR[1].answer, Ch2.CARD_PAIR[0].answer]})
+	await _voice(T, ["A thought for the moss.", "I can feed it to double three times a day for four days, or four times a day for three days."])
 	await T.ask("hesper", Ch2.ASK_SAME, "pe5_same", Ch2.label("pe5_same"))
 	T.set_flag("nests_done", true)
 	T.rebuild_maps()
@@ -1482,8 +1504,10 @@ func jar(T) -> void:
 	await T.ask("hesper", Ch2.ASK_JAR, "pe6_predict", Ch2.label("pe6_predict"))
 	var t := await _f2(T, "pe6_jar", "jar", "Then how many pots are in the bed? [b](2 × 3)²[/b] = ?", Ch2.jar(), {"why": Ch2.WHY.jar})
 	await T.say("", "Pell counts his jar twice. Eighteen. He is 18 seeds short.")
-	await _card2(T, "pe6_coef", "jar", "My seed crates are cubes, 2x hands along each edge, where x is the pot size. The volume?", [Ch2.CARD_CRATE])
-	await _f2(T, "pe6_quot", "jar", "The small bed by the door is square too, ⅔ of a pace on each side. What fraction of a square pace is that?", Ch2.small_bed())
+	await _card2(T, "pe6_coef", "jar", "My seed crates are cubes, 2x hands along each edge, where x is the width of one pot. The volume?", [Ch2.CARD_CRATE],
+		{"hint": "Hesper: \"Write (2x) three times and multiply. How many 2s? How many x's?\"", "why": "(2x)³ = 2x × 2x × 2x = 2 × 2 × 2 × x × x × x = 8x³."})
+	await _f2(T, "pe6_quot", "jar", "The small bed by the door is square too, ⅔ of a pace on each side. What fraction of a square pace is that?", Ch2.small_bed(),
+		{"hint": "Hesper: \"Squaring means times itself. Multiply ⅔ by ⅔: tops together, bottoms together.\"", "why": "(⅔)² = ⅔ × ⅔ = 4⁄9."})
 	await T.say("pell", "Fine. A new bed, then. 3 + 4 pots on a side. That's 3² + 4² pots.")
 	await T.ask("hesper", Ch2.ASK_SUM, "pe6_sum", Ch2.label("pe6_sum"))
 	await T.say("pell", "Forty-nine. Not twenty-five.")
@@ -1508,7 +1532,7 @@ func boulder(T) -> void:
 		T.rebuild_maps()
 	T.refresh()
 	await T.goal("Take the Low Road toward Highstead.", "person:bram")
-	await T.say("", "A boulder taller than you are sits square across the Low Road. A loaded seed cart waits behind a patient horse. Orrin Vael is sitting on the boulder.")
+	await T.say("", ["A boulder taller than you are sits square across the Low Road.", "A loaded seed cart waits behind a patient horse. Orrin Vael stands beside the rock, looking up at the gorge edge."])
 	await T.say("bram", ["Bram Ostler, carter. Seed for the Ford, if I could get it there. Came down from the gorge edge in the night.",
 		"What's that on your wrist? Minus three? You'll make it [i]minus[/i] a boulder? What's that, a hole?"])
 	await T.ask("orrin", Ch2.ASK_BOULDER, "pe7_predict", Ch2.label("pe7_predict"))
@@ -1521,6 +1545,13 @@ func boulder(T) -> void:
 	var q: Dictionary = await T.ask("orrin", Ch2.ASK_NEGBASE)
 	var v := await _f2(T, "pe7_negbase", "boulder", "Then what is [b](−2)⁻³[/b]?", Ch2.negbase(), {"record": false})
 	T.record("pe7_negbase", Ch2.label("pe7_negbase"), _worse(str(q.tier), v))   # the question and the value, one row
+	await T.say("bram", ["While you're at it. Hesper shrank my seed sacks for the road, to a third and a third again.",
+		"The tag to undo it says (⅓)⁻². How many times bigger will they get?"])
+	await T.say("pell", "A third, and a minus. So, minus a ninth?")
+	await _f2(T, "pe7_flip", "boulder", "(⅓)⁻² = ?", Ch2.flip(), {"hint": "Hesper: \"A negative exponent means 1 over. What is 1 over ⅓? Then square it.\"",
+		"why": "(⅓)⁻² = 1 ÷ (⅓)² = 1 ÷ 1⁄9 = 9. Or flip first: 3² = 9."})
+	await T.say("", "The sacks swell back to full size on the cart bed.")
+	await T.say("bram", "Nine times. That's my seed back.")
 	await T.say("", "You cast the charm. The boulder folds in on itself, halving, halving, halving, to the size of a hay bale.")
 	T.set_flag("boulder_done", true)
 	T.rebuild_maps()
@@ -1623,7 +1654,7 @@ func _rune2_fix(T) -> bool:
 
 ## After a second flare: Hesper's worked ladder, and the fixes recorded as shown.
 func _rune2_worked(T) -> void:
-	await _voice(T, "Slowly, with me. 27, 9, 3: each is the one above divided by 3. Then 1. Then ⅓. Then 1⁄9.")
+	await _voice(T, ["Slowly, with me. 27, 9, 3: each is the one above divided by 3.", "Then 1. Then ⅓. Then 1⁄9."])
 	await T.say("", "The lines come right under your hand as she says them.")
 	for k in Ch2.fixes():
 		T.record(k, Ch2.label(k), "later")
@@ -1708,7 +1739,7 @@ func vine(T) -> void:
 	if not T.flag("growth_ledge", false):
 		await _gspot(T, "growth_ledge", true)
 	await T.say("", ["The vine climbs the rock, doubling and doubling, and curls over the ledge.",
-		"Before you can set a foot on it, a small black cat with gold eyes walks down the vine by itself and sits on your boots."])
+		"Before you can set a foot on it, a small black cat with gold eyes walks down the vine by itself.", "It sits on your boots."])
 	await T.say("pell", "It likes you. You have to name it. Those are the rules.")
 	var nm := await Pn.name_box(T, "Name the cat", "Soot")
 	T.set_flag("cat_name", nm)
@@ -1728,7 +1759,7 @@ func chapter_end2(T) -> void:
 	if T.flag("ch2_done", false):
 		return
 	await T.goal("Walk home to Hesper's cottage.", "map:cottage")
-	await T.say("hesper", "The field is green, the loft is clear, and there's seed in the ground. Not a bad month's work, {name}.")
+	await T.say("hesper", "The field is green, the mill is clear, and there's seed in the ground. Not a bad month's work, {name}.")
 	await T.say("orrin", ["Two stones, one hand. And whoever carves them wants us to see the gorge.",
 		"The top of the bank above the vault looks over the broken bridge. When you can grow a vine that high, look."])
 	await T.say("hesper", "That's for another day. Tonight, soup.")

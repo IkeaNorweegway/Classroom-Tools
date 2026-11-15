@@ -9,7 +9,7 @@ cd "$ROOT" || exit 1
 export PATH="$HOME/.local/bin:$HOME/.nvm/versions/node/v20.20.2/bin:$PATH"
 {
 	echo "=== $(date '+%F %T') start"
-	claude -p "Run the playtest agent: one nightly run, following .claude/agents/playtest.md exactly. Today is $(date +%F). Also play Realm (the Math 9 game) with the same player: scripts/playtest_town2.sh OUTDIR \"game=realm auto=right seed=1\" \"game=realm auto=wrong mode=real seed=2 pick=rand\" \"game=realm auto=second seed=3 pick=rand\" (a game= option overrides the script's default game=demo)." \
+	claude -p "Run the playtest agent: one nightly run, following .claude/agents/playtest.md exactly. Today is $(date +%F). Also play Realm (the Math 9 game) with the same player: scripts/playtest_town2.sh OUTDIR \"game=realm auto=right seed=1\" \"game=realm auto=wrong mode=real seed=2 pick=rand\" \"game=realm auto=second seed=3 pick=rand\" \"game=realm chapter=2 auto=right spots=1 seed=4\" \"game=realm chapter=2 auto=wrong mode=real seed=5 pick=rand\" (chapter=2 starts Chapter 2 with no Chapter 1 save; a game= option overrides the script's default game=demo)." \
 		--agent playtest --model sonnet --permission-mode dontAsk --max-budget-usd 3 --no-session-persistence \
 		--allowedTools "Read" "Grep" "Glob" \
 			"Edit(_playtest-review/**)" "Write(_playtest-review/**)" \

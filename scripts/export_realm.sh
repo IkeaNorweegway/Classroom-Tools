@@ -6,7 +6,7 @@ cd "$(dirname "$0")/../godot/story-engine"
 GODOT=${GODOT:-$HOME/.local/bin/godot}
 "$GODOT" --headless --path . --import >/dev/null 2>&1 || true
 "$GODOT" --headless --path . -s res://tests/test_realm.gd
-"$GODOT" --headless --path . -s res://tests/test_nav.gd
+"$GODOT" --headless --path . -s res://tests/test_nav.gd -- game=realm
 mkdir -p ../../public/materials/math-9/realm
 "$GODOT" --headless --path . --export-release "Web-Realm" >/dev/null 2>&1
 ls -la ../../public/materials/math-9/realm/

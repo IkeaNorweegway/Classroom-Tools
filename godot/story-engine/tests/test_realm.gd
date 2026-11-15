@@ -239,7 +239,7 @@ func _initialize() -> void:
 	ok(G.bubble("marta", O2) == "q_gold" and G.bubble("abel", O2) == "", "old save: a gold ? over Marta only")
 	ok(G.summary(O2).pips == 0, "old save: summary builds")
 
-	var n_grow := _chapter2()
+	var n_grow := await _chapter2()
 	print("REALM %d checks (%d spot draws, %d Growth draws), %d problems" % [checks, n_spots, n_grow, fails.size()])
 	for f in fails:
 		print("  ✗ ", f)
@@ -254,7 +254,7 @@ func _fq(v: String) -> Array:
 func _chapter2() -> int:
 	# 1. Every answer is the design's.
 	var want := {"seeds": [Ch2.seeds(), "64"], "turn": [Ch2.turn(), "-32"], "brackets": [Ch2.brackets(), "-16"], "day0": [Ch2.day0(), "1"],
-		"other": [Ch2.other_moss(), "1"], "cure value": [Ch2.cure_value(), "512"], "far bed": [Ch2.bed_value(), "72"], "pots": [Ch2.pots(), "27"],
+		"other": [Ch2.other_moss(), "1"], "negzero": [Ch2.negzero(), "1"], "flip": [Ch2.flip(), "9"], "cure value": [Ch2.cure_value(), "512"], "far bed": [Ch2.bed_value(), "72"], "pots": [Ch2.pots(), "27"],
 		"nook": [Ch2.nook(), "1"], "nest value": [Ch2.nest_value(), "6561"], "jar": [Ch2.jar(), "36"], "pell's jar": [Ch2.jar_pell(), "18"],
 		"small bed": [Ch2.small_bed(), "4/9"], "boulder": [Ch2.boulder(), "1/8"], "weight": [Ch2.weight(), "12"], "negbase": [Ch2.negbase(), "-1/8"],
 		"route2": [Ch2.route2(), "1"], "sum 49": [Ch2.sum_bed()[0], "49"], "sum 25": [Ch2.sum_bed()[1], "25"], "sum 144": [Ch2.sum_bed()[2], "144"],
@@ -275,7 +275,7 @@ func _chapter2() -> int:
 	ok(Ch2.CARD_PAIR[0].answer == Ch2.pair()[0] and Ch2.CARD_PAIR[1].answer == Ch2.pair()[1] and Ch2.CARD_CRATE.coef == Ch2.crate()[0] and Ch2.CARD_CRATE.answer == Ch2.crate()[1], "ch2 pair and crate cards")
 
 	# 2. Named errors: never the answer, always judged wrong (not close), each with its line.
-	var ans_of := {"pe1_seeds": Ch2.seeds(), "pe1_turn": Ch2.turn(), "pe1_brackets": Ch2.brackets(), "pe2_day0": Ch2.day0(), "pe4_pots": Ch2.pots(),
+	var ans_of := {"pe1_seeds": Ch2.seeds(), "pe1_turn": Ch2.turn(), "pe1_brackets": Ch2.brackets(), "pe2_day0": Ch2.day0(), "pe2_other": Ch2.other_moss(), "pe2_negzero": Ch2.negzero(), "pe7_flip": Ch2.flip(), "pe4_pots": Ch2.pots(),
 		"pe4_equal": Ch2.nook(), "pe6_jar": Ch2.jar(), "pe6_quot": Ch2.small_bed(), "pe7_boulder": Ch2.boulder(), "pe7_negbase": Ch2.negbase()}
 	for k in Ch2.TRAPS:
 		ok(ans_of.has(k), "ch2 traps %s belong to a check" % k)
@@ -486,5 +486,5 @@ func _chapter2() -> int:
 	var g2 := {"done": false, "S": {"flags": {}}}
 	ok(G.title_buttons(g2, [["Continue", "continue", true], ["New game", "new"]]).size() == 2, "title mid Chapter 1: Continue and New game only")
 	ok(G.title_buttons({"done": false, "S": {"chapter": 2, "flags": {}}}, [1, 2]) == [1, 2], "title in Chapter 2: unchanged")
-	ok(G.title_pick("ch2", g1) == g1 and int(g1.S.want_ch) == 2, "title pick: go on with the same save")
+	ok((await G.title_pick("ch2", g1, false)) == g1 and int(g1.S.want_ch) == 2, "title pick: go on with the same save")
 	return n_draws

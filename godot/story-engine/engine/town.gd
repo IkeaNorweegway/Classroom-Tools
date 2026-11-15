@@ -1514,7 +1514,10 @@ func _show_title(saved) -> void:
 		_begin()
 		return
 	if v is String and v.begins_with("game:"):   # the game returns the save to play on, or null to make a new character
-		var g = D.title_pick(v.substr(5), saved)
+		var g = await D.title_pick(v.substr(5), saved)
+		if g is String and g == "back":   # the game's own box was dismissed with Back
+			_show_title(saved)
+			return
 		if g != null:
 			G = g
 			G.si = int(G.si)

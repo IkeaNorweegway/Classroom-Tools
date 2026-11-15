@@ -68,6 +68,9 @@ const BOARD_ROWS := [["2³", "8"], ["2²", "4"], ["2¹", "2"], ["2⁰", "1", tru
 static func boulder() -> Array: return pw(2, -3)                                # 1/8
 static func weight() -> Array: return Frac.mul(F("96"), pw(2, -3))              # 12
 static func negbase() -> Array: return pw(-2, -3)                               # −1/8
+static func negzero() -> Array: return Frac.pow_i(F("-15"), 0)                  # 1
+# Frac.pow_i does nothing for a negative exponent (it returns 1), so the flip is 1 over the positive power: 1 ÷ (1/3)² = 9
+static func flip() -> Array: return Frac.div([1, 1], Frac.pow_i(F("1/3"), 2))     # 9
 
 # ── The vault rune ──
 const RUNE_ROWS := [["3³", "27"], ["3²", "9"], ["3¹", "3"], ["3⁰", "1", true, "3 ÷ 3 ="], ["3⁻¹", "1/3", true, "1 ÷ 3 ="], ["3⁻²", "1/9", true, "⅓ ÷ 3 ="]]
@@ -83,7 +86,12 @@ const TRAPS := {
 	"pe1_seeds": [["12", "That's 2 × 6. Double six times."]],
 	"pe1_turn": [["32", "Pair the negatives off. Five of them leaves one without a partner."], ["-10", "That's −2 × 5. Multiply five −2s."]],
 	"pe1_brackets": [["16", "That's (−2)⁴. Without brackets the base is only the 2: work out 2⁴ first, then put the minus sign on."]],
-	"pe2_day0": [["0", "No moss on day 0 means nothing to triple, and the field would still be bare. Each row back divides by 3. What is 3 ÷ 3?"], ["3", "That's day 1. One more row back."]],
+	"pe2_day0": [["0", "No moss on day 0 means nothing to triple, and the field would still be bare.\nEach row back divides by 3. What is 3 ÷ 3?"], ["3", "That's day 1. One more row back."]],
+	"pe2_other": [["0", "Day 1 is 5. What do you divide by to go back a day?"], ["5", "That's day 1. One more day back."]],
+	"pe2_negzero": [["-1", "The brackets make the base −15. One step back from −15 is (−15) ÷ (−15), and that is positive."], ["0", "(−15)¹ is −15. To go back one step, divide by the base: (−15) ÷ (−15)."],
+		["-15", "That's (−15)¹. One more step back."]],
+	"pe7_flip": [["1/9", "That's (⅓)². The minus flips it: 1 over 1⁄9."], ["-1/9", "A negative exponent isn't a negative number. Flip ⅓, then square."], ["-9", "The size is right. The minus means flip, not below zero."],
+		["3", "That's the flip. Now square it."], ["6", "That's 3 × 2. Flip ⅓ to 3, then multiply 3 by itself."]],
 	"pe4_pots": [["9", "That's 3 × 3. 3³ is three 3s multiplied."]],
 	"pe4_equal": [["0", "No pots for 81 moths? A number divided by itself is 1. That's 3⁰ again, from Odile's board."]],
 	"pe6_jar": [["18", "That's Pell's jar, 2 × 3². The bed is 6 by 6."], ["12", "That's 6 × 2. Squaring means 6 × 6."]],
@@ -99,7 +107,7 @@ const CARD_CURE := {"expr": "2⁶ × 2³ =", "base": "2", "answer": 9, "traps": 
 const CARD_MOTHS := {"expr": "3⁷ ÷ 3⁴ =", "base": "3", "answer": 3, "traps": [[11, "You added. That's for multiplying powers. Each pot takes away four 3s."],
 	[28, "You multiplied the exponents. Cancel instead: four 3s from seven."]]}
 const CARD_NOOK := {"expr": "3⁴ ÷ 3⁴ =", "base": "3", "answer": 0, "traps": []}
-const CARD_NEST := {"expr": "(3²)⁴ =", "base": "3", "answer": 8, "traps": [[6, "You added. Write it out: 3² × 3² × 3² × 3². How many 3s?"], [16, "That's 2⁴. Four lots of two 3s is 4 × 2."]]}
+const CARD_NEST := {"expr": "(3²)⁴ =", "base": "3", "answer": 8, "traps": [[6, "You added. Write it out: 3² × 3² × 3² × 3². How many 3s?"], [16, "You raised 2 to the 4. Four lots of two 3s is 4 × 2 = 8 threes."]]}
 const CARD_PAIR := [{"expr": "3² × 3⁴ =", "base": "3", "answer": 6, "traps": []}, {"expr": "(3²)⁴ =", "base": "3", "answer": 8, "traps": []}]
 const PAIR_SWAPPED := "Look at what joins them. Two powers multiplied: add. A power raised to a power: multiply."
 const CARD_CRATE := {"expr": "(2x)³ =", "base": "x", "answer": 3, "coef": 8, "traps": [],
@@ -138,7 +146,7 @@ const ASK_LESSON := {"text": "Why is 2⁵ equal to 32 and not 10?", "opts": [
 	["2⁵ means 5 × 5 = 25.", false, "That's 5². The base is the number that repeats, and here it's 2."],
 	["It's 2 × 2 × 2 × 2 × 2 × 2 = 64: one 2 for the seed and five for the nights.", false, "The exponent 5 means exactly five 2s. The first seed is the 1 you start with."]]}
 
-const ASK_TALLY_WHY := {"text": "Why is every moss 1 on day 0, whatever it multiplies by?", "opts": [
+const ASK_TALLY_WHY := {"text": "Why do both mosses come to 1 on day 0, whatever they multiply by?", "opts": [
 	["Each day back divides by the base. Day 1 is the base itself, and the base divided by itself is 1.", true, ""],
 	["Because zero days means zero moss.", false, "Then day 1 would be 3 × 0. Is it?"],
 	["Because a number with exponent 0 stays as it is, so 3⁰ = 3.", false, "That's day 1, 3¹."],
@@ -159,7 +167,7 @@ const ASK_MOTHS_WHY := {"text": "Why do you subtract the exponents when you divi
 	["Because dividing is the opposite of multiplying, so you do the opposite to the base.", false, "The base stays 3 all the way through. Look at what happens to the count of 3s."],
 	["Because 7 ÷ 4 can't be done, so you subtract instead.", false, "The exponents are never divided. Write the 3s out and cross them off."]]}
 
-const ASK_SAME := {"text": "A thought for the moss. I can feed it to double three times a day for four days, or four times a day for three days. Which grows more?", "opts": [
+const ASK_SAME := {"text": "Which plan grows more?", "opts": [
 	["The same. (2³)⁴ and (2⁴)³ are both twelve doublings, 2¹².", true, ""],
 	["Three times a day for four days, because there are more days.", false, "Count the doublings in each plan. Three a day for four days is how many?"],
 	["Four times a day for three days, because the bigger exponent is inside the brackets.", false, "Count the doublings in each plan. Four a day for three days is how many?"]]}
@@ -170,7 +178,7 @@ const ASK_JAR := {"text": "Will it. {name}, before he plants one: is (2 × 3)² 
 	["Yes, both are 2 × 3 × 2.", false, "An exponent of 2 means multiplied by itself, not times 2. Work out 6² and 2 × 9."]]}
 
 const ASK_SUM := {"text": "Is Pell right this time?", "opts": [
-	["No. (3 + 4)² = 7² = 49, and 3² + 4² is only 25. An exponent spreads over × and ÷, not over + and −.", true, ""],
+	["No. (3 + 4)² = 7² = 49, but 3² + 4² = 25. Exponents spread over × and ÷, not + and −.", true, ""],
 	["Yes, the exponent goes to each number in the brackets.", false, "That works for × and ÷. Try it here: 7² against 9 + 16."],
 	["No, it's 3² × 4² = 144.", false, "That would be (3 × 4)². The bed has 3 + 4 = 7 pots on a side."]]}
 
@@ -181,7 +189,7 @@ const ASK_BOULDER := {"text": "Before you cast it. What will 2⁻³ do to the bo
 	["Make it −6 times its size, 2 × −3.", false, "An exponent isn't a multiplier. Go down the board from 2¹, halving."]]}
 
 const ASK_NEGBASE := {"text": "Good. Now a better question. Can a negative exponent ever give a negative number?", "opts": [
-	["Only when the base is negative, like (−2)⁻³.", true, ""],
+	["Only when the base is negative and the exponent is odd, like (−2)⁻³.", true, ""],
 	["Never.", false, "Try a negative base. What is (−2)³, and what is 1 over that?"],
 	["Always.", false, "You just made ⅛ from 2⁻³. Was that negative?"]]}
 
@@ -192,7 +200,7 @@ const ASK_RUNE_PREDICT := {"text": "Before you touch it. Read down the true line
 	["You can't tell: a zero exponent has no meaning.", false, "The pattern gives it one. 27, 9, 3: what is done each time?"]]}
 
 const ASK_RUNE_EXPLAIN := {"text": "Say what is wrong with the stone.", "opts": [
-	["Going down one exponent divides by 3. 3 ÷ 3 = 1, so 3⁰ = 1. Keep dividing and you get ⅓ and 1⁄9: small positive fractions, never zero and never negative.", true, ""],
+	["Each step down divides by 3, so 3⁰ = 1, then ⅓, then 1⁄9: small positive fractions, never zero or negative.", true, ""],
 	["An exponent of 0 means multiplying by nothing, so 0. A negative exponent means a negative number.", false, "That's what the rune says. Check it on the ladder: is 3 ÷ 3 nought?"],
 	["3⁰ = 1, but a negative exponent flips the sign, so 3⁻¹ = −3.", false, "The first half is right. Keep dividing by 3 from 1. Do you ever go below zero?"],
 	["3⁰ = 3, because with no exponent the base is left as it is.", false, "That's 3¹. One more rung down."]]}
@@ -225,7 +233,7 @@ const PRAISE := {"lesson2": "Base, exponent, brackets. You read all three.", "ta
 	"cure": "Same base, so you counted the factors together. That's the product law.", "moths": "You cancelled, and counted what was left. That's the quotient law.",
 	"nests": "Lots of lots, so you multiplied the exponents. Good.", "jar": "You gave the exponent to everything in the brackets. Pell, take note.",
 	"boulder": "Past 1 and still halving. That's a negative exponent."}
-const WHY_LESSON := {"pe1_seeds": "2⁶ = 2 × 2 × 2 × 2 × 2 × 2 = 64.", "pe1_turn": "(−2)⁵ = −2 × −2 × −2 × −2 × −2 = −32: four pair off, one is left.",
+const WHY_LESSON := {"pe1_seeds": "2⁶ = 2 × 2 × 2 × 2 × 2 × 2 = 64.", "pe1_turn": "(−2)⁵ = (−2) × (−2) × (−2) × (−2) × (−2) = −32: four pair off, one is left.",
 	"pe1_brackets": "−2⁴ = −(2 × 2 × 2 × 2) = −16."}
 ## The rune's four fixes: named errors, the hint and the why line.
 const L_STONE := "That's what the rune says. Go down the ladder: what is the line above, divided by the base?"
@@ -370,20 +378,20 @@ static func _pe(S: Dictionary) -> Dictionary:
 # ── The report: first tries by notes section ──
 const CODES := [
 	["PE1", "What is a power?", ["pe1_lesson", "pe1_seeds", "pe1_turn", "pe1_brackets"]],
-	["PE2", "The zero exponent", ["pe2_day0", "pe2_other", "pe2_why", "pe4_equal", "pe2_rune_fix", "pe2_rune_fix2"]],
+	["PE2", "The zero exponent", ["pe2_day0", "pe2_other", "pe2_why", "pe2_negzero", "pe4_equal", "pe2_rune_fix", "pe2_rune_fix2"]],
 	["PE3", "Product of powers", ["pe3_cure", "pe3_value", "pe3_bases"]],
 	["PE4", "Quotient of powers", ["pe4_moths", "pe4_pots", "pe4_equal", "pe4_why"]],
 	["PE5", "Power of a power", ["pe5_nest", "pe5_pair", "pe5_same"]],
 	["PE6", "Power of a product and quotient", ["pe6_predict", "pe6_jar", "pe6_coef", "pe6_quot", "pe6_sum"]],
-	["PE7", "Negative exponents", ["pe7_predict", "pe7_boulder", "pe7_weight", "pe7_negbase", "pe7_rune_fix", "pe7_rune_fix2"]],
+	["PE7", "Negative exponents", ["pe7_predict", "pe7_boulder", "pe7_weight", "pe7_negbase", "pe7_flip", "pe7_rune_fix", "pe7_rune_fix2"]],
 ]
 ## The report's row labels (script, "Report labels"); a check is recorded as "PEn · <label>".
 const LABEL := {"pe1_lesson": "Why 2⁵ is 32", "pe1_seeds": "2⁶", "pe1_turn": "(−2)⁵", "pe1_brackets": "−2⁴", "pe2_day0": "3⁰ on the tally", "pe2_other": "5⁰",
-	"pe2_why": "Why a zero exponent gives 1", "pe3_cure": "2⁶ × 2³ as one power", "pe3_value": "2⁹ as a number", "pe3_bases": "Different bases",
+	"pe2_why": "Why a zero exponent gives 1", "pe2_negzero": "(−15)⁰", "pe3_cure": "2⁶ × 2³ as one power", "pe3_value": "2⁹ as a number", "pe3_bases": "Different bases",
 	"pe4_moths": "3⁷ ÷ 3⁴ as one power", "pe4_pots": "3³ as a number", "pe4_equal": "3⁴ ÷ 3⁴", "pe4_why": "Why exponents subtract",
 	"pe5_nest": "(3²)⁴ as one power", "pe5_pair": "3² × 3⁴ beside (3²)⁴", "pe5_same": "(2³)⁴ and (2⁴)³", "pe6_predict": "(2 × 3)² or 2 × 3²",
 	"pe6_jar": "(2 × 3)²", "pe6_coef": "(2x)³", "pe6_quot": "(⅔)²", "pe6_sum": "(3 + 4)²", "pe7_predict": "What 2⁻³ does", "pe7_boulder": "2⁻³",
-	"pe7_weight": "96 × ⅛", "pe7_negbase": "(−2)⁻³",
+	"pe7_weight": "96 × ⅛", "pe7_negbase": "(−2)⁻³", "pe7_flip": "(⅓)⁻²",
 	# the rune's four fixes: the script labels them in pairs ("3⁰ and 3⁻²", "4⁰ and 4⁻²"); each pair's two keys share its label
 	"pe2_rune_fix": "3⁰ and 3⁻²", "pe7_rune_fix": "3⁰ and 3⁻²", "pe2_rune_fix2": "4⁰ and 4⁻²", "pe7_rune_fix2": "4⁰ and 4⁻²",
 	"rune2_predict": "Predicted the next line", "rune2_explain": "Explained the stone"}

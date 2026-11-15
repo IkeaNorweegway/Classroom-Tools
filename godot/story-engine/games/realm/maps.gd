@@ -412,7 +412,7 @@ static func _highstead(f: Dictionary, sig: bool) -> Dictionary:
 			props.append(_prop("cart_farm", 18, 35, 1, 2, {"yaw": 90.0}))
 			props.append(_beast("horse", 18, 34, "idle", 180.0))
 		elif f.get("boulder_done", false):
-			props.append(_prop("boulder_small", 16, 32))
+			props.append(_prop("boulder_small", 16, 32, 1, 1, {"parts": {"boulder_small": {"scale": [1.25, 1.25, 1.25]}}}))   # drawn hay-bale size: 1 tile wide, about waist high
 	else:
 		props.append_array([_prop("sack_pile", 47, 9), _prop("cart", 44, 9, 2, 1)])
 	if not f.get("sigil_gate", false):

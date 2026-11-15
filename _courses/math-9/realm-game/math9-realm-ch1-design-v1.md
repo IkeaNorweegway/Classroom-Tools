@@ -1,6 +1,8 @@
 # The Measure of the Realm — Chapter 1 Design v1
 ## "The Spark" · Rational numbers · Sigil: Balance
-*Pilot chapter. The design only, no game yet. Written 2026-11-08. Story: `math9-realm-story-v1.md`, §5–6.*
+*Pilot chapter. Written 2026-11-08; built 2026-11-09 and fixed 2026-11-14. Story: `math9-realm-story-v1.md`, §5–6.*
+
+**As built (2026-11-15, board T-041), where the build differs on purpose:** harvest night is drawn in daylight, and Pell waits at each quest instead of following (`game.gd`, top comment). Sigil state lives in flags (`sigil_pond` …) and `S.rn`, not `S.sigils`. The number-line panel is the card-ordering version only (no tapping points onto a line). The harvest question has a third wrong option (`ch1.gd`).
 
 > **Gate (games):** Outcomes: RN1–RN5. Model: a step-based story; every check is an exact rational answer (equivalent forms accepted); the rune breaks only when the prediction, test and fix are right. Turn-based. Test hook included (`?debug=1`, `auto=right|second|wrong`, a `solve` on every panel).
 
@@ -372,10 +374,10 @@ A teacher reading the RN rows sees which notes section each student needs again.
 | Piece | What it does | Test-player move |
 |---|---|---|
 | `T.frac` (engine) | Typed exact rational answer, modelled on `T.calc`. Accepts `-5/12`, `−5/12`, `1 1/2`, exact decimals; checks with exact fractions (equivalent forms right). Unsimplified is right, with a nudge ("simplest form: −5⁄12"). A rounded decimal for a repeating fraction gets "close: give it as a fraction" and does not count as a try. | right / second / wrong like `calc` |
-| Number-line panel (Realm) | Tap points onto a line, or order cards on it | places in order, or one swap wrong |
+| Number-line panel (Realm) | Order cards on a line (built as card ordering only) | places in order, or one swap wrong |
 | Pie panel (Realm) | The rune's sixths pie | answers 3 and 2 |
 | Step-order panel (Realm) | Order step cards; the decoy is the misconception | right order, or decoy first |
-| Sigil system (engine) | A spot marks tiles or a door as blocked until solved; state in `S.sigils` | solves the spot's `T.frac` |
+| Sigil system (engine) | A spot marks tiles or a door as blocked until solved; state in flags (`sigil_pond` …) and `S.rn` | solves the spot's `T.frac` |
 | Pronouns on the profile (engine) | `P.pron` with `{they}`, `{them}`, `{their}` fills like `{name}` | — |
 | Fantasy art (`art3d.gd`) | Stone cottage, well, mill with wheel, grain tower, rune stone, ford, gorge and cliff tiles, stone gate arch, sheep. Each sizes itself to its footprint. | — |
 | `games/realm/` | Game script, panels, `main.gd` `game=realm`, its own save key | — |
