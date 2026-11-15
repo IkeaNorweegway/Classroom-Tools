@@ -97,7 +97,7 @@ sub draw_srbench {
         my $x = $Xs->($sq);
         $b .= circ($x, $y1, 5, 'dg-point-accent');
         $b .= T($x, $y1 - 14, fmt($sq) . ' = ' . fmt($rt) . '²', anchor => 'middle', cls => 'dg-label');
-        $b .= sprintf('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" class="dg-line" stroke-dasharray="4 4"/>', $x, $y1 + 6, $Xr->($rt), $y2 - 8);
+        $b .= sprintf('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" class="dg-line dg-dash-4"/>', $x, $y1 + 6, $Xr->($rt), $y2 - 8);
         $b .= circ($Xr->($rt), $y2, 5, 'dg-point-accent');
         $b .= T($Xr->($rt), $y2 + 24, '√' . fmt($sq) . ' = ' . fmt($rt), anchor => 'middle', cls => 'dg-label');
     }
@@ -109,7 +109,7 @@ sub draw_srbench {
         my $show = !($A->{dot} // '1') ? 0 : $A->{keydot} ? $KEY : 1;
         if ($show) {
             my $xr = $Xr->(sqrt($n));
-            $b .= sprintf('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" class="dg-accent" stroke-dasharray="3 3"/>', $xs, $y1 + 28, $xr, $y2 - 8);
+            $b .= sprintf('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" class="dg-accent dg-dash-3"/>', $xs, $y1 + 28, $xr, $y2 - 8);
             $b .= circ($xr, $y2, 5.5, 'dg-point-accent');
         }
         my $ex = $show ? $Xr->(sqrt($n)) : $xs;

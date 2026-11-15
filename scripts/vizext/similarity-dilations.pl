@@ -95,7 +95,7 @@ sub draw_sdmap {
     $b .= T($W / 2, 18, $a->{title}, anchor => 'middle', cls => 'dg-title') if $a->{title};
     if ($a->{river}) {
         my $y0 = $mt + $mh * 0.55;
-        $b .= sprintf('<path d="M10,%.1f C%.1f,%.1f %.1f,%.1f %.1f,%.1f S%.1f,%.1f %.1f,%.1f" class="dg-accent" fill="none" stroke-width="7" opacity="0.35"/>',
+        $b .= sprintf('<path d="M10,%.1f C%.1f,%.1f %.1f,%.1f %.1f,%.1f S%.1f,%.1f %.1f,%.1f" class="dg-accent" opacity="0.35"/>',
             $y0, $W * 0.25, $y0 - 40, $W * 0.4, $y0 + 40, $W * 0.6, $y0, $W * 0.85, $y0 - 30, $W - 10, $y0 + 10);
     }
     my ($x1, $y1) = (60, $mt + $mh - 30 - 0);

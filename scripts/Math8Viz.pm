@@ -1783,7 +1783,7 @@ sub poly_one {
     my ($gx, $gy) = (sum(map { $_->[0] } @s) / $n, sum(map { $_->[1] } @s) / $n);
     my @pr = list($a->{"par$sfx"});
     my $b = $a->{"open$sfx"}
-        ? '<polyline points="' . join(' ', map { sprintf('%.1f,%.1f', @$_) } @s) . '" class="dg-line" fill="none"/>'
+        ? '<polyline points="' . join(' ', map { sprintf('%.1f,%.1f', @$_) } @s) . '" class="dg-line"/>'
         : poly($sfx ? 'dg-fill-sun' : 'dg-fill-accent', map { @$_ } @s);
     for my $i (0 .. $n - 1) {
         my ($P, $Q) = ($s[$i], $s[($i + 1) % $n]);
@@ -1805,7 +1805,7 @@ sub poly_one {
             for my $k (0 .. $c - 1) {
                 my $off = ($k - ($c - 1) / 2) * 7 + 3;
                 my ($tx, $ty) = ($mx + $vx * $off, $my + $vy * $off);
-                $b .= sprintf('<path d="M%.1f,%.1f L%.1f,%.1f L%.1f,%.1f" class="dg-accent" fill="none"/>', $tx - $vx * 6 + $vy * 5, $ty - $vy * 6 - $vx * 5, $tx, $ty, $tx - $vx * 6 - $vy * 5, $ty - $vy * 6 + $vx * 5);
+                $b .= sprintf('<path d="M%.1f,%.1f L%.1f,%.1f L%.1f,%.1f" class="dg-accent"/>', $tx - $vx * 6 + $vy * 5, $ty - $vy * 6 - $vx * 5, $tx, $ty, $tx - $vx * 6 - $vy * 5, $ty - $vy * 6 + $vx * 5);
             }
         }
         $b .= T($mx + $nx * 16, $my + $ny * 16 + 4, $sd[$i], anchor => abs($nx) < 0.3 ? 'middle' : $nx > 0 ? 'start' : 'end', cls => 'dg-label-sm') if defined $sd[$i] && $sd[$i] ne '';

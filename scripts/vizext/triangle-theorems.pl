@@ -217,7 +217,7 @@ sub draw_ttscene {
                 $b .= line(($x1 + $x2) / 2, $y1, ($x1 + $x2) / 2, $y2, 'dg-construction');
                 $b .= sprintf('<circle cx="%.1f" cy="%.1f" r="%.1f" class="dg-construction"/>', ($x1 + $x2) / 2, ($y1 + $y2) / 2, min($Wp, $Hp) / 6);
             } else {   # park: the long way round, two trees
-                $b .= sprintf('<polyline points="%.1f,%.1f %.1f,%.1f %.1f,%.1f" class="dg-dashed" fill="none"/>', $x1, $y2 + 6, $x2 + 6, $y2 + 6, $x2 + 6, $y1);
+                $b .= sprintf('<polyline points="%.1f,%.1f %.1f,%.1f %.1f,%.1f" class="dg-dashed"/>', $x1, $y2 + 6, $x2 + 6, $y2 + 6, $x2 + 6, $y1);
                 for my $t ([0.25, 0.3], [0.7, 0.75]) { my ($tx, $ty) = ($x1 + $Wp * $t->[0], $y1 + $Hp * $t->[1]); $b .= circ($tx, $ty, 9, 'dg-fill-plant') . circ($tx, $ty, 2, 'dg-point'); }
                 $b .= circ($x1, $y2, 4, 'dg-point') . circ($x2, $y1, 4, 'dg-point');
                 $b .= T($x1 - 6, $y2 + 18, $a->{from} // 'A', anchor => 'end', cls => 'dg-label');
