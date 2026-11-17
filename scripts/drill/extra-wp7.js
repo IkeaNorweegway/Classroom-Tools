@@ -21,7 +21,7 @@
 window.EXTRA = ok => {
   const M = MODEL, words = s => String(s).replace(/<[^>]*>/g, '').trim().split(/\s+/).length;
   const text = s => String(s).replace(/<[^>]*>/g, '');
-  const NEAR = [['flow', 'ten'], ['web', 'change'], ['chain', 'photo'], ['cond', 'mode'], ['stab', 'design'], ['design', 'mat'], ['design', 'beam'], ['cycle', 'rock'], ['crys', 'rock'], ['uplift', 'bound'], ['form', 'surf'], ['quake', 'bound']];
+  const NEAR = [['flow', 'ten'], ['web', 'change'], ['div', 'recover'], ['chain', 'photo'], ['photo', 'mass'], ['poll', 'repro'], ['cond', 'mode'], ['cond', 'flow'], ['cond', 'insul'], ['flow', 'insul'], ['amount', 'cap'], ['stab', 'design'], ['design', 'mat'], ['design', 'beam'], ['beam', 'force'], ['mat', 'force'], ['cycle', 'rock'], ['cycle', 'surf'], ['crys', 'rock'], ['uplift', 'bound'], ['form', 'surf'], ['quake', 'bound']];
   for (const tp in M.TOPICS) for (const lv in M.TOPICS[tp]) M.TOPICS[tp][lv].forEach(g => {
     const bad = []; let it;
     for (let i = 0; i < 300 && bad.length < 3; i++) {
