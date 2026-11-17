@@ -27,11 +27,12 @@ const MODEL = (() => {
   const bn = (a, b) => '(' + ps({ 1: a, 0: b }) + ')';
   function mk(t, lvl, code, o) {
     const dp = o.dp || 0, tol = o.tol != null ? o.tol : dp ? Math.pow(10, -dp) * .51 : .001, poly = o.poly || null, deg = poly ? o.deg || (co(poly, 2) ? 2 : 1) : 0;
+    const et = o.et != null ? o.et : Math.max(tol, .051), gap = o.et != null ? et + tol : et;   // et: how close a typed answer must be to a named mistake
     const keep = e => poly ? e[0] && typeof e[0] === 'object' && !sameP(e[0], poly) && (deg === 2 || !co(e[0], 2))
-      : isFinite(e[0]) && Math.abs(e[0] - o.v) > Math.max(tol, .051) + 1e-9;
+      : isFinite(e[0]) && Math.abs(e[0] - o.v) > gap + 1e-9 && (!o.prob || e[0] >= 0 && e[0] <= 1);
     const errs = (o.errs || []).filter(e => e && keep(e)).map(([v, cue, s]) => ({ v, cue, s }));
     return { t, lvl, code, story: o.story, q: o.q, v: poly ? null : o.v, poly, deg, dp, tol, pre: o.pre || '', unit: o.unit || '', ans: o.ans || (poly ? ps(poly) : F(o.v, dp)),
-      errs, cue: o.cue, steps: o.steps.map(([l, m]) => ({ l, m })), pic: o.pic };
+      errs, et, prob: !!o.prob, cue: o.cue, steps: o.steps.map(([l, m]) => ({ l, m })), pic: o.pic };
   }
   // A response for an item: a number, or a polynomial's coefficient boxes (text, as typed).
   function resp(it, x) {
@@ -49,9 +50,12 @@ const MODEL = (() => {
   // A typed answer -> ok, or the first named mistake it matches.
   function check(it, r) {
     if (it.poly) return checkPoly(it, r);
-    const g = r.v == null || r.v === '' ? NaN : Q.val(typeof r.v === 'string' ? Q.parse(r.v) : r.v);
+    const pct = it.prob && typeof r.v === 'string' && /%\s*$/.test(r.v), raw = pct ? r.v.replace(/%\s*$/, '').trim() : r.v;
+    const pv = typeof raw === 'string' ? Q.parse(raw) : raw;
+    const g = raw == null || raw === '' || pv == null ? NaN : Q.val(pv) / (pct ? 100 : 1);   // a probability may be typed as a percent
     if (Math.abs(g - it.v) <= it.tol) return { ok: true };
-    const et = Math.max(it.tol, .051);
+    if (it.prob && g > 1) return { code: 'over1', cue: 'Use a fraction, decimal or %', s: -1 };
+    const et = it.et != null ? it.et : Math.max(it.tol, .051);
     for (let i = 0; i < it.errs.length; i++) if (Math.abs(g - it.errs[i].v) <= et) return { code: 'e' + i, cue: it.errs[i].cue, s: it.errs[i].s };
     if (it.v !== 0 && Math.abs(g + it.v) <= it.tol) return { code: 'sign', cue: 'Check the sign', s: it.steps.length - 1 };
     return { code: 'other', cue: it.cue, s: -1 };
@@ -984,7 +988,234 @@ const MODEL = (() => {
     ]
   };
 
-  const TOPICS = { rn: RN, sr: SR, pe: PE, lr: LR, le: LE, po: PO, cg: CG, me: ME, si: SI };
+  /* ============ ST · Statistics: scatter plots and the line of best fit ============ */
+  // Scatter dots around a line (made-up data), x from xa to xb.
+  const scat = (m, b, xa, xb, n, sp) => Array.from({ length: n }, (_, i) => { const x = R(xa + (xb - xa) * i / (n - 1), 1); return { x, y: Math.max(0, R(m * x + b + rnd(-10, 10) / 10 * sp, 1)), dot: true, c: 'L' }; });
+  const ST = {
+    1: [
+      function stDots() {
+        const [who, one, a, b, xh, yh, gx, gy] = pick([
+          ['students', 'student', 'height', 'arm span', 'height (cm)', 'arm span', () => rnd(150, 180), x => x + rnd(-6, 6)],
+          ['students', 'student', 'hours of sleep', 'quiz score', 'sleep (h)', 'score', () => rnd(6, 10), x => 40 + 5 * x + rnd(-6, 6)],
+          ['days', 'day', 'high temperature', 'pool visitors', 'temp (°C)', 'visitors', () => rnd(18, 32), x => 8 * x - 60 + rnd(-15, 15)],
+          ['players', 'player', 'height', 'jump distance', 'height (cm)', 'jump (cm)', () => rnd(150, 180), x => 2 * x + rnd(-30, 30)]]);
+        const n = rnd(14, 32), cols = [0, 1, 2].map(() => { const x = gx(); return { x, y: gy(x) }; });
+        return mk('stDots', 1, 'ST1', {
+          story: 'A class records the ' + a + ' and the ' + b + ' of each of ' + B(n + ' ' + who) + '. They make a scatter plot.',
+          q: 'How many dots?', v: n, unit: 'dots', cue: 'One dot per ' + one,
+          errs: [[2 * n, 'One dot holds both values', 0], [n - 1, 'Every ' + one + ' gets a dot', 0]],
+          steps: [['one dot each', n + ' ' + who + ' → ' + n + ' dots (x, y)']],
+          pic: { k: 'table', xh, yh, cols: cols.concat([{ x: '…', y: '…', ghost: true }]), foot: '?', footl: 'scatter plot:' }
+        });
+      },
+      function stSlope() {
+        const [xl, yl, xs, ys, m, b, xa, xb] = pick([
+          ['study time (h)', 'score', 'study time x (hours)', 'test score y', rnd(4, 9), rnd(45, 60), 0.5, 6],
+          ['temperature (°C)', 'visitors', 'temperature x (°C)', 'splash-pad visitors y', rnd(5, 8), rnd(5, 30), 15, 32]]);
+        const per = xl[0] === 's' ? 'hour' : 'degree', u = xl[0] === 's' ? 'points' : 'visitors';
+        return mk('stSlope', 1, 'ST3', {
+          story: 'A line of best fit for ' + xs + ' and ' + ys + ' is ' + B('y = ' + m + 'x + ' + b) + '.',
+          q: 'More per extra ' + per + '?', v: m, unit: u, cue: 'The slope is the rate',
+          errs: [[b, 'That’s b, the starting value', 0], [m + b, 'The slope alone is the rate', 0]],
+          steps: [['slope = rate', 'm = ' + m + ', so +' + m + ' ' + u + ' per ' + per]],
+          pic: { k: 'graph', xl, yl, lines: [{ m, b, x0: Math.max(0, xa - 1), x1: xb + 1, c: 'L' }], pts: scat(m, b, xa, xb, 9, m * 1.5), rr: { a: [xb - 3, m * (xb - 3) + b], b: [xb - 2, m * (xb - 2) + b], run: '+1', rise: '+' + m, s1: 0 } }
+        });
+      },
+      function stPredict() {
+        const m = pick([2, 2.5, 3, 4]), b = pick([10, 15, 20]), x = rnd(14, 28), v = R(m * x + b, 1);
+        return mk('stPredict', 1, 'ST4', {
+          story: 'A line of best fit for ice-cream sales is ' + B('y = ' + F(m) + 'x + ' + b) + ', with x in °C. Predict the sales on a ' + B(x + ' °C') + ' day.',
+          q: 'Cones sold?', v, dp: dp1(v), unit: 'cones', cue: 'Substitute x into the line',
+          errs: [[R(m * x, 1), 'Add the ' + b + ' too', 0], [R((m + b) * x, 1), 'Only x gets multiplied', 0]],
+          steps: [['substitute x', F(m) + '(' + x + ') + ' + b + ' = ' + F(v) + ' cones']],
+          pic: { k: 'graph', xl: 'temperature (°C)', yl: 'cones', lines: [{ m, b, x0: 10, x1: 32, c: 'L' }], pts: scat(m, b, 12, 30, 9, 8).concat([{ x, y: v, q: true, pos: 'l' }]), read: { x, s: 0 } }
+        });
+      }
+    ],
+    2: [
+      function stOff() {
+        const m = pick([2, 3, 4]), b = pick([10, 15, 20]), x = rnd(15, 30), pred = m * x + b, act = pred + pick([-14, -9, -6, 7, 11, 15]), res = act - pred;
+        return mk('stOff', 2, 'ST3', {
+          story: 'A shop’s line of best fit is ' + B('y = ' + m + 'x + ' + b) + ' (x in °C, y = cones). On a ' + B(x + ' °C') + ' day it sold ' + B(act + ' cones') + '.',
+          q: 'Actual − predicted?', v: res, unit: 'cones', cue: 'Predict first, then subtract',
+          errs: [[pred, 'Now subtract: actual − predicted', 1], [act - m * x, 'Add b to the prediction', 0]],
+          steps: [['predicted', m + '(' + x + ') + ' + b + ' = ' + pred + ' cones'], ['actual − predicted', act + ' − ' + pred + ' = ' + F(res) + ' cones']],
+          pic: { k: 'graph', xl: 'temperature (°C)', yl: 'cones', lines: [{ m, b, x0: 10, x1: 34, c: 'L' }], pts: scat(m, b, 12, 32, 8, 6).concat([{ x, y: act, t: act + ' sold', c: 'Y', pos: 'r' }, { x, y: pred, t: 'line ' + pred, c: 'N', pos: 'l', s: 0 }]), read: { x, s: 0 } }
+        });
+      },
+      function stTrend() {
+        const plant = pick(['sunflower', 'corn plant', 'bean plant']), m = pick([3, 4, 5, 6]), b = rnd(2, 9), x1 = pick([4, 5, 6]), y1 = b + m * x1, x2 = x1 + rnd(3, 6), v = b + m * x2;
+        return mk('stTrend', 2, 'ST3', {
+          story: 'A line of best fit for a ' + plant + '’s height starts at ' + B(b + ' cm') + ' in week 0 and passes ' + B(y1 + ' cm') + ' in week ' + B(x1) + '.',
+          q: 'Height in week ' + x2 + '?', v, unit: 'cm', cue: 'Rate first, then predict',
+          errs: [[R(y1 / x1 * x2, 2), 'Start from the ' + b + ' cm', 0], [m * x2, 'Add the starting height', 1], [m, 'That’s the rate: keep going', 0], [y1 + m * x2, 'Count weeks from week 0', 1]],
+          steps: [['rate', '(' + y1 + ' − ' + b + ') ÷ ' + x1 + ' = ' + m + ' cm per week'], ['predict', m + '(' + x2 + ') + ' + b + ' = ' + v + ' cm']],
+          pic: { k: 'graph', xl: 'week', yl: 'height (cm)', lines: [{ m, b, x0: 0, x1: x2 + 1, c: 'L' }], pts: scat(m, b, 1, x1 + 1, 6, 3).concat([{ x: 0, y: b, t: b + ' cm', c: 'G', pos: 'r' }, { x: x1, y: y1, t: y1 + ' cm', c: 'Y', pos: 'l' }, { x: x2, y: v, q: true, pos: 'l' }]), rr: { a: [0, b], b: [x1, y1], run: x1 + ' wk', rise: '+' + (y1 - b), s0: 0, s1: 0 }, read: { x: x2, s: 1 } }
+        });
+      },
+      function stTarget() {
+        const m = pick([2, 3, 4, 5]), b = pick([10, 15, 20, 25]), x = rnd(14, 30), Y = m * x + b;
+        return mk('stTarget', 2, 'ST4', {
+          story: 'A line of best fit for lemonade sales is ' + B('y = ' + m + 'x + ' + b) + ', with x in °C. The stand wants to sell ' + B(Y + ' cups') + '.',
+          q: 'How warm a day?', v: x, unit: '°C', cue: 'Set y, then solve for x',
+          errs: [[R(Y / m, 2), 'Take off the ' + b + ' first', 0], [R((Y + b) / m, 2), 'Subtract ' + b + ', don’t add', 0], [Y - b, 'Now divide by ' + m, 1]],
+          steps: [['subtract b', Y + ' − ' + b + ' = ' + (Y - b)], ['divide by m', (Y - b) + ' ÷ ' + m + ' = ' + x + ' °C']],
+          pic: { k: 'graph', xl: 'temperature (°C)', yl: 'cups', lines: [{ m, b, x0: 10, x1: 34, c: 'L' }], pts: scat(m, b, 12, 32, 9, 7).concat([{ x, y: Y, q: true, pos: 'l' }]), read: { x, s: 1 } }
+        });
+      }
+    ],
+    3: [
+      function stTwoPts() {
+        for (;;) {
+          const m = pick([2, 3, 4, 5, 1.5, 2.5]), b = rnd(5, 30), x1 = rnd(10, 16), x2 = x1 + rnd(4, 8), x3 = x2 + rnd(3, 8), y1 = m * x1 + b, y2 = m * x2 + b, y3 = m * x3 + b;
+          if (y1 % 1 || y2 % 1) continue;
+          return mk('stTwoPts', 3, 'ST3', {
+            story: 'A line of best fit for hot-dog sales (y) against temperature (x, °C) passes through ' + B('(' + x1 + ', ' + y1 + ')') + ' and ' + B('(' + x2 + ', ' + y2 + ')') + '.',
+            q: 'Sales at ' + x3 + ' °C?', v: y3, dp: dp1(y3), unit: 'hot dogs', cue: 'Slope, then b, then predict',
+            errs: [[R(m * x3, 1), 'Add the y-intercept', 2], [m, 'That’s the slope: keep going', 0], [R(y1 / x1 * x3, 2), 'The line doesn’t start at 0', 1], [R(y2 / x2 * x3, 2), 'The line doesn’t start at 0', 1]],
+            steps: [['slope', '(' + y2 + ' − ' + y1 + ') ÷ (' + x2 + ' − ' + x1 + ') = ' + F(m)], ['y-intercept', 'b = ' + y1 + ' − ' + F(m) + '(' + x1 + ') = ' + b], ['predict', F(m) + '(' + x3 + ') + ' + b + ' = ' + F(y3)]],
+            pic: { k: 'graph', xl: 'temperature (°C)', yl: 'hot dogs', lines: [{ m, b, x0: 0, x1: x3 + 2, c: 'L' }], pts: scat(m, b, x1 - 2, x2 + 2, 8, 6).concat([{ x: 0, y: b, t: 'b = ' + b, c: 'G', pos: 'r', s: 1 }, { x: x1, y: y1, t: '(' + x1 + ', ' + y1 + ')', c: 'Y', pos: 'l' }, { x: x2, y: y2, t: '(' + x2 + ', ' + y2 + ')', c: 'Y', pos: 'l' }, { x: x3, y: y3, q: true, pos: 'l' }]), rr: { a: [x1, y1], b: [x2, y2], run: '+' + (x2 - x1), rise: '+' + (y2 - y1), s0: 0, s1: 0 }, read: { x: x3, s: 2 } }
+          });
+        }
+      },
+      function stZero() {
+        for (;;) {
+          const r = pick([2, 3, 4]), Z = rnd(40, 70), b = r * Z, x1 = rnd(5, 12), x2 = x1 + rnd(10, 18), y1 = b - r * x1, y2 = b - r * x2;
+          if (y2 < 12) continue;
+          return mk('stZero', 3, 'ST4', {
+            story: 'A line of best fit for snow depth at a ski hill passes through ' + B('(day ' + x1 + ', ' + y1 + ' cm)') + ' and ' + B('(day ' + x2 + ', ' + y2 + ' cm)') + '. Extend the line.',
+            q: 'Day with no snow?', v: Z, pre: 'day', cue: 'Slope, b, then y = 0',
+            errs: [[R(y2 / r, 2), 'Count from day 0', 2], [R(y1 / r, 2), 'Count from day 0', 2], [b, 'That’s b: now y = 0', 2], [r, 'That’s the rate: keep going', 0]],
+            steps: [['slope', '(' + y2 + ' − ' + y1 + ') ÷ (' + x2 + ' − ' + x1 + ') = −' + r], ['y-intercept', 'b = ' + y1 + ' + ' + r + '(' + x1 + ') = ' + b], ['set y = 0', '0 = ' + b + ' − ' + r + 'x, so x = ' + b + ' ÷ ' + r + ' = ' + Z]],
+            pic: { k: 'graph', xl: 'day', yl: 'snow (cm)', lines: [{ m: -r, b, x0: 0, x1: x2, c: 'L' }, { m: -r, b, x0: x2, x1: Z, c: 'L', dash: true, s: 2 }], pts: scat(-r, b, x1 - 3, x2 + 3, 8, 5).concat([{ x: x1, y: y1, t: y1 + ' cm', c: 'Y', pos: 'r' }, { x: x2, y: y2, t: y2 + ' cm', c: 'Y', pos: 'r' }, { x: Z, y: 0, q: true, d: 'day ' + Z, pos: 'a' }]) }
+          });
+        }
+      },
+      function stWeekend() {
+        const m = pick([2, 3, 4]), b = rnd(40, 70), t1 = -rnd(3, 15), t2 = -rnd(3, 15), y1 = b - m * t1, y2 = b - m * t2, v = y1 + y2;
+        return mk('stWeekend', 3, 'ST3', {
+          story: 'A café’s line of best fit for hot chocolate is ' + B('y = −' + m + 'x + ' + b) + ' (x in °C, y = cups). Forecast: Saturday ' + B(F(t1) + ' °C') + ', Sunday ' + B(F(t2) + ' °C') + '.',
+          q: 'Cups for both days?', v, unit: 'cups', cue: 'Predict each day, then add',
+          errs: [[2 * b + m * (t1 + t2), '−' + m + ' × negative is positive', 0], [y1, 'Add Sunday too', 2], [y2, 'Add Saturday too', 2], [v - 2 * b, 'Add the ' + b + ' each day', 0]],
+          steps: [['Saturday', '−' + m + '(' + F(t1) + ') + ' + b + ' = ' + y1 + ' cups'], ['Sunday', '−' + m + '(' + F(t2) + ') + ' + b + ' = ' + y2 + ' cups'], ['both days', y1 + ' + ' + y2 + ' = ' + v + ' cups']],
+          pic: { k: 'table', xh: 'temp (°C)', yh: 'cups', cols: [{ x: 'Sat ' + F(t1), q: true, d: String(y1) }, { x: 'Sun ' + F(t2), q: true, d: String(y2) }], foot: '?', footl: 'both days:' }
+        });
+      }
+    ]
+  };
+
+  /* ============ PR · Probability ============ */
+  const fr = (n, d) => Q.str(Q.q(n, d));
+  // A probability answer: exact fraction, or a decimal to 2 places, or a percent. Named mistakes must sit clear of the answer.
+  const prob = (n, d) => ({ v: n / d, ans: fr(n, d), tol: .0051, et: .004, prob: true });
+  const CL = { red: 'R', blue: 'L', green: 'N', yellow: 'Y' };
+  const PR = {
+    1: [
+      function prBag() {
+        const cs = Q.shuffle(['red', 'blue', 'green', 'yellow']).slice(0, 3), ns = cs.map(() => rnd(2, 7)), t = ns[0] + ns[1] + ns[2], i = rnd(0, 2), c = cs[i], k = ns[i];
+        return mk('prBag', 1, 'PR1', Object.assign(prob(k, t), {
+          story: 'A bag holds ' + B(ns[0] + ' ' + cs[0]) + ', ' + B(ns[1] + ' ' + cs[1]) + ' and ' + B(ns[2] + ' ' + cs[2]) + ' marbles. You pick one without looking.',
+          q: 'P(' + c + ')?', cue: 'Wanted ÷ all the marbles',
+          errs: [[k / (t - k), 'Out of all ' + t + ' marbles', 0], [(t - k) / t, 'That’s P(not ' + c + ')', 0]],
+          steps: [['wanted ÷ total', k + ' ÷ ' + t + ' = ' + fr(k, t)]],
+          pic: { k: 'bag', items: cs.map((x, j) => ({ c: CL[x], n: ns[j], t: x })), foot: '?', footl: 'P(' + c + ') =' }
+        }));
+      },
+      function prNot() {
+        const n = pick([5, 6, 8, 10, 12]), k = rnd(1, n - 1), L = pick(['WIN', 'PRIZE', 'BONUS']);
+        return mk('prNot', 1, 'PR1', Object.assign(prob(n - k, n), {
+          story: 'A game spinner has ' + B(n + ' equal sections') + '. ' + B(k) + ' of them say ' + B(L) + '.',
+          q: 'P(not ' + L + ')?', cue: 'Not = 1 − P(' + L + ')',
+          errs: [[k / n, 'That’s P(' + L + ')', 0], [(n - k) / k, 'Out of all ' + n + ' sections', 0]],
+          steps: [['1 − P(' + L + ')', '1 − ' + k + '/' + n + ' = ' + fr(n - k, n)]],
+          pic: { k: 'spin', n, hit: k, c: 'Y', lab: n <= 8 ? L : '', t: L, foot: '?', footl: 'P(not ' + L + ') =' }
+        }));
+      },
+      function prMenu() {
+        const [A, As, Bn, Bs, la, lb] = pick([
+          ['soup', 'soups', 'sandwich', 'sandwiches', ['tomato', 'chicken', 'corn', 'lentil'], ['ham', 'egg', 'tuna', 'turkey', 'veggie', 'BLT']],
+          ['drink', 'drinks', 'snack', 'snacks', ['milk', 'juice', 'water', 'tea'], ['apple', 'muffin', 'yogurt', 'cheese', 'pretzel', 'granola']]]);
+        const a = rnd(2, 4), b = rnd(3, 6);
+        return mk('prMenu', 1, 'PR2', {
+          story: 'A lunch combo is ' + B('1 ' + A) + ' and ' + B('1 ' + Bn) + '. There are ' + B(a + ' ' + As) + ' and ' + B(b + ' ' + Bs) + ' to choose from.',
+          q: 'How many combos?', v: a * b, unit: 'combos', cue: 'Each ' + A + ' with each ' + Bn,
+          errs: [[a + b, 'Each ' + A + ' goes with each', 0]],
+          steps: [[As + ' × ' + Bs, a + ' × ' + b + ' = ' + a * b + ' combos']],
+          pic: { k: 'grid', rl: A, cl: Bn, rows: la.slice(0, a).map(t => ({ t })), cols: lb.slice(0, b).map(t => ({ t })), hit: 'all', dots: true, s: 0, foot: '?', footl: 'total:' }
+        });
+      }
+    ],
+    2: [
+      function prExpect() {
+        const k = rnd(1, 5), N = pick([16, 24, 40, 48, 80]), e = N * k / 8;
+        return mk('prExpect', 2, 'PR1', {
+          story: 'A spinner has ' + B('8 equal sections') + ', and ' + B(k) + ' of them are blue. You spin it ' + B(N + ' times') + '.',
+          q: 'Expected blue spins?', v: e, unit: 'times', cue: 'P(blue) × number of spins',
+          errs: [[R(k / 8, 4), 'Now × the number of spins', 1], [k, 'P(blue) × the spins', 0], [N * k, 'P(blue) is ' + k + '/8', 0], [R(N / k, 2), 'P(blue) × the spins', 0]],
+          steps: [['P(blue)', k + '/8'], ['P × spins', k + '/8 × ' + N + ' = ' + e + ' times']],
+          pic: { k: 'spin', n: 8, hit: k, c: 'L', t: 'blue', foot: '?', footl: 'expected:' }
+        });
+      },
+      function prCoinDie() {
+        const j = rnd(1, 4), g = 6 - j;
+        return mk('prCoinDie', 2, 'PR3', Object.assign(prob(g, 12), {
+          story: 'You flip a coin and roll a die. You win with ' + B('heads') + ' and a roll ' + B('greater than ' + j) + '.',
+          q: 'P(win)?', cue: 'Each P, then multiply',
+          errs: [[g / 6, 'Heads too: × 1/2', 1], [1 / 2 + g / 6, 'And: multiply, don’t add', 1], [g / 8, 'Outcomes multiply: 2 × 6', 1]],
+          steps: [['each event', 'P(heads) = 1/2,  P(> ' + j + ') = ' + fr(g, 6)], ['multiply', '1/2 × ' + fr(g, 6) + ' = ' + fr(g, 12)]],
+          pic: { k: 'grid', rl: 'coin', cl: 'die', rows: [{ t: 'H' }, { t: 'T' }], cols: [1, 2, 3, 4, 5, 6].map(t => ({ t: String(t) })), hit: [1, 2, 3, 4, 5, 6].slice(j).map(c => [0, c - 1]), s: 1, foot: '?', footl: 'P(win) =' }
+        }));
+      },
+      function prExper() {
+        const N = pick([60, 120, 180, 240]), exp = N / 6, obs = exp + pick([-6, -4, -3, 3, 4, 7]), d = obs - exp;
+        return mk('prExper', 2, 'PR1', {
+          story: 'A die is rolled ' + B(N + ' times') + '. It lands on 4 a total of ' + B(obs + ' times') + '.',
+          q: 'Actual − expected?', v: d, cue: 'Expected = 1/6 × rolls',
+          errs: [[exp, 'Now: actual − expected', 1], [R(obs / N, 4), 'Compare counts, not P', 0]],
+          steps: [['expected 4s', '1/6 × ' + N + ' = ' + exp], ['actual − expected', obs + ' − ' + exp + ' = ' + F(d)]],
+          pic: { k: 'bar', rows: [{ t: 'expected 4s (1/6 of ' + N + ')', segs: [{ v: exp, t: String(exp), c: 'L', s: 0 }] }, { t: 'actual 4s', segs: [{ v: obs, t: String(obs), c: 'Y' }] }], foot: '?', footl: 'actual − expected =' }
+        });
+      }
+    ],
+    3: [
+      function prNoRep() {
+        const r = rnd(3, 7), b = rnd(3, 8), t = r + b;
+        return mk('prNoRep', 3, 'PR4', Object.assign(prob(r * (r - 1), t * (t - 1)), {
+          story: 'A bag has ' + B(r + ' red') + ' and ' + B(b + ' blue') + ' tokens. You draw one, ' + B('keep it') + ', then draw another.',
+          q: 'P(both red)?', cue: 'The bag changes after draw 1',
+          errs: [[r * r / (t * t), 'The first one is kept out', 1], [r * (r - 1) / (t * t), 'One fewer token in the bag', 1], [r / t + (r - 1) / (t - 1), 'And: multiply, don’t add', 2]],
+          steps: [['1st red', r + '/' + t], ['2nd red', (r - 1) + '/' + (t - 1) + '  (one red kept out)'], ['multiply', r + '/' + t + ' × ' + (r - 1) + '/' + (t - 1) + ' = ' + fr(r * (r - 1), t * (t - 1))]],
+          pic: { k: 'bag', items: [{ c: 'R', n: r, t: 'red' }, { c: 'L', n: b, t: 'blue' }], out: { c: 'R', s: 1, t: 'kept out' }, foot: '?', footl: 'P(both red) =' }
+        }));
+      },
+      function prRain() {
+        const a = pick([20, 30, 40, 50, 60]), b = pick([10, 20, 30, 40, 70]), pa = 1 - a / 100, pb = 1 - b / 100, none = R(pa * pb, 4), v = R(1 - none, 4);
+        return mk('prRain', 3, 'PR3', Object.assign(prob(1, 1), {
+          v, ans: F(v),
+          story: 'There is a ' + B(a + '%') + ' chance of rain on Saturday and a ' + B(b + '%') + ' chance on Sunday. The two days are independent.',
+          q: 'P(rain at least once)?', cue: 'Use the complement: 1 − P(neither)',
+          errs: [[(a + b) / 100, 'Adding counts the overlap twice', 0], [none, 'That’s neither day: now 1 −', 2], [a * b / 10000, 'That’s rain on both days', 1]],
+          steps: [['no rain each day', F(pa) + ' and ' + F(pb)], ['neither day', F(pa) + ' × ' + F(pb) + ' = ' + F(none)], ['at least once', '1 − ' + F(none) + ' = ' + F(v)]],
+          pic: { k: 'grid', rl: 'Sat', cl: 'Sun', rows: [{ t: 'rain ' + a + '%', w: a }, { t: 'dry ' + (100 - a) + '%', w: 100 - a }], cols: [{ t: 'rain ' + b + '%', w: b }, { t: 'dry ' + (100 - b) + '%', w: 100 - b }], hit: [[0, 0], [0, 1], [1, 0]], s: 2, ct: { '1,1': { t: 'neither ' + F(none), s: 1 } }, foot: '?', footl: 'P(at least once) =' }
+        }));
+      },
+      function prRounds() {
+        for (;;) {
+          const t = pick([4, 5, 6, 8, 10]), g = rnd(1, Math.min(3, t - 2)), k = pick([2, 3, 4, 5]), games = t * t * k, v = g * g * k;
+          if (games > 300) continue;
+          return mk('prRounds', 3, 'PR3', {
+            story: 'A pile has ' + B(t + ' cards') + ' and ' + B(g + ' ' + (g > 1 ? 'are aces' : 'is an ace')) + '. Draw one, put it back, draw again: two aces wins. You play ' + B(games + ' rounds') + '.',
+            q: 'Expected wins?', v, unit: 'wins', cue: 'P(two aces) × the rounds',
+            errs: [[R(g / t * games, 2), 'Both draws must be aces', 1], [R(g * g / (t * t), 4), 'Now × the rounds', 2], [R(g * (g - 1) / (t * (t - 1)) * games, 2), 'It’s put back: same odds', 1], [R(2 * g / t * games, 2), 'And: multiply, don’t add', 1]],
+            steps: [['each draw', 'P(ace) = ' + g + '/' + t], ['both aces', g + '/' + t + ' × ' + g + '/' + t + ' = ' + fr(g * g, t * t)], ['× rounds', fr(g * g, t * t) + ' × ' + games + ' = ' + v + ' wins']],
+            pic: { k: 'bag', box: true, items: [{ c: 'Y', n: g, t: g > 1 ? 'aces' : 'ace', l: 'A' }, { c: 'M', n: t - g, t: 'other' }], foot: '?', footl: 'expected wins:' }
+          });
+        }
+      }
+    ]
+  };
+
+  const TOPICS = { rn: RN, sr: SR, pe: PE, lr: LR, le: LE, po: PO, cg: CG, me: ME, si: SI, st: ST, pr: PR };
   const lvlAt = n => n == null ? rnd(1, 3) : n < 3 ? 1 : n < 7 ? 2 : 3;   // a round: 3 one-step, 4 two-step, 3 three-step
   const gen = (topic, n) => pick(TOPICS[topic][lvlAt(n)])();
   const genMix = n => { const t = pick(Object.keys(TOPICS)); return Object.assign(gen(t, n), { topic: t }); };

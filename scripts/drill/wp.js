@@ -181,6 +181,7 @@ const WP = (() => {
       });
       if (r.brace) { const b = r.brace; lab(A, 60 + tot(r) * px / 2, y + rh + 24, qtext(b, null, V), qcol(b, V, C.muted), { 'font-size': 16 }); }
     });
+    footer(A, p, V, H - 16);
   }
 
   /* ---------- a graph in the first quadrant: lines, points, a rise/run triangle, a reading ---------- */
@@ -219,7 +220,8 @@ const WP = (() => {
       const r = p.read, l = p.lines[0], y = l.m * r.x + l.b, c = hot(r, V) ? C.red : C.green, a = anim(r, V);
       A.el('path', Object.assign({ d: 'M' + sx(r.x) + ' ' + Y0 + 'V' + sy(y) + 'H' + X0, fill: 'none', stroke: c, 'stroke-width': 2.5, 'stroke-dasharray': '6 5' }, a), A.svg);
     }
-    (p.pts || []).forEach(e => {
+    (p.pts || []).filter(e => e.dot).forEach(e => A.el('circle', { cx: sx(e.x), cy: sy(e.y), r: 4.5, fill: col(e.c), 'fill-opacity': .55, stroke: col(e.c), 'stroke-width': 1.5 }, A.svg));   // scatter data
+    (p.pts || []).filter(e => !e.dot).forEach(e => {
       if (!on(e, V)) return;
       const x = sx(e.x), y = sy(e.y), c = hot(e, V) ? C.red : e.q ? qcol('?', V, col(e.c)) : col(e.c), a = anim(e, V);
       A.el('circle', Object.assign({ cx: x, cy: y, r: 7, fill: c, stroke: C.stage, 'stroke-width': 2 }, a), A.svg);
@@ -248,6 +250,7 @@ const WP = (() => {
       lab(A, (x1 + x2) / 2, y + k * 30, d.t, c, Object.assign({ 'font-size': 15 }, a));
     });
     gap(p.dx, yA - 4, true); gap(p.dy, yB + rh + 4, false);
+    footer(A, p, V, H - 16);
   }
 
   /* ---------- a flow of operations, with the undo steps underneath ---------- */
@@ -464,7 +467,76 @@ const WP = (() => {
     footer(A, p, V, H - 16);
   }
 
-  const PIC = { nl, rects, tri, chain, cube, bar, graph, table, flow, shape, circ, solid, pair, scene };
+  /* ---------- a bag (or pile) of counters; out = one taken out and kept ---------- */
+  // p: { items: [{c, n, t, l}], out: {c, s, t}, box (a pile of cards, not a bag), foot, footl }
+  function bag(A, p, V, H) {
+    const all = []; p.items.forEach(g => { for (let i = 0; i < g.n; i++) all.push(g); });
+    const n = all.length, cols = Math.min(7, Math.ceil(Math.sqrt(n * 1.6))), rows = Math.ceil(n / cols), d = 34;
+    const w = cols * d + 40, h = rows * d + 36, cx = p.out ? 250 : 320, x0 = cx - w / 2, y0 = Math.max(28, (H - h - 80) / 2 + 10);
+    if (p.box) A.el('rect', { x: x0, y: y0, width: w, height: h, rx: 10, fill: C.edge, 'fill-opacity': .18, stroke: C.muted, 'stroke-width': 2 }, A.svg);
+    else A.el('path', { d: 'M' + (x0 + 14) + ' ' + y0 + 'Q' + (x0 - 12) + ' ' + (y0 + h * .7) + ' ' + (x0 + 26) + ' ' + (y0 + h) + 'H' + (x0 + w - 26) + 'Q' + (x0 + w + 12) + ' ' + (y0 + h * .7) + ' ' + (x0 + w - 14) + ' ' + y0 + 'Z', fill: C.edge, 'fill-opacity': .18, stroke: C.muted, 'stroke-width': 2.5 }, A.svg);
+    const out = p.out && on(p.out, V) ? p.out : null; let gone = null;
+    all.forEach((g, i) => {
+      const x = x0 + 20 + d / 2 + (i % cols) * d, y = y0 + 18 + d / 2 + Math.floor(i / cols) * d, miss = out && !gone && g.c === out.c;
+      if (miss) gone = [x, y];
+      A.el('circle', { cx: x, cy: y, r: 13, fill: col(g.c), 'fill-opacity': miss ? 0 : .8, stroke: col(g.c), 'stroke-width': 2, 'stroke-dasharray': miss ? '4 4' : null }, A.svg);
+      if (g.l && !miss) lab(A, x, y + 1, g.l, C.stage, { 'font-size': 14, 'font-weight': 700, style: 'stroke:none' });
+    });
+    // the counts under the bag, each in its own colour (after the draw: one fewer)
+    p.items.forEach((g, i) => {
+      const k = out && g.c === out.c ? g.n - 1 : g.n, x = cx + (i - (p.items.length - 1) / 2) * 118;
+      lab(A, x, y0 + h + 26, k + ' ' + g.t, out && g.c === out.c ? C.green : col(g.c), Object.assign({ 'font-size': 16 }, out ? anim(out, V) : {}));
+    });
+    if (out) {
+      const c = hot(out, V) ? C.red : col(out.c), a = anim(out, V), xo = 500, yo = y0 + h / 2;
+      A.el('path', Object.assign({ d: 'M' + (gone[0] + 16) + ' ' + gone[1] + 'Q' + (xo - 60) + ' ' + (y0 - 20) + ' ' + (xo - 20) + ' ' + yo, fill: 'none', stroke: hot(out, V) ? C.red : C.gold, 'stroke-width': 2.5, 'stroke-dasharray': '6 5', 'marker-end': 'url(#a' + (hot(out, V) ? 'R' : 'G') + ')' }, a), A.svg);
+      A.el('circle', Object.assign({ cx: xo, cy: yo, r: 15, fill: c, 'fill-opacity': .85, stroke: c, 'stroke-width': 2 }, a), A.svg);
+      lab(A, xo, yo + 34, out.t, c, Object.assign({ 'font-size': 15 }, a));
+    }
+    footer(A, p, V, H - 16);
+  }
+
+  /* ---------- a spinner with n equal sections, the first `hit` of them coloured ---------- */
+  // p: { n, hit, c, lab (text in each coloured section), t (name of the coloured part), foot, footl }
+  function spin(A, p, V, H) {
+    const r = Math.min(112, (H - 70) / 2), cx = 220, cy = 18 + r + Math.max(0, (H - 60 - 2 * r) / 2), c = col(p.c);
+    for (let i = 0; i < p.n; i++) {
+      const a0 = (i / p.n - .25) * 2 * Math.PI, a1 = ((i + 1) / p.n - .25) * 2 * Math.PI, on1 = i < p.hit;
+      A.el('path', { d: 'M' + cx + ' ' + cy + 'L' + (cx + r * Math.cos(a0)) + ' ' + (cy + r * Math.sin(a0)) + 'A' + r + ' ' + r + ' 0 0 1 ' + (cx + r * Math.cos(a1)) + ' ' + (cy + r * Math.sin(a1)) + 'Z', fill: on1 ? c : C.edge, 'fill-opacity': on1 ? .6 : .3, stroke: C.stage, 'stroke-width': 2.5 }, A.svg);
+      if (on1 && p.lab) { const am = (a0 + a1) / 2; lab(A, cx + r * .64 * Math.cos(am), cy + r * .64 * Math.sin(am), p.lab, C.text, { 'font-size': 12 }); }
+    }
+    A.el('circle', { cx, cy, r, fill: 'none', stroke: C.muted, 'stroke-width': 2 }, A.svg);
+    A.el('line', { x1: cx, y1: cy, x2: cx + r * .55, y2: cy - r * .45, stroke: C.text, 'stroke-width': 4, 'stroke-linecap': 'round', 'marker-end': 'url(#aA)' }, A.svg);
+    A.el('circle', { cx, cy, r: 6, fill: C.text }, A.svg);
+    lab(A, 380, cy - 16, p.hit + ' ' + p.t, c, { 'font-size': 18, 'text-anchor': 'start' });
+    lab(A, 380, cy + 14, p.n - p.hit + ' not ' + p.t, C.muted, { 'font-size': 18, 'text-anchor': 'start' });
+    lab(A, 380, cy + 44, p.n + ' equal sections', C.muted, { 'font-size': 15, 'text-anchor': 'start' });
+    footer(A, p, V, H - 16);
+  }
+
+  /* ---------- an outcome grid (a sample space), or an area model when rows and columns carry weights ---------- */
+  // p: { rl, cl (row and column titles), rows: [{t, w}], cols: [{t, w}], hit: 'all' | [[i, j]], s (the step that shades them),
+  //      dots (a dot per outcome), ct: {'i,j': {t, s}} (a cell label tied to a step), foot, footl }
+  function grid(A, p, V, H) {
+    const X0 = 190, X1 = 600, Y0 = 62, Y1 = H - 42, sw = a => a.reduce((s, e) => s + (e.w || 1), 0);
+    const cut = (list, a, b) => { let acc = 0; const T = sw(list); return list.map(e => { const s = a + acc / T * (b - a); acc += e.w || 1; return [s, a + acc / T * (b - a)]; }); };
+    const RX = cut(p.cols, X0, X1), RY = cut(p.rows, Y0, Y1), hit = (i, j) => p.hit === 'all' || p.hit.some(h => h[0] === i && h[1] === j);
+    const shade = { s: p.s }, sOn = on(shade, V), hc = hot(shade, V);
+    lab(A, (X0 + X1) / 2, Y0 - 40, p.cl, C.blue, { 'font-size': 15 });
+    lab(A, X0 - 12, Y0 - 40, p.rl + ' ↓', C.yellow, { 'font-size': 15, 'text-anchor': 'end' });
+    p.cols.forEach((e, j) => lab(A, (RX[j][0] + RX[j][1]) / 2, Y0 - 14, e.t, C.blue, { 'font-size': p.cols.length > 4 ? 14 : 15 }));
+    p.rows.forEach((e, i) => lab(A, X0 - 12, (RY[i][0] + RY[i][1]) / 2, e.t, C.yellow, { 'font-size': 15, 'text-anchor': 'end' }));
+    p.rows.forEach((_, i) => p.cols.forEach((__, j) => {
+      const [xa, xb] = RX[j], [ya, yb] = RY[i], h = hit(i, j) && sOn, c = hc ? C.red : C.green;
+      A.el('rect', Object.assign({ x: xa, y: ya, width: xb - xa, height: yb - ya, fill: h ? c : 'none', 'fill-opacity': .32, stroke: C.edge, 'stroke-width': 2 }, h ? anim(shade, V) : {}), A.svg);
+      if (p.dots && h) A.el('circle', Object.assign({ cx: (xa + xb) / 2, cy: (ya + yb) / 2, r: 6, fill: c }, anim(shade, V)), A.svg);
+      const ct = p.ct && p.ct[i + ',' + j];
+      if (ct && on(ct, V)) lab(A, (xa + xb) / 2, (ya + yb) / 2, ct.t, hot(ct, V) ? C.red : C.text, Object.assign({ 'font-size': 15 }, anim(ct, V)));
+    }));
+    footer(A, p, V, H - 14);
+  }
+
+  const PIC = { nl, rects, tri, chain, cube, bar, graph, table, flow, shape, circ, solid, pair, scene, bag, spin, grid };
 
   /* ---------- the step chain ---------- */
   function steps(A, it, V, top) {

@@ -10,7 +10,7 @@
 // Word problems: every story type, 300 items each.
 window.EXTRA = ok => {
   const M = MODEL, words = s => String(s).replace(/<[^>]*>/g, '').trim().split(/\s+/).length;
-  const text = s => String(s).replace(/<[^>]*>/g, '');
+  const text = s => String(s).replace(/<[^>]*>/g, ''), R2 = x => Math.round(x * 100) / 100;
   for (const tp in M.TOPICS) for (const lv in M.TOPICS[tp]) M.TOPICS[tp][lv].forEach(g => {
     const bad = []; let it;
     for (let i = 0; i < 300 && bad.length < 3; i++) {
@@ -39,6 +39,12 @@ window.EXTRA = ok => {
   const lv = [...Array(10)].map((_, n) => M.gen('rn', n).lvl).join('');
   ok(lv === '1112222333', 'round ramps 1-1-1-2-2-2-2-3-3-3: ' + lv);
   ok(M.check(M.gen('rn', 0), { v: null }).code === 'other', 'empty answer is not accepted');
+  // Probabilities: a fraction, a 2-place decimal or a percent is right; a number over 1 gets its own cue.
+  let pi; do pi = M.gen('pr', 0); while (!pi.prob);
+  ok(M.check(pi, { v: R2(pi.v * 100) + '%' }).ok, 'probability as a percent: ' + R2(pi.v * 100) + '%');
+  ok(M.check(pi, { v: String(Math.round(pi.v * 100) / 100) }).ok, 'probability to 2 decimal places');
+  ok(M.check(pi, { v: String(R2(pi.v * 100)) }).code === 'over1', 'a percent without % is flagged');
+  ok(!M.check(pi, { v: '1/' + (Math.round(1 / pi.v) + 3) }).ok, 'a wrong fraction is not accepted');
   // Every story type has at least one named mistake.
   for (const tp in M.TOPICS) for (const l in M.TOPICS[tp]) M.TOPICS[tp][l].forEach(g => { let n = 0; for (let i = 0; i < 40; i++) n = Math.max(n, g().errs.length); ok(n > 0, g.name + ' has a named mistake'); });
 };
