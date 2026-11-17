@@ -22,7 +22,7 @@ const MODEL = (() => {
   }
   // A tapped choice -> ok, or the misconception it names (its cue and the step it breaks).
   function check(it, r) {
-    if (r.v === 'a') return { ok: true };
+    if (r.v === 'a') return r.miss ? { ok: true, partial: true, cue: 'Right; an earlier step slipped' } : { ok: true };
     const k = /^e(\d+)$/.test(r.v || '') ? +r.v.slice(1) : -1, e = it.errs[k];
     return e ? { code: 'e' + k, cue: e.cue, s: e.s } : { code: 'other', cue: 'Pick one answer', s: -1 };
   }
@@ -96,7 +96,7 @@ const MODEL = (() => {
   function ecoPyramid() {
     const [pl, ch] = pick(PYR), top = ch[ch.length - 1][1], low = ch[1][1];
     return mk('ecoPyramid', 2, '7-1-02', 3, {
-      story: 'A ' + pl + ' has thousands of ' + B(low) + ' but only a few ' + B(top) + '. The chain is ' + ch.map(x => x[1]).join(' → ') + '.',
+      story: 'A ' + pl + ' has thousands of ' + B(low) + ' but only a few ' + B(top) + '. ' + B('The chain is ' + ch.map(x => x[1]).join(' → ')) + '.',
       q: 'Why so few ' + top + '?', a: 'Energy is lost at each level',
       errs: [['More energy reaches the top', 'Each level gets about 10%', 1], [low[0].toUpperCase() + low.slice(1) + ' are producers', 'They eat plants: consumers', 0]],
       steps: [['each level', 'only about 10% of the energy passes up'], ['top level', 'little energy is left, so only a few ' + top]],
@@ -129,7 +129,7 @@ const MODEL = (() => {
     const [div, mono, pest, ic, pi] = pick(PLOTS), dA = rnd(0, 1), D = dA ? 'A' : 'B', M = dA ? 'B' : 'A';
     const sA = dA ? div : mono, sB = dA ? mono : div;
     return mk('ecoBiodiv', 2, '7-1-03', 4, {
-      story: 'Plot A is ' + sA + '. Plot B is ' + sB + '. ' + pest + ' arrives.',
+      story: 'Plot A is ' + sA + '. Plot B is ' + sB + '. ' + B(pest + ' arrives') + '.',
       q: 'Which recovers better?', a: 'Plot ' + D,
       errs: [['Plot ' + M, 'One kind: the pest hits everything', 1], ['Both the same', 'Count the kinds of species', 0]],
       steps: [['biodiversity', 'Plot ' + D + ' has many more kinds of species'], ['the pest', 'it hits one kind; the rest of Plot ' + D + ' carries on']],
@@ -138,17 +138,17 @@ const MODEL = (() => {
   }
   // A change ripples two links along a food chain. ud: up (+1) or down (−1) for X, Y and Z; st: the three steps.
   const CHAINS = [
-    ['Purple loosestrife crowds out the ' + B('cattails') + ' in a marsh. Muskrats eat cattails, and mink eat muskrats.', ['🌸', 'loosestrife'], ['🌾', 'cattails'], ['🦫', 'muskrats'], ['🦦', 'mink'], [-1, -1, -1],
+    ['Purple loosestrife crowds out the ' + B('cattails') + ' in a marsh. ' + B('Muskrats eat cattails, and mink eat muskrats') + '.', ['🌸', 'loosestrife'], ['🌾', 'cattails'], ['🦫', 'muskrats'], ['🦦', 'mink'], [-1, -1, -1],
       ['loosestrife crowds out the cattails', 'muskrats lose their food, so they decrease', 'mink lose their food, so they decrease']],
-    ['A wetland is ' + B('drained') + ' to build a parking lot. Frogs live in it, and herons eat frogs.', ['🚧', 'draining'], ['💧', 'wetland'], ['🐸', 'frogs'], ['🦩', 'herons'], [-1, -1, -1],
+    ['A wetland is ' + B('drained') + ' to build a parking lot. ' + B('Frogs live in it, and herons eat frogs') + '.', ['🚧', 'draining'], ['💧', 'wetland'], ['🐸', 'frogs'], ['🦩', 'herons'], [-1, -1, -1],
       ['draining removes the wetland', 'frogs lose their habitat, so they decrease', 'herons lose their food, so they decrease']],
-    ['A new road is cut through a forest and many ' + B('aspens') + ' are removed. Hares eat aspen shoots, and lynx eat hares.', ['🚜', 'road'], ['🌳', 'aspens'], ['🐇', 'hares'], ['🐈', 'lynx'], [-1, -1, -1],
+    ['A new road is cut through a forest and many ' + B('aspens') + ' are removed. ' + B('Hares eat aspen shoots, and lynx eat hares') + '.', ['🚜', 'road'], ['🌳', 'aspens'], ['🐇', 'hares'], ['🐈', 'lynx'], [-1, -1, -1],
       ['the road removes many aspens', 'hares lose their food, so they decrease', 'lynx lose their food, so they decrease']],
-    ['A pesticide kills most ' + B('grasshoppers') + ' on a prairie. Meadowlarks eat grasshoppers, and hawks eat meadowlarks.', ['🧴', 'pesticide'], ['🦗', 'grasshoppers'], ['🐦', 'meadowlarks'], ['🦅', 'hawks'], [-1, -1, -1],
+    ['A pesticide kills most ' + B('grasshoppers') + ' on a prairie. ' + B('Meadowlarks eat grasshoppers, and hawks eat meadowlarks') + '.', ['🧴', 'pesticide'], ['🦗', 'grasshoppers'], ['🐦', 'meadowlarks'], ['🦅', 'hawks'], [-1, -1, -1],
       ['the pesticide kills the grasshoppers', 'meadowlarks lose food, so they decrease', 'hawks lose food, so they decrease']],
-    ['Wolves are ' + B('brought back') + ' to a national park. Wolves eat elk, and elk eat willows.', ['🐺', 'reintroduced'], ['🐺', 'wolves'], ['🦌', 'elk'], ['🌿', 'willows'], [1, -1, 1],
+    ['Wolves are ' + B('brought back') + ' to a national park. ' + B('Wolves eat elk, and elk eat willows') + '.', ['🐺', 'reintroduced'], ['🐺', 'wolves'], ['🦌', 'elk'], ['🌿', 'willows'], [1, -1, 1],
       ['more wolves now hunt in the park', 'more elk are eaten, so elk decrease', 'fewer elk eat willows, so willows increase']],
-    ['Ranchers ' + B('trap the coyotes') + ' in a valley. Coyotes eat gophers, and gophers eat grass.', ['🪤', 'trapping'], ['🐺', 'coyotes'], ['🐿️', 'gophers'], ['🌾', 'grass'], [-1, 1, -1],
+    ['Ranchers ' + B('trap the coyotes') + ' in a valley. ' + B('Coyotes eat gophers, and gophers eat grass') + '.', ['🪤', 'trapping'], ['🐺', 'coyotes'], ['🐿️', 'gophers'], ['🌾', 'grass'], [-1, 1, -1],
       ['trapping removes the coyotes', 'fewer gophers are eaten, so they increase', 'more gophers eat grass, so grass decreases']]
   ];
   function ecoChain() {
@@ -170,7 +170,7 @@ const MODEL = (() => {
     ['A spring ' + B('flood') + ' covers a riverbank meadow with mud. The plants there are buried.', ['🌊', 'flood'], 'Plants return in stages',
       [['The meadow is gone for good', 'A flood is a natural disturbance', 0], ['It is all back in a week', 'Recovery takes seasons', 2]],
       ['a flood is a natural disturbance', 'grasses and willow shoots grow through the mud', 'over seasons the meadow fills in again'], ['🌱', 'grasses'], ['🌿', 'willows']],
-    ['A native ' + B('prairie is plowed') + ' and farmed for 50 years. Then the farm is left alone.', ['🚜', 'plowing'], 'Prairie returns only slowly',
+    ['A native ' + B('prairie is plowed') + ' and farmed for 50 years. Then the farm is ' + B('left alone') + '.', ['🚜', 'plowing'], 'Prairie returns only slowly',
       [['Prairie returns in a season', 'Some changes pass a tipping point', 2], ['Wheat keeps growing wild', 'Crops need farmers to replant', 1]],
       ['plowing destroyed the prairie’s roots and soil', 'weeds and crops’ wild cousins move in first', 'native prairie needs decades and help to return'], ['🌾', 'weeds'], ['🌼', 'prairie']]
   ];
@@ -320,9 +320,9 @@ const MODEL = (() => {
     });
   }
   const DARK = [
-    ['Thick ' + B('wildfire smoke') + ' blocks sunlight over a lake for weeks. Algae feed water fleas, and minnows eat the fleas.', ['🌫️', 'smoke']],
-    ['A storm washes ' + B('mud') + ' into a pond, making it murky for weeks. Algae feed water fleas, and minnows eat the fleas.', ['🟤', 'murky water']],
-    ['Deep ' + B('snow covers the ice') + ' on a pond all winter. Algae feed water fleas, and minnows eat the fleas.', ['❄️', 'snow on ice']]
+    ['Thick ' + B('wildfire smoke') + ' blocks sunlight over a lake for weeks. ' + B('Algae feed water fleas, and minnows eat the fleas') + '.', ['🌫️', 'smoke']],
+    ['A storm washes ' + B('mud') + ' into a pond, making it murky for weeks. ' + B('Algae feed water fleas, and minnows eat the fleas') + '.', ['🟤', 'murky water']],
+    ['Deep ' + B('snow covers the ice') + ' on a pond all winter. ' + B('Algae feed water fleas, and minnows eat the fleas') + '.', ['❄️', 'snow on ice']]
   ];
   function plLight() {
     const [story, cause] = pick(DARK);
@@ -760,7 +760,7 @@ const MODEL = (() => {
     });
     const [pl, how] = pick(QUAKE);
     return mk('erQuake', 2, '7-5-04', 4, {
-      story: 'Earthquakes shake ' + B(pl) + ' often. ' + how,
+      story: 'Earthquakes shake ' + B(pl) + ' often. ' + B(how.replace(/.$/, '')) + '.',
       q: 'Why so many quakes?', a: 'Plates stick, then slip',
       errs: [['The core is near the surface', 'Quakes start in the crust', 0], ['Plates move metres a day', 'Plates move cm per year', 1]],
       steps: [['boundary', pl + ' sits on a plate boundary'], ['quake', 'plates stick, stress builds, then they slip']],
@@ -822,6 +822,157 @@ const MODEL = (() => {
     });
   }
 
+  /* ============ READING (v2): a longer passage, the key facts, the key idea, an assumption ============ */
+  /* The passage is a setting sentence (never key), the story's sentences (a sentence with <b> must be found; one
+     without is optional) and red-herring sentences (never key), then the question. Bold is not shown: the
+     student finds the key facts. Then the key idea (from the unit's list), then (Levels 2–3) what we can assume,
+     then the answer. */
+  const SETTING = {
+    eco: ['A park ranger tells this story to a Grade 7 class on a field trip.', 'Students are writing reports about Alberta ecosystems this week.', 'This entry comes from a nature club’s field notebook.', 'A wildlife biologist describes something seen last spring.'],
+    pla: ['A Grade 7 class is studying plants in the science room this term.', 'This story comes up at a farm meeting near Lacombe, in central Alberta.', 'A gardener shares this story at a community garden meeting.', 'The class reads about it in a farm newsletter.'],
+    hea: ['A Grade 7 class is testing heat ideas around the school.', 'This happens on an ordinary day in Red Deer.', 'A science teacher uses this story to start the lesson.', 'Students write it down in their lab journals.'],
+    str: ['A Grade 7 class is studying how structures stand up.', 'An engineer visits the school and tells this story.', 'This story comes from a building site in Edmonton.', 'Students are planning a model for the science fair.'],
+    ear: ['A geologist tells this story on a class trip.', 'The class is studying how Earth’s surface changes.', 'A guide at the Royal Tyrrell Museum tells this story.', 'Students read about it in a news story on Earth science.']
+  };
+  // More everyday details for each unit (never key), so the reading is long enough to need sorting.
+  const UNOISE = {
+    eco: ['Everyone wears rubber boots because the trail is muddy.', 'The group stops for lunch at a picnic table.', 'Two students argue about whose turn it is to carry the notebook.', 'The trip ends with a stop for ice cream in town.'],
+    pla: ['The room smells like fresh soil.', 'A poster about Alberta crops hangs on the wall.', 'One student brings snacks for everyone.', 'The class keeps a calendar of what happens each week.'],
+    hea: ['The school’s furnace hums in the background.', 'Two students take turns writing notes.', 'The teacher reminds everyone to wear safety glasses.', 'It is the last class before the long weekend.'],
+    str: ['The class has a box of tape, glue and string.', 'Two students sketch ideas on graph paper.', 'The engineer wears a bright orange vest.', 'The teacher sets a timer for the activity.'],
+    ear: ['The bus ride there takes about an hour.', 'Everyone brings a hand lens and a notebook.', 'The guide points out a hawk circling overhead.', 'A gift shop sells rock samples and posters.']
+  };
+  // The unit's science ideas: label (the choice) and hint (the cue when another idea is picked).
+  const IDEAS = {
+    eco: { bio: ['Biotic and abiotic factors', 'Sort living from non-living'], role: ['Producer, consumer, decomposer', 'How does it get food?'], flow: ['Energy flow in a food chain', 'Follow the energy from food'],
+      ten: ['The 10% rule', 'Energy is lost at each level'], web: ['Links in a food web', 'Follow who eats whom'], div: ['Biodiversity', 'Count the kinds of species'],
+      change: ['A change spreading along a chain', 'Follow the change link by link'], recover: ['Recovery after a disturbance', 'How ecosystems recover over time'], steward: ['Fixing the cause of a problem', 'Find the cause, then fix it'] },
+    pla: { cell: ['Parts of a plant cell', 'Match the part to its look'], vessel: ['Xylem and phloem', 'What moves, and which way?'], repro: ['Sexual or asexual reproduction', 'One parent or two?'],
+      photo: ['What photosynthesis needs', 'Light, water and CO₂ make glucose'], mass: ['Where a plant’s mass comes from', 'Plants build mass from air'], poll: ['Pollination and seeds', 'Pollen must reach the stigma'],
+      breed: ['Selective breeding or GMO', 'How were the traits changed?'], chain: ['Producers start food chains', 'Every chain starts with light'], farm: ['Crop practices and pests', 'One crop feeds one pest'] },
+    hea: { mode: ['Three ways heat moves', 'Touch, fluid, or waves?'], flow: ['Heat flows from hot to cold', 'Compare the two temperatures'], part: ['Particles and expansion', 'Heat spreads particles apart'],
+      amount: ['Heat vs temperature', 'Total energy depends on amount'], cond: ['Conductors and insulators', 'How fast is heat pulled?'], cap: ['Heat capacity', 'Water warms and cools slowly'],
+      insul: ['Insulation slows heat flow', 'Insulation slows heat; makes none'], state: ['Changes of state', 'Particles speed up or slow'], therm: ['Thermal pollution', 'Warm water holds less oxygen'] },
+    str: { type: ['Solid, frame or shell', 'How is it built?'], load: ['Dead, live and dynamic loads', 'What kind of load acts?'], force: ['Internal forces', 'Push, pull, slide or twist?'],
+      beam: ['Bending: tension and compression', 'One side squeezes, one stretches'], stab: ['Centre of gravity and stability', 'High CoG or narrow base tips'], mach: ['Levers and mechanical advantage', 'Force is traded for distance'],
+      design: ['Improving a design', 'Match the fix to the failure'], mat: ['Choosing materials', 'Match the material to the force'] },
+    ear: { rock: ['Rock types and how they form', 'Melted, layered, or changed?'], bound: ['Plate boundaries', 'Which way do plates move?'], surf: ['Weathering, erosion, deposition', 'Break, carry, or drop?'],
+      layer: ['Earth’s layers', 'Match the layer to its property'], foss: ['Rock layers and fossil age', 'Lower layers are older'], quake: ['Earthquakes at plate boundaries', 'Quakes happen where plates meet'],
+      crys: ['Cooling and crystal size', 'Slow cooling grows big crystals'], uplift: ['Mountain building', 'Plates push rock up slowly'], cycle: ['The rock cycle', 'Follow each change in order'], form: ['Ice and water shape Alberta', 'Glaciers and meltwater shaped it'] }
+  };
+  // Ideas too close to offer as wrong choices for each other.
+  const NEAR = [['flow', 'ten'], ['web', 'change'], ['chain', 'photo'], ['cond', 'mode'], ['stab', 'design'], ['design', 'mat'], ['design', 'beam'], ['cycle', 'rock'], ['crys', 'rock'], ['uplift', 'bound'], ['form', 'surf'], ['quake', 'bound']];
+  const near = (a, b) => NEAR.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
+  // Per story type: idea, red herrings (never key), and for Levels 2–3 what we can assume: [right, [wrong, cue], [wrong, cue]].
+  const READ = {
+    ecoBiotic: { idea: 'bio', noise: ['The visit lasts about two hours.', 'Each entry in the notebook has a date at the top.', 'The class walks in on a gravel trail.'] },
+    ecoRole: { idea: 'role', noise: ['It was seen on a warm morning in June.', 'A student takes a photo of it for the class website.', 'The spot is a short walk from the parking lot.'] },
+    ecoArrow: { idea: 'flow', noise: ['A student sees this happen through binoculars.', 'It happens just before sunset.', 'The class counts 14 birds the same day.'] },
+    ecoPyramid: { idea: 'ten', noise: ['The area is about the size of a football field.', 'The animals are counted over one week in July.', 'A student draws each animal in a notebook.'],
+      assume: ['Each level eats the level below it', ['Each animal eats the same amount', 'The story doesn’t say that'], ['The top animals make their own food', 'Animals can’t make food']] },
+    ecoWeb: { idea: 'web', noise: ['Biologists count the animals each spring.', 'The area is home to many kinds of birds.', 'The disease was first found in a nearby valley.'],
+      assume: ['Nothing else in the web changes', ['The animals switch to new food', 'Stick to what the story says'], ['The disease kills every animal', 'The story says most, not all']] },
+    ecoBiodiv: { idea: 'div', noise: ['A fence runs between the two plots.', 'Students visit the plots twice a month.', 'The plots are near a gravel road.'],
+      assume: ['The plots are alike in other ways', ['The pest eats every kind of plant', 'It eats only one kind'], ['One plot gets much more rain', 'The story says nothing about rain']] },
+    ecoChain: { idea: 'change', noise: ['The area has been studied for ten years.', 'Local people often walk their dogs there.', 'A small stream runs along one side.'],
+      assume: ['Each animal eats mainly what is named', ['The animals easily find other food', 'Stick to the chain given'], ['Only the first species is affected', 'Effects spread along the chain']] },
+    ecoRecover: { idea: 'recover', noise: ['The area is about 20 hectares.', 'A news crew films the area the next day.', 'A biologist marks the spot on a map.'],
+      assume: ['Nothing new disturbs the area', ['No seeds can ever reach it', 'Seeds blow or wash in'], ['Recovery happens all at once', 'Recovery comes in stages']] },
+    ecoSteward: { idea: 'steward', ask: 'What is the best fix?', noise: ['The landowner has lived there for 30 years.', 'The site is close to a highway.', 'A local newspaper writes a story about it.'],
+      assume: ['Fixing the cause fixes the problem', ['The animals will adapt on their own', 'They are already leaving'], ['Any change at all will help', 'Only fixing the cause helps']] },
+    plCell: { idea: 'cell', noise: ['The microscope is set to 400× magnification.', 'The slide was made the day before.', 'A drop of water keeps the sample from drying out.'] },
+    plVessel: { idea: 'vessel', noise: ['The plant is about 40 cm tall.', 'It grows in a raised garden bed.', 'It was planted in early May.'] },
+    plRepro: { idea: 'repro', noise: ['This happens in a garden near Red Deer.', 'The plants get plenty of sun.', 'The gardener waters them every second day.'] },
+    plNeeds: { idea: 'photo', noise: ['The pot is made of red clay.', 'The plant belongs to a Grade 7 class.', 'A student checks it every Monday.'],
+      assume: ['Only the one thing named is missing', ['The soil can feed the plant', 'Soil gives water and minerals only'], ['Stored food lasts forever', 'Stored food runs out']] },
+    plMass: { idea: 'mass', ask: 'Where did the plant’s new mass come from?', noise: ['The pot sits outside in the sun.', 'The pot has a student’s name on it.', 'The plant gets a little taller every week.'],
+      assume: ['Only water was added to the pot', ['The soil was swapped for new soil', 'It’s the same soil'], ['The scale was broken', 'Trust the measurements given']] },
+    plPollin: { idea: 'poll', noise: ['The field is next to a gravel road.', 'The farmer has grown this crop for ten years.', 'The flowers bloom for about three weeks.'],
+      assume: ['Bees are the main pollinators here', ['Wind carries all the pollen', 'Then bees wouldn’t matter'], ['Seeds form without pollen', 'Seeds need pollination']] },
+    plBreed: { idea: 'breed', noise: ['The work is written up in a farm magazine.', 'The seeds are stored in paper bags.', 'Several neighbours want to see the results.'],
+      assume: ['Genes pass traits to offspring', ['Plants change on purpose', 'Selection or genes change them'], ['Seeds don’t carry traits', 'Seeds inherit the parents’ traits']] },
+    plLight: { idea: 'chain', ask: 'What will happen to the minnows?', noise: ['The lake is popular for fishing.', 'A cabin sits on the north shore.', 'The water is about 6 m deep.'],
+      assume: ['Nothing else feeds the water fleas', ['Fish can make their own food', 'Animals can’t make food'], ['Algae grow well without light', 'Algae need light']] },
+    plFarm: { idea: 'farm', ask: 'What is the best fix?', noise: ['The farm has a red barn.', 'The field is 160 acres.', 'The farmer sells the crop in the fall.'],
+      assume: ['The pest feeds only on this crop', ['Fertilizer kills pests', 'Fertilizer feeds plants only'], ['The pest dies off every winter', 'It builds up year to year']] },
+    heMode: { idea: 'mode', noise: ['It happens in the evening after school.', 'The room has two windows and a blue door.', 'It takes about five minutes.'] },
+    heFlow: { idea: 'flow', noise: ['The room has a large window facing north.', 'A clock on the wall reads 3:15.', 'Nobody touches it for an hour.'] },
+    heExpand: { idea: 'part', noise: ['This happens in a town in central Alberta.', 'A student writes the date in a lab journal.', 'The object was bought last year.'] },
+    heAmount: { idea: 'amount', ask: 'Which one has more thermal energy?', noise: ['The thermometer is digital.', 'The readings are taken at noon.', 'A student records them in a table.'],
+      assume: ['Both hold the same kind of liquid', ['A bigger thing is always hotter', 'Both are the same temperature'], ['Temperature measures total energy', 'Temperature is average particle speed']] },
+    heFeel: { idea: 'cond', noise: ['The metal one is painted green.', 'The wooden one is a bit older.', 'Both are about the same size.'],
+      assume: ['Both stayed at the air temperature', ['Metal makes its own cold', 'Objects don’t make cold'], ['The wood sat in the sun', 'Same place, same temperature']] },
+    heCapacity: { idea: 'cap', noise: ['Many tourists visit in summer.', 'The data come from a weather website.', 'A student made a chart of it.'],
+      assume: ['Both get about the same heat', ['Water stores cold, not heat', 'Water stores heat, not cold'], ['Sand and land have no heat', 'Everything has thermal energy']] },
+    heInsul: { idea: 'insul', noise: ['It was bought at a store in Calgary.', 'It is dark blue.', 'It has been used for three years.'],
+      assume: ['Heat flows from hot to cold', ['Cold can flow like heat', 'Only heat flows'], ['Insulation works like a heater', 'Insulation makes no heat']] },
+    heState: { idea: 'state', noise: ['It happens on a Tuesday.', 'A dog naps nearby.', 'A student notes the time: 2:30 p.m.'],
+      assume: ['No water is made or destroyed', ['Particles can grow or shrink', 'Particles keep their size'], ['Cold is a kind of energy', 'Only heat is energy']] },
+    heThermal: { idea: 'therm', ask: 'What will happen to the bull trout?', noise: ['Canoeists often paddle there in summer.', 'A walking path runs along the bank.', 'The water still looks clear.'],
+      assume: ['Trout need oxygen from the water', ['Warm water holds more oxygen', 'Warm water holds less'], ['Fish don’t need oxygen', 'Fish breathe dissolved oxygen']] },
+    stType: { idea: 'type', noise: ['People have built things like it for a long time.', 'It is painted a bright colour.', 'A student sketches it in a notebook.'] },
+    stLoad: { idea: 'load', noise: ['It was finished three years ago.', 'Its builders used a crane for the heaviest parts.', 'A sign shows the name of the company that built it.'] },
+    stForce: { idea: 'force', noise: ['This happens at home on a Saturday morning before breakfast.', 'It takes only a few seconds, and nobody gets hurt.', 'A friend watches from the doorway and laughs.'] },
+    stBeam: { idea: 'beam', noise: ['It was built last summer.', 'It is painted white.', 'A sign gives its largest safe load.'],
+      assume: ['The beam is the same all through', ['Only the top feels any force', 'Bending affects both sides'], ['The load pulls the beam up', 'The load pushes down']] },
+    stStable: { idea: 'stab', noise: ['One is blue and the other is red.', 'They were bought at the same store.', 'A student photographs them side by side.'],
+      assume: ['Both stand on flat, level ground', ['Heavier things never tip', 'CoG and base matter most'], ['Colour changes how it tips', 'Colour doesn’t matter']] },
+    stMachine: { idea: 'mach', noise: ['It is a sunny afternoon.', 'A friend holds the door open.', 'The tool was borrowed from a neighbour.'],
+      assume: ['The load stays the same', ['Machines make extra energy', 'Machines don’t create energy'], ['Friction makes the job easier', 'Friction makes it harder']] },
+    stImprove: { idea: 'design', ask: 'What is the best improvement?', noise: ['The class has two weeks to finish.', 'Their teacher likes bright colours.', 'Another group won last year’s contest.'],
+      assume: ['The same materials are available', ['Any change will fix it', 'Match the fix to the failure'], ['It failed for no reason', 'Look for why it failed']] },
+    stCoG: { idea: 'stab', noise: ['It is a cloudy morning.', 'A crowd is watching.', 'It happens on a Saturday.'],
+      assume: ['The ground is flat and level', ['Heavier is always more stable', 'Where the weight is matters'], ['Strength stops tipping', 'Tipping isn’t breaking']] },
+    stMaterial: { idea: 'mat', noise: ['The project has a tight budget.', 'The parts arrive by truck.', 'The design wins an award.'],
+      assume: ['Each material behaves the usual way', ['The strongest material suits every job', 'Match the material to the force'], ['Cost is all that matters', 'It must handle the force']] },
+    erRock: { idea: 'rock', noise: ['A geologist collects a sample for the lab.', 'The sample fits in the palm of a hand.', 'It is labelled with the date and place.'] },
+    erBound: { idea: 'bound', noise: ['Many people live in the region.', 'The area is popular with tourists.', 'Scientists have studied it for many years.'] },
+    erSurface: { idea: 'surf', noise: ['A photographer takes pictures of it for a calendar.', 'The area is popular with hikers.', 'It is about a two-hour drive from Calgary.'] },
+    erInterior: { idea: 'layer', noise: ['No one has ever drilled that deep.', 'Earth is about 4.6 billion years old.', 'A student draws a diagram of it.'] },
+    erFossil: { idea: 'foss', noise: ['The cliff is about 30 m high.', 'Visitors often stop to take photos.', 'The museum has a cast of each fossil.'],
+      assume: ['The layers formed one after another', ['Fossils move between layers', 'Fossils stay where they formed'], ['All three lived at the same time', 'Layers form at different times']] },
+    erQuake: { idea: 'quake', noise: ['Many tourists visit every year.', 'The region is known for its food.', 'The news reports on it often.'],
+      assume: ['Plates are still moving slowly', ['Quakes come from the weather', 'Quakes start in the crust'], ['Plates stopped moving long ago', 'Plates still move cm per year']] },
+    erCrystal: { idea: 'crys', noise: ['Both rocks fit in a shoebox.', 'A student found them on a hike.', 'They have number labels on them.'],
+      assume: ['Both rocks formed from melted rock', ['Crystal size shows a rock’s age', 'Size shows cooling speed'], ['Colour shows where it cooled', 'Look at crystal size']] },
+    erUplift: { idea: 'uplift', noise: ['Climbers often find them.', 'Tourists visit by bus in summer.', 'Photos of them hang in a museum.'],
+      assume: ['Fossils formed where the animals died', ['The animals climbed the mountain', 'They were sea animals'], ['Mountains never change', 'Plates slowly lift rock']] },
+    erPath: { idea: 'cycle', noise: ['A geologist writes it up in a report.', 'The area is near a highway.', 'Pictures of it appear in a textbook.'],
+      assume: ['Each change takes a very long time', ['Rocks can never change type', 'The rock cycle changes them'], ['Pressing always melts rock', 'Melting needs far more heat']] },
+    erLandform: { idea: 'form', noise: ['Many visitors take photos there.', 'There is a gift shop nearby.', 'The area is busy in July.'],
+      assume: ['It formed over thousands of years', ['People shaped the land', 'Nature shaped it'], ['It formed in a single day', 'It took a very long time']] }
+  };
+  const strip = s => String(s).replace(/<[^>]*>/g, '');
+  const sentences = s => String(s).split(/(?<=[.!?])\s+(?=[A-Z<])/);
+  const choose = (a, ws) => { const errs = ws.map(([t, cue]) => ({ t, cue })); return { a, errs, opts: shuffle([{ v: 'a', t: a }].concat(errs.map((e, k) => ({ v: 'e' + k, t: e.t })))) }; };
+  // Turn a story item into a reading item: passage chunks [{t, k: must | opt | no}], ask, idea, assume.
+  function reading(it) {
+    const R = READ[it.t], ideas = IDEAS[it.unit];
+    const story = sentences(it.story).map(s => ({ t: strip(s), k: /<b>/.test(s) ? 'must' : 'opt' }));
+    const p = [{ t: pick(SETTING[it.unit]), k: 'no' }].concat(story);
+    shuffle(R.noise).concat([pick(UNOISE[it.unit])]).forEach(t => p.splice(rnd(2, p.length), 0, { t, k: 'no' }));
+    const wrongIdeas = shuffle(Object.keys(ideas).filter(k => k !== R.idea && !near(k, R.idea))).slice(0, 2);
+    it.read = {
+      p, ask: R.ask || it.q,
+      idea: choose(ideas[R.idea][0], wrongIdeas.map(k => [ideas[k][0], ideas[R.idea][1]])),
+      assume: it.lvl > 1 && R.assume ? choose(R.assume[0], R.assume.slice(1)) : null
+    };
+    return it;
+  }
+  // The key-facts step: every must sentence tapped, and no red herring.
+  function checkFacts(it, sel) {
+    const p = it.read.p, s = new Set(sel || []);
+    const extra = [...s].filter(i => p[i] && p[i].k === 'no'), missed = p.map((c, i) => c.k === 'must' && !s.has(i) ? i : -1).filter(i => i >= 0);
+    if (!extra.length && !missed.length) return { ok: true, cue: 'You found the key facts' };
+    return { ok: false, extra, missed, cue: extra.length ? 'A detail you picked doesn’t matter' : missed.length > 1 ? 'Some key facts are missing' : 'One key fact is missing' };
+  }
+  // A choice step (idea or assume): ok, or the cue for the wrong pick.
+  function checkPick(step, v) {
+    if (v === 'a') return { ok: true };
+    const e = step.errs[+String(v).slice(1)];
+    return { ok: false, cue: e ? e.cue : 'Pick one answer' };
+  }
+
   const TOPICS = {
     eco: { 1: [ecoBiotic, ecoRole, ecoArrow], 2: [ecoPyramid, ecoWeb, ecoBiodiv], 3: [ecoChain, ecoRecover, ecoSteward] },
     pla: { 1: [plCell, plVessel, plRepro], 2: [plNeeds, plMass, plPollin], 3: [plBreed, plLight, plFarm] },
@@ -831,8 +982,8 @@ const MODEL = (() => {
   };
   // A round ramps: items 1–3 one step, 4–7 two steps, 8–10 three.
   const lvOf = n => n == null ? Q.rnd(1, 3) : n < 3 ? 1 : n < 7 ? 2 : 3;
-  function gen(unit, n) { const it = pick(TOPICS[unit][lvOf(n)])(); it.unit = unit; return it; }
+  function gen(unit, n) { const it = pick(TOPICS[unit][lvOf(n)])(); it.unit = unit; return reading(it); }
   const genMix = n => gen(pick(Object.keys(TOPICS)), n);
-  return { TOPICS, gen, genMix, check, lvOf };
+  return { TOPICS, READ, IDEAS, gen, genMix, check, checkFacts, checkPick, reading, lvOf };
 })();
 /* ===================== MODEL END ===================== */

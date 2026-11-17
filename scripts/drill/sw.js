@@ -176,6 +176,132 @@ const SW = (() => {
       check: (it, r) => MODEL.check(it, r), answer: it => ({ v: 'a' }), link: o.link, draw
     };
   }
-  return { tab, draw, PIC, LVN };
+  /* ---------- v2: a reading tab. The passage fills the stage; the student works through checked steps:
+     Key facts (tap the sentences that matter; two tries), Key idea (one try), What can we assume? (Levels 2–3,
+     one try), Answer (two tries). A tracker under the passage fills in as they go. After the answer the stage
+     shows the picture and the reasoning chain, with a Reading chip to look back. A slip on an earlier step
+     makes a right answer yellow (check returns partial). State lives in the shell's resp for the item. ---------- */
+  const STEPN = { facts: 'Key facts', idea: 'Key idea', assume: 'What can we assume?', answer: 'Answer' };
+  const HINT = { facts: 'Tap the key facts, then Check', idea: 'Pick the key idea', assume: 'Pick what we can assume', answer: 'Pick your answer' };
+  const XH = 'http://www.w3.org/1999/xhtml', $ = id => document.getElementById(id);
+  const stepsOf = it => ['facts', 'idea'].concat(it.read.assume ? ['assume'] : [], ['answer']);
+  let CUR = null;   // { box, it, A } for the item on screen
+  function fbSet(kind, cue) {
+    const f = $('fb'); f.className = 'fb ' + kind;
+    f.innerHTML = '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + cue + '</span>';
+  }
+  const chipH = it => '<div class="lvl l' + it.lvl + '">Level ' + it.lvl + ' · ' + (it.lvl === 1 ? '3 steps' : '4 steps') + '<span class="lo">' + it.code + '</span></div>';
+  function mkBtn(cls, html, on) { const b = document.createElement('button'); b.type = 'button'; b.className = cls; b.innerHTML = html; b.addEventListener('click', on); return b; }
+
+  function renderPanel(fin) {
+    const { box, it, A } = CUR, r = A.resp, S = stepsOf(it), i = fin ? S.length - 1 : r.step || 0, st = S[i];
+    $('q').textContent = 'Step ' + (i + 1) + ' of ' + S.length + ' · ' + STEPN[st];
+    const pr = $('prompt'); pr.style.fontSize = '';
+    pr.innerHTML = chipH(it) + '<div class="story">' + (st === 'facts' ? 'Read the story. Tap the sentences with the <b>key facts</b>, then press Check.'
+      : st === 'idea' ? 'Which <b>science idea</b> do you need for this problem?' : st === 'assume' ? 'What can we safely <b>assume</b>?' : '<b>' + it.read.ask + '</b>') + '</div>';
+    box.innerHTML = '';
+    if (st === 'facts') {
+      const n = (r.sel || []).length;
+      box.appendChild(mkBtn('btn primary factsBtn', 'Check key facts' + (n ? ' (' + n + ')' : ''), onFacts));
+      return;
+    }
+    const step = st === 'answer' ? it : it.read[st], row = document.createElement('div');
+    row.className = 'choices two';
+    step.opts.forEach(o => {
+      const b = mkBtn('choice', o.t, () => onPick(st, o.v, b)); b.dataset.v = o.v; b.setAttribute('aria-label', o.t);
+      if (st === 'answer' && (r.tried || []).includes(o.v)) { b.classList.add('bad'); b.disabled = true; }
+      if (fin && o.v === 'a') b.classList.add('ok');
+      if (fin && o.v === r.v && o.v !== 'a') b.classList.add('bad');
+      row.appendChild(b);
+    });
+    box.appendChild(row);
+  }
+  function advance() { const r = CUR.A.resp; r.step = (r.step || 0) + 1; renderPanel(); CUR.A.redraw(); }
+  function onFacts() {
+    const { it, A } = CUR, r = A.resp; if (A.locked) return;
+    const res = MODEL.checkFacts(it, r.sel); r.factsTry = (r.factsTry || 0) + 1;
+    if (res.ok) { r.facts = 'ok'; r.flag = null; fbSet('ok', res.cue); return advance(); }
+    if (r.factsTry < 2) { r.flag = res.extra; fbSet('bad', res.cue + ' · try again'); return A.redraw(); }
+    r.facts = 'shown'; r.flag = null; r.miss = (r.miss || 0) + 1;
+    r.sel = it.read.p.map((c, k) => c.k === 'must' ? k : -1).filter(k => k >= 0);
+    fbSet('bad', 'The key facts are in green'); advance();
+  }
+  function onPick(st, v, b) {
+    const { it, A } = CUR, r = A.resp; if (A.locked) return;
+    if (st === 'answer') {
+      r.v = v; r.done = true;
+      if (!MODEL.check(it, r).ok) { r.tried = (r.tried || []).concat(v); b.classList.add('bad'); b.disabled = true; }
+      return $('bCheck').click();
+    }
+    const res = MODEL.checkPick(it.read[st], v); r[st] = v;
+    if (!res.ok) r.miss = (r.miss || 0) + 1;
+    fbSet(res.ok ? 'ok' : 'bad', res.ok ? 'Yes' : res.cue);
+    advance();
+  }
+
+  // The passage (tappable on the Key facts step) and the step tracker under it.
+  function reading(A, it, V) {
+    const r = V.resp || {}, S = stepsOf(it), fin = done(V), cur = fin ? S.length : r.step || 0, rh = 31, top = 420 - S.length * rh - 8;
+    const factsDone = fin || cur > 0, tapping = !fin && cur === 0;
+    const fo = el('foreignObject', { x: 10, y: 6, width: 620, height: top - 16 }, A.svg), div = document.createElementNS(XH, 'div');
+    const len = it.read.p.reduce((a, c) => a + c.t.length, 0) + it.read.ask.length;
+    div.setAttribute('style', 'font: ' + (len > 620 ? 15 : len > 520 ? 15.5 : 16.5) + 'px/' + (len > 620 ? 1.42 : 1.5) + ' "Segoe UI Variable Text","Segoe UI",system-ui,sans-serif; color:' + C.text + '; padding: 4px 6px; user-select: none;');
+    const sel = new Set(r.sel || []), flag = new Set(r.flag || []);
+    it.read.p.forEach((c, k) => {
+      const s = document.createElementNS(XH, 'span'), on = sel.has(k);
+      s.textContent = c.t; s.className = 'snt';
+      let st = 'padding: 1px 2px; border-radius: 4px; box-decoration-break: clone; -webkit-box-decoration-break: clone;';
+      if (factsDone) st += c.k === 'must' ? 'background: rgba(131,193,103,.22); border-bottom: 2px solid ' + C.green + ';' : on ? 'background: rgba(247,217,111,.14);' : 'color: ' + C.muted + ';';
+      else if (flag.has(k)) st += 'background: rgba(252,98,85,.25); border-bottom: 2px solid ' + C.red + ';';
+      else if (on) st += 'background: rgba(247,217,111,.25); border-bottom: 2px solid ' + C.yellow + ';';
+      if (tapping) {
+        st += 'cursor: pointer;'; s.setAttribute('role', 'button'); s.setAttribute('tabindex', '0'); s.setAttribute('aria-pressed', on ? 'true' : 'false');
+        const tog = () => { if (A.locked) return; const nx = new Set(r.sel || []); nx.has(k) ? nx.delete(k) : nx.add(k); r.sel = [...nx]; r.flag = (r.flag || []).filter(x => x !== k); renderPanel(); A.redraw(); };
+        s.addEventListener('click', tog);
+        s.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); tog(); } });
+      }
+      s.setAttribute('style', st); div.appendChild(s); div.appendChild(document.createTextNode(' '));
+    });
+    const q = document.createElementNS(XH, 'div'); q.textContent = it.read.ask;
+    q.setAttribute('style', 'margin-top: 8px; font-weight: 700; color: ' + C.blue + ';'); div.appendChild(q);
+    fo.appendChild(div);
+    // the tracker
+    el('line', { x1: 14, x2: 626, y1: top - 6, y2: top - 6, stroke: C.edge, 'stroke-width': 1.5 }, A.svg);
+    const pickText = (step, v) => (step.opts.find(o => o.v === v) || {}).t || '';
+    S.forEach((st, i) => {
+      const y = top + i * rh + rh / 2, now = i === cur && !fin, past = i < cur || fin, c = now ? C.yellow : past ? LVC[it.lvl] : C.edge;
+      el('circle', { cx: 26, cy: y, r: 12, fill: past ? c : 'none', stroke: c, 'stroke-width': now ? 3 : 1.5 }, A.svg);
+      tx(A.svg, 26, y + 1, String(i + 1), { 'font-size': 14, 'font-weight': 700, fill: past ? C.stage : c, style: 'stroke:none' });
+      tx(A.svg, 46, y, STEPN[st], { 'font-size': 14, 'font-weight': 650, fill: now ? C.yellow : past ? C.gold : C.muted, 'text-anchor': 'start' });
+      let v = '', vc = C.text;
+      if (now) { v = st === 'answer' && V.phase === 'wrong' ? '✗ ' + pickText(it, r.v) + ': try again' : '← ' + HINT[st]; vc = st === 'answer' && V.phase === 'wrong' ? '#ff9a90' : C.yellow; }
+      else if (past && st === 'facts') { v = r.facts === 'shown' ? '✗ shown in green' : '✓ ' + it.read.p.filter(c => c.k === 'must').length + ' key facts found'; vc = r.facts === 'shown' ? '#ff9a90' : C.green; if (fin && !r.facts) { v = 'key facts in green'; vc = C.green; } }
+      else if (past && st !== 'answer') { const step = it.read[st], okk = r[st] === 'a'; v = (r[st] == null ? '' : okk ? '✓ ' : '✗ ') + step.a; vc = okk || r[st] == null ? C.green : '#ff9a90'; }
+      else if (past) { v = '✓ ' + it.a; vc = C.green; }
+      if (v) tx(A.svg, 236, y, v, { 'font-size': Math.min(15, 390 / Math.max(1, v.length * .5)), fill: vc, 'text-anchor': 'start' });
+    });
+  }
+
+  function readDraw(A, it, V) {
+    const r = V.resp || {};
+    if (done(V) && CUR && CUR.it === it && !r.fin) { r.fin = true; renderPanel(true); }
+    if (!done(V) || r.view === 'read') reading(A, it, V); else draw(A, it, V);
+    if (!done(V)) return;
+    const g = el('g', { style: 'cursor:pointer', role: 'button', tabindex: '0', 'aria-label': r.view === 'read' ? 'Show the picture' : 'Show the reading' }, A.svg);
+    const tog = () => { r.view = r.view === 'read' ? '' : 'read'; A.redraw(); };
+    S.chip(g, 572, 20, r.view === 'read' ? '🖼 Picture' : '📄 Reading', C.blue, { fs: 14 });
+    g.addEventListener('click', tog);
+  }
+
+  function readTab(o) {
+    return {
+      id: o.id, code: o.code, name: o.name, sec: 1, notes: o.notes, kind: 'custom', tries: 2,
+      q: () => '', gen: o.gen, typeOf: it => it.t, prompt: it => chipH(it), link: o.link,
+      panel(box, it, A) { CUR = { box, it, A }; A.resp.step = 0; renderPanel(); },
+      ready: (r, it) => r.done || r.shown ? '' : HINT[stepsOf(it)[r.step || 0]],
+      check: (it, r) => MODEL.check(it, r), answer: () => ({ v: 'a', done: true }), draw: readDraw
+    };
+  }
+  return { tab, readTab, draw, PIC, LVN };
 })();
 /* ===== SCIENCE WORD PROBLEMS KIT END ===== */

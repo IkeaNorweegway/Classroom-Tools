@@ -5,7 +5,7 @@ name() { case $1 in
   pe) echo math9-powers-exponents-trainer-v1;; rn) echo math9-rational-numbers-trainer-v1;; sr) echo math9-square-roots-trainer-v1;;
   cg) echo math9-circle-geometry-trainer-v1;; me) echo math9-measurement-trainer-v1;; si) echo math9-similarity-trainer-v1;;
   st) echo math9-statistics-trainer-v1;; pr) echo math9-probability-trainer-v1;; pat) echo math9-pat-trainer-v1;; pq) echo math9-pat-questions-trainer-v1;;
-  wp9) echo math9-word-problems-trainer-v1;; wp7) echo sci7-word-problems-trainer-v1;;
+  wp9) echo math9-word-problems-trainer-v1;; wp7) echo sci7-word-problems-trainer-v2;;
   eco) echo sci7-interactions-ecosystems-trainer-v1;; pla) echo sci7-plants-food-fibre-trainer-v1;; hea) echo sci7-heat-temperature-trainer-v1;;
   str) echo sci7-structures-forces-trainer-v1;; ear) echo sci7-planet-earth-trainer-v1;;
   urb) echo soc9-urbanization-industry-trainer-v1;; ind) echo soc9-independence-democratic-rights-trainer-v1;;

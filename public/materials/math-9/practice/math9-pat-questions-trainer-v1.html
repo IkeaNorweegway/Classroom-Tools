@@ -555,7 +555,7 @@ const MODEL = (() => {
        choices(item)       -> [{v, label, math}]                                     tap to answer
        panel(box, item, A) -> builds controls; the stage can also set A.resp
      ready(resp, item)     -> a cue if the answer is not complete yet (optional)
-     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     check(item, resp)     -> {ok, code, cue, partial}  cue is six words or fewer; partial: right but not clean (yellow dot)
      answer(item)          -> the right answer, as resp, for Show me
      draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
      link(item)            -> {notes, sec, sep} for this item's 📖 link (optional; a tab whose items span topics)
@@ -789,7 +789,8 @@ const DRILL = (() => {
     const res = tab.check(item, r); att++;
     const tries = tab.tries || (K() === 'choice' ? 1 : 2);
     if (res.ok) {
-      resolved = true; marks.push(att === 1 ? 'g' : 'y'); record(att === 1);
+      const clean = att === 1 && !res.partial;   // partial: right, but an earlier step of the item was missed (yellow)
+      resolved = true; marks.push(clean ? 'g' : 'y'); record(clean);
       setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
       markAnswer(true); draw('right', res, true); afterResolve();
     } else if (att >= tries) {

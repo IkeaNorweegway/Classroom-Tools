@@ -1,0 +1,2039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Problems Trainer | Science 7</title>
+<!-- =====================================================================
+   SCIENCE 7 WORD PROBLEMS TRAINER v2: READING (narrow trainer format, see _sims-context.md)
+   Science 7 | every unit | used after the lessons: it does not teach, each item's 📖 opens its own notes section.
+   v2 (user request 2026-11-17): the trainer also practises reading comprehension. Each item is a longer reading
+   (a setting sentence, the story, one or two red-herring details, then the question) that fills the stage.
+   The student works through checked steps, like a reader solving a science problem:
+     1 Key facts   tap the sentences that matter, then Check (two tries; then the key facts are shown in green).
+                   A story sentence holding a key fact must be found; a red herring must not be picked;
+                   a plain story sentence (setup) is neither.
+     2 Key idea    which science idea the problem needs (the unit's ideas; close ideas are never offered together)
+     3 Assume      what we can safely assume (Levels 2–3): the right assumption, an overreach, a misconception
+     4 Answer      the question, with named misconceptions (two tries)
+   A tracker under the reading fills in as they go. After the answer the stage shows the picture and the
+   reasoning chain, with a 📄 Reading chip to look back. A right answer after a slip on an earlier step gives a
+   yellow dot (shell: check returns partial). Level 1 has 3 steps (no assumption), Levels 2–3 have 4; a round of
+   10 ramps 1-1-1-2-2-2-2-3-3-3, and Level 3 items need a chain of cause and effect.
+   This page breaks rule 21 (little text) on purpose: reading is the skill. v1 (tap-only, short stories) stays as
+   sci7-word-problems-trainer-v1.html, unlinked.
+     7-1 Ecosystems  biotic/abiotic 7-1-01, role and energy arrow 7-1-02; the 10% pyramid, a food-web link 7-1-02,
+                     biodiversity and a pest 7-1-03; a change down a chain, recovery after a disturbance,
+                     the fix that matches the cause 7-1-04
+     7-2 Plants      cell part under the microscope 7-2-01, xylem or phloem 7-2-02, sexual or asexual 7-2-04;
+                     a missing input to photosynthesis, where the mass comes from (van Helmont) 7-2-03,
+                     pollinators and seeds 7-2-04; selective breeding or GMO, rotation 7-2-05, less light up a lake chain 7-2-03
+     7-3 Heat        conduction/convection/radiation 7-3-03, heat flow (or none) 7-3-01, expand or contract 7-3-02;
+                     heat vs temperature 7-3-01, metal feels colder 7-3-03, heat capacity 7-3-04;
+                     insulation both ways, a change of state 7-3-02, thermal pollution 7-3-05
+     7-4 Structures  type 7-4-01, load and internal force 7-4-02; beam top and bottom (and rebar) 7-4-02,
+                     which tips first (CoG and base, tipping angle drawn) 7-4-03, the machine trade-off 7-4-04;
+                     the design fix, counterweights and leaning 7-4-03/05, material for the force 7-4-05
+     7-5 Earth       rock type 7-5-02, boundary 7-5-03, weathering/erosion/deposition 7-5-05, interior layer 7-5-01;
+                     superposition 7-5-06, why quakes (or few in Alberta) 7-5-04, crystal size 7-5-02;
+                     marine fossils on peaks 7-5-03, a rock-cycle path 7-5-02, Alberta landforms 7-5-05
+   The picture is a schematic of the story (icon cards and arrows, layers, a plant cell, a bent beam with its
+   squeezed and stretched sides, two blocks with their centres of gravity) above the reasoning chain: one row per
+   step, empty until answered. Any answer fills the chain in order; after a wrong pick, the step that choice broke
+   turns red, and the feedback names the misconception.
+   Named misconceptions (per story type, in the model): producer as consumer, arrows as "eats", energy growing up
+   the chain, "stays the same" in a web, nature always recovers (and never recovers), fixing the count not the
+   cause; food from the soil, sunlight as mass, phloem/xylem swapped, flowers fine without pollinators, GMO vs
+   breeding, one-season change; cold flowing, particles growing or melting, temperature as total energy, metal
+   "colder", insulation making heat, matter destroyed by evaporating; compression/tension swapped, a stronger
+   material for a tipping problem, machines making energy; melting called metamorphic, a flood for marine fossils,
+   catastrophic uplift, the top layer as oldest, crystal size backwards.
+   Model: banks of Alberta scenarios with fixed answers; every answer and misconception is checked in the tests.
+   Shared parts: sci.js (cards, arrows, chips) and sw.js (pictures, reasoning chain, the tab).
+   ?debug=1 puts DRILL (and MODEL) on window, no saving or motion.
+   ===================================================================== -->
+<style>
+/* page only: the story in the prompt, the level chip with its outcome code, tighter tabs */
+  .prompt { text-align: left; }
+  .prompt .story { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 17px; line-height: 1.45; text-align: left; }
+  .prompt .story b { color: var(--yellow); font-weight: 650; }
+  .prompt .lvl { display: inline-block; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 9px; border-radius: 99px; margin-bottom: 6px; }
+  .prompt .lvl .lo { margin-left: 8px; padding-left: 8px; border-left: 1px solid rgba(11, 15, 23, .45); letter-spacing: 0; }
+  .prompt .lvl.l1 { color: #0b0f17; background: var(--teal); }
+  .prompt .lvl.l2 { color: #0b0f17; background: var(--gold); }
+  .prompt .lvl.l3 { color: #0b0f17; background: #ef7fc6; }
+  .choices.two .choice { font-size: 17px; min-height: 58px; font-weight: 600; }
+  .tabs .tab { padding: 2px 10px; }
+  @media (max-width: 1150px) { .tabs .tab { padding: 2px 7px; } .top .tabs { gap: 4px; } }
+  #bCheck:not(.go) { display: none; }   /* each step has its own button; Check returns as Next → */
+  .ans .factsBtn { width: 100%; }
+  .q { text-transform: none; }
+  @media (max-height: 700px) { .prompt .story { font-size: 16px; line-height: 1.35; } .choices.two .choice { min-height: 50px; } }
+</style>
+<style>
+/* ===== DRILL SHELL CSS START (same in every narrow trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .stage svg text.emo { stroke: none; font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif; font-weight: 400; }
+  .sans .prompt { font-family: inherit; font-weight: 650; font-size: 26px; }
+  .sans .choice { font-size: 19px; line-height: 1.15; padding: 4px 8px; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slot.sup { width: 1.9em; min-height: 40px; font-size: 20px; align-self: flex-start; margin-left: -2px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choices.two { grid-template-columns: 1fr 1fr; }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choices.one { grid-template-columns: 1fr; gap: 8px; }
+  .choices.one .choice { min-height: 54px; }
+  .choices.one .choice.math { font-size: 26px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+
+/* ===================== MODEL START (no DOM) ===================== */
+/* Science 7 word problems: science stories, not calculations. Each unit has three levels of reasoning:
+   1 = one step (name the idea in the story), 2 = two steps (apply it: predict or explain one link),
+   3 = three steps (a chain of cause and effect, or a fix that matches the cause).
+   An item: { t (story type), lvl, code (LO, e.g. 7-1-02), sec (notes section), unit, story (HTML, key facts in <b>),
+   q (2–4 words), opts: [{v, t}] (tap choices, shuffled; v 'a' is right, 'e0', 'e1', … are named misconceptions),
+   errs: [{t, cue, s}] (the choice text, a cue of six words or fewer, the step it breaks), steps: [{l, m}],
+   pic (a schematic, drawn by sw.js) }. Banks are large and items on the same object take opposite answers
+   (rule 27), so an object never gives the answer away. */
+const MODEL = (() => {
+  const { rnd, pick, shuffle } = Q;
+  const B = s => '<b>' + s + '</b>';
+  const NAMES = ['Ava', 'Liam', 'Noah', 'Maya', 'Ethan', 'Zoe', 'Owen', 'Priya', 'Jayden', 'Hana', 'Lucas', 'Amara', 'Kai', 'Sofia', 'Mateo', 'Leah'];
+  const cd = (c, r, i, t, o) => Object.assign({ c, r, i, t }, o || {});
+  const row = (list, o) => ({ k: 'scene', cards: list.map((x, j) => cd(j, 0, x[0], x[1], x[2])), arrows: list.slice(1).map((x, j) => Object.assign({ a: j, b: j + 1 }, (o && o.arr && o.arr[j]) || {})) });
+
+  function mk(t, lvl, code, sec, o) {
+    const errs = o.errs.map(([tx, cue, s]) => ({ t: tx, cue, s }));
+    const opts = shuffle([{ v: 'a', t: o.a }].concat(errs.map((e, k) => ({ v: 'e' + k, t: e.t }))));
+    return { t, lvl, code, sec, story: o.story, q: o.q, a: o.a, opts, errs, steps: o.steps.map(([l, m]) => ({ l, m })), pic: o.pic };
+  }
+  // A tapped choice -> ok, or the misconception it names (its cue and the step it breaks).
+  function check(it, r) {
+    if (r.v === 'a') return r.miss ? { ok: true, partial: true, cue: 'Right; an earlier step slipped' } : { ok: true };
+    const k = /^e(\d+)$/.test(r.v || '') ? +r.v.slice(1) : -1, e = it.errs[k];
+    return e ? { code: 'e' + k, cue: e.cue, s: e.s } : { code: 'other', cue: 'Pick one answer', s: -1 };
+  }
+
+  /* ============ 7-1 · Interactions and Ecosystems ============ */
+  const ECOS = [
+    { p: 'wetland', bio: [['🦆', 'mallard'], ['🌾', 'cattail'], ['🐸', 'wood frog'], ['🦫', 'muskrat']], abio: [['💧', 'water depth'], ['🌡️', 'water temperature'], ['☀️', 'sunlight'], ['🟫', 'mud']] },
+    { p: 'boreal forest', bio: [['🦌', 'moose'], ['🌲', 'black spruce'], ['🍄', 'mushroom'], ['🐿️', 'red squirrel']], abio: [['❄️', 'snow cover'], ['🌡️', 'air temperature'], ['☀️', 'sunlight'], ['🪨', 'rocky soil']] },
+    { p: 'grassland', bio: [['🌾', 'fescue grass'], ['🦗', 'grasshopper'], ['🦅', 'hawk'], ['🐍', 'bull snake']], abio: [['💨', 'wind'], ['🌧️', 'rainfall'], ['☀️', 'sunlight'], ['🟤', 'soil minerals']] },
+    { p: 'mountain meadow', bio: [['🐐', 'mountain goat'], ['🌼', 'alpine flower'], ['🦋', 'butterfly'], ['🌲', 'fir tree']], abio: [['⛰️', 'steep slope'], ['❄️', 'snowmelt'], ['🌡️', 'cold nights'], ['🪨', 'loose rock']] }
+  ];
+  function ecoBiotic() {
+    const e = pick(ECOS), want = pick(['bio', 'abio']), other = want === 'bio' ? 'abio' : 'bio';
+    const ans = pick(e[want]), others = shuffle(e[other]).slice(0, 2), all = shuffle([ans].concat(others)), n = pick(NAMES);
+    const word = want === 'bio' ? 'biotic' : 'abiotic';
+    return mk('ecoBiotic', 1, '7-1-01', 1, {
+      story: 'At a ' + e.p + ', ' + n + ' records ' + all.map(x => B(x[1])).join(', ').replace(/, ([^,]*)$/, ' and $1') + '.',
+      q: 'Which one is ' + word + '?', a: ans[1],
+      errs: others.map(x => [x[1], want === 'bio' ? 'That was never alive' : 'That one is living', 0]),
+      steps: [[word, ans[1] + (want === 'bio' ? ' is a living thing' : ' is a non-living factor')]],
+      pic: { k: 'scene', cards: all.map((x, j) => cd(j, 0, x[0], x[1], x === ans ? { tag: word } : {})) }
+    });
+  }
+  const ROLES = [
+    ['P', '🌸', 'Fireweed', 'Fireweed grows in a burned forest. Its leaves use ' + B('sunlight to make sugar') + '.', '☀️', 'sunlight'],
+    ['P', '🟢', 'Green algae', 'Green algae float near the top of a pond. They ' + B('make food from light') + ', water and air.', '☀️', 'sunlight'],
+    ['P', '🌿', 'A willow', 'A willow grows on a riverbank. It ' + B('makes its own sugar') + ' in its leaves.', '☀️', 'sunlight'],
+    ['C', '🦌', 'A moose', 'A moose wades into a lake. It ' + B('eats water plants') + ' from the bottom.', '🌿', 'water plants'],
+    ['C', '🦅', 'A hawk', 'A red-tailed hawk circles a field. It ' + B('dives to catch a ground squirrel') + '.', '🐿️', 'ground squirrel'],
+    ['C', '🦗', 'A grasshopper', 'A grasshopper ' + B('chews on prairie grass') + '. Then it hops away.', '🌾', 'grass'],
+    ['C', '🐦', 'A chickadee', 'A chickadee ' + B('picks insects') + ' off spruce bark all winter.', '🐛', 'insects'],
+    ['D', '🍄', 'Mushrooms', 'Mushrooms grow on a fallen aspen log. They ' + B('break the dead wood down') + ' into nutrients.', '🪵', 'dead log'],
+    ['D', '🪱', 'Earthworms', 'Earthworms ' + B('feed on dead leaves') + ' in the soil. Their wastes return nutrients.', '🍂', 'dead leaves'],
+    ['D', '🦠', 'Bacteria', 'Bacteria in a compost bin ' + B('break down old vegetables') + ' into rich soil.', '🥬', 'old vegetables']
+  ];
+  const RN = { P: 'Producer', C: 'Consumer', D: 'Decomposer' };
+  const RCUE = { P: { C: 'It eats other living things', D: 'It eats living things, not dead' }, C: { P: 'It makes food from light', D: 'It breaks down dead matter' }, D: { P: 'It makes food from light', C: 'It breaks down dead matter' } };
+  const RWHY = { P: 'makes its own food from light', C: 'eats other living things', D: 'breaks down dead matter' };
+  function ecoRole() {
+    const [r, i, nm, story, fi, ft] = pick(ROLES), wrong = ['P', 'C', 'D'].filter(x => x !== r);
+    return mk('ecoRole', 1, '7-1-02', 2, {
+      story, q: 'What is its role?', a: RN[r],
+      errs: wrong.map(w => [RN[w], RCUE[w][r], 0]),
+      steps: [['role', nm.replace(/^A /, '') + ' ' + RWHY[r] + ': ' + RN[r].toLowerCase()]],
+      pic: { k: 'scene', cards: [cd(0, 0, fi, ft), cd(1, 0, i, '?', { q: true, d: RN[r] })], arrows: [{ a: 0, b: 1, t: r === 'P' ? 'light' : r === 'C' ? 'eaten' : 'broken down', k: 'G' }] }
+    });
+  }
+  const EATS = [
+    ['boreal forest', ['🐈', 'lynx'], ['🐇', 'hare']], ['aspen parkland', ['🦉', 'owl'], ['🐭', 'vole']], ['grassland', ['🦊', 'fox'], ['🐿️', 'gopher']],
+    ['mountains', ['🐺', 'wolf'], ['🦌', 'elk']], ['wetland', ['🦩', 'heron'], ['🐟', 'minnow']], ['boreal forest', ['🐇', 'hare'], ['🌿', 'willow']],
+    ['grassland', ['🦬', 'bison'], ['🌾', 'grass']], ['wetland', ['🦆', 'duck'], ['🐌', 'snail']]
+  ];
+  function ecoArrow() {
+    const [pl, eat, food] = pick(EATS), left = rnd(0, 1), cards = left ? [food, eat] : [eat, food];
+    const plant = /willow|grass/.test(food[1]);
+    return mk('ecoArrow', 1, '7-1-02', 2, {
+      story: 'In the ' + pl + ', ' + (/^[aeiou]/.test(eat[1]) ? 'an ' : 'a ') + B(eat[1]) + ' ' + (plant ? 'feeds on' : 'catches and eats') + ' ' + (plant ? '' : 'a ') + B(food[1]) + '.',
+      q: 'Energy flows which way?', a: food[1] + ' → ' + eat[1],
+      errs: [[eat[1] + ' → ' + food[1], 'Arrow points toward the eater', 0], ['No energy moves', 'Eating passes energy along', 0]],
+      steps: [['energy flow', 'the ' + food[1] + '’s energy moves into the ' + eat[1]]],
+      pic: { k: 'scene', cards: [cd(0, 0, cards[0][0], cards[0][1]), cd(1, 0, cards[1][0], cards[1][1])], arrows: [left ? { a: 0, b: 1, t: 'energy', k: 'N', dir: true } : { a: 1, b: 0, t: 'energy', k: 'N', dir: true }] }
+    });
+  }
+  const PYR = [
+    ['meadow', [['🌾', 'grass'], ['🦗', 'grasshoppers'], ['🐍', 'snakes'], ['🦅', 'hawks']]],
+    ['boreal forest', [['🌿', 'willows'], ['🐇', 'hares'], ['🐈', 'lynx']]],
+    ['lake', [['🟢', 'algae'], ['🦐', 'water fleas'], ['🐟', 'minnows'], ['🦆', 'loons']]],
+    ['pasture', [['☘️', 'clover'], ['🐭', 'voles'], ['🦊', 'foxes']]],
+    ['wetland', [['🌱', 'pond plants'], ['🐌', 'snails'], ['🐸', 'frogs'], ['🦩', 'herons']]]
+  ];
+  function ecoPyramid() {
+    const [pl, ch] = pick(PYR), top = ch[ch.length - 1][1], low = ch[1][1];
+    return mk('ecoPyramid', 2, '7-1-02', 3, {
+      story: 'A ' + pl + ' has thousands of ' + B(low) + ' but only a few ' + B(top) + '. ' + B('The chain is ' + ch.map(x => x[1]).join(' → ')) + '.',
+      q: 'Why so few ' + top + '?', a: 'Energy is lost at each level',
+      errs: [['More energy reaches the top', 'Each level gets about 10%', 1], [low[0].toUpperCase() + low.slice(1) + ' are producers', 'They eat plants: consumers', 0]],
+      steps: [['each level', 'only about 10% of the energy passes up'], ['top level', 'little energy is left, so only a few ' + top]],
+      pic: { k: 'layers', bands: ch.slice().reverse().map((x, j) => ({ i: x[0], t: x[1], w: .38 + .62 * (j + 1) / ch.length, k: j === 0 ? 'Y' : 'G', tag: ['100%', '10%', '1%', '0.1%'][ch.length - 1 - j] })) }
+    });
+  }
+  const WEB = [
+    ['boreal forest', ['🐺', 'wolves'], ['🦌', 'moose']], ['boreal forest', ['🐈', 'lynx'], ['🐇', 'hares']], ['aspen parkland', ['🦉', 'owls'], ['🐭', 'voles']],
+    ['grassland', ['🦊', 'foxes'], ['🐿️', 'gophers']], ['mountains', ['🐻', 'grizzlies'], ['🐟', 'trout']], ['wetland', ['🦩', 'herons'], ['🐸', 'frogs']],
+    ['boreal forest', ['🐇', 'hares'], ['🌿', 'willows']], ['grassland', ['🦗', 'grasshoppers'], ['🌾', 'grasses']]
+  ];
+  function ecoWeb() {
+    const [pl, eat, food] = pick(WEB), gone = pick(['eater', 'food']), X = gone === 'eater' ? eat : food, Y = gone === 'eater' ? food : eat;
+    const up = gone === 'eater', Yc = Y[1][0].toUpperCase() + Y[1].slice(1);
+    return mk('ecoWeb', 2, '7-1-02', 2, {
+      story: 'In a ' + pl + ' food web, ' + B(eat[1]) + ' eat ' + B(food[1]) + '. A disease kills most of the ' + B(X[1]) + '.',
+      q: 'What happens to ' + Y[1] + '?', a: Yc + (up ? ' increase' : ' decrease'),
+      errs: [[Yc + (up ? ' decrease' : ' increase'), up ? 'Fewer predators eat them' : 'They lose their food', 1], [Yc + ' stay the same', 'They are linked in the web', 0]],
+      steps: [['the link', eat[1] + ' eat ' + food[1]], ['the effect', up ? 'fewer ' + eat[1] + ' eat them, so ' + food[1] + ' increase' : 'less food, so ' + eat[1] + ' decrease']],
+      pic: { k: 'scene', cards: [cd(0, 0, eat[0], eat[1], gone === 'eater' ? { x: true } : { q: true, d: eat[1] + ' ↓' }), cd(0, 1, food[0], food[1], gone === 'food' ? { x: true } : { q: true, d: food[1] + ' ↑' })], arrows: [{ a: 1, b: 0, t: 'eaten by', k: 'G' }] }
+    });
+  }
+  const PLOTS = [
+    ['native prairie with ' + B('30 kinds') + ' of plants', 'all ' + B('wheat'), 'A beetle that eats only wheat', ['🌼', '🌾🌸🌿'], '🪲'],
+    ['a mixed forest of ' + B('12 kinds') + ' of trees', 'all ' + B('lodgepole pine'), 'A beetle that kills only pines', ['🌳', '🌲🌳🍁'], '🪲'],
+    ['a meadow of ' + B('25 kinds') + ' of plants', 'a lawn of ' + B('one grass'), 'A fungus that kills only that grass', ['🌼', '🌱🌼🌿'], '🍄'],
+    ['a garden of ' + B('15 kinds') + ' of crops', 'all ' + B('canola'), 'A pest that eats only canola', ['🥕', '🥬🌽🫘'], '🐛']
+  ];
+  function ecoBiodiv() {
+    const [div, mono, pest, ic, pi] = pick(PLOTS), dA = rnd(0, 1), D = dA ? 'A' : 'B', M = dA ? 'B' : 'A';
+    const sA = dA ? div : mono, sB = dA ? mono : div;
+    return mk('ecoBiodiv', 2, '7-1-03', 4, {
+      story: 'Plot A is ' + sA + '. Plot B is ' + sB + '. ' + B(pest + ' arrives') + '.',
+      q: 'Which recovers better?', a: 'Plot ' + D,
+      errs: [['Plot ' + M, 'One kind: the pest hits everything', 1], ['Both the same', 'Count the kinds of species', 0]],
+      steps: [['biodiversity', 'Plot ' + D + ' has many more kinds of species'], ['the pest', 'it hits one kind; the rest of Plot ' + D + ' carries on']],
+      pic: { k: 'scene', cards: [cd(.5, 0, pi, 'pest'), cd(0, 1, dA ? ic[1] : '🌾', 'Plot A', dA ? { tag: 'many kinds', size: 30 } : { tag: 'one kind', tagk: 'R' }), cd(1, 1, dA ? '🌾' : ic[1], 'Plot B', dA ? { tag: 'one kind', tagk: 'R' } : { tag: 'many kinds', size: 30 })], arrows: [{ a: 0, b: 1, k: 'R', dash: true }, { a: 0, b: 2, k: 'R', dash: true }] }
+    });
+  }
+  // A change ripples two links along a food chain. ud: up (+1) or down (−1) for X, Y and Z; st: the three steps.
+  const CHAINS = [
+    ['Purple loosestrife crowds out the ' + B('cattails') + ' in a marsh. ' + B('Muskrats eat cattails, and mink eat muskrats') + '.', ['🌸', 'loosestrife'], ['🌾', 'cattails'], ['🦫', 'muskrats'], ['🦦', 'mink'], [-1, -1, -1],
+      ['loosestrife crowds out the cattails', 'muskrats lose their food, so they decrease', 'mink lose their food, so they decrease']],
+    ['A wetland is ' + B('drained') + ' to build a parking lot. ' + B('Frogs live in it, and herons eat frogs') + '.', ['🚧', 'draining'], ['💧', 'wetland'], ['🐸', 'frogs'], ['🦩', 'herons'], [-1, -1, -1],
+      ['draining removes the wetland', 'frogs lose their habitat, so they decrease', 'herons lose their food, so they decrease']],
+    ['A new road is cut through a forest and many ' + B('aspens') + ' are removed. ' + B('Hares eat aspen shoots, and lynx eat hares') + '.', ['🚜', 'road'], ['🌳', 'aspens'], ['🐇', 'hares'], ['🐈', 'lynx'], [-1, -1, -1],
+      ['the road removes many aspens', 'hares lose their food, so they decrease', 'lynx lose their food, so they decrease']],
+    ['A pesticide kills most ' + B('grasshoppers') + ' on a prairie. ' + B('Meadowlarks eat grasshoppers, and hawks eat meadowlarks') + '.', ['🧴', 'pesticide'], ['🦗', 'grasshoppers'], ['🐦', 'meadowlarks'], ['🦅', 'hawks'], [-1, -1, -1],
+      ['the pesticide kills the grasshoppers', 'meadowlarks lose food, so they decrease', 'hawks lose food, so they decrease']],
+    ['Wolves are ' + B('brought back') + ' to a national park. ' + B('Wolves eat elk, and elk eat willows') + '.', ['🐺', 'reintroduced'], ['🐺', 'wolves'], ['🦌', 'elk'], ['🌿', 'willows'], [1, -1, 1],
+      ['more wolves now hunt in the park', 'more elk are eaten, so elk decrease', 'fewer elk eat willows, so willows increase']],
+    ['Ranchers ' + B('trap the coyotes') + ' in a valley. ' + B('Coyotes eat gophers, and gophers eat grass') + '.', ['🪤', 'trapping'], ['🐺', 'coyotes'], ['🐿️', 'gophers'], ['🌾', 'grass'], [-1, 1, -1],
+      ['trapping removes the coyotes', 'fewer gophers are eaten, so they increase', 'more gophers eat grass, so grass decreases']]
+  ];
+  function ecoChain() {
+    const [story, cause, X, Y, Z, ud, st] = pick(CHAINS);
+    const [xUp, yUp, zUp] = ud.map(d => d > 0);
+    const Zc = Z[1][0].toUpperCase() + Z[1].slice(1), w = up => Z[1] === 'grass' ? (up ? ' increases' : ' decreases') : (up ? ' increase' : ' decrease');
+    return mk('ecoChain', 3, '7-1-04', 5, {
+      story, q: 'What happens to ' + Z[1] + '?', a: Zc + w(zUp),
+      errs: [[Zc + w(!zUp), 'Follow each link in turn', 2], ['No change to ' + Z[1], 'Effects spread through the web', 2]],
+      steps: [['the change', st[0]], ['next link', st[1]], ['last link', st[2]]],
+      pic: { k: 'scene', cards: [cd(0, 0, cause[0], cause[1], { k: 'R' }), cd(1, 0, X[0], X[1], { tag: xUp ? '↑ more' : '↓ fewer', tagk: xUp ? 'N' : 'R' }), cd(2, 0, Y[0], Y[1], { s: 1, tag: yUp ? '↑ more' : '↓ fewer', tagk: yUp ? 'N' : 'R' }), cd(3, 0, Z[0], '?', { q: true, d: Z[1] + (zUp ? ' ↑' : ' ↓') })],
+        arrows: [{ a: 0, b: 1, k: 'R' }, { a: 1, b: 2, k: 'G' }, { a: 2, b: 3, k: 'G' }] }
+    });
+  }
+  const RECOVER = [
+    ['Lightning starts a fire in a ' + B('lodgepole pine') + ' forest. The heat opens pine cones, and ash covers the ground.', ['🔥', 'fire'], 'Plants return in stages',
+      [['The forest never returns', 'Fire is a natural disturbance', 0], ['The forest is back in a year', 'Recovery takes many years', 2]],
+      ['fire is a natural disturbance in the boreal', 'fireweed and grasses sprout in the sun and ash', 'shrubs, then pines return over many years'], ['🌸', 'fireweed'], ['🌲', 'pines']],
+    ['A spring ' + B('flood') + ' covers a riverbank meadow with mud. The plants there are buried.', ['🌊', 'flood'], 'Plants return in stages',
+      [['The meadow is gone for good', 'A flood is a natural disturbance', 0], ['It is all back in a week', 'Recovery takes seasons', 2]],
+      ['a flood is a natural disturbance', 'grasses and willow shoots grow through the mud', 'over seasons the meadow fills in again'], ['🌱', 'grasses'], ['🌿', 'willows']],
+    ['A native ' + B('prairie is plowed') + ' and farmed for 50 years. Then the farm is ' + B('left alone') + '.', ['🚜', 'plowing'], 'Prairie returns only slowly',
+      [['Prairie returns in a season', 'Some changes pass a tipping point', 2], ['Wheat keeps growing wild', 'Crops need farmers to replant', 1]],
+      ['plowing destroyed the prairie’s roots and soil', 'weeds and crops’ wild cousins move in first', 'native prairie needs decades and help to return'], ['🌾', 'weeds'], ['🌼', 'prairie']]
+  ];
+  function ecoRecover() {
+    const [story, d, a, errs, st, s1, s2] = pick(RECOVER);
+    return mk('ecoRecover', 3, '7-1-04', 5, {
+      story, q: 'What happens over years?', a, errs,
+      steps: [['disturbance', st[0]], ['first growth', st[1]], ['later', st[2]]],
+      pic: row([[d[0], d[1], { k: 'R' }], [s1[0], s1[1], { s: 1 }], [s2[0], '?', { q: true, d: s2[1] }]], { arr: [{ s: 1, t: 'first' }, { s: 2, t: 'later' }] })
+    });
+  }
+  const FIXES = [
+    ['Ducks stop nesting at a farm pond. ' + B('Fertilizer runoff') + ' from the fields fills it with algae.', ['🦆', 'ducks leave'], ['🧪', 'runoff'], 'Plant a grass buffer strip',
+      [['Bring in more ducks', 'Fix the cause, not the count', 2], ['Fence off the pond', 'A fence doesn’t stop runoff', 2]], ['ducks are leaving the pond', 'runoff adds fertilizer; algae take over', 'a grass strip soaks up runoff first'], ['🌾', 'buffer strip']],
+    ['Trout vanish from a creek. ' + B('Cattle trample the banks') + ' and mud fills the water.', ['🐟', 'trout gone'], ['🐄', 'trampling'], 'Fence cattle off the banks',
+      [['Stock more trout', 'Fix the cause, not the count', 2], ['Add fertilizer to the creek', 'That adds more pollution', 2]], ['trout are disappearing', 'trampled banks send mud into the water', 'a fence keeps cattle off the banks'], ['🚧', 'fence']],
+    ['Wildflowers vanish from a park slope. ' + B('Hikers cut new paths') + ' that crush plants.', ['🌼', 'flowers gone'], ['🥾', 'new paths'], 'Keep hikers on one trail',
+      [['Plant new flowers once', 'New paths would crush them', 2], ['Pave the whole slope', 'That destroys the habitat', 2]], ['wildflowers are disappearing', 'feet crush plants and wear away soil', 'one marked trail protects the rest'], ['🪧', 'one trail']],
+    ['Burrowing owls lose their homes on a ranch. The ' + B('ground squirrels are poisoned') + ', and owls nest in old squirrel burrows.', ['🦉', 'owls leave'], ['☠️', 'poison'], 'Stop poisoning the squirrels',
+      [['Hang nest boxes in trees', 'These owls nest in burrows', 1], ['Feed the owls', 'Food isn’t the problem', 1]], ['burrowing owls are leaving', 'no squirrels means no burrows to nest in', 'leaving squirrels keeps the burrows'], ['🐿️', 'squirrels stay']]
+  ];
+  function ecoSteward() {
+    const [story, prob, cause, a, errs, st, fix] = pick(FIXES);
+    return mk('ecoSteward', 3, '7-1-04', 6, {
+      story, q: 'Best fix?', a, errs,
+      steps: [['problem', st[0]], ['cause', st[1]], ['fix', st[2]]],
+      pic: { k: 'scene', cards: [cd(0, 0, cause[0], cause[1], { k: 'R', s: 1 }), cd(1, 0, prob[0], prob[1], { x: false, hl: true }), cd(0, 1, fix[0], '?', { q: true, d: fix[1] })], arrows: [{ a: 0, b: 1, k: 'R', s: 1, t: 'causes' }, { a: 2, b: 0, k: 'N', s: 2, t: 'stops' }] }
+    });
+  }
+
+  /* ============ 7-2 · Plants for Food and Fibre ============ */
+  const PARTS = {
+    chloroplast: ['Chloroplasts', 'small green ovals', 'Chloroplasts are small and green', 'they make food'],
+    wall: ['Cell wall', 'a thick, stiff edge around each cell', 'The wall is the stiff edge', 'it gives the box shape'],
+    vacuole: ['Vacuole', 'one large clear sac filling most of each cell', 'The vacuole is one big sac', 'it stores water'],
+    nucleus: ['Nucleus', 'one dark, round body in each cell', 'The nucleus is one round body', 'it controls the cell'],
+    membrane: ['Cell membrane', 'a thin layer just inside the wall', 'The membrane is a thin layer', 'it lets materials in and out']
+  };
+  function plCell() {
+    const part = pick(Object.keys(PARTS)), P = PARTS[part], n = pick(NAMES);
+    const spec = part === 'chloroplast' ? pick(['an elodea leaf', 'a moss leaf', 'a spinach leaf']) : pick(['onion skin', 'an elodea leaf', 'a moss leaf']);
+    const others = shuffle(Object.keys(PARTS).filter(k => k !== part)).slice(0, 3);
+    return mk('plCell', 1, '7-2-01', 1, {
+      story: 'Under a microscope, ' + n + ' looks at ' + spec + '. ' + n + ' sees ' + B(P[1]) + '.',
+      q: 'What are these?', a: P[0],
+      errs: others.map(k => [PARTS[k][0], PARTS[part][2], 0]),
+      steps: [['match', P[1].replace(/^(a|one) /, '') + ': ' + P[0].toLowerCase()]],
+      pic: { k: 'cell', part, d: P[0], chl: spec !== 'onion skin' }
+    });
+  }
+  const VESSEL = [
+    ['x', 'A ' + B('carrot') + ' plant takes in water through its roots. The water must reach the leaves.', ['🥕', 'roots'], ['🍃', 'leaves'], 'water'],
+    ['x', 'A ' + B('sunflower') + ' on a hot day loses water from its leaves. New water comes up from the soil.', ['🟤', 'roots'], ['🌻', 'leaves'], 'water'],
+    ['x', 'A ' + B('wheat') + ' plant takes dissolved minerals in at its roots. They are needed in the leaves.', ['🟤', 'roots'], ['🌾', 'leaves'], 'minerals'],
+    ['p', 'Leaves of a ' + B('sugar beet') + ' make sugar all summer. The sugar is stored in the big root.', ['🍃', 'leaves'], ['🟣', 'root'], 'sugar'],
+    ['p', 'Leaves of a ' + B('potato') + ' plant make sugar. It is stored in the potatoes underground.', ['🍃', 'leaves'], ['🥔', 'potatoes'], 'sugar'],
+    ['p', 'Leaves of a ' + B('wheat') + ' plant make sugar. It moves up to fill the kernels in the head.', ['🍃', 'leaves'], ['🌾', 'kernels'], 'sugar']
+  ];
+  function plVessel() {
+    const [k, story, from, to, what] = pick(VESSEL), xy = k === 'x', down = !xy && from[1] === 'leaves' && to[1] !== 'kernels';
+    return mk('plVessel', 1, '7-2-02', 2, {
+      story, q: 'Which tissue carries it?', a: xy ? 'Xylem' : 'Phloem',
+      errs: [[xy ? 'Phloem' : 'Xylem', xy ? 'Phloem carries sugar from leaves' : 'Xylem carries water up', 0], ['Root hairs', 'Root hairs absorb; they don’t carry', 0]],
+      steps: [[xy ? 'xylem' : 'phloem', xy ? 'xylem carries water and minerals up from roots' : 'phloem carries sugar from leaves to where it’s used']],
+      pic: { k: 'scene', cards: [cd(0, down ? 0 : 1, from[0], from[1]), cd(0, down ? 1 : 0, to[0], to[1])], arrows: [{ a: 0, b: 1, t: what + ': ?', q: true, d: what + ': ' + (xy ? 'xylem' : 'phloem'), k: 'L' }], w: 170 }
+    });
+  }
+  const REPRO = [
+    ['A', 'A strawberry plant sends out ' + B('runners') + '. New plants root where the runners touch soil.', ['🍓', 'strawberry'], 'one parent: runners grow copies'],
+    ['A', 'A farmer cuts a ' + B('seed potato into pieces') + ' with eyes. Each piece grows a new plant.', ['🥔', 'potato'], 'one parent: each piece is a copy'],
+    ['A', 'Aspens send up ' + B('new shoots from their roots') + '. A whole grove can be one plant.', ['🌳', 'aspen'], 'one parent: root shoots are copies'],
+    ['A', 'Hana puts a ' + B('stem cutting') + ' from a spider plant in water. It grows roots.', ['🪴', 'spider plant'], 'one parent: the cutting is a copy'],
+    ['A', 'A ' + B('tulip bulb splits') + ' into new bulbs underground. Each one flowers.', ['🌷', 'tulip'], 'one parent: new bulbs are copies'],
+    ['S', 'Bees carry ' + B('pollen') + ' between apple blossoms. ' + B('Seeds') + ' form inside the apples.', ['🍎', 'apple'], 'pollen joins an egg: seeds from two parents'],
+    ['S', 'Wind blows ' + B('pollen') + ' from corn tassels onto the silks. ' + B('Kernels') + ' form on the cob.', ['🌽', 'corn'], 'pollen joins an egg: seeds from two parents'],
+    ['S', 'A farmer plants canola ' + B('seeds') + '. Each formed after ' + B('pollen') + ' reached a flower.', ['🌼', 'canola'], 'pollen joins an egg: seeds from two parents'],
+    ['S', 'Pollen from one sunflower lands on the ' + B('stigma') + ' of another. ' + B('Seeds') + ' form in its head.', ['🌻', 'sunflower'], 'pollen joins an egg: seeds from two parents']
+  ];
+  function plRepro() {
+    const [k, story, ic, why] = pick(REPRO), sx = k === 'S';
+    return mk('plRepro', 1, '7-2-04', 4, {
+      story, q: 'What kind of reproduction?', a: sx ? 'Sexual' : 'Asexual',
+      errs: [[sx ? 'Asexual' : 'Sexual', sx ? 'Pollen joins two parents' : 'No pollen or seeds involved', 0], ['Photosynthesis', 'That makes food, not offspring', 0]],
+      steps: [[sx ? 'sexual' : 'asexual', why]],
+      pic: sx ? { k: 'scene', cards: [cd(0, 0, ic[0], 'parent 1'), cd(0, 1, ic[0], 'parent 2'), cd(1, .5, '🌰', '?', { q: true, d: 'seed: sexual' })], arrows: [{ a: 0, b: 2, t: 'pollen', k: 'Y' }, { a: 1, b: 2, t: 'egg', k: 'P' }] }
+        : row([[ic[0], 'parent'], [ic[0], '?', { q: true, d: 'copy: asexual' }]], { arr: [{ t: 'one parent', k: 'T' }] })
+    });
+  }
+  const NEEDS = [
+    ['light', 'A bean plant is kept in a ' + B('dark closet') + ' for two weeks. It gets water and air.', 'no light', 'It can’t make food; it weakens'],
+    ['water', 'A pot of wheat is ' + B('not watered') + ' for two weeks. It sits in a sunny window.', 'no water', 'It can’t make food; it wilts'],
+    ['co2', 'A plant is sealed in a jar with a chemical that ' + B('removes all CO₂') + '. It has light and water.', 'no CO₂', 'It can’t make food; it weakens'],
+    ['chl', 'A geranium has some ' + B('white leaves with no chlorophyll') + '. They get light, water and air.', 'no chlorophyll', 'Those leaves can’t make food']
+  ];
+  function plNeeds() {
+    const [miss, story, gone, a] = pick(NEEDS);
+    const ins = [['☀️', 'light', 'light'], ['💧', 'water', 'water'], ['💨', 'CO₂', 'co2']];
+    return mk('plNeeds', 2, '7-2-03', 3, {
+      story, q: 'What happens to it?', a,
+      errs: [['It feeds on the soil instead', 'Soil has no food for it', 1], ['It makes extra oxygen', 'Missing input: no photosynthesis', 0], ['Nothing changes', 'Photosynthesis needs every input', 0]],
+      steps: [['inputs', 'light + water + CO₂ → glucose + oxygen' + (miss === 'chl' ? ' (needs chlorophyll)' : '')], ['missing', gone + ', so no glucose is made']],
+      pic: { k: 'scene', cards: ins.map((x, j) => cd(0, j, x[0], x[1], miss === x[2] ? { x: true } : {})).concat([cd(1, 1, miss === 'chl' ? '🤍' : '🍃', miss === 'chl' ? 'white leaf' : 'leaf', miss === 'chl' ? { k: 'R' } : {}), cd(2, 1, '🍬', '?', { q: true, d: 'no glucose' })]),
+        arrows: [{ a: 0, b: 3, k: miss === 'light' ? 'R' : 'G' }, { a: 1, b: 3, k: miss === 'water' ? 'R' : 'G' }, { a: 2, b: 3, k: miss === 'co2' ? 'R' : 'G' }, { a: 3, b: 4, k: 'R', s: 1 }], h: 76, w: 128 }
+    });
+  }
+  const MASS = [['willow', '🌳', [2, 3], [70, 80], [50, 90], 5], ['pumpkin plant', '🎃', [0, 0], [15, 25], [20, 40], 1], ['sunflower', '🌻', [0, 0], [2, 4], [10, 25], 1], ['spruce seedling', '🌲', [1, 1], [20, 30], [30, 60], 6]];
+  function plMass() {
+    const [nm, ic, s0, s1, lost, yrs] = pick(MASS), m0 = rnd(s0[0], s0[1]), m1 = rnd(s1[0], s1[1]), g = rnd(lost[0], lost[1]);
+    const start = m0 ? m0 + ' kg' : 'a seed', yy = yrs === 1 ? 'one summer' : yrs + ' years';
+    return mk('plMass', 2, '7-2-03', 3, {
+      story: 'A ' + nm + ' grows from ' + B(start) + ' to ' + B(m1 + ' kg') + ' in ' + yy + '. The soil in its pot loses only ' + B(g + ' g') + '.',
+      q: 'Source of the mass?', a: 'CO₂ from the air, and water',
+      errs: [['The soil', 'Soil lost only a few grams', 0], ['Sunlight', 'Light is energy, not matter', 1], ['Fertilizer', 'Minerals are tiny amounts', 0]],
+      steps: [['the soil', 'the soil lost only ' + g + ' g: not the source'], ['photosynthesis', 'glucose is built from CO₂ and water']],
+      pic: { k: 'scene', cards: [cd(0, 0, '💨', 'CO₂ in air', { s: 1 }), cd(0, 1, '💧', 'water', { s: 1 }), cd(1, .5, ic, '+' + (m1 - m0) + ' kg', { hl: true }), cd(2, .5, '🟫', 'soil −' + g + ' g', { k: 'M' })], arrows: [{ a: 0, b: 2, k: 'N', s: 1 }, { a: 1, b: 2, k: 'N', s: 1 }] }
+    });
+  }
+  const POLL = [['alfalfa seed', '🌸', 'leafcutter bees'], ['canola', '🌼', 'honeybees'], ['apple', '🍎', 'bees'], ['raspberry', '🍇', 'bumblebees'], ['clover seed', '☘️', 'honeybees']];
+  function plPollin() {
+    const [crop, ic, bees] = pick(POLL), more = rnd(0, 1);
+    return mk('plPollin', 2, '7-2-04', 4, {
+      story: more ? 'A farmer brings ' + B('hives of ' + bees) + ' to a ' + crop + ' field in full bloom. The plants are healthy.'
+        : 'A spray ' + B('kills most of the ' + bees) + ' near a ' + crop + ' field. The plants still flower well.',
+      q: 'What happens to seeds?', a: more ? 'More seeds form' : 'Fewer seeds form',
+      errs: [[more ? 'Fewer seeds form' : 'More seeds form', 'Bees carry the pollen', 1], ['No change; flowers are fine', 'Flowers need pollen delivered', 0]],
+      steps: [['pollination', bees + ' carry pollen from anther to stigma'], ['seeds', (more ? 'more' : 'fewer') + ' flowers pollinated, so ' + (more ? 'more' : 'fewer') + ' seeds']],
+      pic: row([['🐝', bees, more ? { hl: true } : { x: true }], [ic, 'flowers'], ['🌰', '?', { q: true, d: more ? 'more seeds' : 'fewer seeds' }]], { arr: [{ t: 'pollen', k: more ? 'Y' : 'R', dash: !more }, { s: 1, t: 'seeds', k: 'G' }] })
+    });
+  }
+  const BREED = [['barley', '🌾', 'grows well in ' + B('dry years'), 'did best in the dry years', 'drought'], ['wheat', '🌾', 'survives an ' + B('early frost'), 'survived the frost', 'frost'],
+    ['oats', '🌾', 'has ' + B('short, stiff stems'), 'had the stiffest stems', 'stiff stems'], ['canola', '🌼', 'resists a ' + B('leaf disease'), 'stayed healthy', 'disease']];
+  function plBreed() {
+    if (rnd(0, 3) === 0) return mk('plBreed', 3, '7-2-05', 6, {
+      story: 'Scientists ' + B('move a gene') + ' from a bacterium into canola cells. The new canola survives a weed spray.',
+      q: 'What method is this?', a: 'Genetic modification (GMO)',
+      errs: [['Selective breeding', 'A gene was moved by scientists', 0], ['Asexual reproduction', 'It changes genes; not a copy', 2]],
+      steps: [['the gene', 'a gene is taken from a bacterium'], ['moved', 'scientists put it into canola cells'], ['result', 'GMO canola now resists the spray']],
+      pic: row([['🦠', 'bacterium'], ['🧬', 'gene', { s: 1 }], ['🌼', '?', { q: true, d: 'GMO canola' }]], { arr: [{ t: 'gene out', k: 'P', s: 1 }, { t: 'into canola', k: 'P', s: 1 }] })
+    });
+    const [crop, ic, want, best, trait] = pick(BREED), n = pick(NAMES);
+    return mk('plBreed', 3, '7-2-05', 6, {
+      story: n + ' wants a ' + crop + ' crop that ' + want + '. Each year, ' + n + ' plants ' + B('seeds only from the plants that ' + best) + '.',
+      q: 'What will happen?', a: 'The trait gets more common',
+      errs: [['It becomes a GMO', 'No genes moved in a lab', 0], ['Every plant is tough next year', 'It takes many generations', 2]],
+      steps: [['method', 'choosing the parents: selective breeding'], ['offspring', 'the seeds inherit the parents’ traits'], ['over time', 'year after year, ' + trait + ' gets more common']],
+      pic: row([[ic, 'year 1'], [ic, 'year 5', { s: 1 }], [ic, '?', { q: true, d: 'year 20: ' + trait }]], { arr: [{ t: 'best seeds', k: 'G' }, { t: 'best seeds', k: 'G', s: 2 }] })
+    });
+  }
+  const DARK = [
+    ['Thick ' + B('wildfire smoke') + ' blocks sunlight over a lake for weeks. ' + B('Algae feed water fleas, and minnows eat the fleas') + '.', ['🌫️', 'smoke']],
+    ['A storm washes ' + B('mud') + ' into a pond, making it murky for weeks. ' + B('Algae feed water fleas, and minnows eat the fleas') + '.', ['🟤', 'murky water']],
+    ['Deep ' + B('snow covers the ice') + ' on a pond all winter. ' + B('Algae feed water fleas, and minnows eat the fleas') + '.', ['❄️', 'snow on ice']]
+  ];
+  function plLight() {
+    const [story, cause] = pick(DARK);
+    return mk('plLight', 3, '7-2-03', 3, {
+      story, q: 'Effect on minnows?', a: 'Fewer minnows over time',
+      errs: [['None: fish don’t need light', 'Their food chain starts with light', 1], ['More: algae grow in shade', 'Algae need light to make food', 0]],
+      steps: [['producers', 'less light, so algae make less glucose'], ['next level', 'water fleas get less food and decrease'], ['top', 'minnows get less food and decrease']],
+      pic: row([[cause[0], cause[1], { k: 'R' }], ['🟢', 'algae', { tag: '↓ less food', tagk: 'R' }], ['🦐', 'water fleas', { s: 1, tag: '↓ fewer', tagk: 'R' }], ['🐟', '?', { q: true, d: 'minnows ↓' }]], { arr: [{ t: 'blocks light', k: 'R' }, { k: 'G' }, { k: 'G' }] })
+    });
+  }
+  const ROT = [['canola', '🌼', 'clubroot', 'a fungus'], ['wheat', '🌾', 'wheat midge', 'an insect'], ['potatoes', '🥔', 'potato beetle', 'a beetle']];
+  function plFarm() {
+    const [crop, ic, pest, kind] = pick(ROT);
+    return mk('plFarm', 3, '7-2-05', 5, {
+      story: 'A farm grows ' + B('only ' + crop) + ' in the same field every year. ' + B(pest[0].toUpperCase() + pest.slice(1)) + ', ' + kind + ' that attacks ' + crop + ', builds up there.',
+      q: 'Best fix?', a: 'Rotate to a different crop',
+      errs: [['Plant ' + crop + ' closer together', 'More host plants feed the pest', 1], ['Add more fertilizer', 'Fertilizer doesn’t stop pests', 2]],
+      steps: [['practice', 'one crop every year: a monoculture'], ['pest', 'the ' + pest + ' always has food there'], ['fix', 'a different crop starves out the ' + pest]],
+      pic: row([[ic, crop + ' every year', { k: 'R' }], ['🐛', pest, { s: 1, k: 'R' }], ['🔄', '?', { q: true, d: 'rotate crops' }]], { arr: [{ t: 'feeds', k: 'R', s: 1 }, { t: 'stopped by', k: 'N', s: 2 }] })
+    });
+  }
+
+  /* ============ 7-3 · Heat and Temperature ============ */
+  const MODES = [
+    ['cd', 'stirs hot soup with a ' + B('metal spoon') + '. Soon the handle feels hot.', ['🍲', 'soup'], ['🥄', 'spoon handle']],
+    ['cd', 'fries an egg. The ' + B('hot pan touches the egg') + ' and cooks it.', ['🍳', 'hot pan'], ['🥚', 'egg']],
+    ['cd', 'holds an ' + B('ice cube in a bare hand') + '. It melts.', ['✋', 'hand'], ['🧊', 'ice cube']],
+    ['cd', 'sits on a ' + B('cold metal bench') + ' at the bus stop. The bench warms where they sit.', ['🧍', 'body'], ['🪑', 'bench']],
+    ['cv', 'turns on a heater by the floor. ' + B('Warm air rises') + ' and spreads across the room.', ['🔥', 'heater'], ['🏠', 'room air']],
+    ['cv', 'heats a pot of water. The ' + B('hot water rises') + ' and cooler water sinks to the bottom.', ['🔥', 'burner'], ['🫕', 'water in pot']],
+    ['cv', 'watches a hot-air balloon. A burner ' + B('heats the air inside') + ', and the warm air rises.', ['🔥', 'burner'], ['🎈', 'balloon air']],
+    ['rd', 'stands in the ' + B('sunshine') + ' on a cold day. Their face feels warm.', ['☀️', 'sun'], ['🙂', 'face']],
+    ['rd', 'holds hands out ' + B('beside a campfire') + ', a metre away. The hands warm up.', ['🔥', 'campfire'], ['🙌', 'hands']],
+    ['rd', 'sees a ' + B('heat lamp') + ' shining down on fries. The fries stay warm.', ['💡', 'heat lamp'], ['🍟', 'fries']]
+  ];
+  const MN = { cd: 'Conduction', cv: 'Convection', rd: 'Radiation' };
+  const MWHY = { cd: 'touching particles pass the energy along', cv: 'warm fluid rises and carries the heat', rd: 'energy travels as waves, with no contact' };
+  const MCUE = { cd: 'Here it passes by touch', cv: 'A warm fluid moves here', rd: 'No contact; it travels as waves' };
+  function heMode() {
+    const [m, s, from, to] = pick(MODES), n = pick(NAMES), wrong = ['cd', 'cv', 'rd'].filter(x => x !== m);
+    return mk('heMode', 1, '7-3-03', 4, {
+      story: n + ' ' + s, q: 'Which heat transfer?', a: MN[m],
+      errs: wrong.map(w => [MN[w], MCUE[m], 0]),
+      steps: [[MN[m].toLowerCase(), MWHY[m]]],
+      pic: row([[from[0], from[1], { k: 'R' }], [to[0], to[1]]], { arr: [{ t: 'heat: ?', q: true, d: MN[m].toLowerCase(), k: 'G' }] })
+    });
+  }
+  const THINGS = [['🥤', 'can of pop', [3, 6]], ['🍦', 'tub of ice cream', [-15, -10]], ['☕', 'mug of cocoa', [60, 75]], ['🥔', 'baked potato', [80, 95]], ['🏒', 'puck from outside', [-20, -10]], ['🍲', 'bowl of soup', [55, 70]]];
+  function heFlow() {
+    const [ic, nm, tr] = pick(THINGS), room = rnd(19, 23), same = rnd(0, 3) === 0, T = same ? room : rnd(tr[0], tr[1]);
+    const thing = same ? pick([['📕', 'book'], ['🪑', 'wooden chair'], ['🧸', 'teddy bear']]) : [ic, nm], hot = T > room;
+    const nmT = thing[1], dirT = hot ? nmT + ' → room' : 'room → ' + nmT;
+    return mk('heFlow', 1, '7-3-01', 2, {
+      story: 'A ' + nmT + ' is at ' + B(T + ' °C') + (same ? ' after a day indoors' : '') + '. It sits in a room at ' + B(room + ' °C') + '.',
+      q: 'Heat flows which way?', a: same ? 'No heat flows' : dirT,
+      errs: same ? [[nmT + ' → room', 'Same temperature: no flow', 0], ['room → ' + nmT, 'Same temperature: no flow', 0]]
+        : [[hot ? 'room → ' + nmT : nmT + ' → room', 'Heat moves from hot to cold', 0], ['No heat flows', 'Different temperatures: heat flows', 0]],
+      steps: [['heat flow', same ? 'both at ' + T + ' °C, so no heat flows' : 'heat flows from the ' + (hot ? nmT : 'room') + ' (hotter) to the ' + (hot ? 'room' : nmT)]],
+      pic: { k: 'scene', cards: [cd(0, 0, thing[0], nmT + ' · ' + T + ' °C', { k: hot ? 'R' : same ? 'M' : 'L' }), cd(1, 0, '🏠', 'room · ' + room + ' °C', { k: 'M' })],
+        arrows: same ? [] : [hot ? { a: 0, b: 1, t: 'heat', k: 'R', dir: true } : { a: 1, b: 0, t: 'heat', k: 'R', dir: true }], w: 190 }
+    });
+  }
+  const EXP = [
+    ['e', 'A metal lid is stuck on a glass jar. ' + B('Hot water') + ' is run over the lid, and it twists off.', ['🫙', 'lid'], 'heated'],
+    ['e', 'On a ' + B('hot summer day') + ', power lines between poles hang lower.', ['🔌', 'power lines'], 'heated'],
+    ['e', 'The red liquid in a thermometer ' + B('rises') + ' when it is moved into the sun.', ['🌡️', 'liquid'], 'heated'],
+    ['e', 'Gaps in a bridge deck get ' + B('narrower') + ' on a hot afternoon.', ['🌉', 'bridge deck'], 'heated'],
+    ['c', 'A full balloon is put in a ' + B('freezer') + ' for an hour. It comes out smaller.', ['🎈', 'balloon air'], 'cooled'],
+    ['c', 'A basketball left outside in ' + B('January') + ' feels soft and flat.', ['🏀', 'air inside'], 'cooled'],
+    ['c', 'Gaps between sidewalk slabs get ' + B('wider') + ' on a very cold night.', ['🧱', 'slabs'], 'cooled'],
+    ['c', 'A bike tire pumped up indoors looks ' + B('low') + ' after a cold night outside.', ['🚲', 'tire air'], 'cooled']
+  ];
+  function heExpand() {
+    const [k, story, obj, how] = pick(EXP), e = k === 'e';
+    return mk('heExpand', 1, '7-3-02', 3, {
+      story, q: 'What did particles do?', a: e ? 'Spread apart: it expanded' : 'Moved closer: it contracted',
+      errs: [[e ? 'Moved closer: it contracted' : 'Spread apart: it expanded', e ? 'Heating spreads particles apart' : 'Cooling lets particles move closer', 0], [e ? 'Each particle got bigger' : 'Each particle got smaller', 'Particles never change size', 0]],
+      steps: [[e ? 'heated' : 'cooled', e ? 'particles move faster and spread apart: expands' : 'particles slow down and move closer: contracts']],
+      pic: row([[obj[0], obj[1]], [e ? '↔️' : '➡️⬅️', '?', { q: true, d: e ? 'expands' : 'contracts' }]], { arr: [{ t: how, k: e ? 'R' : 'L' }] })
+    });
+  }
+  const AMT = [[['🍵', 'teacup'], ['🛁', 'bathtub'], [38, 45]], [['🫖', 'kettle'], ['♨️', 'hot tub'], [37, 40]], [['🥄', 'spoonful of soup'], ['🍲', 'pot of soup'], [60, 80]], [['💧', 'drop of water'], ['🏞️', 'lake'], [15, 22]]];
+  function heAmount() {
+    const [sm, bg, tr] = pick(AMT), T = rnd(tr[0], tr[1]), sw = rnd(0, 1), A = sw ? bg : sm, Bb = sw ? sm : bg;
+    return mk('heAmount', 2, '7-3-01', 2, {
+      story: 'A ' + B(A[1]) + ' and a ' + B(Bb[1]) + ' are both at ' + B(T + ' °C') + '.',
+      q: 'More thermal energy?', a: 'The ' + bg[1],
+      errs: [['The ' + sm[1], 'More water: more total energy', 1], ['Same: same temperature', 'Temperature isn’t total energy', 0]],
+      steps: [['temperature', 'same ' + T + ' °C: particles have the same average speed'], ['amount', 'the ' + bg[1] + ' has far more particles: more energy']],
+      pic: { k: 'scene', cards: [cd(0, 0, A[0], A[1] + ' · ' + T + ' °C', A === bg ? { tag: 'more energy' } : {}), cd(1, 0, Bb[0], Bb[1] + ' · ' + T + ' °C', Bb === bg ? { tag: 'more energy' } : {})], w: 200 }
+    });
+  }
+  const FEEL = [[['🪑', 'metal bench'], ['🪵', 'wooden bench'], 'sat outside all night', -8, -2], [['⬜', 'tile floor'], ['🟫', 'carpet'], 'are in the same house', 19, 22],
+    [['🔘', 'metal doorknob'], ['🚪', 'wooden door'], 'are in the same room', 20, 22], [['🛝', 'steel slide'], ['🟥', 'plastic slide'], 'sat in the shade all day', 8, 14]];
+  function heFeel() {
+    const [m, w, where, lo, hi] = pick(FEEL), T = rnd(lo, hi), Tt = (T < 0 ? '−' + (-T) : T) + ' °C';
+    return mk('heFeel', 2, '7-3-03', 4, {
+      story: 'A ' + B(m[1]) + ' and a ' + B(w[1]) + ' ' + where + ' at ' + B(Tt) + '. The metal one feels colder to touch.',
+      q: 'Why the difference?', a: 'Metal pulls heat away faster',
+      errs: [['Metal is at a lower temperature', 'Both are at ' + Tt, 0], ['Cold flows out of the metal', 'Heat flows; cold does not', 1]],
+      steps: [['temperature', 'both are at ' + Tt + ', the same as the air'], ['conduction', 'metal conducts heat from your hand faster']],
+      pic: { k: 'scene', cards: [cd(0, 1, m[0], m[1]), cd(1, 0, '✋', 'your hand'), cd(2, 1, w[0], w[1])], arrows: [{ a: 1, b: 0, t: 'fast', k: 'R', s: 1 }, { a: 1, b: 2, t: 'slow', k: 'M', s: 1, dash: true }] }
+    });
+  }
+  // cards: two cards, the water one (wi) gets the heat-capacity tag
+  const CAP = [
+    ['On a sunny day at Sylvan Lake, the ' + B('sand') + ' gets too hot to walk on. The ' + B('lake water') + ' stays cool.', 'Why the difference?', 'Water needs more heat to warm',
+      [['The lake gets less sunlight', 'Both get the same sunlight', 0], ['Sand is a better insulator', 'It’s about heat capacity', 1]], ['same heat', 'sand and water get the same sunlight'], ['heat capacity', 'water warms far less for the same heat'], [['🏖️', 'sand · hot'], ['🌊', 'water · cool']], 1],
+    [B('Vancouver') + ' sits by the ocean; ' + B('Calgary') + ' is far inland. Vancouver’s winters are much milder.', 'Why milder winters?', 'The ocean stores heat',
+      [['Vancouver is much farther south', 'They’re at about the same latitude', 0], ['Mountains make heat', 'Mountains don’t make heat', 0]], ['summer', 'the ocean soaks up lots of heat'], ['winter', 'it gives the heat back slowly: mild'], [['🌊', 'Vancouver · mild'], ['🏔️', 'Calgary · cold']], 0],
+    ['Car engines are cooled by a ' + B('water mix') + ' that flows around them. It carries engine heat to the radiator.', 'Why use water?', 'It soaks up lots of heat',
+      [['Water is a good insulator', 'A coolant must carry heat', 1], ['Water is colder than air', 'It’s about heat capacity', 0]], ['engine', 'the engine makes lots of heat'], ['heat capacity', 'water absorbs lots of heat with little warming'], [['🚗', 'engine · hot'], ['💧', 'coolant']], 1]
+  ];
+  function heCapacity() {
+    const [story, q, a, errs, s0, s1, cards, wi] = pick(CAP);
+    return mk('heCapacity', 2, '7-3-04', 5, {
+      story, q, a, errs, steps: [s0, s1],
+      pic: { k: 'scene', cards: cards.map((x, j) => cd(j, 0, x[0], x[1], j === wi ? { tag: 'high heat capacity', tagk: 'L' } : {})), w: 210 }
+    });
+  }
+  const INS = [
+    [['🏠', 'cabin'], 'A cabin’s walls are filled with ' + B('fibreglass') + '. It stays warm in winter and cool in summer.', 'Why both seasons?', 'It slows heat flow both ways',
+      [['It makes heat in winter', 'Insulation makes no heat', 2], ['It blocks cold coming in', 'Heat flows; cold does not', 0]], ['winter', 'heat flows out from the warm inside'], ['summer', 'heat flows in from the hot outside'], ['insulation', 'trapped air slows heat flow both ways']],
+    [['🥤', 'thermos'], 'A thermos keeps ' + B('hot cocoa hot') + '. The same thermos keeps ' + B('iced tea cold') + '.', 'Why both drinks?', 'It slows heat flow both ways',
+      [['It makes the cocoa hot', 'A thermos makes no heat', 2], ['It traps cold inside', 'Heat flows; cold does not', 0]], ['cocoa', 'heat would flow out of the hot cocoa'], ['iced tea', 'heat would flow into the cold tea'], ['thermos', 'its walls slow heat flow both ways']],
+    [['🧥', 'jacket'], 'A ' + B('down jacket') + ' is put on a statue outside with a thermometer inside. The reading does not rise.', 'Why no warmer?', 'The statue makes no heat',
+      [['The jacket is broken', 'Jackets only slow heat loss', 2], ['Cold is trapped inside', 'Heat flows; cold does not', 0]], ['you', 'your body makes its own heat'], ['statue', 'a statue makes no heat'], ['jacket', 'a jacket only slows heat loss']]
+  ];
+  function heInsul() {
+    const [ic, story, q, a, errs, s0, s1, s2] = pick(INS);
+    return mk('heInsul', 3, '7-3-05', 6, {
+      story, q, a, errs, steps: [s0, s1, s2],
+      pic: { k: 'scene', cards: [cd(0, 0, '🔥', 'hot side', { k: 'R' }), cd(1, 0, ic[0], ic[1], { hl: true, tag: 'slows heat' }), cd(2, 0, '❄️', 'cold side', { k: 'L' })], arrows: [{ a: 0, b: 1, t: 'heat', k: 'R', s: 0 }, { a: 1, b: 2, t: 'slowly', k: 'R', dash: true, s: 2 }] }
+    });
+  }
+  const STATE = [
+    ['Wet laundry hangs outside on a ' + B('sunny day') + '. By afternoon it is dry.', 'Where did water go?', 'It became water vapour (gas)',
+      [['The water was destroyed', 'Matter is not destroyed', 2], ['Its particles grew and floated', 'Particles speed up, not grow', 1]], ['heat in', 'the sun adds heat to the water'], ['particles', 'water particles move faster and spread out'], ['state', 'they escape into the air as vapour'], ['👕', 'wet laundry'], ['☁️', 'vapour'], 1],
+    ['A ' + B('cold can') + ' of pop sits out on a humid day. Drops of water form on the outside.', 'Source of the drops?', 'Water vapour in the air',
+      [['The pop leaked through the can', 'The can is sealed', 0], ['The cold made new water', 'Cooling changes state; no new matter', 2]], ['heat out', 'air touching the can loses heat'], ['particles', 'vapour particles slow down and move closer'], ['state', 'they condense into liquid drops'], ['💨', 'humid air'], ['💧', 'drops'], 0],
+    ['A pat of ' + B('butter') + ' is put in a hot pan. It turns to liquid.', 'What did particles do?', 'Moved faster and spread apart',
+      [['The particles melted', 'Particles don’t melt; matter changes state', 1], ['Cold left the butter', 'Heat flowed in; cold doesn’t flow', 0]], ['heat in', 'heat flows from the pan into the butter'], ['particles', 'particles vibrate faster and pull apart'], ['state', 'solid butter becomes a liquid'], ['🧈', 'butter'], ['🫗', 'liquid'], 1]
+  ];
+  function heState() {
+    const [story, q, a, errs, s0, s1, s2, A0, A1, hot] = pick(STATE);
+    return mk('heState', 3, '7-3-02', 3, {
+      story, q, a, errs, steps: [s0, s1, s2],
+      pic: row([[A0[0], A0[1]], [hot ? '🔴' : '🔵', hot ? 'particles faster' : 'particles slower', { s: 1 }], [A1[0], '?', { q: true, d: A1[1] }]], { arr: [{ t: hot ? 'heat in' : 'heat out', k: hot ? 'R' : 'L' }, { k: 'G', s: 2 }] })
+    });
+  }
+  const THERM = [['A power plant pumps ' + B('warm cooling water') + ' into a river.', ['🏭', 'power plant']], ['A factory sends ' + B('hot wastewater') + ' into a creek.', ['🏭', 'factory']],
+    ['The trees shading a creek are ' + B('cut down') + ', and the sun beats on the water.', ['🪓', 'trees cut']], ['Rain runs off a ' + B('hot parking lot') + ' into a stream.', ['🅿️', 'hot pavement']]];
+  function heThermal() {
+    const [s, cause] = pick(THERM), d = rnd(3, 8);
+    return mk('heThermal', 3, '7-3-05', 6, {
+      story: s + ' Downstream, the water is ' + B(d + ' °C warmer') + '.',
+      q: 'Effect on bull trout?', a: 'Fewer trout: less oxygen',
+      errs: [['More trout: warmth helps', 'Trout need cold, oxygen-rich water', 2], ['None: the heat leaves fast', 'Water holds heat a long time', 0]],
+      steps: [['warmer', 'the water downstream warms by ' + d + ' °C'], ['oxygen', 'warm water holds less dissolved oxygen'], ['trout', 'trout struggle, so there are fewer trout']],
+      pic: row([[cause[0], cause[1], { k: 'R' }], ['🌡️', 'water +' + d + ' °C'], ['🫧', 'oxygen', { s: 1, tag: '↓ less', tagk: 'R' }], ['🐟', '?', { q: true, d: 'trout ↓' }]], { arr: [{ k: 'R' }, { k: 'G', s: 1 }, { k: 'G', s: 2 }] })
+    });
+  }
+
+  /* ============ 7-4 · Structures and Forces ============ */
+  const TYPES = [
+    ['sh', '🛖', 'An ' + B('igloo') + ' is built of snow blocks curved into a thin dome.', 'thin curved shell holds its shape'],
+    ['sh', '🥚', 'An ' + B('eggshell') + ' is thin and curved, yet strong when squeezed end to end.', 'a thin curved outer layer'],
+    ['sh', '⛑️', 'A ' + B('bike helmet') + ' is a thin curved layer with nothing inside it but your head.', 'a thin curved outer layer'],
+    ['sh', '🛶', 'A ' + B('canoe') + ' is one thin, curved hull with an open inside.', 'a thin curved outer layer'],
+    ['fr', '🗼', 'A ' + B('power line tower') + ' is steel bars joined in triangles. You can see through it.', 'parts joined together, mostly open'],
+    ['fr', '🚲', 'A ' + B('bicycle') + ' is metal tubes joined at the ends.', 'parts joined together, mostly open'],
+    ['fr', '🏗️', 'The ' + B('wall studs') + ' of a new house are boards nailed into a skeleton.', 'parts joined together, mostly open'],
+    ['so', '🧱', 'A ' + B('brick wall') + ' is built of bricks and mortar all the way through.', 'material all the way through'],
+    ['so', '🌊', 'A ' + B('concrete dam') + ' is thick and filled in all the way. Its weight holds back the river.', 'material all the way through'],
+    ['so', '🗿', 'A ' + B('stone pillar') + ' is carved from one solid block of rock.', 'material all the way through']
+  ];
+  const TN = { sh: 'Shell', fr: 'Frame', so: 'Solid' };
+  const TCUE = { sh: 'A thin, curved outer layer', fr: 'Joined parts, mostly open space', so: 'Material all the way through' };
+  function stType() {
+    const [k, ic, story, why] = pick(TYPES);
+    return mk('stType', 1, '7-4-01', 1, {
+      story, q: 'Which structure type?', a: TN[k],
+      errs: ['sh', 'fr', 'so'].filter(x => x !== k).map(w => [TN[w], TCUE[k], 0]),
+      steps: [[TN[k].toLowerCase(), why]],
+      pic: row([[ic, story.match(/<b>([^<]*)<\/b>/)[1]], ['🏛️', '?', { q: true, d: TN[k].toLowerCase() + ' structure' }]], { arr: [{ t: 'type', k: 'G' }] })
+    });
+  }
+  const LOADS = [
+    ['d', '🌉', 'A bridge crosses the Bow River. Think about ' + B('the weight of its own concrete deck') + '.', ['⚖️', 'its own deck']],
+    ['d', '🏠', 'A house has a heavy roof. Think about ' + B('the weight of the roof’s own beams') + '.', ['⚖️', 'its own beams']],
+    ['d', '🗼', 'A radio tower stands on a hill. Think about ' + B('the weight of its own steel') + '.', ['⚖️', 'its own steel']],
+    ['l', '🌉', 'A bridge crosses the Bow River. Think about ' + B('the cars and trucks crossing it') + '.', ['🚗', 'cars and trucks']],
+    ['l', '🏟️', 'A stadium has rows of seats. Think about ' + B('the people filling the stands') + '.', ['👥', 'people']],
+    ['l', '🏠', 'A house has a flat roof. Think about ' + B('snow piling up on it') + ' all winter.', ['❄️', 'snow']],
+    ['l', '📚', 'A shelf hangs on a wall. Think about ' + B('the books stacked on it') + '.', ['📚', 'books']],
+    ['y', '🪧', 'A big sign stands by the highway. Think about ' + B('strong wind gusts shaking it') + '.', ['💨', 'wind gusts']],
+    ['y', '🏢', 'An office tower stands in a city. Think about ' + B('an earthquake shaking it') + '.', ['💥', 'earthquake']],
+    ['y', '🏟️', 'A stadium has rows of seats. Think about ' + B('fans jumping up and down together') + '.', ['🙌', 'jumping fans']]
+  ];
+  const LN = { d: 'Dead load', l: 'Live load', y: 'Dynamic load' };
+  const LCUE = { d: 'Dead load: its own weight', l: 'Live load: weight it carries', y: 'Dynamic: sudden or changing force' };
+  function stLoad() {
+    const [k, ic, story, lc] = pick(LOADS);
+    return mk('stLoad', 1, '7-4-02', 2, {
+      story, q: 'What kind of load?', a: LN[k],
+      errs: ['d', 'l', 'y'].filter(x => x !== k).map(w => [LN[w], LCUE[k], 0]),
+      steps: [[LN[k].toLowerCase(), k === 'd' ? 'the structure’s own weight, always there' : k === 'l' ? 'weight the structure carries; it changes' : 'a sudden or shaking force that changes']],
+      pic: row([[lc[0], lc[1], { k: 'R' }], [ic, '?', { q: true, d: LN[k].toLowerCase() }]], { arr: [{ t: 'acts on', k: 'R' }] })
+    });
+  }
+  const FORCES = [
+    ['te', '🪢', 'Two teams pull hard on a ' + B('rope') + ' in a tug of war.'], ['te', '🌉', 'Steel ' + B('cables') + ' hold up the deck of a bridge.'], ['te', '🎸', 'Kai tightens a ' + B('guitar string') + ' to tune it.'],
+    ['co', '🥫', 'Leah stands on an ' + B('empty pop can') + ' and it crumples.'], ['co', '🪑', 'The ' + B('legs of a chair') + ' hold up a person sitting on it.'], ['co', '🏛️', 'A stone ' + B('pillar') + ' holds up a heavy roof.'],
+    ['sh', '✂️', 'Owen cuts paper with ' + B('scissors') + '.'], ['sh', '🕳️', 'A ' + B('hole punch') + ' slices a circle out of paper.'], ['sh', '🔩', 'Two plates slide apart and ' + B('slice a bolt') + ' between them.'],
+    ['to', '🧺', 'Noah ' + B('twists a wet towel') + ' to wring out the water.'], ['to', '🔑', 'Maya ' + B('turns a key') + ' in a stiff lock.'], ['to', '🍼', 'Zoe ' + B('twists the cap') + ' off a bottle.']
+  ];
+  const FN = { te: 'Tension', co: 'Compression', sh: 'Shear', to: 'Torsion' };
+  const FWHY = { te: 'it is pulled and stretched', co: 'it is pushed and squeezed', sh: 'parts slide past each other', to: 'it is twisted' };
+  const FCUE = { te: 'It is being stretched', co: 'It is being squeezed', sh: 'Parts slide past each other', to: 'It is being twisted' };
+  function stForce() {
+    const [k, ic, story] = pick(FORCES);
+    return mk('stForce', 1, '7-4-02', 3, {
+      story, q: 'Which internal force?', a: FN[k],
+      errs: ['te', 'co', 'sh', 'to'].filter(x => x !== k).map(w => [FN[w], FCUE[k], 0]),
+      steps: [[FN[k].toLowerCase(), FWHY[k] + ': ' + FN[k].toLowerCase()]],
+      pic: row([[ic, story.match(/<b>([^<]*)<\/b>/)[1]], [k === 'te' ? '↔️' : k === 'co' ? '➡️⬅️' : k === 'sh' ? '⇅' : '🔄', '?', { q: true, d: FN[k].toLowerCase() }]], { arr: [{ t: 'inside it', k: 'G' }] })
+    });
+  }
+  function stBeam() {
+    const v = pick([
+      ['simple', 'bottom', 'A wooden plank bridges a creek. ' + pick(NAMES) + ' stands ' + B('in the middle') + ', and it bends down.', 'Force on the bottom?', '🧍', 'person'],
+      ['simple', 'top', 'A long shelf rests on brackets at each end. ' + B('Heavy books') + ' make it sag in the middle.', 'Force on the top?', '📚', 'books'],
+      ['cantilever', 'top', 'A diver stands at the ' + B('tip of a diving board') + '. The board bends down.', 'Force on the top?', '🤽', 'diver'],
+      ['cantilever', 'bottom', 'A ' + B('balcony') + ' sticks out from a wall with nothing under it. People stand at its edge.', 'Force on the bottom?', '👥', 'people'],
+      ['simple', 'rebar', 'A concrete beam will span a garage door. Concrete ' + B('cracks easily when stretched') + '.', 'Where does rebar go?', '🏠', 'wall above'],
+      ['cantilever', 'rebar', 'A concrete ' + B('balcony') + ' sticks out from a wall. Concrete cracks easily when stretched.', 'Where does rebar go?', '👥', 'people']
+    ]);
+    const [type, ask, story, q, ic, lt] = v, cant = type === 'cantilever', stretch = cant ? 'top' : 'bottom';
+    const S1 = cant ? 'the top stretches; the bottom is squeezed' : 'the top is squeezed; the bottom stretches';
+    if (ask === 'rebar') return mk('stBeam', 2, '7-4-02', 3, {
+      story, q, a: 'Along the ' + stretch,
+      errs: [['Along the ' + (cant ? 'bottom' : 'top'), 'Put steel where it stretches', 1], ['In the very middle', 'The middle barely stretches', 1]],
+      steps: [['forces', S1], ['rebar', 'steel goes where concrete stretches: the ' + stretch]],
+      pic: { k: 'beam', type, ask, i: ic, t: lt }
+    });
+    const ten = ask === stretch;
+    return mk('stBeam', 2, '7-4-02', 3, {
+      story, q, a: ten ? 'Tension (stretched)' : 'Compression (squeezed)',
+      errs: [[ten ? 'Compression (squeezed)' : 'Tension (stretched)', cant ? 'Fixed at one end: top stretches' : 'Top squeezes; bottom stretches', 1], ['No force', 'Bending loads both sides', 0]],
+      steps: [['load', 'the load bends the beam down'], ['forces', S1]],
+      pic: { k: 'beam', type, ask, i: ic, t: lt }
+    });
+  }
+  const PAIRS = [
+    ['vase', '🏺', 'tall and narrow', 'short with a wide base', { w: 10, h: 40, cg: 18 }, { w: 22, h: 20, cg: 8 }],
+    ['truck', '🚚', 'stacked high with hay bales', 'carrying one low layer of bales', { w: 24, h: 40, cg: 22 }, { w: 24, h: 18, cg: 9 }],
+    ['bookshelf', '📚', 'loaded with heavy books on the top shelf', 'loaded with heavy books on the bottom shelf', { w: 16, h: 40, cg: 28 }, { w: 16, h: 40, cg: 12 }],
+    ['lamp', '💡', 'on a light, narrow base', 'on a heavy, wide base', { w: 8, h: 40, cg: 22 }, { w: 18, h: 40, cg: 9 }],
+    ['traffic cone', '🚧', 'tall with a small base', 'short with a wide base', { w: 10, h: 36, cg: 14 }, { w: 22, h: 22, cg: 7 }]
+  ];
+  function stStable() {
+    const [nm, ic, un, st, U, Sx] = pick(PAIRS), uA = rnd(0, 1), Lu = uA ? 'A' : 'B', Ls = uA ? 'B' : 'A';
+    const Nm = nm[0].toUpperCase() + nm.slice(1);
+    return mk('stStable', 2, '7-4-03', 4, {
+      story: Nm + ' A is ' + B(uA ? un : st) + '. ' + Nm + ' B is ' + B(uA ? st : un) + '.',
+      q: 'Which tips more easily?', a: Nm + ' ' + Lu,
+      errs: [[Nm + ' ' + Ls, 'High or narrow tips sooner', 1], ['Both the same', 'CoG height and base matter', 0]],
+      steps: [['centre of gravity', Nm + ' ' + Lu + ' has a higher CoG or a narrower base'], ['tipping', 'its CoG passes the base edge at a smaller tilt']],
+      pic: { k: 'tip', A: Object.assign({ t: Nm + ' A', i: ic }, uA ? U : Sx), B: Object.assign({ t: Nm + ' B', i: ic }, uA ? Sx : U) }
+    });
+  }
+  const MACH = [
+    [1, '🪨', 'uses a long steel bar to lift a heavy rock. The rock is near the pivot; ' + B('their hands are far out') + '.', 'hands far from the pivot'],
+    [1, '🎹', 'pushes a piano up a ' + B('long ramp') + ' into a truck instead of lifting it.', 'a long ramp instead of straight up'],
+    [1, '🛒', 'lifts a load of soil in a ' + B('wheelbarrow') + ', with hands far from the wheel.', 'hands far from the wheel (pivot)'],
+    [1, '🍾', 'opens a bottle with a ' + B('bottle opener') + ', pushing on the far end of its handle.', 'hand far from the pivot'],
+    [3, '🏒', 'swings a ' + B('hockey stick') + '. One hand is near the top; the other pushes close to it.', 'pushing hand close to the pivot'],
+    [3, '🧹', 'sweeps with a ' + B('broom') + '. The top hand holds still while the lower hand pushes.', 'pushing hand close to the pivot'],
+    [3, '🎣', 'flicks a ' + B('fishing rod') + '. The hands are near the bottom of the long rod.', 'hands close to the pivot']
+  ];
+  function stMachine() {
+    const [cls, ic, s, arm] = pick(MACH), n = pick(NAMES), less = cls === 1;
+    return mk('stMachine', 2, '7-4-04', 5, {
+      story: n + ' ' + s, q: 'What is the trade?', a: less ? 'Push less, but farther' : 'Push more, but less far',
+      errs: [[less ? 'Push more, but less far' : 'Push less, but farther', less ? 'Long effort arm: less force' : 'Effort near the pivot: more force', 0], ['Push less, and less far', 'Machines don’t create energy', 1]],
+      steps: [['arms', arm], ['trade', less ? 'less force, but your end moves farther' : 'more force, but the far end moves farther, faster']],
+      pic: row([['💪', 'your push'], [ic, 'machine'], ['🎯', '?', { q: true, d: less ? 'less force, more distance' : 'more force, more speed' }]], { arr: [{ t: less ? 'small force' : 'big force', k: 'G' }, { t: 'output', k: 'G', s: 1 }] })
+    });
+  }
+  const IMPROVE = [
+    ['A class’s popsicle-stick bridge sags and leans when loaded. Its sides are made of ' + B('squares') + '.', ['🌉', 'square sides'], 'Brace the squares into triangles',
+      [['Add more glue only', 'The shape fails, not the glue', 1], ['Make the squares bigger', 'Squares still fold over', 2]], ['load', 'the load pushes the frame out of shape'], ['problem', 'squares can fold flat into diamonds'], ['fix', 'triangles can’t change shape: stiffer'], ['🔺', 'triangles']],
+    ['A tall cardboard tower ' + B('tips over') + ' in a fan’s wind. It has a small base.', ['🗼', 'tower tips'], 'Widen the base',
+      [['Make it taller', 'Taller raises the CoG', 2], ['Use stronger tape', 'It tips; it doesn’t break', 1]], ['load', 'wind is a dynamic load from the side'], ['problem', 'a high CoG over a small base tips easily'], ['fix', 'a wide base keeps the CoG over it'], ['🔻', 'wide base']],
+    ['A long shelf ' + B('sags in the middle') + ' under heavy books. It rests on brackets at each end.', ['📚', 'shelf sags'], 'Add a support in the middle',
+      [['Use a thinner board', 'Thinner beams bend more', 2], ['Pile the books in the middle', 'A centre load bends it most', 1]], ['load', 'the books are a live load on the shelf'], ['problem', 'a long span bends most in the middle'], ['fix', 'a middle support cuts the span in half'], ['📐', 'middle support']],
+    ['A stone wall needs a top over its doorway. A ' + B('flat stone slab cracked') + ' there last time.', ['🧱', 'slab cracks'], 'Build an arch',
+      [['Use a longer flat slab', 'Flat stone cracks when stretched', 1], ['Make the wall thinner', 'That doesn’t fix the top', 2]], ['load', 'the wall above presses down on the top'], ['problem', 'a flat slab’s bottom stretches and cracks'], ['fix', 'an arch turns the load into compression'], ['🌈', 'arch']]
+  ];
+  function stImprove() {
+    const [story, prob, a, errs, s0, s1, s2, fix] = pick(IMPROVE);
+    return mk('stImprove', 3, '7-4-05', 6, {
+      story, q: 'Best improvement?', a, errs, steps: [s0, s1, s2],
+      pic: row([['⬇️', 'load', { k: 'R' }], [prob[0], prob[1], { k: 'R', s: 1 }], [fix[0], '?', { q: true, d: fix[1] }]], { arr: [{ k: 'R' }, { t: 'fixed by', k: 'N', s: 2 }] })
+    });
+  }
+  const COG = [
+    ['A tall crane lifts a heavy beam far out on its arm. Big ' + B('concrete blocks') + ' sit on the back of the arm.', 'Why the blocks?', 'Keep the CoG over the base',
+      [['Make the arm stronger', 'It would tip, not snap', 1], ['Make the load lighter', 'The load’s weight is the same', 2]], ['load', 'the load is far out on one side'], ['problem', 'the CoG shifts past the base: it tips'], ['blocks', 'weight at the back pulls the CoG back'], ['🏗️', 'crane'], ['🧱', 'blocks']],
+    [pick(NAMES) + ' carries a ' + B('heavy backpack') + ' up a trail. ' + 'They lean forward as they walk.', 'Why lean forward?', 'Keep the CoG over the feet',
+      [['To push the pack up', 'Leaning is about balance', 2], ['The pack gets lighter', 'The pack’s weight doesn’t change', 1]], ['load', 'the pack adds weight behind the hiker'], ['problem', 'the CoG moves back, past the heels'], ['lean', 'leaning brings the CoG over the feet'], ['🎒', 'backpack'], ['🚶', 'lean forward']],
+    ['Two friends paddle a canoe on a windy lake. They ' + B('kneel low') + ' instead of sitting on the seats.', 'Why kneel low?', 'A lower CoG is harder to tip',
+      [['The canoe gets lighter', 'Same weight, lower position', 1], ['Paddles reach farther', 'This is about stability', 2]], ['load', 'waves and wind rock the canoe'], ['CoG', 'kneeling lowers the centre of gravity'], ['stability', 'a low CoG must tilt far before it tips'], ['🛶', 'canoe'], ['🧎', 'kneel low']]
+  ];
+  function stCoG() {
+    const [story, q, a, errs, s0, s1, s2, A0, A1] = pick(COG);
+    return mk('stCoG', 3, '7-4-03', 4, {
+      story, q, a, errs, steps: [s0, s1, s2],
+      pic: row([[A0[0], A0[1]], ['🟡', 'CoG moves', { s: 1, k: 'Y' }], [A1[0], '?', { q: true, d: 'CoG over base' }]], { arr: [{ t: 'load', k: 'R' }, { t: 'fix', k: 'N', s: 2 }] })
+    });
+  }
+  const MATS = [
+    ['A bridge deck hangs from cables. Each cable is ' + B('pulled hard') + ' by the deck’s weight.', 'Best cable material?', 'Steel wire',
+      [['Concrete', 'Concrete cracks when stretched', 1], ['Glass', 'Glass is brittle; it snaps', 1]], ['force', 'the cable is in tension'], ['property', 'it must be strong when pulled'], ['choice', 'steel wire is strong in tension'], ['🔗', 'cable']],
+    ['A pillar holds up a heavy bridge deck. The deck ' + B('pushes straight down') + ' on it.', 'Best pillar material?', 'Concrete',
+      [['Rope', 'Rope can’t push back', 1], ['Rubber', 'Rubber squashes too much', 1]], ['force', 'the pillar is in compression'], ['property', 'it must be strong when squeezed'], ['choice', 'concrete is strong in compression'], ['🏛️', 'pillar']],
+    ['A diving board must ' + B('bend and spring back') + ' thousands of times.', 'Best board material?', 'Fibreglass',
+      [['Brick', 'Brick is rigid and brittle', 1], ['Clay', 'Clay stays bent', 1]], ['force', 'the board bends with every dive'], ['property', 'it must be elastic: bend, then return'], ['choice', 'fibreglass bends and springs back'], ['🤽', 'board']],
+    ['A hockey helmet’s shell must take ' + B('sharp hits') + ' without cracking.', 'Best shell material?', 'Tough plastic',
+      [['Glass', 'Glass is brittle; it shatters', 1], ['Thin paper', 'Paper tears with no strength', 1]], ['force', 'sudden hits are a dynamic load'], ['property', 'it must be tough, not brittle'], ['choice', 'tough plastic flexes but won’t shatter'], ['⛑️', 'helmet']]
+  ];
+  function stMaterial() {
+    const [story, q, a, errs, s0, s1, s2, part] = pick(MATS);
+    return mk('stMaterial', 3, '7-4-05', 6, {
+      story, q, a, errs, steps: [s0, s1, s2],
+      pic: row([[part[0], part[1]], ['🧪', s1[1].replace(/^it must be /, ''), { s: 1, k: 'Y' }], ['🧰', '?', { q: true, d: a.toLowerCase() }]], { arr: [{ t: s0[1].replace(/^.* is in |^.* are /, '').replace(/^the board /, ''), k: 'R' }, { k: 'G', s: 2 }] })
+    });
+  }
+
+  /* ============ 7-5 · Planet Earth ============ */
+  const ROCKS = [
+    ['ig', 'Lava from a volcano in Hawaii ' + B('cools quickly') + ' on the surface into dark rock.', ['🌋', 'lava']], ['ig', 'Magma deep under a mountain ' + B('cools slowly') + ' into granite.', ['🔥', 'magma']],
+    ['ig', 'Frothy lava ' + B('cools and hardens') + ' so fast that it traps bubbles: pumice.', ['🌋', 'lava']],
+    ['se', 'Sand settles in ' + B('layers') + ' on a lake bottom. Over millions of years it is ' + B('pressed and cemented') + '.', ['🏖️', 'sand']],
+    ['se', 'Shells pile up on an ancient sea floor. They are ' + B('pressed together') + ' over time.', ['🐚', 'shells']],
+    ['se', 'Mud in a river delta is ' + B('buried and squeezed') + ' into hard flat layers.', ['🟤', 'mud']],
+    ['me', 'Limestone deep in the crust is ' + B('heated and squeezed') + ' but never melts.', ['⬜', 'limestone']],
+    ['me', 'Shale is ' + B('pressed hard') + ' as mountains form. Its minerals change, but it stays solid.', ['⬛', 'shale']],
+    ['me', 'Granite is ' + B('heated and squeezed') + ' deep down until its minerals line up in bands. It never melts.', ['🪨', 'granite']]
+  ];
+  const RKN = { ig: 'Igneous', se: 'Sedimentary', me: 'Metamorphic' };
+  const RKWHY = { ig: 'melted rock that cooled and hardened', se: 'layers of bits pressed and cemented', me: 'existing rock changed by heat and pressure, no melting' };
+  const RKCUE = { ig: 'Cooled from melted rock: igneous', se: 'Pressed layers of bits: sedimentary', me: 'Changed without melting: metamorphic' };
+  function erRock() {
+    const [k, story, src] = pick(ROCKS);
+    return mk('erRock', 1, '7-5-02', 2, {
+      story, q: 'Which rock type?', a: RKN[k],
+      errs: ['ig', 'se', 'me'].filter(x => x !== k).map(w => [RKN[w], RKCUE[k], 0]),
+      steps: [[RKN[k].toLowerCase(), RKWHY[k]]],
+      pic: row([[src[0], src[1]], ['🪨', '?', { q: true, d: RKN[k].toLowerCase() }]], { arr: [{ t: k === 'ig' ? 'cools' : k === 'se' ? 'pressed' : 'heat + pressure', k: k === 'ig' ? 'L' : k === 'se' ? 'G' : 'R' }] })
+    });
+  }
+  const BOUND = [
+    ['dv', 'Two plates ' + B('pull apart') + ' in the middle of the Atlantic Ocean. New sea floor forms between them.'], ['dv', 'In East Africa, the land is slowly ' + B('splitting apart') + ' into a long rift valley.'],
+    ['dv', 'Iceland sits where two plates ' + B('move away') + ' from each other.'], ['cv', 'India’s plate ' + B('pushes into') + ' Asia. The Himalayas keep rising.'],
+    ['cv', 'An ocean plate ' + B('sinks under') + ' South America, raising the Andes.'], ['cv', 'Off the BC coast, the Juan de Fuca plate ' + B('slides under') + ' North America.'],
+    ['tf', 'In California, two plates ' + B('grind past') + ' each other along the San Andreas Fault.'], ['tf', 'Off Haida Gwaii, two plates ' + B('slide sideways') + ' past each other.']
+  ];
+  const BN = { dv: 'Divergent', cv: 'Convergent', tf: 'Transform' };
+  const BWHY = { dv: 'plates move apart', cv: 'plates push together', tf: 'plates slide past each other' };
+  const BCUE = { dv: 'They are moving apart', cv: 'They are pushing together', tf: 'They slide past each other' };
+  function erBound() {
+    const [k, story] = pick(BOUND);
+    const tg = { dv: ['← moves away', 'moves away →'], cv: ['pushes in →', '← pushes in'], tf: ['↑ slides past', '↓ slides past'] }[k];
+    return mk('erBound', 1, '7-5-03', 3, {
+      story, q: 'Which boundary type?', a: BN[k],
+      errs: ['dv', 'cv', 'tf'].filter(x => x !== k).map(w => [BN[w], BCUE[k], 0]),
+      steps: [[BN[k].toLowerCase(), BWHY[k]]],
+      pic: { k: 'scene', cards: [cd(0, 0, '🟫', 'plate', { tag: tg[0], tagk: 'R' }), cd(1, 0, k === 'dv' ? '🌋' : k === 'cv' ? '⛰️' : '💥', '?', { q: true, d: BN[k].toLowerCase() }), cd(2, 0, '🟫', 'plate', { tag: tg[1], tagk: 'R' })] }
+    });
+  }
+  const SURF = [
+    ['w', 'Water seeps into a crack in a rock near Banff. It ' + B('freezes overnight') + ' and the crack widens.', ['🧊', 'frost']], ['w', 'Tree roots ' + B('grow into a crack') + ' in a boulder and split it.', ['🌳', 'roots']],
+    ['w', 'Slightly acidic rain slowly ' + B('dissolves') + ' a limestone statue.', ['🌧️', 'acid rain']], ['e', 'The Red Deer River ' + B('carries sand and mud') + ' downstream after a storm.', ['🌊', 'river']],
+    ['e', 'A glacier ' + B('scrapes and drags rocks') + ' along a mountain valley.', ['🏔️', 'glacier']], ['e', 'Strong wind ' + B('blows dry topsoil') + ' off a bare field.', ['💨', 'wind']],
+    ['d', 'A river slows as it enters a lake. ' + B('Sand and mud settle') + ' on the bottom.', ['🏞️', 'lake']], ['d', 'A melting glacier ' + B('leaves a huge boulder') + ' on the prairie.', ['🪨', 'boulder']],
+    ['d', 'Wind ' + B('drops sand') + ' behind a fence, building a small dune.', ['🏜️', 'dune']]
+  ];
+  const SN = { w: 'Weathering', e: 'Erosion', d: 'Deposition' };
+  const SWHY = { w: 'rock is broken down where it is', e: 'broken pieces are carried away', d: 'carried pieces are dropped off' };
+  const SCUE = { w: 'The rock breaks where it is', e: 'Pieces are being carried away', d: 'Pieces are being dropped off' };
+  function erSurface() {
+    const [k, story, ic] = pick(SURF);
+    return mk('erSurface', 1, '7-5-05', 5, {
+      story, q: 'Which process is this?', a: SN[k],
+      errs: ['w', 'e', 'd'].filter(x => x !== k).map(w => [SN[w], SCUE[k], 0]),
+      steps: [[SN[k].toLowerCase(), SWHY[k]]],
+      pic: row([[ic[0], ic[1]], [k === 'w' ? '💥' : k === 'e' ? '➡️' : '⬇️', '?', { q: true, d: SN[k].toLowerCase() }]], { arr: [{ k: 'G' }] })
+    });
+  }
+  const LAYERS = [['Crust', 'You stand on Earth’s ' + B('thin, rocky outer layer') + '. Under oceans it is only about 7 km thick.'],
+    ['Mantle', 'This thick layer is ' + B('solid rock that flows very slowly') + '. Its currents move the plates.'],
+    ['Outer core', B('Moving liquid iron') + ' deep inside Earth makes its magnetic field. A compass needs it.'],
+    ['Inner core', 'At Earth’s centre, iron is extremely hot, but ' + B('huge pressure keeps it solid') + '.']];
+  const LCUE2 = { Crust: 'Crust: thin, rocky outer skin', Mantle: 'Mantle: thick, slowly flowing rock', 'Outer core': 'Only the outer core is liquid', 'Inner core': 'Inner core: solid, at the centre' };
+  function erInterior() {
+    const [nm, story] = pick(LAYERS);
+    return mk('erInterior', 1, '7-5-01', 1, {
+      story, q: 'Which layer is it?', a: nm,
+      errs: LAYERS.filter(x => x[0] !== nm).map(x => [x[0], LCUE2[nm], 0]),
+      steps: [[nm.toLowerCase(), story.match(/<b>([^<]*)<\/b>/)[1].toLowerCase()]],
+      pic: { k: 'layers', bands: LAYERS.map((x, j) => ({ t: '', d: x[0], w: [1, .9, .7, .45][j], k: 'M', tag: x[0] === nm ? 'this one' : null })) }
+    });
+  }
+  const FOSS = [['🐚', 'clam'], ['🦕', 'dinosaur bone'], ['🐟', 'fish'], ['🌿', 'fern'], ['🐌', 'snail'], ['🦈', 'shark tooth'], ['🍃', 'leaf']];
+  function erFossil() {
+    const fs = shuffle(FOSS).slice(0, 3), first = rnd(0, 1), place = pick(['near Drumheller', 'in the Badlands', 'near Lethbridge', 'by the Red Deer River']);
+    const ans = first ? fs[2] : fs[0], other = fs.filter(f => f !== ans);
+    return mk('erFossil', 2, '7-5-06', 6, {
+      story: 'Flat rock layers in a cliff ' + place + ' hold three fossils. The layers have ' + B('never been flipped') + '.',
+      q: first ? 'Which lived first?' : 'Which is youngest?', a: 'The ' + ans[1],
+      errs: [['The ' + other[0][1], first ? 'Top layers are the youngest' : 'Look at the top layer', 1], ['The ' + other[1][1], first ? 'Look at the lowest layer' : 'Bottom layers formed first', 1]],
+      steps: [['layers', 'each layer settled on top of the one below'], ['superposition', (first ? 'the lowest layer is oldest: the ' : 'the top layer is youngest: the ') + ans[1]]],
+      pic: { k: 'layers', bands: fs.map((f, j) => ({ i: f[0], t: f[1], k: ['Y', 'G', 'M'][j], tag: f === ans ? (first ? 'oldest' : 'youngest') : null })), side: { t: 'older', s: 1 } }
+    });
+  }
+  const QUAKE = [['Chile', 'An ocean plate sinks under South America there.'], ['Japan', 'Several plates meet and push together there.'], ['California', 'Two plates grind past each other there.'], ['Iceland', 'Two plates pull apart there.']];
+  function erQuake() {
+    if (rnd(0, 3) === 0) return mk('erQuake', 2, '7-5-04', 4, {
+      story: B('Alberta') + ' has very few strong earthquakes. ' + B('Japan') + ' has many every year.',
+      q: 'Why so few here?', a: 'Far from a plate boundary',
+      errs: [['There is no plate under Alberta', 'Alberta sits on a plate', 0], ['Prairie soil soaks up quakes', 'It’s about plate boundaries', 1]],
+      steps: [['location', 'Alberta is in the middle of a plate'], ['quakes', 'most quakes happen where plates meet']],
+      pic: row([['🌾', 'Alberta'], ['🧩', 'plate middle', { s: 0 }], ['🗾', 'Japan: plate edge', { k: 'R' }]], { arr: [{ k: 'M', dash: true }, { k: 'M', dash: true }] })
+    });
+    const [pl, how] = pick(QUAKE);
+    return mk('erQuake', 2, '7-5-04', 4, {
+      story: 'Earthquakes shake ' + B(pl) + ' often. ' + B(how.replace(/.$/, '')) + '.',
+      q: 'Why so many quakes?', a: 'Plates stick, then slip',
+      errs: [['The core is near the surface', 'Quakes start in the crust', 0], ['Plates move metres a day', 'Plates move cm per year', 1]],
+      steps: [['boundary', pl + ' sits on a plate boundary'], ['quake', 'plates stick, stress builds, then they slip']],
+      pic: row([['🟫', 'plate'], ['💥', '?', { q: true, d: 'stick, then slip' }], ['🟫', 'plate']], { arr: [{ k: 'R' }, { k: 'R' }] })
+    });
+  }
+  const IGN = [['granite', 'pumice'], ['granite', 'basalt'], ['gabbro', 'obsidian'], ['diorite', 'basalt']];
+  function erCrystal() {
+    const [big, small] = pick(IGN), bA = rnd(0, 1), Lb = bA ? 'A' : 'B', Ls = bA ? 'B' : 'A', ask = pick(['deep', 'fast']);
+    const ans = ask === 'deep' ? Lb : Ls, wr = ask === 'deep' ? Ls : Lb;
+    return mk('erCrystal', 2, '7-5-02', 2, {
+      story: 'Rock A ' + (bA ? 'has ' + B('large crystals') + ' you can see' : 'is ' + B('glassy, with tiny crystals')) + '. Rock B ' + (bA ? 'is ' + B('glassy, with tiny crystals') : 'has ' + B('large crystals') + ' you can see') + '.',
+      q: ask === 'deep' ? 'Which cooled underground?' : 'Which cooled fastest?', a: 'Rock ' + ans,
+      errs: [['Rock ' + wr, 'Slow cooling grows big crystals', 1], ['No way to tell', 'Crystal size shows cooling speed', 0]],
+      steps: [['cooling', 'deep magma cools slowly; lava cools fast'], ['crystals', 'big crystals: slow and deep (Rock ' + Lb + ')']],
+      pic: { k: 'scene', cards: [cd(0, 0, bA ? '💎' : '⬛', 'Rock A', { tag: bA ? 'deep · slow' : 'surface · fast', tagk: bA ? 'L' : 'R' }), cd(1, 0, bA ? '⬛' : '💎', 'Rock B', { tag: bA ? 'surface · fast' : 'deep · slow', tagk: bA ? 'R' : 'L' })], w: 190 }
+    });
+  }
+  const UPLIFT = [['Fossils of ' + B('sea creatures') + ' are found near the top of ' + B('Mount Everest') + '.', '🏔️', 'Everest'],
+    ['Peaks near ' + B('Banff') + ' are made of limestone full of ' + B('sea-lily fossils') + '.', '⛰️', 'Rockies'],
+    ['The ' + B('Burgess Shale') + ', high in the Rockies, holds fossils of ' + B('ancient sea animals') + '.', '⛰️', 'Rockies']];
+  function erUplift() {
+    const [story, ic, where] = pick(UPLIFT);
+    return mk('erUplift', 3, '7-5-03', 3, {
+      story, q: 'Why up so high?', a: 'Plates pushed the sea floor up',
+      errs: [['A great flood left them', 'The rock itself formed underwater', 0], ['One big earthquake lifted them', 'Uplift takes millions of years', 2]],
+      steps: [['sea floor', 'the animals were buried in sea-floor mud'], ['rock', 'the mud hardened into sedimentary rock'], ['plates', 'plates collided and slowly pushed it up']],
+      pic: row([['🐚', 'sea floor'], ['🪨', 'rock layers', { s: 1 }], [ic, '?', { q: true, d: where + ': uplift' }]], { arr: [{ t: 'buried', k: 'G', s: 1 }, { t: 'pushed up', k: 'R', s: 2 }] })
+    });
+  }
+  const PATHS = [
+    ['Granite on a mountain ' + B('weathers into sand') + '. Rivers carry the sand to a sea, where it is ' + B('buried and cemented') + '.', 'Sedimentary',
+      [['Igneous', 'Nothing melted here', 2], ['Metamorphic', 'It was only pressed and cemented', 2]], ['weathering', 'granite breaks into sand grains'], ['erosion', 'rivers carry the sand; it settles in layers'], ['rock', 'pressed and cemented: sedimentary rock'], ['🪨', 'granite'], ['🏖️', 'sand']],
+    ['Sandstone is dragged deep at a plate boundary. It ' + B('melts into magma') + ', which ' + B('cools underground') + '.', 'Igneous',
+      [['Metamorphic', 'It melted: that makes igneous', 2], ['Sedimentary', 'No bits settled in layers', 2]], ['burial', 'the sandstone is carried deep into hot rock'], ['melting', 'it melts into magma'], ['cooling', 'magma cools and hardens: igneous rock'], ['🏖️', 'sandstone'], ['🔥', 'magma']],
+    ['Basalt is buried as mountains form. ' + B('Heat and pressure') + ' change its minerals, but it ' + B('never melts') + '.', 'Metamorphic',
+      [['Igneous', 'It never melted', 2], ['Sedimentary', 'It wasn’t broken into bits', 2]], ['burial', 'the basalt is buried deep in the crust'], ['change', 'heat and pressure change it, no melting'], ['rock', 'changed rock: metamorphic'], ['⬛', 'basalt'], ['🌡️', 'heat + pressure']]
+  ];
+  function erPath() {
+    const [story, a, errs, s0, s1, s2, A0, A1] = pick(PATHS);
+    return mk('erPath', 3, '7-5-02', 2, {
+      story, q: 'What rock forms?', a, errs, steps: [s0, s1, s2],
+      pic: row([[A0[0], A0[1]], [A1[0], A1[1], { s: 1 }], ['🪨', '?', { q: true, d: a.toLowerCase() }]], { arr: [{ t: s0[0], k: 'G', s: 1 }, { t: s2[0] === 'rock' ? s1[0] : s2[0], k: 'G', s: 2 }] })
+    });
+  }
+  const FORMS = [
+    ['A house-sized boulder sits alone on the prairie near ' + B('Okotoks') + '. Its rock ' + B('matches rock from the Rockies') + ' far west.', 'How did it arrive?', 'A glacier carried and dropped it',
+      [['A volcano threw it there', 'Its rock matches the mountains', 0], ['A river rolled it there', 'Too big for a river', 1]], ['erosion', 'a glacier picked up the rock in the mountains'], ['transport', 'the ice carried it east over the prairie'], ['deposition', 'the ice melted and dropped the boulder'], ['🏔️', 'Rockies'], ['🧊', 'glacier'], ['🪨', 'Big Rock']],
+    [B('Hoodoos') + ' near Drumheller are soft rock pillars with ' + B('hard caps') + '. The land around them has worn away.', 'Why do caps matter?', 'Hard caps shield soft rock',
+      [['People placed the caps', 'They formed naturally', 0], ['Caps make pillars grow', 'Pillars shrink; they never grow', 2]], ['weathering', 'rain and frost break down the soft rock'], ['erosion', 'water and wind carry the bits away'], ['caps', 'hard caps protect the rock under them'], ['🌧️', 'rain + frost'], ['💨', 'erosion'], ['🍄', 'hoodoo']],
+    ['The ' + B('Red Deer River valley') + ' is wide and deep. ' + B('Floods of glacier meltwater') + ' once poured through it.', 'What shaped the valley?', 'Meltwater eroded it',
+      [['An earthquake cracked it open', 'It was carved by water', 1], ['Wind blew it out', 'Wind can’t carve that deep', 1]], ['ice age', 'glaciers melted at the end of the ice age'], ['erosion', 'huge floods of meltwater cut into the land'], ['valley', 'the deep valley was left behind'], ['🧊', 'glaciers'], ['🌊', 'meltwater'], ['🏞️', 'valley']]
+  ];
+  function erLandform() {
+    const [story, q, a, errs, s0, s1, s2, A0, A1, A2] = pick(FORMS);
+    return mk('erLandform', 3, '7-5-05', 5, {
+      story, q, a, errs, steps: [s0, s1, s2],
+      pic: row([[A0[0], A0[1]], [A1[0], A1[1], { s: 1 }], [A2[0], '?', { q: true, d: A2[1] }]], { arr: [{ t: s0[0], k: 'G', s: 1 }, { t: s2[0], k: 'G', s: 2 }] })
+    });
+  }
+
+  /* ============ READING (v2): a longer passage, the key facts, the key idea, an assumption ============ */
+  /* The passage is a setting sentence (never key), the story's sentences (a sentence with <b> must be found; one
+     without is optional) and red-herring sentences (never key), then the question. Bold is not shown: the
+     student finds the key facts. Then the key idea (from the unit's list), then (Levels 2–3) what we can assume,
+     then the answer. */
+  const SETTING = {
+    eco: ['A park ranger tells this story to a Grade 7 class on a field trip.', 'Students are writing reports about Alberta ecosystems this week.', 'This entry comes from a nature club’s field notebook.', 'A wildlife biologist describes something seen last spring.'],
+    pla: ['A Grade 7 class is studying plants in the science room this term.', 'This story comes up at a farm meeting near Lacombe, in central Alberta.', 'A gardener shares this story at a community garden meeting.', 'The class reads about it in a farm newsletter.'],
+    hea: ['A Grade 7 class is testing heat ideas around the school.', 'This happens on an ordinary day in Red Deer.', 'A science teacher uses this story to start the lesson.', 'Students write it down in their lab journals.'],
+    str: ['A Grade 7 class is studying how structures stand up.', 'An engineer visits the school and tells this story.', 'This story comes from a building site in Edmonton.', 'Students are planning a model for the science fair.'],
+    ear: ['A geologist tells this story on a class trip.', 'The class is studying how Earth’s surface changes.', 'A guide at the Royal Tyrrell Museum tells this story.', 'Students read about it in a news story on Earth science.']
+  };
+  // More everyday details for each unit (never key), so the reading is long enough to need sorting.
+  const UNOISE = {
+    eco: ['Everyone wears rubber boots because the trail is muddy.', 'The group stops for lunch at a picnic table.', 'Two students argue about whose turn it is to carry the notebook.', 'The trip ends with a stop for ice cream in town.'],
+    pla: ['The room smells like fresh soil.', 'A poster about Alberta crops hangs on the wall.', 'One student brings snacks for everyone.', 'The class keeps a calendar of what happens each week.'],
+    hea: ['The school’s furnace hums in the background.', 'Two students take turns writing notes.', 'The teacher reminds everyone to wear safety glasses.', 'It is the last class before the long weekend.'],
+    str: ['The class has a box of tape, glue and string.', 'Two students sketch ideas on graph paper.', 'The engineer wears a bright orange vest.', 'The teacher sets a timer for the activity.'],
+    ear: ['The bus ride there takes about an hour.', 'Everyone brings a hand lens and a notebook.', 'The guide points out a hawk circling overhead.', 'A gift shop sells rock samples and posters.']
+  };
+  // The unit's science ideas: label (the choice) and hint (the cue when another idea is picked).
+  const IDEAS = {
+    eco: { bio: ['Biotic and abiotic factors', 'Sort living from non-living'], role: ['Producer, consumer, decomposer', 'How does it get food?'], flow: ['Energy flow in a food chain', 'Follow the energy from food'],
+      ten: ['The 10% rule', 'Energy is lost at each level'], web: ['Links in a food web', 'Follow who eats whom'], div: ['Biodiversity', 'Count the kinds of species'],
+      change: ['A change spreading along a chain', 'Follow the change link by link'], recover: ['Recovery after a disturbance', 'How ecosystems recover over time'], steward: ['Fixing the cause of a problem', 'Find the cause, then fix it'] },
+    pla: { cell: ['Parts of a plant cell', 'Match the part to its look'], vessel: ['Xylem and phloem', 'What moves, and which way?'], repro: ['Sexual or asexual reproduction', 'One parent or two?'],
+      photo: ['What photosynthesis needs', 'Light, water and CO₂ make glucose'], mass: ['Where a plant’s mass comes from', 'Plants build mass from air'], poll: ['Pollination and seeds', 'Pollen must reach the stigma'],
+      breed: ['Selective breeding or GMO', 'How were the traits changed?'], chain: ['Producers start food chains', 'Every chain starts with light'], farm: ['Crop practices and pests', 'One crop feeds one pest'] },
+    hea: { mode: ['Three ways heat moves', 'Touch, fluid, or waves?'], flow: ['Heat flows from hot to cold', 'Compare the two temperatures'], part: ['Particles and expansion', 'Heat spreads particles apart'],
+      amount: ['Heat vs temperature', 'Total energy depends on amount'], cond: ['Conductors and insulators', 'How fast is heat pulled?'], cap: ['Heat capacity', 'Water warms and cools slowly'],
+      insul: ['Insulation slows heat flow', 'Insulation slows heat; makes none'], state: ['Changes of state', 'Particles speed up or slow'], therm: ['Thermal pollution', 'Warm water holds less oxygen'] },
+    str: { type: ['Solid, frame or shell', 'How is it built?'], load: ['Dead, live and dynamic loads', 'What kind of load acts?'], force: ['Internal forces', 'Push, pull, slide or twist?'],
+      beam: ['Bending: tension and compression', 'One side squeezes, one stretches'], stab: ['Centre of gravity and stability', 'High CoG or narrow base tips'], mach: ['Levers and mechanical advantage', 'Force is traded for distance'],
+      design: ['Improving a design', 'Match the fix to the failure'], mat: ['Choosing materials', 'Match the material to the force'] },
+    ear: { rock: ['Rock types and how they form', 'Melted, layered, or changed?'], bound: ['Plate boundaries', 'Which way do plates move?'], surf: ['Weathering, erosion, deposition', 'Break, carry, or drop?'],
+      layer: ['Earth’s layers', 'Match the layer to its property'], foss: ['Rock layers and fossil age', 'Lower layers are older'], quake: ['Earthquakes at plate boundaries', 'Quakes happen where plates meet'],
+      crys: ['Cooling and crystal size', 'Slow cooling grows big crystals'], uplift: ['Mountain building', 'Plates push rock up slowly'], cycle: ['The rock cycle', 'Follow each change in order'], form: ['Ice and water shape Alberta', 'Glaciers and meltwater shaped it'] }
+  };
+  // Ideas too close to offer as wrong choices for each other.
+  const NEAR = [['flow', 'ten'], ['web', 'change'], ['chain', 'photo'], ['cond', 'mode'], ['stab', 'design'], ['design', 'mat'], ['design', 'beam'], ['cycle', 'rock'], ['crys', 'rock'], ['uplift', 'bound'], ['form', 'surf'], ['quake', 'bound']];
+  const near = (a, b) => NEAR.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
+  // Per story type: idea, red herrings (never key), and for Levels 2–3 what we can assume: [right, [wrong, cue], [wrong, cue]].
+  const READ = {
+    ecoBiotic: { idea: 'bio', noise: ['The visit lasts about two hours.', 'Each entry in the notebook has a date at the top.', 'The class walks in on a gravel trail.'] },
+    ecoRole: { idea: 'role', noise: ['It was seen on a warm morning in June.', 'A student takes a photo of it for the class website.', 'The spot is a short walk from the parking lot.'] },
+    ecoArrow: { idea: 'flow', noise: ['A student sees this happen through binoculars.', 'It happens just before sunset.', 'The class counts 14 birds the same day.'] },
+    ecoPyramid: { idea: 'ten', noise: ['The area is about the size of a football field.', 'The animals are counted over one week in July.', 'A student draws each animal in a notebook.'],
+      assume: ['Each level eats the level below it', ['Each animal eats the same amount', 'The story doesn’t say that'], ['The top animals make their own food', 'Animals can’t make food']] },
+    ecoWeb: { idea: 'web', noise: ['Biologists count the animals each spring.', 'The area is home to many kinds of birds.', 'The disease was first found in a nearby valley.'],
+      assume: ['Nothing else in the web changes', ['The animals switch to new food', 'Stick to what the story says'], ['The disease kills every animal', 'The story says most, not all']] },
+    ecoBiodiv: { idea: 'div', noise: ['A fence runs between the two plots.', 'Students visit the plots twice a month.', 'The plots are near a gravel road.'],
+      assume: ['The plots are alike in other ways', ['The pest eats every kind of plant', 'It eats only one kind'], ['One plot gets much more rain', 'The story says nothing about rain']] },
+    ecoChain: { idea: 'change', noise: ['The area has been studied for ten years.', 'Local people often walk their dogs there.', 'A small stream runs along one side.'],
+      assume: ['Each animal eats mainly what is named', ['The animals easily find other food', 'Stick to the chain given'], ['Only the first species is affected', 'Effects spread along the chain']] },
+    ecoRecover: { idea: 'recover', noise: ['The area is about 20 hectares.', 'A news crew films the area the next day.', 'A biologist marks the spot on a map.'],
+      assume: ['Nothing new disturbs the area', ['No seeds can ever reach it', 'Seeds blow or wash in'], ['Recovery happens all at once', 'Recovery comes in stages']] },
+    ecoSteward: { idea: 'steward', ask: 'What is the best fix?', noise: ['The landowner has lived there for 30 years.', 'The site is close to a highway.', 'A local newspaper writes a story about it.'],
+      assume: ['Fixing the cause fixes the problem', ['The animals will adapt on their own', 'They are already leaving'], ['Any change at all will help', 'Only fixing the cause helps']] },
+    plCell: { idea: 'cell', noise: ['The microscope is set to 400× magnification.', 'The slide was made the day before.', 'A drop of water keeps the sample from drying out.'] },
+    plVessel: { idea: 'vessel', noise: ['The plant is about 40 cm tall.', 'It grows in a raised garden bed.', 'It was planted in early May.'] },
+    plRepro: { idea: 'repro', noise: ['This happens in a garden near Red Deer.', 'The plants get plenty of sun.', 'The gardener waters them every second day.'] },
+    plNeeds: { idea: 'photo', noise: ['The pot is made of red clay.', 'The plant belongs to a Grade 7 class.', 'A student checks it every Monday.'],
+      assume: ['Only the one thing named is missing', ['The soil can feed the plant', 'Soil gives water and minerals only'], ['Stored food lasts forever', 'Stored food runs out']] },
+    plMass: { idea: 'mass', ask: 'Where did the plant’s new mass come from?', noise: ['The pot sits outside in the sun.', 'The pot has a student’s name on it.', 'The plant gets a little taller every week.'],
+      assume: ['Only water was added to the pot', ['The soil was swapped for new soil', 'It’s the same soil'], ['The scale was broken', 'Trust the measurements given']] },
+    plPollin: { idea: 'poll', noise: ['The field is next to a gravel road.', 'The farmer has grown this crop for ten years.', 'The flowers bloom for about three weeks.'],
+      assume: ['Bees are the main pollinators here', ['Wind carries all the pollen', 'Then bees wouldn’t matter'], ['Seeds form without pollen', 'Seeds need pollination']] },
+    plBreed: { idea: 'breed', noise: ['The work is written up in a farm magazine.', 'The seeds are stored in paper bags.', 'Several neighbours want to see the results.'],
+      assume: ['Genes pass traits to offspring', ['Plants change on purpose', 'Selection or genes change them'], ['Seeds don’t carry traits', 'Seeds inherit the parents’ traits']] },
+    plLight: { idea: 'chain', ask: 'What will happen to the minnows?', noise: ['The lake is popular for fishing.', 'A cabin sits on the north shore.', 'The water is about 6 m deep.'],
+      assume: ['Nothing else feeds the water fleas', ['Fish can make their own food', 'Animals can’t make food'], ['Algae grow well without light', 'Algae need light']] },
+    plFarm: { idea: 'farm', ask: 'What is the best fix?', noise: ['The farm has a red barn.', 'The field is 160 acres.', 'The farmer sells the crop in the fall.'],
+      assume: ['The pest feeds only on this crop', ['Fertilizer kills pests', 'Fertilizer feeds plants only'], ['The pest dies off every winter', 'It builds up year to year']] },
+    heMode: { idea: 'mode', noise: ['It happens in the evening after school.', 'The room has two windows and a blue door.', 'It takes about five minutes.'] },
+    heFlow: { idea: 'flow', noise: ['The room has a large window facing north.', 'A clock on the wall reads 3:15.', 'Nobody touches it for an hour.'] },
+    heExpand: { idea: 'part', noise: ['This happens in a town in central Alberta.', 'A student writes the date in a lab journal.', 'The object was bought last year.'] },
+    heAmount: { idea: 'amount', ask: 'Which one has more thermal energy?', noise: ['The thermometer is digital.', 'The readings are taken at noon.', 'A student records them in a table.'],
+      assume: ['Both hold the same kind of liquid', ['A bigger thing is always hotter', 'Both are the same temperature'], ['Temperature measures total energy', 'Temperature is average particle speed']] },
+    heFeel: { idea: 'cond', noise: ['The metal one is painted green.', 'The wooden one is a bit older.', 'Both are about the same size.'],
+      assume: ['Both stayed at the air temperature', ['Metal makes its own cold', 'Objects don’t make cold'], ['The wood sat in the sun', 'Same place, same temperature']] },
+    heCapacity: { idea: 'cap', noise: ['Many tourists visit in summer.', 'The data come from a weather website.', 'A student made a chart of it.'],
+      assume: ['Both get about the same heat', ['Water stores cold, not heat', 'Water stores heat, not cold'], ['Sand and land have no heat', 'Everything has thermal energy']] },
+    heInsul: { idea: 'insul', noise: ['It was bought at a store in Calgary.', 'It is dark blue.', 'It has been used for three years.'],
+      assume: ['Heat flows from hot to cold', ['Cold can flow like heat', 'Only heat flows'], ['Insulation works like a heater', 'Insulation makes no heat']] },
+    heState: { idea: 'state', noise: ['It happens on a Tuesday.', 'A dog naps nearby.', 'A student notes the time: 2:30 p.m.'],
+      assume: ['No water is made or destroyed', ['Particles can grow or shrink', 'Particles keep their size'], ['Cold is a kind of energy', 'Only heat is energy']] },
+    heThermal: { idea: 'therm', ask: 'What will happen to the bull trout?', noise: ['Canoeists often paddle there in summer.', 'A walking path runs along the bank.', 'The water still looks clear.'],
+      assume: ['Trout need oxygen from the water', ['Warm water holds more oxygen', 'Warm water holds less'], ['Fish don’t need oxygen', 'Fish breathe dissolved oxygen']] },
+    stType: { idea: 'type', noise: ['People have built things like it for a long time.', 'It is painted a bright colour.', 'A student sketches it in a notebook.'] },
+    stLoad: { idea: 'load', noise: ['It was finished three years ago.', 'Its builders used a crane for the heaviest parts.', 'A sign shows the name of the company that built it.'] },
+    stForce: { idea: 'force', noise: ['This happens at home on a Saturday morning before breakfast.', 'It takes only a few seconds, and nobody gets hurt.', 'A friend watches from the doorway and laughs.'] },
+    stBeam: { idea: 'beam', noise: ['It was built last summer.', 'It is painted white.', 'A sign gives its largest safe load.'],
+      assume: ['The beam is the same all through', ['Only the top feels any force', 'Bending affects both sides'], ['The load pulls the beam up', 'The load pushes down']] },
+    stStable: { idea: 'stab', noise: ['One is blue and the other is red.', 'They were bought at the same store.', 'A student photographs them side by side.'],
+      assume: ['Both stand on flat, level ground', ['Heavier things never tip', 'CoG and base matter most'], ['Colour changes how it tips', 'Colour doesn’t matter']] },
+    stMachine: { idea: 'mach', noise: ['It is a sunny afternoon.', 'A friend holds the door open.', 'The tool was borrowed from a neighbour.'],
+      assume: ['The load stays the same', ['Machines make extra energy', 'Machines don’t create energy'], ['Friction makes the job easier', 'Friction makes it harder']] },
+    stImprove: { idea: 'design', ask: 'What is the best improvement?', noise: ['The class has two weeks to finish.', 'Their teacher likes bright colours.', 'Another group won last year’s contest.'],
+      assume: ['The same materials are available', ['Any change will fix it', 'Match the fix to the failure'], ['It failed for no reason', 'Look for why it failed']] },
+    stCoG: { idea: 'stab', noise: ['It is a cloudy morning.', 'A crowd is watching.', 'It happens on a Saturday.'],
+      assume: ['The ground is flat and level', ['Heavier is always more stable', 'Where the weight is matters'], ['Strength stops tipping', 'Tipping isn’t breaking']] },
+    stMaterial: { idea: 'mat', noise: ['The project has a tight budget.', 'The parts arrive by truck.', 'The design wins an award.'],
+      assume: ['Each material behaves the usual way', ['The strongest material suits every job', 'Match the material to the force'], ['Cost is all that matters', 'It must handle the force']] },
+    erRock: { idea: 'rock', noise: ['A geologist collects a sample for the lab.', 'The sample fits in the palm of a hand.', 'It is labelled with the date and place.'] },
+    erBound: { idea: 'bound', noise: ['Many people live in the region.', 'The area is popular with tourists.', 'Scientists have studied it for many years.'] },
+    erSurface: { idea: 'surf', noise: ['A photographer takes pictures of it for a calendar.', 'The area is popular with hikers.', 'It is about a two-hour drive from Calgary.'] },
+    erInterior: { idea: 'layer', noise: ['No one has ever drilled that deep.', 'Earth is about 4.6 billion years old.', 'A student draws a diagram of it.'] },
+    erFossil: { idea: 'foss', noise: ['The cliff is about 30 m high.', 'Visitors often stop to take photos.', 'The museum has a cast of each fossil.'],
+      assume: ['The layers formed one after another', ['Fossils move between layers', 'Fossils stay where they formed'], ['All three lived at the same time', 'Layers form at different times']] },
+    erQuake: { idea: 'quake', noise: ['Many tourists visit every year.', 'The region is known for its food.', 'The news reports on it often.'],
+      assume: ['Plates are still moving slowly', ['Quakes come from the weather', 'Quakes start in the crust'], ['Plates stopped moving long ago', 'Plates still move cm per year']] },
+    erCrystal: { idea: 'crys', noise: ['Both rocks fit in a shoebox.', 'A student found them on a hike.', 'They have number labels on them.'],
+      assume: ['Both rocks formed from melted rock', ['Crystal size shows a rock’s age', 'Size shows cooling speed'], ['Colour shows where it cooled', 'Look at crystal size']] },
+    erUplift: { idea: 'uplift', noise: ['Climbers often find them.', 'Tourists visit by bus in summer.', 'Photos of them hang in a museum.'],
+      assume: ['Fossils formed where the animals died', ['The animals climbed the mountain', 'They were sea animals'], ['Mountains never change', 'Plates slowly lift rock']] },
+    erPath: { idea: 'cycle', noise: ['A geologist writes it up in a report.', 'The area is near a highway.', 'Pictures of it appear in a textbook.'],
+      assume: ['Each change takes a very long time', ['Rocks can never change type', 'The rock cycle changes them'], ['Pressing always melts rock', 'Melting needs far more heat']] },
+    erLandform: { idea: 'form', noise: ['Many visitors take photos there.', 'There is a gift shop nearby.', 'The area is busy in July.'],
+      assume: ['It formed over thousands of years', ['People shaped the land', 'Nature shaped it'], ['It formed in a single day', 'It took a very long time']] }
+  };
+  const strip = s => String(s).replace(/<[^>]*>/g, '');
+  const sentences = s => String(s).split(/(?<=[.!?])\s+(?=[A-Z<])/);
+  const choose = (a, ws) => { const errs = ws.map(([t, cue]) => ({ t, cue })); return { a, errs, opts: shuffle([{ v: 'a', t: a }].concat(errs.map((e, k) => ({ v: 'e' + k, t: e.t })))) }; };
+  // Turn a story item into a reading item: passage chunks [{t, k: must | opt | no}], ask, idea, assume.
+  function reading(it) {
+    const R = READ[it.t], ideas = IDEAS[it.unit];
+    const story = sentences(it.story).map(s => ({ t: strip(s), k: /<b>/.test(s) ? 'must' : 'opt' }));
+    const p = [{ t: pick(SETTING[it.unit]), k: 'no' }].concat(story);
+    shuffle(R.noise).concat([pick(UNOISE[it.unit])]).forEach(t => p.splice(rnd(2, p.length), 0, { t, k: 'no' }));
+    const wrongIdeas = shuffle(Object.keys(ideas).filter(k => k !== R.idea && !near(k, R.idea))).slice(0, 2);
+    it.read = {
+      p, ask: R.ask || it.q,
+      idea: choose(ideas[R.idea][0], wrongIdeas.map(k => [ideas[k][0], ideas[R.idea][1]])),
+      assume: it.lvl > 1 && R.assume ? choose(R.assume[0], R.assume.slice(1)) : null
+    };
+    return it;
+  }
+  // The key-facts step: every must sentence tapped, and no red herring.
+  function checkFacts(it, sel) {
+    const p = it.read.p, s = new Set(sel || []);
+    const extra = [...s].filter(i => p[i] && p[i].k === 'no'), missed = p.map((c, i) => c.k === 'must' && !s.has(i) ? i : -1).filter(i => i >= 0);
+    if (!extra.length && !missed.length) return { ok: true, cue: 'You found the key facts' };
+    return { ok: false, extra, missed, cue: extra.length ? 'A detail you picked doesn’t matter' : missed.length > 1 ? 'Some key facts are missing' : 'One key fact is missing' };
+  }
+  // A choice step (idea or assume): ok, or the cue for the wrong pick.
+  function checkPick(step, v) {
+    if (v === 'a') return { ok: true };
+    const e = step.errs[+String(v).slice(1)];
+    return { ok: false, cue: e ? e.cue : 'Pick one answer' };
+  }
+
+  const TOPICS = {
+    eco: { 1: [ecoBiotic, ecoRole, ecoArrow], 2: [ecoPyramid, ecoWeb, ecoBiodiv], 3: [ecoChain, ecoRecover, ecoSteward] },
+    pla: { 1: [plCell, plVessel, plRepro], 2: [plNeeds, plMass, plPollin], 3: [plBreed, plLight, plFarm] },
+    hea: { 1: [heMode, heFlow, heExpand], 2: [heAmount, heFeel, heCapacity], 3: [heInsul, heState, heThermal] },
+    str: { 1: [stType, stLoad, stForce], 2: [stBeam, stStable, stMachine], 3: [stImprove, stCoG, stMaterial] },
+    ear: { 1: [erRock, erBound, erSurface, erInterior], 2: [erFossil, erQuake, erCrystal], 3: [erUplift, erPath, erLandform] }
+  };
+  // A round ramps: items 1–3 one step, 4–7 two steps, 8–10 three.
+  const lvOf = n => n == null ? Q.rnd(1, 3) : n < 3 ? 1 : n < 7 ? 2 : 3;
+  function gen(unit, n) { const it = pick(TOPICS[unit][lvOf(n)])(); it.unit = unit; return reading(it); }
+  const genMix = n => gen(pick(Object.keys(TOPICS)), n);
+  return { TOPICS, READ, IDEAS, gen, genMix, check, checkFacts, checkPick, reading, lvOf };
+})();
+/* ===================== MODEL END ===================== */
+
+/* ===== DRILL SHELL START (same in every narrow trainer: Math 9 and Science 7) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   Optional: PAGE.sep (heading separator after "Section N", default —), PAGE.secText(tab) (the whole heading text
+   for the 📖 link), PAGE.sans (prompts in the plain font, for science). TAB.cols (2 or 3) sets the choice grid.
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen(n)                -> a new item (from MODEL); n is its place in the round (0–9), for a round that ramps up
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom', or kind(item) -> one of those (a page that mixes typed and tap answers)
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue, partial}  cue is six words or fewer; partial: right but not clean (yellow dot)
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+     link(item)            -> {notes, sec, sep} for this item's 📖 link (optional; a tab whose items span topics)
+     typeOf(item)          -> the question type, for weighting (optional; default: the item's form/kind/shape/... fields)
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown).
+   Weighting: each question type has a score, saved per tab. A first-try right answer lowers it (to half weight at
+   most), a miss or Show me raises it (to about 2.5× at most). Each new item is picked from 8 generated candidates
+   by weight, so missed types come back more often and types answered right still appear, less often. */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {}, w: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); if (!save.w || typeof save.w !== 'object') save.w = {}; } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    let prevItalic = false;
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => {
+      if (!part) return; const it = /^[a-z]$/.test(part);
+      // an italic letter leans into a following ² or ³: nudge it right
+      const t = el('tspan', it ? { 'font-style': 'italic' } : prevItalic && /^[²³]/.test(part) ? { dx: '0.12em' } : {}, e); t.textContent = part; prevItalic = it;
+    });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  const kindOf = (t, it) => typeof t.kind === 'function' ? t.kind(it) : t.kind;
+  const K = () => kindOf(tab, item);
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (K() === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (K() === 'choice') {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
+      row.className = 'choices' + (tab.cols === 2 ? ' two' : tab.cols === 3 ? ' three' : long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = K() === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  /* ---------- weighting: missed question types come back more often ---------- */
+  const TYPE_FIELDS = ['form', 'kind', 'shape', 'type', 'rep', 'ask', 'what', 'mode', 'rule', 'ans', 'useD', 'back', 'direct', 'flip', 'rat', 'idCol'];
+  function keyOf(it) {
+    if (tab.typeOf) return String(tab.typeOf(it));
+    return TYPE_FIELDS.filter(k => typeof it[k] === 'string' || typeof it[k] === 'boolean').map(k => k + ':' + it[k]).join('|');
+  }
+  const scores = () => (save.w[tab.id] = save.w[tab.id] || {});
+  const weightOf = k => Math.pow(2, scores()[k] || 0);
+  function record(right) {
+    const s = scores(), k = item.__key; if (k == null) return;
+    s[k] = right ? Math.max(-1, (s[k] || 0) - .5) : Math.min(1.3, (s[k] || 0) + 1);
+    store();
+  }
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) {
+      const cands = [];
+      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(marks.length), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
+      if (!cands.length) cands.push(tab.gen(marks.length));
+      const ws = cands.map(c => weightOf(keyOf(c))), total = ws.reduce((a, b) => a + b, 0);
+      let r = Q.rnd(0, 999999) / 1e6 * total, i = 0; while (i < cands.length - 1 && r >= ws[i]) { r -= ws[i]; i++; }
+      it = cands[i]; key = JSON.stringify(it);
+    }
+    lastKey = key || JSON.stringify(it);
+    Object.defineProperty(it, '__key', { value: keyOf(it), enumerable: false, configurable: true, writable: true });
+    item = it; resp = {}; att = 0; resolved = false;
+    if (tab.link) setNotes(linkOf());
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (K() === 'choice' && resp.v == null) return;
+    if (K() === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (K() === 'choice' ? 1 : 2);
+    if (res.ok) {
+      const clean = att === 1 && !res.partial;   // partial: right, but an earlier step of the item was missed (yellow)
+      resolved = true; marks.push(clean ? 'g' : 'y'); record(clean);
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r'); record(false);
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (K() === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
+    } else if (K() === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (K() === 'slots') fillSlots(ans, 'shown');
+    else if (K() === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); record(false); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(linkOf()) + '" target="_blank" rel="noopener">📖 Notes §' + linkOf().sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => (t.notes || PAGE.notes) + '#:~:text=' + encodeURIComponent(PAGE.secText ? PAGE.secText(t) : 'Section ' + t.sec + ' ' + (t.sep || PAGE.sep || '—'));
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setNotes(t) {
+    const n = $('notes'); n.href = notesHref(t); $('notesTxt').textContent = '§' + t.sec;
+    n.title = 'Notes, Section ' + t.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + t.sec);
+  }
+  // A tab with link(item) points the 📖 button at the current item's own notes.
+  const linkOf = () => tab.link ? Object.assign({}, tab, tab.link(item)) : tab;
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    setNotes(tab);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    if (P.sans) document.body.classList.add('sans');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }),
+      keyOf: (it, t) => { const cur = tab; if (t) tab = t; try { return keyOf(it); } finally { tab = cur; } }, weights: () => Object.assign({}, scores()), resetWeights: () => { save.w[tab.id] = {}; }, setScore: (k, s) => { scores()[k] = s; } };
+  }
+  return { boot, kindOf, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+/* ===== SCIENCE KIT START (Science 7 narrow trainers only; needs DRILL) =====
+   Icon + label + arrow pictures, not drawings of real objects (see the icon-flowchart rule in _sims-context.md).
+     S.emo(p, x, y, icon, size, a)          an emoji icon
+     S.lines(p, x, y, text, n, a)           text wrapped at n characters, centred on (x, y)
+     S.card(p, o)                           an icon card {x, y, w, h, icon, label, col, fill, size, fs, n, cls}
+     S.arrow(p, x1, y1, x2, y2, col, key)   a straight arrow; key = marker colour letter (Y yellow, N green, R red, …)
+     S.curve(p, d, col, key)                an arrow along an SVG path
+     S.sorter(A, it, V, cats, o)            the sorting picture: the item card on top, one bin per choice below;
+                                            after the answer an arrow drops the card into its bin, and each bin shows
+                                            what it means. cats: [{v, label, means, glyph(g, x, y)}]
+     S.classTab(o)                          a whole tap-to-sort tab from a bank (S.sortGen, S.sortCheck) */
+const S = (() => {
+  const { C, el, tx } = DRILL;
+  const done = V => V.phase === 'right' || V.phase === 'show';
+  function emo(p, x, y, ch, size, a) { return tx(p, x, y, ch, Object.assign({ 'font-size': size || 48 }, a, { class: 'emo' + (a && a.class ? ' ' + a.class : '') })); }
+  function wrap(s, n) {
+    const out = []; let line = '';
+    String(s).split(' ').forEach(w => { if (line && (line + ' ' + w).length > n) { out.push(line); line = w; } else line = line ? line + ' ' + w : w; });
+    if (line) out.push(line); return out;
+  }
+  function lines(p, x, y, s, n, a) {
+    const L = wrap(s, n || 22), fs = (a && a['font-size']) || 18, lh = fs * 1.22, g = el('g', { class: a && a.gcls || null }, p);
+    L.forEach((l, i) => tx(g, x, y + (i - (L.length - 1) / 2) * lh, l, Object.assign({}, a, { gcls: null })));
+    return g;
+  }
+  // Label lines sit at the bottom (o.lb padding); the icon is centred in the space above them.
+  function card(p, o) {
+    const g = el('g', { class: o.cls || null }, p), w = o.w || 150, h = o.h || 130, hasL = o.label != null && o.label !== '';
+    el('rect', { x: o.x - w / 2, y: o.y - h / 2, width: w, height: h, rx: 16, fill: o.fill || C.panel, stroke: o.col || C.edge, 'stroke-width': o.sw || 2.5 }, g);
+    const fs = o.fs || 17, n = o.n || Math.round(w / 9.5), L = hasL ? wrap(o.label, n).length : 0, lh = fs * 1.22;
+    const labTop = hasL ? o.y + h / 2 - (o.lb || 12) - L * lh : o.y + h / 2, top = o.y - h / 2;
+    if (o.icon) emo(g, o.x, (top + labTop) / 2 + 2, o.icon, Math.min(o.size || 999, (labTop - top) * .78, w * .6));
+    if (hasL) lines(g, o.x, labTop + L * lh / 2, o.label, n, { 'font-size': fs, fill: o.tcol || C.text });
+    return g;
+  }
+  function arrow(p, x1, y1, x2, y2, col, key, a) {
+    return el('line', Object.assign({ x1, y1, x2, y2, stroke: col, 'stroke-width': 4, 'stroke-linecap': 'round', 'marker-end': 'url(#a' + (key || 'W') + ')' }, a), p);
+  }
+  function curve(p, d, col, key, a) {
+    return el('path', Object.assign({ d, stroke: col, 'stroke-width': 4, fill: 'none', 'stroke-linecap': 'round', 'marker-end': 'url(#a' + (key || 'W') + ')' }, a), p);
+  }
+  // A small pill label with a dark backing, for notes on a picture.
+  function chip(p, x, y, s, col, a) {
+    const g = el('g', { class: a && a.cls || null }, p), fs = (a && a.fs) || 16, w = String(s).length * fs * .56 + 22;
+    el('rect', { x: x - w / 2, y: y - fs * .9, width: w, height: fs * 1.8, rx: fs * .9, fill: C.stage, stroke: col, 'stroke-width': 2 }, g);
+    tx(g, x, y, s, { 'font-size': fs, fill: col });
+    return g;
+  }
+
+  function sorter(A, it, V, cats, o) {
+    o = o || {};
+    const n = cats.length, by = o.by || 335, bh = o.bh || 118, gap = 14, bw = Math.min(190, (600 - gap * (n - 1)) / n);
+    const span = n * bw + (n - 1) * gap, bx = i => 320 - span / 2 + bw / 2 + i * (bw + gap);
+    const fin = done(V), ai = cats.findIndex(c => c.v === it.a), pi = cats.findIndex(c => c.v === (V.resp && V.resp.v));
+    cats.forEach((c, i) => {
+      const x = bx(i), good = fin && i === ai, bad = fin && i === pi && pi !== ai, g = el('g', {}, A.svg);
+      el('rect', { x: x - bw / 2, y: by - bh / 2, width: bw, height: bh, rx: 16, fill: good ? '#13301c' : bad ? '#331417' : C.panel, stroke: good ? C.green : bad ? C.red : C.edge, 'stroke-width': good || bad ? 3 : 2, 'stroke-dasharray': good || bad ? null : '7 6' }, g);
+      const lab = lines(g, x, fin && c.means ? by - bh / 2 + 26 : by, c.label, Math.round(bw / 10.5), { 'font-size': n > 3 ? 17 : 19, fill: good ? C.green : bad ? '#ff9a90' : C.text });
+      if (fin && c.means) lines(g, x, by + 22, c.means, Math.round(bw / 8.5), { 'font-size': 14.5, fill: good ? C.text : C.muted, gcls: 'fade' });
+      if (fin && good && c.glyph) c.glyph(g, x, by + bh / 2 + 4);
+    });
+    const cw = o.cw || 320, ch = o.ch || 156, cy = o.cy || 108;
+    card(A.svg, { x: 320, y: cy, w: cw, h: ch, icon: it.i, label: it.t, size: o.size || 64, fs: o.fs || 21, n: o.n || 26, col: fin ? (pi === ai || V.phase === 'show' && pi < 0 ? C.green : C.edge) : C.yellow, sw: 3, lb: 16 });
+    if (fin && it.why) chip(A.svg, 320, cy + ch / 2 + 24, it.why, C.green, { cls: 'pop', fs: 15 });
+    if (!fin) return;
+    const y0 = cy + ch / 2 + (it.why ? 44 : 8), y1 = by - bh / 2 - 8;
+    if (pi >= 0 && pi !== ai) arrow(A.svg, 320 + (bx(pi) - 320) * .25, y0, bx(pi), y1, C.red, 'R', { 'stroke-dasharray': '6 6', 'stroke-width': 3, class: 'fade' });
+    arrow(A.svg, 320 + (bx(ai) - 320) * .25, y0, bx(ai), y1, C.green, 'N', { class: 'draw', pathLength: 1 });
+  }
+
+  // Bank items: {t: label, i: icon, a: answer, why?: note shown after, cue?: own cue}. No DOM.
+  // Each answer comes up equally often, whatever the bank sizes.
+  const sortGen = bank => { const a = Q.pick([...new Set(bank.map(b => b.a))]); return Object.assign({}, Q.pick(bank.filter(b => b.a === a))); };
+  const sortCheck = (it, r, cues) => r.v === it.a ? { ok: true } : { code: 'is-' + it.a, cue: it.cue || (cues && cues[it.a]) || 'Not quite' };
+
+  // A tap-to-sort tab. o: {id, code, name, sec, q, cats, bank, cues, cols, pic} — the bank and cues come from MODEL.
+  function classTab(o) {
+    return {
+      id: o.id, code: o.code, name: o.name, sec: o.sec, q: o.q, kind: 'choice', cols: o.cols,
+      typeOf: it => it.t,  // a missed item comes back more often
+      gen: () => sortGen(o.bank),
+      choices: () => o.cats.map(c => ({ v: c.v, label: c.label })),
+      check: (it, r) => sortCheck(it, r, o.cues), answer: it => ({ v: it.a }),
+      draw(A, it, V) { sorter(A, it, V, o.cats, o.pic); }
+    };
+  }
+  return { emo, wrap, lines, card, arrow, curve, chip, sorter, classTab, sortGen, sortCheck, done };
+})();
+/* ===== SCIENCE KIT END ===== */
+
+/* ===== SCIENCE WORD PROBLEMS KIT (Science 7 word-problem trainer; needs DRILL and S from sci.js) =====
+   A story item is answered by tapping one choice (one try). Every wrong choice is a named misconception: its cue
+   (six words or fewer) and the reasoning step (s) it breaks.
+   The picture has two parts: a schematic of the story at the top, and the reasoning chain at the bottom
+   (one numbered row per step, so Level 1 shows one row, Level 3 three or more).
+     ask           the story's parts, with the unknown as '?', and an empty row for each step
+     right / show  each step fades in, in order; parts tied to a step (s) appear with it; the unknown fills in.
+                   After a wrong pick, the step that choice broke is drawn in red with the choice's cue.
+   Pictures (pic.k):
+     scene   icon cards on a small grid joined by arrows: cards [{c, r, i, t, k, s, q, d, x, tag, hl}],
+             arrows [{a, b, t, k, s, q, d, dash, x}] (a and b are card indexes). q: '?' until solved, then d.
+             x: crossed out in red (a missing input, a removed species). tag: a chip under the card once solved.
+     layers  stacked bands, top first: bands [{t, i, k, w, s, q, d, tag}], side: {t, s} (an arrow down the side)
+     cell    a plant cell with one part glowing: part = wall | membrane | vacuole | nucleus | chloroplast */
+const SW = (() => {
+  const { C, el, tx } = DRILL;
+  const COL = { L: C.blue, Y: C.yellow, N: C.green, R: C.red, G: C.gold, T: C.teal, P: C.pink, M: C.muted, W: C.text };
+  const col = k => COL[k] || k || C.edge;
+  const LVC = ['', C.teal, C.gold, C.pink], LVN = ['', 'one step', 'two steps', 'three steps'];
+  const done = V => V.phase === 'right' || V.phase === 'show';
+  const DLY = .5;
+  const on = (e, V) => e.s == null || done(V);
+  const anim = (e, V) => e.s != null && done(V) && V.anim ? { class: 'fade', style: 'animation-delay:' + (e.s * DLY + .2) + 's' } : {};
+  const qt = (e, V) => e.q ? (done(V) ? e.d : '?') : e.t;
+  const qc = (e, V, c) => e.q ? (done(V) ? C.green : C.yellow) : c;
+
+  /* ---------- scene: icon cards and arrows ---------- */
+  function scene(A, p, V, H) {
+    const cs = p.cards, nc = Math.max(...cs.map(c => c.c)) + 1, nr = Math.max(...cs.map(c => c.r)) + 1;
+    const dx = Math.min(210, 620 / nc), dy = Math.min(150, (H - 20) / nr);
+    const w = p.w || Math.min(160, dx - (nc > 3 ? 18 : 40)), h = p.h || Math.min(112, dy - 30);
+    const pos = c => [320 + (c.c - (nc - 1) / 2) * dx + (c.dx || 0), 14 + (H - 14) / 2 + (c.r - (nr - 1) / 2) * dy];
+    const later = [];   // arrow labels go on top of the cards
+    (p.arrows || []).forEach(a => {
+      const [x1, y1] = pos(cs[a.a]), [x2, y2] = pos(cs[a.b]), L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L;
+      const tr = Math.min(Math.abs(ux) > 1e-6 ? (w / 2 + 8) / Math.abs(ux) : 1e9, Math.abs(uy) > 1e-6 ? (h / 2 + 8) / Math.abs(uy) : 1e9);
+      // dir: the direction is the unknown, so before it is solved the link is a plain dashed line with a '?'
+      if (a.dir && !done(V)) {
+        el('line', { x1: x1 + ux * tr, y1: y1 + uy * tr, x2: x2 - ux * tr, y2: y2 - uy * tr, stroke: C.yellow, 'stroke-width': 3, 'stroke-dasharray': '7 7' }, A.svg);
+        later.push(() => S.chip(A.svg, (x1 + x2) / 2, (y1 + y2) / 2, '?', C.yellow, { fs: 17 }));
+        return;
+      }
+      if (!on(a, V)) return;
+      const c = a.x ? C.red : a.q ? qc(a, V, C.yellow) : col(a.k || 'G'), key = a.x ? 'R' : a.q ? (done(V) ? 'N' : 'Y') : (a.k || 'G'), an = anim(a, V);
+      S.arrow(A.svg, x1 + ux * tr, y1 + uy * tr, x2 - ux * tr, y2 - uy * tr, c, key, Object.assign({ 'stroke-dasharray': a.dash ? '8 7' : null }, an));
+      const t = qt(a, V);
+      if (t) {
+        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, vert = Math.abs(uy) > Math.abs(ux);
+        later.push(() => S.chip(A.svg, mx, my + (vert ? 0 : -26), t, c, { fs: 15, cls: an.class }));
+      }
+      if (a.x) { const mx = (x1 + x2) / 2, my = (y1 + y2) / 2; tx(A.svg, mx, my + (Math.abs(uy) > Math.abs(ux) ? 0 : 22), '✕', { 'font-size': 26, fill: C.red }); }
+    });
+    cs.forEach(c => {
+      if (!on(c, V)) return;
+      const [x, y] = pos(c), an = anim(c, V), k = c.x ? C.red : c.q ? qc(c, V, C.yellow) : c.hl ? C.yellow : col(c.k);
+      const g = S.card(A.svg, { x, y, w: c.w || w, h: c.h || h, icon: c.i, label: qt(c, V), col: k, sw: c.hl || c.q ? 3 : 2.5, fs: c.fs || (w < 130 ? 15 : 16), size: c.size || 46, lb: 10, tcol: c.q ? qc(c, V, C.text) : C.text });
+      if (an.class) { g.setAttribute('class', an.class); g.setAttribute('style', an.style); }
+      if (c.q && !done(V)) g.querySelector('rect').setAttribute('stroke-dasharray', '7 6');
+      if (c.x) { el('line', { x1: x - w / 2 + 12, y1: y - h / 2 + 12, x2: x + w / 2 - 12, y2: y + h / 2 - 12, stroke: C.red, 'stroke-width': 4, 'stroke-linecap': 'round', opacity: .85 }, A.svg); }
+      if (c.tag && done(V)) S.chip(A.svg, x, y + (c.h || h) / 2 + 16, c.tag, c.tagk ? col(c.tagk) : C.green, { fs: 14, cls: 'pop' });
+    });
+    later.forEach(f => f());
+  }
+
+  /* ---------- layers: bands stacked from the top ---------- */
+  function layers(A, p, V, H) {
+    const n = p.bands.length, bh = Math.min(64, (H - 30) / n), y0 = 14 + (H - 14 - n * bh) / 2, X = p.side ? 290 : 320, W = 440;
+    p.bands.forEach((b, i) => {
+      if (!on(b, V)) return;
+      const w = W * (b.w || 1), y = y0 + i * bh, c = b.q ? qc(b, V, C.yellow) : b.hl ? C.yellow : col(b.k || 'M'), an = anim(b, V);
+      const g = el('g', an, A.svg);
+      el('rect', { x: X - w / 2, y: y + 2, width: w, height: bh - 4, rx: 8, fill: c, 'fill-opacity': .14, stroke: c, 'stroke-width': b.hl || b.q ? 3 : 2, 'stroke-dasharray': b.q && !done(V) ? '7 6' : null }, g);
+      const t = !b.q && b.d != null && done(V) ? b.d : qt(b, V);
+      if (b.i) S.emo(g, X - w / 2 + 34, y + bh / 2, b.i, Math.min(34, bh * .6));
+      tx(g, X + (b.i ? 14 : 0), y + bh / 2, t, { 'font-size': 17, fill: b.q ? c : C.text });
+      if (b.tag && done(V)) S.chip(A.svg, X + w / 2 - 16 - b.tag.length * 4.5, y + bh / 2, b.tag, C.green, { fs: 14, cls: 'pop' });
+    });
+    if (p.side && on(p.side, V)) {
+      const x = X + W / 2 + 30, an = anim(p.side, V);
+      S.arrow(A.svg, x, y0 + 6, x, y0 + n * bh - 6, C.gold, 'G', an);
+      tx(A.svg, x + 14, y0 + n * bh / 2, p.side.t, Object.assign({ 'font-size': 15, fill: C.gold, 'text-anchor': 'start', transform: 'rotate(90 ' + (x + 14) + ' ' + (y0 + n * bh / 2) + ')' }, an));
+    }
+  }
+
+  /* ---------- a plant cell, one part glowing ---------- */
+  function cell(A, p, V, H) {
+    const w = 330, h = Math.min(220, H - 50), x = 320 - w / 2, y = 10 + (H - 10 - h) / 2, cx = 320, cy = y + h / 2;
+    const glow = k => p.part === k ? { stroke: C.yellow, 'stroke-width': 5, filter: 'url(#glow)' } : {};
+    el('rect', Object.assign({ x, y, width: w, height: h, rx: 14, fill: '#12261a', stroke: C.green, 'stroke-width': 7 }, glow('wall')), A.svg);
+    el('rect', Object.assign({ x: x + 11, y: y + 11, width: w - 22, height: h - 22, rx: 9, fill: 'none', stroke: C.teal, 'stroke-width': 2 }, glow('membrane')), A.svg);
+    el('ellipse', Object.assign({ cx: cx + 30, cy, rx: w * .3, ry: h * .3, fill: C.blue, 'fill-opacity': .14, stroke: C.blue, 'stroke-width': 2 }, glow('vacuole')), A.svg);
+    el('circle', Object.assign({ cx: x + 62, cy: y + 56, r: 24, fill: C.pink, 'fill-opacity': .35, stroke: C.pink, 'stroke-width': 2 }, glow('nucleus')), A.svg);
+    [[x + 54, y + h - 40], [x + 120, y + h - 30], [x + w - 50, y + 38], [x + w - 46, y + h - 44], [x + 150, y + 30]].filter(() => p.chl !== false).forEach(([a, b]) =>
+      el('ellipse', Object.assign({ cx: a, cy: b, rx: 15, ry: 9, fill: C.green, 'fill-opacity': .8, stroke: C.green, 'stroke-width': 1.5 }, p.part === 'chloroplast' ? { stroke: C.yellow, 'stroke-width': 4, filter: 'url(#glow)' } : {}), A.svg));
+    const lx = 320 + w / 2 + 18;
+    S.chip(A.svg, lx + 50, cy, done(V) ? p.d : '?', done(V) ? C.green : C.yellow, { fs: 16, cls: done(V) && V.anim ? 'pop' : null });
+    tx(A.svg, x - 14, cy, '🔬', { 'font-size': 40, class: 'emo', 'text-anchor': 'end' });
+  }
+
+  /* ---------- a beam on supports (simple) or out from a wall (cantilever), bent by a load ---------- */
+  // p: { type: 'simple' | 'cantilever', ask: 'top' | 'bottom' | 'rebar', i (load icon), t (load label) }
+  function beam(A, p, V, H) {
+    const x0 = 130, x1 = 510, bh = 34, y = Math.min(H * .55, H - 70), cant = p.type === 'cantilever', fin = done(V);
+    const lx = cant ? x1 - 30 : (x0 + x1) / 2;
+    if (cant) el('rect', { x: x0 - 40, y: y - 90, width: 40, height: 190, fill: C.edge, stroke: C.muted, 'stroke-width': 2 }, A.svg);
+    else [x0 + 20, x1 - 20].forEach(x => el('path', { d: 'M' + x + ' ' + (y + bh / 2) + 'l-20 34h40z', fill: C.panel, stroke: C.muted, 'stroke-width': 2.5 }, A.svg));
+    el('rect', { x: x0, y: y - bh / 2, width: x1 - x0, height: bh, rx: 4, fill: '#3a2a17', stroke: C.gold, 'stroke-width': 2.5 }, A.svg);
+    // the bent shape, dashed
+    const sag = 26, d = cant ? 'M' + x0 + ' ' + y + 'Q' + (x0 + x1) / 2 + ' ' + y + ' ' + x1 + ' ' + (y + sag * 1.6) : 'M' + x0 + ' ' + y + 'Q' + (x0 + x1) / 2 + ' ' + (y + sag * 2) + ' ' + x1 + ' ' + y;
+    el('path', { d, fill: 'none', stroke: C.muted, 'stroke-width': 2, 'stroke-dasharray': '6 6' }, A.svg);
+    S.emo(A.svg, lx, y - bh / 2 - 74, p.i, 44);
+    S.arrow(A.svg, lx, y - bh / 2 - 46, lx, y - bh / 2 - 6, C.red, 'R');
+    if (p.t) tx(A.svg, lx + 34, y - bh / 2 - 74, p.t, { 'font-size': 15, fill: C.muted, 'text-anchor': 'start' });
+    const topT = cant ? 'stretched' : 'squeezed', botT = cant ? 'squeezed' : 'stretched';
+    const side = (yy, t, k) => {
+      const c = t === 'stretched' ? C.blue : C.gold, a = fin && V.anim ? { class: 'fade', style: 'animation-delay:' + (DLY + .2) + 's' } : {}, m = (x0 + x1) / 2;
+      if (t === 'stretched') { S.arrow(A.svg, m - 20, yy, m - 110, yy, c, 'L', a); S.arrow(A.svg, m + 20, yy, m + 110, yy, c, 'L', a); }
+      else { S.arrow(A.svg, m - 120, yy, m - 30, yy, c, 'G', a); S.arrow(A.svg, m + 120, yy, m + 30, yy, c, 'G', a); }
+      tx(A.svg, m, yy + k * 18, t + (t === 'stretched' ? ': tension' : ': compression'), Object.assign({ 'font-size': 15, fill: c }, a));
+    };
+    const ask = p.ask === 'rebar' ? 'bottom' : p.ask;
+    if (!fin) { const yy = ask === 'top' ? y - bh / 2 : y + bh / 2; el('line', { x1: x0, x2: x1, y1: yy, y2: yy, stroke: C.yellow, 'stroke-width': 5 }, A.svg); S.chip(A.svg, x1 + 50, yy, '?', C.yellow, { fs: 17 }); return; }
+    side(y - bh / 2 - 14, topT, -1); side(y + bh / 2 + 14, botT, 1);
+    if (p.ask === 'rebar') { const yy = cant ? y - bh / 2 + 7 : y + bh / 2 - 7; el('line', { x1: x0 + 6, x2: x1 - 6, y1: yy, y2: yy, stroke: C.red, 'stroke-width': 4, 'stroke-dasharray': '14 5', class: 'fade' }, A.svg); }
+  }
+
+  /* ---------- two blocks with their centres of gravity, and the angle each tips at ---------- */
+  // p: { A: {w, h, cg, t, i}, B: {...} }  (w, h in cm; cg = height of the centre of gravity, cm)
+  function tip(A, p, V, H) {
+    const k = Math.min(150 / Math.max(p.A.w, p.B.w), (H - 110) / Math.max(p.A.h, p.B.h)), base = H - 34, fin = done(V);
+    [['A', p.A, 170], ['B', p.B, 470]].forEach(([n, b, x]) => {
+      const w = b.w * k, h = b.h * k, cy = base - b.cg * k, ang = Math.round(Math.atan2(b.w / 2, b.cg) * 180 / Math.PI);
+      el('line', { x1: x - 120, x2: x + 120, y1: base, y2: base, stroke: C.muted, 'stroke-width': 2 }, A.svg);
+      el('rect', { x: x - w / 2, y: base - h, width: w, height: h, rx: 4, fill: C.blue, 'fill-opacity': .12, stroke: C.blue, 'stroke-width': 2.5 }, A.svg);
+      if (b.i) S.emo(A.svg, x, base - h - 26, b.i, 34);
+      el('circle', { cx: x, cy, r: 8, fill: C.yellow, stroke: C.stage, 'stroke-width': 2 }, A.svg);
+      tx(A.svg, x, base + 20, b.t, { 'font-size': 16, fill: C.text });
+      if (!fin) return;
+      const a = V.anim ? { class: 'fade', style: 'animation-delay:' + (DLY + .2) + 's' } : {};
+      el('line', Object.assign({ x1: x, y1: cy, x2: x + w / 2, y2: base, stroke: C.gold, 'stroke-width': 2.5, 'stroke-dasharray': '6 5' }, a), A.svg);
+      el('line', Object.assign({ x1: x, y1: cy, x2: x, y2: base, stroke: C.muted, 'stroke-width': 2, 'stroke-dasharray': '3 5' }, a), A.svg);
+      S.chip(A.svg, x, Math.max(26, base - h - 58), 'tips at ' + ang + '°', ang < Math.round(Math.atan2((n === 'A' ? p.B : p.A).w / 2, (n === 'A' ? p.B : p.A).cg) * 180 / Math.PI) ? C.red : C.green, { fs: 15, cls: V.anim ? 'pop' : null });
+    });
+  }
+
+  const PIC = { scene, layers, cell, beam, tip };
+
+  /* ---------- the reasoning chain ---------- */
+  function steps(A, it, V, top) {
+    const n = it.steps.length, rh = n > 3 ? 28 : 33, bad = done(V) && V.res && !V.res.ok && V.res.s >= 0 ? V.res.s : -1;
+    it.steps.forEach((st, i) => {
+      const y = top + i * rh + rh / 2, flag = i === bad, c = flag ? C.red : LVC[it.lvl], a = done(V) && V.anim ? { class: 'fade', style: 'animation-delay:' + (i * DLY) + 's' } : {};
+      el('circle', { cx: 26, cy: y, r: 12, fill: c, 'fill-opacity': done(V) ? .9 : .25, stroke: c, 'stroke-width': 1.5 }, A.svg);
+      tx(A.svg, 26, y + 1, String(i + 1), { 'font-size': 14, 'font-weight': 700, fill: done(V) ? C.stage : c, style: 'stroke:none' });
+      if (!done(V)) { el('line', { x1: 48, x2: 610, y1: y, y2: y, stroke: C.edge, 'stroke-width': 2, 'stroke-dasharray': '4 8' }, A.svg); return; }
+      tx(A.svg, 46, y, st.l, Object.assign({ 'font-size': 14, fill: flag ? C.red : C.gold, 'text-anchor': 'start', 'font-weight': 650 }, a));
+      const fs = Math.min(16, 440 / Math.max(1, st.m.length * .5));
+      tx(A.svg, 178, y, st.m, Object.assign({ 'font-size': fs, fill: flag ? '#ff9a90' : i === n - 1 ? C.green : C.text, 'text-anchor': 'start' }, a));
+    });
+  }
+
+  function draw(A, it, V) {
+    const n = it.steps.length, rh = n > 3 ? 28 : 33, top = 420 - n * rh - 6;
+    el('line', { x1: 14, x2: 626, y1: top - 8, y2: top - 8, stroke: C.edge, 'stroke-width': 1.5 }, A.svg);
+    PIC[it.pic.k](A, it.pic, V, top - 14);
+    steps(A, it, V, top);
+  }
+
+  /* ---------- a tab: one unit, a round ramping from one step to three ---------- */
+  function tab(o) {
+    return {
+      id: o.id, code: o.code, name: o.name, sec: 1, notes: o.notes, kind: 'choice', cols: 2,
+      q: it => it.q, gen: o.gen, typeOf: it => it.t,
+      prompt: it => '<div class="lvl l' + it.lvl + '">Level ' + it.lvl + ' · ' + LVN[it.lvl] + '<span class="lo">' + it.code + '</span></div><div class="story">' + it.story + '</div>',
+      choices: it => it.opts.map(c => ({ v: c.v, label: c.t, aria: c.t })),
+      check: (it, r) => MODEL.check(it, r), answer: it => ({ v: 'a' }), link: o.link, draw
+    };
+  }
+  /* ---------- v2: a reading tab. The passage fills the stage; the student works through checked steps:
+     Key facts (tap the sentences that matter; two tries), Key idea (one try), What can we assume? (Levels 2–3,
+     one try), Answer (two tries). A tracker under the passage fills in as they go. After the answer the stage
+     shows the picture and the reasoning chain, with a Reading chip to look back. A slip on an earlier step
+     makes a right answer yellow (check returns partial). State lives in the shell's resp for the item. ---------- */
+  const STEPN = { facts: 'Key facts', idea: 'Key idea', assume: 'What can we assume?', answer: 'Answer' };
+  const HINT = { facts: 'Tap the key facts, then Check', idea: 'Pick the key idea', assume: 'Pick what we can assume', answer: 'Pick your answer' };
+  const XH = 'http://www.w3.org/1999/xhtml', $ = id => document.getElementById(id);
+  const stepsOf = it => ['facts', 'idea'].concat(it.read.assume ? ['assume'] : [], ['answer']);
+  let CUR = null;   // { box, it, A } for the item on screen
+  function fbSet(kind, cue) {
+    const f = $('fb'); f.className = 'fb ' + kind;
+    f.innerHTML = '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + cue + '</span>';
+  }
+  const chipH = it => '<div class="lvl l' + it.lvl + '">Level ' + it.lvl + ' · ' + (it.lvl === 1 ? '3 steps' : '4 steps') + '<span class="lo">' + it.code + '</span></div>';
+  function mkBtn(cls, html, on) { const b = document.createElement('button'); b.type = 'button'; b.className = cls; b.innerHTML = html; b.addEventListener('click', on); return b; }
+
+  function renderPanel(fin) {
+    const { box, it, A } = CUR, r = A.resp, S = stepsOf(it), i = fin ? S.length - 1 : r.step || 0, st = S[i];
+    $('q').textContent = 'Step ' + (i + 1) + ' of ' + S.length + ' · ' + STEPN[st];
+    const pr = $('prompt'); pr.style.fontSize = '';
+    pr.innerHTML = chipH(it) + '<div class="story">' + (st === 'facts' ? 'Read the story. Tap the sentences with the <b>key facts</b>, then press Check.'
+      : st === 'idea' ? 'Which <b>science idea</b> do you need for this problem?' : st === 'assume' ? 'What can we safely <b>assume</b>?' : '<b>' + it.read.ask + '</b>') + '</div>';
+    box.innerHTML = '';
+    if (st === 'facts') {
+      const n = (r.sel || []).length;
+      box.appendChild(mkBtn('btn primary factsBtn', 'Check key facts' + (n ? ' (' + n + ')' : ''), onFacts));
+      return;
+    }
+    const step = st === 'answer' ? it : it.read[st], row = document.createElement('div');
+    row.className = 'choices two';
+    step.opts.forEach(o => {
+      const b = mkBtn('choice', o.t, () => onPick(st, o.v, b)); b.dataset.v = o.v; b.setAttribute('aria-label', o.t);
+      if (st === 'answer' && (r.tried || []).includes(o.v)) { b.classList.add('bad'); b.disabled = true; }
+      if (fin && o.v === 'a') b.classList.add('ok');
+      if (fin && o.v === r.v && o.v !== 'a') b.classList.add('bad');
+      row.appendChild(b);
+    });
+    box.appendChild(row);
+  }
+  function advance() { const r = CUR.A.resp; r.step = (r.step || 0) + 1; renderPanel(); CUR.A.redraw(); }
+  function onFacts() {
+    const { it, A } = CUR, r = A.resp; if (A.locked) return;
+    const res = MODEL.checkFacts(it, r.sel); r.factsTry = (r.factsTry || 0) + 1;
+    if (res.ok) { r.facts = 'ok'; r.flag = null; fbSet('ok', res.cue); return advance(); }
+    if (r.factsTry < 2) { r.flag = res.extra; fbSet('bad', res.cue + ' · try again'); return A.redraw(); }
+    r.facts = 'shown'; r.flag = null; r.miss = (r.miss || 0) + 1;
+    r.sel = it.read.p.map((c, k) => c.k === 'must' ? k : -1).filter(k => k >= 0);
+    fbSet('bad', 'The key facts are in green'); advance();
+  }
+  function onPick(st, v, b) {
+    const { it, A } = CUR, r = A.resp; if (A.locked) return;
+    if (st === 'answer') {
+      r.v = v; r.done = true;
+      if (!MODEL.check(it, r).ok) { r.tried = (r.tried || []).concat(v); b.classList.add('bad'); b.disabled = true; }
+      return $('bCheck').click();
+    }
+    const res = MODEL.checkPick(it.read[st], v); r[st] = v;
+    if (!res.ok) r.miss = (r.miss || 0) + 1;
+    fbSet(res.ok ? 'ok' : 'bad', res.ok ? 'Yes' : res.cue);
+    advance();
+  }
+
+  // The passage (tappable on the Key facts step) and the step tracker under it.
+  function reading(A, it, V) {
+    const r = V.resp || {}, S = stepsOf(it), fin = done(V), cur = fin ? S.length : r.step || 0, rh = 31, top = 420 - S.length * rh - 8;
+    const factsDone = fin || cur > 0, tapping = !fin && cur === 0;
+    const fo = el('foreignObject', { x: 10, y: 6, width: 620, height: top - 16 }, A.svg), div = document.createElementNS(XH, 'div');
+    const len = it.read.p.reduce((a, c) => a + c.t.length, 0) + it.read.ask.length;
+    div.setAttribute('style', 'font: ' + (len > 620 ? 15 : len > 520 ? 15.5 : 16.5) + 'px/' + (len > 620 ? 1.42 : 1.5) + ' "Segoe UI Variable Text","Segoe UI",system-ui,sans-serif; color:' + C.text + '; padding: 4px 6px; user-select: none;');
+    const sel = new Set(r.sel || []), flag = new Set(r.flag || []);
+    it.read.p.forEach((c, k) => {
+      const s = document.createElementNS(XH, 'span'), on = sel.has(k);
+      s.textContent = c.t; s.className = 'snt';
+      let st = 'padding: 1px 2px; border-radius: 4px; box-decoration-break: clone; -webkit-box-decoration-break: clone;';
+      if (factsDone) st += c.k === 'must' ? 'background: rgba(131,193,103,.22); border-bottom: 2px solid ' + C.green + ';' : on ? 'background: rgba(247,217,111,.14);' : 'color: ' + C.muted + ';';
+      else if (flag.has(k)) st += 'background: rgba(252,98,85,.25); border-bottom: 2px solid ' + C.red + ';';
+      else if (on) st += 'background: rgba(247,217,111,.25); border-bottom: 2px solid ' + C.yellow + ';';
+      if (tapping) {
+        st += 'cursor: pointer;'; s.setAttribute('role', 'button'); s.setAttribute('tabindex', '0'); s.setAttribute('aria-pressed', on ? 'true' : 'false');
+        const tog = () => { if (A.locked) return; const nx = new Set(r.sel || []); nx.has(k) ? nx.delete(k) : nx.add(k); r.sel = [...nx]; r.flag = (r.flag || []).filter(x => x !== k); renderPanel(); A.redraw(); };
+        s.addEventListener('click', tog);
+        s.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); tog(); } });
+      }
+      s.setAttribute('style', st); div.appendChild(s); div.appendChild(document.createTextNode(' '));
+    });
+    const q = document.createElementNS(XH, 'div'); q.textContent = it.read.ask;
+    q.setAttribute('style', 'margin-top: 8px; font-weight: 700; color: ' + C.blue + ';'); div.appendChild(q);
+    fo.appendChild(div);
+    // the tracker
+    el('line', { x1: 14, x2: 626, y1: top - 6, y2: top - 6, stroke: C.edge, 'stroke-width': 1.5 }, A.svg);
+    const pickText = (step, v) => (step.opts.find(o => o.v === v) || {}).t || '';
+    S.forEach((st, i) => {
+      const y = top + i * rh + rh / 2, now = i === cur && !fin, past = i < cur || fin, c = now ? C.yellow : past ? LVC[it.lvl] : C.edge;
+      el('circle', { cx: 26, cy: y, r: 12, fill: past ? c : 'none', stroke: c, 'stroke-width': now ? 3 : 1.5 }, A.svg);
+      tx(A.svg, 26, y + 1, String(i + 1), { 'font-size': 14, 'font-weight': 700, fill: past ? C.stage : c, style: 'stroke:none' });
+      tx(A.svg, 46, y, STEPN[st], { 'font-size': 14, 'font-weight': 650, fill: now ? C.yellow : past ? C.gold : C.muted, 'text-anchor': 'start' });
+      let v = '', vc = C.text;
+      if (now) { v = st === 'answer' && V.phase === 'wrong' ? '✗ ' + pickText(it, r.v) + ': try again' : '← ' + HINT[st]; vc = st === 'answer' && V.phase === 'wrong' ? '#ff9a90' : C.yellow; }
+      else if (past && st === 'facts') { v = r.facts === 'shown' ? '✗ shown in green' : '✓ ' + it.read.p.filter(c => c.k === 'must').length + ' key facts found'; vc = r.facts === 'shown' ? '#ff9a90' : C.green; if (fin && !r.facts) { v = 'key facts in green'; vc = C.green; } }
+      else if (past && st !== 'answer') { const step = it.read[st], okk = r[st] === 'a'; v = (r[st] == null ? '' : okk ? '✓ ' : '✗ ') + step.a; vc = okk || r[st] == null ? C.green : '#ff9a90'; }
+      else if (past) { v = '✓ ' + it.a; vc = C.green; }
+      if (v) tx(A.svg, 236, y, v, { 'font-size': Math.min(15, 390 / Math.max(1, v.length * .5)), fill: vc, 'text-anchor': 'start' });
+    });
+  }
+
+  function readDraw(A, it, V) {
+    const r = V.resp || {};
+    if (done(V) && CUR && CUR.it === it && !r.fin) { r.fin = true; renderPanel(true); }
+    if (!done(V) || r.view === 'read') reading(A, it, V); else draw(A, it, V);
+    if (!done(V)) return;
+    const g = el('g', { style: 'cursor:pointer', role: 'button', tabindex: '0', 'aria-label': r.view === 'read' ? 'Show the picture' : 'Show the reading' }, A.svg);
+    const tog = () => { r.view = r.view === 'read' ? '' : 'read'; A.redraw(); };
+    S.chip(g, 572, 20, r.view === 'read' ? '🖼 Picture' : '📄 Reading', C.blue, { fs: 14 });
+    g.addEventListener('click', tog);
+  }
+
+  function readTab(o) {
+    return {
+      id: o.id, code: o.code, name: o.name, sec: 1, notes: o.notes, kind: 'custom', tries: 2,
+      q: () => '', gen: o.gen, typeOf: it => it.t, prompt: it => chipH(it), link: o.link,
+      panel(box, it, A) { CUR = { box, it, A }; A.resp.step = 0; renderPanel(); },
+      ready: (r, it) => r.done || r.shown ? '' : HINT[stepsOf(it)[r.step || 0]],
+      check: (it, r) => MODEL.check(it, r), answer: () => ({ v: 'a', done: true }), draw: readDraw
+    };
+  }
+  return { tab, readTab, draw, PIC, LVN };
+})();
+/* ===== SCIENCE WORD PROBLEMS KIT END ===== */
+/* ===================== PAGE: tabs (pictures and the reasoning chain are in sw.js) ===================== */
+const NOTES7 = {
+  eco: 'sci7-interactions-ecosystems-notes-v1.html', pla: 'sci7-plants-food-fibre-notes-v1.html', hea: 'sci7-heat-temperature-notes-v1.html',
+  str: 'sci7-structures-forces-notes-v1.html', ear: 'sci7-planet-earth-notes-v1.html'
+};
+// Each item opens its own unit's notes at its own section.
+const link7 = it => ({ notes: NOTES7[it.unit], sec: it.sec });
+const tab7 = (id, code, name) => SW.readTab({ id, code, name, notes: NOTES7[id], gen: n => MODEL.gen(id, n), link: link7 });
+const PAGE = {
+  key: 'sci7-word-problems-trainer-v2', course: 'Science 7 · Word problems', title: 'Word Problems',
+  notes: NOTES7.eco, secText: t => 'Section ' + t.sec + ':', sans: true,
+  tabs: [
+    tab7('eco', '7-1', 'Ecosystems'), tab7('pla', '7-2', 'Plants'), tab7('hea', '7-3', 'Heat'),
+    tab7('str', '7-4', 'Structures'), tab7('ear', '7-5', 'Earth'),
+    SW.readTab({ id: 'mix', code: 'All', name: 'Mixed', notes: NOTES7.eco, gen: n => MODEL.genMix(n), link: link7 })
+  ]
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>
