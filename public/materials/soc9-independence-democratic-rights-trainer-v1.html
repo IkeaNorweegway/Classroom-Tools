@@ -315,7 +315,7 @@ const MODEL = (() => {
    for the 📖 link), PAGE.sans (prompts in the plain font, for science). TAB.cols (2 or 3) sets the choice grid.
    A TAB is one narrow skill:
      id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
-     gen()                 -> a new item (from MODEL)
+     gen(n)                -> a new item (from MODEL); n is its place in the round (0–9), for a round that ramps up
      prompt(item)          -> HTML for the prompt (optional)
      kind: 'slots' | 'choice' | 'custom', or kind(item) -> one of those (a page that mixes typed and tap answers)
        slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
@@ -517,8 +517,8 @@ const DRILL = (() => {
     let it = given, key = '';
     if (!it) {
       const cands = [];
-      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
-      if (!cands.length) cands.push(tab.gen());
+      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(marks.length), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
+      if (!cands.length) cands.push(tab.gen(marks.length));
       const ws = cands.map(c => weightOf(keyOf(c))), total = ws.reduce((a, b) => a + b, 0);
       let r = Q.rnd(0, 999999) / 1e6 * total, i = 0; while (i < cands.length - 1 && r >= ws[i]) { r -= ws[i]; i++; }
       it = cands[i]; key = JSON.stringify(it);
@@ -795,11 +795,11 @@ const S = (() => {
         });
         if (!fin) { A.tx(A.svg, 320, 130, '?', { 'font-size': 44, fill: C.yellow }); return; }
         // The timeline: both years placed to scale, a little padding either side.
-        const y1 = B[it.first].y, y2 = B[it.first === it.L ? it.R : it.L].y, pad = Math.max(2, (y2 - y1) * .25);
+        const y1 = B[it.first].y, y2 = B[it.first === it.L ? it.R : it.L].y, pad = Math.max((y2 - y1) * .25, Math.min(2, (y2 - y1) * 1.2));
         const lo = y1 - pad, hi = y2 + pad, X = y => 70 + (y - lo) / (hi - lo) * 500, ly = 330;
         S.arrow(A.svg, 50, ly, 600, ly, C.muted, 'M', { 'stroke-width': 3, class: 'fade' });
         A.tx(A.svg, 608, ly + 26, 'time', { 'font-size': 14, fill: C.muted, 'text-anchor': 'end', class: 'fade' });
-        const close = Math.abs(X(y2) - X(y1)) < 130;  // same month: stack the later label lower
+        const close = Math.abs(X(y2) - X(y1)) < 170;  // same month: stack the later label lower
         cards.forEach(([k, x]) => {
           const px = X(B[k].y), good = k === it.first;
           el('line', { x1: x, y1: 228, x2: px, y2: ly - 10, stroke: good ? C.green : C.muted, 'stroke-width': 2, 'stroke-dasharray': '5 6', class: 'fade' }, A.svg);

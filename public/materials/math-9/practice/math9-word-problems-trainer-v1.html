@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Problems Trainer | Math 9</title>
+<!-- =====================================================================
+   MATH 9 WORD PROBLEMS TRAINER (narrow trainer format, see _sims-context.md)
+   Math 9 | every topic | used after the lessons: it does not teach, each item's 📖 opens its own notes section.
+   One tab per topic. The skill on every tab is the same narrow one: turn a short story into the right steps.
+   A round of 10 ramps up: items 1–3 are Level 1 (one step), 4–7 Level 2 (two steps), 8–10 Level 3 (three or more).
+   Each level draws from three story types, so a tab has nine; Mixed draws from every topic.
+     RN Rational   temperatures, balances, depths, rope in eighths, change, a mean, a diver, shares   RN2 RN3 RN5
+     SR Roots      side from area, decimal and estimated roots, fences, the Pythagorean theorem in a scene   SR1–SR4
+     PE Powers     doubling, cubes, powers of ten, half-life, packing cubes, a chain message   PE1 PE4 PE5 PE7
+   The picture is a schematic of the story (a number line, a bar, rectangles, a triangle in its scene, a chain of
+   × steps, a cube) above the step chain: one row per step, empty until solved. A wrong try names the mistake and
+   turns its step red; Show me fills the steps in order.
+   Named mistakes (per story type, in the model): subtracting a negative, the sign of a fall or a dive, one step
+   left out (the fee, the coldest day, the shared edge, the last subtraction), √ as ÷ 2, area for side, no root,
+   adding instead of squaring, the exponent for the value, adding exponents in a power of a power, × 3 for cubed.
+   Model: generated stories with exact answers; every answer and every named mistake is checked in the tests.
+   Shared parts: wp.js (pictures, step chain, the tab). ?debug=1 puts DRILL (and MODEL) on window, no saving or motion.
+   ===================================================================== -->
+<style>
+/* page only: the story in the prompt, the level chip, and tighter tabs */
+  .prompt { text-align: left; }
+  .prompt .story { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 17px; line-height: 1.45; text-align: left; }
+  .prompt .story b { color: var(--yellow); font-weight: 650; white-space: nowrap; }
+  .prompt .lvl { display: inline-block; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 9px; border-radius: 99px; margin-bottom: 6px; }
+  .prompt .lvl.l1 { color: #0b0f17; background: var(--teal); }
+  .prompt .lvl.l2 { color: #0b0f17; background: var(--gold); }
+  .prompt .lvl.l3 { color: #0b0f17; background: #ef7fc6; }
+  .slots .u { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 20px; }
+  .tabs .tab { padding: 2px 10px; }
+  @media (max-width: 1150px) { .tabs .tab { padding: 2px 7px; } .top .tabs { gap: 4px; } }
+  @media (max-height: 700px) { .prompt .story { font-size: 16px; line-height: 1.35; } }
+</style>
+<style>
+/* ===== DRILL SHELL CSS START (same in every narrow trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .stage svg text.emo { stroke: none; font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif; font-weight: 400; }
+  .sans .prompt { font-family: inherit; font-weight: 650; font-size: 26px; }
+  .sans .choice { font-size: 19px; line-height: 1.15; padding: 4px 8px; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slot.sup { width: 1.9em; min-height: 40px; font-size: 20px; align-self: flex-start; margin-left: -2px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choices.two { grid-template-columns: 1fr 1fr; }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choices.one { grid-template-columns: 1fr; gap: 8px; }
+  .choices.one .choice { min-height: 54px; }
+  .choices.one .choice.math { font-size: 26px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+
+/* ===================== MODEL START (no DOM) ===================== */
+/* Math 9 word problems. Every topic has three levels: 1 = one step, 2 = two steps, 3 = three or more.
+   An item: { t (problem type), lvl, code (notes section, e.g. RN2), story (HTML, numbers in <b>), q (2–4 words),
+   v (the answer), dp (decimal places shown), tol, pre/unit (around the answer box), ans (Show me text, optional),
+   errs: [{v, cue, s}] (a named mistake: its value, a cue of six words or fewer, the step it skips or gets wrong),
+   cue (when no named mistake matches), steps: [{l, m}] (label, working), pic (a schematic, drawn by wp.js) }. */
+const MODEL = (() => {
+  const { rnd, pick } = Q;
+  const R = (x, d) => { const k = Math.pow(10, d == null ? 6 : d); return Math.round((x + (x < 0 ? -1 : 1) * 1e-9) * k) / k; };
+  const F = (x, d) => { const s = d == null ? String(R(x, 4)) : R(x, d).toFixed(d); return s.replace('-', '−'); };
+  const P = (x, d) => x < 0 ? '(' + F(x, d) + ')' : F(x, d);              // a negative in brackets
+  const $ = x => (x < 0 ? '−$' : '$') + Math.abs(R(x, 2)).toFixed(2);
+  const B = s => '<b>' + s + '</b>';
+  const N = n => Math.round(n).toLocaleString('en-CA');                  // 4096 -> 4,096
+  const SUP = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻', '−': '⁻', 'n': 'ⁿ', 'k': 'ᵏ', 'm': 'ᵐ' };
+  const pw = (b, e) => b + String(e).split('').map(c => SUP[c] || c).join('');   // 2, 10 -> 2¹⁰
+  const NAMES = ['Ava', 'Liam', 'Noah', 'Maya', 'Ethan', 'Zoe', 'Owen', 'Priya', 'Jayden', 'Hana', 'Lucas', 'Amara', 'Kai', 'Sofia', 'Mateo', 'Leah'];
+  const TOWNS = ['Edmonton', 'Calgary', 'Red Deer', 'Grande Prairie', 'Fort McMurray', 'Lethbridge', 'St. Albert', 'Medicine Hat'];
+
+  function mk(t, lvl, code, o) {
+    const dp = o.dp || 0, tol = o.tol != null ? o.tol : dp ? Math.pow(10, -dp) * .51 : .001;
+    const errs = (o.errs || []).filter(e => e && isFinite(e[0]) && Math.abs(e[0] - o.v) > Math.max(tol, .051) + 1e-9)
+      .map(([v, cue, s]) => ({ v, cue, s }));
+    return { t, lvl, code, story: o.story, q: o.q, v: o.v, dp, tol, pre: o.pre || '', unit: o.unit || '', ans: o.ans || F(o.v, dp),
+      errs, cue: o.cue, steps: o.steps.map(([l, m]) => ({ l, m })), pic: o.pic };
+  }
+  // A typed answer -> ok, or the first named mistake it matches.
+  function check(it, r) {
+    const g = r.v == null || r.v === '' ? NaN : Q.val(r.v);
+    if (Math.abs(g - it.v) <= it.tol) return { ok: true };
+    const et = Math.max(it.tol, .051);
+    for (let i = 0; i < it.errs.length; i++) if (Math.abs(g - it.errs[i].v) <= et) return { code: 'e' + i, cue: it.errs[i].cue, s: it.errs[i].s };
+    if (it.v !== 0 && Math.abs(g + it.v) <= it.tol) return { code: 'sign', cue: 'Check the sign', s: it.steps.length - 1 };
+    return { code: 'other', cue: it.cue, s: -1 };
+  }
+
+  /* ============ RN · Rational numbers ============ */
+  const RN = {
+    1: [
+      function rnTemp() {
+        const t1 = -rnd(8, 28), t2 = rnd(-3, 9), d = t2 - t1, town = pick(TOWNS);
+        return mk('rnTemp', 1, 'RN2', {
+          story: 'At 7 a.m. it was ' + B(F(t1) + ' °C') + ' in ' + town + '. By 3 p.m. it was ' + B(F(t2) + ' °C') + '.',
+          q: 'How much warmer?', v: d, unit: '°C', cue: 'Change = final − start',
+          errs: [[t2 + t1, 'Minus a negative means add', 0]],
+          steps: [['final − start', F(t2) + ' − ' + P(t1) + ' = ' + d + ' °C']],
+          pic: { k: 'nl', unit: '°C', pts: [{ x: t1, t: '7 a.m.', c: 'L' }, { x: t2, t: '3 p.m.', c: 'Y' }], jumps: [{ a: t1, b: t2, t: '+' + d, c: 'N', s: 0, q: true }] }
+        });
+      },
+      function rnLunch() {
+        const owe = rnd(500, 4500) / 100, dep = rnd(2000, 9000) / 100, bal = R(dep - owe, 2), n = pick(NAMES);
+        return mk('rnLunch', 1, 'RN2', {
+          story: n + '’s lunch account is at ' + B($(-owe)) + '. ' + n + ' puts in ' + B($(dep)) + '.',
+          q: 'New balance?', v: bal, dp: 2, pre: '$', cue: 'Start below zero, then add',
+          errs: [[R(dep + owe, 2), 'The balance starts below zero', 0]],
+          steps: [['start + deposit', F(-owe, 2) + ' + ' + F(dep, 2) + ' = ' + F(bal, 2)]],
+          pic: { k: 'nl', unit: '$', pts: [{ x: -owe, t: 'now', c: 'R' }], jumps: [{ a: -owe, b: bal, t: '+' + F(dep, 2), c: 'N', s: 0, q: true }] }
+        });
+      },
+      function rnDive() {
+        const d = rnd(30, 90) / 10, k = rnd(3, 6), v = R(-d * k, 1);
+        return mk('rnDive', 1, 'RN3', {
+          story: 'A drone sub dives ' + B(F(d, 1) + ' m') + ' every minute. It dives for ' + B(k + ' minutes') + '.',
+          q: 'Change in depth?', v, dp: 1, unit: 'm', cue: 'Down is negative: × minutes',
+          errs: [[R(d * k, 1), 'Going down is negative', 0], [-d, 'Times the number of minutes', 0], [R(-d - k, 1), 'Multiply, don’t add', 0]],
+          steps: [['minutes × change', k + ' × (−' + F(d, 1) + ') = ' + F(v, 1) + ' m']],
+          pic: { k: 'nl', vert: true, unit: 'm', pts: [{ x: 0, t: 'surface', c: 'L' }], jumps: Array.from({ length: k }, (_, i) => ({ a: R(-d * i, 1), b: R(-d * (i + 1), 1), t: i === 0 ? '−' + F(d, 1) : '', c: 'Y' })) }
+        });
+      }
+    ],
+    2: [
+      function rnCool() {
+        const s = rnd(-20, 60) / 10, r = pick([0.5, 1.5, 2.5, 1.2, 0.8]), h = rnd(3, 8), drop = R(r * h, 1), e = R(s - drop, 1);
+        return mk('rnCool', 2, 'RN3', {
+          story: 'At 6 p.m. it is ' + B(F(s, 1) + ' °C') + '. It falls ' + B(F(r, 1) + ' °C') + ' every hour for ' + B(h + ' hours') + '.',
+          q: 'Final temperature?', v: e, dp: 1, unit: '°C', cue: 'Total drop, then subtract',
+          errs: [[R(s + drop, 1), 'The temperature falls', 1], [R(s - r, 1), 'It drops every hour', 0], [-drop, 'Start from ' + F(s, 1) + ' °C', 1]],
+          steps: [['total drop', F(r, 1) + ' × ' + h + ' = ' + F(drop, 1) + ' °C'], ['start − drop', F(s, 1) + ' − ' + F(drop, 1) + ' = ' + F(e, 1) + ' °C']],
+          pic: { k: 'nl', unit: '°C', pts: [{ x: s, t: '6 p.m.', c: 'L' }], jumps: [{ a: s, b: e, t: '−' + F(drop, 1), c: 'Y', s: 0, q: true }] }
+        });
+      },
+      function rnRope() {
+        for (;;) {
+          const W = rnd(5, 9), q = rnd(1, 3), p = rnd(1, 3), s8 = pick([1, 3, 5, 7]);
+          const tot = W * 8 + q * 2, pc = p * 8 + s8, rem = tot - 2 * pc;
+          if (rem <= 0) continue;
+          const mx = n => { const w = Math.floor(n / 8), f = Q.q(n % 8, 8); return (w ? w + ' ' : '') + (f.n ? f.n + '/' + f.d : ''); };
+          return mk('rnRope', 2, 'RN2', {
+            story: 'A rope is ' + B(mx(tot) + ' m') + ' long. Two pieces of ' + B(mx(pc) + ' m') + ' are cut off.',
+            q: 'How much is left?', v: rem / 8, dp: 3, tol: .002, unit: 'm', ans: Q.str(Q.q(rem, 8)), cue: 'Both pieces, in eighths',
+            errs: [[(tot - pc) / 8, 'Two pieces were cut', 0], [2 * pc / 8, 'That’s what was cut off', 1]],
+            steps: [['cut off', '2 × ' + mx(pc) + ' = ' + (2 * pc) + '/8 m'], ['left', tot + '/8 − ' + (2 * pc) + '/8 = ' + rem + '/8 = ' + mx(rem) + ' m']],
+            pic: { k: 'bar', rows: [{ t: 'rope', segs: [{ v: pc, t: mx(pc), c: 'Y' }, { v: pc, t: mx(pc), c: 'Y' }, { v: rem, t: '?', d: mx(rem) + ' m', c: 'N', q: true }] }] }
+          });
+        }
+      },
+      function rnCocoa() {
+        const pr = pick([2.75, 3.25, 4.5, 1.75, 5.25]), n = rnd(3, 6), paid = 20 * Math.ceil((pr * n + 1) / 20), cost = R(pr * n, 2), ch = R(paid - cost, 2);
+        return mk('rnCocoa', 2, 'RN3', {
+          story: 'Hot chocolate at the rink is ' + B($(pr)) + ' a cup. You buy ' + B(n + ' cups') + ' and pay with ' + B($(paid)) + '.',
+          q: 'Your change?', v: ch, dp: 2, pre: '$', cue: 'Cost first, then subtract',
+          errs: [[R(paid - pr, 2), 'You bought ' + n + ' cups', 0], [cost, 'That’s the cost: now subtract', 1]],
+          steps: [['cost', n + ' × ' + $(pr) + ' = ' + $(cost)], ['change', $(paid) + ' − ' + $(cost) + ' = ' + $(ch)]],
+          pic: { k: 'bar', rows: [{ t: 'paid ' + $(paid), segs: Array.from({ length: n }, () => ({ v: pr, t: $(pr), c: 'Y' })).concat([{ v: ch, t: '?', c: 'N', q: true }]) }] }
+        });
+      }
+    ],
+    3: [
+      function rnMean() {
+        for (;;) {
+          const T = Array.from({ length: 5 }, () => rnd(-250, 40) / 10), sum = R(T.reduce((a, b) => a + b, 0), 1);
+          if (Math.round(Math.abs(sum) * 10) % 5) continue;
+          const mean = R(sum / 5, 1), min = Math.min(...T), d = R(mean - min, 1);
+          return mk('rnMean', 3, 'RN5', {
+            story: 'Five daily lows in Grande Prairie: ' + T.map(t => B(F(t, 1))).join(', ') + ' °C.',
+            q: 'Mean − coldest?', v: d, dp: 1, unit: '°C', cue: 'Mean first, then compare',
+            errs: [[mean, 'Now compare with the coldest', 2], [R(mean + min, 1), 'Minus a negative means add', 2], [sum, 'Divide the sum by 5', 1]],
+            steps: [['add all 5', 'sum = ' + F(sum, 1)], ['mean', F(sum, 1) + ' ÷ 5 = ' + F(mean, 1) + ' °C'], ['mean − coldest', F(mean, 1) + ' − ' + P(min, 1) + ' = ' + F(d, 1) + ' °C']],
+            pic: { k: 'nl', unit: '°C', pts: T.map(t => ({ x: t, c: t === min ? 'R' : 'L', dot: true })).concat([{ x: min, t: 'coldest', c: 'R' }, { x: mean, t: 'mean', c: 'Y', s: 1 }]), jumps: [{ a: min, b: mean, t: F(d, 1), c: 'N', s: 2, q: true }] }
+          });
+        }
+      },
+      function rnDiver() {
+        const d = pick([12.4, 16.8, 20.4, 8.8, 14.4, 18.8]), dn = rnd(15, 60) / 10, up = R(d * .75, 2), mid = R(-d + up, 2), e = R(mid - dn, 2);
+        return mk('rnDiver', 3, 'RN3', {
+          story: 'A diver is at ' + B(F(-d, 1) + ' m') + '. She rises ' + B('3/4') + ' of the way to the surface, then dives ' + B(F(dn, 1) + ' m') + ' down.',
+          q: 'Final position?', v: e, dp: 2, unit: 'm', cue: 'Rise 3/4 of the depth',
+          errs: [[mid, 'Then she dives down again', 2], [R(-d * .75 - dn, 2), '3/4 of the way up', 0], [R(-d - up - dn, 2), 'Rising: less negative', 1]],
+          steps: [['rise', '3/4 × ' + F(d, 1) + ' = ' + F(up, 2) + ' m'], ['after rising', F(-d, 1) + ' + ' + F(up, 2) + ' = ' + F(mid, 2) + ' m'], ['dive down', F(mid, 2) + ' − ' + F(dn, 1) + ' = ' + F(e, 2) + ' m']],
+          pic: { k: 'nl', vert: true, unit: 'm', pts: [{ x: 0, t: 'surface', c: 'L' }, { x: -d, t: 'start', c: 'L' }], jumps: [{ a: -d, b: mid, t: '+' + F(up, 2), c: 'N', s: 0 }, { a: mid, b: e, t: '−' + F(dn, 1), c: 'Y', s: 1, q: true }] }
+        });
+      },
+      function rnStock() {
+        const n = rnd(20, 60), c =[-rnd(50, 250) / 100, rnd(20, 300) / 100, -rnd(20, 150) / 100], fee = pick([4.95, 6.99, 9.99]);
+        const per = R(c[0] + c[1] + c[2], 2), gross = R(n * per, 2), net = R(gross - fee, 2);
+        const sg = x => (x < 0 ? '−' : '+') + '$' + Math.abs(x).toFixed(2);
+        return mk('rnStock', 3, 'RN3', {
+          story: 'You buy ' + B(n + ' shares') + '. Over 3 days the price changes ' + c.map(x => B(sg(x))).join(', ') + '. Selling costs a ' + B($(fee)) + ' fee.',
+          q: 'Gain or loss?', v: net, dp: 2, pre: '$', cue: 'Per share × shares − fee',
+          errs: [[per, 'Times the number of shares', 1], [gross, 'Take off the fee', 2], [R(gross + fee, 2), 'The fee costs you money', 2]],
+          steps: [['change per share', c.map(x => P(x, 2)).join(' + ') + ' = ' + F(per, 2)], ['all shares', n + ' × ' + P(per, 2) + ' = ' + F(gross, 2)], ['minus fee', F(gross, 2) + ' − ' + F(fee, 2) + ' = ' + F(net, 2)]],
+          pic: { k: 'nl', unit: '$ per share', pts: [{ x: 0, t: 'buy price', c: 'L' }, { x: per, t: 'day 3', c: 'Y', s: 0 }], jumps: c.map((x, i) => ({ a: R(c.slice(0, i).reduce((a, b) => a + b, 0), 2), b: R(c.slice(0, i + 1).reduce((a, b) => a + b, 0), 2), t: sg(x), c: x < 0 ? 'R' : 'N' })) }
+        });
+      }
+    ]
+  };
+
+  /* ============ SR · Square roots ============ */
+  const TRIPLES = [[3, 4, 5], [5, 12, 13], [8, 15, 17], [7, 24, 25], [6, 8, 10], [9, 12, 15], [20, 21, 29]];
+  const SR = {
+    1: [
+      function srGarden() {
+        const s = rnd(6, 25), A = s * s;
+        return mk('srGarden', 1, 'SR1', {
+          story: 'A square vegetable garden has an area of ' + B(A + ' m²') + '.', q: 'Side length?', v: s, unit: 'm', cue: 'Side = √area',
+          errs: [[A / 2, '√ is not ÷ 2', 0], [A / 4, 'Area = side × side', 0]],
+          steps: [['side = √area', '√' + A + ' = ' + s + ' m']],
+          pic: { k: 'rects', rs: [{ x: 0, y: 0, w: 1, h: 1, c: 'N', t: A + ' m²', tw: '?', q: true }] }
+        });
+      },
+      function srTile() {
+        const s = pick([0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.1, 1.2]), A = R(s * s, 2);
+        return mk('srTile', 1, 'SR4', {
+          story: 'A square floor tile has an area of ' + B(F(A, 2) + ' m²') + '.', q: 'Side length?', v: s, dp: 1, unit: 'm', cue: 'What × itself = ' + F(A, 2) + '?',
+          errs: [[R(A / 2, 3), '√ is not ÷ 2', 0], [R(s / 10, 2), 'Check: side × side', 0], [R(s * 10, 1), 'Check: side × side', 0]],
+          steps: [['side = √area', '√' + F(A, 2) + ' = ' + F(s, 1) + ' m (' + F(s, 1) + ' × ' + F(s, 1) + ')']],
+          pic: { k: 'rects', rs: [{ x: 0, y: 0, w: 1, h: 1, c: 'L', t: F(A, 2) + ' m²', tw: '?', q: true }] }
+        });
+      },
+      function srPoster() {
+        const n = pick([20, 30, 40, 45, 50, 60, 70, 80, 90]), lo = Math.floor(Math.sqrt(n)), e = R(Math.sqrt(n), 1);
+        return mk('srPoster', 1, 'SR2', {
+          story: 'A square poster has an area of ' + B(n + ' dm²') + '. Estimate its side to ' + B('one decimal place') + '.', q: 'About how long?', v: e, dp: 1, unit: 'dm', cue: 'Find the squares around ' + n,
+          errs: [[n / 2, '√ is not ÷ 2', 0], [n / 4, 'Area = side × side', 0]],
+          steps: [['estimate √' + n, lo + '² = ' + lo * lo + ' < ' + n + ' < ' + (lo + 1) * (lo + 1) + ', so ≈ ' + F(e, 1) + ' dm']],
+          pic: { k: 'rects', rs: [{ x: 0, y: 0, w: 1, h: 1, c: 'L', t: n + ' dm²', tw: '?', q: true }] }
+        });
+      }
+    ],
+    2: [
+      function srPaddock() {
+        const s = rnd(8, 30), A = s * s;
+        return mk('srPaddock', 2, 'SR1', {
+          story: 'A square horse paddock has an area of ' + B(A + ' m²') + '. It needs a fence all the way around.', q: 'Metres of fence?', v: 4 * s, unit: 'm', cue: 'Side first, then all 4',
+          errs: [[s, 'The fence goes around 4 sides', 1], [A / 4, 'Side = √area', 0], [A / 2, '√ is not ÷ 2', 0]],
+          steps: [['side = √area', '√' + A + ' = ' + s + ' m'], ['perimeter', '4 × ' + s + ' = ' + 4 * s + ' m']],
+          pic: { k: 'rects', rs: [{ x: 0, y: 0, w: 1, h: 1, c: 'N', t: A + ' m²', tw: s + ' m', tws: 0, ring: 1 }] }
+        });
+      },
+      function srTV() {
+        const [a, b, c] = pick([[3, 4, 5], [6, 8, 10], [9, 12, 15], [12, 16, 20]]), k = pick([3, 4]), w = b * k, h = a * k, d = c * k;
+        return mk('srTV', 2, 'SR3', {
+          story: 'A TV screen is ' + B(w + ' in') + ' wide and ' + B(h + ' in') + ' tall. TVs are sold by the diagonal.', q: 'Diagonal size?', v: d, unit: 'in', cue: 'Square, add, then √',
+          errs: [[w + h, 'Square the sides first', 0], [w * w + h * h, 'Now take the square root', 1], [Math.sqrt(w * w - h * h), 'Add the squares', 0]],
+          steps: [['d² = w² + h²', w + '² + ' + h + '² = ' + (w * w + h * h)], ['d = √', '√' + d * d + ' = ' + d + ' in']],
+          pic: { k: 'tri', scene: 'tv', a: w, b: h, la: w + ' in', lb: h + ' in', lc: '?', q: 'c' }
+        });
+      },
+      function srWire() {
+        const [a, b, c] = pick(TRIPLES), k = pick([2, 3, 4]), run = a * k, up = b * k, L = c * k;
+        return mk('srWire', 2, 'SR3', {
+          story: 'A wire runs from the top of a ' + B(up + ' m') + ' mast to a stake ' + B(run + ' m') + ' from its base.', q: 'Length of wire?', v: L, unit: 'm', cue: 'The wire is the hypotenuse',
+          errs: [[up + run, 'Square the sides first', 0], [up * up + run * run, 'Now take the square root', 1], [Math.sqrt(Math.abs(up * up - run * run)), 'Add the squares for the hypotenuse', 0]],
+          steps: [['wire² = a² + b²', up + '² + ' + run + '² = ' + L * L], ['wire = √', '√' + L * L + ' = ' + L + ' m']],
+          pic: { k: 'tri', scene: 'wire', a: run, b: up, la: run + ' m', lb: up + ' m', lc: '?', q: 'c' }
+        });
+      }
+    ],
+    3: [
+      function srLadder() {
+        const [[a, b, c], k] = pick([[[7, 24, 25], 0.2], [[3, 4, 5], 1], [[5, 12, 13], 0.5], [[8, 15, 17], 0.5], [[3, 4, 5], 1.5]]);
+        const base = R(a * k, 2), h = R(b * k, 2), lad = R(c * k, 2), sill = R(h - rnd(3, 12) / 10, 1), up = R(h - sill, 2);
+        return mk('srLadder', 3, 'SR3', {
+          story: 'A ' + B(F(lad) + ' m') + ' ladder leans on a wall, its foot ' + B(F(base) + ' m') + ' out. A window sill is ' + B(F(sill, 1) + ' m') + ' up.', q: 'Above the sill?', v: up, dp: 2, unit: 'm', cue: 'Height of the top first',
+          errs: [[h, 'Now compare with the sill', 2], [R(Math.sqrt(lad * lad + base * base) - sill, 2), 'The ladder is the hypotenuse', 0], [R(lad - sill, 2), 'Find the height first', 1]],
+          steps: [['h² = L² − b²', F(lad) + '² − ' + F(base) + '² = ' + F(R(h * h, 4))], ['h = √', '√' + F(R(h * h, 4)) + ' = ' + F(h) + ' m'], ['above the sill', F(h) + ' − ' + F(sill, 1) + ' = ' + F(up, 2) + ' m']],
+          pic: { k: 'tri', scene: 'ladder', a: base, b: h, la: F(base) + ' m', lb: 'h', lbd: 'h = ' + F(h) + ' m', lc: F(lad) + ' m', q: 'b', mark: { y: sill, t: 'sill ' + F(sill, 1) + ' m' } }
+        });
+      },
+      function srPatio() {
+        const s1 = rnd(9, 16), s2 = rnd(4, s1 - 2), A1 = s1 * s1, A2 = s2 * s2, per = 4 * s1 + 2 * s2;
+        return mk('srPatio', 3, 'SR1', {
+          story: 'A square patio (' + B(A1 + ' m²') + ') and a square garden (' + B(A2 + ' m²') + ') sit side by side, bottoms lined up.', q: 'Outside perimeter?', v: per, unit: 'm', cue: 'Sides, then the outside edge',
+          errs: [[4 * s1 + 4 * s2, 'The shared edge is inside', 2], [4 * s1 + 3 * s2, 'Take it off both squares', 2], [A1 + A2, 'That’s area, not perimeter', 0]],
+          steps: [['sides', '√' + A1 + ' = ' + s1 + ',  √' + A2 + ' = ' + s2], ['both perimeters', '4(' + s1 + ') + 4(' + s2 + ') = ' + (4 * s1 + 4 * s2)], ['shared edge ×2', (4 * s1 + 4 * s2) + ' − 2(' + s2 + ') = ' + per + ' m']],
+          pic: { k: 'rects', rs: [{ x: 0, y: 0, w: s1, h: s1, c: 'L', t: A1 + ' m²' }, { x: s1, y: s1 - s2, w: s2, h: s2, c: 'N', t: A2 + ' m²' }], shared: { x: s1, y0: s1 - s2, y1: s1, s: 2 } }
+        });
+      },
+      function srPark() {
+        const [a, b, c] = pick([[5, 12, 13], [8, 15, 17], [20, 21, 29], [7, 24, 25]]), k = pick([10, 20]), w = a * k, l = b * k, d = c * k, sv = w + l - d;
+        return mk('srPark', 3, 'SR3', {
+          story: 'A park is ' + B(w + ' m') + ' by ' + B(l + ' m') + '. You cut across the diagonal instead of walking two sides.', q: 'Metres saved?', v: sv, unit: 'm', cue: 'Sides − diagonal',
+          errs: [[d, 'How much shorter is it?', 2], [w + l, 'Subtract the diagonal', 2], [w * w + l * l, 'Take the square root', 1]],
+          steps: [['two sides', w + ' + ' + l + ' = ' + (w + l) + ' m'], ['diagonal', '√(' + w + '² + ' + l + '²) = √' + d * d + ' = ' + d], ['saved', (w + l) + ' − ' + d + ' = ' + sv + ' m']],
+          pic: { k: 'tri', scene: 'park', a: l, b: w, la: l + ' m', lb: w + ' m', lc: '?', q: 'c' }
+        });
+      }
+    ]
+  };
+
+  /* ============ PE · Powers and exponents ============ */
+  const PE = {
+    1: [
+      function peSplit() {
+        const n = rnd(5, 12), v = Math.pow(2, n);
+        return mk('peSplit', 1, 'PE1', {
+          story: 'One bacterium splits into ' + B('2') + ' every hour. Every new one splits too. Count after ' + B(n + ' hours') + '.', q: 'How many bacteria?', v, cue: 'Times 2, ' + n + ' times',
+          errs: [[2 * n, 'Doubling is × 2 each hour', 0], [n * n, pw('2', 'n') + ', not n²', 0], [Math.pow(2, n - 1), 'Count all ' + n + ' hours', 0]],
+          steps: [['2 × 2 × … ' + n + ' times', pw('2', n) + ' = ' + N(v)]],
+          pic: { k: 'chain', start: '1', op: '× 2', n, end: '?' }
+        });
+      },
+      function peCube() {
+        const s = rnd(3, 12), v = s * s * s;
+        return mk('peCube', 1, 'PE1', {
+          story: 'A cube-shaped storage box has edges ' + B(s + ' dm') + ' long.', q: 'Volume?', v, unit: 'dm³', cue: 'V = edge³',
+          errs: [[3 * s, pw('s', 3) + ' is s·s·s', 0], [s * s, 'Volume needs three edges', 0], [6 * s * s, 'That’s surface area', 0]],
+          steps: [['V = s³', pw(s, 3) + ' = ' + s + ' × ' + s + ' × ' + s + ' = ' + v + ' dm³']],
+          pic: { k: 'cube', edge: s + ' dm' }
+        });
+      },
+      function peSand() {
+        const a = rnd(4, 9), b = rnd(2, 5), v = Math.pow(10, b);
+        return mk('peSand', 1, 'PE4', {
+          story: 'A cell is ' + B(pw('10', -a) + ' m') + ' across. A grain of sand is ' + B(pw('10', -a + b) + ' m') + ' across.', q: 'How many times wider?', v, cue: 'Divide: subtract the exponents',
+          errs: [[b, 'That’s the exponent: evaluate ' + pw('10', b), 0], [Math.pow(10, 2 * a - b), 'Bigger ÷ smaller', 0]],
+          steps: [['divide the powers', pw('10', -a + b) + ' ÷ ' + pw('10', -a) + ' = ' + pw('10', b) + ' = ' + N(v)]],
+          pic: { k: 'chain', start: pw('10', -a) + ' m', op: '× 10', n: b, end: pw('10', -a + b) + ' m', cnt: '?', cntd: b + ' × (×10) = ' + N(v) + ' times' }
+        });
+      }
+    ],
+    2: [
+      function peCulture() {
+        const p0 = pick([50, 100, 200, 250, 500]), h = pick([2, 3, 4]), k = rnd(3, 6), t = h * k, v = p0 * Math.pow(2, k);
+        return mk('peCulture', 2, 'PE1', {
+          story: 'A culture starts with ' + B(p0 + ' bacteria') + '. It doubles every ' + B(h + ' hours') + '. Count after ' + B(t + ' hours') + '.', q: 'How many bacteria?', v, cue: 'Doublings first: ' + t + ' ÷ ' + h,
+          errs: [[p0 * Math.pow(2, t), 'Count doublings: ' + t + ' ÷ ' + h, 0], [p0 * 2 * k, 'Doubling ' + k + ' times is ' + pw('2', k), 1], [Math.pow(2, k), 'Start with ' + p0, 1]],
+          steps: [['doublings', t + ' ÷ ' + h + ' = ' + k], ['start × 2ᵏ', p0 + ' × ' + pw('2', k) + ' = ' + p0 + ' × ' + Math.pow(2, k) + ' = ' + N(v)]],
+          pic: { k: 'chain', start: String(p0), op: '× 2', n: k, end: '?', every: h + ' h', cnt: '?', cntd: k + ' × (×2)' }
+        });
+      },
+      function peUSB() {
+        const a = pick([30, 32, 34, 36]), b = pick([18, 20, 22, 24]), d = a - b, v = Math.pow(2, d);
+        return mk('peUSB', 2, 'PE4', {
+          story: 'A USB drive holds ' + B(pw('2', a) + ' bytes') + '. One photo uses ' + B(pw('2', b) + ' bytes') + '.', q: 'How many photos fit?', v, cue: 'Same base: subtract exponents',
+          errs: [[d, 'Now evaluate ' + pw('2', d), 1], [Math.pow(2, Math.round(a / b)), 'Subtract exponents, don’t divide', 0], [a / b, 'Subtract exponents, don’t divide', 0]],
+          steps: [['divide the powers', pw('2', a) + ' ÷ ' + pw('2', b) + ' = ' + pw('2', a + '−' + b) + ' = ' + pw('2', d)], ['evaluate', pw('2', d) + ' = ' + N(v)]],
+          pic: { k: 'chain', start: pw('2', b), op: '× 2', n: d, end: pw('2', a), cnt: '?', cntd: d + ' × (×2)' }
+        });
+      },
+      function peSolar() {
+        const [b, m] = pick([[2, 3], [2, 4], [3, 2], [3, 3], [5, 2], [2, 5]]), e = 2 * m, v = Math.pow(b, e);
+        return mk('peSolar', 2, 'PE5', {
+          story: 'A square solar-panel field is ' + B(pw(b, m) + ' m') + ' on each side.', q: 'Area of the field?', v, unit: 'm²', cue: 'Power of a power: multiply',
+          errs: [[Math.pow(b, m + 2), 'Power of a power: multiply', 0], [2 * Math.pow(b, m), 'Squared means × itself', 0], [Math.pow(b, m), 'Area = side × side', 0]],
+          steps: [['area = side²', '(' + pw(b, m) + ')² = ' + pw(b, e) + '   (' + m + ' × 2 = ' + e + ')'], ['evaluate', pw(b, e) + ' = ' + N(v) + ' m²']],
+          pic: { k: 'rects', rs: [{ x: 0, y: 0, w: 1, h: 1, c: 'Y', t: '?', tw: pw(b, m) + ' m', lh: pw(b, m) + ' m', q: true }] }
+        });
+      }
+    ],
+    3: [
+      function pePack() {
+        const a = rnd(3, 5), b = rnd(1, a - 1), e = 3 * (a - b), v = Math.pow(2, e);
+        return mk('pePack', 3, 'PE5', {
+          story: 'A big cube has edges ' + B(pw('2', a) + ' cm') + '. Small cubes with edges ' + B(pw('2', b) + ' cm') + ' fill it with no gaps.', q: 'How many small cubes?', v, cue: 'Along one edge, then cube',
+          errs: [[Math.pow(2, a - b), 'Now cube it: 3 directions', 1], [3 * Math.pow(2, a - b), 'Cubed means ³, not × 3', 1], [Math.pow(2, 3 * a), 'Divide by the small edge', 0]],
+          steps: [['along one edge', pw('2', a) + ' ÷ ' + pw('2', b) + ' = ' + pw('2', a - b)], ['cube it', '(' + pw('2', a - b) + ')³ = ' + pw('2', e)], ['evaluate', pw('2', e) + ' = ' + N(v)]],
+          pic: { k: 'cube', edge: pw('2', a) + ' cm', n: Math.pow(2, a - b), small: pw('2', b) + ' cm' }
+        });
+      },
+      function peHalf() {
+        const k = rnd(3, 6), s0 = 25 * Math.pow(2, k) * pick([1, 2, 4]), hl = pick([2, 3, 5, 8]), t = hl * k, left = s0 / Math.pow(2, k), dec = s0 - left;
+        return mk('peHalf', 3, 'PE7', {
+          story: 'A medical tracer has a half-life of ' + B(hl + ' days') + '. A hospital gets ' + B(N(s0) + ' mg') + '. Wait ' + B(t + ' days') + '.', q: 'How many mg decayed?', v: dec, unit: 'mg', cue: 'Half-lives, left, then subtract',
+          errs: [[left, 'That’s what is left', 2], [s0 / 2, 'Count the half-lives: ' + t + ' ÷ ' + hl, 0], [s0 - s0 / (2 * k), 'Halve it each half-life', 1]],
+          steps: [['half-lives', t + ' ÷ ' + hl + ' = ' + k], ['left', N(s0) + ' × (½)' + pw('', k) + ' = ' + N(left) + ' mg'], ['decayed', N(s0) + ' − ' + N(left) + ' = ' + N(dec) + ' mg']],
+          pic: { k: 'chain', start: N(s0), op: '÷ 2', n: k, end: '?', endd: N(left) + ' mg', every: hl + ' d', cnt: '?', cntd: k + ' × (÷2)' }
+        });
+      },
+      function peChain() {
+        const r = rnd(4, 7), tot = (Math.pow(3, r + 1) - 3) / 2;
+        return mk('peChain', 3, 'PE1', {
+          story: 'You send a message to ' + B('3') + ' friends (round 1). Each round, every new person sends it to ' + B('3') + ' more.', q: 'Total after ' + r + ' rounds?', v: tot, cue: 'Round k reaches 3ᵏ: add them',
+          errs: [[Math.pow(3, r), 'Add all the rounds', 2], [3 * r, 'Each round is × 3', 0], [Math.pow(3, r + 1), 'Add the rounds, not one more', 2]],
+          steps: [['round k', 'round k reaches ' + pw('3', 'k') + ' people'], ['list', Array.from({ length: r }, (_, i) => Math.pow(3, i + 1)).join(' + ')], ['total', N(tot) + ' people']],
+          pic: { k: 'chain', start: '3', op: '× 3', n: r - 1, end: 'round ' + r, endd: N(Math.pow(3, r)), cnt: 'round 1 → round ' + r, sum: true }
+        });
+      }
+    ]
+  };
+
+  const TOPICS = { rn: RN, sr: SR, pe: PE };
+  const lvlAt = n => n == null ? rnd(1, 3) : n < 3 ? 1 : n < 7 ? 2 : 3;   // a round: 3 one-step, 4 two-step, 3 three-step
+  const gen = (topic, n) => pick(TOPICS[topic][lvlAt(n)])();
+  const genMix = n => { const t = pick(Object.keys(TOPICS)); return Object.assign(gen(t, n), { topic: t }); };
+  return { TOPICS, gen, genMix, check, lvlAt, R, F, pw, N };
+})();
+
+/* ===== DRILL SHELL START (same in every narrow trainer: Math 9 and Science 7) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   Optional: PAGE.sep (heading separator after "Section N", default —), PAGE.secText(tab) (the whole heading text
+   for the 📖 link), PAGE.sans (prompts in the plain font, for science). TAB.cols (2 or 3) sets the choice grid.
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen(n)                -> a new item (from MODEL); n is its place in the round (0–9), for a round that ramps up
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom', or kind(item) -> one of those (a page that mixes typed and tap answers)
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue}       cue is six words or fewer
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+     link(item)            -> {notes, sec, sep} for this item's 📖 link (optional; a tab whose items span topics)
+     typeOf(item)          -> the question type, for weighting (optional; default: the item's form/kind/shape/... fields)
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown).
+   Weighting: each question type has a score, saved per tab. A first-try right answer lowers it (to half weight at
+   most), a miss or Show me raises it (to about 2.5× at most). Each new item is picked from 8 generated candidates
+   by weight, so missed types come back more often and types answered right still appear, less often. */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {}, w: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); if (!save.w || typeof save.w !== 'object') save.w = {}; } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    let prevItalic = false;
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => {
+      if (!part) return; const it = /^[a-z]$/.test(part);
+      // an italic letter leans into a following ² or ³: nudge it right
+      const t = el('tspan', it ? { 'font-style': 'italic' } : prevItalic && /^[²³]/.test(part) ? { dx: '0.12em' } : {}, e); t.textContent = part; prevItalic = it;
+    });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  const kindOf = (t, it) => typeof t.kind === 'function' ? t.kind(it) : t.kind;
+  const K = () => kindOf(tab, item);
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (K() === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (K() === 'choice') {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
+      row.className = 'choices' + (tab.cols === 2 ? ' two' : tab.cols === 3 ? ' three' : long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = K() === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  /* ---------- weighting: missed question types come back more often ---------- */
+  const TYPE_FIELDS = ['form', 'kind', 'shape', 'type', 'rep', 'ask', 'what', 'mode', 'rule', 'ans', 'useD', 'back', 'direct', 'flip', 'rat', 'idCol'];
+  function keyOf(it) {
+    if (tab.typeOf) return String(tab.typeOf(it));
+    return TYPE_FIELDS.filter(k => typeof it[k] === 'string' || typeof it[k] === 'boolean').map(k => k + ':' + it[k]).join('|');
+  }
+  const scores = () => (save.w[tab.id] = save.w[tab.id] || {});
+  const weightOf = k => Math.pow(2, scores()[k] || 0);
+  function record(right) {
+    const s = scores(), k = item.__key; if (k == null) return;
+    s[k] = right ? Math.max(-1, (s[k] || 0) - .5) : Math.min(1.3, (s[k] || 0) + 1);
+    store();
+  }
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) {
+      const cands = [];
+      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(marks.length), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
+      if (!cands.length) cands.push(tab.gen(marks.length));
+      const ws = cands.map(c => weightOf(keyOf(c))), total = ws.reduce((a, b) => a + b, 0);
+      let r = Q.rnd(0, 999999) / 1e6 * total, i = 0; while (i < cands.length - 1 && r >= ws[i]) { r -= ws[i]; i++; }
+      it = cands[i]; key = JSON.stringify(it);
+    }
+    lastKey = key || JSON.stringify(it);
+    Object.defineProperty(it, '__key', { value: keyOf(it), enumerable: false, configurable: true, writable: true });
+    item = it; resp = {}; att = 0; resolved = false;
+    if (tab.link) setNotes(linkOf());
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (K() === 'choice' && resp.v == null) return;
+    if (K() === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (K() === 'choice' ? 1 : 2);
+    if (res.ok) {
+      resolved = true; marks.push(att === 1 ? 'g' : 'y'); record(att === 1);
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r'); record(false);
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (K() === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
+    } else if (K() === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (K() === 'slots') fillSlots(ans, 'shown');
+    else if (K() === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); record(false); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(linkOf()) + '" target="_blank" rel="noopener">📖 Notes §' + linkOf().sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => (t.notes || PAGE.notes) + '#:~:text=' + encodeURIComponent(PAGE.secText ? PAGE.secText(t) : 'Section ' + t.sec + ' ' + (t.sep || PAGE.sep || '—'));
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setNotes(t) {
+    const n = $('notes'); n.href = notesHref(t); $('notesTxt').textContent = '§' + t.sec;
+    n.title = 'Notes, Section ' + t.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + t.sec);
+  }
+  // A tab with link(item) points the 📖 button at the current item's own notes.
+  const linkOf = () => tab.link ? Object.assign({}, tab, tab.link(item)) : tab;
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    setNotes(tab);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    if (P.sans) document.body.classList.add('sans');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }),
+      keyOf: (it, t) => { const cur = tab; if (t) tab = t; try { return keyOf(it); } finally { tab = cur; } }, weights: () => Object.assign({}, scores()), resetWeights: () => { save.w[tab.id] = {}; }, setScore: (k, s) => { scores()[k] = s; } };
+  }
+  return { boot, kindOf, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+
+/* ===== WORD PROBLEMS KIT (Math 9 and Science 7 word-problem trainers) =====
+   The picture has two parts: a schematic of the story at the top, and the step chain at the bottom
+   (one numbered row per step, so Level 1 shows one row, Level 3 three or more).
+     ask    the givens, and an empty row for each step
+     wrong  every step's label (the plan), with the step the named mistake points to in red
+     right / show   each step's working fades in, in order; the parts of the picture tied to a step (s) appear with it
+   A picture part may carry s (the step it belongs to: hidden until solved) and q (the unknown: '?' until solved). */
+const WP = (() => {
+  const { C } = DRILL;
+  const COL = { L: C.blue, Y: C.yellow, N: C.green, R: C.red, G: C.gold, T: C.teal, P: C.pink, M: C.muted, W: C.text };
+  const col = k => COL[k] || k || C.text;
+  const LVC = ['', C.teal, C.gold, C.pink], LVN = ['', 'one step', 'two steps', 'three steps'];
+  const done = V => V.phase === 'right' || V.phase === 'show';
+  const DLY = .45;                                                   // seconds between steps on Show me
+  const nice = x => { const p = Math.pow(10, Math.floor(Math.log10(x))); return [1, 2, 2.5, 5, 10].map(k => k * p).find(k => k >= x) || 10 * p; };
+  const fmt = x => (x < 0 ? '−' : '') + String(Math.abs(Math.round(x * 1000) / 1000));
+  let ITEM = null;
+
+  function lab(A, x, y, s, c, a) { return A.tx(A.svg, x, y, s, Object.assign({ 'font-size': 17, fill: c || C.text }, a || {})); }
+  // Is a part of the picture on screen, and how is it styled?
+  const on = (e, V) => e.s == null || done(V) || hot(e, V);
+  const hot = (e, V) => V.phase === 'wrong' && V.res && e.s != null && V.res.s === e.s;
+  const anim = (e, V) => e.s != null && done(V) && V.anim ? { class: 'fade', style: 'animation-delay:' + (e.s * DLY + .15) + 's' } : {};
+  // A label that may be the unknown: '?' until solved, then the answer (or its own solved text d).
+  function qtext(s, d, V) { if (done(V) && d != null) return d; if (s !== '?') return s; return done(V) ? (ITEM.pre || '') + ITEM.ans + (ITEM.unit ? ' ' + ITEM.unit : '') : '?'; }
+  const qcol = (s, V, c) => s === '?' ? (done(V) ? C.green : C.yellow) : c;
+
+  /* ---------- number line (horizontal, or vertical for depth) ---------- */
+  function nl(A, p, V, H) {
+    const xs = []; (p.pts || []).forEach(e => xs.push(e.x)); (p.jumps || []).forEach(j => xs.push(j.a, j.b));
+    let lo = Math.min(...xs), hi = Math.max(...xs); const pad = Math.max((hi - lo) * .12, .5); lo -= pad; hi += pad;
+    const st = nice((hi - lo) / 8), vert = !!p.vert;
+    const P0 = vert ? H - 22 : 50, P1 = vert ? 34 : 590, at = v => P0 + (v - lo) / (hi - lo) * (P1 - P0);
+    const ax = vert ? 250 : 0, ay = vert ? 0 : Math.min(H * .58, H - 60);
+    const pos = v => vert ? [ax, at(v)] : [at(v), ay];
+    A.el('line', vert ? { x1: ax, x2: ax, y1: P0 + 10, y2: P1 - 14, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)' } : { x1: P0 - 14, x2: P1 + 14, y1: ay, y2: ay, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)' }, A.svg);
+    for (let v = Math.ceil(lo / st) * st; v <= hi + 1e-9; v += st) {
+      const [x, y] = pos(v), z = Math.abs(v) < 1e-9;
+      A.el('line', vert ? { x1: x - (z ? 12 : 7), x2: x + (z ? 12 : 7), y1: y, y2: y } : { x1: x, x2: x, y1: y - (z ? 12 : 7), y2: y + (z ? 12 : 7) }, A.svg).setAttribute('stroke', z ? C.text : C.axis);
+      lab(A, vert ? x - 18 : x, vert ? y : y + 24, fmt(v), z ? C.text : C.tick, { 'font-size': 14, 'text-anchor': vert ? 'end' : 'middle' });
+    }
+    if (p.unit) lab(A, vert ? ax : P1 + 6, vert ? P1 - 26 : ay - 22, p.unit, C.muted, { 'font-size': 15 });
+    // jumps: up/right above (or right of) the line, down/left below
+    (p.jumps || []).forEach((j, i) => {
+      if (!on(j, V)) return;
+      const [xa, ya] = pos(j.a), [xb, yb] = pos(j.b), fw = j.b >= j.a, d = Math.abs(vert ? yb - ya : xb - xa), h = Math.min(70, 18 + d * .35);
+      const c = hot(j, V) ? C.red : col(j.c), side = fw ? -1 : 1, a = Object.assign({}, anim(j, V));
+      const path = vert ? 'M' + (xa + 6) + ' ' + ya + 'Q' + (xa + 6 + h * 1.4) + ' ' + (ya + yb) / 2 + ' ' + (xb + 6) + ' ' + yb
+        : 'M' + xa + ' ' + (ya + side * 6) + 'Q' + (xa + xb) / 2 + ' ' + (ya + side * h * 2) + ' ' + xb + ' ' + (yb + side * 6);
+      A.el('path', Object.assign({ d: path, fill: 'none', stroke: c, 'stroke-width': 3, 'marker-end': 'url(#a' + (c === C.red ? 'R' : j.c === 'N' ? 'N' : j.c === 'R' ? 'R' : 'Y') + ')', 'stroke-dasharray': hot(j, V) ? '6 5' : null }, a), A.svg);
+      const t = j.q ? qtext('?', null, V) : j.t;
+      if (t && !(hot(j, V) && j.q)) lab(A, vert ? xa + 14 + h * .75 : (xa + xb) / 2, vert ? (ya + yb) / 2 : ya + side * (h + 14), t, j.q ? qcol('?', V, c) : c, Object.assign({ 'font-size': 16, 'text-anchor': vert ? 'start' : 'middle' }, a));
+    });
+    // points; labels alternate above and below so neighbours don't collide
+    const labelled = (p.pts || []).filter(e => !e.dot).sort((a, b) => a.x - b.x);
+    (p.pts || []).forEach(e => {
+      if (!on(e, V)) return;
+      const [x, y] = pos(e.x), c = hot(e, V) ? C.red : col(e.c), a = anim(e, V);
+      A.el('circle', Object.assign({ cx: x, cy: y, r: e.dot ? 5 : 7, fill: c, stroke: C.stage, 'stroke-width': 2 }, a), A.svg);
+      if (e.dot || !e.t) return;
+      const k = labelled.indexOf(e), up = k % 2 === 0;
+      if (vert) lab(A, x + 16, y, e.t + ' ' + fmt(e.x), c, Object.assign({ 'font-size': 15, 'text-anchor': 'start' }, a));
+      else { lab(A, x, y + (up ? -40 : 46), e.t, c, Object.assign({ 'font-size': 15 }, a)); lab(A, x, y + (up ? -22 : 64), fmt(e.x), c, Object.assign({ 'font-size': 15 }, a)); }
+    });
+  }
+
+  /* ---------- rectangles (units: x right, y down), scaled to fit ---------- */
+  function rects(A, p, V, H) {
+    const rs = p.rs, X0 = Math.min(...rs.map(r => r.x)), Y0 = Math.min(...rs.map(r => r.y)), X1 = Math.max(...rs.map(r => r.x + r.w)), Y1 = Math.max(...rs.map(r => r.y + r.h));
+    const k = Math.min(440 / (X1 - X0), (H - 90) / (Y1 - Y0), (p.cap || 230) / Math.max(1e-9, Math.min(...rs.map(r => Math.max(r.w, r.h))))), w = (X1 - X0) * k, h = (Y1 - Y0) * k;
+    const ox = 320 - w / 2 - X0 * k, oy = 40 + (H - 80 - h) / 2 - Y0 * k;
+    rs.forEach(r => {
+      const x = ox + r.x * k, y = oy + r.y * k, W = r.w * k, Hh = r.h * k, c = col(r.c);
+      if (r.ring != null && on({ s: r.ring }, V)) A.el('rect', Object.assign({ x: x - 9, y: y - 9, width: W + 18, height: Hh + 18, rx: 4, fill: 'none', stroke: C.gold, 'stroke-width': 3, 'stroke-dasharray': '10 6' }, anim({ s: r.ring }, V)), A.svg);
+      A.el('rect', { x, y, width: W, height: Hh, rx: 3, fill: c, 'fill-opacity': .16, stroke: c, 'stroke-width': 3 }, A.svg);
+      if (r.t) lab(A, x + W / 2, y + Hh / 2, qtext(r.t, r.td, V), qcol(r.t, V, c), { 'font-size': Math.min(20, Math.max(13, W / 6)) });
+      if (r.tw && on({ s: r.tws }, V)) lab(A, x + W / 2, y - (r.ring != null ? 30 : 18), qtext(r.tw, r.twd, V), qcol(r.tw, V, c), Object.assign({ 'font-size': 17 }, anim({ s: r.tws }, V)));
+      if (r.lh) lab(A, x - 12, y + Hh / 2, qtext(r.lh, null, V), qcol(r.lh, V, c), { 'font-size': 17, 'text-anchor': 'end' });
+      if (r.rh) lab(A, x + W + 12, y + Hh / 2, qtext(r.rh, null, V), qcol(r.rh, V, c), { 'font-size': 17, 'text-anchor': 'start' });
+      if (r.bw) lab(A, x + W / 2, y + Hh + 20, qtext(r.bw, null, V), qcol(r.bw, V, c), { 'font-size': 17 });
+    });
+    if (p.shared && on(p.shared, V)) { const s = p.shared, x = ox + s.x * k; A.el('line', Object.assign({ x1: x, x2: x, y1: oy + s.y0 * k, y2: oy + s.y1 * k, stroke: C.red, 'stroke-width': 6, 'stroke-dasharray': '8 6' }, anim(s, V)), A.svg); if (done(V)) lab(A, x + 12, oy + s.y0 * k - 14, 'inside: not perimeter', C.red, Object.assign({ 'font-size': 15, 'text-anchor': 'start' }, anim(s, V))); }
+    return { ox, oy, k };
+  }
+
+  /* ---------- right triangle in a scene: legs a (across) and b (up), the hypotenuse c ---------- */
+  function tri(A, p, V, H) {
+    const k = Math.min(400 / p.a, (H - 90) / p.b), w = p.a * k, h = p.b * k, x0 = 320 - w / 2, y0 = H - 40, xR = x0 + w, yT = y0 - h;
+    const L = (s, d, q) => qtext(s, d, V), lc = s => s === '?' || /\?/.test(s);
+    if (p.scene === 'tv' || p.scene === 'park') {
+      const fill = p.scene === 'tv' ? C.blue : C.green;
+      A.el('rect', { x: x0, y: yT, width: w, height: h, rx: p.scene === 'tv' ? 8 : 2, fill, 'fill-opacity': .12, stroke: fill, 'stroke-width': p.scene === 'tv' ? 6 : 3 }, A.svg);
+      if (p.scene === 'park') A.el('path', { d: 'M' + x0 + ' ' + y0 + 'H' + xR + 'V' + yT, fill: 'none', stroke: C.blue, 'stroke-width': 4, 'stroke-dasharray': '2 8', 'stroke-linecap': 'round' }, A.svg);
+      A.el('line', { x1: x0, y1: y0, x2: xR, y2: yT, stroke: C.yellow, 'stroke-width': 4, 'stroke-dasharray': p.scene === 'park' ? '10 7' : null }, A.svg);
+      if (p.scene === 'tv') A.el('rect', { x: x0 + w / 2 - 30, y: y0 + 6, width: 60, height: 8, rx: 3, fill: C.muted }, A.svg);
+    } else {
+      A.el('line', { x1: x0 - 40, x2: xR + 40, y1: y0, y2: y0, stroke: C.green, 'stroke-width': 3 }, A.svg);   // ground
+      const upc = p.scene === 'ladder' ? C.muted : C.text;
+      A.el('line', { x1: xR, x2: xR, y1: y0, y2: yT - (p.scene === 'ladder' ? 30 : 0), stroke: upc, 'stroke-width': p.scene === 'ladder' ? 10 : 6 }, A.svg);   // wall or mast
+      if (p.scene === 'ladder') {
+        const n = 9; A.el('line', { x1: x0, y1: y0, x2: xR - 5, y2: yT, stroke: C.gold, 'stroke-width': 4 }, A.svg);
+        for (let i = 1; i < n; i++) { const t = i / n, x = x0 + (xR - 5 - x0) * t, y = y0 + (yT - y0) * t; A.el('line', { x1: x - 7, y1: y - 4, x2: x + 7, y2: y + 4, stroke: C.gold, 'stroke-width': 2 }, A.svg); }
+      } else A.el('line', { x1: x0, y1: y0, x2: xR, y2: yT, stroke: C.yellow, 'stroke-width': 2.5 }, A.svg);
+      A.el('path', { d: 'M' + (xR - 16) + ' ' + y0 + 'v-16h16', fill: 'none', stroke: C.muted, 'stroke-width': 2 }, A.svg);
+    }
+    if (p.mark) { const my = y0 - p.mark.y * k; A.el('rect', { x: xR + 6, y: my - 4, width: 46, height: 8, fill: C.teal }, A.svg); lab(A, xR + 58, my, p.mark.t, C.teal, { 'font-size': 15, 'text-anchor': 'start' }); if (done(V)) A.el('line', { x1: xR + 30, x2: xR + 30, y1: my - 6, y2: yT + 4, stroke: C.green, 'stroke-width': 3, 'marker-end': 'url(#aN)', class: 'fade', style: 'animation-delay:' + (2 * DLY + .15) + 's' }, A.svg); }
+    lab(A, (x0 + xR) / 2, y0 + 22, L(p.la, p.lad), qcol(lc(p.la) ? '?' : '', V, C.text));
+    if (p.lb || p.lbd) lab(A, xR + 14, p.mark ? (y0 + y0 - p.mark.y * k) / 2 : (y0 + yT) / 2, L(p.lb, p.lbd), qcol(lc(p.lb) ? '?' : '', V, C.text), { 'text-anchor': 'start' });
+    lab(A, (x0 + xR) / 2 - 26, (y0 + yT) / 2 - 10, L(p.lc, p.lcd), qcol(lc(p.lc) ? '?' : '', V, p.scene === 'ladder' ? C.gold : C.yellow), { 'text-anchor': 'end' });
+  }
+
+  /* ---------- repeated × or ÷ (powers): start box, op arrows, end box ---------- */
+  function chain(A, p, V, H) {
+    const n = p.n, full = n <= 4, show = full ? n : 3, slots = full ? n + 1 : 5, bw = 84, gap = (580 - slots * bw) / (slots - 1), y = Math.min(H * .42, H - 110), xAt = i => 30 + i * (bw + gap);
+    const boxes = [];
+    for (let i = 0; i < slots; i++) boxes.push(i === 0 ? p.start : i === slots - 1 ? p.end : '');
+    boxes.forEach((b, i) => {
+      const x = xAt(i), last = i === slots - 1, q = last && p.end === '?', c = i === 0 ? C.blue : last ? (q ? C.yellow : C.blue) : C.edge;
+      if (!full && i === slots - 2) { lab(A, x + bw / 2, y + 23, '…', C.muted, { 'font-size': 30 }); return; }
+      A.el('rect', { x, y, width: bw, height: 46, rx: 8, fill: c, 'fill-opacity': .14, stroke: c, 'stroke-width': 2.5 }, A.svg);
+      const t = last ? qtext(p.end, p.endd, V) : b; if (t) lab(A, x + bw / 2, y + 23, t, q ? qcol('?', V, c) : C.text, { 'font-size': t.length > 7 ? 15 : 18 });
+      if (i < slots - 1 && !(!full && i === slots - 3)) {
+        const xa = x + bw, xb = xAt(i + 1);
+        A.el('line', { x1: xa + 5, x2: xb - 7, y1: y + 23, y2: y + 23, stroke: C.gold, 'stroke-width': 2.5, 'marker-end': 'url(#aG)' }, A.svg);
+        lab(A, (xa + xb) / 2, y - 14, p.op, C.gold, { 'font-size': 16 });
+        if (p.every) lab(A, (xa + xb) / 2, y + 66, p.every, C.muted, { 'font-size': 14 });
+      }
+    });
+    // the count of steps under the chain
+    const x1 = xAt(0) + bw / 2, x2 = xAt(slots - 1) + bw / 2, yb = y + (p.every ? 92 : 74);
+    A.el('path', { d: 'M' + x1 + ' ' + yb + 'q0 10 10 10H' + ((x1 + x2) / 2 - 10) + 'q10 0 10 10q0 -10 10 -10H' + (x2 - 10) + 'q10 0 10 -10', fill: 'none', stroke: C.muted, 'stroke-width': 2 }, A.svg);
+    const ct = p.cnt || n + ' × (' + p.op.replace(/\s/g, '') + ')', cd = p.cntd;
+    lab(A, (x1 + x2) / 2, yb + 40, qtext(ct, cd, V), ct === '?' && !done(V) ? C.yellow : C.gold, Object.assign({ 'font-size': 18 }, ct === '?' && done(V) && V.anim ? { class: 'fade' } : {}));
+    if (p.sum && done(V)) lab(A, 320, yb + 72, 'add every round: ' + p.start + ' + … + ' + (p.endd || p.end), C.green, { 'font-size': 16, class: 'fade', style: 'animation-delay:' + 2 * DLY + 's' });
+  }
+
+  /* ---------- a cube (with small cubes along an edge when packing) ---------- */
+  function cube(A, p, V, H) {
+    const s = Math.min(190, (H - 96) / 1.45), d = s * .45, x0 = 320 - (s + d) / 2, y0 = 22 + d + (H - 96 - s - d) / 2, c = C.blue;
+    const face = (pts, op) => A.el('path', { d: 'M' + pts.map(q => q.join(' ')).join('L') + 'z', fill: c, 'fill-opacity': op, stroke: c, 'stroke-width': 2.5, 'stroke-linejoin': 'round' }, A.svg);
+    face([[x0, y0], [x0 + s, y0], [x0 + s, y0 + s], [x0, y0 + s]], .14);
+    face([[x0, y0], [x0 + d, y0 - d], [x0 + s + d, y0 - d], [x0 + s, y0]], .24);
+    face([[x0 + s, y0], [x0 + s + d, y0 - d], [x0 + s + d, y0 + s - d], [x0 + s, y0 + s]], .08);
+    if (p.n) {
+      const n = p.n, g = s / n, show = done(V);
+      if (show) for (let i = 1; i < n; i++) {
+        A.el('line', { x1: x0 + i * g, x2: x0 + i * g, y1: y0, y2: y0 + s, stroke: c, 'stroke-opacity': .4, class: 'fade' }, A.svg);
+        A.el('line', { x1: x0, x2: x0 + s, y1: y0 + i * g, y2: y0 + i * g, stroke: c, 'stroke-opacity': .4, class: 'fade' }, A.svg);
+        A.el('line', { x1: x0 + i * g, x2: x0 + i * g + d, y1: y0, y2: y0 - d, stroke: c, 'stroke-opacity': .4, class: 'fade' }, A.svg);
+        A.el('line', { x1: x0 + s + i * d / n, x2: x0 + s + i * d / n, y1: y0 - i * d / n, y2: y0 + s - i * d / n, stroke: c, 'stroke-opacity': .4, class: 'fade' }, A.svg);
+      }
+      A.el('rect', { x: x0, y: y0 + s - g, width: g, height: g, fill: C.yellow, 'fill-opacity': .5, stroke: C.yellow, 'stroke-width': 2 }, A.svg);
+      lab(A, x0 - 10, y0 + s - g / 2, p.small, C.yellow, { 'font-size': 15, 'text-anchor': 'end' });
+      if (show) lab(A, x0 + s / 2, y0 + s + 46, n + ' along each edge', C.green, { 'font-size': 15, class: 'fade' });
+    }
+    lab(A, x0 + s / 2, y0 + s + 22, p.edge, C.text);
+    if (!p.n) lab(A, x0 + s / 2, y0 + s / 2, qtext('?', null, V), qcol('?', V, C.yellow), { 'font-size': 20 });
+  }
+
+  /* ---------- bar model: rows of segments ---------- */
+  function bar(A, p, V, H) {
+    const tot = r => r.segs.reduce((a, s) => a + s.v, 0), max = Math.max(...p.rows.map(tot)), px = 520 / max, rh = 54, gap = 46;
+    const y0 = Math.max(46, (H - p.rows.length * (rh + gap)) / 2 + 20);
+    p.rows.forEach((r, i) => {
+      let x = 60; const y = y0 + i * (rh + gap);
+      if (r.t) lab(A, 60, y - 16, r.t, C.muted, { 'font-size': 15, 'text-anchor': 'start' });
+      r.segs.forEach(s => {
+        const w = s.v * px; if (!on(s, V)) { x += w; return; }
+        const c = hot(s, V) ? C.red : col(s.c), a = anim(s, V);
+        A.el('rect', Object.assign({ x: x + 1, y, width: Math.max(0, w - 2), height: rh, rx: 5, fill: c, 'fill-opacity': s.q && !done(V) ? .06 : .2, stroke: c, 'stroke-width': 2, 'stroke-dasharray': s.q && !done(V) ? '6 5' : null }, a), A.svg);
+        const t = s.q ? qtext('?', s.d, V) : s.t; if (t && w > 26) lab(A, x + w / 2, y + rh / 2, t, s.q ? qcol('?', V, c) : C.text, Object.assign({ 'font-size': w > 80 ? 16 : 13 }, a));
+        x += w;
+      });
+      if (r.brace) { const b = r.brace; lab(A, 60 + tot(r) * px / 2, y + rh + 24, qtext(b, null, V), qcol(b, V, C.muted), { 'font-size': 16 }); }
+    });
+  }
+
+  const PIC = { nl, rects, tri, chain, cube, bar };
+
+  /* ---------- the step chain ---------- */
+  function steps(A, it, V, top) {
+    const n = it.steps.length, rh = n > 3 ? 28 : 32, bad = V.phase === 'wrong' && V.res ? V.res.s : -2;
+    it.steps.forEach((st, i) => {
+      const y = top + i * rh + rh / 2, flag = i === bad, c = flag ? C.red : LVC[it.lvl], a = done(V) && V.anim ? { class: 'fade', style: 'animation-delay:' + (i * DLY) + 's' } : {};
+      A.el('circle', { cx: 26, cy: y, r: 12, fill: c, 'fill-opacity': V.phase === 'ask' ? .25 : .9, stroke: c, 'stroke-width': 1.5 }, A.svg);
+      lab(A, 26, y + 1, String(i + 1), V.phase === 'ask' ? c : C.stage, { 'font-size': 14, 'font-weight': 700, style: 'stroke:none' });
+      if (V.phase === 'ask') { A.el('line', { x1: 48, x2: 610, y1: y, y2: y, stroke: C.edge, 'stroke-width': 2, 'stroke-dasharray': '4 8' }, A.svg); return; }
+      lab(A, 46, y, st.l, flag ? C.red : C.muted, Object.assign({ 'font-size': 14, 'text-anchor': 'start', class: flag ? 'pulse' : '' }, done(V) ? a : {}));
+      if (!done(V)) { if (flag) lab(A, 200, y, '← check this step', C.red, { 'font-size': 15, 'text-anchor': 'start' }); return; }
+      const fs = Math.min(17, 430 / Math.max(1, st.m.length * .54));
+      lab(A, 200, y, st.m, i === n - 1 ? C.green : C.text, Object.assign({ 'font-size': fs, 'text-anchor': 'start' }, a));
+    });
+  }
+
+  function draw(A, it, V) {
+    ITEM = it;
+    const n = it.steps.length, rh = n > 3 ? 28 : 32, top = 420 - n * rh - 8;
+    A.el('line', { x1: 14, x2: 626, y1: top - 8, y2: top - 8, stroke: C.edge, 'stroke-width': 1.5 }, A.svg);
+    PIC[it.pic.k](A, it.pic, V, top - 12);
+    steps(A, it, V, top);
+  }
+
+  /* ---------- a tab: one topic, a round ramping from one step to three ---------- */
+  const unit = s => ({ h: '<span class="u">' + s + '</span>' });
+  function tab(o) {
+    return {
+      id: o.id, code: o.code, name: o.name, sec: o.sec || 1, notes: o.notes, sep: o.sep,
+      q: it => it.q, kind: 'slots', gen: o.gen, typeOf: it => it.t,
+      prompt: it => '<div class="lvl l' + it.lvl + '">Level ' + it.lvl + ' · ' + LVN[it.lvl] + '</div><div class="story">' + it.story + '</div>',
+      slots: it => [it.pre ? unit(it.pre) : null, { k: 'v', label: 'answer', wide: true }, it.unit ? unit(it.unit) : null].filter(Boolean),
+      check: (it, r) => MODEL.check(it, r), answer: it => ({ v: it.ans }), link: o.link, draw
+    };
+  }
+  return { tab, draw, PIC, LVN };
+})();
+/* ===================== PAGE: tabs (pictures and the step chain are in wp.js) ===================== */
+const NOTES9 = {
+  rn: { notes: '../notes/rational-numbers/math9-rational-numbers-notes-v1.html' },
+  sr: { notes: '../notes/square-roots/math9-square-roots-notes-v1.html' },
+  pe: { notes: '../notes/powers-exponents/math9-powers-notes-v1.html', sep: '·' }
+};
+// Each item opens the notes at its own section (RN2, SR3, PE5 ...).
+const link9 = topic => it => Object.assign({ sec: +it.code.replace(/\D/g, '') }, NOTES9[it.topic || topic]);
+const tab9 = (id, code, name) => WP.tab(Object.assign({ id, code, name, gen: n => MODEL.gen(id, n), link: link9(id) }, NOTES9[id]));
+const PAGE = {
+  key: 'math9-word-problems-trainer-v1', course: 'Math 9 · Word problems', title: 'Word Problems',
+  notes: NOTES9.rn.notes,
+  tabs: [
+    tab9('rn', 'RN', 'Rational'), tab9('sr', 'SR', 'Roots'), tab9('pe', 'PE', 'Powers'),
+    WP.tab({ id: 'mix', code: 'All', name: 'Mixed', gen: n => MODEL.genMix(n), link: link9('rn'), notes: NOTES9.rn.notes })
+  ]
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>

@@ -42,12 +42,12 @@
     ok((window.__errs||[]).length === 0, 'no runtime errors ' + (window.__errs||[]).join(' | '));
     // 3. Weighting: a missed question type comes back more often; a type answered right still comes, less often
     if (D.keyOf) {
-      const t = D.PAGE.tabs.find(t => { const ks = new Set(); for (let i = 0; i < 60; i++) ks.add(D.keyOf(t.gen(), t)); return ks.size >= 2; });
+      const t = D.PAGE.tabs.find(t => { const ks = new Set(); for (let i = 0; i < 60; i++) ks.add(D.keyOf(t.gen(0), t)); return ks.size >= 2; });
       if (!t) ok(true, 'weighting: no tab has more than one question type');
       else {
         D.setTab(t.id);
         const share = k => { let n = 0; for (let i = 0; i < 600; i++) { D.newItem(); if (D.keyOf(D.state().item) === k) n++; } return n / 600; };
-        D.resetWeights(); const counts = {}; for (let i = 0; i < 200; i++) { const k = D.keyOf(t.gen()); counts[k] = (counts[k] || 0) + 1; }
+        D.resetWeights(); const counts = {}; for (let i = 0; i < 200; i++) { const k = D.keyOf(t.gen(0)); counts[k] = (counts[k] || 0) + 1; }
         const k = Object.keys(counts).sort((a, b) => Math.abs(counts[a] / 200 - .3) - Math.abs(counts[b] / 200 - .3))[0];
         const base = share(k); D.setScore(k, 1.3); const missed = share(k); D.setScore(k, -1); const right = share(k); D.resetWeights();
         ok(missed > base * 1.4 && right < base && right > 0, 'weighting on ' + t.id + ' (' + k + '): base ' + base.toFixed(2) + ', missed ' + missed.toFixed(2) + ', right ' + right.toFixed(2));

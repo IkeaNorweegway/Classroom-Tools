@@ -368,7 +368,7 @@ const MODEL = (() => {
    for the 📖 link), PAGE.sans (prompts in the plain font, for science). TAB.cols (2 or 3) sets the choice grid.
    A TAB is one narrow skill:
      id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
-     gen()                 -> a new item (from MODEL)
+     gen(n)                -> a new item (from MODEL); n is its place in the round (0–9), for a round that ramps up
      prompt(item)          -> HTML for the prompt (optional)
      kind: 'slots' | 'choice' | 'custom', or kind(item) -> one of those (a page that mixes typed and tap answers)
        slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
@@ -570,8 +570,8 @@ const DRILL = (() => {
     let it = given, key = '';
     if (!it) {
       const cands = [];
-      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
-      if (!cands.length) cands.push(tab.gen());
+      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(marks.length), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
+      if (!cands.length) cands.push(tab.gen(marks.length));
       const ws = cands.map(c => weightOf(keyOf(c))), total = ws.reduce((a, b) => a + b, 0);
       let r = Q.rnd(0, 999999) / 1e6 * total, i = 0; while (i < cands.length - 1 && r >= ws[i]) { r -= ws[i]; i++; }
       it = cands[i]; key = JSON.stringify(it);

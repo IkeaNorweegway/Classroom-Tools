@@ -1,5 +1,5 @@
 # Project Status
-*Last updated: 2026-11-03*
+*Last updated: 2026-11-17*
 
 Current state only, one line per item. Keep it under 130 lines: put session detail in the commit message, and move finished build or test logs to `_status-archive.md`. The archive's **2026-11-01 snapshot** has the full detail behind every line here: test logs, file lists, and the exact facts to check before printing.
 
@@ -23,6 +23,7 @@ Current state only, one line per item. Keep it under 130 lines: put session deta
 - **Math 7** (on `master` since 2026-11-01): built, waiting for the teacher read-through.
 - **Social 9 trainers** (narrow format, `scripts/drill/`, new shared `soc.js`): all three batches done 2026-11-03: Urbanization, Independence, WWII, Post-War, Modern Economy, Government, Evolving Citizenship (`soc9-<unit>-trainer-v1.html`). Site page not yet built or checked (no Node on Windows). Tested: model and UI checks pass in headless Chrome, plus layout at 1366, 1000 and 1280×600; screenshots checked. Not tested: students, touch screens, Chromebooks. Teacher check: facts beyond the notes (Alberta 1916 vote, McKinney 1917, Macphail 1921, Wilson 1930, Quebec 1940 and 1980, the Veterans Charter, the Meech Lake year 1987). The Citizenship trainer leaves out the amending formula (the notes misstate it). Residential schools and the Sixties Scoop are left on paper on purpose.
 - **Math 9 diagrams onto the Math 7/8 library** (trial 2026-11-07): a Math 9 notes fragment can now hold `@viz` lines (`scripts/viz_line.pl`, via `add_notes_visuals.py`). There is a new `scatter` type in `scripts/vizext/scatter.pl`. Statistics fragments 02, 04, 05 and 06 now use it; 01 and 03 stay hand-drawn. Rule for library vs. hand-drawn: `_courses/math-9/_context.md`, "Diagrams". Next: the 14 Statistics diagrams typed straight into the page (empty grids, trend sketches), then other topics. `viz_gallery_m9.py --compare` pairs one old figure with each panel of a multi-panel `@viz` fragment, so its before/after cells can line up wrong.
+- **Word problems trainers (started 2026-11-17):** Math 9 `math9-word-problems-trainer-v1.html` built from `scripts/drill/` (`model-wp9.js`, `view-wp9.js`, new shared `wp.js`): one tab per topic, a round of 10 ramps from one-step to two-step to three-step stories, each with a schematic, a step chain and named mistakes. **Batch 1 done: Number strand** (RN, SR, PE, 27 story types) + Mixed. Next: Algebra (LR, LE, PO; polynomial answers need coefficient boxes), then M&G (CG, ME, SI), S&P (ST, PR), then a Science 7 page (`model-wp7.js`). Story ideas and steps come from the printable generators in `src/scripts/word-problems/` (the `/math9/word-problems` and `/science7/word-problems` pages, kept for printing). Tested: 72 model/UI checks pass, layout at 1366, 1000 and 1280×600; screenshots of 14 story types checked. Not tested: students, touch screens, Chromebooks; site page not built locally (no Node).
 
 ---
 
