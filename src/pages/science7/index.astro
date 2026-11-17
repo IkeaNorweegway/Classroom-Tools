@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CourseHero from '../../components/CourseHero.astro';
 import TopicList from '../../components/TopicList.astro';
+import ActionCard from '../../components/ActionCard.astro';
 import { getCollection } from 'astro:content';
 import { science7 } from '../../data/science7';
 import { materialCount, weeksRange } from '../../data/manifest';
@@ -41,4 +42,14 @@ const materials = materialCount(science7.units);
     heading="Units"
     items={cards.map(u => ({ art: u.slug, href: `${base}science7/materials/${u.slug}`, title: u.label, description: hooks[u.slug] ?? u.description, meta: hooks[u.slug] ? u.description : undefined }))}
   />
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <ActionCard
+      href={`${base}science7/word-problems`}
+      title="Word Problems"
+      description="Science calculations for every unit at three levels: one step, two steps, and three or more. Hints, worked solutions, and printable worksheets with answer keys."
+      cta="Solve"
+      index={4}
+    />
+  </div>
 </BaseLayout>

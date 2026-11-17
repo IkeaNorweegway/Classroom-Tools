@@ -248,6 +248,7 @@ export const courses: Course[] = [
       })),
       { label: 'PAT Prep', path: 'math9/pat-prep', match: includes('pat-prep') },
       { label: 'POTD', path: 'math9/potd', match: includes('potd') },
+      { label: 'Word Problems', path: 'math9/word-problems', match: includes('word-problems') },
       { label: 'All materials', path: 'math9/materials', match: endsWith('/math9/materials') },
     ],
     parentSubnav: [
@@ -272,6 +273,7 @@ export const courses: Course[] = [
     facts: ['5 units', '~26 weeks', '40 materials'],
     subnav: [
       ...unitItems('science7/materials/', sci7Units),
+      { label: 'Word Problems', path: 'science7/word-problems', match: includes('word-problems') },
       { label: 'All units', path: 'science7', match: endsWith('/science7') },
     ],
     parentSubnav: parentItems('science7/parents', sci7Units),
