@@ -8,7 +8,9 @@
    A picture part may carry s (the step it belongs to: hidden until solved) and q (the unknown: '?' until solved).
    Pictures: nl (number line), bar, rects (rectangles, area models; foot = a label under them), tri (right triangle
    in a scene), chain (repeated × or ÷), cube, graph (lines, points, rise/run, a reading), table (values with their
-   changes), flow (operations, with the undo arrows underneath), shape (a polygon with labelled sides).
+   changes), flow (operations, with the undo arrows underneath; noundo for a plain chain), shape (a polygon with labelled
+   sides), circ (a circle with chords, tangents and angles), solid (cylinders, cones, spheres, prisms, pyramids, stacked),
+   pair (two similar triangles), scene (shadows, or a mirror on the ground).
    An item with poly (Algebra: polynomial answers) gets coefficient boxes instead of one answer box. */
 const WP = (() => {
   const { C } = DRILL;
@@ -27,7 +29,7 @@ const WP = (() => {
   const hot = (e, V) => V.phase === 'wrong' && V.res && e.s != null && V.res.s === e.s;
   const anim = (e, V) => e.s != null && done(V) && V.anim ? { class: 'fade', style: 'animation-delay:' + (e.s * DLY + .15) + 's' } : {};
   // A label that may be the unknown: '?' until solved, then the answer (or its own solved text d).
-  function qtext(s, d, V) { if (done(V) && d != null) return d; if (s !== '?') return s; return done(V) ? (ITEM.pre || '') + ITEM.ans + (ITEM.unit ? ' ' + ITEM.unit : '') : '?'; }
+  function qtext(s, d, V) { if (done(V) && d != null) return d; if (s !== '?') return s; return done(V) ? (ITEM.pre || '') + ITEM.ans + (ITEM.unit ? (ITEM.unit === '°' ? '' : ' ') + ITEM.unit : '') : '?'; }
   const qcol = (s, V, c) => s === '?' ? (done(V) ? C.green : C.yellow) : c;
 
   /* ---------- number line (horizontal, or vertical for depth) ---------- */
@@ -269,7 +271,7 @@ const WP = (() => {
         }
       }
     });
-    lab(A, 320, y + 108, done(V) ? 'undo in reverse order' : '', C.muted, { 'font-size': 15 });
+    lab(A, 320, y + 108, done(V) && !p.noundo ? 'undo in reverse order' : '', C.muted, { 'font-size': 15 });
   }
 
   /* ---------- a polygon with labelled sides (units: x right, y down) ---------- */
@@ -288,7 +290,181 @@ const WP = (() => {
     if (p.q) lab(A, cx, cy, qtext('?', null, V), qcol('?', V, C.yellow), { 'font-size': 18 });
   }
 
-  const PIC = { nl, rects, tri, chain, cube, bar, graph, table, flow, shape };
+  // A caption under a picture: footl, then foot ('?' becomes the answer when solved).
+  function footer(A, p, V, y) { if (p.foot) lab(A, 320, y, (p.footl ? p.footl + ' ' : '') + qtext(p.foot, p.footd, V), qcol(p.foot, V, C.muted), { 'font-size': 18 }); }
+  // A small note in the top-left corner (a rate, a conversion).
+  function note(A, p) { if (p.note) lab(A, 18, 16, p.note, C.muted, { 'font-size': 15, 'text-anchor': 'start' }); }
+
+  /* ---------- a circle with points, segments and angles (units: radius 1, y up) ---------- */
+  // p: { P: {A: 200 (degrees round the circle) or [x, y]}, segs: [{a, b, t, c, s, ts (step that shows the label), q, d, dash, at: l|r|a|b}],
+  //      angs: [{v, a, b, t, c, s, q, d, right}] (off: a segment label's distance from its line), hide: ['M'] (no letter), foot, footl }
+  function circ(A, p, V, H) {
+    const P = { O: [0, 0] };
+    for (const n in p.P) { const v = p.P[n]; P[n] = typeof v === 'number' ? [Math.cos(v * Math.PI / 180), Math.sin(v * Math.PI / 180)] : v; }
+    const xs = [-1, 1], ys = [-1, 1]; for (const n in P) { xs.push(P[n][0]); ys.push(P[n][1]); }
+    const X0 = Math.min(...xs), X1 = Math.max(...xs), Y0 = Math.min(...ys), Y1 = Math.max(...ys), fh = p.foot ? 30 : 0;
+    const k = Math.min(500 / (X1 - X0), (H - 64 - fh) / (Y1 - Y0)), ox = 320 - (X0 + X1) / 2 * k, oy = (H - fh) / 2 + 2 + (Y0 + Y1) / 2 * k;
+    const S = n => [ox + P[n][0] * k, oy - P[n][1] * k], [cx, cy] = S('O');
+    A.el('circle', { cx, cy, r: k, fill: C.blue, 'fill-opacity': .06, stroke: C.blue, 'stroke-width': 3 }, A.svg);
+    (p.angs || []).forEach(g => {
+      if (!on(g, V)) return;
+      const [vx, vy] = S(g.v), [ax, ay] = S(g.a), [bx, by] = S(g.b), ta = Math.atan2(ay - vy, ax - vx);
+      let d = Math.atan2(by - vy, bx - vx) - ta; while (d > Math.PI) d -= 2 * Math.PI; while (d <= -Math.PI) d += 2 * Math.PI;
+      const hc = hot(g, V), c = hc ? C.red : g.q ? qcol('?', V, C.yellow) : col(g.c || 'G'), a = anim(g, V), u = t => [Math.cos(t), Math.sin(t)];
+      const r = g.right ? 15 : g.r || 30, u1 = u(ta), u2 = u(ta + d), p1 = [vx + r * u1[0], vy + r * u1[1]], p2 = [vx + r * u2[0], vy + r * u2[1]];
+      if (g.right) A.el('path', Object.assign({ d: 'M' + p1.join(' ') + 'L' + (p1[0] + r * u2[0]) + ' ' + (p1[1] + r * u2[1]) + 'L' + p2.join(' '), fill: 'none', stroke: c, 'stroke-width': 2.5 }, a), A.svg);
+      else A.el('path', Object.assign({ d: 'M' + vx + ' ' + vy + 'L' + p1.join(' ') + 'A' + r + ' ' + r + ' 0 0 ' + (d > 0 ? 1 : 0) + ' ' + p2.join(' ') + 'z', fill: c, 'fill-opacity': .22, stroke: c, 'stroke-width': 2 }, a), A.svg);
+      const t = g.q ? qtext('?', g.d, V) : g.t, ub = u(ta + d / 2), rl = r + (g.right ? 16 : 22);
+      if (t) lab(A, vx + rl * ub[0], vy + rl * ub[1], t, c, Object.assign({ 'font-size': 16 }, a));
+    });
+    (p.segs || []).forEach(g => {
+      if (!on(g, V)) return;
+      const [x1, y1] = S(g.a), [x2, y2] = S(g.b), hc = hot(g, V) || hot({ s: g.ts }, V), c = hc ? C.red : col(g.c || 'W'), a = anim(g, V);
+      A.el('line', Object.assign({ x1, y1, x2, y2, stroke: c, 'stroke-width': 3, 'stroke-dasharray': g.dash || hc ? '8 6' : null, 'stroke-linecap': 'round' }, a), A.svg);
+      const t = g.q ? qtext('?', g.d, V) : g.t; if (!t || !on({ s: g.ts }, V)) return;
+      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, L = Math.hypot(x2 - x1, y2 - y1) || 1, D = { l: [-1, 0], r: [1, 0], a: [0, -1], b: [0, 1] }[g.at];
+      let nx = -(y2 - y1) / L, ny = (x2 - x1) / L; const dot = nx * (mx - cx) + ny * (my - cy);
+      if (D) { nx = D[0]; ny = D[1]; } else if (dot < -1e-6 || (Math.abs(dot) <= 1e-6 && ny > 0)) { nx = -nx; ny = -ny; }
+      const off = g.off || 15;
+      lab(A, mx + nx * off, my + ny * off, t, g.q ? qcol('?', V, c) : c, Object.assign({ 'font-size': 16, 'text-anchor': nx > .45 ? 'start' : nx < -.45 ? 'end' : 'middle' }, g.ts != null ? anim({ s: g.ts }, V) : a));
+    });
+    // O's letter goes on the side away from the other points (out of the angle wedges); the rest go outward from O.
+    let ux = 0, uy = 0; for (const n in P) if (n !== 'O') { const [x, y] = S(n), L = Math.hypot(x - cx, y - cy) || 1; ux += (x - cx) / L; uy += (y - cy) / L; }
+    const uL = Math.hypot(ux, uy), oDir = uL > .3 ? [-ux / uL, -uy / uL] : [-.6, .8];
+    for (const n in P) {
+      const [x, y] = S(n); A.el('circle', { cx: x, cy: y, r: 4.5, fill: n === 'O' ? C.text : C.blue, stroke: C.stage, 'stroke-width': 1.5 }, A.svg);
+      if ((p.hide || []).includes(n)) continue;
+      const L = Math.hypot(x - cx, y - cy), dx = n === 'O' ? oDir[0] : (x - cx) / L, dy = n === 'O' ? oDir[1] : (y - cy) / L;
+      lab(A, x + dx * 18, y + dy * 18, n, C.muted, { 'font-size': 15, 'font-style': 'italic' });
+    }
+    footer(A, p, V, H - 12);
+  }
+
+  /* ---------- solids, stacked bottom-up and centred: cyl, cone, sphere, hemi (a dome), box (square prism), pyr ---------- */
+  // p: { parts: [{k, r, h, w, c, s, wrap, lab: {r, d, h, l, w}}], note, foot, footl }
+  function solid(A, p, V, H) {
+    const ps = p.parts, E = .28, sq = q => q.k === 'box' || q.k === 'pyr';
+    const wOf = q => sq(q) ? q.w * 1.45 : 2 * q.r, hOf = q => q.k === 'sphere' ? 2 * q.r : q.k === 'hemi' ? q.r : q.h;
+    const W = Math.max(...ps.map(wOf)), top = W * (sq(ps[0]) ? .32 : .16), Ht = ps.reduce((a, q) => a + hOf(q), 0) + top + W * .14, fh = p.foot ? 30 : 0;
+    const k = Math.min(270 / W, (H - 70 - fh) / Ht), cx = 300;
+    let yb = (H - fh) / 2 + Ht * k / 2 - W * .14 * k + 10;
+    const T = (x, y, s, a) => lab(A, x, y, s, C.text, Object.assign({ 'font-size': 16 }, a || {}));
+    const dim = (x, y1, y2, s, left) => { A.el('path', { d: 'M' + (x - 5) + ' ' + y1 + 'h10M' + x + ' ' + y1 + 'V' + y2 + 'M' + (x - 5) + ' ' + y2 + 'h10', stroke: C.muted, 'stroke-width': 1.8, fill: 'none' }, A.svg); T(x + (left ? -10 : 10), (y1 + y2) / 2, s, { 'text-anchor': left ? 'end' : 'start' }); };
+    ps.forEach((q, i) => {
+      const c = hot(q, V) ? C.red : col(q.c || 'L'), L = q.lab || {}, nx = ps[i + 1], st = { stroke: c, 'stroke-width': 2.5, fill: 'none' };
+      const path = (d, a) => A.el('path', Object.assign({ d }, st, a || {}), A.svg);
+      if (q.k === 'cyl' || q.k === 'cone' || q.k === 'hemi' || q.k === 'sphere') {
+        const rx = q.r * k, ry = rx * E, Lx = cx - rx, Rx = cx + rx, base = 'M' + Lx + ' ' + yb, front = 'A' + rx + ' ' + ry + ' 0 0 0 ' + Rx + ' ' + yb, back = 'A' + rx + ' ' + ry + ' 0 0 1 ' + Rx + ' ' + yb;
+        if (q.k === 'cyl') {
+          const yt = yb - q.h * k;
+          path('M' + Lx + ' ' + yt + 'V' + yb + front + 'V' + yt + 'A' + rx + ' ' + ry + ' 0 0 1 ' + Lx + ' ' + yt + 'z', { fill: c, 'fill-opacity': q.wrap ? .34 : .12, stroke: 'none' });
+          if (!i) path(base + back, { 'stroke-dasharray': '6 6', 'stroke-width': 1.8 });
+          path(base + front); path('M' + Lx + ' ' + yb + 'V' + yt + 'M' + Rx + ' ' + yb + 'V' + yt);
+          A.el('ellipse', Object.assign({ cx, cy: yt, rx, ry, fill: c, 'fill-opacity': q.wrap ? .05 : .2 }, st), A.svg);
+          if (L.h) dim(Rx + 20, yb, yt, L.h);
+          yb = yt;
+        } else if (q.k === 'cone') {
+          const ya = yb - q.h * k;
+          path(base + front + 'L' + cx + ' ' + ya + 'z', { fill: c, 'fill-opacity': .12, stroke: 'none' });
+          path(base + back, { 'stroke-dasharray': '6 6', 'stroke-width': 1.8 }); path(base + front); path('M' + Lx + ' ' + yb + 'L' + cx + ' ' + ya + 'L' + Rx + ' ' + yb);
+          if (L.h) { path('M' + cx + ' ' + yb + 'V' + ya, { stroke: C.muted, 'stroke-dasharray': '5 5', 'stroke-width': 1.8 }); dim(Lx - 20, yb, ya, L.h, true); }
+          if (L.l) T((Rx + cx) / 2 + 14, (yb + ya) / 2, L.l, { 'text-anchor': 'start' });
+          yb = ya;
+        } else if (q.k === 'hemi') {
+          path(base + 'A' + rx + ' ' + rx + ' 0 0 1 ' + Rx + ' ' + yb, { fill: c, 'fill-opacity': .12 });
+          yb -= rx;
+        } else {
+          const yc = yb - rx;
+          A.el('circle', Object.assign({ cx, cy: yc, r: rx, fill: c, 'fill-opacity': .12 }, st), A.svg);
+          path('M' + Lx + ' ' + yc + 'A' + rx + ' ' + ry + ' 0 0 1 ' + Rx + ' ' + yc, { 'stroke-dasharray': '6 6', 'stroke-width': 1.6 });
+          path('M' + Lx + ' ' + yc + 'A' + rx + ' ' + ry + ' 0 0 0 ' + Rx + ' ' + yc, { 'stroke-width': 1.6 });
+          if (L.r) { path('M' + cx + ' ' + yc + 'H' + Rx, { stroke: C.yellow }); T(cx + rx / 2, yc - 14, L.r); }
+          if (L.d) { path('M' + Lx + ' ' + yc + 'H' + Rx, { stroke: C.yellow }); T(cx, yc - 14, L.d); }
+          yb -= 2 * rx;
+        }
+        if (q.k === 'cyl' || q.k === 'cone') {                 // radius or diameter on the bottom face
+          const y0 = q.k === 'cyl' ? yb + q.h * k : yb + q.h * k;
+          if (L.r) { path('M' + cx + ' ' + y0 + 'H' + Rx, { stroke: C.yellow }); T(cx + rx / 2, y0 + ry + 16, L.r); }
+          if (L.d) { path('M' + Lx + ' ' + y0 + 'H' + Rx, { stroke: C.yellow }); T(cx, y0 + ry + 16, L.d); }
+        }
+      } else {
+        const wk = q.w * k, dx = wk * .45, dy = wk * .3, x0 = cx - (wk + dx) / 2;
+        if (q.k === 'box') {
+          const yt = yb - q.h * k;
+          A.el('rect', Object.assign({ x: x0, y: yt, width: wk, height: q.h * k, fill: c, 'fill-opacity': .12 }, st), A.svg);
+          path('M' + (x0 + wk) + ' ' + yb + 'l' + dx + ' ' + -dy + 'V' + (yt - dy) + 'L' + (x0 + wk) + ' ' + yt, { fill: c, 'fill-opacity': .07 });
+          path('M' + x0 + ' ' + yb + 'l' + dx + ' ' + -dy + 'h' + wk + 'M' + (x0 + dx) + ' ' + (yb - dy) + 'V' + (yt - dy), { 'stroke-dasharray': '6 6', 'stroke-width': 1.8 });
+          if (!nx) path('M' + x0 + ' ' + yt + 'l' + dx + ' ' + -dy + 'h' + wk, { fill: 'none' });
+          if (L.w) T(x0 + wk / 2, yb + 20, L.w);
+          if (L.h) T(x0 - 10, (yb + yt) / 2, L.h, { 'text-anchor': 'end' });
+          yb = yt;
+        } else {
+          const ax = x0 + wk / 2 + dx / 2, ay = yb - dy / 2 - q.h * k, bx = ax, by = yb - dy / 2, fx = x0 + wk / 2;
+          path('M' + x0 + ' ' + yb + 'h' + wk + 'L' + ax + ' ' + ay + 'z', { fill: c, 'fill-opacity': .14 });
+          path('M' + (x0 + wk) + ' ' + yb + 'l' + dx + ' ' + -dy + 'L' + ax + ' ' + ay + 'z', { fill: c, 'fill-opacity': .07 });
+          path('M' + x0 + ' ' + yb + 'l' + dx + ' ' + -dy + 'h' + wk + 'M' + (x0 + dx) + ' ' + (yb - dy) + 'L' + ax + ' ' + ay, { 'stroke-dasharray': '6 6', 'stroke-width': 1.8 });
+          if (L.h) { path('M' + bx + ' ' + by + 'V' + ay, { stroke: C.muted, 'stroke-dasharray': '5 5', 'stroke-width': 1.8 }); dim(x0 + wk + dx + 20, by, ay, L.h); }
+          if (L.l) { path('M' + ax + ' ' + ay + 'L' + fx + ' ' + yb, { stroke: C.yellow, 'stroke-dasharray': '5 5', 'stroke-width': 2 }); T((ax + fx) / 2 - 10, (ay + yb) / 2 + 8, L.l, { 'text-anchor': 'end' }); }
+          if (L.w) T(x0 + wk / 2, yb + 20, L.w);
+          yb = ay;
+        }
+      }
+    });
+    note(A, p); footer(A, p, V, H - 12);
+  }
+
+  /* ---------- two similar triangles: the small one and the large one (× f); matching sides share a colour ---------- */
+  // p: { pts: [[x, y] x3] (y up), f, cs: ['G', 'Y', 'T'] (side i joins point i and i+1), la: [{t, s}], lb: [{t, s, q}], na, nb (names) }
+  function pair(A, p, V, H) {
+    const T = p.pts, mx = Math.min(...T.map(q => q[0])), my = Math.min(...T.map(q => q[1])), w = Math.max(...T.map(q => q[0])) - mx, h = Math.max(...T.map(q => q[1])) - my;
+    const f = p.f, gap = .5 * w, k = Math.min(500 / (w * (1 + f) + gap), (H - 96) / (h * f)), yb = (H + h * f * k) / 2 + 4, x0 = 320 - (w * (1 + f) + gap) * k / 2;
+    [[1, p.la, x0, p.na], [f, p.lb, x0 + (w + gap) * k, p.nb]].forEach(([s, L, xo, nm]) => {
+      const S = T.map(q => [xo + (q[0] - mx) * s * k, yb - (q[1] - my) * s * k]), gx = S.reduce((a, q) => a + q[0], 0) / 3, gy = S.reduce((a, q) => a + q[1], 0) / 3;
+      A.el('path', { d: 'M' + S.map(q => q.join(' ')).join('L') + 'z', fill: C.blue, 'fill-opacity': .08, stroke: 'none' }, A.svg);
+      S.forEach((a, i) => {
+        const b = S[(i + 1) % 3], sd = (L || [])[i] || {}, hc = hot(sd, V), c = hc ? C.red : col(p.cs[i]), ex = (a[0] + b[0]) / 2, ey = (a[1] + b[1]) / 2, dx = ex - gx, dy = ey - gy, D = Math.hypot(dx, dy) || 1;
+        A.el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: c, 'stroke-width': 3.5, 'stroke-linecap': 'round', 'stroke-dasharray': hc ? '8 6' : null }, A.svg);
+        const t = sd.q ? qtext('?', sd.d, V) : sd.t;
+        if (t && on({ s: sd.ts }, V)) lab(A, ex + dx / D * 20, ey + dy / D * 18, t, sd.q ? qcol('?', V, c) : c, Object.assign({ 'text-anchor': Math.abs(dx / D) > .5 ? (dx > 0 ? 'start' : 'end') : 'middle' }, anim({ s: sd.ts }, V)));
+      });
+      if (nm) lab(A, gx, gy + 2, nm, C.muted, { 'font-size': 14 });
+    });
+  }
+
+  /* ---------- an outdoor scene for indirect measurement: shadows, or a mirror on the ground ---------- */
+  // shadow: { mode: 'shadow', h, s, H, S, lh, ls, lH, lS }  (a person and a pole, with sun rays)
+  // mirror: { mode: 'mirror', h, d1, d2, H, lh, l1, l2, lH, barn, lb } (eye height, mirror, the tall object, a barn beside it)
+  function scene(A, p, V, H) {
+    const yG = H - 46 - (p.foot ? 24 : 0), Tx = (x, y, s, c, an, a) => lab(A, x, y, qtext(s, null, V), s === '?' ? qcol('?', V, c) : c, Object.assign({ 'font-size': 16, 'text-anchor': an || 'middle' }, a || {}));
+    const ground = (x1, x2) => A.el('line', { x1, x2, y1: yG, y2: yG, stroke: C.green, 'stroke-width': 3 }, A.svg);
+    const person = (x, hp) => { A.el('line', { x1: x, x2: x, y1: yG, y2: yG - hp + 12, stroke: C.gold, 'stroke-width': 8, 'stroke-linecap': 'round' }, A.svg); A.el('circle', { cx: x, cy: yG - hp + 6, r: 7, fill: C.gold }, A.svg); };
+    if (p.mode === 'shadow') {
+      const gap = Math.max(p.s, p.S) * .35, tot = p.s + gap + p.S, k = Math.min((H - 96) / p.H, 520 / tot), x0 = 320 - tot * k / 2 + 10, x1 = x0 + (p.s + gap) * k;
+      ground(x0 - 40, x1 + p.S * k + 30);
+      [[x0, p.h, p.s, p.lh, p.ls], [x1, p.H, p.S, p.lH, p.lS]].forEach(([x, hh, ss, lh, ls], i) => {
+        A.el('line', { x1: x, x2: x + ss * k, y1: yG + 1, y2: yG + 1, stroke: C.muted, 'stroke-width': 8, 'stroke-opacity': .6 }, A.svg);
+        if (i) { A.el('line', { x1: x, x2: x, y1: yG, y2: yG - hh * k, stroke: C.text, 'stroke-width': 5 }, A.svg); A.el('path', { d: 'M' + x + ' ' + (yG - hh * k) + 'h26v14h-26z', fill: C.red }, A.svg); }
+        else person(x, hh * k);
+        A.el('line', { x1: x, y1: yG - hh * k, x2: x + ss * k, y2: yG, stroke: C.yellow, 'stroke-width': 2, 'stroke-dasharray': '7 6' }, A.svg);
+        Tx(x - 14, yG - hh * k / 2, lh, i ? C.blue : C.gold, 'end');
+        Tx(x + ss * k / 2, yG + 22, ls, C.muted);
+      });
+    } else {
+      const tot = p.d1 + p.d2, k = Math.min((H - 110) / Math.max(p.H, p.barn || 0), 400 / tot), x0 = 320 - tot * k / 2 - 25, xm = x0 + p.d1 * k, xe = xm + p.d2 * k, ew = 34;
+      ground(x0 - 30, xe + ew + 110);
+      person(x0, p.h * k);
+      A.el('rect', { x: xe, y: yG - p.H * k, width: ew, height: p.H * k, fill: C.blue, 'fill-opacity': .2, stroke: C.blue, 'stroke-width': 2.5 }, A.svg);
+      if (p.barn) { const bh = p.barn * k; A.el('path', { d: 'M' + (xe + ew + 20) + ' ' + yG + 'v' + -bh * .7 + 'l' + 30 + ' ' + -bh * .3 + 'l30 ' + bh * .3 + 'v' + bh * .7 + 'z', fill: C.red, 'fill-opacity': .2, stroke: C.red, 'stroke-width': 2.5 }, A.svg); Tx(xe + ew + 50, yG - bh - 14, p.lb, C.red); }
+      A.el('path', { d: 'M' + x0 + ' ' + (yG - p.h * k + 6) + 'L' + xm + ' ' + yG + 'L' + xe + ' ' + (yG - p.H * k), fill: 'none', stroke: C.yellow, 'stroke-width': 2, 'stroke-dasharray': '7 6' }, A.svg);
+      A.el('rect', { x: xm - 12, y: yG - 3, width: 24, height: 6, fill: C.teal }, A.svg);
+      Tx(x0 - 14, yG - p.h * k / 2, p.lh, C.gold, 'end');
+      Tx((x0 + xm) / 2, yG + 22, p.l1, C.muted); Tx((xm + xe) / 2, yG + 22, p.l2, C.muted);
+      if (p.lH && on({ s: p.sH }, V)) Tx(xe - 10, yG - p.H * k / 2, p.lH, C.blue, 'end', anim({ s: p.sH }, V));
+    }
+    footer(A, p, V, H - 16);
+  }
+
+  const PIC = { nl, rects, tri, chain, cube, bar, graph, table, flow, shape, circ, solid, pair, scene };
 
   /* ---------- the step chain ---------- */
   function steps(A, it, V, top) {

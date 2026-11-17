@@ -916,7 +916,319 @@ const MODEL = (() => {
     ]
   };
 
-  const TOPICS = { rn: RN, sr: SR, pe: PE, lr: LR, le: LE, po: PO };
+  /* ============ CG · Circle geometry (angles in degrees; lengths from Pythagorean triples) ============ */
+  const DG = x => x + '°';
+  const arc3 = c => ({ A: 270 - c / 2, B: 270 + c / 2, C: 90 + rnd(-30, 30) });    // A, B cut off an arc at the bottom; C on the far side
+  const ang = (v, a, b, o) => Object.assign({ v, a, b }, o || {});
+  const sg = (a, b, o) => Object.assign({ a, b }, o || {});
+  const leg = ([a, b, c]) => pick([[a, b, c], [b, a, c]]);                          // [radius-side, other leg, hypotenuse]
+  const CG = {
+    1: [
+      function cgArena() {
+        const c = 2 * rnd(20, 80), v = c / 2;
+        return mk('cgArena', 1, 'CG3', {
+          story: 'A camera at the centre of a round arena sees an arc of the wall at ' + B(DG(c)) + '. A camera on the wall sees the same arc.',
+          q: 'Wall camera’s angle?', v, unit: '°', cue: 'Inscribed angle = ½ central angle',
+          errs: [[c, 'On the circle: half the centre’s', 0], [2 * c, 'Half the central angle, not double', 0], [180 - c, 'Same arc: half the central', 0]],
+          steps: [['½ central angle', '½ × ' + DG(c) + ' = ' + DG(v)]],
+          pic: { k: 'circ', P: arc3(c), segs: [sg('O', 'A', { c: 'L' }), sg('O', 'B', { c: 'L' }), sg('C', 'A', { c: 'Y' }), sg('C', 'B', { c: 'Y' })], angs: [ang('O', 'A', 'B', { t: DG(c), c: 'L' }), ang('C', 'A', 'B', { q: true })] }
+        });
+      },
+      function cgPond() {
+        const a = rnd(20, 80), v = 2 * a, P = arc3(v);
+        return mk('cgPond', 1, 'CG3', {
+          story: 'From a spot C on the edge of a round pond, two buoys on the edge are ' + B(DG(a)) + ' apart. A fountain sits at the centre O.',
+          q: 'Angle at the fountain?', v, unit: '°', cue: 'Central angle = 2 × inscribed',
+          errs: [[a / 2, 'The centre angle is double', 0], [a, 'Central = 2 × inscribed', 0], [180 - a, 'Double the inscribed angle', 0]],
+          steps: [['2 × inscribed', '2 × ' + DG(a) + ' = ' + DG(v)]],
+          pic: { k: 'circ', P, segs: [sg('O', 'A', { c: 'L' }), sg('O', 'B', { c: 'L' }), sg('C', 'A', { c: 'Y' }), sg('C', 'B', { c: 'Y' })], angs: [ang('C', 'A', 'B', { t: DG(a), c: 'Y' }), ang('O', 'A', 'B', { q: true })] }
+        });
+      },
+      function cgPath() {
+        const a = rnd(20, 60), v = 90 - a, d = 1 / Math.sin(a * Math.PI / 180);
+        return mk('cgPath', 1, 'CG4', {
+          story: 'A straight path from a gate P just touches a round pond at T. It makes a ' + B(DG(a)) + ' angle with the line from P to the centre O.',
+          q: 'Angle TOP?', v, unit: '°', cue: 'Tangent ⟂ radius: 90° at T',
+          errs: [[180 - a, 'Tangent ⟂ radius: 90° at T', 0], [a, 'Triangle angles add to 180°', 0], [90 + a, 'Take ' + a + '° away from 90°', 0]],
+          steps: [['180° − 90° − ∠P', '180° − 90° − ' + DG(a) + ' = ' + DG(v)]],
+          pic: { k: 'circ', P: { T: 90 - a, P: [d, 0] }, segs: [sg('O', 'T', { c: 'L', t: 'radius' }), sg('T', 'P', { c: 'Y', t: 'path' }), sg('O', 'P', { c: 'M', dash: true, at: 'b' })], angs: [ang('T', 'O', 'P', { right: true, c: 'M' }), ang('P', 'O', 'T', { t: DG(a), c: 'Y', r: 40 }), ang('O', 'T', 'P', { q: true })] }
+        });
+      }
+    ],
+    2: [
+      function cgCrack() {
+        const [d, h, r] = leg(pick(TRIPLES)), y = -d / r, x = h / r;
+        return mk('cgCrack', 2, 'CG2', {
+          story: 'A round table top has a radius of ' + B(r + ' dm') + '. A straight crack across it (a chord) is ' + B(d + ' dm') + ' from the centre.',
+          q: 'Length of the crack?', v: 2 * h, unit: 'dm', cue: 'Half the chord, then double',
+          errs: [[h, 'That’s half: double it', 1], [R(2 * Math.sqrt(r * r + d * d), 2), 'The radius is the hypotenuse', 0], [2 * (r - d), 'Square, subtract, then √', 0], [r * r - d * d, 'Take the square root', 0]],
+          steps: [['half the chord', '√(' + r + '² − ' + d + '²) = √' + h * h + ' = ' + h + ' dm'], ['× 2', '2 × ' + h + ' = ' + 2 * h + ' dm']],
+          pic: { k: 'circ', P: { A: [-x, y], B: [x, y], M: [0, y] }, hide: ['M'], segs: [sg('A', 'B', { c: 'Y', q: true, at: 'b', off: 38 }), sg('M', 'A', { c: 'N', t: h + ' dm', s: 0, at: 'b' }), sg('O', 'M', { c: 'T', t: d + ' dm', at: 'l', dash: true }), sg('O', 'B', { c: 'L', t: r + ' dm' })], angs: [ang('M', 'O', 'B', { right: true, c: 'M' })] }
+        });
+      },
+      function cgChain() {
+        const [r, t, d] = leg(pick(TRIPLES)), th = Math.acos(r / d) * 180 / Math.PI;
+        return mk('cgChain', 2, 'CG4', {
+          story: 'A straight bike chain runs from point P and just touches a gear of radius ' + B(r + ' cm') + ' at T. P is ' + B(d + ' cm') + ' from the gear’s centre.',
+          q: 'Length of PT?', v: t, unit: 'cm', cue: 'Right angle at T: Pythagoras',
+          errs: [[R(Math.sqrt(d * d + r * r), 2), 'PO is the hypotenuse: subtract', 0], [d * d - r * r, 'Now take the square root', 1], [d - r, 'Square first, then subtract', 0]],
+          steps: [['PT² = PO² − r²', d + '² − ' + r + '² = ' + t * t], ['PT = √', '√' + t * t + ' = ' + t + ' cm']],
+          pic: { k: 'circ', P: { T: th, P: [d / r, 0] }, segs: [sg('O', 'T', { c: 'L', t: r + ' cm' }), sg('O', 'P', { c: 'M', t: d + ' cm', at: 'b' }), sg('T', 'P', { c: 'Y', q: true })], angs: [ang('T', 'O', 'P', { right: true, c: 'M' })] }
+        });
+      },
+      function cgBase() {
+        const x = rnd(25, 70), c = 2 * x, v = 90 - x;
+        return mk('cgBase', 2, 'CG3', {
+          story: 'Points A, B and C are on a circle with centre O. Angle ACB is ' + B(DG(x)) + '. Radii OA and OB make triangle AOB.',
+          q: 'Angle OAB?', v, unit: '°', cue: 'Central angle first, then isosceles',
+          errs: [[c, 'That’s ∠AOB: keep going', 1], [180 - c, 'Split it between two angles', 1], [(180 - x) / 2, 'Central = 2 × inscribed first', 0], [x, 'OA = OB: equal base angles', 1]],
+          steps: [['∠AOB = 2 × ∠ACB', '2 × ' + DG(x) + ' = ' + DG(c)], ['equal base angles', '(180° − ' + DG(c) + ') ÷ 2 = ' + DG(v)]],
+          pic: { k: 'circ', P: arc3(c), segs: [sg('O', 'A', { c: 'L' }), sg('O', 'B', { c: 'L' }), sg('A', 'B', { c: 'W' }), sg('C', 'A', { c: 'Y' }), sg('C', 'B', { c: 'Y' })], angs: [ang('C', 'A', 'B', { t: DG(x), c: 'Y' }), ang('O', 'A', 'B', { t: DG(c), c: 'G', s: 0 }), ang('A', 'B', 'O', { q: true })] }
+        });
+      }
+    ],
+    3: [
+      function cgTunnel() {
+        const [d, h, r] = leg(pick(TRIPLES)), y = -d / r, x = h / r;
+        return mk('cgTunnel', 3, 'CG2', {
+          story: 'A tunnel is a circle of radius ' + B(r + ' dm') + ' with a flat floor below the centre. The floor (a chord) is ' + B(2 * h + ' dm') + ' wide.',
+          q: 'Floor to the top?', v: r + d, unit: 'dm', cue: 'Centre to floor, then add r',
+          errs: [[d, 'Add the radius above the centre', 2], [2 * r, 'The floor cuts off the bottom', 2], [r - d, 'The floor is below the centre', 2], [R(r + Math.sqrt(r * r + h * h), 2), 'The radius is the hypotenuse', 1]],
+          steps: [['half the floor', 2 * h + ' ÷ 2 = ' + h + ' dm'], ['centre to floor', '√(' + r + '² − ' + h + '²) = √' + d * d + ' = ' + d + ' dm'], ['+ radius', d + ' + ' + r + ' = ' + (r + d) + ' dm']],
+          pic: { k: 'circ', P: { A: [-x, y], B: [x, y], M: [0, y], T: 90 }, hide: ['M', 'T'], segs: [sg('A', 'B', { c: 'G', t: 2 * h + ' dm', at: 'b', off: 38 }), sg('M', 'A', { c: 'N', t: h + ' dm', s: 0, at: 'b' }), sg('O', 'B', { c: 'L', t: r + ' dm' }), sg('M', 'O', { c: 'T', t: d + ' dm', s: 1, at: 'l' }), sg('O', 'T', { c: 'Y', q: true, at: 'r', dash: true })], angs: [ang('M', 'O', 'B', { right: true, c: 'M', s: 1 })] }
+        });
+      },
+      function cgTangents() {
+        const a = 2 * rnd(15, 50), o = 180 - a, v = o / 2, th = 90 - a / 2, d = 1 / Math.sin(a / 2 * Math.PI / 180);
+        return mk('cgTangents', 3, 'CG3', {
+          story: 'Two tangents from P touch a circle (centre O) at A and B. Angle APB is ' + B(DG(a)) + '. C is on the far side of the circle.',
+          q: 'Angle ACB?', v, unit: '°', cue: 'Right angles, ∠AOB, then half',
+          errs: [[o, 'That’s ∠AOB: now halve it', 2], [a / 2, 'Use ∠AOB, not ∠APB', 1], [(270 - a) / 2, 'Right angles at A and B', 0], [a, 'Find ∠AOB in the kite first', 1]],
+          steps: [['∠OAP = ∠OBP', '90° (tangent ⟂ radius)'], ['∠AOB', '360° − 90° − 90° − ' + DG(a) + ' = ' + DG(o)], ['½ × ∠AOB', '½ × ' + DG(o) + ' = ' + DG(v)]],
+          pic: { k: 'circ', P: { A: th, B: -th, P: [d, 0], C: 180 + rnd(-25, 25) }, segs: [sg('O', 'A', { c: 'L' }), sg('O', 'B', { c: 'L' }), sg('P', 'A', { c: 'W' }), sg('P', 'B', { c: 'W' }), sg('C', 'A', { c: 'Y' }), sg('C', 'B', { c: 'Y' })], angs: [ang('A', 'O', 'P', { right: true, c: 'M', s: 0 }), ang('B', 'O', 'P', { right: true, c: 'M', s: 0 }), ang('P', 'A', 'B', { t: DG(a), c: 'W', r: 36 }), ang('O', 'A', 'B', { t: DG(o), c: 'G', s: 1 }), ang('C', 'A', 'B', { q: true, r: 40 })] }
+        });
+      },
+      function cgKite() {
+        const [r, t, d] = leg(pick(TRIPLES)), th = Math.acos(r / d) * 180 / Math.PI, v = 2 * t + 2 * r;
+        return mk('cgKite', 3, 'CG4', {
+          story: 'From P, two tangents touch a circle at A and B. The circle has centre O and radius ' + B(r + ' cm') + '. P is ' + B(d + ' cm') + ' from O.',
+          q: 'Perimeter of PAOB?', v, unit: 'cm', cue: 'Two tangents plus two radii',
+          errs: [[t + r, 'The kite has four sides', 2], [2 * t, 'Add the two radii too', 2], [2 * d + 2 * r, 'PA is a tangent, not PO', 0], [2 * t + r, 'OA and OB: two radii', 2]],
+          steps: [['PA = √(PO² − r²)', '√(' + d + '² − ' + r + '²) = √' + t * t + ' = ' + t + ' cm'], ['equal tangents', 'PB = PA = ' + t + ', OA = OB = ' + r], ['perimeter', '2(' + t + ') + 2(' + r + ') = ' + v + ' cm']],
+          pic: { k: 'circ', P: { A: th, B: -th, P: [d / r, 0] }, foot: '?', footl: 'perimeter =', segs: [sg('O', 'A', { c: 'L', t: r + ' cm' }), sg('O', 'B', { c: 'L', t: r, ts: 1 }), sg('O', 'P', { c: 'M', dash: true, t: d + ' cm', at: 'b' }), sg('P', 'A', { c: 'Y', t: t + ' cm', ts: 0 }), sg('P', 'B', { c: 'Y', t: String(t), ts: 1 })], angs: [ang('A', 'O', 'P', { right: true, c: 'M' }), ang('B', 'O', 'P', { right: true, c: 'M' })] }
+        });
+      }
+    ]
+  };
+
+  /* ============ ME · Surface area and volume (π answers accepted to 0.2 %, so 3.14 and rounding both pass) ============ */
+  const PI = Math.PI, piT = v => Math.max(.06, Math.abs(v) * .002);
+  const dp1 = v => Math.abs(v % 1) < 1e-9 ? 0 : Math.abs(R(v, 1) - v) < 1e-9 ? 1 : 2;   // as many decimal places as the answer has (up to 2)
+  const ME = {
+    1: [
+      function meTank() {
+        const r = rnd(2, 9), h = rnd(5, 20), V = PI * r * r * h;
+        return mk('meTank', 1, 'ME3', {
+          story: 'A cylindrical water tank has a radius of ' + B(r + ' m') + ' and a height of ' + B(h + ' m') + '.',
+          q: 'Volume of the tank?', v: V, dp: 1, tol: piT(V), unit: 'm³', cue: 'V = πr²h',
+          errs: [[2 * PI * r * h, 'The base is a circle: πr²', 0], [PI * r * h, 'Square the radius', 0], [V / 3, 'No ⅓ for a cylinder', 0], [PI * 4 * r * r * h, 'r is the radius already', 0]],
+          steps: [['V = πr²h', 'π(' + r + ')²(' + h + ') ≈ ' + F(V, 1) + ' m³']],
+          pic: { k: 'solid', parts: [{ k: 'cyl', r, h, lab: { r: r + ' m', h: h + ' m' } }], foot: '?', footl: 'V =' }
+        });
+      },
+      function meCone() {
+        const r = rnd(2, 5), h = rnd(8, 14), l = R(Math.sqrt(r * r + h * h), 1), V = PI * r * r * h / 3;
+        return mk('meCone', 1, 'ME4', {
+          story: 'A paper snow-cone cup has a radius of ' + B(r + ' cm') + ', a height of ' + B(h + ' cm') + ' and a slant height of ' + B(F(l, 1) + ' cm') + '.',
+          q: 'Volume of the cup?', v: V, dp: 1, tol: piT(V), unit: 'cm³', cue: 'V = ⅓πr²h',
+          errs: [[PI * r * r * h, 'Cone: ⅓ of the cylinder', 0], [PI * r * r * l / 3, 'Use the height, not the slant', 0], [PI * r * h / 3, 'Square the radius', 0]],
+          steps: [['V = ⅓πr²h', '⅓π(' + r + ')²(' + h + ') ≈ ' + F(V, 1) + ' cm³']],
+          pic: { k: 'solid', parts: [{ k: 'cone', r, h, lab: { r: r + ' cm', h: h + ' cm', l: F(l, 1) + ' cm' } }], foot: '?', footl: 'V =' }
+        });
+      },
+      function meBall() {
+        const r = rnd(2, 12), A = 4 * PI * r * r;
+        return mk('meBall', 1, 'ME4', {
+          story: 'A spherical exercise ball has a radius of ' + B(r + ' dm') + '. It needs a new cover.',
+          q: 'Area of the cover?', v: A, dp: 1, tol: piT(A), unit: 'dm²', cue: 'SA = 4πr²',
+          errs: [[4 / 3 * PI * r * r * r, 'That’s volume: SA is 4πr²', 0], [PI * r * r, 'A sphere is four circles: 4πr²', 0], [4 * PI * r, 'Square the radius', 0]],
+          steps: [['SA = 4πr²', '4π(' + r + ')² ≈ ' + F(A, 1) + ' dm²']],
+          pic: { k: 'solid', parts: [{ k: 'sphere', r, lab: { r: r + ' dm' } }], foot: '?', footl: 'SA =' }
+        });
+      }
+    ],
+    2: [
+      function meBeach() {
+        const d = 2 * rnd(3, 15), r = d / 2, V = 4 / 3 * PI * r * r * r, what = pick(['A beach ball', 'A rubber ball', 'A glass globe']);
+        return mk('meBeach', 2, 'ME4', {
+          story: what + ' has a diameter of ' + B(d + ' cm') + '.',
+          q: 'Volume of the ball?', v: V, dp: 1, tol: piT(V), unit: 'cm³', cue: 'Radius first, then ⁴⁄₃πr³',
+          errs: [[4 / 3 * PI * d * d * d, 'Use r, half of d', 0], [4 * PI * r * r, 'That’s surface area: ⁴⁄₃πr³', 1], [PI * r * r * r, 'Don’t forget the ⁴⁄₃', 1]],
+          steps: [['r = d ÷ 2', d + ' ÷ 2 = ' + r + ' cm'], ['V = ⁴⁄₃πr³', '⁴⁄₃π(' + r + ')³ ≈ ' + F(V, 1) + ' cm³']],
+          pic: { k: 'solid', parts: [{ k: 'sphere', r, lab: { d: d + ' cm' } }], foot: '?', footl: 'V =' }
+        });
+      },
+      function meLabel() {
+        const d = rnd(6, 12), h = rnd(9, 16), r = d / 2, A = PI * d * h;
+        return mk('meLabel', 2, 'ME2', {
+          story: 'A soup can has a diameter of ' + B(d + ' cm') + ' and a height of ' + B(h + ' cm') + '. The label wraps around the side, not the top or bottom.',
+          q: 'Area of the label?', v: A, dp: 1, tol: piT(A), unit: 'cm²', cue: 'Radius, then the side: 2πrh',
+          errs: [[2 * PI * d * h, 'Use r, half of d', 0], [PI * r * r * h, 'Area of the side: 2πrh', 1], [A + 2 * PI * r * r, 'Only the side: no lids', 1]],
+          steps: [['r = d ÷ 2', d + ' ÷ 2 = ' + F(r) + ' cm'], ['side = 2πrh', '2π(' + F(r) + ')(' + h + ') ≈ ' + F(A, 1) + ' cm²']],
+          pic: { k: 'solid', parts: [{ k: 'cyl', r, h, wrap: true, c: 'G', lab: { d: d + ' cm', h: h + ' cm' } }], foot: '?', footl: 'label =' }
+        });
+      },
+      function meTent() {
+        for (;;) {
+          const s = 2 * rnd(2, 6), l = rnd(s / 2 + 2, s + 3), hh = R(Math.sqrt(l * l - s * s / 4), 1), A = s * s + 2 * s * l;
+          if (hh % 1 === 0) continue;                                                // the height and the slant should look different
+          return mk('meTent', 2, 'ME4', {
+            story: 'A square-based pyramid tent is ' + B(s + ' m') + ' on each side and ' + B(F(hh, 1) + ' m') + ' tall. Each face has a slant height of ' + B(l + ' m') + '. It has a floor.',
+            q: 'Fabric needed?', v: A, unit: 'm²', cue: 'Four triangles plus the floor',
+            errs: [[2 * s * l, 'Add the floor', 1], [s * s + 4 * s * l, 'Triangle: ½ base × slant', 0], [R(s * s + 2 * s * hh, 2), 'Use the slant height', 0], [s * s + s * l / 2, 'There are four triangles', 0]],
+            steps: [['4 triangles', '4 × ½ × ' + s + ' × ' + l + ' = ' + 2 * s * l + ' m²'], ['+ floor', 2 * s * l + ' + ' + s + ' × ' + s + ' = ' + A + ' m²']],
+            pic: { k: 'solid', parts: [{ k: 'pyr', w: s, h: hh, c: 'N', lab: { w: s + ' m', h: F(hh, 1) + ' m', l: l + ' m' } }], foot: '?', footl: 'SA =' }
+          });
+        }
+      }
+    ],
+    3: [
+      function meElevator() {
+        const s = rnd(6, 12), h = rnd(15, 30), p = 3 * rnd(1, 4), Vb = s * s * h, Vp = s * s * p / 3, V = Vb + Vp;
+        return mk('meElevator', 3, 'ME5', {
+          story: 'A model grain elevator is a square prism ' + B(s + ' m') + ' by ' + B(s + ' m') + ' and ' + B(h + ' m') + ' tall, with a square pyramid roof ' + B(p + ' m') + ' tall.',
+          q: 'Total volume?', v: V, unit: 'm³', cue: 'Prism plus ⅓ base × height',
+          errs: [[Vb, 'Add the roof', 2], [Vb + s * s * p, 'Pyramid: ⅓ of the prism', 1], [Vp, 'Add the prism too', 2], [s * s * (h + p) / 3, 'Only the roof gets ⅓', 1]],
+          steps: [['prism', s + ' × ' + s + ' × ' + h + ' = ' + N(Vb) + ' m³'], ['pyramid roof', '⅓ × ' + s * s + ' × ' + p + ' = ' + N(Vp) + ' m³'], ['total', N(Vb) + ' + ' + N(Vp) + ' = ' + N(V) + ' m³']],
+          pic: { k: 'solid', parts: [{ k: 'box', w: s, h, lab: { w: s + ' m', h: h + ' m' } }, { k: 'pyr', w: s, h: p, c: 'G', s: 1, lab: { h: p + ' m' } }], foot: '?', footl: 'V =' }
+        });
+      },
+      function meSilo() {
+        const r = rnd(2, 5), h = rnd(8, 20), Vc = R(PI * r * r * h, 1), Vh = R(2 / 3 * PI * r * r * r, 1), V = R(Vc + Vh, 1);
+        return mk('meSilo', 3, 'ME5', {
+          story: 'A farm silo is a cylinder with a radius of ' + B(r + ' m') + ' and a height of ' + B(h + ' m') + ', with a half-sphere roof on top.',
+          q: 'Total volume?', v: V, dp: 1, tol: piT(V), unit: 'm³', cue: 'Cylinder + half of ⁴⁄₃πr³',
+          errs: [[Vc + 4 / 3 * PI * r * r * r, 'The roof is half a sphere', 1], [Vc, 'Add the roof', 2], [Vh, 'Add the cylinder too', 2], [Vc + 2 * PI * r * r, 'Roof volume: ½ × ⁴⁄₃πr³', 1]],
+          steps: [['cylinder', 'π(' + r + ')²(' + h + ') ≈ ' + F(Vc, 1) + ' m³'], ['half sphere', '½ × ⁴⁄₃π(' + r + ')³ ≈ ' + F(Vh, 1) + ' m³'], ['total', F(Vc, 1) + ' + ' + F(Vh, 1) + ' = ' + F(V, 1) + ' m³']],
+          pic: { k: 'solid', parts: [{ k: 'cyl', r, h, lab: { r: r + ' m', h: h + ' m' } }, { k: 'hemi', r, c: 'G', s: 1 }], foot: '?', footl: 'V =' }
+        });
+      },
+      function meBarrel() {
+        const r = pick([0.5, 0.6, 0.8, 1, 1.2]), h = pick([1, 1.2, 1.5, 2]), rate = pick([20, 25, 40, 50, 80]), V = PI * r * r * h, L = V * 1000, t = L / rate;
+        return mk('meBarrel', 3, 'ME3', {
+          story: 'A rain tank is a cylinder ' + B(F(r) + ' m') + ' in radius and ' + B(F(h) + ' m') + ' tall. A hose fills it at ' + B(rate + ' L') + ' a minute.',
+          q: 'Minutes to fill?', v: t, dp: 1, tol: piT(t), unit: 'min', cue: 'Volume, litres, then ÷ rate',
+          errs: [[V / rate, 'Change m³ to litres first', 1], [L, 'Now divide by the rate', 2], [2 * PI * r * h * 1000 / rate, 'Volume is πr²h', 0], [V * 100 / rate, '1 m³ is 1000 L', 1]],
+          steps: [['V = πr²h', 'π(' + F(r) + ')²(' + F(h) + ') ≈ ' + F(V, 3) + ' m³'], ['litres', F(V, 3) + ' × 1000 ≈ ' + N(L) + ' L'], ['÷ rate', N(L) + ' ÷ ' + rate + ' ≈ ' + F(t, 1) + ' min']],
+          pic: { k: 'solid', parts: [{ k: 'cyl', r, h, lab: { r: F(r) + ' m', h: F(h) + ' m' } }], note: 'hose: ' + rate + ' L/min   ·   1 m³ = 1000 L', foot: '?', footl: 'time =' }
+        });
+      }
+    ]
+  };
+
+  /* ============ SI · Similarity and scale ============ */
+  // A triangle from its three sides: side i joins point i and i + 1 (c along the bottom, then a, then b).
+  const triPts = (a, b, c) => { const x = (b * b - a * a + c * c) / (2 * c); return [[0, 0], [c, 0], [x, Math.sqrt(Math.max(0, b * b - x * x))]]; };
+  const SI = {
+    1: [
+      function siMap() {
+        const k = pick([5, 10, 20, 25, 50]), d = rnd(15, 120) / 10, v = R(d * k, 1);
+        return mk('siMap', 1, 'SI4', {
+          story: 'On a map of Alberta, ' + B('1 cm') + ' stands for ' + B(k + ' km') + '. Two towns are ' + B(F(d, 1) + ' cm') + ' apart on the map.',
+          q: 'Real distance?', v, dp: dp1(v), unit: 'km', cue: 'Map distance × the scale',
+          errs: [[R(d / k, 3), 'Map to real: multiply', 0], [R(d + k, 1), 'Multiply, don’t add', 0]],
+          steps: [['map × scale', F(d, 1) + ' × ' + k + ' = ' + F(v) + ' km']],
+          pic: { k: 'flow', noundo: true, boxes: [{ t: F(d, 1) + ' cm' }, { t: '?', q: true }], ops: ['× ' + k], inv: [] }
+        });
+      },
+      function siPhoto() {
+        const w = rnd(4, 15), k = pick([1.5, 2, 2.5, 3, 4]), v = w * k, h0 = .7;
+        return mk('siPhoto', 1, 'SI1', {
+          story: 'A photo ' + B(w + ' cm') + ' wide is enlarged by a scale factor of ' + B(F(k)) + '.',
+          q: 'New width?', v, dp: dp1(v), unit: 'cm', cue: 'Scale factor × original width',
+          errs: [[w + k, 'Multiply by the scale factor', 0], [R(w / k, 3), 'Enlarging: multiply', 0], [w * k * k, 'Lengths: × k once', 0]],
+          steps: [['k × width', F(k) + ' × ' + w + ' = ' + F(v) + ' cm']],
+          pic: { k: 'rects', rs: [{ x: 0, y: (k - 1) * h0, w: 1, h: h0, c: 'L', t: 'photo', tw: w + ' cm' }, { x: 1.35, y: 0, w: k, h: k * h0, c: 'N', t: '× ' + F(k), tw: '?' }] }
+        });
+      },
+      function siCanoe() {
+        const n = pick([5, 10, 20, 25, 50]), m = rnd(2, 6), real = m * n, v = 1 / n;
+        return mk('siCanoe', 1, 'SI1', {
+          story: 'A real canoe is ' + B(real + ' dm') + ' long. A model of it is ' + B(m + ' dm') + ' long.',
+          q: 'Scale factor to model?', v, dp: 2, tol: .0011, unit: '', ans: F(v), cue: 'Model ÷ real',
+          errs: [[n, 'Model ÷ real, not flipped', 0], [real - m, 'Divide, don’t subtract', 0]],
+          steps: [['k = model ÷ real', m + ' ÷ ' + real + ' = 1/' + n + ' = ' + F(v)]],
+          pic: { k: 'bar', rows: [{ t: 'real canoe', segs: [{ v: real, t: real + ' dm', c: 'L' }] }, { t: 'model', segs: [{ v: m, t: m + ' dm', c: 'Y' }], brace: '?' }] }
+        });
+      }
+    ],
+    2: [
+      function siShadow() {
+        const [h, s] = pick([[1.5, 2], [1.6, 2], [1.8, 1.2], [1.5, 2.5], [1.6, 1.2], [1.8, 2.4]]), k = rnd(4, 12), S = R(s * k, 2), H = R(h * k, 2);
+        return mk('siShadow', 2, 'SI4', {
+          story: 'A ' + B(F(h) + ' m') + ' tall student casts a ' + B(F(s) + ' m') + ' shadow. At the same time, a flagpole casts a ' + B(F(S) + ' m') + ' shadow.',
+          q: 'Height of the flagpole?', v: H, dp: dp1(H), unit: 'm', cue: 'Shadow ratio, then × height',
+          errs: [[k, 'That’s k: now × the height', 1], [R(h + S - s, 2), 'Multiply, don’t add', 0], [R(s * S / h, 2), 'Match height to height', 0]],
+          steps: [['scale factor', F(S) + ' ÷ ' + F(s) + ' = ' + k], ['flagpole', F(h) + ' × ' + k + ' = ' + F(H) + ' m']],
+          pic: { k: 'scene', mode: 'shadow', h, s, H, S, lh: F(h) + ' m', ls: F(s) + ' m', lH: '?', lS: F(S) + ' m' }
+        });
+      },
+      function siTri() {
+        const [a, b, c] = pick([[6, 8, 10], [5, 12, 13], [9, 12, 15], [4, 6, 7], [3, 5, 7], [5, 7, 9]]), k = pick([1.5, 2.5, 3, 4]), C2 = c * k, v = a * k;
+        return mk('siTri', 2, 'SI2', {
+          story: 'A triangle has sides ' + B(a + ' cm') + ', ' + B(b + ' cm') + ' and ' + B(c + ' cm') + '. A similar triangle has a longest side of ' + B(F(C2) + ' cm') + '.',
+          q: 'Its shortest side?', v, dp: dp1(v), unit: 'cm', cue: 'Longest sides give k',
+          errs: [[k, 'That’s k: now × the shortest', 1], [a + C2 - c, 'Multiply, don’t add', 0], [b * k, 'Shortest matches shortest', 1], [R(a * c / C2, 3), 'k = new ÷ old', 0]],
+          steps: [['scale factor', F(C2) + ' ÷ ' + c + ' = ' + F(k)], ['shortest side', a + ' × ' + F(k) + ' = ' + F(v) + ' cm']],
+          pic: { k: 'pair', pts: triPts(a, b, c), f: Math.min(k, 2.2), cs: ['G', 'Y', 'T'], la: [{ t: String(c) }, { t: String(a) }, { t: String(b) }], lb: [{ t: F(C2) }, { t: '?', q: true }, {}] }
+        });
+      },
+      function siTruck() {
+        const sc = pick([20, 24, 25, 40, 50]), real = rnd(30, 60) / 10, cm = R(real * 100, 0), v = R(cm / sc, 3);
+        return mk('siTruck', 2, 'SI4', {
+          story: 'A model truck is built at a scale of ' + B('1 : ' + sc) + '. The real truck is ' + B(F(real, 1) + ' m') + ' long.',
+          q: 'Model length?', v, dp: 2, tol: .051, unit: 'cm', ans: F(R(v, 2)), cue: 'Metres to cm, then ÷ scale',
+          errs: [[R(real / sc, 4), 'Change m to cm first', 0], [cm * sc, 'A model is smaller: divide', 1], [real * sc, 'Divide by the scale', 1]],
+          steps: [['m → cm', F(real, 1) + ' m = ' + cm + ' cm'], ['÷ scale', cm + ' ÷ ' + sc + ' = ' + F(R(v, 2)) + ' cm']],
+          pic: { k: 'flow', noundo: true, boxes: [{ t: F(real, 1) + ' m' }, { t: cm + ' cm', s: 0 }, { t: '?', q: true }], ops: ['× 100', '÷ ' + sc], inv: [] }
+        });
+      }
+    ],
+    3: [
+      function siPlan() {
+        const s = pick([50, 100, 200]), l = rnd(4, 12), w = rnd(3, l), L = l * s / 100, W = w * s / 100, A = R(L * W, 2);
+        return mk('siPlan', 3, 'SI4', {
+          story: 'A house plan uses a scale of ' + B('1 : ' + s) + '. A bedroom is ' + B(l + ' cm') + ' by ' + B(w + ' cm') + ' on the plan.',
+          q: 'Real area in m²?', v: A, dp: A % 1 ? 2 : 0, unit: 'm²', cue: 'Scale each side, then multiply',
+          errs: [[l * w, 'Scale the plan first', 0], [R(l * w * s / 10000, 3), 'Scale both length and width', 2], [l * s * w * s, 'Change cm to m first', 0]],
+          steps: [['real length', l + ' × ' + s + ' = ' + l * s + ' cm = ' + F(L) + ' m'], ['real width', w + ' × ' + s + ' = ' + w * s + ' cm = ' + F(W) + ' m'], ['area', F(L) + ' × ' + F(W) + ' = ' + F(A) + ' m²']],
+          pic: { k: 'rects', foot: 'plan, scale 1 : ' + s, rs: [{ x: 0, y: 0, w: l, h: w, c: 'L', t: '?', tw: l + ' cm', lh: w + ' cm' }] }
+        });
+      },
+      function siSod() {
+        const k = pick([2, 3, 4]), a = rnd(6, 20), c = pick([4, 5, 6.5, 8]), A = a * k * k, cost = R(A * c, 2);
+        return mk('siSod', 3, 'SI2', {
+          story: 'Two rectangular gardens are similar. The small one has an area of ' + B(a + ' m²') + '. The large one’s sides are ' + B(k + ' times') + ' as long. Sod costs ' + B($(c)) + ' per m².',
+          q: 'Cost to sod it?', v: cost, dp: cost % 1 ? 2 : 0, pre: '$', cue: 'Area grows by k²',
+          errs: [[R(a * k * c, 2), 'Area grows by k², not k', 0], [R(a * c, 2), 'Sod the large garden', 1], [A, 'Now times the price', 2]],
+          steps: [['area factor', k + '² = ' + k * k], ['large area', a + ' × ' + k * k + ' = ' + A + ' m²'], ['cost', A + ' × ' + $(c) + ' = ' + $(cost)]],
+          pic: { k: 'rects', foot: $(c) + ' per m²', rs: [{ x: 0, y: (k - 1), w: 1.4, h: 1, c: 'T', t: a + ' m²' }, { x: 1.9, y: 0, w: 1.4 * k, h: k, c: 'N', t: '?', td: A + ' m²', tw: '× ' + k + ' each side' }] }
+        });
+      },
+      function siMirror() {
+        const h = pick([1.5, 1.6, 1.8]), d1 = pick([1.5, 2, 2.5, 3]), k = rnd(5, 12), d2 = R(d1 * k, 1), H = R(h * k, 1), barn = rnd(4, 8), v = R(H - barn, 1);
+        return mk('siMirror', 3, 'SI4', {
+          story: 'Your eyes are ' + B(F(h) + ' m') + ' up. A mirror on the ground ' + B(F(d1) + ' m') + ' away shows the top of a grain elevator ' + B(F(d2) + ' m') + ' past it. A barn is ' + B(barn + ' m') + ' tall.',
+          q: 'Taller than the barn?', v, dp: dp1(v), unit: 'm', cue: 'k, the height, then compare',
+          errs: [[H, 'Now compare with the barn', 2], [k, 'That’s k: now × eye height', 1], [R(H + barn, 1), 'How much taller: subtract', 2], [R(h + d2 - d1 - barn, 2), 'Multiply by k, don’t add', 0]],
+          steps: [['scale factor', F(d2) + ' ÷ ' + F(d1) + ' = ' + k], ['elevator', F(h) + ' × ' + k + ' = ' + F(H) + ' m'], ['− barn', F(H) + ' − ' + barn + ' = ' + F(v) + ' m']],
+          pic: { k: 'scene', mode: 'mirror', h, d1, d2, H, barn, lh: F(h) + ' m', l1: F(d1) + ' m', l2: F(d2) + ' m', lH: F(H) + ' m', sH: 1, lb: barn + ' m', foot: '?', footl: 'taller by' }
+        });
+      }
+    ]
+  };
+
+  const TOPICS = { rn: RN, sr: SR, pe: PE, lr: LR, le: LE, po: PO, cg: CG, me: ME, si: SI };
   const lvlAt = n => n == null ? rnd(1, 3) : n < 3 ? 1 : n < 7 ? 2 : 3;   // a round: 3 one-step, 4 two-step, 3 three-step
   const gen = (topic, n) => pick(TOPICS[topic][lvlAt(n)])();
   const genMix = n => { const t = pick(Object.keys(TOPICS)); return Object.assign(gen(t, n), { topic: t }); };
@@ -1293,7 +1605,9 @@ const DRILL = (() => {
    A picture part may carry s (the step it belongs to: hidden until solved) and q (the unknown: '?' until solved).
    Pictures: nl (number line), bar, rects (rectangles, area models; foot = a label under them), tri (right triangle
    in a scene), chain (repeated × or ÷), cube, graph (lines, points, rise/run, a reading), table (values with their
-   changes), flow (operations, with the undo arrows underneath), shape (a polygon with labelled sides).
+   changes), flow (operations, with the undo arrows underneath; noundo for a plain chain), shape (a polygon with labelled
+   sides), circ (a circle with chords, tangents and angles), solid (cylinders, cones, spheres, prisms, pyramids, stacked),
+   pair (two similar triangles), scene (shadows, or a mirror on the ground).
    An item with poly (Algebra: polynomial answers) gets coefficient boxes instead of one answer box. */
 const WP = (() => {
   const { C } = DRILL;
@@ -1312,7 +1626,7 @@ const WP = (() => {
   const hot = (e, V) => V.phase === 'wrong' && V.res && e.s != null && V.res.s === e.s;
   const anim = (e, V) => e.s != null && done(V) && V.anim ? { class: 'fade', style: 'animation-delay:' + (e.s * DLY + .15) + 's' } : {};
   // A label that may be the unknown: '?' until solved, then the answer (or its own solved text d).
-  function qtext(s, d, V) { if (done(V) && d != null) return d; if (s !== '?') return s; return done(V) ? (ITEM.pre || '') + ITEM.ans + (ITEM.unit ? ' ' + ITEM.unit : '') : '?'; }
+  function qtext(s, d, V) { if (done(V) && d != null) return d; if (s !== '?') return s; return done(V) ? (ITEM.pre || '') + ITEM.ans + (ITEM.unit ? (ITEM.unit === '°' ? '' : ' ') + ITEM.unit : '') : '?'; }
   const qcol = (s, V, c) => s === '?' ? (done(V) ? C.green : C.yellow) : c;
 
   /* ---------- number line (horizontal, or vertical for depth) ---------- */
@@ -1554,7 +1868,7 @@ const WP = (() => {
         }
       }
     });
-    lab(A, 320, y + 108, done(V) ? 'undo in reverse order' : '', C.muted, { 'font-size': 15 });
+    lab(A, 320, y + 108, done(V) && !p.noundo ? 'undo in reverse order' : '', C.muted, { 'font-size': 15 });
   }
 
   /* ---------- a polygon with labelled sides (units: x right, y down) ---------- */
@@ -1573,7 +1887,181 @@ const WP = (() => {
     if (p.q) lab(A, cx, cy, qtext('?', null, V), qcol('?', V, C.yellow), { 'font-size': 18 });
   }
 
-  const PIC = { nl, rects, tri, chain, cube, bar, graph, table, flow, shape };
+  // A caption under a picture: footl, then foot ('?' becomes the answer when solved).
+  function footer(A, p, V, y) { if (p.foot) lab(A, 320, y, (p.footl ? p.footl + ' ' : '') + qtext(p.foot, p.footd, V), qcol(p.foot, V, C.muted), { 'font-size': 18 }); }
+  // A small note in the top-left corner (a rate, a conversion).
+  function note(A, p) { if (p.note) lab(A, 18, 16, p.note, C.muted, { 'font-size': 15, 'text-anchor': 'start' }); }
+
+  /* ---------- a circle with points, segments and angles (units: radius 1, y up) ---------- */
+  // p: { P: {A: 200 (degrees round the circle) or [x, y]}, segs: [{a, b, t, c, s, ts (step that shows the label), q, d, dash, at: l|r|a|b}],
+  //      angs: [{v, a, b, t, c, s, q, d, right}] (off: a segment label's distance from its line), hide: ['M'] (no letter), foot, footl }
+  function circ(A, p, V, H) {
+    const P = { O: [0, 0] };
+    for (const n in p.P) { const v = p.P[n]; P[n] = typeof v === 'number' ? [Math.cos(v * Math.PI / 180), Math.sin(v * Math.PI / 180)] : v; }
+    const xs = [-1, 1], ys = [-1, 1]; for (const n in P) { xs.push(P[n][0]); ys.push(P[n][1]); }
+    const X0 = Math.min(...xs), X1 = Math.max(...xs), Y0 = Math.min(...ys), Y1 = Math.max(...ys), fh = p.foot ? 30 : 0;
+    const k = Math.min(500 / (X1 - X0), (H - 64 - fh) / (Y1 - Y0)), ox = 320 - (X0 + X1) / 2 * k, oy = (H - fh) / 2 + 2 + (Y0 + Y1) / 2 * k;
+    const S = n => [ox + P[n][0] * k, oy - P[n][1] * k], [cx, cy] = S('O');
+    A.el('circle', { cx, cy, r: k, fill: C.blue, 'fill-opacity': .06, stroke: C.blue, 'stroke-width': 3 }, A.svg);
+    (p.angs || []).forEach(g => {
+      if (!on(g, V)) return;
+      const [vx, vy] = S(g.v), [ax, ay] = S(g.a), [bx, by] = S(g.b), ta = Math.atan2(ay - vy, ax - vx);
+      let d = Math.atan2(by - vy, bx - vx) - ta; while (d > Math.PI) d -= 2 * Math.PI; while (d <= -Math.PI) d += 2 * Math.PI;
+      const hc = hot(g, V), c = hc ? C.red : g.q ? qcol('?', V, C.yellow) : col(g.c || 'G'), a = anim(g, V), u = t => [Math.cos(t), Math.sin(t)];
+      const r = g.right ? 15 : g.r || 30, u1 = u(ta), u2 = u(ta + d), p1 = [vx + r * u1[0], vy + r * u1[1]], p2 = [vx + r * u2[0], vy + r * u2[1]];
+      if (g.right) A.el('path', Object.assign({ d: 'M' + p1.join(' ') + 'L' + (p1[0] + r * u2[0]) + ' ' + (p1[1] + r * u2[1]) + 'L' + p2.join(' '), fill: 'none', stroke: c, 'stroke-width': 2.5 }, a), A.svg);
+      else A.el('path', Object.assign({ d: 'M' + vx + ' ' + vy + 'L' + p1.join(' ') + 'A' + r + ' ' + r + ' 0 0 ' + (d > 0 ? 1 : 0) + ' ' + p2.join(' ') + 'z', fill: c, 'fill-opacity': .22, stroke: c, 'stroke-width': 2 }, a), A.svg);
+      const t = g.q ? qtext('?', g.d, V) : g.t, ub = u(ta + d / 2), rl = r + (g.right ? 16 : 22);
+      if (t) lab(A, vx + rl * ub[0], vy + rl * ub[1], t, c, Object.assign({ 'font-size': 16 }, a));
+    });
+    (p.segs || []).forEach(g => {
+      if (!on(g, V)) return;
+      const [x1, y1] = S(g.a), [x2, y2] = S(g.b), hc = hot(g, V) || hot({ s: g.ts }, V), c = hc ? C.red : col(g.c || 'W'), a = anim(g, V);
+      A.el('line', Object.assign({ x1, y1, x2, y2, stroke: c, 'stroke-width': 3, 'stroke-dasharray': g.dash || hc ? '8 6' : null, 'stroke-linecap': 'round' }, a), A.svg);
+      const t = g.q ? qtext('?', g.d, V) : g.t; if (!t || !on({ s: g.ts }, V)) return;
+      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, L = Math.hypot(x2 - x1, y2 - y1) || 1, D = { l: [-1, 0], r: [1, 0], a: [0, -1], b: [0, 1] }[g.at];
+      let nx = -(y2 - y1) / L, ny = (x2 - x1) / L; const dot = nx * (mx - cx) + ny * (my - cy);
+      if (D) { nx = D[0]; ny = D[1]; } else if (dot < -1e-6 || (Math.abs(dot) <= 1e-6 && ny > 0)) { nx = -nx; ny = -ny; }
+      const off = g.off || 15;
+      lab(A, mx + nx * off, my + ny * off, t, g.q ? qcol('?', V, c) : c, Object.assign({ 'font-size': 16, 'text-anchor': nx > .45 ? 'start' : nx < -.45 ? 'end' : 'middle' }, g.ts != null ? anim({ s: g.ts }, V) : a));
+    });
+    // O's letter goes on the side away from the other points (out of the angle wedges); the rest go outward from O.
+    let ux = 0, uy = 0; for (const n in P) if (n !== 'O') { const [x, y] = S(n), L = Math.hypot(x - cx, y - cy) || 1; ux += (x - cx) / L; uy += (y - cy) / L; }
+    const uL = Math.hypot(ux, uy), oDir = uL > .3 ? [-ux / uL, -uy / uL] : [-.6, .8];
+    for (const n in P) {
+      const [x, y] = S(n); A.el('circle', { cx: x, cy: y, r: 4.5, fill: n === 'O' ? C.text : C.blue, stroke: C.stage, 'stroke-width': 1.5 }, A.svg);
+      if ((p.hide || []).includes(n)) continue;
+      const L = Math.hypot(x - cx, y - cy), dx = n === 'O' ? oDir[0] : (x - cx) / L, dy = n === 'O' ? oDir[1] : (y - cy) / L;
+      lab(A, x + dx * 18, y + dy * 18, n, C.muted, { 'font-size': 15, 'font-style': 'italic' });
+    }
+    footer(A, p, V, H - 12);
+  }
+
+  /* ---------- solids, stacked bottom-up and centred: cyl, cone, sphere, hemi (a dome), box (square prism), pyr ---------- */
+  // p: { parts: [{k, r, h, w, c, s, wrap, lab: {r, d, h, l, w}}], note, foot, footl }
+  function solid(A, p, V, H) {
+    const ps = p.parts, E = .28, sq = q => q.k === 'box' || q.k === 'pyr';
+    const wOf = q => sq(q) ? q.w * 1.45 : 2 * q.r, hOf = q => q.k === 'sphere' ? 2 * q.r : q.k === 'hemi' ? q.r : q.h;
+    const W = Math.max(...ps.map(wOf)), top = W * (sq(ps[0]) ? .32 : .16), Ht = ps.reduce((a, q) => a + hOf(q), 0) + top + W * .14, fh = p.foot ? 30 : 0;
+    const k = Math.min(270 / W, (H - 70 - fh) / Ht), cx = 300;
+    let yb = (H - fh) / 2 + Ht * k / 2 - W * .14 * k + 10;
+    const T = (x, y, s, a) => lab(A, x, y, s, C.text, Object.assign({ 'font-size': 16 }, a || {}));
+    const dim = (x, y1, y2, s, left) => { A.el('path', { d: 'M' + (x - 5) + ' ' + y1 + 'h10M' + x + ' ' + y1 + 'V' + y2 + 'M' + (x - 5) + ' ' + y2 + 'h10', stroke: C.muted, 'stroke-width': 1.8, fill: 'none' }, A.svg); T(x + (left ? -10 : 10), (y1 + y2) / 2, s, { 'text-anchor': left ? 'end' : 'start' }); };
+    ps.forEach((q, i) => {
+      const c = hot(q, V) ? C.red : col(q.c || 'L'), L = q.lab || {}, nx = ps[i + 1], st = { stroke: c, 'stroke-width': 2.5, fill: 'none' };
+      const path = (d, a) => A.el('path', Object.assign({ d }, st, a || {}), A.svg);
+      if (q.k === 'cyl' || q.k === 'cone' || q.k === 'hemi' || q.k === 'sphere') {
+        const rx = q.r * k, ry = rx * E, Lx = cx - rx, Rx = cx + rx, base = 'M' + Lx + ' ' + yb, front = 'A' + rx + ' ' + ry + ' 0 0 0 ' + Rx + ' ' + yb, back = 'A' + rx + ' ' + ry + ' 0 0 1 ' + Rx + ' ' + yb;
+        if (q.k === 'cyl') {
+          const yt = yb - q.h * k;
+          path('M' + Lx + ' ' + yt + 'V' + yb + front + 'V' + yt + 'A' + rx + ' ' + ry + ' 0 0 1 ' + Lx + ' ' + yt + 'z', { fill: c, 'fill-opacity': q.wrap ? .34 : .12, stroke: 'none' });
+          if (!i) path(base + back, { 'stroke-dasharray': '6 6', 'stroke-width': 1.8 });
+          path(base + front); path('M' + Lx + ' ' + yb + 'V' + yt + 'M' + Rx + ' ' + yb + 'V' + yt);
+          A.el('ellipse', Object.assign({ cx, cy: yt, rx, ry, fill: c, 'fill-opacity': q.wrap ? .05 : .2 }, st), A.svg);
+          if (L.h) dim(Rx + 20, yb, yt, L.h);
+          yb = yt;
+        } else if (q.k === 'cone') {
+          const ya = yb - q.h * k;
+          path(base + front + 'L' + cx + ' ' + ya + 'z', { fill: c, 'fill-opacity': .12, stroke: 'none' });
+          path(base + back, { 'stroke-dasharray': '6 6', 'stroke-width': 1.8 }); path(base + front); path('M' + Lx + ' ' + yb + 'L' + cx + ' ' + ya + 'L' + Rx + ' ' + yb);
+          if (L.h) { path('M' + cx + ' ' + yb + 'V' + ya, { stroke: C.muted, 'stroke-dasharray': '5 5', 'stroke-width': 1.8 }); dim(Lx - 20, yb, ya, L.h, true); }
+          if (L.l) T((Rx + cx) / 2 + 14, (yb + ya) / 2, L.l, { 'text-anchor': 'start' });
+          yb = ya;
+        } else if (q.k === 'hemi') {
+          path(base + 'A' + rx + ' ' + rx + ' 0 0 1 ' + Rx + ' ' + yb, { fill: c, 'fill-opacity': .12 });
+          yb -= rx;
+        } else {
+          const yc = yb - rx;
+          A.el('circle', Object.assign({ cx, cy: yc, r: rx, fill: c, 'fill-opacity': .12 }, st), A.svg);
+          path('M' + Lx + ' ' + yc + 'A' + rx + ' ' + ry + ' 0 0 1 ' + Rx + ' ' + yc, { 'stroke-dasharray': '6 6', 'stroke-width': 1.6 });
+          path('M' + Lx + ' ' + yc + 'A' + rx + ' ' + ry + ' 0 0 0 ' + Rx + ' ' + yc, { 'stroke-width': 1.6 });
+          if (L.r) { path('M' + cx + ' ' + yc + 'H' + Rx, { stroke: C.yellow }); T(cx + rx / 2, yc - 14, L.r); }
+          if (L.d) { path('M' + Lx + ' ' + yc + 'H' + Rx, { stroke: C.yellow }); T(cx, yc - 14, L.d); }
+          yb -= 2 * rx;
+        }
+        if (q.k === 'cyl' || q.k === 'cone') {                 // radius or diameter on the bottom face
+          const y0 = q.k === 'cyl' ? yb + q.h * k : yb + q.h * k;
+          if (L.r) { path('M' + cx + ' ' + y0 + 'H' + Rx, { stroke: C.yellow }); T(cx + rx / 2, y0 + ry + 16, L.r); }
+          if (L.d) { path('M' + Lx + ' ' + y0 + 'H' + Rx, { stroke: C.yellow }); T(cx, y0 + ry + 16, L.d); }
+        }
+      } else {
+        const wk = q.w * k, dx = wk * .45, dy = wk * .3, x0 = cx - (wk + dx) / 2;
+        if (q.k === 'box') {
+          const yt = yb - q.h * k;
+          A.el('rect', Object.assign({ x: x0, y: yt, width: wk, height: q.h * k, fill: c, 'fill-opacity': .12 }, st), A.svg);
+          path('M' + (x0 + wk) + ' ' + yb + 'l' + dx + ' ' + -dy + 'V' + (yt - dy) + 'L' + (x0 + wk) + ' ' + yt, { fill: c, 'fill-opacity': .07 });
+          path('M' + x0 + ' ' + yb + 'l' + dx + ' ' + -dy + 'h' + wk + 'M' + (x0 + dx) + ' ' + (yb - dy) + 'V' + (yt - dy), { 'stroke-dasharray': '6 6', 'stroke-width': 1.8 });
+          if (!nx) path('M' + x0 + ' ' + yt + 'l' + dx + ' ' + -dy + 'h' + wk, { fill: 'none' });
+          if (L.w) T(x0 + wk / 2, yb + 20, L.w);
+          if (L.h) T(x0 - 10, (yb + yt) / 2, L.h, { 'text-anchor': 'end' });
+          yb = yt;
+        } else {
+          const ax = x0 + wk / 2 + dx / 2, ay = yb - dy / 2 - q.h * k, bx = ax, by = yb - dy / 2, fx = x0 + wk / 2;
+          path('M' + x0 + ' ' + yb + 'h' + wk + 'L' + ax + ' ' + ay + 'z', { fill: c, 'fill-opacity': .14 });
+          path('M' + (x0 + wk) + ' ' + yb + 'l' + dx + ' ' + -dy + 'L' + ax + ' ' + ay + 'z', { fill: c, 'fill-opacity': .07 });
+          path('M' + x0 + ' ' + yb + 'l' + dx + ' ' + -dy + 'h' + wk + 'M' + (x0 + dx) + ' ' + (yb - dy) + 'L' + ax + ' ' + ay, { 'stroke-dasharray': '6 6', 'stroke-width': 1.8 });
+          if (L.h) { path('M' + bx + ' ' + by + 'V' + ay, { stroke: C.muted, 'stroke-dasharray': '5 5', 'stroke-width': 1.8 }); dim(x0 + wk + dx + 20, by, ay, L.h); }
+          if (L.l) { path('M' + ax + ' ' + ay + 'L' + fx + ' ' + yb, { stroke: C.yellow, 'stroke-dasharray': '5 5', 'stroke-width': 2 }); T((ax + fx) / 2 - 10, (ay + yb) / 2 + 8, L.l, { 'text-anchor': 'end' }); }
+          if (L.w) T(x0 + wk / 2, yb + 20, L.w);
+          yb = ay;
+        }
+      }
+    });
+    note(A, p); footer(A, p, V, H - 12);
+  }
+
+  /* ---------- two similar triangles: the small one and the large one (× f); matching sides share a colour ---------- */
+  // p: { pts: [[x, y] x3] (y up), f, cs: ['G', 'Y', 'T'] (side i joins point i and i+1), la: [{t, s}], lb: [{t, s, q}], na, nb (names) }
+  function pair(A, p, V, H) {
+    const T = p.pts, mx = Math.min(...T.map(q => q[0])), my = Math.min(...T.map(q => q[1])), w = Math.max(...T.map(q => q[0])) - mx, h = Math.max(...T.map(q => q[1])) - my;
+    const f = p.f, gap = .5 * w, k = Math.min(500 / (w * (1 + f) + gap), (H - 96) / (h * f)), yb = (H + h * f * k) / 2 + 4, x0 = 320 - (w * (1 + f) + gap) * k / 2;
+    [[1, p.la, x0, p.na], [f, p.lb, x0 + (w + gap) * k, p.nb]].forEach(([s, L, xo, nm]) => {
+      const S = T.map(q => [xo + (q[0] - mx) * s * k, yb - (q[1] - my) * s * k]), gx = S.reduce((a, q) => a + q[0], 0) / 3, gy = S.reduce((a, q) => a + q[1], 0) / 3;
+      A.el('path', { d: 'M' + S.map(q => q.join(' ')).join('L') + 'z', fill: C.blue, 'fill-opacity': .08, stroke: 'none' }, A.svg);
+      S.forEach((a, i) => {
+        const b = S[(i + 1) % 3], sd = (L || [])[i] || {}, hc = hot(sd, V), c = hc ? C.red : col(p.cs[i]), ex = (a[0] + b[0]) / 2, ey = (a[1] + b[1]) / 2, dx = ex - gx, dy = ey - gy, D = Math.hypot(dx, dy) || 1;
+        A.el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: c, 'stroke-width': 3.5, 'stroke-linecap': 'round', 'stroke-dasharray': hc ? '8 6' : null }, A.svg);
+        const t = sd.q ? qtext('?', sd.d, V) : sd.t;
+        if (t && on({ s: sd.ts }, V)) lab(A, ex + dx / D * 20, ey + dy / D * 18, t, sd.q ? qcol('?', V, c) : c, Object.assign({ 'text-anchor': Math.abs(dx / D) > .5 ? (dx > 0 ? 'start' : 'end') : 'middle' }, anim({ s: sd.ts }, V)));
+      });
+      if (nm) lab(A, gx, gy + 2, nm, C.muted, { 'font-size': 14 });
+    });
+  }
+
+  /* ---------- an outdoor scene for indirect measurement: shadows, or a mirror on the ground ---------- */
+  // shadow: { mode: 'shadow', h, s, H, S, lh, ls, lH, lS }  (a person and a pole, with sun rays)
+  // mirror: { mode: 'mirror', h, d1, d2, H, lh, l1, l2, lH, barn, lb } (eye height, mirror, the tall object, a barn beside it)
+  function scene(A, p, V, H) {
+    const yG = H - 46 - (p.foot ? 24 : 0), Tx = (x, y, s, c, an, a) => lab(A, x, y, qtext(s, null, V), s === '?' ? qcol('?', V, c) : c, Object.assign({ 'font-size': 16, 'text-anchor': an || 'middle' }, a || {}));
+    const ground = (x1, x2) => A.el('line', { x1, x2, y1: yG, y2: yG, stroke: C.green, 'stroke-width': 3 }, A.svg);
+    const person = (x, hp) => { A.el('line', { x1: x, x2: x, y1: yG, y2: yG - hp + 12, stroke: C.gold, 'stroke-width': 8, 'stroke-linecap': 'round' }, A.svg); A.el('circle', { cx: x, cy: yG - hp + 6, r: 7, fill: C.gold }, A.svg); };
+    if (p.mode === 'shadow') {
+      const gap = Math.max(p.s, p.S) * .35, tot = p.s + gap + p.S, k = Math.min((H - 96) / p.H, 520 / tot), x0 = 320 - tot * k / 2 + 10, x1 = x0 + (p.s + gap) * k;
+      ground(x0 - 40, x1 + p.S * k + 30);
+      [[x0, p.h, p.s, p.lh, p.ls], [x1, p.H, p.S, p.lH, p.lS]].forEach(([x, hh, ss, lh, ls], i) => {
+        A.el('line', { x1: x, x2: x + ss * k, y1: yG + 1, y2: yG + 1, stroke: C.muted, 'stroke-width': 8, 'stroke-opacity': .6 }, A.svg);
+        if (i) { A.el('line', { x1: x, x2: x, y1: yG, y2: yG - hh * k, stroke: C.text, 'stroke-width': 5 }, A.svg); A.el('path', { d: 'M' + x + ' ' + (yG - hh * k) + 'h26v14h-26z', fill: C.red }, A.svg); }
+        else person(x, hh * k);
+        A.el('line', { x1: x, y1: yG - hh * k, x2: x + ss * k, y2: yG, stroke: C.yellow, 'stroke-width': 2, 'stroke-dasharray': '7 6' }, A.svg);
+        Tx(x - 14, yG - hh * k / 2, lh, i ? C.blue : C.gold, 'end');
+        Tx(x + ss * k / 2, yG + 22, ls, C.muted);
+      });
+    } else {
+      const tot = p.d1 + p.d2, k = Math.min((H - 110) / Math.max(p.H, p.barn || 0), 400 / tot), x0 = 320 - tot * k / 2 - 25, xm = x0 + p.d1 * k, xe = xm + p.d2 * k, ew = 34;
+      ground(x0 - 30, xe + ew + 110);
+      person(x0, p.h * k);
+      A.el('rect', { x: xe, y: yG - p.H * k, width: ew, height: p.H * k, fill: C.blue, 'fill-opacity': .2, stroke: C.blue, 'stroke-width': 2.5 }, A.svg);
+      if (p.barn) { const bh = p.barn * k; A.el('path', { d: 'M' + (xe + ew + 20) + ' ' + yG + 'v' + -bh * .7 + 'l' + 30 + ' ' + -bh * .3 + 'l30 ' + bh * .3 + 'v' + bh * .7 + 'z', fill: C.red, 'fill-opacity': .2, stroke: C.red, 'stroke-width': 2.5 }, A.svg); Tx(xe + ew + 50, yG - bh - 14, p.lb, C.red); }
+      A.el('path', { d: 'M' + x0 + ' ' + (yG - p.h * k + 6) + 'L' + xm + ' ' + yG + 'L' + xe + ' ' + (yG - p.H * k), fill: 'none', stroke: C.yellow, 'stroke-width': 2, 'stroke-dasharray': '7 6' }, A.svg);
+      A.el('rect', { x: xm - 12, y: yG - 3, width: 24, height: 6, fill: C.teal }, A.svg);
+      Tx(x0 - 14, yG - p.h * k / 2, p.lh, C.gold, 'end');
+      Tx((x0 + xm) / 2, yG + 22, p.l1, C.muted); Tx((xm + xe) / 2, yG + 22, p.l2, C.muted);
+      if (p.lH && on({ s: p.sH }, V)) Tx(xe - 10, yG - p.H * k / 2, p.lH, C.blue, 'end', anim({ s: p.sH }, V));
+    }
+    footer(A, p, V, H - 16);
+  }
+
+  const PIC = { nl, rects, tri, chain, cube, bar, graph, table, flow, shape, circ, solid, pair, scene };
 
   /* ---------- the step chain ---------- */
   function steps(A, it, V, top) {
@@ -1621,7 +2109,10 @@ const NOTES9 = {
   pe: { notes: '../notes/powers-exponents/math9-powers-notes-v1.html', sep: '·' },
   lr: { notes: '../notes/linear-relations/math9-linear-relations-notes-v1.html' },
   le: { notes: '../notes/linear-equations/math9-linear-equations-notes-v1.html' },
-  po: { notes: '../notes/polynomials/math9-polynomials-notes-v1.html' }
+  po: { notes: '../notes/polynomials/math9-polynomials-notes-v1.html' },
+  cg: { notes: '../notes/circle-geometry/math9-circle-geometry-notes-v1.html' },
+  me: { notes: '../notes/measurement/math9-measurement-notes-v1.html' },
+  si: { notes: '../notes/similarity/math9-similarity-notes-v1.html' }
 };
 // Each item opens the notes at its own section (RN2, LR3, PO6 ...).
 const link9 = topic => it => Object.assign({ sec: +it.code.replace(/\D/g, '') }, NOTES9[it.topic || topic]);
@@ -1632,6 +2123,7 @@ const PAGE = {
   tabs: [
     tab9('rn', 'RN', 'Rational'), tab9('sr', 'SR', 'Roots'), tab9('pe', 'PE', 'Powers'),
     tab9('lr', 'LR', 'Relations'), tab9('le', 'LE', 'Equations'), tab9('po', 'PO', 'Polynomials'),
+    tab9('cg', 'CG', 'Circles'), tab9('me', 'ME', 'Solids'), tab9('si', 'SI', 'Similarity'),
     WP.tab({ id: 'mix', code: 'All', name: 'Mixed', gen: n => MODEL.genMix(n), link: link9('rn'), notes: NOTES9.rn.notes })
   ]
 };
