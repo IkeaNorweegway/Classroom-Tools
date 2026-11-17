@@ -5,7 +5,11 @@
      ask    the givens, and an empty row for each step
      wrong  every step's label (the plan), with the step the named mistake points to in red
      right / show   each step's working fades in, in order; the parts of the picture tied to a step (s) appear with it
-   A picture part may carry s (the step it belongs to: hidden until solved) and q (the unknown: '?' until solved). */
+   A picture part may carry s (the step it belongs to: hidden until solved) and q (the unknown: '?' until solved).
+   Pictures: nl (number line), bar, rects (rectangles, area models; foot = a label under them), tri (right triangle
+   in a scene), chain (repeated × or ÷), cube, graph (lines, points, rise/run, a reading), table (values with their
+   changes), flow (operations, with the undo arrows underneath), shape (a polygon with labelled sides).
+   An item with poly (Algebra: polynomial answers) gets coefficient boxes instead of one answer box. */
 const WP = (() => {
   const { C } = DRILL;
   const COL = { L: C.blue, Y: C.yellow, N: C.green, R: C.red, G: C.gold, T: C.teal, P: C.pink, M: C.muted, W: C.text };
@@ -80,6 +84,7 @@ const WP = (() => {
       if (r.rh) lab(A, x + W + 12, y + Hh / 2, qtext(r.rh, null, V), qcol(r.rh, V, c), { 'font-size': 17, 'text-anchor': 'start' });
       if (r.bw) lab(A, x + W / 2, y + Hh + 20, qtext(r.bw, null, V), qcol(r.bw, V, c), { 'font-size': 17 });
     });
+    if (p.foot) lab(A, 320, oy + Y1 * k + (rs.some(r => r.bw) ? 46 : 28), qtext(p.foot, null, V), qcol(p.foot, V, C.muted), { 'font-size': 18 });
     if (p.shared && on(p.shared, V)) { const s = p.shared, x = ox + s.x * k; A.el('line', Object.assign({ x1: x, x2: x, y1: oy + s.y0 * k, y2: oy + s.y1 * k, stroke: C.red, 'stroke-width': 6, 'stroke-dasharray': '8 6' }, anim(s, V)), A.svg); if (done(V)) lab(A, x + 12, oy + s.y0 * k - 14, 'inside: not perimeter', C.red, Object.assign({ 'font-size': 15, 'text-anchor': 'start' }, anim(s, V))); }
     return { ox, oy, k };
   }
@@ -176,7 +181,114 @@ const WP = (() => {
     });
   }
 
-  const PIC = { nl, rects, tri, chain, cube, bar };
+  /* ---------- a graph in the first quadrant: lines, points, a rise/run triangle, a reading ---------- */
+  // p: { xl, yl, lines: [{m, b, x0, x1, c, s, t}], pts: [{x, y, t, c, s, q, pos}], rr: {a:[x,y], b:[x,y], run, rise, s0, s1}, read: {x, s} }
+  function graph(A, p, V, H) {
+    const X0 = 86, X1 = 596, Y0 = H - 40, Y1 = 34, xs = [0], ys = [0];
+    (p.pts || []).forEach(e => { xs.push(e.x); ys.push(e.y); });
+    (p.lines || []).forEach(l => { xs.push(l.x0, l.x1); ys.push(l.m * l.x0 + l.b, l.m * l.x1 + l.b); });
+    if (p.read) xs.push(p.read.x);
+    const xhi = Math.max(...xs) * 1.1, yhi = Math.max(...ys) * 1.14;
+    const sx = x => X0 + x / xhi * (X1 - X0), sy = y => Y0 - y / yhi * (Y0 - Y1);
+    const tx = [1, 2, 5, 10, 20, 50, 100].find(k => k >= xhi / 8) || nice(xhi / 7), ty = nice(yhi / 5);   // whole-number steps across (hours, months)
+    for (let v = tx; v <= xhi; v += tx) { A.el('line', { x1: sx(v), x2: sx(v), y1: Y0, y2: Y1, stroke: C.grid, 'stroke-width': 1 }, A.svg); lab(A, sx(v), Y0 + 18, fmt(v), C.tick, { 'font-size': 13 }); }
+    for (let v = ty; v <= yhi; v += ty) { A.el('line', { x1: X0, x2: X1, y1: sy(v), y2: sy(v), stroke: C.grid, 'stroke-width': 1 }, A.svg); lab(A, X0 - 8, sy(v), fmt(v), C.tick, { 'font-size': 13, 'text-anchor': 'end' }); }
+    A.el('line', { x1: X0, x2: X1 + 12, y1: Y0, y2: Y0, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)' }, A.svg);
+    A.el('line', { x1: X0, x2: X0, y1: Y0, y2: Y1 - 14, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)' }, A.svg);
+    lab(A, X0 - 8, Y0 + 18, '0', C.tick, { 'font-size': 13, 'text-anchor': 'end' });
+    if (p.xl) lab(A, X1, Y0 + 34, p.xl, C.muted, { 'font-size': 14, 'text-anchor': 'end' });
+    if (p.yl) lab(A, X0 + 10, Y1 - 12, p.yl, C.muted, { 'font-size': 14, 'text-anchor': 'start' });
+    (p.lines || []).forEach(l => {
+      if (!on(l, V)) return;
+      const c = hot(l, V) ? C.red : col(l.c), a = anim(l, V);
+      A.el('line', Object.assign({ x1: sx(l.x0), y1: sy(l.m * l.x0 + l.b), x2: sx(l.x1), y2: sy(l.m * l.x1 + l.b), stroke: c, 'stroke-width': 3.5, 'stroke-dasharray': l.dash ? '9 7' : null }, a), A.svg);
+      if (l.t) lab(A, sx(l.x1) + 6, sy(l.m * l.x1 + l.b), l.t, c, Object.assign({ 'font-size': 15, 'text-anchor': 'start' }, a));
+    });
+    if (p.rr) {
+      const r = p.rr, [ax, ay] = [sx(r.a[0]), sy(r.a[1])], [bx, by] = [sx(r.b[0]), sy(r.b[1])];
+      [[r.s0, ax, ay, bx, ay, r.run, (ax + bx) / 2, ay + (by < ay ? 20 : -14), 'middle'], [r.s1, bx, ay, bx, by, r.rise, bx + 10, (ay + by) / 2, 'start']].forEach(([s, x1, y1, x2, y2, t, lx, ly, an]) => {
+        const e = { s }; if (!on(e, V)) return;
+        const c = hot(e, V) ? C.red : C.gold, a = anim(e, V);
+        A.el('line', Object.assign({ x1, y1, x2, y2, stroke: c, 'stroke-width': 2.5, 'stroke-dasharray': '7 5' }, a), A.svg);
+        if (t) lab(A, lx, ly, t, c, Object.assign({ 'font-size': 15, 'text-anchor': an }, a));
+      });
+    }
+    if (p.read && on(p.read, V)) {
+      const r = p.read, l = p.lines[0], y = l.m * r.x + l.b, c = hot(r, V) ? C.red : C.green, a = anim(r, V);
+      A.el('path', Object.assign({ d: 'M' + sx(r.x) + ' ' + Y0 + 'V' + sy(y) + 'H' + X0, fill: 'none', stroke: c, 'stroke-width': 2.5, 'stroke-dasharray': '6 5' }, a), A.svg);
+    }
+    (p.pts || []).forEach(e => {
+      if (!on(e, V)) return;
+      const x = sx(e.x), y = sy(e.y), c = hot(e, V) ? C.red : e.q ? qcol('?', V, col(e.c)) : col(e.c), a = anim(e, V);
+      A.el('circle', Object.assign({ cx: x, cy: y, r: 7, fill: c, stroke: C.stage, 'stroke-width': 2 }, a), A.svg);
+      const t = e.q ? qtext('?', e.d, V) : e.t, pos = e.pos || 'l';
+      if (t) lab(A, x + (pos === 'r' ? 14 : pos === 'l' ? -14 : 0), y + (pos === 'b' ? 24 : pos === 'a' ? -20 : 0), t, c, Object.assign({ 'font-size': 15, 'text-anchor': pos === 'r' ? 'start' : pos === 'l' ? 'end' : 'middle' }, a));
+    });
+  }
+
+  /* ---------- a table of values with the change between columns ---------- */
+  // p: { xh, yh, cols: [{x, y, q, d, s, ghost}], dx: [{i, t, s}], dy: [{i, t, s}] }  (i = the gap after column i)
+  function table(A, p, V, H) {
+    const n = p.cols.length, hw = 104, cw = Math.min(100, 470 / n), rh = 50, X = 320 - (hw + n * cw) / 2 + hw, yA = (H - 2 * rh) / 2 + 6, yB = yA + rh;
+    lab(A, X - 12, yA + rh / 2, p.xh, C.blue, { 'text-anchor': 'end' }); lab(A, X - 12, yB + rh / 2, p.yh, C.yellow, { 'text-anchor': 'end' });
+    p.cols.forEach((e, i) => {
+      if (!on(e, V)) return;
+      const x = X + i * cw, a = anim(e, V), da = e.ghost ? '6 5' : null;
+      [[yA, String(e.x), C.blue], [yB, e.q ? qtext('?', e.d, V) : String(e.y), e.q ? qcol('?', V, C.yellow) : C.yellow]].forEach(([y, t, c]) => {
+        A.el('rect', Object.assign({ x: x + 2, y: y + 2, width: cw - 4, height: rh - 4, rx: 5, fill: c, 'fill-opacity': .1, stroke: c, 'stroke-width': 2, 'stroke-dasharray': da }, a), A.svg);
+        lab(A, x + cw / 2, y + rh / 2, t, c, Object.assign({ 'font-size': t.length > 6 ? 15 : 18 }, a));
+      });
+    });
+    const gap = (list, y, up) => (list || []).forEach(d => {
+      if (!on(d, V)) return;
+      const x1 = X + d.i * cw + cw / 2, x2 = x1 + (d.span || 1) * cw, c = hot(d, V) ? C.red : C.gold, a = anim(d, V), k = up ? -1 : 1;
+      A.el('path', Object.assign({ d: 'M' + (x1 + 6) + ' ' + y + 'Q' + (x1 + x2) / 2 + ' ' + (y + k * 30) + ' ' + (x2 - 6) + ' ' + y, fill: 'none', stroke: c, 'stroke-width': 2.5, 'marker-end': 'url(#a' + (c === C.red ? 'R' : 'G') + ')' }, a), A.svg);
+      lab(A, (x1 + x2) / 2, y + k * 30, d.t, c, Object.assign({ 'font-size': 15 }, a));
+    });
+    gap(p.dx, yA - 4, true); gap(p.dy, yB + rh + 4, false);
+  }
+
+  /* ---------- a flow of operations, with the undo steps underneath ---------- */
+  // p: { boxes: [{t, d, s, q}], ops: ['+ 4', '× 3'], inv: [{t, s}] (right to left) }
+  function flow(A, p, V, H) {
+    const n = p.boxes.length, bw = 96, gap = (560 - n * bw) / (n - 1), y = H / 2 - 50, xAt = i => 40 + i * (bw + gap);
+    p.boxes.forEach((b, i) => {
+      const x = xAt(i), q = b.q, c = q ? qcol('?', V, C.yellow) : i === n - 1 ? C.blue : C.edge;
+      A.el('rect', { x, y, width: bw, height: 50, rx: 8, fill: c, 'fill-opacity': .14, stroke: c, 'stroke-width': 2.5 }, A.svg);
+      const t = q ? qtext('?', b.d, V) : on(b, V) ? (done(V) && b.d != null ? b.d : b.t) : '';
+      if (t) lab(A, x + bw / 2, y + 25, t, q ? c : C.text, Object.assign({ 'font-size': 18 }, b.s != null ? anim(b, V) : {}));
+      if (i < n - 1) {
+        const xa = x + bw, xb = xAt(i + 1);
+        A.el('line', { x1: xa + 5, x2: xb - 7, y1: y + 14, y2: y + 14, stroke: C.gold, 'stroke-width': 2.5, 'marker-end': 'url(#aG)' }, A.svg);
+        lab(A, (xa + xb) / 2, y - 6, p.ops[i], C.gold, { 'font-size': 17 });
+        const u = p.inv[n - 2 - i];
+        if (u && on(u, V)) {
+          const c2 = hot(u, V) ? C.red : C.green, a = anim(u, V);
+          A.el('line', Object.assign({ x1: xb - 5, x2: xa + 7, y1: y + 38, y2: y + 38, stroke: c2, 'stroke-width': 2.5, 'marker-end': 'url(#a' + (c2 === C.red ? 'R' : 'N') + ')' }, a), A.svg);
+          lab(A, (xa + xb) / 2, y + 70, u.t, c2, Object.assign({ 'font-size': 17 }, a));
+        }
+      }
+    });
+    lab(A, 320, y + 108, done(V) ? 'undo in reverse order' : '', C.muted, { 'font-size': 15 });
+  }
+
+  /* ---------- a polygon with labelled sides (units: x right, y down) ---------- */
+  function shape(A, p, V, H) {
+    const P = p.pts, xs = P.map(q => q[0]), ys = P.map(q => q[1]), X0 = Math.min(...xs), Y0 = Math.min(...ys);
+    const k = Math.min(380 / (Math.max(...xs) - X0), (H - 110) / (Math.max(...ys) - Y0)), w = (Math.max(...xs) - X0) * k, h = (Math.max(...ys) - Y0) * k;
+    const pt = q => [320 - w / 2 + (q[0] - X0) * k, 50 + (H - 100 - h) / 2 + (q[1] - Y0) * k], S = P.map(pt);
+    const cx = S.reduce((a, q) => a + q[0], 0) / S.length, cy = S.reduce((a, q) => a + q[1], 0) / S.length, c = col(p.c || 'L');
+    A.el('path', { d: 'M' + S.map(q => q.join(' ')).join('L') + 'z', fill: c, 'fill-opacity': .14, stroke: c, 'stroke-width': 3, 'stroke-linejoin': 'round' }, A.svg);
+    S.forEach((a, i) => {
+      const b = S[(i + 1) % S.length], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, dx = mx - cx, dy = my - cy, L = Math.hypot(dx, dy) || 1, sd = p.sides[i];
+      const hc = hot(sd, V);
+      if (hc) A.el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: C.red, 'stroke-width': 6, 'stroke-dasharray': '8 6' }, A.svg);
+      lab(A, mx + dx / L * 26, my + dy / L * 22, sd.t, hc ? C.red : col(sd.c || 'W'), { 'text-anchor': Math.abs(dx / L) > .5 ? (dx > 0 ? 'start' : 'end') : 'middle' });
+    });
+    if (p.q) lab(A, cx, cy, qtext('?', null, V), qcol('?', V, C.yellow), { 'font-size': 18 });
+  }
+
+  const PIC = { nl, rects, tri, chain, cube, bar, graph, table, flow, shape };
 
   /* ---------- the step chain ---------- */
   function steps(A, it, V, top) {
@@ -203,13 +315,16 @@ const WP = (() => {
 
   /* ---------- a tab: one topic, a round ramping from one step to three ---------- */
   const unit = s => ({ h: '<span class="u">' + s + '</span>' });
+  // A polynomial answer: one coefficient box per power of x, up to the item's degree (deg).
+  const polySlots = it => (it.deg === 2 ? [{ k: 'c2', label: 'x squared coefficient', narrow: true }, 'x² +'] : [])
+    .concat([{ k: 'c1', label: 'x coefficient', narrow: true }, 'x +', { k: 'c0', label: 'constant', narrow: true }], it.unit ? [unit(it.unit)] : []);
   function tab(o) {
     return {
       id: o.id, code: o.code, name: o.name, sec: o.sec || 1, notes: o.notes, sep: o.sep,
       q: it => it.q, kind: 'slots', gen: o.gen, typeOf: it => it.t,
       prompt: it => '<div class="lvl l' + it.lvl + '">Level ' + it.lvl + ' · ' + LVN[it.lvl] + '</div><div class="story">' + it.story + '</div>',
-      slots: it => [it.pre ? unit(it.pre) : null, { k: 'v', label: 'answer', wide: true }, it.unit ? unit(it.unit) : null].filter(Boolean),
-      check: (it, r) => MODEL.check(it, r), answer: it => ({ v: it.ans }), link: o.link, draw
+      slots: it => it.poly ? polySlots(it) : [it.pre ? unit(it.pre) : null, { k: 'v', label: 'answer', wide: true }, it.unit ? unit(it.unit) : null].filter(Boolean),
+      check: (it, r) => MODEL.check(it, r), answer: it => it.poly ? MODEL.resp(it, it.poly) : { v: it.ans }, link: o.link, draw
     };
   }
   return { tab, draw, PIC, LVN };

@@ -3,7 +3,7 @@
 (() => {
   const g = new URLSearchParams(location.hash.slice(1)).get('gen');
   if (g) { const all = []; for (const t in MODEL.TOPICS) for (const l in MODEL.TOPICS[t]) all.push(...MODEL.TOPICS[t][l]); const f = all.find(x => x.name === g); if (f) MODEL.gen = () => f(); }
-  window.WRONG = (t, it) => it.errs && it.errs.length ? { v: String(Math.round(it.errs[0].v * 1e6) / 1e6) } : null;
+  window.WRONG = (t, it) => !it.errs || !it.errs.length ? null : it.poly ? MODEL.resp(it, it.errs[0].v) : { v: String(Math.round(it.errs[0].v * 1e6) / 1e6) };
 })();
 </script>
 <script>
@@ -16,9 +16,10 @@ window.EXTRA = ok => {
     for (let i = 0; i < 300 && bad.length < 3; i++) {
       try { it = g(); } catch (e) { bad.push('gen ' + e.message); continue; }
       const fail = m => bad.push(m + ' ' + JSON.stringify(it).slice(0, 160));
-      if (!isFinite(it.v)) fail('answer not a number');
+      if (it.poly ? ![0, 1, 2].every(e => isFinite(it.poly[e] || 0)) : !isFinite(it.v)) fail('answer not a number');
       if (it.lvl !== +lv) fail('level');
-      if (!M.check(it, { v: Q.parse(it.ans) }).ok) fail('Show me answer fails');
+      if (!M.check(it, it.poly ? M.resp(it, it.poly) : { v: Q.parse(it.ans) }).ok) fail('Show me answer fails');
+      if (it.poly && it.deg === 1 && it.poly[2]) fail('x² answer with no x² box');
       if (it.steps.length < +lv) fail('fewer steps than its level');
       if (text(it.story).length > 175) fail('story ' + text(it.story).length + ' chars');
       if (words(it.q) > 4) fail('label over 4 words');
@@ -27,9 +28,9 @@ window.EXTRA = ok => {
       it.errs.forEach((e, k) => {
         if (words(e.cue) > 6) fail('mistake cue over 6 words: ' + e.cue);
         if (!(e.s >= 0 && e.s < it.steps.length)) fail('mistake step out of range');
-        const r = M.check(it, { v: Q.parse(String(Math.round(e.v * 1e6) / 1e6)) });
+        const r = M.check(it, it.poly ? M.resp(it, e.v) : { v: Q.parse(String(Math.round(e.v * 1e6) / 1e6)) });
         if (r.ok) fail('mistake accepted: ' + e.cue);
-        else if (r.code !== 'e' + k && !it.errs.slice(0, k).some(p => Math.abs(p.v - e.v) < .06)) fail('mistake not named: ' + e.cue + ' got ' + r.code);
+        else if (r.code !== 'e' + k && !it.errs.slice(0, k).some(p => it.poly ? M.sameP(p.v, e.v) : Math.abs(p.v - e.v) < .06)) fail('mistake not named: ' + e.cue + ' got ' + r.code);
       });
     }
     ok(bad.length === 0, tp + ' L' + lv + ' ' + g.name + ': answers, mistakes and lengths ' + bad.join(' | ').slice(0, 300));
