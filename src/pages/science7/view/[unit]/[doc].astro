@@ -74,6 +74,7 @@ export function getStaticPaths() {
       'sci7-structures-forces-assessment-answers-v1',
       'sci7-structures-forces-teacherguide-v2',
     ],
+    'word-problems': ['sci7-word-problems-trainer-v1'],
     'planet-earth': [
       'sci7-planet-earth-notes-v1',
       'sci7-planet-earth-workbook-v1',
@@ -112,11 +113,12 @@ const unitLabels: Record<string, string> = {
   'heat-temperature': 'Heat and Temperature',
   'structures-forces': 'Structures and Forces',
   'planet-earth': 'Planet Earth',
+  'word-problems': 'Word Problems',
 };
 
 // Home practice sheets belong to the parent guide; everything else to the unit page.
 const isHome = doc!.includes('-home-');
-const backHref = isHome ? `${base}${manifest.parentHref(unit!)}` : `${base}science7/materials/${unit}`;
+const backHref = isHome ? `${base}${manifest.parentHref(unit!)}` : unit === 'word-problems' ? `${base}science7/word-problems` : `${base}science7/materials/${unit}`;
 const backLabel = isHome ? '← Parent guide' : `← ${unitLabels[unit] ?? 'Science 7'}`;
 const fileUrl = `${base}materials/${doc}.html`;
 // Simulations and trainers fill the window: no site nav, a slim back bar, a full-screen button.
