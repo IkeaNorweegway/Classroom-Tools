@@ -40,6 +40,7 @@ Current state only, one line per item. Keep it under 130 lines: put session deta
 - **Student / parent / teacher views:** read the student and parent copy, especially the grade-to-grade progressions (best guesses for earlier grades).
 - **Science 7 notes keys v2:** approximate figures marked "confirm"; magnitude-7 energy wording; snow as both live and dead load.
 - **Math 9:** circle geometry Core Q6 and Challenge Q3 have no valid solution (flagged in the keys, not fixed). Rational Numbers uses local codes RN1–RN5.
+- **Math 9 answer keys (2026-11-17):** keys now match `research/answer-key-design-research.md`: Core full worked + 2–3 Common Mistake flags each, Challenge partial, workbooks faded, and a "Check your method" yes/no box at the end of every Core, Challenge and workbook key (`scripts/add_key_flags.py`; re-run it after `match_keys.py`). Read the 15 new flags and the method questions. Circle Geometry Core Q3(d) says "inscribed angle on the MAJOR arc" but the key's 105° means the angle *standing on* the major arc (vertex on the major arc gives 75°); reword the sheet or accept both.
 - **Math 9 inquiry projects:** read-through and classroom trial; confirm the transit fares and sample prices; download weather data and NHL standings before running.
 - **CEFL 7–9:** review the units, codes, misconceptions and depth ceilings in `_courses/cefl/_context.md`. Re-check dated figures each January (wages, tax, CPP, EI, TFSA/RRSP, payday cap) and tuition each year. Book audiences early.
 - **CEFL 9 Post-Secondary workbook, Moment 1:** $9,949.29 should be $9,949.20 (same slip in the $4,873.22 comparison). Not fixed; the game accepts both.
@@ -99,4 +100,4 @@ Current state only, one line per item. Keep it under 130 lines: put session deta
 ### Next up
 - Teacher read-through of Math 7 and Math 8 (merged to `master` 2026-11-01).
 - Math 8 (draft): teacher read of all practice and unit tests (unit tests are on Drive).
-- Math 9 answer keys follow `research/answer-key-design-research.md` (full solutions for Core, partial for Challenge, faded in workbooks).
+- Teacher read of the new Math 9 key flags (see Open items).
