@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Problems Trainer | Science 7</title>
+<!-- =====================================================================
+   SCIENCE 7 WORD PROBLEMS TRAINER v3: SCENARIOS (narrow trainer format, see _sims-context.md)
+   Science 7 | every unit | used after the lessons: it does not teach, each part's 📖 opens its own notes section.
+   v3 (user request 2026-11-17): v2's flow, with real scenarios like the workbook and unit-test application questions,
+   at the Apply and Analyze levels of Bloom's. v2's short stories padded with unrelated sentences are gone.
+   A scenario is one Alberta situation (60–110 words, most with a small data table) and 2–3 linked parts:
+   part a applies one idea (Apply); parts b and c read the data, predict a chain of effects, judge a claim or pick
+   the plan that fixes the cause (Analyze). The details to skip belong to the scenario: a true fact that changes no
+   answer, or a data row that did not change. Each part is one item in the round of 10 (about four scenarios).
+   Steps per part, each checked (kit: sws.js):
+     1 Key facts         tap the sentences and table rows that matter for this part (two tries)
+     2 Key idea          the science idea the part needs (one of the unit's ideas; close ideas never offered together)
+     3 What can we assume?  on most Analyze parts
+     4 Answer            named misconceptions (two tries)
+     5 Best explanation  last part: the best of three written answers: complete (claim, evidence, reason),
+                         no reasoning, or a misconception. A slip anywhere in the part gives a yellow dot.
+   After the answer: the picture (icon cards and arrows, an energy pyramid, or a bar chart of the scenario's data)
+   and the reasoning chain, with a 📄 Reading chip to look back.
+     7-1 Ecosystems (12 scenarios): beaver dam (7-1-01, 7-1-02), fertilizer in a slough (7-1-04, 7-1-02),
+         energy in a lake and extra pike (7-1-02), succession after a fire (7-1-04), pine beetles and cold winters
+         (7-1-01, 7-1-04, 7-1-03), burrowing owls and ground squirrels (7-1-02, 7-1-04), Banff elk, aspen and beavers
+         (7-1-02, 7-1-04), zebra mussels (7-1-04, 7-1-02), leaf-litter bags (7-1-02), drought and biodiversity
+         (7-1-03), caribou, lines and wolves (7-1-02, 7-1-04), a schoolyard quadrat survey and a fair test (7-1-01)
+   Teacher check: all numbers are made up and change from play to play (inside ranges where every answer holds).
+   Real-world claims to confirm: beaver weight (~20 kg), jack pine cones opened by fire, pine beetle larvae killed
+   below about −35 °C, burrowing owls nesting in ground-squirrel burrows and wintering in Texas and Mexico, Banff
+   elk staying near town away from wolves, zebra mussels filtering about 1 L a day and present in Manitoba, caribou
+   decline linked to lines and moose.
+   Model: model-sc7.js (scenarios, tags for key facts per part, checks); the shell's round of 10 is kept.
+   ?debug=1 puts DRILL (and MODEL) on window, no saving or motion.
+   ===================================================================== -->
+<style>
+/* page only: the part chip with its outcome code, earlier parts, tighter tabs, written-answer choices */
+  .prompt { text-align: left; }
+  .prompt .story { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 17px; line-height: 1.45; text-align: left; }
+  .prompt .story b { color: var(--yellow); font-weight: 650; }
+  .prompt .lvl { display: inline-block; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 9px; border-radius: 99px; margin-bottom: 6px; }
+  .prompt .lvl .lo { margin-left: 8px; padding-left: 8px; border-left: 1px solid rgba(11, 15, 23, .45); letter-spacing: 0; }
+  .prompt .lvl.l2 { color: #0b0f17; background: var(--gold); }
+  .prompt .lvl.l3 { color: #0b0f17; background: #ef7fc6; }
+  .prompt .prev { text-align: left; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13.5px; line-height: 1.3; color: var(--muted); margin: 0 0 5px; }
+  .prompt .prev b { color: var(--green); font-weight: 600; }
+  .prompt .prev .pl { display: inline-block; width: 18px; height: 18px; line-height: 18px; text-align: center; border-radius: 50%; background: var(--edge); color: var(--text); font-size: 12px; font-weight: 700; margin-right: 6px; }
+  .choices.two .choice { font-size: 16.5px; min-height: 58px; font-weight: 600; }
+  .choices.expl .choice { font-size: 14.5px; line-height: 1.3; font-weight: 500; text-align: left; padding: 6px 10px; min-height: 0; }
+  .tabs .tab { padding: 2px 10px; }
+  @media (max-width: 1150px) { .tabs .tab { padding: 2px 7px; } .top .tabs { gap: 4px; } }
+  #bCheck:not(.go) { display: none; }   /* each step has its own button; Check returns as Next → */
+  .ans .factsBtn { width: 100%; }
+  .q { text-transform: none; }
+  @media (max-height: 700px) { .prompt .story { font-size: 16px; line-height: 1.35; } .choices.two .choice { min-height: 50px; } .choices.expl .choice { font-size: 13.5px; padding: 4px 8px; } }
+</style>
+<style>
+/* ===== DRILL SHELL CSS START (same in every narrow trainer; see _sims-context.md "Narrow trainer format") ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  :root {
+    --bg: #070a10; --panel: #0f1520; --panel2: #151d2b; --stage: #0b0f17; --edge: #263246;
+    --text: #f5f7fb; --muted: #a7b4c8;
+    --blue: #58c4dd; --yellow: #f7d96f; --teal: #5cd0b3; --gold: #f0ac5f; --green: #83c167; --red: #fc6255; --pink: #ef7fc6;
+    --math: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', Cambria, Georgia, serif;
+  }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .35; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .math { font-family: var(--math); }
+  .math i { font-style: italic; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .72em; line-height: 1.05; margin: 0 .1em; }
+  .fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .12em; }
+  .cM { color: var(--gold); } .cB { color: var(--teal); } .cY { color: var(--yellow); } .cR { color: var(--red); } .cBl { color: var(--blue); }
+
+  /* top bar: name, concept tabs, notes link */
+  .top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--edge); flex-shrink: 0; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; flex-shrink: 0; }
+  .brand small { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
+  .brand b { font-size: 17px; font-weight: 650; }
+  .tabs { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 14px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); font-weight: 650; font-size: 15px; line-height: 1.1; color: var(--muted); position: relative; }
+  .tab small { font-size: 10px; font-weight: 700; letter-spacing: .08em; opacity: .75; }
+  .tab:hover { border-color: var(--blue); color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .tab .star { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .notes { flex-shrink: 0; min-height: 46px; display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 12px; background: var(--panel2); color: var(--gold); font-weight: 700; text-decoration: none; }
+  .notes:hover { border-color: var(--gold); }
+  .notes svg { width: 20px; height: 20px; }
+
+  /* picture on the left, one answer area on the right */
+  .app { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+  .stage { min-width: 0; min-height: 0; padding: 12px; display: flex; }
+  .stage svg { flex: 1; min-width: 0; width: 100%; height: 100%; display: block; background: var(--stage); border: 1px solid var(--edge); border-radius: 18px; touch-action: manipulation; }
+  .stage svg text { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 600; paint-order: stroke; stroke: var(--stage); stroke-width: 5px; stroke-linejoin: round; }
+  .stage svg text.m { font-family: var(--math); font-weight: 400; }
+  .stage svg .hit { cursor: pointer; }
+  .stage svg text.emo { stroke: none; font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif; font-weight: 400; }
+  .sans .prompt { font-family: inherit; font-weight: 650; font-size: 26px; }
+  .sans .choice { font-size: 19px; line-height: 1.15; padding: 4px 8px; }
+  .side { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--edge); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .q { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); text-align: center; }
+  .prompt { font-family: var(--math); font-size: 34px; line-height: 1.25; text-align: center; min-height: 44px; }
+  .prompt:empty { display: none; }
+  .ans { display: flex; flex-direction: column; gap: 10px; }
+  .slots { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; font-family: var(--math); font-size: 30px; }
+  .slot { width: 2.7em; min-height: 56px; text-align: center; background: var(--stage); border: 2px solid var(--edge); border-radius: 12px; font-family: var(--math); font-size: 28px; padding: 2px 4px; }
+  .slot.wide { width: 3.6em; }
+  .slot.n { width: 2.1em; font-size: 26px; }
+  .slot.sup { width: 1.9em; min-height: 40px; font-size: 20px; align-self: flex-start; margin-left: -2px; }
+  .slots:has(.slot.n) { font-size: 26px; gap: 4px; }
+  .slot.tM { border-color: #7a5a33; } .slot.tB { border-color: #2f6a5d; }
+  .slot:focus { border-color: var(--yellow); outline: none; box-shadow: 0 0 0 3px rgba(247, 217, 111, .25); }
+  .slot.ok { border-color: var(--green); color: var(--green); }
+  .slot.bad { border-color: var(--red); }
+  .slot.shown { border-color: var(--muted); color: var(--muted); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .choices.two { grid-template-columns: 1fr 1fr; }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choices.one { grid-template-columns: 1fr; gap: 8px; }
+  .choices.one .choice { min-height: 54px; }
+  .choices.one .choice.math { font-size: 26px; }
+  .choice { min-height: 68px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 20px; font-weight: 650; }
+  .choice.math { font-family: var(--math); font-size: 36px; font-weight: 400; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); }
+  .choice.ok { border-color: var(--green); background: #13301c; color: var(--green); opacity: 1; }
+  .choice.bad { border-color: var(--red); background: #331417; opacity: 1; }
+  .seg { display: flex; gap: 8px; justify-content: center; }
+  .seg button { min-width: 72px; min-height: 56px; border: 2px solid var(--edge); border-radius: 14px; background: var(--panel2); font-size: 26px; }
+  .seg button[aria-pressed="true"] { border-color: var(--yellow); color: var(--yellow); background: #262110; }
+  .acts { display: flex; gap: 8px; }
+  .btn { min-height: 52px; border: 1px solid var(--edge); background: var(--panel2); border-radius: 12px; padding: 6px 16px; font-size: 17px; font-weight: 650; }
+  .btn:hover:not(:disabled) { border-color: var(--blue); }
+  .btn.primary { flex: 1; background: var(--blue); border-color: var(--blue); color: #04121a; }
+  .btn.primary:hover:not(:disabled) { background: #7fd3e7; }
+  .btn.go { background: var(--green); border-color: var(--green); color: #0b1a06; }
+  .btn.icon { width: 56px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon svg { width: 24px; height: 24px; }
+  .fb { display: flex; align-items: center; gap: 10px; min-height: 54px; font-size: 17px; font-weight: 600; }
+  .fb .mark { font-size: 32px; font-weight: 800; width: 38px; text-align: center; flex-shrink: 0; }
+  .fb.ok { color: var(--green); } .fb.bad { color: #ff9a90; } .fb.info { color: var(--muted); }
+  .dots { display: flex; gap: 7px; justify-content: center; margin-top: auto; padding-top: 4px; }
+  .dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--edge); }
+  .dots span.now { border-color: var(--text); }
+  .dots .g { background: var(--green); border-color: var(--green); }
+  .dots .y { background: var(--yellow); border-color: var(--yellow); }
+  .dots .r { background: var(--red); border-color: var(--red); }
+  .done { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+  .done .score { font-family: var(--math); font-size: 64px; line-height: 1; }
+  .done .score small { font-size: 30px; color: var(--muted); }
+  .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .keypad button { min-height: 46px; border: 1px solid var(--edge); border-radius: 10px; background: var(--stage); font-family: var(--math); font-size: 22px; }
+
+  /* motion: lines draw themselves in, marks fade or pop in */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .fade { animation: fade .45s ease-out both; }
+  @keyframes fade { from { opacity: 0; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.3, 1.6, .6, 1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.3); } }
+  .pulse { animation: pulse 1.2s ease-in-out 2; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .nomo .draw { animation: none; stroke-dashoffset: 0; }
+  .nomo .fade, .nomo .pop, .nomo .pulse { animation: none; }
+
+  @media (max-width: 1150px) { .brand { display: none; } .app { grid-template-columns: minmax(0, 1fr) 330px; } .tab { padding: 2px 11px; } }
+  @media (max-height: 700px) {
+    .top { padding: 5px 12px; } .tab, .notes { min-height: 42px; }
+    .stage { padding: 8px; } .side { padding: 12px 14px; gap: 10px; }
+    .prompt { font-size: 30px; } .slot { min-height: 50px; } .choice { min-height: 58px; } .btn { min-height: 48px; } .fb { min-height: 46px; }
+  }
+  @media (max-width: 760px) {
+    html, body { height: auto; } body { overflow: auto; display: block; }
+    .top { flex-wrap: wrap; } .tabs { order: 3; flex-basis: 100%; justify-content: flex-start; } .notes { margin-left: auto; }
+    .app { display: block; }
+    .stage { height: 52vh; min-height: 260px; }
+    .side { border-left: none; border-top: 1px solid var(--edge); overflow: visible; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .draw { animation: none; stroke-dashoffset: 0; } .fade, .pop, .pulse { animation: none; }
+  }
+/* ===== DRILL SHELL CSS END ===== */
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><small id="course"></small><b id="title"></b></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Skills"></nav>
+  <a class="notes" id="notes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span id="notesTxt"></span></a>
+</header>
+
+<div class="app">
+  <section class="stage" id="stageWrap"><svg id="svg" viewBox="0 0 640 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Picture for this question"></svg></section>
+  <aside class="side" id="side">
+    <div id="askBox">
+      <div class="q" id="q"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="ans" id="ans"></div>
+    <div class="acts" id="acts">
+      <button type="button" class="btn primary" id="bCheck">Check</button>
+      <button type="button" class="btn icon" id="bShow" aria-label="Show me" title="Show me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="done" id="done" hidden></div>
+    <div class="dots" id="dots" aria-label="This round"></div>
+  </aside>
+</div>
+
+<script>
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ===== DRILL KIT START (no DOM): exact fractions and seeded random ===== */
+const Q = (() => {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const q = (n, d) => { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+  const of = v => typeof v === 'number' ? (Number.isInteger(v) ? q(v) : dec(String(v))) : v;
+  const add = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d + b.n * a.d, a.d * b.d); };
+  const sub = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d - b.n * a.d, a.d * b.d); };
+  const mul = (a, b) => { a = of(a); b = of(b); return q(a.n * b.n, a.d * b.d); };
+  const div = (a, b) => { a = of(a); b = of(b); return q(a.n * b.d, a.d * b.n); };
+  const neg = a => { a = of(a); return q(-a.n, a.d); };
+  const eq = (a, b) => { if (a == null || b == null) return false; a = of(a); b = of(b); return a.n === b.n && a.d === b.d; };
+  const val = a => { a = of(a); return a.n / a.d; };
+  const isInt = a => of(a).d === 1;
+  function dec(s) { const m = /^(-?)(\d*)\.?(\d*)$/.exec(s); if (!m) return null; const f = m[3] || ''; return q((m[1] ? -1 : 1) * parseInt((m[2] || '0') + f, 10), Math.pow(10, f.length)); }
+  // Text a student typed -> fraction, '' for blank, or null if it is not a number.
+  function parse(s) {
+    s = String(s == null ? '' : s).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^\+/, '');
+    if (s === '') return '';
+    if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
+    if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d*\.\d+$/.test(s)) return dec(s);
+    const m = /^(-?)\(?(-?\d+)\)?\/\(?(-?\d+)\)?$/.exec(s);
+    if (m) { const d = parseInt(m[3], 10); if (d === 0) return null; return q((m[1] ? -1 : 1) * parseInt(m[2], 10), d); }
+    return null;
+  }
+  const str = a => { a = of(a); return (a.n < 0 ? '−' : '') + (a.d === 1 ? Math.abs(a.n) : Math.abs(a.n) + '/' + a.d); };
+  let rand = Math.random;
+  function seed(n) { let a = n >>> 0; rand = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pick = arr => arr[rnd(0, arr.length - 1)];
+  const nz = (lo, hi) => { let k; do { k = rnd(lo, hi); } while (k === 0); return k; };
+  const chance = p => rand() < p;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  return { gcd, lcm, q, of, add, sub, mul, div, neg, eq, val, isInt, parse, str, seed, rnd, pick, nz, chance, shuffle };
+})();
+/* ===== DRILL KIT END ===== */
+
+/* ===================== MODEL START (no DOM) ===================== */
+/* Science 7 word problems v3: scenarios like the workbook and unit-test application questions.
+   A scenario: { p: passage, parts: [part, …], pic }. The passage is a list of sentences S(text, tag) and tables
+   TB(head, [[cells, tag], …]). A tag says which parts need the chunk as a key fact:
+     'ab'  a key fact for parts a and b      'B'  fine to tap for part b, not needed (evidence that rules a choice out)
+     '*'   setup: fine to tap, never needed  ''   a detail to skip in every part (believable, but it changes no answer)
+   A key fact for one part is fine to tap in the others. A part:
+     { lvl: 'ap' (apply) | 'an' (analyze), code (LO), sec (notes section), ask, idea (key in IDEAS), a,
+       errs: [[choice, cue (≤ 6 words), step it breaks]], steps: [[label, text]],
+       assume: [right, [wrong, cue], [wrong, cue]], explain (last part): [best, [no reasoning, cue], [misconception, cue]],
+       pic (else the scenario's) }
+   Numbers change from play to play inside ranges where every answer still holds (all data is made up). */
+const MODEL = (() => {
+  const { rnd, pick, shuffle } = Q;
+  const NAMES = ['Ava', 'Liam', 'Noah', 'Maya', 'Ethan', 'Zoe', 'Owen', 'Priya', 'Jayden', 'Hana', 'Lucas', 'Amara', 'Kai', 'Sofia', 'Mateo', 'Leah'];
+  const S = (t, k) => ({ t, k: k || '' });
+  const TB = (head, rows) => ({ head, rows: rows.map(([cells, k]) => ({ cells: cells.map(String), k: k || '' })) });
+  const nf = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  const cd = (c, r, i, t, o) => Object.assign({ c, r, i, t }, o || {});
+
+  /* ============ 7-1 · Interactions and Ecosystems ============ */
+  function ecoBeaver() {
+    const d0 = rnd(3, 6) * 10, d1 = rnd(12, 18) * 10, n0 = rnd(1, 3), n1 = rnd(9, 15), w0 = rnd(70, 95), w1 = rnd(20, 40), cows = pick([35, 40, 45]);
+    return {
+      p: [S('A creek winds through a cattle pasture near Cold Lake.', '*'),
+        S('Last fall, a family of beavers built a dam across it.', 'a'),
+        S('Behind the dam, the water rose from ' + d0 + ' cm deep to ' + d1 + ' cm, and a pond formed.', 'a'),
+        S('Beavers are most active at night.'),
+        S('They eat the bark and twigs of willows, and they cut willow stems to build their dams.', 'b'),
+        S('An adult beaver can weigh about 20 kg.'),
+        TB(['Along the creek', 'Before the dam', 'One year later'], [[['Duck pairs nesting', n0, n1], 'a'], [['Willow shrubs', w0, w1], 'b'], [['Cattle in the pasture', cows, cows], 'AB']])],
+      parts: [
+        { lvl: 'ap', code: '7-1-01', sec: 1, idea: 'bio', ask: 'Why did more ducks nest after the dam was built?', a: 'The deeper pond gave them habitat',
+          errs: [['Beavers bring the ducks food', 'Beavers feed only themselves', 1], ['Fewer cattle came near', 'The cattle count didn’t change', 0]],
+          steps: [['abiotic change', 'the dam raised the water from ' + d0 + ' to ' + d1 + ' cm'], ['living things', 'ducks gained open water to nest and feed: ' + n0 + ' → ' + n1]],
+          pic: { k: 'scene', cards: [cd(0, 0, '🦫', 'beaver dam'), cd(1, 0, '💧', 'deeper pond', { s: 0 }), cd(2, 0, '🦆', '?', { q: true, d: 'more ducks' })], arrows: [{ a: 0, b: 1, t: 'water rises', k: 'L', s: 0 }, { a: 1, b: 2, t: 'habitat', k: 'N', s: 1 }] } },
+        { lvl: 'an', code: '7-1-02', sec: 2, idea: 'role', ask: 'Why did the willow shrubs drop from ' + w0 + ' to ' + w1 + '?', a: 'Beavers cut and ate them',
+          errs: [['Cattle grazed them', 'The cattle count stayed the same', 1], ['The ducks ate them', 'Ducks don’t eat willow stems', 0]],
+          assume: ['Nothing else changed in the pasture', ['Beavers also eat ducks', 'Beavers eat plants only'], ['The willows grow back in a year', 'Stick to the data given']],
+          steps: [['beaver role', 'beavers are consumers of willow bark and twigs'], ['rule out', 'the cattle stayed at ' + cows + ', so grazing didn’t change'], ['conclusion', 'the beavers cut the willows: ' + w0 + ' → ' + w1]],
+          explain: ['Beavers caused it: they eat willow bark and cut stems for the dam, and the cattle stayed at ' + cows + ', so grazing did not change.',
+            ['Beavers caused it, because beavers live in the pond now.', 'Say how beavers use willows'],
+            ['Beavers caused it: beavers are producers, so they need the willows to make their own food, and the cattle count stayed the same.', 'Beavers are consumers, not producers']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🦫', 'beavers'), cd(1, 0, '🌿', '?', { q: true, d: 'willows ' + w0 + ' → ' + w1 }), cd(2, 0, '🐄', 'cattle: ' + cows + ' → ' + cows, { s: 1 })], arrows: [{ a: 1, b: 0, t: 'eaten, cut', k: 'G', s: 0 }, { a: 2, b: 1, k: 'R', dash: true, x: true, s: 1 }] } }
+      ]
+    };
+  }
+  function ecoSlough() {
+    const o0 = rnd(85, 95) / 10, o1 = rnd(70, 80) / 10, o2 = rnd(20, 35) / 10, f0 = rnd(110, 150), f1 = f0 - rnd(0, 8), f2 = rnd(5, 20);
+    return {
+      p: [S('A slough sits beside a canola field near Vermilion.', '*'),
+        S('In June, heavy rain washed fertilizer from the field into the water.', 'ac'),
+        S('The farmer had seeded the canola in early May.'),
+        S('Two weeks later, the slough turned bright green with algae.', 'a'),
+        S('In late July the algae died and sank, and bacteria began to break them down.', 'b'),
+        S('Sticklebacks are small fish, about 5 cm long.'),
+        TB(['Slough survey', 'Oxygen (mg/L)', 'Sticklebacks'], [[['June 1', o0, f0], 'B'], [['July 1', o1, f1], 'B'], [['August 15', o2, f2], 'b']])],
+      parts: [
+        { lvl: 'ap', code: '7-1-04', sec: 5, idea: 'change', ask: 'Why did the algae grow so fast?', a: 'The fertilizer added nutrients',
+          errs: [['The rain cooled the water', 'The rain carried fertilizer in', 0], ['The fish stopped eating algae', 'The fish were still there', 0]],
+          steps: [['cause', 'rain washed fertilizer into the slough'], ['effect', 'the extra nutrients fed a burst of algae']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🌧️', 'heavy rain'), cd(1, 0, '🧪', 'fertilizer', { s: 0 }), cd(2, 0, '🟢', '?', { q: true, d: 'algae boom' })], arrows: [{ a: 0, b: 1, t: 'washes in', k: 'L', s: 0 }, { a: 1, b: 2, t: 'nutrients', k: 'G', s: 1 }] } },
+        { lvl: 'an', code: '7-1-02', sec: 2, idea: 'role', ask: 'Why did the oxygen drop to ' + o2 + ' mg/L by August?', a: 'Decomposers used it on dead algae',
+          errs: [['Living algae used it all', 'Living algae add oxygen in light', 1], ['The fish breathed it all', 'The fish were there all summer', 1]],
+          assume: ['The fish need oxygen from the water', ['Bacteria make oxygen', 'Decomposers use oxygen'], ['The fish died in June', 'The table shows them in July']],
+          steps: [['dead algae', 'the algae died and sank in late July'], ['decomposers', 'bacteria used oxygen to break them down'], ['data', 'oxygen fell to ' + o2 + ' mg/L; fish fell to ' + f2]],
+          pic: { k: 'chart', cats: ['June 1', 'July 1', 'August 15'], series: [{ t: 'oxygen (mg/L)', k: 'L', v: [o0, o1, o2] }], y: 'oxygen (mg/L)', hl: [2] } },
+        { lvl: 'an', code: '7-1-04', sec: 6, idea: 'steward', ask: 'What is the best way to stop this next year?', a: 'Plant a grass strip beside the slough',
+          errs: [['Add more fish to the slough', 'That doesn’t stop the cause', 0], ['Scoop out the dead fish', 'That treats the result only', 0]],
+          steps: [['the cause', 'fertilizer washing in from the field'], ['the fix', 'a grass strip soaks it up first'], ['the result', 'fewer algae, so less oxygen used up']],
+          explain: ['A grass strip soaks up fertilizer before it reaches the water, so fewer algae grow and die, and decomposers use up less oxygen.',
+            ['A grass strip is the best fix, because it is good for the environment.', 'Say how it stops the cause'],
+            ['A grass strip is best: the grass gives off extra oxygen into the slough, so the fish can still breathe when the algae die.', 'It works by blocking the fertilizer']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🌾', 'canola field'), cd(1, 0, '🌱', '?', { q: true, d: 'grass strip' }), cd(2, 0, '💧', 'slough', { s: 2 })], arrows: [{ a: 0, b: 1, t: 'fertilizer', k: 'G', s: 0 }, { a: 1, b: 2, t: 'blocked', k: 'R', dash: true, x: true, s: 1 }] } }
+      ]
+    };
+  }
+  function ecoLake() {
+    const A = pick([10000, 20000, 30000, 50000]), extra = pick([300, 500, 800]);
+    return {
+      p: [S('Biologists measure the energy in a small lake in the boreal forest.', '*'),
+        S('Algae are the producers. Water fleas eat algae, minnows eat water fleas, and northern pike eat minnows.', 'ab'),
+        S('Northern pike can grow more than 1 m long.'),
+        TB(['Level', 'Energy (kJ per m² per year)'], [[['Algae', nf(A)], 'a'], [['Water fleas', nf(A / 10)], 'a'], [['Minnows', nf(A / 100)], 'aB'], [['Northern pike', '?'], 'a']]),
+        S('The lake is about 8 m deep in the middle.'),
+        S('An angler wants to add ' + extra + ' more pike so there will be more to catch.', 'b')],
+      parts: [
+        { lvl: 'ap', code: '7-1-02', sec: 3, idea: 'ten', ask: 'About how much energy reaches the pike?', a: nf(A / 1000) + ' kJ',
+          errs: [[nf(A / 100) + ' kJ', 'That is the minnows’ level', 1], [nf(A * 10) + ' kJ', 'Energy shrinks going up', 0]],
+          steps: [['pattern', 'each level gets about 10% of the one below'], ['pike', '10% of ' + nf(A / 100) + ' = ' + nf(A / 1000) + ' kJ']],
+          pic: { k: 'layers', bands: [{ i: '🐟', t: 'pike', q: true, d: 'pike: ' + nf(A / 1000) + ' kJ', w: .4, k: 'Y' }, { i: '🐠', t: 'minnows: ' + nf(A / 100) + ' kJ', w: .6, k: 'G' }, { i: '🦐', t: 'water fleas: ' + nf(A / 10) + ' kJ', w: .8, k: 'G' }, { i: '🟢', t: 'algae: ' + nf(A) + ' kJ', w: 1, k: 'N' }] } },
+        { lvl: 'an', code: '7-1-02', sec: 3, idea: 'ten', ask: 'What will most likely happen to the extra pike?', a: 'Many will starve or leave',
+          errs: [['They will all thrive', 'Little energy reaches the top', 1], ['They will eat the algae', 'Pike are carnivores', 0]],
+          assume: ['No new food comes into the lake', ['Pike can eat algae', 'Pike eat other animals'], ['More pike means more energy', 'Energy comes from the level below']],
+          steps: [['energy at the top', 'only about 1/1000 of the algae’s energy reaches pike'], ['food limit', 'the minnows can feed only a few pike'], ['prediction', 'many of the ' + extra + ' extra pike starve or leave']],
+          explain: ['Many will starve, because only about 1/1000 of the algae’s energy reaches the pike level, so there are not enough minnows for ' + extra + ' more pike.',
+            ['Many will starve, because the lake is too small.', 'Use the energy numbers'],
+            ['Many will starve, because pike are the biggest animals in the lake, and the biggest animals always need the most energy in a chain.', 'Use the energy at each level']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🐠', 'minnows: ' + nf(A / 100) + ' kJ'), cd(1, 0, '🐟', '?', { q: true, d: 'too many pike' }), cd(2, 0, '➕', '+' + extra + ' pike', { s: 1 })], arrows: [{ a: 0, b: 1, t: 'only 10% passes', k: 'G', s: 0 }, { a: 2, b: 1, k: 'R', s: 2 }] } }
+      ]
+    };
+  }
+  function ecoFire() {
+    const f = [rnd(40, 60), rnd(20, 30), rnd(2, 6)], j = [rnd(8, 14), rnd(26, 40), rnd(12, 18)], s = [0, rnd(2, 5), rnd(8, 14)];
+    return {
+      p: [S('A forest fire burned a stand of jack pine and spruce north of Lac La Biche.', '*'),
+        S('Jack pine cones stay sealed with resin until the heat of a fire opens them.', 'a'),
+        S('The fire burned for eleven days before rain put it out.'),
+        S('Firefighters came from three provinces to help.'),
+        S('Biologists then counted young plants in the same plots for 20 years.', '*'),
+        TB(['Plants per 100 m²', 'Year 1', 'Year 5', 'Year 20'], [[['Fireweed', f[0], f[1], f[2]], 'b'], [['Jack pine', j[0], j[1], j[2]], 'aB'], [['White spruce', s[0], s[1], s[2]], 'b']])],
+      parts: [
+        { lvl: 'ap', code: '7-1-04', sec: 5, idea: 'recover', ask: 'Why do jack pines sprout so soon after the fire?', a: 'Fire opened their cones',
+          errs: [['Fire makes new jack pine seeds', 'The seeds were in sealed cones', 0], ['People planted them', 'The cones open from fire heat', 0]],
+          steps: [['the cones', 'sealed with resin until heated'], ['the fire', 'heat opened the cones and freed the seeds']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🔥', 'fire'), cd(1, 0, '🌰', 'sealed cones', { s: 0 }), cd(2, 0, '🌲', '?', { q: true, d: 'jack pine seedlings' })], arrows: [{ a: 0, b: 1, t: 'heat', k: 'R', s: 0 }, { a: 1, b: 2, t: 'seeds fall', k: 'N', s: 1 }] } },
+        { lvl: 'an', code: '7-1-04', sec: 5, idea: 'recover', ask: 'What does the table show about the forest’s recovery?', a: 'Different plants take over in stages',
+          errs: [['The forest is back in one year', 'Look at the Year 20 column', 1], ['The fire ended the forest for good', 'Plants returned in Year 1', 0]],
+          assume: ['No new fire burns the plots', ['People planted the fireweed', 'It spreads on its own'], ['Spruce seeds can’t reach the plots', 'Spruce shows up by Year 5']],
+          steps: [['first', 'fireweed spreads in the open sun: ' + f[0] + ' in Year 1'], ['next', 'jack pine peaks at ' + j[1] + ' in Year 5'], ['later', 'spruce grows to ' + s[2] + ' as the trees shade out fireweed']],
+          explain: ['The forest recovers in stages: fireweed spreads first in the open sun, then jack pine and spruce grow and shade it out over 20 years.',
+            ['The forest recovers because plants grow back after a fire.', 'Use the numbers in the table'],
+            ['The forest recovers in stages: the fireweed slowly turns into jack pine as it grows, and the jack pine later turns into spruce.', 'Each grows from its own seeds']],
+          pic: { k: 'chart', cats: ['Year 1', 'Year 5', 'Year 20'], series: [{ t: 'fireweed', k: 'P', v: f }, { t: 'jack pine', k: 'N', v: j }, { t: 'white spruce', k: 'T', v: s }], y: 'plants per 100 m²' } }
+      ]
+    };
+  }
+  function ecoBeetle() {
+    const c = [-rnd(39, 43), -rnd(24, 29), -rnd(27, 31)], neg = v => String(v).replace('-', '−'), t = [rnd(20, 60), rnd(400, 700), 0]; t[2] = t[1] + rnd(300, 600);
+    return {
+      p: [S('Mountain pine beetles lay their eggs under the bark of lodgepole pines.', '*'),
+        S('The young beetles feed under the bark all winter, and the tree can die.', 'a'),
+        S('A long cold snap below −35 °C kills most of the young beetles.', 'ab'),
+        S('Lodgepole pines can grow 30 m tall.'),
+        S('An adult beetle is about the size of a grain of rice.'),
+        TB(['Near Hinton', 'Coldest week (°C)', 'Pines attacked'], [[['Winter 1', neg(c[0]), t[0]], 'b'], [['Winter 2', neg(c[1]), t[1]], 'b'], [['Winter 3', neg(c[2]), t[2]], 'b']]),
+        S('Forest A is almost all lodgepole pine. Forest B mixes pine with spruce, aspen and fir.', 'c'),
+        S('Both forests are about the same size.', '*')],
+      parts: [
+        { lvl: 'ap', code: '7-1-01', sec: 1, idea: 'bio', ask: 'Which factor keeps the beetles in check?', a: 'Very cold winters (abiotic)',
+          errs: [['The pines’ height (biotic)', 'Height doesn’t stop the beetles', 0], ['The bark (abiotic)', 'Bark is where they live', 0]],
+          steps: [['the factor', 'a long cold snap below −35 °C'], ['its effect', 'it kills most young beetles under the bark']],
+          pic: { k: 'scene', cards: [cd(0, 0, '❄️', 'below −35 °C'), cd(1, 0, '🪲', '?', { q: true, d: 'most beetles die' }), cd(2, 0, '🌲', 'pines saved', { s: 1 })], arrows: [{ a: 0, b: 1, t: 'kills', k: 'L', s: 0 }, { a: 1, b: 2, k: 'R', dash: true, x: true, s: 1 }] } },
+        { lvl: 'an', code: '7-1-04', sec: 5, idea: 'change', ask: 'Why did attacks rise after Winter 1?', a: 'Milder winters let beetles survive',
+          errs: [['The beetles got used to the cold', 'Too fast for beetles to adapt', 1], ['Cold weather helps the beetles', 'Look at Winter 1’s numbers', 0]],
+          assume: ['Nothing changed but the cold', ['Beetles grew tougher on purpose', 'Beetles can’t adapt in one year'], ['Cold winters help pine beetles', 'Cold kills the young beetles']],
+          steps: [['Winter 1', neg(c[0]) + ' °C: only ' + t[0] + ' pines attacked'], ['Winters 2–3', 'never below ' + neg(Math.min(c[1], c[2])) + ' °C, so most young beetles lived'], ['result', 'attacks rose to ' + nf(t[2])]],
+          pic: { k: 'chart', cats: ['Winter 1 (' + neg(c[0]) + ' °C)', 'Winter 2 (' + neg(c[1]) + ' °C)', 'Winter 3 (' + neg(c[2]) + ' °C)'], series: [{ t: 'pines attacked', k: 'R', v: t }], y: 'pines attacked', hl: [1, 2] } },
+        { lvl: 'an', code: '7-1-03', sec: 4, idea: 'div', ask: 'Which forest will lose a smaller share of its trees?', a: 'Forest B, the mixed forest',
+          errs: [['Forest A, all pine', 'The beetles attack only pines', 1], ['Both lose the same share', 'Count the kinds of trees', 0]],
+          assume: ['The beetles attack only pines', ['Beetles attack every kind of tree', 'They need lodgepole pine'], ['Forest B is colder', 'The story doesn’t say so']],
+          steps: [['the pest', 'beetles kill only pines'], ['Forest B', 'most of its trees are spruce, aspen and fir'], ['result', 'Forest B keeps most of its trees']],
+          explain: ['Forest B loses a smaller share, because the beetles attack only pines, and most of its trees are spruce, aspen and fir.',
+            ['Forest B, because it has more biodiversity.', 'Say why biodiversity helps here'],
+            ['Forest B loses a smaller share, because a mixed forest is always colder in winter, so more of the young beetles die there.', 'Nothing says Forest B is colder']],
+          pic: { k: 'scene', cards: [cd(.5, 0, '🪲', 'pine beetle'), cd(0, 1, '🌲', 'Forest A', { tag: 'all pine', tagk: 'R' }), cd(1, 1, '🌳', '?', { q: true, d: 'Forest B', tag: 'mixed' })], arrows: [{ a: 0, b: 1, k: 'R', dash: true }, { a: 0, b: 2, k: 'R', dash: true }] } }
+      ]
+    };
+  }
+  function ecoOwl() {
+    const y = rnd(3, 5), b1 = rnd(6, 14), o1 = rnd(0, 1), b2 = rnd(120, 190), o2 = rnd(4, 8);
+    return {
+      p: [S('Burrowing owls nest in the grasslands of southern Alberta.', '*'),
+        S('They do not dig their own homes. They nest in old burrows dug by ground squirrels.', 'ab'),
+        S('A burrowing owl stands about 25 cm tall on long legs.'),
+        S('The owls eat grasshoppers, beetles and mice.', 'A'),
+        S('Each fall they fly south to Texas and Mexico for the winter.'),
+        S('On one ranch, the owner poisoned the ground squirrels. Over ' + y + ' years, their empty burrows caved in.', 'a'),
+        TB(['After ' + y + ' years', 'Squirrel burrows', 'Owl pairs'], [[['Ranch with poison', b1, o1], 'ab'], [['Ranch next door', b2, o2], 'aB']])],
+      parts: [
+        { lvl: 'ap', code: '7-1-02', sec: 2, idea: 'web', ask: 'Why did the owl pairs drop on the poisoned ranch?', a: 'They lost the burrows they nest in',
+          errs: [['Owls mainly eat ground squirrels', 'They eat insects and mice', 0], ['The winters got colder', 'The owls leave for winter', 0]],
+          steps: [['the link', 'owls nest in burrows that squirrels dig'], ['the effect', 'no squirrels, burrows cave in: ' + b1 + ' left, ' + o1 + ' owl pair' + (o1 === 1 ? '' : 's')]],
+          pic: { k: 'scene', cards: [cd(0, 0, '🐿️', 'ground squirrels', { x: true }), cd(1, 0, '🕳️', 'burrows: ' + b1, { s: 0 }), cd(2, 0, '🦉', '?', { q: true, d: 'owls ↓' })], arrows: [{ a: 0, b: 1, t: 'dig', k: 'G', s: 0 }, { a: 1, b: 2, t: 'nest in', k: 'G', s: 1 }] } },
+        { lvl: 'an', code: '7-1-04', sec: 6, idea: 'steward', ask: 'Which plan best helps owls return to that ranch?', a: 'Stop the poison so squirrels return',
+          errs: [['Leave out mice to feed the owls', 'Food isn’t what is missing', 1], ['Release more grasshoppers', 'Nesting sites are missing', 1]],
+          assume: ['Owls need burrows to nest', ['Owls can dig burrows', 'They don’t dig their own'], ['Owls stay all winter', 'They fly south each fall']],
+          steps: [['the cause', 'poison removed the squirrels that dig burrows'], ['the fix', 'stop the poison; squirrels dig again'], ['the result', 'new burrows give owls places to nest']],
+          explain: ['Stopping the poison lets ground squirrels come back and dig burrows, so the owls get nesting places again. That fixes the cause.',
+            ['Stop the poison, because poison is bad for animals.', 'Link squirrels to burrows'],
+            ['Stopping the poison is best: the poison soaked into the grass, and the owls were getting sick from eating that grass.', 'Owls eat insects and mice']],
+          pic: { k: 'scene', cards: [cd(0, 0, '☠️', 'poison stops'), cd(1, 0, '🐿️', 'squirrels return', { s: 0 }), cd(2, 0, '🕳️', 'new burrows', { s: 1 }), cd(3, 0, '🦉', '?', { q: true, d: 'owls nest again' })], arrows: [{ a: 0, b: 1, k: 'G', s: 0 }, { a: 1, b: 2, t: 'dig', k: 'G', s: 1 }, { a: 2, b: 3, t: 'nest in', k: 'N', s: 2 }] } }
+      ]
+    };
+  }
+  function ecoElk() {
+    const e1 = rnd(8, 14), e2 = rnd(1, 3), a1 = rnd(2, 6), a2 = rnd(30, 50);
+    return {
+      p: [S('In Banff National Park, wolves hunt elk.', '*'),
+        S('Wolves avoid the busy town, so many elk stay close to town, where they are safe.', 'aB'),
+        S('Banff became Canada’s first national park in 1885.'),
+        S('Elk eat young aspen trees and willow shoots.', 'ab'),
+        S('An adult elk can weigh more than 300 kg.'),
+        TB(['Area', 'Elk per km²', 'Young aspen per plot'], [[['Near town', e1, a1], 'ab'], [['Far from town', e2, a2], 'aB']]),
+        S('Beavers need aspen and willow to eat and to build their dams.', 'b')],
+      parts: [
+        { lvl: 'ap', code: '7-1-02', sec: 2, idea: 'web', ask: 'Why are there so few young aspen near town?', a: 'Many elk eat them there',
+          errs: [['Wolves eat the aspen', 'Wolves are carnivores', 0], ['Aspen don’t grow near towns', 'They grow far from town', 0]],
+          steps: [['the elk', e1 + ' elk per km² near town, ' + e2 + ' far away'], ['the aspen', 'more elk eating them: ' + a1 + ' young aspen vs ' + a2]],
+          pic: { k: 'chart', cats: ['Near town', 'Far from town'], series: [{ t: 'elk per km²', k: 'G', v: [e1, e2] }, { t: 'young aspen', k: 'N', v: [a1, a2] }], y: 'count', hl: [0] } },
+        { lvl: 'an', code: '7-1-04', sec: 5, idea: 'change', ask: 'What will most likely happen to beavers near town?', a: 'Fewer beavers: less food and wood',
+          errs: [['More beavers', 'Aspen and willow are their food', 1], ['No change: beavers don’t eat elk', 'Changes spread through the web', 0]],
+          assume: ['Beavers near town rely on that aspen', ['Elk hunt beavers', 'Elk eat plants'], ['Beavers swim to far-off areas', 'Stick to what the story says']],
+          steps: [['wolves', 'wolves stay away, so elk gather near town'], ['elk', 'the elk eat most young aspen and willow'], ['beavers', 'less food and wood, so fewer beavers']],
+          explain: ['Fewer wolves near town means more elk there; the elk eat most young aspen and willow, so beavers have less food and wood and decrease.',
+            ['Beavers decrease because of the elk.', 'Show each link in the chain'],
+            ['Fewer beavers: the elk drink the same water as the beavers, so the beavers lose their ponds and have to leave town.', 'The link is food and wood']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🐺', 'wolves stay away'), cd(1, 0, '🦌', 'more elk', { s: 0 }), cd(2, 0, '🌳', 'fewer aspen', { s: 1 }), cd(3, 0, '🦫', '?', { q: true, d: 'fewer beavers' })], arrows: [{ a: 0, b: 1, k: 'G', s: 0 }, { a: 1, b: 2, t: 'eat', k: 'G', s: 1 }, { a: 2, b: 3, t: 'food', k: 'G', s: 2 }] } }
+      ]
+    };
+  }
+  function ecoMussel() {
+    const m = rnd(15, 40) * 100, c0 = rnd(12, 18) / 10, c1 = rnd(32, 45) / 10, w0 = rnd(35, 50), w1 = rnd(8, 15);
+    return {
+      p: [S('Zebra mussels are a small invasive species from Europe. They are not yet in Alberta.', '*'),
+        S('One mussel filters about 1 L of water a day and eats the algae in it.', 'a'),
+        S('Their shells have dark zigzag stripes.'),
+        S('In a lake in Manitoba, the mussels spread over the lake bottom in a few years.', 'a'),
+        TB(['Lake survey', 'Mussels per m²', 'Water clarity (m)', 'Water fleas per L'], [[['Before', 0, c0, w0], 'aB'], [['3 years later', nf(m), c1, w1], 'ab']]),
+        S('Water fleas eat algae, and young fish eat water fleas.', 'b'),
+        S('Many people fish for walleye on the lake in summer.'),
+        S('Mussels can ride from lake to lake stuck to boats or in the water inside them.', 'c')],
+      parts: [
+        { lvl: 'ap', code: '7-1-04', sec: 5, idea: 'change', ask: 'Why did the water get clearer?', a: 'The mussels filtered out the algae',
+          errs: [['Water fleas ate more algae', 'The water fleas went down', 0], ['Fewer people fished there', 'Fishing wasn’t measured', 0]],
+          steps: [['the mussels', nf(m) + ' per m², each filtering about 1 L a day'], ['clarity', 'less algae, so clarity rose: ' + c0 + ' → ' + c1 + ' m']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🐚', 'zebra mussels'), cd(1, 0, '🟢', 'algae ↓', { s: 0 }), cd(2, 0, '💧', '?', { q: true, d: 'clearer water' })], arrows: [{ a: 1, b: 0, t: 'filtered, eaten', k: 'G', s: 0 }, { a: 1, b: 2, k: 'L', s: 1 }] } },
+        { lvl: 'an', code: '7-1-02', sec: 2, idea: 'web', ask: 'What will most likely happen to the young fish?', a: 'Fewer: less food for them',
+          errs: [['More: clearer water helps them', 'Follow the food, not the view', 1], ['No change: they don’t eat algae', 'Their food eats algae', 1]],
+          assume: ['Young fish rely on water fleas', ['Young fish eat mussels', 'Story: they eat water fleas'], ['Algae will come back soon', 'Stick to the data given']],
+          steps: [['algae', 'the mussels eat the algae'], ['water fleas', 'less algae: water fleas ' + w0 + ' → ' + w1 + ' per L'], ['young fish', 'less food, so fewer young fish']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🐚', 'mussels'), cd(1, 0, '🟢', 'algae ↓'), cd(2, 0, '🦐', 'water fleas ↓', { s: 1 }), cd(3, 0, '🐟', '?', { q: true, d: 'young fish ↓' })], arrows: [{ a: 1, b: 0, t: 'eaten', k: 'G', s: 0 }, { a: 1, b: 2, t: 'food', k: 'G', s: 1 }, { a: 2, b: 3, t: 'food', k: 'G', s: 2 }] } },
+        { lvl: 'an', code: '7-1-04', sec: 6, idea: 'steward', ask: 'What is Alberta’s best plan for its lakes?', a: 'Inspect and clean every boat',
+          errs: [['Remove mussels once they arrive', 'Very hard once they spread', 1], ['Add water fleas to the lakes', 'That doesn’t stop the mussels', 0]],
+          steps: [['the risk', 'mussels ride in on boats from other lakes'], ['the fix', 'clean, drain and dry every boat'], ['why first', 'stopping them is easier than removing them']],
+          explain: ['Inspecting and cleaning boats stops mussels before they arrive, because once they spread they eat the algae that the lake’s food web depends on.',
+            ['Inspect boats, because invasive species are bad.', 'Say how they arrive and harm'],
+            ['Inspect and clean every boat: boats carry the algae that the mussels eat, so cleaning them starves out any mussels in the lake.', 'Boats carry the mussels themselves']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🚤', 'boat from Manitoba'), cd(1, 0, '🧽', '?', { q: true, d: 'clean, drain, dry' }), cd(2, 0, '🏞️', 'Alberta lake', { s: 2 })], arrows: [{ a: 0, b: 1, k: 'G', s: 0 }, { a: 1, b: 2, t: 'no mussels', k: 'N', s: 1 }] } }
+      ]
+    };
+  }
+  function ecoLitter() {
+    const n = pick(NAMES), wk = pick([8, 10, 12]), a = rnd(6, 9), b = rnd(13, 16);
+    return {
+      p: [S(n + '’s class tests how fast dead leaves break down in an aspen forest.', '*'),
+        S('They fill two mesh bags with 20 g of dry aspen leaves each.', 'a'),
+        S('Bag A has big holes, so earthworms and insects can crawl in. Bag B has tiny holes, so only bacteria and fungi get in.', 'a'),
+        S('Both bags lie side by side on the forest floor.', 'A'),
+        S('Aspen leaves turn bright yellow in September.'),
+        TB(['Leaves left', 'Start', 'After ' + wk + ' weeks'], [[['Bag A (big holes)', '20 g', a + ' g'], 'a'], [['Bag B (tiny holes)', '20 g', b + ' g'], 'a']]),
+        S('The class uses a kitchen scale that reads to the nearest gram.'),
+        S(n + ' says, “Without decomposers, the forest would slowly run out of nutrients.”', 'b')],
+      parts: [
+        { lvl: 'ap', code: '7-1-02', sec: 2, idea: 'role', ask: 'Why did Bag A lose more mass than Bag B?', a: 'More decomposers could get in',
+          errs: [['Bag A got more sunlight', 'They lay side by side', 0], ['Bag B’s leaves grew back', 'Dead leaves can’t grow', 0]],
+          steps: [['the difference', 'only Bag A let in earthworms and insects'], ['the data', 'Bag A fell to ' + a + ' g, Bag B to ' + b + ' g']],
+          pic: { k: 'chart', cats: ['Bag A (big holes)', 'Bag B (tiny holes)'], series: [{ t: 'g left', k: 'G', v: [a, b], f: v => v + ' g' }], y: 'leaves left (g)', hl: [0] } },
+        { lvl: 'an', code: '7-1-02', sec: 2, idea: 'role', ask: 'Is ' + n + ' right?', a: 'Yes: decomposers recycle nutrients',
+          errs: [['No: plants make nutrients from light', 'Light makes sugar, not minerals', 1], ['No: decomposers only clean up', 'They return nutrients to the soil', 0]],
+          assume: ['Plants take nutrients from the soil', ['Dead leaves vanish on their own', 'Something must break them down'], ['Rain brings all the nutrients', 'Nutrients come from dead matter']],
+          steps: [['decomposers', 'break dead leaves down into nutrients'], ['soil', 'the nutrients return to the soil'], ['producers', 'aspens take them up to grow']],
+          explain: ['Yes, because decomposers break dead leaves into nutrients in the soil, and producers like aspens take up those nutrients to grow.',
+            ['Yes, because decomposers are important.', 'Say what decomposers return'],
+            ['Yes: decomposers are producers that make food from sunlight, and they pass that food to the aspens through the soil.', 'Decomposers break down dead matter']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🍂', 'dead leaves'), cd(1, 0, '🪱', 'decomposers', { s: 0 }), cd(2, 0, '🟤', '?', { q: true, d: 'nutrients in soil' }), cd(1, 1, '🌳', 'aspen', { s: 2 })], arrows: [{ a: 0, b: 1, t: 'broken down', k: 'G', s: 0 }, { a: 1, b: 2, k: 'G', s: 1 }, { a: 2, b: 3, t: 'taken up', k: 'N', s: 2 }, { a: 3, b: 0, t: 'drops', k: 'M', dash: true }] } }
+      ]
+    };
+  }
+  function ecoDrought() {
+    const k = rnd(25, 40), rain = rnd(140, 170), n1 = rnd(28, 34) / 100, n2 = rnd(40, 46) / 100, d1 = Math.round(n1 * rnd(75, 85)) / 100, d2 = Math.round(n2 * rnd(25, 35)) / 100;
+    const kg = v => v.toFixed(2);
+    return {
+      p: [S('Two fields sit side by side near Hanna.', '*'),
+        S('Field 1 is native prairie with about ' + k + ' kinds of grasses and flowers. Field 2 was planted with one kind of grass.', 'ab'),
+        S('Both fields are fenced, and neither is grazed.', '*'),
+        S('Field 2’s grass is a type often cut for hay.'),
+        S('Then came a dry summer: only ' + rain + ' mm of rain fell, about half the usual amount.', 'b'),
+        S('Hanna is known for its strong winds.'),
+        TB(['Plant growth (kg per m²)', 'Normal year', 'Dry year'], [[['Field 1', kg(n1), kg(d1)], 'AB'], [['Field 2', kg(n2), kg(d2)], 'AB']])],
+      parts: [
+        { lvl: 'ap', code: '7-1-03', sec: 4, idea: 'div', ask: 'Which field has more biodiversity?', a: 'Field 1',
+          errs: [['Field 2: it grows more', 'Biodiversity counts kinds, not mass', 0], ['They are the same', 'Count the kinds of species', 0]],
+          steps: [['biodiversity', 'the number of kinds of living things'], ['compare', 'Field 1: about ' + k + ' kinds; Field 2: one kind']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🌼', 'Field 1', { tag: k + ' kinds' }), cd(1, 0, '🌾', 'Field 2', { tag: '1 kind', tagk: 'R' })] } },
+        { lvl: 'an', code: '7-1-03', sec: 4, idea: 'div', ask: 'Which field held up better in the dry year?', a: 'Field 1: it lost a smaller share',
+          errs: [['Field 2: it grew the most', 'Compare the dry-year column', 1], ['Both dropped the same', 'Work out each drop', 1]],
+          assume: ['Both fields got the same rain', ['Field 2 was watered', 'The story doesn’t say so'], ['Wind hit only one field', 'They sit side by side']],
+          steps: [['Field 1', kg(n1) + ' → ' + kg(d1) + ': a small drop'], ['Field 2', kg(n2) + ' → ' + kg(d2) + ': it lost more than half'], ['why', 'with many kinds, some cope with drought']],
+          explain: ['Field 1 held up better: with many kinds of plants, some cope with drought, so its growth fell only a little while Field 2’s one grass fell by more than half.',
+            ['Field 1, because native prairie is natural.', 'Use the data and biodiversity'],
+            ['Field 1 held up better, because native prairie plants don’t need any water, so a dry summer can’t hurt them at all.', 'Field 1’s growth dropped too']],
+          pic: { k: 'chart', cats: ['Field 1 (' + k + ' kinds)', 'Field 2 (1 kind)'], series: [{ t: 'normal year', k: 'N', v: [n1, n2], f: kg }, { t: 'dry year', k: 'G', v: [d1, d2], f: kg }], y: 'kg per m²', hl: [0] } }
+      ]
+    };
+  }
+  function ecoCaribou() {
+    const m0 = rnd(20, 30), m1 = rnd(70, 110), w0 = rnd(4, 6), w1 = rnd(11, 16), c0 = rnd(90, 120), c1 = rnd(35, 55);
+    return {
+      p: [S('Woodland caribou live in old forests and peat bogs in northern Alberta.', '*'),
+        S('Few moose or deer live there, so few wolves live there either.', 'a'),
+        S('A caribou’s wide hooves help it walk on snow.'),
+        S('Logging and oil work cut roads and long straight lines through the forest.', 'ab'),
+        S('Young shrubs grow on the cleared ground, and moose and deer move in to eat them.', 'ab'),
+        TB(['Per 1000 km²', 'Before', '20 years later'], [[['Moose', m0, m1], 'a'], [['Wolves', w0, w1], 'aB'], [['Caribou', c0, c1], 'B']]),
+        S('Wolves also travel fast along the straight lines, so they reach caribou more easily.', 'b'),
+        S('Caribou eat lichens, which grow slowly on old trees and on the ground.', 'B'),
+        S('Caribou calves are born in late spring.')],
+      parts: [
+        { lvl: 'ap', code: '7-1-02', sec: 2, idea: 'web', ask: 'Why did the wolves increase?', a: 'More moose and deer to eat',
+          errs: [['Wolves eat the new shrubs', 'Wolves are carnivores', 0], ['More caribou to eat', 'The caribou went down', 0]],
+          steps: [['the change', 'clearings grow shrubs; moose rise ' + m0 + ' → ' + m1], ['wolves', 'more prey, so wolves rise ' + w0 + ' → ' + w1]],
+          pic: { k: 'scene', cards: [cd(0, 0, '🛣️', 'roads, lines'), cd(1, 0, '🌿', 'shrubs'), cd(2, 0, '🫎', 'moose ' + m0 + ' → ' + m1, { s: 0 }), cd(3, 0, '🐺', '?', { q: true, d: 'wolves ' + w0 + ' → ' + w1 })], arrows: [{ a: 0, b: 1, k: 'G' }, { a: 1, b: 2, t: 'food', k: 'G', s: 0 }, { a: 2, b: 3, t: 'prey', k: 'G', s: 1 }] } },
+        { lvl: 'an', code: '7-1-04', sec: 6, idea: 'steward', ask: 'Which plan best protects the caribou?', a: 'Replant the old lines and clearings',
+          errs: [['Leave out lichen for the caribou', 'Hunger isn’t the main cause', 0], ['Cut more lines for patrols', 'The lines help wolves', 1]],
+          assume: ['Wolves are the main threat', ['Caribou are running out of lichen', 'The story doesn’t say so'], ['Wolves eat shrubs', 'Wolves are carnivores']],
+          steps: [['the cause', 'lines and clearings bring moose, then wolves'], ['the fix', 'replanting removes shrubs and wolf paths'], ['the result', 'fewer wolves reach the caribou']],
+          explain: ['Replanting the lines removes the shrubs that draw in moose and deer and the paths wolves travel on, which fixes the cause of more wolves near caribou.',
+            ['Replant the lines, because caribou like trees.', 'Link the lines to the wolves'],
+            ['Replant the lines: the young trees will grow lichen for the caribou to eat right away, which ends their hunger.', 'Wolves, not hunger, are the cause']],
+          pic: { k: 'chart', cats: ['Moose', 'Wolves', 'Caribou'], series: [{ t: 'before', k: 'M', v: [m0, w0, c0] }, { t: '20 years later', k: 'G', v: [m1, w1, c1] }], y: 'per 1000 km²', hl: [2] } }
+      ]
+    };
+  }
+  function ecoQuadrat() {
+    const n = pick(NAMES), lA = rnd(10, 20), kA = rnd(1, 3), kB = rnd(8, 12), m = rnd(22, 28), mB = m + pick([-1, 1, 2]), e = rnd(20, 40), eB = e + rnd(-4, 4);
+    return {
+      p: [S(n + '’s class surveys two spots in a schoolyard in Edmonton.', '*'),
+        S('Spot A is under a row of tall spruce trees. Spot B is an open lawn.', 'a'),
+        S('The spruce trees were planted when the school opened in 1974.'),
+        S('The class counts everything inside a 1 m square frame called a quadrat.', '*'),
+        TB(['Survey', 'Light (% of full sun)', 'Soil moisture (%)', 'Kinds of plants'], [[['Spot A (spruce)', lA, m, kA], 'a'], [['Spot B (lawn)', 100, mB, kB], 'a']]),
+        S('They also find about ' + e + ' earthworms per square metre in each spot.', 'A'),
+        S('The spruce trees are about 15 m tall.'),
+        S(n + ' thinks light is the cause and wants to test it.', 'b')],
+      parts: [
+        { lvl: 'ap', code: '7-1-01', sec: 1, idea: 'bio', ask: 'Which abiotic factor best explains fewer plants at Spot A?', a: 'Less sunlight',
+          errs: [['Soil moisture', 'Moisture is about the same', 0], ['The earthworms', 'Earthworms are biotic and equal', 0]],
+          steps: [['compare', 'light: ' + lA + '% vs 100%; moisture about the same'], ['the cause', 'less light, so fewer kinds of plants: ' + kA + ' vs ' + kB]],
+          pic: { k: 'chart', cats: ['Spot A (spruce)', 'Spot B (lawn)'], series: [{ t: 'light (%)', k: 'Y', v: [lA, 100] }, { t: 'soil moisture (%)', k: 'L', v: [m, mB] }, { t: 'kinds of plants', k: 'N', v: [kA, kB] }], y: 'survey' } },
+        { lvl: 'an', code: '7-1-01', sec: 1, idea: 'bio', ask: 'Which test of light is fair?', a: 'Shade part of the lawn only',
+          errs: [['Count plants in winter too', 'That changes the season too', 1], ['Cut down the spruce trees', 'That changes more than light', 1]],
+          assume: ['Only light changes in a fair test', ['Every factor should change', 'Change one factor only'], ['One quadrat is enough proof', 'Fair tests compare']],
+          steps: [['one factor', 'change only the light'], ['keep the same', 'same lawn, soil and water for both parts'], ['compare', 'count kinds of plants in shaded vs open']],
+          explain: ['Shade one part of the lawn and leave another part open, so light is the only factor that changes; if the shaded part grows fewer kinds, light is the cause.',
+            ['Shade part of the lawn and see what happens.', 'Say what stays the same'],
+            ['Shade part of the lawn and water that part more too, so two factors change and the difference in plants is bigger.', 'Change only one factor']],
+          pic: { k: 'scene', cards: [cd(0, 0, '⛱️', 'shaded lawn'), cd(1, 0, '☀️', 'open lawn'), cd(.5, 1, '🌱', '?', { q: true, d: 'compare the plants' })], arrows: [{ a: 0, b: 2, k: 'G', s: 2 }, { a: 1, b: 2, k: 'G', s: 2 }] } }
+      ]
+    };
+  }
+
+  /* ============ the unit's ideas (from v2): label (the choice) and hint (the cue when another is picked) ============ */
+  const IDEAS = {
+    eco: { bio: ['Biotic and abiotic factors', 'Sort living from non-living'], role: ['Producer, consumer, decomposer', 'How does it get food?'], flow: ['Energy flow in a food chain', 'Follow the energy from food'],
+      ten: ['The 10% rule', 'Energy is lost at each level'], web: ['Links in a food web', 'Follow who eats whom'], div: ['Biodiversity', 'Count the kinds of species'],
+      change: ['A change spreading along a chain', 'Follow the change link by link'], recover: ['Recovery after a disturbance', 'How ecosystems recover over time'], steward: ['Fixing the cause of a problem', 'Find the cause, then fix it'] }
+  };
+  // Ideas too close to offer as wrong choices for each other.
+  const NEAR = [['flow', 'ten'], ['web', 'change'], ['div', 'recover'], ['chain', 'photo'], ['photo', 'mass'], ['poll', 'repro'], ['cond', 'mode'], ['cond', 'flow'], ['cond', 'insul'], ['flow', 'insul'], ['amount', 'cap'], ['stab', 'design'], ['design', 'mat'], ['design', 'beam'], ['beam', 'force'], ['mat', 'force'], ['cycle', 'rock'], ['cycle', 'surf'], ['crys', 'rock'], ['uplift', 'bound'], ['form', 'surf'], ['quake', 'bound'], ['web', 'flow'], ['change', 'steward'], ['recover', 'change']];
+  const near = (a, b) => NEAR.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
+
+  /* ============ building a scenario's parts ============ */
+  const UNITS = { eco: [ecoBeaver, ecoSlough, ecoLake, ecoFire, ecoBeetle, ecoOwl, ecoElk, ecoMussel, ecoLitter, ecoDrought, ecoCaribou, ecoQuadrat] };
+  const choose = (a, ws) => { const errs = ws.map(([t, cue, s]) => ({ t, cue, s })); return { a, errs, opts: shuffle([{ v: 'a', t: a }].concat(errs.map((e, k) => ({ v: 'e' + k, t: e.t })))) }; };
+  // A chunk's kind for part L: must (L in the tag), opt (setup, or a fact for another part), no (a detail to skip).
+  const kindOf = (tag, L) => tag === '*' ? 'opt' : tag.includes(L) ? 'must' : tag ? 'opt' : 'no';
+  function build(unit, f) {
+    const sc = f(), N = sc.parts.length, flat = [];
+    sc.p.forEach(c => c.rows ? c.rows.forEach((r, j) => flat.push({ body: j ? { cells: r.cells } : { cells: r.cells, head: c.head }, tag: r.k })) : flat.push({ body: { t: c.t }, tag: c.k }));
+    const ideas = IDEAS[unit];
+    const items = sc.parts.map((pt, j) => {
+      const L = 'abc'[j], wrongIdeas = pt.idea ? shuffle(Object.keys(ideas).filter(k => k !== pt.idea && !near(k, pt.idea))).slice(0, 2) : [];
+      const read = {
+        p: flat.map(c => Object.assign({}, c.body, { k: kindOf(c.tag, L) })), ask: pt.ask, ideaKey: pt.idea,
+        idea: pt.idea ? choose(ideas[pt.idea][0], wrongIdeas.map(k => [ideas[k][0], ideas[pt.idea][1]])) : null,
+        assume: pt.assume ? choose(pt.assume[0], pt.assume.slice(1)) : null,
+        explain: pt.explain ? choose(pt.explain[0], pt.explain.slice(1)) : null
+      };
+      const errs = pt.errs.map(([t, cue, s]) => ({ t, cue, s }));
+      return { t: f.name, unit, part: j, of: N, lvl: pt.lvl, code: pt.code, sec: pt.sec, read, a: pt.a,
+        opts: shuffle([{ v: 'a', t: pt.a }].concat(errs.map((e, k) => ({ v: 'e' + k, t: e.t })))), errs,
+        steps: pt.steps.map(([l, m]) => ({ l, m })), pic: pt.pic || sc.pic, prev: sc.parts.slice(0, j).map(q => ({ ask: q.ask, a: q.a })) };
+    });
+    items.forEach(it => Object.defineProperty(it, 'all', { value: items, enumerable: false, configurable: true }));
+    return items;
+  }
+  // Part a of a scenario whose parts fit in what is left of the round (rem), never leaving a single item over.
+  function start(unit, rem) {
+    const fits = k => k <= rem && rem - k !== 1;
+    for (let i = 0; i < 40; i++) { const its = build(unit, pick(UNITS[unit])); if (fits(its.length)) return its; }
+    const its = build(unit, pick(UNITS[unit])).slice(0, Math.max(1, rem));
+    its.forEach(it => { it.of = its.length; Object.defineProperty(it, 'all', { value: its }); });
+    return its;
+  }
+  const startMix = rem => start(pick(Object.keys(UNITS)), rem);
+
+  // A part's answer -> ok (partial after a slip), or the misconception it names (its cue and the step it breaks).
+  // On a part with a Best explanation step the page keeps the answer's tries (local): a retry or a weak explanation is a slip.
+  function check(it, r) {
+    if (r.v === 'a') {
+      const ex = it.read.explain, eBad = ex && r.local && r.explain != null && r.explain !== 'a', retry = ex && r.local && (r.tried || []).length;
+      if (!r.miss && !eBad && !retry) return { ok: true };
+      return { ok: true, partial: true, cue: eBad ? ex.errs[+String(r.explain).slice(1)].cue : retry ? 'Right on the second try' : 'Right; an earlier step slipped' };
+    }
+    const k = /^e(\d+)$/.test(r.v || '') ? +r.v.slice(1) : -1, e = it.errs[k];
+    return e ? { code: 'e' + k, cue: e.cue, s: e.s } : { code: 'other', cue: 'Pick one answer', s: -1 };
+  }
+  // The key-facts step: every must chunk tapped, and no detail to skip.
+  function checkFacts(it, sel) {
+    const p = it.read.p, s = new Set(sel || []);
+    const extra = [...s].filter(i => p[i] && p[i].k === 'no'), missed = p.map((c, i) => c.k === 'must' && !s.has(i) ? i : -1).filter(i => i >= 0);
+    if (!extra.length && !missed.length) return { ok: true, cue: 'You found the key facts' };
+    return { ok: false, extra, missed, cue: extra.length ? 'A detail you picked doesn’t matter here' : missed.length > 1 ? 'Some key facts are missing' : 'One key fact is missing' };
+  }
+  function checkPick(step, v) {
+    if (v === 'a') return { ok: true };
+    const e = step.errs[+String(v).slice(1)];
+    return { ok: false, cue: e ? e.cue : 'Pick one answer' };
+  }
+  return { UNITS, IDEAS, NEAR, build, start, startMix, check, checkFacts, checkPick };
+})();
+/* ===================== MODEL END ===================== */
+
+/* ===== DRILL SHELL START (same in every narrow trainer: Math 9 and Science 7) =====
+   A page gives PAGE = { key, course, title, notes, tabs: [TAB, …] } and calls DRILL.boot(PAGE).
+   Optional: PAGE.sep (heading separator after "Section N", default —), PAGE.secText(tab) (the whole heading text
+   for the 📖 link), PAGE.sans (prompts in the plain font, for science). TAB.cols (2 or 3) sets the choice grid.
+   A TAB is one narrow skill:
+     id, code (local outcome), name (1–2 words), sec (notes section number), q (short label above the prompt)
+     gen(n)                -> a new item (from MODEL); n is its place in the round (0–9), for a round that ramps up
+     prompt(item)          -> HTML for the prompt (optional)
+     kind: 'slots' | 'choice' | 'custom', or kind(item) -> one of those (a page that mixes typed and tap answers)
+       slots(item)         -> ['y =', {k:'m', tint:'M'}, 'x +', {k:'b', tint:'B'}]   answer boxes inside the math
+       choices(item)       -> [{v, label, math}]                                     tap to answer
+       panel(box, item, A) -> builds controls; the stage can also set A.resp
+     ready(resp, item)     -> a cue if the answer is not complete yet (optional)
+     check(item, resp)     -> {ok, code, cue, partial}  cue is six words or fewer; partial: right but not clean (yellow dot)
+     answer(item)          -> the right answer, as resp, for Show me
+     draw(A, item, V)      -> draws the picture. V.phase: ask | wrong | right | show; V.res from check; V.anim on a new phase
+     link(item)            -> {notes, sec, sep} for this item's 📖 link (optional; a tab whose items span topics)
+     typeOf(item)          -> the question type, for weighting (optional; default: the item's form/kind/shape/... fields)
+   Rounds are 10 items. A dot is green (first try), yellow (second try) or red (shown).
+   Weighting: each question type has a score, saved per tab. A first-try right answer lowers it (to half weight at
+   most), a miss or Show me raises it (to about 2.5× at most). Each new item is picked from 8 generated candidates
+   by weight, so missed types come back more often and types answered right still appear, less often. */
+const DRILL = (() => {
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const RM = DEBUG || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  const ROUND = 10;
+  const C = { stage: '#0b0f17', grid: '#18212f', grid2: '#222d3e', axis: '#c9d3e1', tick: '#8d9bb0', text: '#f5f7fb', muted: '#a7b4c8',
+    blue: '#58c4dd', yellow: '#f7d96f', teal: '#5cd0b3', gold: '#f0ac5f', green: '#83c167', red: '#fc6255', pink: '#ef7fc6', edge: '#263246', panel: '#151d2b' };
+  let PAGE, tab, item, resp = {}, att = 0, resolved = false, marks = [], phase = 'ask', lastRes = null, gen = 0, timers = [], lastKey = '';
+  let save = { tab: null, best: {}, w: {} };
+  function load() { if (DEBUG) return; try { const s = JSON.parse(localStorage.getItem(PAGE.key) || 'null'); if (s && typeof s === 'object') save = Object.assign(save, s); if (!save.w || typeof save.w !== 'object') save.w = {}; } catch (e) { /* storage blocked */ } }
+  function store() { if (DEBUG) return; try { localStorage.setItem(PAGE.key, JSON.stringify(save)); } catch (e) { /* storage blocked */ } }
+
+  /* ---------- SVG drawing kit ---------- */
+  function el(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a || {}) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function tx(p, x, y, s, a) { const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text }, a), p); e.textContent = s; return e; }
+  // Math text: single letters in italics.
+  function mtx(p, x, y, s, a) {
+    const e = el('text', Object.assign({ x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: C.text, 'font-size': 26 }, a, { class: 'm' + (a && a.class ? ' ' + a.class : '') }), p);
+    let prevItalic = false;
+    String(s).split(/(\b[a-z]\b|(?<=\d)[a-z])/).forEach(part => {
+      if (!part) return; const it = /^[a-z]$/.test(part);
+      // an italic letter leans into a following ² or ³: nudge it right
+      const t = el('tspan', it ? { 'font-style': 'italic' } : prevItalic && /^[²³]/.test(part) ? { dx: '0.12em' } : {}, e); t.textContent = part; prevItalic = it;
+    });
+    return e;
+  }
+  // A stacked fraction centred at (x, y).
+  function frac(p, x, y, n, d, a) {
+    a = Object.assign({ 'font-size': 24 }, a); const fs = +a['font-size'], g = el('g', {}, p);
+    mtx(g, x, y - fs * .55, n, a); mtx(g, x, y + fs * .6, d, a);
+    const w = Math.max(String(n).length, String(d).length) * fs * .55 + 8;
+    el('line', { x1: x - w / 2, x2: x + w / 2, y1: y, y2: y, stroke: a.fill || C.text, 'stroke-width': 2 }, g);
+    return g;
+  }
+  function later(ms, f) { const g0 = gen; if (RM) { f(); return; } timers.push(setTimeout(() => { if (g0 === gen) f(); }, ms)); }
+  function tween(ms, f, done) {
+    const g0 = gen; if (RM) { f(1); if (done) done(); return; }
+    const t0 = performance.now();
+    const step = now => { if (g0 !== gen) return; const t = Math.min(1, (now - t0) / ms); f(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+  // A coordinate grid. o: {x0, y0, w, h, xmin, xmax, ymin, ymax, lab (label every n), grid}
+  function plane(p, o) {
+    o = Object.assign({ lab: 2 }, o);
+    const sx = o.w / (o.xmax - o.xmin), sy = o.h / (o.ymax - o.ymin);
+    const X = x => o.x0 + (x - o.xmin) * sx, Y = y => o.y0 + (o.ymax - y) * sy;
+    const g = el('g', {}, p), gs = o.ystep || 1, xs = o.xstep || 1;
+    for (let x = Math.ceil(o.xmin / xs) * xs; x <= o.xmax + 1e-9; x += xs) el('line', { x1: X(x), x2: X(x), y1: Y(o.ymin), y2: Y(o.ymax), stroke: x === 0 ? C.axis : C.grid2, 'stroke-width': x === 0 ? 2 : 1 }, g);
+    for (let y = Math.ceil(o.ymin / gs) * gs; y <= o.ymax + 1e-9; y += gs) el('line', { x1: X(o.xmin), x2: X(o.xmax), y1: Y(y), y2: Y(y), stroke: y === 0 ? C.axis : C.grid2, 'stroke-width': y === 0 ? 2 : 1 }, g);
+    const lx = o.labx || o.lab * xs, ly = o.laby || o.lab * gs;
+    const y0 = Math.min(Math.max(0, o.ymin), o.ymax), x0 = Math.min(Math.max(0, o.xmin), o.xmax);
+    for (let x = Math.ceil(o.xmin / lx) * lx; x <= o.xmax + 1e-9; x += lx) if (x !== 0 && x !== o.xmin) tx(g, X(x), Y(y0) + 14, fmt(x), { 'font-size': 13, fill: C.tick });
+    for (let y = Math.ceil(o.ymin / ly) * ly; y <= o.ymax + 1e-9; y += ly) if (y !== 0 && y !== o.ymin) tx(g, X(x0) - 8, Y(y), fmt(y), { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    if (o.xmin < 0 && o.ymin < 0) tx(g, X(0) - 8, Y(0) + 13, '0', { 'font-size': 13, fill: C.tick, 'text-anchor': 'end' });
+    mtx(g, X(o.xmax) - 4, Y(y0) - 14, 'x', { 'font-size': 20, fill: C.muted });
+    mtx(g, X(x0) + 14, Y(o.ymax) + 10, 'y', { 'font-size': 20, fill: C.muted });
+    return { X, Y, sx, sy, o, g, inv: (px, py) => ({ x: o.xmin + (px - o.x0) / sx, y: o.ymax - (py - o.y0) / sy }) };
+  }
+  // A number line. o: {x0, x1, y, min, max}
+  function numLine(p, o) {
+    const s = (o.x1 - o.x0) / (o.max - o.min), X = v => o.x0 + (v - o.min) * s, g = el('g', {}, p);
+    el('line', { x1: o.x0 - 18, x2: o.x1 + 18, y1: o.y, y2: o.y, stroke: C.axis, 'stroke-width': 2.5, 'marker-end': 'url(#aA)', 'marker-start': 'url(#aAs)' }, g);
+    for (let v = o.min; v <= o.max; v++) {
+      el('line', { x1: X(v), x2: X(v), y1: o.y - (v % 5 === 0 ? 10 : 6), y2: o.y + (v % 5 === 0 ? 10 : 6), stroke: C.axis, 'stroke-width': v === 0 ? 2.5 : 1.5 }, g);
+      if (o.every === 1 || v % (o.every || 2) === 0) tx(g, X(v), o.y + 26, fmt(v), { 'font-size': 15, fill: v === 0 ? C.text : C.tick });
+    }
+    return { X, s, g, o };
+  }
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(Math.round(n * 1000) / 1000);
+  function defs(svg) {
+    const d = el('defs', {}, svg);
+    const cols = { A: C.axis, W: C.text, G: C.gold, B: C.teal, Y: C.yellow, R: C.red, L: C.blue, N: C.green, M: C.muted };
+    for (const k in cols) {
+      const m = el('marker', { id: 'a' + k, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+      el('path', { d: 'M0 0L10 5L0 10z', fill: cols[k] }, m);
+    }
+    const ms = el('marker', { id: 'aAs', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 15, markerHeight: 15, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, d);
+    el('path', { d: 'M0 0L10 5L0 10z', fill: C.axis }, ms);
+    const f = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d);
+    el('feGaussianBlur', { stdDeviation: 4, result: 'b' }, f);
+    const mg = el('feMerge', {}, f); el('feMergeNode', { in: 'b' }, mg); el('feMergeNode', { in: 'SourceGraphic' }, mg);
+  }
+  function pt(evt) {
+    const svg = $('svg'), p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+    const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+  }
+  const mathHTML = s => String(s).replace(/(^|[^a-z&;])([a-z])(?![a-z])/g, '$1<i>$2</i>');
+  const fracHTML = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+  // A fraction as HTML: whole numbers plain, others stacked.
+  const qHTML = (v, opt) => { v = Q.of(v); const s = v.n < 0 ? '−' : ''; if (v.d === 1) return s + Math.abs(v.n); return s + fracHTML(Math.abs(v.n), v.d); };
+
+  /* ---------- drawing the stage ---------- */
+  const A = { el, tx, mtx, frac, plane, numLine, later, tween, C, fmt, pt, mathHTML, fracHTML, qHTML, get resp() { return resp; }, redraw: () => draw(phase, lastRes, false), set: (k, v) => { resp[k] = v; const back = phase === 'wrong'; if (back) setFb('', ''); draw(back ? 'ask' : phase, back ? null : lastRes, false); }, get locked() { return resolved; } };
+  function draw(ph, res, anim) {
+    gen++; timers.forEach(clearTimeout); timers = [];
+    phase = ph; lastRes = res || null;
+    const svg = $('svg'); svg.innerHTML = ''; defs(svg);
+    A.svg = el('g', {}, svg);
+    tab.draw(A, item, { phase: ph, res: lastRes, resp, anim: anim !== false });
+  }
+
+  const kindOf = (t, it) => typeof t.kind === 'function' ? t.kind(it) : t.kind;
+  const K = () => kindOf(tab, item);
+
+  /* ---------- the answer area ---------- */
+  function buildAnswer() {
+    const box = $('ans'); box.innerHTML = '';
+    if (K() === 'slots') {
+      const row = document.createElement('div'); row.className = 'slots';
+      tab.slots(item).forEach(p => {
+        if (typeof p === 'string') { const s = document.createElement('span'); s.innerHTML = mathHTML(p); row.appendChild(s); return; }
+        if (p.h != null) { const s = document.createElement('span'); s.innerHTML = p.h; row.appendChild(s); return; }
+        const inp = document.createElement('input');
+        inp.className = 'slot' + (p.tint ? ' t' + p.tint : '') + (p.wide ? ' wide' : '') + (p.narrow ? ' n' : '') + (p.sup ? ' sup' : ''); inp.dataset.k = p.k;
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', p.label || p.k);
+        if (COARSE) inp.inputMode = 'none';
+        inp.addEventListener('input', () => { inp.classList.remove('bad', 'ok'); });
+        inp.addEventListener('focus', () => { lastSlot = inp; });
+        row.appendChild(inp);
+      });
+      box.appendChild(row);
+      if (COARSE) box.appendChild(keypad());
+    } else if (K() === 'choice') {
+      const row = document.createElement('div'); const chs = tab.choices(item), long = chs.some(c => String(c.aria || c.label).replace(/<[^>]*>/g, '').length > 8);
+      row.className = 'choices' + (tab.cols === 2 ? ' two' : tab.cols === 3 ? ' three' : long ? ' one' : chs.length === 4 ? ' two' : chs.length === 3 ? ' three' : '');
+      chs.forEach(c => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice' + (c.math ? ' math' : ''); b.dataset.v = c.v;
+        b.innerHTML = c.label; b.setAttribute('aria-label', c.aria || c.v);
+        b.addEventListener('click', () => { if (resolved) return; resp.v = c.v; check(); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    } else if (tab.panel) tab.panel(box, item, A);
+    $('bCheck').hidden = K() === 'choice';
+  }
+  let lastSlot = null;
+  function keypad() {
+    const k = document.createElement('div'); k.className = 'keypad';
+    ['7', '8', '9', '−', '⌫', '4', '5', '6', '/', '.', '1', '2', '3', '0', '±'].forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', () => {
+        const inp = lastSlot || $('ans').querySelector('.slot'); if (!inp || resolved) return;
+        if (c === '⌫') inp.value = inp.value.slice(0, -1);
+        else if (c === '±') inp.value = /^[−-]/.test(inp.value) ? inp.value.slice(1) : '−' + inp.value;
+        else inp.value += c;
+        inp.classList.remove('bad', 'ok'); inp.focus();
+      });
+      k.appendChild(b);
+    });
+    return k;
+  }
+  function readSlots() {
+    const out = {}; let bad = false, any = false;
+    $('ans').querySelectorAll('.slot').forEach(inp => {
+      const v = Q.parse(inp.value);
+      if (v === null) { bad = true; inp.classList.add('bad'); }
+      else if (v !== '') any = true;
+      out[inp.dataset.k] = v === '' ? null : v;
+    });
+    // A blank box counts as 0 once something is filled in.
+    if (!bad && any) for (const k in out) if (out[k] === null) out[k] = Q.q(0);
+    return bad ? 'bad' : any ? out : null;
+  }
+  function fillSlots(ans, cls) {
+    $('ans').querySelectorAll('.slot').forEach(inp => { const v = ans[inp.dataset.k]; if (v != null) inp.value = typeof v === 'string' ? v : Q.str(v); inp.classList.remove('bad', 'ok'); inp.classList.add(cls); inp.readOnly = true; });
+  }
+
+  /* ---------- one item ---------- */
+  /* ---------- weighting: missed question types come back more often ---------- */
+  const TYPE_FIELDS = ['form', 'kind', 'shape', 'type', 'rep', 'ask', 'what', 'mode', 'rule', 'ans', 'useD', 'back', 'direct', 'flip', 'rat', 'idCol'];
+  function keyOf(it) {
+    if (tab.typeOf) return String(tab.typeOf(it));
+    return TYPE_FIELDS.filter(k => typeof it[k] === 'string' || typeof it[k] === 'boolean').map(k => k + ':' + it[k]).join('|');
+  }
+  const scores = () => (save.w[tab.id] = save.w[tab.id] || {});
+  const weightOf = k => Math.pow(2, scores()[k] || 0);
+  function record(right) {
+    const s = scores(), k = item.__key; if (k == null) return;
+    s[k] = right ? Math.max(-1, (s[k] || 0) - .5) : Math.min(1.3, (s[k] || 0) + 1);
+    store();
+  }
+  function newItem(given) {
+    let it = given, key = '';
+    if (!it) {
+      const cands = [];
+      for (let i = 0; i < 40 && cands.length < 8; i++) { const c = tab.gen(marks.length), k = JSON.stringify(c); if (k !== lastKey) cands.push(c); }
+      if (!cands.length) cands.push(tab.gen(marks.length));
+      const ws = cands.map(c => weightOf(keyOf(c))), total = ws.reduce((a, b) => a + b, 0);
+      let r = Q.rnd(0, 999999) / 1e6 * total, i = 0; while (i < cands.length - 1 && r >= ws[i]) { r -= ws[i]; i++; }
+      it = cands[i]; key = JSON.stringify(it);
+    }
+    lastKey = key || JSON.stringify(it);
+    Object.defineProperty(it, '__key', { value: keyOf(it), enumerable: false, configurable: true, writable: true });
+    item = it; resp = {}; att = 0; resolved = false;
+    if (tab.link) setNotes(linkOf());
+    $('askBox').hidden = false; $('ans').hidden = false; $('acts').hidden = false; $('fb').hidden = false; $('done').hidden = true;
+    $('q').textContent = typeof tab.q === 'function' ? tab.q(item) : tab.q;
+    const pr = $('prompt'); pr.innerHTML = tab.prompt ? tab.prompt(item) : '';
+    const plen = pr.textContent.length; pr.style.fontSize = plen > 24 ? '23px' : plen > 17 ? '27px' : '';
+    buildAnswer(); setFb('', '');
+    const bc = $('bCheck'); bc.textContent = 'Check'; bc.classList.remove('go'); $('bShow').disabled = false;
+    dots(); draw('ask', null, true);
+    const first = $('ans').querySelector('.slot');
+    if (first && !COARSE) first.focus();
+  }
+  function setFb(kind, cue) {
+    const f = $('fb'); f.className = 'fb' + (kind ? ' ' + kind : '');
+    f.innerHTML = kind ? '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + (cue || '') + '</span>' : '';
+  }
+  function check() {
+    if (resolved) return nextOrFinish();
+    let r = resp;
+    if (K() === 'choice' && resp.v == null) return;
+    if (K() === 'slots') {
+      const s = readSlots();
+      if (s === 'bad') return setFb('info', 'Numbers only: 3, −2, 3/4, 0.5');
+      if (!s) return setFb('info', 'Type your answer');
+      r = resp = s;
+    }
+    const need = tab.ready ? tab.ready(resp, item) : '';
+    if (need) return setFb('info', need);
+    const res = tab.check(item, r); att++;
+    const tries = tab.tries || (K() === 'choice' ? 1 : 2);
+    if (res.ok) {
+      const clean = att === 1 && !res.partial;   // partial: right, but an earlier step of the item was missed (yellow)
+      resolved = true; marks.push(clean ? 'g' : 'y'); record(clean);
+      setFb('ok', res.cue || pick(['Yes', 'Right', 'Correct', 'Nice']));
+      markAnswer(true); draw('right', res, true); afterResolve();
+    } else if (att >= tries) {
+      resolved = true; marks.push('r'); record(false);
+      setFb('bad', res.cue);
+      markAnswer(false); reveal(); draw('show', res, true); afterResolve();
+    } else {
+      setFb('bad', res.cue);
+      markAnswer(false); draw('wrong', res, true);
+      const bad = $('ans').querySelector('.slot.bad') || $('ans').querySelector('.slot');
+      if (bad && !COARSE) { bad.focus(); bad.select(); }
+    }
+    return res;
+  }
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function markAnswer(ok) {
+    if (K() === 'slots') {
+      const ans = tab.answer(item);
+      $('ans').querySelectorAll('.slot').forEach(inp => { const v = resp[inp.dataset.k]; inp.classList.remove('ok', 'bad'); const a = ans[inp.dataset.k]; inp.classList.add(ok || Q.eq(v, typeof a === 'string' ? Q.parse(a) : a) ? 'ok' : 'bad'); });
+    } else if (K() === 'choice') {
+      $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(resp.v)) b.classList.add(ok ? 'ok' : 'bad'); });
+    }
+  }
+  function reveal() {
+    const ans = tab.answer(item);
+    if (K() === 'slots') fillSlots(ans, 'shown');
+    else if (K() === 'choice') $('ans').querySelectorAll('.choice').forEach(b => { if (b.dataset.v === String(ans.v)) b.classList.add('ok'); });
+    else resp.shown = ans;
+  }
+  function afterResolve() {
+    $('ans').querySelectorAll('button, input').forEach(b => { if (b.classList.contains('slot')) b.readOnly = true; else b.disabled = true; });
+    const bc = $('bCheck'); bc.hidden = false; bc.textContent = marks.length >= ROUND ? 'Finish' : 'Next →'; bc.classList.add('go'); $('bShow').disabled = true;
+    dots(); if (!COARSE) bc.focus();
+  }
+  function show() {
+    if (resolved) return;
+    resolved = true; marks.push('r'); record(false); reveal();
+    setFb('info', 'Watch');
+    draw('show', { ok: false, code: 'shown' }, true); afterResolve();
+  }
+  function nextOrFinish() { if (marks.length >= ROUND) finish(); else newItem(); }
+  function dots() {
+    const d = $('dots'); d.innerHTML = '';
+    for (let i = 0; i < ROUND; i++) { const s = document.createElement('span'); if (marks[i]) s.className = marks[i]; else if (i === marks.length) s.className = 'now'; d.appendChild(s); }
+    d.setAttribute('aria-label', 'This round: ' + marks.filter(m => m === 'g').length + ' first try out of ' + marks.length);
+  }
+  function finish() {
+    const score = marks.filter(m => m === 'g').length;
+    save.best[tab.id] = Math.max(save.best[tab.id] || 0, score); store(); tabsBar();
+    $('askBox').hidden = true; $('ans').hidden = true; $('acts').hidden = true; $('fb').hidden = true;
+    const i = PAGE.tabs.indexOf(tab), nx = PAGE.tabs[i + 1];
+    const d = $('done'); d.hidden = false;
+    d.innerHTML = '<div class="score">' + score + '<small>/' + ROUND + '</small></div>' +
+      '<button type="button" class="btn primary" id="bAgain">↻ Again</button>' +
+      (nx ? '<button type="button" class="btn" id="bNextTab">' + nx.name + ' →</button>' : '') +
+      (score < 7 ? '<a class="notes" style="justify-content:center" href="' + notesHref(linkOf()) + '" target="_blank" rel="noopener">📖 Notes §' + linkOf().sec + '</a>' : '');
+    $('bAgain').onclick = () => setTab(tab.id);
+    if (nx) $('bNextTab').onclick = () => setTab(nx.id);
+    $('svg').innerHTML = ''; defs($('svg'));
+    const g = el('g', {}, $('svg'));
+    marks.forEach((m, k) => el('circle', { cx: 320 + (k - 4.5) * 46, cy: 210, r: 16, fill: m === 'g' ? C.green : m === 'y' ? C.yellow : C.red, class: 'pop', style: 'animation-delay:' + k * 60 + 'ms' }, g));
+    if (!COARSE) $('bAgain').focus();
+  }
+  const notesHref = t => (t.notes || PAGE.notes) + '#:~:text=' + encodeURIComponent(PAGE.secText ? PAGE.secText(t) : 'Section ' + t.sec + ' ' + (t.sep || PAGE.sep || '—'));
+
+  /* ---------- tabs ---------- */
+  function tabsBar() {
+    const bar = $('tabs'); bar.innerHTML = '';
+    PAGE.tabs.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      b.innerHTML = '<small>' + t.code + '</small>' + t.name + ((save.best[t.id] || 0) >= 8 ? '<span class="star" aria-label="8 or more"></span>' : '');
+      b.addEventListener('click', () => setTab(t.id));
+      bar.appendChild(b);
+    });
+  }
+  function setNotes(t) {
+    const n = $('notes'); n.href = notesHref(t); $('notesTxt').textContent = '§' + t.sec;
+    n.title = 'Notes, Section ' + t.sec; n.setAttribute('aria-label', 'Open the notes at Section ' + t.sec);
+  }
+  // A tab with link(item) points the 📖 button at the current item's own notes.
+  const linkOf = () => tab.link ? Object.assign({}, tab, tab.link(item)) : tab;
+  function setTab(id) {
+    tab = PAGE.tabs.find(t => t.id === id) || PAGE.tabs[0];
+    save.tab = tab.id; store(); marks = []; lastKey = '';
+    tabsBar();
+    setNotes(tab);
+    newItem();
+  }
+  function boot(P) {
+    PAGE = P; load();
+    if (RM) document.body.classList.add('nomo');
+    if (P.sans) document.body.classList.add('sans');
+    $('course').textContent = P.course; $('title').textContent = P.title;
+    $('bCheck').addEventListener('click', check);
+    $('bShow').addEventListener('click', show);
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || !$('done').hidden) return;
+      e.preventDefault(); check();
+    });
+    setTab(save.tab);
+    if (DEBUG) window.DRILL = { PAGE, MODEL: typeof MODEL !== 'undefined' ? MODEL : null, setTab, newItem, check, show,
+      fill: vals => { $('ans').querySelectorAll('.slot').forEach(inp => { inp.value = vals[inp.dataset.k] != null ? vals[inp.dataset.k] : ''; }); },
+      pickChoice: v => { const b = [...$('ans').querySelectorAll('.choice')].find(x => x.dataset.v === String(v)); if (b) b.click(); },
+      setResp: o => { Object.assign(resp, o); draw(phase, lastRes, false); },
+      state: () => ({ tab: tab.id, item, att, resolved, marks: marks.slice(), phase, fb: $('fb').textContent, resp }),
+      keyOf: (it, t) => { const cur = tab; if (t) tab = t; try { return keyOf(it); } finally { tab = cur; } }, weights: () => Object.assign({}, scores()), resetWeights: () => { save.w[tab.id] = {}; }, setScore: (k, s) => { scores()[k] = s; } };
+  }
+  return { boot, kindOf, C, el, tx, mtx, frac, mathHTML, fracHTML, qHTML };
+})();
+/* ===== DRILL SHELL END ===== */
+
+/* ===== SCIENCE KIT START (Science 7 narrow trainers only; needs DRILL) =====
+   Icon + label + arrow pictures, not drawings of real objects (see the icon-flowchart rule in _sims-context.md).
+     S.emo(p, x, y, icon, size, a)          an emoji icon
+     S.lines(p, x, y, text, n, a)           text wrapped at n characters, centred on (x, y)
+     S.card(p, o)                           an icon card {x, y, w, h, icon, label, col, fill, size, fs, n, cls}
+     S.arrow(p, x1, y1, x2, y2, col, key)   a straight arrow; key = marker colour letter (Y yellow, N green, R red, …)
+     S.curve(p, d, col, key)                an arrow along an SVG path
+     S.sorter(A, it, V, cats, o)            the sorting picture: the item card on top, one bin per choice below;
+                                            after the answer an arrow drops the card into its bin, and each bin shows
+                                            what it means. cats: [{v, label, means, glyph(g, x, y)}]
+     S.classTab(o)                          a whole tap-to-sort tab from a bank (S.sortGen, S.sortCheck) */
+const S = (() => {
+  const { C, el, tx } = DRILL;
+  const done = V => V.phase === 'right' || V.phase === 'show';
+  function emo(p, x, y, ch, size, a) { return tx(p, x, y, ch, Object.assign({ 'font-size': size || 48 }, a, { class: 'emo' + (a && a.class ? ' ' + a.class : '') })); }
+  function wrap(s, n) {
+    const out = []; let line = '';
+    String(s).split(' ').forEach(w => { if (line && (line + ' ' + w).length > n) { out.push(line); line = w; } else line = line ? line + ' ' + w : w; });
+    if (line) out.push(line); return out;
+  }
+  function lines(p, x, y, s, n, a) {
+    const L = wrap(s, n || 22), fs = (a && a['font-size']) || 18, lh = fs * 1.22, g = el('g', { class: a && a.gcls || null }, p);
+    L.forEach((l, i) => tx(g, x, y + (i - (L.length - 1) / 2) * lh, l, Object.assign({}, a, { gcls: null })));
+    return g;
+  }
+  // Label lines sit at the bottom (o.lb padding); the icon is centred in the space above them.
+  function card(p, o) {
+    const g = el('g', { class: o.cls || null }, p), w = o.w || 150, h = o.h || 130, hasL = o.label != null && o.label !== '';
+    el('rect', { x: o.x - w / 2, y: o.y - h / 2, width: w, height: h, rx: 16, fill: o.fill || C.panel, stroke: o.col || C.edge, 'stroke-width': o.sw || 2.5 }, g);
+    const fs = o.fs || 17, n = o.n || Math.round(w / 9.5), L = hasL ? wrap(o.label, n).length : 0, lh = fs * 1.22;
+    const labTop = hasL ? o.y + h / 2 - (o.lb || 12) - L * lh : o.y + h / 2, top = o.y - h / 2;
+    if (o.icon) emo(g, o.x, (top + labTop) / 2 + 2, o.icon, Math.min(o.size || 999, (labTop - top) * .78, w * .6));
+    if (hasL) lines(g, o.x, labTop + L * lh / 2, o.label, n, { 'font-size': fs, fill: o.tcol || C.text });
+    return g;
+  }
+  function arrow(p, x1, y1, x2, y2, col, key, a) {
+    return el('line', Object.assign({ x1, y1, x2, y2, stroke: col, 'stroke-width': 4, 'stroke-linecap': 'round', 'marker-end': 'url(#a' + (key || 'W') + ')' }, a), p);
+  }
+  function curve(p, d, col, key, a) {
+    return el('path', Object.assign({ d, stroke: col, 'stroke-width': 4, fill: 'none', 'stroke-linecap': 'round', 'marker-end': 'url(#a' + (key || 'W') + ')' }, a), p);
+  }
+  // A small pill label with a dark backing, for notes on a picture.
+  function chip(p, x, y, s, col, a) {
+    const g = el('g', { class: a && a.cls || null }, p), fs = (a && a.fs) || 16, w = String(s).length * fs * .56 + 22;
+    el('rect', { x: x - w / 2, y: y - fs * .9, width: w, height: fs * 1.8, rx: fs * .9, fill: C.stage, stroke: col, 'stroke-width': 2 }, g);
+    tx(g, x, y, s, { 'font-size': fs, fill: col });
+    return g;
+  }
+
+  function sorter(A, it, V, cats, o) {
+    o = o || {};
+    const n = cats.length, by = o.by || 335, bh = o.bh || 118, gap = 14, bw = Math.min(190, (600 - gap * (n - 1)) / n);
+    const span = n * bw + (n - 1) * gap, bx = i => 320 - span / 2 + bw / 2 + i * (bw + gap);
+    const fin = done(V), ai = cats.findIndex(c => c.v === it.a), pi = cats.findIndex(c => c.v === (V.resp && V.resp.v));
+    cats.forEach((c, i) => {
+      const x = bx(i), good = fin && i === ai, bad = fin && i === pi && pi !== ai, g = el('g', {}, A.svg);
+      el('rect', { x: x - bw / 2, y: by - bh / 2, width: bw, height: bh, rx: 16, fill: good ? '#13301c' : bad ? '#331417' : C.panel, stroke: good ? C.green : bad ? C.red : C.edge, 'stroke-width': good || bad ? 3 : 2, 'stroke-dasharray': good || bad ? null : '7 6' }, g);
+      const lab = lines(g, x, fin && c.means ? by - bh / 2 + 26 : by, c.label, Math.round(bw / 10.5), { 'font-size': n > 3 ? 17 : 19, fill: good ? C.green : bad ? '#ff9a90' : C.text });
+      if (fin && c.means) lines(g, x, by + 22, c.means, Math.round(bw / 8.5), { 'font-size': 14.5, fill: good ? C.text : C.muted, gcls: 'fade' });
+      if (fin && good && c.glyph) c.glyph(g, x, by + bh / 2 + 4);
+    });
+    const cw = o.cw || 320, ch = o.ch || 156, cy = o.cy || 108;
+    card(A.svg, { x: 320, y: cy, w: cw, h: ch, icon: it.i, label: it.t, size: o.size || 64, fs: o.fs || 21, n: o.n || 26, col: fin ? (pi === ai || V.phase === 'show' && pi < 0 ? C.green : C.edge) : C.yellow, sw: 3, lb: 16 });
+    if (fin && it.why) chip(A.svg, 320, cy + ch / 2 + 24, it.why, C.green, { cls: 'pop', fs: 15 });
+    if (!fin) return;
+    const y0 = cy + ch / 2 + (it.why ? 44 : 8), y1 = by - bh / 2 - 8;
+    if (pi >= 0 && pi !== ai) arrow(A.svg, 320 + (bx(pi) - 320) * .25, y0, bx(pi), y1, C.red, 'R', { 'stroke-dasharray': '6 6', 'stroke-width': 3, class: 'fade' });
+    arrow(A.svg, 320 + (bx(ai) - 320) * .25, y0, bx(ai), y1, C.green, 'N', { class: 'draw', pathLength: 1 });
+  }
+
+  // Bank items: {t: label, i: icon, a: answer, why?: note shown after, cue?: own cue}. No DOM.
+  // Each answer comes up equally often, whatever the bank sizes.
+  const sortGen = bank => { const a = Q.pick([...new Set(bank.map(b => b.a))]); return Object.assign({}, Q.pick(bank.filter(b => b.a === a))); };
+  const sortCheck = (it, r, cues) => r.v === it.a ? { ok: true } : { code: 'is-' + it.a, cue: it.cue || (cues && cues[it.a]) || 'Not quite' };
+
+  // A tap-to-sort tab. o: {id, code, name, sec, q, cats, bank, cues, cols, pic} — the bank and cues come from MODEL.
+  function classTab(o) {
+    return {
+      id: o.id, code: o.code, name: o.name, sec: o.sec, q: o.q, kind: 'choice', cols: o.cols,
+      typeOf: it => it.t,  // a missed item comes back more often
+      gen: () => sortGen(o.bank),
+      choices: () => o.cats.map(c => ({ v: c.v, label: c.label })),
+      check: (it, r) => sortCheck(it, r, o.cues), answer: it => ({ v: it.a }),
+      draw(A, it, V) { sorter(A, it, V, o.cats, o.pic); }
+    };
+  }
+  return { emo, wrap, lines, card, arrow, curve, chip, sorter, classTab, sortGen, sortCheck, done };
+})();
+/* ===== SCIENCE KIT END ===== */
+
+/* ===== SCIENCE WORD PROBLEMS KIT (Science 7 word-problem trainer; needs DRILL and S from sci.js) =====
+   A story item is answered by tapping one choice (one try). Every wrong choice is a named misconception: its cue
+   (six words or fewer) and the reasoning step (s) it breaks.
+   The picture has two parts: a schematic of the story at the top, and the reasoning chain at the bottom
+   (one numbered row per step, so Level 1 shows one row, Level 3 three or more).
+     ask           the story's parts, with the unknown as '?', and an empty row for each step
+     right / show  each step fades in, in order; parts tied to a step (s) appear with it; the unknown fills in.
+                   After a wrong pick, the step that choice broke is drawn in red with the choice's cue.
+   Pictures (pic.k):
+     scene   icon cards on a small grid joined by arrows: cards [{c, r, i, t, k, s, q, d, x, tag, hl}],
+             arrows [{a, b, t, k, s, q, d, dash, x}] (a and b are card indexes). q: '?' until solved, then d.
+             x: crossed out in red (a missing input, a removed species). tag: a chip under the card once solved.
+     layers  stacked bands, top first: bands [{t, i, k, w, s, q, d, tag}], side: {t, s} (an arrow down the side)
+     cell    a plant cell with one part glowing: part = wall | membrane | vacuole | nucleus | chloroplast */
+const SW = (() => {
+  const { C, el, tx } = DRILL;
+  const COL = { L: C.blue, Y: C.yellow, N: C.green, R: C.red, G: C.gold, T: C.teal, P: C.pink, M: C.muted, W: C.text };
+  const col = k => COL[k] || k || C.edge;
+  const LVC = ['', C.teal, C.gold, C.pink], LVN = ['', 'one step', 'two steps', 'three steps'];
+  const done = V => V.phase === 'right' || V.phase === 'show';
+  const DLY = .5;
+  const on = (e, V) => e.s == null || done(V);
+  const anim = (e, V) => e.s != null && done(V) && V.anim ? { class: 'fade', style: 'animation-delay:' + (e.s * DLY + .2) + 's' } : {};
+  const qt = (e, V) => e.q ? (done(V) ? e.d : '?') : e.t;
+  const qc = (e, V, c) => e.q ? (done(V) ? C.green : C.yellow) : c;
+
+  /* ---------- scene: icon cards and arrows ---------- */
+  function scene(A, p, V, H) {
+    const cs = p.cards, nc = Math.max(...cs.map(c => c.c)) + 1, nr = Math.max(...cs.map(c => c.r)) + 1;
+    const dx = Math.min(210, 620 / nc), dy = Math.min(150, (H - 20) / nr);
+    const w = p.w || Math.min(160, dx - (nc > 3 ? 18 : 40)), h = p.h || Math.min(112, dy - 30);
+    const pos = c => [320 + (c.c - (nc - 1) / 2) * dx + (c.dx || 0), 14 + (H - 14) / 2 + (c.r - (nr - 1) / 2) * dy];
+    const later = [];   // arrow labels go on top of the cards
+    (p.arrows || []).forEach(a => {
+      const [x1, y1] = pos(cs[a.a]), [x2, y2] = pos(cs[a.b]), L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L;
+      const tr = Math.min(Math.abs(ux) > 1e-6 ? (w / 2 + 8) / Math.abs(ux) : 1e9, Math.abs(uy) > 1e-6 ? (h / 2 + 8) / Math.abs(uy) : 1e9);
+      // dir: the direction is the unknown, so before it is solved the link is a plain dashed line with a '?'
+      if (a.dir && !done(V)) {
+        el('line', { x1: x1 + ux * tr, y1: y1 + uy * tr, x2: x2 - ux * tr, y2: y2 - uy * tr, stroke: C.yellow, 'stroke-width': 3, 'stroke-dasharray': '7 7' }, A.svg);
+        later.push(() => S.chip(A.svg, (x1 + x2) / 2, (y1 + y2) / 2, '?', C.yellow, { fs: 17 }));
+        return;
+      }
+      if (!on(a, V)) return;
+      const c = a.x ? C.red : a.q ? qc(a, V, C.yellow) : col(a.k || 'G'), key = a.x ? 'R' : a.q ? (done(V) ? 'N' : 'Y') : (a.k || 'G'), an = anim(a, V);
+      S.arrow(A.svg, x1 + ux * tr, y1 + uy * tr, x2 - ux * tr, y2 - uy * tr, c, key, Object.assign({ 'stroke-dasharray': a.dash ? '8 7' : null }, an));
+      const t = qt(a, V);
+      if (t) {
+        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, vert = Math.abs(uy) > Math.abs(ux);
+        later.push(() => S.chip(A.svg, mx, my + (vert ? 0 : -26), t, c, { fs: 15, cls: an.class }));
+      }
+      if (a.x) { const mx = (x1 + x2) / 2, my = (y1 + y2) / 2; tx(A.svg, mx, my + (Math.abs(uy) > Math.abs(ux) ? 0 : 22), '✕', { 'font-size': 26, fill: C.red }); }
+    });
+    cs.forEach(c => {
+      if (!on(c, V)) return;
+      const [x, y] = pos(c), an = anim(c, V), k = c.x ? C.red : c.q ? qc(c, V, C.yellow) : c.hl ? C.yellow : col(c.k);
+      const g = S.card(A.svg, { x, y, w: c.w || w, h: c.h || h, icon: c.i, label: qt(c, V), col: k, sw: c.hl || c.q ? 3 : 2.5, fs: c.fs || (w < 130 ? 15 : 16), size: c.size || 46, lb: 10, tcol: c.q ? qc(c, V, C.text) : C.text });
+      if (an.class) { g.setAttribute('class', an.class); g.setAttribute('style', an.style); }
+      if (c.q && !done(V)) g.querySelector('rect').setAttribute('stroke-dasharray', '7 6');
+      if (c.x) { el('line', { x1: x - w / 2 + 12, y1: y - h / 2 + 12, x2: x + w / 2 - 12, y2: y + h / 2 - 12, stroke: C.red, 'stroke-width': 4, 'stroke-linecap': 'round', opacity: .85 }, A.svg); }
+      if (c.tag && done(V)) S.chip(A.svg, x, y + (c.h || h) / 2 + 16, c.tag, c.tagk ? col(c.tagk) : C.green, { fs: 14, cls: 'pop' });
+    });
+    later.forEach(f => f());
+  }
+
+  /* ---------- layers: bands stacked from the top ---------- */
+  function layers(A, p, V, H) {
+    const n = p.bands.length, bh = Math.min(64, (H - 30) / n), y0 = 14 + (H - 14 - n * bh) / 2, X = p.side ? 290 : 320, W = 440;
+    p.bands.forEach((b, i) => {
+      if (!on(b, V)) return;
+      const w = W * (b.w || 1), y = y0 + i * bh, c = b.q ? qc(b, V, C.yellow) : b.hl ? C.yellow : col(b.k || 'M'), an = anim(b, V);
+      const g = el('g', an, A.svg);
+      el('rect', { x: X - w / 2, y: y + 2, width: w, height: bh - 4, rx: 8, fill: c, 'fill-opacity': .14, stroke: c, 'stroke-width': b.hl || b.q ? 3 : 2, 'stroke-dasharray': b.q && !done(V) ? '7 6' : null }, g);
+      const t = !b.q && b.d != null && done(V) ? b.d : qt(b, V);
+      if (b.i) S.emo(g, X - w / 2 + 34, y + bh / 2, b.i, Math.min(34, bh * .6));
+      tx(g, X + (b.i ? 14 : 0), y + bh / 2, t, { 'font-size': 17, fill: b.q ? c : C.text });
+      if (b.tag && done(V)) S.chip(A.svg, X + w / 2 - 16 - b.tag.length * 4.5, y + bh / 2, b.tag, C.green, { fs: 14, cls: 'pop' });
+    });
+    if (p.side && on(p.side, V)) {
+      const x = X + W / 2 + 30, an = anim(p.side, V);
+      S.arrow(A.svg, x, y0 + 6, x, y0 + n * bh - 6, C.gold, 'G', an);
+      tx(A.svg, x + 14, y0 + n * bh / 2, p.side.t, Object.assign({ 'font-size': 15, fill: C.gold, 'text-anchor': 'start', transform: 'rotate(90 ' + (x + 14) + ' ' + (y0 + n * bh / 2) + ')' }, an));
+    }
+  }
+
+  /* ---------- a plant cell, one part glowing ---------- */
+  function cell(A, p, V, H) {
+    const w = 330, h = Math.min(220, H - 50), x = 320 - w / 2, y = 10 + (H - 10 - h) / 2, cx = 320, cy = y + h / 2;
+    const glow = k => p.part === k ? { stroke: C.yellow, 'stroke-width': 5, filter: 'url(#glow)' } : {};
+    el('rect', Object.assign({ x, y, width: w, height: h, rx: 14, fill: '#12261a', stroke: C.green, 'stroke-width': 7 }, glow('wall')), A.svg);
+    el('rect', Object.assign({ x: x + 11, y: y + 11, width: w - 22, height: h - 22, rx: 9, fill: 'none', stroke: C.teal, 'stroke-width': 2 }, glow('membrane')), A.svg);
+    el('ellipse', Object.assign({ cx: cx + 30, cy, rx: w * .3, ry: h * .3, fill: C.blue, 'fill-opacity': .14, stroke: C.blue, 'stroke-width': 2 }, glow('vacuole')), A.svg);
+    el('circle', Object.assign({ cx: x + 62, cy: y + 56, r: 24, fill: C.pink, 'fill-opacity': .35, stroke: C.pink, 'stroke-width': 2 }, glow('nucleus')), A.svg);
+    [[x + 54, y + h - 40], [x + 120, y + h - 30], [x + w - 50, y + 38], [x + w - 46, y + h - 44], [x + 150, y + 30]].filter(() => p.chl !== false).forEach(([a, b]) =>
+      el('ellipse', Object.assign({ cx: a, cy: b, rx: 15, ry: 9, fill: C.green, 'fill-opacity': .8, stroke: C.green, 'stroke-width': 1.5 }, p.part === 'chloroplast' ? { stroke: C.yellow, 'stroke-width': 4, filter: 'url(#glow)' } : {}), A.svg));
+    const lx = 320 + w / 2 + 18;
+    S.chip(A.svg, lx + 50, cy, done(V) ? p.d : '?', done(V) ? C.green : C.yellow, { fs: 16, cls: done(V) && V.anim ? 'pop' : null });
+    tx(A.svg, x - 14, cy, '🔬', { 'font-size': 40, class: 'emo', 'text-anchor': 'end' });
+  }
+
+  /* ---------- a beam on supports (simple) or out from a wall (cantilever), bent by a load ---------- */
+  // p: { type: 'simple' | 'cantilever', ask: 'top' | 'bottom' | 'rebar', i (load icon), t (load label) }
+  function beam(A, p, V, H) {
+    const x0 = 130, x1 = 510, bh = 34, y = Math.min(H * .55, H - 70), cant = p.type === 'cantilever', fin = done(V);
+    const lx = cant ? x1 - 30 : (x0 + x1) / 2;
+    if (cant) el('rect', { x: x0 - 40, y: y - 90, width: 40, height: 190, fill: C.edge, stroke: C.muted, 'stroke-width': 2 }, A.svg);
+    else [x0 + 20, x1 - 20].forEach(x => el('path', { d: 'M' + x + ' ' + (y + bh / 2) + 'l-20 34h40z', fill: C.panel, stroke: C.muted, 'stroke-width': 2.5 }, A.svg));
+    el('rect', { x: x0, y: y - bh / 2, width: x1 - x0, height: bh, rx: 4, fill: '#3a2a17', stroke: C.gold, 'stroke-width': 2.5 }, A.svg);
+    // the bent shape, dashed
+    const sag = 26, d = cant ? 'M' + x0 + ' ' + y + 'Q' + (x0 + x1) / 2 + ' ' + y + ' ' + x1 + ' ' + (y + sag * 1.6) : 'M' + x0 + ' ' + y + 'Q' + (x0 + x1) / 2 + ' ' + (y + sag * 2) + ' ' + x1 + ' ' + y;
+    el('path', { d, fill: 'none', stroke: C.muted, 'stroke-width': 2, 'stroke-dasharray': '6 6' }, A.svg);
+    S.emo(A.svg, lx, y - bh / 2 - 74, p.i, 44);
+    S.arrow(A.svg, lx, y - bh / 2 - 46, lx, y - bh / 2 - 6, C.red, 'R');
+    if (p.t) tx(A.svg, lx + 34, y - bh / 2 - 74, p.t, { 'font-size': 15, fill: C.muted, 'text-anchor': 'start' });
+    const topT = cant ? 'stretched' : 'squeezed', botT = cant ? 'squeezed' : 'stretched';
+    const side = (yy, t, k) => {
+      const c = t === 'stretched' ? C.blue : C.gold, a = fin && V.anim ? { class: 'fade', style: 'animation-delay:' + (DLY + .2) + 's' } : {}, m = (x0 + x1) / 2;
+      if (t === 'stretched') { S.arrow(A.svg, m - 20, yy, m - 110, yy, c, 'L', a); S.arrow(A.svg, m + 20, yy, m + 110, yy, c, 'L', a); }
+      else { S.arrow(A.svg, m - 120, yy, m - 30, yy, c, 'G', a); S.arrow(A.svg, m + 120, yy, m + 30, yy, c, 'G', a); }
+      tx(A.svg, m, yy + k * 18, t + (t === 'stretched' ? ': tension' : ': compression'), Object.assign({ 'font-size': 15, fill: c }, a));
+    };
+    const ask = p.ask === 'rebar' ? 'bottom' : p.ask;
+    if (!fin) { const yy = ask === 'top' ? y - bh / 2 : y + bh / 2; el('line', { x1: x0, x2: x1, y1: yy, y2: yy, stroke: C.yellow, 'stroke-width': 5 }, A.svg); S.chip(A.svg, x1 + 50, yy, '?', C.yellow, { fs: 17 }); return; }
+    side(y - bh / 2 - 14, topT, -1); side(y + bh / 2 + 14, botT, 1);
+    if (p.ask === 'rebar') { const yy = cant ? y - bh / 2 + 7 : y + bh / 2 - 7; el('line', { x1: x0 + 6, x2: x1 - 6, y1: yy, y2: yy, stroke: C.red, 'stroke-width': 4, 'stroke-dasharray': '14 5', class: 'fade' }, A.svg); }
+  }
+
+  /* ---------- two blocks with their centres of gravity, and the angle each tips at ---------- */
+  // p: { A: {w, h, cg, t, i}, B: {...} }  (w, h in cm; cg = height of the centre of gravity, cm)
+  function tip(A, p, V, H) {
+    const k = Math.min(150 / Math.max(p.A.w, p.B.w), (H - 110) / Math.max(p.A.h, p.B.h)), base = H - 34, fin = done(V);
+    [['A', p.A, 170], ['B', p.B, 470]].forEach(([n, b, x]) => {
+      const w = b.w * k, h = b.h * k, cy = base - b.cg * k, ang = Math.round(Math.atan2(b.w / 2, b.cg) * 180 / Math.PI);
+      el('line', { x1: x - 120, x2: x + 120, y1: base, y2: base, stroke: C.muted, 'stroke-width': 2 }, A.svg);
+      el('rect', { x: x - w / 2, y: base - h, width: w, height: h, rx: 4, fill: C.blue, 'fill-opacity': .12, stroke: C.blue, 'stroke-width': 2.5 }, A.svg);
+      if (b.i) S.emo(A.svg, x, base - h - 26, b.i, 34);
+      el('circle', { cx: x, cy, r: 8, fill: C.yellow, stroke: C.stage, 'stroke-width': 2 }, A.svg);
+      tx(A.svg, x, base + 20, b.t, { 'font-size': 16, fill: C.text });
+      if (!fin) return;
+      const a = V.anim ? { class: 'fade', style: 'animation-delay:' + (DLY + .2) + 's' } : {};
+      el('line', Object.assign({ x1: x, y1: cy, x2: x + w / 2, y2: base, stroke: C.gold, 'stroke-width': 2.5, 'stroke-dasharray': '6 5' }, a), A.svg);
+      el('line', Object.assign({ x1: x, y1: cy, x2: x, y2: base, stroke: C.muted, 'stroke-width': 2, 'stroke-dasharray': '3 5' }, a), A.svg);
+      S.chip(A.svg, x, Math.max(26, base - h - 58), 'tips at ' + ang + '°', ang < Math.round(Math.atan2((n === 'A' ? p.B : p.A).w / 2, (n === 'A' ? p.B : p.A).cg) * 180 / Math.PI) ? C.red : C.green, { fs: 15, cls: V.anim ? 'pop' : null });
+    });
+  }
+
+  const PIC = { scene, layers, cell, beam, tip };
+
+  /* ---------- the reasoning chain ---------- */
+  function steps(A, it, V, top) {
+    const n = it.steps.length, rh = n > 3 ? 28 : 33, bad = done(V) && V.res && !V.res.ok && V.res.s >= 0 ? V.res.s : -1;
+    it.steps.forEach((st, i) => {
+      const y = top + i * rh + rh / 2, flag = i === bad, c = flag ? C.red : LVC[it.lvl], a = done(V) && V.anim ? { class: 'fade', style: 'animation-delay:' + (i * DLY) + 's' } : {};
+      el('circle', { cx: 26, cy: y, r: 12, fill: c, 'fill-opacity': done(V) ? .9 : .25, stroke: c, 'stroke-width': 1.5 }, A.svg);
+      tx(A.svg, 26, y + 1, String(i + 1), { 'font-size': 14, 'font-weight': 700, fill: done(V) ? C.stage : c, style: 'stroke:none' });
+      if (!done(V)) { el('line', { x1: 48, x2: 610, y1: y, y2: y, stroke: C.edge, 'stroke-width': 2, 'stroke-dasharray': '4 8' }, A.svg); return; }
+      tx(A.svg, 46, y, st.l, Object.assign({ 'font-size': 14, fill: flag ? C.red : C.gold, 'text-anchor': 'start', 'font-weight': 650 }, a));
+      const fs = Math.min(16, 440 / Math.max(1, st.m.length * .5));
+      tx(A.svg, 178, y, st.m, Object.assign({ 'font-size': fs, fill: flag ? '#ff9a90' : i === n - 1 ? C.green : C.text, 'text-anchor': 'start' }, a));
+    });
+  }
+
+  function draw(A, it, V) {
+    const n = it.steps.length, rh = n > 3 ? 28 : 33, top = 420 - n * rh - 6;
+    el('line', { x1: 14, x2: 626, y1: top - 8, y2: top - 8, stroke: C.edge, 'stroke-width': 1.5 }, A.svg);
+    PIC[it.pic.k](A, it.pic, V, top - 14);
+    steps(A, it, V, top);
+  }
+
+  /* ---------- a tab: one unit, a round ramping from one step to three ---------- */
+  function tab(o) {
+    return {
+      id: o.id, code: o.code, name: o.name, sec: 1, notes: o.notes, kind: 'choice', cols: 2,
+      q: it => it.q, gen: o.gen, typeOf: it => it.t,
+      prompt: it => '<div class="lvl l' + it.lvl + '">Level ' + it.lvl + ' · ' + LVN[it.lvl] + '<span class="lo">' + it.code + '</span></div><div class="story">' + it.story + '</div>',
+      choices: it => it.opts.map(c => ({ v: c.v, label: c.t, aria: c.t })),
+      check: (it, r) => MODEL.check(it, r), answer: it => ({ v: 'a' }), link: o.link, draw
+    };
+  }
+  /* ---------- v2: a reading tab. The passage fills the stage; the student works through checked steps:
+     Key facts (tap the sentences that matter; two tries), Key idea (one try), What can we assume? (Levels 2–3,
+     one try), Answer (two tries). A tracker under the passage fills in as they go. After the answer the stage
+     shows the picture and the reasoning chain, with a Reading chip to look back. A slip on an earlier step
+     makes a right answer yellow (check returns partial). State lives in the shell's resp for the item. ---------- */
+  const STEPN = { facts: 'Key facts', idea: 'Key idea', assume: 'What can we assume?', answer: 'Answer' };
+  const HINT = { facts: 'Tap the key facts, then Check', idea: 'Pick the key idea', assume: 'Pick what we can assume', answer: 'Pick your answer' };
+  const XH = 'http://www.w3.org/1999/xhtml', $ = id => document.getElementById(id);
+  const stepsOf = it => ['facts', 'idea'].concat(it.read.assume ? ['assume'] : [], ['answer']);
+  let CUR = null;   // { box, it, A } for the item on screen
+  function fbSet(kind, cue) {
+    const f = $('fb'); f.className = 'fb ' + kind;
+    f.innerHTML = '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + cue + '</span>';
+  }
+  const chipH = it => '<div class="lvl l' + it.lvl + '">Level ' + it.lvl + ' · ' + (it.lvl === 1 ? '3 steps' : '4 steps') + '<span class="lo">' + it.code + '</span></div>';
+  function mkBtn(cls, html, on) { const b = document.createElement('button'); b.type = 'button'; b.className = cls; b.innerHTML = html; b.addEventListener('click', on); return b; }
+
+  function renderPanel(fin) {
+    const { box, it, A } = CUR, r = A.resp, S = stepsOf(it), i = fin ? S.length - 1 : r.step || 0, st = S[i];
+    $('q').textContent = 'Step ' + (i + 1) + ' of ' + S.length + ' · ' + STEPN[st];
+    const pr = $('prompt'); pr.style.fontSize = '';
+    pr.innerHTML = chipH(it) + '<div class="story">' + (st === 'facts' ? 'Read the story. Tap the sentences with the <b>key facts</b>, then press Check.'
+      : st === 'idea' ? 'Which <b>science idea</b> do you need for this problem?' : st === 'assume' ? 'What can we safely <b>assume</b>?' : '<b>' + it.read.ask + '</b>') + '</div>';
+    box.innerHTML = '';
+    if (st === 'facts') {
+      const n = (r.sel || []).length;
+      box.appendChild(mkBtn('btn primary factsBtn', 'Check key facts' + (n ? ' (' + n + ')' : ''), onFacts));
+      return;
+    }
+    const step = st === 'answer' ? it : it.read[st], row = document.createElement('div');
+    row.className = 'choices two';
+    step.opts.forEach(o => {
+      const b = mkBtn('choice', o.t, () => onPick(st, o.v, b)); b.dataset.v = o.v; b.setAttribute('aria-label', o.t);
+      if (st === 'answer' && (r.tried || []).includes(o.v)) { b.classList.add('bad'); b.disabled = true; }
+      if (fin && o.v === 'a') b.classList.add('ok');
+      if (fin && o.v === r.v && o.v !== 'a') b.classList.add('bad');
+      row.appendChild(b);
+    });
+    box.appendChild(row);
+  }
+  function advance() { const r = CUR.A.resp; r.step = (r.step || 0) + 1; renderPanel(); CUR.A.redraw(); }
+  function onFacts() {
+    const { it, A } = CUR, r = A.resp; if (A.locked) return;
+    const res = MODEL.checkFacts(it, r.sel); r.factsTry = (r.factsTry || 0) + 1;
+    if (res.ok) { r.facts = 'ok'; r.flag = null; fbSet('ok', res.cue); return advance(); }
+    if (r.factsTry < 2) { r.flag = res.extra; fbSet('bad', res.cue + ' · try again'); return A.redraw(); }
+    r.facts = 'shown'; r.flag = null; r.miss = (r.miss || 0) + 1;
+    r.sel = it.read.p.map((c, k) => c.k === 'must' ? k : -1).filter(k => k >= 0);
+    fbSet('bad', 'The key facts are in green'); advance();
+  }
+  function onPick(st, v, b) {
+    const { it, A } = CUR, r = A.resp; if (A.locked) return;
+    if (st === 'answer') {
+      r.v = v; r.done = true;
+      if (!MODEL.check(it, r).ok) { r.tried = (r.tried || []).concat(v); b.classList.add('bad'); b.disabled = true; }
+      return $('bCheck').click();
+    }
+    const res = MODEL.checkPick(it.read[st], v); r[st] = v;
+    if (!res.ok) r.miss = (r.miss || 0) + 1;
+    fbSet(res.ok ? 'ok' : 'bad', res.ok ? 'Yes' : res.cue);
+    advance();
+  }
+
+  // The passage (tappable on the Key facts step) and the step tracker under it.
+  function reading(A, it, V) {
+    const r = V.resp || {}, S = stepsOf(it), fin = done(V), cur = fin ? S.length : r.step || 0, rh = 31, top = 420 - S.length * rh - 8;
+    const factsDone = fin || cur > 0, tapping = !fin && cur === 0;
+    const fo = el('foreignObject', { x: 10, y: 6, width: 620, height: top - 16 }, A.svg), div = document.createElementNS(XH, 'div');
+    const len = it.read.p.reduce((a, c) => a + c.t.length, 0) + it.read.ask.length;
+    div.setAttribute('style', 'font: ' + (len > 620 ? 15 : len > 520 ? 15.5 : 16.5) + 'px/' + (len > 620 ? 1.42 : 1.5) + ' "Segoe UI Variable Text","Segoe UI",system-ui,sans-serif; color:' + C.text + '; padding: 4px 6px; user-select: none;');
+    const sel = new Set(r.sel || []), flag = new Set(r.flag || []);
+    it.read.p.forEach((c, k) => {
+      const s = document.createElementNS(XH, 'span'), on = sel.has(k);
+      s.textContent = c.t; s.className = 'snt';
+      let st = 'padding: 1px 2px; border-radius: 4px; box-decoration-break: clone; -webkit-box-decoration-break: clone;';
+      if (factsDone) st += c.k === 'must' ? 'background: rgba(131,193,103,.22); border-bottom: 2px solid ' + C.green + ';' : on ? 'background: rgba(247,217,111,.14);' : 'color: ' + C.muted + ';';
+      else if (flag.has(k)) st += 'background: rgba(252,98,85,.25); border-bottom: 2px solid ' + C.red + ';';
+      else if (on) st += 'background: rgba(247,217,111,.25); border-bottom: 2px solid ' + C.yellow + ';';
+      if (tapping) {
+        st += 'cursor: pointer;'; s.setAttribute('role', 'button'); s.setAttribute('tabindex', '0'); s.setAttribute('aria-pressed', on ? 'true' : 'false');
+        const tog = () => { if (A.locked) return; const nx = new Set(r.sel || []); nx.has(k) ? nx.delete(k) : nx.add(k); r.sel = [...nx]; r.flag = (r.flag || []).filter(x => x !== k); renderPanel(); A.redraw(); };
+        s.addEventListener('click', tog);
+        s.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); tog(); } });
+      }
+      s.setAttribute('style', st); div.appendChild(s); div.appendChild(document.createTextNode(' '));
+    });
+    const q = document.createElementNS(XH, 'div'); q.textContent = it.read.ask;
+    q.setAttribute('style', 'margin-top: 8px; font-weight: 700; color: ' + C.blue + ';'); div.appendChild(q);
+    fo.appendChild(div);
+    // the tracker
+    el('line', { x1: 14, x2: 626, y1: top - 6, y2: top - 6, stroke: C.edge, 'stroke-width': 1.5 }, A.svg);
+    const pickText = (step, v) => (step.opts.find(o => o.v === v) || {}).t || '';
+    S.forEach((st, i) => {
+      const y = top + i * rh + rh / 2, now = i === cur && !fin, past = i < cur || fin, c = now ? C.yellow : past ? LVC[it.lvl] : C.edge;
+      el('circle', { cx: 26, cy: y, r: 12, fill: past ? c : 'none', stroke: c, 'stroke-width': now ? 3 : 1.5 }, A.svg);
+      tx(A.svg, 26, y + 1, String(i + 1), { 'font-size': 14, 'font-weight': 700, fill: past ? C.stage : c, style: 'stroke:none' });
+      tx(A.svg, 46, y, STEPN[st], { 'font-size': 14, 'font-weight': 650, fill: now ? C.yellow : past ? C.gold : C.muted, 'text-anchor': 'start' });
+      let v = '', vc = C.text;
+      if (now) { v = st === 'answer' && V.phase === 'wrong' ? '✗ ' + pickText(it, r.v) + ': try again' : '← ' + HINT[st]; vc = st === 'answer' && V.phase === 'wrong' ? '#ff9a90' : C.yellow; }
+      else if (past && st === 'facts') { v = r.facts === 'shown' ? '✗ shown in green' : '✓ ' + it.read.p.filter(c => c.k === 'must').length + ' key facts found'; vc = r.facts === 'shown' ? '#ff9a90' : C.green; if (fin && !r.facts) { v = 'key facts in green'; vc = C.green; } }
+      else if (past && st !== 'answer') { const step = it.read[st], okk = r[st] === 'a'; v = (r[st] == null ? '' : okk ? '✓ ' : '✗ ') + step.a; vc = okk || r[st] == null ? C.green : '#ff9a90'; }
+      else if (past) { v = '✓ ' + it.a; vc = C.green; }
+      if (v) tx(A.svg, 236, y, v, { 'font-size': Math.min(15, 390 / Math.max(1, v.length * .5)), fill: vc, 'text-anchor': 'start' });
+    });
+  }
+
+  function readDraw(A, it, V) {
+    const r = V.resp || {};
+    if (done(V) && CUR && CUR.it === it && !r.fin) { r.fin = true; renderPanel(true); }
+    if (!done(V) || r.view === 'read') reading(A, it, V); else draw(A, it, V);
+    if (!done(V)) return;
+    const g = el('g', { style: 'cursor:pointer', role: 'button', tabindex: '0', 'aria-label': r.view === 'read' ? 'Show the picture' : 'Show the reading' }, A.svg);
+    const tog = () => { r.view = r.view === 'read' ? '' : 'read'; A.redraw(); };
+    S.chip(g, 572, 20, r.view === 'read' ? '🖼 Picture' : '📄 Reading', C.blue, { fs: 14 });
+    g.addEventListener('click', tog);
+  }
+
+  function readTab(o) {
+    return {
+      id: o.id, code: o.code, name: o.name, sec: 1, notes: o.notes, kind: 'custom', tries: 2,
+      q: () => '', gen: o.gen, typeOf: it => it.t, prompt: it => chipH(it), link: o.link,
+      panel(box, it, A) { CUR = { box, it, A }; A.resp.step = 0; renderPanel(); },
+      ready: (r, it) => r.done || r.shown ? '' : HINT[stepsOf(it)[r.step || 0]],
+      check: (it, r) => MODEL.check(it, r), answer: () => ({ v: 'a', done: true }), draw: readDraw
+    };
+  }
+  return { tab, readTab, draw, PIC, LVN };
+})();
+/* ===== SCIENCE WORD PROBLEMS KIT END ===== */
+/* ===== SCIENCE SCENARIOS KIT (Science 7 word problems v3; needs DRILL, S from sci.js and SW from sw.js) =====
+   A scenario is one reading, like a unit-test question: a real Alberta situation in sentences, often with a small
+   data table, then 2–3 linked parts that climb from Apply (part a) to Analyze (parts b, c). Each part is one item in
+   the round of 10, so a round is about four scenarios. The tab keeps the scenario between parts (RUN).
+   A part's steps, each checked:
+     1 Key facts         tap the sentences and table rows that matter for THIS part (two tries; then shown in green)
+     2 Key idea          which science idea the part needs (when the part names one)
+     3 What can we assume?   (when the part has one)
+     4 Answer            the part's question; every wrong choice is a named misconception (two tries)
+     5 Best explanation  last part only: the best of three written answers (one complete, one with no reasoning,
+                         one with a misconception). On these parts the answer's two tries are kept here, and the
+                         shell checks once at the end: a slip anywhere gives a yellow dot, no right answer a red one.
+   After the answer the stage shows the picture and the reasoning chain (SW.draw), with a 📄 Reading chip.
+   Item (from the model): { t, unit, part, of, lvl: 'ap' | 'an', code, sec, a, opts, errs, steps, pic,
+     read: { p: [{t, k} | {cells, head, k}], ask, idea, assume, explain }, prev: [{ask, a}] }
+   p chunks: k = must (a key fact for this part), opt (setup, or a fact for another part) or no (a detail to skip).
+   New picture: chart (grouped bars), added to SW.PIC. */
+const SWS = (() => {
+  const { C, el, tx } = DRILL;
+  const XH = 'http://www.w3.org/1999/xhtml', $ = id => document.getElementById(id);
+  const done = V => V.phase === 'right' || V.phase === 'show';
+  const LV = { ap: ['Apply', C.gold, 'l2'], an: ['Analyze', C.pink, 'l3'] };
+  const STEPN = { facts: 'Key facts', idea: 'Key idea', assume: 'What can we assume?', answer: 'Answer', explain: 'Best explanation' };
+  const HINT = { facts: 'Tap the key facts, then Check', idea: 'Pick the key idea', assume: 'Pick what we can assume', answer: 'Pick your answer', explain: 'Pick the best written answer' };
+  const stepsOf = it => ['facts'].concat(it.read.idea ? ['idea'] : [], it.read.assume ? ['assume'] : [], ['answer'], it.read.explain ? ['explain'] : []);
+  const LET = 'abc';
+  let CUR = null;          // { box, it, A } for the part on screen
+  const RUN = {};          // tab id -> { parts, next }: the scenario in progress
+
+  /* ---------- chart: grouped bars, for a scenario's data ---------- */
+  // p: { cats: [label], series: [{t, k, v: [number per cat]}], y: axis label, hl: [cat index] (ringed once solved), s }
+  function chart(A, p, V, H) {
+    const x0 = 92, x1 = 612, top = p.series.length > 1 ? 50 : 30, base = H - 34, all = [].concat(...p.series.map(s => s.v));
+    const mx = Math.max(...all) * 1.18 || 1, Y = v => base - (base - top) * v / mx;
+    el('line', { x1: x0, x2: x1, y1: base, y2: base, stroke: C.axis, 'stroke-width': 2 }, A.svg);
+    el('line', { x1: x0, x2: x0, y1: top - 10, y2: base, stroke: C.axis, 'stroke-width': 2 }, A.svg);
+    if (p.y) tx(A.svg, 30, (top + base) / 2, p.y, { 'font-size': 14, fill: C.muted, transform: 'rotate(-90 30 ' + (top + base) / 2 + ')' });
+    const gw = (x1 - x0) / p.cats.length, ns = p.series.length, bw = Math.min(64, gw * .72 / ns), fin = done(V);
+    p.cats.forEach((c, i) => {
+      const gx = x0 + gw * (i + .5);
+      if (fin && (p.hl || []).includes(i)) el('rect', { x: gx - gw / 2 + 6, y: top - 18, width: gw - 12, height: base - top + 18, rx: 10, fill: C.yellow, 'fill-opacity': .07, stroke: C.yellow, 'stroke-width': 2, 'stroke-dasharray': '6 5' }, A.svg);
+      tx(A.svg, gx, base + 17, c, { 'font-size': p.cats.length > 3 ? 13 : 15, fill: C.text });
+      p.series.forEach((s, j) => {
+        const x = gx + (j - (ns - 1) / 2) * (bw + 6), v = s.v[i], y = Y(v), cl = SW_COL(s.k);
+        el('rect', { x: x - bw / 2, y, width: bw, height: base - y, rx: 4, fill: cl, 'fill-opacity': .55, stroke: cl, 'stroke-width': 2 }, A.svg);
+        tx(A.svg, x, y - 11, s.f ? s.f(v) : String(v), { 'font-size': 14, fill: C.text });
+      });
+    });
+    if (ns > 1) p.series.forEach((s, j) => {
+      const x = x0 + j * 150, cl = SW_COL(s.k);
+      el('rect', { x, y: 8, width: 16, height: 16, rx: 3, fill: cl, 'fill-opacity': .55, stroke: cl, 'stroke-width': 2 }, A.svg);
+      tx(A.svg, x + 24, 16, s.t, { 'font-size': 14, fill: C.text, 'text-anchor': 'start' });
+    });
+  }
+  const SW_COL = k => ({ L: C.blue, Y: C.yellow, N: C.green, R: C.red, G: C.gold, T: C.teal, P: C.pink, M: C.muted })[k] || k || C.blue;
+  SW.PIC.chart = chart;
+
+  /* ---------- the side panel: the step's question and its controls ---------- */
+  function fbSet(kind, cue) {
+    const f = $('fb'); f.className = 'fb ' + kind;
+    f.innerHTML = '<span class="mark">' + (kind === 'ok' ? '✓' : kind === 'bad' ? '✗' : '👁') + '</span><span>' + cue + '</span>';
+  }
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  function chipH(it) {
+    const [nm, , cls] = LV[it.lvl];
+    return '<div class="lvl ' + cls + '">Part ' + LET[it.part] + ' of ' + it.of + ' · ' + nm + '<span class="lo">' + it.code + '</span></div>' +
+      (it.prev || []).map((p, k) => '<div class="prev"><span class="pl">' + LET[k] + '</span>' + esc(p.ask) + ' <b>' + esc(p.a) + '</b></div>').join('');
+  }
+  function mkBtn(cls, html, on) { const b = document.createElement('button'); b.type = 'button'; b.className = cls; b.innerHTML = html; b.addEventListener('click', on); return b; }
+  function renderPanel(fin) {
+    const { box, it, A } = CUR, r = A.resp, S = stepsOf(it), i = fin ? S.length - 1 : r.step || 0, st = S[i];
+    $('q').textContent = 'Step ' + (i + 1) + ' of ' + S.length + ' · ' + STEPN[st];
+    const pr = $('prompt'); pr.style.fontSize = '';
+    pr.innerHTML = chipH(it) + '<div class="story">' + (st === 'facts' ? 'Read the scenario. Tap the sentences and rows with the <b>key facts</b> for this part, then press Check.'
+      : st === 'idea' ? 'Which <b>science idea</b> do you need for this part?' : st === 'assume' ? 'What can we safely <b>assume</b>?'
+      : st === 'explain' ? 'Which is the <b>best written answer</b> to: ' + esc(it.read.ask) : '<b>' + esc(it.read.ask) + '</b>') + '</div>';
+    box.innerHTML = '';
+    if (st === 'facts') {
+      const n = (r.sel || []).length;
+      box.appendChild(mkBtn('btn primary factsBtn', 'Check key facts' + (n ? ' (' + n + ')' : ''), onFacts));
+      return;
+    }
+    const step = st === 'answer' ? it : it.read[st], row = document.createElement('div');
+    row.className = 'choices ' + (st === 'explain' ? 'one expl' : 'two');
+    step.opts.forEach(o => {
+      const b = mkBtn('choice', esc(o.t), () => onPick(st, o.v, b)); b.dataset.v = o.v; b.setAttribute('aria-label', o.t);
+      if (st === 'answer' && (r.tried || []).includes(o.v)) { b.classList.add('bad'); b.disabled = true; }
+      const mine = st === 'explain' ? r.explain : r.v;
+      if (fin && o.v === 'a') b.classList.add('ok');
+      if (fin && o.v === mine && o.v !== 'a') b.classList.add('bad');
+      row.appendChild(b);
+    });
+    box.appendChild(row);
+  }
+  function advance() { const r = CUR.A.resp; r.step = (r.step || 0) + 1; r.wrong = null; renderPanel(); CUR.A.redraw(); }
+  function onFacts() {
+    const { it, A } = CUR, r = A.resp; if (A.locked) return;
+    const res = MODEL.checkFacts(it, r.sel); r.factsTry = (r.factsTry || 0) + 1;
+    if (res.ok) { r.facts = 'ok'; r.flag = null; fbSet('ok', res.cue); return advance(); }
+    if (r.factsTry < 2) { r.flag = res.extra; fbSet('bad', res.cue + ' · try again'); return A.redraw(); }
+    r.facts = 'shown'; r.flag = null; r.miss = (r.miss || 0) + 1;
+    r.sel = it.read.p.map((c, k) => c.k === 'must' ? k : -1).filter(k => k >= 0);
+    fbSet('bad', 'The key facts are in green'); advance();
+  }
+  // The shell checks the part once. On a part with a Best explanation step the answer's tries are kept here.
+  const finish = () => $('bCheck').click();
+  function onPick(st, v, b) {
+    const { it, A } = CUR, r = A.resp; if (A.locked) return;
+    if (st === 'answer' && !it.read.explain) {
+      r.v = v; r.done = true;
+      if (!MODEL.check(it, r).ok) { r.tried = (r.tried || []).concat(v); b.classList.add('bad'); b.disabled = true; }
+      return finish();
+    }
+    if (st === 'answer') {
+      if (v === 'a') { r.v = 'a'; fbSet('ok', 'Yes · now pick the best written answer'); return advance(); }
+      r.tried = (r.tried || []).concat(v); b.classList.add('bad'); b.disabled = true;
+      if (r.tried.length < 2) { r.wrong = v; fbSet('bad', MODEL.check(it, { v }).cue + ' · try again'); return A.redraw(); }
+      r.v = v; r.done = true; r.local = true; return finish();
+    }
+    if (st === 'explain') { r.explain = v; r.done = true; r.local = true; return finish(); }
+    const res = MODEL.checkPick(it.read[st], v); r[st] = v;
+    if (!res.ok) r.miss = (r.miss || 0) + 1;
+    fbSet(res.ok ? 'ok' : 'bad', res.ok ? 'Yes' : res.cue);
+    advance();
+  }
+
+  /* ---------- the stage: the reading (tappable on Key facts) and the step tracker ---------- */
+  const RH = 28;
+  function reading(A, it, V) {
+    const r = V.resp || {}, S = stepsOf(it), fin = done(V), cur = fin ? S.length : r.step || 0, top = 420 - S.length * RH - 8;
+    const factsDone = fin || cur > 0, tapping = !fin && cur === 0;
+    const fo = el('foreignObject', { x: 8, y: 4, width: 624, height: top - 12 }, A.svg), div = document.createElementNS(XH, 'div');
+    const P = it.read.p, len = P.reduce((a, c) => a + (c.t || c.cells.join('   ')).length, 0) + it.read.ask.length + P.filter(c => c.cells).length * 30;
+    const fs = len > 720 ? 14 : len > 620 ? 14.5 : len > 520 ? 15 : 16;
+    div.setAttribute('class', 'scn'); div.setAttribute('style', 'font: ' + fs + 'px/1.42 "Segoe UI Variable Text","Segoe UI",system-ui,sans-serif; color:' + C.text + '; padding: 2px 6px; user-select: none;');
+    const sel = new Set(r.sel || []), flag = new Set(r.flag || []);
+    const look = (c, k) => {
+      const on = sel.has(k);
+      if (factsDone) return c.k === 'must' ? 'background: rgba(131,193,103,.22); box-shadow: inset 0 -2px ' + C.green + ';' : on ? 'background: rgba(247,217,111,.14);' : 'color: ' + C.muted + ';';
+      if (flag.has(k)) return 'background: rgba(252,98,85,.25); box-shadow: inset 0 -2px ' + C.red + ';';
+      if (on) return 'background: rgba(247,217,111,.25); box-shadow: inset 0 -2px ' + C.yellow + ';';
+      return '';
+    };
+    const tappable = (node, k) => {
+      if (!tapping) return;
+      node.style.cursor = 'pointer'; node.setAttribute('role', 'button'); node.setAttribute('tabindex', '0'); node.setAttribute('aria-pressed', sel.has(k) ? 'true' : 'false');
+      const tog = () => { if (A.locked) return; const nx = new Set(r.sel || []); nx.has(k) ? nx.delete(k) : nx.add(k); r.sel = [...nx]; r.flag = (r.flag || []).filter(x => x !== k); renderPanel(); A.redraw(); };
+      node.addEventListener('click', tog);
+      node.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); tog(); } });
+    };
+    let para = null, table = null;
+    P.forEach((c, k) => {
+      if (c.cells) {
+        para = null;
+        if (c.head) {
+          table = document.createElementNS(XH, 'table');
+          table.setAttribute('style', 'border-collapse: separate; border-spacing: 0 3px; margin: 4px 0 6px; font-size: ' + (fs - .5) + 'px;');
+          const hr = document.createElementNS(XH, 'tr');
+          c.head.forEach((h, j) => { const th = document.createElementNS(XH, 'th'); th.textContent = h; th.setAttribute('style', 'padding: 1px 12px; color: ' + C.blue + '; font-weight: 650; text-align: ' + (j ? 'center' : 'left') + ';'); hr.appendChild(th); });
+          table.appendChild(hr); div.appendChild(table);
+        }
+        const tr = document.createElementNS(XH, 'tr');
+        tr.setAttribute('style', look(c, k));
+        c.cells.forEach((v, j) => { const td = document.createElementNS(XH, 'td'); td.textContent = v; td.setAttribute('style', 'padding: 1px 12px; border-radius: 4px; text-align: ' + (j ? 'center' : 'left') + ';' + (j ? '' : 'white-space: nowrap;')); tr.appendChild(td); });
+        tappable(tr, k); table.appendChild(tr);
+        return;
+      }
+      if (!para) { para = document.createElementNS(XH, 'div'); para.setAttribute('style', 'margin: 0 0 2px;'); div.appendChild(para); }
+      const s = document.createElementNS(XH, 'span');
+      s.textContent = c.t; s.setAttribute('style', 'padding: 1px 2px; border-radius: 4px; box-decoration-break: clone; -webkit-box-decoration-break: clone;' + look(c, k));
+      tappable(s, k); para.appendChild(s); para.appendChild(document.createTextNode(' '));
+    });
+    const q = document.createElementNS(XH, 'div');
+    q.textContent = LET[it.part] + ') ' + it.read.ask;
+    q.setAttribute('style', 'margin-top: 6px; font-weight: 700; color: ' + C.blue + ';'); div.appendChild(q);
+    fo.appendChild(div);
+    // shrink to fit above the tracker (a part with five steps has less room)
+    const H = top - 12;
+    for (let f = fs; div.scrollHeight > H && f > 13; f -= .5) {
+      div.style.fontSize = (f - .5) + 'px'; div.style.lineHeight = f < 15 ? '1.36' : '1.42';
+      if (table) div.querySelectorAll('table').forEach(t => { t.style.fontSize = (f - 1) + 'px'; });
+    }
+    // the tracker
+    el('line', { x1: 14, x2: 626, y1: top - 6, y2: top - 6, stroke: C.edge, 'stroke-width': 1.5 }, A.svg);
+    const lc = LV[it.lvl][1], pickText = (step, v) => (step.opts.find(o => o.v === v) || {}).t || '';
+    S.forEach((st, i) => {
+      const y = top + i * RH + RH / 2, now = i === cur && !fin, past = i < cur || fin, c = now ? C.yellow : past ? lc : C.edge;
+      el('circle', { cx: 26, cy: y, r: 11, fill: past ? c : 'none', stroke: c, 'stroke-width': now ? 3 : 1.5 }, A.svg);
+      tx(A.svg, 26, y + 1, String(i + 1), { 'font-size': 13, 'font-weight': 700, fill: past ? C.stage : c, style: 'stroke:none' });
+      tx(A.svg, 46, y, STEPN[st], { 'font-size': 14, 'font-weight': 650, fill: now ? C.yellow : past ? C.gold : C.muted, 'text-anchor': 'start' });
+      let v = '', vc = C.text;
+      const wrongNow = st === 'answer' && (r.wrong || V.phase === 'wrong');
+      if (now) { v = wrongNow ? '✗ ' + pickText(it, r.wrong || r.v) + ': try again' : '← ' + HINT[st]; vc = wrongNow ? '#ff9a90' : C.yellow; }
+      else if (past && st === 'facts') { v = r.facts === 'shown' ? '✗ shown in green' : '✓ ' + ((n) => n + ' key fact' + (n === 1 ? '' : 's') + ' found')(P.filter(c => c.k === 'must').length); vc = r.facts === 'shown' ? '#ff9a90' : C.green; if (fin && !r.facts) { v = 'key facts in green'; vc = C.green; } }
+      else if (past && st === 'explain') { const okk = r.explain === 'a'; v = r.explain == null ? '✓ see the green answer' : okk ? '✓ complete: claim, evidence, reason' : '✗ ' + it.read.explain.errs[+String(r.explain).slice(1)].cue; vc = okk || r.explain == null ? C.green : '#ff9a90'; }
+      else if (past && st !== 'answer') { const step = it.read[st], okk = r[st] === 'a'; v = (r[st] == null ? '' : okk ? '✓ ' : '✗ ') + step.a; vc = okk || r[st] == null ? C.green : '#ff9a90'; }
+      else if (past) { v = '✓ ' + it.a; vc = C.green; }
+      if (v) tx(A.svg, 236, y, v, { 'font-size': Math.min(15, 390 / Math.max(1, v.length * .5)), fill: vc, 'text-anchor': 'start' });
+    });
+  }
+
+  function readDraw(A, it, V) {
+    const r = V.resp || {};
+    if (done(V) && CUR && CUR.it === it && !r.fin) { r.fin = true; renderPanel(true); }
+    if (!done(V) || r.view === 'read') reading(A, it, V); else SW.draw(A, Object.assign({}, it, { lvl: it.lvl === 'ap' ? 2 : 3 }), V);
+    if (!done(V)) return;
+    const g = el('g', { style: 'cursor:pointer', role: 'button', tabindex: '0', 'aria-label': r.view === 'read' ? 'Show the picture' : 'Show the reading' }, A.svg);
+    const tog = () => { r.view = r.view === 'read' ? '' : 'read'; A.redraw(); };
+    S.chip(g, 572, 20, r.view === 'read' ? '🖼 Picture' : '📄 Reading', C.blue, { fs: 14 });
+    g.addEventListener('click', tog);
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); tog(); } });
+  }
+
+  /* ---------- a tab. o: { id, code, name, notes, start(rem) -> [part items], link } ---------- */
+  function tab(o) {
+    return {
+      id: o.id, code: o.code, name: o.name, sec: 1, notes: o.notes, kind: 'custom',
+      get tries() { return CUR && CUR.it.read.explain && CUR.A.resp.local ? 1 : 2; },
+      q: () => '', typeOf: it => it.t, prompt: it => chipH(it), link: o.link,
+      // n: the item's place in the round. The next part of the scenario in progress, or part a of a new one that
+      // fits in what is left of the round (never leaving one item over).
+      gen(n) {
+        const R = RUN[o.id];
+        if (n && R && R.next < R.parts.length) return R.parts[R.next];
+        return o.start(n == null ? 10 : 10 - n)[0];
+      },
+      panel(box, it, A) { RUN[o.id] = { parts: it.all, next: it.part + 1 }; CUR = { box, it, A }; A.resp.step = 0; renderPanel(); },
+      ready: (r, it) => r.done || r.shown ? '' : HINT[stepsOf(it)[r.step || 0]],
+      check: (it, r) => MODEL.check(it, r), answer: () => ({ v: 'a', done: true }), draw: readDraw
+    };
+  }
+  return { tab, chart, stepsOf, RUN };
+})();
+/* ===== SCIENCE SCENARIOS KIT END ===== */
+/* ===================== PAGE: one tab per unit with scenarios, then Mixed (the kit is sws.js) ===================== */
+const NOTES7 = {
+  eco: 'sci7-interactions-ecosystems-notes-v1.html', pla: 'sci7-plants-food-fibre-notes-v1.html', hea: 'sci7-heat-temperature-notes-v1.html',
+  str: 'sci7-structures-forces-notes-v1.html', ear: 'sci7-planet-earth-notes-v1.html'
+};
+const UNIT7 = { eco: ['7-1', 'Ecosystems'], pla: ['7-2', 'Plants'], hea: ['7-3', 'Heat'], str: ['7-4', 'Structures'], ear: ['7-5', 'Earth'] };
+// Each part opens its own unit's notes at its own section.
+const link7 = it => ({ notes: NOTES7[it.unit], sec: it.sec });
+const units7 = Object.keys(UNIT7).filter(u => MODEL.UNITS[u]);
+const PAGE = {
+  key: 'sci7-word-problems-trainer-v3', course: 'Science 7 · Word problems', title: 'Word Problems',
+  notes: NOTES7.eco, secText: t => 'Section ' + t.sec + ':', sans: true,
+  tabs: units7.map(u => SWS.tab({ id: u, code: UNIT7[u][0], name: UNIT7[u][1], notes: NOTES7[u], start: rem => MODEL.start(u, rem), link: link7 }))
+    .concat(units7.length > 1 ? [SWS.tab({ id: 'mix', code: 'All', name: 'Mixed', notes: NOTES7.eco, start: rem => MODEL.startMix(rem), link: link7 })] : [])
+};
+DRILL.boot(PAGE);
+</script>
+</body>
+</html>
