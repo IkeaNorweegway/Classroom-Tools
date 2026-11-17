@@ -569,8 +569,9 @@ const WP = (() => {
   function tab(o) {
     return {
       id: o.id, code: o.code, name: o.name, sec: o.sec || 1, notes: o.notes, sep: o.sep,
-      q: it => it.q, kind: 'slots', gen: o.gen, typeOf: it => it.t,
-      prompt: it => '<div class="lvl l' + it.lvl + '">Level ' + it.lvl + ' · ' + LVN[it.lvl] + '</div><div class="story">' + it.story + '</div>',
+      // The question is written out in full at the end of the story (it.ask), so the short title is left off.
+      q: it => it.ask ? '' : it.q, kind: 'slots', gen: o.gen, typeOf: it => it.t,
+      prompt: it => '<div class="lvl l' + it.lvl + '">Level ' + it.lvl + ' · ' + LVN[it.lvl] + '</div><div class="story">' + it.story + (it.ask ? ' <span class="ask">' + it.ask + '</span>' : '') + '</div>',
       slots: it => it.poly ? polySlots(it) : [it.pre ? unit(it.pre) : null, { k: 'v', label: 'answer', wide: true }, it.unit ? unit(it.unit) : null].filter(Boolean),
       check: (it, r) => MODEL.check(it, r), answer: it => it.poly ? MODEL.resp(it, it.poly) : { v: it.ans }, link: o.link, draw
     };

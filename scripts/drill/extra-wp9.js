@@ -23,6 +23,8 @@ window.EXTRA = ok => {
       if (it.steps.length < +lv) fail('fewer steps than its level');
       if (text(it.story).length > 175) fail('story ' + text(it.story).length + ' chars');
       if (words(it.q) > 4) fail('label over 4 words');
+      if (!/\?$/.test(it.ask || '')) fail('no written question');
+      if (text(it.ask).length > 80) fail('question ' + text(it.ask).length + ' chars');
       if (words(it.cue) > 6) fail('cue over 6 words');
       it.steps.forEach(s => { if (s.l.length > 19) fail('step label long: ' + s.l); if (s.m.length > 50) fail('step working long: ' + s.m); });
       it.errs.forEach((e, k) => {
