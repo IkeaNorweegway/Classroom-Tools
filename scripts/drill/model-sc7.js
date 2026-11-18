@@ -350,18 +350,348 @@ const MODEL = (() => {
     };
   }
 
+  /* ============ 7-2 · Plants for Food and Fibre ============ */
+  function plCells() {
+    const n = pick(NAMES);
+    return {
+      p: [S(n + '’s class looks at cells under a microscope at a school in Red Deer.', '*'),
+        S('Slide 1 is a thin leaf from Elodea, a pond plant that grows in sunlight.', 'a'),
+        S('Slide 2 is skin peeled from inside an onion bulb, which grows underground.', 'a'),
+        S('The class stains Slide 2 with iodine so the nucleus shows up.'),
+        S('The microscope magnifies ' + pick([100, 400]) + ' times.'),
+        TB(['Seen in the cells', 'Slide 1 (Elodea)', 'Slide 2 (onion)'], [[['Boxy outer edge (wall)', 'yes', 'yes'], 'B'], [['Large clear sac (vacuole)', 'yes', 'yes'], 'B'], [['Green ovals', 'many', 'none'], 'a']]),
+        S('Then the teacher shows Slide 3, from a carrot root: boxy cells with a wall and a large vacuole, but no green ovals.', 'b'),
+        S('Carrots are orange because of a pigment called carotene.')],
+      parts: [
+        { lvl: 'ap', code: '7-2-01', sec: 1, idea: 'cell', ask: 'Why do only the Elodea cells have green ovals?', a: 'Its chloroplasts catch light for food',
+          errs: [['Onion cells are animal cells', 'Onion cells have walls too', 0], ['The iodine bleached the green', 'The bulb grows in the dark', 1]],
+          steps: [['the green ovals', 'chloroplasts, where photosynthesis happens'], ['the onion', 'a bulb underground gets no light, so it has none']],
+          pic: { k: 'cell', part: 'chloroplast', d: 'chloroplasts' } },
+        { lvl: 'an', code: '7-2-01', sec: 1, idea: 'cell', ask: 'Is Slide 3 a plant cell?', a: 'Yes: it has a wall and a big vacuole',
+          errs: [['No: plant cells must be green', 'Roots grow in the dark', 1], ['No: it is an animal cell', 'Animal cells have no wall', 0]],
+          assume: ['A root gets no light underground', ['Every plant part is green', 'Only parts in light are green'], ['Carrots are not made of cells', 'All living things are cells']],
+          steps: [['the clues', 'a cell wall and a large vacuole'], ['no chloroplasts', 'a root grows in the dark'], ['conclusion', 'a plant cell, from a part that gets no light']],
+          explain: ['Yes: it has a cell wall and a large vacuole, which animal cells lack. It has no chloroplasts because a root grows in the dark.',
+            ['Yes, because carrots are plants.', 'Use what the cells show'],
+            ['No: every plant cell has chloroplasts to make its own food, so a cell with no green ovals must come from an animal.', 'Roots in the dark lack them']],
+          pic: { k: 'cell', part: 'wall', chl: false, d: 'wall + vacuole: plant' } }
+      ]
+    };
+  }
+  function plCelery() {
+    const n = pick(NAMES), h1 = rnd(2, 5);
+    return {
+      p: [S(n + ' puts a stalk of celery in a cup of water with blue food colouring.', 'a'),
+        S('The celery came from a farmers’ market in Lethbridge.'),
+        TB(['Time', 'How far the blue reached'], [[['After 1 hour', h1 + ' cm up the stalk'], 'a'], [['After 1 day', 'the tips of the leaves'], 'a']]),
+        S('When ' + n + ' cuts across the stalk, the blue shows only in small dots near the outside, in tubes that run up the stalk.', 'ab'),
+        S('Celery is about 95% water, so it is very crunchy.'),
+        S('The leaves make sugar in sunlight. The roots, deep in the dark soil, need sugar to grow too.', 'b'),
+        S('The teacher says sugar travels in a different set of tubes.', 'b'),
+        S('Celery is often eaten with peanut butter.')],
+      parts: [
+        { lvl: 'ap', code: '7-2-02', sec: 2, idea: 'vessel', ask: 'What do the blue dots show?', a: 'Xylem tubes carry water up',
+          errs: [['Phloem carries water down', 'The dye moved up', 0], ['Water soaks through every cell', 'The dye stayed in tubes', 1]],
+          steps: [['the dye', 'blue rose from the cup to the leaf tips'], ['the tubes', 'only in small tubes: xylem carries water up']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🥤', 'blue water'), cd(1, 0, '🌿', 'stalk tubes', { s: 0 }), cd(2, 0, '🍃', '?', { q: true, d: 'xylem: up to leaves' })], arrows: [{ a: 0, b: 1, t: 'up', k: 'L', s: 0 }, { a: 1, b: 2, t: 'up', k: 'L', s: 1 }] } },
+        { lvl: 'an', code: '7-2-02', sec: 2, idea: 'vessel', ask: 'Which way does sugar move, and in what?', a: 'Down from the leaves, in phloem',
+          errs: [['Up from the roots, in xylem', 'Roots in the dark make none', 0], ['Down in the same blue tubes', 'Those tubes carry water up', 1]],
+          assume: ['Roots can’t make their own sugar', ['Roots take sugar from the soil', 'Soil gives water and minerals'], ['Sugar moves with the dye', 'The dye only went up']],
+          steps: [['where it’s made', 'leaves make sugar in the light'], ['where it’s needed', 'roots in the dark soil'], ['the tubes', 'phloem carries sugar down to them']],
+          explain: ['Down in the phloem: the leaves make sugar in the light, the roots in dark soil can’t, and the xylem tubes carry water up, not sugar down.',
+            ['Down in the phloem, because that is what phloem does.', 'Say where the sugar is made'],
+            ['Up in the xylem: the roots take sugar out of the soil, and the same tubes that carried the blue dye carry it up to the leaves.', 'Leaves make sugar; soil doesn’t']],
+          pic: { k: 'scene', cards: [cd(0, 0, '☀️', 'leaves make sugar'), cd(1, 0, '🌿', '?', { q: true, d: 'phloem: down' }), cd(2, 0, '🟫', 'roots in soil', { s: 1 })], arrows: [{ a: 0, b: 1, t: 'sugar', k: 'G', s: 0 }, { a: 1, b: 2, t: 'down', k: 'G', s: 2 }] } }
+      ]
+    };
+  }
+  function plMass() {
+    const n = pick(NAMES), t1 = rnd(8, 14), gain = (t1 * 10 - 2) / 10, loss = rnd(1, 2) / 10, s1 = (500 - loss * 10) / 10;
+    return {
+      p: [S(n + ' plants a 0.2 kg poplar cutting in a tub of 50.0 kg of dry soil.', 'a'),
+        S('For five years she adds only water. She covers the soil so nothing falls in.', 'a'),
+        S('The tub sits in her backyard in Grande Prairie.'),
+        TB(['Mass (kg)', 'Start', 'After 5 years'], [[['Poplar tree', '0.2', t1], 'ab'], [['Dry soil', '50.0', s1.toFixed(1)], 'ab']]),
+        S('Poplars drop their leaves every fall, and she rakes them up.'),
+        S('Each spring, the first leaves open in early May.'),
+        S('Her brother says, “The tree must have eaten the soil.”', 'b')],
+      parts: [
+        { lvl: 'ap', code: '7-2-03', sec: 3, idea: 'mass', ask: 'Where did most of the tree’s new mass come from?', a: 'CO₂ from the air, plus water',
+          errs: [['The soil it took in', 'The soil lost only ' + loss + ' kg', 0], ['Sunlight turned into wood', 'Light gives energy, not mass', 1]],
+          steps: [['the soil', 'soil fell only 50.0 → ' + s1.toFixed(1) + ' kg'], ['the tree', 'CO₂ and water built ' + gain + ' kg of new tree']],
+          pic: { k: 'scene', cards: [cd(0, 0, '💨', 'CO₂ from air'), cd(0, 1, '💧', 'water'), cd(1, .5, '🌳', '?', { q: true, d: '+' + gain + ' kg' }), cd(2, .5, '🟫', 'soil −' + loss + ' kg', { s: 0 })], arrows: [{ a: 0, b: 2, k: 'N', s: 1 }, { a: 1, b: 2, k: 'L', s: 1 }] } },
+        { lvl: 'an', code: '7-2-03', sec: 3, idea: 'photo', ask: 'Is her brother right?', a: 'No: the soil barely changed',
+          errs: [['Yes: plants eat soil for food', 'Plants make their own food', 1], ['Yes: roots take in food', 'Roots take in water, minerals', 1]],
+          assume: ['No soil washed out of the tub', ['The tree ate its fallen leaves', 'She raked them up'], ['Soil turns into wood', 'The soil mass barely changed']],
+          steps: [['the claim', 'the tree ate the soil'], ['the evidence', 'tree +' + gain + ' kg, soil −' + loss + ' kg'], ['conclusion', 'the mass came from air and water']],
+          explain: ['No: the tree gained ' + gain + ' kg but the soil lost only ' + loss + ' kg, so the mass came from CO₂ and water, built into glucose by photosynthesis.',
+            ['No, because plants make their own food.', 'Use the mass numbers'],
+            ['No: the tree got its mass from the sunlight it soaked up, because light is the plant’s food and the soil barely changed.', 'Light gives energy, not mass']],
+          pic: { k: 'chart', cats: ['Tree gained', 'Soil lost'], series: [{ t: 'kg', k: 'N', v: [gain, loss], f: v => v + ' kg' }], y: 'mass (kg)', hl: [1] } }
+      ]
+    };
+  }
+  function plGreenhouse() {
+    const tA = rnd(300, 360), tB = tA + rnd(70, 110);
+    return {
+      p: [S('Greenhouses near Redcliff grow tomatoes all year.', '*'),
+        S('A grower compares two of her greenhouses with the same plants, water, light and heat.', 'a'),
+        S('In Greenhouse B, she pipes in extra carbon dioxide from her gas heaters.', 'a'),
+        TB(['Over 4 weeks', 'CO₂ in the air (ppm)', 'Tomatoes picked (kg)'], [[['Greenhouse A', 420, tA], 'a'], [['Greenhouse B', 900, tB], 'a']]),
+        S('Bumblebees from boxes pollinate the flowers.'),
+        S('She turns the extra CO₂ off every night, when the greenhouse is dark.', 'b'),
+        S('Workers pick the tomatoes by hand each morning.')],
+      parts: [
+        { lvl: 'ap', code: '7-2-03', sec: 3, idea: 'photo', ask: 'Why did Greenhouse B grow more tomatoes?', a: 'More CO₂ for photosynthesis',
+          errs: [['The heaters made it warmer', 'The heat was the same', 0], ['More water reached B', 'The water was the same', 0]],
+          steps: [['fair test', 'same plants, water, light and heat'], ['the difference', 'more CO₂: ' + tA + ' → ' + tB + ' kg']],
+          pic: { k: 'chart', cats: ['A (420 ppm)', 'B (900 ppm)'], series: [{ t: 'kg picked', k: 'P', v: [tA, tB] }], y: 'tomatoes (kg)', hl: [1] } },
+        { lvl: 'an', code: '7-2-03', sec: 3, idea: 'photo', ask: 'Why does she turn the extra CO₂ off at night?', a: 'No light, so no photosynthesis',
+          errs: [['To keep the plants cool', 'The heat was kept the same', 0], ['Plants use more CO₂ at night', 'Photosynthesis needs light', 1]],
+          assume: ['There are no grow lights at night', ['Plants make food in the dark', 'Light powers photosynthesis'], ['CO₂ harms tomatoes', 'B grew more tomatoes']],
+          steps: [['the inputs', 'light, water and CO₂ make glucose'], ['at night', 'no light, so the extra CO₂ goes unused'], ['so', 'turning it off saves gas']],
+          explain: ['At night there is no light, so the plants can’t do photosynthesis or use the extra CO₂; piping it in then would only waste gas.',
+            ['She turns it off because it isn’t needed at night.', 'Say why it isn’t needed'],
+            ['At night the plants fall asleep and stop needing any energy at all, so the extra CO₂ would just build up in the air.', 'Light is what’s missing']],
+          pic: { k: 'scene', cards: [cd(0, 0, '☀️', 'light at night', { x: true }), cd(0, 1, '💨', 'extra CO₂'), cd(1, .5, '🍅', '?', { q: true, d: 'no photosynthesis' })], arrows: [{ a: 0, b: 2, k: 'Y', dash: true, x: true, s: 1 }, { a: 1, b: 2, t: 'unused', k: 'M', dash: true, s: 1 }] } }
+      ]
+    };
+  }
+  function plBerries() {
+    const fl = rnd(180, 240), bn = rnd(4, 15), bo = rnd(110, 160);
+    return {
+      p: [S('A saskatoon berry farm near Leduc tests how much its bees matter.', '*'),
+        S('In spring, workers tie fine net bags over some branches before the flowers open, so insects can’t reach them.', 'a'),
+        S('Other branches are left open, and bees visit their flowers.', 'a'),
+        TB(['Per branch', 'Flowers', 'Berries'], [[['Netted', fl, bn], 'a'], [['Open', fl, bo], 'aB']]),
+        S('Saskatoon berries are an important food for many First Nations in Alberta.'),
+        S('A berry forms only after pollen reaches the stigma of a flower.', 'ab'),
+        S('The farm sells jam at a market in Edmonton.'),
+        S('This year, a cold, rainy week kept the bees in their hives all through the bloom.', 'b')],
+      parts: [
+        { lvl: 'ap', code: '7-2-04', sec: 4, idea: 'poll', ask: 'Why did the netted branches make so few berries?', a: 'No bees carried pollen to them',
+          errs: [['The nets blocked the flowers', 'Flower counts were the same', 0], ['Bees eat berries on open ones', 'Open branches had more', 1]],
+          steps: [['pollination', 'bees carry pollen to the stigma'], ['the nets', 'no bees, so few berries: ' + bn + ' vs ' + bo]],
+          pic: { k: 'chart', cats: ['Netted', 'Open'], series: [{ t: 'flowers', k: 'P', v: [fl, fl] }, { t: 'berries', k: 'L', v: [bn, bo] }], y: 'per branch', hl: [0] } },
+        { lvl: 'an', code: '7-2-04', sec: 4, idea: 'poll', ask: 'What will the cold week most likely do to the harvest?', a: 'Fewer berries this year',
+          errs: [['More berries: bees eat fewer', 'Bees carry pollen to flowers', 1], ['No change: the flowers bloomed', 'Flowers need visits to make fruit', 1]],
+          assume: ['Few other insects flew that week', ['Wind carries saskatoon pollen', 'The nets showed insects matter'], ['Rain carries the pollen', 'The story doesn’t say so']],
+          steps: [['the week', 'cold rain kept the bees inside'], ['the flowers', 'little pollen reached the stigmas'], ['prediction', 'fewer berries, like the netted branches']],
+          explain: ['Fewer berries: the bees stayed in during the bloom, so little pollen reached the stigmas, just like the netted branches that made only ' + bn + ' berries.',
+            ['Fewer berries, because the weather was bad.', 'Link the weather to pollen'],
+            ['Fewer berries: the cold rain washed away the food the berries need from the flowers, so they had nothing to grow from.', 'Berries need pollination first']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🐝', 'cold week: bees stay in', { x: true, s: 0 }), cd(1, 0, '🌸', 'few pollinated', { s: 1 }), cd(2, 0, '🫐', '?', { q: true, d: 'fewer berries' })], arrows: [{ a: 0, b: 1, t: 'pollen', k: 'R', dash: true, x: true, s: 1 }, { a: 1, b: 2, k: 'G', s: 2 }] } }
+      ]
+    };
+  }
+  function plPotato() {
+    const l1 = rnd(80, 95), l2 = rnd(15, 25);
+    return {
+      p: [S('A farm near Taber grows potatoes.', '*'),
+        S('Each spring, the farmer plants pieces of last year’s potatoes. Each piece sprouts into a new plant.', 'a'),
+        S('Potatoes are tubers: swollen underground stems that store starch.', 'A'),
+        S('Southern Alberta has hot, dry summers, so the fields are watered by sprinklers.'),
+        S('Field 1 grows one variety, so every plant there is a copy of the same parent plant.', 'b'),
+        S('Field 2 grows a mix of four varieties.', 'b'),
+        S('Potato flowers are white or purple.'),
+        S('In July, a disease that attacks only one of these varieties spreads through the area.', 'b'),
+        TB(['Plants lost', 'Field 1 (one variety)', 'Field 2 (four varieties)'], [[['Share lost to the disease', l1 + '%', l2 + '%'], 'b']])],
+      parts: [
+        { lvl: 'ap', code: '7-2-04', sec: 4, idea: 'repro', ask: 'What kind of reproduction does the farmer use?', a: 'Asexual: one parent, exact copies',
+          errs: [['Sexual: the pieces are seeds', 'Tuber pieces aren’t seeds', 0], ['Sexual: flowers made the pieces', 'Tubers are stems, not flowers', 0]],
+          steps: [['the method', 'pieces of potato sprout into plants'], ['the type', 'one parent, no seeds: asexual']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🥔', 'potato piece'), cd(1, 0, '🌱', 'sprout', { s: 0 }), cd(2, 0, '🥔', '?', { q: true, d: 'same as the parent' })], arrows: [{ a: 0, b: 1, k: 'N', s: 0 }, { a: 1, b: 2, t: 'one parent', k: 'N', s: 1 }] } },
+        { lvl: 'an', code: '7-2-04', sec: 4, idea: 'repro', ask: 'Why did Field 1 lose a bigger share?', a: 'All its plants share one weakness',
+          errs: [['Tuber plants are always weaker', 'Field 2 grew from tubers too', 1], ['Field 2 had more plants', 'Compare the shares lost', 2]],
+          assume: ['Both fields were otherwise alike', ['The disease attacks every variety', 'It attacks only one'], ['Field 2 was sprayed', 'The story doesn’t say so']],
+          steps: [['Field 1', 'identical copies: every plant can catch it'], ['Field 2', 'only one variety in four can catch it'], ['the data', 'lost ' + l1 + '% vs ' + l2 + '%']],
+          explain: ['Field 1’s plants are identical copies, so all of them could catch the disease; in Field 2 only one variety in four could, so it lost only ' + l2 + '%.',
+            ['Field 1 lost more because it had only one variety.', 'Say why one variety is risky'],
+            ['Field 1 lost more because plants grown from tuber pieces are always weaker than plants from seeds, so they catch any disease.', 'Field 2 grew from tubers too']],
+          pic: { k: 'chart', cats: ['Field 1 (one variety)', 'Field 2 (four varieties)'], series: [{ t: '% lost', k: 'R', v: [l1, l2], f: v => v + '%' }], y: 'share lost (%)', hl: [0] } }
+      ]
+    };
+  }
+  function plSprout() {
+    const n = pick(NAMES), a = rnd(16, 19), b = rnd(16, 19), d = rnd(0, 3);
+    return {
+      p: [S(n + '’s class tests what wheat seeds need to sprout. All 80 seeds come from one bag.', '*'),
+        S('Each dish gets 20 seeds on a paper towel.', '*'),
+        TB(['Dish', 'Water', 'Place', 'Sprouted in 5 days'], [[['A', 'wet', 'warm, dark cupboard', a], 'a'], [['B', 'wet', 'warm, sunny window', b], 'a'], [['C', 'dry', 'warm, sunny window', 0], 'b'], [['D', 'wet', 'fridge (4 °C)', d], 'b']]),
+        S('The seeds came from a farm near Olds.'),
+        S('A seed stores food for the young plant until its first leaves open.', 'a'),
+        S('Wheat is one of Alberta’s biggest crops.'),
+        S('The class checks the dishes every morning at 9:00.')],
+      parts: [
+        { lvl: 'ap', code: '7-2-04', sec: 4, idea: 'germ', ask: 'Does a wheat seed need light to sprout?', a: 'No: Dish A sprouted in the dark',
+          errs: [['Yes: plants need light for food', 'The seed has stored food', 1], ['Yes: Dish C was in the light', 'Dish C had no water', 0]],
+          steps: [['compare A and B', 'only light differs: ' + a + ' vs ' + b], ['the reason', 'stored food feeds it until its leaves open']],
+          pic: { k: 'chart', cats: ['A (dark)', 'B (light)', 'C (dry)', 'D (cold)'], series: [{ t: 'sprouted', k: 'N', v: [a, b, 0, d] }], y: 'seeds sprouted', hl: [0, 1] } },
+        { lvl: 'an', code: '7-2-04', sec: 4, idea: 'germ', ask: 'What do Dishes C and D show?', a: 'Seeds need water and warmth',
+          errs: [['Seeds need only light', 'C had light, no sprouts', 0], ['Only water matters', 'D had water but few sprouts', 1]],
+          assume: ['All the seeds could sprout', ['The fridge light helped D', 'A shut fridge is dark'], ['Dish C’s seeds were dead', 'All came from one bag']],
+          steps: [['Dish C', 'no water: 0 sprouted'], ['Dish D', 'too cold: only ' + d + ' sprouted'], ['conclusion', 'seeds need water and warmth to sprout']],
+          explain: ['Seeds need water and warmth: Dish C was warm and bright but dry, and none sprouted; Dish D had water but was cold, so only ' + d + ' sprouted.',
+            ['Seeds need water and warmth to grow.', 'Use the dishes as evidence'],
+            ['Seeds need water and warmth: Dish C’s seeds had no water to do photosynthesis, so they could not make the food to sprout.', 'Seeds sprout on stored food']],
+          pic: { k: 'chart', cats: ['A (dark)', 'B (light)', 'C (dry)', 'D (cold)'], series: [{ t: 'sprouted', k: 'N', v: [a, b, 0, d] }], y: 'seeds sprouted', hl: [2, 3] } }
+      ]
+    };
+  }
+  function plClubroot() {
+    const x1 = rnd(55, 80), x2 = rnd(3, 10);
+    return {
+      p: [S('Clubroot is a disease that lives in soil and attacks only canola and its relatives.', 'ab'),
+        S('Its spores ride in mud stuck to tractors, and they last in soil for many years.', 'b'),
+        S('Canola has bright yellow flowers in July.'),
+        TB(['Near Westlock', 'Crops in the last 4 years', 'Canola plants with clubroot'], [[['Field 1', 'canola every year', x1 + '%'], 'a'], [['Field 2', 'canola, wheat, peas, barley', x2 + '%'], 'a']]),
+        S('Canola seeds are crushed to make cooking oil.'),
+        S('The farmer will soon drive from Field 1 into a field that has never had clubroot.', 'b'),
+        S('His tractor is green and about ten years old.')],
+      parts: [
+        { lvl: 'ap', code: '7-2-05', sec: 5, idea: 'farm', ask: 'Why does Field 2 have less clubroot?', a: 'Rotating crops starved the disease',
+          errs: [['Wheat roots kill the spores', 'Wheat just isn’t a host', 1], ['More crops add more nutrients', 'The disease is the difference', 0]],
+          steps: [['the disease', 'clubroot attacks only canola roots'], ['rotation', 'canola 1 year in 4: ' + x2 + '% vs ' + x1 + '%']],
+          pic: { k: 'chart', cats: ['Field 1 (canola only)', 'Field 2 (rotation)'], series: [{ t: '% with clubroot', k: 'R', v: [x1, x2], f: v => v + '%' }], y: 'plants with clubroot (%)', hl: [1] } },
+        { lvl: 'an', code: '7-2-05', sec: 5, idea: 'farm', ask: 'Which plan best keeps clubroot out of the clean field?', a: 'Wash the mud off the tractor first',
+          errs: [['Plant canola there every year', 'That feeds the disease', 1], ['Spray the clean field after', 'The spores come in the mud', 0]],
+          assume: ['Clubroot spores travel in soil', ['Clubroot spreads by air only', 'The spores ride in mud'], ['Spores die in one winter', 'They last for years']],
+          steps: [['the risk', 'spores ride in mud on the tractor'], ['the fix', 'wash the tractor before it goes in'], ['why first', 'once there, spores last for years']],
+          explain: ['Washing the mud off stops spores from riding into the clean field; once there, they last for years and attack every canola crop.',
+            ['Wash the tractor, because clean machines are better.', 'Say how the spores travel'],
+            ['Washing the tractor is best, because clubroot is carried by insects that live in the tractor mud and bite canola roots.', 'Spores, not insects, ride in mud']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🚜', 'muddy tractor'), cd(1, 0, '🧽', '?', { q: true, d: 'wash off the mud' }), cd(2, 0, '🌼', 'clean field', { s: 2 })], arrows: [{ a: 0, b: 1, t: 'spores', k: 'R', s: 0 }, { a: 1, b: 2, t: 'no spores', k: 'N', s: 1 }] } }
+      ]
+    };
+  }
+  function plCanola() {
+    return {
+      p: [S('Canola was developed in Canada in the 1970s from a plant called rapeseed.', '*'),
+        S('Rapeseed oil tasted bitter. Scientists picked the few plants with the least bitter oil and bred them together, generation after generation.', 'a'),
+        S('The name canola comes from “Canada” and “oil.”'),
+        S('Later, scientists moved one gene from a soil bacterium into canola, so the plants survive a weed killer.', 'bc'),
+        S('Today, most canola in Alberta grows from these seeds.', '*'),
+        S('A canola field in bloom can be seen from far away.'),
+        S('A shopper says, “All GMO food is unsafe, so this canola oil must be too.”', 'c')],
+      parts: [
+        { lvl: 'ap', code: '7-2-05', sec: 6, idea: 'breed', ask: 'How was rapeseed changed into canola?', a: 'Selective breeding',
+          errs: [['Genetic modification', 'No gene was moved in', 0], ['Asexual cloning', 'They bred plants together', 0]],
+          steps: [['the method', 'pick plants with the trait and breed them'], ['over time', 'many generations: oil that isn’t bitter']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🌼', 'rapeseed: bitter'), cd(1, 0, '👩‍🔬', 'pick the best, breed', { s: 0 }), cd(2, 0, '🌼', '?', { q: true, d: 'canola: mild oil' })], arrows: [{ a: 0, b: 1, k: 'G', s: 0 }, { a: 1, b: 2, t: 'generations', k: 'N', s: 1 }] } },
+        { lvl: 'an', code: '7-2-05', sec: 6, idea: 'breed', ask: 'How is the weed-killer canola different?', a: 'It is a GMO: a gene was added',
+          errs: [['It was selectively bred', 'A gene came from a bacterium', 1], ['It was grafted onto weeds', 'Nothing was grafted', 0]],
+          assume: ['Canola can’t breed with bacteria', ['The plants chose the new gene', 'Scientists moved the gene'], ['Weed killer changed the seeds', 'The gene was put in first']],
+          steps: [['breeding', 'mixes genes of the same kind of plant'], ['this change', 'one gene moved in from a bacterium'], ['so', 'a genetically modified organism (GMO)']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🦠', 'bacterium gene'), cd(1, 0, '🌼', 'canola', { s: 1 }), cd(2, 0, '🧪', '?', { q: true, d: 'GMO: survives weed killer' })], arrows: [{ a: 0, b: 1, k: 'P', s: 1 }, { a: 1, b: 2, k: 'N', s: 2 }] } },
+        { lvl: 'an', code: '7-2-05', sec: 6, idea: 'breed', ask: 'The shopper says all GMO food is unsafe. Is that sound?', a: 'No: judge each change by testing',
+          errs: [['Yes: every GMO is dangerous', 'A GMO is a method', 1], ['No: GMOs are always safe', 'Blanket claims fail both ways', 1]],
+          assume: ['Each GMO change can be tested', ['Bacteria genes make food toxic', 'The story doesn’t say so'], ['Natural always means safe', 'Bitter rapeseed was natural']],
+          steps: [['the claim', 'every GMO food is unsafe'], ['the problem', 'GMO is a method; risk depends on the change'], ['better', 'test each change on its own']],
+          explain: ['Not sound: GMO is a method, not one product. Each added gene has to be judged by testing what it does, just as breeding can add good or bad traits.',
+            ['Not sound, because GMOs are fine.', 'Say why one rule fails'],
+            ['Not sound, because the new gene came from a soil bacterium, and anything that comes from nature is always safe to eat.', 'Natural isn’t always safe']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🧪', 'GMO: a method'), cd(1, 0, '🔬', 'test each change', { s: 1 }), cd(2, 0, '⚖️', '?', { q: true, d: 'judge case by case' })], arrows: [{ a: 0, b: 1, k: 'G', s: 1 }, { a: 1, b: 2, k: 'N', s: 2 }] } }
+      ]
+    };
+  }
+  function plFlax() {
+    return {
+      p: [S('Flax grows well in Alberta’s short, cool prairie summers.', 'b'),
+        S('Its seeds are pressed for oil or eaten in bread and cereal.', 'a'),
+        S('Long, strong strands inside its stem are spun into linen thread.', 'ab'),
+        S('Flax has small sky-blue flowers that last only one day.'),
+        S('Hemp grows here too: seeds for food, and stem strands for rope and cloth.', 'b'),
+        TB(['Crop', 'Part used', 'Product'], [[['Canola', 'seed', 'cooking oil'], 'B'], [['Cotton', 'seed hairs', 'T-shirts'], 'b'], [['Barley', 'seed', 'animal feed, malt'], 'B']]),
+        S('Cotton can’t grow in Alberta: it needs a long, hot season.', 'b'),
+        S('Linen is one of the oldest cloths people have made.')],
+      parts: [
+        { lvl: 'ap', code: '7-2-05', sec: 5, idea: 'use', ask: 'Why is flax both a food crop and a fibre crop?', a: 'Seeds give food; stems give fibre',
+          errs: [['Its flowers are spun into cloth', 'The strands are in the stem', 0], ['Its roots are eaten', 'The seeds are the food', 0]],
+          steps: [['food', 'seeds: oil, bread and cereal'], ['fibre', 'stem strands spun into linen']],
+          pic: { k: 'scene', cards: [cd(.5, 0, '🌾', 'flax'), cd(0, 1, '🍞', '?', { q: true, d: 'seeds: food' }), cd(1, 1, '🧵', '?', { q: true, d: 'stems: fibre' })], arrows: [{ a: 0, b: 1, k: 'G', s: 0 }, { a: 0, b: 2, k: 'L', s: 1 }] } },
+        { lvl: 'an', code: '7-2-05', sec: 5, idea: 'use', ask: 'Which T-shirt fibre could an Alberta farm grow?', a: 'Flax or hemp, not cotton',
+          errs: [['Cotton, in a hot summer', 'Cotton needs a long hot season', 1], ['Canola, from its oil', 'Oil is food, not fibre', 0]],
+          assume: ['Alberta summers stay short and cool', ['Fibre comes only from cotton', 'Flax and hemp give fibre'], ['Any plant part makes cloth', 'Fibre needs long, strong strands']],
+          steps: [['fibre crops', 'cotton, flax and hemp'], ['the climate', 'cotton needs a long, hot season'], ['the choice', 'flax or hemp stems give fibre here']],
+          explain: ['Flax or hemp: their stems have long, strong strands for cloth, and they grow in Alberta’s cool summers, while cotton needs a long, hot season.',
+            ['Flax or hemp, because they grow here.', 'Say which part gives fibre'],
+            ['Flax or hemp: their seeds are full of oil, and that oil can be spun into thread for cloth the same way cotton is.', 'The fibre is in the stem']],
+          pic: { k: 'scene', cards: [cd(0, 0, '🌡️', 'short, cool summer'), cd(1, 0, '🌿', 'flax, hemp', { s: 2 }), cd(2, 0, '👕', '?', { q: true, d: 'linen, hemp cloth' }), cd(1, 1, '☁️', 'cotton', { x: true, s: 1 })], arrows: [{ a: 0, b: 1, t: 'grow here', k: 'N', s: 1 }, { a: 1, b: 2, t: 'stem fibre', k: 'G', s: 2 }] } }
+      ]
+    };
+  }
+  function plFeedlot() {
+    const E = pick([40000, 50000, 60000]);
+    return {
+      p: [S('A feedlot near Lethbridge raises beef cattle.', '*'),
+        S('The cattle eat barley grown on nearby farms.', 'ab'),
+        S('Barley plants make glucose in their leaves from sunlight, water and carbon dioxide.', 'a'),
+        S('A feedlot steer can weigh about 600 kg.'),
+        S('Lethbridge gets strong chinook winds in winter.'),
+        TB(['From one hectare of barley', 'Food energy for people (MJ)'], [[['Barley eaten as food', nf(E)], 'b'], [['Beef from cattle fed that barley', nf(E / 10)], 'b']]),
+        S('The cattle use most of the energy they eat to live, move and stay warm.', 'b'),
+        S('The beef is sold to stores across Canada.')],
+      parts: [
+        { lvl: 'ap', code: '7-2-03', sec: 3, idea: 'chain', ask: 'Where did the energy in a beef burger first come from?', a: 'Sunlight, captured by barley',
+          errs: [['The soil the barley grew in', 'Soil gives minerals, not energy', 0], ['The cattle made it themselves', 'Cattle are consumers', 1]],
+          steps: [['producer', 'barley turns light energy into glucose'], ['consumers', 'cattle eat the barley; we eat the beef']],
+          pic: { k: 'scene', cards: [cd(0, 0, '☀️', '?', { q: true, d: 'sunlight' }), cd(1, 0, '🌾', 'barley', { s: 0 }), cd(2, 0, '🐄', 'cattle', { s: 1 }), cd(3, 0, '🍔', 'burger', { s: 1 })], arrows: [{ a: 0, b: 1, k: 'Y', s: 0 }, { a: 1, b: 2, k: 'G', s: 1 }, { a: 2, b: 3, k: 'G', s: 1 }] } },
+        { lvl: 'an', code: '7-2-03', sec: 3, idea: 'chain', ask: 'Why does the barley feed more people than its beef?', a: 'Cattle use most energy to live',
+          errs: [['Cattle spill most of the barley', 'They eat it, then use it', 1], ['Barley has more minerals', 'The table is about energy', 0]],
+          assume: ['People eat the barley or its beef', ['Cattle make new energy', 'Energy only passes along'], ['Beef gives more energy per hectare', 'The table shows less']],
+          steps: [['barley', 'producer: ' + nf(E) + ' MJ'], ['cattle', 'use most of it to live, move and stay warm'], ['beef', 'only about ' + nf(E / 10) + ' MJ passes on']],
+          explain: ['Barley feeds more: the cattle use most of its energy to live, move and stay warm, so only about a tenth, ' + nf(E / 10) + ' MJ, ends up in the beef.',
+            ['Barley feeds more, because it is lower in the food chain.', 'Say where the energy goes'],
+            ['Barley feeds more: the cattle turn most of the barley’s energy into minerals and water, which give people no energy at all.', 'Energy is used up living']],
+          pic: { k: 'layers', bands: [{ i: '🍔', t: 'beef', q: true, d: 'beef: ' + nf(E / 10) + ' MJ', w: .55 }, { i: '🐄', t: 'cattle use most to live', w: .7, k: 'G', s: 1 }, { i: '🌾', t: 'barley: ' + nf(E) + ' MJ', w: 1, k: 'N' }] } }
+      ]
+    };
+  }
+  function plLettuce() {
+    const m1 = rnd(140, 180), m2 = rnd(20, 40);
+    return {
+      p: [S('A vertical farm in a Calgary warehouse grows lettuce with no soil at all.', 'b'),
+        S('The roots hang in water that flows past them.', 'a'),
+        S('In a test, workers add dissolved minerals, such as nitrogen, to the water in Tank 1 only.', 'a'),
+        S('LED lights shine on the leaves 16 hours a day, and fans bring in fresh air with carbon dioxide.', 'b'),
+        S('The warehouse used to store furniture.'),
+        TB(['Test tank', 'What the water has', 'Lettuce after 5 weeks (g)'], [[['Tank 1', 'water + minerals', m1], 'a'], [['Tank 2', 'plain water', m2], 'a']]),
+        S('The lettuce is packed and sold to stores in the city.')],
+      parts: [
+        { lvl: 'ap', code: '7-2-02', sec: 2, idea: 'root', ask: 'Why did the Tank 1 lettuce grow bigger?', a: 'Its roots took in minerals it needs',
+          errs: [['The minerals are its food', 'Minerals help; leaves make food', 0], ['Tank 1 got more light', 'Only the minerals differ', 0]],
+          steps: [['the difference', 'only Tank 1’s water had minerals'], ['the roots', 'took in water and minerals: ' + m1 + ' vs ' + m2 + ' g']],
+          pic: { k: 'chart', cats: ['Tank 1 (minerals)', 'Tank 2 (plain)'], series: [{ t: 'g', k: 'N', v: [m1, m2], f: v => v + ' g' }], y: 'lettuce (g)', hl: [0] } },
+        { lvl: 'an', code: '7-2-03', sec: 3, idea: 'photo', ask: 'Where does this lettuce get its food?', a: 'It makes it from light, water, CO₂',
+          errs: [['From the minerals in the water', 'Minerals aren’t food energy', 1], ['From the soil it grew in', 'There is no soil', 0]],
+          assume: ['The lettuce gets nothing else', ['Roots take in sugar', 'Roots take in water, minerals'], ['Plants don’t use air', 'The fans bring in CO₂']],
+          steps: [['no soil', 'the lettuce grows without any soil'], ['the inputs', 'LED light, water and CO₂ reach it'], ['its food', 'photosynthesis makes glucose in the leaves']],
+          explain: ['It makes its own food: its leaves use LED light, water from the roots and CO₂ from the fans to make glucose. The minerals only help it grow.',
+            ['It makes its own food, because plants are producers.', 'Name the inputs it uses'],
+            ['It makes its own food: its roots soak up the minerals, and those minerals are the food that gives the lettuce its energy.', 'Minerals aren’t food energy']],
+          pic: { k: 'scene', cards: [cd(0, 0, '💡', 'LED light'), cd(0, 1, '💨', 'CO₂ from fans'), cd(1, .5, '🥬', '?', { q: true, d: 'glucose: its own food' }), cd(2, .5, '💧', 'water + minerals', { s: 1 })], arrows: [{ a: 0, b: 2, k: 'Y', s: 1 }, { a: 1, b: 2, k: 'M', s: 1 }, { a: 3, b: 2, t: 'roots', k: 'L', s: 1 }] } }
+      ]
+    };
+  }
+
   /* ============ the unit's ideas (from v2): label (the choice) and hint (the cue when another is picked) ============ */
   const IDEAS = {
     eco: { bio: ['Biotic and abiotic factors', 'Sort living from non-living'], role: ['Producer, consumer, decomposer', 'How does it get food?'], flow: ['Energy flow in a food chain', 'Follow the energy from food'],
       ten: ['The 10% rule', 'Energy is lost at each level'], web: ['Links in a food web', 'Follow who eats whom'], div: ['Biodiversity', 'Count the kinds of species'],
-      change: ['A change spreading along a chain', 'Follow the change link by link'], recover: ['Recovery after a disturbance', 'How ecosystems recover over time'], steward: ['Fixing the cause of a problem', 'Find the cause, then fix it'] }
+      change: ['A change spreading along a chain', 'Follow the change link by link'], recover: ['Recovery after a disturbance', 'How ecosystems recover over time'], steward: ['Fixing the cause of a problem', 'Find the cause, then fix it'] },
+    // v2's nine, plus germ, root and use (v3 scenarios on sprouting, roots in water, and crop parts)
+    pla: { cell: ['Parts of a plant cell', 'Match the part to its look'], vessel: ['Xylem and phloem', 'What moves, and which way?'], repro: ['Sexual or asexual reproduction', 'One parent or two?'],
+      photo: ['What photosynthesis needs', 'Light, water and CO₂ make glucose'], mass: ['Where a plant’s mass comes from', 'Plants build mass from air'], poll: ['Pollination and seeds', 'Pollen must reach the stigma'],
+      breed: ['Selective breeding or GMO', 'How were the traits changed?'], chain: ['Producers start food chains', 'Every chain starts with light'], farm: ['Crop practices and pests', 'Starve the pest of its host'],
+      germ: ['What a seed needs to sprout', 'Water and warmth wake a seed'], root: ['What roots take in', 'Water and minerals, not food'], use: ['Food and fibre from plant parts', 'Which part gives which product?'] }
   };
   // Ideas too close to offer as wrong choices for each other.
-  const NEAR = [['flow', 'ten'], ['web', 'change'], ['div', 'recover'], ['chain', 'photo'], ['photo', 'mass'], ['poll', 'repro'], ['cond', 'mode'], ['cond', 'flow'], ['cond', 'insul'], ['flow', 'insul'], ['amount', 'cap'], ['stab', 'design'], ['design', 'mat'], ['design', 'beam'], ['beam', 'force'], ['mat', 'force'], ['cycle', 'rock'], ['cycle', 'surf'], ['crys', 'rock'], ['uplift', 'bound'], ['form', 'surf'], ['quake', 'bound'], ['web', 'flow'], ['change', 'steward'], ['recover', 'change']];
+  const NEAR = [['flow', 'ten'], ['web', 'change'], ['div', 'recover'], ['chain', 'photo'], ['photo', 'mass'], ['poll', 'repro'], ['cond', 'mode'], ['cond', 'flow'], ['cond', 'insul'], ['flow', 'insul'], ['amount', 'cap'], ['stab', 'design'], ['design', 'mat'], ['design', 'beam'], ['beam', 'force'], ['mat', 'force'], ['cycle', 'rock'], ['cycle', 'surf'], ['crys', 'rock'], ['uplift', 'bound'], ['form', 'surf'], ['quake', 'bound'], ['web', 'flow'], ['change', 'steward'], ['recover', 'change'], ['germ', 'poll'], ['germ', 'repro'], ['root', 'vessel'], ['root', 'mass'], ['use', 'farm']];
   const near = (a, b) => NEAR.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
 
   /* ============ building a scenario's parts ============ */
-  const UNITS = { eco: [ecoBeaver, ecoSlough, ecoLake, ecoFire, ecoBeetle, ecoOwl, ecoElk, ecoMussel, ecoLitter, ecoDrought, ecoCaribou, ecoQuadrat] };
+  const UNITS = { eco: [ecoBeaver, ecoSlough, ecoLake, ecoFire, ecoBeetle, ecoOwl, ecoElk, ecoMussel, ecoLitter, ecoDrought, ecoCaribou, ecoQuadrat],
+    pla: [plCells, plCelery, plMass, plGreenhouse, plBerries, plPotato, plSprout, plClubroot, plCanola, plFlax, plFeedlot, plLettuce] };
   const choose = (a, ws) => { const errs = ws.map(([t, cue, s]) => ({ t, cue, s })); return { a, errs, opts: shuffle([{ v: 'a', t: a }].concat(errs.map((e, k) => ({ v: 'e' + k, t: e.t })))) }; };
   // A chunk's kind for part L: must (L in the tag), opt (setup, or a fact for another part), no (a detail to skip).
   const kindOf = (tag, L) => tag === '*' ? 'opt' : tag.includes(L) ? 'must' : tag ? 'opt' : 'no';
