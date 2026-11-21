@@ -1,8 +1,7 @@
 """Kokoro text-to-speech for add_read_aloud.py. Needs the ~/kokoro-tts venv (see that script).
 
-Each unit is a list of parts, [['t', 'text'], ['b', None], ...]. Text parts are spoken in the
-normal voice; a blank part is the word "blank", slower and lower, with a short gap either side.
-The result is one MP3 per unit, mono, 24 kHz, 40 kbps.
+Each unit is a list of parts, [['t', 'text'], ['b', None], ...]. Text parts are spoken as written;
+a blank part is the plain word "blank", in the same voice. The result is one MP3 per unit, mono, 24 kHz, 40 kbps.
 """
 import os
 import subprocess
@@ -40,43 +39,20 @@ class Speaker:
         self.cfg = cfg
         self.k = Kokoro(os.path.join(kokoro_dir, 'models', 'kokoro-v1.0.onnx'),
                         os.path.join(kokoro_dir, 'models', 'voices-v1.0.bin'))
-        self.blank = self._blank_clip()
 
     def say(self, text, speed):
         audio, sr = self.k.create(text, voice=self.cfg['voice'], speed=speed, lang='en-us')
         assert sr == SR, sr
         return _peak(_trim(np.asarray(audio, dtype=np.float32)))
 
-    def _blank_clip(self):
-        """The word 'blank': slower, and lowered in pitch without changing its speed."""
-        a = self.say('blank', self.cfg['blank_speed'])
-        pitch = self.cfg['blank_pitch']
-        if abs(pitch - 1.0) > 1e-3:
-            out = _ffmpeg(['-f', 'f32le', '-ar', str(SR), '-ac', '1', '-i', 'pipe:0',
-                           '-af', f'rubberband=pitch={pitch}', '-f', 'f32le', '-ar', str(SR), '-ac', '1', 'pipe:1'],
-                          a.astype('<f4').tobytes())
-            a = _peak(_trim(np.frombuffer(out, dtype='<f4').copy()))
-        return a
-
     def make(self, parts, out_path):
+        """One MP3 for one unit. A blank is just the word "blank" inside the sentence, so the voice
+        reads it exactly like the words around it."""
         cfg = self.cfg
-        chunks = []
-        silence = lambda s: np.zeros(int(s * SR), dtype=np.float32)
-        chunks.append(silence(cfg['lead']))
-        for i, (kind, text) in enumerate(parts):
-            if kind == 'b':
-                if len(chunks) > 1:
-                    chunks.append(silence(cfg['gap_before']))
-                chunks.append(self.blank)
-                if i < len(parts) - 1:
-                    chunks.append(silence(cfg['gap_after']))
-            else:
-                # a piece that runs into a blank should sound unfinished, not like the end of a sentence
-                if i < len(parts) - 1 and parts[i + 1][0] == 'b' and text[-1:] not in ',.;:!?':
-                    text += ','
-                chunks.append(self.say(text, cfg['speed']))
-        chunks.append(silence(cfg['tail']))
-        pcm = np.concatenate(chunks).astype('<f4').tobytes()
+        silence = lambda sec: np.zeros(int(sec * SR), dtype=np.float32)
+        text = ' '.join('blank' if kind == 'b' else t.strip() for kind, t in parts)
+        pcm = np.concatenate([silence(cfg['lead']), self.say(text, cfg['speed']), silence(cfg['tail'])])
+        pcm = pcm.astype('<f4').tobytes()
         tmp = out_path + '.part'
         mp3 = _ffmpeg(['-f', 'f32le', '-ar', str(SR), '-ac', '1', '-i', 'pipe:0', '-codec:a', 'libmp3lame',
                        '-b:a', '40k', '-ar', str(SR), '-ac', '1', '-f', 'mp3', 'pipe:1'], pcm)
