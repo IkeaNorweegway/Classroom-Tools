@@ -20,7 +20,7 @@ You make the Math 7, 8 and 9 diagrams easier to read and more true to life. A Ma
 ## Each run
 1. **Pick.** Stop and report if `$R/pending.md` already has 5 or more entries waiting for review. Otherwise take the first `- [ ]` line in `$R/queue.md`. Read the entries for that type in `$R/log.md`, and don't repeat an idea that was rejected.
 2. **Look.** `perl scripts/viz_gallery.pl TYPE --out <scratchpad>/TYPE`. If any source line holds `[[` or a `key…=` argument, also run it with `--key`. Open the PNGs. For 12 pages or fewer, look at every page. For more, look at 12 spread evenly. Run `python3 .claude/skills/svg-diagram-review/scripts/review.py <page>.html` on the same pages for overlap and small-text warnings.
-3. **Judge** against the checklist below. Write down at most 3 problems that students would notice, worst first, and give each one a diagram number (`#14`) as evidence. If nothing on the list is clearly wrong, mark the line `[x]`, log "no change: looked at N diagrams, fine", and stop.
+3. **Judge** against the quality bar and the checklist below. Write down at most 3 problems that students would notice, worst first, and give each one a diagram number (`#14`) as evidence. If nothing on the list is clearly wrong, mark the line `[x]`, log "no change: looked at N diagrams, fine", and stop.
 4. **Fix** inside `sub draw_TYPE` and helpers that only this type uses (grep for other callers first). If the fix needs a shared helper (`T`, `arrow`, `chip`, `pan_items`, `grid_frame`, …) or the CSS, log it as a suggestion and don't make it. Keep the dg-* classes. Never add inline `fill`, `stroke` or `font-size`. Then run `perl -c scripts/Math8Viz.pm`. Prefer fixes that change only the diagrams that have the problem (for example, widen only when items don't fit), so most diagrams stay identical and the review stays short.
 5. **Check.** `perl scripts/viz_gallery.pl TYPE --compare --out "$R/galleries/TYPE"`, plus `--key` into `…/TYPE-key` if needed.
    - Any WORDS CHANGED → wrong. Undo that part.
@@ -48,6 +48,19 @@ Queue lines that start with `math9:` are Math 9 topics (`- [ ] math9: circle-geo
 - **Save.** `git diff --output=$R/patches/math9-TOPIC.patch -- notes-packages/_visuals/ public/materials/math-9/`. Re-running `add_notes_visuals.py` can also add newer `viz-kit` CSS lines to a page; that is fine to keep. Then `git checkout -- notes-packages/_visuals/ public/materials/math-9/` at the end. The pending.md heading is `## math9-TOPIC — summary`.
 - Sims, trainers and posters are not in scope.
 
+## Quality bar: the Science 7 Planet Earth diagrams
+The six reworked Science 7 Planet Earth diagrams are the quality level to aim for. Open `/home/ejanbremness/Documents/classroom-tools-site/_image-review/reference/sci7-planet-earth-textbook.png` at the start of every run and keep it in mind while you judge. The sources are in the main copy at `notes-packages/_visuals/sci7-planet-earth/`: `02-seismic-waves`, `05-rock-cycle`, `06-mantle-convection`, `07-divergent`, `08-subduction` and `09-transform` (read only; they may not be on `master` yet). Figures 03, 04 and 10–18 there are the older flat style. Don't use them as the bar.
+
+What makes them the bar, and what to bring to the maths diagrams:
+- **Arrows look finished.** Curved paths where the motion curves (rock cycle, convection loops), with one consistent stroke weight and a real arrowhead that ends just short of its box, never on top of it.
+- **Labels have room.** Each label sits in clear space beside its part, with a short straight leader only when the part is small (the Earth-layer labels). Answer boxes never touch an arrow or a line.
+- **One weight system.** Outlines, arrows and leaders each have their own weight, the same in every figure. Nothing looks heavier or thinner by accident.
+- **The thing being taught stands out.** In each figure one feature carries the strong colour (the magma, the fault, the shadow zone) and the rest stays quiet.
+- **Real-world detail only when it helps.** Small touches (waves on the sea, trees on land, a rock icon in each rock-cycle box) show what a thing is at a glance. Nothing is there just to decorate.
+- **Same thing, same look across a set.** Plates, mantle and ocean are drawn the same way in Figures 3–6.
+
+Limits for maths: bring over the finish (arrows, spacing, weights, emphasis, consistency), not the geology paint. Gradients and textures belong only to physical materials in a scene (water, rock, liquid in a container). Flat maths objects (shapes, grids, number lines, bars) stay flat. The textbook classes (`dg-g-*`, `dg-arrow mk`, `dg-ico*`) live in the Science 7 CSS (`TB_CSS` in `scripts/add_notes_visuals.py`), not in the Math 7/8 CSS. So reaching that look for a maths type would mean CSS work: log it as a suggestion and don't make it.
+
 ## Checklist: what "better" means
 Readability (printed on paper, often in black and white, read by Grade 7–8 students, many below grade level):
 - Text is at least 11 px at print size, and 9 px only for small secondary tick labels. No label touches or overlaps a line, shape or other label.
@@ -60,7 +73,7 @@ Readability (printed on paper, often in black and white, read by Grade 7–8 stu
 Realism (the picture should behave like the real thing, so the picture never teaches something false):
 - To scale when it has numbers: a 3 by 4 rectangle looks 3 by 4, a 30° angle looks like 30°, a bar of 6 is twice a bar of 3, points sit exactly at their values. If a type is not to scale on purpose, it should say so ("not to scale") or keep a clear sketch look.
 - Physical scenes act physically. A balance tips toward the heavier side when the text says it isn't level. Ladders rest on the ground against a wall. Solids show hidden edges dashed and use a consistent viewpoint. Shadows, liquids and spinners look like what they are.
-- No decoration that adds nothing to the maths: no clip-art, gradients or 3-D effects on flat things.
+- No decoration that adds nothing to the maths: no clip-art, gradients or 3-D effects on flat things. Texture on physical materials in a scene is fine (see Quality bar).
 
 Never change, even if it looks better:
 - Numbers, labels, answers, captions, the arguments a type accepts or what they mean, the `[[…]]` blank behaviour, or which items show only in the key.
