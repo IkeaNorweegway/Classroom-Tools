@@ -443,6 +443,11 @@ svg .dg-tickm { fill: none; stroke: #24211d; stroke-width: 1.8px; stroke-linecap
 svg .dg-gravel { fill: none; stroke: #e8dfcc; stroke-width: 14px; stroke-linecap: round; }
 svg .dg-grass { fill: #eef5e6; stroke: none; }
 svg .dg-tickm.accent { stroke: var(--dg-accent); } svg .dg-tickm.hot { stroke: var(--viz-hot); }
+svg .dg-open, svg .dg-closed, svg .dg-solray { vector-effect: non-scaling-stroke; }
+svg .dg-open { fill: #fff; stroke: var(--dg-accent); stroke-width: 2.6px; }   /* number-line endpoint: not included */
+svg .dg-closed { fill: var(--dg-accent); stroke: #fff; stroke-width: 1.2px; }  /* number-line endpoint: included */
+svg .dg-closed.hot { fill: var(--viz-hot); }
+svg .dg-solray { stroke: var(--dg-accent); stroke-width: 5px; stroke-linecap: butt; stroke-opacity: .85; fill: none; }
 """
 
 TB_DEFS_START, TB_DEFS_END = "<!-- viz-defs -->", "<!-- /viz-defs -->"
