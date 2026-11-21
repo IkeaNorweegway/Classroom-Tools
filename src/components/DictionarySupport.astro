@@ -1,0 +1,64 @@
+---
+// Word help for the material viewers. Injects public/dictionary/dictionary.js into the
+// material's iframe each time it loads (the same way PrintSupport reaches into it) and
+// adds a "Word help" on/off button to the back bar. Put it before <PrintSupport />, so the
+// button sits beside Print.
+// Skipped for: games, sims and trainers (back bar has class "app" or data-no-print),
+// answer keys and teacher notes (file name), and French pages (dictionary.js checks lang).
+const base = import.meta.env.BASE_URL;
+const ASSET_VERSION = 9; // ?v= on the files; bump when dictionary.js, .css or glossary.txt change
+---
+<style is:global>
+  .wh-toggle {
+    font: 600 0.8rem 'Atkinson Hyperlegible Next Variable', system-ui, sans-serif;
+    color: #6b665d; background: #fff; border: 1px solid rgb(31 29 26 / 0.15);
+    border-radius: 8px; padding: 0.3rem 0.8rem; cursor: pointer; margin-left: auto; margin-right: 0.5rem;
+  }
+  .wh-toggle:hover { color: #1f1d1a; border-color: rgb(31 29 26 / 0.35); }
+  .wh-toggle[aria-pressed='true'] { color: #1f1d1a; border-color: #1f1d1a; }
+  .wh-toggle:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+  .back-bar.has-wh { display: flex; align-items: center; gap: 0.5rem; }
+  @media print { .wh-toggle { display: none; } }
+</style>
+<script is:inline define:vars={{ base, v: ASSET_VERSION }}>
+  (function () {
+    var frame = document.querySelector('.doc-frame');
+    var bar = document.querySelector('.back-bar');
+    if (!frame || !bar || bar.classList.contains('app') || bar.hasAttribute('data-no-print')) return;
+    var file = (frame.getAttribute('src') || '').split(/[?#]/)[0];
+    if (/(answers|-key|teachernotes|teacher-guide|teacherguide)/i.test(file)) return;
+
+    var KEY = 'wordhelp';
+    function isOn() { try { return localStorage.getItem(KEY) !== 'off'; } catch (e) { return true; } }
+
+    function inject() {
+      var d;
+      try { d = frame.contentDocument; } catch (e) { return; }
+      if (!d || !d.head || !d.body || d.getElementById('wh-script')) return;
+      var s = d.createElement('script');
+      s.id = 'wh-script';
+      s.src = new URL(base + 'dictionary/dictionary.js?v=' + v, location.href).href;
+      d.body.appendChild(s);
+    }
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'wh-toggle';
+    function draw() {
+      var on = isOn();
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      btn.textContent = '📖 Word help: ' + (on ? 'on' : 'off');
+      btn.title = on ? 'Hover an underlined word to see what it means. Click to turn off.' : 'Turn on word definitions';
+    }
+    btn.addEventListener('click', function () {
+      try { localStorage.setItem(KEY, isOn() ? 'off' : 'on'); } catch (e) {}
+      draw();
+    });
+    draw();
+    bar.appendChild(btn);
+    bar.classList.add('has-wh');
+
+    frame.addEventListener('load', inject);
+    inject();
+  })();
+</script>
