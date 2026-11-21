@@ -151,6 +151,821 @@ code { font-family: var(--font-mono); font-size: 10pt; background: #f4f2ed; bord
   .frac .b { border-bottom: 0; min-height: 1.3em; }   /* the fraction bar is the write-on line */
 
 
+body { counter-reset: fig; }
+.viz.tb { counter-increment: fig; background: #fff; border: 1px solid #d6d1c6; border-top: 3px solid var(--dg-accent);
+  border-radius: 3px; padding: .9rem 1.1rem .7rem; max-width: 44rem; }
+.viz.tb figcaption { font-style: normal; text-align: left; max-width: none; font-size: .84rem; line-height: 1.45; color: #2f2b26;
+  border-top: 1px solid #e2ddd2; margin: .65rem 0 0; padding-top: .45rem; }
+.viz.tb figcaption::before { content: "Figure " counter(fig) "\00a0\00a0"; font-weight: 700; color: var(--dg-accent); }
+.viz.tb svg .dg-label { font-size: 12.5px; } .viz.tb svg .dg-label-sm { font-size: 11.5px; }
+.viz.tb svg .dg-label-hot, .viz.tb svg .dg-label-cold, .viz.tb svg .dg-label-water, .viz.tb svg .dg-label-plant,
+.viz.tb svg .dg-label-earth, .viz.tb svg .dg-label-accent { font-size: 12px; }
+.viz.tb svg .dg-fill-hot { fill-opacity: .34; } .viz.tb svg .dg-fill-cold { fill-opacity: .30; } .viz.tb svg .dg-fill-plant { fill-opacity: .34; }
+.viz.tb svg .dg-fill-water { fill-opacity: .32; } .viz.tb svg .dg-fill-earth { fill-opacity: .34; } .viz.tb svg .dg-fill-sun { fill-opacity: .42; }
+.viz.tb svg .dg-fill-accent { fill-opacity: .28; } .viz.tb svg .dg-fill-soft { fill: #e9e5dc; stroke: #b9b3a6; }
+.viz.tb svg [class^="dg-fill"], .viz.tb svg [class^="dg-solid"], .viz.tb svg .dg-boundary { filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.28)); }
+svg .dg-g-crust, svg .dg-g-mantle, svg .dg-g-ocean, svg .dg-g-magma, svg .dg-g-cont, svg .dg-g-sph-crust, svg .dg-g-sph-mantle,
+svg .dg-g-sph-outer, svg .dg-g-sph-inner, svg .dg-g-ign, svg .dg-g-sed, svg .dg-g-met, svg .dg-g-landa, svg .dg-g-landb,
+svg .dg-speckle, svg .dg-star, svg .dg-station, svg .dg-wave, svg .dg-stream, svg .dg-stream-hi, svg .dg-ico { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-g-crust     { fill: url(#tb-crust);  stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-mantle    { fill: url(#tb-mantle); stroke: #c0702f; stroke-width: 1px; }
+svg .dg-g-ocean     { fill: url(#tb-ocean);  stroke: #2f7aa6; stroke-width: .8px; }
+svg .dg-g-magma     { fill: url(#tb-magma);  stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-cont      { fill: url(#tb-cont);   stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-sph-crust { fill: url(#tb-sph-crust); stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-sph-mantle{ fill: url(#tb-sph-mantle); stroke: #a8501b; stroke-width: 1px; }
+svg .dg-g-sph-outer { fill: url(#tb-sph-outer);  stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-sph-inner { fill: url(#tb-sph-inner);  stroke: #b45a0a; stroke-width: 1px; }
+svg .dg-g-ign       { fill: url(#tb-ign); stroke: #9a4a30; stroke-width: 1.2px; }
+svg .dg-g-sed       { fill: url(#tb-sed); stroke: #8a6a2e; stroke-width: 1.2px; }
+svg .dg-g-met       { fill: url(#tb-met); stroke: #6e5f52; stroke-width: 1.2px; }
+svg .dg-g-landa     { fill: url(#tb-landa); stroke: #8a7650; stroke-width: 1px; }
+svg .dg-g-landb     { fill: url(#tb-landb); stroke: #7a8a58; stroke-width: 1px; }
+svg .dg-speckle     { fill: url(#tb-speckle); stroke: none; }
+svg .dg-star        { fill: #ffd23f; stroke: #7a2e0e; stroke-width: 1.2px; }
+svg .dg-station     { fill: #2f2b26; stroke: #fff; stroke-width: 1.5px; }
+svg .dg-wave        { fill: none; stroke: #fff; stroke-width: 1.5px; stroke-linecap: round; }
+svg .dg-stream      { fill: none; stroke: #2f86b8; stroke-width: 6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-stream-hi   { fill: none; stroke: #cfeaf7; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-ico         { stroke: #5b4430; stroke-width: .8px; }
+svg .dg-ico-1 { fill: #f3d9c9; } svg .dg-ico-2 { fill: #7a3b2a; stroke: none; } svg .dg-ico-3 { fill: #fff; stroke: none; }
+svg .dg-ico-4 { fill: #e7c98a; } svg .dg-ico-5 { fill: #cfa95e; } svg .dg-ico-6 { fill: #f0dfb4; }
+svg .dg-ico-7 { fill: #bfb2a5; } svg .dg-ico-line { fill: none; stroke: #6e5f52; stroke-width: 1px; }
+svg .dg-shadow { fill: url(#tb-hatch); stroke: none; }
+svg .dg-ray-case { fill: none; stroke: #fff; stroke-width: 3.8px; stroke-opacity: .85; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-lane { fill: none; stroke: #fff; stroke-opacity: .38; stroke-width: 15px; stroke-linejoin: round; }
+svg .dg-glow { fill: url(#tb-glow); stroke: none; }
+svg .dg-g-crustL { fill: url(#tb-crustL); stroke: #5b4430; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-g-crustR { fill: url(#tb-crustR); stroke: #5b4430; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-crustline { fill: none; stroke: #5b4430; stroke-width: .9px; stroke-opacity: .7; vector-effect: non-scaling-stroke; }
+svg .dg-melt { fill: #ff8c42; stroke: #a3270b; stroke-width: .6px; }
+svg .dg-tree { fill: #5d8a47; stroke: #34592a; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-fz { fill: #5b4430; fill-opacity: .22; stroke: none; }
+svg .dg-tick { fill: none; stroke: var(--dg-stroke, #3f3b35); stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-tuft { fill: none; stroke: #6f8548; stroke-width: 1px; stroke-linecap: round; stroke-opacity: .8; }
+svg .dg-ico-8 { fill: #d99a82; } svg .dg-ico-9 { fill: #8a4a3a; } svg .dg-ico-10 { fill: #fbf1ea; } svg .dg-ico-11 { fill: #e9b9a2; }
+svg .dg-ico-pale { fill: none; stroke: #efe8de; stroke-width: 1px; }
+svg .dg-arrow.dash { stroke-dasharray: 6 4; }
+svg .dg-g-outer { fill: url(#tb-outer); stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-inner { fill: url(#tb-inner); stroke: #b45a0a; stroke-width: 1px; }
+svg .dg-g-volc  { fill: url(#tb-volc); stroke: #3f352d; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-rock  { fill: url(#tb-rock); stroke: #4a4038; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-ashcloud { fill: url(#tb-ashcloud); stroke: #8f877e; stroke-width: .8px; }
+svg .dg-snow  { fill: #fff; stroke: #b9b3a6; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-crack { fill: none; stroke: #3a3029; stroke-width: 1.1px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-sed-sand { fill: #ecd59c; stroke: #a8874a; stroke-width: .7px; }
+svg .dg-sed-silt { fill: #cfab7c; stroke: #8f6c45; stroke-width: .7px; }
+svg .dg-sed-clay { fill: #aaa39a; stroke: #6e675f; stroke-width: .7px; }
+svg .dg-lens  { fill: none; stroke: #3f3b35; stroke-width: 2px; }
+svg .dg-lens-rim { fill: none; stroke: #fff; stroke-width: 5px; }
+svg .dg-basalt { fill: #56514c; stroke: none; }
+svg .dg-fine  { fill: url(#tb-fine); stroke: none; }
+svg .dg-min-feld { fill: #e39a7e; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-feld2 { fill: #f2bba3; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-qtz { fill: #eeebe5; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-mica { fill: #3a3330; stroke: #1f1a18; stroke-width: .6px; }
+svg .dg-stripe-n { fill: #57514b; stroke: none; }
+svg .dg-stripe-r { fill: #f3eee4; stroke: none; }
+svg .dg-pol-n { fill: #fff; stroke: none; } svg .dg-pol-r { fill: #57514b; stroke: none; }
+svg .dg-grass { fill: #8bb162; stroke: #5d8a47; stroke-width: .8px; }
+svg .dg-fault { fill: none; stroke: #2f241b; stroke-width: 2.2px; stroke-linecap: round; }
+svg .dg-focus { fill: #e2431a; stroke: #7a1f0a; stroke-width: 1.2px; }
+svg .dg-house-wall { fill: #f6efe2; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-roof { fill: #a3452a; stroke: #5e2414; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-door { fill: #6b4a3a; stroke: none; } svg .dg-window { fill: #bfe3f5; stroke: #3f3b35; stroke-width: .6px; }
+svg .dg-ash { fill: #d9d3ca; stroke: #3f352d; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-ash-dot { fill: #6b645c; stroke: none; }
+svg .dg-ice { fill: #e3f4fb; stroke: #5aa9d0; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-ice-line { fill: none; stroke: #fff; stroke-width: 1px; }
+svg .dg-sun { fill: #ffd23f; stroke: #c98a0a; stroke-width: 1px; } svg .dg-ray { fill: none; stroke: #e0a515; stroke-width: 1.4px; stroke-linecap: round; }
+svg .dg-moon { fill: #f4f1e6; stroke: #8a8578; stroke-width: 1px; }
+svg .dg-fish { fill: #b9c6ce; stroke: #4a5560; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-bone { fill: none; stroke: #f6f1e6; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-bone-fill { fill: #f6f1e6; stroke: #8a7a62; stroke-width: .8px; }
+svg .dg-fossil { fill: none; stroke: #3a2f26; stroke-width: 1.8px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-fossil-fill { fill: #3a2f26; stroke: none; }
+svg .dg-lith-sand { fill: url(#tb-p-sand); stroke: #8a6a2e; stroke-width: .8px; }
+svg .dg-lith-shale { fill: url(#tb-p-shale); stroke: #5f5a55; stroke-width: .8px; }
+svg .dg-lith-lime { fill: url(#tb-p-lime); stroke: #5d6a72; stroke-width: .8px; }
+svg .dg-lith-coal { fill: #2f2b28; stroke: #1a1715; stroke-width: .8px; }
+svg .dg-ammonite { fill: #efe3c8; stroke: #5b4430; stroke-width: 1px; }
+svg .dg-amm-line { fill: none; stroke: #5b4430; stroke-width: .8px; }
+svg .dg-face-side { fill: #000; fill-opacity: .16; stroke: #3f3b35; stroke-width: .8px; }
+svg .dg-face-top { fill: #fff; fill-opacity: .45; stroke: #3f3b35; stroke-width: .8px; }
+svg .dg-panel { fill: #faf8f3; stroke: #e2ddd2; stroke-width: 1px; }
+svg .dg-rain { fill: none; stroke: #3b8fc0; stroke-width: 1.3px; stroke-linecap: round; stroke-dasharray: 5 4; }
+svg .dg-precam { fill: url(#tb-precam); stroke: #6e675f; stroke-width: .8px; }
+svg .dg-zoom { fill: none; stroke: #8f877e; stroke-width: 1px; stroke-dasharray: 3 3; }
+svg .dg-sp-d { fill: #5b4430; fill-opacity: .28; } svg .dg-sp-l { fill: #fff; fill-opacity: .33; }
+svg .dg-hatch-l { stroke: #fff; stroke-opacity: .55; stroke-width: 1.6px; }
+svg .dg-fine-a { fill: #d8d2c8; } svg .dg-fine-b { fill: #8f877e; }
+svg .dg-psand-bg { fill: #f0dca6; } svg .dg-psand-dot { fill: #8a6a2e; }
+svg .dg-pshale-bg { fill: #cfcac3; } svg .dg-pshale-l { stroke: #6e675f; stroke-width: .9px; }
+svg .dg-plime-bg { fill: #dce4e8; } svg .dg-plime-l { fill: none; stroke: #7d8b93; stroke-width: .8px; }
+svg .dg-pt-cold { fill: url(#tb-pt-cold); stroke: #1e3a8a; stroke-width: .8px; }
+svg .dg-pt-warm { fill: url(#tb-pt-warm); stroke: #8a5a00; stroke-width: .8px; }
+svg .dg-pt-hot  { fill: url(#tb-pt-hot);  stroke: #7a1f0a; stroke-width: .8px; }
+svg .dg-trail-cold, svg .dg-trail-warm, svg .dg-trail-hot { fill: none; stroke-linecap: round; stroke-width: 12px; }
+svg .dg-trail-cold.sm, svg .dg-trail-warm.sm, svg .dg-trail-hot.sm { stroke-width: 8px; }
+svg .dg-trail-cold { stroke: #3b6fd8; stroke-opacity: .22; } svg .dg-trail-warm { stroke: #e0a515; stroke-opacity: .32; }
+svg .dg-trail-hot { stroke: #e2431a; stroke-opacity: .24; }
+svg .dg-vib { fill: none; stroke: #8f877e; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-g-steel  { fill: url(#tb-steel);  stroke: #5f6770; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-steelH { fill: url(#tb-steelH); stroke: #4a5058; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-wood { fill: url(#tb-wood); stroke: #6b4a2a; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-grain { fill: none; stroke: #7a5230; stroke-opacity: .45; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-flame { fill: url(#tb-flame); stroke: #c2410c; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-flame-in { fill: #fff3a0; stroke: none; }
+svg .dg-g-water { fill: url(#tb-water); stroke: none; }
+svg .dg-water-top { fill: none; stroke: #2f7aa6; stroke-width: 1.2px; }
+svg .dg-glass { fill: #f4f9fb; fill-opacity: .55; stroke: #6e8796; stroke-width: 1.4px; stroke-linejoin: round; }
+svg .dg-glass-hi { fill: none; stroke: #fff; stroke-width: 3px; stroke-linecap: round; stroke-opacity: .9; }
+svg .dg-skin { fill: url(#tb-skin); stroke: #9a6a4f; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-skin-line { fill: none; stroke: #9a6a4f; stroke-width: .8px; stroke-linecap: round; }
+svg .dg-g-sand { fill: url(#tb-sand); stroke: #a8874a; stroke-width: 1px; }
+svg .dg-g-sky-day { fill: url(#tb-sky-day); stroke: none; } svg .dg-g-sky-night { fill: url(#tb-sky-night); stroke: none; }
+svg .dg-starlet { fill: #fff; stroke: none; }
+svg .dg-g-liquid { fill: url(#tb-liquid); stroke: #a3270b; stroke-width: .8px; }
+svg .dg-burner { fill: #3f3b35; stroke: #1f1c19; stroke-width: 1px; }
+svg .dg-g-hotblock  { fill: url(#tb-hotblock);  stroke: #7a1f0a; stroke-width: 1.2px; }
+svg .dg-g-coldblock { fill: url(#tb-coldblock); stroke: #1e3a8a; stroke-width: 1.2px; }
+svg .dg-g-warmblock { fill: url(#tb-warmblock); stroke: #8a5a00; stroke-width: 1.2px; }
+svg .dg-cross { fill: none; stroke: #b91c1c; stroke-width: 3px; stroke-linecap: round; }
+svg .dg-g-bag { fill: url(#tb-bag); stroke: #2f5a7a; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-quilt { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 1px; stroke-dasharray: 3 3; }
+svg .dg-insul { fill: url(#tb-insul); stroke: #b8708a; stroke-width: .8px; }
+svg .dg-ins-a { fill: #f6c9d6; } svg .dg-ins-l { fill: none; stroke: #d98aa3; stroke-width: 1px; }
+svg .dg-g-globe { fill: url(#tb-globe); stroke: #1f5f8a; stroke-width: 1px; }
+svg .dg-land { fill: #6fa35a; stroke: #3f6b33; stroke-width: .6px; }
+svg .dg-g-sunball { fill: url(#tb-sunball); stroke: #d97a0a; stroke-width: 1px; }
+svg .dg-silver { fill: url(#tb-silver); stroke: #6e7780; stroke-width: 1px; }
+svg .dg-g-plastic { fill: url(#tb-plastic); stroke: #26303a; stroke-width: 1px; }
+svg .dg-g-soup { fill: url(#tb-soup); stroke: #a3501b; stroke-width: .8px; }
+svg .dg-vac { fill: #fff; stroke: none; }
+svg .dg-band-water { fill: #0369a1; fill-opacity: .09; stroke: none; } svg .dg-band-hot { fill: #c2410c; fill-opacity: .08; stroke: none; }
+svg .dg-dot-water { fill: #0369a1; stroke: #fff; stroke-width: 1px; } svg .dg-dot-hot { fill: #c2410c; stroke: #fff; stroke-width: 1px; }
+svg .dg-g-ballast { fill: url(#tb-rock); stroke: #6e675f; stroke-width: .8px; }
+svg .dg-brick { fill: url(#tb-brick); stroke: #7a3b2a; stroke-width: 1px; }
+svg .dg-brick-bg { fill: #c97a5a; } svg .dg-brick-l { fill: none; stroke: #f3e3d6; stroke-width: 1px; }
+svg .dg-wave-hot { fill: none; stroke: #e0a515; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-porcelain { fill: #fbfaf7; stroke: #3f3b35; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-snowflake { fill: none; stroke: #6fa8d6; stroke-width: 1.2px; stroke-linecap: round; }
+svg .dg-curve-cold, svg .dg-curve-water, svg .dg-curve-hot, svg .dg-curve-accent { fill: none; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-curve-cold { stroke: #1d4ed8; } svg .dg-curve-water { stroke: #0369a1; } svg .dg-curve-hot { stroke: #c2410c; } svg .dg-curve-accent { stroke: var(--dg-accent); }
+svg .dg-rodglow { fill: url(#tb-rodglow); stroke: none; }
+svg .dg-night { fill: #0b1a33; fill-opacity: .38; stroke: none; }
+svg .dg-vibring-cold, svg .dg-vibring-hot, svg .dg-vibring-warm { stroke-width: .9px; stroke-dasharray: 2 2; }
+svg .dg-vibring-cold { fill: #1d4ed8; fill-opacity: .08; stroke: #6f97ea; } svg .dg-vibring-warm { fill: #e0a515; fill-opacity: .1; stroke: #e0a515; }
+svg .dg-vibring-hot { fill: #e2431a; fill-opacity: .09; stroke: #f2793a; }
+svg .dg-zip { fill: none; stroke: #e9ecef; stroke-width: 2px; stroke-dasharray: 2 2; }
+svg .dg-leader { fill: none; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-leader-dot { fill: #3f3b35; stroke: #fff; stroke-width: 1px; }
+svg .dg-arrow.mk.sun { marker-end: url(#tb-m-sun); } svg .dg-arrow.mk.plant { marker-end: url(#tb-m-plant); }
+svg .dg-arrow.mk.earth { marker-end: url(#tb-m-earth); } svg .dg-arrow.mk.accent { marker-end: url(#tb-m-accent); }
+svg .dg-an { stroke: #3a332c; stroke-width: .9px; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-line { fill: none; stroke: #3a332c; stroke-width: .9px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-thin { fill: none; stroke: #3a332c; stroke-width: .6px; stroke-opacity: .6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-stem { fill: none; stroke: #3f6b33; stroke-width: 1.4px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-c-tan { fill: #d9c3a0; } svg .dg-c-snow { fill: #f4efe6; } svg .dg-c-grey { fill: #a39d93; } svg .dg-c-wolf { fill: #8f8a82; }
+svg .dg-c-brown { fill: #7a5236; } svg .dg-c-moose { fill: #5e4030; } svg .dg-c-dark { fill: #2a2622; } svg .dg-c-yellow { fill: #f2c230; }
+svg .dg-c-orange { fill: #e8892a; } svg .dg-c-green { fill: #6fa35a; } svg .dg-c-dkgreen { fill: #3f6b33; } svg .dg-c-olive { fill: #7d8a3e; }
+svg .dg-c-heron { fill: #8fa3b5; } svg .dg-c-pink { fill: #d9579a; } svg .dg-c-cream { fill: #efe3c8; } svg .dg-c-white { fill: #fff; }
+svg .dg-c-red { fill: #b8452a; } svg .dg-c-lynx { fill: #c9b08c; } svg .dg-c-owl { fill: #8a6544; } svg .dg-c-mallard { fill: #2f7a4a; }
+svg .dg-c-purple { fill: #9b7cc0; } svg .dg-c-bark { fill: #f1efe8; } svg .dg-c-char { fill: #3a3330; } svg .dg-c-lime { fill: #a9cf6a; }
+svg .dg-c-lilac { fill: #c9a6de; } svg .dg-c-wheat { fill: #e3c46a; } svg .dg-c-canola { fill: #f5d42a; } svg .dg-c-skin { fill: #f1c7a8; }
+svg .dg-g-leaf { fill: url(#tb-leaf); stroke: #3f6b33; stroke-width: .9px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-g-conifer { fill: url(#tb-conifer); stroke: #23421f; stroke-width: .9px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-g-soil { fill: url(#tb-soil); stroke: #5b4430; stroke-width: 1px; }
+svg .dg-g-sphere-plant { fill: url(#tb-sph-plant); stroke: #2c5a22; stroke-width: 1px; }
+svg .dg-g-sphere-earth { fill: url(#tb-sph-earth); stroke: #5b3a20; stroke-width: 1px; }
+svg .dg-g-sphere-muted { fill: url(#tb-sph-muted); stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-curve-plant { fill: none; stroke: #3f7a2a; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-band-plant { fill: #3f7a2a; fill-opacity: .08; stroke: none; } svg .dg-band-earth { fill: #7a5230; fill-opacity: .08; stroke: none; }
+svg .dg-card { fill: #fff; stroke: #b9b3a6; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-card-plant { fill: #eef5e6; stroke: #7aa35a; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-card-earth { fill: #f5ede2; stroke: #a8876a; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-tier-1 { fill: #dcebcb; stroke: #6f8f55; stroke-width: 1px; } svg .dg-tier-2 { fill: #f5eac4; stroke: #a8904a; stroke-width: 1px; }
+svg .dg-tier-3 { fill: #f7dcc2; stroke: #b07a4a; stroke-width: 1px; } svg .dg-tier-4 { fill: #f2cfcb; stroke: #a8605a; stroke-width: 1px; }
+svg .dg-g-nucleus { fill: url(#tb-nucleus); stroke: #6b3f85; stroke-width: 1px; }
+svg .dg-g-chloro { fill: url(#tb-chloro); stroke: #2c5a22; stroke-width: .8px; }
+svg .dg-g-cyto { fill: url(#tb-cyto); stroke: #5b8a3a; stroke-width: 1px; }
+svg .dg-cellwall { fill: #cfe3a8; stroke: #4f7a2a; stroke-width: 1.6px; }
+svg .dg-epi { fill: #f6f9f0; stroke: #7a9a5a; stroke-width: 1px; }
+svg .dg-g-vac { fill: url(#tb-vac); stroke: #4a98c6; stroke-width: 1px; }
+svg .dg-g-acell { fill: url(#tb-acell); stroke: #a8605a; stroke-width: 1.6px; }
+svg .dg-g-carrot { fill: url(#tb-carrot); stroke: #b8560f; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-petal { fill: url(#tb-petal); stroke: #c98a0a; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-pod { fill: url(#tb-pod); stroke: #3f6b33; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-pot { fill: url(#tb-pot); stroke: #8a4a2a; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-oil { fill: url(#tb-oil); stroke: #a8800a; stroke-width: 1px; }
+svg .dg-root { fill: none; stroke: #8a6a3a; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-root-thin { fill: none; stroke: #8a6a3a; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-hair { fill: none; stroke: #6b4a2a; stroke-width: 1.3px; stroke-linecap: round; }
+svg .dg-vein { fill: none; stroke: #eaf6dc; stroke-width: 1.1px; stroke-linecap: round; }
+svg .dg-filament { fill: none; stroke: #c9a64a; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-tube { fill: none; stroke: #d9a21a; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-cross-thin { fill: none; stroke: #b91c1c; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-dna-a { fill: none; stroke: var(--dg-accent); stroke-width: 1.8px; } svg .dg-dna-b { fill: none; stroke: #c2410c; stroke-width: 1.8px; }
+svg .dg-dna-r { fill: none; stroke: #8f877e; stroke-width: 1px; }
+svg .dg-g-concrete { fill: url(#tb-concrete); stroke: #6e6a64; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-stone { fill: url(#tb-stone); stroke: #6e5f52; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-dome { fill: url(#tb-dome); stroke: #5f6770; stroke-width: 1.2px; }
+svg .dg-g-tube { fill: url(#tb-tube); stroke: #8f877e; stroke-width: 1.2px; }
+svg .dg-rope { fill: none; stroke: #8a6a3a; stroke-width: 2.2px; stroke-linecap: round; }
+svg .dg-paperedge { fill: none; stroke: #6b665d; stroke-width: 2.6px; stroke-linecap: round; }
+svg .dg-paper { fill: #fdfdfb; stroke: #8f877e; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-member { fill: none; stroke: #5f6770; stroke-width: 4px; stroke-linecap: round; }
+svg .dg-member-hi { fill: none; stroke: #d6dadf; stroke-width: 1.2px; stroke-linecap: round; }
+svg .dg-bolt { fill: #8a939c; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-ghost { fill: none; stroke: #8f877e; stroke-width: 2px; stroke-dasharray: 5 4; }
+svg .dg-book-1 { fill: #c0533a; stroke: #6b2a1a; stroke-width: 1px; } svg .dg-book-2 { fill: #3b6fa0; stroke: #1f3f60; stroke-width: 1px; }
+svg .dg-book-3 { fill: #5d8a47; stroke: #34592a; stroke-width: 1px; } svg .dg-pages { fill: #fbf7ea; stroke: #b9b3a6; stroke-width: .6px; }
+svg .dg-bar-elastic, svg .dg-bar-plastic, svg .dg-bar-brittle { fill: none; stroke-width: 9px; stroke-linecap: round; }
+svg .dg-bar-elastic { stroke: #5b7fb0; } svg .dg-bar-plastic { stroke: #c9824a; } svg .dg-bar-brittle { stroke: #a8d4e8; }
+svg .dg-bar-hi { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-arrow.mk       { stroke-width: 2.4px; }
+svg .dg-arrow.mk.thin  { stroke-width: 1.7px; }
+svg .dg-arrow.mk.muted { marker-end: url(#tb-m-muted); }
+svg .dg-arrow.mk.plain { marker-end: url(#tb-m-plain); } svg .dg-arrow.mk.hot  { marker-end: url(#tb-m-hot); }
+svg .dg-arrow.mk.cold  { marker-end: url(#tb-m-cold); }  svg .dg-arrow.mk.water{ marker-end: url(#tb-m-water); }
+
+.viz.tb svg text { paint-order: stroke; stroke: #fff; stroke-width: 3.5px; stroke-linejoin: round; }
+.viz.tb svg .dg-label-white, .viz.tb svg .dg-tag-answer { stroke: none; }
+.viz.tb svg .dg-boundary { stroke: #24211d; stroke-width: 2.1px; fill: url(#tb-m-disc); filter: none; }
+.viz.tb svg .dg-line { stroke: #24211d; stroke-width: 2px; stroke-linecap: round; }
+.viz.tb svg .dg-accent { stroke-width: 3px; stroke-linecap: round; }
+.viz.tb svg .dg-dashed { stroke: #4a453e; stroke-width: 1.8px; stroke-dasharray: 6 4; }
+.viz.tb svg .dg-construction { stroke-width: 1.3px; stroke-dasharray: 3 3; }
+.viz.tb svg .dg-right-angle { stroke: #24211d; stroke-width: 1.5px; }
+.viz.tb svg .dg-point { fill: #24211d; } .viz.tb svg .dg-point-accent { stroke: #fff; stroke-width: 1px; }
+.viz.tb svg .dg-label { font-size: 14.5px; font-weight: 500; fill: #24211d; }
+.viz.tb svg .dg-label-sm { font-size: 13px; }
+.viz.tb svg .dg-label-accent, .viz.tb svg .dg-label-hot, .viz.tb svg .dg-label-cold, .viz.tb svg .dg-label-plant,
+.viz.tb svg .dg-label-water, .viz.tb svg .dg-label-earth { font-size: 13.5px; font-weight: 700; }
+.viz.tb svg .dg-math { font-size: 16.5px; } .viz.tb svg .dg-math-accent { font-size: 16.5px; }
+.viz.tb svg .dg-pt { font: italic 600 15.5px/1 "Times New Roman", Georgia, serif; fill: #24211d; }
+.viz.tb svg .dg-tag-answer { font-size: 13px; }
+.viz.tb svg .dg-pt.hot { fill: var(--viz-hot); } .viz.tb svg .dg-pt.accent { fill: var(--dg-accent); }
+.viz.tb svg .dg-fill-accent { fill-opacity: .17; stroke-width: 2px; }
+.viz.tb svg .dg-fill-hot, .viz.tb svg .dg-fill-plant, .viz.tb svg .dg-fill-earth, .viz.tb svg .dg-fill-water,
+.viz.tb svg .dg-fill-cold, .viz.tb svg .dg-fill-sun { stroke-width: 2px; }
+.viz.tb svg [class^="dg-fill"] { filter: drop-shadow(0 1px 1px rgba(40,30,20,.18)); }
+svg .dg-ang, svg .dg-ang-w, svg .dg-tickm { vector-effect: non-scaling-stroke; }
+svg .dg-ang { fill: none; stroke: var(--dg-accent); stroke-width: 1.7px; }
+svg .dg-ang-w { stroke: none; fill: var(--dg-accent); fill-opacity: .16; }
+svg .dg-ang.hot { stroke: var(--viz-hot); } svg .dg-ang-w.hot { fill: var(--viz-hot); }
+svg .dg-ang.plant { stroke: var(--viz-plant); } svg .dg-ang-w.plant { fill: var(--viz-plant); }
+svg .dg-ang.plain { stroke: #24211d; } svg .dg-ang-w.plain { fill: #6b665d; fill-opacity: .14; }
+svg .dg-tickm { fill: none; stroke: #24211d; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-gravel { fill: none; stroke: #e8dfcc; stroke-width: 14px; stroke-linecap: round; }
+svg .dg-grass { fill: #eef5e6; stroke: none; }
+svg .dg-tickm.accent { stroke: var(--dg-accent); } svg .dg-tickm.hot { stroke: var(--viz-hot); }
+
+
+body { counter-reset: fig; }
+.viz.tb { counter-increment: fig; background: #fff; border: 1px solid #d6d1c6; border-top: 3px solid var(--dg-accent);
+  border-radius: 3px; padding: .9rem 1.1rem .7rem; max-width: 44rem; }
+.viz.tb figcaption { font-style: normal; text-align: left; max-width: none; font-size: .84rem; line-height: 1.45; color: #2f2b26;
+  border-top: 1px solid #e2ddd2; margin: .65rem 0 0; padding-top: .45rem; }
+.viz.tb figcaption::before { content: "Figure " counter(fig) "\00a0\00a0"; font-weight: 700; color: var(--dg-accent); }
+.viz.tb svg .dg-label { font-size: 12.5px; } .viz.tb svg .dg-label-sm { font-size: 11.5px; }
+.viz.tb svg .dg-label-hot, .viz.tb svg .dg-label-cold, .viz.tb svg .dg-label-water, .viz.tb svg .dg-label-plant,
+.viz.tb svg .dg-label-earth, .viz.tb svg .dg-label-accent { font-size: 12px; }
+.viz.tb svg .dg-fill-hot { fill-opacity: .34; } .viz.tb svg .dg-fill-cold { fill-opacity: .30; } .viz.tb svg .dg-fill-plant { fill-opacity: .34; }
+.viz.tb svg .dg-fill-water { fill-opacity: .32; } .viz.tb svg .dg-fill-earth { fill-opacity: .34; } .viz.tb svg .dg-fill-sun { fill-opacity: .42; }
+.viz.tb svg .dg-fill-accent { fill-opacity: .28; } .viz.tb svg .dg-fill-soft { fill: #e9e5dc; stroke: #b9b3a6; }
+.viz.tb svg [class^="dg-fill"], .viz.tb svg [class^="dg-solid"], .viz.tb svg .dg-boundary { filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.28)); }
+svg .dg-g-crust, svg .dg-g-mantle, svg .dg-g-ocean, svg .dg-g-magma, svg .dg-g-cont, svg .dg-g-sph-crust, svg .dg-g-sph-mantle,
+svg .dg-g-sph-outer, svg .dg-g-sph-inner, svg .dg-g-ign, svg .dg-g-sed, svg .dg-g-met, svg .dg-g-landa, svg .dg-g-landb,
+svg .dg-speckle, svg .dg-star, svg .dg-station, svg .dg-wave, svg .dg-stream, svg .dg-stream-hi, svg .dg-ico { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-g-crust     { fill: url(#tb-crust);  stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-mantle    { fill: url(#tb-mantle); stroke: #c0702f; stroke-width: 1px; }
+svg .dg-g-ocean     { fill: url(#tb-ocean);  stroke: #2f7aa6; stroke-width: .8px; }
+svg .dg-g-magma     { fill: url(#tb-magma);  stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-cont      { fill: url(#tb-cont);   stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-sph-crust { fill: url(#tb-sph-crust); stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-sph-mantle{ fill: url(#tb-sph-mantle); stroke: #a8501b; stroke-width: 1px; }
+svg .dg-g-sph-outer { fill: url(#tb-sph-outer);  stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-sph-inner { fill: url(#tb-sph-inner);  stroke: #b45a0a; stroke-width: 1px; }
+svg .dg-g-ign       { fill: url(#tb-ign); stroke: #9a4a30; stroke-width: 1.2px; }
+svg .dg-g-sed       { fill: url(#tb-sed); stroke: #8a6a2e; stroke-width: 1.2px; }
+svg .dg-g-met       { fill: url(#tb-met); stroke: #6e5f52; stroke-width: 1.2px; }
+svg .dg-g-landa     { fill: url(#tb-landa); stroke: #8a7650; stroke-width: 1px; }
+svg .dg-g-landb     { fill: url(#tb-landb); stroke: #7a8a58; stroke-width: 1px; }
+svg .dg-speckle     { fill: url(#tb-speckle); stroke: none; }
+svg .dg-star        { fill: #ffd23f; stroke: #7a2e0e; stroke-width: 1.2px; }
+svg .dg-station     { fill: #2f2b26; stroke: #fff; stroke-width: 1.5px; }
+svg .dg-wave        { fill: none; stroke: #fff; stroke-width: 1.5px; stroke-linecap: round; }
+svg .dg-stream      { fill: none; stroke: #2f86b8; stroke-width: 6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-stream-hi   { fill: none; stroke: #cfeaf7; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-ico         { stroke: #5b4430; stroke-width: .8px; }
+svg .dg-ico-1 { fill: #f3d9c9; } svg .dg-ico-2 { fill: #7a3b2a; stroke: none; } svg .dg-ico-3 { fill: #fff; stroke: none; }
+svg .dg-ico-4 { fill: #e7c98a; } svg .dg-ico-5 { fill: #cfa95e; } svg .dg-ico-6 { fill: #f0dfb4; }
+svg .dg-ico-7 { fill: #bfb2a5; } svg .dg-ico-line { fill: none; stroke: #6e5f52; stroke-width: 1px; }
+svg .dg-shadow { fill: url(#tb-hatch); stroke: none; }
+svg .dg-ray-case { fill: none; stroke: #fff; stroke-width: 3.8px; stroke-opacity: .85; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-lane { fill: none; stroke: #fff; stroke-opacity: .38; stroke-width: 15px; stroke-linejoin: round; }
+svg .dg-glow { fill: url(#tb-glow); stroke: none; }
+svg .dg-g-crustL { fill: url(#tb-crustL); stroke: #5b4430; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-g-crustR { fill: url(#tb-crustR); stroke: #5b4430; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-crustline { fill: none; stroke: #5b4430; stroke-width: .9px; stroke-opacity: .7; vector-effect: non-scaling-stroke; }
+svg .dg-melt { fill: #ff8c42; stroke: #a3270b; stroke-width: .6px; }
+svg .dg-tree { fill: #5d8a47; stroke: #34592a; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-fz { fill: #5b4430; fill-opacity: .22; stroke: none; }
+svg .dg-tick { fill: none; stroke: var(--dg-stroke, #3f3b35); stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-tuft { fill: none; stroke: #6f8548; stroke-width: 1px; stroke-linecap: round; stroke-opacity: .8; }
+svg .dg-ico-8 { fill: #d99a82; } svg .dg-ico-9 { fill: #8a4a3a; } svg .dg-ico-10 { fill: #fbf1ea; } svg .dg-ico-11 { fill: #e9b9a2; }
+svg .dg-ico-pale { fill: none; stroke: #efe8de; stroke-width: 1px; }
+svg .dg-arrow.dash { stroke-dasharray: 6 4; }
+svg .dg-g-outer { fill: url(#tb-outer); stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-inner { fill: url(#tb-inner); stroke: #b45a0a; stroke-width: 1px; }
+svg .dg-g-volc  { fill: url(#tb-volc); stroke: #3f352d; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-rock  { fill: url(#tb-rock); stroke: #4a4038; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-ashcloud { fill: url(#tb-ashcloud); stroke: #8f877e; stroke-width: .8px; }
+svg .dg-snow  { fill: #fff; stroke: #b9b3a6; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-crack { fill: none; stroke: #3a3029; stroke-width: 1.1px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-sed-sand { fill: #ecd59c; stroke: #a8874a; stroke-width: .7px; }
+svg .dg-sed-silt { fill: #cfab7c; stroke: #8f6c45; stroke-width: .7px; }
+svg .dg-sed-clay { fill: #aaa39a; stroke: #6e675f; stroke-width: .7px; }
+svg .dg-lens  { fill: none; stroke: #3f3b35; stroke-width: 2px; }
+svg .dg-lens-rim { fill: none; stroke: #fff; stroke-width: 5px; }
+svg .dg-basalt { fill: #56514c; stroke: none; }
+svg .dg-fine  { fill: url(#tb-fine); stroke: none; }
+svg .dg-min-feld { fill: #e39a7e; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-feld2 { fill: #f2bba3; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-qtz { fill: #eeebe5; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-mica { fill: #3a3330; stroke: #1f1a18; stroke-width: .6px; }
+svg .dg-stripe-n { fill: #57514b; stroke: none; }
+svg .dg-stripe-r { fill: #f3eee4; stroke: none; }
+svg .dg-pol-n { fill: #fff; stroke: none; } svg .dg-pol-r { fill: #57514b; stroke: none; }
+svg .dg-grass { fill: #8bb162; stroke: #5d8a47; stroke-width: .8px; }
+svg .dg-fault { fill: none; stroke: #2f241b; stroke-width: 2.2px; stroke-linecap: round; }
+svg .dg-focus { fill: #e2431a; stroke: #7a1f0a; stroke-width: 1.2px; }
+svg .dg-house-wall { fill: #f6efe2; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-roof { fill: #a3452a; stroke: #5e2414; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-door { fill: #6b4a3a; stroke: none; } svg .dg-window { fill: #bfe3f5; stroke: #3f3b35; stroke-width: .6px; }
+svg .dg-ash { fill: #d9d3ca; stroke: #3f352d; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-ash-dot { fill: #6b645c; stroke: none; }
+svg .dg-ice { fill: #e3f4fb; stroke: #5aa9d0; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-ice-line { fill: none; stroke: #fff; stroke-width: 1px; }
+svg .dg-sun { fill: #ffd23f; stroke: #c98a0a; stroke-width: 1px; } svg .dg-ray { fill: none; stroke: #e0a515; stroke-width: 1.4px; stroke-linecap: round; }
+svg .dg-moon { fill: #f4f1e6; stroke: #8a8578; stroke-width: 1px; }
+svg .dg-fish { fill: #b9c6ce; stroke: #4a5560; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-bone { fill: none; stroke: #f6f1e6; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-bone-fill { fill: #f6f1e6; stroke: #8a7a62; stroke-width: .8px; }
+svg .dg-fossil { fill: none; stroke: #3a2f26; stroke-width: 1.8px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-fossil-fill { fill: #3a2f26; stroke: none; }
+svg .dg-lith-sand { fill: url(#tb-p-sand); stroke: #8a6a2e; stroke-width: .8px; }
+svg .dg-lith-shale { fill: url(#tb-p-shale); stroke: #5f5a55; stroke-width: .8px; }
+svg .dg-lith-lime { fill: url(#tb-p-lime); stroke: #5d6a72; stroke-width: .8px; }
+svg .dg-lith-coal { fill: #2f2b28; stroke: #1a1715; stroke-width: .8px; }
+svg .dg-ammonite { fill: #efe3c8; stroke: #5b4430; stroke-width: 1px; }
+svg .dg-amm-line { fill: none; stroke: #5b4430; stroke-width: .8px; }
+svg .dg-face-side { fill: #000; fill-opacity: .16; stroke: #3f3b35; stroke-width: .8px; }
+svg .dg-face-top { fill: #fff; fill-opacity: .45; stroke: #3f3b35; stroke-width: .8px; }
+svg .dg-panel { fill: #faf8f3; stroke: #e2ddd2; stroke-width: 1px; }
+svg .dg-rain { fill: none; stroke: #3b8fc0; stroke-width: 1.3px; stroke-linecap: round; stroke-dasharray: 5 4; }
+svg .dg-precam { fill: url(#tb-precam); stroke: #6e675f; stroke-width: .8px; }
+svg .dg-zoom { fill: none; stroke: #8f877e; stroke-width: 1px; stroke-dasharray: 3 3; }
+svg .dg-sp-d { fill: #5b4430; fill-opacity: .28; } svg .dg-sp-l { fill: #fff; fill-opacity: .33; }
+svg .dg-hatch-l { stroke: #fff; stroke-opacity: .55; stroke-width: 1.6px; }
+svg .dg-fine-a { fill: #d8d2c8; } svg .dg-fine-b { fill: #8f877e; }
+svg .dg-psand-bg { fill: #f0dca6; } svg .dg-psand-dot { fill: #8a6a2e; }
+svg .dg-pshale-bg { fill: #cfcac3; } svg .dg-pshale-l { stroke: #6e675f; stroke-width: .9px; }
+svg .dg-plime-bg { fill: #dce4e8; } svg .dg-plime-l { fill: none; stroke: #7d8b93; stroke-width: .8px; }
+svg .dg-pt-cold { fill: url(#tb-pt-cold); stroke: #1e3a8a; stroke-width: .8px; }
+svg .dg-pt-warm { fill: url(#tb-pt-warm); stroke: #8a5a00; stroke-width: .8px; }
+svg .dg-pt-hot  { fill: url(#tb-pt-hot);  stroke: #7a1f0a; stroke-width: .8px; }
+svg .dg-trail-cold, svg .dg-trail-warm, svg .dg-trail-hot { fill: none; stroke-linecap: round; stroke-width: 12px; }
+svg .dg-trail-cold.sm, svg .dg-trail-warm.sm, svg .dg-trail-hot.sm { stroke-width: 8px; }
+svg .dg-trail-cold { stroke: #3b6fd8; stroke-opacity: .22; } svg .dg-trail-warm { stroke: #e0a515; stroke-opacity: .32; }
+svg .dg-trail-hot { stroke: #e2431a; stroke-opacity: .24; }
+svg .dg-vib { fill: none; stroke: #8f877e; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-g-steel  { fill: url(#tb-steel);  stroke: #5f6770; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-steelH { fill: url(#tb-steelH); stroke: #4a5058; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-wood { fill: url(#tb-wood); stroke: #6b4a2a; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-grain { fill: none; stroke: #7a5230; stroke-opacity: .45; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-flame { fill: url(#tb-flame); stroke: #c2410c; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-flame-in { fill: #fff3a0; stroke: none; }
+svg .dg-g-water { fill: url(#tb-water); stroke: none; }
+svg .dg-water-top { fill: none; stroke: #2f7aa6; stroke-width: 1.2px; }
+svg .dg-glass { fill: #f4f9fb; fill-opacity: .55; stroke: #6e8796; stroke-width: 1.4px; stroke-linejoin: round; }
+svg .dg-glass-hi { fill: none; stroke: #fff; stroke-width: 3px; stroke-linecap: round; stroke-opacity: .9; }
+svg .dg-skin { fill: url(#tb-skin); stroke: #9a6a4f; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-skin-line { fill: none; stroke: #9a6a4f; stroke-width: .8px; stroke-linecap: round; }
+svg .dg-g-sand { fill: url(#tb-sand); stroke: #a8874a; stroke-width: 1px; }
+svg .dg-g-sky-day { fill: url(#tb-sky-day); stroke: none; } svg .dg-g-sky-night { fill: url(#tb-sky-night); stroke: none; }
+svg .dg-starlet { fill: #fff; stroke: none; }
+svg .dg-g-liquid { fill: url(#tb-liquid); stroke: #a3270b; stroke-width: .8px; }
+svg .dg-burner { fill: #3f3b35; stroke: #1f1c19; stroke-width: 1px; }
+svg .dg-g-hotblock  { fill: url(#tb-hotblock);  stroke: #7a1f0a; stroke-width: 1.2px; }
+svg .dg-g-coldblock { fill: url(#tb-coldblock); stroke: #1e3a8a; stroke-width: 1.2px; }
+svg .dg-g-warmblock { fill: url(#tb-warmblock); stroke: #8a5a00; stroke-width: 1.2px; }
+svg .dg-cross { fill: none; stroke: #b91c1c; stroke-width: 3px; stroke-linecap: round; }
+svg .dg-g-bag { fill: url(#tb-bag); stroke: #2f5a7a; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-quilt { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 1px; stroke-dasharray: 3 3; }
+svg .dg-insul { fill: url(#tb-insul); stroke: #b8708a; stroke-width: .8px; }
+svg .dg-ins-a { fill: #f6c9d6; } svg .dg-ins-l { fill: none; stroke: #d98aa3; stroke-width: 1px; }
+svg .dg-g-globe { fill: url(#tb-globe); stroke: #1f5f8a; stroke-width: 1px; }
+svg .dg-land { fill: #6fa35a; stroke: #3f6b33; stroke-width: .6px; }
+svg .dg-g-sunball { fill: url(#tb-sunball); stroke: #d97a0a; stroke-width: 1px; }
+svg .dg-silver { fill: url(#tb-silver); stroke: #6e7780; stroke-width: 1px; }
+svg .dg-g-plastic { fill: url(#tb-plastic); stroke: #26303a; stroke-width: 1px; }
+svg .dg-g-soup { fill: url(#tb-soup); stroke: #a3501b; stroke-width: .8px; }
+svg .dg-vac { fill: #fff; stroke: none; }
+svg .dg-band-water { fill: #0369a1; fill-opacity: .09; stroke: none; } svg .dg-band-hot { fill: #c2410c; fill-opacity: .08; stroke: none; }
+svg .dg-dot-water { fill: #0369a1; stroke: #fff; stroke-width: 1px; } svg .dg-dot-hot { fill: #c2410c; stroke: #fff; stroke-width: 1px; }
+svg .dg-g-ballast { fill: url(#tb-rock); stroke: #6e675f; stroke-width: .8px; }
+svg .dg-brick { fill: url(#tb-brick); stroke: #7a3b2a; stroke-width: 1px; }
+svg .dg-brick-bg { fill: #c97a5a; } svg .dg-brick-l { fill: none; stroke: #f3e3d6; stroke-width: 1px; }
+svg .dg-wave-hot { fill: none; stroke: #e0a515; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-porcelain { fill: #fbfaf7; stroke: #3f3b35; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-snowflake { fill: none; stroke: #6fa8d6; stroke-width: 1.2px; stroke-linecap: round; }
+svg .dg-curve-cold, svg .dg-curve-water, svg .dg-curve-hot, svg .dg-curve-accent { fill: none; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-curve-cold { stroke: #1d4ed8; } svg .dg-curve-water { stroke: #0369a1; } svg .dg-curve-hot { stroke: #c2410c; } svg .dg-curve-accent { stroke: var(--dg-accent); }
+svg .dg-rodglow { fill: url(#tb-rodglow); stroke: none; }
+svg .dg-night { fill: #0b1a33; fill-opacity: .38; stroke: none; }
+svg .dg-vibring-cold, svg .dg-vibring-hot, svg .dg-vibring-warm { stroke-width: .9px; stroke-dasharray: 2 2; }
+svg .dg-vibring-cold { fill: #1d4ed8; fill-opacity: .08; stroke: #6f97ea; } svg .dg-vibring-warm { fill: #e0a515; fill-opacity: .1; stroke: #e0a515; }
+svg .dg-vibring-hot { fill: #e2431a; fill-opacity: .09; stroke: #f2793a; }
+svg .dg-zip { fill: none; stroke: #e9ecef; stroke-width: 2px; stroke-dasharray: 2 2; }
+svg .dg-leader { fill: none; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-leader-dot { fill: #3f3b35; stroke: #fff; stroke-width: 1px; }
+svg .dg-arrow.mk.sun { marker-end: url(#tb-m-sun); } svg .dg-arrow.mk.plant { marker-end: url(#tb-m-plant); }
+svg .dg-arrow.mk.earth { marker-end: url(#tb-m-earth); } svg .dg-arrow.mk.accent { marker-end: url(#tb-m-accent); }
+svg .dg-an { stroke: #3a332c; stroke-width: .9px; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-line { fill: none; stroke: #3a332c; stroke-width: .9px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-thin { fill: none; stroke: #3a332c; stroke-width: .6px; stroke-opacity: .6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-stem { fill: none; stroke: #3f6b33; stroke-width: 1.4px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-c-tan { fill: #d9c3a0; } svg .dg-c-snow { fill: #f4efe6; } svg .dg-c-grey { fill: #a39d93; } svg .dg-c-wolf { fill: #8f8a82; }
+svg .dg-c-brown { fill: #7a5236; } svg .dg-c-moose { fill: #5e4030; } svg .dg-c-dark { fill: #2a2622; } svg .dg-c-yellow { fill: #f2c230; }
+svg .dg-c-orange { fill: #e8892a; } svg .dg-c-green { fill: #6fa35a; } svg .dg-c-dkgreen { fill: #3f6b33; } svg .dg-c-olive { fill: #7d8a3e; }
+svg .dg-c-heron { fill: #8fa3b5; } svg .dg-c-pink { fill: #d9579a; } svg .dg-c-cream { fill: #efe3c8; } svg .dg-c-white { fill: #fff; }
+svg .dg-c-red { fill: #b8452a; } svg .dg-c-lynx { fill: #c9b08c; } svg .dg-c-owl { fill: #8a6544; } svg .dg-c-mallard { fill: #2f7a4a; }
+svg .dg-c-purple { fill: #9b7cc0; } svg .dg-c-bark { fill: #f1efe8; } svg .dg-c-char { fill: #3a3330; } svg .dg-c-lime { fill: #a9cf6a; }
+svg .dg-c-lilac { fill: #c9a6de; } svg .dg-c-wheat { fill: #e3c46a; } svg .dg-c-canola { fill: #f5d42a; } svg .dg-c-skin { fill: #f1c7a8; }
+svg .dg-g-leaf { fill: url(#tb-leaf); stroke: #3f6b33; stroke-width: .9px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-g-conifer { fill: url(#tb-conifer); stroke: #23421f; stroke-width: .9px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-g-soil { fill: url(#tb-soil); stroke: #5b4430; stroke-width: 1px; }
+svg .dg-g-sphere-plant { fill: url(#tb-sph-plant); stroke: #2c5a22; stroke-width: 1px; }
+svg .dg-g-sphere-earth { fill: url(#tb-sph-earth); stroke: #5b3a20; stroke-width: 1px; }
+svg .dg-g-sphere-muted { fill: url(#tb-sph-muted); stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-curve-plant { fill: none; stroke: #3f7a2a; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-band-plant { fill: #3f7a2a; fill-opacity: .08; stroke: none; } svg .dg-band-earth { fill: #7a5230; fill-opacity: .08; stroke: none; }
+svg .dg-card { fill: #fff; stroke: #b9b3a6; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-card-plant { fill: #eef5e6; stroke: #7aa35a; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-card-earth { fill: #f5ede2; stroke: #a8876a; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-tier-1 { fill: #dcebcb; stroke: #6f8f55; stroke-width: 1px; } svg .dg-tier-2 { fill: #f5eac4; stroke: #a8904a; stroke-width: 1px; }
+svg .dg-tier-3 { fill: #f7dcc2; stroke: #b07a4a; stroke-width: 1px; } svg .dg-tier-4 { fill: #f2cfcb; stroke: #a8605a; stroke-width: 1px; }
+svg .dg-g-nucleus { fill: url(#tb-nucleus); stroke: #6b3f85; stroke-width: 1px; }
+svg .dg-g-chloro { fill: url(#tb-chloro); stroke: #2c5a22; stroke-width: .8px; }
+svg .dg-g-cyto { fill: url(#tb-cyto); stroke: #5b8a3a; stroke-width: 1px; }
+svg .dg-cellwall { fill: #cfe3a8; stroke: #4f7a2a; stroke-width: 1.6px; }
+svg .dg-epi { fill: #f6f9f0; stroke: #7a9a5a; stroke-width: 1px; }
+svg .dg-g-vac { fill: url(#tb-vac); stroke: #4a98c6; stroke-width: 1px; }
+svg .dg-g-acell { fill: url(#tb-acell); stroke: #a8605a; stroke-width: 1.6px; }
+svg .dg-g-carrot { fill: url(#tb-carrot); stroke: #b8560f; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-petal { fill: url(#tb-petal); stroke: #c98a0a; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-pod { fill: url(#tb-pod); stroke: #3f6b33; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-pot { fill: url(#tb-pot); stroke: #8a4a2a; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-oil { fill: url(#tb-oil); stroke: #a8800a; stroke-width: 1px; }
+svg .dg-root { fill: none; stroke: #8a6a3a; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-root-thin { fill: none; stroke: #8a6a3a; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-hair { fill: none; stroke: #6b4a2a; stroke-width: 1.3px; stroke-linecap: round; }
+svg .dg-vein { fill: none; stroke: #eaf6dc; stroke-width: 1.1px; stroke-linecap: round; }
+svg .dg-filament { fill: none; stroke: #c9a64a; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-tube { fill: none; stroke: #d9a21a; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-cross-thin { fill: none; stroke: #b91c1c; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-dna-a { fill: none; stroke: var(--dg-accent); stroke-width: 1.8px; } svg .dg-dna-b { fill: none; stroke: #c2410c; stroke-width: 1.8px; }
+svg .dg-dna-r { fill: none; stroke: #8f877e; stroke-width: 1px; }
+svg .dg-g-concrete { fill: url(#tb-concrete); stroke: #6e6a64; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-stone { fill: url(#tb-stone); stroke: #6e5f52; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-dome { fill: url(#tb-dome); stroke: #5f6770; stroke-width: 1.2px; }
+svg .dg-g-tube { fill: url(#tb-tube); stroke: #8f877e; stroke-width: 1.2px; }
+svg .dg-rope { fill: none; stroke: #8a6a3a; stroke-width: 2.2px; stroke-linecap: round; }
+svg .dg-paperedge { fill: none; stroke: #6b665d; stroke-width: 2.6px; stroke-linecap: round; }
+svg .dg-paper { fill: #fdfdfb; stroke: #8f877e; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-member { fill: none; stroke: #5f6770; stroke-width: 4px; stroke-linecap: round; }
+svg .dg-member-hi { fill: none; stroke: #d6dadf; stroke-width: 1.2px; stroke-linecap: round; }
+svg .dg-bolt { fill: #8a939c; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-ghost { fill: none; stroke: #8f877e; stroke-width: 2px; stroke-dasharray: 5 4; }
+svg .dg-book-1 { fill: #c0533a; stroke: #6b2a1a; stroke-width: 1px; } svg .dg-book-2 { fill: #3b6fa0; stroke: #1f3f60; stroke-width: 1px; }
+svg .dg-book-3 { fill: #5d8a47; stroke: #34592a; stroke-width: 1px; } svg .dg-pages { fill: #fbf7ea; stroke: #b9b3a6; stroke-width: .6px; }
+svg .dg-bar-elastic, svg .dg-bar-plastic, svg .dg-bar-brittle { fill: none; stroke-width: 9px; stroke-linecap: round; }
+svg .dg-bar-elastic { stroke: #5b7fb0; } svg .dg-bar-plastic { stroke: #c9824a; } svg .dg-bar-brittle { stroke: #a8d4e8; }
+svg .dg-bar-hi { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-arrow.mk       { stroke-width: 2.4px; }
+svg .dg-arrow.mk.thin  { stroke-width: 1.7px; }
+svg .dg-arrow.mk.muted { marker-end: url(#tb-m-muted); }
+svg .dg-arrow.mk.plain { marker-end: url(#tb-m-plain); } svg .dg-arrow.mk.hot  { marker-end: url(#tb-m-hot); }
+svg .dg-arrow.mk.cold  { marker-end: url(#tb-m-cold); }  svg .dg-arrow.mk.water{ marker-end: url(#tb-m-water); }
+
+.viz.tb svg text { paint-order: stroke; stroke: #fff; stroke-width: 3.5px; stroke-linejoin: round; }
+.viz.tb svg .dg-label-white, .viz.tb svg .dg-tag-answer { stroke: none; }
+.viz.tb svg .dg-boundary { stroke: #24211d; stroke-width: 2.1px; fill: url(#tb-m-disc); filter: none; }
+.viz.tb svg .dg-line { stroke: #24211d; stroke-width: 2px; stroke-linecap: round; }
+.viz.tb svg .dg-accent { stroke-width: 3px; stroke-linecap: round; }
+.viz.tb svg .dg-dashed { stroke: #4a453e; stroke-width: 1.8px; stroke-dasharray: 6 4; }
+.viz.tb svg .dg-construction { stroke-width: 1.3px; stroke-dasharray: 3 3; }
+.viz.tb svg .dg-right-angle { stroke: #24211d; stroke-width: 1.5px; }
+.viz.tb svg .dg-point { fill: #24211d; } .viz.tb svg .dg-point-accent { stroke: #fff; stroke-width: 1px; }
+.viz.tb svg .dg-label { font-size: 14.5px; font-weight: 500; fill: #24211d; }
+.viz.tb svg .dg-label-sm { font-size: 13px; }
+.viz.tb svg .dg-label-accent, .viz.tb svg .dg-label-hot, .viz.tb svg .dg-label-cold, .viz.tb svg .dg-label-plant,
+.viz.tb svg .dg-label-water, .viz.tb svg .dg-label-earth { font-size: 13.5px; font-weight: 700; }
+.viz.tb svg .dg-math { font-size: 16.5px; } .viz.tb svg .dg-math-accent { font-size: 16.5px; }
+.viz.tb svg .dg-pt { font: italic 600 15.5px/1 "Times New Roman", Georgia, serif; fill: #24211d; }
+.viz.tb svg .dg-tag-answer { font-size: 13px; }
+.viz.tb svg .dg-accent.hot { stroke: var(--viz-hot); } .viz.tb svg .dg-accent.plant { stroke: var(--viz-plant); }
+.viz.tb svg .dg-pt.hot { fill: var(--viz-hot); } .viz.tb svg .dg-pt.accent { fill: var(--dg-accent); }
+.viz.tb svg .dg-fill-accent { fill-opacity: .17; stroke-width: 2px; }
+.viz.tb svg .dg-fill-hot, .viz.tb svg .dg-fill-plant, .viz.tb svg .dg-fill-earth, .viz.tb svg .dg-fill-water,
+.viz.tb svg .dg-fill-cold, .viz.tb svg .dg-fill-sun { stroke-width: 2px; }
+.viz.tb svg [class^="dg-fill"] { filter: drop-shadow(0 1px 1px rgba(40,30,20,.18)); }
+svg .dg-ang, svg .dg-ang-w, svg .dg-tickm { vector-effect: non-scaling-stroke; }
+svg .dg-ang { fill: none; stroke: var(--dg-accent); stroke-width: 1.7px; }
+svg .dg-ang-w { stroke: none; fill: var(--dg-accent); fill-opacity: .16; }
+svg .dg-ang.hot { stroke: var(--viz-hot); } svg .dg-ang-w.hot { fill: var(--viz-hot); }
+svg .dg-ang.plant { stroke: var(--viz-plant); } svg .dg-ang-w.plant { fill: var(--viz-plant); }
+svg .dg-ang.plain { stroke: #24211d; } svg .dg-ang-w.plain { fill: #6b665d; fill-opacity: .14; }
+svg .dg-tickm { fill: none; stroke: #24211d; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-gravel { fill: none; stroke: #e8dfcc; stroke-width: 14px; stroke-linecap: round; }
+svg .dg-grass { fill: #eef5e6; stroke: none; }
+svg .dg-tickm.accent { stroke: var(--dg-accent); } svg .dg-tickm.hot { stroke: var(--viz-hot); }
+
+
+body { counter-reset: fig; }
+.viz.tb { counter-increment: fig; background: #fff; border: 1px solid #d6d1c6; border-top: 3px solid var(--dg-accent);
+  border-radius: 3px; padding: .9rem 1.1rem .7rem; max-width: 44rem; }
+.viz.tb figcaption { font-style: normal; text-align: left; max-width: none; font-size: .84rem; line-height: 1.45; color: #2f2b26;
+  border-top: 1px solid #e2ddd2; margin: .65rem 0 0; padding-top: .45rem; }
+.viz.tb figcaption::before { content: "Figure " counter(fig) "\00a0\00a0"; font-weight: 700; color: var(--dg-accent); }
+.viz.tb svg .dg-label { font-size: 12.5px; } .viz.tb svg .dg-label-sm { font-size: 11.5px; }
+.viz.tb svg .dg-label-hot, .viz.tb svg .dg-label-cold, .viz.tb svg .dg-label-water, .viz.tb svg .dg-label-plant,
+.viz.tb svg .dg-label-earth, .viz.tb svg .dg-label-accent { font-size: 12px; }
+.viz.tb svg .dg-fill-hot { fill-opacity: .34; } .viz.tb svg .dg-fill-cold { fill-opacity: .30; } .viz.tb svg .dg-fill-plant { fill-opacity: .34; }
+.viz.tb svg .dg-fill-water { fill-opacity: .32; } .viz.tb svg .dg-fill-earth { fill-opacity: .34; } .viz.tb svg .dg-fill-sun { fill-opacity: .42; }
+.viz.tb svg .dg-fill-accent { fill-opacity: .28; } .viz.tb svg .dg-fill-soft { fill: #e9e5dc; stroke: #b9b3a6; }
+.viz.tb svg [class^="dg-fill"], .viz.tb svg [class^="dg-solid"], .viz.tb svg .dg-boundary { filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.28)); }
+svg .dg-g-crust, svg .dg-g-mantle, svg .dg-g-ocean, svg .dg-g-magma, svg .dg-g-cont, svg .dg-g-sph-crust, svg .dg-g-sph-mantle,
+svg .dg-g-sph-outer, svg .dg-g-sph-inner, svg .dg-g-ign, svg .dg-g-sed, svg .dg-g-met, svg .dg-g-landa, svg .dg-g-landb,
+svg .dg-speckle, svg .dg-star, svg .dg-station, svg .dg-wave, svg .dg-stream, svg .dg-stream-hi, svg .dg-ico { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-g-crust     { fill: url(#tb-crust);  stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-mantle    { fill: url(#tb-mantle); stroke: #c0702f; stroke-width: 1px; }
+svg .dg-g-ocean     { fill: url(#tb-ocean);  stroke: #2f7aa6; stroke-width: .8px; }
+svg .dg-g-magma     { fill: url(#tb-magma);  stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-cont      { fill: url(#tb-cont);   stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-sph-crust { fill: url(#tb-sph-crust); stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-sph-mantle{ fill: url(#tb-sph-mantle); stroke: #a8501b; stroke-width: 1px; }
+svg .dg-g-sph-outer { fill: url(#tb-sph-outer);  stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-sph-inner { fill: url(#tb-sph-inner);  stroke: #b45a0a; stroke-width: 1px; }
+svg .dg-g-ign       { fill: url(#tb-ign); stroke: #9a4a30; stroke-width: 1.2px; }
+svg .dg-g-sed       { fill: url(#tb-sed); stroke: #8a6a2e; stroke-width: 1.2px; }
+svg .dg-g-met       { fill: url(#tb-met); stroke: #6e5f52; stroke-width: 1.2px; }
+svg .dg-g-landa     { fill: url(#tb-landa); stroke: #8a7650; stroke-width: 1px; }
+svg .dg-g-landb     { fill: url(#tb-landb); stroke: #7a8a58; stroke-width: 1px; }
+svg .dg-speckle     { fill: url(#tb-speckle); stroke: none; }
+svg .dg-star        { fill: #ffd23f; stroke: #7a2e0e; stroke-width: 1.2px; }
+svg .dg-station     { fill: #2f2b26; stroke: #fff; stroke-width: 1.5px; }
+svg .dg-wave        { fill: none; stroke: #fff; stroke-width: 1.5px; stroke-linecap: round; }
+svg .dg-stream      { fill: none; stroke: #2f86b8; stroke-width: 6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-stream-hi   { fill: none; stroke: #cfeaf7; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-ico         { stroke: #5b4430; stroke-width: .8px; }
+svg .dg-ico-1 { fill: #f3d9c9; } svg .dg-ico-2 { fill: #7a3b2a; stroke: none; } svg .dg-ico-3 { fill: #fff; stroke: none; }
+svg .dg-ico-4 { fill: #e7c98a; } svg .dg-ico-5 { fill: #cfa95e; } svg .dg-ico-6 { fill: #f0dfb4; }
+svg .dg-ico-7 { fill: #bfb2a5; } svg .dg-ico-line { fill: none; stroke: #6e5f52; stroke-width: 1px; }
+svg .dg-shadow { fill: url(#tb-hatch); stroke: none; }
+svg .dg-ray-case { fill: none; stroke: #fff; stroke-width: 3.8px; stroke-opacity: .85; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-lane { fill: none; stroke: #fff; stroke-opacity: .38; stroke-width: 15px; stroke-linejoin: round; }
+svg .dg-glow { fill: url(#tb-glow); stroke: none; }
+svg .dg-g-crustL { fill: url(#tb-crustL); stroke: #5b4430; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-g-crustR { fill: url(#tb-crustR); stroke: #5b4430; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-crustline { fill: none; stroke: #5b4430; stroke-width: .9px; stroke-opacity: .7; vector-effect: non-scaling-stroke; }
+svg .dg-melt { fill: #ff8c42; stroke: #a3270b; stroke-width: .6px; }
+svg .dg-tree { fill: #5d8a47; stroke: #34592a; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-fz { fill: #5b4430; fill-opacity: .22; stroke: none; }
+svg .dg-tick { fill: none; stroke: var(--dg-stroke, #3f3b35); stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-tuft { fill: none; stroke: #6f8548; stroke-width: 1px; stroke-linecap: round; stroke-opacity: .8; }
+svg .dg-ico-8 { fill: #d99a82; } svg .dg-ico-9 { fill: #8a4a3a; } svg .dg-ico-10 { fill: #fbf1ea; } svg .dg-ico-11 { fill: #e9b9a2; }
+svg .dg-ico-pale { fill: none; stroke: #efe8de; stroke-width: 1px; }
+svg .dg-arrow.dash { stroke-dasharray: 6 4; }
+svg .dg-g-outer { fill: url(#tb-outer); stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-inner { fill: url(#tb-inner); stroke: #b45a0a; stroke-width: 1px; }
+svg .dg-g-volc  { fill: url(#tb-volc); stroke: #3f352d; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-rock  { fill: url(#tb-rock); stroke: #4a4038; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-ashcloud { fill: url(#tb-ashcloud); stroke: #8f877e; stroke-width: .8px; }
+svg .dg-snow  { fill: #fff; stroke: #b9b3a6; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-crack { fill: none; stroke: #3a3029; stroke-width: 1.1px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-sed-sand { fill: #ecd59c; stroke: #a8874a; stroke-width: .7px; }
+svg .dg-sed-silt { fill: #cfab7c; stroke: #8f6c45; stroke-width: .7px; }
+svg .dg-sed-clay { fill: #aaa39a; stroke: #6e675f; stroke-width: .7px; }
+svg .dg-lens  { fill: none; stroke: #3f3b35; stroke-width: 2px; }
+svg .dg-lens-rim { fill: none; stroke: #fff; stroke-width: 5px; }
+svg .dg-basalt { fill: #56514c; stroke: none; }
+svg .dg-fine  { fill: url(#tb-fine); stroke: none; }
+svg .dg-min-feld { fill: #e39a7e; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-feld2 { fill: #f2bba3; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-qtz { fill: #eeebe5; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-mica { fill: #3a3330; stroke: #1f1a18; stroke-width: .6px; }
+svg .dg-stripe-n { fill: #57514b; stroke: none; }
+svg .dg-stripe-r { fill: #f3eee4; stroke: none; }
+svg .dg-pol-n { fill: #fff; stroke: none; } svg .dg-pol-r { fill: #57514b; stroke: none; }
+svg .dg-grass { fill: #8bb162; stroke: #5d8a47; stroke-width: .8px; }
+svg .dg-fault { fill: none; stroke: #2f241b; stroke-width: 2.2px; stroke-linecap: round; }
+svg .dg-focus { fill: #e2431a; stroke: #7a1f0a; stroke-width: 1.2px; }
+svg .dg-house-wall { fill: #f6efe2; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-roof { fill: #a3452a; stroke: #5e2414; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-door { fill: #6b4a3a; stroke: none; } svg .dg-window { fill: #bfe3f5; stroke: #3f3b35; stroke-width: .6px; }
+svg .dg-ash { fill: #d9d3ca; stroke: #3f352d; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-ash-dot { fill: #6b645c; stroke: none; }
+svg .dg-ice { fill: #e3f4fb; stroke: #5aa9d0; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-ice-line { fill: none; stroke: #fff; stroke-width: 1px; }
+svg .dg-sun { fill: #ffd23f; stroke: #c98a0a; stroke-width: 1px; } svg .dg-ray { fill: none; stroke: #e0a515; stroke-width: 1.4px; stroke-linecap: round; }
+svg .dg-moon { fill: #f4f1e6; stroke: #8a8578; stroke-width: 1px; }
+svg .dg-fish { fill: #b9c6ce; stroke: #4a5560; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-bone { fill: none; stroke: #f6f1e6; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-bone-fill { fill: #f6f1e6; stroke: #8a7a62; stroke-width: .8px; }
+svg .dg-fossil { fill: none; stroke: #3a2f26; stroke-width: 1.8px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-fossil-fill { fill: #3a2f26; stroke: none; }
+svg .dg-lith-sand { fill: url(#tb-p-sand); stroke: #8a6a2e; stroke-width: .8px; }
+svg .dg-lith-shale { fill: url(#tb-p-shale); stroke: #5f5a55; stroke-width: .8px; }
+svg .dg-lith-lime { fill: url(#tb-p-lime); stroke: #5d6a72; stroke-width: .8px; }
+svg .dg-lith-coal { fill: #2f2b28; stroke: #1a1715; stroke-width: .8px; }
+svg .dg-ammonite { fill: #efe3c8; stroke: #5b4430; stroke-width: 1px; }
+svg .dg-amm-line { fill: none; stroke: #5b4430; stroke-width: .8px; }
+svg .dg-face-side { fill: #000; fill-opacity: .16; stroke: #3f3b35; stroke-width: .8px; }
+svg .dg-face-top { fill: #fff; fill-opacity: .45; stroke: #3f3b35; stroke-width: .8px; }
+svg .dg-panel { fill: #faf8f3; stroke: #e2ddd2; stroke-width: 1px; }
+svg .dg-rain { fill: none; stroke: #3b8fc0; stroke-width: 1.3px; stroke-linecap: round; stroke-dasharray: 5 4; }
+svg .dg-precam { fill: url(#tb-precam); stroke: #6e675f; stroke-width: .8px; }
+svg .dg-zoom { fill: none; stroke: #8f877e; stroke-width: 1px; stroke-dasharray: 3 3; }
+svg .dg-sp-d { fill: #5b4430; fill-opacity: .28; } svg .dg-sp-l { fill: #fff; fill-opacity: .33; }
+svg .dg-hatch-l { stroke: #fff; stroke-opacity: .55; stroke-width: 1.6px; }
+svg .dg-fine-a { fill: #d8d2c8; } svg .dg-fine-b { fill: #8f877e; }
+svg .dg-psand-bg { fill: #f0dca6; } svg .dg-psand-dot { fill: #8a6a2e; }
+svg .dg-pshale-bg { fill: #cfcac3; } svg .dg-pshale-l { stroke: #6e675f; stroke-width: .9px; }
+svg .dg-plime-bg { fill: #dce4e8; } svg .dg-plime-l { fill: none; stroke: #7d8b93; stroke-width: .8px; }
+svg .dg-pt-cold { fill: url(#tb-pt-cold); stroke: #1e3a8a; stroke-width: .8px; }
+svg .dg-pt-warm { fill: url(#tb-pt-warm); stroke: #8a5a00; stroke-width: .8px; }
+svg .dg-pt-hot  { fill: url(#tb-pt-hot);  stroke: #7a1f0a; stroke-width: .8px; }
+svg .dg-trail-cold, svg .dg-trail-warm, svg .dg-trail-hot { fill: none; stroke-linecap: round; stroke-width: 12px; }
+svg .dg-trail-cold.sm, svg .dg-trail-warm.sm, svg .dg-trail-hot.sm { stroke-width: 8px; }
+svg .dg-trail-cold { stroke: #3b6fd8; stroke-opacity: .22; } svg .dg-trail-warm { stroke: #e0a515; stroke-opacity: .32; }
+svg .dg-trail-hot { stroke: #e2431a; stroke-opacity: .24; }
+svg .dg-vib { fill: none; stroke: #8f877e; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-g-steel  { fill: url(#tb-steel);  stroke: #5f6770; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-steelH { fill: url(#tb-steelH); stroke: #4a5058; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-wood { fill: url(#tb-wood); stroke: #6b4a2a; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-grain { fill: none; stroke: #7a5230; stroke-opacity: .45; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-flame { fill: url(#tb-flame); stroke: #c2410c; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-flame-in { fill: #fff3a0; stroke: none; }
+svg .dg-g-water { fill: url(#tb-water); stroke: none; }
+svg .dg-water-top { fill: none; stroke: #2f7aa6; stroke-width: 1.2px; }
+svg .dg-glass { fill: #f4f9fb; fill-opacity: .55; stroke: #6e8796; stroke-width: 1.4px; stroke-linejoin: round; }
+svg .dg-glass-hi { fill: none; stroke: #fff; stroke-width: 3px; stroke-linecap: round; stroke-opacity: .9; }
+svg .dg-skin { fill: url(#tb-skin); stroke: #9a6a4f; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-skin-line { fill: none; stroke: #9a6a4f; stroke-width: .8px; stroke-linecap: round; }
+svg .dg-g-sand { fill: url(#tb-sand); stroke: #a8874a; stroke-width: 1px; }
+svg .dg-g-sky-day { fill: url(#tb-sky-day); stroke: none; } svg .dg-g-sky-night { fill: url(#tb-sky-night); stroke: none; }
+svg .dg-starlet { fill: #fff; stroke: none; }
+svg .dg-g-liquid { fill: url(#tb-liquid); stroke: #a3270b; stroke-width: .8px; }
+svg .dg-burner { fill: #3f3b35; stroke: #1f1c19; stroke-width: 1px; }
+svg .dg-g-hotblock  { fill: url(#tb-hotblock);  stroke: #7a1f0a; stroke-width: 1.2px; }
+svg .dg-g-coldblock { fill: url(#tb-coldblock); stroke: #1e3a8a; stroke-width: 1.2px; }
+svg .dg-g-warmblock { fill: url(#tb-warmblock); stroke: #8a5a00; stroke-width: 1.2px; }
+svg .dg-cross { fill: none; stroke: #b91c1c; stroke-width: 3px; stroke-linecap: round; }
+svg .dg-g-bag { fill: url(#tb-bag); stroke: #2f5a7a; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-quilt { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 1px; stroke-dasharray: 3 3; }
+svg .dg-insul { fill: url(#tb-insul); stroke: #b8708a; stroke-width: .8px; }
+svg .dg-ins-a { fill: #f6c9d6; } svg .dg-ins-l { fill: none; stroke: #d98aa3; stroke-width: 1px; }
+svg .dg-g-globe { fill: url(#tb-globe); stroke: #1f5f8a; stroke-width: 1px; }
+svg .dg-land { fill: #6fa35a; stroke: #3f6b33; stroke-width: .6px; }
+svg .dg-g-sunball { fill: url(#tb-sunball); stroke: #d97a0a; stroke-width: 1px; }
+svg .dg-silver { fill: url(#tb-silver); stroke: #6e7780; stroke-width: 1px; }
+svg .dg-g-plastic { fill: url(#tb-plastic); stroke: #26303a; stroke-width: 1px; }
+svg .dg-g-soup { fill: url(#tb-soup); stroke: #a3501b; stroke-width: .8px; }
+svg .dg-vac { fill: #fff; stroke: none; }
+svg .dg-band-water { fill: #0369a1; fill-opacity: .09; stroke: none; } svg .dg-band-hot { fill: #c2410c; fill-opacity: .08; stroke: none; }
+svg .dg-dot-water { fill: #0369a1; stroke: #fff; stroke-width: 1px; } svg .dg-dot-hot { fill: #c2410c; stroke: #fff; stroke-width: 1px; }
+svg .dg-g-ballast { fill: url(#tb-rock); stroke: #6e675f; stroke-width: .8px; }
+svg .dg-brick { fill: url(#tb-brick); stroke: #7a3b2a; stroke-width: 1px; }
+svg .dg-brick-bg { fill: #c97a5a; } svg .dg-brick-l { fill: none; stroke: #f3e3d6; stroke-width: 1px; }
+svg .dg-wave-hot { fill: none; stroke: #e0a515; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-porcelain { fill: #fbfaf7; stroke: #3f3b35; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-snowflake { fill: none; stroke: #6fa8d6; stroke-width: 1.2px; stroke-linecap: round; }
+svg .dg-curve-cold, svg .dg-curve-water, svg .dg-curve-hot, svg .dg-curve-accent { fill: none; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-curve-cold { stroke: #1d4ed8; } svg .dg-curve-water { stroke: #0369a1; } svg .dg-curve-hot { stroke: #c2410c; } svg .dg-curve-accent { stroke: var(--dg-accent); }
+svg .dg-rodglow { fill: url(#tb-rodglow); stroke: none; }
+svg .dg-night { fill: #0b1a33; fill-opacity: .38; stroke: none; }
+svg .dg-vibring-cold, svg .dg-vibring-hot, svg .dg-vibring-warm { stroke-width: .9px; stroke-dasharray: 2 2; }
+svg .dg-vibring-cold { fill: #1d4ed8; fill-opacity: .08; stroke: #6f97ea; } svg .dg-vibring-warm { fill: #e0a515; fill-opacity: .1; stroke: #e0a515; }
+svg .dg-vibring-hot { fill: #e2431a; fill-opacity: .09; stroke: #f2793a; }
+svg .dg-zip { fill: none; stroke: #e9ecef; stroke-width: 2px; stroke-dasharray: 2 2; }
+svg .dg-leader { fill: none; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-leader-dot { fill: #3f3b35; stroke: #fff; stroke-width: 1px; }
+svg .dg-arrow.mk.sun { marker-end: url(#tb-m-sun); } svg .dg-arrow.mk.plant { marker-end: url(#tb-m-plant); }
+svg .dg-arrow.mk.earth { marker-end: url(#tb-m-earth); } svg .dg-arrow.mk.accent { marker-end: url(#tb-m-accent); }
+svg .dg-an { stroke: #3a332c; stroke-width: .9px; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-line { fill: none; stroke: #3a332c; stroke-width: .9px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-thin { fill: none; stroke: #3a332c; stroke-width: .6px; stroke-opacity: .6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-stem { fill: none; stroke: #3f6b33; stroke-width: 1.4px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-c-tan { fill: #d9c3a0; } svg .dg-c-snow { fill: #f4efe6; } svg .dg-c-grey { fill: #a39d93; } svg .dg-c-wolf { fill: #8f8a82; }
+svg .dg-c-brown { fill: #7a5236; } svg .dg-c-moose { fill: #5e4030; } svg .dg-c-dark { fill: #2a2622; } svg .dg-c-yellow { fill: #f2c230; }
+svg .dg-c-orange { fill: #e8892a; } svg .dg-c-green { fill: #6fa35a; } svg .dg-c-dkgreen { fill: #3f6b33; } svg .dg-c-olive { fill: #7d8a3e; }
+svg .dg-c-heron { fill: #8fa3b5; } svg .dg-c-pink { fill: #d9579a; } svg .dg-c-cream { fill: #efe3c8; } svg .dg-c-white { fill: #fff; }
+svg .dg-c-red { fill: #b8452a; } svg .dg-c-lynx { fill: #c9b08c; } svg .dg-c-owl { fill: #8a6544; } svg .dg-c-mallard { fill: #2f7a4a; }
+svg .dg-c-purple { fill: #9b7cc0; } svg .dg-c-bark { fill: #f1efe8; } svg .dg-c-char { fill: #3a3330; } svg .dg-c-lime { fill: #a9cf6a; }
+svg .dg-c-lilac { fill: #c9a6de; } svg .dg-c-wheat { fill: #e3c46a; } svg .dg-c-canola { fill: #f5d42a; } svg .dg-c-skin { fill: #f1c7a8; }
+svg .dg-g-leaf { fill: url(#tb-leaf); stroke: #3f6b33; stroke-width: .9px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-g-conifer { fill: url(#tb-conifer); stroke: #23421f; stroke-width: .9px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-g-soil { fill: url(#tb-soil); stroke: #5b4430; stroke-width: 1px; }
+svg .dg-g-sphere-plant { fill: url(#tb-sph-plant); stroke: #2c5a22; stroke-width: 1px; }
+svg .dg-g-sphere-earth { fill: url(#tb-sph-earth); stroke: #5b3a20; stroke-width: 1px; }
+svg .dg-g-sphere-muted { fill: url(#tb-sph-muted); stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-curve-plant { fill: none; stroke: #3f7a2a; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-band-plant { fill: #3f7a2a; fill-opacity: .08; stroke: none; } svg .dg-band-earth { fill: #7a5230; fill-opacity: .08; stroke: none; }
+svg .dg-card { fill: #fff; stroke: #b9b3a6; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-card-plant { fill: #eef5e6; stroke: #7aa35a; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-card-earth { fill: #f5ede2; stroke: #a8876a; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-tier-1 { fill: #dcebcb; stroke: #6f8f55; stroke-width: 1px; } svg .dg-tier-2 { fill: #f5eac4; stroke: #a8904a; stroke-width: 1px; }
+svg .dg-tier-3 { fill: #f7dcc2; stroke: #b07a4a; stroke-width: 1px; } svg .dg-tier-4 { fill: #f2cfcb; stroke: #a8605a; stroke-width: 1px; }
+svg .dg-g-nucleus { fill: url(#tb-nucleus); stroke: #6b3f85; stroke-width: 1px; }
+svg .dg-g-chloro { fill: url(#tb-chloro); stroke: #2c5a22; stroke-width: .8px; }
+svg .dg-g-cyto { fill: url(#tb-cyto); stroke: #5b8a3a; stroke-width: 1px; }
+svg .dg-cellwall { fill: #cfe3a8; stroke: #4f7a2a; stroke-width: 1.6px; }
+svg .dg-epi { fill: #f6f9f0; stroke: #7a9a5a; stroke-width: 1px; }
+svg .dg-g-vac { fill: url(#tb-vac); stroke: #4a98c6; stroke-width: 1px; }
+svg .dg-g-acell { fill: url(#tb-acell); stroke: #a8605a; stroke-width: 1.6px; }
+svg .dg-g-carrot { fill: url(#tb-carrot); stroke: #b8560f; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-petal { fill: url(#tb-petal); stroke: #c98a0a; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-pod { fill: url(#tb-pod); stroke: #3f6b33; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-pot { fill: url(#tb-pot); stroke: #8a4a2a; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-oil { fill: url(#tb-oil); stroke: #a8800a; stroke-width: 1px; }
+svg .dg-root { fill: none; stroke: #8a6a3a; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-root-thin { fill: none; stroke: #8a6a3a; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-hair { fill: none; stroke: #6b4a2a; stroke-width: 1.3px; stroke-linecap: round; }
+svg .dg-vein { fill: none; stroke: #eaf6dc; stroke-width: 1.1px; stroke-linecap: round; }
+svg .dg-filament { fill: none; stroke: #c9a64a; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-tube { fill: none; stroke: #d9a21a; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-cross-thin { fill: none; stroke: #b91c1c; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-dna-a { fill: none; stroke: var(--dg-accent); stroke-width: 1.8px; } svg .dg-dna-b { fill: none; stroke: #c2410c; stroke-width: 1.8px; }
+svg .dg-dna-r { fill: none; stroke: #8f877e; stroke-width: 1px; }
+svg .dg-g-concrete { fill: url(#tb-concrete); stroke: #6e6a64; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-stone { fill: url(#tb-stone); stroke: #6e5f52; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-dome { fill: url(#tb-dome); stroke: #5f6770; stroke-width: 1.2px; }
+svg .dg-g-tube { fill: url(#tb-tube); stroke: #8f877e; stroke-width: 1.2px; }
+svg .dg-rope { fill: none; stroke: #8a6a3a; stroke-width: 2.2px; stroke-linecap: round; }
+svg .dg-paperedge { fill: none; stroke: #6b665d; stroke-width: 2.6px; stroke-linecap: round; }
+svg .dg-paper { fill: #fdfdfb; stroke: #8f877e; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-member { fill: none; stroke: #5f6770; stroke-width: 4px; stroke-linecap: round; }
+svg .dg-member-hi { fill: none; stroke: #d6dadf; stroke-width: 1.2px; stroke-linecap: round; }
+svg .dg-bolt { fill: #8a939c; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-ghost { fill: none; stroke: #8f877e; stroke-width: 2px; stroke-dasharray: 5 4; }
+svg .dg-book-1 { fill: #c0533a; stroke: #6b2a1a; stroke-width: 1px; } svg .dg-book-2 { fill: #3b6fa0; stroke: #1f3f60; stroke-width: 1px; }
+svg .dg-book-3 { fill: #5d8a47; stroke: #34592a; stroke-width: 1px; } svg .dg-pages { fill: #fbf7ea; stroke: #b9b3a6; stroke-width: .6px; }
+svg .dg-bar-elastic, svg .dg-bar-plastic, svg .dg-bar-brittle { fill: none; stroke-width: 9px; stroke-linecap: round; }
+svg .dg-bar-elastic { stroke: #5b7fb0; } svg .dg-bar-plastic { stroke: #c9824a; } svg .dg-bar-brittle { stroke: #a8d4e8; }
+svg .dg-bar-hi { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-arrow.mk       { stroke-width: 2.4px; }
+svg .dg-arrow.mk.thin  { stroke-width: 1.7px; }
+svg .dg-arrow.mk.muted { marker-end: url(#tb-m-muted); }
+svg .dg-arrow.mk.plain { marker-end: url(#tb-m-plain); } svg .dg-arrow.mk.hot  { marker-end: url(#tb-m-hot); }
+svg .dg-arrow.mk.cold  { marker-end: url(#tb-m-cold); }  svg .dg-arrow.mk.water{ marker-end: url(#tb-m-water); }
+
+.viz.tb svg text { paint-order: stroke; stroke: #fff; stroke-width: 3.5px; stroke-linejoin: round; }
+.viz.tb svg .dg-label-white, .viz.tb svg .dg-tag-answer { stroke: none; }
+.viz.tb svg .dg-boundary { stroke: #24211d; stroke-width: 2.1px; fill: url(#tb-m-disc); filter: none; }
+.viz.tb svg .dg-line { stroke: #24211d; stroke-width: 2px; stroke-linecap: round; }
+.viz.tb svg .dg-accent { stroke-width: 3px; stroke-linecap: round; }
+.viz.tb svg .dg-dashed { stroke: #4a453e; stroke-width: 1.8px; stroke-dasharray: 6 4; }
+.viz.tb svg .dg-construction { stroke-width: 1.3px; stroke-dasharray: 3 3; }
+.viz.tb svg .dg-right-angle { stroke: #24211d; stroke-width: 1.5px; }
+.viz.tb svg .dg-point { fill: #24211d; } .viz.tb svg .dg-point-accent { stroke: #fff; stroke-width: 1px; }
+.viz.tb svg .dg-label { font-size: 14.5px; font-weight: 500; fill: #24211d; }
+.viz.tb svg .dg-label-sm { font-size: 13px; }
+.viz.tb svg .dg-label-accent, .viz.tb svg .dg-label-hot, .viz.tb svg .dg-label-cold, .viz.tb svg .dg-label-plant,
+.viz.tb svg .dg-label-water, .viz.tb svg .dg-label-earth { font-size: 13.5px; font-weight: 700; }
+.viz.tb svg .dg-math { font-size: 16.5px; } .viz.tb svg .dg-math-accent { font-size: 16.5px; }
+.viz.tb svg .dg-pt { font: italic 600 15.5px/1 "Times New Roman", Georgia, serif; fill: #24211d; }
+.viz.tb svg .dg-tag-answer { font-size: 13px; }
+.viz.tb svg .dg-accent.hot { stroke: var(--viz-hot); } .viz.tb svg .dg-accent.plant { stroke: var(--viz-plant); }
+.viz.tb svg .dg-pt.hot { fill: var(--viz-hot); } .viz.tb svg .dg-pt.accent { fill: var(--dg-accent); }
+.viz.tb svg .dg-fill-accent { fill-opacity: .17; stroke-width: 2px; }
+.viz.tb svg .dg-fill-hot, .viz.tb svg .dg-fill-plant, .viz.tb svg .dg-fill-earth, .viz.tb svg .dg-fill-water,
+.viz.tb svg .dg-fill-cold, .viz.tb svg .dg-fill-sun { stroke-width: 2px; }
+.viz.tb svg [class^="dg-fill"] { filter: drop-shadow(0 1px 1px rgba(40,30,20,.18)); }
+svg .dg-ang, svg .dg-ang-w, svg .dg-tickm { vector-effect: non-scaling-stroke; }
+svg .dg-ang { fill: none; stroke: var(--dg-accent); stroke-width: 1.7px; }
+svg .dg-ang-w { stroke: none; fill: var(--dg-accent); fill-opacity: .16; }
+svg .dg-ang.hot { stroke: var(--viz-hot); } svg .dg-ang-w.hot { fill: var(--viz-hot); }
+svg .dg-ang.plant { stroke: var(--viz-plant); } svg .dg-ang-w.plant { fill: var(--viz-plant); }
+svg .dg-ang.plain { stroke: #24211d; } svg .dg-ang-w.plain { fill: #6b665d; fill-opacity: .14; }
+svg .dg-tickm { fill: none; stroke: #24211d; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-gravel { fill: none; stroke: #e8dfcc; stroke-width: 14px; stroke-linecap: round; }
+svg .dg-grass { fill: #eef5e6; stroke: none; }
+svg .dg-tickm.accent { stroke: var(--dg-accent); } svg .dg-tickm.hot { stroke: var(--viz-hot); }
+
+
 /* ── viz-kit: teaching visuals (scripts/add_notes_visuals.py) ── */
 :root { --dg-accent: var(--accent, var(--unit, #1d4ed8)); --viz-hot: #c2410c; --viz-cold: #1d4ed8;
         --viz-plant: #15803d; --viz-water: #0369a1; --viz-earth: #92400e; --viz-sun: #ca8a04; --viz-key: #15803d; }
@@ -228,6 +1043,278 @@ svg .dg-route       { fill: none; stroke: var(--dg-accent); stroke-width: 2px; s
 svg .dg-route.muted { stroke: var(--dg-muted, #6b665d); stroke-dasharray: 5 3; }
 svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
 /* ── /viz-kit ── */
+
+body { counter-reset: fig; }
+.viz.tb { counter-increment: fig; background: #fff; border: 1px solid #d6d1c6; border-top: 3px solid var(--dg-accent);
+  border-radius: 3px; padding: .9rem 1.1rem .7rem; max-width: 44rem; }
+.viz.tb figcaption { font-style: normal; text-align: left; max-width: none; font-size: .84rem; line-height: 1.45; color: #2f2b26;
+  border-top: 1px solid #e2ddd2; margin: .65rem 0 0; padding-top: .45rem; }
+.viz.tb figcaption::before { content: "Figure " counter(fig) "\00a0\00a0"; font-weight: 700; color: var(--dg-accent); }
+.viz.tb svg .dg-label { font-size: 12.5px; } .viz.tb svg .dg-label-sm { font-size: 11.5px; }
+.viz.tb svg .dg-label-hot, .viz.tb svg .dg-label-cold, .viz.tb svg .dg-label-water, .viz.tb svg .dg-label-plant,
+.viz.tb svg .dg-label-earth, .viz.tb svg .dg-label-accent { font-size: 12px; }
+.viz.tb svg .dg-fill-hot { fill-opacity: .34; } .viz.tb svg .dg-fill-cold { fill-opacity: .30; } .viz.tb svg .dg-fill-plant { fill-opacity: .34; }
+.viz.tb svg .dg-fill-water { fill-opacity: .32; } .viz.tb svg .dg-fill-earth { fill-opacity: .34; } .viz.tb svg .dg-fill-sun { fill-opacity: .42; }
+.viz.tb svg .dg-fill-accent { fill-opacity: .28; } .viz.tb svg .dg-fill-soft { fill: #e9e5dc; stroke: #b9b3a6; }
+.viz.tb svg [class^="dg-fill"], .viz.tb svg [class^="dg-solid"], .viz.tb svg .dg-boundary { filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.28)); }
+svg .dg-g-crust, svg .dg-g-mantle, svg .dg-g-ocean, svg .dg-g-magma, svg .dg-g-cont, svg .dg-g-sph-crust, svg .dg-g-sph-mantle,
+svg .dg-g-sph-outer, svg .dg-g-sph-inner, svg .dg-g-ign, svg .dg-g-sed, svg .dg-g-met, svg .dg-g-landa, svg .dg-g-landb,
+svg .dg-speckle, svg .dg-star, svg .dg-station, svg .dg-wave, svg .dg-stream, svg .dg-stream-hi, svg .dg-ico { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-g-crust     { fill: url(#tb-crust);  stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-mantle    { fill: url(#tb-mantle); stroke: #c0702f; stroke-width: 1px; }
+svg .dg-g-ocean     { fill: url(#tb-ocean);  stroke: #2f7aa6; stroke-width: .8px; }
+svg .dg-g-magma     { fill: url(#tb-magma);  stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-cont      { fill: url(#tb-cont);   stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-sph-crust { fill: url(#tb-sph-crust); stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-sph-mantle{ fill: url(#tb-sph-mantle); stroke: #a8501b; stroke-width: 1px; }
+svg .dg-g-sph-outer { fill: url(#tb-sph-outer);  stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-sph-inner { fill: url(#tb-sph-inner);  stroke: #b45a0a; stroke-width: 1px; }
+svg .dg-g-ign       { fill: url(#tb-ign); stroke: #9a4a30; stroke-width: 1.2px; }
+svg .dg-g-sed       { fill: url(#tb-sed); stroke: #8a6a2e; stroke-width: 1.2px; }
+svg .dg-g-met       { fill: url(#tb-met); stroke: #6e5f52; stroke-width: 1.2px; }
+svg .dg-g-landa     { fill: url(#tb-landa); stroke: #8a7650; stroke-width: 1px; }
+svg .dg-g-landb     { fill: url(#tb-landb); stroke: #7a8a58; stroke-width: 1px; }
+svg .dg-speckle     { fill: url(#tb-speckle); stroke: none; }
+svg .dg-star        { fill: #ffd23f; stroke: #7a2e0e; stroke-width: 1.2px; }
+svg .dg-station     { fill: #2f2b26; stroke: #fff; stroke-width: 1.5px; }
+svg .dg-wave        { fill: none; stroke: #fff; stroke-width: 1.5px; stroke-linecap: round; }
+svg .dg-stream      { fill: none; stroke: #2f86b8; stroke-width: 6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-stream-hi   { fill: none; stroke: #cfeaf7; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-ico         { stroke: #5b4430; stroke-width: .8px; }
+svg .dg-ico-1 { fill: #f3d9c9; } svg .dg-ico-2 { fill: #7a3b2a; stroke: none; } svg .dg-ico-3 { fill: #fff; stroke: none; }
+svg .dg-ico-4 { fill: #e7c98a; } svg .dg-ico-5 { fill: #cfa95e; } svg .dg-ico-6 { fill: #f0dfb4; }
+svg .dg-ico-7 { fill: #bfb2a5; } svg .dg-ico-line { fill: none; stroke: #6e5f52; stroke-width: 1px; }
+svg .dg-shadow { fill: url(#tb-hatch); stroke: none; }
+svg .dg-ray-case { fill: none; stroke: #fff; stroke-width: 3.8px; stroke-opacity: .85; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-lane { fill: none; stroke: #fff; stroke-opacity: .38; stroke-width: 15px; stroke-linejoin: round; }
+svg .dg-glow { fill: url(#tb-glow); stroke: none; }
+svg .dg-g-crustL { fill: url(#tb-crustL); stroke: #5b4430; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-g-crustR { fill: url(#tb-crustR); stroke: #5b4430; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-crustline { fill: none; stroke: #5b4430; stroke-width: .9px; stroke-opacity: .7; vector-effect: non-scaling-stroke; }
+svg .dg-melt { fill: #ff8c42; stroke: #a3270b; stroke-width: .6px; }
+svg .dg-tree { fill: #5d8a47; stroke: #34592a; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-fz { fill: #5b4430; fill-opacity: .22; stroke: none; }
+svg .dg-tick { fill: none; stroke: var(--dg-stroke, #3f3b35); stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-tuft { fill: none; stroke: #6f8548; stroke-width: 1px; stroke-linecap: round; stroke-opacity: .8; }
+svg .dg-ico-8 { fill: #d99a82; } svg .dg-ico-9 { fill: #8a4a3a; } svg .dg-ico-10 { fill: #fbf1ea; } svg .dg-ico-11 { fill: #e9b9a2; }
+svg .dg-ico-pale { fill: none; stroke: #efe8de; stroke-width: 1px; }
+svg .dg-arrow.dash { stroke-dasharray: 6 4; }
+svg .dg-g-outer { fill: url(#tb-outer); stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-inner { fill: url(#tb-inner); stroke: #b45a0a; stroke-width: 1px; }
+svg .dg-g-volc  { fill: url(#tb-volc); stroke: #3f352d; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-rock  { fill: url(#tb-rock); stroke: #4a4038; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-ashcloud { fill: url(#tb-ashcloud); stroke: #8f877e; stroke-width: .8px; }
+svg .dg-snow  { fill: #fff; stroke: #b9b3a6; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-crack { fill: none; stroke: #3a3029; stroke-width: 1.1px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-sed-sand { fill: #ecd59c; stroke: #a8874a; stroke-width: .7px; }
+svg .dg-sed-silt { fill: #cfab7c; stroke: #8f6c45; stroke-width: .7px; }
+svg .dg-sed-clay { fill: #aaa39a; stroke: #6e675f; stroke-width: .7px; }
+svg .dg-lens  { fill: none; stroke: #3f3b35; stroke-width: 2px; }
+svg .dg-lens-rim { fill: none; stroke: #fff; stroke-width: 5px; }
+svg .dg-basalt { fill: #56514c; stroke: none; }
+svg .dg-fine  { fill: url(#tb-fine); stroke: none; }
+svg .dg-min-feld { fill: #e39a7e; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-feld2 { fill: #f2bba3; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-qtz { fill: #eeebe5; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-mica { fill: #3a3330; stroke: #1f1a18; stroke-width: .6px; }
+svg .dg-stripe-n { fill: #57514b; stroke: none; }
+svg .dg-stripe-r { fill: #f3eee4; stroke: none; }
+svg .dg-pol-n { fill: #fff; stroke: none; } svg .dg-pol-r { fill: #57514b; stroke: none; }
+svg .dg-grass { fill: #8bb162; stroke: #5d8a47; stroke-width: .8px; }
+svg .dg-fault { fill: none; stroke: #2f241b; stroke-width: 2.2px; stroke-linecap: round; }
+svg .dg-focus { fill: #e2431a; stroke: #7a1f0a; stroke-width: 1.2px; }
+svg .dg-house-wall { fill: #f6efe2; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-roof { fill: #a3452a; stroke: #5e2414; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-door { fill: #6b4a3a; stroke: none; } svg .dg-window { fill: #bfe3f5; stroke: #3f3b35; stroke-width: .6px; }
+svg .dg-ash { fill: #d9d3ca; stroke: #3f352d; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-ash-dot { fill: #6b645c; stroke: none; }
+svg .dg-ice { fill: #e3f4fb; stroke: #5aa9d0; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-ice-line { fill: none; stroke: #fff; stroke-width: 1px; }
+svg .dg-sun { fill: #ffd23f; stroke: #c98a0a; stroke-width: 1px; } svg .dg-ray { fill: none; stroke: #e0a515; stroke-width: 1.4px; stroke-linecap: round; }
+svg .dg-moon { fill: #f4f1e6; stroke: #8a8578; stroke-width: 1px; }
+svg .dg-fish { fill: #b9c6ce; stroke: #4a5560; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-bone { fill: none; stroke: #f6f1e6; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-bone-fill { fill: #f6f1e6; stroke: #8a7a62; stroke-width: .8px; }
+svg .dg-fossil { fill: none; stroke: #3a2f26; stroke-width: 1.8px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-fossil-fill { fill: #3a2f26; stroke: none; }
+svg .dg-lith-sand { fill: url(#tb-p-sand); stroke: #8a6a2e; stroke-width: .8px; }
+svg .dg-lith-shale { fill: url(#tb-p-shale); stroke: #5f5a55; stroke-width: .8px; }
+svg .dg-lith-lime { fill: url(#tb-p-lime); stroke: #5d6a72; stroke-width: .8px; }
+svg .dg-lith-coal { fill: #2f2b28; stroke: #1a1715; stroke-width: .8px; }
+svg .dg-ammonite { fill: #efe3c8; stroke: #5b4430; stroke-width: 1px; }
+svg .dg-amm-line { fill: none; stroke: #5b4430; stroke-width: .8px; }
+svg .dg-face-side { fill: #000; fill-opacity: .16; stroke: #3f3b35; stroke-width: .8px; }
+svg .dg-face-top { fill: #fff; fill-opacity: .45; stroke: #3f3b35; stroke-width: .8px; }
+svg .dg-panel { fill: #faf8f3; stroke: #e2ddd2; stroke-width: 1px; }
+svg .dg-rain { fill: none; stroke: #3b8fc0; stroke-width: 1.3px; stroke-linecap: round; stroke-dasharray: 5 4; }
+svg .dg-precam { fill: url(#tb-precam); stroke: #6e675f; stroke-width: .8px; }
+svg .dg-zoom { fill: none; stroke: #8f877e; stroke-width: 1px; stroke-dasharray: 3 3; }
+svg .dg-sp-d { fill: #5b4430; fill-opacity: .28; } svg .dg-sp-l { fill: #fff; fill-opacity: .33; }
+svg .dg-hatch-l { stroke: #fff; stroke-opacity: .55; stroke-width: 1.6px; }
+svg .dg-fine-a { fill: #d8d2c8; } svg .dg-fine-b { fill: #8f877e; }
+svg .dg-psand-bg { fill: #f0dca6; } svg .dg-psand-dot { fill: #8a6a2e; }
+svg .dg-pshale-bg { fill: #cfcac3; } svg .dg-pshale-l { stroke: #6e675f; stroke-width: .9px; }
+svg .dg-plime-bg { fill: #dce4e8; } svg .dg-plime-l { fill: none; stroke: #7d8b93; stroke-width: .8px; }
+svg .dg-pt-cold { fill: url(#tb-pt-cold); stroke: #1e3a8a; stroke-width: .8px; }
+svg .dg-pt-warm { fill: url(#tb-pt-warm); stroke: #8a5a00; stroke-width: .8px; }
+svg .dg-pt-hot  { fill: url(#tb-pt-hot);  stroke: #7a1f0a; stroke-width: .8px; }
+svg .dg-trail-cold, svg .dg-trail-warm, svg .dg-trail-hot { fill: none; stroke-linecap: round; stroke-width: 12px; }
+svg .dg-trail-cold.sm, svg .dg-trail-warm.sm, svg .dg-trail-hot.sm { stroke-width: 8px; }
+svg .dg-trail-cold { stroke: #3b6fd8; stroke-opacity: .22; } svg .dg-trail-warm { stroke: #e0a515; stroke-opacity: .32; }
+svg .dg-trail-hot { stroke: #e2431a; stroke-opacity: .24; }
+svg .dg-vib { fill: none; stroke: #8f877e; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-g-steel  { fill: url(#tb-steel);  stroke: #5f6770; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-steelH { fill: url(#tb-steelH); stroke: #4a5058; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-wood { fill: url(#tb-wood); stroke: #6b4a2a; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-grain { fill: none; stroke: #7a5230; stroke-opacity: .45; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-flame { fill: url(#tb-flame); stroke: #c2410c; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-flame-in { fill: #fff3a0; stroke: none; }
+svg .dg-g-water { fill: url(#tb-water); stroke: none; }
+svg .dg-water-top { fill: none; stroke: #2f7aa6; stroke-width: 1.2px; }
+svg .dg-glass { fill: #f4f9fb; fill-opacity: .55; stroke: #6e8796; stroke-width: 1.4px; stroke-linejoin: round; }
+svg .dg-glass-hi { fill: none; stroke: #fff; stroke-width: 3px; stroke-linecap: round; stroke-opacity: .9; }
+svg .dg-skin { fill: url(#tb-skin); stroke: #9a6a4f; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-skin-line { fill: none; stroke: #9a6a4f; stroke-width: .8px; stroke-linecap: round; }
+svg .dg-g-sand { fill: url(#tb-sand); stroke: #a8874a; stroke-width: 1px; }
+svg .dg-g-sky-day { fill: url(#tb-sky-day); stroke: none; } svg .dg-g-sky-night { fill: url(#tb-sky-night); stroke: none; }
+svg .dg-starlet { fill: #fff; stroke: none; }
+svg .dg-g-liquid { fill: url(#tb-liquid); stroke: #a3270b; stroke-width: .8px; }
+svg .dg-burner { fill: #3f3b35; stroke: #1f1c19; stroke-width: 1px; }
+svg .dg-g-hotblock  { fill: url(#tb-hotblock);  stroke: #7a1f0a; stroke-width: 1.2px; }
+svg .dg-g-coldblock { fill: url(#tb-coldblock); stroke: #1e3a8a; stroke-width: 1.2px; }
+svg .dg-g-warmblock { fill: url(#tb-warmblock); stroke: #8a5a00; stroke-width: 1.2px; }
+svg .dg-cross { fill: none; stroke: #b91c1c; stroke-width: 3px; stroke-linecap: round; }
+svg .dg-g-bag { fill: url(#tb-bag); stroke: #2f5a7a; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-quilt { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 1px; stroke-dasharray: 3 3; }
+svg .dg-insul { fill: url(#tb-insul); stroke: #b8708a; stroke-width: .8px; }
+svg .dg-ins-a { fill: #f6c9d6; } svg .dg-ins-l { fill: none; stroke: #d98aa3; stroke-width: 1px; }
+svg .dg-g-globe { fill: url(#tb-globe); stroke: #1f5f8a; stroke-width: 1px; }
+svg .dg-land { fill: #6fa35a; stroke: #3f6b33; stroke-width: .6px; }
+svg .dg-g-sunball { fill: url(#tb-sunball); stroke: #d97a0a; stroke-width: 1px; }
+svg .dg-silver { fill: url(#tb-silver); stroke: #6e7780; stroke-width: 1px; }
+svg .dg-g-plastic { fill: url(#tb-plastic); stroke: #26303a; stroke-width: 1px; }
+svg .dg-g-soup { fill: url(#tb-soup); stroke: #a3501b; stroke-width: .8px; }
+svg .dg-vac { fill: #fff; stroke: none; }
+svg .dg-band-water { fill: #0369a1; fill-opacity: .09; stroke: none; } svg .dg-band-hot { fill: #c2410c; fill-opacity: .08; stroke: none; }
+svg .dg-dot-water { fill: #0369a1; stroke: #fff; stroke-width: 1px; } svg .dg-dot-hot { fill: #c2410c; stroke: #fff; stroke-width: 1px; }
+svg .dg-g-ballast { fill: url(#tb-rock); stroke: #6e675f; stroke-width: .8px; }
+svg .dg-brick { fill: url(#tb-brick); stroke: #7a3b2a; stroke-width: 1px; }
+svg .dg-brick-bg { fill: #c97a5a; } svg .dg-brick-l { fill: none; stroke: #f3e3d6; stroke-width: 1px; }
+svg .dg-wave-hot { fill: none; stroke: #e0a515; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-porcelain { fill: #fbfaf7; stroke: #3f3b35; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-snowflake { fill: none; stroke: #6fa8d6; stroke-width: 1.2px; stroke-linecap: round; }
+svg .dg-curve-cold, svg .dg-curve-water, svg .dg-curve-hot, svg .dg-curve-accent { fill: none; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-curve-cold { stroke: #1d4ed8; } svg .dg-curve-water { stroke: #0369a1; } svg .dg-curve-hot { stroke: #c2410c; } svg .dg-curve-accent { stroke: var(--dg-accent); }
+svg .dg-rodglow { fill: url(#tb-rodglow); stroke: none; }
+svg .dg-night { fill: #0b1a33; fill-opacity: .38; stroke: none; }
+svg .dg-vibring-cold, svg .dg-vibring-hot, svg .dg-vibring-warm { stroke-width: .9px; stroke-dasharray: 2 2; }
+svg .dg-vibring-cold { fill: #1d4ed8; fill-opacity: .08; stroke: #6f97ea; } svg .dg-vibring-warm { fill: #e0a515; fill-opacity: .1; stroke: #e0a515; }
+svg .dg-vibring-hot { fill: #e2431a; fill-opacity: .09; stroke: #f2793a; }
+svg .dg-zip { fill: none; stroke: #e9ecef; stroke-width: 2px; stroke-dasharray: 2 2; }
+svg .dg-leader { fill: none; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-leader-dot { fill: #3f3b35; stroke: #fff; stroke-width: 1px; }
+svg .dg-arrow.mk.sun { marker-end: url(#tb-m-sun); } svg .dg-arrow.mk.plant { marker-end: url(#tb-m-plant); }
+svg .dg-arrow.mk.earth { marker-end: url(#tb-m-earth); } svg .dg-arrow.mk.accent { marker-end: url(#tb-m-accent); }
+svg .dg-an { stroke: #3a332c; stroke-width: .9px; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-line { fill: none; stroke: #3a332c; stroke-width: .9px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-thin { fill: none; stroke: #3a332c; stroke-width: .6px; stroke-opacity: .6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-stem { fill: none; stroke: #3f6b33; stroke-width: 1.4px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-c-tan { fill: #d9c3a0; } svg .dg-c-snow { fill: #f4efe6; } svg .dg-c-grey { fill: #a39d93; } svg .dg-c-wolf { fill: #8f8a82; }
+svg .dg-c-brown { fill: #7a5236; } svg .dg-c-moose { fill: #5e4030; } svg .dg-c-dark { fill: #2a2622; } svg .dg-c-yellow { fill: #f2c230; }
+svg .dg-c-orange { fill: #e8892a; } svg .dg-c-green { fill: #6fa35a; } svg .dg-c-dkgreen { fill: #3f6b33; } svg .dg-c-olive { fill: #7d8a3e; }
+svg .dg-c-heron { fill: #8fa3b5; } svg .dg-c-pink { fill: #d9579a; } svg .dg-c-cream { fill: #efe3c8; } svg .dg-c-white { fill: #fff; }
+svg .dg-c-red { fill: #b8452a; } svg .dg-c-lynx { fill: #c9b08c; } svg .dg-c-owl { fill: #8a6544; } svg .dg-c-mallard { fill: #2f7a4a; }
+svg .dg-c-purple { fill: #9b7cc0; } svg .dg-c-bark { fill: #f1efe8; } svg .dg-c-char { fill: #3a3330; } svg .dg-c-lime { fill: #a9cf6a; }
+svg .dg-c-lilac { fill: #c9a6de; } svg .dg-c-wheat { fill: #e3c46a; } svg .dg-c-canola { fill: #f5d42a; } svg .dg-c-skin { fill: #f1c7a8; }
+svg .dg-g-leaf { fill: url(#tb-leaf); stroke: #3f6b33; stroke-width: .9px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-g-conifer { fill: url(#tb-conifer); stroke: #23421f; stroke-width: .9px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-g-soil { fill: url(#tb-soil); stroke: #5b4430; stroke-width: 1px; }
+svg .dg-g-sphere-plant { fill: url(#tb-sph-plant); stroke: #2c5a22; stroke-width: 1px; }
+svg .dg-g-sphere-earth { fill: url(#tb-sph-earth); stroke: #5b3a20; stroke-width: 1px; }
+svg .dg-g-sphere-muted { fill: url(#tb-sph-muted); stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-curve-plant { fill: none; stroke: #3f7a2a; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-band-plant { fill: #3f7a2a; fill-opacity: .08; stroke: none; } svg .dg-band-earth { fill: #7a5230; fill-opacity: .08; stroke: none; }
+svg .dg-card { fill: #fff; stroke: #b9b3a6; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-card-plant { fill: #eef5e6; stroke: #7aa35a; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-card-earth { fill: #f5ede2; stroke: #a8876a; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-tier-1 { fill: #dcebcb; stroke: #6f8f55; stroke-width: 1px; } svg .dg-tier-2 { fill: #f5eac4; stroke: #a8904a; stroke-width: 1px; }
+svg .dg-tier-3 { fill: #f7dcc2; stroke: #b07a4a; stroke-width: 1px; } svg .dg-tier-4 { fill: #f2cfcb; stroke: #a8605a; stroke-width: 1px; }
+svg .dg-g-nucleus { fill: url(#tb-nucleus); stroke: #6b3f85; stroke-width: 1px; }
+svg .dg-g-chloro { fill: url(#tb-chloro); stroke: #2c5a22; stroke-width: .8px; }
+svg .dg-g-cyto { fill: url(#tb-cyto); stroke: #5b8a3a; stroke-width: 1px; }
+svg .dg-cellwall { fill: #cfe3a8; stroke: #4f7a2a; stroke-width: 1.6px; }
+svg .dg-epi { fill: #f6f9f0; stroke: #7a9a5a; stroke-width: 1px; }
+svg .dg-g-vac { fill: url(#tb-vac); stroke: #4a98c6; stroke-width: 1px; }
+svg .dg-g-acell { fill: url(#tb-acell); stroke: #a8605a; stroke-width: 1.6px; }
+svg .dg-g-carrot { fill: url(#tb-carrot); stroke: #b8560f; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-petal { fill: url(#tb-petal); stroke: #c98a0a; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-pod { fill: url(#tb-pod); stroke: #3f6b33; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-pot { fill: url(#tb-pot); stroke: #8a4a2a; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-oil { fill: url(#tb-oil); stroke: #a8800a; stroke-width: 1px; }
+svg .dg-root { fill: none; stroke: #8a6a3a; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-root-thin { fill: none; stroke: #8a6a3a; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-hair { fill: none; stroke: #6b4a2a; stroke-width: 1.3px; stroke-linecap: round; }
+svg .dg-vein { fill: none; stroke: #eaf6dc; stroke-width: 1.1px; stroke-linecap: round; }
+svg .dg-filament { fill: none; stroke: #c9a64a; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-tube { fill: none; stroke: #d9a21a; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-cross-thin { fill: none; stroke: #b91c1c; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-dna-a { fill: none; stroke: var(--dg-accent); stroke-width: 1.8px; } svg .dg-dna-b { fill: none; stroke: #c2410c; stroke-width: 1.8px; }
+svg .dg-dna-r { fill: none; stroke: #8f877e; stroke-width: 1px; }
+svg .dg-g-concrete { fill: url(#tb-concrete); stroke: #6e6a64; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-stone { fill: url(#tb-stone); stroke: #6e5f52; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-dome { fill: url(#tb-dome); stroke: #5f6770; stroke-width: 1.2px; }
+svg .dg-g-tube { fill: url(#tb-tube); stroke: #8f877e; stroke-width: 1.2px; }
+svg .dg-rope { fill: none; stroke: #8a6a3a; stroke-width: 2.2px; stroke-linecap: round; }
+svg .dg-paperedge { fill: none; stroke: #6b665d; stroke-width: 2.6px; stroke-linecap: round; }
+svg .dg-paper { fill: #fdfdfb; stroke: #8f877e; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-member { fill: none; stroke: #5f6770; stroke-width: 4px; stroke-linecap: round; }
+svg .dg-member-hi { fill: none; stroke: #d6dadf; stroke-width: 1.2px; stroke-linecap: round; }
+svg .dg-bolt { fill: #8a939c; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-ghost { fill: none; stroke: #8f877e; stroke-width: 2px; stroke-dasharray: 5 4; }
+svg .dg-book-1 { fill: #c0533a; stroke: #6b2a1a; stroke-width: 1px; } svg .dg-book-2 { fill: #3b6fa0; stroke: #1f3f60; stroke-width: 1px; }
+svg .dg-book-3 { fill: #5d8a47; stroke: #34592a; stroke-width: 1px; } svg .dg-pages { fill: #fbf7ea; stroke: #b9b3a6; stroke-width: .6px; }
+svg .dg-bar-elastic, svg .dg-bar-plastic, svg .dg-bar-brittle { fill: none; stroke-width: 9px; stroke-linecap: round; }
+svg .dg-bar-elastic { stroke: #5b7fb0; } svg .dg-bar-plastic { stroke: #c9824a; } svg .dg-bar-brittle { stroke: #a8d4e8; }
+svg .dg-bar-hi { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-arrow.mk       { stroke-width: 2.4px; }
+svg .dg-arrow.mk.thin  { stroke-width: 1.7px; }
+svg .dg-arrow.mk.muted { marker-end: url(#tb-m-muted); }
+svg .dg-arrow.mk.plain { marker-end: url(#tb-m-plain); } svg .dg-arrow.mk.hot  { marker-end: url(#tb-m-hot); }
+svg .dg-arrow.mk.cold  { marker-end: url(#tb-m-cold); }  svg .dg-arrow.mk.water{ marker-end: url(#tb-m-water); }
+
+.viz.tb svg text { paint-order: stroke; stroke: #fff; stroke-width: 3.5px; stroke-linejoin: round; }
+.viz.tb svg .dg-label-white, .viz.tb svg .dg-tag-answer { stroke: none; }
+.viz.tb svg .dg-boundary { stroke: #24211d; stroke-width: 2.1px; fill: url(#tb-m-disc); filter: none; }
+.viz.tb svg .dg-line { stroke: #24211d; stroke-width: 2px; stroke-linecap: round; }
+.viz.tb svg .dg-accent { stroke-width: 3px; stroke-linecap: round; }
+.viz.tb svg .dg-dashed { stroke: #4a453e; stroke-width: 1.8px; stroke-dasharray: 6 4; }
+.viz.tb svg .dg-construction { stroke-width: 1.3px; stroke-dasharray: 3 3; }
+.viz.tb svg .dg-right-angle { stroke: #24211d; stroke-width: 1.5px; }
+.viz.tb svg .dg-point { fill: #24211d; } .viz.tb svg .dg-point-accent { stroke: #fff; stroke-width: 1px; }
+.viz.tb svg .dg-label { font-size: 14.5px; font-weight: 500; fill: #24211d; }
+.viz.tb svg .dg-label-sm { font-size: 13px; }
+.viz.tb svg .dg-label-accent, .viz.tb svg .dg-label-hot, .viz.tb svg .dg-label-cold, .viz.tb svg .dg-label-plant,
+.viz.tb svg .dg-label-water, .viz.tb svg .dg-label-earth { font-size: 13.5px; font-weight: 700; }
+.viz.tb svg .dg-math { font-size: 16.5px; } .viz.tb svg .dg-math-accent { font-size: 16.5px; }
+.viz.tb svg .dg-pt { font: italic 600 15.5px/1 "Times New Roman", Georgia, serif; fill: #24211d; }
+.viz.tb svg .dg-tag-answer { font-size: 13px; }
+.viz.tb svg .dg-accent.hot { stroke: var(--viz-hot); } .viz.tb svg .dg-accent.plant { stroke: var(--viz-plant); }
+.viz.tb svg .dg-pt.hot { fill: var(--viz-hot); } .viz.tb svg .dg-pt.accent { fill: var(--dg-accent); }
+.viz.tb svg .dg-fill-accent { fill-opacity: .17; stroke-width: 2px; }
+.viz.tb svg .dg-fill-hot, .viz.tb svg .dg-fill-plant, .viz.tb svg .dg-fill-earth, .viz.tb svg .dg-fill-water,
+.viz.tb svg .dg-fill-cold, .viz.tb svg .dg-fill-sun { stroke-width: 2px; }
+.viz.tb svg [class^="dg-fill"] { filter: drop-shadow(0 1px 1px rgba(40,30,20,.18)); }
+svg .dg-ang, svg .dg-ang-w, svg .dg-tickm { vector-effect: non-scaling-stroke; }
+svg .dg-ang { fill: none; stroke: var(--dg-accent); stroke-width: 1.7px; }
+svg .dg-ang-w { stroke: none; fill: var(--dg-accent); fill-opacity: .16; }
+svg .dg-ang.hot { stroke: var(--viz-hot); } svg .dg-ang-w.hot { fill: var(--viz-hot); }
+svg .dg-ang.plant { stroke: var(--viz-plant); } svg .dg-ang-w.plant { fill: var(--viz-plant); }
+svg .dg-ang.plain { stroke: #24211d; } svg .dg-ang-w.plain { fill: #6b665d; fill-opacity: .14; }
+svg .dg-tickm { fill: none; stroke: #24211d; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-gravel { fill: none; stroke: #e8dfcc; stroke-width: 14px; stroke-linecap: round; }
+svg .dg-grass { fill: #eef5e6; stroke: none; }
+svg .dg-tickm.accent { stroke: var(--dg-accent); } svg .dg-tickm.hot { stroke: var(--viz-hot); }
+
 </style>
 <style id="key-link-css">
   .key-link { margin: 6px 0 14px; font-size: 0.9rem; font-weight: 600; }
@@ -256,6 +1343,9 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 @media print { .ak-answer, .ak-teacher { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
 </style></head>
 <body>
+<!-- viz-defs -->
+<!-- tikz: none | shared paints for the figures below -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="tb-crust" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d3b88f"/><stop offset="1" stop-color="#a88a65"/></linearGradient><linearGradient id="tb-mantle" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde3ad"/><stop offset="1" stop-color="#f2a85f"/></linearGradient><linearGradient id="tb-ocean" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b5e1f4"/><stop offset="1" stop-color="#4a98c6"/></linearGradient><linearGradient id="tb-magma" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc15a"/><stop offset="1" stop-color="#e2431a"/></linearGradient><linearGradient id="tb-cont" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8c4a0"/><stop offset="1" stop-color="#b29a72"/></linearGradient><radialGradient id="tb-sph-crust" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#c9ab80"/><stop offset="1" stop-color="#8f7150"/></radialGradient><radialGradient id="tb-sph-mantle" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fcd18c"/><stop offset="0.6" stop-color="#ee8a42"/><stop offset="1" stop-color="#c9581f"/></radialGradient><radialGradient id="tb-sph-outer" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffb85a"/><stop offset="0.6" stop-color="#e8662a"/><stop offset="1" stop-color="#b83a12"/></radialGradient><radialGradient id="tb-sph-inner" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff7c9"/><stop offset="0.55" stop-color="#ffd23f"/><stop offset="1" stop-color="#f0a01a"/></radialGradient><linearGradient id="tb-ign" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c6b0"/><stop offset="1" stop-color="#e59878"/></linearGradient><linearGradient id="tb-sed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e6b8"/><stop offset="1" stop-color="#e6c882"/></linearGradient><linearGradient id="tb-met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6cabe"/><stop offset="1" stop-color="#b0a090"/></linearGradient><linearGradient id="tb-landa" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e4d6b4"/><stop offset="1" stop-color="#cdb98e"/></linearGradient><linearGradient id="tb-landb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9e0bc"/><stop offset="1" stop-color="#bccb94"/></linearGradient><pattern id="tb-speckle" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r=".9" class="dg-sp-d"/><circle cx="10" cy="9" r=".7" class="dg-sp-d"/><circle cx="7" cy="13" r=".8" class="dg-sp-l"/><circle cx="12" cy="2" r=".7" class="dg-sp-l"/></pattern><pattern id="tb-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" class="dg-hatch-l"/></pattern><radialGradient id="tb-glow" cx=".5" cy="1" r="1"><stop offset="0" stop-color="#ff7a2a" stop-opacity=".85"/><stop offset="1" stop-color="#ff7a2a" stop-opacity="0"/></radialGradient><linearGradient id="tb-crustL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a07f5a"/><stop offset="1" stop-color="#dcbf94"/></linearGradient><linearGradient id="tb-crustR" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dcbf94"/><stop offset="1" stop-color="#a07f5a"/></linearGradient><linearGradient id="tb-outer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb85a"/><stop offset="1" stop-color="#d9531e"/></linearGradient><linearGradient id="tb-inner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#f0a01a"/></linearGradient><linearGradient id="tb-volc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a8c80"/><stop offset="1" stop-color="#5f544b"/></linearGradient><linearGradient id="tb-rock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3a698"/><stop offset="1" stop-color="#7d7064"/></linearGradient><linearGradient id="tb-precam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9d2c6"/><stop offset="1" stop-color="#ebe6dc"/></linearGradient><radialGradient id="tb-ashcloud" cx=".5" cy=".5" r=".5" fx=".4" fy=".35"><stop offset="0" stop-color="#eeebe6"/><stop offset="1" stop-color="#a8a097"/></radialGradient><pattern id="tb-fine" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".6" class="dg-fine-a"/><circle cx="3" cy="3" r=".5" class="dg-fine-b"/></pattern><pattern id="tb-p-sand" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" class="dg-psand-bg"/><circle cx="2" cy="3" r=".9" class="dg-psand-dot"/><circle cx="7" cy="7" r=".9" class="dg-psand-dot"/><circle cx="8" cy="1.5" r=".6" class="dg-psand-dot"/></pattern><pattern id="tb-p-shale" width="16" height="8" patternUnits="userSpaceOnUse"><rect width="16" height="8" class="dg-pshale-bg"/><line x1="1" y1="3" x2="7" y2="3" class="dg-pshale-l"/><line x1="9" y1="7" x2="15" y2="7" class="dg-pshale-l"/></pattern><pattern id="tb-p-lime" width="20" height="10" patternUnits="userSpaceOnUse"><rect width="20" height="10" class="dg-plime-bg"/><path d="M0 0.5 H20 M0 5.5 H20 M5 0.5 V5.5 M15 5.5 V10" class="dg-plime-l"/></pattern><radialGradient id="tb-pt-cold" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#dbe7ff"/><stop offset="0.55" stop-color="#6f97ea"/><stop offset="1" stop-color="#1d4ed8"/></radialGradient><radialGradient id="tb-pt-warm" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff6cf"/><stop offset="0.55" stop-color="#f3c33f"/><stop offset="1" stop-color="#c98a0a"/></radialGradient><radialGradient id="tb-pt-hot" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffe1c9"/><stop offset="0.55" stop-color="#f2793a"/><stop offset="1" stop-color="#c2410c"/></radialGradient><linearGradient id="tb-steel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f5f7"/><stop offset="0.45" stop-color="#c3c9cf"/><stop offset="0.55" stop-color="#a7afb7"/><stop offset="1" stop-color="#d6dadf"/></linearGradient><linearGradient id="tb-steelH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8a939c"/><stop offset="0.25" stop-color="#e9ecef"/><stop offset="0.5" stop-color="#c3c9cf"/><stop offset="1" stop-color="#7d868f"/></linearGradient><linearGradient id="tb-wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9a86c"/><stop offset="1" stop-color="#b07a44"/></linearGradient><linearGradient id="tb-water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfeaf8"/><stop offset="1" stop-color="#7fbde2"/></linearGradient><linearGradient id="tb-flame" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffd23f"/><stop offset=".55" stop-color="#ff8a2a"/><stop offset="1" stop-color="#e2431a"/></linearGradient><linearGradient id="tb-skin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7d6bd"/><stop offset="1" stop-color="#e3ad8a"/></linearGradient><linearGradient id="tb-sand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7e6b0"/><stop offset="1" stop-color="#dfbd72"/></linearGradient><linearGradient id="tb-sky-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2f6"/><stop offset="1" stop-color="#f2f9fd"/></linearGradient><linearGradient id="tb-sky-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c2745"/><stop offset="1" stop-color="#3d4d78"/></linearGradient><linearGradient id="tb-liquid" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff9a7a"/><stop offset="0.5" stop-color="#e2431a"/><stop offset="1" stop-color="#b8320c"/></linearGradient><linearGradient id="tb-hotblock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb38a"/><stop offset="1" stop-color="#e2541f"/></linearGradient><linearGradient id="tb-coldblock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe0ff"/><stop offset="1" stop-color="#6f97ea"/></linearGradient><linearGradient id="tb-warmblock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7a3"/><stop offset="1" stop-color="#f0b43a"/></linearGradient><linearGradient id="tb-bag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb9d8"/><stop offset="1" stop-color="#4f86ad"/></linearGradient><pattern id="tb-insul" width="12" height="8" patternUnits="userSpaceOnUse"><rect width="12" height="8" class="dg-ins-a"/><path d="M0 4 Q3 0 6 4 T12 4" class="dg-ins-l"/></pattern><radialGradient id="tb-globe" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#bfe3f5"/><stop offset="0.6" stop-color="#4a98c6"/><stop offset="1" stop-color="#1f5f8a"/></radialGradient><radialGradient id="tb-sunball" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fffbe0"/><stop offset="0.5" stop-color="#ffd23f"/><stop offset="1" stop-color="#f08a1a"/></radialGradient><linearGradient id="tb-silver" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset="0.5" stop-color="#d3d8dd"/><stop offset="1" stop-color="#f2f4f6"/></linearGradient><linearGradient id="tb-plastic" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6f8091"/><stop offset="1" stop-color="#3a4652"/></linearGradient><linearGradient id="tb-soup" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9c27c"/><stop offset="1" stop-color="#e0782a"/></linearGradient><pattern id="tb-brick" width="24" height="12" patternUnits="userSpaceOnUse"><rect width="24" height="12" class="dg-brick-bg"/><path d="M0 .5 H24 M0 6.5 H24 M6 .5 V6.5 M18 6.5 V12" class="dg-brick-l"/></pattern><linearGradient id="tb-rodglow" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff5a1a" stop-opacity=".6"/><stop offset=".55" stop-color="#ffb03a" stop-opacity=".18"/><stop offset="1" stop-color="#ffb03a" stop-opacity="0"/></linearGradient><linearGradient id="tb-leaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd07a"/><stop offset="1" stop-color="#5b9a44"/></linearGradient><linearGradient id="tb-conifer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f8a4a"/><stop offset="1" stop-color="#2f5f2c"/></linearGradient><linearGradient id="tb-soil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a7452"/><stop offset="1" stop-color="#6b4a32"/></linearGradient><radialGradient id="tb-sph-plant" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#d8f0c0"/><stop offset="0.6" stop-color="#7cb85a"/><stop offset="1" stop-color="#3f7a2a"/></radialGradient><radialGradient id="tb-sph-earth" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#f0d8b8"/><stop offset="0.6" stop-color="#b88a5a"/><stop offset="1" stop-color="#7a5230"/></radialGradient><radialGradient id="tb-sph-muted" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#e8e4dc"/><stop offset="0.6" stop-color="#9a958c"/><stop offset="1" stop-color="#5f5a52"/></radialGradient><radialGradient id="tb-nucleus" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#f0dcf6"/><stop offset="0.6" stop-color="#c09ad6"/><stop offset="1" stop-color="#8a5aa8"/></radialGradient><radialGradient id="tb-chloro" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#d4f0b0"/><stop offset="0.6" stop-color="#6fb84a"/><stop offset="1" stop-color="#3f7a2a"/></radialGradient><linearGradient id="tb-cyto" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2f9e8"/><stop offset="1" stop-color="#dcefc6"/></linearGradient><radialGradient id="tb-vac" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#f2faff"/><stop offset="1" stop-color="#b5dcf2"/></radialGradient><radialGradient id="tb-acell" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff3ef"/><stop offset="1" stop-color="#f6d4cc"/></radialGradient><linearGradient id="tb-carrot" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e0701a"/><stop offset="0.45" stop-color="#ffb05a"/><stop offset="1" stop-color="#d8601a"/></linearGradient><linearGradient id="tb-petal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#f2b830"/></linearGradient><linearGradient id="tb-pod" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe9a0"/><stop offset="1" stop-color="#7cb85a"/></linearGradient><linearGradient id="tb-pot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d98a5a"/><stop offset="1" stop-color="#a85a34"/></linearGradient><linearGradient id="tb-oil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#e8b820"/></linearGradient><linearGradient id="tb-concrete" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dedbd5"/><stop offset="1" stop-color="#a8a49e"/></linearGradient><linearGradient id="tb-stone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ecdfca"/><stop offset="1" stop-color="#bfa98c"/></linearGradient><radialGradient id="tb-dome" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#bfc6cd"/></radialGradient><linearGradient id="tb-tube" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6d1c6"/><stop offset="0.4" stop-color="#ffffff"/><stop offset="1" stop-color="#cfc9bd"/></linearGradient><marker id="tb-m-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head muted"/></marker><marker id="tb-m-plain" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head plain"/></marker><marker id="tb-m-hot" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head hot"/></marker><marker id="tb-m-cold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head cold"/></marker><marker id="tb-m-water" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head water"/></marker><marker id="tb-m-sun" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head sun"/></marker><marker id="tb-m-plant" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head plant"/></marker><marker id="tb-m-earth" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head earth"/></marker><marker id="tb-m-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head accent"/></marker><radialGradient id="tb-m-disc" cx=".5" cy=".5" r=".5" fx=".42" fy=".36"><stop offset="0" stop-color="#ffffff"/><stop offset=".75" stop-color="#f6f8fc"/><stop offset="1" stop-color="#e6ebf5"/></radialGradient></defs></svg><!-- /viz-defs -->
 <div class="header-strip">
 <div class="course-label">Grade 9 Mathematics · Alberta Curriculum · Measurement &amp; Geometry</div>
 <h1>Circle Geometry — Answer Key</h1>
@@ -271,47 +1361,41 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <div class="label">Pre-Knowledge Check</div>
 <p><em>No marks. No correction. Be honest — write exactly what you think right now.</em></p>
 <p>Label any parts of a circle that you already know on this diagram:</p>
-<figure style="margin:12px 0;overflow-x:auto;">
-<!-- tikz: circle-vocab | r=2.5 | points=O,T,Q,R,A,P,S | features=diameter,radius,chord,arc,tangent -->
-<svg aria-label="Circle diagram showing centre O, radius OA, diameter QR, chord PS, arc PS, and tangent at T" height="350" role="img" viewbox="0 0 360 350" width="360" xmlns="http://www.w3.org/2000/svg">
-<circle class="dg-boundary" cx="175" cy="180" r="115"></circle>
-<!-- Tangent line at T — top of circle, horizontal -->
-<line class="dg-line" x1="80" x2="270" y1="65" y2="65"></line>
-<!-- Right-angle mark: radius ⊥ tangent at T -->
-<polyline class="dg-right-angle" points="183,65 183,73 175,73"></polyline>
-<!-- Diameter Q–R -->
-<line class="dg-accent" x1="60" x2="290" y1="180" y2="180"></line>
-<!-- Radius O–A -->
-<line class="dg-line" x1="175" x2="256" y1="180" y2="99"></line>
-<!-- Chord P–S (dashed) -->
-<line class="dg-dashed" x1="94" x2="256" y1="261" y2="261"></line>
-<!-- Minor arc P→S through bottom of circle (sweep=0) -->
-<path class="dg-accent" d="M 94 261 A 115 115 0 0 0 256 261"></path>
-<!-- Point markers -->
-<circle class="dg-point" cx="175" cy="180" r="2.5"></circle>
-<circle class="dg-point" cx="175" cy="65" r="2.5"></circle>
-<circle class="dg-point" cx="60" cy="180" r="2.5"></circle>
-<circle class="dg-point" cx="290" cy="180" r="2.5"></circle>
-<circle class="dg-point" cx="256" cy="99" r="2.5"></circle>
-<circle class="dg-point" cx="94" cy="261" r="2.5"></circle>
-<circle class="dg-point" cx="256" cy="261" r="2.5"></circle>
-<!-- Point labels -->
-<text class="dg-label" x="187" y="185">O</text>
-<text class="dg-label" x="43" y="184">Q</text>
-<text class="dg-label" x="295" y="184">R</text>
-<text class="dg-label" x="261" y="95">A</text>
-<text class="dg-label" x="76" y="270">P</text>
-<text class="dg-label" x="261" y="270">S</text>
-<text class="dg-label" x="165" y="59">T</text>
-<!-- Feature labels -->
-<text class="dg-label-accent" text-anchor="middle" x="175" y="170">diameter (d)</text>
-<text class="dg-label-sm" x="232" y="133">radius (r)</text>
-<text class="dg-label-sm" text-anchor="middle" x="175" y="274">chord</text>
-<text class="dg-label-accent" text-anchor="middle" x="175" y="314">arc</text>
-<text class="dg-label-sm" x="275" y="63">tangent</text>
+<!-- viz:vocab-preknow -->
+<figure class="viz tb">
+<!-- tikz: custom | vocab-preknow -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 460 322" aria-label="Circle diagram showing centre O, radius OA, diameter QR, chord PS, arc PS, and tangent at T" width="460" height="322">
+<circle cx="200" cy="172" r="110" class="dg-boundary"/>
+<path d="M136.9 262.1 A110 110 0 0 0 263.1 262.1" class="dg-accent"/>
+<line x1="105.0" y1="62.0" x2="310.0" y2="62.0" class="dg-line"/>
+<polyline points="209.3,62.0 209.3,71.3 200.0,71.3" class="dg-right-angle"/>
+<line x1="90.0" y1="172.0" x2="310.0" y2="172.0" class="dg-accent"/>
+<line x1="200.0" y1="172.0" x2="290.1" y2="108.9" class="dg-line"/>
+<line x1="136.9" y1="262.1" x2="263.1" y2="262.1" class="dg-line"/>
+<line x1="200.0" y1="172.0" x2="200.0" y2="62.0" class="dg-construction"/>
+<circle cx="200.0" cy="172.0" r="3.2" class="dg-point"/>
+<circle cx="200.0" cy="62.0" r="3.2" class="dg-point"/>
+<circle cx="90.0" cy="172.0" r="3.2" class="dg-point"/>
+<circle cx="310.0" cy="172.0" r="3.2" class="dg-point"/>
+<circle cx="290.1" cy="108.9" r="3.2" class="dg-point"/>
+<circle cx="136.9" cy="262.1" r="3.2" class="dg-point"/>
+<circle cx="263.1" cy="262.1" r="3.2" class="dg-point"/>
+<text x="200.0" y="194.0" text-anchor="middle" class="dg-pt">O</text>
+<text x="75.0" y="177.0" text-anchor="middle" class="dg-pt">Q</text>
+<text x="325.0" y="177.0" text-anchor="middle" class="dg-pt">R</text>
+<text x="302.4" y="105.3" text-anchor="middle" class="dg-pt">A</text>
+<text x="128.3" y="279.4" text-anchor="middle" class="dg-pt">P</text>
+<text x="271.7" y="279.4" text-anchor="middle" class="dg-pt">S</text>
+<text x="200.0" y="53.0" text-anchor="middle" class="dg-pt">T</text>
+<rect x="104" y="146" width="76" height="20" rx="3" class="dg-tag"/><text x="142" y="160" text-anchor="middle" class="dg-tag-answer">diameter</text>
+<rect x="244" y="152" width="58" height="18" rx="3" class="dg-tag"/><text x="273" y="165" text-anchor="middle" class="dg-tag-answer">radius</text>
+<rect x="168" y="234" width="64" height="18" rx="3" class="dg-tag"/><text x="200" y="247" text-anchor="middle" class="dg-tag-answer">chord</text>
+<rect x="168" y="292" width="64" height="20" rx="3" class="dg-tag"/><text x="200" y="306" text-anchor="middle" class="dg-tag-answer">arc</text>
+<rect x="316" y="50" width="72" height="20" rx="3" class="dg-tag"/><text x="352" y="64" text-anchor="middle" class="dg-tag-answer">tangent</text>
 </svg>
-<figcaption style="font-size:9pt;color:#544f47;margin-top:4px;">Label any circle parts you already know</figcaption>
+<figcaption>Label any circle parts you already know</figcaption>
 </figure>
+<!-- /viz:vocab-preknow -->
 <p>What do you think an "inscribed angle" is? Make your best guess.</p>
 <span class="al"></span>
 <p>What angle do you think is formed when a radius meets the edge of a circle?</p>
@@ -340,46 +1424,41 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 </table>
 <h3>Guided Notes</h3>
 <p><strong>Label each part on the diagram below:</strong></p>
-<figure style="margin:12px 0;overflow-x:auto;">
-<!-- tikz: circle-vocab | r=2.5 | points=O,T,Q,R,A,P,S | features=diameter,radius,chord,arc,tangent -->
-<svg aria-label="Circle diagram showing centre O, radius OA, diameter QR, chord PS, arc PS, and tangent at T" height="350" role="img" viewbox="0 0 360 350" width="360" xmlns="http://www.w3.org/2000/svg">
-<circle class="dg-boundary" cx="175" cy="180" r="115"></circle>
-<!-- Tangent line at T — top of circle, horizontal -->
-<line class="dg-line" x1="80" x2="270" y1="65" y2="65"></line>
-<!-- Right-angle mark: radius ⊥ tangent at T -->
-<polyline class="dg-right-angle" points="183,65 183,73 175,73"></polyline>
-<!-- Diameter Q–R -->
-<line class="dg-accent" x1="60" x2="290" y1="180" y2="180"></line>
-<!-- Radius O–A -->
-<line class="dg-line" x1="175" x2="256" y1="180" y2="99"></line>
-<!-- Chord P–S (dashed) -->
-<line class="dg-dashed" x1="94" x2="256" y1="261" y2="261"></line>
-<!-- Minor arc P→S through bottom of circle (sweep=0) -->
-<path class="dg-accent" d="M 94 261 A 115 115 0 0 0 256 261"></path>
-<!-- Point markers -->
-<circle class="dg-point" cx="175" cy="180" r="2.5"></circle>
-<circle class="dg-point" cx="175" cy="65" r="2.5"></circle>
-<circle class="dg-point" cx="60" cy="180" r="2.5"></circle>
-<circle class="dg-point" cx="290" cy="180" r="2.5"></circle>
-<circle class="dg-point" cx="256" cy="99" r="2.5"></circle>
-<circle class="dg-point" cx="94" cy="261" r="2.5"></circle>
-<circle class="dg-point" cx="256" cy="261" r="2.5"></circle>
-<!-- Point labels -->
-<text class="dg-label" x="187" y="185">O</text>
-<text class="dg-label" x="43" y="184">Q</text>
-<text class="dg-label" x="295" y="184">R</text>
-<text class="dg-label" x="261" y="95">A</text>
-<text class="dg-label" x="76" y="270">P</text>
-<text class="dg-label" x="261" y="270">S</text>
-<text class="dg-label" x="165" y="59">T</text>
-<!-- Feature labels -->
-<text class="dg-label-accent" text-anchor="middle" x="175" y="170">diameter (d)</text>
-<text class="dg-label-sm" x="232" y="133">radius (r)</text>
-<text class="dg-label-sm" text-anchor="middle" x="175" y="274">chord</text>
-<text class="dg-label-accent" text-anchor="middle" x="175" y="314">arc</text>
-<text class="dg-label-sm" x="275" y="63">tangent</text>
+<!-- viz:vocab-label -->
+<figure class="viz tb">
+<!-- tikz: custom | vocab-label -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 460 322" aria-label="Circle diagram showing centre O, radius OA, diameter QR, chord PS, arc PS, and tangent at T" width="460" height="322">
+<circle cx="200" cy="172" r="110" class="dg-boundary"/>
+<path d="M136.9 262.1 A110 110 0 0 0 263.1 262.1" class="dg-accent"/>
+<line x1="105.0" y1="62.0" x2="310.0" y2="62.0" class="dg-line"/>
+<polyline points="209.3,62.0 209.3,71.3 200.0,71.3" class="dg-right-angle"/>
+<line x1="90.0" y1="172.0" x2="310.0" y2="172.0" class="dg-accent"/>
+<line x1="200.0" y1="172.0" x2="290.1" y2="108.9" class="dg-line"/>
+<line x1="136.9" y1="262.1" x2="263.1" y2="262.1" class="dg-line"/>
+<line x1="200.0" y1="172.0" x2="200.0" y2="62.0" class="dg-construction"/>
+<circle cx="200.0" cy="172.0" r="3.2" class="dg-point"/>
+<circle cx="200.0" cy="62.0" r="3.2" class="dg-point"/>
+<circle cx="90.0" cy="172.0" r="3.2" class="dg-point"/>
+<circle cx="310.0" cy="172.0" r="3.2" class="dg-point"/>
+<circle cx="290.1" cy="108.9" r="3.2" class="dg-point"/>
+<circle cx="136.9" cy="262.1" r="3.2" class="dg-point"/>
+<circle cx="263.1" cy="262.1" r="3.2" class="dg-point"/>
+<text x="200.0" y="194.0" text-anchor="middle" class="dg-pt">O</text>
+<text x="75.0" y="177.0" text-anchor="middle" class="dg-pt">Q</text>
+<text x="325.0" y="177.0" text-anchor="middle" class="dg-pt">R</text>
+<text x="302.4" y="105.3" text-anchor="middle" class="dg-pt">A</text>
+<text x="128.3" y="279.4" text-anchor="middle" class="dg-pt">P</text>
+<text x="271.7" y="279.4" text-anchor="middle" class="dg-pt">S</text>
+<text x="200.0" y="53.0" text-anchor="middle" class="dg-pt">T</text>
+<rect x="104" y="146" width="76" height="20" rx="3" class="dg-tag"/><text x="142" y="160" text-anchor="middle" class="dg-tag-answer">diameter</text>
+<rect x="244" y="152" width="58" height="18" rx="3" class="dg-tag"/><text x="273" y="165" text-anchor="middle" class="dg-tag-answer">radius</text>
+<rect x="168" y="234" width="64" height="18" rx="3" class="dg-tag"/><text x="200" y="247" text-anchor="middle" class="dg-tag-answer">chord</text>
+<rect x="168" y="292" width="64" height="20" rx="3" class="dg-tag"/><text x="200" y="306" text-anchor="middle" class="dg-tag-answer">arc</text>
+<rect x="316" y="50" width="72" height="20" rx="3" class="dg-tag"/><text x="352" y="64" text-anchor="middle" class="dg-tag-answer">tangent</text>
 </svg>
+<figcaption>A circle and its parts. Write the name of each part in its box.</figcaption>
 </figure>
+<!-- /viz:vocab-label -->
 <p>Fill in the labels: P, Q, O, R, T, and the two unlabelled lines.</p>
 <p><strong>Fill in the blanks:</strong></p>
 <p>The <strong>centre</strong> of a circle is the point <span class="ak-fill">equidistant</span> from all points on the circle.</p>
@@ -399,47 +1478,64 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <p>A <strong>central angle</strong> has its vertex at the <span class="ak-fill">centre</span> of the circle.</p>
 <p>An <strong>inscribed angle</strong> has its vertex on the <span class="ak-fill">circle itself (circumference)</span> of the circle, with both sides being chords.</p>
 <p>Draw an example of each inside this circle:</p>
-<figure style="margin:12px 0;overflow-x:auto;">
-<!-- tikz: central-inscribed-angle | r=2.2 | A=210 | B=330 | P=90 -->
-<svg aria-label="Central angle versus inscribed angle" height="195" role="img" viewbox="0 0 380 195" width="380" xmlns="http://www.w3.org/2000/svg">
-<circle class="dg-boundary" cx="95" cy="95" r="68"></circle>
-<circle class="dg-point" cx="95" cy="95" r="2.5"></circle>
-<text class="dg-label" x="99" y="91">O</text>
-<line class="dg-accent" x1="95" x2="39.3" y1="95" y2="56.0"></line>
-<line class="dg-accent" x1="95" x2="150.7" y1="95" y2="56.0"></line>
-<path class="dg-accent" d="M 39.3,56.0 A 68,68 0 0,1 150.7,56.0"></path>
-<text class="dg-label-accent" text-anchor="middle" x="95" y="179">central angle</text>
-<text class="dg-label-sm" font-weight="700" text-anchor="middle" x="95" y="191">Circle A</text>
-<text class="dg-label" x="31.299999999999997" y="56.0">A</text>
-<text class="dg-label" x="153.7" y="56.0">B</text>
-<circle class="dg-boundary" cx="285" cy="95" r="68"></circle>
-<circle class="dg-point" cx="287.4" cy="163.0" r="2.5"></circle>
-<line class="dg-accent" x1="287.4" x2="229.3" y1="163.0" y2="56.0"></line>
-<line class="dg-accent" x1="287.4" x2="340.7" y1="163.0" y2="56.0"></line>
-<path class="dg-accent" d="M 229.3,56.0 A 68,68 0 0,1 340.7,56.0"></path>
-<text class="dg-label-accent" text-anchor="middle" x="285" y="179">inscribed angle</text>
-<text class="dg-label-sm" font-weight="700" text-anchor="middle" x="285" y="191">Circle B</text>
-<text class="dg-label" x="221.3" y="56.0">A</text>
-<text class="dg-label" x="343.7" y="56.0">B</text>
-<text class="dg-label" x="296" y="162">C</text>
+<!-- viz:central-inscribed -->
+<figure class="viz tb">
+<!-- tikz: custom | central-inscribed -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 400 222" aria-label="Two circles, A and B, each with its centre marked, for drawing a central angle and an inscribed angle" width="400" height="222">
+<circle cx="100" cy="96" r="70" class="dg-boundary"/>
+<circle cx="300" cy="96" r="70" class="dg-boundary"/>
+<circle cx="100.0" cy="96.0" r="2.8" class="dg-point"/>
+<circle cx="300.0" cy="96.0" r="2.8" class="dg-point"/>
+
+<line x1="100.0" y1="96.0" x2="42.7" y2="55.8" class="dg-accent"/>
+<line x1="100.0" y1="96.0" x2="157.3" y2="55.8" class="dg-accent"/>
+<path d="M100 96 L85.3 85.7 A18 18 0 0 1 114.7 85.7 Z" class="dg-ang-w accent"/><path d="M85.3 85.7 A18 18 0 0 1 114.7 85.7" class="dg-ang accent"/>
+<path d="M157.3 55.8 A70 70 0 0 0 42.7 55.8" class="dg-accent"/>
+<circle cx="42.7" cy="55.8" r="3.2" class="dg-point"/>
+<circle cx="157.3" cy="55.8" r="3.2" class="dg-point"/>
+<text x="30.4" y="52.2" text-anchor="middle" class="dg-pt">A</text>
+<text x="169.6" y="52.2" text-anchor="middle" class="dg-pt">B</text>
+<line x1="297.6" y1="166.0" x2="242.7" y2="55.8" class="dg-accent"/>
+<line x1="297.6" y1="166.0" x2="357.3" y2="55.8" class="dg-accent"/>
+<path d="M297.6 166 L288.7 148.1 A20 20 0 0 1 307.1 148.4 Z" class="dg-ang-w accent"/><path d="M288.7 148.1 A20 20 0 0 1 307.1 148.4" class="dg-ang accent"/>
+<path d="M357.3 55.8 A70 70 0 0 0 242.7 55.8" class="dg-accent"/>
+<circle cx="242.7" cy="55.8" r="3.2" class="dg-point"/>
+<circle cx="357.3" cy="55.8" r="3.2" class="dg-point"/>
+<circle cx="297.6" cy="166.0" r="3.2" class="dg-point"/>
+<text x="230.4" y="52.2" text-anchor="middle" class="dg-pt">A</text>
+<text x="369.6" y="52.2" text-anchor="middle" class="dg-pt">B</text>
+<text x="297.0" y="185.9" text-anchor="middle" class="dg-pt">C</text>
+
+<text x="107.0" y="112.0" class="dg-pt">O</text>
+<text x="307.0" y="90.0" class="dg-pt">O</text>
+<text x="100.0" y="202.0" text-anchor="middle" class="dg-label-accent">central angle</text>
+<text x="100.0" y="216.0" text-anchor="middle" class="dg-label-sm">Circle A</text>
+<text x="300.0" y="202.0" text-anchor="middle" class="dg-label-accent">inscribed angle</text>
+<text x="300.0" y="216.0" text-anchor="middle" class="dg-label-sm">Circle B</text>
 </svg>
+<figcaption>Circle A and Circle B, each with its centre marked.</figcaption>
 </figure>
+<!-- /viz:central-inscribed -->
 <p>The <strong>arc intercepted by an angle</strong> is the arc that lies <span class="ak-fill">inside (between the arms of)</span> the angle.</p>
 <p><strong>Tangent:</strong></p>
 <p>A <strong>tangent</strong> is a line that touches the circle at exactly <span class="ak-fill">one</span> point (the point of tangency).</p>
 <!-- viz:tangent-secant -->
-<figure class="viz">
+<figure class="viz tb">
 <!-- tikz: line-circle-positions | secant | tangent | miss -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 182" aria-label="Three copies of a circle. A line crossing it at two points. A tangent line touching it at exactly one, a blank, point. A line that misses the circle." width="480" height="182">
-<circle cx="80" cy="80" r="50" class="dg-boundary"/><line x1="10" y1="60" x2="150" y2="110" class="dg-line"/>
-<circle cx="35.6" cy="64.1" r="3.5" class="dg-point"/><circle cx="125.3" cy="96.2" r="3.5" class="dg-point"/>
-<circle cx="240" cy="80" r="50" class="dg-boundary"/><line x1="170" y1="30" x2="310" y2="30" class="dg-accent"/>
-<circle cx="240" cy="30" r="4" class="dg-point-accent"/>
-<circle cx="400" cy="80" r="50" class="dg-boundary"/><line x1="330" y1="16" x2="470" y2="10" class="dg-dashed"/>
-<text x="80" y="152" text-anchor="middle" class="dg-label">crosses at 2 points</text>
-<text x="240" y="152" text-anchor="middle" class="dg-label-accent">tangent: touches at</text>
-<rect x="214" y="156" width="52" height="18" rx="3" class="dg-tag"/><text x="240" y="169" text-anchor="middle" class="dg-tag-answer">one</text>
-<text x="400" y="152" text-anchor="middle" class="dg-label">misses: 0 points</text>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 184" aria-label="Three copies of a circle. A line crossing it at two points. A tangent line touching it at exactly one, a blank, point. A line that misses the circle." width="480" height="184">
+<circle cx="80" cy="82" r="50" class="dg-boundary"/>
+<line x1="10.0" y1="62.0" x2="150.0" y2="112.0" class="dg-line"/>
+<circle cx="31.5" cy="69.7" r="3.2" class="dg-point"/>
+<circle cx="125.3" cy="103.2" r="3.2" class="dg-point"/>
+<circle cx="240" cy="82" r="50" class="dg-boundary"/>
+<line x1="170.0" y1="32.0" x2="310.0" y2="32.0" class="dg-accent"/>
+<circle cx="240.0" cy="32.0" r="4" class="dg-point-accent"/>
+<circle cx="400" cy="82" r="50" class="dg-boundary"/>
+<line x1="330.0" y1="18.0" x2="470.0" y2="12.0" class="dg-dashed"/>
+<text x="80.0" y="154.0" text-anchor="middle" class="dg-label">crosses at 2 points</text>
+<text x="240.0" y="154.0" text-anchor="middle" class="dg-label-accent">tangent: touches at</text>
+<rect x="212" y="160" width="56" height="20" rx="3" class="dg-tag"/><text x="240" y="174" text-anchor="middle" class="dg-tag-answer">one</text>
+<text x="400.0" y="154.0" text-anchor="middle" class="dg-label">misses: 0 points</text>
 </svg>
 <figcaption>A line can cross a circle twice, touch it once, or miss it. Only the line that touches at a single point is a tangent.</figcaption>
 </figure>
@@ -451,10 +1547,28 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <p>A <strong>major arc</strong> is the <span class="ak-fill">longer</span> arc (more than a semicircle).</p>
 <p>A <strong>semicircle</strong> is exactly <span class="ak-fill">half</span> of the circle — it is the arc cut by a <span class="ak-fill">diameter</span>.</p>
 <!-- viz:arc-types -->
-<figure class="viz">
+<figure class="viz tb">
 <!-- tikz: arc-types | minor | major | semicircle -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 200" aria-label="Left circle: points A and B split it into a short minor arc at the bottom and a long major arc around the top. Right circle: a diameter splits it into two semicircles, each exactly half the circle." width="480" height="200">
-<circle cx="120" cy="100" r="70" class="dg-boundary"/><path d="M54.2 123.9 A70 70 0 0 0 173.6 145.0" class="dg-accent"/><path d="M173.6 145.0 A70 70 0 1 0 54.2 123.9" class="dg-arrow hot"/><circle cx="54.2" cy="123.9" r="3" class="dg-point"/><circle cx="173.6" cy="145.0" r="3" class="dg-point"/><text x="46.2" y="127.9" text-anchor="end" class="dg-label">A</text><text x="181.6" y="149.0" class="dg-label">B</text><text x="120" y="190" text-anchor="middle" class="dg-label-accent">minor arc AB</text><text x="120" y="20" text-anchor="middle" class="dg-label-hot">major arc</text><circle cx="360" cy="100" r="70" class="dg-boundary"/><path d="M430.0 100.0 A70 70 0 0 0 290.0 100.0" class="dg-accent"/><path d="M290.0 100.0 A70 70 0 0 0 430.0 100.0" class="dg-arrow plant"/><line x1="290" y1="100" x2="430" y2="100" class="dg-line"/><circle cx="360" cy="100" r="2.5" class="dg-point"/><text x="360" y="20" text-anchor="middle" class="dg-label-accent">semicircle</text><text x="360" y="190" text-anchor="middle" class="dg-label-plant">semicircle</text><text x="360" y="94" text-anchor="middle" class="dg-label-sm">diameter</text>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 204" aria-label="Left circle: points A and B split it into a short minor arc at the bottom and a long major arc around the top. Right circle: a diameter splits it into two semicircles, each exactly half the circle." width="480" height="204">
+<circle cx="120" cy="102" r="70" class="dg-boundary"/>
+<path d="M54.2 125.9 A70 70 0 0 0 173.6 147.0" class="dg-accent"/>
+<path d="M173.6 147.0 A70 70 0 1 0 54.2 125.9" class="dg-accent hot"/>
+<circle cx="54.2" cy="125.9" r="3.2" class="dg-point"/>
+<circle cx="173.6" cy="147.0" r="3.2" class="dg-point"/>
+<text x="40.1" y="136.1" text-anchor="middle" class="dg-pt">A</text>
+<text x="185.1" y="161.6" text-anchor="middle" class="dg-pt">B</text>
+<text x="120.0" y="196.0" text-anchor="middle" class="dg-label-accent">minor arc AB</text>
+<text x="120.0" y="20.0" text-anchor="middle" class="dg-label-hot">major arc</text>
+<circle cx="360" cy="102" r="70" class="dg-boundary"/>
+<path d="M430.0 102.0 A70 70 0 0 0 290.0 102.0" class="dg-accent"/>
+<path d="M290.0 102.0 A70 70 0 0 0 430.0 102.0" class="dg-accent plant"/>
+<line x1="290.0" y1="102.0" x2="430.0" y2="102.0" class="dg-line"/>
+<circle cx="290.0" cy="102.0" r="3.2" class="dg-point"/>
+<circle cx="430.0" cy="102.0" r="3.2" class="dg-point"/>
+<circle cx="360.0" cy="102.0" r="2.8" class="dg-point"/>
+<text x="360.0" y="20.0" text-anchor="middle" class="dg-label-accent">semicircle</text>
+<text x="360.0" y="196.0" text-anchor="middle" class="dg-label-plant">semicircle</text>
+<text x="360.0" y="93.0" text-anchor="middle" class="dg-label-sm">diameter</text>
 </svg>
 <figcaption>Two points split a circle into two arcs: the shorter minor arc and the longer major arc. When the points are the ends of a diameter, both arcs are semicircles.</figcaption>
 </figure>
@@ -491,23 +1605,29 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <h3>Guided Notes</h3>
 <p><strong>Property 1: The Perpendicular from the Centre Bisects the Chord</strong></p>
 <p>If a line from the <span class="ak-fill">centre</span> of a circle is perpendicular to a chord, then it <span class="ak-fill">bisects</span> that chord (cuts it into two equal halves).</p>
-<figure style="margin:12px 0;overflow-x:auto;">
-<!-- tikz: chord-bisector | r=2.2 | chord-depth=1.0 -->
-<svg aria-label="Chord perpendicular bisector theorem" height="210" role="img" viewbox="0 0 220 210" width="220" xmlns="http://www.w3.org/2000/svg">
-<circle class="dg-boundary" cx="110" cy="105" r="80"></circle>
-<line class="dg-construction" x1="110" x2="47.0" y1="105" y2="154.3"></line>
-<line class="dg-construction" x1="110" x2="173.0" y1="105" y2="154.3"></line>
-<line class="dg-line" x1="47.0" x2="173.0" y1="154.3" y2="154.3"></line>
-<line class="dg-accent" x1="110" x2="110.0" y1="105" y2="154.3"></line>
-<polyline class="dg-right-angle" points="103.0,154.3 103.0,161.3 110.0,161.3"></polyline>
-<circle class="dg-point" cx="110" cy="105" r="2.5"></circle>
-<circle class="dg-point" cx="110.0" cy="154.3" r="2.5"></circle>
-<text class="dg-label" x="35.0" y="158.3">A</text>
-<text class="dg-label" x="177.0" y="158.3">B</text>
-<text class="dg-label" text-anchor="middle" x="106.0" y="170.3">M</text>
-<text class="dg-label" x="115" y="100">O</text>
+<!-- viz:chord-bisector -->
+<figure class="viz tb">
+<!-- tikz: custom | chord-bisector -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 230 204" aria-label="Chord perpendicular bisector theorem" width="230" height="204">
+<circle cx="115" cy="100" r="80" class="dg-boundary"/>
+<line x1="115.0" y1="100.0" x2="52.0" y2="149.3" class="dg-construction"/>
+<line x1="115.0" y1="100.0" x2="178.0" y2="149.3" class="dg-construction"/>
+<line x1="52.0" y1="149.3" x2="178.0" y2="149.3" class="dg-line"/>
+<line x1="115.0" y1="100.0" x2="115.0" y2="149.3" class="dg-accent"/>
+<polyline points="115.0,141.9 122.4,141.9 122.4,149.3" class="dg-right-angle"/>
+<line x1="83.5" y1="155.3" x2="83.5" y2="143.3" class="dg-tickm plain"/><line x1="146.5" y1="155.3" x2="146.5" y2="143.3" class="dg-tickm plain"/>
+<circle cx="115.0" cy="100.0" r="3.2" class="dg-point"/>
+<circle cx="115.0" cy="149.3" r="3.2" class="dg-point"/>
+<circle cx="52.0" cy="149.3" r="3.2" class="dg-point"/>
+<circle cx="178.0" cy="149.3" r="3.2" class="dg-point"/>
+<text x="45.0" y="155.3" text-anchor="end" class="dg-pt">A</text>
+<text x="185.0" y="155.3" class="dg-pt">B</text>
+<text x="115.0" y="170.3" text-anchor="middle" class="dg-pt">M</text>
+<text x="122.0" y="94.0" class="dg-pt">O</text>
 </svg>
+<figcaption>Segment OM meets chord AB at M, making a right angle.</figcaption>
 </figure>
+<!-- /viz:chord-bisector -->
 <p>In symbols: If OM ⊥ AB, then AM = <span class="ak-fill">MB</span></p>
 <p><strong>The converse is also true:</strong> If a line from the centre bisects a chord, then it is <span class="ak-fill">perpendicular</span> to the chord.</p>
 <div class="worked-example">
@@ -524,23 +1644,31 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <p>OM = <span class="ak-fill">6</span> cm</p>
 </div>
 <!-- viz:chord-triangle -->
-<figure class="viz">
+<figure class="viz tb">
 <!-- tikz: chord-right-triangle | r=10 | chord=16 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 440 220" aria-label="A circle with centre O and radius 10. A chord AB of 16 centimetres has midpoint M. OM is perpendicular to AB. Triangle OMA has hypotenuse OA equal to 10, AM equal to 8, and OM equal to a blank, 6." width="440" height="220">
-<circle cx="150" cy="110" r="90" class="dg-boundary"/>
-<line x1="78" y1="164" x2="222" y2="164" class="dg-line"/>
-<polygon points="150,110 150,164 78,164" class="dg-fill-accent"/>
-<line x1="150" y1="110" x2="78" y2="164" class="dg-accent"/>
-<line x1="150" y1="110" x2="150" y2="164" class="dg-line"/>
-<polyline points="142,164 142,156 150,156" class="dg-right-angle"/>
-<circle cx="150" cy="110" r="2.5" class="dg-point"/>
-<text x="156" y="104" class="dg-label">O</text><text x="66" y="168" class="dg-label">A</text><text x="227" y="168" class="dg-label">B</text><text x="146" y="180" class="dg-label">M</text>
-<text x="104" y="133" text-anchor="end" class="dg-label-accent">10</text>
-<text x="114" y="180" text-anchor="middle" class="dg-label">8</text>
-<text x="290" y="70" class="dg-math">OA² = OM² + AM²</text>
-<text x="290" y="96" class="dg-math">100 = OM² + 64</text>
-<text x="290" y="130" class="dg-math">OM =</text>
-<rect x="336" y="112" width="40" height="24" rx="3" class="dg-tag"/><text x="356" y="128" text-anchor="middle" class="dg-tag-answer">6</text>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 450 214" aria-label="A circle with centre O and radius 10. A chord AB of 16 centimetres has midpoint M. OM is perpendicular to AB. Triangle OMA has hypotenuse OA equal to 10, AM equal to 8, and OM equal to a blank, 6." width="450" height="214">
+<circle cx="150" cy="104" r="90" class="dg-boundary"/>
+<polygon points="150.0,104.0 150.0,158.0 78.0,158.0" class="dg-fill-accent"/>
+<line x1="78.0" y1="158.0" x2="222.0" y2="158.0" class="dg-line"/>
+<line x1="150.0" y1="104.0" x2="78.0" y2="158.0" class="dg-accent"/>
+<line x1="150.0" y1="104.0" x2="150.0" y2="158.0" class="dg-line"/>
+<polyline points="141.3,158.0 141.3,149.3 150.0,149.3" class="dg-right-angle"/>
+<line x1="114.0" y1="164.0" x2="114.0" y2="152.0" class="dg-tickm plain"/>
+<line x1="186.0" y1="164.0" x2="186.0" y2="152.0" class="dg-tickm plain"/>
+<circle cx="150.0" cy="104.0" r="3.2" class="dg-point"/>
+<circle cx="78.0" cy="158.0" r="3.2" class="dg-point"/>
+<circle cx="222.0" cy="158.0" r="3.2" class="dg-point"/>
+<circle cx="150.0" cy="158.0" r="3.2" class="dg-point"/>
+<text x="158.0" y="98.0" class="dg-pt">O</text>
+<text x="70.0" y="163.0" text-anchor="end" class="dg-pt">A</text>
+<text x="230.0" y="163.0" class="dg-pt">B</text>
+<text x="150.0" y="179.0" text-anchor="middle" class="dg-pt">M</text>
+<text x="107.0" y="126.0" text-anchor="end" class="dg-label-accent">10</text>
+<text x="102.0" y="178.0" text-anchor="middle" class="dg-label">8</text>
+<text x="296.0" y="70.0" class="dg-math">OA² = OM² + AM²</text>
+<text x="296.0" y="98.0" class="dg-math">100 = OM² + 64</text>
+<text x="296.0" y="132.0" class="dg-math">OM =</text>
+<rect x="344" y="113" width="44" height="26" rx="3" class="dg-tag"/><text x="366" y="130" text-anchor="middle" class="dg-tag-answer">6</text>
 </svg>
 <figcaption>The perpendicular from O cuts the 16 cm chord into two 8 cm halves and makes a right triangle. The radius OA is the hypotenuse because it is opposite the right angle at M.</figcaption>
 </figure>
@@ -553,30 +1681,37 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <li>If two chords are <span class="ak-fill">equal</span> in length, then they are <span class="ak-fill">equidistant (the same distance)</span> from the centre.</li>
 <li>Conversely: if two chords are the same distance from the centre, they are <span class="ak-fill">equal</span>.</li>
 </ul>
-<!-- tikz: equal-chords-equidistant | r=95 | d=55 | chords=AB,CD | perpendiculars=d1,d2 -->
-<figure style="margin:12px 0;overflow-x:auto;">
-<svg aria-label="Equal chords AB and CD are equidistant from centre O" height="250" role="img" viewbox="0 0 360 250" width="360" xmlns="http://www.w3.org/2000/svg">
-<circle class="dg-boundary" cx="180" cy="125" r="95"></circle>
-<circle class="dg-point" cx="180" cy="125" r="2.5"></circle>
-<line class="dg-line" x1="125" x2="125" y1="48" y2="202"></line>
-<line class="dg-line" x1="235" x2="235" y1="48" y2="202"></line>
-<line class="dg-accent" x1="180" x2="125" y1="125" y2="125"></line>
-<line class="dg-accent" x1="180" x2="235" y1="125" y2="125"></line>
-<polyline class="dg-right-angle" points="125,115 135,115 135,125"></polyline>
-<polyline class="dg-right-angle" points="235,115 225,115 225,125"></polyline>
-<circle class="dg-point" cx="125" cy="125" r="2.5"></circle>
-<circle class="dg-point" cx="235" cy="125" r="2.5"></circle>
-<line class="dg-line" x1="118" x2="132" y1="88" y2="92"></line>
-<line class="dg-line" x1="228" x2="242" y1="88" y2="92"></line>
-<text class="dg-label" text-anchor="end" x="173" y="120">O</text>
-<text class="dg-label" text-anchor="end" x="115" y="52">A</text>
-<text class="dg-label" text-anchor="end" x="115" y="207">B</text>
-<text class="dg-label" x="244" y="52">C</text>
-<text class="dg-label" x="244" y="207">D</text>
-<text class="dg-label-accent" text-anchor="middle" x="152" y="117">d₁</text>
-<text class="dg-label-accent" text-anchor="middle" x="208" y="117">d₂</text>
+<!-- viz:equal-chords -->
+<figure class="viz tb">
+<!-- tikz: custom | equal-chords -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 360 250" aria-label="Equal chords AB and CD are equidistant from centre O" width="360" height="250">
+<circle cx="180" cy="125" r="95" class="dg-boundary"/>
+<line x1="125.0" y1="47.5" x2="125.0" y2="202.5" class="dg-line"/>
+<line x1="235.0" y1="47.5" x2="235.0" y2="202.5" class="dg-line"/>
+<line x1="180.0" y1="125.0" x2="125.0" y2="125.0" class="dg-accent"/>
+<line x1="180.0" y1="125.0" x2="235.0" y2="125.0" class="dg-accent"/>
+<polyline points="125.0,118.2 131.8,118.2 131.8,125.0" class="dg-right-angle"/>
+<polyline points="228.2,125.0 228.2,118.2 235.0,118.2" class="dg-right-angle"/>
+<line x1="119.0" y1="77.5" x2="131.0" y2="77.5" class="dg-tickm plain"/>
+<line x1="229.0" y1="77.5" x2="241.0" y2="77.5" class="dg-tickm plain"/>
+<circle cx="180.0" cy="125.0" r="2.8" class="dg-point"/>
+<circle cx="125.0" cy="125.0" r="2.8" class="dg-point"/>
+<circle cx="235.0" cy="125.0" r="2.8" class="dg-point"/>
+<circle cx="125.0" cy="47.5" r="3.2" class="dg-point"/>
+<circle cx="125.0" cy="202.5" r="3.2" class="dg-point"/>
+<circle cx="235.0" cy="47.5" r="3.2" class="dg-point"/>
+<circle cx="235.0" cy="202.5" r="3.2" class="dg-point"/>
+<text x="180.0" y="145.0" text-anchor="middle" class="dg-pt">O</text>
+<text x="119.0" y="45.5" text-anchor="end" class="dg-pt">A</text>
+<text x="119.0" y="214.5" text-anchor="end" class="dg-pt">B</text>
+<text x="241.0" y="45.5" class="dg-pt">C</text>
+<text x="241.0" y="214.5" class="dg-pt">D</text>
+<text x="152.5" y="117.0" text-anchor="middle" class="dg-label-accent">d₁</text>
+<text x="207.5" y="117.0" text-anchor="middle" class="dg-label-accent">d₂</text>
 </svg>
+<figcaption>Tick marks show which chords match in length. d₁ and d₂ are the distances from the centre O to each chord, measured at right angles.</figcaption>
 </figure>
+<!-- /viz:equal-chords -->
 <p>If AB = CD, then d₁ = <span class="ak-fill">d₂</span></p>
 <div class="misconception">
 <div class="label">Misconception</div>
@@ -586,14 +1721,23 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <p>Think of it: as you move a horizontal chord up toward the top of a circle, it gets shorter and shorter until it disappears at the edge. The closer to the middle, the longer.</p>
 </div>
 <!-- viz:chord-distance -->
-<figure class="viz">
+<figure class="viz tb">
 <!-- tikz: chord-lengths | distances=0,35,62,82 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 440 215" aria-label="A circle with four horizontal chords. The diameter through the centre is the longest. Chords further from the centre get shorter and shorter. Closer to the centre means longer." width="440" height="215">
-<circle cx="130" cy="110" r="90" class="dg-boundary"/><circle cx="130" cy="110" r="2.5" class="dg-point"/><line x1="40.0" y1="110" x2="220.0" y2="110" class="dg-accent"/><line x1="47.1" y1="75" x2="212.9" y2="75" class="dg-line"/><text x="220.9" y="79" class="dg-label-sm">shorter</text><line x1="64.8" y1="48" x2="195.2" y2="48" class="dg-line"/><text x="203.2" y="52" class="dg-label-sm">shorter still</text><line x1="92.9" y1="28" x2="167.1" y2="28" class="dg-line"/><text x="175.1" y="32" class="dg-label-sm">shortest</text>
-<text x="228" y="114" class="dg-label-accent">diameter: longest</text>
-<line x1="20" y1="110" x2="20.0" y2="34.9" class="dg-arrow muted thin"/><polygon points="20.0,30.0 23.6,36.0 16.4,36.0" class="dg-head muted"/>
-<text x="20" y="22" text-anchor="middle" class="dg-label-sm">further</text>
-<text x="300" y="196" text-anchor="middle" class="dg-label">closer to the centre = longer chord</text>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 460 212" aria-label="A circle with four horizontal chords. The diameter through the centre is the longest. Chords further from the centre get shorter and shorter. Closer to the centre means longer." width="460" height="212">
+<circle cx="130" cy="112" r="90" class="dg-boundary"/>
+<circle cx="130.0" cy="112.0" r="2.8" class="dg-point"/>
+<line x1="40.0" y1="112.0" x2="220.0" y2="112.0" class="dg-accent"/>
+<line x1="47.1" y1="77.0" x2="212.9" y2="77.0" class="dg-line"/>
+<text x="226.9" y="81.5" class="dg-label-sm">shorter</text>
+<line x1="64.8" y1="50.0" x2="195.2" y2="50.0" class="dg-line"/>
+<text x="209.2" y="54.5" class="dg-label-sm">shorter still</text>
+<line x1="92.9" y1="30.0" x2="167.1" y2="30.0" class="dg-line"/>
+<text x="181.1" y="34.5" class="dg-label-sm">shortest</text>
+<line x1="130.0" y1="112.0" x2="130.0" y2="30.0" class="dg-construction"/>
+<text x="228.0" y="117.0" class="dg-label-accent">diameter: longest</text>
+<line x1="20" y1="112" x2="20.0" y2="36.9" class="dg-arrow muted thin"/><polygon points="20.0,32.0 23.6,38.0 16.4,38.0" class="dg-head muted"/>
+<text x="20.0" y="23.0" text-anchor="middle" class="dg-label-sm">further</text>
+<text x="310.0" y="200.0" text-anchor="middle" class="dg-label">closer to the centre = longer chord</text>
 </svg>
 <figcaption>Chords drawn further and further from the centre. The diameter, through the centre, is the longest; each chord further away is shorter, until it shrinks to a single point at the edge.</figcaption>
 </figure>
@@ -646,40 +1790,35 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <p><strong>The Inscribed Angle Theorem:</strong></p>
 <p>The inscribed angle is <span class="ak-fill">half</span> the central angle that subtends the same arc.</p>
 <p>Inscribed angle = (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>) × Central angle<br/>OR: Central angle = <span class="ak-fill">2</span> × Inscribed angle</p>
-<figure style="margin:10px 0;overflow-x:auto;">
-<!-- tikz: inscribed-central-angle | r=2.5 | points=P,O,A,B | chord=AB | inscribed=P | central=O -->
-<svg aria-label="Inscribed angle APB with vertex P on the circle, and central angle AOB at centre O, both subtending arc AB." height="224" role="img" viewbox="0 0 240 224" width="240" xmlns="http://www.w3.org/2000/svg">
-<!-- Circle -->
-<circle class="dg-boundary" cx="120" cy="115" r="80"></circle>
-<!-- Points: A at left on circle, B at right on circle, P at top, O at centre -->
-<!-- A at 210°: (120 + 80*cos(210°), 115 + 80*sin(210°)) = (120-69.3, 115+40) = (50.7, 155) -->
-<!-- B at 330°: (120 + 80*cos(330°), 115 + 80*sin(330°)) = (120+69.3, 115-40) = (189.3, 75) -->
-<!-- Wait — let's place A bottom-left and B bottom-right so arc AB is at bottom -->
-<!-- A at 220°: (120+80*cos(220°), 115+80*sin(220°)) = (120-61.3, 115+51.4) = (58.7, 166.4) -->
-<!-- B at 320°: (120+80*cos(320°), 115+80*sin(320°)) = (120+61.3, 115+51.4) = (181.3, 166.4) -->
-<!-- P at 90° (top): (120, 115-80) = (120, 35) -->
-<!-- Inscribed angle: P to A and P to B -->
-<line class="dg-accent" x1="120" x2="58.7" y1="35" y2="166.4"></line>
-<line class="dg-accent" x1="120" x2="181.3" y1="35" y2="166.4"></line>
-<!-- Central angle: O to A and O to B -->
-<line class="dg-line" x1="120" x2="58.7" y1="115" y2="166.4"></line>
-<line class="dg-line" x1="120" x2="181.3" y1="115" y2="166.4"></line>
-<!-- Arc AB (minor arc at bottom, sweep-flag=0) -->
-<path class="dg-dashed" d="M 58.7 166.4 A 80 80 0 0 1 181.3 166.4"></path>
-<!-- Points -->
-<circle class="dg-point" cx="120" cy="35" r="2.5"></circle>
-<circle class="dg-point" cx="120" cy="115" r="2.5"></circle>
-<circle class="dg-point" cx="58.7" cy="166.4" r="2.5"></circle>
-<circle class="dg-point" cx="181.3" cy="166.4" r="2.5"></circle>
-<!-- Labels -->
-<text class="dg-label" x="113" y="28">P</text>
-<text class="dg-label" x="125" y="112">O</text>
-<text class="dg-label" x="42" y="172">A</text>
-<text class="dg-label" x="185" y="172">B</text>
-<!-- Angle labels -->
-<text class="dg-label-sm" text-anchor="middle" x="120" y="214">central angle AOB = 2 × inscribed angle APB</text>
+<!-- viz:inscribed-central -->
+<figure class="viz tb">
+<!-- tikz: custom | inscribed-central -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 260 226" aria-label="Inscribed angle APB with vertex P on the circle, and central angle AOB at centre O, both subtending arc AB." width="260" height="226">
+<circle cx="120" cy="112" r="80" class="dg-boundary"/>
+<path d="M58.7 163.4 A80 80 0 0 0 181.3 163.4" class="dg-dashed"/>
+<line x1="120.0" y1="32.0" x2="58.7" y2="163.4" class="dg-accent"/>
+<line x1="120.0" y1="32.0" x2="181.3" y2="163.4" class="dg-accent"/>
+<line x1="120.0" y1="112.0" x2="58.7" y2="163.4" class="dg-line"/>
+<line x1="120.0" y1="112.0" x2="181.3" y2="163.4" class="dg-line"/>
+<path d="M120 32 L130.1 53.7 A24 24 0 0 1 109.9 53.7 Z" class="dg-ang-w accent"/><path d="M130.1 53.7 A24 24 0 0 1 109.9 53.7" class="dg-ang accent"/>
+<path d="M120 112 L132.3 122.3 A16 16 0 0 1 107.7 122.3 Z" class="dg-ang-w plain"/><path d="M132.3 122.3 A16 16 0 0 1 107.7 122.3" class="dg-ang plain"/>
+
+<text x="120.0" y="74.0" text-anchor="middle" class="dg-label-accent">50°</text>
+<text x="120.0" y="145.0" text-anchor="middle" class="dg-label">100°</text>
+
+<circle cx="120.0" cy="32.0" r="3.2" class="dg-point"/>
+<circle cx="120.0" cy="112.0" r="3.2" class="dg-point"/>
+<circle cx="58.7" cy="163.4" r="3.2" class="dg-point"/>
+<circle cx="181.3" cy="163.4" r="3.2" class="dg-point"/>
+<text x="120.0" y="22.0" text-anchor="middle" class="dg-pt">P</text>
+<text x="128.0" y="108.0" class="dg-pt">O</text>
+<text x="47.2" y="178.1" text-anchor="middle" class="dg-pt">A</text>
+<text x="192.8" y="178.1" text-anchor="middle" class="dg-pt">B</text>
+<text x="130.0" y="220.0" text-anchor="middle" class="dg-label-sm">central angle AOB = 2 × inscribed angle APB</text>
 </svg>
+<figcaption>Inscribed angle APB and central angle AOB stand on the same arc AB. The drawing is exact, so you can measure both angles with a protractor.</figcaption>
 </figure>
+<!-- /viz:inscribed-central -->
 <p>Angle AOB (central) = <span class="ak-fill">2 × APB (measure it)</span>°<br/>Angle APB (inscribed, same arc AB) = <span class="ak-fill">½ × AOB</span>°</p>
 <div class="worked-example">
 <p><strong>Worked Example 1:</strong></p>
@@ -700,35 +1839,31 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <p>If angles APB and AQB are both inscribed in the same circle and subtend the same arc AB, then:</p>
 <p>APB = AQB = (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>) × AOB</p>
 <p>No matter where P and Q are on the major arc, the inscribed angle is always the <span class="ak-fill">same</span> size.</p>
-<figure style="margin:10px 0;overflow-x:auto;">
-<!-- tikz: equal-inscribed-angles | r=2.5 | points=P,Q,A,B | chord=AB | inscribed=P,Q -->
-<svg aria-label="Two inscribed angles APB and AQB both subtending arc AB from points P and Q on the major arc. Both angles are equal." height="224" role="img" viewbox="0 0 240 224" width="240" xmlns="http://www.w3.org/2000/svg">
-<!-- Circle -->
-<circle class="dg-boundary" cx="120" cy="115" r="80"></circle>
-<!-- A at 220°, B at 320° (same as above) -->
-<!-- P at 100°: (120+80*cos(100°), 115+80*sin(100°)) = (120-13.9, 115-78.8) = (106.1, 36.2) -->
-<!-- Q at 70°: (120+80*cos(70°), 115+80*sin(70°)) = (120+27.4, 115-75.2) = (147.4, 39.8) -->
-<!-- Inscribed angle from P -->
-<line class="dg-accent" x1="106.1" x2="58.7" y1="36.2" y2="166.4"></line>
-<line class="dg-accent" x1="106.1" x2="181.3" y1="36.2" y2="166.4"></line>
-<!-- Inscribed angle from Q -->
-<line class="dg-line" x1="147.4" x2="58.7" y1="39.8" y2="166.4"></line>
-<line class="dg-line" x1="147.4" x2="181.3" y1="39.8" y2="166.4"></line>
-<!-- Arc AB (minor arc at bottom) -->
-<path class="dg-dashed" d="M 58.7 166.4 A 80 80 0 0 1 181.3 166.4"></path>
-<!-- Points -->
-<circle class="dg-point" cx="106.1" cy="36.2" r="2.5"></circle>
-<circle class="dg-point" cx="147.4" cy="39.8" r="2.5"></circle>
-<circle class="dg-point" cx="58.7" cy="166.4" r="2.5"></circle>
-<circle class="dg-point" cx="181.3" cy="166.4" r="2.5"></circle>
-<!-- Labels -->
-<text class="dg-label" x="98" y="30">P</text>
-<text class="dg-label" x="151" y="34">Q</text>
-<text class="dg-label" x="42" y="172">A</text>
-<text class="dg-label" x="185" y="172">B</text>
-<text class="dg-label-sm" text-anchor="middle" x="120" y="214">“APB = “AQB (same arc AB)</text>
+<!-- viz:same-arc -->
+<figure class="viz tb">
+<!-- tikz: custom | same-arc -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 260 226" aria-label="Two inscribed angles APB and AQB both subtending arc AB from points P and Q on the major arc. Both angles are equal." width="260" height="226">
+<circle cx="120" cy="112" r="80" class="dg-boundary"/>
+<path d="M58.7 163.4 A80 80 0 0 0 181.3 163.4" class="dg-dashed"/>
+<line x1="106.1" y1="33.2" x2="58.7" y2="163.4" class="dg-accent"/>
+<line x1="106.1" y1="33.2" x2="181.3" y2="163.4" class="dg-accent"/>
+<line x1="147.4" y1="36.8" x2="58.7" y2="163.4" class="dg-arrow hot"/>
+<line x1="147.4" y1="36.8" x2="181.3" y2="163.4" class="dg-arrow hot"/>
+<path d="M106.1 33.2 L119.1 55.7 A26 26 0 0 1 97.2 57.6 Z" class="dg-ang-w accent"/><path d="M119.1 55.7 A26 26 0 0 1 97.2 57.6" class="dg-ang accent"/>
+<path d="M147.4 36.8 L152.6 56.1 A20 20 0 0 1 135.9 53.2 Z" class="dg-ang-w hot"/><path d="M152.6 56.1 A20 20 0 0 1 135.9 53.2" class="dg-ang hot"/>
+<circle cx="106.1" cy="33.2" r="3.2" class="dg-point"/>
+<circle cx="147.4" cy="36.8" r="3.2" class="dg-point"/>
+<circle cx="58.7" cy="163.4" r="3.2" class="dg-point"/>
+<circle cx="181.3" cy="163.4" r="3.2" class="dg-point"/>
+<text x="103.5" y="23.4" text-anchor="middle" class="dg-pt">P</text>
+<text x="152.5" y="27.7" text-anchor="middle" class="dg-pt">Q</text>
+<text x="47.2" y="178.1" text-anchor="middle" class="dg-pt">A</text>
+<text x="192.8" y="178.1" text-anchor="middle" class="dg-pt">B</text>
+<text x="130.0" y="220.0" text-anchor="middle" class="dg-label-sm">∠APB = ∠AQB (same arc AB)</text>
 </svg>
+<figcaption>P and Q are two different points on the major arc. Both angles stand on arc AB.</figcaption>
 </figure>
+<!-- /viz:same-arc -->
 <p>APB = AQB = <span class="ak-fill">½ × AOB</span></p>
 <div class="misconception">
 <div class="label">Misconception</div>
@@ -740,16 +1875,32 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <p><strong>Angles in a semicircle:</strong></p>
 <p>If AB is a diameter, then any inscribed angle APB = <span class="ak-fill">90</span>°.</p>
 <!-- viz:angle-in-semicircle -->
-<figure class="viz">
+<figure class="viz tb">
 <!-- tikz: thales | diameter=AB | points=3 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 440 230" aria-label="A circle with diameter AB. Three different points on the circle each form a triangle with A and B, and every angle at those points is a right angle, a blank, 90 degrees." width="440" height="230">
-<circle cx="150" cy="120" r="90" class="dg-boundary"/><line x1="60.0" y1="120.0" x2="240.0" y2="120.0" class="dg-accent"/><line x1="60.0" y1="120.0" x2="92.1" y2="51.1" class="dg-line"/><line x1="240.0" y1="120.0" x2="92.1" y2="51.1" class="dg-line"/><circle cx="92.1" cy="51.1" r="3" class="dg-point-accent"/><line x1="60.0" y1="120.0" x2="150.0" y2="30.0" class="dg-line"/><line x1="240.0" y1="120.0" x2="150.0" y2="30.0" class="dg-line"/><circle cx="150.0" cy="30.0" r="3" class="dg-point-accent"/><line x1="60.0" y1="120.0" x2="218.9" y2="62.1" class="dg-line"/><line x1="240.0" y1="120.0" x2="218.9" y2="62.1" class="dg-line"/><circle cx="218.9" cy="62.1" r="3" class="dg-point-accent"/><polyline points="88.3,59.2 96.5,63.0 100.3,54.9" class="dg-right-angle"/><polyline points="143.6,36.4 150.0,42.7 156.4,36.4" class="dg-right-angle"/><polyline points="210.5,65.2 213.6,73.7 222.0,70.6" class="dg-right-angle"/>
-<circle cx="150" cy="120" r="2.5" class="dg-point"/>
-<text x="48.0" y="124.0" class="dg-label">A</text><text x="245.0" y="124.0" class="dg-label">B</text>
-<text x="150" y="136" text-anchor="middle" class="dg-label-sm">diameter: central angle 180°</text>
-<text x="290" y="90" class="dg-label">every angle at P =</text>
-<rect x="392" y="76" width="44" height="20" rx="3" class="dg-tag"/><text x="414" y="90" text-anchor="middle" class="dg-tag-answer">90°</text>
-<text x="290" y="116" class="dg-label-sm">half of 180°</text>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 484 226" aria-label="A circle with diameter AB. Three different points on the circle each form a triangle with A and B, and every angle at those points is a right angle, a blank, 90 degrees." width="484" height="226">
+<circle cx="150" cy="122" r="90" class="dg-boundary"/>
+<line x1="60.0" y1="122.0" x2="240.0" y2="122.0" class="dg-accent"/>
+<line x1="60.0" y1="122.0" x2="92.1" y2="53.1" class="dg-line"/>
+<line x1="240.0" y1="122.0" x2="92.1" y2="53.1" class="dg-line"/>
+<polygon points="92.1,53.1 99.4,56.5 96.0,63.8 88.7,60.4" class="dg-ang-w accent"/><polyline points="99.4,56.5 96.0,63.8 88.7,60.4" class="dg-right-angle"/>
+<line x1="60.0" y1="122.0" x2="150.0" y2="32.0" class="dg-line"/>
+<line x1="240.0" y1="122.0" x2="150.0" y2="32.0" class="dg-line"/>
+<polygon points="150,32 155.7,37.7 150.0,43.4 144.3,37.7" class="dg-ang-w accent"/><polyline points="155.7,37.7 150.0,43.4 144.3,37.7" class="dg-right-angle"/>
+<line x1="60.0" y1="122.0" x2="218.9" y2="64.1" class="dg-line"/>
+<line x1="240.0" y1="122.0" x2="218.9" y2="64.1" class="dg-line"/>
+<polygon points="218.9,64.1 221.7,71.7 214.1,74.4 211.3,66.9" class="dg-ang-w accent"/><polyline points="221.7,71.7 214.1,74.4 211.3,66.9" class="dg-right-angle"/>
+<circle cx="92.1" cy="53.1" r="3.6" class="dg-point-accent"/>
+<circle cx="150.0" cy="32.0" r="3.6" class="dg-point-accent"/>
+<circle cx="218.9" cy="64.1" r="3.6" class="dg-point-accent"/>
+<circle cx="150.0" cy="122.0" r="2.8" class="dg-point"/>
+<circle cx="60.0" cy="122.0" r="3.2" class="dg-point"/>
+<circle cx="240.0" cy="122.0" r="3.2" class="dg-point"/>
+<text x="45.0" y="127.0" text-anchor="middle" class="dg-pt">A</text>
+<text x="255.0" y="127.0" text-anchor="middle" class="dg-pt">B</text>
+<text x="150.0" y="140.0" text-anchor="middle" class="dg-label-sm">diameter: central angle 180°</text>
+<text x="290.0" y="92.0" class="dg-label">every angle at P =</text>
+<rect x="428" y="77" width="46" height="20" rx="3" class="dg-tag"/><text x="451" y="91" text-anchor="middle" class="dg-tag-answer">90°</text>
+<text x="290.0" y="118.0" class="dg-label-sm">half of 180°</text>
 </svg>
 <figcaption>Wherever P sits on the circle, the angle it makes with the ends of a diameter is a right angle. The central angle is 180°, so the inscribed angle is half of that.</figcaption>
 </figure>
@@ -763,19 +1914,36 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <em>(Hint: the major arc central angle = 360° − 110° = <span class="ak-fill">250</span>°)</em><br/>
     AQB = <span class="ak-fill">250</span>°/2 = <span class="ak-fill">125</span>°</p>
 <!-- viz:major-arc-angle -->
-<figure class="viz">
+<figure class="viz tb">
 <!-- tikz: inscribed-both-arcs | central=110 | major=250 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 460 220" aria-label="Circle with chord endpoints A and B. The central angle on the minor arc is 110 degrees. P on the major arc sees the minor arc at 55 degrees. Q on the minor arc sees the major arc: 360 minus 110 is 250, so angle AQB is a blank, 125 degrees." width="460" height="220">
-<circle cx="150" cy="110" r="85" class="dg-boundary"/><path d="M80.4 158.8 A85 85 0 0 0 219.6 158.8" class="dg-accent"/><line x1="150" y1="110" x2="80.4" y2="158.8" class="dg-dashed"/><line x1="150" y1="110" x2="219.6" y2="158.8" class="dg-dashed"/><line x1="135.2" y1="26.3" x2="80.4" y2="158.8" class="dg-line"/><line x1="135.2" y1="26.3" x2="219.6" y2="158.8" class="dg-line"/><line x1="150.0" y1="195.0" x2="80.4" y2="158.8" class="dg-arrow hot"/><line x1="150.0" y1="195.0" x2="219.6" y2="158.8" class="dg-arrow hot"/><circle cx="80.4" cy="158.8" r="3" class="dg-point"/><circle cx="219.6" cy="158.8" r="3" class="dg-point"/><circle cx="135.2" cy="26.3" r="3" class="dg-point"/><circle cx="150.0" cy="195.0" r="3" class="dg-point"/><circle cx="150.0" cy="110.0" r="3" class="dg-point"/>
-<text x="68.4" y="162.8" class="dg-label">A</text><text x="224.6" y="162.8" class="dg-label">B</text>
-<text x="131.2" y="18.3" class="dg-label">P</text><text x="146.0" y="211.0" class="dg-label-hot">Q</text>
-<text x="156" y="104" class="dg-label">O</text>
-<text x="150" y="140" text-anchor="middle" class="dg-label-accent">110°</text>
-<text x="270" y="60" class="dg-label">P sees the minor arc: 110 ÷ 2 = 55°</text>
-<text x="270" y="110" class="dg-label-hot">Q sees the major arc:</text>
-<text x="270" y="128" class="dg-label">360 − 110 = 250°</text>
-<text x="270" y="152" class="dg-label">angle AQB = 250 ÷ 2 =</text>
-<rect x="400" y="138" width="50" height="20" rx="3" class="dg-tag"/><text x="425" y="152" text-anchor="middle" class="dg-tag-answer">125°</text>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 530 226" aria-label="Circle with chord endpoints A and B. The central angle on the minor arc is 110 degrees. P on the major arc sees the minor arc at 55 degrees. Q on the minor arc sees the major arc: 360 minus 110 is 250, so angle AQB is a blank, 125 degrees." width="530" height="226">
+<circle cx="150" cy="112" r="85" class="dg-boundary"/>
+<path d="M80.4 160.8 A85 85 0 0 0 219.6 160.8" class="dg-accent"/>
+<line x1="150.0" y1="112.0" x2="80.4" y2="160.8" class="dg-dashed"/>
+<line x1="150.0" y1="112.0" x2="219.6" y2="160.8" class="dg-dashed"/>
+<line x1="135.2" y1="28.3" x2="80.4" y2="160.8" class="dg-line"/>
+<line x1="135.2" y1="28.3" x2="219.6" y2="160.8" class="dg-line"/>
+<line x1="150.0" y1="197.0" x2="80.4" y2="160.8" class="dg-arrow hot"/>
+<line x1="150.0" y1="197.0" x2="219.6" y2="160.8" class="dg-arrow hot"/>
+<path d="M150 112 L164.7 122.3 A18 18 0 0 1 135.3 122.3 Z" class="dg-ang-w accent"/><path d="M164.7 122.3 A18 18 0 0 1 135.3 122.3" class="dg-ang accent"/>
+<path d="M135.2 28.3 L147.0 46.9 A22 22 0 0 1 126.8 48.6 Z" class="dg-ang-w accent"/><path d="M147.0 46.9 A22 22 0 0 1 126.8 48.6" class="dg-ang accent"/>
+<path d="M150 197 L135.8 189.6 A16 16 0 0 1 164.2 189.6 Z" class="dg-ang-w hot"/><path d="M135.8 189.6 A16 16 0 0 1 164.2 189.6" class="dg-ang hot"/>
+<circle cx="80.4" cy="160.8" r="3.2" class="dg-point"/>
+<circle cx="219.6" cy="160.8" r="3.2" class="dg-point"/>
+<circle cx="135.2" cy="28.3" r="3.2" class="dg-point"/>
+<circle cx="150.0" cy="197.0" r="3.2" class="dg-point"/>
+<circle cx="150.0" cy="112.0" r="3.2" class="dg-point"/>
+<text x="68.1" y="174.4" text-anchor="middle" class="dg-pt">A</text>
+<text x="231.9" y="174.4" text-anchor="middle" class="dg-pt">B</text>
+<text x="132.6" y="18.5" text-anchor="middle" class="dg-pt">P</text>
+<text x="150.0" y="217.0" text-anchor="middle" class="dg-pt hot">Q</text>
+<text x="158.0" y="106.0" class="dg-pt">O</text>
+<text x="150.0" y="150.0" text-anchor="middle" class="dg-label-accent">110°</text>
+<text x="272.0" y="60.0" class="dg-label">P sees the minor arc: 110 ÷ 2 = 55°</text>
+<text x="272.0" y="108.0" class="dg-label-hot">Q sees the major arc:</text>
+<text x="272.0" y="128.0" class="dg-label">360 − 110 = 250°</text>
+<text x="272.0" y="154.0" class="dg-label">angle AQB = 250 ÷ 2 =</text>
+<rect x="446" y="139" width="54" height="20" rx="3" class="dg-tag"/><text x="473" y="153" text-anchor="middle" class="dg-tag-answer">125°</text>
 </svg>
 <figcaption>The same chord AB, seen from both sides. P on the major arc subtends the minor arc (110° at the centre, 55° at P). Q on the minor arc subtends the major arc (250° at the centre, 125° at Q).</figcaption>
 </figure>
@@ -812,24 +1980,27 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <h3>Guided Notes</h3>
 <p><strong>Tangent-Radius Property:</strong></p>
 <p>A tangent to a circle is <span class="ak-fill">perpendicular</span> to the radius at the point of tangency.</p>
-<figure style="margin:12px 0;overflow-x:auto;">
-<!-- tikz: tangent-radius | r=2.0 | points=O,T,P | show-hypotenuse=true -->
-<svg aria-label="Tangent-radius perpendicularity at point of tangency" height="185" role="img" viewbox="0 0 240 185" width="240" xmlns="http://www.w3.org/2000/svg">
-<circle class="dg-boundary" cx="115" cy="85" r="65"></circle>
-<line class="dg-accent" x1="115" x2="115" y1="85" y2="150"></line>
-<line class="dg-line" x1="50" x2="205" y1="150" y2="150"></line>
-<polyline class="dg-right-angle" points="115,143 122,143 122,150"></polyline>
-<line class="dg-construction" x1="115" x2="195" y1="85" y2="150"></line>
-<circle class="dg-point" cx="115" cy="85" r="2.5"></circle>
-<circle class="dg-point" cx="115" cy="150" r="2.5"></circle>
-<circle class="dg-point" cx="195" cy="150" r="2.5"></circle>
-<text class="dg-label" x="120" y="80">O</text>
-<text class="dg-label" x="111" y="164">T</text>
-<text class="dg-label" x="199" y="154">P</text>
-<text class="dg-label-accent" x="121" y="118">r</text>
-<text class="dg-label-sm" text-anchor="middle" x="155" y="142">PT</text>
+<!-- viz:tangent-radius -->
+<figure class="viz tb">
+<!-- tikz: custom | tangent-radius -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 250 181" aria-label="Tangent-radius perpendicularity at point of tangency" width="250" height="181">
+<circle cx="110" cy="82" r="65" class="dg-boundary"/>
+<line x1="35.0" y1="147.0" x2="216.0" y2="147.0" class="dg-line"/>
+<line x1="110.0" y1="82.0" x2="110.0" y2="147.0" class="dg-accent"/>
+<line x1="110.0" y1="82.0" x2="200.0" y2="147.0" class="dg-construction"/>
+<polygon points="110,147 110.0,138.9 118.1,138.9 118.1,147.0" class="dg-ang-w accent"/><polyline points="110.0,138.9 118.1,138.9 118.1,147.0" class="dg-right-angle"/>
+<circle cx="110.0" cy="82.0" r="3.2" class="dg-point"/>
+<circle cx="110.0" cy="147.0" r="3.2" class="dg-point"/>
+<circle cx="200.0" cy="147.0" r="3.2" class="dg-point"/>
+<text x="117.0" y="76.0" class="dg-pt">O</text>
+<text x="110.0" y="168.0" text-anchor="middle" class="dg-pt">T</text>
+<text x="200.0" y="168.0" text-anchor="middle" class="dg-pt">P</text>
+<text x="118.0" y="120.0" class="dg-label-accent">r</text>
+<text x="155.0" y="164.0" text-anchor="middle" class="dg-label-sm">PT</text>
 </svg>
+<figcaption>The tangent touches the circle at T. OT is a radius, and P is a point on the tangent outside the circle.</figcaption>
 </figure>
+<!-- /viz:tangent-radius -->
 <p>Angle OTP = <span class="ak-fill">90</span>°</p>
 <p>This means: if you know a line is tangent to a circle, you automatically know the angle at the point of tangency is <span class="ak-fill">90°</span>.</p>
 <p><strong>Applying the Pythagorean theorem:</strong></p>
@@ -837,24 +2008,28 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <div class="worked-example">
 <p><strong>Worked Example:</strong></p>
 <p>A tangent PT touches a circle with centre O and radius 5 cm. The external point P is 13 cm from the centre. Find the length of the tangent PT.</p>
-<figure style="margin:12px 0;overflow-x:auto;">
-<!-- tikz: tangent-radius | r=2.0 | points=O,T,P | show-hypotenuse=true -->
-<svg aria-label="Tangent-radius perpendicularity at point of tangency" height="185" role="img" viewbox="0 0 240 185" width="240" xmlns="http://www.w3.org/2000/svg">
-<circle class="dg-boundary" cx="115" cy="85" r="65"></circle>
-<line class="dg-accent" x1="115" x2="115" y1="85" y2="150"></line>
-<line class="dg-line" x1="50" x2="205" y1="150" y2="150"></line>
-<polyline class="dg-right-angle" points="115,143 122,143 122,150"></polyline>
-<line class="dg-construction" x1="115" x2="195" y1="85" y2="150"></line>
-<circle class="dg-point" cx="115" cy="85" r="2.5"></circle>
-<circle class="dg-point" cx="115" cy="150" r="2.5"></circle>
-<circle class="dg-point" cx="195" cy="150" r="2.5"></circle>
-<text class="dg-label" x="120" y="80">O</text>
-<text class="dg-label" x="111" y="164">T</text>
-<text class="dg-label" x="199" y="154">P</text>
-<text class="dg-label-accent" x="121" y="118">r</text>
-<text class="dg-label-sm" text-anchor="middle" x="155" y="142">PT</text>
+<!-- viz:tangent-worked -->
+<figure class="viz tb">
+<!-- tikz: custom | tangent-worked -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 274 166" aria-label="Tangent PT touches a circle with centre O at T. Radius OT is 5 centimetres, OP is 13 centimetres, and PT is unknown." width="274" height="166">
+<circle cx="80" cy="72" r="60" class="dg-boundary"/>
+<line x1="10.0" y1="132.0" x2="240.0" y2="132.0" class="dg-line"/>
+<line x1="80.0" y1="72.0" x2="80.0" y2="132.0" class="dg-accent"/>
+<line x1="80.0" y1="72.0" x2="224.0" y2="132.0" class="dg-construction"/>
+<polygon points="80,132 80.0,123.9 88.1,123.9 88.1,132.0" class="dg-ang-w accent"/><polyline points="80.0,123.9 88.1,123.9 88.1,132.0" class="dg-right-angle"/>
+<circle cx="80.0" cy="72.0" r="3.2" class="dg-point"/>
+<circle cx="80.0" cy="132.0" r="3.2" class="dg-point"/>
+<circle cx="224.0" cy="132.0" r="3.2" class="dg-point"/>
+<text x="87.0" y="66.0" class="dg-pt">O</text>
+<text x="80.0" y="153.0" text-anchor="middle" class="dg-pt">T</text>
+<text x="224.0" y="153.0" text-anchor="middle" class="dg-pt">P</text>
+<text x="72.0" y="108.0" text-anchor="end" class="dg-label-accent">5 cm</text>
+<text x="172.0" y="94.0" text-anchor="start" class="dg-label-sm">OP = 13 cm</text>
+<text x="152.0" y="150.0" text-anchor="middle" class="dg-label-sm">PT</text>
 </svg>
+<figcaption>The worked example drawn to scale. The radius meets the tangent at 90° at T, so OP is the hypotenuse of right triangle OTP.</figcaption>
 </figure>
+<!-- /viz:tangent-worked -->
 <p>Right angle is at <span class="ak-fill">T</span> (tangent ⊥ radius)</p>
 <p>Hypotenuse = PO = <span class="ak-fill">13 cm</span></p>
 <p>PT<sup>2</sup> = PO<sup>2</sup> − OT<sup>2</sup></p>
@@ -866,63 +2041,66 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <span class="ak-fill">PO is opposite the right angle at T, so it is the longest side</span>
 <p><strong>Equal tangents from an external point:</strong></p>
 <p>From any external point P, two tangents can be drawn to a circle. The two tangent segments (from P to each point of tangency) are <span class="ak-fill">equal</span> in length.</p>
-<figure style="margin:10px 0;overflow-x:auto;">
-<!-- tikz: equal-tangents | r=2.0 | points=O,T1,T2,P | show-right-angles=true -->
-<svg aria-label="Two equal tangent segments PT1 and PT2 drawn from external point P to circle with centre O." height="200" role="img" viewbox="0 0 260 200" width="260" xmlns="http://www.w3.org/2000/svg">
-<!-- Circle centred at (90,100) r=55. External point P at (220,100).
-             OP = 130. Tangent length = sqrt(130²−55²) ≈ 117.8.
-             Angle at O = arctan(117.8/55) ≈ 65°.
-             T1 (below): (90+55·cos65°, 100+55·sin65°) = (113.2, 149.8)
-             T2 (above): (90+55·cos65°, 100−55·sin65°) = (113.2, 50.2) -->
-<circle class="dg-boundary" cx="90" cy="100" r="55"></circle>
-<circle class="dg-point" cx="90" cy="100" r="2.5"></circle>
-<text class="dg-label" x="72" y="104">O</text>
-<!-- External point P -->
-<circle class="dg-point" cx="220" cy="100" r="2.5"></circle>
-<text class="dg-label" x="225" y="104">P</text>
-<!-- Tangent lines: P to T1 (below) and P to T2 (above) -->
-<line class="dg-accent" x1="220" x2="113.2" y1="100" y2="149.8"></line>
-<line class="dg-accent" x1="220" x2="113.2" y1="100" y2="50.2"></line>
-<!-- Radii O to T1 and O to T2 -->
-<line class="dg-line" x1="90" x2="113.2" y1="100" y2="149.8"></line>
-<line class="dg-line" x1="90" x2="113.2" y1="100" y2="50.2"></line>
-<!-- Right angle marks at T1(113.2,149.8):
-             unit toward P = (0.907,−0.423), unit toward O = (−0.422,−0.906) -->
-<polyline class="dg-right-angle" points="110.3,143.5 116.6,140.5 119.5,146.8"></polyline>
-<!-- Right angle mark at T2(113.2,50.2):
-             unit toward P = (0.907,0.423), unit toward O = (−0.422,0.906) -->
-<polyline class="dg-right-angle" points="110.3,56.5 116.6,59.5 119.5,53.2"></polyline>
-<!-- Tangent point dots -->
-<circle class="dg-point" cx="113.2" cy="149.8" r="2.5"></circle>
-<circle class="dg-point" cx="113.2" cy="50.2" r="2.5"></circle>
-<!-- Labels -->
-<text class="dg-label" x="118" y="158">T₁</text>
-<text class="dg-label" x="118" y="46">T₂</text>
-<!-- Midpoint labels on tangent segments -->
-<text class="dg-label-accent" text-anchor="middle" x="170" y="133">PT₁</text>
-<text class="dg-label-accent" text-anchor="middle" x="170" y="66">PT₂</text>
+<!-- viz:equal-tangents -->
+<figure class="viz tb">
+<!-- tikz: custom | equal-tangents -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 262 202" aria-label="Two equal tangent segments PT1 and PT2 drawn from external point P to circle with centre O." width="262" height="202">
+<circle cx="90" cy="100" r="55" class="dg-boundary"/>
+<line x1="90.0" y1="100.0" x2="220.0" y2="100.0" class="dg-construction"/>
+<line x1="220.0" y1="100.0" x2="113.3" y2="149.8" class="dg-accent"/>
+<line x1="220.0" y1="100.0" x2="113.3" y2="50.2" class="dg-accent"/>
+<line x1="90.0" y1="100.0" x2="113.3" y2="149.8" class="dg-line"/>
+<line x1="90.0" y1="100.0" x2="113.3" y2="50.2" class="dg-line"/>
+<polygon points="113.3,149.8 110.4,143.6 116.6,140.7 119.5,146.9" class="dg-ang-w accent"/><polyline points="110.4,143.6 116.6,140.7 119.5,146.9" class="dg-right-angle"/>
+<polygon points="113.3,50.2 119.5,53.1 116.6,59.3 110.4,56.4" class="dg-ang-w accent"/><polyline points="119.5,53.1 116.6,59.3 110.4,56.4" class="dg-right-angle"/>
+<line x1="166.2" y1="118.5" x2="171.2" y2="129.4" class="dg-tickm accent"/><line x1="162.1" y1="120.4" x2="167.1" y2="131.3" class="dg-tickm accent"/><line x1="171.2" y1="70.6" x2="166.2" y2="81.5" class="dg-tickm accent"/><line x1="167.1" y1="68.7" x2="162.1" y2="79.6" class="dg-tickm accent"/>
+<circle cx="90.0" cy="100.0" r="3.2" class="dg-point"/>
+<circle cx="220.0" cy="100.0" r="3.2" class="dg-point"/>
+<circle cx="113.3" cy="149.8" r="3.2" class="dg-point"/>
+<circle cx="113.3" cy="50.2" r="3.2" class="dg-point"/>
+<text x="82.0" y="105.0" text-anchor="end" class="dg-pt">O</text>
+<text x="228.0" y="105.0" class="dg-pt">P</text>
+<text x="111.3" y="170.8" class="dg-pt">T₁</text>
+<text x="111.3" y="40.2" class="dg-pt">T₂</text>
+<text x="172.6" y="146.9" text-anchor="middle" class="dg-label-accent">PT₁</text>
+<text x="172.6" y="63.1" text-anchor="middle" class="dg-label-accent">PT₂</text>
 </svg>
+<figcaption>Two tangents from the same outside point P touch the circle at T₁ and T₂.</figcaption>
 </figure>
+<!-- /viz:equal-tangents -->
 <p>PT₁ = <span class="ak-fill">PT₂</span></p>
 <p><strong>Alberta context:</strong><br/>
     A circular fountain in a Calgary park has radius 3 m. A park bench sits 5 m from the fountain's centre. Two straight paths run from the bench, each touching the fountain at exactly one point. How long is each path from the bench to its point of tangency?</p>
 <p><em>(Hint: sketch the bench as an external point, draw the radius to the point of tangency, then use the tangent-radius property.)</em></p>
 <!-- viz:fountain-paths -->
-<figure class="viz">
+<figure class="viz tb">
 <!-- tikz: tangents-from-point | r=3 | d=5 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 440 220" aria-label="A circular fountain with centre O and radius 3 metres. A bench B is 5 metres from O. Two straight paths from the bench just touch the fountain at T1 and T2, each meeting the radius at a right angle. The path length is unknown." width="440" height="220">
-<circle cx="120" cy="110" r="78" class="dg-fill-water"/>
-<line x1="120" y1="110" x2="250" y2="110" class="dg-dashed"/>
-<line x1="120" y1="110" x2="166.8" y2="47.6" class="dg-line"/><line x1="120" y1="110" x2="166.8" y2="172.4" class="dg-line"/>
-<line x1="250" y1="110" x2="166.8" y2="47.6" class="dg-accent"/><line x1="250" y1="110" x2="166.8" y2="172.4" class="dg-accent"/>
-<polyline points="162.0,54.0 168.4,58.8 173.2,52.4" class="dg-right-angle"/><polyline points="162.0,166.0 168.4,161.2 173.2,167.6" class="dg-right-angle"/>
-<circle cx="120" cy="110" r="2.5" class="dg-point"/><rect x="244" y="104" width="12" height="12" class="dg-fill-earth"/>
-<text x="112" y="114" text-anchor="end" class="dg-label">O</text>
-<text x="260" y="114" class="dg-label">B (bench)</text>
-<text x="160.8" y="39.6" class="dg-label">T₁</text><text x="160.8" y="190.4" class="dg-label">T₂</text>
-<text x="137.4" y="78.8" text-anchor="end" class="dg-label-sm">3 m</text>
-<text x="185.0" y="126" text-anchor="middle" class="dg-label-sm">5 m</text>
-<text x="216.4" y="72.8" class="dg-label-accent">path = ? m</text>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 450 224" aria-label="A circular fountain with centre O and radius 3 metres. A bench B is 5 metres from O. Two straight paths from the bench just touch the fountain at T1 and T2, each meeting the radius at a right angle. The path length is unknown." width="450" height="224">
+<rect x="4" y="4" width="442" height="216" rx="6" class="dg-grass"/>
+<line x1="252.0" y1="112.0" x2="168.8" y2="49.6" class="dg-gravel"/>
+<line x1="252.0" y1="112.0" x2="168.8" y2="174.4" class="dg-gravel"/>
+<circle cx="122" cy="112" r="78" class="dg-g-stone"/>
+<circle cx="122" cy="112" r="71" class="dg-g-water"/>
+<circle cx="122" cy="112" r="9" class="dg-g-stone"/>
+<line x1="122.0" y1="112.0" x2="252.0" y2="112.0" class="dg-dashed"/>
+<line x1="122.0" y1="112.0" x2="168.8" y2="49.6" class="dg-line"/>
+<line x1="122.0" y1="112.0" x2="168.8" y2="174.4" class="dg-line"/>
+<line x1="252.0" y1="112.0" x2="168.8" y2="49.6" class="dg-accent"/>
+<line x1="252.0" y1="112.0" x2="168.8" y2="174.4" class="dg-accent"/>
+<polyline points="174.8,54.1 170.3,60.0 164.3,55.6" class="dg-right-angle"/>
+<polyline points="164.3,168.4 170.3,164.0 174.8,169.9" class="dg-right-angle"/>
+<rect x="246" y="97" width="12" height="30" rx="2" class="dg-g-wood"/>
+<rect x="258" y="97" width="4" height="30" rx="1" class="dg-g-wood"/>
+<circle cx="122.0" cy="112.0" r="2.8" class="dg-point"/>
+<circle cx="168.8" cy="49.6" r="3.2" class="dg-point"/>
+<circle cx="168.8" cy="174.4" r="3.2" class="dg-point"/>
+<text x="110.0" y="117.0" text-anchor="end" class="dg-pt">O</text>
+<text x="268.0" y="117.0" class="dg-pt">B (bench)</text>
+<text x="162.8" y="41.6" text-anchor="end" class="dg-pt">T₁</text>
+<text x="162.8" y="194.4" text-anchor="end" class="dg-pt">T₂</text>
+<text x="139.4" y="80.8" text-anchor="end" class="dg-label-sm">3 m</text>
+<text x="226.0" y="130.0" text-anchor="middle" class="dg-label-sm">5 m</text>
+<text x="222.4" y="74.8" class="dg-label-accent">path = ? m</text>
 </svg>
 <figcaption>The sketch the hint describes. Each path touches the fountain at one point, where it meets the radius at 90°. That gives a right triangle with hypotenuse OB = 5 m.</figcaption>
 </figure>

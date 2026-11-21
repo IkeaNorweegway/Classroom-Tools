@@ -3,7 +3,7 @@
 Each visual is one fragment file in notes-packages/_visuals/<unit>/NN-name.html:
 
     ---
-    section: Section 3            text inside the section's <h2> (search starts there)
+    section: Section 3            text inside the section's <h2> (search starts there); (top) = before the first <h2>
     anchor: <strong>Changes of state:</strong>   text on the line to insert at
     where: after                  before | after | after:<text> (first line at/after the anchor holding <text>)
     ak_anchor: ...                optional: different anchor for the answer key
@@ -14,7 +14,10 @@ Each visual is one fragment file in notes-packages/_visuals/<unit>/NN-name.html:
       ... dg-* classed elements ...
       <tag x="10" y="20" w="70">answer</tag>      blank label box; answer shows only in the key
       <arrow x1="0" y1="0" x2="50" y2="0" kind="hot"/>   line + arrowhead (kind: plain|accent|hot|cold|muted)
-      <mapbase name="europe-canada" x="0" y="0"/>   land layer from notes-packages/_visuals/_maps/ (scripts/build_social_maps.py)
+      <mapbase name="europe-canada" x="0" y="0"/>
+      <angle at="x,y" from="x,y" to="x,y" r="16"/>   angle arc + soft wedge between two rays (right="1" square, n="2" double, reflex="1")
+      <ticks x1="0" y1="0" x2="50" y2="0" n="1"/>    equal-length tick marks across a segment's midpoint
+      <keyonly>...</keyonly>                        drawn in the answer key only   land layer from notes-packages/_visuals/_maps/ (scripts/build_social_maps.py)
     </svg>
 
 A body may instead be one or more `@viz` lines (Math 7/8/9 diagram library, scripts/Math8Viz.pm and
@@ -406,6 +409,42 @@ def _marker(i, col):
     return (f'<marker id="tb-m-{i}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" '
             f'markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head {i}"/></marker>')
 
+# ── Math textbook layer (Math 9, on top of TB_CSS): bolder lines, bigger haloed labels, angle arcs, tick marks ──
+TB_MATH_CSS = """
+.viz.tb svg text { paint-order: stroke; stroke: #fff; stroke-width: 3.5px; stroke-linejoin: round; }
+.viz.tb svg .dg-label-white, .viz.tb svg .dg-tag-answer { stroke: none; }
+.viz.tb svg .dg-boundary { stroke: #24211d; stroke-width: 2.1px; fill: url(#tb-m-disc); filter: none; }
+.viz.tb svg .dg-line { stroke: #24211d; stroke-width: 2px; stroke-linecap: round; }
+.viz.tb svg .dg-accent { stroke-width: 3px; stroke-linecap: round; }
+.viz.tb svg .dg-dashed { stroke: #4a453e; stroke-width: 1.8px; stroke-dasharray: 6 4; }
+.viz.tb svg .dg-construction { stroke-width: 1.3px; stroke-dasharray: 3 3; }
+.viz.tb svg .dg-right-angle { stroke: #24211d; stroke-width: 1.5px; }
+.viz.tb svg .dg-point { fill: #24211d; } .viz.tb svg .dg-point-accent { stroke: #fff; stroke-width: 1px; }
+.viz.tb svg .dg-label { font-size: 14.5px; font-weight: 500; fill: #24211d; }
+.viz.tb svg .dg-label-sm { font-size: 13px; }
+.viz.tb svg .dg-label-accent, .viz.tb svg .dg-label-hot, .viz.tb svg .dg-label-cold, .viz.tb svg .dg-label-plant,
+.viz.tb svg .dg-label-water, .viz.tb svg .dg-label-earth { font-size: 13.5px; font-weight: 700; }
+.viz.tb svg .dg-math { font-size: 16.5px; } .viz.tb svg .dg-math-accent { font-size: 16.5px; }
+.viz.tb svg .dg-pt { font: italic 600 15.5px/1 "Times New Roman", Georgia, serif; fill: #24211d; }
+.viz.tb svg .dg-tag-answer { font-size: 13px; }
+.viz.tb svg .dg-accent.hot { stroke: var(--viz-hot); } .viz.tb svg .dg-accent.plant { stroke: var(--viz-plant); }
+.viz.tb svg .dg-pt.hot { fill: var(--viz-hot); } .viz.tb svg .dg-pt.accent { fill: var(--dg-accent); }
+.viz.tb svg .dg-fill-accent { fill-opacity: .17; stroke-width: 2px; }
+.viz.tb svg .dg-fill-hot, .viz.tb svg .dg-fill-plant, .viz.tb svg .dg-fill-earth, .viz.tb svg .dg-fill-water,
+.viz.tb svg .dg-fill-cold, .viz.tb svg .dg-fill-sun { stroke-width: 2px; }
+.viz.tb svg [class^="dg-fill"] { filter: drop-shadow(0 1px 1px rgba(40,30,20,.18)); }
+svg .dg-ang, svg .dg-ang-w, svg .dg-tickm { vector-effect: non-scaling-stroke; }
+svg .dg-ang { fill: none; stroke: var(--dg-accent); stroke-width: 1.7px; }
+svg .dg-ang-w { stroke: none; fill: var(--dg-accent); fill-opacity: .16; }
+svg .dg-ang.hot { stroke: var(--viz-hot); } svg .dg-ang-w.hot { fill: var(--viz-hot); }
+svg .dg-ang.plant { stroke: var(--viz-plant); } svg .dg-ang-w.plant { fill: var(--viz-plant); }
+svg .dg-ang.plain { stroke: #24211d; } svg .dg-ang-w.plain { fill: #6b665d; fill-opacity: .14; }
+svg .dg-tickm { fill: none; stroke: #24211d; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-gravel { fill: none; stroke: #e8dfcc; stroke-width: 14px; stroke-linecap: round; }
+svg .dg-grass { fill: #eef5e6; stroke: none; }
+svg .dg-tickm.accent { stroke: var(--dg-accent); } svg .dg-tickm.hot { stroke: var(--viz-hot); }
+"""
+
 TB_DEFS_START, TB_DEFS_END = "<!-- viz-defs -->", "<!-- /viz-defs -->"
 TB_DEFS = (TB_DEFS_START + '\n<!-- tikz: none | shared paints for the figures below -->\n<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>'
     + _grad("crust", [(0, "#d3b88f"), (1, "#a88a65")]) + _grad("mantle", [(0, "#fde3ad"), (1, "#f2a85f")])
@@ -457,9 +496,18 @@ TB_DEFS = (TB_DEFS_START + '\n<!-- tikz: none | shared paints for the figures be
     + _rad("dome", [(0, "#ffffff"), (1, "#bfc6cd")]) + _grad("tube", [(0, "#d6d1c6"), (.4, "#ffffff"), (1, "#cfc9bd")])
     + _marker("muted", "#6b665d") + _marker("plain", "#3f3b35") + _marker("hot", "#c2410c") + _marker("cold", "#1d4ed8") + _marker("water", "#0369a1")
     + _marker("sun", "#c98a0a") + _marker("plant", "#3f7a2a") + _marker("earth", "#7a5230") + _marker("accent", "#6b4a8a")
+    + '<radialGradient id="tb-m-disc" cx=".5" cy=".5" r=".5" fx=".42" fy=".36"><stop offset="0" stop-color="#ffffff"/><stop offset=".75" stop-color="#f6f8fc"/><stop offset="1" stop-color="#e6ebf5"/></radialGradient>'
     + "</defs></svg>" + TB_DEFS_END)
 DEFS_RE = re.compile(re.escape(TB_DEFS_START) + r".*?" + re.escape(TB_DEFS_END) + r"\n?", re.S)
-TB_UNIT = re.compile(r"sci7-")
+TB_UNIT = re.compile(r"sci7-|math9-")
+MATH_UNIT = re.compile(r"math9-")
+
+
+def tb_css(unit):
+    """Textbook CSS for a unit: '' (old look), TB_CSS (Science 7), or TB_CSS + the math layer (Math 9)."""
+    if not TB_UNIT.match(unit):
+        return ""
+    return TB_CSS + (TB_MATH_CSS if MATH_UNIT.match(unit) else "")
 
 VIZ_RE = re.compile(r"[ \t]*<!-- viz:[\w-]+ -->.*?<!-- /viz:[\w-]+ -->\n?", re.S)
 CSS_RE = re.compile(r"\n?[ \t]*" + re.escape(CSS_START) + r".*?" + re.escape(CSS_END) + r"\n?", re.S)
@@ -530,6 +578,59 @@ def expand(svg, answer_key):
             layer = f'<g transform="translate({a.get("x", 0)},{a.get("y", 0)})">{layer}</g>'
         return layer
 
+    def pt(v):
+        x, y = v.split(",")
+        return float(x), float(y)
+
+    def angle(m):
+        # <angle at="x,y" from="x,y" to="x,y" r="16" kind="accent" right="1" n="2" reflex="1" nofill="1"/>
+        a = attrs(m.group(1))
+        (cx, cy), (fx, fy), (tx, ty) = pt(a["at"]), pt(a["from"]), pt(a["to"])
+        r = float(a.get("r", 16))
+        kind = a.get("kind", "accent")
+        a1, a2 = math.atan2(fy - cy, fx - cx), math.atan2(ty - cy, tx - cx)
+        d = (a2 - a1) % (2 * math.pi)
+        reflex = bool(a.get("reflex"))
+        if (d > math.pi) != reflex:      # draw the other way round
+            a1, a2, d = a2, a1, 2 * math.pi - d
+        u1, u2 = (math.cos(a1), math.sin(a1)), (math.cos(a2), math.sin(a2))
+        if a.get("right"):
+            s = r * 0.62
+            p1, p3 = (cx + u1[0] * s, cy + u1[1] * s), (cx + u2[0] * s, cy + u2[1] * s)
+            p2 = (p1[0] + u2[0] * s, p1[1] + u2[1] * s)
+            pts = f"{p1[0]:.1f},{p1[1]:.1f} {p2[0]:.1f},{p2[1]:.1f} {p3[0]:.1f},{p3[1]:.1f}"
+            fill = "" if a.get("nofill") else f'<polygon points="{cx:g},{cy:g} {pts}" class="dg-ang-w {kind}"/>'
+            return fill + f'<polyline points="{pts}" class="dg-right-angle"/>'
+        large = 1 if d > math.pi else 0
+        def arc(rr):
+            sx, sy = cx + u1[0] * rr, cy + u1[1] * rr
+            ex, ey = cx + u2[0] * rr, cy + u2[1] * rr
+            return f"M{sx:.1f} {sy:.1f} A{rr:g} {rr:g} 0 {large} 1 {ex:.1f} {ey:.1f}"
+        out = "" if a.get("nofill") else f'<path d="M{cx:g} {cy:g} L{arc(r)[1:]} Z" class="dg-ang-w {kind}"/>'
+        for k in range(int(a.get("n", 1))):
+            out += f'<path d="{arc(r - 4 * k)}" class="dg-ang {kind}"/>'
+        return out
+
+    def ticks(m):
+        # <ticks x1 y1 x2 y2 n="1" kind="plain"/>: n short marks across the middle of a segment (equal lengths)
+        a = attrs(m.group(1))
+        x1, y1, x2, y2 = (float(a[k]) for k in ("x1", "y1", "x2", "y2"))
+        n, kind, L = int(a.get("n", 1)), a.get("kind", "plain"), float(a.get("len", 6))
+        ang = math.atan2(y2 - y1, x2 - x1)
+        ux, uy, nx, ny = math.cos(ang), math.sin(ang), -math.sin(ang), math.cos(ang)
+        mx, my = (x1 + x2) / 2, (y1 + y2) / 2
+        out = ""
+        for k in range(n):
+            off = (k - (n - 1) / 2) * 4.5
+            px, py = mx + ux * off, my + uy * off
+            out += (f'<line x1="{px + nx * L:.1f}" y1="{py + ny * L:.1f}" x2="{px - nx * L:.1f}" y2="{py - ny * L:.1f}" '
+                    f'class="dg-tickm {kind}"/>')
+        return out
+
+    # <keyonly>...</keyonly>: drawn only in the answer key (a worked example, tick marks that give an answer away)
+    svg = re.sub(r"<keyonly>(.*?)</keyonly>", lambda m: m.group(1) if answer_key else "", svg, flags=re.S)
+    svg = re.sub(r"<angle\s+([^>]*?)/>", angle, svg)
+    svg = re.sub(r"<ticks\s+([^>]*?)/>", ticks, svg)
     svg = re.sub(r"<mapbase\s+([^>]*?)/>", mapbase, svg)
     svg = re.sub(r"<tag\s+([^>]*)>(.*?)</tag>", tag, svg, flags=re.S)
     svg = re.sub(r"<arrow\s+([^>]*?)/>", arrow, svg)
@@ -573,6 +674,8 @@ def figure(meta, answer_key, tb=False):
 
 
 def find_section(doc, section, path):
+    if section == "(top)":   # before the first <h2>: search from the start of <body>
+        return re.search(r"<body[^>]*>", doc)
     for m in re.finditer(r"<h2\b[^>]*>(.*?)</h2>", doc, re.S):
         if section in re.sub(r"<[^>]+>", "", html.unescape(m.group(1))):
             return m
@@ -613,7 +716,7 @@ def apply(unit, frags, notes_path, ak_path, remove=False):
         doc = DEFS_RE.sub("", doc)
         tb = bool(TB_UNIT.match(unit))
         if not remove and frags:
-            doc = doc.replace("</style>", "\n" + CSS + ("\n" + TB_CSS if tb else "") + "\n</style>", 1)
+            doc = doc.replace("</style>", "\n" + CSS + ("\n" + tb_css(unit) if tb else "") + "\n</style>", 1)
             if tb:
                 doc = re.sub(r"(<body[^>]*>)", lambda m: m.group(1) + "\n" + TB_DEFS, doc, count=1)
             # insert bottom-up so earlier offsets stay valid; ties keep fragment order
@@ -648,7 +751,7 @@ def restyle(unit, frags, paths):
         doc = path.read_text(encoding="utf-8")
         doc = CSS_RE.sub("", doc)
         doc = DEFS_RE.sub("", doc)
-        doc = doc.replace("</style>", "\n" + CSS + ("\n" + TB_CSS if tb else "") + "\n</style>", 1)
+        doc = doc.replace("</style>", "\n" + CSS + ("\n" + tb_css(unit) if tb else "") + "\n</style>", 1)
         if tb:
             doc = re.sub(r"(<body[^>]*>)", lambda m: m.group(1) + "\n" + TB_DEFS, doc, count=1)
         for meta in frags:
@@ -687,7 +790,7 @@ def preview(unit, frags, notes_path, outdir):
         body.append("</div>")
     out = outdir / f"{unit}.html"
     font_base = notes_path.parent.as_uri() + "/"
-    out.write_text(f"<!doctype html><html><head><meta charset='utf-8'><base href='{font_base}'><style>{style}\n{CSS}\n{TB_CSS if tb else ''}\n"
+    out.write_text(f"<!doctype html><html><head><meta charset='utf-8'><base href='{font_base}'><style>{style}\n{CSS}\n{tb_css(unit)}\n"
                    f"body{{max-width:1300px}}</style></head><body>{''.join(body)}</body></html>", encoding="utf-8")
     return out
 
