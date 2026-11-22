@@ -516,6 +516,22 @@ def tb_css(unit):
 
 VIZ_RE = re.compile(r"[ \t]*<!-- viz:[\w-]+ -->.*?<!-- /viz:[\w-]+ -->\n?", re.S)
 CSS_RE = re.compile(r"\n?[ \t]*" + re.escape(CSS_START) + r".*?" + re.escape(CSS_END) + r"\n?", re.S)
+TB_CSS_START = "/* ── viz-kit textbook layer (scripts/add_notes_visuals.py) ── */"
+TB_CSS_END = "/* ── /viz-kit textbook layer ── */"
+TB_CSS_RE = re.compile(re.escape(TB_CSS_START) + r".*?" + re.escape(TB_CSS_END) + r"\n?", re.S)
+# Before 2026-11-21 the textbook layer went in unmarked after CSS_END, so every re-run stacked one more copy.
+TB_LEGACY_RE = re.compile(r"\n?body \{ counter-reset: fig; \}.*?(?=</style>)", re.S)
+
+
+def strip_css(doc):
+    """Remove the viz-kit CSS, the textbook layer and any old unmarked textbook copies."""
+    doc = CSS_RE.sub("", doc)
+    doc = TB_CSS_RE.sub("", doc)
+    return TB_LEGACY_RE.sub("\n", doc)
+
+
+def kit_css(unit, tb):
+    return CSS + ("\n" + TB_CSS_START + tb_css(unit) + TB_CSS_END if tb else "")
 
 
 def parse_fragment(path):
@@ -717,11 +733,11 @@ def apply(unit, frags, notes_path, ak_path, remove=False):
     for path, answer_key in ((notes_path, False), (ak_path, True)):
         doc = path.read_text(encoding="utf-8")
         doc = VIZ_RE.sub("", doc)
-        doc = CSS_RE.sub("", doc)  # the block is inserted with its own newlines; put nothing back
+        doc = strip_css(doc)  # the block is inserted with its own newlines; put nothing back
         doc = DEFS_RE.sub("", doc)
         tb = bool(TB_UNIT.match(unit))
         if not remove and frags:
-            doc = doc.replace("</style>", "\n" + CSS + ("\n" + tb_css(unit) if tb else "") + "\n</style>", 1)
+            doc = doc.replace("</style>", "\n" + kit_css(unit, tb) + "\n</style>", 1)
             if tb:
                 doc = re.sub(r"(<body[^>]*>)", lambda m: m.group(1) + "\n" + TB_DEFS, doc, count=1)
             # insert bottom-up so earlier offsets stay valid; ties keep fragment order
@@ -754,9 +770,9 @@ def restyle(unit, frags, paths):
     report = []
     for path, answer_key in zip(paths, (False, True)):
         doc = path.read_text(encoding="utf-8")
-        doc = CSS_RE.sub("", doc)
+        doc = strip_css(doc)
         doc = DEFS_RE.sub("", doc)
-        doc = doc.replace("</style>", "\n" + CSS + ("\n" + tb_css(unit) if tb else "") + "\n</style>", 1)
+        doc = doc.replace("</style>", "\n" + kit_css(unit, tb) + "\n</style>", 1)
         if tb:
             doc = re.sub(r"(<body[^>]*>)", lambda m: m.group(1) + "\n" + TB_DEFS, doc, count=1)
         for meta in frags:
@@ -784,7 +800,7 @@ def restyle(unit, frags, paths):
 def preview(unit, frags, notes_path, outdir):
     src = notes_path.read_text(encoding="utf-8")
     style = re.search(r"<style>(.*?)</style>", src, re.S).group(1)
-    style = CSS_RE.sub("\n", style)
+    style = strip_css(style)
     tb = bool(TB_UNIT.match(unit))
     body = [TB_DEFS if tb else "", f"<h1 style='font-size:1.2rem'>{unit}</h1>"]
     for meta in frags:
