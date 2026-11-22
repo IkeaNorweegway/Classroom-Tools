@@ -484,6 +484,15 @@ svg .dg-tl-q { fill: url(#tb-tl-q); } svg .dg-tl-x { fill: url(#tb-tl-x); } svg 
 svg .dg-tl-q.e { fill: #4672b8; } svg .dg-tl-x.e { fill: #4c9a3a; } svg .dg-tl-1.e { fill: #c99a18; } svg .dg-tl-n.e { fill: #b03b22; }   /* tile edge (thickness) */
 svg .dg-canola { fill: url(#tb-canola); stroke: #8a7414; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
 svg .dg-crop { fill: none; stroke: #c79f12; stroke-width: 1px; stroke-opacity: .7; vector-effect: non-scaling-stroke; }
+svg .dg-eq-xl { font: 400 46px/1 "Times New Roman", Georgia, serif; fill: #24211d; } svg .dg-eq-xl .v { font-style: italic; }
+svg .dg-eq .sup, svg .dg-eq-lg .sup, svg .dg-eq-xl .sup { font-size: 70%; }   /* exponent: <tspan class="sup" dy="-8"> */
+svg .dg-eq .acc, svg .dg-eq-lg .acc, svg .dg-eq-xl .acc { fill: var(--dg-accent); font-weight: 700; }
+svg .dg-eq .hot, svg .dg-eq-lg .hot, svg .dg-eq-xl .hot { fill: var(--viz-hot); font-weight: 700; }
+svg .dg-ch-a, svg .dg-ch-b, svg .dg-ch-n, svg .dg-ch-g { stroke: #24211d; stroke-width: 1.2px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-ch-a { fill: url(#tb-ch-a); } svg .dg-ch-b { fill: url(#tb-ch-b); } svg .dg-ch-n { fill: url(#tb-ch-n); } svg .dg-ch-g { fill: url(#tb-ch-g); }   /* factor chips: blue, green, red (negative), grey (cancelled) */
+svg .dg-ch-a.e { fill: #6f8fc4; } svg .dg-ch-b.e { fill: #5f9a48; } svg .dg-ch-n.e { fill: #c4573c; } svg .dg-ch-g.e { fill: #aaa395; }
+svg .dg-strike { fill: none; stroke: var(--viz-hot); stroke-width: 2.4px; stroke-linecap: round; vector-effect: non-scaling-stroke; }   /* cancelled factor */
+svg .dg-frac-key { stroke: var(--viz-key); stroke-width: 1.3px; vector-effect: non-scaling-stroke; }   /* fraction bar of a key answer */
 """
 
 TB_DEFS_START, TB_DEFS_END = "<!-- viz-defs -->", "<!-- /viz-defs -->"
@@ -549,6 +558,8 @@ TB_DEFS = (TB_DEFS_START + '\n<!-- tikz: none | shared paints for the figures be
     + _grad("tl-q", [(0, "#b4cdf4"), (1, "#7aa3e3")], "1", "1") + _grad("tl-x", [(0, "#bde6a8"), (1, "#78c35f")], "1", "1")
     + _grad("tl-1", [(0, "#fff2b0"), (1, "#f5cd4c")], "1", "1") + _grad("tl-n", [(0, "#f9b3a1"), (1, "#e4644a")], "1", "1")
     + _grad("canola", [(0, "#ffec70"), (1, "#f2c51c")])
+    + _grad("ch-a", [(0, "#e3ecf9"), (1, "#a9c2e8")], "1", "1") + _grad("ch-b", [(0, "#e0f2d4"), (1, "#a6d58d")], "1", "1")
+    + _grad("ch-n", [(0, "#fcdad0"), (1, "#ef9f88")], "1", "1") + _grad("ch-g", [(0, "#f4f2ed"), (1, "#d6d1c6")], "1", "1")
     + '<radialGradient id="tb-m-disc" cx=".5" cy=".5" r=".5" fx=".42" fy=".36"><stop offset="0" stop-color="#ffffff"/><stop offset=".75" stop-color="#f6f8fc"/><stop offset="1" stop-color="#e6ebf5"/></radialGradient>'
     + "</defs></svg>" + TB_DEFS_END)
 DEFS_RE = re.compile(re.escape(TB_DEFS_START) + r".*?" + re.escape(TB_DEFS_END) + r"\n?", re.S)
