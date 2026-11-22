@@ -509,6 +509,12 @@ svg .dg-scale { fill: url(#tb-pscale); stroke: #24211d; stroke-width: 1.5px; }  
 svg .dg-bag { fill: #e6eef8; fill-opacity: .45; stroke: #24211d; stroke-width: 1.6px; } svg .dg-bag-tie { fill: none; stroke: #8a6512; stroke-width: 3px; stroke-linecap: round; }   /* clear bag */
 svg .dg-rainbar { fill: url(#tb-rainbar); stroke: #24211d; stroke-width: 1.6px; } svg .dg-rainfx { fill: url(#tb-rain); stroke: none; } svg .dg-rain-l { stroke: #fff; stroke-opacity: .75; stroke-width: 1.3px; stroke-linecap: round; }
 svg .dg-blank-bar { fill: url(#tb-cell); stroke: #24211d; stroke-width: 1.6px; vector-effect: non-scaling-stroke; }
+svg .dg-eq-sm { font: 400 15px/1 "Times New Roman", Georgia, serif; fill: #24211d; } svg .dg-eq-sm .v { font-style: italic; }   /* small typeset maths: number-line labels */
+svg .dg-eq-sm .sup { font-size: 70%; } svg .dg-eq-sm.accent { fill: var(--dg-accent); font-weight: 700; }
+svg .dg-eq.hot, svg .dg-eq-sm.hot, svg .dg-eq-lg.hot { fill: var(--viz-hot); font-weight: 700; }
+svg .dg-eq.plant, svg .dg-eq-sm.plant, svg .dg-eq-lg.plant { fill: var(--viz-plant); font-weight: 700; }
+svg .dg-fbar.hot { stroke: var(--viz-hot); } svg .dg-fbar.plant { stroke: var(--viz-plant); }
+svg .dg-therm { fill: url(#tb-therm); stroke: #8a1f0a; stroke-width: 1px; vector-effect: non-scaling-stroke; }   /* thermometer liquid */
 """
 
 TB_DEFS_START, TB_DEFS_END = "<!-- viz-defs -->", "<!-- /viz-defs -->"
@@ -582,7 +588,7 @@ TB_DEFS = (TB_DEFS_START + '\n<!-- tikz: none | shared paints for the figures be
     + _grad("cell-on", [(0, "#e3ecfb"), (1, "#b9cdf1")])
     + _grad("pc-r", [(0, "#f9bba7"), (1, "#de5d3c")], "1", "1") + _grad("pc-b", [(0, "#bfd3f6"), (1, "#5a86d6")], "1", "1")
     + _grad("pc-g", [(0, "#c9e9b4"), (1, "#68ae4b")], "1", "1") + _grad("pscale", [(0, "#ece8e0"), (1, "#a9c2ec")], "1", "0")
-    + _grad("rainbar", [(0, "#a7d1ee"), (1, "#4c93c4")])
+    + _grad("rainbar", [(0, "#a7d1ee"), (1, "#4c93c4")]) + _grad("therm", [(0, "#f6a08c"), (.45, "#d93a1c"), (1, "#9a2410")])
     + '<pattern id="tb-rain" width="9" height="11" patternUnits="userSpaceOnUse"><line x1="7" y1="1.5" x2="4" y2="8.5" class="dg-rain-l"/></pattern>'
     + '<radialGradient id="tb-m-disc" cx=".5" cy=".5" r=".5" fx=".42" fy=".36"><stop offset="0" stop-color="#ffffff"/><stop offset=".75" stop-color="#f6f8fc"/><stop offset="1" stop-color="#e6ebf5"/></radialGradient>'
     + "</defs></svg>" + TB_DEFS_END)
