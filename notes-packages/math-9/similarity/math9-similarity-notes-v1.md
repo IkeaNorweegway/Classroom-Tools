@@ -440,7 +440,7 @@ h_object / d₁ = h_observer / d₂
 
 **Alberta context — Measuring a grain elevator:**
 
-A student stands 60 m from a grain elevator and places a mirror at 10 m from herself. Her eye height is 1.6 m. The mirror reflects the top of the elevator.
+A student lays a mirror flat on the ground 60 m from a grain elevator, then steps back until she sees the top of the elevator in it. She is 10 m from the mirror, and her eye height is 1.6 m.
 
 h/60 = 1.6/10 → h = ___ m
 
