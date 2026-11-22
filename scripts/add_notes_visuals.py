@@ -447,7 +447,14 @@ svg .dg-open, svg .dg-closed, svg .dg-solray { vector-effect: non-scaling-stroke
 svg .dg-open { fill: #fff; stroke: var(--dg-accent); stroke-width: 2.6px; }   /* number-line endpoint: not included */
 svg .dg-closed { fill: var(--dg-accent); stroke: #fff; stroke-width: 1.2px; }  /* number-line endpoint: included */
 svg .dg-closed.hot { fill: var(--viz-hot); }
-svg .dg-solray { stroke: var(--dg-accent); stroke-width: 5px; stroke-linecap: butt; stroke-opacity: .85; fill: none; }
+svg .dg-solray { stroke: var(--dg-accent); stroke-width: 5px; stroke-linecap: butt; stroke-opacity: .85; fill: none; }svg .dg-plot, svg .dg-grid-min, svg .dg-grid-maj, svg .dg-road, svg .dg-road-mid { vector-effect: non-scaling-stroke; }
+svg .dg-plot { fill: #fbfcfe; stroke: #9aa5b8; stroke-width: 1px; }               /* graph paper behind a grid */
+svg .dg-grid-min { stroke: #d5dce8; stroke-width: .8px; fill: none; }           /* every grid line */
+svg .dg-grid-maj { stroke: #a9b4c6; stroke-width: 1px; fill: none; }            /* grid lines that carry a number */
+svg .dg-road { stroke: #5c5853; stroke-width: 9px; stroke-linecap: round; fill: none; }
+svg .dg-road-mid { stroke: #f4d35e; stroke-width: 1.6px; stroke-dasharray: 9 7; fill: none; }
+svg .dg-wax { fill: url(#tb-tube); stroke: #8f887b; stroke-width: 1px; }
+.viz.tb svg .dg-accent.water { stroke: var(--viz-water); }
 """
 
 TB_DEFS_START, TB_DEFS_END = "<!-- viz-defs -->", "<!-- /viz-defs -->"
