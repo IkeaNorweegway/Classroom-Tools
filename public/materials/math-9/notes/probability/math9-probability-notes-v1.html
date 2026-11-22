@@ -203,6 +203,344 @@ svg .dg-route       { fill: none; stroke: var(--dg-accent); stroke-width: 2px; s
 svg .dg-route.muted { stroke: var(--dg-muted, #6b665d); stroke-dasharray: 5 3; }
 svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
 /* ── /viz-kit ── */
+/* ── viz-kit textbook layer (scripts/add_notes_visuals.py) ── */
+body { counter-reset: fig; }
+.viz.tb { counter-increment: fig; background: #fff; border: 1px solid #d6d1c6; border-top: 3px solid var(--dg-accent);
+  border-radius: 3px; padding: .9rem 1.1rem .7rem; max-width: 44rem; }
+.viz.tb figcaption { font-style: normal; text-align: left; max-width: none; font-size: .84rem; line-height: 1.45; color: #2f2b26;
+  border-top: 1px solid #e2ddd2; margin: .65rem 0 0; padding-top: .45rem; }
+.viz.tb figcaption::before { content: "Figure " counter(fig) "\00a0\00a0"; font-weight: 700; color: var(--dg-accent); }
+.viz.tb svg .dg-label { font-size: 12.5px; } .viz.tb svg .dg-label-sm { font-size: 11.5px; }
+.viz.tb svg .dg-label-hot, .viz.tb svg .dg-label-cold, .viz.tb svg .dg-label-water, .viz.tb svg .dg-label-plant,
+.viz.tb svg .dg-label-earth, .viz.tb svg .dg-label-accent { font-size: 12px; }
+.viz.tb svg .dg-fill-hot { fill-opacity: .34; } .viz.tb svg .dg-fill-cold { fill-opacity: .30; } .viz.tb svg .dg-fill-plant { fill-opacity: .34; }
+.viz.tb svg .dg-fill-water { fill-opacity: .32; } .viz.tb svg .dg-fill-earth { fill-opacity: .34; } .viz.tb svg .dg-fill-sun { fill-opacity: .42; }
+.viz.tb svg .dg-fill-accent { fill-opacity: .28; } .viz.tb svg .dg-fill-soft { fill: #e9e5dc; stroke: #b9b3a6; }
+.viz.tb svg [class^="dg-fill"], .viz.tb svg [class^="dg-solid"], .viz.tb svg .dg-boundary { filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.28)); }
+svg .dg-g-crust, svg .dg-g-mantle, svg .dg-g-ocean, svg .dg-g-magma, svg .dg-g-cont, svg .dg-g-sph-crust, svg .dg-g-sph-mantle,
+svg .dg-g-sph-outer, svg .dg-g-sph-inner, svg .dg-g-ign, svg .dg-g-sed, svg .dg-g-met, svg .dg-g-landa, svg .dg-g-landb,
+svg .dg-speckle, svg .dg-star, svg .dg-station, svg .dg-wave, svg .dg-stream, svg .dg-stream-hi, svg .dg-ico { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-g-crust     { fill: url(#tb-crust);  stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-mantle    { fill: url(#tb-mantle); stroke: #c0702f; stroke-width: 1px; }
+svg .dg-g-ocean     { fill: url(#tb-ocean);  stroke: #2f7aa6; stroke-width: .8px; }
+svg .dg-g-magma     { fill: url(#tb-magma);  stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-cont      { fill: url(#tb-cont);   stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-sph-crust { fill: url(#tb-sph-crust); stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-sph-mantle{ fill: url(#tb-sph-mantle); stroke: #a8501b; stroke-width: 1px; }
+svg .dg-g-sph-outer { fill: url(#tb-sph-outer);  stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-sph-inner { fill: url(#tb-sph-inner);  stroke: #b45a0a; stroke-width: 1px; }
+svg .dg-g-ign       { fill: url(#tb-ign); stroke: #9a4a30; stroke-width: 1.2px; }
+svg .dg-g-sed       { fill: url(#tb-sed); stroke: #8a6a2e; stroke-width: 1.2px; }
+svg .dg-g-met       { fill: url(#tb-met); stroke: #6e5f52; stroke-width: 1.2px; }
+svg .dg-g-landa     { fill: url(#tb-landa); stroke: #8a7650; stroke-width: 1px; }
+svg .dg-g-landb     { fill: url(#tb-landb); stroke: #7a8a58; stroke-width: 1px; }
+svg .dg-speckle     { fill: url(#tb-speckle); stroke: none; }
+svg .dg-star        { fill: #ffd23f; stroke: #7a2e0e; stroke-width: 1.2px; }
+svg .dg-station     { fill: #2f2b26; stroke: #fff; stroke-width: 1.5px; }
+svg .dg-wave        { fill: none; stroke: #fff; stroke-width: 1.5px; stroke-linecap: round; }
+svg .dg-stream      { fill: none; stroke: #2f86b8; stroke-width: 6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-stream-hi   { fill: none; stroke: #cfeaf7; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-ico         { stroke: #5b4430; stroke-width: .8px; }
+svg .dg-ico-1 { fill: #f3d9c9; } svg .dg-ico-2 { fill: #7a3b2a; stroke: none; } svg .dg-ico-3 { fill: #fff; stroke: none; }
+svg .dg-ico-4 { fill: #e7c98a; } svg .dg-ico-5 { fill: #cfa95e; } svg .dg-ico-6 { fill: #f0dfb4; }
+svg .dg-ico-7 { fill: #bfb2a5; } svg .dg-ico-line { fill: none; stroke: #6e5f52; stroke-width: 1px; }
+svg .dg-shadow { fill: url(#tb-hatch); stroke: none; }
+svg .dg-ray-case { fill: none; stroke: #fff; stroke-width: 3.8px; stroke-opacity: .85; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-lane { fill: none; stroke: #fff; stroke-opacity: .38; stroke-width: 15px; stroke-linejoin: round; }
+svg .dg-glow { fill: url(#tb-glow); stroke: none; }
+svg .dg-g-crustL { fill: url(#tb-crustL); stroke: #5b4430; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-g-crustR { fill: url(#tb-crustR); stroke: #5b4430; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-crustline { fill: none; stroke: #5b4430; stroke-width: .9px; stroke-opacity: .7; vector-effect: non-scaling-stroke; }
+svg .dg-melt { fill: #ff8c42; stroke: #a3270b; stroke-width: .6px; }
+svg .dg-tree { fill: #5d8a47; stroke: #34592a; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-fz { fill: #5b4430; fill-opacity: .22; stroke: none; }
+svg .dg-tick { fill: none; stroke: var(--dg-stroke, #3f3b35); stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-tuft { fill: none; stroke: #6f8548; stroke-width: 1px; stroke-linecap: round; stroke-opacity: .8; }
+svg .dg-ico-8 { fill: #d99a82; } svg .dg-ico-9 { fill: #8a4a3a; } svg .dg-ico-10 { fill: #fbf1ea; } svg .dg-ico-11 { fill: #e9b9a2; }
+svg .dg-ico-pale { fill: none; stroke: #efe8de; stroke-width: 1px; }
+svg .dg-arrow.dash { stroke-dasharray: 6 4; }
+svg .dg-g-outer { fill: url(#tb-outer); stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-inner { fill: url(#tb-inner); stroke: #b45a0a; stroke-width: 1px; }
+svg .dg-g-volc  { fill: url(#tb-volc); stroke: #3f352d; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-rock  { fill: url(#tb-rock); stroke: #4a4038; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-ashcloud { fill: url(#tb-ashcloud); stroke: #8f877e; stroke-width: .8px; }
+svg .dg-snow  { fill: #fff; stroke: #b9b3a6; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-crack { fill: none; stroke: #3a3029; stroke-width: 1.1px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-sed-sand { fill: #ecd59c; stroke: #a8874a; stroke-width: .7px; }
+svg .dg-sed-silt { fill: #cfab7c; stroke: #8f6c45; stroke-width: .7px; }
+svg .dg-sed-clay { fill: #aaa39a; stroke: #6e675f; stroke-width: .7px; }
+svg .dg-lens  { fill: none; stroke: #3f3b35; stroke-width: 2px; }
+svg .dg-lens-rim { fill: none; stroke: #fff; stroke-width: 5px; }
+svg .dg-basalt { fill: #56514c; stroke: none; }
+svg .dg-fine  { fill: url(#tb-fine); stroke: none; }
+svg .dg-min-feld { fill: #e39a7e; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-feld2 { fill: #f2bba3; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-qtz { fill: #eeebe5; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-mica { fill: #3a3330; stroke: #1f1a18; stroke-width: .6px; }
+svg .dg-stripe-n { fill: #57514b; stroke: none; }
+svg .dg-stripe-r { fill: #f3eee4; stroke: none; }
+svg .dg-pol-n { fill: #fff; stroke: none; } svg .dg-pol-r { fill: #57514b; stroke: none; }
+svg .dg-grass { fill: #8bb162; stroke: #5d8a47; stroke-width: .8px; }
+svg .dg-fault { fill: none; stroke: #2f241b; stroke-width: 2.2px; stroke-linecap: round; }
+svg .dg-focus { fill: #e2431a; stroke: #7a1f0a; stroke-width: 1.2px; }
+svg .dg-house-wall { fill: #f6efe2; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-roof { fill: #a3452a; stroke: #5e2414; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-door { fill: #6b4a3a; stroke: none; } svg .dg-window { fill: #bfe3f5; stroke: #3f3b35; stroke-width: .6px; }
+svg .dg-ash { fill: #d9d3ca; stroke: #3f352d; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-ash-dot { fill: #6b645c; stroke: none; }
+svg .dg-ice { fill: #e3f4fb; stroke: #5aa9d0; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-ice-line { fill: none; stroke: #fff; stroke-width: 1px; }
+svg .dg-sun { fill: #ffd23f; stroke: #c98a0a; stroke-width: 1px; } svg .dg-ray { fill: none; stroke: #e0a515; stroke-width: 1.4px; stroke-linecap: round; }
+svg .dg-moon { fill: #f4f1e6; stroke: #8a8578; stroke-width: 1px; }
+svg .dg-fish { fill: #b9c6ce; stroke: #4a5560; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-bone { fill: none; stroke: #f6f1e6; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-bone-fill { fill: #f6f1e6; stroke: #8a7a62; stroke-width: .8px; }
+svg .dg-fossil { fill: none; stroke: #3a2f26; stroke-width: 1.8px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-fossil-fill { fill: #3a2f26; stroke: none; }
+svg .dg-lith-sand { fill: url(#tb-p-sand); stroke: #8a6a2e; stroke-width: .8px; }
+svg .dg-lith-shale { fill: url(#tb-p-shale); stroke: #5f5a55; stroke-width: .8px; }
+svg .dg-lith-lime { fill: url(#tb-p-lime); stroke: #5d6a72; stroke-width: .8px; }
+svg .dg-lith-coal { fill: #2f2b28; stroke: #1a1715; stroke-width: .8px; }
+svg .dg-ammonite { fill: #efe3c8; stroke: #5b4430; stroke-width: 1px; }
+svg .dg-amm-line { fill: none; stroke: #5b4430; stroke-width: .8px; }
+svg .dg-face-side { fill: #000; fill-opacity: .16; stroke: #3f3b35; stroke-width: .8px; }
+svg .dg-face-top { fill: #fff; fill-opacity: .45; stroke: #3f3b35; stroke-width: .8px; }
+svg .dg-panel { fill: #faf8f3; stroke: #e2ddd2; stroke-width: 1px; }
+svg .dg-rain { fill: none; stroke: #3b8fc0; stroke-width: 1.3px; stroke-linecap: round; stroke-dasharray: 5 4; }
+svg .dg-precam { fill: url(#tb-precam); stroke: #6e675f; stroke-width: .8px; }
+svg .dg-zoom { fill: none; stroke: #8f877e; stroke-width: 1px; stroke-dasharray: 3 3; }
+svg .dg-sp-d { fill: #5b4430; fill-opacity: .28; } svg .dg-sp-l { fill: #fff; fill-opacity: .33; }
+svg .dg-hatch-l { stroke: #fff; stroke-opacity: .55; stroke-width: 1.6px; }
+svg .dg-fine-a { fill: #d8d2c8; } svg .dg-fine-b { fill: #8f877e; }
+svg .dg-psand-bg { fill: #f0dca6; } svg .dg-psand-dot { fill: #8a6a2e; }
+svg .dg-pshale-bg { fill: #cfcac3; } svg .dg-pshale-l { stroke: #6e675f; stroke-width: .9px; }
+svg .dg-plime-bg { fill: #dce4e8; } svg .dg-plime-l { fill: none; stroke: #7d8b93; stroke-width: .8px; }
+svg .dg-pt-cold { fill: url(#tb-pt-cold); stroke: #1e3a8a; stroke-width: .8px; }
+svg .dg-pt-warm { fill: url(#tb-pt-warm); stroke: #8a5a00; stroke-width: .8px; }
+svg .dg-pt-hot  { fill: url(#tb-pt-hot);  stroke: #7a1f0a; stroke-width: .8px; }
+svg .dg-trail-cold, svg .dg-trail-warm, svg .dg-trail-hot { fill: none; stroke-linecap: round; stroke-width: 12px; }
+svg .dg-trail-cold.sm, svg .dg-trail-warm.sm, svg .dg-trail-hot.sm { stroke-width: 8px; }
+svg .dg-trail-cold { stroke: #3b6fd8; stroke-opacity: .22; } svg .dg-trail-warm { stroke: #e0a515; stroke-opacity: .32; }
+svg .dg-trail-hot { stroke: #e2431a; stroke-opacity: .24; }
+svg .dg-vib { fill: none; stroke: #8f877e; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-g-steel  { fill: url(#tb-steel);  stroke: #5f6770; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-steelH { fill: url(#tb-steelH); stroke: #4a5058; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-wood { fill: url(#tb-wood); stroke: #6b4a2a; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-grain { fill: none; stroke: #7a5230; stroke-opacity: .45; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-flame { fill: url(#tb-flame); stroke: #c2410c; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-flame-in { fill: #fff3a0; stroke: none; }
+svg .dg-g-water { fill: url(#tb-water); stroke: none; }
+svg .dg-water-top { fill: none; stroke: #2f7aa6; stroke-width: 1.2px; }
+svg .dg-glass { fill: #f4f9fb; fill-opacity: .55; stroke: #6e8796; stroke-width: 1.4px; stroke-linejoin: round; }
+svg .dg-glass-hi { fill: none; stroke: #fff; stroke-width: 3px; stroke-linecap: round; stroke-opacity: .9; }
+svg .dg-skin { fill: url(#tb-skin); stroke: #9a6a4f; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-skin-line { fill: none; stroke: #9a6a4f; stroke-width: .8px; stroke-linecap: round; }
+svg .dg-g-sand { fill: url(#tb-sand); stroke: #a8874a; stroke-width: 1px; }
+svg .dg-g-sky-day { fill: url(#tb-sky-day); stroke: none; } svg .dg-g-sky-night { fill: url(#tb-sky-night); stroke: none; }
+svg .dg-starlet { fill: #fff; stroke: none; }
+svg .dg-g-liquid { fill: url(#tb-liquid); stroke: #a3270b; stroke-width: .8px; }
+svg .dg-burner { fill: #3f3b35; stroke: #1f1c19; stroke-width: 1px; }
+svg .dg-g-hotblock  { fill: url(#tb-hotblock);  stroke: #7a1f0a; stroke-width: 1.2px; }
+svg .dg-g-coldblock { fill: url(#tb-coldblock); stroke: #1e3a8a; stroke-width: 1.2px; }
+svg .dg-g-warmblock { fill: url(#tb-warmblock); stroke: #8a5a00; stroke-width: 1.2px; }
+svg .dg-cross { fill: none; stroke: #b91c1c; stroke-width: 3px; stroke-linecap: round; }
+svg .dg-g-bag { fill: url(#tb-bag); stroke: #2f5a7a; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-quilt { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 1px; stroke-dasharray: 3 3; }
+svg .dg-insul { fill: url(#tb-insul); stroke: #b8708a; stroke-width: .8px; }
+svg .dg-ins-a { fill: #f6c9d6; } svg .dg-ins-l { fill: none; stroke: #d98aa3; stroke-width: 1px; }
+svg .dg-g-globe { fill: url(#tb-globe); stroke: #1f5f8a; stroke-width: 1px; }
+svg .dg-land { fill: #6fa35a; stroke: #3f6b33; stroke-width: .6px; }
+svg .dg-g-sunball { fill: url(#tb-sunball); stroke: #d97a0a; stroke-width: 1px; }
+svg .dg-silver { fill: url(#tb-silver); stroke: #6e7780; stroke-width: 1px; }
+svg .dg-g-plastic { fill: url(#tb-plastic); stroke: #26303a; stroke-width: 1px; }
+svg .dg-g-soup { fill: url(#tb-soup); stroke: #a3501b; stroke-width: .8px; }
+svg .dg-vac { fill: #fff; stroke: none; }
+svg .dg-band-water { fill: #0369a1; fill-opacity: .09; stroke: none; } svg .dg-band-hot { fill: #c2410c; fill-opacity: .08; stroke: none; }
+svg .dg-dot-water { fill: #0369a1; stroke: #fff; stroke-width: 1px; } svg .dg-dot-hot { fill: #c2410c; stroke: #fff; stroke-width: 1px; }
+svg .dg-g-ballast { fill: url(#tb-rock); stroke: #6e675f; stroke-width: .8px; }
+svg .dg-brick { fill: url(#tb-brick); stroke: #7a3b2a; stroke-width: 1px; }
+svg .dg-brick-bg { fill: #c97a5a; } svg .dg-brick-l { fill: none; stroke: #f3e3d6; stroke-width: 1px; }
+svg .dg-wave-hot { fill: none; stroke: #e0a515; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-porcelain { fill: #fbfaf7; stroke: #3f3b35; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-snowflake { fill: none; stroke: #6fa8d6; stroke-width: 1.2px; stroke-linecap: round; }
+svg .dg-curve-cold, svg .dg-curve-water, svg .dg-curve-hot, svg .dg-curve-accent { fill: none; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-curve-cold { stroke: #1d4ed8; } svg .dg-curve-water { stroke: #0369a1; } svg .dg-curve-hot { stroke: #c2410c; } svg .dg-curve-accent { stroke: var(--dg-accent); }
+svg .dg-rodglow { fill: url(#tb-rodglow); stroke: none; }
+svg .dg-night { fill: #0b1a33; fill-opacity: .38; stroke: none; }
+svg .dg-vibring-cold, svg .dg-vibring-hot, svg .dg-vibring-warm { stroke-width: .9px; stroke-dasharray: 2 2; }
+svg .dg-vibring-cold { fill: #1d4ed8; fill-opacity: .08; stroke: #6f97ea; } svg .dg-vibring-warm { fill: #e0a515; fill-opacity: .1; stroke: #e0a515; }
+svg .dg-vibring-hot { fill: #e2431a; fill-opacity: .09; stroke: #f2793a; }
+svg .dg-zip { fill: none; stroke: #e9ecef; stroke-width: 2px; stroke-dasharray: 2 2; }
+svg .dg-leader { fill: none; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-leader-dot { fill: #3f3b35; stroke: #fff; stroke-width: 1px; }
+svg .dg-arrow.mk.sun { marker-end: url(#tb-m-sun); } svg .dg-arrow.mk.plant { marker-end: url(#tb-m-plant); }
+svg .dg-arrow.mk.earth { marker-end: url(#tb-m-earth); } svg .dg-arrow.mk.accent { marker-end: url(#tb-m-accent); }
+svg .dg-an { stroke: #3a332c; stroke-width: .9px; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-line { fill: none; stroke: #3a332c; stroke-width: .9px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-thin { fill: none; stroke: #3a332c; stroke-width: .6px; stroke-opacity: .6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-stem { fill: none; stroke: #3f6b33; stroke-width: 1.4px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-c-tan { fill: #d9c3a0; } svg .dg-c-snow { fill: #f4efe6; } svg .dg-c-grey { fill: #a39d93; } svg .dg-c-wolf { fill: #8f8a82; }
+svg .dg-c-brown { fill: #7a5236; } svg .dg-c-moose { fill: #5e4030; } svg .dg-c-dark { fill: #2a2622; } svg .dg-c-yellow { fill: #f2c230; }
+svg .dg-c-orange { fill: #e8892a; } svg .dg-c-green { fill: #6fa35a; } svg .dg-c-dkgreen { fill: #3f6b33; } svg .dg-c-olive { fill: #7d8a3e; }
+svg .dg-c-heron { fill: #8fa3b5; } svg .dg-c-pink { fill: #d9579a; } svg .dg-c-cream { fill: #efe3c8; } svg .dg-c-white { fill: #fff; }
+svg .dg-c-red { fill: #b8452a; } svg .dg-c-lynx { fill: #c9b08c; } svg .dg-c-owl { fill: #8a6544; } svg .dg-c-mallard { fill: #2f7a4a; }
+svg .dg-c-purple { fill: #9b7cc0; } svg .dg-c-bark { fill: #f1efe8; } svg .dg-c-char { fill: #3a3330; } svg .dg-c-lime { fill: #a9cf6a; }
+svg .dg-c-lilac { fill: #c9a6de; } svg .dg-c-wheat { fill: #e3c46a; } svg .dg-c-canola { fill: #f5d42a; } svg .dg-c-skin { fill: #f1c7a8; }
+svg .dg-g-leaf { fill: url(#tb-leaf); stroke: #3f6b33; stroke-width: .9px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-g-conifer { fill: url(#tb-conifer); stroke: #23421f; stroke-width: .9px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-g-soil { fill: url(#tb-soil); stroke: #5b4430; stroke-width: 1px; }
+svg .dg-g-sphere-plant { fill: url(#tb-sph-plant); stroke: #2c5a22; stroke-width: 1px; }
+svg .dg-g-sphere-earth { fill: url(#tb-sph-earth); stroke: #5b3a20; stroke-width: 1px; }
+svg .dg-g-sphere-muted { fill: url(#tb-sph-muted); stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-curve-plant { fill: none; stroke: #3f7a2a; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-band-plant { fill: #3f7a2a; fill-opacity: .08; stroke: none; } svg .dg-band-earth { fill: #7a5230; fill-opacity: .08; stroke: none; }
+svg .dg-card { fill: #fff; stroke: #b9b3a6; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-card-plant { fill: #eef5e6; stroke: #7aa35a; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-card-earth { fill: #f5ede2; stroke: #a8876a; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-tier-1 { fill: #dcebcb; stroke: #6f8f55; stroke-width: 1px; } svg .dg-tier-2 { fill: #f5eac4; stroke: #a8904a; stroke-width: 1px; }
+svg .dg-tier-3 { fill: #f7dcc2; stroke: #b07a4a; stroke-width: 1px; } svg .dg-tier-4 { fill: #f2cfcb; stroke: #a8605a; stroke-width: 1px; }
+svg .dg-g-nucleus { fill: url(#tb-nucleus); stroke: #6b3f85; stroke-width: 1px; }
+svg .dg-g-chloro { fill: url(#tb-chloro); stroke: #2c5a22; stroke-width: .8px; }
+svg .dg-g-cyto { fill: url(#tb-cyto); stroke: #5b8a3a; stroke-width: 1px; }
+svg .dg-cellwall { fill: #cfe3a8; stroke: #4f7a2a; stroke-width: 1.6px; }
+svg .dg-epi { fill: #f6f9f0; stroke: #7a9a5a; stroke-width: 1px; }
+svg .dg-g-vac { fill: url(#tb-vac); stroke: #4a98c6; stroke-width: 1px; }
+svg .dg-g-acell { fill: url(#tb-acell); stroke: #a8605a; stroke-width: 1.6px; }
+svg .dg-g-carrot { fill: url(#tb-carrot); stroke: #b8560f; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-petal { fill: url(#tb-petal); stroke: #c98a0a; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-pod { fill: url(#tb-pod); stroke: #3f6b33; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-pot { fill: url(#tb-pot); stroke: #8a4a2a; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-oil { fill: url(#tb-oil); stroke: #a8800a; stroke-width: 1px; }
+svg .dg-root { fill: none; stroke: #8a6a3a; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-root-thin { fill: none; stroke: #8a6a3a; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-hair { fill: none; stroke: #6b4a2a; stroke-width: 1.3px; stroke-linecap: round; }
+svg .dg-vein { fill: none; stroke: #eaf6dc; stroke-width: 1.1px; stroke-linecap: round; }
+svg .dg-filament { fill: none; stroke: #c9a64a; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-tube { fill: none; stroke: #d9a21a; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-cross-thin { fill: none; stroke: #b91c1c; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-dna-a { fill: none; stroke: var(--dg-accent); stroke-width: 1.8px; } svg .dg-dna-b { fill: none; stroke: #c2410c; stroke-width: 1.8px; }
+svg .dg-dna-r { fill: none; stroke: #8f877e; stroke-width: 1px; }
+svg .dg-g-concrete { fill: url(#tb-concrete); stroke: #6e6a64; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-stone { fill: url(#tb-stone); stroke: #6e5f52; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-dome { fill: url(#tb-dome); stroke: #5f6770; stroke-width: 1.2px; }
+svg .dg-g-tube { fill: url(#tb-tube); stroke: #8f877e; stroke-width: 1.2px; }
+svg .dg-rope { fill: none; stroke: #8a6a3a; stroke-width: 2.2px; stroke-linecap: round; }
+svg .dg-paperedge { fill: none; stroke: #6b665d; stroke-width: 2.6px; stroke-linecap: round; }
+svg .dg-paper { fill: #fdfdfb; stroke: #8f877e; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-member { fill: none; stroke: #5f6770; stroke-width: 4px; stroke-linecap: round; }
+svg .dg-member-hi { fill: none; stroke: #d6dadf; stroke-width: 1.2px; stroke-linecap: round; }
+svg .dg-bolt { fill: #8a939c; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-ghost { fill: none; stroke: #8f877e; stroke-width: 2px; stroke-dasharray: 5 4; }
+svg .dg-book-1 { fill: #c0533a; stroke: #6b2a1a; stroke-width: 1px; } svg .dg-book-2 { fill: #3b6fa0; stroke: #1f3f60; stroke-width: 1px; }
+svg .dg-book-3 { fill: #5d8a47; stroke: #34592a; stroke-width: 1px; } svg .dg-pages { fill: #fbf7ea; stroke: #b9b3a6; stroke-width: .6px; }
+svg .dg-bar-elastic, svg .dg-bar-plastic, svg .dg-bar-brittle { fill: none; stroke-width: 9px; stroke-linecap: round; }
+svg .dg-bar-elastic { stroke: #5b7fb0; } svg .dg-bar-plastic { stroke: #c9824a; } svg .dg-bar-brittle { stroke: #a8d4e8; }
+svg .dg-bar-hi { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-arrow.mk       { stroke-width: 2.4px; }
+svg .dg-arrow.mk.thin  { stroke-width: 1.7px; }
+svg .dg-arrow.mk.muted { marker-end: url(#tb-m-muted); }
+svg .dg-arrow.mk.plain { marker-end: url(#tb-m-plain); } svg .dg-arrow.mk.hot  { marker-end: url(#tb-m-hot); }
+svg .dg-arrow.mk.cold  { marker-end: url(#tb-m-cold); }  svg .dg-arrow.mk.water{ marker-end: url(#tb-m-water); }
+
+.viz.tb svg text { paint-order: stroke; stroke: #fff; stroke-width: 3.5px; stroke-linejoin: round; }
+.viz.tb svg .dg-label-white, .viz.tb svg .dg-tag-answer { stroke: none; }
+.viz.tb svg .dg-boundary { stroke: #24211d; stroke-width: 2.1px; fill: url(#tb-m-disc); filter: none; }
+.viz.tb svg .dg-line { stroke: #24211d; stroke-width: 2px; stroke-linecap: round; }
+.viz.tb svg .dg-accent { stroke-width: 3px; stroke-linecap: round; }
+.viz.tb svg .dg-dashed { stroke: #4a453e; stroke-width: 1.8px; stroke-dasharray: 6 4; }
+.viz.tb svg .dg-construction { stroke-width: 1.3px; stroke-dasharray: 3 3; }
+.viz.tb svg .dg-right-angle { stroke: #24211d; stroke-width: 1.5px; }
+.viz.tb svg .dg-point { fill: #24211d; } .viz.tb svg .dg-point-accent { stroke: #fff; stroke-width: 1px; }
+.viz.tb svg .dg-label { font-size: 14.5px; font-weight: 500; fill: #24211d; }
+.viz.tb svg .dg-label-sm { font-size: 13px; }
+.viz.tb svg .dg-label-accent, .viz.tb svg .dg-label-hot, .viz.tb svg .dg-label-cold, .viz.tb svg .dg-label-plant,
+.viz.tb svg .dg-label-water, .viz.tb svg .dg-label-earth { font-size: 13.5px; font-weight: 700; }
+.viz.tb svg .dg-math { font-size: 16.5px; } .viz.tb svg .dg-math-accent { font-size: 16.5px; }
+.viz.tb svg .dg-pt { font: italic 600 15.5px/1 "Times New Roman", Georgia, serif; fill: #24211d; }
+.viz.tb svg .dg-tag-answer { font-size: 13px; }
+.viz.tb svg .dg-accent.hot { stroke: var(--viz-hot); } .viz.tb svg .dg-accent.plant { stroke: var(--viz-plant); }
+.viz.tb svg .dg-pt.hot { fill: var(--viz-hot); } .viz.tb svg .dg-pt.accent { fill: var(--dg-accent); }
+.viz.tb svg .dg-fill-accent { fill-opacity: .17; stroke-width: 2px; }
+.viz.tb svg .dg-fill-hot, .viz.tb svg .dg-fill-plant, .viz.tb svg .dg-fill-earth, .viz.tb svg .dg-fill-water,
+.viz.tb svg .dg-fill-cold, .viz.tb svg .dg-fill-sun { stroke-width: 2px; }
+.viz.tb svg [class^="dg-fill"] { filter: drop-shadow(0 1px 1px rgba(40,30,20,.18)); }
+svg .dg-ang, svg .dg-ang-w, svg .dg-tickm { vector-effect: non-scaling-stroke; }
+svg .dg-ang { fill: none; stroke: var(--dg-accent); stroke-width: 1.7px; }
+svg .dg-ang-w { stroke: none; fill: var(--dg-accent); fill-opacity: .16; }
+svg .dg-ang.hot { stroke: var(--viz-hot); } svg .dg-ang-w.hot { fill: var(--viz-hot); }
+svg .dg-ang.plant { stroke: var(--viz-plant); } svg .dg-ang-w.plant { fill: var(--viz-plant); }
+svg .dg-ang.plain { stroke: #24211d; } svg .dg-ang-w.plain { fill: #6b665d; fill-opacity: .14; }
+svg .dg-tickm { fill: none; stroke: #24211d; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-gravel { fill: none; stroke: #e8dfcc; stroke-width: 14px; stroke-linecap: round; }
+svg .dg-grass { fill: #eef5e6; stroke: none; }
+svg .dg-tickm.accent { stroke: var(--dg-accent); } svg .dg-tickm.hot { stroke: var(--viz-hot); }
+svg .dg-open, svg .dg-closed, svg .dg-solray { vector-effect: non-scaling-stroke; }
+svg .dg-open { fill: #fff; stroke: var(--dg-accent); stroke-width: 2.6px; }   /* number-line endpoint: not included */
+svg .dg-closed { fill: var(--dg-accent); stroke: #fff; stroke-width: 1.2px; }  /* number-line endpoint: included */
+svg .dg-closed.hot { fill: var(--viz-hot); }
+svg .dg-solray { stroke: var(--dg-accent); stroke-width: 5px; stroke-linecap: butt; stroke-opacity: .85; fill: none; }
+svg .dg-plot, svg .dg-grid-min, svg .dg-grid-maj, svg .dg-road, svg .dg-road-mid { vector-effect: non-scaling-stroke; }
+svg .dg-plot { fill: #fbfcfe; stroke: #9aa5b8; stroke-width: 1px; }               /* graph paper behind a grid */
+svg .dg-grid-min { stroke: #d5dce8; stroke-width: .8px; fill: none; }           /* every grid line */
+svg .dg-grid-maj { stroke: #a9b4c6; stroke-width: 1px; fill: none; }            /* grid lines that carry a number */
+svg .dg-road { stroke: #5c5853; stroke-width: 9px; stroke-linecap: round; fill: none; }
+svg .dg-road-mid { stroke: #f4d35e; stroke-width: 1.6px; stroke-dasharray: 9 7; fill: none; }
+svg .dg-wax { fill: url(#tb-tube); stroke: #8f887b; stroke-width: 1px; }
+.viz.tb svg .dg-accent.water { stroke: var(--viz-water); }
+svg .dg-sc-f, svg .dg-sc-t, svg .dg-sc-s, svg .dg-sc-cyl, svg .dg-sw-f, svg .dg-sw-t, svg .dg-sw-s, svg .dg-sw-cyl,
+svg .dg-sg-f, svg .dg-sg-t, svg .dg-sg-s, svg .dg-sg-cyl, svg .dg-sr-f, svg .dg-sr-t, svg .dg-sr-s, svg .dg-sk-f, svg .dg-sk-t, svg .dg-sk-s,
+svg .dg-sh-f, svg .dg-sh-t, svg .dg-sh-s { stroke: #24211d; stroke-width: 1.6px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-edge, svg .dg-hid, svg .dg-fold, svg .dg-glass, svg .dg-plank { vector-effect: non-scaling-stroke; }   /* shaded solids: front / top / side / curved */
+svg .dg-sc-f { fill: url(#tb-sc-f); } svg .dg-sc-t { fill: url(#tb-sc-t); } svg .dg-sc-s { fill: url(#tb-sc-s); } svg .dg-sc-cyl { fill: url(#tb-sc-cyl); }
+svg .dg-sw-f { fill: url(#tb-sw-f); } svg .dg-sw-t { fill: url(#tb-sw-t); } svg .dg-sw-s { fill: url(#tb-sw-s); } svg .dg-sw-cyl { fill: url(#tb-sw-cyl); }
+svg .dg-sg-f { fill: url(#tb-sg-f); } svg .dg-sg-t { fill: url(#tb-sg-t); } svg .dg-sg-s { fill: url(#tb-sg-s); } svg .dg-sg-cyl { fill: url(#tb-sg-cyl); }
+svg .dg-sr-f { fill: url(#tb-sr-f); } svg .dg-sr-t { fill: url(#tb-sr-t); } svg .dg-sr-s { fill: url(#tb-sr-s); }
+svg .dg-sk-f { fill: url(#tb-sk-f); } svg .dg-sk-t { fill: url(#tb-sk-t); } svg .dg-sk-s { fill: url(#tb-sk-s); }
+svg .dg-sh-f { fill: url(#tb-sh-f); } svg .dg-sh-t { fill: url(#tb-sh-t); } svg .dg-sh-s { fill: url(#tb-sh-s); }
+svg .ns { stroke: none; }                                                       /* face fill only; edges drawn on top */
+svg .dg-edge { fill: none; stroke: #24211d; stroke-width: 1.6px; stroke-linecap: round; }
+svg .dg-hid { fill: none; stroke: #5f5a52; stroke-width: 1.3px; stroke-dasharray: 5 3.5; }   /* hidden edge */
+svg .dg-hid.hot { stroke: var(--viz-hot); stroke-width: 1.8px; } svg .dg-hid.water { stroke: var(--viz-water); stroke-width: 1.8px; }
+svg .dg-fold { fill: none; stroke: #4a453e; stroke-width: 1.1px; stroke-dasharray: 4 3; }    /* fold line in a net */
+svg .dg-glass { fill: #e6eef8; fill-opacity: .38; stroke: #24211d; stroke-width: 1.5px; }    /* see-through container */
+svg .dg-ghost-hot { fill: var(--viz-hot); fill-opacity: .22; stroke: var(--viz-hot); stroke-width: 1.5px; stroke-dasharray: 5 3.5; vector-effect: non-scaling-stroke; }
+svg .dg-plank { fill: none; stroke: #7e2618; stroke-width: .8px; stroke-opacity: .55; }
+svg .dg-door { fill: #4a2a20; stroke: #24211d; stroke-width: 1px; }
+svg .dg-eq, svg .dg-eq-lg { font: 400 19px/1 "Times New Roman", Georgia, serif; fill: #24211d; }   /* typeset maths: upright numbers, */
+svg .dg-eq-lg { font-size: 25px; } svg .dg-eq .v, svg .dg-eq-lg .v { font-style: italic; }       /* letters in <tspan class="v"> */
+svg .dg-eq.accent, svg .dg-eq-lg.accent { fill: var(--dg-accent); font-weight: 700; }
+svg .dg-brace { fill: none; stroke: #4a453e; stroke-width: 1.4px; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-tl-q, svg .dg-tl-x, svg .dg-tl-1, svg .dg-tl-n { stroke: #24211d; stroke-width: 1.3px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-tl-q { fill: url(#tb-tl-q); } svg .dg-tl-x { fill: url(#tb-tl-x); } svg .dg-tl-1 { fill: url(#tb-tl-1); } svg .dg-tl-n { fill: url(#tb-tl-n); }   /* algebra tiles: x², x, 1, negative */
+svg .dg-tl-q.e { fill: #4672b8; } svg .dg-tl-x.e { fill: #4c9a3a; } svg .dg-tl-1.e { fill: #c99a18; } svg .dg-tl-n.e { fill: #b03b22; }   /* tile edge (thickness) */
+svg .dg-canola { fill: url(#tb-canola); stroke: #8a7414; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-crop { fill: none; stroke: #c79f12; stroke-width: 1px; stroke-opacity: .7; vector-effect: non-scaling-stroke; }
+svg .dg-eq-xl { font: 400 46px/1 "Times New Roman", Georgia, serif; fill: #24211d; } svg .dg-eq-xl .v { font-style: italic; }
+svg .dg-eq .sup, svg .dg-eq-lg .sup, svg .dg-eq-xl .sup { font-size: 70%; }   /* exponent: <tspan class="sup" dy="-8"> */
+svg .dg-eq .acc, svg .dg-eq-lg .acc, svg .dg-eq-xl .acc { fill: var(--dg-accent); font-weight: 700; }
+svg .dg-eq .hot, svg .dg-eq-lg .hot, svg .dg-eq-xl .hot { fill: var(--viz-hot); font-weight: 700; }
+svg .dg-ch-a, svg .dg-ch-b, svg .dg-ch-n, svg .dg-ch-g { stroke: #24211d; stroke-width: 1.2px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-ch-a { fill: url(#tb-ch-a); } svg .dg-ch-b { fill: url(#tb-ch-b); } svg .dg-ch-n { fill: url(#tb-ch-n); } svg .dg-ch-g { fill: url(#tb-ch-g); }   /* factor chips: blue, green, red (negative), grey (cancelled) */
+svg .dg-ch-a.e { fill: #6f8fc4; } svg .dg-ch-b.e { fill: #5f9a48; } svg .dg-ch-n.e { fill: #c4573c; } svg .dg-ch-g.e { fill: #aaa395; }
+svg .dg-strike { fill: none; stroke: var(--viz-hot); stroke-width: 2.4px; stroke-linecap: round; vector-effect: non-scaling-stroke; }   /* cancelled factor */
+svg .dg-frac-key { stroke: var(--viz-key); stroke-width: 1.3px; vector-effect: non-scaling-stroke; }   /* fraction bar of a key answer */
+svg .dg-fbar { stroke: #24211d; stroke-width: 1.3px; vector-effect: non-scaling-stroke; } svg .dg-fbar.acc { stroke: var(--dg-accent); }   /* fraction bar */
+svg .dg-mb-r, svg .dg-mb-b, svg .dg-mb-g, svg .dg-coin, svg .dg-coin-rim, svg .dg-die, svg .dg-pc-r, svg .dg-pc-b, svg .dg-pc-g,
+svg .dg-cell, svg .dg-scale, svg .dg-bag, svg .dg-bag-tie, svg .dg-rainbar { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-mb-r { fill: url(#tb-mb-r); stroke: #6e1c0c; stroke-width: 1px; } svg .dg-mb-b { fill: url(#tb-mb-b); stroke: #132b63; stroke-width: 1px; }   /* marbles */
+svg .dg-mb-g { fill: url(#tb-mb-g); stroke: #1f4f14; stroke-width: 1px; }
+.viz.tb svg .dg-eq.stamp, .viz.tb svg .dg-eq-lg.stamp { stroke: none; fill: #5c430a; font-weight: 700; }   /* letter stamped on a coin */
+svg .dg-coin { fill: url(#tb-coin); stroke: #8a6512; stroke-width: 1.5px; } svg .dg-coin-rim { fill: none; stroke: #b8891d; stroke-width: 1.2px; }   /* coin */
+svg .dg-die { fill: url(#tb-die); stroke: #24211d; stroke-width: 1.3px; } svg .dg-pip { fill: #24211d; stroke: none; }   /* die face */
+svg .dg-pc-r { fill: url(#tb-pc-r); stroke: #24211d; stroke-width: 1.4px; } svg .dg-pc-b { fill: url(#tb-pc-b); stroke: #24211d; stroke-width: 1.4px; }   /* spinner sectors, bars */
+svg .dg-pc-g { fill: url(#tb-pc-g); stroke: #24211d; stroke-width: 1.4px; }
+svg .dg-needle { fill: #24211d; stroke: #fff; stroke-width: 1px; } svg .dg-hub { fill: #f4f2ed; stroke: #24211d; stroke-width: 1.4px; }
+svg .dg-cell { fill: url(#tb-cell); stroke: #b9b3a6; stroke-width: 1px; } svg .dg-cell.on { fill: url(#tb-cell-on); stroke: var(--dg-accent); stroke-width: 1.8px; }   /* outcome square */
+svg .dg-scale { fill: url(#tb-pscale); stroke: #24211d; stroke-width: 1.5px; }   /* probability line, 0 to 1 */
+svg .dg-bag { fill: #e6eef8; fill-opacity: .45; stroke: #24211d; stroke-width: 1.6px; } svg .dg-bag-tie { fill: none; stroke: #8a6512; stroke-width: 3px; stroke-linecap: round; }   /* clear bag */
+svg .dg-rainbar { fill: url(#tb-rainbar); stroke: #24211d; stroke-width: 1.6px; } svg .dg-rainfx { fill: url(#tb-rain); stroke: none; } svg .dg-rain-l { stroke: #fff; stroke-opacity: .75; stroke-width: 1.3px; stroke-linecap: round; }
+svg .dg-blank-bar { fill: url(#tb-cell); stroke: #24211d; stroke-width: 1.6px; vector-effect: non-scaling-stroke; }
+/* ── /viz-kit textbook layer ── */
 </style>
 <style id="key-link-css">
   .key-link { margin: 6px 0 14px; font-size: 0.9rem; font-weight: 600; }
@@ -213,6 +551,9 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
 </style>
 </head>
 <body>
+<!-- viz-defs -->
+<!-- tikz: none | shared paints for the figures below -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="tb-crust" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d3b88f"/><stop offset="1" stop-color="#a88a65"/></linearGradient><linearGradient id="tb-mantle" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde3ad"/><stop offset="1" stop-color="#f2a85f"/></linearGradient><linearGradient id="tb-ocean" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b5e1f4"/><stop offset="1" stop-color="#4a98c6"/></linearGradient><linearGradient id="tb-magma" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc15a"/><stop offset="1" stop-color="#e2431a"/></linearGradient><linearGradient id="tb-cont" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8c4a0"/><stop offset="1" stop-color="#b29a72"/></linearGradient><radialGradient id="tb-sph-crust" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#c9ab80"/><stop offset="1" stop-color="#8f7150"/></radialGradient><radialGradient id="tb-sph-mantle" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fcd18c"/><stop offset="0.6" stop-color="#ee8a42"/><stop offset="1" stop-color="#c9581f"/></radialGradient><radialGradient id="tb-sph-outer" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffb85a"/><stop offset="0.6" stop-color="#e8662a"/><stop offset="1" stop-color="#b83a12"/></radialGradient><radialGradient id="tb-sph-inner" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff7c9"/><stop offset="0.55" stop-color="#ffd23f"/><stop offset="1" stop-color="#f0a01a"/></radialGradient><linearGradient id="tb-ign" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c6b0"/><stop offset="1" stop-color="#e59878"/></linearGradient><linearGradient id="tb-sed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e6b8"/><stop offset="1" stop-color="#e6c882"/></linearGradient><linearGradient id="tb-met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6cabe"/><stop offset="1" stop-color="#b0a090"/></linearGradient><linearGradient id="tb-landa" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e4d6b4"/><stop offset="1" stop-color="#cdb98e"/></linearGradient><linearGradient id="tb-landb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9e0bc"/><stop offset="1" stop-color="#bccb94"/></linearGradient><pattern id="tb-speckle" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r=".9" class="dg-sp-d"/><circle cx="10" cy="9" r=".7" class="dg-sp-d"/><circle cx="7" cy="13" r=".8" class="dg-sp-l"/><circle cx="12" cy="2" r=".7" class="dg-sp-l"/></pattern><pattern id="tb-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" class="dg-hatch-l"/></pattern><radialGradient id="tb-glow" cx=".5" cy="1" r="1"><stop offset="0" stop-color="#ff7a2a" stop-opacity=".85"/><stop offset="1" stop-color="#ff7a2a" stop-opacity="0"/></radialGradient><linearGradient id="tb-crustL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a07f5a"/><stop offset="1" stop-color="#dcbf94"/></linearGradient><linearGradient id="tb-crustR" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dcbf94"/><stop offset="1" stop-color="#a07f5a"/></linearGradient><linearGradient id="tb-outer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb85a"/><stop offset="1" stop-color="#d9531e"/></linearGradient><linearGradient id="tb-inner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#f0a01a"/></linearGradient><linearGradient id="tb-volc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a8c80"/><stop offset="1" stop-color="#5f544b"/></linearGradient><linearGradient id="tb-rock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3a698"/><stop offset="1" stop-color="#7d7064"/></linearGradient><linearGradient id="tb-precam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9d2c6"/><stop offset="1" stop-color="#ebe6dc"/></linearGradient><radialGradient id="tb-ashcloud" cx=".5" cy=".5" r=".5" fx=".4" fy=".35"><stop offset="0" stop-color="#eeebe6"/><stop offset="1" stop-color="#a8a097"/></radialGradient><pattern id="tb-fine" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".6" class="dg-fine-a"/><circle cx="3" cy="3" r=".5" class="dg-fine-b"/></pattern><pattern id="tb-p-sand" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" class="dg-psand-bg"/><circle cx="2" cy="3" r=".9" class="dg-psand-dot"/><circle cx="7" cy="7" r=".9" class="dg-psand-dot"/><circle cx="8" cy="1.5" r=".6" class="dg-psand-dot"/></pattern><pattern id="tb-p-shale" width="16" height="8" patternUnits="userSpaceOnUse"><rect width="16" height="8" class="dg-pshale-bg"/><line x1="1" y1="3" x2="7" y2="3" class="dg-pshale-l"/><line x1="9" y1="7" x2="15" y2="7" class="dg-pshale-l"/></pattern><pattern id="tb-p-lime" width="20" height="10" patternUnits="userSpaceOnUse"><rect width="20" height="10" class="dg-plime-bg"/><path d="M0 0.5 H20 M0 5.5 H20 M5 0.5 V5.5 M15 5.5 V10" class="dg-plime-l"/></pattern><radialGradient id="tb-pt-cold" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#dbe7ff"/><stop offset="0.55" stop-color="#6f97ea"/><stop offset="1" stop-color="#1d4ed8"/></radialGradient><radialGradient id="tb-pt-warm" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff6cf"/><stop offset="0.55" stop-color="#f3c33f"/><stop offset="1" stop-color="#c98a0a"/></radialGradient><radialGradient id="tb-pt-hot" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffe1c9"/><stop offset="0.55" stop-color="#f2793a"/><stop offset="1" stop-color="#c2410c"/></radialGradient><linearGradient id="tb-steel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f5f7"/><stop offset="0.45" stop-color="#c3c9cf"/><stop offset="0.55" stop-color="#a7afb7"/><stop offset="1" stop-color="#d6dadf"/></linearGradient><linearGradient id="tb-steelH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8a939c"/><stop offset="0.25" stop-color="#e9ecef"/><stop offset="0.5" stop-color="#c3c9cf"/><stop offset="1" stop-color="#7d868f"/></linearGradient><linearGradient id="tb-wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9a86c"/><stop offset="1" stop-color="#b07a44"/></linearGradient><linearGradient id="tb-water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfeaf8"/><stop offset="1" stop-color="#7fbde2"/></linearGradient><linearGradient id="tb-flame" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffd23f"/><stop offset=".55" stop-color="#ff8a2a"/><stop offset="1" stop-color="#e2431a"/></linearGradient><linearGradient id="tb-skin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7d6bd"/><stop offset="1" stop-color="#e3ad8a"/></linearGradient><linearGradient id="tb-sand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7e6b0"/><stop offset="1" stop-color="#dfbd72"/></linearGradient><linearGradient id="tb-sky-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2f6"/><stop offset="1" stop-color="#f2f9fd"/></linearGradient><linearGradient id="tb-sky-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c2745"/><stop offset="1" stop-color="#3d4d78"/></linearGradient><linearGradient id="tb-liquid" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff9a7a"/><stop offset="0.5" stop-color="#e2431a"/><stop offset="1" stop-color="#b8320c"/></linearGradient><linearGradient id="tb-hotblock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb38a"/><stop offset="1" stop-color="#e2541f"/></linearGradient><linearGradient id="tb-coldblock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe0ff"/><stop offset="1" stop-color="#6f97ea"/></linearGradient><linearGradient id="tb-warmblock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7a3"/><stop offset="1" stop-color="#f0b43a"/></linearGradient><linearGradient id="tb-bag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb9d8"/><stop offset="1" stop-color="#4f86ad"/></linearGradient><pattern id="tb-insul" width="12" height="8" patternUnits="userSpaceOnUse"><rect width="12" height="8" class="dg-ins-a"/><path d="M0 4 Q3 0 6 4 T12 4" class="dg-ins-l"/></pattern><radialGradient id="tb-globe" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#bfe3f5"/><stop offset="0.6" stop-color="#4a98c6"/><stop offset="1" stop-color="#1f5f8a"/></radialGradient><radialGradient id="tb-sunball" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fffbe0"/><stop offset="0.5" stop-color="#ffd23f"/><stop offset="1" stop-color="#f08a1a"/></radialGradient><linearGradient id="tb-silver" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset="0.5" stop-color="#d3d8dd"/><stop offset="1" stop-color="#f2f4f6"/></linearGradient><linearGradient id="tb-plastic" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6f8091"/><stop offset="1" stop-color="#3a4652"/></linearGradient><linearGradient id="tb-soup" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9c27c"/><stop offset="1" stop-color="#e0782a"/></linearGradient><pattern id="tb-brick" width="24" height="12" patternUnits="userSpaceOnUse"><rect width="24" height="12" class="dg-brick-bg"/><path d="M0 .5 H24 M0 6.5 H24 M6 .5 V6.5 M18 6.5 V12" class="dg-brick-l"/></pattern><linearGradient id="tb-rodglow" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff5a1a" stop-opacity=".6"/><stop offset=".55" stop-color="#ffb03a" stop-opacity=".18"/><stop offset="1" stop-color="#ffb03a" stop-opacity="0"/></linearGradient><linearGradient id="tb-leaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd07a"/><stop offset="1" stop-color="#5b9a44"/></linearGradient><linearGradient id="tb-conifer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f8a4a"/><stop offset="1" stop-color="#2f5f2c"/></linearGradient><linearGradient id="tb-soil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a7452"/><stop offset="1" stop-color="#6b4a32"/></linearGradient><radialGradient id="tb-sph-plant" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#d8f0c0"/><stop offset="0.6" stop-color="#7cb85a"/><stop offset="1" stop-color="#3f7a2a"/></radialGradient><radialGradient id="tb-sph-earth" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#f0d8b8"/><stop offset="0.6" stop-color="#b88a5a"/><stop offset="1" stop-color="#7a5230"/></radialGradient><radialGradient id="tb-sph-muted" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#e8e4dc"/><stop offset="0.6" stop-color="#9a958c"/><stop offset="1" stop-color="#5f5a52"/></radialGradient><radialGradient id="tb-nucleus" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#f0dcf6"/><stop offset="0.6" stop-color="#c09ad6"/><stop offset="1" stop-color="#8a5aa8"/></radialGradient><radialGradient id="tb-chloro" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#d4f0b0"/><stop offset="0.6" stop-color="#6fb84a"/><stop offset="1" stop-color="#3f7a2a"/></radialGradient><linearGradient id="tb-cyto" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2f9e8"/><stop offset="1" stop-color="#dcefc6"/></linearGradient><radialGradient id="tb-vac" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#f2faff"/><stop offset="1" stop-color="#b5dcf2"/></radialGradient><radialGradient id="tb-acell" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff3ef"/><stop offset="1" stop-color="#f6d4cc"/></radialGradient><linearGradient id="tb-carrot" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e0701a"/><stop offset="0.45" stop-color="#ffb05a"/><stop offset="1" stop-color="#d8601a"/></linearGradient><linearGradient id="tb-petal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#f2b830"/></linearGradient><linearGradient id="tb-pod" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe9a0"/><stop offset="1" stop-color="#7cb85a"/></linearGradient><linearGradient id="tb-pot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d98a5a"/><stop offset="1" stop-color="#a85a34"/></linearGradient><linearGradient id="tb-oil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#e8b820"/></linearGradient><linearGradient id="tb-concrete" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dedbd5"/><stop offset="1" stop-color="#a8a49e"/></linearGradient><linearGradient id="tb-stone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ecdfca"/><stop offset="1" stop-color="#bfa98c"/></linearGradient><radialGradient id="tb-dome" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#bfc6cd"/></radialGradient><linearGradient id="tb-tube" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6d1c6"/><stop offset="0.4" stop-color="#ffffff"/><stop offset="1" stop-color="#cfc9bd"/></linearGradient><marker id="tb-m-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head muted"/></marker><marker id="tb-m-plain" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head plain"/></marker><marker id="tb-m-hot" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head hot"/></marker><marker id="tb-m-cold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head cold"/></marker><marker id="tb-m-water" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head water"/></marker><marker id="tb-m-sun" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head sun"/></marker><marker id="tb-m-plant" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head plant"/></marker><marker id="tb-m-earth" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head earth"/></marker><marker id="tb-m-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head accent"/></marker><linearGradient id="tb-sc-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6eef8"/><stop offset="1" stop-color="#cbdaee"/></linearGradient><linearGradient id="tb-sc-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f5f8fc"/><stop offset="1" stop-color="#e3ebf6"/></linearGradient><linearGradient id="tb-sc-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8cae2"/><stop offset="1" stop-color="#9fb5d3"/></linearGradient><linearGradient id="tb-sc-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9fb4d2"/><stop offset="0.38" stop-color="#f1f6fc"/><stop offset="1" stop-color="#8ea5c6"/></linearGradient><linearGradient id="tb-sw-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde8bd"/><stop offset="1" stop-color="#f5cf82"/></linearGradient><linearGradient id="tb-sw-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff5dc"/><stop offset="1" stop-color="#fbe7b8"/></linearGradient><linearGradient id="tb-sw-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eec27a"/><stop offset="1" stop-color="#dea65a"/></linearGradient><linearGradient id="tb-sw-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dca55a"/><stop offset="0.38" stop-color="#fff2d2"/><stop offset="1" stop-color="#cf9442"/></linearGradient><linearGradient id="tb-sg-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dff0d4"/><stop offset="1" stop-color="#c0dfad"/></linearGradient><linearGradient id="tb-sg-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0f8ea"/><stop offset="1" stop-color="#dcefd0"/></linearGradient><linearGradient id="tb-sg-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8cf8e"/><stop offset="1" stop-color="#8dbd72"/></linearGradient><linearGradient id="tb-sg-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8cbb72"/><stop offset="0.38" stop-color="#eef8e7"/><stop offset="1" stop-color="#7aab5f"/></linearGradient><linearGradient id="tb-sr-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d65a43"/><stop offset="1" stop-color="#b53c2b"/></linearGradient><linearGradient id="tb-sr-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e48a74"/><stop offset="1" stop-color="#d4664f"/></linearGradient><linearGradient id="tb-sr-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3372a"/><stop offset="1" stop-color="#86291c"/></linearGradient><linearGradient id="tb-sr-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#86291c"/><stop offset="0.38" stop-color="#e07a62"/><stop offset="1" stop-color="#7a2418"/></linearGradient><linearGradient id="tb-sk-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfc3c7"/><stop offset="1" stop-color="#9fa5ab"/></linearGradient><linearGradient id="tb-sk-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9dcdf"/><stop offset="1" stop-color="#c3c7cb"/></linearGradient><linearGradient id="tb-sk-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8e959c"/><stop offset="1" stop-color="#767d84"/></linearGradient><linearGradient id="tb-sk-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#767d84"/><stop offset="0.38" stop-color="#d9dcdf"/><stop offset="1" stop-color="#6a7178"/></linearGradient><linearGradient id="tb-sh-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9d6c8"/><stop offset="1" stop-color="#f0b6a0"/></linearGradient><linearGradient id="tb-sh-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fce6dd"/><stop offset="1" stop-color="#f7cdbd"/></linearGradient><linearGradient id="tb-sh-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eaa58b"/><stop offset="1" stop-color="#dc8a6f"/></linearGradient><linearGradient id="tb-sh-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dc8a6f"/><stop offset="0.38" stop-color="#fbe0d4"/><stop offset="1" stop-color="#c97458"/></linearGradient><linearGradient id="tb-tl-q" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b4cdf4"/><stop offset="1" stop-color="#7aa3e3"/></linearGradient><linearGradient id="tb-tl-x" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bde6a8"/><stop offset="1" stop-color="#78c35f"/></linearGradient><linearGradient id="tb-tl-1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2b0"/><stop offset="1" stop-color="#f5cd4c"/></linearGradient><linearGradient id="tb-tl-n" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9b3a1"/><stop offset="1" stop-color="#e4644a"/></linearGradient><linearGradient id="tb-canola" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffec70"/><stop offset="1" stop-color="#f2c51c"/></linearGradient><linearGradient id="tb-ch-a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3ecf9"/><stop offset="1" stop-color="#a9c2e8"/></linearGradient><linearGradient id="tb-ch-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e0f2d4"/><stop offset="1" stop-color="#a6d58d"/></linearGradient><linearGradient id="tb-ch-n" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fcdad0"/><stop offset="1" stop-color="#ef9f88"/></linearGradient><linearGradient id="tb-ch-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f2ed"/><stop offset="1" stop-color="#d6d1c6"/></linearGradient><radialGradient id="tb-mb-r" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffd6c8"/><stop offset="0.5" stop-color="#e0553a"/><stop offset="1" stop-color="#9a2913"/></radialGradient><radialGradient id="tb-mb-b" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#d6e4ff"/><stop offset="0.5" stop-color="#3e70d4"/><stop offset="1" stop-color="#1a3a86"/></radialGradient><radialGradient id="tb-mb-g" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#d9f2c8"/><stop offset="0.5" stop-color="#4d9c35"/><stop offset="1" stop-color="#24591a"/></radialGradient><radialGradient id="tb-coin" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff6cc"/><stop offset="0.5" stop-color="#f0c84e"/><stop offset="1" stop-color="#c4921b"/></radialGradient><linearGradient id="tb-die" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e4e0d7"/></linearGradient><linearGradient id="tb-cell" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ebe7de"/></linearGradient><linearGradient id="tb-cell-on" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3ecfb"/><stop offset="1" stop-color="#b9cdf1"/></linearGradient><linearGradient id="tb-pc-r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9bba7"/><stop offset="1" stop-color="#de5d3c"/></linearGradient><linearGradient id="tb-pc-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bfd3f6"/><stop offset="1" stop-color="#5a86d6"/></linearGradient><linearGradient id="tb-pc-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9e9b4"/><stop offset="1" stop-color="#68ae4b"/></linearGradient><linearGradient id="tb-pscale" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ece8e0"/><stop offset="1" stop-color="#a9c2ec"/></linearGradient><linearGradient id="tb-rainbar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a7d1ee"/><stop offset="1" stop-color="#4c93c4"/></linearGradient><pattern id="tb-rain" width="9" height="11" patternUnits="userSpaceOnUse"><line x1="7" y1="1.5" x2="4" y2="8.5" class="dg-rain-l"/></pattern><radialGradient id="tb-m-disc" cx=".5" cy=".5" r=".5" fx=".42" fy=".36"><stop offset="0" stop-color="#ffffff"/><stop offset=".75" stop-color="#f6f8fc"/><stop offset="1" stop-color="#e6ebf5"/></radialGradient></defs></svg><!-- /viz-defs -->
 
   <div class="header-strip">
     <div class="course-label">Grade 9 Mathematics · Alberta Curriculum · Statistics &amp; Probability</div>
@@ -282,21 +623,33 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
       </tbody>
     </table>
 <!-- viz:probability-scale -->
-<figure class="viz">
+<figure class="viz tb">
 <!-- tikz: probability-scale | 0..1 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 160" aria-label="A probability line from 0 to 1. At 0, a blank, impossible: rolling a 7. Near 1/6, unlikely: rolling a 6. At one half, even chance: rolling an even number. Near 5/6, likely: rolling less than 6. At 1, a blank, certain: rolling less than 7." width="480" height="160">
-<line x1="40" y1="70" x2="440" y2="70" class="dg-accent"/>
-<line x1="40" y1="62" x2="40" y2="78" class="dg-line"/><line x1="440" y1="62" x2="440" y2="78" class="dg-line"/>
-<line x1="240.0" y1="62" x2="240.0" y2="78" class="dg-line"/>
-<text x="40" y="96" text-anchor="middle" class="dg-label">0</text><text x="240.0" y="96" text-anchor="middle" class="dg-label">0.5</text><text x="440" y="96" text-anchor="middle" class="dg-label">1</text>
-<circle cx="106.7" cy="70" r="5" class="dg-point"/><circle cx="373.3" cy="70" r="5" class="dg-point"/>
-<text x="106.7" y="52" text-anchor="middle" class="dg-label-sm">unlikely: roll a 6</text>
-<text x="240.0" y="52" text-anchor="middle" class="dg-label-sm">even chance: roll even</text>
-<text x="373.3" y="40" text-anchor="middle" class="dg-label-sm">likely: roll under 6</text>
-<rect x="6" y="104" width="80" height="20" rx="3" class="dg-tag"/>
-<text x="46" y="140" text-anchor="middle" class="dg-label-sm">roll a 7</text>
-<rect x="400" y="104" width="70" height="20" rx="3" class="dg-tag"/>
-<text x="435" y="140" text-anchor="middle" class="dg-label-sm">roll under 7</text>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 172" aria-label="A probability line from 0 to 1. At 0, a blank, impossible: rolling a 7. Near 1/6, unlikely: rolling a 6. At one half, a blank, even chance: rolling an even number. Near 5/6, likely: rolling less than 6. At 1, a blank, certain: rolling less than 7." width="520" height="172">
+<rect x="50" y="84" width="420" height="12" rx="6" class="dg-scale"/>
+<line x1="120" y1="84" x2="120" y2="96" class="dg-construction"/>
+<line x1="190" y1="84" x2="190" y2="96" class="dg-construction"/>
+<line x1="260" y1="84" x2="260" y2="96" class="dg-construction"/>
+<line x1="330" y1="84" x2="330" y2="96" class="dg-construction"/>
+<line x1="400" y1="84" x2="400" y2="96" class="dg-construction"/>
+<line x1="50" y1="78" x2="50" y2="102" class="dg-line"/>
+<line x1="260" y1="78" x2="260" y2="102" class="dg-line"/>
+<line x1="470" y1="78" x2="470" y2="102" class="dg-line"/>
+<text x="50" y="120" text-anchor="middle" class="dg-label">0</text><text x="260" y="120" text-anchor="middle" class="dg-label">0.5</text><text x="470" y="120" text-anchor="middle" class="dg-label">1</text>
+<line x1="120" y1="64" x2="120" y2="83" class="dg-leader"/>
+<circle cx="120" cy="90" r="6" class="dg-point-accent"/>
+<line x1="260" y1="64" x2="260" y2="83" class="dg-leader"/>
+<circle cx="260" cy="90" r="6" class="dg-point-accent"/>
+<line x1="400" y1="64" x2="400" y2="83" class="dg-leader"/>
+<circle cx="400" cy="90" r="6" class="dg-point-accent"/>
+<text x="120" y="56" text-anchor="middle" class="dg-label-sm">unlikely: roll a 6</text>
+<rect x="212" y="18" width="96" height="20" rx="3" class="dg-tag"/>
+<text x="260" y="56" text-anchor="middle" class="dg-label-sm">roll even</text>
+<text x="400" y="56" text-anchor="middle" class="dg-label-sm">likely: roll under 6</text>
+<rect x="8" y="128" width="84" height="20" rx="3" class="dg-tag"/>
+<text x="50" y="164" text-anchor="middle" class="dg-label-sm">roll a 7</text>
+<rect x="434" y="128" width="72" height="20" rx="3" class="dg-tag"/>
+<text x="470" y="164" text-anchor="middle" class="dg-label-sm">roll under 7</text>
 </svg>
 <figcaption>Every probability sits somewhere on this line from 0 to 1. Examples use one roll of a standard die.</figcaption>
 </figure>
@@ -331,22 +684,33 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
       <p>P(blue) experimental = <span class="b b-sm"></span>/<span class="b b-sm"></span> = <span class="b b-sm"></span></p>
     </div>
 <!-- viz:theory-vs-experiment -->
-<figure class="viz">
+<figure class="viz tb">
 <!-- tikz: spinner-vs-results | sections=3 | spins=40 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 500 195" aria-label="A spinner with three equal sections, red, blue and green: theoretical probability of red is a blank, 1/3. A bar chart of 40 real spins: red 14, blue 16, green 10. A dashed line at about 13.3 shows what theory expects." width="500" height="195">
-<path d="M90 95 L90.0 35.0 A60 60 0 0 1 142.0 125.0 Z" class="dg-fill-hot"/><path d="M90 95 L142.0 125.0 A60 60 0 0 1 38.0 125.0 Z" class="dg-fill-cold"/><path d="M90 95 L38.0 125.0 A60 60 0 0 1 90.0 35.0 Z" class="dg-fill-plant"/>
-<circle cx="90" cy="95" r="3" class="dg-point"/>
-<line x1="90" y1="95" x2="122" y2="66" class="dg-arrow plain"/>
-<text x="56" y="184" text-anchor="end" class="dg-label">P(red) =</text>
-<rect x="62" y="170" width="44" height="20" rx="3" class="dg-tag"/>
-<text x="110" y="184" class="dg-label-sm">theory</text>
-<rect x="230" y="72" width="40" height="98" class="dg-fill-hot"/><text x="250" y="66" text-anchor="middle" class="dg-label">14</text><text x="250" y="186" text-anchor="middle" class="dg-label-sm">red</text><rect x="310" y="58" width="40" height="112" class="dg-fill-cold"/><text x="330" y="52" text-anchor="middle" class="dg-label">16</text><text x="330" y="186" text-anchor="middle" class="dg-label-sm">blue</text><rect x="390" y="100" width="40" height="70" class="dg-fill-plant"/><text x="410" y="94" text-anchor="middle" class="dg-label">10</text><text x="410" y="186" text-anchor="middle" class="dg-label-sm">green</text>
-<line x1="220" y1="170" x2="470" y2="170" class="dg-line"/>
-<line x1="220" y1="76.7" x2="470" y2="76.7" class="dg-dashed"/>
-<text x="472" y="80.7" class="dg-label-sm">13.3</text>
-<text x="345" y="22" text-anchor="middle" class="dg-title">40 real spins</text>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 500 205" aria-label="A spinner with three equal sections, red, blue and green: theoretical probability of red is a blank, 1/3. A bar chart of 40 real spins: red 14, blue 16, green 10. A dashed line at about 13.3 shows what theory expects." width="500" height="205">
+<path d="M100 92 L100 28 A64 64 0 0 1 155.4 124 Z" class="dg-pc-r"/>
+<path d="M100 92 L155.4 124 A64 64 0 0 1 44.6 124 Z" class="dg-pc-b"/>
+<path d="M100 92 L44.6 124 A64 64 0 0 1 100 28 Z" class="dg-pc-g"/>
+<circle cx="100" cy="92" r="64" class="dg-line"/>
+<polygon points="138.3,59.9 103.2,95.8 89.3,101 96.8,88.2" class="dg-needle"/>
+<circle cx="100" cy="92" r="5" class="dg-hub"/>
+<text x="62" y="190" text-anchor="end" class="dg-label">P(red) =</text>
+<rect x="68" y="175" width="44" height="20" rx="3" class="dg-tag"/>
+<text x="120" y="190" class="dg-label-sm">theory</text>
+<rect x="236" y="70" width="44" height="98" class="dg-pc-r"/>
+<text x="258" y="63" text-anchor="middle" class="dg-label">14</text>
+<text x="258" y="186" text-anchor="middle" class="dg-label-sm">red</text>
+<rect x="316" y="56" width="44" height="112" class="dg-pc-b"/>
+<text x="338" y="49" text-anchor="middle" class="dg-label">16</text>
+<text x="338" y="186" text-anchor="middle" class="dg-label-sm">blue</text>
+<rect x="396" y="98" width="44" height="70" class="dg-pc-g"/>
+<text x="418" y="91" text-anchor="middle" class="dg-label">10</text>
+<text x="418" y="186" text-anchor="middle" class="dg-label-sm">green</text>
+<line x1="222" y1="168" x2="470" y2="168" class="dg-line"/>
+<line x1="222" y1="74.7" x2="470" y2="74.7" class="dg-dashed"/>
+<text x="474" y="79.2" class="dg-label-sm">13.3</text>
+<text x="350" y="22" text-anchor="middle" class="dg-title">40 real spins</text>
 </svg>
-<figcaption>A fair 3-colour spinner predicts each colour 1 out of 3 times: about 13 of 40 spins. The real results wobble around that line; more spins would usually bring them closer.</figcaption>
+<figcaption>A fair spinner with three equal sections, beside the results of 40 real spins. The dashed line shows what theory predicts for each colour. The real results wobble around that line; more spins would usually bring them closer.</figcaption>
 </figure>
 <!-- /viz:theory-vs-experiment -->
     <p><strong>Explain:</strong> If the spinner is fair (equal sections), what should the theoretical P(red) be? Is the experimental result close? What does the difference tell you?</p>
@@ -363,17 +727,18 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
       <p>If P(rain) = 0.35, then P(no rain) = 1 − 0.35 = <span class="b b-sm"></span></p>
     </div>
 <!-- viz:complement -->
-<figure class="viz">
+<figure class="viz tb">
 <!-- tikz: complement-bar | p=0.35 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 120" aria-label="A bar representing probability 1, split into rain at 0.35 and no rain, which is the rest: a blank, 0.65." width="480" height="120">
-<rect x="40" y="40" width="140" height="40" class="dg-fill-water"/>
-<rect x="180" y="40" width="260" height="40" class="dg-fill-soft"/>
-<text x="110" y="65" text-anchor="middle" class="dg-label">rain: 0.35</text>
-<text x="250" y="65" text-anchor="middle" class="dg-label">no rain:</text>
-<rect x="290" y="50" width="56" height="20" rx="3" class="dg-tag"/>
-<line x1="40" y1="28" x2="440" y2="28" class="dg-line"/><line x1="40" y1="22" x2="40" y2="34" class="dg-line"/><line x1="440" y1="22" x2="440" y2="34" class="dg-line"/>
-<text x="240" y="18" text-anchor="middle" class="dg-label">total = 1</text>
-<text x="240" y="106" text-anchor="middle" class="dg-math">P(not A) = 1 − P(A)</text>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 146" aria-label="A bar representing probability 1, split into rain at 0.35 and no rain, which is the rest: a blank, 0.65." width="480" height="146">
+<path d="M40 40 q0 -7 7 -7 H233 q7 0 7 -8 q0 8 7 8 H433 q7 0 7 7" class="dg-brace"/>
+<text x="240" y="17" text-anchor="middle" class="dg-label">total = 1</text>
+<rect x="40" y="46" width="140" height="44" class="dg-rainbar"/>
+<rect x="40" y="46" width="140" height="44" class="dg-rainfx"/>
+<rect x="180" y="46" width="260" height="44" class="dg-blank-bar"/>
+<text x="110" y="73" text-anchor="middle" class="dg-label">rain: 0.35</text>
+<text x="252" y="73" text-anchor="middle" class="dg-label">no rain:</text>
+<rect x="292" y="57" width="58" height="22" rx="3" class="dg-tag"/>
+<text x="240" y="128" text-anchor="middle" class="dg-eq"><tspan class="v">P</tspan>(not <tspan class="v">A</tspan>) = 1 − <tspan class="v">P</tspan>(<tspan class="v">A</tspan>)</text>
 </svg>
 <figcaption>An event and its complement fill the whole bar between them. Whatever is not "rain" must be "no rain", so the two probabilities add to 1.</figcaption>
 </figure>
@@ -449,62 +814,66 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
 
     <p><strong>Method 1 — Tree diagram:</strong></p>
     <p>Flip a coin AND spin a 3-section spinner (R, G, B).</p>
-
-<figure style="margin:12px 0;overflow-x:auto;">
-    <!-- tikz: tree-diagram | experiment=coin-and-spinner | level1=H,T | level2=R,G,B | viewBox=420x230 -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 230" width="420" height="230" role="img" aria-label="Probability tree diagram coin flip then three-section spinner">
-<circle class="dg-point" cx="28" cy="115" r="3"/>
-<text class="dg-label-sm" x="24" y="105">Start</text>
-<text class="dg-label-sm" x="15" y="12"  font-weight="700">COIN</text>
-<text class="dg-label-sm" x="105" y="12"  font-weight="700">SPINNER</text>
-<text class="dg-label-sm" x="240" y="12"  font-weight="700">OUTCOME</text>
-<text class="dg-label-sm" x="365" y="12"  font-weight="700">P</text>
-<line class="dg-grid" x1="28" y1="115" x2="120" y2="55"/>
-<circle class="dg-point" cx="120" cy="55" r="3"/>
-<text class="dg-label-accent" x="74" y="79" text-anchor="middle">1/2</text>
-<text class="dg-label" x="125" y="50"  font-weight="700">H</text>
-<line class="dg-grid" x1="120" y1="55" x2="240" y2="20"/>
-<text class="dg-label-sm" x="180" y="33" text-anchor="middle">1/3</text>
-<circle class="dg-point" cx="240" cy="20" r="2"/>
-<line class="dg-grid" x1="240" y1="20" x2="360" y2="20"/>
-<text class="dg-label-sm" x="363" y="24">(H,R)</text>
-<text class="dg-label-sm" x="410" y="24">1/6</text>
-<line class="dg-grid" x1="120" y1="55" x2="240" y2="55"/>
-<text class="dg-label-sm" x="180" y="51" text-anchor="middle">1/3</text>
-<circle class="dg-point" cx="240" cy="55" r="2"/>
-<line class="dg-grid" x1="240" y1="55" x2="360" y2="55"/>
-<text class="dg-label-sm" x="363" y="59">(H,G)</text>
-<text class="dg-label-sm" x="410" y="59">1/6</text>
-<line class="dg-grid" x1="120" y1="55" x2="240" y2="90"/>
-<text class="dg-label-sm" x="180" y="68" text-anchor="middle">1/3</text>
-<circle class="dg-point" cx="240" cy="90" r="2"/>
-<line class="dg-grid" x1="240" y1="90" x2="360" y2="90"/>
-<text class="dg-label-sm" x="363" y="94">(H,B)</text>
-<text class="dg-label-sm" x="410" y="94">1/6</text>
-<line class="dg-grid" x1="28" y1="115" x2="120" y2="175"/>
-<circle class="dg-point" cx="120" cy="175" r="3"/>
-<text class="dg-label-accent" x="74" y="139" text-anchor="middle">1/2</text>
-<text class="dg-label" x="125" y="170"  font-weight="700">T</text>
-<line class="dg-grid" x1="120" y1="175" x2="240" y2="130"/>
-<text class="dg-label-sm" x="180" y="148" text-anchor="middle">1/3</text>
-<circle class="dg-point" cx="240" cy="130" r="2"/>
-<line class="dg-grid" x1="240" y1="130" x2="360" y2="130"/>
-<text class="dg-label-sm" x="363" y="134">(T,R)</text>
-<text class="dg-label-sm" x="410" y="134">1/6</text>
-<line class="dg-grid" x1="120" y1="175" x2="240" y2="165"/>
-<text class="dg-label-sm" x="180" y="166" text-anchor="middle">1/3</text>
-<circle class="dg-point" cx="240" cy="165" r="2"/>
-<line class="dg-grid" x1="240" y1="165" x2="360" y2="165"/>
-<text class="dg-label-sm" x="363" y="169">(T,G)</text>
-<text class="dg-label-sm" x="410" y="169">1/6</text>
-<line class="dg-grid" x1="120" y1="175" x2="240" y2="200"/>
-<text class="dg-label-sm" x="180" y="183" text-anchor="middle">1/3</text>
-<circle class="dg-point" cx="240" cy="200" r="2"/>
-<line class="dg-grid" x1="240" y1="200" x2="360" y2="200"/>
-<text class="dg-label-sm" x="363" y="204">(T,B)</text>
-<text class="dg-label-sm" x="410" y="204">1/6</text>
+<!-- viz:coin-spinner-tree -->
+<figure class="viz tb">
+<!-- tikz: tree-diagram | experiment=coin-and-spinner | level1=H,T | level2=R,G,B -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 470 268" aria-label="Probability tree diagram coin flip then three-section spinner. Coin: heads 1/2, tails 1/2. Spinner after each: red, green, blue, 1/3 each. Six outcomes, (H,R), (H,G), (H,B), (T,R), (T,G), (T,B), each with probability a blank, 1/6." width="470" height="268">
+<text x="130" y="12" text-anchor="middle" class="dg-title">COIN</text>
+<text x="254" y="12" text-anchor="middle" class="dg-title">SPINNER</text>
+<text x="338" y="12" text-anchor="middle" class="dg-title">OUTCOME</text>
+<text x="432" y="12" text-anchor="middle" class="dg-title">P</text>
+<line x1="40" y1="140" x2="114" y2="74" class="dg-line"/>
+<line x1="40" y1="140" x2="114" y2="206" class="dg-line"/>
+<circle cx="40" cy="140" r="4.5" class="dg-point"/>
+<text x="40" y="166" text-anchor="middle" class="dg-label-sm">Start</text>
+<text x="72" y="84.8" text-anchor="middle" class="dg-eq accent">1</text><line x1="64" y1="89.3" x2="80" y2="89.3" class="dg-fbar acc"/><text x="72" y="106.3" text-anchor="middle" class="dg-eq accent">2</text><text x="72" y="186.2" text-anchor="middle" class="dg-eq accent">1</text><line x1="64" y1="190.7" x2="80" y2="190.7" class="dg-fbar acc"/><text x="72" y="207.7" text-anchor="middle" class="dg-eq accent">2</text>
+<line x1="146" y1="74" x2="253" y2="30" class="dg-line"/>
+<text x="210.2" y="52.1" text-anchor="middle" class="dg-label-accent">1/3</text>
+<circle cx="262" cy="30" r="9" class="dg-pc-r"/>
+<line x1="276" y1="30" x2="306" y2="30" class="dg-construction"/>
+<text x="334" y="35" text-anchor="middle" class="dg-label">(H,R)</text>
+<line x1="362" y1="30" x2="406" y2="30" class="dg-construction"/>
+<rect x="410" y="19" width="44" height="22" rx="3" class="dg-tag"/>
+<line x1="146" y1="74" x2="253" y2="74" class="dg-line"/>
+<text x="210.2" y="78.5" text-anchor="middle" class="dg-label-accent">1/3</text>
+<circle cx="262" cy="74" r="9" class="dg-pc-g"/>
+<line x1="276" y1="74" x2="306" y2="74" class="dg-construction"/>
+<text x="334" y="79" text-anchor="middle" class="dg-label">(H,G)</text>
+<line x1="362" y1="74" x2="406" y2="74" class="dg-construction"/>
+<rect x="410" y="63" width="44" height="22" rx="3" class="dg-tag"/>
+<line x1="146" y1="74" x2="253" y2="118" class="dg-line"/>
+<text x="210.2" y="104.9" text-anchor="middle" class="dg-label-accent">1/3</text>
+<circle cx="262" cy="118" r="9" class="dg-pc-b"/>
+<line x1="276" y1="118" x2="306" y2="118" class="dg-construction"/>
+<text x="334" y="123" text-anchor="middle" class="dg-label">(H,B)</text>
+<line x1="362" y1="118" x2="406" y2="118" class="dg-construction"/>
+<rect x="410" y="107" width="44" height="22" rx="3" class="dg-tag"/>
+<line x1="146" y1="206" x2="253" y2="162" class="dg-line"/>
+<text x="210.2" y="184.1" text-anchor="middle" class="dg-label-accent">1/3</text>
+<circle cx="262" cy="162" r="9" class="dg-pc-r"/>
+<line x1="276" y1="162" x2="306" y2="162" class="dg-construction"/>
+<text x="334" y="167" text-anchor="middle" class="dg-label">(T,R)</text>
+<line x1="362" y1="162" x2="406" y2="162" class="dg-construction"/>
+<rect x="410" y="151" width="44" height="22" rx="3" class="dg-tag"/>
+<line x1="146" y1="206" x2="253" y2="206" class="dg-line"/>
+<text x="210.2" y="210.5" text-anchor="middle" class="dg-label-accent">1/3</text>
+<circle cx="262" cy="206" r="9" class="dg-pc-g"/>
+<line x1="276" y1="206" x2="306" y2="206" class="dg-construction"/>
+<text x="334" y="211" text-anchor="middle" class="dg-label">(T,G)</text>
+<line x1="362" y1="206" x2="406" y2="206" class="dg-construction"/>
+<rect x="410" y="195" width="44" height="22" rx="3" class="dg-tag"/>
+<line x1="146" y1="206" x2="253" y2="250" class="dg-line"/>
+<text x="210.2" y="236.9" text-anchor="middle" class="dg-label-accent">1/3</text>
+<circle cx="262" cy="250" r="9" class="dg-pc-b"/>
+<line x1="276" y1="250" x2="306" y2="250" class="dg-construction"/>
+<text x="334" y="255" text-anchor="middle" class="dg-label">(T,B)</text>
+<line x1="362" y1="250" x2="406" y2="250" class="dg-construction"/>
+<rect x="410" y="239" width="44" height="22" rx="3" class="dg-tag"/>
+<circle cx="130" cy="74" r="15" class="dg-coin"/><circle cx="130" cy="74" r="11.8" class="dg-coin-rim"/><text x="130" y="80.5" text-anchor="middle" class="dg-eq stamp">H</text><circle cx="130" cy="206" r="15" class="dg-coin"/><circle cx="130" cy="206" r="11.8" class="dg-coin-rim"/><text x="130" y="212.5" text-anchor="middle" class="dg-eq stamp">T</text>
 </svg>
+<figcaption>A tree for flipping a coin and then spinning a 3-section spinner. Each path gives one outcome; multiply along the path to find its probability.</figcaption>
 </figure>
+<!-- /viz:coin-spinner-tree -->
 
     <p>Total outcomes = <span class="b b-sm"></span> × <span class="b b-sm"></span> = <span class="b b-sm"></span> (Fundamental Counting Principle)</p>
     <p>P(Heads and Green) = <span class="b b-sm"></span>/<span class="b b-sm"></span></p>
@@ -547,17 +916,102 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
     <p>P(both show the same number) = <span class="b b-sm"></span>/<span class="b b-sm"></span></p>
     <p>P(first die &gt; second die) = <span class="b b-sm"></span>/<span class="b b-sm"></span></p>
 <!-- viz:dice-sums -->
-<figure class="viz">
-<!-- tikz: dice-grid | sums | highlight=7 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 460 230" aria-label="A 6 by 6 grid of two-dice outcomes showing each sum. The six squares where the sum is 7 lie on a diagonal and are shaded. P of sum 7 is a blank, 6 out of 36." width="460" height="230">
-<text x="94" y="22" text-anchor="middle" class="dg-label">1</text><text x="124" y="22" text-anchor="middle" class="dg-label">2</text><text x="154" y="22" text-anchor="middle" class="dg-label">3</text><text x="184" y="22" text-anchor="middle" class="dg-label">4</text><text x="214" y="22" text-anchor="middle" class="dg-label">5</text><text x="244" y="22" text-anchor="middle" class="dg-label">6</text><text x="70" y="48" text-anchor="end" class="dg-label">1</text><text x="70" y="78" text-anchor="end" class="dg-label">2</text><text x="70" y="108" text-anchor="end" class="dg-label">3</text><text x="70" y="138" text-anchor="end" class="dg-label">4</text><text x="70" y="168" text-anchor="end" class="dg-label">5</text><text x="70" y="198" text-anchor="end" class="dg-label">6</text><rect x="80" y="30" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="94" y="48" text-anchor="middle" class="dg-label-sm">2</text><rect x="110" y="30" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="124" y="48" text-anchor="middle" class="dg-label-sm">3</text><rect x="140" y="30" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="154" y="48" text-anchor="middle" class="dg-label-sm">4</text><rect x="170" y="30" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="184" y="48" text-anchor="middle" class="dg-label-sm">5</text><rect x="200" y="30" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="214" y="48" text-anchor="middle" class="dg-label-sm">6</text><rect x="230" y="30" width="28" height="28" rx="4" class="dg-fill-accent"/><text x="244" y="48" text-anchor="middle" class="dg-label-sm">7</text><rect x="80" y="60" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="94" y="78" text-anchor="middle" class="dg-label-sm">3</text><rect x="110" y="60" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="124" y="78" text-anchor="middle" class="dg-label-sm">4</text><rect x="140" y="60" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="154" y="78" text-anchor="middle" class="dg-label-sm">5</text><rect x="170" y="60" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="184" y="78" text-anchor="middle" class="dg-label-sm">6</text><rect x="200" y="60" width="28" height="28" rx="4" class="dg-fill-accent"/><text x="214" y="78" text-anchor="middle" class="dg-label-sm">7</text><rect x="230" y="60" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="244" y="78" text-anchor="middle" class="dg-label-sm">8</text><rect x="80" y="90" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="94" y="108" text-anchor="middle" class="dg-label-sm">4</text><rect x="110" y="90" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="124" y="108" text-anchor="middle" class="dg-label-sm">5</text><rect x="140" y="90" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="154" y="108" text-anchor="middle" class="dg-label-sm">6</text><rect x="170" y="90" width="28" height="28" rx="4" class="dg-fill-accent"/><text x="184" y="108" text-anchor="middle" class="dg-label-sm">7</text><rect x="200" y="90" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="214" y="108" text-anchor="middle" class="dg-label-sm">8</text><rect x="230" y="90" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="244" y="108" text-anchor="middle" class="dg-label-sm">9</text><rect x="80" y="120" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="94" y="138" text-anchor="middle" class="dg-label-sm">5</text><rect x="110" y="120" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="124" y="138" text-anchor="middle" class="dg-label-sm">6</text><rect x="140" y="120" width="28" height="28" rx="4" class="dg-fill-accent"/><text x="154" y="138" text-anchor="middle" class="dg-label-sm">7</text><rect x="170" y="120" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="184" y="138" text-anchor="middle" class="dg-label-sm">8</text><rect x="200" y="120" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="214" y="138" text-anchor="middle" class="dg-label-sm">9</text><rect x="230" y="120" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="244" y="138" text-anchor="middle" class="dg-label-sm">10</text><rect x="80" y="150" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="94" y="168" text-anchor="middle" class="dg-label-sm">6</text><rect x="110" y="150" width="28" height="28" rx="4" class="dg-fill-accent"/><text x="124" y="168" text-anchor="middle" class="dg-label-sm">7</text><rect x="140" y="150" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="154" y="168" text-anchor="middle" class="dg-label-sm">8</text><rect x="170" y="150" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="184" y="168" text-anchor="middle" class="dg-label-sm">9</text><rect x="200" y="150" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="214" y="168" text-anchor="middle" class="dg-label-sm">10</text><rect x="230" y="150" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="244" y="168" text-anchor="middle" class="dg-label-sm">11</text><rect x="80" y="180" width="28" height="28" rx="4" class="dg-fill-accent"/><text x="94" y="198" text-anchor="middle" class="dg-label-sm">7</text><rect x="110" y="180" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="124" y="198" text-anchor="middle" class="dg-label-sm">8</text><rect x="140" y="180" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="154" y="198" text-anchor="middle" class="dg-label-sm">9</text><rect x="170" y="180" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="184" y="198" text-anchor="middle" class="dg-label-sm">10</text><rect x="200" y="180" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="214" y="198" text-anchor="middle" class="dg-label-sm">11</text><rect x="230" y="180" width="28" height="28" rx="4" class="dg-fill-soft"/><text x="244" y="198" text-anchor="middle" class="dg-label-sm">12</text>
-<text x="170" y="226" text-anchor="middle" class="dg-label-sm">die 2 across, die 1 down</text>
-<text x="290" y="100" class="dg-label">sum of 7: 6 squares</text>
-<text x="290" y="126" class="dg-math">P(sum 7) =</text>
-<rect x="380" y="108" width="50" height="24" rx="3" class="dg-tag"/>
-<text x="290" y="150" class="dg-label-sm">= 1/6</text>
+<figure class="viz tb">
+<!-- tikz: dice-grid | sums | highlight=7 (key only) -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 470 252" aria-label="A 6 by 6 grid of two-dice outcomes showing each sum, with die faces 1 to 6 along the top for die 2 and down the side for die 1. The squares where the sum is 7 lie on one diagonal: there are a blank, 6 of them, so P of sum 7 is a blank, 6 out of 36." width="470" height="252">
+<rect x="90" y="14" width="22" height="22" rx="4.4" class="dg-die"/><circle cx="101" cy="25" r="1.9" class="dg-pip"/>
+<rect x="57" y="50" width="22" height="22" rx="4.4" class="dg-die"/><circle cx="68" cy="61" r="1.9" class="dg-pip"/>
+<rect x="120" y="14" width="22" height="22" rx="4.4" class="dg-die"/><circle cx="125.1" cy="19.1" r="1.9" class="dg-pip"/><circle cx="136.9" cy="30.9" r="1.9" class="dg-pip"/>
+<rect x="57" y="80" width="22" height="22" rx="4.4" class="dg-die"/><circle cx="62.1" cy="85.1" r="1.9" class="dg-pip"/><circle cx="73.9" cy="96.9" r="1.9" class="dg-pip"/>
+<rect x="150" y="14" width="22" height="22" rx="4.4" class="dg-die"/><circle cx="155.1" cy="19.1" r="1.9" class="dg-pip"/><circle cx="161" cy="25" r="1.9" class="dg-pip"/><circle cx="166.9" cy="30.9" r="1.9" class="dg-pip"/>
+<rect x="57" y="110" width="22" height="22" rx="4.4" class="dg-die"/><circle cx="62.1" cy="115.1" r="1.9" class="dg-pip"/><circle cx="68" cy="121" r="1.9" class="dg-pip"/><circle cx="73.9" cy="126.9" r="1.9" class="dg-pip"/>
+<rect x="180" y="14" width="22" height="22" rx="4.4" class="dg-die"/><circle cx="185.1" cy="19.1" r="1.9" class="dg-pip"/><circle cx="196.9" cy="19.1" r="1.9" class="dg-pip"/><circle cx="185.1" cy="30.9" r="1.9" class="dg-pip"/><circle cx="196.9" cy="30.9" r="1.9" class="dg-pip"/>
+<rect x="57" y="140" width="22" height="22" rx="4.4" class="dg-die"/><circle cx="62.1" cy="145.1" r="1.9" class="dg-pip"/><circle cx="73.9" cy="145.1" r="1.9" class="dg-pip"/><circle cx="62.1" cy="156.9" r="1.9" class="dg-pip"/><circle cx="73.9" cy="156.9" r="1.9" class="dg-pip"/>
+<rect x="210" y="14" width="22" height="22" rx="4.4" class="dg-die"/><circle cx="215.1" cy="19.1" r="1.9" class="dg-pip"/><circle cx="226.9" cy="19.1" r="1.9" class="dg-pip"/><circle cx="221" cy="25" r="1.9" class="dg-pip"/><circle cx="215.1" cy="30.9" r="1.9" class="dg-pip"/><circle cx="226.9" cy="30.9" r="1.9" class="dg-pip"/>
+<rect x="57" y="170" width="22" height="22" rx="4.4" class="dg-die"/><circle cx="62.1" cy="175.1" r="1.9" class="dg-pip"/><circle cx="73.9" cy="175.1" r="1.9" class="dg-pip"/><circle cx="68" cy="181" r="1.9" class="dg-pip"/><circle cx="62.1" cy="186.9" r="1.9" class="dg-pip"/><circle cx="73.9" cy="186.9" r="1.9" class="dg-pip"/>
+<rect x="240" y="14" width="22" height="22" rx="4.4" class="dg-die"/><circle cx="245.1" cy="19.1" r="1.9" class="dg-pip"/><circle cx="256.9" cy="19.1" r="1.9" class="dg-pip"/><circle cx="245.1" cy="25" r="1.9" class="dg-pip"/><circle cx="256.9" cy="25" r="1.9" class="dg-pip"/><circle cx="245.1" cy="30.9" r="1.9" class="dg-pip"/><circle cx="256.9" cy="30.9" r="1.9" class="dg-pip"/>
+<rect x="57" y="200" width="22" height="22" rx="4.4" class="dg-die"/><circle cx="62.1" cy="205.1" r="1.9" class="dg-pip"/><circle cx="73.9" cy="205.1" r="1.9" class="dg-pip"/><circle cx="62.1" cy="211" r="1.9" class="dg-pip"/><circle cx="73.9" cy="211" r="1.9" class="dg-pip"/><circle cx="62.1" cy="216.9" r="1.9" class="dg-pip"/><circle cx="73.9" cy="216.9" r="1.9" class="dg-pip"/>
+<rect x="87" y="47" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="117" y="47" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="147" y="47" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="177" y="47" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="207" y="47" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="237" y="47" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="87" y="77" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="117" y="77" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="147" y="77" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="177" y="77" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="207" y="77" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="237" y="77" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="87" y="107" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="117" y="107" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="147" y="107" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="177" y="107" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="207" y="107" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="237" y="107" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="87" y="137" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="117" y="137" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="147" y="137" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="177" y="137" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="207" y="137" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="237" y="137" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="87" y="167" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="117" y="167" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="147" y="167" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="177" y="167" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="207" y="167" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="237" y="167" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="87" y="197" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="117" y="197" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="147" y="197" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="177" y="197" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="207" y="197" width="28" height="28" rx="4" class="dg-cell"/>
+<rect x="237" y="197" width="28" height="28" rx="4" class="dg-cell"/>
+
+<text x="101" y="66" text-anchor="middle" class="dg-label-sm">2</text>
+<text x="131" y="66" text-anchor="middle" class="dg-label-sm">3</text>
+<text x="161" y="66" text-anchor="middle" class="dg-label-sm">4</text>
+<text x="191" y="66" text-anchor="middle" class="dg-label-sm">5</text>
+<text x="221" y="66" text-anchor="middle" class="dg-label-sm">6</text>
+<text x="251" y="66" text-anchor="middle" class="dg-label-sm">7</text>
+<text x="101" y="96" text-anchor="middle" class="dg-label-sm">3</text>
+<text x="131" y="96" text-anchor="middle" class="dg-label-sm">4</text>
+<text x="161" y="96" text-anchor="middle" class="dg-label-sm">5</text>
+<text x="191" y="96" text-anchor="middle" class="dg-label-sm">6</text>
+<text x="221" y="96" text-anchor="middle" class="dg-label-sm">7</text>
+<text x="251" y="96" text-anchor="middle" class="dg-label-sm">8</text>
+<text x="101" y="126" text-anchor="middle" class="dg-label-sm">4</text>
+<text x="131" y="126" text-anchor="middle" class="dg-label-sm">5</text>
+<text x="161" y="126" text-anchor="middle" class="dg-label-sm">6</text>
+<text x="191" y="126" text-anchor="middle" class="dg-label-sm">7</text>
+<text x="221" y="126" text-anchor="middle" class="dg-label-sm">8</text>
+<text x="251" y="126" text-anchor="middle" class="dg-label-sm">9</text>
+<text x="101" y="156" text-anchor="middle" class="dg-label-sm">5</text>
+<text x="131" y="156" text-anchor="middle" class="dg-label-sm">6</text>
+<text x="161" y="156" text-anchor="middle" class="dg-label-sm">7</text>
+<text x="191" y="156" text-anchor="middle" class="dg-label-sm">8</text>
+<text x="221" y="156" text-anchor="middle" class="dg-label-sm">9</text>
+<text x="251" y="156" text-anchor="middle" class="dg-label-sm">10</text>
+<text x="101" y="186" text-anchor="middle" class="dg-label-sm">6</text>
+<text x="131" y="186" text-anchor="middle" class="dg-label-sm">7</text>
+<text x="161" y="186" text-anchor="middle" class="dg-label-sm">8</text>
+<text x="191" y="186" text-anchor="middle" class="dg-label-sm">9</text>
+<text x="221" y="186" text-anchor="middle" class="dg-label-sm">10</text>
+<text x="251" y="186" text-anchor="middle" class="dg-label-sm">11</text>
+<text x="101" y="216" text-anchor="middle" class="dg-label-sm">7</text>
+<text x="131" y="216" text-anchor="middle" class="dg-label-sm">8</text>
+<text x="161" y="216" text-anchor="middle" class="dg-label-sm">9</text>
+<text x="191" y="216" text-anchor="middle" class="dg-label-sm">10</text>
+<text x="221" y="216" text-anchor="middle" class="dg-label-sm">11</text>
+<text x="251" y="216" text-anchor="middle" class="dg-label-sm">12</text>
+<text x="176" y="245" text-anchor="middle" class="dg-label-sm">die 2 across, die 1 down</text>
+<text x="300" y="106" class="dg-label">sum of 7:</text>
+<rect x="368" y="91" width="84" height="20" rx="3" class="dg-tag"/>
+<text x="300" y="144" class="dg-math">P(sum 7) =</text>
+<rect x="386" y="127" width="56" height="24" rx="3" class="dg-tag"/>
+
 </svg>
-<figcaption>All 36 outcomes for two dice, with the sum written in each square. The six shaded squares are the ways to roll a sum of 7, the most common sum.</figcaption>
+<figcaption>All 36 outcomes for two dice, with the sum written in each square. Find every square that shows 7: they lie on one diagonal, and 7 is the most common sum.</figcaption>
 </figure>
 <!-- /viz:dice-sums -->
 
@@ -656,16 +1110,40 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
       <p>P(H and 3) = (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">2</span></span>) × (<span class="frac"><span class="num">1</span><span class="frac-slash">/</span><span class="den">6</span></span>) = <span class="b b-sm"></span>/<span class="b b-sm"></span></p>
     </div>
 <!-- viz:independent-area -->
-<figure class="viz">
+<figure class="viz tb">
 <!-- tikz: probability-area | 1/2 x 1/6 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 460 190" aria-label="A grid with two columns for heads and tails and six rows for die faces 1 to 6. One box, heads and 3, is shaded. P of heads and 3 is one half times one sixth, a blank, 1/12." width="460" height="190">
-<rect x="90" y="30" width="70" height="24" class="dg-boundary"/><rect x="160" y="30" width="70" height="24" class="dg-boundary"/><rect x="90" y="54" width="70" height="24" class="dg-boundary"/><rect x="160" y="54" width="70" height="24" class="dg-boundary"/><rect x="90" y="78" width="70" height="24" class="dg-fill-accent"/><rect x="160" y="78" width="70" height="24" class="dg-boundary"/><rect x="90" y="102" width="70" height="24" class="dg-boundary"/><rect x="160" y="102" width="70" height="24" class="dg-boundary"/><rect x="90" y="126" width="70" height="24" class="dg-boundary"/><rect x="160" y="126" width="70" height="24" class="dg-boundary"/><rect x="90" y="150" width="70" height="24" class="dg-boundary"/><rect x="160" y="150" width="70" height="24" class="dg-boundary"/><text x="82" y="47" text-anchor="end" class="dg-label">1</text><text x="82" y="71" text-anchor="end" class="dg-label">2</text><text x="82" y="95" text-anchor="end" class="dg-label">3</text><text x="82" y="119" text-anchor="end" class="dg-label">4</text><text x="82" y="143" text-anchor="end" class="dg-label">5</text><text x="82" y="167" text-anchor="end" class="dg-label">6</text>
-<text x="125" y="22" text-anchor="middle" class="dg-label">H</text><text x="195" y="22" text-anchor="middle" class="dg-label">T</text>
-<text x="280" y="80" class="dg-math">1/2 × 1/6 =</text>
-<rect x="380" y="62" width="50" height="24" rx="3" class="dg-tag"/>
-<text x="280" y="108" class="dg-label-sm">1 shaded box out of 12</text>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 470 250" aria-label="A grid with two columns for heads and tails and six rows for die faces 1 to 6. The heads column is one half of the width and each row is one sixth of the height. One box, heads and 3, is shaded. P of heads and 3 is one half times one sixth, a blank, 1/12." width="470" height="250">
+<rect x="98" y="44" width="70" height="24" class="dg-cell"/>
+<rect x="168" y="44" width="70" height="24" class="dg-cell"/>
+<rect x="98" y="68" width="70" height="24" class="dg-cell"/>
+<rect x="168" y="68" width="70" height="24" class="dg-cell"/>
+<rect x="98" y="92" width="70" height="24" class="dg-cell on"/>
+<rect x="168" y="92" width="70" height="24" class="dg-cell"/>
+<rect x="98" y="116" width="70" height="24" class="dg-cell"/>
+<rect x="168" y="116" width="70" height="24" class="dg-cell"/>
+<rect x="98" y="140" width="70" height="24" class="dg-cell"/>
+<rect x="168" y="140" width="70" height="24" class="dg-cell"/>
+<rect x="98" y="164" width="70" height="24" class="dg-cell"/>
+<rect x="168" y="164" width="70" height="24" class="dg-cell"/>
+<rect x="98" y="44" width="140" height="144" class="dg-line"/>
+<line x1="168" y1="44" x2="168" y2="188" class="dg-line"/>
+<rect x="72.5" y="46.5" width="19" height="19" rx="3.8" class="dg-die"/><circle cx="82" cy="56" r="1.6" class="dg-pip"/>
+<rect x="72.5" y="70.5" width="19" height="19" rx="3.8" class="dg-die"/><circle cx="76.9" cy="74.9" r="1.6" class="dg-pip"/><circle cx="87.1" cy="85.1" r="1.6" class="dg-pip"/>
+<rect x="72.5" y="94.5" width="19" height="19" rx="3.8" class="dg-die"/><circle cx="76.9" cy="98.9" r="1.6" class="dg-pip"/><circle cx="82" cy="104" r="1.6" class="dg-pip"/><circle cx="87.1" cy="109.1" r="1.6" class="dg-pip"/>
+<rect x="72.5" y="118.5" width="19" height="19" rx="3.8" class="dg-die"/><circle cx="76.9" cy="122.9" r="1.6" class="dg-pip"/><circle cx="87.1" cy="122.9" r="1.6" class="dg-pip"/><circle cx="76.9" cy="133.1" r="1.6" class="dg-pip"/><circle cx="87.1" cy="133.1" r="1.6" class="dg-pip"/>
+<rect x="72.5" y="142.5" width="19" height="19" rx="3.8" class="dg-die"/><circle cx="76.9" cy="146.9" r="1.6" class="dg-pip"/><circle cx="87.1" cy="146.9" r="1.6" class="dg-pip"/><circle cx="82" cy="152" r="1.6" class="dg-pip"/><circle cx="76.9" cy="157.1" r="1.6" class="dg-pip"/><circle cx="87.1" cy="157.1" r="1.6" class="dg-pip"/>
+<rect x="72.5" y="166.5" width="19" height="19" rx="3.8" class="dg-die"/><circle cx="76.9" cy="170.9" r="1.6" class="dg-pip"/><circle cx="87.1" cy="170.9" r="1.6" class="dg-pip"/><circle cx="76.9" cy="176" r="1.6" class="dg-pip"/><circle cx="87.1" cy="176" r="1.6" class="dg-pip"/><circle cx="76.9" cy="181.1" r="1.6" class="dg-pip"/><circle cx="87.1" cy="181.1" r="1.6" class="dg-pip"/>
+<circle cx="133" cy="22" r="15" class="dg-coin"/><circle cx="133" cy="22" r="11.8" class="dg-coin-rim"/><text x="133" y="28.5" text-anchor="middle" class="dg-eq stamp">H</text>
+<circle cx="203" cy="22" r="15" class="dg-coin"/><circle cx="203" cy="22" r="11.8" class="dg-coin-rim"/><text x="203" y="28.5" text-anchor="middle" class="dg-eq stamp">T</text>
+<path d="M98 193 q0 7 7 7 H126.0 q7 0 7 8 q0 -8 7 -8 H161 q7 0 7 -7" class="dg-brace"/>
+<text x="133" y="218.5" text-anchor="middle" class="dg-eq">1</text><line x1="125" y1="223" x2="141" y2="223" class="dg-fbar"/><text x="133" y="240" text-anchor="middle" class="dg-eq">2</text>
+<path d="M243 92 q7 0 7 6 V99.0 q0 5 7 5 q-7 0 -7 5 V110 q0 6 -7 6" class="dg-brace"/>
+<text x="269" y="99.5" text-anchor="middle" class="dg-eq">1</text><line x1="261" y1="104" x2="277" y2="104" class="dg-fbar"/><text x="269" y="121" text-anchor="middle" class="dg-eq">6</text>
+<text x="316" y="107.5" text-anchor="middle" class="dg-eq">1</text><line x1="308" y1="112" x2="324" y2="112" class="dg-fbar"/><text x="316" y="129" text-anchor="middle" class="dg-eq">2</text><text x="336" y="118" text-anchor="middle" class="dg-eq">×</text><text x="356" y="107.5" text-anchor="middle" class="dg-eq">1</text><line x1="348" y1="112" x2="364" y2="112" class="dg-fbar"/><text x="356" y="129" text-anchor="middle" class="dg-eq">6</text><text x="376" y="118" text-anchor="middle" class="dg-eq">=</text>
+<rect x="390" y="99" width="52" height="26" rx="3" class="dg-tag"/>
+<text x="300" y="164" class="dg-label-sm">1 shaded box out of 12</text>
 </svg>
-<figcaption>Coin across, die down: 2 × 6 = 12 equally likely boxes. Heads-and-3 is one box, so the probability is 1/2 × 1/6 = 1/12.</figcaption>
+<figcaption>Coin across, die down: 2 × 6 = 12 equally likely boxes. Heads is half the width and a 3 is one sixth of the height, so heads-and-3 is the shaded box where they meet.</figcaption>
 </figure>
 <!-- /viz:independent-area -->
     <p><strong>Verify using the sample space:</strong> The sample space has 12 outcomes. How many show (H, 3)? <span class="b b-sm"></span><br>
@@ -697,15 +1175,20 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
       <p>What IS true: Over very many flips, heads and tails will appear about equally often (Law of Large Numbers). But this happens through future flips balancing out — NOT through the coin compensating for its past.</p>
     </div>
 <!-- viz:gamblers-fallacy -->
-<figure class="viz">
+<figure class="viz tb">
 <!-- tikz: flip-sequence | HHHH? -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 140" aria-label="Four coins all showing heads, then a fifth coin marked with a question mark. The probability that the next flip is heads is still a blank, 1/2." width="480" height="140">
-<circle cx="50" cy="70" r="22" class="dg-fill-sun"/><text x="50" y="76" text-anchor="middle" class="dg-title">H</text><circle cx="110" cy="70" r="22" class="dg-fill-sun"/><text x="110" y="76" text-anchor="middle" class="dg-title">H</text><circle cx="170" cy="70" r="22" class="dg-fill-sun"/><text x="170" y="76" text-anchor="middle" class="dg-title">H</text><circle cx="230" cy="70" r="22" class="dg-fill-sun"/><text x="230" y="76" text-anchor="middle" class="dg-title">H</text>
-<circle cx="290" cy="70" r="22" class="dg-construction"/><text x="290" y="77" text-anchor="middle" class="dg-title">?</text>
-<text x="330" y="66" class="dg-label">P(heads next) =</text>
-<rect x="420" y="52" width="44" height="20" rx="3" class="dg-tag"/>
-<text x="330" y="90" class="dg-label-sm">same as every flip</text>
-<text x="140" y="120" text-anchor="middle" class="dg-label-hot">"tails is due" is the gambler's fallacy</text>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 150" aria-label="Four coins all showing heads, then a fifth coin marked with a question mark. The probability that the next flip is heads is still a blank, 1/2." width="520" height="150">
+<circle cx="50" cy="66" r="24" class="dg-coin"/><circle cx="50" cy="66" r="20.8" class="dg-coin-rim"/><text x="50" y="74.5" text-anchor="middle" class="dg-eq-lg stamp">H</text>
+<circle cx="112" cy="66" r="24" class="dg-coin"/><circle cx="112" cy="66" r="20.8" class="dg-coin-rim"/><text x="112" y="74.5" text-anchor="middle" class="dg-eq-lg stamp">H</text>
+<circle cx="174" cy="66" r="24" class="dg-coin"/><circle cx="174" cy="66" r="20.8" class="dg-coin-rim"/><text x="174" y="74.5" text-anchor="middle" class="dg-eq-lg stamp">H</text>
+<circle cx="236" cy="66" r="24" class="dg-coin"/><circle cx="236" cy="66" r="20.8" class="dg-coin-rim"/><text x="236" y="74.5" text-anchor="middle" class="dg-eq-lg stamp">H</text>
+<circle cx="300" cy="66" r="24" class="dg-construction"/>
+<text x="300" y="75" text-anchor="middle" class="dg-eq-lg">?</text>
+<path d="M236 36 Q266 8 294 36" class="dg-arrow mk plain"/>
+<text x="346" y="62" class="dg-label">P(heads next) =</text>
+<rect x="466" y="47" width="44" height="20" rx="3" class="dg-tag"/>
+<text x="346" y="88" class="dg-label-sm">same as every flip</text>
+<text x="143" y="132" text-anchor="middle" class="dg-label-hot">"tails is due" is the gambler's fallacy</text>
 </svg>
 <figcaption>Four heads in a row change nothing. The coin has no memory, so the next flip is still a 50–50 chance.</figcaption>
 </figure>
@@ -808,16 +1291,26 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
     <hr style="margin:16px 0;border:none;border-top:1px solid #c9c4b9;">
 
 <!-- viz:replacement -->
-<figure class="viz">
+<figure class="viz tb">
 <!-- tikz: bag-compare | 5R3B | after-red -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 205" aria-label="Two bags after drawing a red marble. With replacement: 5 red and 3 blue, so P of blue next is a blank, 3/8. Without replacement: 4 red and 3 blue, so P of blue next is a blank, 3/7." width="480" height="205">
-<path d="M60 50 Q 50 150 120 150 Q 190 150 180 50 Z" class="dg-fill-soft"/><circle cx="84" cy="80" r="10" class="dg-solid-hot"/><circle cx="108" cy="80" r="10" class="dg-solid-hot"/><circle cx="132" cy="80" r="10" class="dg-solid-hot"/><circle cx="156" cy="80" r="10" class="dg-solid-hot"/><circle cx="96" cy="104" r="10" class="dg-solid-hot"/><circle cx="120" cy="104" r="10" class="dg-solid-cold"/><circle cx="144" cy="104" r="10" class="dg-solid-cold"/><circle cx="108" cy="128" r="10" class="dg-solid-cold"/><text x="120" y="36" text-anchor="middle" class="dg-title">With replacement</text><path d="M300 50 Q 290 150 360 150 Q 430 150 420 50 Z" class="dg-fill-soft"/><circle cx="324" cy="80" r="10" class="dg-solid-hot"/><circle cx="348" cy="80" r="10" class="dg-solid-hot"/><circle cx="372" cy="80" r="10" class="dg-solid-hot"/><circle cx="396" cy="80" r="10" class="dg-solid-hot"/><circle cx="336" cy="104" r="10" class="dg-solid-cold"/><circle cx="360" cy="104" r="10" class="dg-solid-cold"/><circle cx="384" cy="104" r="10" class="dg-solid-cold"/><text x="360" y="36" text-anchor="middle" class="dg-title">Without replacement</text>
-<text x="120" y="176" text-anchor="middle" class="dg-label-sm">red put back: 5 red, 3 blue</text>
-<text x="360" y="176" text-anchor="middle" class="dg-label-sm">red kept: 4 red, 3 blue</text>
-<text x="104" y="198" text-anchor="end" class="dg-label">P(blue next) =</text>
-<rect x="110" y="184" width="44" height="20" rx="3" class="dg-tag"/>
-<text x="344" y="198" text-anchor="end" class="dg-label">P(blue next) =</text>
-<rect x="350" y="184" width="44" height="20" rx="3" class="dg-tag"/>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 490 228" aria-label="Two bags after drawing a red marble. With replacement: the red marble goes back, leaving 5 red and 3 blue, so P of blue next is a blank, 3/8. Without replacement: the red marble stays out, leaving 4 red and 3 blue, so P of blue next is a blank, 3/7." width="490" height="228">
+<path d="M96 68 C40 92 42 170 122 172 C202 170 204 92 148 68 Z" class="dg-bag"/>
+<circle cx="90.5" cy="154" r="10" class="dg-mb-r"/><circle cx="111.5" cy="154" r="10" class="dg-mb-b"/><circle cx="132.5" cy="154" r="10" class="dg-mb-r"/><circle cx="153.5" cy="154" r="10" class="dg-mb-r"/><circle cx="101" cy="135.5" r="10" class="dg-mb-b"/><circle cx="122" cy="135.5" r="10" class="dg-mb-r"/><circle cx="143" cy="135.5" r="10" class="dg-mb-b"/><circle cx="122" cy="117" r="10" class="dg-mb-r"/>
+<path d="M96 68 L88 46 Q102 52 110 48 Q122 54 134 48 Q142 52 156 46 L148 68 Z" class="dg-bag"/><path d="M94 67 Q122 73 150 67" class="dg-bag-tie"/>
+<text x="122" y="24" text-anchor="middle" class="dg-title">With replacement</text>
+<circle cx="206" cy="60" r="10" class="dg-mb-r"/>
+<path d="M200 47 Q142 20 124 43" class="dg-arrow mk plain"/>
+<path d="M342 68 C286 92 288 170 368 172 C448 170 450 92 394 68 Z" class="dg-bag"/>
+<circle cx="336.5" cy="154" r="10" class="dg-mb-r"/><circle cx="357.5" cy="154" r="10" class="dg-mb-b"/><circle cx="378.5" cy="154" r="10" class="dg-mb-r"/><circle cx="399.5" cy="154" r="10" class="dg-mb-r"/><circle cx="347" cy="135.5" r="10" class="dg-mb-b"/><circle cx="368" cy="135.5" r="10" class="dg-mb-r"/><circle cx="389" cy="135.5" r="10" class="dg-mb-b"/>
+<path d="M342 68 L334 46 Q348 52 356 48 Q368 54 380 48 Q388 52 402 46 L394 68 Z" class="dg-bag"/><path d="M340 67 Q368 73 396 67" class="dg-bag-tie"/>
+<text x="368" y="24" text-anchor="middle" class="dg-title">Without replacement</text>
+<circle cx="452" cy="60" r="10" class="dg-mb-r"/>
+<text x="122" y="196" text-anchor="middle" class="dg-label-sm">red put back: 5 red, 3 blue</text>
+<text x="368" y="196" text-anchor="middle" class="dg-label-sm">red kept: 4 red, 3 blue</text>
+<text x="108" y="220" text-anchor="end" class="dg-label">P(blue next) =</text>
+<rect x="114" y="205" width="44" height="20" rx="3" class="dg-tag"/>
+<text x="354" y="220" text-anchor="end" class="dg-label">P(blue next) =</text>
+<rect x="360" y="205" width="44" height="20" rx="3" class="dg-tag"/>
 </svg>
 <figcaption>After a red marble is drawn first. Put it back and the bag is unchanged; keep it and the bag has one fewer red marble and one fewer marble overall.</figcaption>
 </figure>
@@ -835,24 +1328,38 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
     </table>
     <p>The probabilities are different because without replacement changes the <span class="b b-lg"></span></p>
 <!-- viz:dependent-tree -->
-<figure class="viz">
+<figure class="viz tb">
 <!-- tikz: tree-diagram-weighted | 5R3B | no-replacement -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 500 230" aria-label="Tree diagram. First draw: red 5/8, blue 3/8. After red: red 4/7, blue 3/7. After blue: red 5/7, blue 2/7. Red then blue is 5/8 times 3/7, a blank, 15/56." width="500" height="230">
-<circle cx="40" cy="115" r="4" class="dg-point"/>
-<line x1="40" y1="115" x2="170" y2="60" class="dg-line"/><line x1="40" y1="115" x2="170" y2="170" class="dg-line"/>
-<text x="96" y="76" class="dg-label-accent">5/8</text><text x="96" y="164" class="dg-label-accent">3/8</text>
-<circle cx="180" cy="60" r="10" class="dg-solid-hot"/><circle cx="180" cy="170" r="10" class="dg-solid-cold"/>
-<line x1="190" y1="60" x2="300" y2="30" class="dg-line"/><line x1="190" y1="60" x2="300" y2="90" class="dg-line"/>
-<line x1="190" y1="170" x2="300" y2="140" class="dg-line"/><line x1="190" y1="170" x2="300" y2="200" class="dg-line"/>
-<text x="236" y="36" class="dg-label-accent">4/7</text><text x="236" y="94" class="dg-label-accent">3/7</text>
-<text x="236" y="146" class="dg-label-accent">5/7</text><text x="236" y="204" class="dg-label-accent">2/7</text>
-<circle cx="310" cy="30" r="9" class="dg-solid-hot"/><circle cx="310" cy="90" r="9" class="dg-solid-cold"/>
-<circle cx="310" cy="140" r="9" class="dg-solid-hot"/><circle cx="310" cy="200" r="9" class="dg-solid-cold"/>
-<text x="330" y="34" class="dg-label">RR: 5/8 × 4/7 = 20/56</text>
-<text x="330" y="94" class="dg-label">RB: 5/8 × 3/7 =</text>
-<rect x="430" y="80" width="56" height="20" rx="3" class="dg-tag"/>
-<text x="330" y="144" class="dg-label">BR: 3/8 × 5/7 = 15/56</text>
-<text x="330" y="204" class="dg-label">BB: 3/8 × 2/7 = 6/56</text>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 536 250" aria-label="Tree diagram. First draw: red 5/8, blue 3/8. After red: red 4/7, blue 3/7. After blue: red 5/7, blue 2/7. Red then blue is 5/8 times 3/7, a blank, 15/56." width="536" height="250">
+<line x1="36" y1="125" x2="175" y2="64" class="dg-line"/>
+<line x1="36" y1="125" x2="175" y2="186" class="dg-line"/>
+<line x1="197" y1="64" x2="316" y2="32" class="dg-line"/>
+<line x1="197" y1="64" x2="316" y2="94" class="dg-line"/>
+<line x1="197" y1="186" x2="316" y2="156" class="dg-line"/>
+<line x1="197" y1="186" x2="316" y2="218" class="dg-line"/>
+<circle cx="36" cy="125" r="4.5" class="dg-point"/>
+<text x="102.7" y="69.6" text-anchor="middle" class="dg-eq accent">5</text><line x1="94.7" y1="74.1" x2="110.7" y2="74.1" class="dg-fbar acc"/><text x="102.7" y="91.1" text-anchor="middle" class="dg-eq accent">8</text><text x="102.7" y="171.4" text-anchor="middle" class="dg-eq accent">3</text><line x1="94.7" y1="175.9" x2="110.7" y2="175.9" class="dg-fbar acc"/><text x="102.7" y="192.9" text-anchor="middle" class="dg-eq accent">8</text>
+<text x="250.8" y="22.3" text-anchor="middle" class="dg-eq accent">4</text><line x1="242.8" y1="26.8" x2="258.8" y2="26.8" class="dg-fbar acc"/><text x="250.8" y="43.8" text-anchor="middle" class="dg-eq accent">7</text>
+<text x="251.1" y="95.8" text-anchor="middle" class="dg-eq accent">3</text><line x1="243.1" y1="100.3" x2="259.1" y2="100.3" class="dg-fbar acc"/><text x="251.1" y="117.3" text-anchor="middle" class="dg-eq accent">7</text>
+<text x="251.1" y="145.2" text-anchor="middle" class="dg-eq accent">5</text><line x1="243.1" y1="149.7" x2="259.1" y2="149.7" class="dg-fbar acc"/><text x="251.1" y="166.7" text-anchor="middle" class="dg-eq accent">7</text>
+<text x="250.8" y="218.7" text-anchor="middle" class="dg-eq accent">2</text><line x1="242.8" y1="223.2" x2="258.8" y2="223.2" class="dg-fbar acc"/><text x="250.8" y="240.2" text-anchor="middle" class="dg-eq accent">7</text>
+<circle cx="186" cy="64" r="11" class="dg-mb-r"/><circle cx="186" cy="186" r="11" class="dg-mb-b"/>
+<circle cx="326" cy="32" r="10" class="dg-mb-r"/>
+<circle cx="326" cy="94" r="10" class="dg-mb-b"/>
+<circle cx="326" cy="156" r="10" class="dg-mb-r"/>
+<circle cx="326" cy="218" r="10" class="dg-mb-b"/>
+<text x="350" y="37" class="dg-label">RR:</text>
+<text x="397" y="27.5" text-anchor="middle" class="dg-eq">5</text><line x1="389" y1="32" x2="405" y2="32" class="dg-fbar"/><text x="397" y="49" text-anchor="middle" class="dg-eq">8</text><text x="417" y="38" text-anchor="middle" class="dg-eq">×</text><text x="437" y="27.5" text-anchor="middle" class="dg-eq">4</text><line x1="429" y1="32" x2="445" y2="32" class="dg-fbar"/><text x="437" y="49" text-anchor="middle" class="dg-eq">7</text><text x="457" y="38" text-anchor="middle" class="dg-eq">=</text>
+<text x="486" y="27.5" text-anchor="middle" class="dg-eq">20</text><line x1="473" y1="32" x2="499" y2="32" class="dg-fbar"/><text x="486" y="49" text-anchor="middle" class="dg-eq">56</text>
+<text x="350" y="99" class="dg-label">RB:</text>
+<text x="397" y="89.5" text-anchor="middle" class="dg-eq">5</text><line x1="389" y1="94" x2="405" y2="94" class="dg-fbar"/><text x="397" y="111" text-anchor="middle" class="dg-eq">8</text><text x="417" y="100" text-anchor="middle" class="dg-eq">×</text><text x="437" y="89.5" text-anchor="middle" class="dg-eq">3</text><line x1="429" y1="94" x2="445" y2="94" class="dg-fbar"/><text x="437" y="111" text-anchor="middle" class="dg-eq">7</text><text x="457" y="100" text-anchor="middle" class="dg-eq">=</text>
+<rect x="468" y="81" width="58" height="26" rx="3" class="dg-tag"/>
+<text x="350" y="161" class="dg-label">BR:</text>
+<text x="397" y="151.5" text-anchor="middle" class="dg-eq">3</text><line x1="389" y1="156" x2="405" y2="156" class="dg-fbar"/><text x="397" y="173" text-anchor="middle" class="dg-eq">8</text><text x="417" y="162" text-anchor="middle" class="dg-eq">×</text><text x="437" y="151.5" text-anchor="middle" class="dg-eq">5</text><line x1="429" y1="156" x2="445" y2="156" class="dg-fbar"/><text x="437" y="173" text-anchor="middle" class="dg-eq">7</text><text x="457" y="162" text-anchor="middle" class="dg-eq">=</text>
+<text x="486" y="151.5" text-anchor="middle" class="dg-eq">15</text><line x1="473" y1="156" x2="499" y2="156" class="dg-fbar"/><text x="486" y="173" text-anchor="middle" class="dg-eq">56</text>
+<text x="350" y="223" class="dg-label">BB:</text>
+<text x="397" y="213.5" text-anchor="middle" class="dg-eq">3</text><line x1="389" y1="218" x2="405" y2="218" class="dg-fbar"/><text x="397" y="235" text-anchor="middle" class="dg-eq">8</text><text x="417" y="224" text-anchor="middle" class="dg-eq">×</text><text x="437" y="213.5" text-anchor="middle" class="dg-eq">2</text><line x1="429" y1="218" x2="445" y2="218" class="dg-fbar"/><text x="437" y="235" text-anchor="middle" class="dg-eq">7</text><text x="457" y="224" text-anchor="middle" class="dg-eq">=</text>
+<text x="486" y="213.5" text-anchor="middle" class="dg-eq">6</text><line x1="473" y1="218" x2="499" y2="218" class="dg-fbar"/><text x="486" y="235" text-anchor="middle" class="dg-eq">56</text>
 </svg>
 <figcaption>A tree for drawing two marbles without replacement. The second-draw branches change because one marble is already gone. Multiply along a path to get that outcome's probability.</figcaption>
 </figure>

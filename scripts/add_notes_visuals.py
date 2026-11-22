@@ -493,6 +493,22 @@ svg .dg-ch-a { fill: url(#tb-ch-a); } svg .dg-ch-b { fill: url(#tb-ch-b); } svg 
 svg .dg-ch-a.e { fill: #6f8fc4; } svg .dg-ch-b.e { fill: #5f9a48; } svg .dg-ch-n.e { fill: #c4573c; } svg .dg-ch-g.e { fill: #aaa395; }
 svg .dg-strike { fill: none; stroke: var(--viz-hot); stroke-width: 2.4px; stroke-linecap: round; vector-effect: non-scaling-stroke; }   /* cancelled factor */
 svg .dg-frac-key { stroke: var(--viz-key); stroke-width: 1.3px; vector-effect: non-scaling-stroke; }   /* fraction bar of a key answer */
+svg .dg-fbar { stroke: #24211d; stroke-width: 1.3px; vector-effect: non-scaling-stroke; } svg .dg-fbar.acc { stroke: var(--dg-accent); }   /* fraction bar */
+svg .dg-mb-r, svg .dg-mb-b, svg .dg-mb-g, svg .dg-coin, svg .dg-coin-rim, svg .dg-die, svg .dg-pc-r, svg .dg-pc-b, svg .dg-pc-g,
+svg .dg-cell, svg .dg-scale, svg .dg-bag, svg .dg-bag-tie, svg .dg-rainbar { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-mb-r { fill: url(#tb-mb-r); stroke: #6e1c0c; stroke-width: 1px; } svg .dg-mb-b { fill: url(#tb-mb-b); stroke: #132b63; stroke-width: 1px; }   /* marbles */
+svg .dg-mb-g { fill: url(#tb-mb-g); stroke: #1f4f14; stroke-width: 1px; }
+.viz.tb svg .dg-eq.stamp, .viz.tb svg .dg-eq-lg.stamp { stroke: none; fill: #5c430a; font-weight: 700; }   /* letter stamped on a coin */
+svg .dg-coin { fill: url(#tb-coin); stroke: #8a6512; stroke-width: 1.5px; } svg .dg-coin-rim { fill: none; stroke: #b8891d; stroke-width: 1.2px; }   /* coin */
+svg .dg-die { fill: url(#tb-die); stroke: #24211d; stroke-width: 1.3px; } svg .dg-pip { fill: #24211d; stroke: none; }   /* die face */
+svg .dg-pc-r { fill: url(#tb-pc-r); stroke: #24211d; stroke-width: 1.4px; } svg .dg-pc-b { fill: url(#tb-pc-b); stroke: #24211d; stroke-width: 1.4px; }   /* spinner sectors, bars */
+svg .dg-pc-g { fill: url(#tb-pc-g); stroke: #24211d; stroke-width: 1.4px; }
+svg .dg-needle { fill: #24211d; stroke: #fff; stroke-width: 1px; } svg .dg-hub { fill: #f4f2ed; stroke: #24211d; stroke-width: 1.4px; }
+svg .dg-cell { fill: url(#tb-cell); stroke: #b9b3a6; stroke-width: 1px; } svg .dg-cell.on { fill: url(#tb-cell-on); stroke: var(--dg-accent); stroke-width: 1.8px; }   /* outcome square */
+svg .dg-scale { fill: url(#tb-pscale); stroke: #24211d; stroke-width: 1.5px; }   /* probability line, 0 to 1 */
+svg .dg-bag { fill: #e6eef8; fill-opacity: .45; stroke: #24211d; stroke-width: 1.6px; } svg .dg-bag-tie { fill: none; stroke: #8a6512; stroke-width: 3px; stroke-linecap: round; }   /* clear bag */
+svg .dg-rainbar { fill: url(#tb-rainbar); stroke: #24211d; stroke-width: 1.6px; } svg .dg-rainfx { fill: url(#tb-rain); stroke: none; } svg .dg-rain-l { stroke: #fff; stroke-opacity: .75; stroke-width: 1.3px; stroke-linecap: round; }
+svg .dg-blank-bar { fill: url(#tb-cell); stroke: #24211d; stroke-width: 1.6px; vector-effect: non-scaling-stroke; }
 """
 
 TB_DEFS_START, TB_DEFS_END = "<!-- viz-defs -->", "<!-- /viz-defs -->"
@@ -560,6 +576,14 @@ TB_DEFS = (TB_DEFS_START + '\n<!-- tikz: none | shared paints for the figures be
     + _grad("canola", [(0, "#ffec70"), (1, "#f2c51c")])
     + _grad("ch-a", [(0, "#e3ecf9"), (1, "#a9c2e8")], "1", "1") + _grad("ch-b", [(0, "#e0f2d4"), (1, "#a6d58d")], "1", "1")
     + _grad("ch-n", [(0, "#fcdad0"), (1, "#ef9f88")], "1", "1") + _grad("ch-g", [(0, "#f4f2ed"), (1, "#d6d1c6")], "1", "1")
+    + _rad("mb-r", [(0, "#ffd6c8"), (.5, "#e0553a"), (1, "#9a2913")]) + _rad("mb-b", [(0, "#d6e4ff"), (.5, "#3e70d4"), (1, "#1a3a86")])
+    + _rad("mb-g", [(0, "#d9f2c8"), (.5, "#4d9c35"), (1, "#24591a")]) + _rad("coin", [(0, "#fff6cc"), (.5, "#f0c84e"), (1, "#c4921b")])
+    + _grad("die", [(0, "#ffffff"), (1, "#e4e0d7")], "1", "1") + _grad("cell", [(0, "#ffffff"), (1, "#ebe7de")])
+    + _grad("cell-on", [(0, "#e3ecfb"), (1, "#b9cdf1")])
+    + _grad("pc-r", [(0, "#f9bba7"), (1, "#de5d3c")], "1", "1") + _grad("pc-b", [(0, "#bfd3f6"), (1, "#5a86d6")], "1", "1")
+    + _grad("pc-g", [(0, "#c9e9b4"), (1, "#68ae4b")], "1", "1") + _grad("pscale", [(0, "#ece8e0"), (1, "#a9c2ec")], "1", "0")
+    + _grad("rainbar", [(0, "#a7d1ee"), (1, "#4c93c4")])
+    + '<pattern id="tb-rain" width="9" height="11" patternUnits="userSpaceOnUse"><line x1="7" y1="1.5" x2="4" y2="8.5" class="dg-rain-l"/></pattern>'
     + '<radialGradient id="tb-m-disc" cx=".5" cy=".5" r=".5" fx=".42" fy=".36"><stop offset="0" stop-color="#ffffff"/><stop offset=".75" stop-color="#f6f8fc"/><stop offset="1" stop-color="#e6ebf5"/></radialGradient>'
     + "</defs></svg>" + TB_DEFS_END)
 DEFS_RE = re.compile(re.escape(TB_DEFS_START) + r".*?" + re.escape(TB_DEFS_END) + r"\n?", re.S)
