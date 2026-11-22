@@ -447,7 +447,8 @@ svg .dg-open, svg .dg-closed, svg .dg-solray { vector-effect: non-scaling-stroke
 svg .dg-open { fill: #fff; stroke: var(--dg-accent); stroke-width: 2.6px; }   /* number-line endpoint: not included */
 svg .dg-closed { fill: var(--dg-accent); stroke: #fff; stroke-width: 1.2px; }  /* number-line endpoint: included */
 svg .dg-closed.hot { fill: var(--viz-hot); }
-svg .dg-solray { stroke: var(--dg-accent); stroke-width: 5px; stroke-linecap: butt; stroke-opacity: .85; fill: none; }svg .dg-plot, svg .dg-grid-min, svg .dg-grid-maj, svg .dg-road, svg .dg-road-mid { vector-effect: non-scaling-stroke; }
+svg .dg-solray { stroke: var(--dg-accent); stroke-width: 5px; stroke-linecap: butt; stroke-opacity: .85; fill: none; }
+svg .dg-plot, svg .dg-grid-min, svg .dg-grid-maj, svg .dg-road, svg .dg-road-mid { vector-effect: non-scaling-stroke; }
 svg .dg-plot { fill: #fbfcfe; stroke: #9aa5b8; stroke-width: 1px; }               /* graph paper behind a grid */
 svg .dg-grid-min { stroke: #d5dce8; stroke-width: .8px; fill: none; }           /* every grid line */
 svg .dg-grid-maj { stroke: #a9b4c6; stroke-width: 1px; fill: none; }            /* grid lines that carry a number */
@@ -455,6 +456,25 @@ svg .dg-road { stroke: #5c5853; stroke-width: 9px; stroke-linecap: round; fill: 
 svg .dg-road-mid { stroke: #f4d35e; stroke-width: 1.6px; stroke-dasharray: 9 7; fill: none; }
 svg .dg-wax { fill: url(#tb-tube); stroke: #8f887b; stroke-width: 1px; }
 .viz.tb svg .dg-accent.water { stroke: var(--viz-water); }
+svg .dg-sc-f, svg .dg-sc-t, svg .dg-sc-s, svg .dg-sc-cyl, svg .dg-sw-f, svg .dg-sw-t, svg .dg-sw-s, svg .dg-sw-cyl,
+svg .dg-sg-f, svg .dg-sg-t, svg .dg-sg-s, svg .dg-sg-cyl, svg .dg-sr-f, svg .dg-sr-t, svg .dg-sr-s, svg .dg-sk-f, svg .dg-sk-t, svg .dg-sk-s,
+svg .dg-sh-f, svg .dg-sh-t, svg .dg-sh-s { stroke: #24211d; stroke-width: 1.6px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-edge, svg .dg-hid, svg .dg-fold, svg .dg-glass, svg .dg-plank { vector-effect: non-scaling-stroke; }   /* shaded solids: front / top / side / curved */
+svg .dg-sc-f { fill: url(#tb-sc-f); } svg .dg-sc-t { fill: url(#tb-sc-t); } svg .dg-sc-s { fill: url(#tb-sc-s); } svg .dg-sc-cyl { fill: url(#tb-sc-cyl); }
+svg .dg-sw-f { fill: url(#tb-sw-f); } svg .dg-sw-t { fill: url(#tb-sw-t); } svg .dg-sw-s { fill: url(#tb-sw-s); } svg .dg-sw-cyl { fill: url(#tb-sw-cyl); }
+svg .dg-sg-f { fill: url(#tb-sg-f); } svg .dg-sg-t { fill: url(#tb-sg-t); } svg .dg-sg-s { fill: url(#tb-sg-s); } svg .dg-sg-cyl { fill: url(#tb-sg-cyl); }
+svg .dg-sr-f { fill: url(#tb-sr-f); } svg .dg-sr-t { fill: url(#tb-sr-t); } svg .dg-sr-s { fill: url(#tb-sr-s); }
+svg .dg-sk-f { fill: url(#tb-sk-f); } svg .dg-sk-t { fill: url(#tb-sk-t); } svg .dg-sk-s { fill: url(#tb-sk-s); }
+svg .dg-sh-f { fill: url(#tb-sh-f); } svg .dg-sh-t { fill: url(#tb-sh-t); } svg .dg-sh-s { fill: url(#tb-sh-s); }
+svg .ns { stroke: none; }                                                       /* face fill only; edges drawn on top */
+svg .dg-edge { fill: none; stroke: #24211d; stroke-width: 1.6px; stroke-linecap: round; }
+svg .dg-hid { fill: none; stroke: #5f5a52; stroke-width: 1.3px; stroke-dasharray: 5 3.5; }   /* hidden edge */
+svg .dg-hid.hot { stroke: var(--viz-hot); stroke-width: 1.8px; } svg .dg-hid.water { stroke: var(--viz-water); stroke-width: 1.8px; }
+svg .dg-fold { fill: none; stroke: #4a453e; stroke-width: 1.1px; stroke-dasharray: 4 3; }    /* fold line in a net */
+svg .dg-glass { fill: #e6eef8; fill-opacity: .38; stroke: #24211d; stroke-width: 1.5px; }    /* see-through container */
+svg .dg-ghost-hot { fill: var(--viz-hot); fill-opacity: .22; stroke: var(--viz-hot); stroke-width: 1.5px; stroke-dasharray: 5 3.5; vector-effect: non-scaling-stroke; }
+svg .dg-plank { fill: none; stroke: #7e2618; stroke-width: .8px; stroke-opacity: .55; }
+svg .dg-door { fill: #4a2a20; stroke: #24211d; stroke-width: 1px; }
 """
 
 TB_DEFS_START, TB_DEFS_END = "<!-- viz-defs -->", "<!-- /viz-defs -->"
@@ -508,6 +528,15 @@ TB_DEFS = (TB_DEFS_START + '\n<!-- tikz: none | shared paints for the figures be
     + _rad("dome", [(0, "#ffffff"), (1, "#bfc6cd")]) + _grad("tube", [(0, "#d6d1c6"), (.4, "#ffffff"), (1, "#cfc9bd")])
     + _marker("muted", "#6b665d") + _marker("plain", "#3f3b35") + _marker("hot", "#c2410c") + _marker("cold", "#1d4ed8") + _marker("water", "#0369a1")
     + _marker("sun", "#c98a0a") + _marker("plant", "#3f7a2a") + _marker("earth", "#7a5230") + _marker("accent", "#6b4a8a")
+    + "".join(_grad(f"{t}-f", [(0, f0), (1, f1)]) + _grad(f"{t}-t", [(0, t0), (1, t1)], "1", "1") + _grad(f"{t}-s", [(0, s0), (1, s1)])
+              + _grad(f"{t}-cyl", [(0, c0), (.38, c1), (1, c2)], "1", "0")
+              for t, f0, f1, t0, t1, s0, s1, c0, c1, c2 in [
+                  ("sc", "#e6eef8", "#cbdaee", "#f5f8fc", "#e3ebf6", "#b8cae2", "#9fb5d3", "#9fb4d2", "#f1f6fc", "#8ea5c6"),
+                  ("sw", "#fde8bd", "#f5cf82", "#fff5dc", "#fbe7b8", "#eec27a", "#dea65a", "#dca55a", "#fff2d2", "#cf9442"),
+                  ("sg", "#dff0d4", "#c0dfad", "#f0f8ea", "#dcefd0", "#a8cf8e", "#8dbd72", "#8cbb72", "#eef8e7", "#7aab5f"),
+                  ("sr", "#d65a43", "#b53c2b", "#e48a74", "#d4664f", "#a3372a", "#86291c", "#86291c", "#e07a62", "#7a2418"),
+                  ("sk", "#bfc3c7", "#9fa5ab", "#d9dcdf", "#c3c7cb", "#8e959c", "#767d84", "#767d84", "#d9dcdf", "#6a7178"),
+                  ("sh", "#f9d6c8", "#f0b6a0", "#fce6dd", "#f7cdbd", "#eaa58b", "#dc8a6f", "#dc8a6f", "#fbe0d4", "#c97458")])
     + '<radialGradient id="tb-m-disc" cx=".5" cy=".5" r=".5" fx=".42" fy=".36"><stop offset="0" stop-color="#ffffff"/><stop offset=".75" stop-color="#f6f8fc"/><stop offset="1" stop-color="#e6ebf5"/></radialGradient>'
     + "</defs></svg>" + TB_DEFS_END)
 DEFS_RE = re.compile(re.escape(TB_DEFS_START) + r".*?" + re.escape(TB_DEFS_END) + r"\n?", re.S)
