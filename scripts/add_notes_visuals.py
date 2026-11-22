@@ -475,6 +475,15 @@ svg .dg-glass { fill: #e6eef8; fill-opacity: .38; stroke: #24211d; stroke-width:
 svg .dg-ghost-hot { fill: var(--viz-hot); fill-opacity: .22; stroke: var(--viz-hot); stroke-width: 1.5px; stroke-dasharray: 5 3.5; vector-effect: non-scaling-stroke; }
 svg .dg-plank { fill: none; stroke: #7e2618; stroke-width: .8px; stroke-opacity: .55; }
 svg .dg-door { fill: #4a2a20; stroke: #24211d; stroke-width: 1px; }
+svg .dg-eq, svg .dg-eq-lg { font: 400 19px/1 "Times New Roman", Georgia, serif; fill: #24211d; }   /* typeset maths: upright numbers, */
+svg .dg-eq-lg { font-size: 25px; } svg .dg-eq .v, svg .dg-eq-lg .v { font-style: italic; }       /* letters in <tspan class="v"> */
+svg .dg-eq.accent, svg .dg-eq-lg.accent { fill: var(--dg-accent); font-weight: 700; }
+svg .dg-brace { fill: none; stroke: #4a453e; stroke-width: 1.4px; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-tl-q, svg .dg-tl-x, svg .dg-tl-1, svg .dg-tl-n { stroke: #24211d; stroke-width: 1.3px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-tl-q { fill: url(#tb-tl-q); } svg .dg-tl-x { fill: url(#tb-tl-x); } svg .dg-tl-1 { fill: url(#tb-tl-1); } svg .dg-tl-n { fill: url(#tb-tl-n); }   /* algebra tiles: x², x, 1, negative */
+svg .dg-tl-q.e { fill: #4672b8; } svg .dg-tl-x.e { fill: #4c9a3a; } svg .dg-tl-1.e { fill: #c99a18; } svg .dg-tl-n.e { fill: #b03b22; }   /* tile edge (thickness) */
+svg .dg-canola { fill: url(#tb-canola); stroke: #8a7414; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-crop { fill: none; stroke: #c79f12; stroke-width: 1px; stroke-opacity: .7; vector-effect: non-scaling-stroke; }
 """
 
 TB_DEFS_START, TB_DEFS_END = "<!-- viz-defs -->", "<!-- /viz-defs -->"
@@ -537,6 +546,9 @@ TB_DEFS = (TB_DEFS_START + '\n<!-- tikz: none | shared paints for the figures be
                   ("sr", "#d65a43", "#b53c2b", "#e48a74", "#d4664f", "#a3372a", "#86291c", "#86291c", "#e07a62", "#7a2418"),
                   ("sk", "#bfc3c7", "#9fa5ab", "#d9dcdf", "#c3c7cb", "#8e959c", "#767d84", "#767d84", "#d9dcdf", "#6a7178"),
                   ("sh", "#f9d6c8", "#f0b6a0", "#fce6dd", "#f7cdbd", "#eaa58b", "#dc8a6f", "#dc8a6f", "#fbe0d4", "#c97458")])
+    + _grad("tl-q", [(0, "#b4cdf4"), (1, "#7aa3e3")], "1", "1") + _grad("tl-x", [(0, "#bde6a8"), (1, "#78c35f")], "1", "1")
+    + _grad("tl-1", [(0, "#fff2b0"), (1, "#f5cd4c")], "1", "1") + _grad("tl-n", [(0, "#f9b3a1"), (1, "#e4644a")], "1", "1")
+    + _grad("canola", [(0, "#ffec70"), (1, "#f2c51c")])
     + '<radialGradient id="tb-m-disc" cx=".5" cy=".5" r=".5" fx=".42" fy=".36"><stop offset="0" stop-color="#ffffff"/><stop offset=".75" stop-color="#f6f8fc"/><stop offset="1" stop-color="#e6ebf5"/></radialGradient>'
     + "</defs></svg>" + TB_DEFS_END)
 DEFS_RE = re.compile(re.escape(TB_DEFS_START) + r".*?" + re.escape(TB_DEFS_END) + r"\n?", re.S)
