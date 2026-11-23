@@ -203,6 +203,353 @@ svg .dg-route       { fill: none; stroke: var(--dg-accent); stroke-width: 2px; s
 svg .dg-route.muted { stroke: var(--dg-muted, #6b665d); stroke-dasharray: 5 3; }
 svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
 /* ── /viz-kit ── */
+/* ── viz-kit textbook layer (scripts/add_notes_visuals.py) ── */
+body { counter-reset: fig; }
+.viz.tb { counter-increment: fig; background: #fff; border: 1px solid #d6d1c6; border-top: 3px solid var(--dg-accent);
+  border-radius: 3px; padding: .9rem 1.1rem .7rem; max-width: 44rem; }
+.viz.tb figcaption { font-style: normal; text-align: left; max-width: none; font-size: .84rem; line-height: 1.45; color: #2f2b26;
+  border-top: 1px solid #e2ddd2; margin: .65rem 0 0; padding-top: .45rem; }
+.viz.tb figcaption::before { content: "Figure " counter(fig) "\00a0\00a0"; font-weight: 700; color: var(--dg-accent); }
+.viz.tb svg .dg-label { font-size: 12.5px; } .viz.tb svg .dg-label-sm { font-size: 11.5px; }
+.viz.tb svg .dg-label-hot, .viz.tb svg .dg-label-cold, .viz.tb svg .dg-label-water, .viz.tb svg .dg-label-plant,
+.viz.tb svg .dg-label-earth, .viz.tb svg .dg-label-accent { font-size: 12px; }
+.viz.tb svg .dg-fill-hot { fill-opacity: .34; } .viz.tb svg .dg-fill-cold { fill-opacity: .30; } .viz.tb svg .dg-fill-plant { fill-opacity: .34; }
+.viz.tb svg .dg-fill-water { fill-opacity: .32; } .viz.tb svg .dg-fill-earth { fill-opacity: .34; } .viz.tb svg .dg-fill-sun { fill-opacity: .42; }
+.viz.tb svg .dg-fill-accent { fill-opacity: .28; } .viz.tb svg .dg-fill-soft { fill: #e9e5dc; stroke: #b9b3a6; }
+.viz.tb svg [class^="dg-fill"], .viz.tb svg [class^="dg-solid"], .viz.tb svg .dg-boundary { filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.28)); }
+svg .dg-g-crust, svg .dg-g-mantle, svg .dg-g-ocean, svg .dg-g-magma, svg .dg-g-cont, svg .dg-g-sph-crust, svg .dg-g-sph-mantle,
+svg .dg-g-sph-outer, svg .dg-g-sph-inner, svg .dg-g-ign, svg .dg-g-sed, svg .dg-g-met, svg .dg-g-landa, svg .dg-g-landb,
+svg .dg-speckle, svg .dg-star, svg .dg-station, svg .dg-wave, svg .dg-stream, svg .dg-stream-hi, svg .dg-ico { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-g-crust     { fill: url(#tb-crust);  stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-mantle    { fill: url(#tb-mantle); stroke: #c0702f; stroke-width: 1px; }
+svg .dg-g-ocean     { fill: url(#tb-ocean);  stroke: #2f7aa6; stroke-width: .8px; }
+svg .dg-g-magma     { fill: url(#tb-magma);  stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-cont      { fill: url(#tb-cont);   stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-sph-crust { fill: url(#tb-sph-crust); stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-sph-mantle{ fill: url(#tb-sph-mantle); stroke: #a8501b; stroke-width: 1px; }
+svg .dg-g-sph-outer { fill: url(#tb-sph-outer);  stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-sph-inner { fill: url(#tb-sph-inner);  stroke: #b45a0a; stroke-width: 1px; }
+svg .dg-g-ign       { fill: url(#tb-ign); stroke: #9a4a30; stroke-width: 1.2px; }
+svg .dg-g-sed       { fill: url(#tb-sed); stroke: #8a6a2e; stroke-width: 1.2px; }
+svg .dg-g-met       { fill: url(#tb-met); stroke: #6e5f52; stroke-width: 1.2px; }
+svg .dg-g-landa     { fill: url(#tb-landa); stroke: #8a7650; stroke-width: 1px; }
+svg .dg-g-landb     { fill: url(#tb-landb); stroke: #7a8a58; stroke-width: 1px; }
+svg .dg-speckle     { fill: url(#tb-speckle); stroke: none; }
+svg .dg-star        { fill: #ffd23f; stroke: #7a2e0e; stroke-width: 1.2px; }
+svg .dg-station     { fill: #2f2b26; stroke: #fff; stroke-width: 1.5px; }
+svg .dg-wave        { fill: none; stroke: #fff; stroke-width: 1.5px; stroke-linecap: round; }
+svg .dg-stream      { fill: none; stroke: #2f86b8; stroke-width: 6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-stream-hi   { fill: none; stroke: #cfeaf7; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-ico         { stroke: #5b4430; stroke-width: .8px; }
+svg .dg-ico-1 { fill: #f3d9c9; } svg .dg-ico-2 { fill: #7a3b2a; stroke: none; } svg .dg-ico-3 { fill: #fff; stroke: none; }
+svg .dg-ico-4 { fill: #e7c98a; } svg .dg-ico-5 { fill: #cfa95e; } svg .dg-ico-6 { fill: #f0dfb4; }
+svg .dg-ico-7 { fill: #bfb2a5; } svg .dg-ico-line { fill: none; stroke: #6e5f52; stroke-width: 1px; }
+svg .dg-shadow { fill: url(#tb-hatch); stroke: none; }
+svg .dg-ray-case { fill: none; stroke: #fff; stroke-width: 3.8px; stroke-opacity: .85; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-lane { fill: none; stroke: #fff; stroke-opacity: .38; stroke-width: 15px; stroke-linejoin: round; }
+svg .dg-glow { fill: url(#tb-glow); stroke: none; }
+svg .dg-g-crustL { fill: url(#tb-crustL); stroke: #5b4430; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-g-crustR { fill: url(#tb-crustR); stroke: #5b4430; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-crustline { fill: none; stroke: #5b4430; stroke-width: .9px; stroke-opacity: .7; vector-effect: non-scaling-stroke; }
+svg .dg-melt { fill: #ff8c42; stroke: #a3270b; stroke-width: .6px; }
+svg .dg-tree { fill: #5d8a47; stroke: #34592a; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-fz { fill: #5b4430; fill-opacity: .22; stroke: none; }
+svg .dg-tick { fill: none; stroke: var(--dg-stroke, #3f3b35); stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-tuft { fill: none; stroke: #6f8548; stroke-width: 1px; stroke-linecap: round; stroke-opacity: .8; }
+svg .dg-ico-8 { fill: #d99a82; } svg .dg-ico-9 { fill: #8a4a3a; } svg .dg-ico-10 { fill: #fbf1ea; } svg .dg-ico-11 { fill: #e9b9a2; }
+svg .dg-ico-pale { fill: none; stroke: #efe8de; stroke-width: 1px; }
+svg .dg-arrow.dash { stroke-dasharray: 6 4; }
+svg .dg-g-outer { fill: url(#tb-outer); stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-inner { fill: url(#tb-inner); stroke: #b45a0a; stroke-width: 1px; }
+svg .dg-g-volc  { fill: url(#tb-volc); stroke: #3f352d; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-rock  { fill: url(#tb-rock); stroke: #4a4038; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-ashcloud { fill: url(#tb-ashcloud); stroke: #8f877e; stroke-width: .8px; }
+svg .dg-snow  { fill: #fff; stroke: #b9b3a6; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-crack { fill: none; stroke: #3a3029; stroke-width: 1.1px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-sed-sand { fill: #ecd59c; stroke: #a8874a; stroke-width: .7px; }
+svg .dg-sed-silt { fill: #cfab7c; stroke: #8f6c45; stroke-width: .7px; }
+svg .dg-sed-clay { fill: #aaa39a; stroke: #6e675f; stroke-width: .7px; }
+svg .dg-lens  { fill: none; stroke: #3f3b35; stroke-width: 2px; }
+svg .dg-lens-rim { fill: none; stroke: #fff; stroke-width: 5px; }
+svg .dg-basalt { fill: #56514c; stroke: none; }
+svg .dg-fine  { fill: url(#tb-fine); stroke: none; }
+svg .dg-min-feld { fill: #e39a7e; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-feld2 { fill: #f2bba3; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-qtz { fill: #eeebe5; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-mica { fill: #3a3330; stroke: #1f1a18; stroke-width: .6px; }
+svg .dg-stripe-n { fill: #57514b; stroke: none; }
+svg .dg-stripe-r { fill: #f3eee4; stroke: none; }
+svg .dg-pol-n { fill: #fff; stroke: none; } svg .dg-pol-r { fill: #57514b; stroke: none; }
+svg .dg-grass { fill: #8bb162; stroke: #5d8a47; stroke-width: .8px; }
+svg .dg-fault { fill: none; stroke: #2f241b; stroke-width: 2.2px; stroke-linecap: round; }
+svg .dg-focus { fill: #e2431a; stroke: #7a1f0a; stroke-width: 1.2px; }
+svg .dg-house-wall { fill: #f6efe2; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-roof { fill: #a3452a; stroke: #5e2414; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-door { fill: #6b4a3a; stroke: none; } svg .dg-window { fill: #bfe3f5; stroke: #3f3b35; stroke-width: .6px; }
+svg .dg-ash { fill: #d9d3ca; stroke: #3f352d; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-ash-dot { fill: #6b645c; stroke: none; }
+svg .dg-ice { fill: #e3f4fb; stroke: #5aa9d0; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-ice-line { fill: none; stroke: #fff; stroke-width: 1px; }
+svg .dg-sun { fill: #ffd23f; stroke: #c98a0a; stroke-width: 1px; } svg .dg-ray { fill: none; stroke: #e0a515; stroke-width: 1.4px; stroke-linecap: round; }
+svg .dg-moon { fill: #f4f1e6; stroke: #8a8578; stroke-width: 1px; }
+svg .dg-fish { fill: #b9c6ce; stroke: #4a5560; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-bone { fill: none; stroke: #f6f1e6; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-bone-fill { fill: #f6f1e6; stroke: #8a7a62; stroke-width: .8px; }
+svg .dg-fossil { fill: none; stroke: #3a2f26; stroke-width: 1.8px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-fossil-fill { fill: #3a2f26; stroke: none; }
+svg .dg-lith-sand { fill: url(#tb-p-sand); stroke: #8a6a2e; stroke-width: .8px; }
+svg .dg-lith-shale { fill: url(#tb-p-shale); stroke: #5f5a55; stroke-width: .8px; }
+svg .dg-lith-lime { fill: url(#tb-p-lime); stroke: #5d6a72; stroke-width: .8px; }
+svg .dg-lith-coal { fill: #2f2b28; stroke: #1a1715; stroke-width: .8px; }
+svg .dg-ammonite { fill: #efe3c8; stroke: #5b4430; stroke-width: 1px; }
+svg .dg-amm-line { fill: none; stroke: #5b4430; stroke-width: .8px; }
+svg .dg-face-side { fill: #000; fill-opacity: .16; stroke: #3f3b35; stroke-width: .8px; }
+svg .dg-face-top { fill: #fff; fill-opacity: .45; stroke: #3f3b35; stroke-width: .8px; }
+svg .dg-panel { fill: #faf8f3; stroke: #e2ddd2; stroke-width: 1px; }
+svg .dg-rain { fill: none; stroke: #3b8fc0; stroke-width: 1.3px; stroke-linecap: round; stroke-dasharray: 5 4; }
+svg .dg-precam { fill: url(#tb-precam); stroke: #6e675f; stroke-width: .8px; }
+svg .dg-zoom { fill: none; stroke: #8f877e; stroke-width: 1px; stroke-dasharray: 3 3; }
+svg .dg-sp-d { fill: #5b4430; fill-opacity: .28; } svg .dg-sp-l { fill: #fff; fill-opacity: .33; }
+svg .dg-hatch-l { stroke: #fff; stroke-opacity: .55; stroke-width: 1.6px; }
+svg .dg-fine-a { fill: #d8d2c8; } svg .dg-fine-b { fill: #8f877e; }
+svg .dg-psand-bg { fill: #f0dca6; } svg .dg-psand-dot { fill: #8a6a2e; }
+svg .dg-pshale-bg { fill: #cfcac3; } svg .dg-pshale-l { stroke: #6e675f; stroke-width: .9px; }
+svg .dg-plime-bg { fill: #dce4e8; } svg .dg-plime-l { fill: none; stroke: #7d8b93; stroke-width: .8px; }
+svg .dg-pt-cold { fill: url(#tb-pt-cold); stroke: #1e3a8a; stroke-width: .8px; }
+svg .dg-pt-warm { fill: url(#tb-pt-warm); stroke: #8a5a00; stroke-width: .8px; }
+svg .dg-pt-hot  { fill: url(#tb-pt-hot);  stroke: #7a1f0a; stroke-width: .8px; }
+svg .dg-trail-cold, svg .dg-trail-warm, svg .dg-trail-hot { fill: none; stroke-linecap: round; stroke-width: 12px; }
+svg .dg-trail-cold.sm, svg .dg-trail-warm.sm, svg .dg-trail-hot.sm { stroke-width: 8px; }
+svg .dg-trail-cold { stroke: #3b6fd8; stroke-opacity: .22; } svg .dg-trail-warm { stroke: #e0a515; stroke-opacity: .32; }
+svg .dg-trail-hot { stroke: #e2431a; stroke-opacity: .24; }
+svg .dg-vib { fill: none; stroke: #8f877e; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-g-steel  { fill: url(#tb-steel);  stroke: #5f6770; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-steelH { fill: url(#tb-steelH); stroke: #4a5058; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-wood { fill: url(#tb-wood); stroke: #6b4a2a; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-grain { fill: none; stroke: #7a5230; stroke-opacity: .45; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-flame { fill: url(#tb-flame); stroke: #c2410c; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-flame-in { fill: #fff3a0; stroke: none; }
+svg .dg-g-water { fill: url(#tb-water); stroke: none; }
+svg .dg-water-top { fill: none; stroke: #2f7aa6; stroke-width: 1.2px; }
+svg .dg-glass { fill: #f4f9fb; fill-opacity: .55; stroke: #6e8796; stroke-width: 1.4px; stroke-linejoin: round; }
+svg .dg-glass-hi { fill: none; stroke: #fff; stroke-width: 3px; stroke-linecap: round; stroke-opacity: .9; }
+svg .dg-skin { fill: url(#tb-skin); stroke: #9a6a4f; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-skin-line { fill: none; stroke: #9a6a4f; stroke-width: .8px; stroke-linecap: round; }
+svg .dg-g-sand { fill: url(#tb-sand); stroke: #a8874a; stroke-width: 1px; }
+svg .dg-g-sky-day { fill: url(#tb-sky-day); stroke: none; } svg .dg-g-sky-night { fill: url(#tb-sky-night); stroke: none; }
+svg .dg-starlet { fill: #fff; stroke: none; }
+svg .dg-g-liquid { fill: url(#tb-liquid); stroke: #a3270b; stroke-width: .8px; }
+svg .dg-burner { fill: #3f3b35; stroke: #1f1c19; stroke-width: 1px; }
+svg .dg-g-hotblock  { fill: url(#tb-hotblock);  stroke: #7a1f0a; stroke-width: 1.2px; }
+svg .dg-g-coldblock { fill: url(#tb-coldblock); stroke: #1e3a8a; stroke-width: 1.2px; }
+svg .dg-g-warmblock { fill: url(#tb-warmblock); stroke: #8a5a00; stroke-width: 1.2px; }
+svg .dg-cross { fill: none; stroke: #b91c1c; stroke-width: 3px; stroke-linecap: round; }
+svg .dg-g-bag { fill: url(#tb-bag); stroke: #2f5a7a; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-quilt { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 1px; stroke-dasharray: 3 3; }
+svg .dg-insul { fill: url(#tb-insul); stroke: #b8708a; stroke-width: .8px; }
+svg .dg-ins-a { fill: #f6c9d6; } svg .dg-ins-l { fill: none; stroke: #d98aa3; stroke-width: 1px; }
+svg .dg-g-globe { fill: url(#tb-globe); stroke: #1f5f8a; stroke-width: 1px; }
+svg .dg-land { fill: #6fa35a; stroke: #3f6b33; stroke-width: .6px; }
+svg .dg-g-sunball { fill: url(#tb-sunball); stroke: #d97a0a; stroke-width: 1px; }
+svg .dg-silver { fill: url(#tb-silver); stroke: #6e7780; stroke-width: 1px; }
+svg .dg-g-plastic { fill: url(#tb-plastic); stroke: #26303a; stroke-width: 1px; }
+svg .dg-g-soup { fill: url(#tb-soup); stroke: #a3501b; stroke-width: .8px; }
+svg .dg-vac { fill: #fff; stroke: none; }
+svg .dg-band-water { fill: #0369a1; fill-opacity: .09; stroke: none; } svg .dg-band-hot { fill: #c2410c; fill-opacity: .08; stroke: none; }
+svg .dg-dot-water { fill: #0369a1; stroke: #fff; stroke-width: 1px; } svg .dg-dot-hot { fill: #c2410c; stroke: #fff; stroke-width: 1px; }
+svg .dg-g-ballast { fill: url(#tb-rock); stroke: #6e675f; stroke-width: .8px; }
+svg .dg-brick { fill: url(#tb-brick); stroke: #7a3b2a; stroke-width: 1px; }
+svg .dg-brick-bg { fill: #c97a5a; } svg .dg-brick-l { fill: none; stroke: #f3e3d6; stroke-width: 1px; }
+svg .dg-wave-hot { fill: none; stroke: #e0a515; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-porcelain { fill: #fbfaf7; stroke: #3f3b35; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-snowflake { fill: none; stroke: #6fa8d6; stroke-width: 1.2px; stroke-linecap: round; }
+svg .dg-curve-cold, svg .dg-curve-water, svg .dg-curve-hot, svg .dg-curve-accent { fill: none; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-curve-cold { stroke: #1d4ed8; } svg .dg-curve-water { stroke: #0369a1; } svg .dg-curve-hot { stroke: #c2410c; } svg .dg-curve-accent { stroke: var(--dg-accent); }
+svg .dg-rodglow { fill: url(#tb-rodglow); stroke: none; }
+svg .dg-night { fill: #0b1a33; fill-opacity: .38; stroke: none; }
+svg .dg-vibring-cold, svg .dg-vibring-hot, svg .dg-vibring-warm { stroke-width: .9px; stroke-dasharray: 2 2; }
+svg .dg-vibring-cold { fill: #1d4ed8; fill-opacity: .08; stroke: #6f97ea; } svg .dg-vibring-warm { fill: #e0a515; fill-opacity: .1; stroke: #e0a515; }
+svg .dg-vibring-hot { fill: #e2431a; fill-opacity: .09; stroke: #f2793a; }
+svg .dg-zip { fill: none; stroke: #e9ecef; stroke-width: 2px; stroke-dasharray: 2 2; }
+svg .dg-leader { fill: none; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-leader-dot { fill: #3f3b35; stroke: #fff; stroke-width: 1px; }
+svg .dg-arrow.mk.sun { marker-end: url(#tb-m-sun); } svg .dg-arrow.mk.plant { marker-end: url(#tb-m-plant); }
+svg .dg-arrow.mk.earth { marker-end: url(#tb-m-earth); } svg .dg-arrow.mk.accent { marker-end: url(#tb-m-accent); }
+svg .dg-an { stroke: #3a332c; stroke-width: .9px; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-line { fill: none; stroke: #3a332c; stroke-width: .9px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-thin { fill: none; stroke: #3a332c; stroke-width: .6px; stroke-opacity: .6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-stem { fill: none; stroke: #3f6b33; stroke-width: 1.4px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-c-tan { fill: #d9c3a0; } svg .dg-c-snow { fill: #f4efe6; } svg .dg-c-grey { fill: #a39d93; } svg .dg-c-wolf { fill: #8f8a82; }
+svg .dg-c-brown { fill: #7a5236; } svg .dg-c-moose { fill: #5e4030; } svg .dg-c-dark { fill: #2a2622; } svg .dg-c-yellow { fill: #f2c230; }
+svg .dg-c-orange { fill: #e8892a; } svg .dg-c-green { fill: #6fa35a; } svg .dg-c-dkgreen { fill: #3f6b33; } svg .dg-c-olive { fill: #7d8a3e; }
+svg .dg-c-heron { fill: #8fa3b5; } svg .dg-c-pink { fill: #d9579a; } svg .dg-c-cream { fill: #efe3c8; } svg .dg-c-white { fill: #fff; }
+svg .dg-c-red { fill: #b8452a; } svg .dg-c-lynx { fill: #c9b08c; } svg .dg-c-owl { fill: #8a6544; } svg .dg-c-mallard { fill: #2f7a4a; }
+svg .dg-c-purple { fill: #9b7cc0; } svg .dg-c-bark { fill: #f1efe8; } svg .dg-c-char { fill: #3a3330; } svg .dg-c-lime { fill: #a9cf6a; }
+svg .dg-c-lilac { fill: #c9a6de; } svg .dg-c-wheat { fill: #e3c46a; } svg .dg-c-canola { fill: #f5d42a; } svg .dg-c-skin { fill: #f1c7a8; }
+svg .dg-g-leaf { fill: url(#tb-leaf); stroke: #3f6b33; stroke-width: .9px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-g-conifer { fill: url(#tb-conifer); stroke: #23421f; stroke-width: .9px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-g-soil { fill: url(#tb-soil); stroke: #5b4430; stroke-width: 1px; }
+svg .dg-g-sphere-plant { fill: url(#tb-sph-plant); stroke: #2c5a22; stroke-width: 1px; }
+svg .dg-g-sphere-earth { fill: url(#tb-sph-earth); stroke: #5b3a20; stroke-width: 1px; }
+svg .dg-g-sphere-muted { fill: url(#tb-sph-muted); stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-curve-plant { fill: none; stroke: #3f7a2a; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-band-plant { fill: #3f7a2a; fill-opacity: .08; stroke: none; } svg .dg-band-earth { fill: #7a5230; fill-opacity: .08; stroke: none; }
+svg .dg-card { fill: #fff; stroke: #b9b3a6; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-card-plant { fill: #eef5e6; stroke: #7aa35a; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-card-earth { fill: #f5ede2; stroke: #a8876a; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-tier-1 { fill: #dcebcb; stroke: #6f8f55; stroke-width: 1px; } svg .dg-tier-2 { fill: #f5eac4; stroke: #a8904a; stroke-width: 1px; }
+svg .dg-tier-3 { fill: #f7dcc2; stroke: #b07a4a; stroke-width: 1px; } svg .dg-tier-4 { fill: #f2cfcb; stroke: #a8605a; stroke-width: 1px; }
+svg .dg-g-nucleus { fill: url(#tb-nucleus); stroke: #6b3f85; stroke-width: 1px; }
+svg .dg-g-chloro { fill: url(#tb-chloro); stroke: #2c5a22; stroke-width: .8px; }
+svg .dg-g-cyto { fill: url(#tb-cyto); stroke: #5b8a3a; stroke-width: 1px; }
+svg .dg-cellwall { fill: #cfe3a8; stroke: #4f7a2a; stroke-width: 1.6px; }
+svg .dg-epi { fill: #f6f9f0; stroke: #7a9a5a; stroke-width: 1px; }
+svg .dg-g-vac { fill: url(#tb-vac); stroke: #4a98c6; stroke-width: 1px; }
+svg .dg-g-acell { fill: url(#tb-acell); stroke: #a8605a; stroke-width: 1.6px; }
+svg .dg-g-carrot { fill: url(#tb-carrot); stroke: #b8560f; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-petal { fill: url(#tb-petal); stroke: #c98a0a; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-pod { fill: url(#tb-pod); stroke: #3f6b33; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-pot { fill: url(#tb-pot); stroke: #8a4a2a; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-oil { fill: url(#tb-oil); stroke: #a8800a; stroke-width: 1px; }
+svg .dg-root { fill: none; stroke: #8a6a3a; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-root-thin { fill: none; stroke: #8a6a3a; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-hair { fill: none; stroke: #6b4a2a; stroke-width: 1.3px; stroke-linecap: round; }
+svg .dg-vein { fill: none; stroke: #eaf6dc; stroke-width: 1.1px; stroke-linecap: round; }
+svg .dg-filament { fill: none; stroke: #c9a64a; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-tube { fill: none; stroke: #d9a21a; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-cross-thin { fill: none; stroke: #b91c1c; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-dna-a { fill: none; stroke: var(--dg-accent); stroke-width: 1.8px; } svg .dg-dna-b { fill: none; stroke: #c2410c; stroke-width: 1.8px; }
+svg .dg-dna-r { fill: none; stroke: #8f877e; stroke-width: 1px; }
+svg .dg-g-concrete { fill: url(#tb-concrete); stroke: #6e6a64; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-stone { fill: url(#tb-stone); stroke: #6e5f52; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-dome { fill: url(#tb-dome); stroke: #5f6770; stroke-width: 1.2px; }
+svg .dg-g-tube { fill: url(#tb-tube); stroke: #8f877e; stroke-width: 1.2px; }
+svg .dg-rope { fill: none; stroke: #8a6a3a; stroke-width: 2.2px; stroke-linecap: round; }
+svg .dg-paperedge { fill: none; stroke: #6b665d; stroke-width: 2.6px; stroke-linecap: round; }
+svg .dg-paper { fill: #fdfdfb; stroke: #8f877e; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-member { fill: none; stroke: #5f6770; stroke-width: 4px; stroke-linecap: round; }
+svg .dg-member-hi { fill: none; stroke: #d6dadf; stroke-width: 1.2px; stroke-linecap: round; }
+svg .dg-bolt { fill: #8a939c; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-ghost { fill: none; stroke: #8f877e; stroke-width: 2px; stroke-dasharray: 5 4; }
+svg .dg-book-1 { fill: #c0533a; stroke: #6b2a1a; stroke-width: 1px; } svg .dg-book-2 { fill: #3b6fa0; stroke: #1f3f60; stroke-width: 1px; }
+svg .dg-book-3 { fill: #5d8a47; stroke: #34592a; stroke-width: 1px; } svg .dg-pages { fill: #fbf7ea; stroke: #b9b3a6; stroke-width: .6px; }
+svg .dg-bar-elastic, svg .dg-bar-plastic, svg .dg-bar-brittle { fill: none; stroke-width: 9px; stroke-linecap: round; }
+svg .dg-bar-elastic { stroke: #5b7fb0; } svg .dg-bar-plastic { stroke: #c9824a; } svg .dg-bar-brittle { stroke: #a8d4e8; }
+svg .dg-bar-hi { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-arrow.mk       { stroke-width: 2.4px; }
+svg .dg-arrow.mk.thin  { stroke-width: 1.7px; }
+svg .dg-arrow.mk.muted { marker-end: url(#tb-m-muted); }
+svg .dg-arrow.mk.plain { marker-end: url(#tb-m-plain); } svg .dg-arrow.mk.hot  { marker-end: url(#tb-m-hot); }
+svg .dg-arrow.mk.cold  { marker-end: url(#tb-m-cold); }  svg .dg-arrow.mk.water{ marker-end: url(#tb-m-water); }
+
+.viz.tb svg text { paint-order: stroke; stroke: #fff; stroke-width: 3.5px; stroke-linejoin: round; }
+.viz.tb svg .dg-label-white, .viz.tb svg .dg-tag-answer { stroke: none; }
+.viz.tb svg .dg-boundary { stroke: #24211d; stroke-width: 2.1px; fill: url(#tb-m-disc); filter: none; }
+.viz.tb svg .dg-line { stroke: #24211d; stroke-width: 2px; stroke-linecap: round; }
+.viz.tb svg .dg-accent { stroke-width: 3px; stroke-linecap: round; }
+.viz.tb svg .dg-dashed { stroke: #4a453e; stroke-width: 1.8px; stroke-dasharray: 6 4; }
+.viz.tb svg .dg-construction { stroke-width: 1.3px; stroke-dasharray: 3 3; }
+.viz.tb svg .dg-right-angle { stroke: #24211d; stroke-width: 1.5px; }
+.viz.tb svg .dg-point { fill: #24211d; } .viz.tb svg .dg-point-accent { stroke: #fff; stroke-width: 1px; }
+.viz.tb svg .dg-label { font-size: 14.5px; font-weight: 500; fill: #24211d; }
+.viz.tb svg .dg-label-sm { font-size: 13px; }
+.viz.tb svg .dg-label-accent, .viz.tb svg .dg-label-hot, .viz.tb svg .dg-label-cold, .viz.tb svg .dg-label-plant,
+.viz.tb svg .dg-label-water, .viz.tb svg .dg-label-earth { font-size: 13.5px; font-weight: 700; }
+.viz.tb svg .dg-math { font-size: 16.5px; } .viz.tb svg .dg-math-accent { font-size: 16.5px; }
+.viz.tb svg .dg-pt { font: italic 600 15.5px/1 "Times New Roman", Georgia, serif; fill: #24211d; }
+.viz.tb svg .dg-tag-answer { font-size: 13px; }
+.viz.tb svg .dg-accent.hot { stroke: var(--viz-hot); } .viz.tb svg .dg-accent.plant { stroke: var(--viz-plant); }
+.viz.tb svg .dg-pt.hot { fill: var(--viz-hot); } .viz.tb svg .dg-pt.accent { fill: var(--dg-accent); }
+.viz.tb svg .dg-fill-accent { fill-opacity: .17; stroke-width: 2px; }
+.viz.tb svg .dg-fill-hot, .viz.tb svg .dg-fill-plant, .viz.tb svg .dg-fill-earth, .viz.tb svg .dg-fill-water,
+.viz.tb svg .dg-fill-cold, .viz.tb svg .dg-fill-sun { stroke-width: 2px; }
+.viz.tb svg [class^="dg-fill"] { filter: drop-shadow(0 1px 1px rgba(40,30,20,.18)); }
+svg .dg-ang, svg .dg-ang-w, svg .dg-tickm { vector-effect: non-scaling-stroke; }
+svg .dg-ang { fill: none; stroke: var(--dg-accent); stroke-width: 1.7px; }
+svg .dg-ang-w { stroke: none; fill: var(--dg-accent); fill-opacity: .16; }
+svg .dg-ang.hot { stroke: var(--viz-hot); } svg .dg-ang-w.hot { fill: var(--viz-hot); }
+svg .dg-ang.plant { stroke: var(--viz-plant); } svg .dg-ang-w.plant { fill: var(--viz-plant); }
+svg .dg-ang.plain { stroke: #24211d; } svg .dg-ang-w.plain { fill: #6b665d; fill-opacity: .14; }
+svg .dg-tickm { fill: none; stroke: #24211d; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-gravel { fill: none; stroke: #e8dfcc; stroke-width: 14px; stroke-linecap: round; }
+svg .dg-grass { fill: #eef5e6; stroke: none; }
+svg .dg-tickm.accent { stroke: var(--dg-accent); } svg .dg-tickm.hot { stroke: var(--viz-hot); }
+svg .dg-open, svg .dg-closed, svg .dg-solray { vector-effect: non-scaling-stroke; }
+svg .dg-open { fill: #fff; stroke: var(--dg-accent); stroke-width: 2.6px; }   /* number-line endpoint: not included */
+svg .dg-closed { fill: var(--dg-accent); stroke: #fff; stroke-width: 1.2px; }  /* number-line endpoint: included */
+svg .dg-closed.hot { fill: var(--viz-hot); }
+svg .dg-solray { stroke: var(--dg-accent); stroke-width: 5px; stroke-linecap: butt; stroke-opacity: .85; fill: none; }
+svg .dg-plot, svg .dg-grid-min, svg .dg-grid-maj, svg .dg-road, svg .dg-road-mid { vector-effect: non-scaling-stroke; }
+svg .dg-plot { fill: #fbfcfe; stroke: #9aa5b8; stroke-width: 1px; }               /* graph paper behind a grid */
+svg .dg-grid-min { stroke: #d5dce8; stroke-width: .8px; fill: none; }           /* every grid line */
+svg .dg-grid-maj { stroke: #a9b4c6; stroke-width: 1px; fill: none; }            /* grid lines that carry a number */
+svg .dg-road { stroke: #5c5853; stroke-width: 9px; stroke-linecap: round; fill: none; }
+svg .dg-road-mid { stroke: #f4d35e; stroke-width: 1.6px; stroke-dasharray: 9 7; fill: none; }
+svg .dg-wax { fill: url(#tb-tube); stroke: #8f887b; stroke-width: 1px; }
+.viz.tb svg .dg-accent.water { stroke: var(--viz-water); }
+svg .dg-sc-f, svg .dg-sc-t, svg .dg-sc-s, svg .dg-sc-cyl, svg .dg-sw-f, svg .dg-sw-t, svg .dg-sw-s, svg .dg-sw-cyl,
+svg .dg-sg-f, svg .dg-sg-t, svg .dg-sg-s, svg .dg-sg-cyl, svg .dg-sr-f, svg .dg-sr-t, svg .dg-sr-s, svg .dg-sk-f, svg .dg-sk-t, svg .dg-sk-s,
+svg .dg-sh-f, svg .dg-sh-t, svg .dg-sh-s { stroke: #24211d; stroke-width: 1.6px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-edge, svg .dg-hid, svg .dg-fold, svg .dg-glass, svg .dg-plank { vector-effect: non-scaling-stroke; }   /* shaded solids: front / top / side / curved */
+svg .dg-sc-f { fill: url(#tb-sc-f); } svg .dg-sc-t { fill: url(#tb-sc-t); } svg .dg-sc-s { fill: url(#tb-sc-s); } svg .dg-sc-cyl { fill: url(#tb-sc-cyl); }
+svg .dg-sw-f { fill: url(#tb-sw-f); } svg .dg-sw-t { fill: url(#tb-sw-t); } svg .dg-sw-s { fill: url(#tb-sw-s); } svg .dg-sw-cyl { fill: url(#tb-sw-cyl); }
+svg .dg-sg-f { fill: url(#tb-sg-f); } svg .dg-sg-t { fill: url(#tb-sg-t); } svg .dg-sg-s { fill: url(#tb-sg-s); } svg .dg-sg-cyl { fill: url(#tb-sg-cyl); }
+svg .dg-sr-f { fill: url(#tb-sr-f); } svg .dg-sr-t { fill: url(#tb-sr-t); } svg .dg-sr-s { fill: url(#tb-sr-s); }
+svg .dg-sk-f { fill: url(#tb-sk-f); } svg .dg-sk-t { fill: url(#tb-sk-t); } svg .dg-sk-s { fill: url(#tb-sk-s); }
+svg .dg-sh-f { fill: url(#tb-sh-f); } svg .dg-sh-t { fill: url(#tb-sh-t); } svg .dg-sh-s { fill: url(#tb-sh-s); }
+svg .ns { stroke: none; }                                                       /* face fill only; edges drawn on top */
+svg .dg-edge { fill: none; stroke: #24211d; stroke-width: 1.6px; stroke-linecap: round; }
+svg .dg-hid { fill: none; stroke: #5f5a52; stroke-width: 1.3px; stroke-dasharray: 5 3.5; }   /* hidden edge */
+svg .dg-hid.hot { stroke: var(--viz-hot); stroke-width: 1.8px; } svg .dg-hid.water { stroke: var(--viz-water); stroke-width: 1.8px; }
+svg .dg-fold { fill: none; stroke: #4a453e; stroke-width: 1.1px; stroke-dasharray: 4 3; }    /* fold line in a net */
+svg .dg-glass { fill: #e6eef8; fill-opacity: .38; stroke: #24211d; stroke-width: 1.5px; }    /* see-through container */
+svg .dg-ghost-hot { fill: var(--viz-hot); fill-opacity: .22; stroke: var(--viz-hot); stroke-width: 1.5px; stroke-dasharray: 5 3.5; vector-effect: non-scaling-stroke; }
+svg .dg-plank { fill: none; stroke: #7e2618; stroke-width: .8px; stroke-opacity: .55; }
+svg .dg-door { fill: #4a2a20; stroke: #24211d; stroke-width: 1px; }
+svg .dg-eq, svg .dg-eq-lg { font: 400 19px/1 "Times New Roman", Georgia, serif; fill: #24211d; }   /* typeset maths: upright numbers, */
+svg .dg-eq-lg { font-size: 25px; } svg .dg-eq .v, svg .dg-eq-lg .v { font-style: italic; }       /* letters in <tspan class="v"> */
+svg .dg-eq.accent, svg .dg-eq-lg.accent { fill: var(--dg-accent); font-weight: 700; }
+svg .dg-brace { fill: none; stroke: #4a453e; stroke-width: 1.4px; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-tl-q, svg .dg-tl-x, svg .dg-tl-1, svg .dg-tl-n { stroke: #24211d; stroke-width: 1.3px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-tl-q { fill: url(#tb-tl-q); } svg .dg-tl-x { fill: url(#tb-tl-x); } svg .dg-tl-1 { fill: url(#tb-tl-1); } svg .dg-tl-n { fill: url(#tb-tl-n); }   /* algebra tiles: x², x, 1, negative */
+svg .dg-tl-q.e { fill: #4672b8; } svg .dg-tl-x.e { fill: #4c9a3a; } svg .dg-tl-1.e { fill: #c99a18; } svg .dg-tl-n.e { fill: #b03b22; }   /* tile edge (thickness) */
+svg .dg-canola { fill: url(#tb-canola); stroke: #8a7414; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-crop { fill: none; stroke: #c79f12; stroke-width: 1px; stroke-opacity: .7; vector-effect: non-scaling-stroke; }
+svg .dg-eq-xl { font: 400 46px/1 "Times New Roman", Georgia, serif; fill: #24211d; } svg .dg-eq-xl .v { font-style: italic; }
+svg .dg-eq .sup, svg .dg-eq-lg .sup, svg .dg-eq-xl .sup { font-size: 70%; }   /* exponent: <tspan class="sup" dy="-8"> */
+svg .dg-eq .acc, svg .dg-eq-lg .acc, svg .dg-eq-xl .acc { fill: var(--dg-accent); font-weight: 700; }
+svg .dg-eq .hot, svg .dg-eq-lg .hot, svg .dg-eq-xl .hot { fill: var(--viz-hot); font-weight: 700; }
+svg .dg-ch-a, svg .dg-ch-b, svg .dg-ch-n, svg .dg-ch-g { stroke: #24211d; stroke-width: 1.2px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-ch-a { fill: url(#tb-ch-a); } svg .dg-ch-b { fill: url(#tb-ch-b); } svg .dg-ch-n { fill: url(#tb-ch-n); } svg .dg-ch-g { fill: url(#tb-ch-g); }   /* factor chips: blue, green, red (negative), grey (cancelled) */
+svg .dg-ch-a.e { fill: #6f8fc4; } svg .dg-ch-b.e { fill: #5f9a48; } svg .dg-ch-n.e { fill: #c4573c; } svg .dg-ch-g.e { fill: #aaa395; }
+svg .dg-strike { fill: none; stroke: var(--viz-hot); stroke-width: 2.4px; stroke-linecap: round; vector-effect: non-scaling-stroke; }   /* cancelled factor */
+svg .dg-frac-key { stroke: var(--viz-key); stroke-width: 1.3px; vector-effect: non-scaling-stroke; }   /* fraction bar of a key answer */
+svg .dg-fbar { stroke: #24211d; stroke-width: 1.3px; vector-effect: non-scaling-stroke; } svg .dg-fbar.acc { stroke: var(--dg-accent); }   /* fraction bar */
+svg .dg-mb-r, svg .dg-mb-b, svg .dg-mb-g, svg .dg-coin, svg .dg-coin-rim, svg .dg-die, svg .dg-pc-r, svg .dg-pc-b, svg .dg-pc-g,
+svg .dg-cell, svg .dg-scale, svg .dg-bag, svg .dg-bag-tie, svg .dg-rainbar { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-mb-r { fill: url(#tb-mb-r); stroke: #6e1c0c; stroke-width: 1px; } svg .dg-mb-b { fill: url(#tb-mb-b); stroke: #132b63; stroke-width: 1px; }   /* marbles */
+svg .dg-mb-g { fill: url(#tb-mb-g); stroke: #1f4f14; stroke-width: 1px; }
+.viz.tb svg .dg-eq.stamp, .viz.tb svg .dg-eq-lg.stamp { stroke: none; fill: #5c430a; font-weight: 700; }   /* letter stamped on a coin */
+svg .dg-coin { fill: url(#tb-coin); stroke: #8a6512; stroke-width: 1.5px; } svg .dg-coin-rim { fill: none; stroke: #b8891d; stroke-width: 1.2px; }   /* coin */
+svg .dg-die { fill: url(#tb-die); stroke: #24211d; stroke-width: 1.3px; } svg .dg-pip { fill: #24211d; stroke: none; }   /* die face */
+svg .dg-pc-r { fill: url(#tb-pc-r); stroke: #24211d; stroke-width: 1.4px; } svg .dg-pc-b { fill: url(#tb-pc-b); stroke: #24211d; stroke-width: 1.4px; }   /* spinner sectors, bars */
+svg .dg-pc-g { fill: url(#tb-pc-g); stroke: #24211d; stroke-width: 1.4px; }
+svg .dg-needle { fill: #24211d; stroke: #fff; stroke-width: 1px; } svg .dg-hub { fill: #f4f2ed; stroke: #24211d; stroke-width: 1.4px; }
+svg .dg-cell { fill: url(#tb-cell); stroke: #b9b3a6; stroke-width: 1px; } svg .dg-cell.on { fill: url(#tb-cell-on); stroke: var(--dg-accent); stroke-width: 1.8px; }   /* outcome square */
+svg .dg-scale { fill: url(#tb-pscale); stroke: #24211d; stroke-width: 1.5px; }   /* probability line, 0 to 1 */
+svg .dg-bag { fill: #e6eef8; fill-opacity: .45; stroke: #24211d; stroke-width: 1.6px; } svg .dg-bag-tie { fill: none; stroke: #8a6512; stroke-width: 3px; stroke-linecap: round; }   /* clear bag */
+svg .dg-rainbar { fill: url(#tb-rainbar); stroke: #24211d; stroke-width: 1.6px; } svg .dg-rainfx { fill: url(#tb-rain); stroke: none; } svg .dg-rain-l { stroke: #fff; stroke-opacity: .75; stroke-width: 1.3px; stroke-linecap: round; }
+svg .dg-blank-bar { fill: url(#tb-cell); stroke: #24211d; stroke-width: 1.6px; vector-effect: non-scaling-stroke; }
+svg .dg-eq-sm { font: 400 15px/1 "Times New Roman", Georgia, serif; fill: #24211d; } svg .dg-eq-sm .v { font-style: italic; }   /* small typeset maths: number-line labels */
+svg .dg-eq-sm .sup { font-size: 70%; } svg .dg-eq-sm.accent { fill: var(--dg-accent); font-weight: 700; }
+svg .dg-eq.hot, svg .dg-eq-sm.hot, svg .dg-eq-lg.hot { fill: var(--viz-hot); font-weight: 700; }
+svg .dg-eq.plant, svg .dg-eq-sm.plant, svg .dg-eq-lg.plant { fill: var(--viz-plant); font-weight: 700; }
+svg .dg-fbar.hot { stroke: var(--viz-hot); } svg .dg-fbar.plant { stroke: var(--viz-plant); }
+svg .dg-therm { fill: url(#tb-therm); stroke: #8a1f0a; stroke-width: 1px; vector-effect: non-scaling-stroke; }   /* thermometer liquid */
+svg .dg-rad { fill: none; stroke: #24211d; stroke-width: 1.4px; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }   /* radical sign with its bar */
+svg .dg-rad.acc { stroke: var(--dg-accent); stroke-width: 1.8px; } svg .dg-rad.hot { stroke: var(--viz-hot); stroke-width: 1.8px; } svg .dg-rad.plant { stroke: var(--viz-plant); stroke-width: 1.8px; }
+svg .dg-rad.muted { stroke: #6b665d; stroke-width: 1.1px; } svg .dg-eq-sm.muted { fill: #6b665d; }
+/* ── /viz-kit textbook layer ── */
 </style>
 <style id="key-link-css">
   .key-link { margin: 6px 0 14px; font-size: 0.9rem; font-weight: 600; }
@@ -213,6 +560,9 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
 </style>
 </head>
 <body>
+<!-- viz-defs -->
+<!-- tikz: none | shared paints for the figures below -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="tb-crust" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d3b88f"/><stop offset="1" stop-color="#a88a65"/></linearGradient><linearGradient id="tb-mantle" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde3ad"/><stop offset="1" stop-color="#f2a85f"/></linearGradient><linearGradient id="tb-ocean" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b5e1f4"/><stop offset="1" stop-color="#4a98c6"/></linearGradient><linearGradient id="tb-magma" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc15a"/><stop offset="1" stop-color="#e2431a"/></linearGradient><linearGradient id="tb-cont" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8c4a0"/><stop offset="1" stop-color="#b29a72"/></linearGradient><radialGradient id="tb-sph-crust" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#c9ab80"/><stop offset="1" stop-color="#8f7150"/></radialGradient><radialGradient id="tb-sph-mantle" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fcd18c"/><stop offset="0.6" stop-color="#ee8a42"/><stop offset="1" stop-color="#c9581f"/></radialGradient><radialGradient id="tb-sph-outer" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffb85a"/><stop offset="0.6" stop-color="#e8662a"/><stop offset="1" stop-color="#b83a12"/></radialGradient><radialGradient id="tb-sph-inner" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff7c9"/><stop offset="0.55" stop-color="#ffd23f"/><stop offset="1" stop-color="#f0a01a"/></radialGradient><linearGradient id="tb-ign" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c6b0"/><stop offset="1" stop-color="#e59878"/></linearGradient><linearGradient id="tb-sed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e6b8"/><stop offset="1" stop-color="#e6c882"/></linearGradient><linearGradient id="tb-met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6cabe"/><stop offset="1" stop-color="#b0a090"/></linearGradient><linearGradient id="tb-landa" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e4d6b4"/><stop offset="1" stop-color="#cdb98e"/></linearGradient><linearGradient id="tb-landb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9e0bc"/><stop offset="1" stop-color="#bccb94"/></linearGradient><pattern id="tb-speckle" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r=".9" class="dg-sp-d"/><circle cx="10" cy="9" r=".7" class="dg-sp-d"/><circle cx="7" cy="13" r=".8" class="dg-sp-l"/><circle cx="12" cy="2" r=".7" class="dg-sp-l"/></pattern><pattern id="tb-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" class="dg-hatch-l"/></pattern><radialGradient id="tb-glow" cx=".5" cy="1" r="1"><stop offset="0" stop-color="#ff7a2a" stop-opacity=".85"/><stop offset="1" stop-color="#ff7a2a" stop-opacity="0"/></radialGradient><linearGradient id="tb-crustL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a07f5a"/><stop offset="1" stop-color="#dcbf94"/></linearGradient><linearGradient id="tb-crustR" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dcbf94"/><stop offset="1" stop-color="#a07f5a"/></linearGradient><linearGradient id="tb-outer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb85a"/><stop offset="1" stop-color="#d9531e"/></linearGradient><linearGradient id="tb-inner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#f0a01a"/></linearGradient><linearGradient id="tb-volc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a8c80"/><stop offset="1" stop-color="#5f544b"/></linearGradient><linearGradient id="tb-rock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3a698"/><stop offset="1" stop-color="#7d7064"/></linearGradient><linearGradient id="tb-precam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9d2c6"/><stop offset="1" stop-color="#ebe6dc"/></linearGradient><radialGradient id="tb-ashcloud" cx=".5" cy=".5" r=".5" fx=".4" fy=".35"><stop offset="0" stop-color="#eeebe6"/><stop offset="1" stop-color="#a8a097"/></radialGradient><pattern id="tb-fine" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".6" class="dg-fine-a"/><circle cx="3" cy="3" r=".5" class="dg-fine-b"/></pattern><pattern id="tb-p-sand" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" class="dg-psand-bg"/><circle cx="2" cy="3" r=".9" class="dg-psand-dot"/><circle cx="7" cy="7" r=".9" class="dg-psand-dot"/><circle cx="8" cy="1.5" r=".6" class="dg-psand-dot"/></pattern><pattern id="tb-p-shale" width="16" height="8" patternUnits="userSpaceOnUse"><rect width="16" height="8" class="dg-pshale-bg"/><line x1="1" y1="3" x2="7" y2="3" class="dg-pshale-l"/><line x1="9" y1="7" x2="15" y2="7" class="dg-pshale-l"/></pattern><pattern id="tb-p-lime" width="20" height="10" patternUnits="userSpaceOnUse"><rect width="20" height="10" class="dg-plime-bg"/><path d="M0 0.5 H20 M0 5.5 H20 M5 0.5 V5.5 M15 5.5 V10" class="dg-plime-l"/></pattern><radialGradient id="tb-pt-cold" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#dbe7ff"/><stop offset="0.55" stop-color="#6f97ea"/><stop offset="1" stop-color="#1d4ed8"/></radialGradient><radialGradient id="tb-pt-warm" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff6cf"/><stop offset="0.55" stop-color="#f3c33f"/><stop offset="1" stop-color="#c98a0a"/></radialGradient><radialGradient id="tb-pt-hot" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffe1c9"/><stop offset="0.55" stop-color="#f2793a"/><stop offset="1" stop-color="#c2410c"/></radialGradient><linearGradient id="tb-steel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f5f7"/><stop offset="0.45" stop-color="#c3c9cf"/><stop offset="0.55" stop-color="#a7afb7"/><stop offset="1" stop-color="#d6dadf"/></linearGradient><linearGradient id="tb-steelH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8a939c"/><stop offset="0.25" stop-color="#e9ecef"/><stop offset="0.5" stop-color="#c3c9cf"/><stop offset="1" stop-color="#7d868f"/></linearGradient><linearGradient id="tb-wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9a86c"/><stop offset="1" stop-color="#b07a44"/></linearGradient><linearGradient id="tb-water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfeaf8"/><stop offset="1" stop-color="#7fbde2"/></linearGradient><linearGradient id="tb-flame" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffd23f"/><stop offset=".55" stop-color="#ff8a2a"/><stop offset="1" stop-color="#e2431a"/></linearGradient><linearGradient id="tb-skin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7d6bd"/><stop offset="1" stop-color="#e3ad8a"/></linearGradient><linearGradient id="tb-sand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7e6b0"/><stop offset="1" stop-color="#dfbd72"/></linearGradient><linearGradient id="tb-sky-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2f6"/><stop offset="1" stop-color="#f2f9fd"/></linearGradient><linearGradient id="tb-sky-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c2745"/><stop offset="1" stop-color="#3d4d78"/></linearGradient><linearGradient id="tb-liquid" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff9a7a"/><stop offset="0.5" stop-color="#e2431a"/><stop offset="1" stop-color="#b8320c"/></linearGradient><linearGradient id="tb-hotblock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb38a"/><stop offset="1" stop-color="#e2541f"/></linearGradient><linearGradient id="tb-coldblock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe0ff"/><stop offset="1" stop-color="#6f97ea"/></linearGradient><linearGradient id="tb-warmblock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7a3"/><stop offset="1" stop-color="#f0b43a"/></linearGradient><linearGradient id="tb-bag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb9d8"/><stop offset="1" stop-color="#4f86ad"/></linearGradient><pattern id="tb-insul" width="12" height="8" patternUnits="userSpaceOnUse"><rect width="12" height="8" class="dg-ins-a"/><path d="M0 4 Q3 0 6 4 T12 4" class="dg-ins-l"/></pattern><radialGradient id="tb-globe" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#bfe3f5"/><stop offset="0.6" stop-color="#4a98c6"/><stop offset="1" stop-color="#1f5f8a"/></radialGradient><radialGradient id="tb-sunball" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fffbe0"/><stop offset="0.5" stop-color="#ffd23f"/><stop offset="1" stop-color="#f08a1a"/></radialGradient><linearGradient id="tb-silver" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset="0.5" stop-color="#d3d8dd"/><stop offset="1" stop-color="#f2f4f6"/></linearGradient><linearGradient id="tb-plastic" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6f8091"/><stop offset="1" stop-color="#3a4652"/></linearGradient><linearGradient id="tb-soup" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9c27c"/><stop offset="1" stop-color="#e0782a"/></linearGradient><pattern id="tb-brick" width="24" height="12" patternUnits="userSpaceOnUse"><rect width="24" height="12" class="dg-brick-bg"/><path d="M0 .5 H24 M0 6.5 H24 M6 .5 V6.5 M18 6.5 V12" class="dg-brick-l"/></pattern><linearGradient id="tb-rodglow" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff5a1a" stop-opacity=".6"/><stop offset=".55" stop-color="#ffb03a" stop-opacity=".18"/><stop offset="1" stop-color="#ffb03a" stop-opacity="0"/></linearGradient><linearGradient id="tb-leaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd07a"/><stop offset="1" stop-color="#5b9a44"/></linearGradient><linearGradient id="tb-conifer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f8a4a"/><stop offset="1" stop-color="#2f5f2c"/></linearGradient><linearGradient id="tb-soil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a7452"/><stop offset="1" stop-color="#6b4a32"/></linearGradient><radialGradient id="tb-sph-plant" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#d8f0c0"/><stop offset="0.6" stop-color="#7cb85a"/><stop offset="1" stop-color="#3f7a2a"/></radialGradient><radialGradient id="tb-sph-earth" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#f0d8b8"/><stop offset="0.6" stop-color="#b88a5a"/><stop offset="1" stop-color="#7a5230"/></radialGradient><radialGradient id="tb-sph-muted" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#e8e4dc"/><stop offset="0.6" stop-color="#9a958c"/><stop offset="1" stop-color="#5f5a52"/></radialGradient><radialGradient id="tb-nucleus" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#f0dcf6"/><stop offset="0.6" stop-color="#c09ad6"/><stop offset="1" stop-color="#8a5aa8"/></radialGradient><radialGradient id="tb-chloro" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#d4f0b0"/><stop offset="0.6" stop-color="#6fb84a"/><stop offset="1" stop-color="#3f7a2a"/></radialGradient><linearGradient id="tb-cyto" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2f9e8"/><stop offset="1" stop-color="#dcefc6"/></linearGradient><radialGradient id="tb-vac" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#f2faff"/><stop offset="1" stop-color="#b5dcf2"/></radialGradient><radialGradient id="tb-acell" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff3ef"/><stop offset="1" stop-color="#f6d4cc"/></radialGradient><linearGradient id="tb-carrot" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e0701a"/><stop offset="0.45" stop-color="#ffb05a"/><stop offset="1" stop-color="#d8601a"/></linearGradient><linearGradient id="tb-petal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#f2b830"/></linearGradient><linearGradient id="tb-pod" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe9a0"/><stop offset="1" stop-color="#7cb85a"/></linearGradient><linearGradient id="tb-pot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d98a5a"/><stop offset="1" stop-color="#a85a34"/></linearGradient><linearGradient id="tb-oil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#e8b820"/></linearGradient><linearGradient id="tb-concrete" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dedbd5"/><stop offset="1" stop-color="#a8a49e"/></linearGradient><linearGradient id="tb-stone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ecdfca"/><stop offset="1" stop-color="#bfa98c"/></linearGradient><radialGradient id="tb-dome" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#bfc6cd"/></radialGradient><linearGradient id="tb-tube" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6d1c6"/><stop offset="0.4" stop-color="#ffffff"/><stop offset="1" stop-color="#cfc9bd"/></linearGradient><marker id="tb-m-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head muted"/></marker><marker id="tb-m-plain" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head plain"/></marker><marker id="tb-m-hot" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head hot"/></marker><marker id="tb-m-cold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head cold"/></marker><marker id="tb-m-water" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head water"/></marker><marker id="tb-m-sun" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head sun"/></marker><marker id="tb-m-plant" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head plant"/></marker><marker id="tb-m-earth" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head earth"/></marker><marker id="tb-m-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head accent"/></marker><linearGradient id="tb-sc-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6eef8"/><stop offset="1" stop-color="#cbdaee"/></linearGradient><linearGradient id="tb-sc-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f5f8fc"/><stop offset="1" stop-color="#e3ebf6"/></linearGradient><linearGradient id="tb-sc-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8cae2"/><stop offset="1" stop-color="#9fb5d3"/></linearGradient><linearGradient id="tb-sc-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9fb4d2"/><stop offset="0.38" stop-color="#f1f6fc"/><stop offset="1" stop-color="#8ea5c6"/></linearGradient><linearGradient id="tb-sw-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde8bd"/><stop offset="1" stop-color="#f5cf82"/></linearGradient><linearGradient id="tb-sw-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff5dc"/><stop offset="1" stop-color="#fbe7b8"/></linearGradient><linearGradient id="tb-sw-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eec27a"/><stop offset="1" stop-color="#dea65a"/></linearGradient><linearGradient id="tb-sw-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dca55a"/><stop offset="0.38" stop-color="#fff2d2"/><stop offset="1" stop-color="#cf9442"/></linearGradient><linearGradient id="tb-sg-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dff0d4"/><stop offset="1" stop-color="#c0dfad"/></linearGradient><linearGradient id="tb-sg-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0f8ea"/><stop offset="1" stop-color="#dcefd0"/></linearGradient><linearGradient id="tb-sg-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8cf8e"/><stop offset="1" stop-color="#8dbd72"/></linearGradient><linearGradient id="tb-sg-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8cbb72"/><stop offset="0.38" stop-color="#eef8e7"/><stop offset="1" stop-color="#7aab5f"/></linearGradient><linearGradient id="tb-sr-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d65a43"/><stop offset="1" stop-color="#b53c2b"/></linearGradient><linearGradient id="tb-sr-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e48a74"/><stop offset="1" stop-color="#d4664f"/></linearGradient><linearGradient id="tb-sr-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3372a"/><stop offset="1" stop-color="#86291c"/></linearGradient><linearGradient id="tb-sr-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#86291c"/><stop offset="0.38" stop-color="#e07a62"/><stop offset="1" stop-color="#7a2418"/></linearGradient><linearGradient id="tb-sk-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfc3c7"/><stop offset="1" stop-color="#9fa5ab"/></linearGradient><linearGradient id="tb-sk-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9dcdf"/><stop offset="1" stop-color="#c3c7cb"/></linearGradient><linearGradient id="tb-sk-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8e959c"/><stop offset="1" stop-color="#767d84"/></linearGradient><linearGradient id="tb-sk-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#767d84"/><stop offset="0.38" stop-color="#d9dcdf"/><stop offset="1" stop-color="#6a7178"/></linearGradient><linearGradient id="tb-sh-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9d6c8"/><stop offset="1" stop-color="#f0b6a0"/></linearGradient><linearGradient id="tb-sh-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fce6dd"/><stop offset="1" stop-color="#f7cdbd"/></linearGradient><linearGradient id="tb-sh-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eaa58b"/><stop offset="1" stop-color="#dc8a6f"/></linearGradient><linearGradient id="tb-sh-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dc8a6f"/><stop offset="0.38" stop-color="#fbe0d4"/><stop offset="1" stop-color="#c97458"/></linearGradient><linearGradient id="tb-tl-q" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b4cdf4"/><stop offset="1" stop-color="#7aa3e3"/></linearGradient><linearGradient id="tb-tl-x" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bde6a8"/><stop offset="1" stop-color="#78c35f"/></linearGradient><linearGradient id="tb-tl-1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2b0"/><stop offset="1" stop-color="#f5cd4c"/></linearGradient><linearGradient id="tb-tl-n" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9b3a1"/><stop offset="1" stop-color="#e4644a"/></linearGradient><linearGradient id="tb-canola" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffec70"/><stop offset="1" stop-color="#f2c51c"/></linearGradient><linearGradient id="tb-ch-a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3ecf9"/><stop offset="1" stop-color="#a9c2e8"/></linearGradient><linearGradient id="tb-ch-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e0f2d4"/><stop offset="1" stop-color="#a6d58d"/></linearGradient><linearGradient id="tb-ch-n" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fcdad0"/><stop offset="1" stop-color="#ef9f88"/></linearGradient><linearGradient id="tb-ch-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f2ed"/><stop offset="1" stop-color="#d6d1c6"/></linearGradient><radialGradient id="tb-mb-r" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffd6c8"/><stop offset="0.5" stop-color="#e0553a"/><stop offset="1" stop-color="#9a2913"/></radialGradient><radialGradient id="tb-mb-b" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#d6e4ff"/><stop offset="0.5" stop-color="#3e70d4"/><stop offset="1" stop-color="#1a3a86"/></radialGradient><radialGradient id="tb-mb-g" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#d9f2c8"/><stop offset="0.5" stop-color="#4d9c35"/><stop offset="1" stop-color="#24591a"/></radialGradient><radialGradient id="tb-coin" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff6cc"/><stop offset="0.5" stop-color="#f0c84e"/><stop offset="1" stop-color="#c4921b"/></radialGradient><linearGradient id="tb-die" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e4e0d7"/></linearGradient><linearGradient id="tb-cell" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ebe7de"/></linearGradient><linearGradient id="tb-cell-on" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3ecfb"/><stop offset="1" stop-color="#b9cdf1"/></linearGradient><linearGradient id="tb-pc-r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9bba7"/><stop offset="1" stop-color="#de5d3c"/></linearGradient><linearGradient id="tb-pc-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bfd3f6"/><stop offset="1" stop-color="#5a86d6"/></linearGradient><linearGradient id="tb-pc-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9e9b4"/><stop offset="1" stop-color="#68ae4b"/></linearGradient><linearGradient id="tb-pscale" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ece8e0"/><stop offset="1" stop-color="#a9c2ec"/></linearGradient><linearGradient id="tb-rainbar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a7d1ee"/><stop offset="1" stop-color="#4c93c4"/></linearGradient><linearGradient id="tb-therm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6a08c"/><stop offset="0.45" stop-color="#d93a1c"/><stop offset="1" stop-color="#9a2410"/></linearGradient><pattern id="tb-rain" width="9" height="11" patternUnits="userSpaceOnUse"><line x1="7" y1="1.5" x2="4" y2="8.5" class="dg-rain-l"/></pattern><radialGradient id="tb-m-disc" cx=".5" cy=".5" r=".5" fx=".42" fy=".36"><stop offset="0" stop-color="#ffffff"/><stop offset=".75" stop-color="#f6f8fc"/><stop offset="1" stop-color="#e6ebf5"/></radialGradient></defs></svg><!-- /viz-defs -->
   <div class="header-strip">
     <div class="course-label">Grade 9 Mathematics · Alberta Curriculum · Number</div>
     <h1>Square Roots and Radicals</h1>
@@ -259,21 +609,49 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
     <p>If 5<sup>2</sup> = 25, then √25 = <span class="b b-sm"></span></p>
     <p>If 9<sup>2</sup> = 81, then √81 = <span class="b b-sm"></span></p>
 <!-- viz:area-and-side -->
-<figure class="viz">
-<!-- tikz: square-area-side | area=25 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 440 170" aria-label="A square made of 25 unit squares. Its side is 5 units. Squaring: 5 squared is 25, from side to area. Square root: the square root of 25 is a blank, 5, from area back to side." width="440" height="170">
-<rect x="40" y="20" width="26" height="26" class="dg-fill-accent"/><rect x="40" y="46" width="26" height="26" class="dg-fill-accent"/><rect x="40" y="72" width="26" height="26" class="dg-fill-accent"/><rect x="40" y="98" width="26" height="26" class="dg-fill-accent"/><rect x="40" y="124" width="26" height="26" class="dg-fill-accent"/><rect x="66" y="20" width="26" height="26" class="dg-fill-accent"/><rect x="66" y="46" width="26" height="26" class="dg-fill-accent"/><rect x="66" y="72" width="26" height="26" class="dg-fill-accent"/><rect x="66" y="98" width="26" height="26" class="dg-fill-accent"/><rect x="66" y="124" width="26" height="26" class="dg-fill-accent"/><rect x="92" y="20" width="26" height="26" class="dg-fill-accent"/><rect x="92" y="46" width="26" height="26" class="dg-fill-accent"/><rect x="92" y="72" width="26" height="26" class="dg-fill-accent"/><rect x="92" y="98" width="26" height="26" class="dg-fill-accent"/><rect x="92" y="124" width="26" height="26" class="dg-fill-accent"/><rect x="118" y="20" width="26" height="26" class="dg-fill-accent"/><rect x="118" y="46" width="26" height="26" class="dg-fill-accent"/><rect x="118" y="72" width="26" height="26" class="dg-fill-accent"/><rect x="118" y="98" width="26" height="26" class="dg-fill-accent"/><rect x="118" y="124" width="26" height="26" class="dg-fill-accent"/><rect x="144" y="20" width="26" height="26" class="dg-fill-accent"/><rect x="144" y="46" width="26" height="26" class="dg-fill-accent"/><rect x="144" y="72" width="26" height="26" class="dg-fill-accent"/><rect x="144" y="98" width="26" height="26" class="dg-fill-accent"/><rect x="144" y="124" width="26" height="26" class="dg-fill-accent"/>
-<text x="105" y="166" text-anchor="middle" class="dg-label">side = 5</text>
-<text x="105" y="90" text-anchor="middle" class="dg-math-lg">25</text>
-<line x1="200" y1="60" x2="293.7" y2="60.0" class="dg-arrow accent"/><polygon points="300.0,60.0 292.3,64.6 292.3,55.4" class="dg-head accent"/>
-<text x="250" y="50" text-anchor="middle" class="dg-label-accent">square it: 5² = 25</text>
-<line x1="300" y1="110" x2="206.3" y2="110.0" class="dg-arrow hot"/><polygon points="200.0,110.0 207.7,105.4 207.7,114.6" class="dg-head hot"/>
-<text x="250" y="100" text-anchor="middle" class="dg-label-hot">square root: √25 =</text>
-<rect x="230" y="116" width="40" height="20" rx="3" class="dg-tag"/>
-<text x="320" y="64" class="dg-label">side → area</text>
-<text x="320" y="114" class="dg-label">area → side</text>
+<figure class="viz tb">
+<!-- tikz: square-area-side | area=25 | 5x5 unit squares -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 200" aria-label="A square made of 25 unit squares, 5 rows of 5. Its area is 25 and its side is the square root of 25. Square it: 5 squared is 25, from side to area. Take the square root: the square root of 25 is a blank, 5, from area back to side." width="480" height="200">
+<rect x="40" y="20" width="24" height="24" class="dg-cell on"/>
+<rect x="64" y="20" width="24" height="24" class="dg-cell on"/>
+<rect x="88" y="20" width="24" height="24" class="dg-cell on"/>
+<rect x="112" y="20" width="24" height="24" class="dg-cell on"/>
+<rect x="136" y="20" width="24" height="24" class="dg-cell on"/>
+<rect x="40" y="44" width="24" height="24" class="dg-cell on"/>
+<rect x="64" y="44" width="24" height="24" class="dg-cell on"/>
+<rect x="88" y="44" width="24" height="24" class="dg-cell on"/>
+<rect x="112" y="44" width="24" height="24" class="dg-cell on"/>
+<rect x="136" y="44" width="24" height="24" class="dg-cell on"/>
+<rect x="40" y="68" width="24" height="24" class="dg-cell on"/>
+<rect x="64" y="68" width="24" height="24" class="dg-cell on"/>
+<rect x="88" y="68" width="24" height="24" class="dg-cell on"/>
+<rect x="112" y="68" width="24" height="24" class="dg-cell on"/>
+<rect x="136" y="68" width="24" height="24" class="dg-cell on"/>
+<rect x="40" y="92" width="24" height="24" class="dg-cell on"/>
+<rect x="64" y="92" width="24" height="24" class="dg-cell on"/>
+<rect x="88" y="92" width="24" height="24" class="dg-cell on"/>
+<rect x="112" y="92" width="24" height="24" class="dg-cell on"/>
+<rect x="136" y="92" width="24" height="24" class="dg-cell on"/>
+<rect x="40" y="116" width="24" height="24" class="dg-cell on"/>
+<rect x="64" y="116" width="24" height="24" class="dg-cell on"/>
+<rect x="88" y="116" width="24" height="24" class="dg-cell on"/>
+<rect x="112" y="116" width="24" height="24" class="dg-cell on"/>
+<rect x="136" y="116" width="24" height="24" class="dg-cell on"/>
+<text x="100" y="72" text-anchor="middle" class="dg-label">area</text>
+<text x="100" y="98" text-anchor="middle" class="dg-eq-lg">25</text>
+<line x1="44.9" y1="154.0" x2="155.1" y2="154.0" class="dg-arrow plain thin"/><polygon points="40.0,154.0 46.0,150.4 46.0,157.6" class="dg-head plain"/><polygon points="160.0,154.0 154.0,157.6 154.0,150.4" class="dg-head plain"/>
+<text x="54.2" y="180" class="dg-eq">side = </text><path d="M112.4 174.3 L114.9 173 L118.7 181.9 L123.8 163.3 L145.8 163.3" class="dg-rad"/><text x="125.7" y="180" class="dg-eq">25</text>
+<text x="226" y="106" text-anchor="middle" class="dg-title">side</text>
+<text x="440" y="106" text-anchor="middle" class="dg-title">area</text>
+<line x1="252" y1="84" x2="405.7" y2="84.0" class="dg-arrow accent"/><polygon points="412.0,84.0 404.3,88.6 404.3,79.4" class="dg-head accent"/>
+<text x="332" y="46" text-anchor="middle" class="dg-label-accent">square it</text>
+<text x="304.3" y="72" class="dg-eq">5</text><text x="313.8" y="72" class="dg-eq"><tspan class="sup" dy="-8">2</tspan></text><text x="320.5" y="72" class="dg-eq"> = 25</text>
+<line x1="412" y1="120" x2="258.3" y2="120.0" class="dg-arrow hot"/><polygon points="252.0,120.0 259.7,115.4 259.7,124.6" class="dg-head hot"/>
+<path d="M296 148.3 L298.5 147 L302.3 155.9 L307.4 137.3 L329.4 137.3" class="dg-rad"/><text x="309.3" y="154" class="dg-eq">25</text><text x="329.4" y="154" class="dg-eq"> =</text>
+<rect x="350.9" y="136" width="36" height="24" rx="3" class="dg-tag"/>
+<text x="332" y="182" text-anchor="middle" class="dg-label-hot">take the square root</text>
 </svg>
-<figcaption>Squaring goes from side to area; square-rooting goes back from area to side. A square of area 25 has side √25.</figcaption>
+<figcaption>Squaring takes you from the side of a square to its area; the square root takes you back from the area to the side.</figcaption>
 </figure>
 <!-- /viz:area-and-side -->
 
@@ -296,37 +674,142 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
       <tr><td>12</td><td></td><td></td></tr>
     </table>
 <!-- viz:perfect-squares -->
-<figure class="viz">
-<!-- tikz: square-staircase | n=1..5 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 420 172" aria-label="Squares made of 1, 4, 9, 16 and 25 unit squares: 1 squared, 2 squared, 3 squared, 4 squared and 5 squared." width="420" height="172">
-<rect x="20" y="118" width="12" height="12" class="dg-fill-accent"/><text x="26.0" y="148" text-anchor="middle" class="dg-label">1</text><text x="26.0" y="164" text-anchor="middle" class="dg-label-sm">1²</text><rect x="58" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="58" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="70" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="70" y="118" width="12" height="12" class="dg-fill-accent"/><text x="70.0" y="148" text-anchor="middle" class="dg-label">4</text><text x="70.0" y="164" text-anchor="middle" class="dg-label-sm">2²</text><rect x="108" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="108" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="108" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="120" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="120" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="120" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="132" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="132" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="132" y="118" width="12" height="12" class="dg-fill-accent"/><text x="126.0" y="148" text-anchor="middle" class="dg-label">9</text><text x="126.0" y="164" text-anchor="middle" class="dg-label-sm">3²</text><rect x="170" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="170" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="170" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="170" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="182" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="182" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="182" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="182" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="194" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="194" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="194" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="194" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="206" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="206" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="206" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="206" y="118" width="12" height="12" class="dg-fill-accent"/><text x="194.0" y="148" text-anchor="middle" class="dg-label">16</text><text x="194.0" y="164" text-anchor="middle" class="dg-label-sm">4²</text><rect x="244" y="70" width="12" height="12" class="dg-fill-accent"/><rect x="244" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="244" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="244" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="244" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="256" y="70" width="12" height="12" class="dg-fill-accent"/><rect x="256" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="256" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="256" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="256" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="268" y="70" width="12" height="12" class="dg-fill-accent"/><rect x="268" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="268" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="268" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="268" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="280" y="70" width="12" height="12" class="dg-fill-accent"/><rect x="280" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="280" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="280" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="280" y="118" width="12" height="12" class="dg-fill-accent"/><rect x="292" y="70" width="12" height="12" class="dg-fill-accent"/><rect x="292" y="82" width="12" height="12" class="dg-fill-accent"/><rect x="292" y="94" width="12" height="12" class="dg-fill-accent"/><rect x="292" y="106" width="12" height="12" class="dg-fill-accent"/><rect x="292" y="118" width="12" height="12" class="dg-fill-accent"/><text x="274.0" y="148" text-anchor="middle" class="dg-label">25</text><text x="274.0" y="164" text-anchor="middle" class="dg-label-sm">5²</text>
-<text x="330" y="80" class="dg-label">10 is not a</text>
-<text x="330" y="96" class="dg-label">perfect square:</text>
-<text x="330" y="112" class="dg-label-sm">10 squares can't</text>
-<text x="330" y="126" class="dg-label-sm">make a full square</text>
+<figure class="viz tb">
+<!-- tikz: square-staircase | n=1..5 | plus 10 = 3x3 + 1 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 530 205" aria-label="Unit squares arranged into full squares: 1 square is 1 squared, 4 squares is 2 squared, then 3 squared, 4 squared and 5 squared are blanks, 9, 16 and 25. Ten unit squares make a 3 by 3 square with one left over, so 10 is not a perfect square." width="530" height="205">
+<rect x="18" y="126" width="14" height="14" class="dg-tl-1"/>
+<text x="18.6" y="164" class="dg-eq-sm">1</text><text x="26.1" y="164" class="dg-eq-sm"><tspan class="sup" dy="-6.3">2</tspan></text>
+<text x="25" y="190" text-anchor="middle" class="dg-eq-sm">= 1</text>
+<rect x="62" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="76" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="62" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="76" y="112" width="14" height="14" class="dg-tl-1"/>
+<text x="69.6" y="164" class="dg-eq-sm">2</text><text x="77.1" y="164" class="dg-eq-sm"><tspan class="sup" dy="-6.3">2</tspan></text>
+<text x="76" y="190" text-anchor="middle" class="dg-eq-sm">= 4</text>
+<rect x="120" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="134" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="148" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="120" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="134" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="148" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="120" y="98" width="14" height="14" class="dg-tl-1"/>
+<rect x="134" y="98" width="14" height="14" class="dg-tl-1"/>
+<rect x="148" y="98" width="14" height="14" class="dg-tl-1"/>
+<text x="134.6" y="164" class="dg-eq-sm">3</text><text x="142.1" y="164" class="dg-eq-sm"><tspan class="sup" dy="-6.3">2</tspan></text>
+<text x="127" y="190" text-anchor="end" class="dg-eq-sm">=</text>
+<rect x="131" y="174" width="34" height="22" rx="3" class="dg-tag"/>
+<rect x="192" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="206" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="220" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="234" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="192" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="206" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="220" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="234" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="192" y="98" width="14" height="14" class="dg-tl-1"/>
+<rect x="206" y="98" width="14" height="14" class="dg-tl-1"/>
+<rect x="220" y="98" width="14" height="14" class="dg-tl-1"/>
+<rect x="234" y="98" width="14" height="14" class="dg-tl-1"/>
+<rect x="192" y="84" width="14" height="14" class="dg-tl-1"/>
+<rect x="206" y="84" width="14" height="14" class="dg-tl-1"/>
+<rect x="220" y="84" width="14" height="14" class="dg-tl-1"/>
+<rect x="234" y="84" width="14" height="14" class="dg-tl-1"/>
+<text x="213.6" y="164" class="dg-eq-sm">4</text><text x="221.1" y="164" class="dg-eq-sm"><tspan class="sup" dy="-6.3">2</tspan></text>
+<text x="206" y="190" text-anchor="end" class="dg-eq-sm">=</text>
+<rect x="210" y="174" width="34" height="22" rx="3" class="dg-tag"/>
+<rect x="278" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="292" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="306" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="320" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="334" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="278" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="292" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="306" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="320" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="334" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="278" y="98" width="14" height="14" class="dg-tl-1"/>
+<rect x="292" y="98" width="14" height="14" class="dg-tl-1"/>
+<rect x="306" y="98" width="14" height="14" class="dg-tl-1"/>
+<rect x="320" y="98" width="14" height="14" class="dg-tl-1"/>
+<rect x="334" y="98" width="14" height="14" class="dg-tl-1"/>
+<rect x="278" y="84" width="14" height="14" class="dg-tl-1"/>
+<rect x="292" y="84" width="14" height="14" class="dg-tl-1"/>
+<rect x="306" y="84" width="14" height="14" class="dg-tl-1"/>
+<rect x="320" y="84" width="14" height="14" class="dg-tl-1"/>
+<rect x="334" y="84" width="14" height="14" class="dg-tl-1"/>
+<rect x="278" y="70" width="14" height="14" class="dg-tl-1"/>
+<rect x="292" y="70" width="14" height="14" class="dg-tl-1"/>
+<rect x="306" y="70" width="14" height="14" class="dg-tl-1"/>
+<rect x="320" y="70" width="14" height="14" class="dg-tl-1"/>
+<rect x="334" y="70" width="14" height="14" class="dg-tl-1"/>
+<text x="306.6" y="164" class="dg-eq-sm">5</text><text x="314.1" y="164" class="dg-eq-sm"><tspan class="sup" dy="-6.3">2</tspan></text>
+<text x="299" y="190" text-anchor="end" class="dg-eq-sm">=</text>
+<rect x="303" y="174" width="34" height="22" rx="3" class="dg-tag"/>
+<rect x="400" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="414" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="428" y="126" width="14" height="14" class="dg-tl-1"/>
+<rect x="400" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="414" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="428" y="112" width="14" height="14" class="dg-tl-1"/>
+<rect x="400" y="98" width="14" height="14" class="dg-tl-1"/>
+<rect x="414" y="98" width="14" height="14" class="dg-tl-1"/>
+<rect x="428" y="98" width="14" height="14" class="dg-tl-1"/>
+<rect x="450" y="126" width="14" height="14" class="dg-tl-1"/>
+<circle cx="457" cy="133" r="13" class="dg-ghost-hot"/>
+<line x1="382" y1="20" x2="382" y2="196" class="dg-construction"/>
+<text x="428" y="82" text-anchor="middle" class="dg-eq">10</text>
+<text x="432" y="164" text-anchor="middle" class="dg-label-sm">one left over:</text>
+<text x="432" y="182" text-anchor="middle" class="dg-label-hot">not a perfect square</text>
 </svg>
-<figcaption>Perfect squares are the numbers of unit squares you can arrange into a full square: 1, 4, 9, 16, 25 and so on.</figcaption>
+<figcaption>A perfect square is a number of unit squares that makes one full square with none left over.</figcaption>
 </figure>
 <!-- /viz:perfect-squares -->
 
     <p><strong>The principal square root is the <em>positive</em> root.</strong></p>
     <p>Both 5 and −5, when squared, equal 25. But √25 = <span class="b b-sm"></span> only, because the radical symbol √ means the <span class="b b-lg"></span> root.</p>
 <!-- viz:principal-root -->
-<figure class="viz">
-<!-- tikz: number-line | roots=-5,5 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 165" aria-label="Number line from −6 to 6. Both −5 and 5 square to 25. The radical sign, the square root of 25, points only to 5, the blank, positive, root." width="480" height="165">
-<line x1="30.9" y1="110.0" x2="449.1" y2="110.0" class="dg-arrow plain"/><polygon points="26.0,110.0 32.0,106.4 32.0,113.6" class="dg-head plain"/><polygon points="454.0,110.0 448.0,113.6 448.0,106.4" class="dg-head plain"/><line x1="40.0" y1="104" x2="40.0" y2="116" class="dg-line"/><text x="40.0" y="132" text-anchor="middle" class="dg-label-sm">-6</text><line x1="73.3" y1="104" x2="73.3" y2="116" class="dg-line"/><text x="73.3" y="132" text-anchor="middle" class="dg-label-sm">-5</text><line x1="106.7" y1="104" x2="106.7" y2="116" class="dg-line"/><text x="106.7" y="132" text-anchor="middle" class="dg-label-sm">-4</text><line x1="140.0" y1="104" x2="140.0" y2="116" class="dg-line"/><text x="140.0" y="132" text-anchor="middle" class="dg-label-sm">-3</text><line x1="173.3" y1="104" x2="173.3" y2="116" class="dg-line"/><text x="173.3" y="132" text-anchor="middle" class="dg-label-sm">-2</text><line x1="206.7" y1="104" x2="206.7" y2="116" class="dg-line"/><text x="206.7" y="132" text-anchor="middle" class="dg-label-sm">-1</text><line x1="240.0" y1="104" x2="240.0" y2="116" class="dg-line"/><text x="240.0" y="132" text-anchor="middle" class="dg-label-sm">0</text><line x1="273.3" y1="104" x2="273.3" y2="116" class="dg-line"/><text x="273.3" y="132" text-anchor="middle" class="dg-label-sm">1</text><line x1="306.7" y1="104" x2="306.7" y2="116" class="dg-line"/><text x="306.7" y="132" text-anchor="middle" class="dg-label-sm">2</text><line x1="340.0" y1="104" x2="340.0" y2="116" class="dg-line"/><text x="340.0" y="132" text-anchor="middle" class="dg-label-sm">3</text><line x1="373.3" y1="104" x2="373.3" y2="116" class="dg-line"/><text x="373.3" y="132" text-anchor="middle" class="dg-label-sm">4</text><line x1="406.7" y1="104" x2="406.7" y2="116" class="dg-line"/><text x="406.7" y="132" text-anchor="middle" class="dg-label-sm">5</text><line x1="440.0" y1="104" x2="440.0" y2="116" class="dg-line"/><text x="440.0" y="132" text-anchor="middle" class="dg-label-sm">6</text>
-<circle cx="73.3" cy="110" r="6" class="dg-solid-hot"/><circle cx="406.7" cy="110" r="6" class="dg-point-accent"/>
-<text x="73.3" y="90" text-anchor="middle" class="dg-label-hot">(−5)² = 25</text>
-<text x="406.7" y="156" text-anchor="middle" class="dg-label-accent">5² = 25</text>
-<text x="240.0" y="28" text-anchor="middle" class="dg-math-lg">√25</text>
-<path d="M266.0 22 Q 373.3 20 406.7 98" class="dg-arrow accent"/>
-<line x1="405.7" y1="88" x2="406.2" y2="94.4" class="dg-arrow accent"/><polygon points="406.7,100.0 402.0,93.5 410.2,92.8" class="dg-head accent"/>
-<text x="236.0" y="66" text-anchor="end" class="dg-label">means only the</text>
-<rect x="242" y="52" width="70" height="20" rx="3" class="dg-tag"/>
-<text x="318" y="66" class="dg-label">root</text>
+<figure class="viz tb">
+<!-- tikz: number-line | -6..6 | roots=-5,5 | principal root -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 196" aria-label="Number line from −6 to 6 with dots at −5 and 5. Both (−5) squared and 5 squared are 25. An arrow from the square root of 25 goes only to 5; the path to −5 is crossed out. The radical sign means only the blank, positive, root." width="480" height="196">
+<line x1="29.6" y1="126.0" x2="450.4" y2="126.0" class="dg-arrow plain"/><polygon points="24.0,126.0 30.9,121.9 30.9,130.1" class="dg-head plain"/><polygon points="456.0,126.0 449.1,130.1 449.1,121.9" class="dg-head plain"/>
+<line x1="40" y1="118" x2="40" y2="134" class="dg-line"/>
+<text x="35.8" y="152" text-anchor="middle" class="dg-eq-sm">−6</text>
+<line x1="73.3" y1="118" x2="73.3" y2="134" class="dg-line"/>
+<text x="69.1" y="152" text-anchor="middle" class="dg-eq-sm">−5</text>
+<line x1="106.7" y1="118" x2="106.7" y2="134" class="dg-line"/>
+<text x="102.5" y="152" text-anchor="middle" class="dg-eq-sm">−4</text>
+<line x1="140" y1="118" x2="140" y2="134" class="dg-line"/>
+<text x="135.8" y="152" text-anchor="middle" class="dg-eq-sm">−3</text>
+<line x1="173.3" y1="118" x2="173.3" y2="134" class="dg-line"/>
+<text x="169.1" y="152" text-anchor="middle" class="dg-eq-sm">−2</text>
+<line x1="206.7" y1="118" x2="206.7" y2="134" class="dg-line"/>
+<text x="202.5" y="152" text-anchor="middle" class="dg-eq-sm">−1</text>
+<line x1="240" y1="118" x2="240" y2="134" class="dg-line"/>
+<text x="240" y="152" text-anchor="middle" class="dg-eq-sm">0</text>
+<line x1="273.3" y1="118" x2="273.3" y2="134" class="dg-line"/>
+<text x="273.3" y="152" text-anchor="middle" class="dg-eq-sm">1</text>
+<line x1="306.7" y1="118" x2="306.7" y2="134" class="dg-line"/>
+<text x="306.7" y="152" text-anchor="middle" class="dg-eq-sm">2</text>
+<line x1="340" y1="118" x2="340" y2="134" class="dg-line"/>
+<text x="340" y="152" text-anchor="middle" class="dg-eq-sm">3</text>
+<line x1="373.3" y1="118" x2="373.3" y2="134" class="dg-line"/>
+<text x="373.3" y="152" text-anchor="middle" class="dg-eq-sm">4</text>
+<line x1="406.7" y1="118" x2="406.7" y2="134" class="dg-line"/>
+<text x="406.7" y="152" text-anchor="middle" class="dg-eq-sm">5</text>
+<line x1="440" y1="118" x2="440" y2="134" class="dg-line"/>
+<text x="440" y="152" text-anchor="middle" class="dg-eq-sm">6</text>
+<circle cx="73.3" cy="126" r="6.5" class="dg-closed hot"/><circle cx="406.7" cy="126" r="6.5" class="dg-closed"/>
+<path d="M218 32.5 L221.2 30.8 L226.2 42.5 L233 18.5 L262 18.5" class="dg-rad"/><text x="235.5" y="40" class="dg-eq-lg">25</text>
+<path d="M268 32 Q390 24 405.6 108.5" class="dg-arrow accent"/><polygon points="406.7,114 401.4,108 409.5,106.5" class="dg-head accent"/>
+<path d="M212 32 Q90 24 75.3 112" class="dg-arrow muted dash"/>
+<line x1="113" y1="40" x2="129" y2="56" class="dg-strike"/><line x1="129" y1="40" x2="113" y2="56" class="dg-strike"/>
+<text x="48.3" y="178" class="dg-eq-sm hot">(−5)</text><text x="74.2" y="178" class="dg-eq-sm hot"><tspan class="sup" dy="-6.3">2</tspan></text><text x="79.5" y="178" class="dg-eq-sm hot"> = 25</text>
+<text x="378.8" y="178" class="dg-eq-sm accent">5</text><text x="386.3" y="178" class="dg-eq-sm accent"><tspan class="sup" dy="-6.3">2</tspan></text><text x="391.6" y="178" class="dg-eq-sm accent"> = 25</text>
+<text x="226" y="94" text-anchor="end" class="dg-label">√ means only the</text>
+<rect x="232" y="78" width="72" height="22" rx="3" class="dg-tag"/>
+<text x="310" y="94" class="dg-label">root</text>
 </svg>
-<figcaption>Two numbers square to 25, but the √ symbol always means the one that is not negative.</figcaption>
+<figcaption>Two numbers square to 25, but the √ symbol points to only one of them.</figcaption>
 </figure>
 <!-- /viz:principal-root -->
 
@@ -339,26 +822,19 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
     </div>
 
     <p><strong>Structure of a radical expression:</strong></p>
-    <!-- tikz: radical-structure | labels=radical-symbol,radicand | viewBox=240x90 -->
-    <figure style="margin:12px 0;overflow-x:auto;">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 105" width="240" height="105" role="img" aria-label="Structure of a radical expression showing the radical symbol and radicand of square root of 36">
-  <!-- radical symbol: tick stroke then horizontal bar over radicand -->
-  <polyline class="dg-accent" points="30,55 40,65 55,20 155,20"/>
-  <!-- radicand "36" text -->
-  <text class="dg-label-lg" x="100" y="52" text-anchor="middle">36</text>
-  <!-- pointer line to radical symbol base -->
-  <line class="dg-line" x1="40" y1="80" x2="40" y2="70"/>
-  <polygon style="fill:var(--dg-stroke);stroke:none;" points="37,70 40,65 43,70"/>
-  <!-- pointer line to radicand -->
-  <line class="dg-line" x1="105" y1="80" x2="105" y2="60"/>
-  <polygon style="fill:var(--dg-stroke);stroke:none;" points="102,60 105,55 108,60"/>
-  <!-- labels row 1 -->
-  <text class="dg-label-accent" x="10" y="92" text-anchor="start">radical</text>
-  <text class="dg-label-accent" x="80" y="92" text-anchor="start">radicand</text>
-  <!-- labels row 2 -->
-  <text class="dg-label-sm" x="10" y="104" text-anchor="start">symbol</text>
+<!-- viz:radical-structure -->
+<figure class="viz tb">
+<!-- tikz: radical-structure | sqrt36 | labels=radical-symbol,radicand -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 330 160" aria-label="The radical expression square root of 36, drawn large. Two blank labels point to its parts: the radical symbol, and the radicand, 36, the number under the symbol." width="330" height="160">
+<path d="M118 72.2 L124 69 L133.2 90.6 L145.6 47.7 L199 47.7" class="dg-rad acc"/><text x="150.2" y="86" class="dg-eq-xl">36</text>
+<path d="M134 82 L90 124" class="dg-leader"/><circle cx="134" cy="82" r="2.5" class="dg-leader-dot"/>
+<path d="M173.2 92 L220.2 124" class="dg-leader"/><circle cx="173.2" cy="92" r="2.5" class="dg-leader-dot"/>
+<rect x="24" y="124" width="120" height="24" rx="3" class="dg-tag"/>
+<rect x="172.2" y="124" width="100" height="24" rx="3" class="dg-tag"/>
 </svg>
-    </figure>
+<figcaption>Name the two parts of a radical expression.</figcaption>
+</figure>
+<!-- /viz:radical-structure -->
 
     <p>The radicand of √36 is <span class="b b-sm"></span>. The principal square root of 36 is <span class="b b-sm"></span>.</p>
 
@@ -442,20 +918,36 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
       <p>Step 3: Better estimate: √47 ≈ <span class="b b-sm"></span></p>
     </div>
 <!-- viz:squeeze -->
-<figure class="viz">
-<!-- tikz: number-line-squeeze | sqrt47 | 6..7 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 150" aria-label="Number line from 5 to 8. Above 6 is the square root of 36; above 7 is the square root of 49. The square root of 47 sits between them, close to 7, at about a blank, 6.9." width="480" height="150">
-<line x1="50.9" y1="90.0" x2="429.1" y2="90.0" class="dg-arrow plain"/><polygon points="46.0,90.0 52.0,86.4 52.0,93.6" class="dg-head plain"/><polygon points="434.0,90.0 428.0,93.6 428.0,86.4" class="dg-head plain"/><line x1="60.0" y1="84" x2="60.0" y2="96" class="dg-line"/><text x="60.0" y="112" text-anchor="middle" class="dg-label-sm">5</text><line x1="180.0" y1="84" x2="180.0" y2="96" class="dg-line"/><text x="180.0" y="112" text-anchor="middle" class="dg-label-sm">6</text><line x1="300.0" y1="84" x2="300.0" y2="96" class="dg-line"/><text x="300.0" y="112" text-anchor="middle" class="dg-label-sm">7</text><line x1="420.0" y1="84" x2="420.0" y2="96" class="dg-line"/><text x="420.0" y="112" text-anchor="middle" class="dg-label-sm">8</text><line x1="60.0" y1="86" x2="60.0" y2="94" class="dg-line"/><line x1="72.0" y1="86" x2="72.0" y2="94" class="dg-line"/><line x1="84.0" y1="86" x2="84.0" y2="94" class="dg-line"/><line x1="96.0" y1="86" x2="96.0" y2="94" class="dg-line"/><line x1="108.0" y1="86" x2="108.0" y2="94" class="dg-line"/><line x1="120.0" y1="86" x2="120.0" y2="94" class="dg-line"/><line x1="132.0" y1="86" x2="132.0" y2="94" class="dg-line"/><line x1="144.0" y1="86" x2="144.0" y2="94" class="dg-line"/><line x1="156.0" y1="86" x2="156.0" y2="94" class="dg-line"/><line x1="168.0" y1="86" x2="168.0" y2="94" class="dg-line"/><line x1="180.0" y1="86" x2="180.0" y2="94" class="dg-line"/><line x1="192.0" y1="86" x2="192.0" y2="94" class="dg-line"/><line x1="204.0" y1="86" x2="204.0" y2="94" class="dg-line"/><line x1="216.0" y1="86" x2="216.0" y2="94" class="dg-line"/><line x1="228.0" y1="86" x2="228.0" y2="94" class="dg-line"/><line x1="240.0" y1="86" x2="240.0" y2="94" class="dg-line"/><line x1="252.0" y1="86" x2="252.0" y2="94" class="dg-line"/><line x1="264.0" y1="86" x2="264.0" y2="94" class="dg-line"/><line x1="276.0" y1="86" x2="276.0" y2="94" class="dg-line"/><line x1="288.0" y1="86" x2="288.0" y2="94" class="dg-line"/><line x1="300.0" y1="86" x2="300.0" y2="94" class="dg-line"/><line x1="312.0" y1="86" x2="312.0" y2="94" class="dg-line"/><line x1="324.0" y1="86" x2="324.0" y2="94" class="dg-line"/><line x1="336.0" y1="86" x2="336.0" y2="94" class="dg-line"/><line x1="348.0" y1="86" x2="348.0" y2="94" class="dg-line"/><line x1="360.0" y1="86" x2="360.0" y2="94" class="dg-line"/><line x1="372.0" y1="86" x2="372.0" y2="94" class="dg-line"/><line x1="384.0" y1="86" x2="384.0" y2="94" class="dg-line"/><line x1="396.0" y1="86" x2="396.0" y2="94" class="dg-line"/><line x1="408.0" y1="86" x2="408.0" y2="94" class="dg-line"/><line x1="420.0" y1="86" x2="420.0" y2="94" class="dg-line"/>
-<rect x="180.0" y="82" width="120.0" height="16" class="dg-fill-accent"/>
-<text x="180.0" y="60" text-anchor="middle" class="dg-label">√36</text>
-<text x="300.0" y="60" text-anchor="middle" class="dg-label">√49</text>
-<circle cx="282.7" cy="90" r="6" class="dg-solid-hot"/>
-<text x="282.7" y="40" text-anchor="middle" class="dg-label-hot">√47</text>
-<line x1="282.7" y1="44" x2="282.7" y2="82" class="dg-dashed"/>
-<text x="240" y="138" text-anchor="end" class="dg-label">36 &lt; 47 &lt; 49, so √47 ≈</text>
-<rect x="246" y="124" width="44" height="20" rx="3" class="dg-tag"/>
+<figure class="viz tb">
+<!-- tikz: number-line-squeeze | sqrt47 | 5..8, tenths 6..7 | dot key only -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 500 160" aria-label="Number line from 5 to 8, with tenths marked between 6 and 7. Above 6 and above 7 are blanks for the square roots of the perfect squares on either side of 47: the square root of 36 and the square root of 49. In the key, the square root of 47 is marked at about 6.9, close to 7." width="500" height="160">
+
+<line x1="39.6" y1="92.0" x2="480.4" y2="92.0" class="dg-arrow plain"/><polygon points="34.0,92.0 40.9,87.9 40.9,96.1" class="dg-head plain"/><polygon points="486.0,92.0 479.1,96.1 479.1,87.9" class="dg-head plain"/>
+<line x1="204" y1="87.5" x2="204" y2="96.5" class="dg-line"/>
+<line x1="218" y1="87.5" x2="218" y2="96.5" class="dg-line"/>
+<line x1="232" y1="87.5" x2="232" y2="96.5" class="dg-line"/>
+<line x1="246" y1="87.5" x2="246" y2="96.5" class="dg-line"/>
+<line x1="260" y1="85.5" x2="260" y2="98.5" class="dg-line"/>
+<line x1="274" y1="87.5" x2="274" y2="96.5" class="dg-line"/>
+<line x1="288" y1="87.5" x2="288" y2="96.5" class="dg-line"/>
+<line x1="302" y1="87.5" x2="302" y2="96.5" class="dg-line"/>
+<line x1="316" y1="87.5" x2="316" y2="96.5" class="dg-line"/>
+<line x1="50" y1="84" x2="50" y2="100" class="dg-line"/>
+<text x="50" y="118" text-anchor="middle" class="dg-eq-sm">5</text>
+<line x1="190" y1="84" x2="190" y2="100" class="dg-line"/>
+<text x="190" y="118" text-anchor="middle" class="dg-eq-sm">6</text>
+<line x1="330" y1="84" x2="330" y2="100" class="dg-line"/>
+<text x="330" y="118" text-anchor="middle" class="dg-eq-sm">7</text>
+<line x1="470" y1="84" x2="470" y2="100" class="dg-line"/>
+<text x="470" y="118" text-anchor="middle" class="dg-eq-sm">8</text>
+<rect x="165" y="30" width="50" height="24" rx="3" class="dg-tag"/>
+<line x1="190" y1="58" x2="190" y2="80" class="dg-construction"/>
+<rect x="305" y="30" width="50" height="24" rx="3" class="dg-tag"/>
+<line x1="330" y1="58" x2="330" y2="80" class="dg-construction"/>
+<text x="36" y="150" class="dg-label-sm">small spaces: 0.1 each</text>
+
 </svg>
-<figcaption>√47 is squeezed between √36 = 6 and √49 = 7. Since 47 is much closer to 49, √47 sits close to 7.</figcaption>
+<figcaption>Write the square root of a perfect square above 6 and above 7, then mark √47 on the line. Which whole number is it closer to?</figcaption>
 </figure>
 <!-- /viz:squeeze -->
 
@@ -470,50 +962,86 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
 
     <p><strong>Locating on the number line:</strong></p>
     <p>Place √5, √10, √15, and √20 on the number line below by estimating:</p>
-    <figure style="margin:12px 0;overflow-x:auto;">
-    <!-- tikz: number-line | range=2-5 | blank=true | markers=arrow | viewBox=440x70 | purpose=sqrt-placement -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 70" width="440" height="70" role="img" aria-label="Number line from 2 to 5">
-<defs><marker id="nm2to5-sq1" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path class="dg-point" d="M0,0 L0,7 L7,3.5z"/></marker><marker id="nm2to5r-sq1" markerWidth="7" markerHeight="7" refX="1" refY="3.5" orient="auto-start-reverse"><path class="dg-point" d="M0,0 L0,7 L7,3.5z"/></marker></defs>
-<line class="dg-line" x1="22" y1="40" x2="418" y2="40"  marker-start="url(#nm2to5r-sq1)" marker-end="url(#nm2to5-sq1)"/>
-<line class="dg-line" x1="22.0" y1="32" x2="22.0" y2="48"/>
-<text class="dg-label-sm" x="22.0" y="60" text-anchor="middle">2</text>
-<line class="dg-line" x1="154.0" y1="32" x2="154.0" y2="48"/>
-<text class="dg-label-sm" x="154.0" y="60" text-anchor="middle">3</text>
-<line class="dg-line" x1="286.0" y1="32" x2="286.0" y2="48"/>
-<text class="dg-label-sm" x="286.0" y="60" text-anchor="middle">4</text>
-<line class="dg-line" x1="418.0" y1="32" x2="418.0" y2="48"/>
-<text class="dg-label-sm" x="418.0" y="60" text-anchor="middle">5</text>
+<!-- viz:place-roots -->
+<figure class="viz tb">
+<!-- tikz: number-line | blank=true | 2..5 in tenths | purpose=sqrt-placement -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 500 128" aria-label="A blank number line from 2 to 5, marked in tenths. Under 2, 3, 4 and 5 it says they equal the square roots of 4, 9, 16 and 25. In the key, the square roots of 5, 10, 15 and 20 are marked at about 2.2, 3.2, 3.9 and 4.5." width="500" height="128">
+<line x1="29.6" y1="70.0" x2="470.4" y2="70.0" class="dg-arrow plain"/><polygon points="24.0,70.0 30.9,65.9 30.9,74.1" class="dg-head plain"/><polygon points="476.0,70.0 469.1,74.1 469.1,65.9" class="dg-head plain"/>
+<line x1="54" y1="65.5" x2="54" y2="74.5" class="dg-line"/>
+<line x1="68" y1="65.5" x2="68" y2="74.5" class="dg-line"/>
+<line x1="82" y1="65.5" x2="82" y2="74.5" class="dg-line"/>
+<line x1="96" y1="65.5" x2="96" y2="74.5" class="dg-line"/>
+<line x1="110" y1="63.5" x2="110" y2="76.5" class="dg-line"/>
+<line x1="124" y1="65.5" x2="124" y2="74.5" class="dg-line"/>
+<line x1="138" y1="65.5" x2="138" y2="74.5" class="dg-line"/>
+<line x1="152" y1="65.5" x2="152" y2="74.5" class="dg-line"/>
+<line x1="166" y1="65.5" x2="166" y2="74.5" class="dg-line"/>
+<line x1="194" y1="65.5" x2="194" y2="74.5" class="dg-line"/>
+<line x1="208" y1="65.5" x2="208" y2="74.5" class="dg-line"/>
+<line x1="222" y1="65.5" x2="222" y2="74.5" class="dg-line"/>
+<line x1="236" y1="65.5" x2="236" y2="74.5" class="dg-line"/>
+<line x1="250" y1="63.5" x2="250" y2="76.5" class="dg-line"/>
+<line x1="264" y1="65.5" x2="264" y2="74.5" class="dg-line"/>
+<line x1="278" y1="65.5" x2="278" y2="74.5" class="dg-line"/>
+<line x1="292" y1="65.5" x2="292" y2="74.5" class="dg-line"/>
+<line x1="306" y1="65.5" x2="306" y2="74.5" class="dg-line"/>
+<line x1="334" y1="65.5" x2="334" y2="74.5" class="dg-line"/>
+<line x1="348" y1="65.5" x2="348" y2="74.5" class="dg-line"/>
+<line x1="362" y1="65.5" x2="362" y2="74.5" class="dg-line"/>
+<line x1="376" y1="65.5" x2="376" y2="74.5" class="dg-line"/>
+<line x1="390" y1="63.5" x2="390" y2="76.5" class="dg-line"/>
+<line x1="404" y1="65.5" x2="404" y2="74.5" class="dg-line"/>
+<line x1="418" y1="65.5" x2="418" y2="74.5" class="dg-line"/>
+<line x1="432" y1="65.5" x2="432" y2="74.5" class="dg-line"/>
+<line x1="446" y1="65.5" x2="446" y2="74.5" class="dg-line"/>
+<line x1="40" y1="62" x2="40" y2="78" class="dg-line"/>
+<text x="40" y="96" text-anchor="middle" class="dg-eq-sm">2</text>
+<line x1="180" y1="62" x2="180" y2="78" class="dg-line"/>
+<text x="180" y="96" text-anchor="middle" class="dg-eq-sm">3</text>
+<line x1="320" y1="62" x2="320" y2="78" class="dg-line"/>
+<text x="320" y="96" text-anchor="middle" class="dg-eq-sm">4</text>
+<line x1="460" y1="62" x2="460" y2="78" class="dg-line"/>
+<text x="460" y="96" text-anchor="middle" class="dg-eq-sm">5</text>
+<text x="26.5" y="116" class="dg-eq-sm muted">= </text><path d="M37.1 112.1 L38.8 111.2 L41.4 117.3 L44.9 104.1 L53.5 104.1" class="dg-rad muted"/><text x="46.2" y="116" class="dg-eq-sm muted">4</text>
+<text x="166.5" y="116" class="dg-eq-sm muted">= </text><path d="M177.1 112.1 L178.8 111.2 L181.4 117.3 L184.9 104.1 L193.5 104.1" class="dg-rad muted"/><text x="186.2" y="116" class="dg-eq-sm muted">9</text>
+<text x="303.3" y="116" class="dg-eq-sm muted">= </text><path d="M313.9 112.1 L315.5 111.2 L318.1 117.3 L321.7 104.1 L336.7 104.1" class="dg-rad muted"/><text x="323" y="116" class="dg-eq-sm muted">16</text>
+<text x="443.3" y="116" class="dg-eq-sm muted">= </text><path d="M453.9 112.1 L455.5 111.2 L458.1 117.3 L461.7 104.1 L476.7 104.1" class="dg-rad muted"/><text x="463" y="116" class="dg-eq-sm muted">25</text>
+
 </svg>
+<figcaption>Each small space is one tenth. Under each whole number is the square root it equals. Mark √5, √10, √15 and √20 with dots.</figcaption>
 </figure>
+<!-- /viz:place-roots -->
 
     <p><strong>The Real Number System — diagram:</strong></p>
-    <figure style="margin:10px 0;overflow-x:auto;">
-    <!-- real-number-system | type=tree | levels=5 | purpose=number-classification -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 205" width="470" height="205" role="img" aria-label="Tree diagram: Real Numbers split into Rational Numbers (containing Integers, Whole Numbers, Natural Numbers, and Non-integer rationals) and Irrational Numbers.">
-      <!-- Spine: Real Numbers children — Rational (y=46) to Irrational (y=186) -->
-      <line x1="8" y1="46" x2="8" y2="186" class="dg-line"/>
-      <line x1="8" y1="46" x2="40" y2="46" class="dg-line"/>
-      <line x1="8" y1="186" x2="40" y2="186" class="dg-line"/>
-      <!-- Branch: Rational Numbers children — Integers (y=74) to Non-integer (y=158) -->
-      <line x1="40" y1="74" x2="40" y2="158" class="dg-line"/>
-      <line x1="40" y1="74" x2="72" y2="74" class="dg-line"/>
-      <line x1="40" y1="158" x2="72" y2="158" class="dg-line"/>
-      <!-- Elbow: Integers → Whole Numbers -->
-      <line x1="72" y1="74" x2="72" y2="102" class="dg-line"/>
-      <line x1="72" y1="102" x2="104" y2="102" class="dg-line"/>
-      <!-- Elbow: Whole Numbers → Natural Numbers -->
-      <line x1="104" y1="102" x2="104" y2="130" class="dg-line"/>
-      <line x1="104" y1="130" x2="136" y2="130" class="dg-line"/>
-      <!-- Labels -->
-      <text x="8" y="22" class="dg-label" font-weight="bold">Real Numbers</text>
-      <text x="40" y="50" class="dg-label">Rational Numbers</text>
-      <text x="72" y="78" class="dg-label">Integers (&#8230;&#8722;2, &#8722;1, 0, 1, 2&#8230;)</text>
-      <text x="104" y="106" class="dg-label">Whole Numbers (0, 1, 2&#8230;)</text>
-      <text x="136" y="134" class="dg-label">Natural Numbers (1, 2, 3&#8230;)</text>
-      <text x="72" y="162" class="dg-label">Non-integer rationals (1/3, &#8722;7/4, 0.25&#8230;)</text>
-      <text x="40" y="190" class="dg-label">Irrational Numbers (&#8730;2, &#8730;3, &#960;&#8230;)</text>
-    </svg>
-    </figure>
+<!-- viz:real-number-system -->
+<figure class="viz tb">
+<!-- tikz: nested-sets | natural | whole | integer | rational | irrational -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 248" aria-label="The real number system as nested ovals inside a box of all real numbers. Natural numbers 1, 2, 3 sit inside whole numbers, which add 0, inside integers, which add negatives like −2 and −1, inside rational numbers, which add non-integer rationals like 1/3, −7/4 and 0.25. Outside the rational oval are the irrational numbers, such as the square roots of 2 and 3, and pi. In the key, the square root of 9 is placed with the natural numbers and the square root of 10 with the irrational numbers." width="520" height="248">
+<rect x="10" y="10" width="500" height="228" rx="16" class="dg-fill-soft"/>
+<text x="24" y="32" class="dg-title">Real numbers</text>
+<ellipse cx="210" cy="132" rx="191" ry="98" class="dg-fill-accent"/>
+<ellipse cx="270" cy="140" rx="130" ry="74" class="dg-fill-water"/>
+<ellipse cx="318" cy="148" rx="84" ry="54" class="dg-fill-plant"/>
+<ellipse cx="346" cy="150" rx="48" ry="40" class="dg-fill-sun"/>
+<text x="40" y="88" class="dg-title">Rational</text>
+<text x="56" y="127.6" text-anchor="middle" class="dg-eq-sm">1</text><line x1="49.8" y1="131.2" x2="62.2" y2="131.2" class="dg-fbar"/><text x="56" y="144.7" text-anchor="middle" class="dg-eq-sm">3</text>
+<text x="82" y="136" class="dg-eq-sm">−</text><text x="98" y="127.6" text-anchor="middle" class="dg-eq-sm">7</text><line x1="91.8" y1="131.2" x2="104.2" y2="131.2" class="dg-fbar"/><text x="98" y="144.7" text-anchor="middle" class="dg-eq-sm">4</text>
+<text x="56" y="172" class="dg-eq-sm">0.25</text>
+<text x="158" y="110" class="dg-title">Integers</text>
+<text x="164" y="160" class="dg-eq-sm">−2,  −1</text>
+<text x="246" y="134" class="dg-title">Whole</text>
+<text x="262" y="168" class="dg-eq-sm">0</text>
+<text x="346" y="136" text-anchor="middle" class="dg-label">Natural</text>
+<text x="346" y="154" text-anchor="middle" class="dg-eq-sm">1, 2, 3</text>
+<text x="414" y="84" class="dg-title">Irrational</text>
+<path d="M414 106.3 L416.5 105 L420.3 113.9 L425.4 95.3 L437.9 95.3" class="dg-rad"/><text x="427.3" y="112" class="dg-eq">2</text><text x="437.9" y="112" class="dg-eq">,  </text><path d="M452.2 106.3 L454.7 105 L458.5 113.9 L463.6 95.3 L476.1 95.3" class="dg-rad"/><text x="465.5" y="112" class="dg-eq">3</text><text x="476.1" y="112" class="dg-eq">,</text>
+<text x="418" y="138" class="dg-eq">π</text>
+<text x="414" y="160" class="dg-label-sm">not a fraction</text>
+
+</svg>
+<figcaption>Each set of numbers fits inside the next, and all of them are real numbers. Irrational numbers are real but sit outside the rational oval.</figcaption>
+</figure>
+<!-- /viz:real-number-system -->
 
     <p>Where does √9 go in this diagram? <span class="b b-xl"></span></p>
     <p>Where does √10 go? <span class="b b-xl"></span></p>
@@ -524,21 +1052,55 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
         <li>Is √49 rational or irrational? Is √50 rational or irrational? Explain each.<span class="al"></span><span class="al"></span></li>
         <li>Estimate √30 to one decimal place without a calculator. Show your reasoning.<span class="al"></span><span class="al"></span></li>
         <li>Place √7 on the number line as precisely as you can:
-<figure style="margin:12px 0;overflow-x:auto;">
-    <!-- tikz: number-line | range=1-4 | blank=true | markers=arrow | viewBox=440x70 | purpose=sqrt-placement -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 70" width="440" height="70" role="img" aria-label="Number line from 1 to 4">
-<defs><marker id="nm1to4-sq2" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path class="dg-point" d="M0,0 L0,7 L7,3.5z"/></marker><marker id="nm1to4r-sq2" markerWidth="7" markerHeight="7" refX="1" refY="3.5" orient="auto-start-reverse"><path class="dg-point" d="M0,0 L0,7 L7,3.5z"/></marker></defs>
-<line class="dg-line" x1="22" y1="40" x2="418" y2="40"  marker-start="url(#nm1to4r-sq2)" marker-end="url(#nm1to4-sq2)"/>
-<line class="dg-line" x1="22.0" y1="32" x2="22.0" y2="48"/>
-<text class="dg-label-sm" x="22.0" y="60" text-anchor="middle">1</text>
-<line class="dg-line" x1="154.0" y1="32" x2="154.0" y2="48"/>
-<text class="dg-label-sm" x="154.0" y="60" text-anchor="middle">2</text>
-<line class="dg-line" x1="286.0" y1="32" x2="286.0" y2="48"/>
-<text class="dg-label-sm" x="286.0" y="60" text-anchor="middle">3</text>
-<line class="dg-line" x1="418.0" y1="32" x2="418.0" y2="48"/>
-<text class="dg-label-sm" x="418.0" y="60" text-anchor="middle">4</text>
+<!-- viz:place-sqrt7 -->
+<figure class="viz tb">
+<!-- tikz: number-line | blank=true | 1..4 in tenths | purpose=sqrt-placement -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 500 128" aria-label="A blank number line from 1 to 4, marked in tenths. Under 1, 2, 3 and 4 it says they equal the square roots of 1, 4, 9 and 16. In the key, the square root of 7 is marked at about 2.6." width="500" height="128">
+<line x1="29.6" y1="70.0" x2="470.4" y2="70.0" class="dg-arrow plain"/><polygon points="24.0,70.0 30.9,65.9 30.9,74.1" class="dg-head plain"/><polygon points="476.0,70.0 469.1,74.1 469.1,65.9" class="dg-head plain"/>
+<line x1="54" y1="65.5" x2="54" y2="74.5" class="dg-line"/>
+<line x1="68" y1="65.5" x2="68" y2="74.5" class="dg-line"/>
+<line x1="82" y1="65.5" x2="82" y2="74.5" class="dg-line"/>
+<line x1="96" y1="65.5" x2="96" y2="74.5" class="dg-line"/>
+<line x1="110" y1="63.5" x2="110" y2="76.5" class="dg-line"/>
+<line x1="124" y1="65.5" x2="124" y2="74.5" class="dg-line"/>
+<line x1="138" y1="65.5" x2="138" y2="74.5" class="dg-line"/>
+<line x1="152" y1="65.5" x2="152" y2="74.5" class="dg-line"/>
+<line x1="166" y1="65.5" x2="166" y2="74.5" class="dg-line"/>
+<line x1="194" y1="65.5" x2="194" y2="74.5" class="dg-line"/>
+<line x1="208" y1="65.5" x2="208" y2="74.5" class="dg-line"/>
+<line x1="222" y1="65.5" x2="222" y2="74.5" class="dg-line"/>
+<line x1="236" y1="65.5" x2="236" y2="74.5" class="dg-line"/>
+<line x1="250" y1="63.5" x2="250" y2="76.5" class="dg-line"/>
+<line x1="264" y1="65.5" x2="264" y2="74.5" class="dg-line"/>
+<line x1="278" y1="65.5" x2="278" y2="74.5" class="dg-line"/>
+<line x1="292" y1="65.5" x2="292" y2="74.5" class="dg-line"/>
+<line x1="306" y1="65.5" x2="306" y2="74.5" class="dg-line"/>
+<line x1="334" y1="65.5" x2="334" y2="74.5" class="dg-line"/>
+<line x1="348" y1="65.5" x2="348" y2="74.5" class="dg-line"/>
+<line x1="362" y1="65.5" x2="362" y2="74.5" class="dg-line"/>
+<line x1="376" y1="65.5" x2="376" y2="74.5" class="dg-line"/>
+<line x1="390" y1="63.5" x2="390" y2="76.5" class="dg-line"/>
+<line x1="404" y1="65.5" x2="404" y2="74.5" class="dg-line"/>
+<line x1="418" y1="65.5" x2="418" y2="74.5" class="dg-line"/>
+<line x1="432" y1="65.5" x2="432" y2="74.5" class="dg-line"/>
+<line x1="446" y1="65.5" x2="446" y2="74.5" class="dg-line"/>
+<line x1="40" y1="62" x2="40" y2="78" class="dg-line"/>
+<text x="40" y="96" text-anchor="middle" class="dg-eq-sm">1</text>
+<line x1="180" y1="62" x2="180" y2="78" class="dg-line"/>
+<text x="180" y="96" text-anchor="middle" class="dg-eq-sm">2</text>
+<line x1="320" y1="62" x2="320" y2="78" class="dg-line"/>
+<text x="320" y="96" text-anchor="middle" class="dg-eq-sm">3</text>
+<line x1="460" y1="62" x2="460" y2="78" class="dg-line"/>
+<text x="460" y="96" text-anchor="middle" class="dg-eq-sm">4</text>
+<text x="26.5" y="116" class="dg-eq-sm muted">= </text><path d="M37.1 112.1 L38.8 111.2 L41.4 117.3 L44.9 104.1 L53.5 104.1" class="dg-rad muted"/><text x="46.2" y="116" class="dg-eq-sm muted">1</text>
+<text x="166.5" y="116" class="dg-eq-sm muted">= </text><path d="M177.1 112.1 L178.8 111.2 L181.4 117.3 L184.9 104.1 L193.5 104.1" class="dg-rad muted"/><text x="186.2" y="116" class="dg-eq-sm muted">4</text>
+<text x="306.5" y="116" class="dg-eq-sm muted">= </text><path d="M317.1 112.1 L318.8 111.2 L321.4 117.3 L324.9 104.1 L333.5 104.1" class="dg-rad muted"/><text x="326.2" y="116" class="dg-eq-sm muted">9</text>
+<text x="443.3" y="116" class="dg-eq-sm muted">= </text><path d="M453.9 112.1 L455.5 111.2 L458.1 117.3 L461.7 104.1 L476.7 104.1" class="dg-rad muted"/><text x="463" y="116" class="dg-eq-sm muted">16</text>
+
 </svg>
+<figcaption>Each small space is one tenth. Mark √7 with a dot.</figcaption>
 </figure>
+<!-- /viz:place-sqrt7 -->
         </li>
         <li>Can a number be both rational and irrational? Explain.<span class="al"></span><span class="al"></span></li>
         <li><em>(Stretch)</em> A square has an area of 50 cm<sup>2</sup>. What is the exact side length? What is the approximate side length in cm? Is the side length rational or irrational?<span class="al"></span><span class="al"></span></li>
@@ -576,35 +1138,50 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
     <p>In any right triangle, the square of the <span class="b b-lg"></span> (c) equals the sum of the squares of the two <span class="b b-lg"></span> (a and b).</p>
     <p style="font-size:13pt;text-align:center;margin:10px 0;"><strong>a<sup>2</sup> + b<sup>2</sup> = c<sup>2</sup></strong></p>
 <!-- viz:pythagoras-squares -->
-<figure class="viz">
-<!-- tikz: pythagoras-squares | 3-4-5 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 440 270" aria-label="A right triangle with legs 3 and 4 and hypotenuse 5. A square on the leg of 3 has area 9; a square on the leg of 4 has area 16; the square on the hypotenuse has area a blank, 25. 9 plus 16 equals 25." width="440" height="270">
-<polygon points="80,170 80,104 14,104 14,170" class="dg-fill-plant"/><polygon points="80,170 168,170 168,258 80,258" class="dg-fill-sun"/><polygon points="80,104 168,170 234,82 146,16" class="dg-fill-accent"/><polygon points="80,170 168,170 80,104" class="dg-boundary"/>
-<polyline points="88,170 88,162 80,162" class="dg-right-angle"/>
-<text x="47.0" y="142.0" text-anchor="middle" class="dg-math">9</text>
-<text x="124" y="219" text-anchor="middle" class="dg-math">16</text>
-<rect x="135" y="81" width="44" height="24" rx="3" class="dg-tag"/>
-<text x="74" y="157.0" text-anchor="end" class="dg-label-sm">a = 3</text>
-<text x="124" y="164" text-anchor="middle" class="dg-label-sm">b = 4</text>
-<text x="300" y="230" class="dg-math">9 + 16 = 25</text>
-<text x="300" y="254" class="dg-math-accent">a² + b² = c²</text>
+<figure class="viz tb">
+<!-- tikz: pythagoras-squares | 3-4-5 | gridded -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 286" aria-label="A right triangle with legs 3 and 4. A square built on the leg of 3 is a 3 by 3 grid with area 9; a square on the leg of 4 is a 4 by 4 grid with area 16; the square on the hypotenuse is a 5 by 5 grid with area a blank, 25. a squared plus b squared equals c squared." width="480" height="286">
+<polygon points="140,170 140,104 74,104 74,170" class="dg-fill-plant"/>
+<polygon points="140,170 228,170 228,258 140,258" class="dg-fill-sun"/>
+<polygon points="140,104 228,170 294,82 206,16" class="dg-fill-accent"/>
+<line x1="96" y1="104" x2="96" y2="170" class="dg-grid"/><line x1="74" y1="126" x2="140" y2="126" class="dg-grid"/>
+<line x1="118" y1="104" x2="118" y2="170" class="dg-grid"/><line x1="74" y1="148" x2="140" y2="148" class="dg-grid"/>
+<line x1="162" y1="170" x2="162" y2="258" class="dg-grid"/><line x1="140" y1="192" x2="228" y2="192" class="dg-grid"/>
+<line x1="184" y1="170" x2="184" y2="258" class="dg-grid"/><line x1="140" y1="214" x2="228" y2="214" class="dg-grid"/>
+<line x1="206" y1="170" x2="206" y2="258" class="dg-grid"/><line x1="140" y1="236" x2="228" y2="236" class="dg-grid"/>
+<line x1="157.6" y1="117.2" x2="223.6" y2="29.2" class="dg-grid"/><line x1="153.2" y1="86.4" x2="241.2" y2="152.4" class="dg-grid"/>
+<line x1="175.2" y1="130.4" x2="241.2" y2="42.4" class="dg-grid"/><line x1="166.4" y1="68.8" x2="254.4" y2="134.8" class="dg-grid"/>
+<line x1="192.8" y1="143.6" x2="258.8" y2="55.6" class="dg-grid"/><line x1="179.6" y1="51.2" x2="267.6" y2="117.2" class="dg-grid"/>
+<line x1="210.4" y1="156.8" x2="276.4" y2="68.8" class="dg-grid"/><line x1="192.8" y1="33.6" x2="280.8" y2="99.6" class="dg-grid"/>
+<polygon points="140,170 228,170 140,104" class="dg-boundary"/>
+<polygon points="140,170 140.0,161.3 148.7,161.3 148.7,170.0" class="dg-ang-w accent"/><polyline points="140.0,161.3 148.7,161.3 148.7,170.0" class="dg-right-angle"/>
+<text x="107" y="144" text-anchor="middle" class="dg-eq">9</text>
+<text x="184" y="221" text-anchor="middle" class="dg-eq">16</text>
+<rect x="195" y="81" width="44" height="24" rx="3" class="dg-tag"/>
+<text x="107" y="96" text-anchor="middle" class="dg-eq-sm"><tspan class="v">a</tspan> = 3</text>
+<text x="184" y="278" text-anchor="middle" class="dg-eq-sm"><tspan class="v">b</tspan> = 4</text>
+<text x="176" y="152" text-anchor="middle" class="dg-eq-sm"><tspan class="v">c</tspan></text>
+<text x="300" y="196" class="dg-eq accent"><tspan class="v">a</tspan><tspan class="sup" dy="-8">2</tspan><tspan dy="8"> + </tspan><tspan class="v">b</tspan><tspan class="sup" dy="-8">2</tspan><tspan dy="8"> = </tspan><tspan class="v">c</tspan><tspan class="sup" dy="-8">2</tspan></text>
+<text x="300" y="228" class="dg-eq">3<tspan class="sup" dy="-8">2</tspan><tspan dy="8"> + 4</tspan><tspan class="sup" dy="-8">2</tspan><tspan dy="8"> = 5</tspan><tspan class="sup" dy="-8">2</tspan></text>
 </svg>
-<figcaption>Build a square on each side of a 3-4-5 right triangle. The two smaller squares (9 + 16) have exactly the same total area as the big square on the hypotenuse (25).</figcaption>
+<figcaption>Build a square on each side of a 3-4-5 right triangle and count the unit squares. The two squares on the legs together hold exactly as many as the square on the hypotenuse.</figcaption>
 </figure>
 <!-- /viz:pythagoras-squares -->
 
     <p>Label the parts of this triangle:</p>
-    <figure style="margin:12px 0;overflow-x:auto;">
-    <!-- tikz: right-triangle | legs=a,b | hypotenuse=c | right-angle-mark=true | viewBox=180x165 -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 165" width="180" height="165" role="img" aria-label="Right triangle with legs a b and hypotenuse c">
-<polygon class="dg-boundary" points="25,135 150,135 25,25"/>
-<polyline class="dg-right-angle" points="35,135 35,125 25,125"/>
-<text class="dg-label-accent" x="9" y="84" text-anchor="middle"  font-style="italic">a</text>
-<text class="dg-label-accent" x="88" y="153" text-anchor="middle"  font-style="italic">b</text>
-<text class="dg-label-accent" x="102" y="80" text-anchor="middle"  font-style="italic">c</text>
+<!-- viz:label-triangle -->
+<figure class="viz tb">
+<!-- tikz: right-triangle | 3-4-5 shape | right angle at top | blank labels -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 330 212" aria-label="A right triangle turned so the right angle is at the top and the longest side lies along the bottom. Each side has a blank label: the two sides that meet at the right angle are leg a and leg b, and the side opposite the right angle is the hypotenuse c." width="330" height="212">
+<polygon points="40,170 290,170 130,50" class="dg-boundary"/>
+<polygon points="130,50 140.9,58.2 132.7,69.1 121.8,60.9" class="dg-ang-w accent"/><polyline points="140.9,58.2 132.7,69.1 121.8,60.9" class="dg-right-angle"/>
+<rect x="8" y="70" width="76" height="22" rx="3" class="dg-tag"/>
+<rect x="214" y="64" width="76" height="22" rx="3" class="dg-tag"/>
+<rect x="105" y="182" width="120" height="22" rx="3" class="dg-tag"/>
 </svg>
-    <figcaption style="font-size:9pt;color:#544f47;margin-top:4px;">Label the hypotenuse (c) and both legs (a, b)</figcaption>
+<figcaption>Write leg or hypotenuse on each side, with its letter: a and b for the legs, c for the hypotenuse.</figcaption>
 </figure>
+<!-- /viz:label-triangle -->
 
     <p>The hypotenuse is always the side <span class="b b-lg"></span> the right angle and is always the <span class="b b-lg"></span> side.</p>
 
@@ -657,20 +1234,30 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
     A rectangular section of land near Leduc is 9 km × 40 km. How long is the diagonal pipeline crossing the rectangle?</p>
     <p>c = √(9<sup>2</sup> + 40<sup>2</sup>) = √(<span class="b b-sm"></span> + <span class="b b-sm"></span>) = √<span class="b b-sm"></span> = <span class="b b-sm"></span> km</p>
 <!-- viz:pipeline-diagonal -->
-<figure class="viz">
-<!-- tikz: rectangle-diagonal | 9x40 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 150" aria-label="A rectangle 40 kilometres long and 9 kilometres wide with a diagonal pipeline across it. The pipeline is the hypotenuse of a right triangle with legs 9 and 40, so it is a blank, 41, kilometres long." width="480" height="150">
-<rect x="40" y="30" width="360" height="81" class="dg-fill-plant"/>
-<line x1="40" y1="111" x2="400" y2="30" class="dg-arrow hot"/>
-<polyline points="392,111 392,103 400,103" class="dg-right-angle"/>
-<text x="220" y="130" text-anchor="middle" class="dg-label">40 km</text>
-<text x="408" y="76" class="dg-label">9 km</text>
-<text x="200" y="64" text-anchor="middle" class="dg-label-hot">pipeline</text>
-<text x="300" y="146" text-anchor="end" class="dg-label">√(81 + 1600) = √1681 =</text>
-<rect x="306" y="132" width="40" height="20" rx="3" class="dg-tag"/>
-<text x="352" y="146" class="dg-label">km</text>
+<figure class="viz tb">
+<!-- tikz: rectangle-diagonal | 9x40 | to scale 9 px per km -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 186" aria-label="A canola field 40 kilometres long and 9 kilometres wide, drawn to scale, with a pipeline straight across it from corner to corner. The pipeline is the hypotenuse c of a right triangle with legs 9 and 40; its length is a blank, 41, kilometres." width="480" height="186">
+<rect x="40" y="30" width="360" height="81" class="dg-canola"/>
+<line x1="40" y1="39" x2="400" y2="39" class="dg-crop"/>
+<line x1="40" y1="48" x2="400" y2="48" class="dg-crop"/>
+<line x1="40" y1="57" x2="400" y2="57" class="dg-crop"/>
+<line x1="40" y1="66" x2="400" y2="66" class="dg-crop"/>
+<line x1="40" y1="75" x2="400" y2="75" class="dg-crop"/>
+<line x1="40" y1="84" x2="400" y2="84" class="dg-crop"/>
+<line x1="40" y1="93" x2="400" y2="93" class="dg-crop"/>
+<line x1="40" y1="102" x2="400" y2="102" class="dg-crop"/>
+<line x1="40" y1="111" x2="400" y2="30" class="dg-member"/><line x1="40" y1="110" x2="400" y2="29" class="dg-member-hi"/>
+<rect x="37" y="93" width="6" height="16" rx="1" class="dg-c-orange"/><rect x="37" y="93" width="6" height="5" class="dg-c-white"/>
+<rect x="397" y="12" width="6" height="16" rx="1" class="dg-c-orange"/><rect x="397" y="12" width="6" height="5" class="dg-c-white"/>
+<polygon points="400,111 390.1,111.0 390.1,101.1 400.0,101.1" class="dg-ang-w accent"/><polyline points="390.1,111.0 390.1,101.1 400.0,101.1" class="dg-right-angle"/>
+<line x1="44.9" y1="126.0" x2="395.1" y2="126.0" class="dg-arrow plain thin"/><polygon points="40.0,126.0 46.0,122.4 46.0,129.6" class="dg-head plain"/><polygon points="400.0,126.0 394.0,129.6 394.0,122.4" class="dg-head plain"/><text x="220" y="146" text-anchor="middle" class="dg-label">40 km</text>
+<line x1="416.0" y1="106.1" x2="416.0" y2="34.9" class="dg-arrow plain thin"/><polygon points="416.0,111.0 412.4,105.0 419.6,105.0" class="dg-head plain"/><polygon points="416.0,30.0 419.6,36.0 412.4,36.0" class="dg-head plain"/><text x="424" y="76" class="dg-label">9 km</text>
+<text x="190" y="66" text-anchor="middle" transform="rotate(-12.7 190 66)" class="dg-label">pipeline</text>
+<text x="232" y="176" text-anchor="end" class="dg-label">pipeline length</text>
+<text x="240" y="176" class="dg-eq"><tspan class="v">c</tspan> = </text>
+<rect x="270.7" y="160" width="40" height="22" rx="3" class="dg-tag"/><text x="316.7" y="176" class="dg-label">km</text>
 </svg>
-<figcaption>The diagonal pipeline splits the 9 km × 40 km rectangle into two right triangles. The pipeline is the hypotenuse.</figcaption>
+<figcaption>The field drawn to scale. The diagonal pipeline splits the 9 km × 40 km rectangle into two right triangles, and the pipeline is the hypotenuse of each.</figcaption>
 </figure>
 <!-- /viz:pipeline-diagonal -->
 
@@ -710,17 +1297,39 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
       <p>√(<span class="frac"><span class="num">9</span><span class="frac-slash">/</span><span class="den">16</span></span>) = <span class="frac"><span class="num">√9</span><span class="frac-slash">/</span><span class="den">√16</span></span> = <span class="b b-sm"></span>/<span class="b b-sm"></span></p>
     </div>
 <!-- viz:sqrt-fraction -->
-<figure class="viz">
-<!-- tikz: unit-square-fraction | 9/16 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 440 180" aria-label="A unit square divided into a 4 by 4 grid. A 3 by 3 block is shaded: area 9 over 16. The shaded square's side is 3 quarters of the unit side, so the square root of 9 over 16 is a blank, 3 over 4." width="440" height="180">
-<rect x="60" y="20" width="34" height="34" class="dg-fill-accent"/><rect x="60" y="54" width="34" height="34" class="dg-fill-accent"/><rect x="60" y="88" width="34" height="34" class="dg-fill-accent"/><rect x="60" y="122" width="34" height="34" class="dg-boundary"/><rect x="94" y="20" width="34" height="34" class="dg-fill-accent"/><rect x="94" y="54" width="34" height="34" class="dg-fill-accent"/><rect x="94" y="88" width="34" height="34" class="dg-fill-accent"/><rect x="94" y="122" width="34" height="34" class="dg-boundary"/><rect x="128" y="20" width="34" height="34" class="dg-fill-accent"/><rect x="128" y="54" width="34" height="34" class="dg-fill-accent"/><rect x="128" y="88" width="34" height="34" class="dg-fill-accent"/><rect x="128" y="122" width="34" height="34" class="dg-boundary"/><rect x="162" y="20" width="34" height="34" class="dg-boundary"/><rect x="162" y="54" width="34" height="34" class="dg-boundary"/><rect x="162" y="88" width="34" height="34" class="dg-boundary"/><rect x="162" y="122" width="34" height="34" class="dg-boundary"/>
-<text x="111" y="14" text-anchor="middle" class="dg-label-accent">3/4</text>
-<text x="196" y="174" text-anchor="middle" class="dg-label-sm">whole side = 1</text>
-<text x="240" y="70" class="dg-math">shaded area = 9/16</text>
-<text x="240" y="110" class="dg-math">√(9/16) =</text>
-<rect x="330" y="92" width="44" height="24" rx="3" class="dg-tag"/>
+<figure class="viz tb">
+<!-- tikz: unit-square-fraction | 9/16 | 4x4 grid -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 214" aria-label="A unit square divided into a 4 by 4 grid of 16 small squares. A 3 by 3 block of 9 small squares is shaded, so the shaded area is 9 sixteenths. The side of the shaded square is a blank, 3 quarters of the whole side. So the square root of 9 sixteenths is 3 quarters." width="480" height="214">
+<rect x="56" y="46" width="34" height="34" class="dg-cell on"/>
+<rect x="90" y="46" width="34" height="34" class="dg-cell on"/>
+<rect x="124" y="46" width="34" height="34" class="dg-cell on"/>
+<rect x="158" y="46" width="34" height="34" class="dg-cell"/>
+<rect x="56" y="80" width="34" height="34" class="dg-cell on"/>
+<rect x="90" y="80" width="34" height="34" class="dg-cell on"/>
+<rect x="124" y="80" width="34" height="34" class="dg-cell on"/>
+<rect x="158" y="80" width="34" height="34" class="dg-cell"/>
+<rect x="56" y="114" width="34" height="34" class="dg-cell on"/>
+<rect x="90" y="114" width="34" height="34" class="dg-cell on"/>
+<rect x="124" y="114" width="34" height="34" class="dg-cell on"/>
+<rect x="158" y="114" width="34" height="34" class="dg-cell"/>
+<rect x="56" y="148" width="34" height="34" class="dg-cell"/>
+<rect x="90" y="148" width="34" height="34" class="dg-cell"/>
+<rect x="124" y="148" width="34" height="34" class="dg-cell"/>
+<rect x="158" y="148" width="34" height="34" class="dg-cell"/>
+<rect x="56" y="46" width="136" height="136" class="dg-outline"/>
+<path d="M56 40 q0 -7 7 -7 h40 q4 0 4 -6 q0 6 4 6 h40 q7 0 7 7" class="dg-brace"/>
+<rect x="85" y="2" width="44" height="24" rx="3" class="dg-tag"/>
+<line x1="42.0" y1="177.1" x2="42.0" y2="50.9" class="dg-arrow plain thin"/><polygon points="42.0,182.0 38.4,176.0 45.6,176.0" class="dg-head plain"/><polygon points="42.0,46.0 45.6,52.0 38.4,52.0" class="dg-head plain"/>
+<text x="34" y="119" text-anchor="end" class="dg-eq-sm">1</text>
+<text x="124" y="204" text-anchor="middle" class="dg-label-sm">whole square: side 1, area 1</text>
+<text x="244" y="84" class="dg-label">shaded area =</text>
+<text x="358" y="73.4" text-anchor="middle" class="dg-eq">9</text><line x1="345.5" y1="77.9" x2="370.5" y2="77.9" class="dg-fbar"/><text x="358" y="95" text-anchor="middle" class="dg-eq">16</text>
+<text x="244" y="148" class="dg-label">side =</text>
+<path d="M292 142.3 L294.5 141 L298.3 164 L303.4 118 L328.4 118" class="dg-rad"/><text x="316.3" y="137.4" text-anchor="middle" class="dg-eq">9</text><line x1="303.8" y1="141.9" x2="328.8" y2="141.9" class="dg-fbar"/><text x="316.3" y="159" text-anchor="middle" class="dg-eq">16</text>
+<text x="335.3" y="148" class="dg-eq">=</text>
+<rect x="351.3" y="130" width="44" height="24" rx="3" class="dg-tag"/>
 </svg>
-<figcaption>Shade 9 of 16 small squares in a unit square: a 3-by-4ths-by-3-by-4ths square. Its area is 9/16, so its side is √(9/16) = 3/4.</figcaption>
+<figcaption>Nine of the sixteen small squares are shaded as one square block. How long is the block's side, as a fraction of the whole side?</figcaption>
 </figure>
 <!-- /viz:sqrt-fraction -->
 
@@ -757,24 +1366,34 @@ svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stro
       <p>What DOES work: √(a × b) = √a × √b (roots distribute over multiplication, not addition).</p>
     </div>
 <!-- viz:sqrt-sum-walk -->
-<figure class="viz">
-<!-- tikz: path-vs-diagonal | 3,4,5 -->
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 170" aria-label="Walking 3 units then 4 units along the legs of a right triangle covers 3 plus 4, which is 7, the same as root 9 plus root 16. For the straight diagonal, square the legs first: 3 squared plus 4 squared is 9 plus 16, which is 25. Then the square root of 25 is a blank, 5." width="480" height="170">
-<line x1="60" y1="150" x2="180" y2="150" class="dg-arrow plant"/>
-<line x1="180" y1="150" x2="180" y2="30" class="dg-arrow plant"/>
-<line x1="60" y1="150" x2="180" y2="30" class="dg-arrow hot"/>
-<polyline points="172,150 172,142 180,142" class="dg-right-angle"/>
-<text x="120" y="166" text-anchor="middle" class="dg-label-plant">3</text>
-<text x="188" y="94" class="dg-label-plant">4</text>
-<text x="108" y="84" text-anchor="end" class="dg-label-hot">?</text>
-<text x="230" y="40" class="dg-math">√9 + √16 = 3 + 4 = 7</text>
-<text x="230" y="58" class="dg-label-plant">walk along the two legs</text>
-<text x="230" y="98" class="dg-math">3² + 4² = 9 + 16 = 25</text>
-<text x="230" y="130" class="dg-math">√(9 + 16) = √25 =</text>
-<rect x="380" y="112" width="36" height="24" rx="3" class="dg-tag"/>
-<text x="230" y="150" class="dg-label-hot">the straight shortcut</text>
+<figure class="viz tb">
+<!-- tikz: path-vs-diagonal | 3,4,5 | grid paper -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 490 200" aria-label="On grid paper, a walk of 3 units east then 4 units north, and the straight shortcut from start to finish. Walking the legs: root 9 plus root 16 is 3 plus 4, which is 7. The shortcut: the square root of 9 plus 16 is the square root of 25, which is a blank, 5." width="490" height="200">
+<rect x="36" y="16" width="160" height="168" class="dg-plot"/>
+<line x1="68" y1="16" x2="68" y2="184" class="dg-grid-min"/>
+<line x1="100" y1="16" x2="100" y2="184" class="dg-grid-min"/>
+<line x1="132" y1="16" x2="132" y2="184" class="dg-grid-min"/>
+<line x1="164" y1="16" x2="164" y2="184" class="dg-grid-min"/>
+<line x1="36" y1="160" x2="196" y2="160" class="dg-grid-min"/>
+<line x1="36" y1="128" x2="196" y2="128" class="dg-grid-min"/>
+<line x1="36" y1="96" x2="196" y2="96" class="dg-grid-min"/>
+<line x1="36" y1="64" x2="196" y2="64" class="dg-grid-min"/>
+<line x1="36" y1="32" x2="196" y2="32" class="dg-grid-min"/>
+<line x1="68" y1="160" x2="157.7" y2="160.0" class="dg-arrow plant"/><polygon points="164.0,160.0 156.3,164.6 156.3,155.4" class="dg-head plant"/>
+<line x1="164" y1="160" x2="164.0" y2="38.3" class="dg-arrow plant"/><polygon points="164.0,32.0 168.6,39.7 159.4,39.7" class="dg-head plant"/>
+<line x1="68" y1="160" x2="160.2" y2="37.0" class="dg-arrow hot"/><polygon points="164.0,32.0 163.1,41.0 155.7,35.4" class="dg-head hot"/>
+<polygon points="164,160 155.3,160.0 155.3,151.3 164.0,151.3" class="dg-ang-w plant"/><polyline points="155.3,160.0 155.3,151.3 164.0,151.3" class="dg-right-angle"/>
+<circle cx="68" cy="160" r="4.5" class="dg-point"/>
+<text x="116" y="178" text-anchor="middle" class="dg-eq-sm plant">3</text>
+<text x="174" y="101" class="dg-eq-sm plant">4</text>
+<text x="104" y="90" text-anchor="end" class="dg-eq-sm hot">?</text>
+<path d="M222 46.3 L224.5 45 L228.3 53.9 L233.4 35.3 L245.9 35.3" class="dg-rad"/><text x="235.3" y="52" class="dg-eq">9</text><text x="245.9" y="52" class="dg-eq"> + </text><path d="M266.2 46.3 L268.6 45 L272.4 53.9 L277.6 35.3 L299.6 35.3" class="dg-rad"/><text x="279.5" y="52" class="dg-eq">16</text><text x="299.6" y="52" class="dg-eq"> = 3 + 4 = 7</text>
+<text x="222" y="76" class="dg-label-plant">walk along the two legs</text>
+<path d="M222 128.3 L224.5 127 L228.3 135.9 L233.4 117.3 L285.2 117.3" class="dg-rad"/><text x="235.3" y="134" class="dg-eq">9 + 16</text><text x="285.2" y="134" class="dg-eq"> = </text><path d="M305.4 128.3 L307.8 127 L311.6 135.9 L316.8 117.3 L338.8 117.3" class="dg-rad"/><text x="318.7" y="134" class="dg-eq">25</text><text x="338.8" y="134" class="dg-eq"> =</text>
+<rect x="360.3" y="116" width="36" height="24" rx="3" class="dg-tag"/>
+<text x="222" y="160" class="dg-label-hot">the straight shortcut</text>
 </svg>
-<figcaption>√9 + √16 is like walking 3 east then 4 north: 7 in total. The straight-line shortcut squares the legs first, adds them, then takes one root: only 5. The radical of a sum is not the sum of the radicals.</figcaption>
+<figcaption>√9 + √16 is like walking 3 east and then 4 north. The straight shortcut is shorter: the radical covers the whole sum 9 + 16, so add first, then take one square root.</figcaption>
 </figure>
 <!-- /viz:sqrt-sum-walk -->
 

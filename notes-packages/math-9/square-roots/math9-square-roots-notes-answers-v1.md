@@ -123,7 +123,7 @@ Grade 9 Mathematics · Teacher Copy — Not for Students
 
 | Blank | Answer |
 |---|---|
-| Where does √9 go? | **Integer** (√9 = 3, which is an integer → also rational, real) |
+| Where does √9 go? | **Natural numbers** (√9 = 3, so it is also a whole number, an integer, rational and real) |
 | Where does √10 go? | **Irrational** (real, but not rational or integer) |
 
 ### Retrieval Check — Section 2
@@ -132,7 +132,7 @@ Grade 9 Mathematics · Teacher Copy — Not for Students
 |---|---|
 | 1. √49 rational or irrational? √50? | √49 = 7 → **rational** (integer). √50 is irrational (50 not a perfect square; decimal never terminates/repeats). |
 | 2. Estimate √30 | 5² = 25 < 30 < 36 = 6². Distance: 30−25=5 vs 36−30=6. Closer to 25. √30 ≈ **5.5** |
-| 3. Place √7 on number line | 2² = 4 < 7 < 9 = 3², so 2 < √7 < 3. Closer to 3 (distance 2) than 4 (distance 3). Plot √7 ≈ **2.6** |
+| 3. Place √7 on number line | 2² = 4 < 7 < 9 = 3², so 2 < √7 < 3. 7 is closer to 9 (distance 2) than to 4 (distance 3), so √7 is closer to 3. Plot √7 ≈ **2.6** |
 | 4. Can a number be both rational and irrational? | **No** — they are mutually exclusive categories by definition. |
 | 5. (Stretch) Square, area 50 cm² | s = **√50 = 5√2 cm** (exact). Approx: **≈ 7.1 cm**. **Irrational** — 50 is not a perfect square. |
 
