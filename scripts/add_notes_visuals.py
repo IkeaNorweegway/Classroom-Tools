@@ -32,6 +32,8 @@ If the anchor is not in the answer key, the figure goes right after that section
 
 Re-running is safe: earlier inserts (between <!-- viz:... --> markers) are removed first.
 
+Workbooks: see WB_DOC below (fragments in worksheets/_visuals/sci7-<unit>-workbook/, placed with `q: N`).
+
 Usage:
     python3 scripts/add_notes_visuals.py                 all units
     python3 scripts/add_notes_visuals.py sci7-heat-temperature math9-polynomials
@@ -75,6 +77,26 @@ for _g, _units in [
     for _u in _units:
         UNITS[f"soc{_g}-{_u}"] = (PM / f"soc{_g}-{_u}-notes-v1.html", PM / f"soc{_g}-{_u}-notes-answers-v1.html")
 
+# Workbooks: fragments live in worksheets/_visuals/<unit>/ and are placed by question number (see WB_DOC below)
+WB_VIS = ROOT / "worksheets" / "_visuals"
+for _u in ["heat-temperature", "interactions-ecosystems", "planet-earth", "plants-food-fibre", "structures-forces"]:
+    UNITS[f"sci7-{_u}-workbook"] = (PM / f"sci7-{_u}-workbook-v1.html", PM / f"sci7-{_u}-workbook-answers-v1.html")
+WB_DOC = """Workbook fragments (units ending in -workbook) use `q: 7` instead of `section:`. The anchor is searched
+only inside that question's card (from its <span class="badge badge-num">Q7</span> to the next one). After
+inserting, every figure on the page, old hand-made ones included, is numbered in page order in the page's
+own style ("Fig. N —" or "Figure N —"), and references such as "Fig. 2" in the text follow the same map,
+so re-runs and --remove keep the numbers right. Cards that gain a figure get a "Diagram" badge. Inside a
+fragment, <keyonly>...</keyonly> is drawn in the answer key only and <studentonly>...</studentonly> only on the student page. The key pages are rebuilt from the
+student pages by match_keys.py sci7-workbooks, so run this script again after that."""
+
+
+def is_wb(unit):
+    return unit.endswith("-workbook")
+
+
+def vis_dir(unit):
+    return (WB_VIS if is_wb(unit) else VIS) / unit
+
 CSS_START = "/* ── viz-kit: teaching visuals (scripts/add_notes_visuals.py) ── */"
 CSS_END = "/* ── /viz-kit ── */"
 CSS = CSS_START + """
@@ -102,8 +124,6 @@ svg .dg-label-accent{ font: 600 11px/1.3 var(--font-body, system-ui, sans-serif)
 svg .dg-grid, svg .dg-tag, svg .dg-arrow, svg .dg-fill-accent, svg .dg-fill-hot, svg .dg-fill-cold,
 svg .dg-fill-plant, svg .dg-fill-water, svg .dg-fill-earth, svg .dg-fill-sun, svg .dg-fill-soft, svg .dg-outline { vector-effect: non-scaling-stroke; }
 svg .dg-grid        { stroke: var(--dg-muted, #6b665d); stroke-opacity: .45; fill: none; stroke-width: 1px; }
-svg .dg-line.dg-dash-4 { stroke-dasharray: 4 4; }   /* dashed line in the line colour (roots-irrationals) */
-svg .dg-accent.dg-dash-3 { stroke-dasharray: 3 3; }   /* dashed accent line (roots-irrationals) */
 svg .dg-outline     { stroke: var(--dg-stroke, #3f3b35); fill: none; stroke-width: 1.5px; }
 svg .dg-fill-accent { fill: var(--dg-accent); fill-opacity: .14; stroke: var(--dg-accent); stroke-width: 1.5px; }
 svg .dg-fill-hot    { fill: var(--viz-hot);   fill-opacity: .16; stroke: var(--viz-hot);   stroke-width: 1.5px; }
@@ -622,8 +642,15 @@ def strip_css(doc):
     return TB_LEGACY_RE.sub("\n", doc)
 
 
-def kit_css(unit, tb):
-    return CSS + ("\n" + TB_CSS_START + tb_css(unit) + TB_CSS_END if tb else "")
+def kit_css(unit, tb, wb=False):
+    """wb: workbook rules go last inside the textbook markers, so they win and a re-run removes them."""
+    return CSS + ("\n" + TB_CSS_START + tb_css(unit) + ("\n" + WB_CSS + "\n" if wb else "") + TB_CSS_END if tb else "")
+
+
+def read_page(path):
+    with open(path, encoding="utf-8", newline="") as f:  # keep any \r\n exactly as it is
+        return f.read()
+
 
 
 def parse_fragment(path):
@@ -636,9 +663,11 @@ def parse_fragment(path):
         if line.strip():
             k, _, v = line.partition(":")
             meta[k.strip()] = v.strip()
-    for key in ("section", "anchor", "caption"):
+    for key in ("anchor", "caption"):
         if key not in meta:
             sys.exit(f"{path}: header needs '{key}'")
+    if "section" not in meta and "q" not in meta:
+        sys.exit(f"{path}: header needs 'section' (notes) or 'q' (workbook)")
     meta["id"] = path.stem.split("-", 1)[1] if re.match(r"\d+-", path.stem) else path.stem
     meta["svg"] = m.group(2).strip()
     meta["lib"] = meta["svg"].startswith("@viz")
@@ -742,6 +771,7 @@ def expand(svg, answer_key):
 
     # <keyonly>...</keyonly>: drawn only in the answer key (a worked example, tick marks that give an answer away)
     svg = re.sub(r"<keyonly>(.*?)</keyonly>", lambda m: m.group(1) if answer_key else "", svg, flags=re.S)
+    svg = re.sub(r"<studentonly>(.*?)</studentonly>", lambda m: "" if answer_key else m.group(1), svg, flags=re.S)
     svg = re.sub(r"<angle\s+([^>]*?)/>", angle, svg)
     svg = re.sub(r"<ticks\s+([^>]*?)/>", ticks, svg)
     svg = re.sub(r"<mapbase\s+([^>]*?)/>", mapbase, svg)
@@ -795,11 +825,25 @@ def find_section(doc, section, path):
     sys.exit(f"{path.name}: no <h2> containing '{section}'")
 
 
+BADGE_NUM = r'<span class="badge badge-num">Q?{}</span>'
+
+
+def find_card(doc, q, path):
+    m = re.search(BADGE_NUM.format(int(q)), doc)
+    if not m:
+        sys.exit(f"{path.name}: no question badge for Q{q}")
+    nxt = re.search(BADGE_NUM.format(r"\d+"), doc[m.end():])
+    return m.start(), (m.end() + nxt.start()) if nxt else len(doc)
+
+
 def insert_point(doc, meta, anchor, where):
-    sec = find_section(doc, meta["section"], meta["path"])
-    nxt = re.compile(r"<h2\b").search(doc, sec.end())
-    limit = nxt.start() if nxt else len(doc)
-    i = doc.find(anchor, sec.start(), limit)
+    if "q" in meta:
+        start, limit = find_card(doc, meta["q"], meta["path"])
+    else:
+        sec = find_section(doc, meta["section"], meta["path"])
+        nxt = re.compile(r"<h2\b").search(doc, sec.end())
+        start, limit = sec.start(), (nxt.start() if nxt else len(doc))
+    i = doc.find(anchor, start, limit)
     if i < 0:
         return None
     if where == "before":
@@ -815,27 +859,75 @@ def insert_point(doc, meta, anchor, where):
 
 
 def fallback_point(doc, meta):
+    if "q" in meta:
+        sys.exit(f"{meta['file'].name}: anchor not found in Q{meta['q']} of {meta['path'].name}")
     sec = find_section(doc, meta["section"], meta["path"])
     end = doc.find("\n", sec.end())
     return end + 1
 
 
+WB_CSS = ".viz.tb figcaption::before { content: none; }\n.q-card .viz.tb { margin: .9rem auto 1rem; }"
+WB_BADGE = '<span class="badge badge-vis" data-viz>Diagram</span>'
+CAP_NUM = re.compile(r'(<(?:p|div) class="svg-caption">|<figcaption>)(\s*)(Fig\.|Figure) (\d+)')
+REF_NUM = re.compile(r'\b(Fig\.|Figure)(\s|&nbsp;)(\d+)\b')
+
+
+def wb_caption_word(doc):
+    return "Figure" if re.search(r'class="svg-caption">\s*Figure \d', doc) else "Fig."
+
+
+def wb_number(doc):
+    """Number every figure caption in page order and move text references with them."""
+    caps = list(CAP_NUM.finditer(doc))
+    new_at, remap = {}, {}
+    for n, m in enumerate(caps, 1):
+        new_at[m.start(4)] = n
+        old = int(m.group(4))
+        if old:
+            remap.setdefault(old, n)
+    def ref(m):
+        if m.start(3) in new_at:
+            return f"{m.group(1)}{m.group(2)}{new_at[m.start(3)]}"
+        return f"{m.group(1)}{m.group(2)}{remap.get(int(m.group(3)), m.group(3))}"
+    return REF_NUM.sub(ref, doc)
+
+
+def wb_badges(doc, frags):
+    for q in sorted({int(f["q"]) for f in frags}, reverse=True):
+        m = re.search(BADGE_NUM.format(q), doc)
+        start, end = find_card(doc, q, Path("page"))
+        head_end = doc.find("</div>", m.end())
+        if 'badge-vis' in doc[m.end():head_end]:
+            continue
+        star = re.search(r'<span class="badge badge-(?:core|ext)">.*?</span>', doc[m.end():head_end], re.S)
+        at = m.end() + (star.end() if star else 0)
+        doc = doc[:at] + "\n    " + WB_BADGE + doc[at:]
+    return doc
+
+
 def apply(unit, frags, notes_path, ak_path, remove=False):
     report = []
+    wb = is_wb(unit)
     for path, answer_key in ((notes_path, False), (ak_path, True)):
-        doc = path.read_text(encoding="utf-8")
+        doc = read_page(path)
         doc = VIZ_RE.sub("", doc)
         doc = strip_css(doc)  # the block is inserted with its own newlines; put nothing back
         doc = DEFS_RE.sub("", doc)
+        if wb:
+            doc = re.sub(r"\n[ \t]*" + re.escape(WB_BADGE), "", doc)
         tb = bool(TB_UNIT.match(unit))
         if not remove and frags:
-            doc = doc.replace("</style>", "\n" + kit_css(unit, tb) + "\n</style>", 1)
+            doc = doc.replace("</style>", "\n" + kit_css(unit, tb, wb) + "\n</style>", 1)
             if tb:
                 doc = re.sub(r"(<body[^>]*>)", lambda m: m.group(1) + "\n" + TB_DEFS, doc, count=1)
             # insert bottom-up so earlier offsets stay valid; ties keep fragment order
             placed = []
+            word = wb_caption_word(doc) if wb else None
             for n, meta in enumerate(frags):
                 meta = dict(meta, path=path)
+                if wb:
+                    meta["caption"] = f"{word} 0 — {meta['caption']}"
+                    meta.setdefault("section", f"Q{meta['q']}")
                 anchor = meta.get("ak_anchor", meta["anchor"]) if answer_key else meta["anchor"]
                 pos = insert_point(doc, meta, anchor, meta.get("where", "after"))
                 mode = "anchor"
@@ -850,6 +942,10 @@ def apply(unit, frags, notes_path, ak_path, remove=False):
                 if mode == "top of section":
                     block = block.replace(f'<figure class="{"viz tb" if tb else "viz"}">', f'<figure class="{"viz tb" if tb else "viz"}">\n<p class="viz-ak-note">Diagram — answers</p>', 1)
                 doc = doc[:pos] + block + doc[pos:]
+            if wb:
+                doc = wb_badges(doc, frags)
+        if wb:
+            doc = wb_number(doc)
         path.write_text(doc, encoding="utf-8")
     return report
 
@@ -861,10 +957,10 @@ def restyle(unit, frags, paths):
     tb = bool(TB_UNIT.match(unit))
     report = []
     for path, answer_key in zip(paths, (False, True)):
-        doc = path.read_text(encoding="utf-8")
+        doc = read_page(path)
         doc = strip_css(doc)
         doc = DEFS_RE.sub("", doc)
-        doc = doc.replace("</style>", "\n" + kit_css(unit, tb) + "\n</style>", 1)
+        doc = doc.replace("</style>", "\n" + kit_css(unit, tb, is_wb(unit)) + "\n</style>", 1)
         if tb:
             doc = re.sub(r"(<body[^>]*>)", lambda m: m.group(1) + "\n" + TB_DEFS, doc, count=1)
         for meta in frags:
@@ -896,7 +992,7 @@ def preview(unit, frags, notes_path, outdir):
     tb = bool(TB_UNIT.match(unit))
     body = [TB_DEFS if tb else "", f"<h1 style='font-size:1.2rem'>{unit}</h1>"]
     for meta in frags:
-        body.append(f"<h3 style='margin-top:2rem'>{meta['file'].name} · {html.escape(meta['section'])}</h3>")
+        body.append(f"<h3 style='margin-top:2rem'>{meta['file'].name} · {html.escape(meta.get('section') or 'Q' + meta.get('q', ''))}</h3>")
         body.append("<div style='display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap'>")
         for ak in (False, True):
             body.append(f"<div style='flex:1;min-width:380px;border:1px dashed #ccc;padding:.5rem'>{figure(meta, ak, tb)}</div>")
@@ -921,7 +1017,7 @@ def main(argv):
         if unit not in UNITS:
             sys.exit(f"unknown unit {unit}; choose from {', '.join(UNITS)}")
         notes_path, ak_path = UNITS[unit]
-        frag_dir = VIS / unit
+        frag_dir = vis_dir(unit)
         frags = [parse_fragment(p) for p in sorted(frag_dir.glob("*.html"))] if frag_dir.exists() else []
         if not frags and not remove:
             continue

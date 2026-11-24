@@ -212,6 +212,324 @@
     .section-heading, .q-header { break-after: avoid; page-break-after: avoid; }
     p { orphans: 3; widows: 3; }
   }
+
+/* ── viz-kit: teaching visuals (scripts/add_notes_visuals.py) ── */
+:root { --dg-accent: var(--accent, var(--unit, #1d4ed8)); --viz-hot: #c2410c; --viz-cold: #1d4ed8;
+        --viz-plant: #15803d; --viz-water: #0369a1; --viz-earth: #92400e; --viz-sun: #ca8a04; --viz-key: #15803d; }
+.viz { margin: 1rem auto 1.25rem; text-align: center; break-inside: avoid; page-break-inside: avoid; }
+.viz svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.viz-row { display: flex; justify-content: center; align-items: flex-start; gap: 1.25rem; flex-wrap: wrap; }
+.viz-row svg { margin: 0; }
+svg .dg-shade       { fill: var(--dg-accent); fill-opacity: .42; stroke: none; }
+.viz figcaption { font-size: 0.8rem; line-height: 1.4; color: #544f47; margin: 0.4rem auto 0; max-width: 40rem; font-style: italic; }
+svg .dg-boundary, svg .dg-line, svg .dg-accent, svg .dg-dashed, svg .dg-right-angle, svg .dg-construction { vector-effect: non-scaling-stroke; }
+svg .dg-boundary    { stroke: var(--dg-stroke, #3f3b35); fill: var(--dg-fill, #faf9f6); stroke-width: var(--dg-sw, 1.5px); }
+svg .dg-line        { stroke: var(--dg-stroke, #3f3b35); fill: none; stroke-width: var(--dg-sw, 1.5px); }
+svg .dg-accent      { stroke: var(--dg-accent); fill: none; stroke-width: var(--dg-sw-bold, 2.5px); }
+svg .dg-dashed      { stroke: var(--dg-secondary, #544f47); fill: none; stroke-width: var(--dg-sw, 1.5px); stroke-dasharray: 5 3; }
+svg .dg-right-angle { stroke: var(--dg-stroke, #3f3b35); fill: none; stroke-width: var(--dg-sw-thin, 1px); }
+svg .dg-construction{ stroke: var(--dg-muted, #6b665d); fill: none; stroke-width: var(--dg-sw-thin, 1px); stroke-dasharray: 2 3; }
+svg .dg-point       { fill: var(--dg-stroke, #3f3b35); stroke: none; }
+svg .dg-point-accent{ fill: var(--dg-accent); stroke: none; }
+svg .dg-label       { font: 12px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-stroke, #3f3b35); stroke: none; }
+svg .dg-label-sm    { font: 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-secondary, #544f47); stroke: none; }
+svg .dg-label-accent{ font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-accent); stroke: none; }
+.viz-ak-note { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #544f47; margin: 1rem 0 0.25rem; }
+svg .dg-grid, svg .dg-tag, svg .dg-arrow, svg .dg-fill-accent, svg .dg-fill-hot, svg .dg-fill-cold,
+svg .dg-fill-plant, svg .dg-fill-water, svg .dg-fill-earth, svg .dg-fill-sun, svg .dg-fill-soft, svg .dg-outline { vector-effect: non-scaling-stroke; }
+svg .dg-grid        { stroke: var(--dg-muted, #6b665d); stroke-opacity: .45; fill: none; stroke-width: 1px; }
+svg .dg-outline     { stroke: var(--dg-stroke, #3f3b35); fill: none; stroke-width: 1.5px; }
+svg .dg-fill-accent { fill: var(--dg-accent); fill-opacity: .14; stroke: var(--dg-accent); stroke-width: 1.5px; }
+svg .dg-fill-hot    { fill: var(--viz-hot);   fill-opacity: .16; stroke: var(--viz-hot);   stroke-width: 1.5px; }
+svg .dg-fill-cold   { fill: var(--viz-cold);  fill-opacity: .12; stroke: var(--viz-cold);  stroke-width: 1.5px; }
+svg .dg-fill-plant  { fill: var(--viz-plant); fill-opacity: .16; stroke: var(--viz-plant); stroke-width: 1.5px; }
+svg .dg-fill-water  { fill: var(--viz-water); fill-opacity: .14; stroke: var(--viz-water); stroke-width: 1.5px; }
+svg .dg-fill-earth  { fill: var(--viz-earth); fill-opacity: .16; stroke: var(--viz-earth); stroke-width: 1.5px; }
+svg .dg-fill-sun    { fill: var(--viz-sun);   fill-opacity: .22; stroke: var(--viz-sun);   stroke-width: 1.5px; }
+svg .dg-fill-soft   { fill: #efece6; stroke: #c9c4b9; stroke-width: 1px; }
+svg .dg-solid-accent{ fill: var(--dg-accent); stroke: none; }
+svg .dg-solid-hot   { fill: var(--viz-hot); stroke: none; }
+svg .dg-solid-cold  { fill: var(--viz-cold); stroke: none; }
+svg .dg-solid-plant { fill: var(--viz-plant); stroke: none; }
+svg .dg-solid-water { fill: var(--viz-water); stroke: none; }
+svg .dg-solid-earth { fill: var(--viz-earth); stroke: none; }
+svg .dg-solid-sun   { fill: var(--viz-sun); stroke: none; }
+svg .dg-solid-muted { fill: var(--dg-muted, #6b665d); stroke: none; }
+svg .dg-arrow       { fill: none; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-arrow.plain { stroke: var(--dg-stroke, #3f3b35); }  svg .dg-head.plain  { fill: var(--dg-stroke, #3f3b35); }
+svg .dg-arrow.accent{ stroke: var(--dg-accent); }           svg .dg-head.accent { fill: var(--dg-accent); }
+svg .dg-arrow.hot   { stroke: var(--viz-hot); }             svg .dg-head.hot    { fill: var(--viz-hot); }
+svg .dg-arrow.cold  { stroke: var(--viz-cold); }            svg .dg-head.cold   { fill: var(--viz-cold); }
+svg .dg-arrow.plant { stroke: var(--viz-plant); }           svg .dg-head.plant  { fill: var(--viz-plant); }
+svg .dg-arrow.water { stroke: var(--viz-water); }           svg .dg-head.water  { fill: var(--viz-water); }
+svg .dg-arrow.earth { stroke: var(--viz-earth); }           svg .dg-head.earth  { fill: var(--viz-earth); }
+svg .dg-arrow.sun   { stroke: var(--viz-sun); }             svg .dg-head.sun    { fill: var(--viz-sun); }
+svg .dg-arrow.muted { stroke: var(--dg-muted, #6b665d); }   svg .dg-head.muted  { fill: var(--dg-muted, #6b665d); }
+svg .dg-arrow.thin  { stroke-width: 1.4px; }
+svg .dg-head        { stroke: none; }
+svg .dg-tag         { fill: #fff; stroke: var(--dg-accent); stroke-width: 1.25px; stroke-dasharray: 4 2; }
+svg .dg-tag-answer  { font: 600 12px/1 var(--font-body, system-ui, sans-serif); fill: var(--viz-key); }
+svg .dg-title       { font: 700 13px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-stroke, #3f3b35); }
+svg .dg-math        { font: 15px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-stroke, #3f3b35); }
+svg .dg-math-lg     { font: 600 20px/1.2 var(--font-body, system-ui, sans-serif); fill: var(--dg-stroke, #3f3b35); }
+svg .dg-math-accent { font: 700 15px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--dg-accent); }
+svg .dg-label-hot   { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-hot); }
+svg .dg-label-cold  { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-cold); }
+svg .dg-label-plant { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-plant); }
+svg .dg-label-water { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-water); }
+svg .dg-label-earth { font: 600 11px/1.3 var(--font-body, system-ui, sans-serif); fill: var(--viz-earth); }
+svg .dg-label-white { font: 700 12px/1.3 var(--font-body, system-ui, sans-serif); fill: #fff; }
+svg .dg-land, svg .dg-land-hi, svg .dg-border { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-land        { fill: #ebe7df; stroke: #a8a294; stroke-width: .75px; }
+svg .dg-land-hi     { fill: var(--dg-accent); fill-opacity: .22; stroke: var(--dg-accent); stroke-width: 1px; }
+svg .dg-border      { fill: none; stroke: #a8a294; stroke-width: .5px; }
+svg .dg-sea         { fill: #f4f7f9; stroke: none; }
+svg .dg-route       { fill: none; stroke: var(--dg-accent); stroke-width: 2px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-route.muted { stroke: var(--dg-muted, #6b665d); stroke-dasharray: 5 3; }
+svg .dg-halo        { paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+/* ── /viz-kit ── */
+/* ── viz-kit textbook layer (scripts/add_notes_visuals.py) ── */
+body { counter-reset: fig; }
+.viz.tb { counter-increment: fig; background: #fff; border: 1px solid #d6d1c6; border-top: 3px solid var(--dg-accent);
+  border-radius: 3px; padding: .9rem 1.1rem .7rem; max-width: 44rem; }
+.viz.tb figcaption { font-style: normal; text-align: left; max-width: none; font-size: .84rem; line-height: 1.45; color: #2f2b26;
+  border-top: 1px solid #e2ddd2; margin: .65rem 0 0; padding-top: .45rem; }
+.viz.tb figcaption::before { content: "Figure " counter(fig) "\00a0\00a0"; font-weight: 700; color: var(--dg-accent); }
+.viz.tb svg .dg-label { font-size: 12.5px; } .viz.tb svg .dg-label-sm { font-size: 11.5px; }
+.viz.tb svg .dg-label-hot, .viz.tb svg .dg-label-cold, .viz.tb svg .dg-label-water, .viz.tb svg .dg-label-plant,
+.viz.tb svg .dg-label-earth, .viz.tb svg .dg-label-accent { font-size: 12px; }
+.viz.tb svg .dg-fill-hot { fill-opacity: .34; } .viz.tb svg .dg-fill-cold { fill-opacity: .30; } .viz.tb svg .dg-fill-plant { fill-opacity: .34; }
+.viz.tb svg .dg-fill-water { fill-opacity: .32; } .viz.tb svg .dg-fill-earth { fill-opacity: .34; } .viz.tb svg .dg-fill-sun { fill-opacity: .42; }
+.viz.tb svg .dg-fill-accent { fill-opacity: .28; } .viz.tb svg .dg-fill-soft { fill: #e9e5dc; stroke: #b9b3a6; }
+.viz.tb svg [class^="dg-fill"], .viz.tb svg [class^="dg-solid"], .viz.tb svg .dg-boundary { filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.28)); }
+svg .dg-g-crust, svg .dg-g-mantle, svg .dg-g-ocean, svg .dg-g-magma, svg .dg-g-cont, svg .dg-g-sph-crust, svg .dg-g-sph-mantle,
+svg .dg-g-sph-outer, svg .dg-g-sph-inner, svg .dg-g-ign, svg .dg-g-sed, svg .dg-g-met, svg .dg-g-landa, svg .dg-g-landb,
+svg .dg-speckle, svg .dg-star, svg .dg-station, svg .dg-wave, svg .dg-stream, svg .dg-stream-hi, svg .dg-ico { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-g-crust     { fill: url(#tb-crust);  stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-mantle    { fill: url(#tb-mantle); stroke: #c0702f; stroke-width: 1px; }
+svg .dg-g-ocean     { fill: url(#tb-ocean);  stroke: #2f7aa6; stroke-width: .8px; }
+svg .dg-g-magma     { fill: url(#tb-magma);  stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-cont      { fill: url(#tb-cont);   stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-sph-crust { fill: url(#tb-sph-crust); stroke: #5b4430; stroke-width: 1.2px; }
+svg .dg-g-sph-mantle{ fill: url(#tb-sph-mantle); stroke: #a8501b; stroke-width: 1px; }
+svg .dg-g-sph-outer { fill: url(#tb-sph-outer);  stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-sph-inner { fill: url(#tb-sph-inner);  stroke: #b45a0a; stroke-width: 1px; }
+svg .dg-g-ign       { fill: url(#tb-ign); stroke: #9a4a30; stroke-width: 1.2px; }
+svg .dg-g-sed       { fill: url(#tb-sed); stroke: #8a6a2e; stroke-width: 1.2px; }
+svg .dg-g-met       { fill: url(#tb-met); stroke: #6e5f52; stroke-width: 1.2px; }
+svg .dg-g-landa     { fill: url(#tb-landa); stroke: #8a7650; stroke-width: 1px; }
+svg .dg-g-landb     { fill: url(#tb-landb); stroke: #7a8a58; stroke-width: 1px; }
+svg .dg-speckle     { fill: url(#tb-speckle); stroke: none; }
+svg .dg-star        { fill: #ffd23f; stroke: #7a2e0e; stroke-width: 1.2px; }
+svg .dg-station     { fill: #2f2b26; stroke: #fff; stroke-width: 1.5px; }
+svg .dg-wave        { fill: none; stroke: #fff; stroke-width: 1.5px; stroke-linecap: round; }
+svg .dg-stream      { fill: none; stroke: #2f86b8; stroke-width: 6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-stream-hi   { fill: none; stroke: #cfeaf7; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-ico         { stroke: #5b4430; stroke-width: .8px; }
+svg .dg-ico-1 { fill: #f3d9c9; } svg .dg-ico-2 { fill: #7a3b2a; stroke: none; } svg .dg-ico-3 { fill: #fff; stroke: none; }
+svg .dg-ico-4 { fill: #e7c98a; } svg .dg-ico-5 { fill: #cfa95e; } svg .dg-ico-6 { fill: #f0dfb4; }
+svg .dg-ico-7 { fill: #bfb2a5; } svg .dg-ico-line { fill: none; stroke: #6e5f52; stroke-width: 1px; }
+svg .dg-shadow { fill: url(#tb-hatch); stroke: none; }
+svg .dg-ray-case { fill: none; stroke: #fff; stroke-width: 3.8px; stroke-opacity: .85; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-lane { fill: none; stroke: #fff; stroke-opacity: .38; stroke-width: 15px; stroke-linejoin: round; }
+svg .dg-glow { fill: url(#tb-glow); stroke: none; }
+svg .dg-g-crustL { fill: url(#tb-crustL); stroke: #5b4430; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-g-crustR { fill: url(#tb-crustR); stroke: #5b4430; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-crustline { fill: none; stroke: #5b4430; stroke-width: .9px; stroke-opacity: .7; vector-effect: non-scaling-stroke; }
+svg .dg-melt { fill: #ff8c42; stroke: #a3270b; stroke-width: .6px; }
+svg .dg-tree { fill: #5d8a47; stroke: #34592a; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-fz { fill: #5b4430; fill-opacity: .22; stroke: none; }
+svg .dg-tick { fill: none; stroke: var(--dg-stroke, #3f3b35); stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+svg .dg-tuft { fill: none; stroke: #6f8548; stroke-width: 1px; stroke-linecap: round; stroke-opacity: .8; }
+svg .dg-ico-8 { fill: #d99a82; } svg .dg-ico-9 { fill: #8a4a3a; } svg .dg-ico-10 { fill: #fbf1ea; } svg .dg-ico-11 { fill: #e9b9a2; }
+svg .dg-ico-pale { fill: none; stroke: #efe8de; stroke-width: 1px; }
+svg .dg-arrow.dash { stroke-dasharray: 6 4; }
+svg .dg-g-outer { fill: url(#tb-outer); stroke: #a3270b; stroke-width: 1px; }
+svg .dg-g-inner { fill: url(#tb-inner); stroke: #b45a0a; stroke-width: 1px; }
+svg .dg-g-volc  { fill: url(#tb-volc); stroke: #3f352d; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-rock  { fill: url(#tb-rock); stroke: #4a4038; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-ashcloud { fill: url(#tb-ashcloud); stroke: #8f877e; stroke-width: .8px; }
+svg .dg-snow  { fill: #fff; stroke: #b9b3a6; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-crack { fill: none; stroke: #3a3029; stroke-width: 1.1px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-sed-sand { fill: #ecd59c; stroke: #a8874a; stroke-width: .7px; }
+svg .dg-sed-silt { fill: #cfab7c; stroke: #8f6c45; stroke-width: .7px; }
+svg .dg-sed-clay { fill: #aaa39a; stroke: #6e675f; stroke-width: .7px; }
+svg .dg-lens  { fill: none; stroke: #3f3b35; stroke-width: 2px; }
+svg .dg-lens-rim { fill: none; stroke: #fff; stroke-width: 5px; }
+svg .dg-basalt { fill: #56514c; stroke: none; }
+svg .dg-fine  { fill: url(#tb-fine); stroke: none; }
+svg .dg-min-feld { fill: #e39a7e; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-feld2 { fill: #f2bba3; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-qtz { fill: #eeebe5; stroke: #6b4a3a; stroke-width: .6px; }
+svg .dg-min-mica { fill: #3a3330; stroke: #1f1a18; stroke-width: .6px; }
+svg .dg-stripe-n { fill: #57514b; stroke: none; }
+svg .dg-stripe-r { fill: #f3eee4; stroke: none; }
+svg .dg-pol-n { fill: #fff; stroke: none; } svg .dg-pol-r { fill: #57514b; stroke: none; }
+svg .dg-grass { fill: #8bb162; stroke: #5d8a47; stroke-width: .8px; }
+svg .dg-fault { fill: none; stroke: #2f241b; stroke-width: 2.2px; stroke-linecap: round; }
+svg .dg-focus { fill: #e2431a; stroke: #7a1f0a; stroke-width: 1.2px; }
+svg .dg-house-wall { fill: #f6efe2; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-roof { fill: #a3452a; stroke: #5e2414; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-door { fill: #6b4a3a; stroke: none; } svg .dg-window { fill: #bfe3f5; stroke: #3f3b35; stroke-width: .6px; }
+svg .dg-ash { fill: #d9d3ca; stroke: #3f352d; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-ash-dot { fill: #6b645c; stroke: none; }
+svg .dg-ice { fill: #e3f4fb; stroke: #5aa9d0; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-ice-line { fill: none; stroke: #fff; stroke-width: 1px; }
+svg .dg-sun { fill: #ffd23f; stroke: #c98a0a; stroke-width: 1px; } svg .dg-ray { fill: none; stroke: #e0a515; stroke-width: 1.4px; stroke-linecap: round; }
+svg .dg-moon { fill: #f4f1e6; stroke: #8a8578; stroke-width: 1px; }
+svg .dg-fish { fill: #b9c6ce; stroke: #4a5560; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-bone { fill: none; stroke: #f6f1e6; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-bone-fill { fill: #f6f1e6; stroke: #8a7a62; stroke-width: .8px; }
+svg .dg-fossil { fill: none; stroke: #3a2f26; stroke-width: 1.8px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-fossil-fill { fill: #3a2f26; stroke: none; }
+svg .dg-lith-sand { fill: url(#tb-p-sand); stroke: #8a6a2e; stroke-width: .8px; }
+svg .dg-lith-shale { fill: url(#tb-p-shale); stroke: #5f5a55; stroke-width: .8px; }
+svg .dg-lith-lime { fill: url(#tb-p-lime); stroke: #5d6a72; stroke-width: .8px; }
+svg .dg-lith-coal { fill: #2f2b28; stroke: #1a1715; stroke-width: .8px; }
+svg .dg-ammonite { fill: #efe3c8; stroke: #5b4430; stroke-width: 1px; }
+svg .dg-amm-line { fill: none; stroke: #5b4430; stroke-width: .8px; }
+svg .dg-face-side { fill: #000; fill-opacity: .16; stroke: #3f3b35; stroke-width: .8px; }
+svg .dg-face-top { fill: #fff; fill-opacity: .45; stroke: #3f3b35; stroke-width: .8px; }
+svg .dg-panel { fill: #faf8f3; stroke: #e2ddd2; stroke-width: 1px; }
+svg .dg-rain { fill: none; stroke: #3b8fc0; stroke-width: 1.3px; stroke-linecap: round; stroke-dasharray: 5 4; }
+svg .dg-precam { fill: url(#tb-precam); stroke: #6e675f; stroke-width: .8px; }
+svg .dg-zoom { fill: none; stroke: #8f877e; stroke-width: 1px; stroke-dasharray: 3 3; }
+svg .dg-sp-d { fill: #5b4430; fill-opacity: .28; } svg .dg-sp-l { fill: #fff; fill-opacity: .33; }
+svg .dg-hatch-l { stroke: #fff; stroke-opacity: .55; stroke-width: 1.6px; }
+svg .dg-fine-a { fill: #d8d2c8; } svg .dg-fine-b { fill: #8f877e; }
+svg .dg-psand-bg { fill: #f0dca6; } svg .dg-psand-dot { fill: #8a6a2e; }
+svg .dg-pshale-bg { fill: #cfcac3; } svg .dg-pshale-l { stroke: #6e675f; stroke-width: .9px; }
+svg .dg-plime-bg { fill: #dce4e8; } svg .dg-plime-l { fill: none; stroke: #7d8b93; stroke-width: .8px; }
+svg .dg-pt-cold { fill: url(#tb-pt-cold); stroke: #1e3a8a; stroke-width: .8px; }
+svg .dg-pt-warm { fill: url(#tb-pt-warm); stroke: #8a5a00; stroke-width: .8px; }
+svg .dg-pt-hot  { fill: url(#tb-pt-hot);  stroke: #7a1f0a; stroke-width: .8px; }
+svg .dg-trail-cold, svg .dg-trail-warm, svg .dg-trail-hot { fill: none; stroke-linecap: round; stroke-width: 12px; }
+svg .dg-trail-cold.sm, svg .dg-trail-warm.sm, svg .dg-trail-hot.sm { stroke-width: 8px; }
+svg .dg-trail-cold { stroke: #3b6fd8; stroke-opacity: .22; } svg .dg-trail-warm { stroke: #e0a515; stroke-opacity: .32; }
+svg .dg-trail-hot { stroke: #e2431a; stroke-opacity: .24; }
+svg .dg-vib { fill: none; stroke: #8f877e; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-g-steel  { fill: url(#tb-steel);  stroke: #5f6770; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-steelH { fill: url(#tb-steelH); stroke: #4a5058; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-wood { fill: url(#tb-wood); stroke: #6b4a2a; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-grain { fill: none; stroke: #7a5230; stroke-opacity: .45; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-flame { fill: url(#tb-flame); stroke: #c2410c; stroke-width: .8px; stroke-linejoin: round; }
+svg .dg-flame-in { fill: #fff3a0; stroke: none; }
+svg .dg-g-water { fill: url(#tb-water); stroke: none; }
+svg .dg-water-top { fill: none; stroke: #2f7aa6; stroke-width: 1.2px; }
+svg .dg-glass { fill: #f4f9fb; fill-opacity: .55; stroke: #6e8796; stroke-width: 1.4px; stroke-linejoin: round; }
+svg .dg-glass-hi { fill: none; stroke: #fff; stroke-width: 3px; stroke-linecap: round; stroke-opacity: .9; }
+svg .dg-skin { fill: url(#tb-skin); stroke: #9a6a4f; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-skin-line { fill: none; stroke: #9a6a4f; stroke-width: .8px; stroke-linecap: round; }
+svg .dg-g-sand { fill: url(#tb-sand); stroke: #a8874a; stroke-width: 1px; }
+svg .dg-g-sky-day { fill: url(#tb-sky-day); stroke: none; } svg .dg-g-sky-night { fill: url(#tb-sky-night); stroke: none; }
+svg .dg-starlet { fill: #fff; stroke: none; }
+svg .dg-g-liquid { fill: url(#tb-liquid); stroke: #a3270b; stroke-width: .8px; }
+svg .dg-burner { fill: #3f3b35; stroke: #1f1c19; stroke-width: 1px; }
+svg .dg-g-hotblock  { fill: url(#tb-hotblock);  stroke: #7a1f0a; stroke-width: 1.2px; }
+svg .dg-g-coldblock { fill: url(#tb-coldblock); stroke: #1e3a8a; stroke-width: 1.2px; }
+svg .dg-g-warmblock { fill: url(#tb-warmblock); stroke: #8a5a00; stroke-width: 1.2px; }
+svg .dg-cross { fill: none; stroke: #b91c1c; stroke-width: 3px; stroke-linecap: round; }
+svg .dg-g-bag { fill: url(#tb-bag); stroke: #2f5a7a; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-quilt { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 1px; stroke-dasharray: 3 3; }
+svg .dg-insul { fill: url(#tb-insul); stroke: #b8708a; stroke-width: .8px; }
+svg .dg-ins-a { fill: #f6c9d6; } svg .dg-ins-l { fill: none; stroke: #d98aa3; stroke-width: 1px; }
+svg .dg-g-globe { fill: url(#tb-globe); stroke: #1f5f8a; stroke-width: 1px; }
+svg .dg-land { fill: #6fa35a; stroke: #3f6b33; stroke-width: .6px; }
+svg .dg-g-sunball { fill: url(#tb-sunball); stroke: #d97a0a; stroke-width: 1px; }
+svg .dg-silver { fill: url(#tb-silver); stroke: #6e7780; stroke-width: 1px; }
+svg .dg-g-plastic { fill: url(#tb-plastic); stroke: #26303a; stroke-width: 1px; }
+svg .dg-g-soup { fill: url(#tb-soup); stroke: #a3501b; stroke-width: .8px; }
+svg .dg-vac { fill: #fff; stroke: none; }
+svg .dg-band-water { fill: #0369a1; fill-opacity: .09; stroke: none; } svg .dg-band-hot { fill: #c2410c; fill-opacity: .08; stroke: none; }
+svg .dg-dot-water { fill: #0369a1; stroke: #fff; stroke-width: 1px; } svg .dg-dot-hot { fill: #c2410c; stroke: #fff; stroke-width: 1px; }
+svg .dg-g-ballast { fill: url(#tb-rock); stroke: #6e675f; stroke-width: .8px; }
+svg .dg-brick { fill: url(#tb-brick); stroke: #7a3b2a; stroke-width: 1px; }
+svg .dg-brick-bg { fill: #c97a5a; } svg .dg-brick-l { fill: none; stroke: #f3e3d6; stroke-width: 1px; }
+svg .dg-wave-hot { fill: none; stroke: #e0a515; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-porcelain { fill: #fbfaf7; stroke: #3f3b35; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-snowflake { fill: none; stroke: #6fa8d6; stroke-width: 1.2px; stroke-linecap: round; }
+svg .dg-curve-cold, svg .dg-curve-water, svg .dg-curve-hot, svg .dg-curve-accent { fill: none; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-curve-cold { stroke: #1d4ed8; } svg .dg-curve-water { stroke: #0369a1; } svg .dg-curve-hot { stroke: #c2410c; } svg .dg-curve-accent { stroke: var(--dg-accent); }
+svg .dg-rodglow { fill: url(#tb-rodglow); stroke: none; }
+svg .dg-night { fill: #0b1a33; fill-opacity: .38; stroke: none; }
+svg .dg-vibring-cold, svg .dg-vibring-hot, svg .dg-vibring-warm { stroke-width: .9px; stroke-dasharray: 2 2; }
+svg .dg-vibring-cold { fill: #1d4ed8; fill-opacity: .08; stroke: #6f97ea; } svg .dg-vibring-warm { fill: #e0a515; fill-opacity: .1; stroke: #e0a515; }
+svg .dg-vibring-hot { fill: #e2431a; fill-opacity: .09; stroke: #f2793a; }
+svg .dg-zip { fill: none; stroke: #e9ecef; stroke-width: 2px; stroke-dasharray: 2 2; }
+svg .dg-leader { fill: none; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-leader-dot { fill: #3f3b35; stroke: #fff; stroke-width: 1px; }
+svg .dg-arrow.mk.sun { marker-end: url(#tb-m-sun); } svg .dg-arrow.mk.plant { marker-end: url(#tb-m-plant); }
+svg .dg-arrow.mk.earth { marker-end: url(#tb-m-earth); } svg .dg-arrow.mk.accent { marker-end: url(#tb-m-accent); }
+svg .dg-an { stroke: #3a332c; stroke-width: .9px; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-line { fill: none; stroke: #3a332c; stroke-width: .9px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-thin { fill: none; stroke: #3a332c; stroke-width: .6px; stroke-opacity: .6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-an-stem { fill: none; stroke: #3f6b33; stroke-width: 1.4px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg .dg-c-tan { fill: #d9c3a0; } svg .dg-c-snow { fill: #f4efe6; } svg .dg-c-grey { fill: #a39d93; } svg .dg-c-wolf { fill: #8f8a82; }
+svg .dg-c-brown { fill: #7a5236; } svg .dg-c-moose { fill: #5e4030; } svg .dg-c-dark { fill: #2a2622; } svg .dg-c-yellow { fill: #f2c230; }
+svg .dg-c-orange { fill: #e8892a; } svg .dg-c-green { fill: #6fa35a; } svg .dg-c-dkgreen { fill: #3f6b33; } svg .dg-c-olive { fill: #7d8a3e; }
+svg .dg-c-heron { fill: #8fa3b5; } svg .dg-c-pink { fill: #d9579a; } svg .dg-c-cream { fill: #efe3c8; } svg .dg-c-white { fill: #fff; }
+svg .dg-c-red { fill: #b8452a; } svg .dg-c-lynx { fill: #c9b08c; } svg .dg-c-owl { fill: #8a6544; } svg .dg-c-mallard { fill: #2f7a4a; }
+svg .dg-c-purple { fill: #9b7cc0; } svg .dg-c-bark { fill: #f1efe8; } svg .dg-c-char { fill: #3a3330; } svg .dg-c-lime { fill: #a9cf6a; }
+svg .dg-c-lilac { fill: #c9a6de; } svg .dg-c-wheat { fill: #e3c46a; } svg .dg-c-canola { fill: #f5d42a; } svg .dg-c-skin { fill: #f1c7a8; }
+svg .dg-g-leaf { fill: url(#tb-leaf); stroke: #3f6b33; stroke-width: .9px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-g-conifer { fill: url(#tb-conifer); stroke: #23421f; stroke-width: .9px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+svg .dg-g-soil { fill: url(#tb-soil); stroke: #5b4430; stroke-width: 1px; }
+svg .dg-g-sphere-plant { fill: url(#tb-sph-plant); stroke: #2c5a22; stroke-width: 1px; }
+svg .dg-g-sphere-earth { fill: url(#tb-sph-earth); stroke: #5b3a20; stroke-width: 1px; }
+svg .dg-g-sphere-muted { fill: url(#tb-sph-muted); stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-curve-plant { fill: none; stroke: #3f7a2a; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+svg .dg-band-plant { fill: #3f7a2a; fill-opacity: .08; stroke: none; } svg .dg-band-earth { fill: #7a5230; fill-opacity: .08; stroke: none; }
+svg .dg-card { fill: #fff; stroke: #b9b3a6; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-card-plant { fill: #eef5e6; stroke: #7aa35a; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-card-earth { fill: #f5ede2; stroke: #a8876a; stroke-width: 1px; filter: drop-shadow(0 1.2px 1.2px rgba(40,30,20,.22)); }
+svg .dg-tier-1 { fill: #dcebcb; stroke: #6f8f55; stroke-width: 1px; } svg .dg-tier-2 { fill: #f5eac4; stroke: #a8904a; stroke-width: 1px; }
+svg .dg-tier-3 { fill: #f7dcc2; stroke: #b07a4a; stroke-width: 1px; } svg .dg-tier-4 { fill: #f2cfcb; stroke: #a8605a; stroke-width: 1px; }
+svg .dg-g-nucleus { fill: url(#tb-nucleus); stroke: #6b3f85; stroke-width: 1px; }
+svg .dg-g-chloro { fill: url(#tb-chloro); stroke: #2c5a22; stroke-width: .8px; }
+svg .dg-g-cyto { fill: url(#tb-cyto); stroke: #5b8a3a; stroke-width: 1px; }
+svg .dg-cellwall { fill: #cfe3a8; stroke: #4f7a2a; stroke-width: 1.6px; }
+svg .dg-epi { fill: #f6f9f0; stroke: #7a9a5a; stroke-width: 1px; }
+svg .dg-g-vac { fill: url(#tb-vac); stroke: #4a98c6; stroke-width: 1px; }
+svg .dg-g-acell { fill: url(#tb-acell); stroke: #a8605a; stroke-width: 1.6px; }
+svg .dg-g-carrot { fill: url(#tb-carrot); stroke: #b8560f; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-petal { fill: url(#tb-petal); stroke: #c98a0a; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-pod { fill: url(#tb-pod); stroke: #3f6b33; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-pot { fill: url(#tb-pot); stroke: #8a4a2a; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-oil { fill: url(#tb-oil); stroke: #a8800a; stroke-width: 1px; }
+svg .dg-root { fill: none; stroke: #8a6a3a; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-root-thin { fill: none; stroke: #8a6a3a; stroke-width: 1px; stroke-linecap: round; }
+svg .dg-hair { fill: none; stroke: #6b4a2a; stroke-width: 1.3px; stroke-linecap: round; }
+svg .dg-vein { fill: none; stroke: #eaf6dc; stroke-width: 1.1px; stroke-linecap: round; }
+svg .dg-filament { fill: none; stroke: #c9a64a; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-tube { fill: none; stroke: #d9a21a; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-cross-thin { fill: none; stroke: #b91c1c; stroke-width: 1.8px; stroke-linecap: round; }
+svg .dg-dna-a { fill: none; stroke: var(--dg-accent); stroke-width: 1.8px; } svg .dg-dna-b { fill: none; stroke: #c2410c; stroke-width: 1.8px; }
+svg .dg-dna-r { fill: none; stroke: #8f877e; stroke-width: 1px; }
+svg .dg-g-concrete { fill: url(#tb-concrete); stroke: #6e6a64; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-g-stone { fill: url(#tb-stone); stroke: #6e5f52; stroke-width: 1px; stroke-linejoin: round; }
+svg .dg-g-dome { fill: url(#tb-dome); stroke: #5f6770; stroke-width: 1.2px; }
+svg .dg-g-tube { fill: url(#tb-tube); stroke: #8f877e; stroke-width: 1.2px; }
+svg .dg-rope { fill: none; stroke: #8a6a3a; stroke-width: 2.2px; stroke-linecap: round; }
+svg .dg-paperedge { fill: none; stroke: #6b665d; stroke-width: 2.6px; stroke-linecap: round; }
+svg .dg-paper { fill: #fdfdfb; stroke: #8f877e; stroke-width: 1.2px; stroke-linejoin: round; }
+svg .dg-member { fill: none; stroke: #5f6770; stroke-width: 4px; stroke-linecap: round; }
+svg .dg-member-hi { fill: none; stroke: #d6dadf; stroke-width: 1.2px; stroke-linecap: round; }
+svg .dg-bolt { fill: #8a939c; stroke: #3f3b35; stroke-width: 1px; }
+svg .dg-ghost { fill: none; stroke: #8f877e; stroke-width: 2px; stroke-dasharray: 5 4; }
+svg .dg-book-1 { fill: #c0533a; stroke: #6b2a1a; stroke-width: 1px; } svg .dg-book-2 { fill: #3b6fa0; stroke: #1f3f60; stroke-width: 1px; }
+svg .dg-book-3 { fill: #5d8a47; stroke: #34592a; stroke-width: 1px; } svg .dg-pages { fill: #fbf7ea; stroke: #b9b3a6; stroke-width: .6px; }
+svg .dg-bar-elastic, svg .dg-bar-plastic, svg .dg-bar-brittle { fill: none; stroke-width: 9px; stroke-linecap: round; }
+svg .dg-bar-elastic { stroke: #5b7fb0; } svg .dg-bar-plastic { stroke: #c9824a; } svg .dg-bar-brittle { stroke: #a8d4e8; }
+svg .dg-bar-hi { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 2px; stroke-linecap: round; }
+svg .dg-arrow.mk       { stroke-width: 2.4px; }
+svg .dg-arrow.mk.thin  { stroke-width: 1.7px; }
+svg .dg-arrow.mk.muted { marker-end: url(#tb-m-muted); }
+svg .dg-arrow.mk.plain { marker-end: url(#tb-m-plain); } svg .dg-arrow.mk.hot  { marker-end: url(#tb-m-hot); }
+svg .dg-arrow.mk.cold  { marker-end: url(#tb-m-cold); }  svg .dg-arrow.mk.water{ marker-end: url(#tb-m-water); }
+
+.viz.tb figcaption::before { content: none; }
+.q-card .viz.tb { margin: .9rem auto 1rem; }
+/* ── /viz-kit textbook layer ── */
 </style>
 <style>
 /* ── Answer key overlay (scripts/match_keys.py) ── */
@@ -233,6 +551,9 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 @media print { .ak-answer, .ak-teacher { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
 </style></head>
 <body>
+<!-- viz-defs -->
+<!-- tikz: none | shared paints for the figures below -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="tb-crust" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d3b88f"/><stop offset="1" stop-color="#a88a65"/></linearGradient><linearGradient id="tb-mantle" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde3ad"/><stop offset="1" stop-color="#f2a85f"/></linearGradient><linearGradient id="tb-ocean" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b5e1f4"/><stop offset="1" stop-color="#4a98c6"/></linearGradient><linearGradient id="tb-magma" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc15a"/><stop offset="1" stop-color="#e2431a"/></linearGradient><linearGradient id="tb-cont" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8c4a0"/><stop offset="1" stop-color="#b29a72"/></linearGradient><radialGradient id="tb-sph-crust" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#c9ab80"/><stop offset="1" stop-color="#8f7150"/></radialGradient><radialGradient id="tb-sph-mantle" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fcd18c"/><stop offset="0.6" stop-color="#ee8a42"/><stop offset="1" stop-color="#c9581f"/></radialGradient><radialGradient id="tb-sph-outer" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffb85a"/><stop offset="0.6" stop-color="#e8662a"/><stop offset="1" stop-color="#b83a12"/></radialGradient><radialGradient id="tb-sph-inner" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff7c9"/><stop offset="0.55" stop-color="#ffd23f"/><stop offset="1" stop-color="#f0a01a"/></radialGradient><linearGradient id="tb-ign" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c6b0"/><stop offset="1" stop-color="#e59878"/></linearGradient><linearGradient id="tb-sed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e6b8"/><stop offset="1" stop-color="#e6c882"/></linearGradient><linearGradient id="tb-met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6cabe"/><stop offset="1" stop-color="#b0a090"/></linearGradient><linearGradient id="tb-landa" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e4d6b4"/><stop offset="1" stop-color="#cdb98e"/></linearGradient><linearGradient id="tb-landb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9e0bc"/><stop offset="1" stop-color="#bccb94"/></linearGradient><pattern id="tb-speckle" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r=".9" class="dg-sp-d"/><circle cx="10" cy="9" r=".7" class="dg-sp-d"/><circle cx="7" cy="13" r=".8" class="dg-sp-l"/><circle cx="12" cy="2" r=".7" class="dg-sp-l"/></pattern><pattern id="tb-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" class="dg-hatch-l"/></pattern><radialGradient id="tb-glow" cx=".5" cy="1" r="1"><stop offset="0" stop-color="#ff7a2a" stop-opacity=".85"/><stop offset="1" stop-color="#ff7a2a" stop-opacity="0"/></radialGradient><linearGradient id="tb-crustL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a07f5a"/><stop offset="1" stop-color="#dcbf94"/></linearGradient><linearGradient id="tb-crustR" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dcbf94"/><stop offset="1" stop-color="#a07f5a"/></linearGradient><linearGradient id="tb-outer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb85a"/><stop offset="1" stop-color="#d9531e"/></linearGradient><linearGradient id="tb-inner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#f0a01a"/></linearGradient><linearGradient id="tb-volc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a8c80"/><stop offset="1" stop-color="#5f544b"/></linearGradient><linearGradient id="tb-rock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3a698"/><stop offset="1" stop-color="#7d7064"/></linearGradient><linearGradient id="tb-precam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9d2c6"/><stop offset="1" stop-color="#ebe6dc"/></linearGradient><radialGradient id="tb-ashcloud" cx=".5" cy=".5" r=".5" fx=".4" fy=".35"><stop offset="0" stop-color="#eeebe6"/><stop offset="1" stop-color="#a8a097"/></radialGradient><pattern id="tb-fine" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".6" class="dg-fine-a"/><circle cx="3" cy="3" r=".5" class="dg-fine-b"/></pattern><pattern id="tb-p-sand" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" class="dg-psand-bg"/><circle cx="2" cy="3" r=".9" class="dg-psand-dot"/><circle cx="7" cy="7" r=".9" class="dg-psand-dot"/><circle cx="8" cy="1.5" r=".6" class="dg-psand-dot"/></pattern><pattern id="tb-p-shale" width="16" height="8" patternUnits="userSpaceOnUse"><rect width="16" height="8" class="dg-pshale-bg"/><line x1="1" y1="3" x2="7" y2="3" class="dg-pshale-l"/><line x1="9" y1="7" x2="15" y2="7" class="dg-pshale-l"/></pattern><pattern id="tb-p-lime" width="20" height="10" patternUnits="userSpaceOnUse"><rect width="20" height="10" class="dg-plime-bg"/><path d="M0 0.5 H20 M0 5.5 H20 M5 0.5 V5.5 M15 5.5 V10" class="dg-plime-l"/></pattern><radialGradient id="tb-pt-cold" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#dbe7ff"/><stop offset="0.55" stop-color="#6f97ea"/><stop offset="1" stop-color="#1d4ed8"/></radialGradient><radialGradient id="tb-pt-warm" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff6cf"/><stop offset="0.55" stop-color="#f3c33f"/><stop offset="1" stop-color="#c98a0a"/></radialGradient><radialGradient id="tb-pt-hot" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffe1c9"/><stop offset="0.55" stop-color="#f2793a"/><stop offset="1" stop-color="#c2410c"/></radialGradient><linearGradient id="tb-steel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f5f7"/><stop offset="0.45" stop-color="#c3c9cf"/><stop offset="0.55" stop-color="#a7afb7"/><stop offset="1" stop-color="#d6dadf"/></linearGradient><linearGradient id="tb-steelH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8a939c"/><stop offset="0.25" stop-color="#e9ecef"/><stop offset="0.5" stop-color="#c3c9cf"/><stop offset="1" stop-color="#7d868f"/></linearGradient><linearGradient id="tb-wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9a86c"/><stop offset="1" stop-color="#b07a44"/></linearGradient><linearGradient id="tb-water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfeaf8"/><stop offset="1" stop-color="#7fbde2"/></linearGradient><linearGradient id="tb-flame" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffd23f"/><stop offset=".55" stop-color="#ff8a2a"/><stop offset="1" stop-color="#e2431a"/></linearGradient><linearGradient id="tb-skin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7d6bd"/><stop offset="1" stop-color="#e3ad8a"/></linearGradient><linearGradient id="tb-sand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7e6b0"/><stop offset="1" stop-color="#dfbd72"/></linearGradient><linearGradient id="tb-sky-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2f6"/><stop offset="1" stop-color="#f2f9fd"/></linearGradient><linearGradient id="tb-sky-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c2745"/><stop offset="1" stop-color="#3d4d78"/></linearGradient><linearGradient id="tb-liquid" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff9a7a"/><stop offset="0.5" stop-color="#e2431a"/><stop offset="1" stop-color="#b8320c"/></linearGradient><linearGradient id="tb-hotblock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb38a"/><stop offset="1" stop-color="#e2541f"/></linearGradient><linearGradient id="tb-coldblock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe0ff"/><stop offset="1" stop-color="#6f97ea"/></linearGradient><linearGradient id="tb-warmblock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7a3"/><stop offset="1" stop-color="#f0b43a"/></linearGradient><linearGradient id="tb-bag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb9d8"/><stop offset="1" stop-color="#4f86ad"/></linearGradient><pattern id="tb-insul" width="12" height="8" patternUnits="userSpaceOnUse"><rect width="12" height="8" class="dg-ins-a"/><path d="M0 4 Q3 0 6 4 T12 4" class="dg-ins-l"/></pattern><radialGradient id="tb-globe" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#bfe3f5"/><stop offset="0.6" stop-color="#4a98c6"/><stop offset="1" stop-color="#1f5f8a"/></radialGradient><radialGradient id="tb-sunball" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fffbe0"/><stop offset="0.5" stop-color="#ffd23f"/><stop offset="1" stop-color="#f08a1a"/></radialGradient><linearGradient id="tb-silver" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset="0.5" stop-color="#d3d8dd"/><stop offset="1" stop-color="#f2f4f6"/></linearGradient><linearGradient id="tb-plastic" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6f8091"/><stop offset="1" stop-color="#3a4652"/></linearGradient><linearGradient id="tb-soup" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9c27c"/><stop offset="1" stop-color="#e0782a"/></linearGradient><pattern id="tb-brick" width="24" height="12" patternUnits="userSpaceOnUse"><rect width="24" height="12" class="dg-brick-bg"/><path d="M0 .5 H24 M0 6.5 H24 M6 .5 V6.5 M18 6.5 V12" class="dg-brick-l"/></pattern><linearGradient id="tb-rodglow" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff5a1a" stop-opacity=".6"/><stop offset=".55" stop-color="#ffb03a" stop-opacity=".18"/><stop offset="1" stop-color="#ffb03a" stop-opacity="0"/></linearGradient><linearGradient id="tb-leaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd07a"/><stop offset="1" stop-color="#5b9a44"/></linearGradient><linearGradient id="tb-conifer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f8a4a"/><stop offset="1" stop-color="#2f5f2c"/></linearGradient><linearGradient id="tb-soil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a7452"/><stop offset="1" stop-color="#6b4a32"/></linearGradient><radialGradient id="tb-sph-plant" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#d8f0c0"/><stop offset="0.6" stop-color="#7cb85a"/><stop offset="1" stop-color="#3f7a2a"/></radialGradient><radialGradient id="tb-sph-earth" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#f0d8b8"/><stop offset="0.6" stop-color="#b88a5a"/><stop offset="1" stop-color="#7a5230"/></radialGradient><radialGradient id="tb-sph-muted" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#e8e4dc"/><stop offset="0.6" stop-color="#9a958c"/><stop offset="1" stop-color="#5f5a52"/></radialGradient><radialGradient id="tb-nucleus" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#f0dcf6"/><stop offset="0.6" stop-color="#c09ad6"/><stop offset="1" stop-color="#8a5aa8"/></radialGradient><radialGradient id="tb-chloro" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#d4f0b0"/><stop offset="0.6" stop-color="#6fb84a"/><stop offset="1" stop-color="#3f7a2a"/></radialGradient><linearGradient id="tb-cyto" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2f9e8"/><stop offset="1" stop-color="#dcefc6"/></linearGradient><radialGradient id="tb-vac" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#f2faff"/><stop offset="1" stop-color="#b5dcf2"/></radialGradient><radialGradient id="tb-acell" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff3ef"/><stop offset="1" stop-color="#f6d4cc"/></radialGradient><linearGradient id="tb-carrot" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e0701a"/><stop offset="0.45" stop-color="#ffb05a"/><stop offset="1" stop-color="#d8601a"/></linearGradient><linearGradient id="tb-petal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#f2b830"/></linearGradient><linearGradient id="tb-pod" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe9a0"/><stop offset="1" stop-color="#7cb85a"/></linearGradient><linearGradient id="tb-pot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d98a5a"/><stop offset="1" stop-color="#a85a34"/></linearGradient><linearGradient id="tb-oil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#e8b820"/></linearGradient><linearGradient id="tb-concrete" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dedbd5"/><stop offset="1" stop-color="#a8a49e"/></linearGradient><linearGradient id="tb-stone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ecdfca"/><stop offset="1" stop-color="#bfa98c"/></linearGradient><radialGradient id="tb-dome" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#bfc6cd"/></radialGradient><linearGradient id="tb-tube" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6d1c6"/><stop offset="0.4" stop-color="#ffffff"/><stop offset="1" stop-color="#cfc9bd"/></linearGradient><marker id="tb-m-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head muted"/></marker><marker id="tb-m-plain" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head plain"/></marker><marker id="tb-m-hot" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head hot"/></marker><marker id="tb-m-cold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head cold"/></marker><marker id="tb-m-water" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head water"/></marker><marker id="tb-m-sun" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head sun"/></marker><marker id="tb-m-plant" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head plant"/></marker><marker id="tb-m-earth" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head earth"/></marker><marker id="tb-m-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.5 0.5 L9.5 5 L0.5 9.5 Z" class="dg-head accent"/></marker><linearGradient id="tb-sc-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6eef8"/><stop offset="1" stop-color="#cbdaee"/></linearGradient><linearGradient id="tb-sc-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f5f8fc"/><stop offset="1" stop-color="#e3ebf6"/></linearGradient><linearGradient id="tb-sc-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8cae2"/><stop offset="1" stop-color="#9fb5d3"/></linearGradient><linearGradient id="tb-sc-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9fb4d2"/><stop offset="0.38" stop-color="#f1f6fc"/><stop offset="1" stop-color="#8ea5c6"/></linearGradient><linearGradient id="tb-sw-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde8bd"/><stop offset="1" stop-color="#f5cf82"/></linearGradient><linearGradient id="tb-sw-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff5dc"/><stop offset="1" stop-color="#fbe7b8"/></linearGradient><linearGradient id="tb-sw-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eec27a"/><stop offset="1" stop-color="#dea65a"/></linearGradient><linearGradient id="tb-sw-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dca55a"/><stop offset="0.38" stop-color="#fff2d2"/><stop offset="1" stop-color="#cf9442"/></linearGradient><linearGradient id="tb-sg-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dff0d4"/><stop offset="1" stop-color="#c0dfad"/></linearGradient><linearGradient id="tb-sg-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0f8ea"/><stop offset="1" stop-color="#dcefd0"/></linearGradient><linearGradient id="tb-sg-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8cf8e"/><stop offset="1" stop-color="#8dbd72"/></linearGradient><linearGradient id="tb-sg-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8cbb72"/><stop offset="0.38" stop-color="#eef8e7"/><stop offset="1" stop-color="#7aab5f"/></linearGradient><linearGradient id="tb-sr-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d65a43"/><stop offset="1" stop-color="#b53c2b"/></linearGradient><linearGradient id="tb-sr-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e48a74"/><stop offset="1" stop-color="#d4664f"/></linearGradient><linearGradient id="tb-sr-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3372a"/><stop offset="1" stop-color="#86291c"/></linearGradient><linearGradient id="tb-sr-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#86291c"/><stop offset="0.38" stop-color="#e07a62"/><stop offset="1" stop-color="#7a2418"/></linearGradient><linearGradient id="tb-sk-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfc3c7"/><stop offset="1" stop-color="#9fa5ab"/></linearGradient><linearGradient id="tb-sk-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9dcdf"/><stop offset="1" stop-color="#c3c7cb"/></linearGradient><linearGradient id="tb-sk-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8e959c"/><stop offset="1" stop-color="#767d84"/></linearGradient><linearGradient id="tb-sk-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#767d84"/><stop offset="0.38" stop-color="#d9dcdf"/><stop offset="1" stop-color="#6a7178"/></linearGradient><linearGradient id="tb-sh-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9d6c8"/><stop offset="1" stop-color="#f0b6a0"/></linearGradient><linearGradient id="tb-sh-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fce6dd"/><stop offset="1" stop-color="#f7cdbd"/></linearGradient><linearGradient id="tb-sh-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eaa58b"/><stop offset="1" stop-color="#dc8a6f"/></linearGradient><linearGradient id="tb-sh-cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dc8a6f"/><stop offset="0.38" stop-color="#fbe0d4"/><stop offset="1" stop-color="#c97458"/></linearGradient><linearGradient id="tb-tl-q" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b4cdf4"/><stop offset="1" stop-color="#7aa3e3"/></linearGradient><linearGradient id="tb-tl-x" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bde6a8"/><stop offset="1" stop-color="#78c35f"/></linearGradient><linearGradient id="tb-tl-1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2b0"/><stop offset="1" stop-color="#f5cd4c"/></linearGradient><linearGradient id="tb-tl-n" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9b3a1"/><stop offset="1" stop-color="#e4644a"/></linearGradient><linearGradient id="tb-canola" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffec70"/><stop offset="1" stop-color="#f2c51c"/></linearGradient><linearGradient id="tb-ch-a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3ecf9"/><stop offset="1" stop-color="#a9c2e8"/></linearGradient><linearGradient id="tb-ch-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e0f2d4"/><stop offset="1" stop-color="#a6d58d"/></linearGradient><linearGradient id="tb-ch-n" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fcdad0"/><stop offset="1" stop-color="#ef9f88"/></linearGradient><linearGradient id="tb-ch-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f2ed"/><stop offset="1" stop-color="#d6d1c6"/></linearGradient><radialGradient id="tb-mb-r" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#ffd6c8"/><stop offset="0.5" stop-color="#e0553a"/><stop offset="1" stop-color="#9a2913"/></radialGradient><radialGradient id="tb-mb-b" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#d6e4ff"/><stop offset="0.5" stop-color="#3e70d4"/><stop offset="1" stop-color="#1a3a86"/></radialGradient><radialGradient id="tb-mb-g" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#d9f2c8"/><stop offset="0.5" stop-color="#4d9c35"/><stop offset="1" stop-color="#24591a"/></radialGradient><radialGradient id="tb-coin" cx=".5" cy=".5" r=".5" fx=".36" fy=".3"><stop offset="0" stop-color="#fff6cc"/><stop offset="0.5" stop-color="#f0c84e"/><stop offset="1" stop-color="#c4921b"/></radialGradient><linearGradient id="tb-die" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e4e0d7"/></linearGradient><linearGradient id="tb-cell" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ebe7de"/></linearGradient><linearGradient id="tb-cell-on" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3ecfb"/><stop offset="1" stop-color="#b9cdf1"/></linearGradient><linearGradient id="tb-pc-r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9bba7"/><stop offset="1" stop-color="#de5d3c"/></linearGradient><linearGradient id="tb-pc-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bfd3f6"/><stop offset="1" stop-color="#5a86d6"/></linearGradient><linearGradient id="tb-pc-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9e9b4"/><stop offset="1" stop-color="#68ae4b"/></linearGradient><linearGradient id="tb-pscale" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ece8e0"/><stop offset="1" stop-color="#a9c2ec"/></linearGradient><linearGradient id="tb-rainbar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a7d1ee"/><stop offset="1" stop-color="#4c93c4"/></linearGradient><linearGradient id="tb-therm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6a08c"/><stop offset="0.45" stop-color="#d93a1c"/><stop offset="1" stop-color="#9a2410"/></linearGradient><pattern id="tb-rain" width="9" height="11" patternUnits="userSpaceOnUse"><line x1="7" y1="1.5" x2="4" y2="8.5" class="dg-rain-l"/></pattern><radialGradient id="tb-m-disc" cx=".5" cy=".5" r=".5" fx=".42" fy=".36"><stop offset="0" stop-color="#ffffff"/><stop offset=".75" stop-color="#f6f8fc"/><stop offset="1" stop-color="#e6ebf5"/></radialGradient></defs></svg><!-- /viz-defs -->
 <div class="header-strip">
 <div class="course-label">Grade 7 Science — Heat and Temperature</div>
 </div>
@@ -385,6 +706,7 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <div class="q-header">
 <span class="badge badge-num">Q4</span>
 <span class="badge badge-ext">★★ Extended</span>
+    <span class="badge badge-vis" data-viz>Diagram</span>
 </div>
 <p class="q-context">Cluster 3 — Particle model applied to heat · Analyze</p>
 <p>A railroad track is laid at 20°C. Each section is 18.6 m long. A 1 cm expansion gap is left between sections. On a July afternoon the track reaches 55°C.</p>
@@ -392,6 +714,67 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <div class="err-label">Student claim to evaluate</div>
 <p class="student-claim">"We don't need the gaps. The track might get a little longer. But it will just stay in place. No big deal."</p>
 </div>
+<!-- viz:rail-gaps -->
+<figure class="viz tb">
+<!-- tikz: rail-expansion | sections=2 | gap=1cm | T=20,55 | zoom=particles -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 520 252" aria-label="Two steel rail sections on wooden ties. Top row, laid at 20 degrees: a 1 centimetre expansion gap between sections, each section 18.6 metres long, and a zoom circle showing the particles packed closely with small vibrations. Bottom row, a July afternoon at 55 degrees: the gap is much smaller, and an empty zoom circle for students to draw the particles." width="520" height="252">
+<text x="20" y="24" class="dg-title">Laid at 20 °C</text>
+<rect x="18" y="54" width="344" height="12" rx="2" class="dg-g-ballast"/>
+<rect x="26" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="48" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="70" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="92" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="114" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="136" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="158" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="180" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="202" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="224" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="246" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="268" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="290" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="312" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="334" y="48" width="10" height="8" class="dg-g-wood"/>
+<rect x="20" y="40" width="166" height="9" rx="1" class="dg-g-steel"/>
+<rect x="194" y="40" width="166" height="9" rx="1" class="dg-g-steel"/>
+<line x1="214" y1="24" x2="190" y2="40" class="dg-leader"/>
+<text x="218" y="24" class="dg-label-sm">1 cm expansion gap</text>
+<line x1="24.2" y1="82.0" x2="181.8" y2="82.0" class="dg-arrow muted thin"/><polygon points="20.0,82.0 25.1,78.9 25.1,85.1" class="dg-head muted"/><polygon points="186.0,82.0 180.9,85.1 180.9,78.9" class="dg-head muted"/>
+<text x="103" y="97" text-anchor="middle" class="dg-label-sm">one section: 18.6 m</text>
+<line x1="330" y1="44" x2="396" y2="44" class="dg-construction"/>
+<circle cx="444" cy="56" r="46" class="dg-panel"/><circle cx="444" cy="56" r="46" class="dg-lens"/>
+<circle cx="422" cy="34" r="10" class="dg-vibring-warm"/><circle cx="422" cy="56" r="10" class="dg-vibring-warm"/><circle cx="422" cy="78" r="10" class="dg-vibring-warm"/><circle cx="444" cy="34" r="10" class="dg-vibring-warm"/><circle cx="444" cy="56" r="10" class="dg-vibring-warm"/><circle cx="444" cy="78" r="10" class="dg-vibring-warm"/><circle cx="466" cy="34" r="10" class="dg-vibring-warm"/><circle cx="466" cy="56" r="10" class="dg-vibring-warm"/><circle cx="466" cy="78" r="10" class="dg-vibring-warm"/><circle cx="422" cy="34" r="7" class="dg-pt-warm"/><circle cx="422" cy="56" r="7" class="dg-pt-warm"/><circle cx="422" cy="78" r="7" class="dg-pt-warm"/><circle cx="444" cy="34" r="7" class="dg-pt-warm"/><circle cx="444" cy="56" r="7" class="dg-pt-warm"/><circle cx="444" cy="78" r="7" class="dg-pt-warm"/><circle cx="466" cy="34" r="7" class="dg-pt-warm"/><circle cx="466" cy="56" r="7" class="dg-pt-warm"/><circle cx="466" cy="78" r="7" class="dg-pt-warm"/>
+<text x="444" y="118" text-anchor="middle" class="dg-label-sm">particles in the rail at 20 °C</text>
+<text x="20" y="150" class="dg-label-hot">July afternoon: 55 °C</text>
+<rect x="18" y="180" width="344" height="12" rx="2" class="dg-g-ballast"/>
+<rect x="26" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="48" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="70" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="92" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="114" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="136" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="158" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="180" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="202" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="224" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="246" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="268" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="290" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="312" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="334" y="174" width="10" height="8" class="dg-g-wood"/>
+<rect x="20" y="166" width="169" height="9" rx="1" class="dg-g-steel"/>
+<rect x="191" y="166" width="169" height="9" rx="1" class="dg-g-steel"/>
+<line x1="214" y1="150" x2="190" y2="166" class="dg-leader"/>
+<text x="218" y="150" class="dg-label-sm">the gap is now much smaller</text>
+<line x1="330" y1="170" x2="396" y2="170" class="dg-construction"/>
+<circle cx="444" cy="182" r="46" class="dg-panel"/><circle cx="444" cy="182" r="46" class="dg-lens"/>
+
+<circle cx="420" cy="158" r="13" class="dg-vibring-hot"/><circle cx="420" cy="182" r="13" class="dg-vibring-hot"/><circle cx="420" cy="206" r="13" class="dg-vibring-hot"/><circle cx="444" cy="158" r="13" class="dg-vibring-hot"/><circle cx="444" cy="182" r="13" class="dg-vibring-hot"/><circle cx="444" cy="206" r="13" class="dg-vibring-hot"/><circle cx="468" cy="158" r="13" class="dg-vibring-hot"/><circle cx="468" cy="182" r="13" class="dg-vibring-hot"/><circle cx="468" cy="206" r="13" class="dg-vibring-hot"/><circle cx="420" cy="158" r="7" class="dg-pt-hot"/><circle cx="420" cy="182" r="7" class="dg-pt-hot"/><circle cx="420" cy="206" r="7" class="dg-pt-hot"/><circle cx="444" cy="158" r="7" class="dg-pt-hot"/><circle cx="444" cy="182" r="7" class="dg-pt-hot"/><circle cx="444" cy="206" r="7" class="dg-pt-hot"/><circle cx="468" cy="158" r="7" class="dg-pt-hot"/><circle cx="468" cy="182" r="7" class="dg-pt-hot"/><circle cx="468" cy="206" r="7" class="dg-pt-hot"/>
+<text x="444" y="244" text-anchor="middle" class="dg-label-sm">particles in the rail at 55 °C</text>
+</svg>
+<figcaption>Fig. 2 — Two sections of the same track: the day it was laid (top) and a hot July afternoon (bottom). Each circle zooms in on the particles inside the rail.</figcaption>
+</figure>
+<!-- /viz:rail-gaps -->
 <p><strong>(a)</strong> Use the particle model. The temperature rises from 20°C to 55°C. Explain what happens to the metal particles in the rail. Be specific about vibration and spacing.</p>
 
 
@@ -407,9 +790,49 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <div class="q-header">
 <span class="badge badge-num">Q5</span>
 <span class="badge badge-core">★ Core</span>
+    <span class="badge badge-vis" data-viz>Diagram</span>
 </div>
 <p class="q-context">Cluster 5 — Specific heat capacity · Apply</p>
 <p>Two matching cups sit in direct sunlight. One is full of dry sand and one is full of water. Both start at 18°C. After 20 minutes you measure: sand = 45°C, water = 24°C.</p>
+<!-- viz:sand-vs-water -->
+<figure class="viz tb">
+<!-- tikz: two-cups-sun | sand=18-45 | water=18-24 | t=20min -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 480 236" aria-label="The sun shines equally on two matching cups, each with a thermometer. Left cup: dry sand, starts at 18 degrees, 45 degrees after 20 minutes. Right cup: water, starts at 18 degrees, 24 degrees after 20 minutes." width="480" height="236">
+<circle cx="240" cy="36" r="20" class="dg-g-sunball"/>
+<line x1="265.0" y1="36.0" x2="273.0" y2="36.0" class="dg-ray"/>
+<line x1="261.7" y1="48.5" x2="268.6" y2="52.5" class="dg-ray"/>
+<line x1="252.5" y1="57.7" x2="256.5" y2="64.6" class="dg-ray"/>
+<line x1="240.0" y1="61.0" x2="240.0" y2="69.0" class="dg-ray"/>
+<line x1="227.5" y1="57.7" x2="223.5" y2="64.6" class="dg-ray"/>
+<line x1="218.3" y1="48.5" x2="211.4" y2="52.5" class="dg-ray"/>
+<line x1="215.0" y1="36.0" x2="207.0" y2="36.0" class="dg-ray"/>
+<line x1="218.3" y1="23.5" x2="211.4" y2="19.5" class="dg-ray"/>
+<line x1="227.5" y1="14.3" x2="223.5" y2="7.4" class="dg-ray"/>
+<line x1="240.0" y1="11.0" x2="240.0" y2="3.0" class="dg-ray"/>
+<line x1="252.5" y1="14.3" x2="256.5" y2="7.4" class="dg-ray"/>
+<line x1="261.7" y1="23.5" x2="268.6" y2="19.5" class="dg-ray"/>
+<line x1="220" y1="58" x2="165.5" y2="88.9" class="dg-arrow sun thin"/><polygon points="160.0,92.0 164.4,84.2 169.0,92.2" class="dg-head sun"/>
+<line x1="260" y1="58" x2="314.5" y2="88.9" class="dg-arrow sun thin"/><polygon points="320.0,92.0 311.0,92.2 315.6,84.2" class="dg-head sun"/>
+<path d="M88 100 L172 100 L164 176 L96 176 Z" class="dg-glass"/>
+<path d="M90.5 112 L169.5 112 L162.5 173 L97.5 173 Z" class="dg-g-sand"/>
+<path d="M100 106 L105 168" class="dg-glass-hi"/>
+<rect x="144" y="78" width="7" height="82" rx="3.5" class="dg-glass"/><circle cx="147.5" cy="160" r="6" class="dg-dot-hot"/>
+<line x1="147.5" y1="156" x2="147.5" y2="118" class="dg-curve-hot"/>
+<text x="130" y="196" text-anchor="middle" class="dg-title">dry sand</text>
+<text x="130" y="212" text-anchor="middle" class="dg-label-sm">start: 18 °C</text>
+<text x="130" y="227" text-anchor="middle" class="dg-label-hot">after 20 minutes: 45 °C</text>
+<path d="M308 100 L392 100 L384 176 L316 176 Z" class="dg-glass"/>
+<path d="M310.5 112 L389.5 112 L382.5 173 L317.5 173 Z" class="dg-g-water"/>
+<path d="M320 106 L325 168" class="dg-glass-hi"/>
+<rect x="364" y="78" width="7" height="82" rx="3.5" class="dg-glass"/><circle cx="367.5" cy="160" r="6" class="dg-dot-hot"/>
+<line x1="367.5" y1="156" x2="367.5" y2="140" class="dg-curve-hot"/>
+<text x="350" y="196" text-anchor="middle" class="dg-title">water</text>
+<text x="350" y="212" text-anchor="middle" class="dg-label-sm">start: 18 °C</text>
+<text x="350" y="227" text-anchor="middle" class="dg-label-hot">after 20 minutes: 24 °C</text>
+</svg>
+<figcaption>Fig. 3 — Two matching cups in the same sunlight for the same 20 minutes. Only what is inside them is different.</figcaption>
+</figure>
+<!-- /viz:sand-vs-water -->
 <p><strong>(a)</strong> Which material has the <em>higher</em> specific heat capacity? How do you know from the data?</p>
 
 
@@ -454,11 +877,41 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <div class="q-header">
 <span class="badge badge-num">Q7</span>
 <span class="badge badge-core">★ Core</span>
+    <span class="badge badge-vis" data-viz>Diagram</span>
 <span class="badge badge-err">Error analysis</span>
 </div>
 <p class="q-context">Cluster 2 — Heat vs. temperature · Analyze</p>
 <p>A common thing people say on a cold Alberta winter day: <em>"Close the door — you're letting the cold in."</em></p>
 <div class="hint"><span class="hint-label">Hint</span>Think about what heat always does — which direction it always travels. Is "cold" a thing that moves?</div>
+<!-- viz:open-door -->
+<figure class="viz tb">
+<!-- tikz: open-door | inside=21 | outside=-30 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 500 248" aria-label="A warm room at 21 degrees on the left and the cold outdoors at minus 30 degrees on the right, with a wide-open doorway between them. Two blanks ask what moves across the doorway and which way." width="500" height="248">
+<rect x="0" y="16" width="232" height="168" class="dg-band-hot"/>
+<rect x="258" y="16" width="242" height="168" class="dg-band-water"/>
+<path d="M300 48 V56 M296.5 50.0 L303.5 54.0 M296.5 54.0 L303.5 50.0" class="dg-snowflake"/>
+<path d="M420 56 V64 M416.5 58.0 L423.5 62.0 M416.5 62.0 L423.5 58.0" class="dg-snowflake"/>
+<path d="M468 124 V132 M464.5 126.0 L471.5 130.0 M464.5 130.0 L471.5 126.0" class="dg-snowflake"/>
+<path d="M300 136 V144 M296.5 138.0 L303.5 142.0 M296.5 142.0 L303.5 138.0" class="dg-snowflake"/>
+<path d="M388 108 V116 M384.5 110.0 L391.5 114.0 M384.5 114.0 L391.5 110.0" class="dg-snowflake"/>
+<path d="M350 32 V40 M346.5 34.0 L353.5 38.0 M346.5 38.0 L353.5 34.0" class="dg-snowflake"/>
+<path d="M452 36 V44 M448.5 38.0 L455.5 42.0 M448.5 42.0 L455.5 38.0" class="dg-snowflake"/>
+<text x="14" y="34" class="dg-label-hot">Inside · 21 °C</text>
+<text x="488" y="168" text-anchor="end" class="dg-label-cold">Outside · −30 °C</text>
+<text x="250" y="12" text-anchor="middle" class="dg-label-sm">Edmonton, a January morning</text>
+<rect x="232" y="16" width="26" height="48" class="dg-brick"/>
+<line x1="232" y1="184" x2="258" y2="184" class="dg-line"/>
+<rect x="232" y="64" width="26" height="120" class="dg-construction"/>
+<text x="245" y="202" text-anchor="middle" class="dg-label-sm">door wide open</text>
+<line x1="120" y1="90" x2="333.7" y2="90.0" class="dg-arrow hot"/><polygon points="340.0,90.0 332.3,94.6 332.3,85.4" class="dg-head hot"/><line x1="120" y1="120" x2="333.7" y2="120.0" class="dg-arrow hot"/><polygon points="340.0,120.0 332.3,124.6 332.3,115.4" class="dg-head hot"/><line x1="120" y1="150" x2="333.7" y2="150.0" class="dg-arrow hot"/><polygon points="340.0,150.0 332.3,154.6 332.3,145.4" class="dg-head hot"/>
+<text x="14" y="236" class="dg-label">What moves across the doorway?</text>
+<rect x="222" y="222" width="64" height="20" rx="3" class="dg-tag"/><text x="254" y="236" text-anchor="middle" class="dg-tag-answer">heat</text>
+<text x="296" y="236" class="dg-label">Which way?</text>
+<rect x="372" y="222" width="120" height="20" rx="3" class="dg-tag"/><text x="432" y="236" text-anchor="middle" class="dg-tag-answer">inside → outside</text>
+</svg>
+<figcaption>Fig. 4 — The front door is open. Draw arrows through the doorway to show what really moves and which way it goes.</figcaption>
+</figure>
+<!-- /viz:open-door -->
 <p><strong>(a)</strong> Use heat transfer words. Describe what is <em>really</em> happening when you open the door on a −30°C January morning in Edmonton.</p>
 
 
@@ -518,7 +971,7 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <!-- Label: "Same ΔT across each slab" -->
 <text class="dg-label" style="font-size:11px;" text-anchor="middle" x="250" y="20">All three slabs: same size, same temperature difference (ΔT = 17°C)</text>
 </svg>
-<p class="svg-caption">Fig. 2 — Three material slabs with identical temperature difference. Arrow length indicates relative rate of heat flow.</p>
+<p class="svg-caption">Fig. 5 — Three material slabs with identical temperature difference. Arrow length indicates relative rate of heat flow.</p>
 </div>
 <p><strong>(a)</strong> Rank the three materials from fastest to slowest at conducting heat. Use the particle model to explain your ranking. Why do metal particles transfer heat faster than wood or foam particles?</p>
 
@@ -593,7 +1046,7 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <circle class="dg-point-accent" cx="332" cy="80" r="3"></circle>
 <circle class="dg-point-accent" cx="400" cy="80" r="3"></circle>
 </svg>
-<p class="svg-caption">Fig. 3 — Heating curve for water. Heat is added at a constant rate throughout. Phase change B is unlabelled — you will name it.</p>
+<p class="svg-caption">Fig. 6 — Heating curve for water. Heat is added at a constant rate throughout. Phase change B is unlabelled — you will name it.</p>
 </div>
 <p><strong>(a)</strong> During Phase change A (the flat part at 0°C), heat is still being added. But the temperature does not rise. Use the particle model. Where is the energy going, if not into raising the temperature?</p>
 
@@ -638,6 +1091,7 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <div class="q-header">
 <span class="badge badge-num">Q11</span>
 <span class="badge badge-core">★ Core</span>
+    <span class="badge badge-vis" data-viz>Diagram</span>
 <span class="badge" style="background:#dcfce7;color:#166534;">Alberta</span>
 </div>
 <p class="q-context">Cluster 6 — Applications and technology · Apply</p>
@@ -647,6 +1101,53 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <li><strong>Design B:</strong> 10 cm fiberglass batt insulation</li>
 <li><strong>Design C:</strong> 10 cm solid wood framing</li>
 </ul>
+<!-- viz:three-walls -->
+<figure class="viz tb">
+<!-- tikz: wall-sections | A=concrete | B=fiberglass | C=wood | t=10cm -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 524 192" aria-label="Three wall cross-sections side by side, each 10 centimetres thick, with 21 degrees inside and minus 40 degrees outside. Wall A is solid concrete, wall B is fiberglass batt insulation, wall C is solid wood." width="524" height="192">
+<text x="87" y="18" text-anchor="middle" class="dg-title">A · solid concrete</text>
+<rect x="12" y="30" width="44" height="120" class="dg-band-hot"/>
+<rect x="116" y="30" width="44" height="120" class="dg-band-water"/>
+<rect x="56" y="30" width="60" height="120" class="dg-g-concrete"/>
+<rect x="56" y="30" width="60" height="120" class="dg-speckle"/>
+<rect x="56" y="30" width="60" height="120" class="dg-line"/>
+<text x="34" y="46" text-anchor="middle" class="dg-label-hot">in</text>
+<text x="34" y="60" text-anchor="middle" class="dg-label-sm">21 °C</text>
+<text x="138" y="46" text-anchor="middle" class="dg-label-cold">out</text>
+<text x="138" y="60" text-anchor="middle" class="dg-label-sm">−40 °C</text>
+<path d="M138 116 V124 M134.5 118.0 L141.5 122.0 M134.5 122.0 L141.5 118.0" class="dg-snowflake"/>
+<line x1="60.2" y1="166.0" x2="111.8" y2="166.0" class="dg-arrow muted thin"/><polygon points="56.0,166.0 61.1,162.9 61.1,169.1" class="dg-head muted"/><polygon points="116.0,166.0 110.9,169.1 110.9,162.9" class="dg-head muted"/>
+<text x="86" y="182" text-anchor="middle" class="dg-label-sm">10 cm</text>
+<text x="257" y="18" text-anchor="middle" class="dg-title">B · fiberglass batt</text>
+<rect x="182" y="30" width="44" height="120" class="dg-band-hot"/>
+<rect x="286" y="30" width="44" height="120" class="dg-band-water"/>
+<rect x="226" y="30" width="60" height="120" class="dg-insul"/>
+<path d="M228 40 q14 -6 28 0 t28 0" class="dg-ins-l"/><path d="M228 52 q14 -6 28 0 t28 0" class="dg-ins-l"/><path d="M228 64 q14 -6 28 0 t28 0" class="dg-ins-l"/><path d="M228 76 q14 -6 28 0 t28 0" class="dg-ins-l"/><path d="M228 88 q14 -6 28 0 t28 0" class="dg-ins-l"/><path d="M228 100 q14 -6 28 0 t28 0" class="dg-ins-l"/><path d="M228 112 q14 -6 28 0 t28 0" class="dg-ins-l"/><path d="M228 124 q14 -6 28 0 t28 0" class="dg-ins-l"/><path d="M228 136 q14 -6 28 0 t28 0" class="dg-ins-l"/><path d="M228 148 q14 -6 28 0 t28 0" class="dg-ins-l"/>
+<rect x="226" y="30" width="60" height="120" class="dg-line"/>
+<text x="204" y="46" text-anchor="middle" class="dg-label-hot">in</text>
+<text x="204" y="60" text-anchor="middle" class="dg-label-sm">21 °C</text>
+<text x="308" y="46" text-anchor="middle" class="dg-label-cold">out</text>
+<text x="308" y="60" text-anchor="middle" class="dg-label-sm">−40 °C</text>
+<path d="M308 116 V124 M304.5 118.0 L311.5 122.0 M304.5 122.0 L311.5 118.0" class="dg-snowflake"/>
+<line x1="230.2" y1="166.0" x2="281.8" y2="166.0" class="dg-arrow muted thin"/><polygon points="226.0,166.0 231.1,162.9 231.1,169.1" class="dg-head muted"/><polygon points="286.0,166.0 280.9,169.1 280.9,162.9" class="dg-head muted"/>
+<text x="256" y="182" text-anchor="middle" class="dg-label-sm">10 cm</text>
+<text x="427" y="18" text-anchor="middle" class="dg-title">C · solid wood</text>
+<rect x="352" y="30" width="44" height="120" class="dg-band-hot"/>
+<rect x="456" y="30" width="44" height="120" class="dg-band-water"/>
+<rect x="396" y="30" width="60" height="120" class="dg-g-wood"/>
+<path d="M406 30 q4 60 0 120 M422 30 q-5 60 0 120 M440 30 q4 60 0 120" class="dg-grain"/>
+<rect x="396" y="30" width="60" height="120" class="dg-line"/>
+<text x="374" y="46" text-anchor="middle" class="dg-label-hot">in</text>
+<text x="374" y="60" text-anchor="middle" class="dg-label-sm">21 °C</text>
+<text x="478" y="46" text-anchor="middle" class="dg-label-cold">out</text>
+<text x="478" y="60" text-anchor="middle" class="dg-label-sm">−40 °C</text>
+<path d="M478 116 V124 M474.5 118.0 L481.5 122.0 M474.5 122.0 L481.5 118.0" class="dg-snowflake"/>
+<line x1="400.2" y1="166.0" x2="451.8" y2="166.0" class="dg-arrow muted thin"/><polygon points="396.0,166.0 401.1,162.9 401.1,169.1" class="dg-head muted"/><polygon points="456.0,166.0 450.9,169.1 450.9,162.9" class="dg-head muted"/>
+<text x="426" y="182" text-anchor="middle" class="dg-label-sm">10 cm</text>
+</svg>
+<figcaption>Fig. 7 — Looking down at a cut through each wall. All three are 10 cm thick, with the same temperatures on each side. Only the material is different.</figcaption>
+</figure>
+<!-- /viz:three-walls -->
 <p><strong>(a)</strong> Use what you know about conduction. Rank the three designs from <em>best</em> to <em>worst</em> at slowing heat loss through the wall. Give reasons for your ranking — don't just list them.</p>
 
 
@@ -663,10 +1164,34 @@ svg .ak-svg-fill { fill: #166534; font-weight: 700; }
 <div class="q-header">
 <span class="badge badge-num">Q12</span>
 <span class="badge badge-ext">★★ Extended</span>
+    <span class="badge badge-vis" data-viz>Diagram</span>
 <span class="badge" style="background:#dcfce7;color:#166534;">Alberta</span>
 </div>
 <p class="q-context">Cluster 5 — Specific heat capacity · Evaluate</p>
 <p>Vancouver, BC (49°N) has much milder winters and cooler summers than Edmonton, AB (53°N). This is true even though both cities are at similar latitudes.</p>
+<!-- viz:coast-vs-inland-map -->
+<figure class="viz tb">
+<!-- tikz: map | canada-provinces | crop=BC-AB | cities=Vancouver,Edmonton | lat=49,53 -->
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 500 236" aria-label="Map of British Columbia and Alberta. Vancouver is on the Pacific coast near the 49 degrees north line. Edmonton is far inland near the 53 degrees north line, with mountains between it and the ocean." width="500" height="236">
+<g transform="translate(10 4) scale(2.0) translate(-62 -128)"><path class="dg-land" d="M195.3,119.1l-20.9,52.8l0.6,2.4l-1,-0.2l-0.2,0.9l0.6,1.7l1.4,0.7l0.2,1.5l1,1.1l0.5,-0.8l0.7,1.1l1.1,4.8l-0.5,3l1.5,-0.5l1.1,1.4l-0.7,1.5l2.2,1.3l0.9,4.7l1.5,-0.2l1,4.9l2.5,4.4l-0.4,0.9l1.3,1.6l0.3,1.8l1.2,0.5l0.7,2l-0.1,3.3l-1.7,3.8l0.8,0.7l-0.3,1.4l1.9,4.5l-25.6,-8.4l-22,-8.9l-3,-1.3l-0.7,-1.1l-1,0.4l0.6,-1.2l-0.6,-0.3l0.2,-1.2l1.7,0.4l0.8,-0.7l-1.1,0.3l-1.4,-0.9l1.8,-2.7l-1.7,1.5l-1.3,0l-1.9,-3l0.7,-1l0.4,1.7l1.7,-0.2l-1.1,-0.3l-0.3,-1l1.9,-3.3l-0.5,-0.6l-0,1.2l-1.4,1.4l-2,0.1l-1,-0.8l-0.8,-2.6l0.2,-4.1l1.9,-1.3l1,-2l-1.8,2l-1.7,0.4l-1.5,-1.1l0.4,-1.3l-1.3,1.3l-3.9,-2.9l3.5,0.4l-3.3,-1.6l1.4,-0.9l-0.6,-0.6l0.8,-1.6l-1.2,0.9l-2.4,-0.8l-2.1,-4.2l1,-1.5l2.6,-1.4l4.1,1.2l-3.3,-1.8l-2.7,1l-0.1,-2.1l2.1,-2.3l-0.7,-0.3l1.2,-1.5l2.5,-0.4l1.2,0.2l1.2,4.2l-0.7,-4.6l2.4,-1.5l0.2,-1.1l-1.1,1.4l-5.6,1.2l-3.4,3l0.4,-3.7l2.3,-0.4l1.5,-1.6l-2.5,0.6l3.6,-3.9l-1.9,-0.2l0.7,-3l-1.7,-3.4l0.3,-1.6l1.5,-0.9l0.9,0.4l-0.9,1l1.1,2.1l2,1.1l0.4,1.7l-0.4,-2.4l-1.5,-0.8l-0.4,-1.1l0.5,-1.8l1.6,-0.3l-0.5,-1l-1.6,-0.1l-2.1,0.9l-1.3,1.7l-2.2,0.5l-0.3,-3.4l-1.2,-2.6l3.3,-2.5l2.4,0.4l-2.4,-0.9l-0.5,-2.9l1.5,-1.6l7.4,-4.3l-0.7,-0.2l0.1,-1.2l-3.5,3.3l4.7,-8.5l-1.3,-0.9l-0.4,-2.6l-2.4,-4.3l-1.1,-0.6l0.8,-1.7l-0.7,-1.1l1.1,-1.1l-1,-1.2l1,-0.6l1.3,-12.5l-1,-6.1l0.4,-1.8l-0.9,-2.9l1.1,-2.5l-0.5,-2.7l-4.2,-0.9l-0.1,0.7l-1.2,-0.1l-2.1,2l-0.9,-0.6l-4,-0.3l1.5,-2.5l-0.7,-7l0.4,-1.1l-0.7,-1.7l17.5,13.1l18.4,11.7l19.3,10.3zM114.3,138l0.1,0.7l1.3,0.5l-0.1,1.5l-0.6,0.8l-2.6,0.5l1.8,0.8l2,-2.6l2.7,0.5l-5.5,5.7l-2.4,-0.2l-1.3,-2.2l0.5,-0.3l1.1,0.9l-1.1,-2.5l0.6,-3.3l1.8,-2.4zM122.7,153.7l-1.4,-4.9l0.7,-0.5l1.5,3l0,2.1zM128,159.1l-1.7,3.5l-1.9,1.4l1.8,-4l-1.2,0.3l0.1,-3.4l2.1,-1.9l1.2,2.5zM113.8,147.9l-0.8,2.5l-1.8,-0.7l1.6,3l-1.3,0.6l0,1.7l0.8,0.6l-0.8,0.7l0.8,0.6l-1.1,0.9l-1.4,-7.8l0.3,-1.5l0.9,-0.2l-1.2,-2.3zM124.5,181.7l7.7,7.4l0.3,8.4l3.4,4.8l0.2,6.8l1,-0.5l-0.6,2.4l-0.7,-0.5l-1.1,0.6l-1.7,-1.5l-5.3,-6.5l2.6,-1.5l1,-1.5l-1.5,1.4l-3.5,-0.9l-1.2,-2.3l1.4,-0.3l-0.7,-1.3l-0.8,-0.1l0.7,-1.2l-1.5,-1.2l-0.6,0.3l-0.5,-1l-0.6,0.2l0.7,-1.7l2.6,0.5l-1.9,-1.5l-1.1,-2.9l-1.4,-0.1l0.4,-2.5l-0.9,0.4l-0.1,-1.3l-2.3,-0.8l1.2,-2.7l1.5,0.5l0.5,1.1l0.9,-1.4l-1.4,-1l-0.2,0.6l-1.9,-0.6l-0.6,-2.5l1.2,-0.8l1.8,0.7zM338.3,166.7l-22.4,30.4l-8.3,8.8l0.4,35.9l-19.9,-0.3l-18.5,-1.1l2.1,-63.8l3.6,-38.3l16.5,1.1l16.7,0.1l0.1,6.7l-0.8,1.8l3.3,3.2l-0.1,3.9l0.9,-4.1l4.5,-0.1l4.3,12.7l-1.6,3.8l1.7,-1.1l0.8,-0.1l-0.2,0.7l7.1,-3.1zM506.2,217.9l-1.7,3.2l-1.5,-0.7l0.8,1l-0.3,2.1l-4.7,7l-1.8,-0.1l0.1,-1.1l-0.6,1.2l0.7,0.8l-1.2,2l-0.6,-0.2l-1.9,1.7l-1,-0.5l-2,1l-1.5,-0.6l-1.1,-2.9l-2.7,-0l-5.6,-11.7l-3.6,-1.1l-2.9,2.8l-1.7,-0.2l2.7,-3.7l-1.3,-3.6l1.5,-0.7l-0.3,-0.6l2.9,-1.4l2,0.5l4.9,-4.6l3.5,-0.2l2.4,1.3l2.6,-3.3l-0,0.6l2.2,-0.5l0.4,3.6l-1.1,3.5l3,-1.1l0.3,1.7l2,1.3l1.9,2.4l1.1,0.6l4.3,-1.3zM515.8,151.6l-3,-4.3l-17.6,11.6l-14.9,8.6l0.2,-0.7l-1.6,-1.7l-2.3,-0.7l2.3,-3.4l-3.4,-2.6l-0.7,0.8l0.5,1.7l-0.7,1.2l3.1,5l-0.2,1.2l1.5,3l-1,1.9l-1.2,-0.9l0,-0.9l-4,-1.3l-1.8,0.4l-0.1,1.4l-1.1,0.8l-3.4,-0.9l-0.2,1.3l-2.1,-3.9l-0.4,-2.3l-1.1,-0.6l-0.6,1.1l0.5,1.9l-0.5,0.7l-1.6,0.1l-1.8,-5.3l-1.9,-1l-1.8,0.2l-0.7,-1.5l-2.4,-1.3l0.4,-2.3l-1.7,-2.4l1.7,-0.5l0.3,-1.1l-3.1,-3.2l4.6,1.1l-2.6,-4.7l7.6,2.2l6.4,-3.2l3.3,-0.6l-0.2,-3.1l-1.2,-2l1,-2.4l-1,-1.3l-1.6,0l-2.5,-1.4l-0.2,-1.6l-2.2,0.5l-0,-1.2l-1.4,-0.2l-0.5,-0.7l0.6,-1.2l-1.9,-1.4l0.1,-2l-2.3,-5.7l-0.1,-1.7l-2.2,0.6l-3,-1.9l0.8,-4l-1.7,-0.9l1.9,-2.2l-1.4,-0.3l-1.5,1.8l-0.9,-0.6l-2.7,0.6l-0.1,-1l2,-0.8l-1.7,-1.2l-0.7,-2.6l-1.1,1.1l-0.7,-0.4l-1,-3.4l-1.4,-0.4l0.6,-1.4l-1.3,-0.6l0.6,-0.7l1.1,0.2l-0.4,2.5l1.7,-1.5l1.6,2.5l0.3,-1l2.6,1.8l-0.2,1.5l1.2,0.4l0.7,-1l1.1,0.8l-1.4,2.5l2.7,-1.9l0.8,1.7l0.9,-0.6l1,0.6l0.6,0.6l-1.2,4.3l0.8,-1.9l0.6,0.3l1.8,-1.9l0.5,2.9l-1.1,2.6l2.6,-3l1.6,1l1.7,-0.4l1.4,2.4l-1.7,2.3l2.8,-0.9l0.6,1.5l1.8,-0.4l2.1,0.6l1.4,2.7l-3.1,1.7l-1.6,0.2l-0,-0.7l-0.7,0.8l4.6,0.2l-0.4,1.3l2.6,-0.9l-0.6,1.8l1.6,-0.8l1.1,1.2l-0.4,0.8l2.2,0.1l1.2,-1.5l1.8,1.2l-0,-0.9l0.7,-0.2l0.4,1.2l1.8,0.7l0.2,4.5l0.9,-2.5l1.7,-1.9l0.9,0.7l1.2,-0.6l0,4l0.6,-4.7l1.4,-0.4l2.5,1.8l2,-0.6l1.4,-2.1l1.4,0.8l2.5,-0.3l-0.2,2.5l-1.8,1.7l-0.6,1.8l0,2l-1.2,1l-1.6,3.3l-1.5,1l-0.3,2.8l-1.5,0.3l2.2,0.4l0,2.4l4.2,-10.6l2.7,-3.1l-1.8,1l-0.5,-0.3l0.4,-0.9l3.8,-1.9l3.2,1.9l-0.8,2.6l1.6,0.5l0.8,-3.6l1.5,-1.4l5,1.2l4.1,5.1l-1.9,2.5l3,-1.4l0.5,0.9l-1.2,0.6l2.3,0.1l0.6,0.8zM523,145.3l0.2,1.5l-1.8,2l0.9,0.9l1.2,-0.5l0.7,1l1.1,11.1l1.7,3.3l0.4,-6.1l1.1,1.3l0.7,-1.4l2.3,-1.3l-1.1,5.1l1.1,-1.4l0.1,2.4l1,-1.5l1.1,0.1l1.2,-1.5l0.8,0.8l-0.2,-1.4l1.8,3.7l-0.1,-1.9l0.8,-0.9l0.9,-3.7l1.4,1.3l-0,-1l1.8,-1.7l2.3,-0.4l1.3,1.2l-0.8,4.9l1.4,-1.4l0.1,1.2l1.6,-0.6l0.3,1.3l-0.8,2.2l3.9,-6l0.8,2.1l-1.2,3.3l0.9,0.7l-1.1,1.7l1.2,-0.9l0.2,2.6l1.8,0.3l-0.1,-4.1l1.4,-2.5l0.8,3.9l1.2,1.7l0.6,0.2l0.3,-1.4l-0.5,-2.3l2,1.1l3,8.5l-1.4,0.4l-0.9,1.7l-3,-3.8l-0.3,3.9l-1.1,0.3l-1.6,-5.5l-2.5,-1.8l-1.6,0l1.1,4.6l-0.2,0.5l-0.5,-1.6l-0.1,1.7l-0.9,1l0.4,5.4l-2.3,2.1l-1.2,0.2l-0.3,-0.8l1.4,-2.7l-0.1,-3.4l0.8,-3.2l-3,2.3l0.6,1.5l-0.5,0.8l-3.1,1.8l0.8,-1.7l-1.2,-1.8l-3.3,5.4l-8.8,4.8l-0.3,-0.4l-2.4,3.3l-2,0.7l-2,-2.1l2.2,-8.2l-4.6,2.6l0.7,-2.6l0.2,1l1.3,-0.2l-0.9,-4.9l2.6,-0.7l-1,-0.3l-0.2,-1.6l-1.2,0.5l-0.8,-0.9l0.2,-1.9l1.4,-0.4l-1.8,-1.2l-1.8,-7.9l0.7,-1.7l-1,-0.2l0.3,-2.1l-0.7,-1.2l-0,-3.7l1.8,-4l2.1,-0.4l-0.5,-0.9zM505.4,220.3l0.8,-2.4l5.5,-0.2l2.1,-1.5l1.4,-0.4l0.2,0.9l1.7,-0.7l1.8,-3.8l2.1,1.1l1.5,-1.2l1.4,0.4l1.1,0.8l-0.7,1.2l2.8,-0.9l-10.2,13.2l-2,0.7l0.9,1.7l-1.4,0.4l-1.7,-0.5l0.1,1.7l-0.9,-0.6l-0.5,0.7l1.1,1.8l-1.4,5.9l-2,3.2l0.4,1.1l-1.9,1.2l-2.6,-1.5l-0.7,0.9l-0.9,-0.3l-1.9,-2.6l-0.4,-2.2l0.5,-2.4l-1.1,2l0,-0.8l2.1,-3l0.3,-1l-1.1,0.8l3,-5.7l2.1,-2.6l-0.4,-0.7l0.8,-0.1l0.6,1.5l1.8,0.3l-0.9,-0.9l0.2,-0.9l3.6,-3.6l-7.5,3.6l-0.5,1.2l-0.9,0.1l-0.3,-1.2zM523.4,208.8l1.2,-1.2l-0.5,1.4l0.6,0.1l0.2,1.4l1.6,-1.5l0.5,-2.7l-1.5,1.1l0.7,-4.4l1,0.7l2.2,-1l0.3,1.4l0.9,0.3l-1.6,4.3l-1.3,1.5l-3.4,2.3l-1.7,-0.6l-2,-3.9l-0.1,-6.9l0.6,-2.7l0.9,-0.6l1.8,1.9l1.5,4.3zM239.1,132.6l-30.3,-8.5l-29.5,-11.9l-0.6,-0.7l0.7,-3.8l-0.7,-2.5l1.2,-2.4l-0.9,-0.5l-0.7,0.7l-2,-0.3l-1.9,-2l-0.8,0.5l-0.4,-0.8l-0.9,0.4l-2.3,-1l1.8,-6.3l-1.8,-2.6l-0.6,-5.6l-1.2,-0.1l-1.2,-1.6l1.8,-2.5l-0.6,-1.5l0.2,-2.3l1.4,-1.6l-0.8,-2.8l2,-1l0,-2.2l-0.6,-0.5l1.1,-0.3l-1.3,-2.9l0.8,-3.9l-0.6,-1l-1.8,-0.4l0.9,-1l-1.6,-3.8l2.1,-1.5l-0.6,-2l3.8,-1.8l0.1,-2.7l1.3,-0.5l-0.6,-0.9l-1.5,0.3l0.5,-1l-2.4,-1l1.7,-2.3l-0.5,-0.8l1.7,-1.5l1,-4.2l-6.1,-4.4l2.7,-3.7l0.5,-2.3l6.3,-8.5l2.1,3.9l0.4,-1.5l-0.6,-2l1.3,0.3l-0.4,-1.3l1.7,-1.1l1,0.8l1.3,-0.9l1.9,1.2l1.2,-1.5l0.5,2.3l-2.1,1.4l3.6,0.4l1.7,-1.1l1.5,0.7l0.2,-0.8l0.7,0.8l3,-0.4l0.8,0.6l2.3,-1l1.8,1.4l1.2,-0.4l-0.8,1.6l-4.9,0.8l-3.6,-1l-2.2,1.1l-1.8,-0.1l-3.5,1.7l0.1,1.2l0.2,-1l1.5,1.3l0.8,-0.2l-0.3,-0.7l0.8,-1.2l3.2,-0.2l1.1,-0.9l1.2,0.7l-0.3,0.6l1.2,-0.3l-0.9,2l4.8,-2.6l4.5,-0l-1.5,0.9l-0.2,1l0.8,-0.1l3.2,-2l2.3,-0.3l-0.6,-2l1.2,-1l0.9,3.4l-0.5,7.5l1.3,2.6l1.3,-0.1l0.3,-1.9l1.3,-1.5l1.9,-0.7l-0.5,-0.6l1.7,-0.4l-1.1,3.4l0.5,1l-2.1,1.7l0.2,0.7l2.5,0.9l3.3,-2.8l3.5,1.7l2.1,2.7l-5.2,13.9l9.5,15.8l11.2,15.3l6.7,1.7l3.1,6.3l1.8,1.5l26.4,9.1l-3.7,38.5l-18.2,-2.3zM269.2,-2l-0.3,1.4l-2.7,1.4l-4.3,1l-2.4,-0.8l-1.4,-2.8zM243.7,-1.2l1.5,-0.3l-0.4,1.7l2.1,-1.5l2.4,1l3.1,7l-0.3,1.6l-11.3,3.5l-2.7,2.8l-2.1,0.1l-3.6,5.6l-2.7,0l-0.5,-0.8l-1.8,1l-3.2,0.3l-0.2,-6l-2.2,-4.1l-1.4,-0.6l0.9,-1.3l3.8,-2.8l1.1,-2.1l1.3,-0.2l0.3,-1.9l4.5,-3.9l12.1,0.0zM265.1,16.3l-6,26.9l-7.6,-1.9l-0.9,1.4l-0.7,-0.2l0.4,-1.5l-12.6,-3.9l0.2,3.5l-0.6,-0.2l-0.3,-1.8l0.8,-2.4l8.1,0.6l5.6,2.4l3.2,0l-5.4,-5.1l-6.8,-1.1l-4.5,-1.9l-1.1,-2.9l0.4,-1.3l1.7,-0.6l6.1,-0.1l0,-0.8l2,0.4l-0.6,-0.7l-6.4,-0.6l-1.1,-0.9l1.9,-1.5l-2.3,-0.7l-0.7,-1.4l0.8,-1.9l2.8,-1.7l-0.2,-1.7l0.6,-0.8l4.1,-2.3l8,-1.9l0.9,1l-0.2,2.1l-2.5,3.9l2.7,0.2l1.5,-2.4l1.5,0.1l3.3,3.5l-2.5,2.8l0.5,0.7l1.3,-1.1l0.3,0.9l3.2,-2.1l-0.5,-3.4zM308.4,139.6l-16.7,-0.1l-16.5,-1.1l3.7,-38.5l-26.4,-9.1l-1.8,-1.5l-3.1,-6.3l-6.7,-1.7l-11.2,-15.3l-9.5,-15.8l5.4,-13.3l1,2.2l3.4,2.5l4,4.8l3.4,1.9l-0.2,-1.4l1.4,0.3l3.1,3.3l1.2,3.7l-0.8,1l-2.2,-0.7l-1.6,0.9l-1.6,1.7l0.8,1l3.8,2.2l4.6,1.5l5.3,0.3l3.5,-1.1l1,2.7l1.9,0.8l0.1,2.5l1.1,-1.4l1.7,4.4l-1.3,0.8l-0.9,-0.6l3.2,7.1l-1.1,-3.4l0.2,-2l0.5,-0.3l1.5,1.4l-1.2,-9l0.9,-1.9l4.9,-0.7l0.2,-1.1l2.6,-2.1l-0.5,-0.5l-1.9,0.8l-0.7,1.4l-3.4,-0.4l-0.6,1.3l-2,-0.2l-1.1,-1.6l1.9,-2.6l7.5,-1.5l1.4,1.1l0.5,3.9l2.2,2l0.4,1.6l2,0.5l1.5,-0.5l3.6,3.9l2.6,0.6l4.7,-1l4.4,1.3l1.8,-0.7l-0.9,-1.5l0.3,-1l2.3,3.4l1.6,0.9l1.1,-1l-0.2,-1.2l-1.8,-1.2l-1.6,0.5l-1.4,-4.1l1.4,0.5l1.5,-0.6l-0.4,-1.3l1.7,0.3l1.4,2.2l1.9,-0.5l-1,2.5l2.6,-1.9l-1.4,6.8l0.8,2.2l1.5,-0.4l-0.2,1.2l1.3,0.3l0,1.3l-1.2,0.4l-2.3,-0.8l2.3,4l-0.9,-2.9l2.3,-0.1l0.5,-2.9l-1.4,-4.3l0.6,-2.6l2.4,-0.5l4.2,-5.2l-0.7,-0.1l-0.8,-3.3l-0.6,2l-1.4,0.4l-0.4,-0.5l1.6,-3l-0.6,-0.2l-0,-1.5l2,-1l-0.4,1.8l1,-1.4l-0.4,-1l-2.4,0.3l-1.2,-1.8l-0.6,0.7l-3.7,-2l-1.8,-3.8l0.8,-2.8l1.3,-0.3l-0,-1.3l-1.1,0.5l-0.9,-1.5l0.3,-4l1.1,-1.6l1.5,0.7l0.5,-1.4l-1.4,-0.7l1.9,-3.1l1.3,-0.8l1.3,2l1.6,0.2l-0,1l2.5,3.4l0.1,3.8l2,1.9l1.1,3l0.7,-0.4l0.9,1.4l-0.9,0.5l-1.5,-0.9l-0.5,1.2l1.7,0.5l-2.7,3.6l1.8,-0.1l1.4,1.2l2.2,-1.2l-0.7,1.1l3.3,0.4l-0.8,0.3l-0.6,1.5l-1.1,-0.1l2.8,3.5l0,3.7l1.4,1.9l0.8,-2.2l0.3,-4.9l1,-2.3l0.7,-0.2l3.1,2.9l2,5l-0.2,0.9l-1.3,-0.7l-0.3,0.5l0.5,3.1l4.2,6.6l2.4,-3.2l0.1,-3l1.1,-2.7l0.1,-5.8l0.4,-0.8l2,-0.3l-0.9,-0.5l0.4,-2.2l-1.9,-1.1l-1.3,-5.5l3.7,-0.6l2.3,0.9l3.3,-0.6l0.9,0.7l-0.9,1.2l1.6,0.5l0.6,1.4l2.8,-0l0.3,0.6l-1.5,2.6l1.9,-0.1l0.7,1.6l-1.7,2.3l-1.1,-0.2l-1,0.8l1.7,2.5l0.6,-0.6l0.4,2.4l2.9,2.5l0.9,2l0,2.7l-1.4,1.2l-1.8,4l-2.8,2.6l-2.3,-2.9l-0.8,0.1l-1.6,-1.9l-1.2,-0.3l-0.7,1.4l1.7,-0.4l4.1,5.4l-2,-0.1l-0.4,1.1l-2.5,-0.9l-2.2,-1.9l-3.9,1l0.3,1.5l3,1.8l-3.2,6.8l-1.3,1.1l-2,0.2l-3.3,-2.6l-4,-1.9l-0.7,0.1l0.3,0.6l-5.8,-0.2l1.5,1l0.2,-0.8l4.1,0.9l4,3.6l7.2,0.2l0.5,1.4l-3.1,8.5l-2.6,2.1l-1.6,-0.9l0.4,1.3l-2,-0.4l-0.9,-1.3l-0.9,0.4l0.9,1.6l-1.3,-0.1l0.8,1.5l-0.8,1.6l-2.8,0.7l-4.3,-1.8l-1.4,0.4l-5.6,-3l0.6,2.6l1.2,0.2l-0.5,-1l5,2.1l-1.2,1.3l2.5,-1.5l3.7,2.1l1.2,1.2l0.2,2.2l-0.3,0.9l-2.7,1.7l-3.8,0.1l0.3,1l1.6,1l-2.6,0.6l-0.8,1.8l1.1,1.6l-3,-1.7l1.3,1.3l-0.7,1.4l-1.2,0.3l0.1,0.9l-1.1,-0l1.2,1.6l-2.5,2.7l0.1,1.3l-0.8,0.4l0.1,1.5l-1.8,4.9l-1.1,1l0.5,0.7zM268.9,-0.6l0.3,-1.4l10.1,0l-3.3,2.1l-1.7,-1l-1.7,0.2l-0.6,-1.2l-1.9,1.3zM237.3,40.4l0.6,0.2l-0.2,-3.5l12.6,3.9l-0.4,1.5l0.7,0.2l0.9,-1.4l7.6,1.9l6,-26.9l2.5,4.6l0.1,7.8l1,1.1l1.6,-1.6l-0.3,-12l1,-0.9l-0,-1.2l2.1,1.9l0.9,-0.5l2.9,4.4l1.5,12.1l-1.1,4.3l1.4,3.4l2.3,2.6l0.3,-1.3l2.9,3.7l1,0.2l0.2,1.3l1.5,0.1l0.3,3l-0.5,1.3l-0.9,-0.5l-0.4,-1.3l-0.6,1.3l-1.7,-1.5l-1.3,1l-0.2,1.5l-2.5,-1.3l1,1.9l-0.5,2.4l2.4,-2.3l1,-0l0.5,0.6l-0.4,1.5l0.8,0.8l-0.4,1.4l-3.6,1.5l-7.1,-1.8l0.5,-1.4l-3.5,-1.3l-0.9,-2.8l-3.6,3.5l-3.1,0l-4.1,1.6l-11.5,-0.9l-1,-0.8l-0.5,-2.3l0.6,-3.9l-7.1,-3.5l-1.1,-1.3zM335.4,66.4l-1.2,-0.8l-0.6,-2.4l0.6,-2l1.1,1l0.5,2.7zM378.8,54.9l-3.2,0.7l-1.2,-1.9l4.1,-0.8l0.9,1.7zM348.6,82.2l2,0.4l-0.2,0.8l-1.8,-0l-0.3,-1l-1.1,0.4l-1.7,-3l2.5,1.1zM345.4,84.8l-1.9,-1.4l-0.6,-2.3l0.8,-0.1l0.9,1.2zM345,87.8l1.3,-2.1l2,1.9l2.4,0.3l1.4,1.3l5,1.9l2.3,3.5l-0.4,1.9l4,-1.6l1.4,1.2l-0.3,0.4l1.7,0.9l-2.3,3.4l-5.8,-1l-0.8,-1.9l-2.4,-0.4l-0.4,-1.2l-0.9,0.3l-0.9,1l-0.1,2.3l-1.9,2.5l-0.9,2.7l-2.8,2.2l-2.4,-5l-5.4,1.9l0.5,-3l2.4,-2.5l-1.1,-3.8l-0.2,-8.9l0.5,-2.8l0.8,-0.9l1.3,0.9l0.8,1.5l-0.3,1.1zM380.8,96.6l-3.2,-0.9l0.6,-1.1l2.4,1.0zM375.9,97.4l2,1.7l-1.3,1.5l-3.1,-2.0zM360.6,106.2l0.3,2l-1.6,3.4l-1.5,2.1l-1.6,0.1l-1.2,1l-1.4,-2.5l1.4,-4.5zM408.2,94.8l-1.8,0.3l-2.7,-1.6l3.5,-0.1zM371.8,108.6l1.5,1.2l0.4,2l-1,4.4l-2.4,-1.5l-0.6,-2.6l0.7,-2.9zM434.2,94.3l-3.5,-1.1l2.4,-1.4l0.8,0.3zM425.2,110.3l-0.8,-0.4l0.1,-2.8l1.6,0.6zM389.3,162.4l-0.3,3.7l-0.6,-0.2l-0.2,-2.7l-0.8,3.4l-1.2,1l0.3,-3.2l-1.7,2.7l1.3,-4.5l-0.2,-2l0.5,3.3l0.3,-4.1l2,1.2zM388.1,196.4l-2.1,0.2l-5.7,-1.3l0.8,-1.5l3.8,-1.1l2.6,2.1zM342.1,-2l-1.6,0l0.9,2.8l-3.5,1.8l-2.9,-0.2l-0.9,-2.2l-1.2,-0.6l0.7,1.2l-0.1,1.7l-1.6,1l-2.1,-0.5l-0,0.9l-0.9,-0.6l-0.7,1.1l-2.4,-0.2l0,0.7l-4.1,0.4l-0.6,-3.1l-0.6,1.4l-0.3,-0.9l-0.6,0.5l-0.7,1.9l-2.5,-0.3l-1.1,-0.9l0.1,-1l-0.5,1.6l-1,0l-1.1,-1.2l-1.4,-5.3zM298.4,-2l0.4,2.3l-1,-0.5l0.1,1.4l-3.2,-0.2l-0.8,0.6l-1.5,-0.3l-0.5,-1.7l0.8,-0.5l-1.3,-1.0zM308.7,1.3l0.1,3.4l-2.4,0.4l-3.3,-1.8l-1.8,-1.9l1.3,-3.4l5.2,0.0zM283.3,0.1l-1.6,-1l0.3,-1.1l2.4,0l0.1,1.3zM310,9.4l2.5,1.6l1.5,-0.6l2.6,0.5l0.7,1.1l-2.6,5.7l0.3,0.8l-1.5,3.7l-5.7,0.2l1.2,0.8l0.7,2.3l-1.2,3.7l-2.8,0.2l-0.5,-0.1l-0.2,-4.4l-1,-3.5l-0.1,-7.5l0.6,-0.6l1.8,0.8l-1.2,-2l0.4,-1.5zM296.9,12.2l-1.8,0.4l-1.1,-0.8l4.2,-1.9l0.1,1.0zM292.5,11.2l2.1,2.1l3.9,-1.3l1.3,0.6l0.4,1.5l-1.7,1.5l0.9,1.1l-1.4,0.9l-1.8,3.1l2.2,-0.7l1.5,2.5l-0.1,1.3l1.5,-0.7l0.4,1.5l-1,2.1l0.6,1.1l-0.5,1.5l0.4,2l-2.8,1.8l-1.7,-0.4l-0.3,-1.8l-0.4,0.7l0.6,3.1l-1.4,1.2l-1.6,-0.9l-3.5,-7.3l-1.6,-1.7l-1.4,-0.1l-2.3,-4.4l0.6,-1.9l1,-0.8l0.7,0.3l1.5,3.3l2.2,-0.3l0.4,-1.9l0.7,0.7l-0.9,-2.8l0.6,-0.6l1.3,0.6l-1.4,-1.4l-1.4,0.7l-1.5,-2.1l1.5,-0.9l1.1,1.5l-0.9,-3.3l1.3,-0.4l1.2,0.5l-0.6,-0.9zM330.9,36.6l2.6,-1.7l1.6,-0.3l1,1l-0.6,-5.5l-1.9,-0.3l-2.1,-2.4l1.3,-2.5l3.2,1.2l-2,-2.1l0.5,-0.7l-2.1,-0.1l-1.3,-2.6l0.7,-2.3l3,1l-3.7,-2.3l0.8,-2.3l1.4,-1.4l1.7,0l-0.5,-1l1.1,-1.2l3.6,-1.7l1.6,0.5l4.8,7.1l-1.6,4.8l1.4,-1.7l-0.4,2.4l0.9,0.8l-0.6,0.4l0.3,1.5l1.4,-3.2l0.9,0.1l-1,-1.2l0.5,-1.2l1,1l0.5,-0.9l1.2,0.8l0.5,2l1.6,1.1l-1.3,-1.7l-0.2,-2.4l3.6,0.6l-3.4,-1.8l0,-1.3l1.3,-1.6l2.3,-0.6l2.3,0.7l1.3,-0.4l1.8,0.7l1,1.7l-0.9,5.3l0.6,-2.8l1.1,-1.5l1.5,-0.2l0.7,0.6l0.1,1.3l-2,2l1.5,-0.2l0.6,4.3l0.1,-4.2l1.5,-1.7l0.1,3.6l0.8,-2.1l2.4,2.1l-1.1,-2.1l0.6,-1.6l4,0l1.7,1.1l0.1,2.3l-1.2,0.6l-1.1,3l0.9,-0.4l0.9,-2.5l1.3,0.2l1,-1.8l0.6,0.3l0.7,2.3l-1.9,4.4l0.6,0.1l0.3,-1.7l0.6,0.3l0.9,3.4l-0.3,-4.4l1.9,-3.5l4.9,0.2l0.9,0.9l-3.2,5.8l3.1,-3l0.2,2.2l0.9,-0l0.8,-2.1l-0.5,-0.4l0.2,-1.5l3.1,1.4l1.6,2.3l-2.4,0.8l-2.6,3.8l1.9,-1.5l2.2,0.2l2,-0.9l2.1,0.5l0.6,1.2l-5.3,1.9l-1.4,2l1.6,-1.5l2.1,0.1l1,2.4l-4.6,1.4l3.9,-0.2l1.5,1.1l3.9,-1.2l-0.3,1.5l1.1,0.6l0.3,1.4l0.3,-0.8l0.6,0.7l-0.6,-1.5l1,-1.2l1.1,4l0.6,-2.7l0.9,1.1l0.9,-0.9l1.6,2.2l-0.9,-1.6l0.9,-2l0.7,2.1l0.9,-1.1l3.6,0.9l-0.4,1l0.9,1.1l-2.2,1.1l1.5,0.2l1.6,-0.9l0.3,-1.3l2.3,0.2l-0.2,4.5l1.7,-2.3l2,-0.7l0.1,-1.6l4.1,1.4l0.5,0.5l-0.4,0.8l-1.7,-0.2l-0.5,0.7l2.1,0.2l0.9,0.9l-0.9,1.2l-2.3,0.3l0.9,0.4l0,0.9l2.6,0.5l-1.9,1.3l1.6,1l-0,2.1l-1.7,0.8l-1.8,-1l0.8,1.1l-0.5,0.8l1.2,-0.2l1.7,3.1l0.5,2.9l-1.8,-0.9l-0.7,0.8l-1.1,-0.5l-0.7,-2l0.3,2.8l-5.6,-3.7l0.8,-6.1l-0.8,2.9l-2.4,2.1l-0.3,-2l-1,1.3l-5.1,-2.5l0.1,1l-0.9,0l1.3,2l-2.8,-0.3l1.4,1.4l2.7,1.1l-0.1,1.1l-1.7,0.5l-3.2,-1.4l-0.8,0.9l2.3,0.2l0.9,1.7l1.5,0.3l0.6,1.8l0.9,-1.2l2.4,0.9l-0.4,1.1l2.8,1.4l1.5,1.9l-0.5,-1.6l2,0.5l0.6,1.1l0.3,-1.8l3.4,0.9l-0.4,1.5l1.2,-0.7l0.7,0.4l0.1,1.3l-1.3,0.8l1.1,0.1l1.5,1.3l1.7,-0.9l0.1,1.1l0.9,-0.3l1.4,1.2l-0.4,0.5l2,3.3l-0.5,0.4l-4.1,-3.2l2.6,3.8l2.9,2l-1.8,0.9l1.5,2.4l-6.2,-1.8l0.5,1l-0.8,0.1l-1.9,-1.5l0.6,1.7l-7.1,-3.3l1.7,2.4l-3.9,-1.3l-1.5,0.9l4.9,3.1l2,-0.2l0.1,0.8l5.7,1.4l2.6,1.8l1.5,0.2l0.8,2.9l-0.7,0.6l-5.4,-0.2l-4.6,1.1l-2.9,-0.4l-3.1,-2.1l-2.4,1.1l-2.7,-0.3l-1.5,-0.3l0.2,-1.3l-1.3,1.1l-3.7,-2l1.3,-0.8l0.4,-1.5l-2.2,-0.5l-1.7,0.6l-0.1,-1.6l-1,1.1l-1.3,-1.4l-4.1,-2.2l0.1,-1.8l-2.3,0.9l-0.1,1.5l-0.8,-1.5l-1.3,0.1l-1.4,-1.3l-0.7,0.6l1.7,1.7l-0.7,1.1l-3.2,0.5l0.2,1.2l-3.2,2.5l-4.4,0.1l-2.5,-2.9l0,-2.6l1.9,-2.2l-0.8,-1.3l0.2,-1l6.1,0.3l1.6,1.1l0.2,1.4l0.7,0.4l-0.1,-1.6l-2.4,-2l2.3,-0.6l0.4,-1.1l1.8,-0.5l0.9,-1.6l2.2,-0.6l-1.6,-2.2l-3.6,-2.6l3,-6.6l-0.2,-2.9l1.1,-1.4l-0.1,-1.5l-6.9,-7.9l-0.9,1l-0.8,-0.4l-1,-2.8l-1,0.2l0.9,1.2l-0.9,0.4l-2.2,-1.8l-0.6,0.2l0.2,-1.1l-0.8,-0.2l0.5,-1l-4.9,5l-0.8,-2.7l2,-1.1l0.3,-1.1l-0.7,-1.1l-2.7,-0.8l-0.5,-1l0.7,-0.9l-0.9,0.1l-0.4,1.2l-1.2,-0.2l0.3,-1.5l-2.4,0.1l-1.6,-3.3l-1.5,0.5l-3.3,-2.7l-0.5,2.1l2,1l0.6,2.4l-1.7,1.3l-6.7,-0.4l2.5,1.9l0.3,1.1l-2.4,-1.4l-2,1.5l-3,-1l-2.1,0.9l-5.1,-0.5l-1,0.9l-1.8,-0.7l-0.7,-2.9l-0.8,0.8l-1.3,-0l0.3,0.8l-2.3,1l-3.2,-1.9l-2.6,-5l4.9,0.5l2,-0.9l-2.4,-1.5l-3.6,-0.3l-2.4,-1.6l-0.9,-4.1l0.8,-2.2l-0.8,-2.1l1.1,-6.6l3.3,-6.1l3.2,-1.7l3.4,-0.1l0.5,1l-2.1,3.9l-1,5.3l1.4,2.6l1.1,5.1l4.3,4.4zM345.4,8.7l3.1,-1l3.2,0.7l3.5,3l0.9,2l-4.5,0.9l-3.6,2.3l-1.5,-0.3l-1.9,-3.3l-1.8,-0.6l-1,-3.4l1,-0.7zM277.6,19.2l-3.5,-5.8l1.1,-1.8l3.4,-0.1l1.6,2l-0.4,2.4zM298.2,51.3l0.7,-0.3l3,3.1l1.8,4.1l1.6,0.6l-3.8,3.3l-3.6,-0.7l-2.5,-1.9l-0.2,-1l-1.3,0.3l-0.6,-1.2l-1.2,0.6l-0.7,-0.9l0.2,-1.6l1.8,-0.2l1.5,-1.5l-0.2,-2.2l1.6,1.1l-0.7,-1.6l0.3,-1.5l1.3,-0.6l1.2,1.2zM354.9,43.2l-0,1.5l-1.5,0.4l0.5,1.1l-2.9,-1l0.9,-1.3l1.1,0.3zM364,46.7l-0.7,0.3l-0.9,-1l0.2,-1.6l1.8,0.2zM357.8,51.3l-0.8,-0.5l0.2,-1.3l0.9,-1.1l0.3,-2.1l0.9,-0.6l0.5,0.6l-0.9,3.6zM370.5,52.5l2.4,0.7l1.7,6.3l-1.4,2.2l-3.8,1.5l-2.4,-3.4l-0.1,-2.5l0.8,-3.4zM308,238.3l-0.4,-32.3l8.3,-8.8l22.4,-30.4l4.8,3l3.5,3.7l10.5,2.9l2.1,1.4l-0.3,2.6l1.3,-2.2l5.9,-1.4l4.9,-0.2l2.3,0.3l1.7,1.1l0.8,1.6l0,5.4l2.4,3.5l1,5l-0.3,2.3l5,4.6l0.2,1l-1,1.2l2.1,-0.3l5.5,3l2,3.1l-1.7,3l1.7,-2.2l1.2,-0.4l2.8,0.7l2.4,1.8l8.1,31.4l2.3,3.9l4.2,4.1l3.3,0.9l5.3,-0.3l5.2,2.2l1.1,-1.1l1.7,1.9l2,0.8l1.8,-0.7l1.6,0.3l5.9,-4.2l1.8,-0.5l1.3,0.2l0.3,2.4l1.2,0.6l-1.7,2.7l-2.7,2l-4.5,7.5l-2.5,7.6l-12.7,3.8l-2.6,2.3l3.2,4.7l-0.6,1.2l-7.3,6.3l-6.8,3.2l-7.1,6.9l-1.8,0.4l-2.7,-1l-1.5,-2.8l0.2,-1.6l3.1,-3.9l0.9,-9.6l-6.4,-16.1l-7.7,-3l0.5,-1.8l-1.2,-1l-2.3,0.8l-1.7,-4l-2.7,1.2l-1.7,-1.4l-1.1,-2.4l-24.1,-9.9l-6.4,3.6l-2.8,0.3l-1.3,-1l-4.1,0.5l-1.2,-0.9l-3.7,1.7l-3.2,-2.1l-2.6,0.4l-0.6,-1.5l-3.2,-1.5l-2.4,0.1l-2,0.9l-5.8,-1.9l-1.5,-5.3zM399,210.8l-1.8,-1.7l0.4,-3.6zM505.4,213.4l0.3,-1.2l3.8,-0.6l5.2,-3.7l1.1,0.1l-1.8,3.5l1.1,1.9l-1.6,0.9l-1.7,-0.1l0.5,-0.9l-1.4,-0.3l0,-1l-1.1,1.9l0.7,-0.3l-0.2,0.4l-2.8,0.8l-1.5,-1l-2.2,0.9l-0.9,-1.4l-1.6,0.4l-0.4,-1.2l0.7,-3.6l0.8,2.7zM179.2,112.2l-23.2,-12.1l-18.4,-11.7l-17.5,-13.1l0,-1l1.9,-1.6l-2.2,-1.6l-1.9,0.2l-1,-2.2l-0.7,0.4l-1.2,-2l55.7,-65.1l3.7,4.7l0.9,5.7l2.7,4.3l-6.3,8.5l-0.5,2.3l-2.7,3.7l6.1,4.4l-1,4.2l-1.7,1.5l0.5,0.8l-1.7,2.3l2.4,1l-0.5,1l1.5,-0.3l0.6,0.9l-1.3,0.5l-0.1,2.7l-3.8,1.8l0.6,2l-2.1,1.5l1.6,3.8l-0.9,1l1.8,0.4l0.6,1l-0.8,3.9l1.3,2.9l-1.1,0.3l0.6,0.5l-0,2.2l-2,1l0.8,2.8l-1.4,1.6l-0.2,2.3l0.6,1.5l-1.8,2.5l1.2,1.6l1.2,0.1l0.6,5.6l1.8,2.6l-1.8,6.3l2.3,1l0.9,-0.4l0.4,0.8l0.8,-0.5l1.9,2l2,0.3l0.7,-0.7l0.9,0.5l-1.2,2.4l0.7,2.5l-0.7,3.8z"/>
+<path class="dg-land-hi" d="M216.8,232.4l-24.4,-6.3l-1.9,-4.5l0.3,-1.4l-0.8,-0.7l1.7,-3.8l0.1,-3.3l-0.7,-2l-1.2,-0.5l-0.3,-1.8l-1.3,-1.6l0.4,-0.9l-2.5,-4.4l-1,-4.9l-1.5,0.2l-0.9,-4.7l-2.2,-1.3l0.7,-1.5l-1.1,-1.4l-1.5,0.5l0.5,-3l-1.1,-4.8l-0.7,-1.1l-0.5,0.8l-1,-1.1l-0.2,-1.5l-1.4,-0.7l-0.6,-1.7l0.2,-0.9l1,0.2l-0.6,-2.4l20.9,-52.8l21.6,7.6l22.2,5.9zM216.8,232.4l22.3,-99.7l18,3.4l18.2,2.3l-3.6,38.3l-2.1,63.8l-26.2,-3.1z"/>
+<path class="dg-fill-cold" d="M482,209l-0.9,1.7l-2.2,1.5l-2,-0.5l-2.9,1.4l0.3,0.6l-1.5,0.7l1.4,2.9l-0.2,1.3l-2.5,3.1l-0.5,-1.2l-1.3,0.2l-1.6,8.6l0.7,2.5l-0.4,2.1l1,3.2l-1.2,4.2l0.5,1.1l-0.7,2l-0.9,-0.4l-0.6,1l-1.3,0.3l-0.2,3l-20.3,7.7l6,-6.4l0.5,-6.2l4.6,-7.3l4.4,-3.9l3.4,-4.3l2.6,-10.8l1.6,-3.9l5.8,-8.7l6.2,-6.8l3.4,-2.3l4.1,-1.3l4.8,0.8l0.3,0.5l-1.8,0.6l2.1,0.5l0.6,2.5l-1.3,1.4l-0.3,1.9l-1.7,2.8l-4.5,0.5l-0.5,1.2l-2.1,0.9zM439.7,102.4l-0.7,0.9l1.4,0.4l-0.6,1.4l1.4,0.4l1,3.4l0.7,0.4l1.1,-1.1l0.7,2.6l1.7,1.2l-2,0.8l0.1,1l2.7,-0.6l0.9,0.6l1.5,-1.8l1.4,0.3l-1.9,2.2l1.7,0.9l-0.8,4l3,1.9l2.2,-0.6l0.1,1.7l2.3,5.7l-0.1,2l1.9,1.4l-0.6,1.2l0.5,0.7l1.4,0.2l0,1.2l2.2,-0.5l0.2,1.6l2.5,1.4l1.6,-0l1,1.3l-1,2.4l1.2,2l0.2,3.1l-3.3,0.6l-6.4,3.2l-7.6,-2.2l2.6,4.7l-4.6,-1.1l3.1,3.2l-0.3,1.1l-1.7,0.5l1.7,2.4l-0.4,2.3l2.4,1.3l0.7,1.5l1.8,-0.2l1.9,1l1.8,5.3l1.6,-0.1l0.5,-0.7l-0.5,-1.9l0.6,-1.1l1.1,0.6l0.4,2.3l2.1,3.9l0.2,-1.3l3.4,0.9l1.1,-0.8l0.1,-1.4l1.8,-0.4l4,1.3l-0,0.9l1.2,0.9l1,-1.9l-1.5,-3l0.2,-1.2l-3.1,-5l0.7,-1.2l-0.5,-1.7l0.7,-0.8l3.4,2.6l-2.3,3.4l2.3,0.7l1.6,1.7l-0.2,0.7l14.9,-8.6l17.6,-11.6l3,4.3l-1.9,1l-1.9,3l-2.2,1.8l-0.6,6.2l-1.9,7.1l-3.7,2.4l-4,4l-1.6,-0.4l-4.5,1.9l-2.5,2l-11,5.2l-6.1,4.3l-1.5,3l0.3,6.6l-4.4,3.7l0.5,0.2l-2.7,4.6l-1.8,7.3l-8.7,1.1l7.7,-0.4l0.8,0.4l0.1,3.7l-2,7l-2.1,4.4l-3.3,2.5l-5.1,6.9l-1.5,5.4l-1.4,0.8l-1.4,2.6l-1.8,0.4l2.3,0.2l0.4,0.7l-1.9,2l-1.2,-0.6l-0.3,-2.4l-2.3,-0l-6.8,4.6l-1.6,-0.3l-1.8,0.7l-2,-0.8l-1.7,-1.9l-1.1,1.1l-5.2,-2.2l-7.5,0.1l-5.3,-4.8l-2.3,-3.9l-8.1,-31.4l1.4,1.2l-1.5,-1.6l-1.4,-5.2l1.1,-1l1.8,1l1.4,2.2l0.2,-2.9l-2.1,-2.1l1.7,-5.2l-2.6,-3.1l-0.4,-1.8l-1.4,-1.4l-2.6,-5.2l0.4,-1.8l-0.9,-0.7l0.2,-0.7l-1.5,-0.5l0.3,-0.8l-1.3,-0.5l-2.8,-3.2l5.5,-4.8l2.8,-3.5l3.2,-7.8l0.1,-3.5l-2.4,-7.2l-3.1,-4.6l-1.9,-1.9l-7.9,-3.7l-0.3,-2.3l1.8,-5.1l-0.7,-0.7l0.1,-1.9l1.9,0.4l-0.9,-0.7l-0,-3.2l-1.5,-0.2l0.4,-0.7l-1.7,-2.2l0.5,-1.2l-1.5,-0.5l0.4,-1.7l-2.6,0.7l0.8,-2.8l-0.5,-3.2l0.6,-1.3l-2.8,-1.8l-1.6,-4.2l2.3,-3.1l7,0.3l0.8,0.4l-0.3,0.8l1.4,-1.8l3.4,0.7l-0.3,-0.8l3,-3.6l4.4,1.8l0.8,-0.3l0.6,2.6l0.8,-1.1l1.4,0.3l1.3,1l-0.4,1.1l1.1,-1.4l1.2,0.2l-0.3,1.9l0.9,-0.1l-0.1,0.8l1.9,1l3.2,-0.3l1.8,-0.9l1.9,1.3l1.3,-2.4l1.1,1.4l0,4.1l1.7,2.9l-3.9,2.2l4.3,-0.8l1.5,1.8l0.8,3l1.6,-0.3l0.8,4l-0.3,0.6l-1.1,-0.9l-0.9,2.3l1.9,-0.1l1.5,-2.6l2.4,-1.3l2,0.7l1.7,1.9l0.7,2.9l-2,3.6l2.2,-2.5l0,-4.4l1.3,1.3l-0.2,1.7l0.3,-2.8l2,3.3l-0.4,-2.1l2.6,-4.1l0.3,-3.2l1.7,0.5l1.3,1.7l-0.2,-1.3l-1.6,-1.8l0.7,-0.6l-0.6,-0.4l0.4,-1.3l1.3,-1l-2,-0.6l0.2,-1.5l0.6,0.1l-0.9,-1.1l2.2,-0.3l-2.2,-0.4l-1.1,-1.9l0.4,-0.6l1.2,0l-1.1,-1l-0.5,-3.3l0.1,-0.9zM504.1,185.5l-2.2,1.4l-5.1,1.3l-3.6,0.2l-2.1,-1l-5.1,-0.3l1.6,-1.5l7.8,-1.8l7.5,0.2l1.3,0.8zM512.2,200.6l0.9,-0.3l-1.2,1l-0.5,-1.8l1.9,-3.5z"/></g>
+<polyline points="-10.9,50.5 8.4,66.0 28.2,80.9 48.4,95.1 69.1,108.7 90.2,121.7 111.8,134.0 133.6,145.6 155.9,156.5 178.5,166.7 201.3,176.2 224.5,184.9 247.9,193.0 271.6,200.3 295.5,206.8 319.6,212.6 343.9,217.6 368.3,221.9 392.8,225.4 417.4,228.1 442.1,230.0" class="dg-construction"/>
+<text x="13.2802" y="64.7818" text-anchor="middle" class="dg-label-sm dg-halo">49° N</text>
+<polyline points="36.9,-7.2 54.4,6.8 72.3,20.2 90.6,33.1 109.3,45.5 128.4,57.2 147.9,68.3 167.7,78.8 187.8,88.7 208.3,97.9 229.0,106.5 249.9,114.4 271.1,121.7 292.6,128.3 314.2,134.2 336.0,139.4 357.9,144.0 380.0,147.8 402.2,151.0 424.5,153.4 446.8,155.2" class="dg-construction"/>
+<text x="413.311" y="147.305" text-anchor="middle" class="dg-label-sm dg-halo">53° N</text>
+<circle cx="168.0" cy="156.3" r="5" class="dg-point-accent"/>
+<text x="175.964" y="174.256" class="dg-label dg-halo">Vancouver</text>
+<circle cx="300.7" cy="120.0" r="5" class="dg-point-accent"/>
+<text x="308.721" y="111.958" class="dg-label dg-halo">Edmonton</text>
+<text x="74.2449" y="78.4312" text-anchor="middle" class="dg-label-water dg-halo">Pacific</text>
+<text x="74.2449" y="92.4312" text-anchor="middle" class="dg-label-water dg-halo">Ocean</text>
+<text x="197.26" y="56.1157" text-anchor="middle" class="dg-label-sm dg-halo">British Columbia</text>
+<text x="305.783" y="64.5292" text-anchor="middle" class="dg-label-sm dg-halo">Alberta</text>
+</svg>
+<figcaption>Fig. 8 — Where the two cities are. Vancouver sits beside the Pacific Ocean; Edmonton is far from any ocean.</figcaption>
+</figure>
+<!-- /viz:coast-vs-inland-map -->
 <p><strong>(a)</strong> Use the term <em>specific heat capacity</em> correctly. Explain how the Pacific Ocean helps keep Vancouver's climate mild. Why does the ocean resist big temperature swings?</p>
 
 
