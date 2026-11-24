@@ -9,10 +9,11 @@ Grade 9 Mathematics · Teacher Copy — Not for Students
 
 ## Q1 ★ — Circle vocabulary
 
-**Top diagram (triangle POP is inscribed in circle):**
+**Top diagram:**
+- Point O = **centre**
 - OP = **radius**
 - AB = **diameter** (passes through centre O)
-- PO extended beyond O to circle = **diameter** (the full line through O)
+- PA = **chord** (both ends on the circle, not through the centre)
 - Angle POA (vertex at O) = **central angle**
 - Angle PAB (vertex at A, on circumference) = **inscribed angle**
 - Arc PB (shorter arc between P and B) = **(minor) arc**
@@ -173,7 +174,7 @@ Central AOB = 120°.
 
 > (a) APB = 120°/2 = **60°**
 >
-> (b) Major arc central = 240°. Inscribed = **120°**
+> (b) Major arc central = 240°. ARB = **120°**
 >
 > (c) 60° + 120° = **180° ✓**
 >

@@ -39,9 +39,10 @@ Word bank: centre · radius · diameter · chord · arc · central angle · insc
 [SVG: Circle with centre O, diameter AB, point P on top of circumference, inscribed angle lines PA and PB, and separate tangent line L touching circle at point T below]
 
 Labels for the top diagram:
+- Point O = _______________
 - OP = _______________
 - AB = _______________
-- PO extended to circle = _______________
+- PA = _______________
 - Angle POA (vertex at O) = _______________
 - Angle PAB (vertex at A, on circumference) = _______________
 - Arc PB (the shorter arc) = _______________
@@ -306,11 +307,11 @@ In circle O, central angle AOB = 120°.
 
 APB = ___°
 
-(b) Find the inscribed angle on the major arc. (Hint: major arc central angle = 360° − 120° = 240°.)
+(b) Find inscribed angle ARB. It stands on the major arc AB, so its vertex R is on the minor arc. (Hint: major arc central angle = 360° − 120° = 240°.)
 
-Inscribed angle on major arc = 240°/2 = ___°
+ARB = 240°/2 = ___°
 
-(c) Do the two inscribed angles (major arc and minor arc) add up to 180°? Check and explain why or why not.
+(c) Do the two inscribed angles APB and ARB add up to 180°? Check and explain why or why not.
 
 ___ + ___ = ___° ≠ 180°? or = 180°?
 

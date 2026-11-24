@@ -81,6 +81,24 @@ for _g, _units in [
 WB_VIS = ROOT / "worksheets" / "_visuals"
 for _u in ["heat-temperature", "interactions-ecosystems", "planet-earth", "plants-food-fibre", "structures-forces"]:
     UNITS[f"sci7-{_u}-workbook"] = (PM / f"sci7-{_u}-workbook-v1.html", PM / f"sci7-{_u}-workbook-answers-v1.html")
+for _s in ["algebra", "measurement-geometry", "number", "statistics-probability"]:
+    _d = PM / "math-9" / "worksheets" / _s
+    UNITS[f"math9-{_s}-workbook"] = (_d / f"math9-{_s}-workbook-v1.html", _d / f"math9-{_s}-workbook-answers-v1.html")
+# Math 9 practice tests: fragments live in tests-quizzes/_visuals/math9-<topic>-test/ (see TEST_DOC)
+TEST_VIS = ROOT / "tests-quizzes" / "_visuals"
+for _topic, _stem in [
+    ("circle-geometry", "circle-geometry"), ("linear-equations", "linear-equations"),
+    ("linear-relations", "linear-relations"), ("measurement", "measurement"),
+    ("polynomials", "polynomials"), ("powers-exponents", "powers"),
+    ("probability", "probability"), ("rational-numbers", "rational-numbers"),
+    ("similarity", "similarity"), ("square-roots", "square-roots"), ("statistics", "statistics"),
+]:
+    _d = PM / "math-9" / "tests" / _topic
+    UNITS[f"math9-{_topic}-test"] = (_d / f"math9-{_stem}-practice-test-v1.html", _d / f"math9-{_stem}-practice-test-answers-v1.html")
+TEST_DOC = """Test fragments (units ending in -test) use `section: Part B` and, as the anchor, a slot comment such as
+<!-- fig-slot:q10 --> left where the question's old hand-typed SVG was (in the student page and the key). An empty
+`caption:` draws the frame with no caption and no figure number, which suits a test. Inside a .fig-row the
+figure sits beside the question text, as the old SVG did."""
 WB_DOC = """Workbook fragments (units ending in -workbook) use `q: 7` instead of `section:`. The anchor is searched
 only inside that question's card (from its <span class="badge badge-num">Q7</span> to the next one). After
 inserting, every figure on the page, old hand-made ones included, is numbered in page order in the page's
@@ -94,8 +112,12 @@ def is_wb(unit):
     return unit.endswith("-workbook")
 
 
+def is_test(unit):
+    return unit.endswith("-test")
+
+
 def vis_dir(unit):
-    return (WB_VIS if is_wb(unit) else VIS) / unit
+    return (WB_VIS if is_wb(unit) else TEST_VIS if is_test(unit) else VIS) / unit
 
 CSS_START = "/* ── viz-kit: teaching visuals (scripts/add_notes_visuals.py) ── */"
 CSS_END = "/* ── /viz-kit ── */"
@@ -654,7 +676,8 @@ def strip_css(doc):
 
 def kit_css(unit, tb, wb=False):
     """wb: workbook rules go last inside the textbook markers, so they win and a re-run removes them."""
-    return CSS + ("\n" + TB_CSS_START + tb_css(unit) + ("\n" + WB_CSS + "\n" if wb else "") + TB_CSS_END if tb else "")
+    extra = ("\n" + WB_CSS + "\n" if wb else "") + ("\n" + TEST_CSS + "\n" if is_test(unit) else "")
+    return CSS + ("\n" + TB_CSS_START + tb_css(unit) + extra + TB_CSS_END if tb else "")
 
 
 def read_page(path):
@@ -822,6 +845,9 @@ def figure(meta, answer_key, tb=False):
     svg = expand(meta["svg"], answer_key)
     tikz = meta.get("tikz", f"custom | {meta['id']}")
     cap = meta["caption"]
+    if not cap:   # tests: frame only, no caption and no figure number
+        return (f'<!-- viz:{meta["id"]} -->\n<figure class="{cls} nocap">\n<!-- tikz: {tikz} -->\n{svg}\n'
+                f'</figure>\n<!-- /viz:{meta["id"]} -->\n')
     return (f'<!-- viz:{meta["id"]} -->\n<figure class="{cls}">\n<!-- tikz: {tikz} -->\n{svg}\n'
             f'<figcaption>{cap}</figcaption>\n</figure>\n<!-- /viz:{meta["id"]} -->\n')
 
@@ -836,13 +862,16 @@ def find_section(doc, section, path):
 
 
 BADGE_NUM = r'<span class="badge badge-num">Q?{}</span>'
+# Math 9 strand workbooks also have cards headed <p><strong>Q14 ★★</strong> — ...</p>, and Stretch cards (S1)
+CARD_NUM = r'(?:<span class="badge badge-num">Q?{0}</span>|<p><strong>Q{0}\b)'
+ANY_CARD = r'(?:<span class="badge badge-num">[QS]?\d+</span>|<p><strong>Q\d+\b)'
 
 
 def find_card(doc, q, path):
-    m = re.search(BADGE_NUM.format(int(q)), doc)
+    m = re.search(CARD_NUM.format(int(q)), doc)
     if not m:
         sys.exit(f"{path.name}: no question badge for Q{q}")
-    nxt = re.search(BADGE_NUM.format(r"\d+"), doc[m.end():])
+    nxt = re.search(ANY_CARD, doc[m.end():])
     return m.start(), (m.end() + nxt.start()) if nxt else len(doc)
 
 
@@ -877,12 +906,18 @@ def fallback_point(doc, meta):
 
 
 WB_CSS = ".viz.tb figcaption::before { content: none; }\n.q-card .viz.tb { margin: .9rem auto 1rem; }"
+TEST_CSS = (".viz.tb.nocap { counter-increment: none; padding: .6rem .7rem .5rem; margin: .4rem auto .6rem; }\n"
+            ".fig-row > figure.viz { flex: 0 0 auto; width: 310px; margin: 0; }\n"
+            ".fig-row figure.viz svg { width: 100%; }\n"
+            "@media (max-width: 600px) { .fig-row > figure.viz { width: 100%; } }")
 WB_BADGE = '<span class="badge badge-vis" data-viz>Diagram</span>'
 CAP_NUM = re.compile(r'(<(?:p|div) class="svg-caption">|<figcaption>)(\s*)(Fig\.|Figure) (\d+)')
 REF_NUM = re.compile(r'\b(Fig\.|Figure)(\s|&nbsp;)(\d+)\b')
 
 
-def wb_caption_word(doc):
+def wb_caption_word(doc, unit=""):
+    if MATH_UNIT.match(unit):
+        return "Figure"
     return "Figure" if re.search(r'class="svg-caption">\s*Figure \d', doc) else "Fig."
 
 
@@ -905,7 +940,8 @@ def wb_number(doc):
 def wb_badges(doc, frags):
     for q in sorted({int(f["q"]) for f in frags}, reverse=True):
         m = re.search(BADGE_NUM.format(q), doc)
-        start, end = find_card(doc, q, Path("page"))
+        if not m:   # a <strong>Q14</strong> card has no badge row
+            continue
         head_end = doc.find("</div>", m.end())
         if 'badge-vis' in doc[m.end():head_end]:
             continue
@@ -932,7 +968,7 @@ def apply(unit, frags, notes_path, ak_path, remove=False):
                 doc = re.sub(r"(<body[^>]*>)", lambda m: m.group(1) + "\n" + TB_DEFS, doc, count=1)
             # insert bottom-up so earlier offsets stay valid; ties keep fragment order
             placed = []
-            word = wb_caption_word(doc) if wb else None
+            word = wb_caption_word(doc, unit) if wb else None
             for n, meta in enumerate(frags):
                 meta = dict(meta, path=path)
                 if wb:
