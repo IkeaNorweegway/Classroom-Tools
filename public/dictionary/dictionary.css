@@ -1,0 +1,46 @@
+/* Word help card and pill. Loaded by dictionary.js (see that file). Fixed-position, so it
+   does not depend on the page's layout. */
+.wh-pop {
+  position: fixed; z-index: 2147483000; box-sizing: border-box;
+  width: max-content; max-width: min(320px, calc(100vw - 16px));
+  padding: .7rem .9rem .8rem; color: #1f1d1a; background: #fffdf8;
+  border: 2px solid #1f1d1a; border-radius: 14px;
+  box-shadow: 0 8px 26px rgb(31 29 26 / .24);
+  font: 500 15px/1.4 var(--font-body, 'Atkinson Hyperlegible Next Variable', system-ui, sans-serif);
+  text-align: left; letter-spacing: normal; text-transform: none;
+}
+.wh-pop[hidden] { display: none !important; }
+.wh-head { display: flex; align-items: center; gap: .35rem; margin-bottom: .25rem; }
+.wh-word { flex: 1; font-weight: 800; font-size: 1.05em; color: var(--accent-ink, var(--accent, #1d4ed8)); }
+.wh-btn {
+  all: unset; box-sizing: border-box; cursor: pointer; min-width: 30px; height: 30px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 8px; font-size: 1.05rem; line-height: 1; color: #55504a;
+}
+.wh-btn:hover { background: rgb(31 29 26 / .08); color: #1f1d1a; }
+.wh-btn:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 1px; }
+.wh-pop p { margin: 0; }
+.wh-def { font-size: 1em; }
+.wh-ex { margin-top: .4rem !important; font-size: .93em; color: #3d3a35; }
+.wh-gen { margin-top: .45rem !important; font-size: .8em; color: #6b665d; font-style: italic; }
+.wh-none { color: #55504a; }
+
+.wh-pill {
+  position: fixed; left: 14px; bottom: 14px; z-index: 2147482000;
+  min-height: 36px; padding: 0 .9rem; cursor: pointer;
+  font: 700 13px/1 var(--font-body, 'Atkinson Hyperlegible Next Variable', system-ui, sans-serif);
+  color: #1f1d1a; background: #fffdf8; border: 2px solid #1f1d1a; border-radius: 999px;
+  box-shadow: 0 4px 14px rgb(31 29 26 / .18);
+}
+.wh-pill[aria-pressed='false'] { color: #6b665d; border-color: #9a948a; box-shadow: none; }
+.wh-pill:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+@media print { .wh-pop, .wh-pill { display: none !important; } }
+
+/* The soft underline on words that have a definition (see CSS.highlights in dictionary.js).
+   Not printed: students print these notes. */
+::highlight(wh-term) {
+  background-color: rgb(250 204 21 / .16);
+  text-decoration: underline dotted rgb(161 98 7 / .75);
+}
+html.wh-over, html.wh-over body { cursor: help; }
+@media print { ::highlight(wh-term) { background-color: transparent; text-decoration: none; } }

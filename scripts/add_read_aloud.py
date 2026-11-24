@@ -6,8 +6,8 @@ What it does, per notes page:
      (a question), one table row, one heading or figure caption.
   2. Marks each block in the HTML with data-ra="N" (a few attributes, nothing else changes),
      and adds a manifest (inline JSON) plus links to read-aloud.css and read-aloud.js.
-  3. Makes one MP3 per unit with Kokoro. Blanks are spoken as the word "blank" in a slower,
-     lower voice. Files are named by a hash of what they say, so a re-run only makes the
+  3. Makes one MP3 per unit with Kokoro. Blanks are spoken as the plain word "blank" in
+     the normal voice. Files are named by a hash of what they say, so a re-run only makes the
      units that changed; unchanged ones are kept byte for byte.
 
 The student UI (a Listen button, a dock, Space for the next sentence) is public/materials/
@@ -40,16 +40,21 @@ KOKORO_DIR = os.environ.get('KOKORO_DIR', os.path.expanduser('~/kokoro-tts'))
 
 # Which pages each family covers. 'audio' is a folder under public/materials/.
 FAMILIES = {
-    'sci7': {'glob': 'sci7-*-notes-v1.html', 'audio': 'audio/sci7'},
+    # 'glob' lists the student pages then the answer keys; both share one audio folder, since a key
+    # sentence that has no blank is word for word the student sentence and reuses its audio.
+    'sci7': {'glob': ['sci7-*-notes-v1.html', 'sci7-*-notes-answers-v2.html'], 'audio': 'audio/sci7'},
+    'soc7': {'glob': ['soc7-*-notes-v1.html', 'soc7-*-notes-answers-v1.html'], 'audio': 'audio/soc7'},
+    'soc8': {'glob': ['soc8-*-notes-v1.html', 'soc8-*-notes-answers-v1.html'], 'audio': 'audio/soc8'},
+    'soc9': {'glob': ['soc9-*-notes-v1.html', 'soc9-*-notes-answers-v1.html'], 'audio': 'audio/soc9'},
 }
 
 # ── Voice settings. Changing any of these changes every file's hash, so all audio is remade. ──
 VOICE = 'af_bella'
 SPEED = 0.95
-BLANK_SPEED = 0.8           # the word "blank" is slower ...
-BLANK_PITCH = 0.9           # ... and lower (1.0 = same pitch; 0.9 is about 1.8 semitones down)
-GAP_BEFORE_BLANK = 0.16     # seconds of silence either side of the word "blank"
-GAP_AFTER_BLANK = 0.14
+# A blank is read as the plain word "blank", in the same voice and speed as the rest of the sentence.
+# (Until 2026-11-20 it was slower and lower; those settings are only kept so that the names of the
+# audio files for sentences WITHOUT a blank do not change.)
+LEGACY_BLANK_SETTINGS = [0.8, 0.9, 0.16, 0.14]
 LEAD = 0.05                 # silence at the start of every file (MP3 encoders eat the first few ms)
 TAIL = 0.12
 AUDIO_VERSION = 1           # bump to force every file to be remade
@@ -58,6 +63,8 @@ ASSET_VERSION = 1           # ?v= on read-aloud.css/.js; bump when you change th
 BLANK = ''            # stands in for a blank (<span class="b">) while text is processed
 MARK_OPEN = '<!-- read-aloud (scripts/add_read_aloud.py) -->'
 MARK_CLOSE = '<!-- /read-aloud -->'
+
+KEY_MODE = False   # set per page: an answer key has its answers filled in, so nobody has to write
 
 # flags in the manifest
 F_CHAIN = 1   # a heading: keep going into the next unit without waiting for a key
@@ -178,12 +185,16 @@ def split_sentences(raw):
 # Words the voice gets wrong, respelled so it says them right. Keys are matched whole-word,
 # ignoring case; a leading capital is kept. Check a word with: espeak-ng -v en-us -q --ipa WORD
 # Add to this when you hear a mistake, then re-run (only the units that contain it are remade).
-PRONUNCIATION = {'Schwann': 'Shwahn', 'Mercalli': 'Mur-kah-lee'}
+PRONUNCIATION = {'Schwann': 'Shwahn', 'Mercalli': 'Mur-kah-lee',
+                 'Métis': 'May-tee', 'Metis': 'May-tee', 'Saskatchewan': 'Sas-katch-uh-wan',
+                 'Komagata': 'Koh-mah-gah-tah', 'Nunavut': 'Noo-nuh-voot', 'Dieppe': 'Dee-ep',
+                 'Laurier': 'Lor-ee-ay'}
 
 ACRONYMS = {'MA': 'M A', 'GMO': 'G M O', 'TEK': 'T E K', 'BC': 'B C', 'DNA': 'D N A', 'GPS': 'G P S',
             'SW': 'southwest', 'NE': 'northeast', 'NW': 'northwest', 'SE': 'southeast'}
 # exact phrases, tried before anything else
-LITERAL = [(r'\band/or\b', 'and or'), (r'\bI \(not felt\)', 'one, not felt'), (r'\bXII\b', 'twelve'),
+LITERAL = [(r'\u2605\s*Stretch\b', 'Stretch question.'), (r'\bRoyal 22e R\u00e9giment', 'Royal Twenty-second Regiment'),
+           (r'\bR\u00e9giment', 'Regiment'), (r'\bMPs\b', 'M Ps'), (r'\band/or\b', 'and or'), (r'\bI \(not felt\)', 'one, not felt'), (r'\bXII\b', 'twelve'),
            (r'\bCO\u2082', 'carbon dioxide'), (r'\bH\u2082O\b', 'water'), (r'\bO\u2082', 'oxygen'),
            (r'\be\.g\.', 'for example,'), (r'\bi\.e\.', 'that is,'), (r'\betc\.', 'et cetera'),
            (r'\bapprox\.', 'approximately'), (r'\bvs\.?(?=\s)', 'versus'),
@@ -199,6 +210,8 @@ UNITS_AT_START = {'km', 'cm', 'mm', 'kg', 'mL', 'N', 'K', 'J', 'kJ'}   # may ope
 def speak(t):
     """Make one stretch of text (no blanks in it) easy for the voice to read."""
     t = t.replace('\xa0', ' ')
+    if KEY_MODE:   # "Answer Three forms..." -> a pause after the label
+        t = re.sub(r'^(Answer|Sample answer|Possible answer)s?\s+(?=[A-Z"(\d])', r'\1. ', t)
     if '\u2610' in t:  # checkbox lists: "☐ I could teach it ☐ Getting there ☐ Not yet"
         items = [x.strip() for x in t.split('\u2610') if x.strip()]
         t = '. '.join(i.rstrip('.') for i in items) + '.'
@@ -269,6 +282,8 @@ def parts_from_raw(raw, prefix=''):
 
 def unit_flags(parts, writes):
     f = F_BLANK if any(k == 'b' for k, _ in parts) else 0
+    if KEY_MODE:
+        return f
     if f & F_BLANK or writes:
         f |= F_WRITE
     return f
@@ -334,9 +349,13 @@ def table_row_units(tr, headers):
     for c in cells:
         raw = raw_text(atoms_of(c, own_only=False))
         empty = not re.search(r'[A-Za-z0-9]', raw.replace(BLANK, '')) and BLANK not in raw
-        texts.append(BLANK if empty else raw)
+        texts.append(('' if KEY_MODE else BLANK) if empty else raw)   # a key's empty cells are not "blanks"
+    if KEY_MODE and not any(t for t in texts[1:]):
+        return []
     for i, raw in enumerate(texts):
         head = headers[i] if headers and i < len(headers) and len(headers) == len(texts) else ''
+        if KEY_MODE and i > 0 and not raw:
+            continue
         head = speak(HEADER_SHORT.get(head, head))
         cell = parts_from_raw(raw)
         if i == 0:
@@ -425,13 +444,26 @@ def tag_end(src, off):
 
 
 def hash_unit(parts):
-    key = json.dumps([AUDIO_VERSION, VOICE, SPEED, BLANK_SPEED, BLANK_PITCH, GAP_BEFORE_BLANK,
-                      GAP_AFTER_BLANK, parts], ensure_ascii=False, sort_keys=True)
+    if any(k == 'b' for k, _ in parts):
+        key = json.dumps([AUDIO_VERSION, VOICE, SPEED, 'blank-inline', parts], ensure_ascii=False, sort_keys=True)
+    else:
+        key = json.dumps([AUDIO_VERSION, VOICE, SPEED] + LEGACY_BLANK_SETTINGS + [parts],
+                         ensure_ascii=False, sort_keys=True)
     return hashlib.sha1(key.encode('utf-8')).hexdigest()[:12]
+
+
+def family_files(fam):
+    return sorted(f for g in fam['glob'] for f in glob.glob(os.path.join(MAT, g)))
+
+
+def is_key(path):
+    return '-notes-answers-' in os.path.basename(path)
 
 
 def process_page(path, audio_dir_rel):
     """Return (new_source, manifest, units) for one page."""
+    global KEY_MODE
+    KEY_MODE = is_key(path)
     src = strip_injection(open(path, encoding='utf-8').read())
     soup = parse(src)
     body = soup.body
@@ -496,7 +528,7 @@ def main():
     args = ap.parse_args()
 
     fam = FAMILIES[args.family]
-    files = sorted(glob.glob(os.path.join(MAT, fam['glob'])))
+    files = family_files(fam)
     if args.unit:
         files = [f for f in files if args.unit in os.path.basename(f)]
     if not files:
@@ -534,7 +566,7 @@ def main():
         # prune against every page of the family, not only the ones selected
         used = set(wanted)
         if args.unit:
-            for f in sorted(glob.glob(os.path.join(MAT, fam['glob']))):
+            for f in family_files(fam):
                 if f not in files:
                     used |= set(re.findall(r'"([0-9a-f]{12})"', re.search(r'id="ra-manifest">(.*?)</script>',
                                 open(f, encoding='utf-8').read(), re.S).group(1)))
@@ -550,8 +582,7 @@ def main():
 
     from read_aloud_tts import Speaker  # noqa: E402  (needs the Kokoro venv)
     os.makedirs(audio_dir, exist_ok=True)
-    sp = Speaker(KOKORO_DIR, dict(voice=VOICE, speed=SPEED, blank_speed=BLANK_SPEED, blank_pitch=BLANK_PITCH,
-                                  gap_before=GAP_BEFORE_BLANK, gap_after=GAP_AFTER_BLANK, lead=LEAD, tail=TAIL))
+    sp = Speaker(KOKORO_DIR, dict(voice=VOICE, speed=SPEED, lead=LEAD, tail=TAIL))
     t0 = time.time()
     for i, h in enumerate(todo, 1):
         sp.make(wanted[h], os.path.join(audio_dir, h + '.mp3'))
