@@ -538,6 +538,16 @@ svg .dg-therm { fill: url(#tb-therm); stroke: #8a1f0a; stroke-width: 1px; vector
 svg .dg-rad { fill: none; stroke: #24211d; stroke-width: 1.4px; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }   /* radical sign with its bar */
 svg .dg-rad.acc { stroke: var(--dg-accent); stroke-width: 1.8px; } svg .dg-rad.hot { stroke: var(--viz-hot); stroke-width: 1.8px; } svg .dg-rad.plant { stroke: var(--viz-plant); stroke-width: 1.8px; }
 svg .dg-rad.muted { stroke: #6b665d; stroke-width: 1.1px; } svg .dg-eq-sm.muted { fill: #6b665d; }
+svg .dg-ring { fill: none; stroke: #4a453e; stroke-width: 1.6px; stroke-dasharray: 5 3.5; vector-effect: non-scaling-stroke; }   /* dashed ring round a point */
+svg .dg-band { fill: var(--dg-accent); fill-opacity: .14; stroke: none; }   /* shaded data range on a graph */
+svg .dg-curve { fill: none; }
+svg .dg-axis-gap { fill: #fff; stroke: none; } svg .dg-zig { fill: none; stroke: #24211d; stroke-width: 2px; stroke-linejoin: round; }   /* axis break */
+svg .dg-sunball { fill: url(#tb-sunball); stroke: #c98a0a; stroke-width: 1.5px; }
+svg .dg-cone { fill: url(#tb-wood); stroke: #7a5230; stroke-width: 1.2px; } svg .dg-cone-x { fill: none; stroke: #7a5230; stroke-width: .8px; }   /* ice cream cone */
+svg .dg-scoop { fill: #fbe3ea; stroke: #c46a86; stroke-width: 1.2px; } svg .dg-shine { fill: #fff; fill-opacity: .8; stroke: none; }
+svg .dg-buoy { fill: #fff; stroke: #24211d; stroke-width: 1.2px; } svg .dg-buoy-band { fill: #d8432a; stroke: none; }   /* life ring */
+svg .dg-buoy-hole { fill: url(#tb-water); stroke: #24211d; stroke-width: 1.2px; } svg .dg-buoy-rim { fill: none; stroke: #24211d; stroke-width: 1.2px; }
+svg .dg-wave { fill: none; stroke: var(--viz-water); stroke-width: 1.4px; }
 """
 
 TB_DEFS_START, TB_DEFS_END = "<!-- viz-defs -->", "<!-- /viz-defs -->"

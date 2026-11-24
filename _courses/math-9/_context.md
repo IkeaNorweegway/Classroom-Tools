@@ -126,7 +126,7 @@ Notes diagrams are fragment files in `notes-packages/_visuals/math9-<topic>/`. A
 2. **A new library type** (a file in `scripts/vizext/`) when the same kind of picture will be needed about 3 or more times, in any course.
 3. **Hand-drawn SVG** for one-offs and for what the library draws worse: sketches with no scale, cause-and-effect or concept diagrams, real-world scenes, unusual layouts. Use `dg-*` classes, `<tag>` blanks, and run svg-audit.
 
-Never switch a diagram to the library unless the library version is at least as clear: compare with `scripts/viz_gallery_m9.py TOPIC --compare`. Hand-drawn is a normal choice, not a failure; the same checks (galleries, checker, image-polish) cover both. Trial: Statistics (`scatter` type; 01 and 03 stay hand-drawn).
+Never switch a diagram to the library unless the library version is at least as clear: compare with `scripts/viz_gallery_m9.py TOPIC --compare`. Hand-drawn is a normal choice, not a failure; the same checks (galleries, checker, image-polish) cover both. Statistics tried the `scatter` type (2026-11-07); on 2026-11-23 its scatter plots were hand-drawn again so they share the textbook graph paper (minor and major grid, arrowhead axes, key-only dots) with the other Math 9 notes.
 
 ---
 
