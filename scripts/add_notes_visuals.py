@@ -99,7 +99,7 @@ TEST_DOC = """Test fragments (units ending in -test) use `section: Part B` and, 
 <!-- fig-slot:q10 --> left where the question's old hand-typed SVG was (in the student page and the key). An empty
 `caption:` draws the frame with no caption and no figure number, which suits a test. Inside a .fig-row the
 figure sits beside the question text, as the old SVG did."""
-WB_DOC = """Workbook fragments (units ending in -workbook) use `q: 7` instead of `section:`. The anchor is searched
+WB_DOC = """Workbook fragments (units ending in -workbook) use `q: 7` (or `q: S2` for a Stretch card) instead of `section:`. The anchor is searched
 only inside that question's card (from its <span class="badge badge-num">Q7</span> to the next one). After
 inserting, every figure on the page, old hand-made ones included, is numbered in page order in the page's
 own style ("Fig. N —" or "Figure N —"), and references such as "Fig. 2" in the text follow the same map,
@@ -867,8 +867,16 @@ CARD_NUM = r'(?:<span class="badge badge-num">Q?{0}</span>|<p><strong>Q{0}\b)'
 ANY_CARD = r'(?:<span class="badge badge-num">[QS]?\d+</span>|<p><strong>Q\d+\b)'
 
 
+def card_re(q):
+    """q: 7 finds the Q7 card; q: S2 finds the Stretch card S2."""
+    q = str(q).strip()
+    if q[:1].upper() == "S":
+        return r'<span class="badge badge-num">S{}</span>'.format(int(q[1:]))
+    return CARD_NUM.format(int(q))
+
+
 def find_card(doc, q, path):
-    m = re.search(CARD_NUM.format(int(q)), doc)
+    m = re.search(card_re(q), doc)
     if not m:
         sys.exit(f"{path.name}: no question badge for Q{q}")
     nxt = re.search(ANY_CARD, doc[m.end():])
@@ -889,9 +897,9 @@ def insert_point(doc, meta, anchor, where):
         return doc.rfind("\n", 0, i) + 1
     if where.startswith("after:"):
         line_end = doc.find("\n", i)
-        j = doc.find(where[6:], line_end if line_end >= 0 else i)
+        j = doc.find(where[6:], line_end if line_end >= 0 else i, limit)
         if j < 0:
-            sys.exit(f"{meta['file'].name}: '{where[6:]}' not found after anchor")
+            sys.exit(f"{meta['file'].name}: '{where[6:]}' not found after anchor in {meta['path'].name}")
         i = j
     end = doc.find("\n", i)
     return len(doc) if end < 0 else end + 1
@@ -938,8 +946,8 @@ def wb_number(doc):
 
 
 def wb_badges(doc, frags):
-    for q in sorted({int(f["q"]) for f in frags}, reverse=True):
-        m = re.search(BADGE_NUM.format(q), doc)
+    for q in sorted({str(f["q"]).strip() for f in frags}, reverse=True):
+        m = re.search(BADGE_NUM.format(q if q[:1].upper() == "S" else int(q)), doc)
         if not m:   # a <strong>Q14</strong> card has no badge row
             continue
         head_end = doc.find("</div>", m.end())

@@ -281,8 +281,9 @@ def render_lines_to_html(lines):
                 quote_lines.append(lines[i].lstrip('> ').strip())
                 i += 1
             content = ' '.join(q for q in quote_lines if q)
+            q = '' if content.startswith('"') else '"'   # the source often quotes the claim already
             out.append(f'<div class="misconception"><div class="err-label">Student claim</div>'
-                       f'<p class="student-claim">"{inline_fmt(esc(content))}"</p></div>')
+                       f'<p class="student-claim">{q}{inline_fmt(esc(content))}{q}</p></div>')
             continue
 
         # Word bank
