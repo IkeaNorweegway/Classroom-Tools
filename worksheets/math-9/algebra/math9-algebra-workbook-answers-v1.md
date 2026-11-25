@@ -294,13 +294,12 @@ Grade 9 Mathematics · Teacher Copy — Not for Students
 > (b) Company 1 cheaper: 25h+40 < 35h → 40 < 10h → **h > 4** — for more than 4 hours, Company 1 is cheaper.
 > (c) At h=4: both charge $140 exactly — **neither is more expensive at 4 hours.**
 
-**S2** — Rectangle area = 26
+**S2** — Rectangle area = 22
 
 > (a) Area = (3x+2)(x−1) = **3x²−x−2**
-> (b) 3x²−x−28=0. Discriminant = 1+4(3)(28)=337 — not a perfect square, **no integer solution.**
-> Try x=3: 27−3−28=−4 ≠ 0. Try x=4: 48−4−28=16 ≠ 0.
-> *(Note: the equation has irrational roots ≈ 3.25 and −2.92.)*
-> (c) With x>0: approximately **x ≈ 3.25**. This is a limitation of the problem — the worksheet is intended as an exploratory stretch, not requiring an exact integer answer.
+> (b) 3x²−x−2 = 22, so 3x²−x−24 = 0.
+> Try x=3: 3(3²) − 3 − 24 = 27 − 3 − 24 = **0 ✓** It works.
+> (c) **x = 3** (the other root, x = −8/3, is negative, so it can't be a length). Length 3(3)+2 = **11**, width 3 − 1 = **2**. Check: 11 × 2 = 22 ✓
 
 **S3** — Inequality sign flip error
 

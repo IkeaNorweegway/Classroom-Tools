@@ -571,11 +571,11 @@ A rectangle has length (3x + 2) and width (x − 1).
 
 (a) Write the polynomial for its area.
 
-(b) If the area equals 26, set up and solve the equation. (Hint: this gives a quadratic — can you find integer solutions by inspection or factoring?)
+(b) If the area equals 22, set up and solve the equation. (Hint: this gives a quadratic — can you find integer solutions by inspection or factoring?)
 
-3x² − x − 2 = 26 → 3x² − x − 28 = 0
+3x² − x − 2 = 22 → 3x² − x − 24 = 0
 
-Try x = ___ : 3(___²) − ___ − 28 = ___
+Try x = ___ : 3(___²) − ___ − 24 = ___
 
 Does it work? ___
 
