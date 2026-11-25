@@ -413,7 +413,7 @@ ___
 
 A toy rocket (for a class project) has a cylinder (r = 3 cm, h = 12 cm) with a cone on top (same radius, slant height 5 cm).
 
-(a) Find the slant height's confirmation (Pythagorean check):
+(a) Use the slant height and the radius to find the cone's height (Pythagorean check):
 
 Cone h = √(l² − r²) = √(25 − 9) = √___ = ___ cm
 

@@ -266,6 +266,6 @@ r=5, OP=13.
 
 **S1:** chord=24, d=5. r=√(12²+5²)=√169=**13 cm**. CD=**24 cm** (equal distance → equal chord). APB=40° → central=80°. Arc fraction=80/360=**2/9≈22.2%**.
 
-**S2:** Model SA: cylinder bottom+lateral+cone lateral=4π+20π+6π=**30π cm²**. Real scale 1:40. Real SA=30π×1600=**48,000π cm²**. Factor=**1600=40²** ✓ (area scales by k²).
+**S2:** (a) Model SA: cylinder bottom+lateral+cone lateral=4π+20π+6π=**30π cm²**. (b) Real dimensions (× 40): cylinder **r = 80 cm, h = 200 cm**; cone slant height **120 cm**. (c) Real scale 1:40. Real SA=30π×1600=**48,000π cm²**. Factor=**1600=40²** ✓ (area scales by k²).
 
 **S3:** Setup: tangent from P to circle (r=6). Chord AB parallel to tangent. Perpendicular P to AB=10. The distance from P to centre O involves the tangent length and the geometry of the parallel chord. Full solution requires knowing PO first; since OT (tangent-radius)=6, PT=√(PO²-36). The perpendicular from P to AB (a chord) = 10. This problem requires knowing PO — it is underspecified without additional information. *(Exploratory stretch — diagram and geometric relationships are the primary learning target here.)*
