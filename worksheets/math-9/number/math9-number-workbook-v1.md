@@ -302,7 +302,7 @@ _______________________________________________
 
 A student simplified (x³)² ÷ x⁴ this way:
 
-> "(x³)² ÷ x⁴ = x⁶ ÷ x⁴ = x²"  ← the student claims the answer is x² and is correct.
+> "(x³)² ÷ x⁴ = x⁶ ÷ x⁴ = x²"  ← the student claims the answer is x².
 
 > A second student simplifies a different expression: 3² × 3⁴ and writes 3⁸, claiming "when powers are involved you multiply exponents."
 
