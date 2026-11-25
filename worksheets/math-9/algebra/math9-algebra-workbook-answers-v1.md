@@ -93,7 +93,7 @@ Grade 9 Mathematics · Teacher Copy — Not for Students
 | 3 | **9** | **11** |
 
 **(c) Same and different:**
-> Same **slope** (m=3) — both rise 3 units per 1 unit right; parallel lines.
+> Same **slope** (m=3) — both rise 3 units per 1 unit right; parallel lines on the graph.
 > Different **y-intercepts** (0 vs 2) — y=3x+2 is shifted 2 units upward from y=3x.
 
 ---
@@ -255,7 +255,7 @@ Grade 9 Mathematics · Teacher Copy — Not for Students
 > (a) m = (13−7)/(2−0) = **3**
 > (b) b = **7**
 > (c) **y = 3x + 7**
-> (d) Graph: starts at (0,7); slopes upward 3 units per 2 horizontal units
+> (d) Graph: start at (0, 7), then rise 3 for every 1 across (6 for every 2), through (2, 13), (4, 19) and (6, 25)
 
 ---
 

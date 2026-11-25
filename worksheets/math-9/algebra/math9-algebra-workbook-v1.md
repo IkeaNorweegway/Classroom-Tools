@@ -156,7 +156,7 @@ A student says the equation y = 3x has a y-intercept of 3.
 _______________________________________________
 _______________________________________________
 
-(b) Complete all four representations of y = 3x and y = 3x + 2 side by side:
+(b) Show y = 3x and y = 3x + 2 side by side: complete the table, then graph both lines on the grid.
 
 | x | y = 3x | y = 3x + 2 |
 |---|---|---|
@@ -453,16 +453,7 @@ y = ___
 
 (d) Sketch the graph. Mark the y-intercept and use the slope to draw the line.
 
-```
-│30
-│
-│20
-│
-│10
-│
-└──────────────
-  0  2  4  6  8
-```
+*(Grid: x from 0 to 8, y from 0 to 30.)*
 
 ---
 
