@@ -80,7 +80,7 @@ A spinner has 3 sections (Red, Blue, Yellow). A coin is also flipped.
 
 (a) Complete the tree diagram.
 
-[SVG: Partially complete tree diagram — coin flip Start node branches to Heads and Tails; each branches to three spinner outcomes (Red given, two blanks); six outcome pairs listed on the right]
+<!-- fig-slot:q3 — tree diagram: worksheets/_visuals/math9-statistics-probability-workbook/ (coin H/T, then Red given and two blank spinner leaves; six outcome pairs, five blank) -->
 
 (b) Total outcomes = ___
 
@@ -519,7 +519,7 @@ _______________________________________________
 
 **S1 ★★** — Statistics + probability
 
-A spinner has 5 sections: 2 red, 2 blue, 1 green. You record 100 spins and get: Red = 38, Blue = 41, Green = 21.
+A spinner has 5 sections: 2 red, 2 blue, 1 green. You record 100 spins and get: Red = 33, Blue = 34, Green = 33.
 
 (a) Calculate the theoretical and experimental probabilities for each colour.
 

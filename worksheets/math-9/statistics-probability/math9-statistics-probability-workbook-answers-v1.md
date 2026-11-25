@@ -239,15 +239,15 @@ Because: each coin flip is completely independent — the coin has no memory of 
 
 ## Stretch Zone
 
-**S1** — Spinner (2R,2B,1G), 100 spins: R=38, B=41, G=21
+**S1** — Spinner (2R,2B,1G), 100 spins: R=33, B=34, G=33
 
 | Colour | Theoretical | Experimental | Difference |
 |---|---|---|---|
-| Red | 0.40 | **0.38** | −0.02 |
-| Blue | 0.40 | **0.41** | +0.01 |
-| Green | 0.20 | **0.21** | +0.01 |
+| Red | 0.40 | **0.33** | −0.07 |
+| Blue | 0.40 | **0.34** | −0.06 |
+| Green | 0.20 | **0.33** | +0.13 |
 
-All very close — differences within normal random variation.
+Red and blue are a little under theory, but green came up 33 times when theory expects 20: a difference of 0.13.
 Green explanations: (1) **Spinner design** — green section might be physically slightly larger than 1/5. (2) **Chance** — with only 100 spins, small deviations from theoretical are expected.
 
 **S2** — 15 students (10G, 5B), 2 chosen without replacement

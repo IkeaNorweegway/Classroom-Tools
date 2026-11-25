@@ -571,6 +571,16 @@ svg .dg-scoop { fill: #fbe3ea; stroke: #c46a86; stroke-width: 1.2px; } svg .dg-s
 svg .dg-buoy { fill: #fff; stroke: #24211d; stroke-width: 1.2px; } svg .dg-buoy-band { fill: #d8432a; stroke: none; }   /* life ring */
 svg .dg-buoy-hole { fill: url(#tb-water); stroke: #24211d; stroke-width: 1.2px; } svg .dg-buoy-rim { fill: none; stroke: #24211d; stroke-width: 1.2px; }
 svg .dg-wave { fill: none; stroke: var(--viz-water); stroke-width: 1.4px; }
+svg .dg-pc-y, svg .dg-pc-w, svg .dg-cube, svg .dg-tk-r, svg .dg-tk-gold, svg .dg-tk-k, svg .dg-gb-c, svg .dg-gb-p, svg .dg-box-f, svg .dg-box-s, svg .dg-box-in { vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+svg .dg-pc-y { fill: url(#tb-pc-y); stroke: #24211d; stroke-width: 1.4px; } svg .dg-pc-w { fill: url(#tb-die); stroke: #24211d; stroke-width: 1.4px; }   /* yellow and plain spinner sectors */
+svg .dg-cube { stroke: #24211d; stroke-width: .9px; } svg .dg-cube.g { fill: #5f9a48; } svg .dg-cube.g.t { fill: #a6d58d; } svg .dg-cube.g.s { fill: #3f7a2e; }   /* small cubes: front, top, side */
+svg .dg-cube.y { fill: #f2c230; } svg .dg-cube.y.t { fill: #fbe8a0; } svg .dg-cube.y.s { fill: #c99a14; }
+svg .dg-tk-r { fill: url(#tb-tk-r); stroke: #7a2210; stroke-width: 1px; } svg .dg-tk-gold { fill: url(#tb-tk-gold); stroke: #8a6512; stroke-width: 1px; } svg .dg-tk-k { fill: url(#tb-tk-k); stroke: #000; stroke-width: 1px; }   /* raffle tickets */
+svg .dg-tk-perf { fill: none; stroke: #fff; stroke-opacity: .8; stroke-width: 1px; stroke-dasharray: 2 2; }
+svg .dg-gb-c { fill: url(#tb-gb-c); stroke: #2e1b0e; stroke-width: 1px; } svg .dg-gb-p { fill: url(#tb-gb-p); stroke: #6e5224; stroke-width: 1px; }   /* granola bar wrappers */
+svg .dg-gb-crimp { fill: none; stroke: #fff; stroke-opacity: .55; stroke-width: 1px; }
+svg .dg-box-f { fill: url(#tb-box); stroke: #6e4f24; stroke-width: 1.3px; } svg .dg-box-s { fill: #b88f55; stroke: #6e4f24; stroke-width: 1.3px; } svg .dg-box-in { fill: #7d5c30; stroke: #6e4f24; stroke-width: 1.3px; }   /* cardboard box */
+svg .dg-suit { font: 700 10px/1 Georgia, "Times New Roman", serif; fill: #24211d; } svg .dg-suit.r { fill: #c0281c; } svg .dg-suit.lg { font-size: 15px; }   /* playing-card rank and suit */
 """
 
 TB_DEFS_START, TB_DEFS_END = "<!-- viz-defs -->", "<!-- /viz-defs -->"
@@ -644,6 +654,11 @@ TB_DEFS = (TB_DEFS_START + '\n<!-- tikz: none | shared paints for the figures be
     + _grad("cell-on", [(0, "#e3ecfb"), (1, "#b9cdf1")])
     + _grad("pc-r", [(0, "#f9bba7"), (1, "#de5d3c")], "1", "1") + _grad("pc-b", [(0, "#bfd3f6"), (1, "#5a86d6")], "1", "1")
     + _grad("pc-g", [(0, "#c9e9b4"), (1, "#68ae4b")], "1", "1") + _grad("pscale", [(0, "#ece8e0"), (1, "#a9c2ec")], "1", "0")
+    + _grad("pc-y", [(0, "#fff0b0"), (1, "#eec23a")], "1", "1")
+    + _grad("tk-r", [(0, "#f48a70"), (1, "#c9391c")], "1", "1") + _grad("tk-gold", [(0, "#fff1b3"), (1, "#e0a92a")], "1", "1")
+    + _grad("tk-k", [(0, "#5a5550"), (1, "#1c1a18")], "1", "1")
+    + _grad("gb-c", [(0, "#9a6440"), (1, "#5a3420")]) + _grad("gb-p", [(0, "#f2dcae"), (1, "#d4b072")])
+    + _grad("box", [(0, "#e9cd98"), (1, "#cfa865")])
     + _grad("rainbar", [(0, "#a7d1ee"), (1, "#4c93c4")]) + _grad("therm", [(0, "#f6a08c"), (.45, "#d93a1c"), (1, "#9a2410")])
     + '<pattern id="tb-rain" width="9" height="11" patternUnits="userSpaceOnUse"><line x1="7" y1="1.5" x2="4" y2="8.5" class="dg-rain-l"/></pattern>'
     + '<radialGradient id="tb-m-disc" cx=".5" cy=".5" r=".5" fx=".42" fy=".36"><stop offset="0" stop-color="#ffffff"/><stop offset=".75" stop-color="#f6f8fc"/><stop offset="1" stop-color="#e6ebf5"/></radialGradient>'
