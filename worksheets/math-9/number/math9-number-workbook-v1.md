@@ -130,10 +130,7 @@ Estimate each square root to one decimal place without a calculator. Show the tw
 
 Plot √38 and √75 on the number line:
 
-```
-◄──────────────────────────────────────────────►
-      5           6           7           8           9
-```
+<!-- fig-slot:q6 — number line 5 to 9 in tenths: worksheets/_visuals/math9-number-workbook/07-q6-place-roots.html -->
 
 ---
 
@@ -329,11 +326,9 @@ _______________________________________________
 
 A rectangular hockey rink in Edmonton is 26 m wide and 61 m long.
 
-(a) A player skates diagonally from corner to corner. Draw the right triangle and label all sides.
+(a) A player skates diagonally from corner to corner. Draw the diagonal on the rink, then label all three sides of the right triangle it makes.
 
-```
-[draw here]
-```
+<!-- fig-slot:q15 — the rink from above: worksheets/_visuals/math9-number-workbook/08-q15-edmonton-rink.html -->
 
 (b) Find the exact diagonal length. Is the answer rational or irrational?
 
