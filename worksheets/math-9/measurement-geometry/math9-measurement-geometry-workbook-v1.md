@@ -87,7 +87,7 @@ Scale factor = ___/___  = ___
 
 EF = 9 × ___ = ___ &nbsp;&nbsp; DF = 12 × ___ = ___
 
-(c) Angle B = 47°. Which angle in DEF equals 47°? ___
+(c) Angle A = 47°. Which angle in DEF equals 47°? ___
 
 Explain: _______________________________________________
 
@@ -403,7 +403,7 @@ Are all ratios equal? ___ Therefore: ___
 
 _______________________________________________
 
-(c) Angle Q = 58°. Which angle in triangle XYZ equals 58°?
+(c) Angle Q is about 105°. Which angle in triangle XYZ is also about 105°?
 
 ___
 
@@ -535,13 +535,13 @@ _______________________________________________
 
 **S3 ★★** — Circle + similarity
 
-A tangent from point P touches a circle (radius r = 6 cm) at T. A chord AB passes through the circle and is parallel to the tangent line. The perpendicular from P to chord AB has length 10 cm.
+A tangent from point P touches a circle (centre O, radius 6 cm) at T. PT = 8 cm. Segment TF is drawn from T to PO, meeting PO at a right angle at F.
 
-(a) Set up the geometry. Draw a clear diagram.
+(a) Find PO, the distance from P to the centre O. Which fact about tangents do you need?
 
-(b) Find the distance from P to the centre O.
+(b) Explain why △PFT ~ △PTO. Name the criterion.
 
-(c) If triangles are similar in this diagram, identify the criterion and write the similarity statement.
+(c) Use the similar triangles to find PF and TF.
 
 _______________________________________________
 

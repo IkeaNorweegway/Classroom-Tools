@@ -42,7 +42,7 @@ AB=6, BC=9, AC=12, DE=4.
 
 **(b)** EF = 9 × 2/3 = **6** | DF = 12 × 2/3 = **8**
 
-**(c)** Angle E = **47°** (B↔E in the similarity statement — corresponding angles are equal)
+**(c)** Angle D = **47°** (A↔D in the similarity statement — corresponding angles are equal)
 
 ---
 
@@ -230,7 +230,7 @@ PQR (6,9,12) and XYZ (10,15,20).
 > XY/PQ=10/6=**5/3** | YZ/QR=15/9=**5/3** | XZ/PR=20/12=**5/3**
 > All equal? **Yes** → **Similar by SSS**
 > Statement: **△PQR ~ △XYZ** (P↔X, Q↔Y, R↔Z)
-> Angle Q=58° corresponds to **angle Y = 58°**
+> Angle Q ≈ 105° corresponds to **angle Y ≈ 105°** (Q↔Y)
 
 ---
 
@@ -268,4 +268,4 @@ r=5, OP=13.
 
 **S2:** (a) Model SA: cylinder bottom+lateral+cone lateral=4π+20π+6π=**30π cm²**. (b) Real dimensions (× 40): cylinder **r = 80 cm, h = 200 cm**; cone slant height **120 cm**. (c) Real scale 1:40. Real SA=30π×1600=**48,000π cm²**. Factor=**1600=40²** ✓ (area scales by k²).
 
-**S3:** Setup: tangent from P to circle (r=6). Chord AB parallel to tangent. Perpendicular P to AB=10. The distance from P to centre O involves the tangent length and the geometry of the parallel chord. Full solution requires knowing PO first; since OT (tangent-radius)=6, PT=√(PO²-36). The perpendicular from P to AB (a chord) = 10. This problem requires knowing PO — it is underspecified without additional information. *(Exploratory stretch — diagram and geometric relationships are the primary learning target here.)*
+**S3:** (a) The tangent is perpendicular to the radius, so ∠PTO = 90°. PO = √(8² + 6²) = √100 = **10 cm**. (b) Both triangles have a right angle (∠PFT = ∠PTO = 90°) and they share ∠P: **similar by AA**, △PFT ~ △PTO. (c) Scale factor PT/PO = 8/10 = 0.8. PF = 0.8 × 8 = **6.4 cm**, TF = 0.8 × 6 = **4.8 cm**. (Check: 6.4² + 4.8² = 64 = 8².)
