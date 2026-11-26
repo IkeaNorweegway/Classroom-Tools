@@ -111,7 +111,7 @@ A) a relationship in the data &nbsp; B) a trend &nbsp; C) causation &nbsp; D) th
 |---|---|---|---|---|---|---|---|---|---|---|
 | Visitors | 110 | 135 | 130 | 160 | 170 | 195 | 190 | 220 | 235 | 250 |
 
-(a) Plot the data on the grid. Label both axes. *[2]* [Grid: temperature 15–35 °C, visitors 80–280.]
+(a) Plot the data on the grid. Label both axes. *[2]* [Grid: temperature 16–34 °C, visitors 80–260, axes not named.]
 (b) Describe the correlation: direction, strength, and what it means here. *[2]*
 (c) Draw a line of best fit and find its equation. *[2]*
 (d) Use your equation to predict the number of visitors at 25 °C and at 40 °C. Which prediction is more reliable? Explain. *[2]*

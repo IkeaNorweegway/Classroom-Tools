@@ -32,7 +32,7 @@ Grade 9 Mathematics · Teacher Copy — Not for Students
 **(a)** Direction: **positive**
 **(b)** Strength: **strong**
 **(c)** "There is a **strong positive** correlation between daily temperature and the number of visitors to the hiking trail."
-**(d)** An outlier might appear as a warm day with very few visitors — possible explanation: unexpected rain shower, trail closure, or a holiday that drew people elsewhere.
+**(d)** Outlier: **22 °C with only 95 visitors**, a warm day with very few visitors. Possible explanation: unexpected rain shower, trail closure, or a holiday that drew people elsewhere.
 
 ---
 
@@ -73,8 +73,8 @@ Data: (2,55), (4,63), (5,70), (7,74), (8,80), (10,87), (12,93)
 
 **(a-b)** Plot: points rise clearly — strong positive trend.
 
-**(c-d)** Sample calculation with points (2,55) and (12,93):
-m = (93−55)/(12−2) = 38/10 = **3.8** *(accept any reasonable line; Q9 uses 3.5)*
+**(c-d)** Sample line of best fit y ≈ 3.8x + 48.5, through (0, 48.5) and (10, 86.5), two points on the line:
+m = (86.5−48.5)/(10−0) = 38/10 = **3.8** *(accept any reasonable line; Q9 uses 3.5)*
 
 **(e)** "For each additional hour of study per week, the test score increases by approximately **3.5–3.8 percentage points**."
 
@@ -232,7 +232,7 @@ Because: each coin flip is completely independent — the coin has no memory of 
 
 > (a) **Strong negative** — as screen time increases, reading decreases.
 > (b) Plot: generally descending. One point (6,4) is slightly above the trend.
-> (c) Using (1,7) and (8,1): m=(1-7)/(8-1)=-6/7≈-0.86. Equation: **y ≈ -0.86x + 7.86** (or approximately y ≈ -x + 8)
+> (c) A line with 4 points above and 4 below passes through (0, 7.5) and (5, 3.5): m = (3.5−7.5)/(5−0) = −0.8. Equation: **y ≈ −0.8x + 7.5** (accept a slope from −0.7 to −0.9 with a matching intercept)
 > (d) No — correlation doesn't prove causation. Third variable: **parental habits** (parents who limit screen time may also encourage reading). Or **homework load** (more homework → less screen time AND more required reading).
 
 ---

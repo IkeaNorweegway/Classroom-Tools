@@ -54,9 +54,9 @@ P(not 3) = 1 − P(3) = 1 − ___ = ___
 
 **Q2 ★** — Scatter plots · Reading and describing · Visual
 
-The scatter plot shows daily high temperature (°C) and the number of visitors to a Banff hiking trail.
+The scatter plot shows the daily high temperature (°C) and the number of visitors to a Banff hiking trail on 10 summer days.
 
-*(Use the data from your notes — temperature vs. visitors from the Statistics notes package.)*
+[Figure: scatter plot, temperature 8–24 °C vs. visitors 95–330; nine points rise steadily, one outlier at (22, 95).]
 
 Describe the scatter plot:
 
@@ -128,7 +128,7 @@ The data below shows study time (hours/week) and average test score (%) for 7 st
 
 (a) Plot the data on the axes below.
 
-[SVG: Blank scatter plot axes — y-axis labelled Test score (%) from 50 to 100, x-axis labelled Study time (h) from 2 to 12]
+[Figure: blank grid, study time 0–14 h, test score 40–100 % with an axis break.]
 
 (b) Draw a line of best fit.
 
@@ -395,32 +395,7 @@ ___ × ___ × ___ = ___
 
 For each correlation description, sketch a scatter plot that matches it.
 
-(a) Strong negative correlation:
-
-```
-     │
-     │
-     │
-     └──────────
-```
-
-(b) Weak positive correlation:
-
-```
-     │
-     │
-     │
-     └──────────
-```
-
-(c) No correlation:
-
-```
-     │
-     │
-     │
-     └──────────
-```
+[Figure: three blank sets of axes, labelled (a) Strong negative, (b) Weak positive, (c) No correlation.]
 
 (d) A student says "weak positive and no correlation look the same." Explain the difference.
 
@@ -475,7 +450,7 @@ _______________________________________________
 
 (b) Plot the data and draw a line of best fit.
 
-[SVG: Blank scatter plot axes — y-axis labelled Reading (h) from 1 to 7, x-axis labelled Screen time (h) from 1 to 8]
+[Figure: blank grid, daily screen time 0–9 h, weekly reading time 0–8 h.]
 
 (c) Write the approximate equation of your line of best fit.
 
