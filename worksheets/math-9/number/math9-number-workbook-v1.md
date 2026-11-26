@@ -40,10 +40,7 @@ Order these from least to greatest. Plot them on the number line below.
 
 Least to greatest: ______, ______, ______, ______, ______
 
-```
-◄─────────────────────────────────────────────►
-   -1        -0.5         0        0.5         1
-```
+<!-- fig-slot:q1 — number line −1 to 1 in twelfths: worksheets/_visuals/math9-number-workbook/04-q1-order-line.html -->
 
 Why is −3/4 less than −1/3 even though 3/4 > 1/3?
 
@@ -88,6 +85,8 @@ Hint: √(a/b) = √a ÷ √b. The principal square root is always _____________
 **Q4 ★** — Adding rational numbers · Alberta context
 
 The temperature in Fort McMurray was −8.5°C at sunrise. By noon it had risen 11.75°C. By midnight it had fallen 6.25°C from the noon reading.
+
+<!-- fig-slot:q4 — sunrise / noon / midnight thermometers: worksheets/_visuals/math9-number-workbook/05-q4-three-thermometers.html -->
 
 (a) What was the noon temperature?
 
@@ -285,6 +284,8 @@ _______________________________________________
 **Q13 ★** — Dividing rational numbers · Alberta context
 
 Workers on a pipeline project near Leduc finished 3/4 of a section. They need to divide the remaining section equally among 5 crews.
+
+<!-- fig-slot:q13 — pipeline bar, 3/4 finished: worksheets/_visuals/math9-number-workbook/06-q13-pipeline.html -->
 
 (a) What fraction of the total section does each crew get?
 
